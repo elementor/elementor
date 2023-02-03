@@ -25,37 +25,29 @@ abstract class Files_Upload_Handler {
 	abstract public function get_file_type();
 
 	/**
-	 * is_elementor_media_upload
+	 * Is Elementor Media Upload
+	 *
 	 * @deprecated 3.5.0
+	 *
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled()' );
+
+		return Plugin::$instance->uploads_manager->is_elementor_media_upload();
 	}
 
 	/**
+	 * Is Enabled
+	 *
+	 * @deprecated 3.5.0
+	 *
 	 * @return bool
 	 */
 	final public static function is_enabled() {
-		$enabled = ! ! get_option( self::OPTION_KEY ) && Svg::file_sanitizer_can_run();
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled()' );
 
-		/**
-		 * @deprecated 3.0.0 Use `elementor/files/allow_unfiltered_upload` filter instead.
-		 */
-		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
-
-		/**
-		 * Allow Unfiltered Files Upload.
-		 *
-		 * Determines whether to enable unfiltered file uploads.
-		 *
-		 * @since 3.0.0
-		 *
-		 * @param bool $enabled Whether upload is enabled or not.
-		 */
-		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
-
-		return $enabled;
+		return Plugin::$instance->uploads_manager->are_unfiltered_uploads_enabled();
 	}
 
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
@@ -67,7 +59,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * handle_upload_prefilter
 	 *
-	 * @deprcated 3.5.0
+	 * @deprecated 3.5.0
 	 *
 	 * @param $file
 	 *
@@ -82,7 +74,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * is_file_should_handled
 	 *
-	 * @deprcated 3.5.0
+	 * @deprecated 3.5.0
 	 *
 	 * @param $file
 	 *
@@ -99,7 +91,7 @@ abstract class Files_Upload_Handler {
 	/**
 	 * file_sanitizer_can_run
 	 *
-	 * @deprcated 3.5.0
+	 * @deprecated 3.5.0
 	 *
 	 * @return bool
 	 */
@@ -117,7 +109,7 @@ abstract class Files_Upload_Handler {
 	 * ref: https://core.trac.wordpress.org/ticket/39550
 	 * ref: https://core.trac.wordpress.org/ticket/40175
 	 *
-	 * @deprcated 3.5.0
+	 * @deprecated 3.5.0
 	 *
 	 * @param $data
 	 * @param $file

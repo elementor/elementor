@@ -40,7 +40,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 
 	public function test_should_register_controls() {
 		$page_reflection = new \ReflectionClass( 'Elementor\Modules\Library\Documents\Page' );
-		$method = $page_reflection->getMethod( '_register_controls' );
+		$method = $page_reflection->getMethod( 'register_controls' );
 		$method->setAccessible( true );
 
 		$method->invokeArgs( self::$page, [] );

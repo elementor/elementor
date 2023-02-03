@@ -19,6 +19,9 @@ class Deprecation {
 	public function get_settings() {
 		return [
 			'soft_notices' => $this->soft_deprecated_notices,
+			'soft_version_count' => self::SOFT_VERSIONS_COUNT,
+			'hard_version_count' => self::HARD_VERSIONS_COUNT,
+			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
@@ -193,7 +196,7 @@ class Deprecation {
 		$diff = $this->compare_version( $base_version, $version );
 
 		if ( false === $diff ) {
-			throw new \Exception( 'Invalid deprecation diff' );
+			throw new \Exception( 'Invalid deprecation diff.' );
 		}
 
 		$print_deprecated = false;
@@ -346,8 +349,21 @@ class Deprecation {
 	 */
 	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
 		if ( ! has_action( $hook ) ) {
-			return;
+			// `$args` should be an array, but in order to keep BC, we need to support non-array values.
+			if ( is_array( $args ) ) {
+				return $args[0] ?? null;
+			}
+
+			return $args;
 		}
+
+		// BC - See the comment above.
+		if ( ! is_array( $args ) ) {
+			$args = [ $args ];
+		}
+
+		// Avoid associative arrays.
+		$args = array_values( $args );
 
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
 

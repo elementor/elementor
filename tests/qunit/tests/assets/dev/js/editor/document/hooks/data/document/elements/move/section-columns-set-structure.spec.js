@@ -23,7 +23,7 @@ export const SectionColumnsSetStructure = () => {
 			ElementsHelper.resizeColumn( eColumns[ 0 ], width );
 
 			ElementsHelper.move( eColumns[ 0 ], eSection, {
-				at: columns - 1, // move to end.
+				at: columns - 1, // Move to end.
 			} );
 
 			assert.equal( eColumns[ 0 ].settings.get( '_inline_size' ), width, 'Column size still the same' );

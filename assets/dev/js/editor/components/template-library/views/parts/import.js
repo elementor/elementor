@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../../../../utils/files-upload-handler';
+
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
@@ -16,7 +18,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	droppedFiles: null,
 
-	submitForm: function() {
+	submitForm() {
 		let file;
 
 		if ( this.droppedFiles ) {
@@ -36,13 +38,13 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 		fileReader.readAsDataURL( file );
 	},
 
-	importTemplate: function( fileName, fileData ) {
+	importTemplate( fileName, fileData ) {
 		const layout = elementor.templates.layout;
 
-		const options = {
+		this.options = {
 			data: {
-				fileName: fileName,
-				fileData: fileData,
+				fileName,
+				fileData,
 			},
 			success: ( successData ) => {
 				elementor.templates.getTemplatesCollection().add( successData );
@@ -59,12 +61,22 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			},
 		};
 
-		elementorCommon.ajax.addRequest( 'import_template', options );
+		if ( ! elementorCommon.config.filesUpload.unfilteredFiles ) {
+			const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => this.sendImportRequest() );
 
-		layout.showLoadingView();
+			enableUnfilteredFilesModal.show();
+		} else {
+			this.sendImportRequest();
+		}
 	},
 
-	onRender: function() {
+	sendImportRequest() {
+		elementorCommon.ajax.addRequest( 'import_template', this.options );
+
+		elementor.templates.layout.showLoadingView();
+	},
+
+	onRender() {
 		this.ui.uploadForm.on( {
 			'drag dragstart dragend dragover dragenter dragleave drop': this.onFormActions.bind( this ),
 			dragenter: this.onFormDragEnter.bind( this ),
@@ -73,16 +85,16 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onFormActions: function( event ) {
+	onFormActions( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 	},
 
-	onFormDragEnter: function() {
+	onFormDragEnter() {
 		this.ui.uploadForm.addClass( 'elementor-drag-over' );
 	},
 
-	onFormDragLeave: function( event ) {
+	onFormDragLeave( event ) {
 		if ( jQuery( event.relatedTarget ).closest( this.ui.uploadForm ).length ) {
 			return;
 		}
@@ -90,13 +102,13 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 		this.ui.uploadForm.removeClass( 'elementor-drag-over' );
 	},
 
-	onFormDrop: function( event ) {
+	onFormDrop( event ) {
 		this.droppedFiles = event.originalEvent.dataTransfer.files;
 
 		this.submitForm();
 	},
 
-	onFileInputChange: function() {
+	onFileInputChange() {
 		this.submitForm();
 	},
 } );

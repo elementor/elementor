@@ -2,7 +2,7 @@ var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behavi
 	TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend( {
-	className: function() {
+	className() {
 		var classes = 'elementor-template-library-template',
 			source = this.model.get( 'source' );
 
@@ -19,7 +19,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 		return classes;
 	},
 
-	attributes: function() {
+	attributes() {
 		const subscriptionPlan = elementor.config.library_connect.subscription_plans[ this.model.get( 'accessLevel' ) ];
 
 		if ( ! subscriptionPlan ) {
@@ -31,13 +31,13 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 		};
 	},
 
-	ui: function() {
+	ui() {
 		return {
 			previewButton: '.elementor-template-library-template-preview',
 		};
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.previewButton': 'onPreviewButtonClick',
 		};

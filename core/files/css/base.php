@@ -10,7 +10,6 @@ use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -328,6 +327,8 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [] );
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -343,6 +344,8 @@ abstract class Base extends Base_File {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
+
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
@@ -372,6 +375,10 @@ abstract class Base extends Base_File {
 
 								throw new \Exception();
 							}
+						}
+
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
 						}
 
 						return $parsed_value;
@@ -437,9 +444,21 @@ abstract class Base extends Base_File {
 	 */
 	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
 		if ( $parser_control_name ) {
-			$control = $controls_stack[ $parser_control_name ];
+			// If both the processed control and the control name found in the placeholder are responsive
+			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+
+				$control = $controls_stack[ $parser_control_name . $device_suffix ] ?? $controls_stack[ $parser_control_name ];
+			} else {
+				$control = $controls_stack[ $parser_control_name ];
+			}
 
 			$value = call_user_func( $value_callback, $control );
+		}
+
+		// If the control value is empty, check for global default. `0` (integer, string) are falsy but are valid values.
+		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
+			$value = $this->get_control_global_default_value( $control );
 		}
 
 		if ( Controls_Manager::FONT === $control['type'] ) {
@@ -671,6 +690,42 @@ abstract class Base extends Base_File {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements, $values
 		);
+	}
+
+	/**
+	 * Get Control Global Default Value
+	 *
+	 * If the control has a global default value, and the corresponding global default setting is enabled, this method
+	 * fetches and returns the global default value. Otherwise, it returns null.
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @param $control
+	 * @return string|null
+	 */
+	private function get_control_global_default_value( $control ) {
+		if ( empty( $control['global']['default'] ) ) {
+			return null;
+		}
+
+		// If the control value is empty, and the control has a global default set, fetch the global value and use it.
+		$global_enabled = false;
+
+		if ( 'color' === $control['type'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+		} elseif ( isset( $control['groupType'] ) && 'typography' === $control['groupType'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+		}
+
+		$value = null;
+
+		// Only apply the global default if Global Colors are enabled.
+		if ( $global_enabled ) {
+			$value = $this->get_selector_global_value( $control, $control['global']['default'] );
+		}
+
+		return $value;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 var Validator = require( 'elementor-validator/base' );
 
 module.exports = Validator.extend( {
-	validationMethod: function( newValue ) {
+	validationMethod( newValue ) {
 		var validationTerms = this.getSettings( 'validationTerms' ),
 			errors = [];
 

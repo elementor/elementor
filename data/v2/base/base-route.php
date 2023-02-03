@@ -316,7 +316,7 @@ abstract class Base_Route {
 		}
 
 		$args = wp_parse_args( $args, [
-			'is_debug' => defined( 'WP_DEBUG' ),
+			'is_debug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 		] );
 
 		$result = new \WP_Error( 'invalid_methods', 'route not supported.' );

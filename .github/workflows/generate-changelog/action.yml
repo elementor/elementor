@@ -1,0 +1,25 @@
+name: Generate Changelog
+description: Generate a changelog for the current version with the last version as the base.
+
+inputs:
+  TOKEN:
+    required: true
+  REPOSITORY:
+    required: true
+  HEAD_BRANCH_NAME:
+    required: true
+  BASE_TAG_NAME:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        TOKEN: ${{ inputs.TOKEN }}
+        REPOSITORY: ${{ inputs.REPOSITORY }}
+        HEAD_BRANCH_NAME: ${{ inputs.HEAD_BRANCH_NAME }}
+        BASE_TAG_NAME: ${{ inputs.BASE_TAG_NAME }}
+      run: |
+            npm install --no-package-lock --no-save @octokit/core@3.4.0
+            node ./.github/scripts/generate-changelog.js

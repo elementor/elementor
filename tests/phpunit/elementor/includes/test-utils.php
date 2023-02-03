@@ -10,7 +10,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function test_should_return_elementor_pro_link() {
-		$this->assertSame( self::BASE_LINK . '&utm_term=twentynineteen', Utils::get_pro_link( self::BASE_LINK ) );
+		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
 
 	public function test_should_return_source_of_placeholder_image() {
@@ -64,17 +64,17 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different
+	 * @expectedExceptionMessage The `from` and `to` URL's must be different URL's.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( 'The `from` and `to` URL\'s must be different' );
+		//$this->expectExceptionMessage( "The `from` and `to` URL's must be different URL's." );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s
+	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
@@ -172,5 +172,116 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
+	}
+
+	public function test_file_get_contents() {
+		// Arrange
+		$file_name = __DIR__ . '/mock/mock-file.txt';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertEquals( "test.\n", $content );
+	}
+
+	public function test_file_get_contents__non_file() {
+		// Arrange
+		// Elementor Logo
+		$file_name = 'https://avatars.githubusercontent.com/u/47606894';
+
+		// Act
+		$content = Utils::file_get_contents( $file_name );
+
+		// Assert
+		$this->assertFalse( $content );
+	}
+
+	public function test_get_super_global_value__returns_default() {
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'not_set', 'default' );
+
+		// Assert
+		$this->assertEquals( 'default', $value );
+	}
+
+	public function test_get_super_global_value__returns_value() {
+		// Arrange
+		$_REQUEST['key'] = 'value';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key', 'default' );
+
+		// Assert
+		$this->assertEquals( 'value', $value );
+	}
+
+	public function test_get_super_global_value__unslashed() {
+		// Arrange
+		$_REQUEST['key'] = 'value\\//';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
+
+		// Assert
+		$this->assertEquals( 'value//', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized() {
+		// Arrange
+		$_REQUEST['key'] = 'value<script>alert(1)</script>';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( 'valuealert(1)', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_associative_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'key' => 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__files() {
+		// Arrange
+		$_FILES['file'] = [
+			'name' => '..%2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		$sanitized = [
+			'name' => '2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		// Act
+		$file = Utils::get_super_global_value( $_FILES,  'file' );
+
+		// Assert
+		$this->assertEquals( $sanitized, $file);
 	}
 }

@@ -89,10 +89,19 @@ class Create extends Base_Category {
 	}
 
 	private function create_item_url_by_document_class( $document_class ) {
-		return $this->get_create_new_template(
+		$result = $this->get_create_new_template(
 			$document_class::get_add_new_title(),
 			$document_class::get_create_url()
 		);
+
+		$lock_behavior = $document_class::get_lock_behavior_v2();
+		$is_locked = ! empty( $lock_behavior ) && $lock_behavior->is_locked();
+
+		if ( $is_locked ) {
+			$result['lock'] = $lock_behavior->get_config();
+		}
+
+		return $result;
 	}
 
 	private function get_create_new_template( $add_new_title, $url ) {

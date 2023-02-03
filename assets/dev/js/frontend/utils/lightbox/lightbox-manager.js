@@ -77,7 +77,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		elementorFrontend.elements.$document.on(
 			'click',
 			this.getSettings( 'selectors.links' ),
-			( event ) => this.onLinkClick( event )
+			( event ) => this.onLinkClick( event ),
 		);
 	}
 

@@ -1,9 +1,12 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Plugin;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,6 +68,10 @@ class Module extends BaseModule {
 		'mu_plugins' => [],
 	];
 
+	public function get_capability() {
+		return $this->capability;
+	}
+
 	/**
 	 * Main system info page constructor.
 	 *
@@ -111,7 +118,12 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+				$this->register_menu( $admin_menu_manager );
+			}, Settings::ADMIN_MENU_PRIORITY + 30 );
+		}
+
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
@@ -123,19 +135,10 @@ class Module extends BaseModule {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.9.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_menu() {
-		$system_info_text = esc_html__( 'System Info', 'elementor' );
-
-		add_submenu_page(
-			'elementor',
-			$system_info_text,
-			$system_info_text,
-			$this->capability,
-			'elementor-system-info',
-			[ $this, 'display_page' ]
-		);
+	private function register_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 
 	/**

@@ -41,12 +41,11 @@ class Categories_Manager {
 	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 */
 	public function add_category( $category_name, Base_Category $category ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'register'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
 		$this->register( $category, $category_name );
 	}
@@ -73,6 +72,19 @@ class Categories_Manager {
 		}
 
 		$this->categories[ $finder_category_name ] = $finder_category_instance;
+	}
+
+	/**
+	 * Unregister a finder category.
+	 *
+	 * @param string $finder_category_name - Category to unregister.
+	 *
+	 * @return void
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public function unregister( $finder_category_name ) {
+		unset( $this->categories[ $finder_category_name ] );
 	}
 
 	/**
@@ -131,15 +143,12 @@ class Categories_Manager {
 		 *
 		 * @param Categories_Manager $this.
 		 */
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
-		//	'elementor/finder/categories/init',
-		//	[ $this ],
-		//	'3.5.0',
-		//	'elementor/finder/register'
-		//);
-
-		do_action( 'elementor/finder/categories/init', $this );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+			'elementor/finder/categories/init',
+			[ $this ],
+			'3.5.0',
+			'elementor/finder/register'
+		);
 
 		/**
 		 * Elementor Finder categories registration.

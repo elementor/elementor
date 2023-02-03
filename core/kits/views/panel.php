@@ -32,6 +32,12 @@
 		removeIcon = 'eicon-disable-trash-o'
 	}
 	#>
+	<# if ( itemActions.sort ) { #>
+	<div class="elementor-repeater-row-tool elementor-repeater-row-tools elementor-repeater-tool-sort">
+		<i class="eicon-cursor-move"></i>
+		<span class="elementor-screen-only"><?php echo esc_html__( 'Reorder', 'elementor' ); ?></span>
+	</div>
+	<# } #>
 	<div class="elementor-repeater-row-tool elementor-repeater-tool-{{{ removeClass }}}">
 		<i class="{{{ removeIcon }}}" aria-hidden="true"></i>
 		<# if ( itemActions.remove ) { #>

@@ -187,10 +187,10 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 *
+	 * @param bool $force_update
 	 * @return array
 	 */
-	public function get_templates( $filter_sources = [] ) {
+	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
@@ -198,7 +198,7 @@ class Manager {
 				continue;
 			}
 
-			$templates = array_merge( $templates, $source->get_items() );
+			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update ] ) );
 		}
 
 		return $templates;
@@ -219,13 +219,18 @@ class Manager {
 	public function get_library_data( array $args ) {
 		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
 
+		if ( empty( $library_data ) ) {
+			return $library_data;
+		}
+
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
+		$force_update = ! empty( $args['sync'] );
 
 		return [
-			'templates' => $this->get_templates( $filter_sources ),
+			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
 		];
 	}
@@ -450,8 +455,15 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
+		// If the template is a JSON file, allow uploading it.
+		add_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		add_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
+
 		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
 		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
+
+		remove_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
@@ -468,6 +480,20 @@ class Manager {
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
 
 		return $import_result;
+	}
+
+	/**
+	 * Enable JSON Template Upload
+	 *
+	 * Runs on the 'elementor/files/allow-file-type/json' Uploads Manager filter.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * return bool
+	 */
+	public function enable_json_template_upload() {
+		return true;
 	}
 
 	/**
@@ -534,14 +560,14 @@ class Manager {
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
-			throw new \Exception( 'Access Denied' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		if ( ! empty( $data['editor_post_id'] ) ) {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
 			if ( ! get_post( $editor_post_id ) ) {
-				throw new \Exception( esc_html__( 'Post not found.', 'elementor' ) );
+				throw new \Exception( 'Post not found.' );
 			}
 
 			Plugin::$instance->db->switch_to_post( $editor_post_id );
@@ -655,7 +681,7 @@ class Manager {
 	 * @return \WP_Error|true True on success, 'WP_Error' otherwise.
 	 */
 	private function ensure_args( array $required_args, array $specified_args ) {
-		$not_specified_args = array_diff( $required_args, array_keys( array_filter( $specified_args ) ) );
+		$not_specified_args = array_diff( $required_args, array_keys( $specified_args ) );
 
 		if ( $not_specified_args ) {
 			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );

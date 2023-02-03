@@ -95,6 +95,9 @@ class Widget_Menu_Anchor extends Widget_Base {
 				'placeholder' => esc_html__( 'For Example: About', 'elementor' ),
 				'description' => esc_html__( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -147,5 +150,11 @@ class Widget_Menu_Anchor extends Widget_Base {
 		?>
 		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
 		<?php
+	}
+
+	protected function on_save( array $settings ) {
+		$settings['anchor'] = sanitize_html_class( $settings['anchor'] );
+
+		return $settings;
 	}
 }

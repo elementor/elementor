@@ -5,10 +5,9 @@ const packageJson = require('../../package.json');
 const fs = require('fs');
 
 const preId = process.argv[2];
-if (!['dev', 'beta'].includes(preId)) {
+if (!['dev', 'beta', 'cloud' ].includes(preId)) {
 	console.error('missing argument dev or beta mode');
 	process.exit(1);
-	return;
 }
 
 const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersion = 1) => {
@@ -27,7 +26,6 @@ const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersio
 			if (Number.isNaN(currentLastVersionNumber)) {
 				console.error(`invalid ${preId} version: ${currentLastVersion}`);
 				process.exit(1);
-				return;
 			}
 		}
 	}
@@ -38,9 +36,9 @@ const bumpVersion = (relativeVersion, lastVersionTagName, bumpsFromCurrentVersio
 	console.log(newVersion);
 }
 
-if (preId === 'beta') {
+if (['beta','cloud'].includes(preId)) {
 	const relativeVersion = packageJson.version;
-	bumpVersion(relativeVersion, 'last_beta_version');
+	bumpVersion(relativeVersion,`last_${preId}_version`);
 	return;
 }
 

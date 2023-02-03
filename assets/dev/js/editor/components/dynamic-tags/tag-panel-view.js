@@ -6,7 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	tagControlsStack: null,
 
-	templateHelpers: function() {
+	templateHelpers() {
 		var helpers = {};
 		if ( this.model ) {
 			helpers.controls = this.model.options.controls;
@@ -19,7 +19,7 @@ module.exports = Marionette.ItemView.extend( {
 		remove: '.elementor-dynamic-cover__remove',
 	},
 
-	events: function() {
+	events() {
 		var events = {
 			'click @ui.remove': 'onRemoveClick',
 		};
@@ -31,7 +31,7 @@ module.exports = Marionette.ItemView.extend( {
 		return events;
 	},
 
-	getTemplate: function() {
+	getTemplate() {
 		var config = this.getTagConfig(),
 			templateFunction = Marionette.TemplateCache.get( '#tmpl-elementor-control-dynamic-cover' ),
 			renderedTemplate = Marionette.Renderer.render( templateFunction, {
@@ -44,11 +44,11 @@ module.exports = Marionette.ItemView.extend( {
 		return Marionette.TemplateCache.prototype.compileTemplate( renderedTemplate.trim() );
 	},
 
-	getTagConfig: function() {
+	getTagConfig() {
 		return elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 	},
 
-	initSettingsPopup: function() {
+	initSettingsPopup() {
 		var settingsPopupOptions = {
 			className: 'elementor-tag-settings-popup',
 			position: {
@@ -69,11 +69,11 @@ module.exports = Marionette.ItemView.extend( {
 		};
 	},
 
-	hasSettings: function() {
+	hasSettings() {
 		return !! Object.values( this.getTagConfig().controls ).length;
 	},
 
-	showSettingsPopup: function() {
+	showSettingsPopup() {
 		if ( ! this.tagControlsStack ) {
 			this.initTagControlsStack();
 		}
@@ -87,7 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 		settingsPopup.show();
 	},
 
-	initTagControlsStack: function() {
+	initTagControlsStack() {
 		this.tagControlsStack = new TagControlsStack( {
 			model: this.model,
 			controls: this.model.controls,
@@ -100,13 +100,13 @@ module.exports = Marionette.ItemView.extend( {
 		this.tagControlsStack.render();
 	},
 
-	initModel: function() {
+	initModel() {
 		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getOption( 'settings' ), {
 			controls: this.getTagConfig().controls,
 		} );
 	},
 
-	initialize: function() {
+	initialize() {
 		// The `model` should always be available.
 		this.initModel();
 
@@ -119,11 +119,11 @@ module.exports = Marionette.ItemView.extend( {
 		this.listenTo( this.model, 'change', this.render );
 	},
 
-	onClick: function() {
+	onClick() {
 		this.showSettingsPopup();
 	},
 
-	onRemoveClick: function( event ) {
+	onRemoveClick( event ) {
 		event.stopPropagation();
 
 		this.destroy();
@@ -131,7 +131,7 @@ module.exports = Marionette.ItemView.extend( {
 		this.trigger( 'remove' );
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		if ( this.hasSettings() ) {
 			this.getSettingsPopup().destroy();
 		}

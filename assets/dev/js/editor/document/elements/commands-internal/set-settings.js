@@ -1,6 +1,4 @@
-import CommandInternal from 'elementor-api/modules/command-internal-base';
-
-export class SetSettings extends CommandInternal {
+export class SetSettings extends $e.modules.editor.CommandContainerInternalBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'settings', 'object', args );
@@ -26,7 +24,27 @@ export class SetSettings extends CommandInternal {
 			} else if ( render ) {
 				container.render();
 			}
+
+			$e.store.dispatch(
+				this.component.store.actions.settings( {
+					documentId: elementor.documents.getCurrentId(),
+					elementId: container.id,
+					// Deep copy in order to avoid making container setting properties immutable.
+					settings: JSON.parse( JSON.stringify( settings ) ),
+				} ),
+			);
 		} );
+	}
+
+	static reducer( state, { payload } ) {
+		const { documentId, elementId, settings } = payload;
+
+		if ( state[ documentId ]?.[ elementId ] ) {
+			state[ documentId ][ elementId ].settings = {
+				...state[ documentId ][ elementId ].settings,
+				...settings,
+			};
+		}
 	}
 }
 

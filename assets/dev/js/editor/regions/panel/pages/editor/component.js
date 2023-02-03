@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -32,12 +33,12 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view } = args,
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
 		elementor.getPanelView().setPage( 'editor', title, {
 			tab,
-			model: model,
+			model,
 			controls: elementor.getElementControls( model ),
 			editedElementView: view,
 		} );
@@ -75,5 +76,38 @@ export default class Component extends ComponentBase {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Callback on route open under the current namespace.
+	 *
+	 * @param {string} route
+	 * @param {Object} routeArgs
+	 *
+	 * @return {void}
+	 */
+	onRoute( route, routeArgs = {} ) {
+		super.onRoute( route );
+
+		const { view } = routeArgs;
+
+		if ( ! view?.getContainer() ) {
+			return;
+		}
+
+		SetDirectionMode.set( view.getContainer() );
+	}
+
+	/**
+	 * Callback on route close under the current namespace.
+	 *
+	 * @param {string } route - Route ID.
+	 *
+	 * @return {void}
+	 */
+	onCloseRoute( route ) {
+		super.onCloseRoute( route );
+
+		$e.uiStates.remove( 'document/direction-mode' );
 	}
 }

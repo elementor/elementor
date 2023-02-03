@@ -11,6 +11,7 @@ $theme-dark-gray-lighter: #7D7E82;
 $theme-dark-gray-lightest: #B4B5B7;
 
 $theme-dark-light: #E0E1E3;
+$theme-dark-lighter: #f1f3f5;
 $theme-dark-dark: #26292C;
 $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
@@ -21,6 +22,10 @@ $theme-dark-gradient-end: $theme-dark-gray;
 $theme-dark-panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 
 //General
+:root {
+	color-scheme: dark;
+}
+
 body {
 	color: $theme-dark-light;
 
@@ -133,6 +138,13 @@ body {
 
 		.elementor-button-wrapper {
 			border-top-color: $theme-dark-gray-darkest;
+		}
+
+		.elementor-repeater-fields {
+
+			&.ui-sortable-helper {
+				background-color: $theme-dark-gray-dark;
+			}
 		}
 	}
 }
@@ -456,6 +468,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -487,6 +500,45 @@ a.elementor-responsive-switcher {
 		}
 	}
 }
+
+.e-units-wrapper {
+
+	.e-units-switcher {
+		color: $theme-dark-lighter;
+
+		&:hover {
+			color: $theme-dark-accent;
+			background-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
 
 .elementor-control-type-popover_toggle {
 
@@ -547,8 +599,10 @@ a.elementor-responsive-switcher {
 
 .elementor-control-type-media {
 
-	.elementor-control-media__preview {
-		background-color: $theme-dark-gray-darkest;
+	.elementor-control-media-area {
+		.elementor-control-media__preview {
+			background-color: $theme-dark-gray-darkest;
+		}
 	}
 }
 
@@ -1325,7 +1379,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 
@@ -1441,6 +1496,7 @@ label.elementor-template-library-order-label,
 
 //WP Media Modal
 .media-modal {
+	color-scheme: light;
 	color: $editor-dark;
 }
 

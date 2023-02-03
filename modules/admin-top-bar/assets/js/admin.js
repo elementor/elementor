@@ -19,6 +19,6 @@ if ( isElementorPage ) {
 		<AppWrapper>
 			<AdminTopBar />
 		</AppWrapper>,
-		adminTopBarElement
+		adminTopBarElement,
 	);
 }

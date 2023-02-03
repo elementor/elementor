@@ -105,7 +105,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'responsive_heading',
 			[
-				'label' => __( 'Responsive Preview', 'elementor' ),
+				'label' => esc_html__( 'Responsive Preview', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
@@ -114,10 +114,10 @@ class Model extends BaseModel {
 		$this->add_control(
 			'show_hidden_elements',
 			[
-				'label' => __( 'Hidden Elements', 'elementor' ),
+				'label' => esc_html__( 'Hidden Elements', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_on' => 'Show',
-				'label_off' => 'Hide',
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'default' => 'yes',
 			]
 		);
@@ -133,6 +133,22 @@ class Model extends BaseModel {
 					'mobile' => esc_html__( 'Mobile', 'elementor' ),
 					'tablet' => esc_html__( 'Tablet', 'elementor' ),
 					'desktop' => esc_html__( 'Desktop', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'exit_to',
+			[
+				'label' => esc_html__( 'Exit to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'description' => esc_html__( 'Decide where you want to go when you click the "Exit" button.', 'elementor' ),
+				'default' => 'this_post',
+				'options' => [
+					'this_post' => esc_html__( 'This Post', 'elementor' ),
+					'all_posts' => esc_html__( 'All Posts', 'elementor' ),
+					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
 				],
 			]
 		);

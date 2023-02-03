@@ -101,13 +101,13 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		$token = md5( wp_rand() );
+		$token = hash( 'sha256', wp_rand() );
 
 		// Only who own this key can use 'elementor-safe-mode'.
 		update_option( self::OPTION_TOKEN, $token );
 
 		// Save for later use.
-		setcookie( self::OPTION_TOKEN, $token, time() + HOUR_IN_SECONDS, COOKIEPATH );
+		setcookie( self::OPTION_TOKEN, $token, time() + HOUR_IN_SECONDS, COOKIEPATH, '', is_ssl(), true );
 	}
 
 	public function disable_safe_mode() {
@@ -131,7 +131,7 @@ class Module extends \Elementor\Core\Base\Module {
 		delete_option( 'elementor_safe_mode_created_mu_dir' );
 
 		delete_option( self::OPTION_TOKEN );
-		setcookie( self::OPTION_TOKEN, '', 1 );
+		setcookie( self::OPTION_TOKEN, '', 1, '', '', is_ssl(), true );
 	}
 
 	public function filter_preview_url( $url ) {

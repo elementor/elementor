@@ -79,3 +79,11 @@
 		@include padding-start(10px);
 	}
 }
+
+.e-con,
+.e-con-inner {
+
+	.elementor-progress-wrapper {
+		height: initial;
+	}
+}

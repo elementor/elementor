@@ -17,7 +17,7 @@ export class SectionColumnsLimit extends Dependency {
 		const { containers = [ args.container ] } = args;
 
 		// If one of the targets have maximum columns reached break the command.
-		return ! containers.some( ( /**Container*/ container ) => {
+		return ! containers.some( ( /** Container*/ container ) => {
 			return container.view.isCollectionFilled();
 		} );
 	}
