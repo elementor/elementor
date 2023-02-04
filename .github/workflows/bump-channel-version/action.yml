@@ -29,7 +29,7 @@ runs:
             CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | grep ${{ inputs.CLEAN_PACKAGE_VERSION }} | awk '{print $2}' | cut -d/ -f3 | sort -V | tail -1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}')
             
             # If CURRENT_CHANNEL_VERSION is empty or not a number, set it to 0 ( PACKAGE_VERSION not found, means it's the first build of the current package version )
-            if [ -z "$CURRENT_CHANNEL_VERSION" ] || ! [[ "$CURRENT_CHANNEL_VERSION" =~ ^[0-9]+$ ]]; then
+            if [ -z "$CURRENT_CHANNEL_VERSION" ]; then
                 CURRENT_CHANNEL_VERSION=0
             fi
 
