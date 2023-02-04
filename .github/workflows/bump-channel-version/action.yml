@@ -26,7 +26,7 @@ runs:
             git config user.name ${{ inputs.MAINTAIN_USERNAME }}
             git config user.email ${{ inputs.MAINTAIN_EMAIL }}
             
-            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | awk "/${inputs.CLEAN_PACKAGE_VERSION}.*${inputs.CHANNEL}.*[^-rc]/ {print \$2}" | cut -d/ -f3 | sort -V | tail -n1 | awk -F"${inputs.CHANNEL}" '{print $2}') || CURRENT_CHANNEL_VERSION=0
+            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | awk "/${inputs.CLEAN_PACKAGE_VERSION}.*${inputs.CHANNEL}.*[^-rc]/ {print \$2}" | cut -d/ -f3 | sort -V | tail -n1 | awk -F"${inputs.CHANNEL}" "${print $2}") || CURRENT_CHANNEL_VERSION=0
 
             NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
             ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.REPO_NAME }}-${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
