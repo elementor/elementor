@@ -16,7 +16,8 @@ runs:
             
             # # Get the list of tags from remote, filtered
             tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | awk '{print $2}')
-
+            git fetch --tags
+            
             # Loop through the list of tags and get their creation date
             latest_date=""
             latest_tag=""
