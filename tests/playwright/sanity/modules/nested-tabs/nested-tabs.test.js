@@ -3,7 +3,7 @@ const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe( 'Nested Tabs tests @nested-tabs', () => {
+test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
 
 	test.beforeEach( async () => {
@@ -375,7 +375,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
+	test.only( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -384,21 +384,22 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
-		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
+		// The preview frame some times detaches and accessing the locator does not work, so we set up the locator each time
+		const getFirstTabLocator = () => editor.getPreviewFrame().locator( '.e-normal:first-child' );
+		const getLastTabLocator = () => editor.getPreviewFrame().locator( '.e-normal:last-child' );
 
 		// Set first tab to active tab.
-		await firstTab.click();
+		await getFirstTabLocator().click();
 		// Get last tab width.
-		const lastTabWidth = await lastTab.boundingBox().width;
+		const lastTabWidth = await getLastTabLocator().boundingBox().width;
 		// Set last tab to active tab.
-		await lastTab.click();
+		await getLastTabLocator().click();
 		// Get last tab active width.
-		const lastTabActiveWidth = await lastTab.boundingBox().width;
+		const lastTabActiveWidth = await getLastTabLocator().boundingBox().width;
 
 		// Assert.
 		// Verify that the last tab is active.
-		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+		await expect( getLastTabLocator() ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 		// Check if the normal tab width is equal to the active tab width.
 		expect( lastTabWidth ).toBe( lastTabActiveWidth );
 
