@@ -1,5 +1,5 @@
 export type jQueryDeferred<T> = {
-	then<U>( onFulfill: ( value: T ) => U, onReject?: ( error: any ) => U ): jQueryDeferred<U>;
+	then<U>( onFulfill: ( value: T ) => U, onReject?: ( error: unknown ) => U ): jQueryDeferred<U>;
 };
 
 export type ExtendedWindow = Window & {

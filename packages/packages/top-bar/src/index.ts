@@ -1,4 +1,9 @@
-import { addToTop } from '@elementor/editor';
-import TopBar from './components/top-bar';
+export {
+	registerLink,
+	registerAction,
+	registerToggleAction,
+	injectIntoCanvasDisplay,
+	injectIntoPrimaryAction,
+} from './locations/index';
 
-addToTop( { component: TopBar } );
+import './init';
