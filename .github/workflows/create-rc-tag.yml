@@ -3,6 +3,7 @@ name: Create Rc Tag
 
 env:
   TYPE: 'rc'
+  CHANGELOG_FILE: 'temp-changelog.txt'
 
 on:
   workflow_dispatch:
@@ -81,10 +82,6 @@ jobs:
         uses : ./.github/workflows/get-previous-release
         with:
           CHANNEL: ${{ github.event.inputs.chennel }}
-      - name: Add defult temp-changelog.txt
-        run: |
-          # upload-artifact action fails if the file size is 0.
-          echo "No changelog" > temp-changelog.txt
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
@@ -92,11 +89,21 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
+      - name: Set empty changelog if no changes
+        run: |
+            # upload-artifact action fails if the file size is 0.
+            
+            # Check the file size
+            size=$(wc -c < "${{ env.CHANGELOG_FILE }}")
+            if [ $size -eq 0 ]; then
+              echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
+            fi
+            
       - name: Upload changelog to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: temp-changelog.txt
-          path: temp-changelog.txt
+          name: ${{ env.CHANGELOG_FILE }}
+          path: ${{ env.CHANGELOG_FILE }}
           if-no-files-found: error
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
@@ -104,9 +111,9 @@ jobs:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: |
             elementor-*.zip
-            temp-changelog.txt
+            ${{ env.CHANGELOG_FILE }}
           prerelease: true
-          body_path: temp-changelog.txt
+          body_path: ${{ env.CHANGELOG_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
