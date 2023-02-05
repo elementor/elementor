@@ -89,6 +89,12 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_NAME }}
+      - name: Upload changelog to GitHub actions artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog.txt
+          path: temp-changelog.txt
+          if-no-files-found: error
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
