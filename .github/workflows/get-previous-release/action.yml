@@ -35,5 +35,6 @@ runs:
         done
 
         # Output the latest tag's name
-        PREVIOUS_TAG_NAME=$(echo "$latest_tag" | awk -F "/" '{print $3}')
-        echo "PREVIOUS_TAG_NAME=${PREVIOUS_TAG_NAME}" >> $GITHUB_ENV
+        PREVIOUS_TAG_SHA=$(echo "$latest_tag" | awk -F "/" '{print $1}')
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}"
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
