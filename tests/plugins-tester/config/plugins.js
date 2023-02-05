@@ -2,6 +2,7 @@
 import topPluginsConfig from "./top-plugins.json" assert {type: 'json'};
 
 const notCompatiblePlugins = [
+	'complianz-gdpr', // SQL Error
 	'easy-table-of-contents', // Welcome page.
 	'elementor-beta', // Enables container experiment and panel badge.
 	'embedpress',
