@@ -55,9 +55,9 @@ export class PluginsTester {
 			this.runWP( `npx wp-env run cli wp plugin deactivate ${ slug }` );
 		} );
 
-		this.options.logger.error( 'errors:', errors );
-
 		if ( errors.length ) {
+			this.options.logger.error( 'errors:', Object.values( errors ).map( ( { slug } ) => slug ) );
+
 			process.exit( 1 );
 		}
 	}
