@@ -56,7 +56,15 @@ export class PluginsTester {
 		} );
 
 		if ( errors.length ) {
-			this.options.logger.error( 'errors:', Object.values( errors ).map( ( { slug } ) => slug ) );
+			const failedPlugins = errors.map( ( { slug } ) => slug );
+
+			this.cmd( `mkdir -p errors-reports` );
+
+			failedPlugins.forEach( ( { slug } ) => {
+				this.cmd( `mv reports/${ slug } errors-reports/${ slug }` );
+			} );
+
+			this.options.logger.error( { failedPlugins } );
 
 			process.exit( 1 );
 		}
