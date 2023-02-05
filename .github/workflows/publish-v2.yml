@@ -57,7 +57,7 @@ jobs:
         uses: robinraju/release-downloader@v1.7
         with:
           tag: v${{ env.CLEAN_PACKAGE_NAME }}
-          fileName: changelog.txt
+          fileName: temp-changelog.txt
           out-file-path: /tmp/
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
@@ -65,7 +65,7 @@ jobs:
           tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
           prerelease: ${{ github.event.inputs.pre_release }}
-          body_path: /tmp/changelog.txt
+          body_path: /tmp/temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
