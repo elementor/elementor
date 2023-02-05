@@ -256,7 +256,7 @@ describe( '@elementor/top-bar API', () => {
 
 function registerExampleAction(
 	menuName: MenuName,
-	{ onClick = () => {} }: { onClick?: () => void } = {}
+	{ onClick = () => null }: { onClick?: () => void } = {}
 ) {
 	registerAction(
 		menuName,
