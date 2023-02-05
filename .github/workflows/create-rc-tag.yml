@@ -95,8 +95,8 @@ jobs:
       - name: Upload changelog to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
-          name: changelog.txt
-          path: temp-changelog.txt
+          name: temp-changelog.txt
+          path: ./
           if-no-files-found: error
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
