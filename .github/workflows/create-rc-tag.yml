@@ -55,7 +55,6 @@ jobs:
           CHANNEL: ${{ github.event.inputs.chennel }}
       - name: Install Dependencies
         run: |
-          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           npm ci
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
@@ -82,6 +81,10 @@ jobs:
         uses : ./.github/workflows/get-previous-release
         with:
           CHANNEL: ${{ github.event.inputs.chennel }}
+      - name: Add defult temp-changelog.txt
+        run: |
+          # upload-artifact action fails if the file size is 0.
+          echo "No changelog" > temp-changelog.txt
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
