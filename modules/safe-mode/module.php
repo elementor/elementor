@@ -151,6 +151,7 @@ class Module extends \Elementor\Core\Base\Module {
 				bottom: 10px;
 				width: 400px;
 				line-height: 30px;
+				color: var(--e-admin-color-txt);
 				background: var(--e-admin-bg-default);
 				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
@@ -173,7 +174,6 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast .elementor-toast-content {
 				font-size: 13px;
 				line-height: 22px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content a {
@@ -200,7 +200,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 			.elementor-safe-mode-toast header i {
 				font-size: 25px;
-				color: #fcb92c;
+				color: var(--e-admin-color-warning);
 			}
 
 			body:not(.rtl) .elementor-safe-mode-toast header i {
@@ -214,7 +214,6 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast header h2 {
 				flex-grow: 1;
 				font-size: 18px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-list-item {

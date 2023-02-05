@@ -197,26 +197,22 @@
 }
 
 .elementor-panel-heading {
-	display: table;
-	table-layout: fixed;
+	display: flex;
+	align-items: center;
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
 	border-top: var(--e-admin-border);
 	cursor: pointer;
 
-	> * {
-		display: table-cell;
-		vertical-align: middle;
-	}
-
 	&-toggle {
 		width: 20px;
-		color: $editor-darkest;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	&-title {
-		color: $editor-darkest;
 		font-weight: bold;
 	}
 }
@@ -228,15 +224,6 @@
 		.elementor-panel-heading {
 			border-top: none;
 		}
-	}
-}
-
-// WP Widgets
-.elementor-control-wp {
-	line-height: 1.5;
-
-	p {
-		margin: 15px 0;
 	}
 }
 
