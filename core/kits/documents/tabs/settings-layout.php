@@ -108,6 +108,9 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => $widgets_space_label,
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'size' => 20,
+				],
 				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
@@ -117,7 +120,6 @@ class Settings_Layout extends Tab_Base {
 				],
 				'placeholder' => [
 					'size' => 20,
-					'unit' => 'px',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
