@@ -849,6 +849,76 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test the nested tabs behaviour when using container flex row @latest', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'heading', container );
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'heading', container );
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		const tabButtonOne = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=0' ),
+			contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
+			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			tabButtonTwo = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=1' ),
+			contentContainerTwo = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=1` ),
+			contentContainerTwoId = await contentContainerTwo.getAttribute( 'data-id' ),
+			tabButtonThree = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=2' ),
+			contentContainerThree = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=2` ),
+			contentContainerThreeId = await contentContainerThree.getAttribute( 'data-id' );
+
+		// Act.
+		// Add content
+		// Tab 1.
+		await editor.addWidget( 'video', contentContainerOneId );
+
+		// Tab 2.
+		await tabButtonTwo.click();
+		await editor.addWidget( 'heading', contentContainerTwoId );
+
+		// Tab 3.
+		await tabButtonThree.click();
+		await editor.addWidget( 'image', contentContainerThreeId );
+		await editor.addWidget( 'text-editor', contentContainerThreeId );
+
+		// Set container direction to `row`.
+		await editor.selectElement( container );
+		await page.locator( '.elementor-control-flex_direction .eicon-arrow-left' ).click();
+
+		// Assert
+		// Get content container widths.
+		// Tab 1 & Content Container 1.
+		await tabButtonOne.click();
+
+		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Tab 2 & Content Container 2.
+		await tabButtonTwo.click();
+
+		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Tab 3 & Content Container 3.
+		await tabButtonThree.click();
+
+		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Verify that the content width doesn't change after changing the active tab.
+		expect( contentContainerOneWidth === contentContainerTwoWidth && contentContainerOneWidth === contentContainerThreeWidth ).toBeTruthy();
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 async function editTab( editor, tabIndex ) {
