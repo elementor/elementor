@@ -45,18 +45,26 @@ export function createSlice() {
 				state.activeId = action.payload.id;
 			},
 
-			updateActiveDocument( state, action: PayloadAction<Document> ) {
+			startSaving: createActiveDocumentReducer( ( document ) => document.isSaving = true ),
+			endSaving( state, action: PayloadAction<Document> ) {
 				if ( ! state.activeId ) {
 					return;
 				}
 
 				state.entities[ state.activeId ] = action.payload;
+				state.entities[ state.activeId ].isSaving = false;
 			},
 
-			startSaving: createActiveDocumentReducer( ( document ) => document.isSaving = true ),
-			endSaving: createActiveDocumentReducer( ( document ) => document.isSaving = false ),
 			startSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = true ),
-			endSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = false ),
+			endSavingDraft( state, action: PayloadAction<Document> ) {
+				if ( ! state.activeId ) {
+					return;
+				}
+
+				state.entities[ state.activeId ] = action.payload;
+				state.entities[ state.activeId ].isSavingDraft = false;
+			},
+
 			markAsDirty: createActiveDocumentReducer( ( document ) => document.isDirty = true ),
 			markAsPristine: createActiveDocumentReducer( ( document ) => document.isDirty = false ),
 		},

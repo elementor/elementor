@@ -1,5 +1,5 @@
 import { resetInjections } from '@elementor/locations';
-import { flushListeners } from '@elementor/v1-adapters';
+import { flushListeners, setIsReady } from '@elementor/v1-adapters';
 import { deleteStore } from '@elementor/store';
 
 import '@wordpress/jest-console';
@@ -16,4 +16,6 @@ beforeEach( () => {
 	resetInjections();
 	flushListeners();
 	deleteStore();
+
+	setIsReady( true );
 } );

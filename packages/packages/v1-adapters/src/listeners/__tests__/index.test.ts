@@ -2,7 +2,6 @@ import {
 	commandEndEvent,
 	commandStartEvent,
 	dispatchReadyEvent,
-	flushListeners,
 	listenTo,
 	routeOpenEvent,
 	routeCloseEvent,
@@ -231,39 +230,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 			event: 'test-event',
 			originalEvent: expect.any( Event ),
 		} );
-	} );
-
-	it( 'should flush listeners & re-listen', () => {
-		// Arrange.
-		const event1 = 'test-event-1',
-			event2 = 'test-event-2',
-			callback = jest.fn();
-
-		listenTo(
-			windowEvent( event1 ),
-			callback,
-		);
-
-		// Act.
-		flushListeners();
-
-		// Dispatch events.
-		dispatchWindowEvent( event1 );
-
-		// Assert.
-		expect( callback ).toHaveBeenCalledTimes( 0 );
-
-		// Act.
-		listenTo(
-			windowEvent( event2 ),
-			callback,
-		);
-
-		// Dispatch events.
-		dispatchWindowEvent( event2 );
-
-		// Assert.
-		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should cleanup listeners', () => {

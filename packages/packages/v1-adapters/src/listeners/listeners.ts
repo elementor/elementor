@@ -2,10 +2,12 @@ import { normalizeEvent } from './utils';
 import {
 	CommandEventDescriptor,
 	EventDescriptor,
+	ExtendedWindow,
 	ListenerCallback,
 	RouteEventDescriptor,
 	WindowEventDescriptor,
 } from './types';
+import { getIsReady, setIsReady } from './is-ready';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
@@ -43,6 +45,7 @@ export function listenTo(
 export function flushListeners() {
 	abortController.abort();
 	callbacksByEvent.clear();
+	setIsReady( false );
 
 	abortController = new AbortController();
 }
@@ -58,6 +61,13 @@ function registerCommandListener(
 		if ( shouldRunCallback ) {
 			callback( e );
 		}
+	} );
+}
+
+export function dispatchReadyEvent() {
+	return getV1LoadingPromise().then( () => {
+		setIsReady( true );
+		window.dispatchEvent( new CustomEvent( 'elementor/v1/initialized' ) );
 	} );
 }
 
@@ -109,10 +119,24 @@ function addListener( event: EventDescriptor['name'] ) {
 
 function makeEventHandler( event: EventDescriptor['name'] ): EventListener {
 	return ( e ) => {
+		if ( ! getIsReady() ) {
+			return;
+		}
+
 		const normalizedEvent = normalizeEvent( e );
 
 		callbacksByEvent.get( event )?.forEach( ( callback ) => {
 			callback( normalizedEvent );
 		} );
 	};
+}
+
+function getV1LoadingPromise() {
+	const v1LoadingPromise = ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
+
+	if ( ! v1LoadingPromise ) {
+		return Promise.reject( 'Elementor Editor V1 is not loaded' );
+	}
+
+	return v1LoadingPromise;
 }

@@ -1,20 +1,4 @@
-import { ExtendedWindow, ListenerEvent } from './types';
-
-export function dispatchReadyEvent() {
-	return getV1LoadingPromise().then( () => {
-		window.dispatchEvent( new CustomEvent( 'elementor/v1/initialized' ) );
-	} );
-}
-
-function getV1LoadingPromise() {
-	const v1LoadingPromise = ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
-
-	if ( ! v1LoadingPromise ) {
-		return Promise.reject( 'Elementor Editor V1 is not loaded' );
-	}
-
-	return v1LoadingPromise;
-}
+import { ListenerEvent } from './types';
 
 export function normalizeEvent( e: ListenerEvent['originalEvent'] ): ListenerEvent {
 	if ( e instanceof CustomEvent && e.detail?.command ) {

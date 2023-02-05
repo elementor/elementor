@@ -54,7 +54,7 @@ function syncActiveDocument( slice: Slice ) {
 }
 
 function syncOnDocumentSave( slice: Slice ) {
-	const { startSaving, endSaving, startSavingDraft, endSavingDraft, updateActiveDocument } = slice.actions;
+	const { startSaving, endSaving, startSavingDraft, endSavingDraft } = slice.actions;
 
 	const isDraft = ( e: ListenerEvent ) => {
 		const event = e as CommandEvent<{ status: string }>;
@@ -64,17 +64,6 @@ function syncOnDocumentSave( slice: Slice ) {
 		 */
 		return event.args?.status === 'autosave';
 	};
-
-	listenTo(
-		v1ReadyEvent(),
-		() => {
-			const { isSaving } = getV1DocumentsManager().getCurrent().editor;
-
-			if ( isSaving ) {
-				dispatch( startSaving() );
-			}
-		}
-	);
 
 	listenTo(
 		commandStartEvent( 'document/save/save' ),
@@ -91,17 +80,15 @@ function syncOnDocumentSave( slice: Slice ) {
 	listenTo(
 		commandEndEvent( 'document/save/save' ),
 		( e ) => {
-			if ( isDraft( e ) ) {
-				dispatch( endSavingDraft() );
-			} else {
-				dispatch( endSaving() );
-			}
-
 			const activeDocument = normalizeV1Document(
 				getV1DocumentsManager().getCurrent()
 			);
 
-			dispatch( updateActiveDocument( activeDocument ) );
+			if ( isDraft( e ) ) {
+				dispatch( endSavingDraft( activeDocument ) );
+			} else {
+				dispatch( endSaving( activeDocument ) );
+			}
 		}
 	);
 }
