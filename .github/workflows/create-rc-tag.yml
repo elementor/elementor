@@ -99,7 +99,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
-          files: elementor-*.zip
+          files: 
+                elementor-*.zip
+                temp-changelog.txt
           prerelease: true
           body_path: temp-changelog.txt
         env:
