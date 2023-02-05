@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/workflows/parse-branch-name
         with:
           BRANCH_NAME: ${{ github.ref }}
-      - name: Download release assets
+      - name: Download release zip file from RC tag artifact
         uses: robinraju/release-downloader@v1.7
         with:
           tag: v${{ env.CLEAN_PACKAGE_NAME }}
@@ -53,20 +53,19 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           MESSAGE: ${{ env.RELEASE_NAME }}
-      - name: Generate changelog
-        uses : ./.github/workflows/generate-changelog
+      - name: Download release chengelog from RC tag artifact
+        uses: robinraju/release-downloader@v1.7
         with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: ${{ github.ref }}
-          BASE_TAG_NAME: main
+          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          fileName: changelog.txt
+          out-file-path: /tmp/
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
           prerelease: ${{ github.event.inputs.pre_release }}
-          body_path: temp-changelog.txt
+          body_path: /tmp/changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
