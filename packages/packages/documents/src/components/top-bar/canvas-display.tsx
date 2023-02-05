@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Grid } from '@elementor/ui';
+import { Stack } from '@elementor/ui';
 import { useActiveDocument } from '../../hooks';
 import useHostDocument from '../../hooks/use-host-document';
 import SettingsButton from './settings-button';
@@ -26,9 +26,9 @@ export default function CanvasDisplay() {
 	}
 
 	return (
-		<Grid container alignItems="center" flexWrap="noWrap" sx={ { px: 3, gap: 3 } }>
+		<Stack direction="row" spacing={ 3 } sx={ { px: 3 } }>
 			<Indicator title={ document.title } status={ document.status } />
 			<SettingsButton />
-		</Grid>
+		</Stack>
 	);
 }

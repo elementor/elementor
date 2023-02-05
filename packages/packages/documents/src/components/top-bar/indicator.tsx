@@ -1,4 +1,4 @@
-import { Grid, Tooltip, Typography } from '@elementor/ui';
+import { Tooltip, Typography, Stack } from '@elementor/ui';
 import { Document } from '../../types';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 export default function Indicator( { title, status }: Props ) {
 	return (
 		<Tooltip title={ title }>
-			<Grid container alignItems="center" sx={ { gap: 2 } }>
+			<Stack direction="row" alignItems="center" spacing={ 2 }>
 				<Typography variant="body2" sx={ {
 					textOverflow: 'ellipsis',
 					maxWidth: '120px',
@@ -23,7 +23,7 @@ export default function Indicator( { title, status }: Props ) {
 						({ status })
 					</Typography>
 				}
-			</Grid>
+			</Stack>
 		</Tooltip>
 	);
 }

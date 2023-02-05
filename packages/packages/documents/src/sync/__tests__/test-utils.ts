@@ -47,7 +47,17 @@ export function makeDocumentsManager( documentsArray: V1Document[], current = 1,
 	};
 }
 
-export function makeMockV1Document( { id = 1, type = 'wp-page' } = {} ): V1Document {
+export function makeMockV1Document( {
+	id = 1,
+	title = 'Document ' + id,
+	status = 'publish',
+	type = 'wp-page',
+}: {
+	id?: number,
+	status?: string,
+	title?: string,
+	type?: string,
+} = {} ): V1Document {
 	return {
 		id,
 		config: {
@@ -65,8 +75,8 @@ export function makeMockV1Document( { id = 1, type = 'wp-page' } = {} ): V1Docum
 		},
 		container: {
 			settings: makeSettings( {
-				post_title: 'Document ' + id,
-				post_status: 'publish',
+				post_title: title,
+				post_status: status,
 			} ) as V1Document['container']['settings'],
 		},
 	};
