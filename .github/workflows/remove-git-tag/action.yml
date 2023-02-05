@@ -3,6 +3,7 @@ description: Remove a Git Tag from the remote repository.
 
 inputs:
   PACKAGE_VERSION:
+    description: 'The GitHub tag to remove from the remote repository.'
     required: true
 
 runs:
@@ -10,6 +11,4 @@ runs:
   steps:
     - shell: bash 
       run: |
-        #remove force 
-              git tag -d ${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
-              git push origin :refs/tags/${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
+            git push --delete origin ${{ inputs.PACKAGE_VERSION }} || echo "Tag ${{ inputs.PACKAGE_VERSION }} not found on remote"
