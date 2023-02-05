@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "wp-env": "wp-env",
-    "test": "node index.js"
+    "test": "node index.js",
+	"update-baseline": "node ./scripts/run-backstop.js --slug='elementor'"
   },
   "author": "Elementor Team",
   "dependencies": {
