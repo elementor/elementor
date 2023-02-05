@@ -31,6 +31,12 @@ jobs:
           tag: v${{ env.CLEAN_PACKAGE_NAME }}
           fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           out-file-path: /tmp/
+      - name: Download change log file from RC tag artifact
+        uses: robinraju/release-downloader@v1.7
+        with:
+          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          fileName: temp-changelog.txt
+          out-file-path: /tmp/
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
@@ -53,12 +59,6 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           MESSAGE: ${{ env.RELEASE_NAME }}
-      - name: Download release chengelog from RC tag artifact
-        uses: robinraju/release-downloader@v1.7
-        with:
-          tag: v${{ env.CLEAN_PACKAGE_NAME }}
-          fileName: temp-changelog.txt
-          out-file-path: /tmp/
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
