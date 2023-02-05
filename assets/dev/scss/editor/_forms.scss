@@ -6,19 +6,19 @@ input,
 select,
 textarea,
 .e-input-style {
-	color: var(--e-admin-color-txt);
-	border-radius: var(--e-admin-border-radius);
+	color: var(--e-ad-color-txt);
+	border-radius: var(--e-ad-border-radius);
 	font-size: 12px;
 	width: 100%;
 	background: none;
 	box-shadow: none;
-	border: var(--e-admin-border);
+	border: var(--e-ad-border);
 	outline: none;
 
 	&:focus {
 
 		&, + .elementor-control-dynamic-switcher {
-			border-color: var(--e-admin-border-color-active);
+			border-color: var(--e-ad-border-color-active);
 		}
 	}
 
@@ -32,7 +32,7 @@ textarea,
 	input,
 	select,
 	textarea {
-		border-color: var(--e-admin-color-warning);
+		border-color: var(--e-ad-color-warning);
 	}
 }
 
@@ -57,7 +57,7 @@ input[type="radio"] {
 }
 
 input[disabled] {
-	background-color: var(--e-admin-bg-hover);
+	background-color: var(--e-ad-bg-hover);
 	cursor: not-allowed;
 	opacity: 1;
 }

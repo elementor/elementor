@@ -16,8 +16,8 @@ $menu-item-transition: $eps-transition-duration;
 
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(900);
-$menu-item-background-color-hover: var(--e-admin-bg-hover);
-$menu-item-background-color-active: var(--e-admin-bg-active);
+$menu-item-background-color-hover: var(--e-ad-bg-hover);
+$menu-item-background-color-active: var(--e-ad-bg-active);
 
 :root {
 	--menu-item-color: #{$menu-item-color};

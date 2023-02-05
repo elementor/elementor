@@ -6,7 +6,7 @@
 
 	.dialog-widget-content {
 		font-family: $admin-font-family;
-		background-color: var(--e-admin-bg-default);
+		background-color: var(--e-ad-bg-default);
 		width: 100%;
 
 		@media (max-width: $library_screen_breakpoint) {
@@ -21,13 +21,13 @@
 	.dialog {
 
 		&-header {
-			border-bottom: var(--e-admin-border);
+			border-bottom: var(--e-ad-border);
 			padding: 0;
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			border-top: var(--e-admin-border);
+			border-top: var(--e-ad-border);
 			padding: 10px;
 			display: flex;
 			justify-content: end;
@@ -110,7 +110,7 @@
 
 			&--normal {
 				width: 47px;
-				@include border-start(var(--e-admin-border));
+				@include border-start(var(--e-ad-border));
 
 				i {
 					font-size: 18px;
@@ -137,7 +137,7 @@
 					@include border-start(1px solid);
 
 					&:not(:hover) { // Overwrite the default
-						color: var(--e-admin-color-white);
+						color: var(--e-ad-color-white);
 					}
 				}
 			}
@@ -147,7 +147,7 @@
 	&__sidebar {
 		flex-shrink: 0;
 		width: 25%;
-		border-inline-end: var(--e-admin-border);
+		border-inline-end: var(--e-ad-border);
 	}
 
 	&__content {

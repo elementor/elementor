@@ -48,7 +48,7 @@
 		}
 
 		p {
-			color: var(--e-admin-color-txt);
+			color: var(--e-ad-color-txt);
 			font-size: 16px;
 			margin: 20px 0 25px;
 		}
@@ -60,7 +60,7 @@
 
 	&__container a:not(.elementor-button),
 	&__info a {
-		color: var(--e-admin-color-info);
+		color: var(--e-ad-color-info);
 		text-decoration: underline;
 	}
 
@@ -70,7 +70,7 @@
 		align-items: flex-start;
 
 		h2 {
-			color: var(--e-admin-color-txt);
+			color: var(--e-ad-color-txt);
 			font-size: 28px;
 			font-weight: normal;
 			line-height: 1;

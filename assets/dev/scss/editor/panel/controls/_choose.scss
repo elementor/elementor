@@ -14,16 +14,16 @@
 	line-height: $control-unit;
 	text-align: center;
 	border-spacing: 1px;
-	border-radius: var(--e-admin-border-radius);
+	border-radius: var(--e-ad-border-radius);
 	overflow: hidden;
 
 	.elementor-choices-label {
-		border-top: var(--e-admin-border);
-		border-bottom: var(--e-admin-border);
-		@include border-start(var(--e-admin-border));
+		border-top: var(--e-ad-border);
+		border-bottom: var(--e-ad-border);
+		@include border-start(var(--e-ad-border));
 		@include border-end(none);
 		font-size: 12px;
-		transition: var(--e-admin-transition-hover);
+		transition: var(--e-ad-transition-hover);
 		cursor: pointer;
 		overflow: hidden;
 
@@ -33,7 +33,7 @@
 		}
 
 		&:last-child {
-			@include border-end(var(--e-admin-border));
+			@include border-end(var(--e-ad-border));
 			@include _dimension_side_property(border-top, end, radius, 3px);
 			@include _dimension_side_property(border-bottom, end, radius, 3px);
 		}
@@ -75,7 +75,7 @@
 				.elementor-choices-label {
 
 					&:nth-child(2) {
-						@include border-end(var(--e-admin-border));
+						@include border-end(var(--e-ad-border));
 						border-radius: 3px 0 0 3px;
 					}
 

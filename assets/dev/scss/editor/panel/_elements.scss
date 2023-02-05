@@ -40,7 +40,7 @@
 }
 
 #elementor-panel-elements-search-area {
-	background-color: var(--e-admin-bg-default);
+	background-color: var(--e-ad-bg-default);
 	position: sticky;
 	top: 0;
 	padding: 15px;
@@ -55,7 +55,7 @@
 	font-size: 11px;
 	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
-	border: var(--e-admin-border);
+	border: var(--e-ad-border);
 	border-radius: 0;
 	transition: all 1s;
 	appearance: none;
@@ -69,7 +69,7 @@
 	}
 
 	&:focus {
-		border-color: var(--e-admin-border-color-active);
+		border-color: var(--e-ad-border-color-active);
 		@include padding-end(15px);
 	}
 }
@@ -78,7 +78,7 @@
 
 	.elementor-element {
 		text-align: center;
-		border: var(--e-admin-border);
+		border: var(--e-ad-border);
 		border-radius: 3px;
 		cursor: move;
 		position: relative;
@@ -93,8 +93,8 @@
 		}
 
 		&:hover {
-			background-color: var(--e-admin-bg-hover);
-			color: var(--e-admin-color-txt-hover);
+			background-color: var(--e-ad-bg-hover);
+			color: var(--e-ad-color-txt-hover);
 		}
 
 		.icon {
@@ -121,9 +121,9 @@
 		}
 
 		&:active {
-			background-color: var(--e-admin-bg-active);
-			border-color: var(--e-admin-border-active);
-			color: var(--e-admin-color-txt-active);
+			background-color: var(--e-ad-bg-active);
+			border-color: var(--e-ad-border-active);
+			color: var(--e-ad-color-txt-active);
 		}
 	}
 }
@@ -132,7 +132,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: var(--e-admin-color-white);
+	background-color: var(--e-ad-color-white);
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -143,7 +143,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-admin-color-white));
+		@include border-end-property(color, var(--e-ad-color-white));
 	}
 
 	&__title {
@@ -163,7 +163,7 @@
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
-				color: var(--e-admin-color-brand);
+				color: var(--e-ad-color-brand);
 			}
 
 			.eicon-close {

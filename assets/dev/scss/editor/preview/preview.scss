@@ -488,11 +488,11 @@ html.elementor-html {
 .elementor-sortable-helper {
 	position: absolute;
 	cursor: move;
-	border: var(--e-admin-border);
+	border: var(--e-ad-border);
 	border-radius: 3px;
-	background-color: var(--e-admin-bg-active);
-	border-color: var(--e-admin-border-active);
-	color: var(--e-admin-color-active);
+	background-color: var(--e-ad-bg-active);
+	border-color: var(--e-ad-border-active);
+	color: var(--e-ad-color-active);
 	text-align: center;
 
 	.icon {

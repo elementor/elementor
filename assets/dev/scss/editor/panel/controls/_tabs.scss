@@ -12,14 +12,14 @@
 	width: 100%;
 	padding: 0;
 	line-height: $control-unit - 2;
-	border-top: var(--e-admin-border);
-	border-bottom: var(--e-admin-border);
-	@include border-end(var(--e-admin-border));
+	border-top: var(--e-ad-border);
+	border-bottom: var(--e-ad-border);
+	@include border-end(var(--e-ad-border));
 	transition: $transition-hover;
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start(var(--e-admin-border));
+		@include border-start(var(--e-ad-border));
 		@include _dimension_side_property(border-top, start, radius, 3px);
 		@include _dimension_side_property(border-bottom, start, radius, 3px);
 	}
@@ -30,14 +30,14 @@
 	}
 
 	&:hover {
-		background-color: var(--e-admin-bg-hover);
-		color: var(--e-admin-color-txt-hover);
+		background-color: var(--e-ad-bg-hover);
+		color: var(--e-ad-color-txt-hover);
 	}
 
 	&.e-tab-active {
-		background-color: var(--e-admin-bg-active);
-		border-color: var(--e-admin-border-color);
-		color: var(--e-admin-color-txt-active);
+		background-color: var(--e-ad-bg-active);
+		border-color: var(--e-ad-border-color);
+		color: var(--e-ad-color-txt-active);
 	}
 }
 

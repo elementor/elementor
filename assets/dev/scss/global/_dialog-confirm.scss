@@ -21,7 +21,7 @@ $e-dialog-confirm-space: 20px;
 		&:after {
 			content: '';
 			display: block;
-			border-bottom: var(--e-admin-border);
+			border-bottom: var(--e-ad-border);
 			padding-bottom: 10px;
 			margin-bottom: 10px;
 			margin-right: -$e-dialog-confirm-space;

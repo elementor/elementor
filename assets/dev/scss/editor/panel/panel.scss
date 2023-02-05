@@ -26,9 +26,9 @@
 	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
 	width: var(--e-editor-panel-width);
 	overflow: visible;
-	background-color: var(--e-admin-bg-default);
+	background-color: var(--e-ad-bg-default);
 	z-index: $first-layer;
-	font-family: var(--e-admin-font-family);
+	font-family: var(--e-ad-font-family);
 	font-size: 13px;
 	@include start(0);
 

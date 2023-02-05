@@ -41,16 +41,14 @@
 
 	&.elementor-control-type-divider {
 		padding: 0;
-		background-color: transparent;
+
 
 		.elementor-control-content {
 			border-width: 0;
-			border-color: $editor-background;
-			border-style: solid;
-			border-top-width: 1px;
+			border-top: var(--e-ad-border);
 
 			//For the next control in the panel
-			background-color: #ffffff;
+			background-color: var(--e-ad-bg-default);
 			height: 15px;
 		}
 	}
@@ -83,7 +81,7 @@
 				width: calc(100% - 40px);
 				top: 0;
 				@include start(20px);
-				background-color: var(--e-admin-border-color);
+				background-color: var(--e-ad-border-color);
 			}
 		}
 
@@ -96,7 +94,7 @@
 				width: calc(100% - 40px);
 				bottom: 0;
 				@include start(20px);
-				background-color: var(--e-admin-border-color);
+				background-color: var(--e-ad-border-color);
 			}
 
 			+ .elementor-control-type-tabs,
@@ -202,7 +200,7 @@
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
-	border-top: var(--e-admin-border);
+	border-top: var(--e-ad-border);
 	cursor: pointer;
 
 	&-toggle {

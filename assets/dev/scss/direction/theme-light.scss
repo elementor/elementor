@@ -1,125 +1,137 @@
 @import "../helpers/variables";
 
-// Theme Dark - CSS Vars
-:root {
-
-	//Colors
-	--e-admin-color-white: 			#{$white};
-	--e-admin-color-black: 			#{$black};
-	--e-admin-color-primary: 		#{$e-purple};
-	--e-admin-color-secondary: 		#{$e-gray-600};
-	--e-admin-color-success: 		#{$e-success};
-	--e-admin-color-danger: 		#{$e-danger};
-	--e-admin-color-info: 			#{$e-info};
-	--e-admin-color-warning: 		#{$e-warning};
-	--e-admin-color-brand: 			#{$e-brand};
-
-	//Backgrounds
-	--e-admin-bg-default: 			#{$black};
-	--e-admin-bg-hover: 			#{$e-gray-900};
-	--e-admin-bg-active: 			#{$e-gray-700};
-	--e-admin-bg-loading: 			#{$e-gray-800};
-	--e-admin-bg-primary: 			#{$e-purple-shade};
-	--e-admin-bg-secondary: 		#{$e-gray-400};
-	--e-admin-bg-success: 			#F2FDF5;
-	--e-admin-bg-danger: 			#FEF1F4;
-	--e-admin-bg-info: 				#F0F7FF;
-	--e-admin-bg-warning: 			#FCB92C;
-
-	//Text, Borders, Hovers
-	--e-admin-color-txt: 			#{$e-gray-100};
-	--e-admin-color-txt-hover: 		#{$e-gray-50};
-	--e-admin-color-txt-active: 	#{$e-gray-25};
-	--e-admin-border-color: 		#{$e-gray-800};
-	--e-admin-border-color-active: 	#{$e-gray-600};
-	--e-admin-border:				1px solid var(--e-admin-border-color);
-	--e-admin-border-radius: 		3px;
-
-	//Buttons
-	--e-admin-btn-color: 			#{$white};
-	--e-admin-btn-color-disabled:	#{$e-gray-300};
-	--e-admin-btn-bg: 				#{$e-gray-600};
-	--e-admin-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
-	--e-admin-btn-bg-active: 		#{darken($e-gray-600, 20%)};
-	--e-admin-btn-bg-disabled:		#{$e-gray-100};
-	--e-admin-btn-bg-primary: 		#{$e-primary};
-	--e-admin-btn-bg-primary-hover: #{darken($e-primary, 10%)};
-	--e-admin-btn-bg-primary-active:#{darken($e-primary, 20%)};
-	--e-admin-btn-bg-brand: 		#{$e-brand};
-	--e-admin-btn-bg-brand-hover:	#{darken($e-brand, 10%)};
-	--e-admin-btn-bg-brand-active:	#{darken($e-brand, 20%)};
-	--e-admin-btn-bg-success: 		#{$e-success};
-	--e-admin-btn-bg-success-hover:	#{darken($e-success, 10%)};
-	--e-admin-btn-bg-success-active:#{darken($e-success, 20%)};
-	--e-admin-btn-bg-danger: 		#{$e-danger};
-	--e-admin-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
-	--e-admin-btn-bg-danger-active:	#{darken($e-danger, 20%)};
-
-	//Fonts
-	--e-admin-font-family:			#{$admin-font-family};
-
-	//Animation
-	--e-admin-transition-hover:		all .3s;
-}
-
-//// Theme Light - CSS Vars
+//// Theme Dark - CSS Vars
 //:root {
 //
 //	//Colors
-//	--e-admin-color-white: 			#{$white};
-//	--e-admin-color-black: 			#{$black};
-//	--e-admin-color-primary: 		#{$e-purple};
-//	--e-admin-color-secondary: 		#{$e-gray-600};
-//	--e-admin-color-success: 		#{$e-success};
-//	--e-admin-color-danger: 		#{$e-danger};
-//	--e-admin-color-info: 			#{$e-info};
-//	--e-admin-color-warning: 		#{$e-warning};
-//	--e-admin-color-brand: 			#{$e-brand};
+//	--e-ad-color-white: 			#{$white};
+//	--e-ad-color-black: 			#{$black};
+//	--e-ad-color-primary: 		#{$e-purple};
+//	--e-ad-color-secondary: 		#{$e-gray-600};
+//	--e-ad-color-success: 		#{$e-success};
+//	--e-ad-color-danger: 		#{$e-danger};
+//	--e-ad-color-info: 			#{$e-info};
+//	--e-ad-color-warning: 		#{$e-warning};
+//	--e-ad-color-brand: 			#{$e-brand};
 //
 //	//Backgrounds
-//	--e-admin-bg-default: 			#{$white};
-//	--e-admin-bg-hover: 			#{$e-gray-25};
-//	--e-admin-bg-active: 			#{$e-gray-50};
-//	--e-admin-bg-loading: 			#{$e-gray-25};
-//	--e-admin-bg-primary: 			#{$e-purple-shade};
-//	--e-admin-bg-secondary: 		#{$e-gray-600};
-//	--e-admin-bg-success: 			#F2FDF5;
-//	--e-admin-bg-danger: 			#FEF1F4;
-//	--e-admin-bg-info: 				#F0F7FF;
-//	--e-admin-bg-warning: 			#FCB92C;
+//	--e-ad-bg-default: 			#{$black};
+//	--e-ad-bg-hover: 			#{$e-gray-900};
+//	--e-ad-bg-active: 			#{$e-gray-700};
+//	--e-ad-bg-loading: 			#{$e-gray-800};
+//	--e-ad-bg-primary: 			#{$e-purple-shade};
+//	--e-ad-bg-secondary: 		#{$e-gray-400};
+//	--e-ad-bg-success: 			#F2FDF5;
+//	--e-ad-bg-danger: 			#FEF1F4;
+//	--e-ad-bg-info: 				#F0F7FF;
+//	--e-ad-bg-warning: 			#FCB92C;
 //
-//	//Text, Borders, Hovers
-//	--e-admin-color-txt: 			#{$e-gray-600};
-//	--e-admin-color-txt-hover: 		#{$e-gray-700};
-//	--e-admin-color-txt-active: 	#{$e-gray-900};
-//	--e-admin-border-color: 		#{$e-gray-100};
-//	--e-admin-border-color-active: 	#{$e-gray-900};
-//	--e-admin-border:				1px solid var(--e-admin-border-color);
-//	--e-admin-border-radius: 		3px;
+//	//Text, Icons
+//	--e-ad-color-txt: 			#{$e-gray-200};
+//	--e-ad-color-txt-muted: 		#{$e-gray-400};
+//	--e-ad-color-txt-disabled: 	#{$e-gray-500};
+//	--e-ad-color-txt-invert: 	#{$e-gray-900};
+//	--e-ad-color-txt-hover: 		#{$e-gray-700};
+//	--e-ad-color-txt-active: 	#{$e-gray-900};
+//	--e-ad-color-txt-accent: 	#{$white};
+//
+//	//Borders
+//	--e-ad-border-color: 		#{$e-gray-100};
+//	--e-ad-border-color-active: 	#{$e-gray-900};
+//	--e-ad-border:				1px solid var(--e-ad-border-color);
+//	--e-ad-border-radius: 		3px;
 //
 //	//Buttons
-//	--e-admin-btn-color: 			#{$white};
-//	--e-admin-btn-color-disabled:	#{$e-gray-300};
-//	--e-admin-btn-bg: 				#{$e-gray-600};
-//	--e-admin-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
-//	--e-admin-btn-bg-active: 		#{darken($e-gray-600, 20%)};
-//	--e-admin-btn-bg-disabled:		#{$e-gray-100};
-//	--e-admin-btn-bg-primary: 		#{$e-primary};
-//	--e-admin-btn-bg-primary-hover: #{darken($e-primary, 10%)};
-//	--e-admin-btn-bg-primary-active:#{darken($e-primary, 20%)};
-//	--e-admin-btn-bg-brand: 		#{$e-brand};
-//	--e-admin-btn-bg-brand-hover:	#{darken($e-brand, 10%)};
-//	--e-admin-btn-bg-brand-active:	#{darken($e-brand, 20%)};
-//	--e-admin-btn-bg-success: 		#{$e-success};
-//	--e-admin-btn-bg-success-hover:	#{darken($e-success, 10%)};
-//	--e-admin-btn-bg-success-active:#{darken($e-success, 20%)};
-//	--e-admin-btn-bg-danger: 		#{$e-danger};
-//	--e-admin-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
-//	--e-admin-btn-bg-danger-active:	#{darken($e-danger, 20%)};
+//	--e-ad-btn-color: 			#{$white};
+//	--e-ad-btn-color-disabled:	#{$e-gray-300};
+//	--e-ad-btn-bg: 				#{$e-gray-600};
+//	--e-ad-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
+//	--e-ad-btn-bg-active: 		#{darken($e-gray-600, 20%)};
+//	--e-ad-btn-bg-disabled:		#{$e-gray-100};
+//	--e-ad-btn-bg-primary: 		#{$e-primary};
+//	--e-ad-btn-bg-primary-hover: #{darken($e-primary, 10%)};
+//	--e-ad-btn-bg-primary-active:#{darken($e-primary, 20%)};
+//	--e-ad-btn-bg-brand: 		#{$e-brand};
+//	--e-ad-btn-bg-brand-hover:	#{darken($e-brand, 10%)};
+//	--e-ad-btn-bg-brand-active:	#{darken($e-brand, 20%)};
+//	--e-ad-btn-bg-success: 		#{$e-success};
+//	--e-ad-btn-bg-success-hover:	#{darken($e-success, 10%)};
+//	--e-ad-btn-bg-success-active:#{darken($e-success, 20%)};
+//	--e-ad-btn-bg-danger: 		#{$e-danger};
+//	--e-ad-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
+//	--e-ad-btn-bg-danger-active:	#{darken($e-danger, 20%)};
 //
 //	//Fonts
-//	--e-admin-font-family:			#{$admin-font-family};
+//	--e-ad-font-family:			#{$admin-font-family};
 //
 //	//Animation
-//	--e-admin-transition-hover:		all .3s;
+//	--e-ad-transition-hover:		all .3s;
 //}
+
+// Theme Light - CSS Vars
+:root {
+
+	//Colors
+	--e-ad-color-white: 			#{$white};
+	--e-ad-color-black: 			#{$black};
+	--e-ad-color-primary: 		#{$e-purple};
+	--e-ad-color-secondary: 		#{$e-gray-600};
+	--e-ad-color-success: 		#{$e-success};
+	--e-ad-color-danger: 		#{$e-danger};
+	--e-ad-color-info: 			#{$e-info};
+	--e-ad-color-warning: 		#{$e-warning};
+	--e-ad-color-brand: 			#{$e-brand};
+
+	//Backgrounds
+	--e-ad-bg-default: 			#{$white};
+	--e-ad-bg-hover: 			#{$e-gray-25};
+	--e-ad-bg-active: 			#{$e-gray-50};
+	--e-ad-bg-loading: 			#{$e-gray-25};
+	--e-ad-bg-primary: 			#{$e-purple-shade};
+	--e-ad-bg-secondary: 		#{$e-gray-600};
+	--e-ad-bg-success: 			#F2FDF5;
+	--e-ad-bg-danger: 			#FEF1F4;
+	--e-ad-bg-info: 				#F0F7FF;
+	--e-ad-bg-warning: 			#FCB92C;
+
+	//Text, Icons
+	--e-ad-color-txt: 			#{$e-gray-600};
+	--e-ad-color-txt-muted: 		#{$e-gray-500};
+	--e-ad-color-txt-disabled: 	#{$e-gray-200};
+	--e-ad-color-txt-invert: 	#{$white};
+	--e-ad-color-txt-hover: 		#{$e-gray-700};
+	--e-ad-color-txt-active: 	#{$e-gray-900};
+	--e-ad-color-txt-accent: 	#{$e-gray-900};
+
+	//Borders
+	--e-ad-border-color: 		#{$e-gray-100};
+	--e-ad-border-color-active: 	#{$e-gray-900};
+	--e-ad-border:				1px solid var(--e-ad-border-color);
+	--e-ad-border-radius: 		3px;
+
+	//Buttons
+	--e-ad-btn-color: 			#{$white};
+	--e-ad-btn-color-disabled:	#{$e-gray-300};
+	--e-ad-btn-bg: 				#{$e-gray-600};
+	--e-ad-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
+	--e-ad-btn-bg-active: 		#{darken($e-gray-600, 20%)};
+	--e-ad-btn-bg-disabled:		#{$e-gray-100};
+	--e-ad-btn-bg-primary: 		#{$e-primary};
+	--e-ad-btn-bg-primary-hover: #{darken($e-primary, 10%)};
+	--e-ad-btn-bg-primary-active:#{darken($e-primary, 20%)};
+	--e-ad-btn-bg-brand: 		#{$e-brand};
+	--e-ad-btn-bg-brand-hover:	#{darken($e-brand, 10%)};
+	--e-ad-btn-bg-brand-active:	#{darken($e-brand, 20%)};
+	--e-ad-btn-bg-success: 		#{$e-success};
+	--e-ad-btn-bg-success-hover:	#{darken($e-success, 10%)};
+	--e-ad-btn-bg-success-active:#{darken($e-success, 20%)};
+	--e-ad-btn-bg-danger: 		#{$e-danger};
+	--e-ad-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
+	--e-ad-btn-bg-danger-active:	#{darken($e-danger, 20%)};
+
+	//Fonts
+	--e-ad-font-family:			#{$admin-font-family};
+
+	//Animation
+	--e-ad-transition-hover:		all .3s;
+}

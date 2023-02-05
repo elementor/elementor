@@ -17,7 +17,7 @@
 	}
 
 	&-items {
-		border: var(--e-admin-border);
+		border: var(--e-ad-border);
 		margin: 15px 0 25px;
 		border-radius: 5px;
 		overflow: hidden;
@@ -32,17 +32,17 @@
 		cursor: pointer;
 
 		&:not(:last-child) {
-			border-bottom: var(--e-admin-border);
+			border-bottom: var(--e-ad-border);
 		}
 
 		&:hover {
-			background-color: var(--e-admin-bg-hover);
-			color: var(--e-admin-color-txt-hover);
+			background-color: var(--e-ad-bg-hover);
+			color: var(--e-ad-color-txt-hover);
 		}
 
 		&:active {
-			background-color: var(--e-admin-bg-active);
-			color: var(--e-admin-color-txt-active);
+			background-color: var(--e-ad-bg-active);
+			color: var(--e-ad-color-txt-active);
 		}
 
 		&-icon {
