@@ -69,7 +69,7 @@
 	}
 
 	&:focus {
-		border-color: var(--e-a-border-color-active);
+		border-color: var(--e-a-border-color-bolder);
 		@include padding-end(15px);
 	}
 }
@@ -94,6 +94,7 @@
 
 		&:hover {
 			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-bold);
 			color: var(--e-a-color-txt-hover);
 		}
 
@@ -121,9 +122,9 @@
 		}
 
 		&:active {
-			background-color: var(--e-a-bg-active);
-			border-color: var(--e-a-border-active);
-			color: var(--e-a-color-txt-active);
+			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 		}
 	}
 }
@@ -132,7 +133,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: var(--e-a-color-white);
+	background-color: var(--e-a-bg-default);
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -155,8 +156,7 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			color: $editor-darkest;
-			border-bottom: 1px solid $editor-background;
+			border-bottom: var(--e-a-border);
 			font-weight: 500;
 
 			.eicon-pro-icon {
@@ -177,7 +177,7 @@
 		}
 
 		&-message {
-			padding: 0 20px 20px;
+			padding: 20px;
 		}
 
 		&-buttons-wrapper {

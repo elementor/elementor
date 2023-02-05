@@ -103,7 +103,7 @@ body {
 
 		&:active {
 			background-color: var(--e-a-bg-active);
-			color: var(--e-a-color-txt-active);
+			color: var(--e-a-color-txt-accent);
 		}
 
 		&[data-locked="true"] {
@@ -148,7 +148,7 @@ body {
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
 			background-color: var(--e-a-bg-active);
-			color: var(--e-a-color-txt-active);
+			color: var(--e-a-color-txt-accent);
 			pointer-events: none;
 		}
 

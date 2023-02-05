@@ -165,7 +165,7 @@
 
 		&.elementor-active {
 			background-color: var(--e-a-bg-active);
-			color: var(--e-a-color-txt-active);
+			color: var(--e-a-color-txt-accent);
 
 			&:after {
 				content: '';
@@ -174,7 +174,7 @@
 				width: 3px;
 				top: 0;
 				@include start(0);
-				background-color: var(--e-a-border-color-active);
+				background-color: var(--e-a-border-color-accent);
 			}
 		}
 	}
@@ -196,8 +196,8 @@
 
 		&.elementor-selected {
 			background-color: var(--e-a-bg-active);
-			border-color: var(--e-a-border-color-active);
-			color: var(--e-a-color-txt-active);
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 		}
 
 		&__content {

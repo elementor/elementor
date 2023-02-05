@@ -5,7 +5,6 @@
 //Editor Facelift 2023 - Grays
 $black:         #000000;
 $white:         #ffffff;
-$e-gray-0:		#FFFFFF;
 $e-gray-25:		#F9FAFA;
 $e-gray-50:		#F1F2F3;
 $e-gray-75:		#E6E8EA;
@@ -93,7 +92,7 @@ $editor-lighter: $e-gray-200;
 $editor-lightest: $e-gray-100;
 
 $editor-accent: $brand-color-dark-pink;
-$editor-background: $e-gray-0;
+$editor-background: $white;
 $editor-background-light: $e-gray-50;
 $editor-background-lighter: $e-gray-100;
 

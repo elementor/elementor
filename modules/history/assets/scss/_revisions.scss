@@ -15,12 +15,6 @@
 				background-color: var(--e-a-bg-hover);
 				color: var(--e-a-color-txt-hover);
 			}
-
-			//&.current {
-			//	border-color: var(--e-a-border-color-active);
-			//	background-color: var(--e-a-bg-active);
-			//	color: var(--e-a-color-txt-hover);
-			//}
 		}
 
 		&-loading {
@@ -62,7 +56,7 @@
 	&current-preview {
 
 		.elementor-revision-item__wrapper {
-			border-color: var(--e-a-border-color-active);
+			border-color: var(--e-a-border-color-accent);
 			background-color: var(--e-a-bg-active);
 			color: var(--e-a-color-txt-hover);
 		}

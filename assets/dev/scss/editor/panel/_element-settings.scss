@@ -21,11 +21,11 @@
 		}
 
 		&.elementor-active {
-			border-bottom: 3px solid var(--e-a-border-color-active);
-			color: var(--e-a-color-txt-active);
+			border-bottom: 3px solid var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 
 			a {
-				color: var(--e-a-color-txt-active);
+				color: var(--e-a-color-txt-accent);
 			}
 		}
 

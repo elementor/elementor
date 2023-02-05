@@ -12,13 +12,13 @@ textarea,
 	width: 100%;
 	background: none;
 	box-shadow: none;
-	border: var(--e-a-border);
+	border: var(--e-a-border-bold);
 	outline: none;
 
 	&:focus {
 
 		&, + .elementor-control-dynamic-switcher {
-			border-color: var(--e-a-border-color-active);
+			border-color: var(--e-a-border-color-bolder);
 		}
 	}
 
@@ -32,7 +32,7 @@ textarea,
 	input,
 	select,
 	textarea {
-		border-color: var(--e-a-color-warning);
+		border-color: var(--e-a-color-danger);
 	}
 }
 
