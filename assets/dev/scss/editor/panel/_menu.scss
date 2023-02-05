@@ -17,7 +17,7 @@
 	}
 
 	&-items {
-		border: var(--e-ad-border);
+		border: var(--e-a-border);
 		margin: 15px 0 25px;
 		border-radius: 5px;
 		overflow: hidden;
@@ -32,17 +32,17 @@
 		cursor: pointer;
 
 		&:not(:last-child) {
-			border-bottom: var(--e-ad-border);
+			border-bottom: var(--e-a-border);
 		}
 
 		&:hover {
-			background-color: var(--e-ad-bg-hover);
-			color: var(--e-ad-color-txt-hover);
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
 		}
 
 		&:active {
-			background-color: var(--e-ad-bg-active);
-			color: var(--e-ad-color-txt-active);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-active);
 		}
 
 		&-icon {

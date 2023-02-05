@@ -5,27 +5,27 @@
 .elementor-panel-navigation {
 	display: flex;
 	width: 100%;
-	border-bottom: var(--e-ad-border);
+	border-bottom: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
 		flex: auto;
 		transition: $transition-hover;
 
 		&:hover {
-			background-color: var(--e-ad-bg-hover);
-			color: var(--e-ad-color-txt-hover);
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
 
 			a {
-				color: var(--e-ad-color-txt-hover);
+				color: var(--e-a-color-txt-hover);
 			}
 		}
 
 		&.elementor-active {
-			border-bottom: 3px solid var(--e-ad-border-color-active);
-			color: var(--e-ad-color-txt-active);
+			border-bottom: 3px solid var(--e-a-border-color-active);
+			color: var(--e-a-color-txt-active);
 
 			a {
-				color: var(--e-ad-color-txt-active);
+				color: var(--e-a-color-txt-active);
 			}
 		}
 

@@ -1,8 +1,8 @@
 .elementor-context-menu {
 	position: absolute;
 	width: 200px;
-	background-color: var(--e-ad-bg-default);
-	border: var(--e-ad-border);
+	background-color: var(--e-a-bg-default);
+	border: var(--e-a-border);
 	border-radius: 3px;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
@@ -15,7 +15,7 @@
 			padding: 5px 0;
 
 			&:not(:last-child) {
-				border-bottom: var(--e-ad-border);
+				border-bottom: var(--e-a-border);
 			}
 		}
 
@@ -24,7 +24,7 @@
 			@include padding-end(20px);
 			display: flex;
 			cursor: pointer;
-			transition: var(--e-ad-transition-hover);
+			transition: var(--e-a-transition-hover);
 
 			&--disabled {
 				cursor: default;
@@ -34,8 +34,8 @@
 			&:not(.elementor-context-menu-list__item--disabled) {
 
 				&:hover {
-					background-color: var(--e-ad-bg-hover);
-					color: var(--e-ad-color-hover);
+					background-color: var(--e-a-bg-hover);
+					color: var(--e-a-color-hover);
 				}
 			}
 

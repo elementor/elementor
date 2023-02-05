@@ -45,10 +45,10 @@
 
 		.elementor-control-content {
 			border-width: 0;
-			border-top: var(--e-ad-border);
+			border-top: var(--e-a-border);
 
 			//For the next control in the panel
-			background-color: var(--e-ad-bg-default);
+			background-color: var(--e-a-bg-default);
 			height: 15px;
 		}
 	}
@@ -81,7 +81,7 @@
 				width: calc(100% - 40px);
 				top: 0;
 				@include start(20px);
-				background-color: var(--e-ad-border-color);
+				background-color: var(--e-a-border-color);
 			}
 		}
 
@@ -94,7 +94,7 @@
 				width: calc(100% - 40px);
 				bottom: 0;
 				@include start(20px);
-				background-color: var(--e-ad-border-color);
+				background-color: var(--e-a-border-color);
 			}
 
 			+ .elementor-control-type-tabs,
@@ -200,7 +200,7 @@
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
-	border-top: var(--e-ad-border);
+	border-top: var(--e-a-border);
 	cursor: pointer;
 
 	&-toggle {

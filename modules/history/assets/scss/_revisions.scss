@@ -4,22 +4,22 @@
 		&__wrapper {
 			display: flex;
 			align-items: center;
-			border: var(--e-ad-border);
-			border-radius: var(--e-ad-border-radius);
+			border: var(--e-a-border);
+			border-radius: var(--e-a-border-radius);
 			padding: 10px 15px;
 			margin-bottom: 10px;
 			font-size: 11px;
-			transition: var(--e-ad-transition-hover);
+			transition: var(--e-a-transition-hover);
 
 			&:hover {
-				background-color: var(--e-ad-bg-hover);
-				color: var(--e-ad-color-txt-hover);
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt-hover);
 			}
 
 			//&.current {
-			//	border-color: var(--e-ad-border-color-active);
-			//	background-color: var(--e-ad-bg-active);
-			//	color: var(--e-ad-color-txt-hover);
+			//	border-color: var(--e-a-border-color-active);
+			//	background-color: var(--e-a-bg-active);
+			//	color: var(--e-a-color-txt-hover);
 			//}
 		}
 
@@ -62,9 +62,9 @@
 	&current-preview {
 
 		.elementor-revision-item__wrapper {
-			border-color: var(--e-ad-border-color-active);
-			background-color: var(--e-ad-bg-active);
-			color: var(--e-ad-color-txt-hover);
+			border-color: var(--e-a-border-color-active);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-hover);
 		}
 	}
 }

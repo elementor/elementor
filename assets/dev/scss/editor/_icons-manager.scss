@@ -30,7 +30,7 @@
 	&__upload {
 		margin: 20px 45px;
 		padding-top: 35px;
-		border-top: var(--e-ad-border);
+		border-top: var(--e-a-border);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -59,7 +59,7 @@
 
 		input {
 			padding: 8px 15px;
-			background-color: var(--e-ad-color-white);
+			background-color: var(--e-a-color-white);
 		}
 
 		i {
@@ -159,13 +159,13 @@
 		}
 
 		&:hover {
-			background-color: var(--e-ad-bg-hover);
-			color: var(--e-ad-color-txt-hover);
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
 		}
 
 		&.elementor-active {
-			background-color: var(--e-ad-bg-active);
-			color: var(--e-ad-color-txt-active);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-active);
 
 			&:after {
 				content: '';
@@ -174,7 +174,7 @@
 				width: 3px;
 				top: 0;
 				@include start(0);
-				background-color: var(--e-ad-border-color-active);
+				background-color: var(--e-a-border-color-active);
 			}
 		}
 	}
@@ -183,21 +183,21 @@
 		position: relative;
 		height: 0;
 		padding-bottom: 100%;
-		border: var(--e-ad-border);
+		border: var(--e-a-border);
 		border-radius: 3px;
 		cursor: pointer;
 		transition: $transition-hover;
 		overflow: hidden;
 
 		&:hover {
-			background-color: var(--e-ad-bg-hover);
-			color: var(--e-ad-color-txt-hover);
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
 		}
 
 		&.elementor-selected {
-			background-color: var(--e-ad-bg-active);
-			border-color: var(--e-ad-border-color-active);
-			color: var(--e-ad-color-txt-active);
+			background-color: var(--e-a-bg-active);
+			border-color: var(--e-a-border-color-active);
+			color: var(--e-a-color-txt-active);
 		}
 
 		&__content {

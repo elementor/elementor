@@ -151,12 +151,12 @@ class Module extends \Elementor\Core\Base\Module {
 				bottom: 10px;
 				width: 400px;
 				line-height: 30px;
-				color: var(--e-admin-color-txt);
-				background: var(--e-admin-bg-default);
+				color: var(--e-a-color-txt);
+				background: var(--e-a-bg-default);
 				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 				border-radius: 5px;
-				font-family: var(--e-admin-font-family);
+				font-family: var(--e-a-font-family);
 			}
 
 			body.rtl .elementor-safe-mode-toast {
@@ -177,13 +177,13 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content a {
-				color: var(--e-admin-color-info);
+				color: var(--e-a-color-info);
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content hr {
 				margin: 15px auto;
 				border: 0 none;
-				border-top: var(--e-admin-border);
+				border-top: var(--e-a-border);
 			}
 
 			.elementor-safe-mode-toast header {
@@ -200,7 +200,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 			.elementor-safe-mode-toast header i {
 				font-size: 25px;
-				color: var(--e-admin-color-warning);
+				color: var(--e-a-color-warning);
 			}
 
 			body:not(.rtl) .elementor-safe-mode-toast header i {
@@ -235,7 +235,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 			.elementor-safe-mode-list-item-content {
 				font-style: italic;
-				color: var(--e-admin-color-txt);
+				color: var(--e-a-color-txt);
 			}
 
 			.elementor-safe-mode-list-item-title {
@@ -243,8 +243,8 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-mu-plugins {
-				background-color: var(--e-admin-bg-hover);
-				color: var(--e-admin-color-txt-hover);
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt-hover);
 				margin-top: 20px;
 				padding: 10px 15px;
 			}

@@ -32,13 +32,13 @@ $remote-templates-items-space: 30px;
 	cursor: pointer;
 
 	&:hover {
-		background-color: var(--e-ad-bg-hover);
-		color: var(--e-ad-color-txt-hover);
+		background-color: var(--e-a-bg-hover);
+		color: var(--e-a-color-txt-hover);
 	}
 
 	&.elementor-active {
-		border-bottom: 3px solid var(--e-ad-border-color-active);
-		color: var(--e-ad-color-txt-active);
+		border-bottom: 3px solid var(--e-a-border-color-active);
+		color: var(--e-a-color-txt-active);
 	}
 }
 
@@ -314,12 +314,12 @@ label.elementor-template-library-order-label {
 .elementor-template-library-template-remote {
 	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
-	border: var(--e-ad-border);
+	border: var(--e-a-border);
 	border-radius: 3px;
 
 	&:hover {
-		background-color: var(--e-ad-bg-hover);
-		color: var(--e-ad-color-txt-hover);
+		background-color: var(--e-a-bg-hover);
+		color: var(--e-a-color-txt-hover);
 
 		.elementor-template-library-template-name {
 			display: none;
@@ -342,7 +342,7 @@ label.elementor-template-library-order-label {
 
 		.elementor-template-library-template-body:before {
 			content: var( --elementor-template-library-subscription-plan-label );
-			background-color: var(--e-ad-color-brand);
+			background-color: var(--e-a-color-brand);
 			color: $white;
 			position: absolute;
 			text-transform: uppercase;
@@ -519,7 +519,7 @@ label.elementor-template-library-order-label {
 	transition: background-color .3s linear;
 
 	&:hover {
-		background-color: var(--e-ad-bg-hover);
+		background-color: var(--e-a-bg-hover);
 	}
 
 	&:first-child {
@@ -605,7 +605,7 @@ label.elementor-template-library-order-label {
 		}
 
 		a {
-			color: var(--e-ad-color-txt);
+			color: var(--e-a-color-txt);
 		}
 	}
 
@@ -701,12 +701,12 @@ label.elementor-template-library-order-label {
 	&-form {
 		width: 95%;
 		padding: 60px;
-		border: 2px dashed var(--e-ad-border-color);
+		border: 2px dashed var(--e-a-border-color);
 		margin: 35px auto;
-		transition: var(--e-ad-transition-hover);
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			border-color: var(--e-ad-color-secondary);
+			border-color: var(--e-a-color-secondary);
 		}
 
 		&-or {
@@ -725,7 +725,7 @@ label.elementor-template-library-order-label {
 		}
 
 		&.elementor-drag-over {
-			border-color: var(--e-ad-color-primary);
+			border-color: var(--e-a-color-primary);
 		}
 	}
 

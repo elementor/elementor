@@ -3,9 +3,9 @@
 
 // Private API. Will consume global tokens
 // - Default tokens
-$card-background-color-hover: var(--e-ad-bg-hover);
-$card-background-color-active: var(--e-ad-bg-active);
-$card-border: var(--e-ad-border);
+$card-background-color-hover: var(--e-a-bg-hover);
+$card-background-color-active: var(--e-a-bg-active);
+$card-border: var(--e-a-border);
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
 $card-font-size: type(text,xs);

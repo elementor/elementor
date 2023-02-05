@@ -83,7 +83,7 @@
 	.elementor-link-dimensions {
 
 		&.unlinked {
-			background-color: var(--e-ad-bg-default);
+			background-color: var(--e-a-bg-default);
 
 			.elementor-linked {
 				display: none;
@@ -91,8 +91,8 @@
 		}
 
 		&:not(.unlinked) {
-			background-color: var(--e-ad-border-color);
-			border-color: var(--e-ad-border-color);
+			background-color: var(--e-a-border-color);
+			border-color: var(--e-a-border-color);
 
 			.elementor-unlinked {
 				display: none;
