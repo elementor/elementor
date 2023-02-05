@@ -7,6 +7,7 @@ import {
 	routeCloseEvent,
 	windowEvent,
 	v1ReadyEvent,
+	setIsReady,
 	ExtendedWindow,
 } from '../';
 
@@ -310,6 +311,26 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		// Cleanup.
 		delete extendedWindow.__elementorEditorV1LoadingPromise;
+	} );
+
+	it( 'should not listen to event if isReady equals to `false`', () => {
+		// Arrange
+		setIsReady( false );
+
+		const event = 'test-event';
+		const callback = jest.fn();
+
+		// Act.
+		listenTo(
+			windowEvent( event ),
+			callback
+		);
+
+		// Dispatch events.
+		dispatchWindowEvent( event );
+
+		// Assert.
+		expect( callback ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {

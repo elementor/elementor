@@ -170,7 +170,7 @@ describe( '@elementor/documents - Sync Store', () => {
 
 	it( 'should sync dirty state of a document on V1 load', () => {
 		// Arrange.
-		const mockDocument = makeMockV1Document();
+		const mockDocument = makeMockV1Document( { id: 1 } );
 
 		mockV1DocumentsManager( [ {
 			...mockDocument,
