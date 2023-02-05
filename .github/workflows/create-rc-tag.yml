@@ -88,7 +88,7 @@ jobs:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
-          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_NAME }}
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
       - name: Upload changelog to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
