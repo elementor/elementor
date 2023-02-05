@@ -5,13 +5,13 @@
 	max-height: 300px;
 	overflow: auto;
 	padding-bottom: 5px;
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
+	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	border: var(--e-a-border);
 	border-radius: 3px;
 	z-index: $super-layer;
 
 	&__group-title {
-		color: $editor-darkest;
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
@@ -20,7 +20,7 @@
 
 		.eicon-info-circle {
 			@include padding-end(5px);
-			color: $editor-accent;
+			color: var(--e-a-color-primary);
 			font-size: 14px;
 		}
 	}
@@ -37,7 +37,7 @@
 		}
 
 		&:hover {
-			background-color: $e-gray-50;
+			background-color: var(--e-a-bg-hover);
 		}
 	}
 
@@ -46,10 +46,6 @@
 		padding-top: 4px;
 		margin-top: 4px;
 
-		&-title {
-			color: $editor-dark;
-		}
-
 		&-text {
 			padding: 2px 15px 8px;
 			line-height: 1.5;
@@ -57,7 +53,7 @@
 		}
 
 		&-link {
-			color: $editor-accent;
+			color: var(--e-a-color-primary);
 			text-decoration: underline;
 			font-style: italic;
 			font-weight: bold;
@@ -82,7 +78,7 @@
 	&__remove {
 		color: $editor-lighter;
 		cursor: pointer;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
 			color: $editor-light;
@@ -97,7 +93,7 @@
 .elementor-tag-settings-popup {
 	position: absolute;
 	width: 260px;
-	background-color: $editor-background;
+	background-color: var(--e-a-bg-default);
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
 	z-index: 1;
 
@@ -124,7 +120,7 @@
 }
 
 .elementor-tag-controls-stack-empty {
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 	padding: 10px;
 	font-size: 13px;
 	text-align: center;
@@ -139,12 +135,12 @@
 		flex-shrink: 0;
 		height: $control-unit;
 		cursor: pointer;
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border-bold);
 		border-radius: 3px;
-		background: #fff;
+		background: var(--e-a-bg-default);
 
 		&:hover {
-			color: $editor-accent;
+			color: var(--e-a-color-primary);
 		}
 
 		&.e-control-tool {

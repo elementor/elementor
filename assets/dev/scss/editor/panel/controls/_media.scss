@@ -42,7 +42,7 @@
 
 	&-area {
 		@include checkers-background(16px);
-		background-color: #f6f6f6;
+		background-color: $editor-lightest;
 		aspect-ratio: 21 / 9;
 
 		&:not(:hover) {
@@ -111,7 +111,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-grow: 1;
-		color: $white;
+		color: var(--e-a-color-white);
 		background-color: rgba($editor-dark, .85);
 		font-size: 11px;
 		transition: background .3s;
@@ -136,9 +136,9 @@
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		color: $white;
+		color: var(--e-a-color-white);
 		background-color: rgba($editor-dark, .85);
-		border-radius: 3px;
+		border-radius: var(--e-border-radius);
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
 		transition: background .3s;
 
@@ -159,7 +159,7 @@
 		align-items: center;
 		width: 100%;
 		margin-top: 10px;
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border);
 
 		&__content {
 			@include padding-start(5px);
@@ -182,7 +182,7 @@
 
 		&__controls {
 			display: flex;
-			@include border-start(1px solid $editor-lightest);
+			@include border-start(var(--e-a-border));
 
 			&__upload-button,
 			&__remove {
@@ -198,7 +198,7 @@
 			}
 
 			&__remove {
-				@include border-end(1px solid $editor-lightest);
+				@include border-end(var(--e-a-border));
 			}
 		}
 	}
@@ -228,10 +228,11 @@
 		border: none;
 		border-radius: 0;
 		background-color: rgba($editor-dark, .85);
-		color: $white;
+		color: var(--e-a-color-white);
 
 		&:hover {
 			background-color: rgba($editor-dark, .95);
+			color: var(--e-a-color-white);
 		}
 	}
 

@@ -94,44 +94,6 @@ body {
 	}
 }
 
-// Globals
-.e-global {
-
-	&__popover {
-
-		&-toggle {
-			border-color: $theme-dark-gray-light;
-			background-color: $theme-dark-gray-darkest;
-		}
-
-		&-container {
-			background-color: $theme-dark-gray;
-			color: $theme-dark-light;
-		}
-
-		&-title {
-			border-bottom-color: $theme-dark-gray-dark;
-		}
-	}
-
-	&__color-title,
-	&__manage-button,
-	&__popover-title {
-		color: $theme-dark-light;
-	}
-
-	&__manage-button {
-		border-top-color: $theme-dark-gray-dark;
-	}
-
-	&__preview-item {
-
-		&:hover {
-			background-color: $theme-dark-gray-dark;
-		}
-	}
-}
-
 // Global Settings
 .elementor-control {
 

@@ -21,10 +21,6 @@ textarea,
 			border-color: var(--e-a-border-color-bolder);
 		}
 	}
-
-	&::placeholder {
-		color: $editor-light;
-	}
 }
 
 .elementor-error {

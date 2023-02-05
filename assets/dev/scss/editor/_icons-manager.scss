@@ -59,7 +59,7 @@
 
 		input {
 			padding: 8px 15px;
-			background-color: var(--e-a-color-white);
+			background-color: transparent;
 		}
 
 		i {
@@ -186,7 +186,7 @@
 		border: var(--e-a-border);
 		border-radius: 3px;
 		cursor: pointer;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 		overflow: hidden;
 
 		&:hover {
@@ -219,15 +219,5 @@
 			max-width: 100%;
 			@include ellipsis;
 		}
-	}
-}
-
-#elementor-enable-fa5-dialog {
-	a {
-		font-style: italic;
-		text-decoration: underline;
-	}
-	.dialog-confirm-ok {
-		color: $editor-success;
 	}
 }

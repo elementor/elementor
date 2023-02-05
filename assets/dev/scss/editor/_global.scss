@@ -82,7 +82,7 @@
 	font-weight: bold;
 	font-size: 12px;
 	padding: 10px;
-	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	margin-bottom: 15px;
 }
 
@@ -98,7 +98,7 @@
 	margin: 0 3px 0;
 	border: 0;
 	position: relative;
-	background-color: #fff;
+	background-color: var(--e-a-color-white);
 
 	&:not(.e-control-tool-disabled) {
 		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
@@ -110,7 +110,7 @@
 		pointer-events: none;
 
 		i {
-			color: #fff;
+			color: var(--e-a-color-white);
 		}
 	}
 

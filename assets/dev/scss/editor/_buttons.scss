@@ -5,7 +5,7 @@
 .elementor-button,
 .e-btn {
 	font-size: 12px;
-	font-family: $admin-font-family;
+	font-family: var(--e-a-font-family);
 	font-weight: 500;
 	line-height: 1.2;
 	text-transform: uppercase;
@@ -15,7 +15,7 @@
 	border-radius: 3px;
 	background-color: var(--e-a-btn-bg);
 	color: var(--e-a-btn-color);
-	transition: $transition-hover;
+	transition: var(--e-a-transition-hover);
 
 	&:hover {
 		background-color: var(--e-a-btn-bg-hover);

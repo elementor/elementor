@@ -28,7 +28,7 @@
 
 			&--disabled {
 				cursor: default;
-				color: $e-gray-200;
+				color: var(--e-a-color-disabled);
 			}
 
 			&:not(.elementor-context-menu-list__item--disabled) {
@@ -49,7 +49,7 @@
 			}
 
 			&__shortcut {
-				color: $e-gray-200;
+				color: var(--e-a-color-txt-muted);
 			}
 
 			&.elementor-context-menu-list__item-delete {

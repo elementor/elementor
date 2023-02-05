@@ -55,22 +55,6 @@
 
 	&.elementor-control-separator- {
 
-		&default:not(.elementor-control-type-divider) {
-
-			// WP Widgets
-			&.elementor-control-wp {
-				margin-top: 15px;
-
-				&:before {
-					content: '';
-					height: 1px;
-					display: block;
-					margin-bottom: 15px;
-					background-color: transparent;
-				}
-			}
-		}
-
 		&before {
 			padding-top: 15px;
 
@@ -197,14 +181,15 @@
 .elementor-panel-heading {
 	display: flex;
 	align-items: center;
+	gap: 5px;
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
-	//border-top: var(--e-a-border); //todo: remove
+	border-top: var(--e-a-border); //todo: remove
 	cursor: pointer;
 
 	&-toggle {
-		width: 20px;
+		width: 10px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -321,7 +306,8 @@
 
 	.elementor-control-start-end {
 
-		.eicon-h-align-left, .eicon-h-align-right {
+		.eicon-h-align-left,
+		.eicon-h-align-right {
 			transform: rotate(180deg);
 		}
 	}

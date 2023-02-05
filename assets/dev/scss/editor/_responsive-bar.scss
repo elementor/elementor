@@ -41,7 +41,7 @@
 		line-height: 22px;
 		border-radius: 3px;
 		font-size: 16px;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&:hover,
 		&[aria-selected="true"] {

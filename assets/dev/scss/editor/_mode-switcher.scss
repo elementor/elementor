@@ -15,7 +15,7 @@
 	cursor: pointer;
 
 	&:hover {
-		background-color: $e-gray-50;
+		background-color: var(--e-a-bg-hover);
 	}
 }
 
