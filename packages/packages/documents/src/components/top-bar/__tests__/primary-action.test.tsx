@@ -158,6 +158,24 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		expect( actionsMock.save ).not.toHaveBeenCalled();
 		expect( loader ).toBeInTheDocument();
 	} );
+
+	it( 'should not show a loader when the button is disabled', () => {
+		// Arrange.
+		const mockDocument = makeMockDocument();
+
+		mockedUseActiveDocument.mockReturnValue( {
+			...mockDocument,
+			type: 'kit', // Disables the button.
+			isSaving: true,
+		} );
+
+		// Act.
+		const { container } = render( <PrimaryAction /> );
+		const loader = container.querySelector( 'svg' );
+
+		// Assert.
+		expect( loader ).not.toBeInTheDocument();
+	} );
 } );
 
 function makeMockDocument(): Document {

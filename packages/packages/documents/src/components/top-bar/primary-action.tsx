@@ -11,11 +11,14 @@ export default function PrimaryAction() {
 		return null;
 	}
 
+	const isDisabled = ! isEnabled( document );
+	const shouldShowSpinner = document.isSaving && ! isDisabled;
+
 	return (
 		<Button variant="contained"
-			disabled={ ! isEnabled( document ) }
+			disabled={ isDisabled }
 			size="large"
-			startIcon={ document.isSaving && <CircularProgress /> }
+			startIcon={ shouldShowSpinner && <CircularProgress /> }
 			onClick={ () => {
 				if ( document.isSaving ) {
 					return;
