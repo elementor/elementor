@@ -48,6 +48,7 @@ export function makeMockV1Document( id = 1 ): V1Document {
 	return {
 		id,
 		config: {
+			type: 'page',
 			user: {
 				can_publish: true,
 			},
@@ -63,15 +64,15 @@ export function makeMockV1Document( id = 1 ): V1Document {
 			settings: makeSettings( {
 				post_title: 'Document ' + id,
 				post_status: 'publish',
-			} ) as V1Document['container']['settings'],
+			} ),
 		},
 	};
 }
 
-function makeSettings<T extends object>( settings: T ) {
+export function makeSettings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];
 		},
-	};
+	} as V1Document['container']['settings'];
 }
