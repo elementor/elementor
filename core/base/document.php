@@ -588,7 +588,6 @@ abstract class Document extends Controls_Stack {
 
 		$post = $this->get_main_post();
 
-		$post_status_object = get_post_status_object( $post->post_status );
 		$post_type_object = get_post_type_object( $post->post_type );
 
 		$settings = SettingsManager::get_settings_managers_config();
@@ -619,6 +618,8 @@ abstract class Document extends Controls_Stack {
 				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
+
+		$post_status_object = get_post_status_object( $post->post_status );
 
 		if ( $post_status_object ) {
 			$config['status'] = [
