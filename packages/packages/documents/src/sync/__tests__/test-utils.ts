@@ -61,7 +61,7 @@ export function makeMockV1Document( id = 1 ): V1Document {
 			isSaving: false,
 		},
 		container: {
-			settings: makeSettings( {
+			settings: makeV1Settings( {
 				post_title: 'Document ' + id,
 				post_status: 'publish',
 			} ),
@@ -69,7 +69,7 @@ export function makeMockV1Document( id = 1 ): V1Document {
 	};
 }
 
-export function makeSettings<T extends object>( settings: T ) {
+export function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];

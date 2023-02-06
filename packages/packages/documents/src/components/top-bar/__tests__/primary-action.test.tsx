@@ -103,7 +103,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		expect( container.querySelector( 'button' ) ).toBeDisabled();
 	} );
 
-	it( 'should be enabled if the document is Draft', () => {
+	it( 'should be enabled when the document is Draft', () => {
 		// Arrange.
 		const mockDocument = makeMockDocument();
 

@@ -14,12 +14,14 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 	// TODO: See: https://github.com/elementor/elementor/blob/e86b957a2/assets/dev/js/editor/document/save/behaviors/footer-saver.js#L96-L101
 	const status = documentData.container.settings.get( 'post_status' ) ?? 'pending';
 
+	const isAutoSave = documentData.config.revisions.current_id !== documentData.id;
+
 	return {
 		id: documentData.id,
 		title: documentData.container.settings.get( 'post_title' ),
 		status,
 		type: documentData.config.type,
-		isDirty: documentData.editor.isChanged || documentData.config.revisions.current_id !== documentData.id,
+		isDirty: documentData.editor.isChanged || isAutoSave,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,
 		userCan: {

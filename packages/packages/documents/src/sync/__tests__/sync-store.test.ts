@@ -9,7 +9,7 @@ import {
 	dispatchV1ReadyEvent,
 	makeDocumentsManager,
 	makeMockV1Document,
-	makeSettings,
+	makeV1Settings,
 } from './test-utils';
 import { selectActiveDocument } from '../../store/selectors';
 
@@ -116,14 +116,14 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 	} );
 
-	it( 'should normalize current document status', () => {
+	it( 'should normalize `undefined` status to `pending`', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
 
 		mockV1DocumentsManager( [ {
 			...mockDocument,
 			container: {
-				settings: makeSettings( {
+				settings: makeV1Settings( {
 					post_title: 'Document 1',
 					post_status: undefined,
 				} ),
