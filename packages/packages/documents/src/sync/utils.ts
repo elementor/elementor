@@ -14,8 +14,14 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 	return {
 		id: documentData.id,
 		title: documentData.container.settings.get( 'post_title' ),
-		type: documentData.config.type,
-		status: documentData.container.settings.get( 'post_status' ),
+		type: {
+			value: documentData.config.type,
+			label: documentData.config.panel.title,
+		},
+		status: {
+			value: documentData.config.status.value,
+			label: documentData.config.status.label,
+		},
 		isDirty: documentData.editor.isChanged || documentData.config.revisions.current_id !== documentData.id,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,

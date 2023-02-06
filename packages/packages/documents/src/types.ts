@@ -1,12 +1,16 @@
 import { createSlice } from './store';
 
-export type DocumentStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit';
-
 export type Document = {
 	id: number,
 	title: string,
-	type: string,
-	status: DocumentStatus,
+	type: {
+		value: string,
+		label: string,
+	},
+	status: {
+		value: string,
+		label: string,
+	},
 	isDirty: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
@@ -38,6 +42,13 @@ export type V1Document = {
 		revisions: {
 			current_id: number,
 		}
+		panel: {
+			title: string,
+		}
+		status: {
+			value: string,
+			label: string,
+		}
 	},
 	editor: {
 		isChanged: boolean,
@@ -46,7 +57,6 @@ export type V1Document = {
 	container: {
 		settings: V1Model<{
 			post_title: string,
-			post_status: DocumentStatus
 		}>,
 	}
 }

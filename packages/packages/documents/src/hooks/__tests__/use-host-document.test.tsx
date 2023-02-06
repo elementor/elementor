@@ -3,20 +3,10 @@ import { createSlice } from '../../store';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import useHostDocument from '../use-host-document';
 import { renderHookWithStore } from './test-utils';
+import { createMockDocument } from '../../__tests__/test-utils';
 
 describe( '@elementor/documents - useHostDocument', () => {
-	const mockDocument = {
-		id: 1,
-		title: 'Document 1',
-		type: 'wp-page',
-		status: 'publish' as const,
-		isDirty: false,
-		isSaving: false,
-		isSavingDraft: false,
-		userCan: {
-			publish: true,
-		},
-	};
+	const mockDocument = createMockDocument();
 
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;

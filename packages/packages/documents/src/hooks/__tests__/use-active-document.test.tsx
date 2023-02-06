@@ -3,6 +3,7 @@ import { createSlice } from '../../store';
 import useActiveDocument from '../use-active-document';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { renderHookWithStore } from './test-utils';
+import { createMockDocument } from '../../__tests__/test-utils';
 
 describe( '@elementor/documents - useActiveDocument', () => {
 	let store: Store<SliceState<Slice>>;
@@ -15,18 +16,7 @@ describe( '@elementor/documents - useActiveDocument', () => {
 
 	it( 'should return the current document', () => {
 		// Arrange.
-		const mockDocument = {
-			id: 1,
-			title: 'Document 1',
-			type: 'wp-page',
-			status: 'publish' as const,
-			isDirty: false,
-			isSaving: false,
-			isSavingDraft: false,
-			userCan: {
-				publish: true,
-			},
-		};
+		const mockDocument = createMockDocument();
 
 		dispatch( slice.actions.activateDocument( mockDocument ) );
 

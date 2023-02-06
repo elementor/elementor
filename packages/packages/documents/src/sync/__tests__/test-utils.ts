@@ -68,6 +68,13 @@ export function makeMockV1Document( {
 			revisions: {
 				current_id: id,
 			},
+			panel: {
+				title: type,
+			},
+			status: {
+				label: status,
+				value: status,
+			},
 		},
 		editor: {
 			isChanged: false,
@@ -76,7 +83,6 @@ export function makeMockV1Document( {
 		container: {
 			settings: makeSettings( {
 				post_title: title,
-				post_status: status,
 			} ) as V1Document['container']['settings'],
 		},
 	};

@@ -50,8 +50,14 @@ describe( '@elementor/documents - Sync Store', () => {
 			1: {
 				id: 1,
 				title: 'Document 1',
-				type: 'wp-page',
-				status: 'publish',
+				type: {
+					value: 'wp-page',
+					label: 'wp-page',
+				},
+				status: {
+					value: 'publish',
+					label: 'publish',
+				},
 				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
@@ -62,8 +68,14 @@ describe( '@elementor/documents - Sync Store', () => {
 			2: {
 				id: 2,
 				title: 'Document 2',
-				type: 'wp-page',
-				status: 'publish',
+				type: {
+					value: 'wp-page',
+					label: 'wp-page',
+				},
+				status: {
+					value: 'publish',
+					label: 'publish',
+				},
 				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
@@ -99,8 +111,14 @@ describe( '@elementor/documents - Sync Store', () => {
 		expect( currentDocument ).toEqual( {
 			id: 2,
 			title: 'Document 2',
-			type: 'wp-page',
-			status: 'publish',
+			type: {
+				value: 'wp-page',
+				label: 'wp-page',
+			},
+			status: {
+				value: 'publish',
+				label: 'publish',
+			},
 			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,
@@ -241,16 +259,16 @@ describe( '@elementor/documents - Sync Store', () => {
 			} ),
 		] );
 
-		// Assert
+		// Assert.
 		expect( selectActiveDocument( store.getState() )?.title ).toBe( 'test' );
-		expect( selectActiveDocument( store.getState() )?.status ).toBe( 'draft' );
+		expect( selectActiveDocument( store.getState() )?.status.value ).toBe( 'draft' );
 
 		// Act.
 		dispatchCommandAfter( 'document/save/save' );
 
-		// Assert
+		// Assert.
 		expect( selectActiveDocument( store.getState() )?.title ).toBe( 'test title changed' );
-		expect( selectActiveDocument( store.getState() )?.status ).toBe( 'publish' );
+		expect( selectActiveDocument( store.getState() )?.status.value ).toBe( 'publish' );
 	} );
 } );
 

@@ -18,9 +18,9 @@ export default function Indicator( { title, status }: Props ) {
 				} }>
 					{ title }
 				</Typography>
-				{ status !== 'publish' &&
+				{ status.value !== 'publish' &&
 					<Typography variant="body2" sx={ { fontStyle: 'italic' } }>
-						({ status })
+						({ status.label })
 					</Typography>
 				}
 			</Stack>

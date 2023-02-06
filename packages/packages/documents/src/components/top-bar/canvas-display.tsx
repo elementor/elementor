@@ -10,7 +10,7 @@ export default function CanvasDisplay() {
 	const hostDocument = useHostDocument();
 
 	const document = useMemo( () => {
-		if ( activeDocument && activeDocument.type !== 'kit' ) {
+		if ( activeDocument && activeDocument.type.value !== 'kit' ) {
 			return activeDocument;
 		}
 
@@ -28,7 +28,7 @@ export default function CanvasDisplay() {
 	return (
 		<Stack direction="row" spacing={ 3 } sx={ { px: 3 } }>
 			<Indicator title={ document.title } status={ document.status } />
-			<SettingsButton />
+			<SettingsButton type={ document.type } />
 		</Stack>
 	);
 }
