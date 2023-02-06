@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { getCurrentEditMode, useIsPreviewMode } from '../../';
 import { dispatchEditModeChange } from '../../__tests__/utils';
 
-jest.mock( '../../dispatchers', () => {
+jest.mock( '../../utils', () => {
 	return {
 		getCurrentEditMode: jest.fn(),
 	};
@@ -29,6 +29,9 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 	it( 'should update the state when the edit mode changes', () => {
 		// Arrange.
 		const { result } = renderHook( () => useIsPreviewMode() );
+
+		// Assert.
+		expect( result.current ).toBe( false );
 
 		// Act.
 		act( () => {

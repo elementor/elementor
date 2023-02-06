@@ -1,4 +1,4 @@
-import useProps from '../use-props';
+import useActionProps from '../use-action-props';
 import { renderHook } from '@testing-library/react-hooks';
 import { openRoute, useIsPreviewMode, useIsRouteActive } from '@elementor/v1-adapters';
 
@@ -11,17 +11,17 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 const mockedIsPreviewMode = jest.mocked( useIsPreviewMode );
 const mockedIsRouteActive = jest.mocked( useIsRouteActive );
 
-describe( '@elementor/elements-panel - useProps', () => {
+describe( '@elementor/elements-panel - useActionProps', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
 	it( 'should open the elements panel on click', () => {
 		// Arrange.
-		const { result } = renderHook( () => useProps() );
+		const { result } = renderHook( () => useActionProps() );
 
 		// Act.
-		result.current.onClick?.();
+		result.current.onClick();
 
 		// Assert.
 		expect( openRoute ).toHaveBeenCalledTimes( 1 );
@@ -71,7 +71,7 @@ describe( '@elementor/elements-panel - useProps', () => {
 		mockedIsRouteActive.mockImplementation( ( route ) => route === currentRoute );
 
 		// Act.
-		const { result } = renderHook( () => useProps() );
+		const { result } = renderHook( () => useActionProps() );
 
 		// Assert.
 		expect( result.current.selected ).toBe( expected.isSelected );

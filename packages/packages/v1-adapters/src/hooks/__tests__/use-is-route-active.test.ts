@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useIsRouteActive, isRouteActive } from '../../';
 import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
 
-jest.mock( '../../dispatchers', () => {
+jest.mock( '../../utils', () => {
 	return {
 		isRouteActive: jest.fn(),
 	};
