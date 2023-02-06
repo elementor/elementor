@@ -3,7 +3,7 @@ const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
-test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
+test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
 
 	test.beforeEach( async () => {
@@ -375,7 +375,7 @@ test.describe.only( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test.only( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
