@@ -28,5 +28,10 @@ runs:
           # e.g. elementor-3.11.0-cloud20 => v3.11.0-cloud20
           RELEASE_NAME=${RELEASE_NAME/${{ inputs.PLUGIN_NAME }}-/v}
 
+          if ${{ env.CHANNEL == 'ga' }}; then
+            RELEASE_NAME=v${{ env.PACKAGE_VERSION }}
+            RELEASE_FILENAME=${{ ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}
+          fi
+
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
           echo "RELEASE_FILENAME=${RELEASE_FILENAME}" >> $GITHUB_ENV

@@ -72,7 +72,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
-          prerelease: ${{ github.event.inputs.pre_release }}
           body_path: /tmp/temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
