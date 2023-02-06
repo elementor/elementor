@@ -475,47 +475,80 @@ class Test_Import extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_init_import_session__kit_thumbnail() {
-		// Arrange
+	public function test_init_import_session__get_kit_thumbnail_from_manifest() {
 		$import_settings = [
 			'referrer' => 'kit-library',
 		];
 		$module = new Module();
 
-		// Case 1: kit-thumbnail exists in manifest
 		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
+
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+	}
 
-		// Case 2: no thumbnail & no kit id
+	public function init_import_session__get_empty_kit_thumbnail() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$module = new Module();
+
 		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 		$this->assertEmpty( $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+	}
 
-		// Case 3: no thumbnail -> request to API
-		$import_settings['id'] = '123';
-		$this->mock_get_remote_kit_by_id( [
-			'thumbnail' => 'api-thumbnail',
-		] );
+	public function init_import_session__get_kit_thumbnail_from_api() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$this->mock_get_remote_kit_by_id();
+		$module = new Module();
+
 		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 		$this->assertEquals( 'api-thumbnail', $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
 
+		$this->unmock_get_remote();
 	}
 
-	private function mock_get_remote_kit_by_id( $kit ) {
-		add_filter( 'pre_http_request', function () use ( $kit ) {
-			return [
-				'headers' => [],
-				'response' => [
-					'code' => 200,
-					'message' => 'OK',
-				],
-				'cookies' => [],
-				'filename' => '',
-				'body' => wp_json_encode( $kit ),
-			];
-		}, 10, 3 );
+	public function init_import_session__get_kit_thumbnail_from_api_wp_error() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$module = new Module();
+
+		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$this->assertEmpty( $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	private function mock_get_remote_kit_by_id() {
+		add_filter( 'pre_http_request',  [ $this, 'get_kit' ] );
+	}
+
+	public function get_kit() {
+		return [
+			'headers' => [],
+			'response' => [
+				'code' => 200,
+				'message' => 'OK',
+			],
+			'cookies' => [],
+			'filename' => '',
+			'body' => wp_json_encode( [
+				'thumbnail' => 'api-thumbnail'
+			] ),
+		];
+	}
+
+	private function unmock_get_remote() {
+		remove_filter( 'pre_http_request', [ $this, 'get_kit' ] );
 	}
 
 	private function assert_valid_taxonomies( $result ) {

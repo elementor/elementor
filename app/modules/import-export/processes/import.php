@@ -448,7 +448,7 @@ class Import {
 		$kit = $api->get_by_id( $this->kit_id );
 
 		if ( is_wp_error( $kit ) ) {
-			throw new WP_Error_Exception( $kit );
+			return '';
 		}
 
 		return $kit->thumbnail;
