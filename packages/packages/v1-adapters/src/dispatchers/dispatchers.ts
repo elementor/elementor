@@ -46,5 +46,5 @@ export function isRouteActive( route: string ) {
 export function getCurrentEditMode() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return extendedWindow.elementor.channels.dataEditMode.request( 'activeMode' );
+	return extendedWindow.elementor?.channels?.dataEditMode?.request?.( 'activeMode' );
 }
