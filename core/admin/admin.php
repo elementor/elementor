@@ -397,7 +397,7 @@ class Admin extends App {
 	 */
 	public function elementor_dashboard_overview_widget() {
 		?>
-		<div class="e-dashboard-widget">
+		<div class="e-dashboard-overview e-dashboard-widget">
 			<?php
 			$this->elementor_dashboard_overview_header();
 			$this->elementor_dashboard_overview_recently_edited();

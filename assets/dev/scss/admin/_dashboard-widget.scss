@@ -50,7 +50,7 @@
 }
 
 //Overview Widget
-#e-dashboard-overview {
+.e-dashboard-overview {
 
 	.dashicons {
 		vertical-align: middle;
@@ -159,8 +159,4 @@
 			}
 		}
 	}
-}
-
-.e-dashboard-overview {
-	@extend #e-dashboard-overview;
 }
