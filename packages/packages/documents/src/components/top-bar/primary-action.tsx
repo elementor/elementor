@@ -15,10 +15,11 @@ export default function PrimaryAction() {
 	const shouldShowSpinner = document.isSaving && ! isDisabled;
 
 	return (
-		<Button variant="contained"
+		<Button
+			variant="contained"
+			sx={ { width: '120px' } }
 			disabled={ isDisabled }
 			size="large"
-			startIcon={ shouldShowSpinner && <CircularProgress /> }
 			onClick={ () => {
 				if ( document.isSaving ) {
 					return;
@@ -27,7 +28,11 @@ export default function PrimaryAction() {
 				save();
 			} }
 		>
-			{ getLabel( document ) }
+			{
+				shouldShowSpinner
+					? <CircularProgress />
+					: getLabel( document )
+			}
 		</Button>
 	);
 }

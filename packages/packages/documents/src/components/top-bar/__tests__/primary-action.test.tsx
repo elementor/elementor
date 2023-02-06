@@ -157,6 +157,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		// Assert.
 		expect( actionsMock.save ).not.toHaveBeenCalled();
 		expect( loader ).toBeInTheDocument();
+		expect( container.textContent ).toBe( '' );
 	} );
 
 	it( 'should not show a loader when the button is disabled', () => {
@@ -175,6 +176,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 		// Assert.
 		expect( loader ).not.toBeInTheDocument();
+		expect( container.textContent ).not.toBe( '' );
 	} );
 } );
 
