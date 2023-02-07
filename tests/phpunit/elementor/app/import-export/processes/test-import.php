@@ -527,7 +527,7 @@ class Test_Import extends Elementor_Test_Base {
 		$cleanup();
 	}
 
-	public function mock_get_kit() {
+	private function mock_get_kit() {
 		$filter = function() {
 			return [
 				'headers' => [],
