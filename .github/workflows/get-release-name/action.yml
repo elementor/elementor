@@ -8,6 +8,12 @@ inputs:
   PLUGIN_NAME:
     description: 'The name of the plugin.'
     required: true
+  CHANNEL:
+    description: 'The channel to get the version to (ga, cloud, beta).'
+    required: true
+  PACKAGE_VERSION:
+    description: 'The clean package version e.g. 3.10.1'
+    required: true
 
 runs:
   using: "composite"
