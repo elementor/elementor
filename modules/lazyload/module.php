@@ -38,7 +38,8 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function get_repeater( $controls ) {
+	private function get_repeaters_selectors( $controls, $settings ) {
+		$selectors = [];
 		$repeater = array_filter( $controls, function( $control ) {
 			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
 				return true;
@@ -47,7 +48,38 @@ class Module extends BaseModule {
 		if ( empty( $repeater ) ) {
 			return false;
 		}
-		return array_shift( $repeater );
+		$repeater = array_shift( $repeater );
+
+		if ( $repeater ) {
+			$repeater_settings = $settings[ $repeater['name'] ][0];
+			$repeater_selector = $this->get_repeater_selector( $repeater_settings, $repeater );
+			if ( $repeater_selector ) {
+				$selectors[] = $repeater_selector;
+			}
+		}
+
+		return $selectors;
+	}
+
+	private function get_repeater_selector( $repeater_settings, $repeater ) {
+		$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
+		if ( ! $lazyload_options['active'] ) {
+			return false;
+		}
+
+		$repeater_selector = Utils::get_array_value_by_keys( $lazyload_options, [ 'selector' ] );
+		if ( ! $repeater_selector ) {
+			return false;
+		}
+
+		$repeater_keys = Utils::get_array_value_by_keys( $repeater_settings, [ 'background_lazyload', 'keys' ] );
+		$repeater_background_image_url = Utils::get_array_value_by_keys( $repeater_settings, $repeater_keys );
+
+		if ( $repeater_background_image_url ) {
+			return $repeater_selector;
+		}
+
+		return false;
 	}
 
 	private function update_element_attributes( Element_Base $element ) {
@@ -60,28 +92,40 @@ class Module extends BaseModule {
 			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
 		} );
 
-		$repeater = $this->get_repeater( $controls );
+		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 
-			// If the control is a repeater, we need to loop over the repeater fields options and check if the background image is set to lazyload.
-			if ( $repeater ) {
-				$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
-				$control_data['background_lazyload'] = array_merge( $control_data['background_lazyload'], $lazyload_options );
+			$selectors = [];
 
-				// Get lazyload property from the repeater first control.
-				$settings = $settings[ $repeater['name'] ][0];
-				$attributes['data-e-bg-repeater'] = '';
+			if ( $repeaters_selectors ) {
+				$selectors = array_merge( $repeaters_selectors, $selectors );
 			}
 
 			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
 			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
-			if ( $background_image_url ) {
+
+			if ( $background_image_url || $selectors ) {
 
 				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
 				if ( ! $has_attribute ) {
-					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-					$attributes[ $lazyload_attribute_name ] = $bg_selector;
+
+					$wrapper_bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] );
+					$bg_selector = $wrapper_bg_selector ?? '';
+
+					$bg_selector = implode( ',', $selectors ) . $bg_selector;
+					$selectors[] = $bg_selector;
+
+					$wrapper_selector = $element->get_unique_selector();
+					$selectors = array_map( function( $selector ) use ( $wrapper_selector ) {
+						return $wrapper_selector . ' ' . $selector;
+					}, $selectors );
+
+					if ( $background_image_url && ! $wrapper_bg_selector ) {
+						$selectors[] = $wrapper_selector;
+					}
+
+					$attributes[ $lazyload_attribute_name ] = implode( ',', $selectors );
 
 					$element->add_render_attribute( '_wrapper',
 						$attributes
@@ -192,45 +236,32 @@ class Module extends BaseModule {
 		add_action( 'wp_footer', function() {
 			?>
 			<script type='text/javascript'>
-				const getReapetersBackgroundLazyload = ( lazyloadBackgrounds, reapterAttribute, dataAttribute) => {
-					const lazyloadRepeaterBackgrounds = document.querySelectorAll( `[${ reapterAttribute }]` );
-					const repeaterBackgrounds = [];
-
-					lazyloadRepeaterBackgrounds.forEach( ( repeater ) => {
-						const lazyloadSelector = repeater.getAttribute( dataAttribute );
-						if ( lazyloadSelector ) {
-							lazyloadBackground = repeater.querySelectorAll( lazyloadSelector );
-							if ( lazyloadBackground.length ) {
-								repeaterBackgrounds.push( ...lazyloadBackground );
-							}
-						}
-					} );
-					lazyloadBackgrounds = [ ...lazyloadBackgrounds, ...repeaterBackgrounds ];
-
-					return lazyloadBackgrounds;
-				};
 
 				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
 					const reapterAttribute = 'data-e-bg-repeater';
 
-					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded, [${reapterAttribute}])` );
-					lazyloadBackgrounds = getReapetersBackgroundLazyload( lazyloadBackgrounds, reapterAttribute, dataAttribute );
-
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
 					entries.forEach( ( entry ) => {
 						if ( entry.isIntersecting ) {
-							let lazyloadBackground = entry.target;
-							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
-							if ( lazyloadSelector ) {
-								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
-							}
-							lazyloadBackground.classList.add( 'lazyloaded' );
+							entry.target.classList.add( 'lazyloaded' );
 							lazyloadBackgroundObserver.unobserve( entry.target );
 						}
 					});
 					}, { rootMargin: '100px 0px 100px 0px' } );
-					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+
+					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					let elementsToObserve = [];
+
+					lazyloadBackgrounds.forEach( ( lazyloadBackgroundWrapper ) => {
+						const selectors = lazyloadBackgroundWrapper.getAttribute( dataAttribute );
+						if ( selectors ) {
+							const innerSelectors = document.querySelectorAll( selectors );
+							elementsToObserve = [...elementsToObserve, ...innerSelectors];
+						}
+					} );
+
+					elementsToObserve.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
 				};
