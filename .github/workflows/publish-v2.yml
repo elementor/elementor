@@ -69,35 +69,35 @@ jobs:
           body_path: /tmp/temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Read changelog and set current date
-        if: ${{ env.CHANNEL == "ga" }} # Only for GA releases
-        uses : ./.github/workflows/get-changelog-datetime
-      - name: Parse Jira Keys from changelog # Only for GA releases
-        if: ${{ env.CHANNEL == "ga" }}
-        id: jira_keys
-        uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
-        with:
-          commit-message: '${{ env.CHANGELOG }}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push Deployment Info to Jira
-        if: steps.jira_keys.outputs.jira-keys != '' && ${{ env.CHANNEL == "ga" }}
-        uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
-        with:
-          client-id: '${{ secrets.JIRA_CLIENT_ID }}'
-          client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
-          cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
-          issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
-          display-name: "${{ env.PACKAGE_VERSION }}"
-          url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          description: "This PR was merged to the following release(s)"
-          last-updated: '${{ env.NOW }}'
-          state: 'successful'
-          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
-          pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          environment-id: "${{ env.PACKAGE_VERSION }}"
-          environment-display-name: "${{ env.PACKAGE_VERSION }}"
-          environment-type: 'production'
+      # - name: Read changelog and set current date
+      #   if: ${{ env.CHANNEL == "ga" }} # Only for GA releases
+      #   uses : ./.github/workflows/get-changelog-datetime
+      # - name: Parse Jira Keys from changelog # Only for GA releases
+      #   if: ${{ env.CHANNEL == "ga" }}
+      #   id: jira_keys
+      #   uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
+      #   with:
+      #     commit-message: '${{ env.CHANGELOG }}'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Push Deployment Info to Jira
+      #   if: steps.jira_keys.outputs.jira-keys != '' && ${{ env.CHANNEL == "ga" }}
+      #   uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
+      #   with:
+      #     client-id: '${{ secrets.JIRA_CLIENT_ID }}'
+      #     client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
+      #     cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
+      #     issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
+      #     display-name: "${{ env.PACKAGE_VERSION }}"
+      #     url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+      #     description: "This PR was merged to the following release(s)"
+      #     last-updated: '${{ env.NOW }}'
+      #     state: 'successful'
+      #     pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+      #     pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+      #     environment-id: "${{ env.PACKAGE_VERSION }}"
+      #     environment-display-name: "${{ env.PACKAGE_VERSION }}"
+      #     environment-type: 'production'
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
