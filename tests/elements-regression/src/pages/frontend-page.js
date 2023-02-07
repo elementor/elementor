@@ -29,7 +29,7 @@ module.exports = class FrontendPage extends BasePage {
 	}
 
 	async screenshotElement( id ) {
-		await this.refresh();
+		await this.load();
 
 		const pageRect = await this.page.locator( 'body' ).boundingBox();
 		const elementRect = await ( await this.getElement( id ) ).boundingBox();
