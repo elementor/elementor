@@ -1210,6 +1210,12 @@ export default class EditorBase extends Marionette.Application {
 	onEditModeSwitched() {
 		const activeMode = this.channels.dataEditMode.request( 'activeMode' );
 
+		dispatchEvent( new CustomEvent( 'elementor/edit-mode/change', {
+			detail: {
+				activeMode,
+			},
+		} ) );
+
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
 		} else {
