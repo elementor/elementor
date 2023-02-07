@@ -479,76 +479,89 @@ class Test_Import extends Elementor_Test_Base {
 		$import_settings = [
 			'referrer' => 'kit-library',
 		];
-		$module = new Module();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
+		$import->init_import_session();
 
-		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
-
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
-		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 	}
 
-	public function init_import_session__get_empty_kit_thumbnail() {
+	public function test_init_import_session__get_empty_kit_thumbnail() {
 		$import_settings = [
 			'referrer' => 'kit-library',
 		];
-		$module = new Module();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
 
-		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
-
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
-		$this->assertEmpty( $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 	}
 
-	public function init_import_session__get_kit_thumbnail_from_api() {
-		$import_settings = [
-			'referrer' => 'kit-library',
-			'id' => '123',
-		];
-		$this->mock_get_remote_kit_by_id();
-		$module = new Module();
-
-		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
-
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
-		$this->assertEquals( 'api-thumbnail', $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
-
-		$this->unmock_get_remote();
-	}
-
-	public function init_import_session__get_kit_thumbnail_from_api_wp_error() {
+	public function test_init_import_session__get_kit_thumbnail_from_api() {
 		$import_settings = [
 			'referrer' => 'kit-library',
 			'id' => '123',
 		];
-		$module = new Module();
+		$cleanup = $this->mock_get_kit();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
 
-		$module->import_kit( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'api-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
-		$this->assertEmpty( $import_sessions[ $module->import->get_session_id() ]['kit_thumbnail'] );
+		$cleanup();
 	}
 
-	private function mock_get_remote_kit_by_id() {
-		add_filter( 'pre_http_request',  [ $this, 'get_kit' ] );
-	}
-
-	public function get_kit() {
-		return [
-			'headers' => [],
-			'response' => [
-				'code' => 200,
-				'message' => 'OK',
-			],
-			'cookies' => [],
-			'filename' => '',
-			'body' => wp_json_encode( [
-				'thumbnail' => 'api-thumbnail'
-			] ),
+	public function test_init_import_session__get_kit_thumbnail_from_api_wp_error() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
 		];
+		$cleanup = $this->mock_get_kit_wp_error();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
 	}
 
-	private function unmock_get_remote() {
-		remove_filter( 'pre_http_request', [ $this, 'get_kit' ] );
+	public function mock_get_kit() {
+		$filter = function() {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'thumbnail' => 'api-thumbnail'
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
+	}
+
+	public function mock_get_kit_wp_error() {
+		$filter = function() {
+			return [
+				'body' => new \WP_Error( 500, 'No Response' ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
 	}
 
 	private function assert_valid_taxonomies( $result ) {
