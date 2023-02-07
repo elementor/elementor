@@ -15,7 +15,7 @@ type ExtendedWindow = Window & {
 	}
 }
 
-describe( '@elementor/v1-adapters - Utils', () => {
+describe( '@elementor/v1-adapters - Readers', () => {
 	let eIsPartOf: jest.Mock,
 		eGetEditMode: jest.Mock;
 

@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { getCurrentEditMode, useIsPreviewMode } from '../../';
 import { dispatchEditModeChange } from '../../__tests__/utils';
 
-jest.mock( '../../utils', () => {
+jest.mock( '../../readers', () => {
 	return {
 		getCurrentEditMode: jest.fn(),
 	};
