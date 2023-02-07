@@ -18,7 +18,6 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
-use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
@@ -432,8 +431,6 @@ class Import {
 	 * Get the Kit thumbnail, goes to the home page thumbnail if main doesn't exist
 	 *
 	 * @return string
-	 *
-	 * @throws WP_Error_Exception
 	 */
 	private function get_kit_thumbnail(): string {
 		if ( ! empty( $this->manifest['thumbnail'] ) ) {
