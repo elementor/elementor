@@ -1,5 +1,16 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.12.0-dev3 - 2023-02-07
+* Add Niv to the approved list (#21183)
+* Fix: Adjusted right-click menu dark mode for blocked options [ED-9554] (#21186)
+* Tweak: Added 'vw' unit to margin and padding [ED-9574] (#21187)
+* Tweak: Update minimum required WordPress version to 5.3 [ED-9466] (#21192)
+* Tweak: Added a vertical alignment control to icons in Icon List widget [ED-9265] (#21199)
+* Fix: Button Widget - Inline editing and icon space [ED-9569] (#21185)
+* Tweak: Extracted Stretch Section handler to more generic Stretch Element [ED-9454] (#21184)
+* Fix: Nested tab changes sizes when direction set to row or column in Container [ED-9515] (#21228)
+* Fix: Can't rollback Elementor to older Core version [ED-9525] (#21247)
+
 #### 3.12.0-dev2 - 2023-01-26
 * Fix: Keyboard actions are not blocked in Nested Tabs [ED-9355] (#21106)
 
@@ -475,28 +486,3 @@
 
 #### 3.6.0-dev39 - 2022-02-17
 * Fix: `remove_responsive_control()` doesn't remove controls for additional Custom breakpoints [ED-6294] (#17529)
-
-#### 3.6.0-dev38 - 2022-02-14
-* Tweak: Updated changelog for v3.5.5 (#17691)
-* Fix: When the inline-font-icons experiment is active, the icon of the video lightbox is not getting the correct color (#17628)
-* Fix: Video Widget - Privacy mode videos don't play in Lightbox since v3.5.5 [ED-6482] (#17747)
-* Tweak: Admin Menu Handling Improvements (#17263)
-* Fix: Favorites with WooCommerce widgets throws a critical error if it's is deactivated [ED-6442] (#17731)
-* Fix: When the Additional Breakpoints experiment is active, the 'devices' parameter for `add_responsive_control()` isn't supported [ED-6478] (#17746)
-* Fix: Global widgets search didn't work when core 3.5 is active [ED-5926] (#17331)
-* Fix: tests (#17822)
-* Tweak: Make typography weight strings translatable [ED-6392] (#17826)
-* Tweak: Allowing to import and export plugins as part of the kit content [ED-4978] (#17830)
-* Tweak: Remove legacy style tab and imporve CSS code [ED-6524] (#17833)
-* Fix: Button trait alignment names are wrong [ED-6474] (#17736)
-* Fix: Playwright for global widget search fails [ED-6523] (#17832)
-
-#### 3.6.0-dev37 - 2022-02-03
-* Fix: System info file displays inaccurate WP memory limit. [ED-5717] (#17252)
-
-#### 3.6.0-dev36 - 2022-01-31
-* Tweak: Added "Convert to Container" control to each legacy section, inner section and page [ED-5488] (#17515)
-
-#### 3.6.0-dev35 - 2022-01-26
-* Tweak: Test Responsive reverse columns control inoperative [ED-5931] (#17341)
-* Tweak: Internal - Import Kit - Allow to override Kit import temp directory path [ED-5914] (#17381)
