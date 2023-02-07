@@ -1,19 +1,15 @@
-import { isRouteActive, openRoute, runCommand } from '../';
+import { openRoute, runCommand } from '../';
 
 type ExtendedWindow = Window & {
 	$e: {
 		run: jest.Mock;
 		route: jest.Mock;
-		routes: {
-			isPartOf: jest.Mock;
-		}
-	}
+	},
 }
 
 describe( '@elementor/v1-adapters/dispatchers', () => {
 	let eRun: jest.Mock,
-		eRoute: jest.Mock,
-		eIsPartOf: jest.Mock;
+		eRoute: jest.Mock;
 
 	beforeEach( () => {
 		const extendedWindow = window as unknown as ExtendedWindow;
@@ -21,14 +17,10 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		extendedWindow.$e = {
 			run: jest.fn(),
 			route: jest.fn(),
-			routes: {
-				isPartOf: jest.fn(),
-			},
 		};
 
 		eRun = extendedWindow.$e.run;
 		eRoute = extendedWindow.$e.route;
-		eIsPartOf = extendedWindow.$e.routes.isPartOf;
 	} );
 
 	afterEach( () => {
@@ -124,21 +116,6 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 		expect( () => openRoute( 'test/route' ) )
 			.rejects
 			.toEqual( '`$e.route()` is not available' );
-	} );
-
-	it( 'should determine if a route is active', () => {
-		// Arrange.
-		const route = 'test/route';
-
-		eIsPartOf.mockReturnValue( true );
-
-		// Act.
-		const result = isRouteActive( route );
-
-		// Assert.
-		expect( result ).toEqual( true );
-		expect( eIsPartOf ).toHaveBeenCalledTimes( 1 );
-		expect( eIsPartOf ).toHaveBeenCalledWith( route );
 	} );
 } );
 
