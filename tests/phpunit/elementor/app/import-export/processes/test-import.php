@@ -550,7 +550,7 @@ class Test_Import extends Elementor_Test_Base {
 		};
 	}
 
-	public function mock_get_kit_wp_error() {
+	private function mock_get_kit_wp_error() {
 		$filter = function() {
 			return [
 				'body' => new \WP_Error( 500, 'No Response' ),
