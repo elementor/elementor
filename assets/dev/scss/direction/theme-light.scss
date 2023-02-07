@@ -38,7 +38,7 @@
 //	//Borders
 //	--e-a-border-color: 		#{$e-gray-100};
 //	--e-a-border-color-bold: 	#{$e-gray-100};
-//	--e-a-border-color-bolder: 	#{$e-gray-200};
+//	--e-a-border-color-focus: 	#{$e-gray-200};
 //	--e-a-border-color-accent: 	#{$e-gray-900};
 //	--e-a-border:				1px solid var(--e-a-border-color);
 //	--e-a-border-radius: 		3px;
@@ -103,13 +103,13 @@
 	--e-a-color-txt-disabled: 	#{$e-gray-200};
 	--e-a-color-txt-invert: 	#{$white};
 	--e-a-color-txt-accent: 	#{$e-gray-900};
-	--e-a-color-txt-hover: 		#{$e-gray-700}; //TODO: Check if needed
+	--e-a-color-txt-hover: 		#{$e-gray-600};
 	--e-a-color-txt-active: 	#{$e-gray-900}; //TODO: Check if needed
 
 	//Borders
 	--e-a-border-color: 		#{$e-gray-75};
 	--e-a-border-color-bold: 	#{$e-gray-100};
-	--e-a-border-color-bolder: 	#{$e-gray-200};
+	--e-a-border-color-focus: 	#{$e-gray-200};
 	--e-a-border-color-accent: 	#{$e-gray-900};
 	--e-a-border:				1px solid var(--e-a-border-color);
 	--e-a-border-bold:			1px solid var(--e-a-border-color-bold);

@@ -69,7 +69,7 @@
 	}
 
 	&:focus {
-		border-color: var(--e-a-border-color-bolder);
+		border-color: var(--e-a-border-color-focus);
 		@include padding-end(15px);
 	}
 }

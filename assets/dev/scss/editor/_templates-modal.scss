@@ -300,7 +300,7 @@ label.elementor-template-library-order-label {
 	transition: border 0.5s;
 
 	&:focus {
-		border-color: var(--e-a-border-color-bolder);
+		border-color: var(--e-a-border-color-focus);
 	}
 
 	&::placeholder {

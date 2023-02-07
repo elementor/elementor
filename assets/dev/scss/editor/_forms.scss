@@ -18,7 +18,7 @@ textarea,
 	&:focus {
 
 		&, + .elementor-control-dynamic-switcher {
-			border-color: var(--e-a-border-color-bolder);
+			border-color: var(--e-a-border-color-focus);
 		}
 	}
 }
