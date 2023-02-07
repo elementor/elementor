@@ -31,7 +31,7 @@ export function dispatchRouteClose( route: string ) {
 }
 
 export function dispatchEditModeChange() {
-	window.dispatchEvent( new CustomEvent( 'elementor/v1/edit-mode/change' ) );
+	window.dispatchEvent( new CustomEvent( 'elementor/edit-mode/change' ) );
 }
 
 export function dispatchWindowEvent( event: string ) {

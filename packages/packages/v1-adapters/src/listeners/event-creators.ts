@@ -40,9 +40,9 @@ export const windowEvent = ( event: WindowEventDescriptor['name'] ): WindowEvent
 };
 
 export const v1ReadyEvent = () => {
-	return windowEvent( 'elementor/v1/initialized' );
+	return windowEvent( 'elementor/initialized' );
 };
 
 export const editModeChangeEvent = () => {
-	return windowEvent( 'elementor/v1/edit-mode/change' );
+	return windowEvent( 'elementor/edit-mode/change' );
 };
