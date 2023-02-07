@@ -25,7 +25,6 @@ describe( '@elementor/v1-adapters/dispatchers', () => {
 
 	afterEach( () => {
 		delete ( window as unknown as { $e?: unknown } ).$e;
-		delete ( window as unknown as { elementor?: unknown } ).elementor;
 	} );
 
 	it( 'should run a V1 command that returns Promise', () => {
