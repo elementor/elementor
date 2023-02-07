@@ -1,6 +1,12 @@
 const BasePage = require( './base-page.js' );
 
 module.exports = class FrontendPage extends BasePage {
+	pageId = null;
+
+	setPageId( pageId ) {
+		this.pageId = pageId;
+	}
+
 	/**
 	 * @return {Promise<void>}
 	 */
@@ -13,8 +19,7 @@ module.exports = class FrontendPage extends BasePage {
 		await this.ensureLoaded();
 	}
 
-	async goto( pageId ) {
-		this.pageId = pageId;
+	async load() {
 		await this.page.goto( `?page_id=${ this.pageId }` );
 		await this.ensureLoaded();
 	}
