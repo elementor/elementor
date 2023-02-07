@@ -155,17 +155,25 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	setFiltersUI() {
 		if ( ! this.select2Instance ) {
 			const $filters = this.$( this.ui.selectFilter ),
-				select2Options = {
-					placeholder: __( 'Category', 'elementor' ),
-					allowClear: true,
-					width: 150,
-					dropdownParent: this.$el,
-				};
+				filterLength = $filters.length;
+			for ( let i = 0; i < filterLength; i++ ) {
+				let instance = $filters[ i ];
+				let placeholder = __( 'Category', 'elementor' );
+				if ( instance.getAttribute( 'id' ).includes( 'sets' ) ) {
+					placeholder = __( 'Sets', 'elementor' );
+				}
+				const select2Options = {
+						placeholder: placeholder,
+						allowClear: true,
+						width: 150,
+						dropdownParent: this.$el,
+					};
 
-			this.select2Instance = new Select2( {
-				$element: $filters,
-				options: select2Options,
-			} );
+				this.select2Instance = new Select2( {
+					$element: instance,
+					options: select2Options,
+				} );
+			}
 		}
 	},
 
