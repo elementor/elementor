@@ -1,7 +1,7 @@
 import { ExtendedWindow } from './types';
 import { isJQueryDeferred, promisifyJQueryDeferred } from './utils';
 
-export function runCommand( command: string, args?: object ): Promise<unknown> {
+export function runCommand( command: string, args?: object ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	if ( ! extendedWindow.$e?.run ) {
@@ -21,7 +21,7 @@ export function runCommand( command: string, args?: object ): Promise<unknown> {
 	return Promise.resolve( result );
 }
 
-export function openRoute( route: string ): Promise<void> {
+export function openRoute( route: string ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	if ( ! extendedWindow.$e?.route ) {
@@ -35,10 +35,4 @@ export function openRoute( route: string ): Promise<void> {
 	} catch ( e ) {
 		return Promise.reject( e );
 	}
-}
-
-export function isRouteActive( route: string ): boolean {
-	const extendedWindow = window as unknown as ExtendedWindow;
-
-	return !! extendedWindow.$e?.routes?.isPartOf( route );
 }

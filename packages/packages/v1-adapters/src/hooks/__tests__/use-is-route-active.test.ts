@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useIsRouteActive, isRouteActive } from '@elementor/v1-adapters';
+import { useIsRouteActive, isRouteActive } from '../../';
 import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
 
-jest.mock( '../../dispatchers', () => {
+jest.mock( '../../readers', () => {
 	return {
 		isRouteActive: jest.fn(),
 	};
@@ -10,7 +10,7 @@ jest.mock( '../../dispatchers', () => {
 
 const mockedIsRouteActive = jest.mocked( isRouteActive );
 
-describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
+describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 	it( 'should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
