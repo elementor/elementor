@@ -94,13 +94,13 @@
 		display: inline-block;
 
 		header {
-			border-bottom: 1px solid #f1f3f5;
+			border-bottom: 1px solid $editor-background-light;
 			padding: 0.625rem;
 		}
 
 		h3 {
 			font-size: 0.875rem;
-			color: $color-gray-sheffield;
+			color: $editor-dark;
 			margin: 0;
 		}
 
