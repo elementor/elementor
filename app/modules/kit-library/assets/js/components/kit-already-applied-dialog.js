@@ -1,9 +1,9 @@
 import { Dialog } from '@elementor/app-ui';
 
 export default function KitAlreadyAppliedDialog( props ) {
-	const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 
 	const getRemoveKitUrl = () => {
+		const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 		const url = new URL( elementorToolsUrl );
 		url.searchParams.append( 'referrer_kit', props.id );
 		url.hash = 'tab-import-export-kit';

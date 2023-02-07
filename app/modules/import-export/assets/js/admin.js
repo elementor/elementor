@@ -199,7 +199,11 @@ class Admin {
 			return this.cachedKitData;
 		}
 
-		this.cachedKitData = JSON.parse( sessionStorage.getItem( this.KIT_DATA_KEY ) );
+		try {
+			this.cachedKitData = JSON.parse( sessionStorage.getItem( this.KIT_DATA_KEY ) );
+		} catch ( e ) {
+			return {};
+		}
 
 		return this.cachedKitData ?? {};
 	}

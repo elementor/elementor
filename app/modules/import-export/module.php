@@ -243,9 +243,11 @@ class Module extends BaseModule {
 	 */
 	private function maybe_add_referrer_param( string $href ): string {
 		$param_name = 'referrer_kit';
+
 		if ( empty( $_GET[ $param_name ] ) ) {
 			return $href;
 		}
+
 		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
 	}
 

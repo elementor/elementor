@@ -1,4 +1,4 @@
-describe( 'Admin Test', () => {
+describe( 'Import Export Admin Test', () => {
 	it( 'should check if revert button handler is added', function () {
 		window.document.body.innerHTML = `
 			<button id="elementor-import-export__revert_kit">

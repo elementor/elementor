@@ -6,7 +6,7 @@ import ApplyKitDialog from './apply-kit-dialog';
 export default function KitDialog( props ) {
 	const [ applyAnyway, setApplyAnyway ] = useState( false );
 
-	const kitAlreadyApplied = elementorAppConfig[ 'import-export' ].lastImportedSession.session_id;
+	const kitAlreadyApplied = !! elementorAppConfig[ 'import-export' ].lastImportedSession.session_id;
 
 	if ( kitAlreadyApplied && ! applyAnyway ) {
 		return (
