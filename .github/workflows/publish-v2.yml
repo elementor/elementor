@@ -1,13 +1,7 @@
 name: Publish V2
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
 
-on:
-  workflow_dispatch:
-    inputs:
-      pre_release:
-        type: boolean
-        description: 'Is this a pre-release?'
-        required: false
+on: [workflow_dispatch]
 
 jobs:
   publish:
