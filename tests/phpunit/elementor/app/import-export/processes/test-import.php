@@ -475,6 +475,95 @@ class Test_Import extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_init_import_session__get_kit_thumbnail_from_manifest() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_empty_kit_thumbnail() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'api-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api_wp_error() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit_wp_error();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	private function mock_get_kit() {
+		$filter = function() {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'thumbnail' => 'api-thumbnail'
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
+	}
+
+	private function mock_get_kit_wp_error() {
+		$filter = function() {
+			return [
+				'body' => new \WP_Error( 500, 'No Response' ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
+	}
+
 	private function assert_valid_taxonomies( $result ) {
 		$this->assertNotEmpty( $result['taxonomies'] );
 
