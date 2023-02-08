@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useIsRouteActive } from '../use-is-route-active';
+import useIsRouteActive from '../use-is-route-active';
 import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
 
-describe( '@elementor/v1-adapters - hooks/useIsRouteActive', () => {
+describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 	it( 'should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';

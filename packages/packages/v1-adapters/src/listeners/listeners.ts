@@ -2,7 +2,6 @@ import { normalizeEvent } from './utils';
 import {
 	CommandEventDescriptor,
 	EventDescriptor,
-	ExtendedWindow,
 	ListenerCallback,
 	RouteEventDescriptor,
 	WindowEventDescriptor,
@@ -64,13 +63,6 @@ function registerCommandListener(
 	} );
 }
 
-export function dispatchReadyEvent() {
-	return getV1LoadingPromise().then( () => {
-		setIsReady( true );
-		window.dispatchEvent( new CustomEvent( 'elementor/v1/initialized' ) );
-	} );
-}
-
 function registerRouteListener(
 	route: RouteEventDescriptor['name'],
 	state: RouteEventDescriptor['state'],
@@ -129,14 +121,4 @@ function makeEventHandler( event: EventDescriptor['name'] ): EventListener {
 			callback( normalizedEvent );
 		} );
 	};
-}
-
-function getV1LoadingPromise() {
-	const v1LoadingPromise = ( window as unknown as ExtendedWindow ).__elementorEditorV1LoadingPromise;
-
-	if ( ! v1LoadingPromise ) {
-		return Promise.reject( 'Elementor Editor V1 is not loaded' );
-	}
-
-	return v1LoadingPromise;
 }
