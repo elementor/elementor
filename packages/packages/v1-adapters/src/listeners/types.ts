@@ -1,3 +1,7 @@
+export type ExtendedWindow = Window & {
+	__elementorEditorV1LoadingPromise?: Promise<void>;
+};
+
 export type CommandEventDescriptor = {
 	type: 'command',
 	name: string,
@@ -15,10 +19,10 @@ export type WindowEventDescriptor = {
 	name: string,
 };
 
-export type CommandEvent = {
+export type CommandEvent<TArgs extends object = object> = {
 	type: CommandEventDescriptor['type'],
 	command: string,
-	args: object,
+	args: TArgs,
 	originalEvent: CustomEvent,
 };
 

@@ -456,11 +456,11 @@ test.describe( 'Container tests', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
+			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
-
 			expect( await container.screenshot( {
 				type: 'jpeg',
-				quality: 90,
+				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
