@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.12.0-dev4 - 2023-02-08
+* Fix: Dynamic background video of section/container is not working in Loop Carousel widget [ED-9516] (#21267)
+* Tweak: Use accessible dismiss notices [ED-9672] (#21241)
+* Tweak: Refactor - separate overview widget to sections [ED-9571] (#21196)
+* Tweak: Add thumbnail to most recently installed kit [ED-9422] (#21105)
+
 #### 3.12.0-dev3 - 2023-02-07
 * Add Niv to the approved list (#21183)
 * Fix: Adjusted right-click menu dark mode for blocked options [ED-9554] (#21186)
@@ -480,9 +486,3 @@
 * Fix: GitHub issue creation minor fixes (#3) [ED-6376] (#17936)
 * Tweak: Lightbox [ED-6517] (#17847)
 * Tweak: Nested Infra - Allow dependencies for experiments [ED-6421] (#17663)
-
-#### 3.6.0-dev40 - 2022-02-22
-* Fix: Navigator keeps opening when dragging in a new widget [Dev edition] [ED-5776] (#17905)
-
-#### 3.6.0-dev39 - 2022-02-17
-* Fix: `remove_responsive_control()` doesn't remove controls for additional Custom breakpoints [ED-6294] (#17529)
