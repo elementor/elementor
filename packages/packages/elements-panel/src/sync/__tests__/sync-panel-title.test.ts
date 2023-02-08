@@ -58,7 +58,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 
 	it( 'should change the panel title when V1 is ready and the elements panel is open', () => {
 		// Arrange.
-		mockIsRouteActive.mockReturnValue( true );
+		mockIsRouteActive.mockImplementation( ( route ) => route === 'panel/elements' );
 		syncPanelTitle();
 
 		// Act.
@@ -71,7 +71,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 
 	it( 'should not change the panel title when V1 is ready and the elements panel is not open', () => {
 		// Arrange.
-		mockIsRouteActive.mockReturnValue( false );
+		mockIsRouteActive.mockImplementation( ( route ) => route === 'not/the/panel' );
 		syncPanelTitle();
 
 		// Act.
@@ -84,6 +84,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 
 	it( 'should not change the panel title when opening the site settings', () => {
 		// Arrange.
+		mockIsRouteActive.mockImplementation( ( route ) => route === 'panel/global/menu' );
 		syncPanelTitle();
 
 		// Act.
