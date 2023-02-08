@@ -14,6 +14,6 @@ injectIntoCanvasDisplay( {
 } );
 
 injectIntoPrimaryAction( {
-	name: 'top-bar-document-primary-action',
+	name: 'top-bar-primary-action',
 	filler: PrimaryAction,
 } );

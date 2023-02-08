@@ -46,10 +46,10 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( container ).toHaveTextContent( 'Submit' );
+		expect( getByRole( 'button' ) ).toHaveTextContent( 'Submit' );
 	} );
 
 	it( 'should have "Publish" text when the user can publish the document', () => {
@@ -64,10 +64,10 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( container ).toHaveTextContent( 'Publish' );
+		expect( getByRole( 'button' ) ).toHaveTextContent( 'Publish' );
 	} );
 
 	it( 'should be disabled when the document is a Kit', () => {
@@ -81,10 +81,10 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( container.querySelector( 'button' ) ).toBeDisabled();
+		expect( getByRole( 'button' ) ).toBeDisabled();
 	} );
 
 	it( 'should be disabled when the document is pristine', () => {
@@ -97,13 +97,13 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( container.querySelector( 'button' ) ).toBeDisabled();
+		expect( getByRole( 'button' ) ).toBeDisabled();
 	} );
 
-	it( 'should be enabled when the document is Draft', () => {
+	it( 'should always be enabled when the document status is draft', () => {
 		// Arrange.
 		const mockDocument = makeMockDocument();
 
@@ -114,10 +114,10 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( container.querySelector( 'button' ) ).toBeEnabled();
+		expect( getByRole( 'button' ) ).toBeEnabled();
 	} );
 
 	it( 'should save the current document on click', () => {
@@ -130,9 +130,9 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
-		container.querySelector( 'button' )?.click();
+		getByRole( 'button' )?.click();
 
 		// Assert.
 		expect( actionsMock.save ).toHaveBeenCalledTimes( 1 );
@@ -149,15 +149,17 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
+		const { getByRole } = render( <PrimaryAction /> );
 
-		container.querySelector( 'button' )?.click();
-		const loader = container.querySelector( 'svg' );
+		const button = getByRole( 'button' );
+		const loader = getByRole( 'progressbar' );
+
+		button?.click();
 
 		// Assert.
 		expect( actionsMock.save ).not.toHaveBeenCalled();
 		expect( loader ).toBeInTheDocument();
-		expect( container.textContent ).toBe( '' );
+		expect( button.textContent ).toBe( '' );
 	} );
 
 	it( 'should not show a loader when the button is disabled', () => {
@@ -171,12 +173,13 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		} );
 
 		// Act.
-		const { container } = render( <PrimaryAction /> );
-		const loader = container.querySelector( 'svg' );
+		const { getByRole, queryByRole } = render( <PrimaryAction /> );
+		const button = getByRole( 'button' );
+		const loader = queryByRole( 'progressbar' );
 
 		// Assert.
 		expect( loader ).not.toBeInTheDocument();
-		expect( container.textContent ).not.toBe( '' );
+		expect( button.textContent ).not.toBe( '' );
 	} );
 } );
 

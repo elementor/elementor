@@ -20,13 +20,7 @@ export default function PrimaryAction() {
 			sx={ { width: '120px' } }
 			disabled={ isDisabled }
 			size="large"
-			onClick={ () => {
-				if ( document.isSaving ) {
-					return;
-				}
-
-				save();
-			} }
+			onClick={ () => ! document.isSaving && save() }
 		>
 			{
 				shouldShowSpinner
@@ -38,11 +32,9 @@ export default function PrimaryAction() {
 }
 
 function getLabel( document: Document ) {
-	if ( ! document.userCan.publish ) {
-		return __( 'Submit', 'elementor' );
-	}
-
-	return __( 'Publish', 'elementor' );
+	return document.userCan.publish
+		? __( 'Publish', 'elementor' )
+		: __( 'Submit', 'elementor' );
 }
 
 function isEnabled( document: Document ) {
