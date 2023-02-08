@@ -292,8 +292,4 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			this.run();
 		}
 	}
-
-	onDestroy() {
-		this.deactivate();
-	}
 }
