@@ -74,8 +74,10 @@ test.describe( 'Elements regression', () => {
 
 							await control.setValue( value );
 
-							expect( await editorPage.screenshotElement( elementId ) )
-								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							await expect( async () => {
+								expect( await editorPage.screenshotElement( elementId ) )
+									.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							} ).toPass();
 						} );
 					}
 
