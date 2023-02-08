@@ -1,7 +1,6 @@
 import { Dialog } from '@elementor/app-ui';
 
 export default function KitAlreadyAppliedDialog( props ) {
-
 	const getRemoveKitUrl = () => {
 		const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 		const url = new URL( elementorToolsUrl );
