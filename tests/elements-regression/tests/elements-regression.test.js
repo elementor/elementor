@@ -31,7 +31,7 @@ test.describe( 'Elements regression', () => {
 
 			await editorPage.page.waitForTimeout( 500 );
 
-			await test.step( `default values`, async () => {
+			await test.step.soft( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
 				expect( await editorPage.screenshotElement( elementId ) )
@@ -55,7 +55,7 @@ test.describe( 'Elements regression', () => {
 					continue;
 				}
 
-				await test.step( controlId, async () => {
+				await test.step.soft( controlId, async () => {
 					const testedValues = [];
 
 					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
@@ -69,12 +69,12 @@ test.describe( 'Elements regression', () => {
 					for ( const value of await control.getTestValues( initialValue ) ) {
 						const valueLabel = control.generateSnapshotLabel( value );
 
-						await test.step( valueLabel, async () => {
+						await test.step.soft( valueLabel, async () => {
 							testedValues.push( valueLabel );
 
 							await control.setValue( value );
 
-							expect( await editorPage.screenshotElement( elementId ) )
+							expect.soft( await editorPage.screenshotElement( elementId ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 						} );
 					}
