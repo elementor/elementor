@@ -125,14 +125,21 @@ class Module extends BaseModule {
 						$selectors[] = $wrapper_selector;
 					}
 
+					// Trim spaces and remove duplicates.
+					$selectors = array_unique( array_map( 'trim', $selectors ) );
+
 					$attributes[ $lazyload_attribute_name ] = implode( ',', $selectors );
 
-					$element->add_render_attribute( '_wrapper',
-						$attributes
-					);
 				}
 			}
 		}
+
+		if ( ! empty( $attributes ) ) {
+			$element->add_render_attribute( '_wrapper',
+				$attributes
+			);
+		}
+
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
