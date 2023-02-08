@@ -6,8 +6,9 @@ export default function TopBarSave() {
 	const { save } = useActiveDocumentActions();
 
 	return (
-		<Button variant="contained"
-			onClick={ () => save() }
+		<Button
+			variant="contained"
+			onClick={ save }
 			disabled={ ! document || ! document.isDirty }
 			size="large"
 		>

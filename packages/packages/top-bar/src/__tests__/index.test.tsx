@@ -114,7 +114,7 @@ describe( '@elementor/top-bar API', () => {
 
 			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
 			expect( menuItem ).toHaveAttribute( 'aria-disabled', 'true' );
-			expect( menuItemButton ).toHaveAttribute( 'disabled' );
+			expect( menuItemButton ).not.toBeVisible();
 		} );
 
 		it( 'should render a link', () => {
@@ -126,7 +126,7 @@ describe( '@elementor/top-bar API', () => {
 
 			getByRole( 'button' ).click(); // Opens the popover menu
 
-			const link = getByRole( 'link' );
+			const link = getByRole( 'menuitem' );
 
 			expect( link ).toHaveAttribute( 'href', 'https://elementor.com' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
