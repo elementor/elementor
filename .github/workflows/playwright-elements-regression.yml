@@ -77,7 +77,7 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:elements-regression -- --update-snapshots
+          npm run test:setup:elements-regression
       - name: WordPress debug information
         run: |
           npx wp-env run cli "wp core version"
@@ -93,10 +93,4 @@ jobs:
         with:
           name: playwright-test-results
           path: test-results/
-          retention-days: 14
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: screenshots
-          path: tests/elements-regression/tests/elements-regression.test.js-snapshots/
           retention-days: 14
