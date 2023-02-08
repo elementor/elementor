@@ -1,16 +1,34 @@
 import { __ } from '@wordpress/i18n';
-import { listenTo, routeOpenEvent, runCommand, v1ReadyEvent } from '@elementor/v1-adapters';
+import { isRouteActive, listenTo, routeOpenEvent, v1ReadyEvent } from '@elementor/v1-adapters';
+
+type ExtendedWindow = Window & {
+	elementor: {
+		getPanelView: () => {
+			getHeaderView: () => {
+				setTitle: ( title: string ) => void;
+			}
+		}
+	}
+}
 
 export default function syncPanelTitle() {
-	listenTo(
-		[
-			v1ReadyEvent(),
-			routeOpenEvent( 'panel/elements' ),
-		],
-		() => {
-			const title = __( 'Widget Panel', 'elementor' );
+	const title = __( 'Widget Panel', 'elementor' );
 
-			runCommand( 'panel/set-title', { title } );
+	listenTo(
+		routeOpenEvent( 'panel/elements' ),
+		() => setPanelTitle( title )
+	);
+
+	listenTo(
+		v1ReadyEvent(),
+		() => {
+			if ( isRouteActive( 'panel/elements' ) ) {
+				setPanelTitle( title );
+			}
 		}
 	);
+}
+
+function setPanelTitle( title: string ) {
+	( window as unknown as ExtendedWindow ).elementor?.getPanelView?.()?.getHeaderView?.()?.setTitle?.( title );
 }

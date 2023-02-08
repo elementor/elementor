@@ -1,18 +1,44 @@
 import syncPanelTitle from '../sync-panel-title';
-import { flushListeners, runCommand } from '@elementor/v1-adapters';
+import { flushListeners, isRouteActive } from '@elementor/v1-adapters';
+
+type ExtendedWindow = Window & {
+	elementor?: {
+		getPanelView: () => {
+			getHeaderView: () => {
+				setTitle: jest.Mock;
+			}
+		}
+	}
+}
 
 jest.mock( '@elementor/v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/v1-adapters' ),
-	runCommand: jest.fn(),
+	isRouteActive: jest.fn().mockReturnValue( false ),
 } ) );
 
-const mockRunCommand = jest.mocked( runCommand );
+const mockIsRouteActive = jest.mocked( isRouteActive );
 
 describe( '@elementor/elements-panel - syncPanelTitle', () => {
+	let mockSetTitle: jest.Mock;
+
+	beforeEach( () => {
+		mockSetTitle = jest.fn();
+
+		( window as unknown as ExtendedWindow ).elementor = {
+			getPanelView: () => ( {
+				getHeaderView: () => ( {
+					setTitle: mockSetTitle,
+				} ),
+			} ),
+		};
+	} );
+
 	afterEach( () => {
 		flushListeners();
 
 		jest.clearAllMocks();
+
+		delete ( window as unknown as ExtendedWindow ).elementor;
 	} );
 
 	it( 'should change the panel title when opening the elements panel', () => {
@@ -26,17 +52,35 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		} ) );
 
 		// Assert.
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'panel/set-title', { title: 'Widget Panel' } );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
 	} );
 
-	it( 'should change the panel title when V1 is ready', () => {
+	it( 'should change the panel title when V1 is ready and the elements panel is open', () => {
+		// Arrange.
+		mockIsRouteActive.mockReturnValue( true );
+
 		// Act.
 		syncPanelTitle();
 
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'panel/set-title', { title: 'Widget Panel' } );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
+		expect( mockIsRouteActive ).toHaveBeenCalledWith( 'panel/elements' );
+	} );
+
+	it( 'should not change the panel title when V1 is ready and the elements panel is not open', () => {
+		// Arrange.
+		mockIsRouteActive.mockReturnValue( false );
+
+		// Act.
+		syncPanelTitle();
+
+		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
+
+		// Assert.
+		expect( mockSetTitle ).not.toHaveBeenCalled();
+		expect( mockIsRouteActive ).toHaveBeenCalledWith( 'panel/elements' );
 	} );
 
 	it( 'should not change the panel title when opening the site settings', () => {
@@ -50,6 +94,6 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		} ) );
 
 		// Assert.
-		expect( mockRunCommand ).not.toHaveBeenCalled();
+		expect( mockSetTitle ).not.toHaveBeenCalled();
 	} );
 } );
