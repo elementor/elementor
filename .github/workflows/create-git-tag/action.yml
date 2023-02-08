@@ -3,10 +3,13 @@ description: Generate a new Git version and push it to the remote repository.
 
 inputs:
   MAINTAIN_USERNAME:
+    description: 'The username of the user that will create the tag.'
     required: true
   MAINTAIN_EMAIL:
+    description: 'The email of the user that will create the tag.'
     required: true
   MESSAGE:
+    description: 'The message of the tag.'
     required: false
 
 runs:
@@ -17,5 +20,5 @@ runs:
         git config user.name ${{ inputs.MAINTAIN_USERNAME }}
         git config user.email ${{ inputs.MAINTAIN_EMAIL }}
         echo "Create tag v${{ inputs.MESSAGE }}"
-        git tag "${{ inputs.MESSAGE }}"
-        git push origin "${{ inputs.MESSAGE }}"
+        git tag -f "${{ inputs.MESSAGE }}"
+        git push origin "${{ inputs.MESSAGE }}" --force

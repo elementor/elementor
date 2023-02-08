@@ -69,10 +69,6 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
-      - name: Remove Git tag
-        uses : ./.github/workflows/remove-git-tag
-        with:
-          PACKAGE_VERSION: v${{ env.PACKAGE_VERSION }}
       - name: Create Git tag
         uses : ./.github/workflows/create-git-tag
         with:
