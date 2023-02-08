@@ -23,7 +23,7 @@ export function dispatchWindowEvent( event: string ) {
 }
 
 export function dispatchV1ReadyEvent() {
-	dispatchWindowEvent( 'elementor/v1/initialized' );
+	dispatchWindowEvent( 'elementor/initialized' );
 }
 
 export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
