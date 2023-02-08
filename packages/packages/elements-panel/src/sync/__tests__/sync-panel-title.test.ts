@@ -29,6 +29,16 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		expect( mockRunCommand ).toHaveBeenCalledWith( 'panel/set-title', { title: 'Widget Panel' } );
 	} );
 
+	it( 'should change the panel title when V1 is ready', () => {
+		// Act.
+		syncPanelTitle();
+
+		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
+
+		// Assert.
+		expect( mockRunCommand ).toHaveBeenCalledWith( 'panel/set-title', { title: 'Widget Panel' } );
+	} );
+
 	it( 'should not change the panel title when opening the site settings', () => {
 		// Act.
 		syncPanelTitle();
