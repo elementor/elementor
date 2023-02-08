@@ -74,7 +74,7 @@ test.describe( 'Elements regression', () => {
 
 							await control.setValue( value );
 
-							expect.soft( await editorPage.screenshotElement( elementId ) )
+							expect( await editorPage.screenshotElement( elementId ) )
 								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
 						} );
 					}
