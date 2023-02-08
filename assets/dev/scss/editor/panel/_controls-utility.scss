@@ -4,6 +4,7 @@
 
 //Start responsive switcher
 $item-size: 2.5em;
+$title-size: 12px;
 
 .elementor-control-responsive-switchers {
 	--selected-option: 0;
@@ -12,7 +13,7 @@ $item-size: 2.5em;
 	position: relative;
 	width: $item-size;
 	height: $item-size;
-	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	margin: calc( -#{$item-size} + #{$title-size}) 0;
 	@include margin-end(5px);
 
 	&__holder {

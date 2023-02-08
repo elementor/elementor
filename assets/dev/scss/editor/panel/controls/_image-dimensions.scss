@@ -18,7 +18,7 @@
 			&:focus {
 
 				+ .elementor-image-dimensions-field-description {
-					color: $editor-light;
+					color: var(--e-a-color-txt);
 				}
 			}
 		}
@@ -32,9 +32,8 @@
 
 	.elementor-image-dimensions-field-description {
 		display: block;
-		text-transform: uppercase;
 		margin-top: 5px;
-		color: $editor-lightest;
+		color: var(--e-a-color-txt-disabled);
 		font-size: 9px;
 		text-align: center;
 	}

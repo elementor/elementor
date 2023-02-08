@@ -5,18 +5,18 @@
 
 		// Equivalent to `0 3px 3px 0` in LTR.
 		border-start-start-radius: 0;
-		border-start-end-radius: 3px;
-		border-end-end-radius: 3px;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-end-radius: var(--e-a-border-radius);
 		border-end-start-radius: 0;
 	}
 
 	&.elementor-control-dynamic {
 		input {
 			// Equivalent to `3px 0 0 3px` in LTR.
-			border-start-start-radius: 3px;
+			border-start-start-radius: var(--e-a-border-radius);
 			border-start-end-radius: 0;
 			border-end-end-radius: 0;
-			border-end-start-radius: 3px;
+			border-end-start-radius: var(--e-a-border-radius);
 		}
 	}
 }

@@ -19,10 +19,10 @@
 		input {
 			@include border-start(none);
 			border-radius: 0;
-			padding: 3px;
+			padding: var(--e-a-border-radius);
 
 			&:focus {
-				@include border-start(1px solid var(--e-a-border-color-bold));
+				@include border-start(var(--e-a-border-bold));
 				@include margin-start(-1px);
 				width: calc(100% + 1px);
 
@@ -38,7 +38,7 @@
 			background-color: var(--e-a-bg-default);
 			padding: 0;
 			outline: none;
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 			cursor: pointer;
 		}
 
@@ -46,10 +46,10 @@
 
 			input {
 				@include border-start(1px solid var(--e-a-border-color-bold));
-				border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+				border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
 
 				&:focus {
-					border-color: $editor-light;
+					border-color: var(--e-a-border-color-focus);
 					@include margin-start(0);
 					width: 100%;
 				}
@@ -76,7 +76,6 @@
 		display: block;
 		text-align: center;
 		font-size: 9px;
-		text-transform: uppercase;
 		padding-top: 5px;
 	}
 

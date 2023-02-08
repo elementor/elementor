@@ -18,9 +18,9 @@
 	overflow: hidden;
 
 	.elementor-choices-label {
-		border-top: var(--e-a-border);
-		border-bottom: var(--e-a-border);
-		@include border-start(var(--e-a-border));
+		border-top: var(--e-a-border-bold);
+		border-bottom: var(--e-a-border-bold);
+		@include border-start(var(--e-a-border-bold));
 		@include border-end(none);
 		font-size: 12px;
 		transition: var(--e-a-transition-hover);
@@ -28,28 +28,30 @@
 		overflow: hidden;
 
 		&:nth-child(2) {
-			@include _dimension_side_property(border-top, start, radius, 3px);
-			@include _dimension_side_property(border-bottom, start, radius, 3px);
+			@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
+			@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
 		}
 
 		&:last-child {
-			@include border-end(var(--e-a-border));
-			@include _dimension_side_property(border-top, end, radius, 3px);
-			@include _dimension_side_property(border-bottom, end, radius, 3px);
+			@include border-end(var(--e-a-border-bold));
+			@include _dimension_side_property(border-top, end, radius, var(--e-a-border-radius));
+			@include _dimension_side_property(border-bottom, end, radius, var(--e-a-border-radius));
 		}
 	}
 
 	input {
 		display: none;
 
-		&.e-choose-placeholder + .elementor-choices-label {
-			background-color: $editor-lightest;
-			border-color: $editor-lightest;
+		&:hover {
+			+ .elementor-choices-label {
+				background-color: var(--e-a-bg-hover);
+			}
 		}
 
+		&.e-choose-placeholder + .elementor-choices-label,
 		&:checked + .elementor-choices-label {
-			background-color: $editor-lightest;
-			border-color: $editor-lightest;
+			background-color: var(--e-a-bg-active-bold);
+			color: var(--e-a-color-txt-accent);
 		}
 	}
 }
@@ -58,33 +60,5 @@
 
 	.elementor-choices {
 		justify-content: flex-end;
-	}
-}
-
-.rtl {
-
-	.elementor-control-type-choose {
-
-		&[class*="elementor-control-text_align"],
-		&[class*="elementor-control-align"],
-		&[class*="elementor-control-position"] {
-
-			.elementor-choices {
-				flex-direction: row-reverse; // Force ltr also in RTL languages
-
-				.elementor-choices-label {
-
-					&:nth-child(2) {
-						@include border-end(var(--e-a-border));
-						border-radius: 3px 0 0 3px;
-					}
-
-					&:last-child {
-						@include border-end(none);
-						border-radius: 0 3px 3px 0;
-					}
-				}
-			}
-		}
 	}
 }
