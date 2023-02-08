@@ -12,7 +12,7 @@ export default function useActionProps() {
 	const disabled = isPreviewMode || isSiteSettingsActive;
 
 	return {
-		title: __( 'Add element', 'elementor' ),
+		title: __( 'Structure', 'elementor' ),
 		icon: () => <StructureIcon />,
 		onClick: () => runCommand( 'navigator/toggle' ),
 		selected,
