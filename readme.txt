@@ -146,7 +146,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
+* WordPress 5.9 or greater
 * PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
