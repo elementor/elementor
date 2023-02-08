@@ -8,7 +8,7 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      chennel:
+      channel:
         type: choice
         description: 'The channel to get the version to'
         required: true
@@ -44,7 +44,7 @@ jobs:
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
         with:
-          CHANNEL: ${{ github.event.inputs.chennel }}
+          CHANNEL: ${{ github.event.inputs.channel }}
           TYPE: ${{ env.TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
@@ -53,7 +53,7 @@ jobs:
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           REPO_NAME: ${{ github.event.repository.name }}
           CLEAN_PACKAGE_VERSION: ${{ env.PACKAGE_VERSION_CLEAN }}
-          CHANNEL: ${{ github.event.inputs.chennel }}
+          CHANNEL: ${{ github.event.inputs.channel }}
       - name: Install Dependencies
         run: |
           npm ci
@@ -78,7 +78,7 @@ jobs:
       - name: Get Previous Release
         uses : ./.github/workflows/get-previous-release
         with:
-          CHANNEL: ${{ github.event.inputs.chennel }}
+          CHANNEL: ${{ github.event.inputs.channel }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
