@@ -128,6 +128,14 @@
 
 .elementor-control-dynamic {
 
+	input {
+		// Equivalent to `3px 0 0 3px` in LTR.
+		border-start-start-radius: var(--e-a-border-radius);
+		border-start-end-radius: 0;
+		border-end-end-radius: 0;
+		border-end-start-radius: var(--e-a-border-radius);
+	}
+
 	&-switcher {
 		display: inline-flex;
 		align-items: center;
@@ -136,8 +144,13 @@
 		height: $control-unit;
 		cursor: pointer;
 		border: var(--e-a-border-bold);
-		border-radius: 3px;
 		background: var(--e-a-bg-default);
+		border-inline-start-width: 0;
+		// Equivalent to `0 3px 3px 0` in LTR.
+		border-start-start-radius: 0;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-end-radius: var(--e-a-border-radius);
+		border-end-start-radius: 0;
 
 		&:hover {
 			color: var(--e-a-color-primary);

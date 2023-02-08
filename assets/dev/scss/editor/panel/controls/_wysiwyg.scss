@@ -5,11 +5,11 @@
 	}
 
 	.wp-editor-container {
-		border: 1px solid $editor-background;
+		border: var(--e-a-border);
 	}
 
 	.wp-editor-tabs {
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border);
 		border-bottom: none;
 		border-radius: 3px 3px 0 0;
 	}

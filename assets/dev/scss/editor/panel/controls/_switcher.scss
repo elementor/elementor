@@ -23,7 +23,6 @@
 		display: block;
 		height: inherit;
 		font-size: 7px;
-		text-transform: uppercase;
 		background: #eceeef;
 		border-radius: inherit;
 		transition: 0.15s ease-out;
@@ -45,19 +44,19 @@
 		&:before {
 			content: attr(data-off);
 			right: 3px;
-			color: $editor-light;
+			color: var(--e-a-color-txt-muted);
 		}
 
 		&:after {
 			content: attr(data-on);
 			left: 3px;
-			color: white;
+			color: var(--e-a-color-txt-invert);
 			opacity: 0;
 		}
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-label {
-		background: $editor-accent;
+		background: var(--e-a-color-primary);
 
 		&:before {
 			opacity: 0;

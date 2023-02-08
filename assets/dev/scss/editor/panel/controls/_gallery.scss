@@ -144,9 +144,9 @@
 	}
 
 	.elementor-control-dynamic-switcher {
-		border: none;
-		border-bottom: var(--e-a-border);
-		@include border-start(var(--e-a-border));
-		border-radius: getValueByDirection(0 var(--e-admin-border-radius) 0 0, var(--e-admin-border-radius) 0 0 0);
+		border-width: 0;
+		border-inline-start-width: 1px;
+		border-bottom-width: 1px;
+		border-radius: 0;
 	}
 }
