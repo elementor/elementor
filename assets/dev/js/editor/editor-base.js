@@ -179,7 +179,6 @@ export default class EditorBase extends Marionette.Application {
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
-			Order: require( 'elementor-controls/order' ),
 			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
