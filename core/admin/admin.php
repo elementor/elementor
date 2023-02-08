@@ -392,7 +392,9 @@ class Admin extends App {
 	 * Elementor dashboard widget.
 	 *
 	 * Displays the Elementor dashboard widget.
+	 *
 	 * Fired by `wp_add_dashboard_widget` function.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */
@@ -479,10 +481,13 @@ class Admin extends App {
 
 	/**
 	 * Get elementor dashboard overview widget footer actions.
+	 *
 	 * Retrieves the footer action links displayed in elementor dashboard widget.
-	 * @since 3.12.0
+	 *
+	 * @since 1.9.0
+	 * @access private
 	 */
-	public static function static_get_dashboard_overview_widget_footer_actions() {
+	private function get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
 				'title' => esc_html__( 'Blog', 'elementor' ),
@@ -527,19 +532,12 @@ class Admin extends App {
 	}
 
 	/**
-	 * Get elementor dashboard overview widget footer actions.
-	 * Retrieves the footer action links displayed in elementor dashboard widget.
-	 * @since 1.9.0
-	 * @access private
-	 */
-	private function get_dashboard_overview_widget_footer_actions() {
-		return self::static_get_dashboard_overview_widget_footer_actions();
-	}
-
-	/**
 	 * Admin action new post.
+	 *
 	 * When a new post action is fired the title is set to 'Elementor' and the post ID.
+	 *
 	 * Fired by `admin_action_elementor_new_post` action.
+	 *
 	 * @since 1.9.0
 	 * @access public
 	 */
