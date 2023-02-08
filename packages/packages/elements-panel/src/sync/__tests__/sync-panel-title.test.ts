@@ -42,9 +42,10 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 	} );
 
 	it( 'should change the panel title when opening the elements panel', () => {
-		// Act.
+		// Arrange.
 		syncPanelTitle();
 
+		// Act.
 		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
 			detail: {
 				route: 'panel/elements/categories',
@@ -58,10 +59,9 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 	it( 'should change the panel title when V1 is ready and the elements panel is open', () => {
 		// Arrange.
 		mockIsRouteActive.mockReturnValue( true );
-
-		// Act.
 		syncPanelTitle();
 
+		// Act.
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
@@ -72,10 +72,9 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 	it( 'should not change the panel title when V1 is ready and the elements panel is not open', () => {
 		// Arrange.
 		mockIsRouteActive.mockReturnValue( false );
-
-		// Act.
 		syncPanelTitle();
 
+		// Act.
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
@@ -84,9 +83,10 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 	} );
 
 	it( 'should not change the panel title when opening the site settings', () => {
-		// Act.
+		// Arrange.
 		syncPanelTitle();
 
+		// Act.
 		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
 			detail: {
 				route: 'panel/global/menu',
