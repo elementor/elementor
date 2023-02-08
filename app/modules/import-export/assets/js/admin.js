@@ -115,7 +115,7 @@ class Admin {
 					cancel: __( 'Kit Library', 'elementor' ),
 				},
 				onCancel: () => {
-					location.href = elementorAppConfig.base_url + '#/kit-library';
+					location.href = elementorAppConfig[ 'kit-library' ].app_url;
 				},
 			} );
 			this.clearCache();
@@ -130,7 +130,7 @@ class Admin {
 				cancel: __( 'Close', 'elementor' ),
 			},
 			onConfirm: () => {
-				location.href = elementorAppConfig.base_url + '#/kit-library/preview/' + referrerKitId;
+				location.href = elementorAppConfig[ 'kit-library' ].app_url + '/preview/' + referrerKitId;
 			},
 		} );
 		this.clearCache();
