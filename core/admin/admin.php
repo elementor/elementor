@@ -561,7 +561,7 @@ class Admin extends App {
 	 * @since 3.12.0
 	 * @access public
 	 */
-	public static function static_get_dashboard_overview_widget_footer_actions(){
+	public static function static_get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
 				'title' => esc_html__( 'Blog', 'elementor' ),
