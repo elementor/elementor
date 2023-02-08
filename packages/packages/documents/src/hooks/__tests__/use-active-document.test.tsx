@@ -24,7 +24,7 @@ describe( '@elementor/documents - useActiveDocument', () => {
 			id: 1,
 			title: 'Document 1',
 			status: 'publish' as const,
-			type: 'page',
+			type: 'wp-page;',
 			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,

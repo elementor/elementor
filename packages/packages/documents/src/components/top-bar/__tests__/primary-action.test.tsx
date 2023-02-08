@@ -1,6 +1,6 @@
-import { Document } from '../../../types';
 import PrimaryAction from '../primary-action';
 import { render } from '@testing-library/react';
+import { createMockDocument } from '../../../__tests__/test-utils';
 import { useActiveDocument, useActiveDocumentActions } from '../../../hooks';
 
 jest.mock( '../../../hooks', () => ( {
@@ -36,7 +36,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should have "Submit" text when the user cannot publish the document', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -54,7 +54,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should have "Publish" text when the user can publish the document', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -72,7 +72,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should be disabled when the document is a Kit', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -89,7 +89,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should be disabled when the document is pristine', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -105,7 +105,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should always be enabled when the document status is draft', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -120,9 +120,9 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		expect( getByRole( 'button' ) ).toBeEnabled();
 	} );
 
-	it( 'should save the current document on click', () => {
+	it( 'should save the active document on click', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -140,7 +140,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should show a loader & not save when there is save in progress', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -164,7 +164,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should not show a loader when the button is disabled', () => {
 		// Arrange.
-		const mockDocument = makeMockDocument();
+		const mockDocument = createMockDocument();
 
 		mockedUseActiveDocument.mockReturnValue( {
 			...mockDocument,
@@ -182,18 +182,3 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		expect( button.textContent ).not.toBe( '' );
 	} );
 } );
-
-function makeMockDocument(): Document {
-	return {
-		id: 1,
-		title: 'Document 1',
-		status: 'publish',
-		type: 'page',
-		isDirty: false,
-		isSaving: false,
-		isSavingDraft: false,
-		userCan: {
-			publish: true,
-		},
-	};
-}

@@ -48,7 +48,7 @@ export function makeMockV1Document( id = 1 ): V1Document {
 	return {
 		id,
 		config: {
-			type: 'page',
+			type: 'wp-page;',
 			user: {
 				can_publish: true,
 			},

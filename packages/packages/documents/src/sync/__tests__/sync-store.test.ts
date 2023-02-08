@@ -54,7 +54,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		expect( storeState.documents.entities ).toEqual( {
 			1: {
 				id: 1,
-				type: 'page',
+				type: 'wp-page;',
 				title: 'Document 1',
 				status: 'publish',
 				isDirty: false,
@@ -66,7 +66,7 @@ describe( '@elementor/documents - Sync Store', () => {
 			},
 			2: {
 				id: 2,
-				type: 'page',
+				type: 'wp-page;',
 				title: 'Document 2',
 				status: 'publish',
 				isDirty: false,
@@ -106,7 +106,7 @@ describe( '@elementor/documents - Sync Store', () => {
 			id: 2,
 			title: 'Document 2',
 			status: 'publish',
-			type: 'page',
+			type: 'wp-page;',
 			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,

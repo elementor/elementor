@@ -12,6 +12,9 @@ export default function PrimaryAction() {
 	}
 
 	const isDisabled = ! isEnabled( document );
+
+	// When the document is being saved, the spinner should not appear.
+	// Usually happens when the Kit is being saved.
 	const shouldShowSpinner = document.isSaving && ! isDisabled;
 
 	return (
