@@ -87,7 +87,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:elements-regression:linux
+          npm run test:elements-regression
       - uses: actions/upload-artifact@v2
         if: always()
         with:
