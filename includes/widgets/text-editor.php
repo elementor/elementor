@@ -315,6 +315,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 5,
 				],
@@ -337,6 +338,7 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 10,
 				],
