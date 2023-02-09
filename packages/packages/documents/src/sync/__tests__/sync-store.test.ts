@@ -8,7 +8,6 @@ import {
 	dispatchV1ReadyEvent,
 	makeDocumentsManager,
 	makeMockV1Document,
-	makeV1Settings,
 } from './test-utils';
 import { selectActiveDocument } from '../../store/selectors';
 

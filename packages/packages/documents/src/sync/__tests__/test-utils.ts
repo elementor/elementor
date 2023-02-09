@@ -89,7 +89,7 @@ export function makeMockV1Document( {
 }
 
 // Mock Backbone's settings model.
-export function makeV1Settings<T extends object>( settings: T ) {
+function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];
