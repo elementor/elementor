@@ -1,8 +1,8 @@
-import { injectIntoTop, useEnvOptions } from '@elementor/editor';
-import TopBar from './components/top-bar';
 import { registerLink } from './';
 import { __ } from '@wordpress/i18n';
 import { WordpressIcon } from './icons';
+import TopBar from './components/top-bar';
+import { injectIntoTop, useSettings } from '@elementor/editor';
 
 injectIntoTop( {
 	name: 'top-bar',
@@ -13,7 +13,7 @@ registerLink( 'main', {
 	name: 'manage-website',
 	group: 'exits',
 	useProps: () => {
-		const { urls } = useEnvOptions();
+		const { urls } = useSettings();
 
 		return {
 			title: __( 'Manage Website', 'elementor' ),

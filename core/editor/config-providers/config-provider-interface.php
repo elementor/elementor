@@ -21,6 +21,13 @@ interface Config_Provider_Interface {
 	public function get_script_handles_to_enqueue();
 
 	/**
+	 * Return the settings objects that will be printed with the scripts.
+	 *
+	 * @return array
+	 */
+	public function get_client_settings();
+
+	/**
 	 * Return a list of the styles to register.
 	 *
 	 * @return array
@@ -40,11 +47,4 @@ interface Config_Provider_Interface {
 	 * @return string
 	 */
 	public function get_template_body_file_path();
-
-	/**
-	 * Return the Environment variables for the app.
-	 *
-	 * @return array
-	 */
-	public function get_app_env();
 }

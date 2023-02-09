@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_script_configs() {
 		return array_merge(
-			Editor_Common_Assets::get_script_configs(),
+			Editor_Common_Configs::get_script_configs(),
 			[
 				// Loader script
 				[
@@ -24,8 +24,12 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		return [ 'elementor-editor-loader-v1' ];
 	}
 
+	public function get_client_settings() {
+		return Editor_Common_Configs::get_client_settings();
+	}
+
 	public function get_style_configs() {
-		return Editor_Common_Assets::get_style_configs();
+		return Editor_Common_Configs::get_style_configs();
 	}
 
 	public function get_style_handles_to_enqueue() {
@@ -34,9 +38,5 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v1.view.php';
-	}
-
-	public function get_app_env() {
-		return [];
 	}
 }

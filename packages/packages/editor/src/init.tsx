@@ -1,20 +1,22 @@
 import * as ReactDOM from 'react-dom';
 import Shell from './components/shell';
+import { ThemeProvider } from '@elementor/ui';
 import { StoreProvider, createStore } from '@elementor/store';
 import { dispatchReadyEvent } from '@elementor/v1-adapters';
-import { EnvContextProvider, EnvOptions } from './contexts/env-context';
+import { SettingsContextProvider, Settings } from './contexts/settings-context';
 
-export default function init( domElement: HTMLElement, envOptions: EnvOptions ): void {
+export default function init( domElement: HTMLElement, settings: Settings ): void {
 	const store = createStore();
 
 	dispatchReadyEvent();
 
-	// TODO: Why those providers are here and the ThemeProvider is in the Shell?
 	ReactDOM.render( (
-		<EnvContextProvider { ...envOptions }>
+		<SettingsContextProvider settings={ settings }>
 			<StoreProvider store={ store }>
-				<Shell />
+				<ThemeProvider>
+					<Shell />
+				</ThemeProvider>
 			</StoreProvider>
-		</EnvContextProvider>
+		</SettingsContextProvider>
 	), domElement );
 }

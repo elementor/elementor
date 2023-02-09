@@ -52,6 +52,18 @@ class Editor_Loader {
 		}
 	}
 
+	public function print_client_settings() {
+		$client_settings = $this->config_provider->get_client_settings();
+
+		foreach ( $client_settings as $client_setting ) {
+			Utils::print_js_config(
+				$client_setting['handle'],
+				$client_setting['name'],
+				$client_setting['config']
+			);
+		}
+	}
+
 	/**
 	 * @return void
 	 */
@@ -109,8 +121,6 @@ class Editor_Loader {
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
 		$body_file_path = $this->config_provider->get_template_body_file_path();
-
-		$app_env = $this->config_provider->get_app_env();
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
