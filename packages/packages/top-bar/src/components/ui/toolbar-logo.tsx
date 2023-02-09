@@ -6,6 +6,8 @@ interface StyledElementorLogoProps extends SvgIconProps {
 	showMenuIcon?: boolean;
 }
 
+type ToolbarLogoProps = Omit<ToggleButtonProps, 'value'>;
+
 const ElementorLogo = ( props: SvgIconProps ) => {
 	return (
 		<SvgIcon viewBox="0 0 32 32" { ...props }>
@@ -59,11 +61,11 @@ const StyledElementorLogo = styled( ElementorLogo, {
 	},
 } ) );
 
-export default function ToolbarLogo( props: ToggleButtonProps ) {
-	const [ showMenuIcon, setShowMenuIcon ] = useState( () => props.selected );
+export default function ToolbarLogo( props: ToolbarLogoProps ) {
+	const [ isHoverState, setIsHoverState ] = useState( () => props.selected );
 
 	useEffect( () => {
-		setShowMenuIcon( props.selected );
+		setIsHoverState( props.selected );
 	}, [ props.selected ] );
 
 	return (
@@ -71,14 +73,10 @@ export default function ToolbarLogo( props: ToggleButtonProps ) {
 			{ ...props }
 			value="selected"
 			size="small"
-			onMouseEnter={ () => setShowMenuIcon( true ) }
-			onMouseLeave={ () => setShowMenuIcon( props.selected ) }
+			onMouseEnter={ () => setIsHoverState( true ) }
+			onMouseLeave={ () => setIsHoverState( props.selected ) }
 		>
-			<StyledElementorLogo titleAccess={ props.value as string } showMenuIcon={ showMenuIcon } />
+			<StyledElementorLogo titleAccess={ __( 'Elementor Logo', 'elementor' ) } showMenuIcon={ isHoverState } />
 		</StyledToggleButton>
 	);
 }
-
-ToolbarLogo.defaultProps = {
-	value: __( 'Elementor Logo', 'elementor' ),
-};
