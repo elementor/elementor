@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { useIsPreviewMode } from '../../';
 import { dispatchEditModeChange } from '../../__tests__/utils';
-import { EditMode, ExtendedWindow } from '../../readers/types';
+import { mockGetCurrentEditMode } from './test-utils';
 
 describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 	it.each( [
@@ -46,14 +46,3 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 	} );
 } );
 
-function mockGetCurrentEditMode( implementation: () => EditMode ) {
-	const extendedWindow = window as unknown as ExtendedWindow;
-
-	extendedWindow.elementor = {
-		channels: {
-			dataEditMode: {
-				request: jest.fn( implementation ),
-			},
-		},
-	};
-}

@@ -14,7 +14,7 @@ export default function Indicator( { title, status }: Props ) {
 					textOverflow: 'ellipsis',
 					maxWidth: '120px',
 					overflow: 'hidden',
-					whiteSpace: 'noWrap',
+					whiteSpace: 'nowrap',
 				} }>
 					{ title }
 				</Typography>

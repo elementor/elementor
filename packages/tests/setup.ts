@@ -1,6 +1,9 @@
-import { resetInjections } from '@elementor/locations';
+import { flushInjections } from '@elementor/locations';
 import { flushListeners, setIsReady } from '@elementor/v1-adapters';
 import { deleteStore } from '@elementor/store';
+
+// Add JSDOM matchers.
+import '@testing-library/jest-dom';
 
 import '@wordpress/jest-console';
 
@@ -13,7 +16,7 @@ beforeEach( () => {
 	jest.mocked( console.info ).mockImplementation( () => null );
 	/* eslint-enable no-console */
 
-	resetInjections();
+	flushInjections();
 	flushListeners();
 	deleteStore();
 

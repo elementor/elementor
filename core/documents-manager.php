@@ -510,6 +510,7 @@ class Documents_Manager {
 		$document->save( $data );
 
 		$post = $document->get_post();
+		$main_post = $document->get_main_post();
 
 		// Refresh after save.
 		$document = $this->get( $post->ID, false );
@@ -526,7 +527,7 @@ class Documents_Manager {
 			],
 		];
 
-		$post_status_object = get_post_status_object( $post->post_status );
+		$post_status_object = get_post_status_object( $main_post->post_status );
 
 		if ( $post_status_object ) {
 			$return_data['config']['document']['status'] = [

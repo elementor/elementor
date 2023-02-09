@@ -1,29 +1,25 @@
 import { ToggleButton, Tooltip, SvgIcon } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { Document } from '../../types';
-import { useIsRouteActive, openRoute } from '@elementor/v1-adapters';
+import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
 
 type Props = {
 	type: Document['type']
 }
 
 export default function SettingsButton( { type }: Props ) {
-	const isPageSettingsPanelActive = useIsRouteActive( 'panel/page-settings' );
-	const isSiteSettingsActive = useIsRouteActive( 'panel/global' );
+	const { isActive, isBlocked } = useRouteStatus( 'panel/page-settings' );
 
 	/* translators: %s: Post type label. */
 	const title = __( '%s settings', 'elementor' )
 		.replace( '%s', type.label );
 
-	const selected = isPageSettingsPanelActive;
-	const disabled = isSiteSettingsActive;
-
 	return (
 		<Tooltip title={ title }>
 			<ToggleButton
 				value="document-settings"
-				selected={ selected }
-				disabled={ disabled }
+				selected={ isActive }
+				disabled={ isBlocked }
 				onChange={ () => openRoute( 'panel/page-settings/settings' ) }
 			>
 				<SvgIcon viewBox="0 0 21 20">

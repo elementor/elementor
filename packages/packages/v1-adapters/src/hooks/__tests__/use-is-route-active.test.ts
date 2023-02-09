@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import useIsRouteActive from '../use-is-route-active';
 import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
+import { mockIsRouteActive } from './test-utils';
 
 describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 	it( 'should return false when a route is inactive by default', () => {
@@ -91,18 +92,3 @@ describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 	} );
 } );
 
-function mockIsRouteActive( implementation: ( route: string ) => boolean ) {
-	const extendedWindow = window as unknown as {
-		$e: {
-			routes: {
-				isPartOf: ( route: string ) => boolean
-			}
-		}
-	};
-
-	extendedWindow.$e = {
-		routes: {
-			isPartOf: jest.fn( implementation ),
-		},
-	};
-}
