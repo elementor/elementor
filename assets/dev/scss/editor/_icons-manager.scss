@@ -79,7 +79,7 @@
 		}
 
 		&__title {
-			color: $editor-darker;
+			color: var(--e-a-color-txt);
 			font-size: 16px;
 			font-weight: 500;
 			text-align: $start;
@@ -122,7 +122,6 @@
 
 		&__icon {
 			font-size: 60px;
-			color: $editor-lighter;
 		}
 
 		&__text {

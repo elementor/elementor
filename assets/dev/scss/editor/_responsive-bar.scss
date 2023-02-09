@@ -46,7 +46,7 @@
 		&:hover,
 		&[aria-selected="true"] {
 			color: $e-gray-50;
-			background-color: $editor-accent;
+			background-color: var(--e-a-bg-primary);
 		}
 
 		input {

@@ -45,7 +45,7 @@ body {
 		cursor: pointer;
 
 		&:not(:hover) {
-			color: $editor-light;
+			color: var(--e-a-color-txt-hover);
 		}
 	}
 
@@ -268,12 +268,12 @@ body {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: $editor-dark;
-			background-color: #fff;
-			@include border-start(1px solid $e-gray-50);
+			color: var(--e-a-color-txt-invert);
+			background-color: var(--e-a-color-white);
+			@include border-start(--e-a-border);
 
 			&:first-child {
-				@include border-start(3px solid $e-gray-900);
+				@include border-start(3px solid var(--e-a-border-color-accent));
 
 				.elementor-editing & {
 					border-color: lighten($e-gray-900, 10%);
@@ -281,7 +281,7 @@ body {
 			}
 
 			&:hover {
-				color: $editor-darkest;
+				color: var(--e-a-color-txt-hover);
 			}
 		}
 

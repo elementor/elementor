@@ -49,10 +49,10 @@ body {
 	}
 
 	a {
-		color: $editor-info;
+		color: var(--e-a-color-info);
 
 		&:hover {
-			color: $editor-accent;
+			color: var(--e-a-color-primary);
 		}
 	}
 

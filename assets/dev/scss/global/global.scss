@@ -38,25 +38,14 @@
 
 //Elementor icon logo wrapper
 .e-logo-wrapper {
-	background: $e-gray-900;
+	background: var(--e-a-bg-invert);
 	display: inline-block;
 	padding: 0.75em;
 	border-radius: 50%;
 	line-height: 1;
 
 	i {
-		color: #fff;
+		color: var(--e-a-color-white);
 		font-size: 1em;
-	}
-}
-
-#e-enable-unfiltered-files-dialog-import-template {
-
-	.dialog-confirm-ok {
-		color: $editor-success;
-	}
-
-	.dialog-confirm-cancel {
-		color: $editor-warning;
 	}
 }

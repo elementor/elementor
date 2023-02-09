@@ -24,11 +24,10 @@
 	@include end(15px);
 	font-size: 15px;
 	line-height: 1;
-	color: $editor-light;
-	transition: $transition-hover;
+	transition: var(--e-a-transition-hover);
 
 	&:hover {
-		color: $editor-dark;
+		color: var(--e-a-color-txt-hover);
 	}
 }
 

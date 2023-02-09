@@ -77,7 +77,7 @@
 	}
 
 	&:not(.elementor-empty) {
-		background-color: #fff;
+		background-color: var(--e-a-color-white);
 		margin-top: 10px;
 	}
 }
