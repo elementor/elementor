@@ -493,7 +493,7 @@ class Widget_Alert extends Widget_Base {
 					} else { ?>
 						<span aria-hidden="true">&times;</span>
 					<?php } ?>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 				</button>
 			<?php endif; ?>
 		</div>
@@ -532,7 +532,7 @@ class Widget_Alert extends Widget_Base {
 						<# } else { #>
 							<span aria-hidden="true">&times;</span>
 						<# } #>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 					</button>
 				<# } #>
 			</div>
