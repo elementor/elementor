@@ -5,9 +5,6 @@ export default function PopoverMenu( { children, ...props }: MenuProps ) {
 	return (
 		<MenuContextProvider type={ 'popover' }>
 			<Menu
-				MenuListProps={ {
-					component: 'div',
-				} }
 				PaperProps={ {
 					sx: { mt: 4 },
 				} }

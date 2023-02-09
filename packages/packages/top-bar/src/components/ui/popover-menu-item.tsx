@@ -1,4 +1,13 @@
-import { MenuItem, MenuItemProps, styled, ListItemText, ListItemIcon } from '@elementor/ui';
+import * as React from 'react';
+import {
+	MenuItem,
+	MenuItemProps,
+	styled,
+	ListItemText,
+	ListItemIcon,
+	ListItemButton,
+	ListItemButtonProps,
+} from '@elementor/ui';
 
 type ExtraProps = {
 	href?: string;
@@ -7,26 +16,32 @@ type ExtraProps = {
 	icon?: JSX.Element;
 }
 
-// The MenuItem link color is affected on hover, by a global CSS color that applies on 'body a:hover {}'.
-const StyleMenuItem = styled( MenuItem )( ( { theme } ) => ( {
-	'&.MuiMenuItem-root:hover': {
+// The 'a' tag color is affected on hover by a global CSS color that applies on 'body a:hover {}'.
+const StyleListItemButton = styled( ListItemButton )( ( { theme } ) => ( {
+	'&.MuiListItemButton-root:hover': {
 		color: theme.palette.text.primary,
 	},
 } ) );
 
+const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, target } ) => {
+	if ( ! href ) {
+		return <>{ children }</>;
+	}
+
+	return (
+		<StyleListItemButton component="a" role="menuitem" href={ href } target={ target }>
+			{ children }
+		</StyleListItemButton>
+	);
+};
+
 export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
 	return (
-		<StyleMenuItem
-			{ ...props }
-			disabled={ disabled }
-			onClick={ onClick }
-			href={ href }
-			target={ target }
-			component={ href ? 'a' : null }
-			LinkComponent={ href ? 'a' : null }
-		>
-			<ListItemIcon>{ icon }</ListItemIcon>
-			<ListItemText primary={ text } />
-		</StyleMenuItem>
+		<MenuItem { ...props } disabled={ disabled } onClick={ onClick } role={ href ? 'presentation' : 'menuitem' }>
+			<MenuItemInnerWrapper href={ href } target={ target }>
+				<ListItemIcon>{ icon }</ListItemIcon>
+				<ListItemText primary={ text } />
+			</MenuItemInnerWrapper>
+		</MenuItem>
 	);
 }
