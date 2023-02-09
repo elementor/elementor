@@ -1,5 +1,6 @@
+import { isRTL } from '@wordpress/i18n';
 import { ArrowUpLeftIcon, ArrowUpRightIcon } from '../../icons';
-import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button, useTheme } from '@elementor/ui';
+import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button } from '@elementor/ui';
 
 const StyledMenuItem = styled( ( props: MenuItemProps ) => (
 	<MenuItem { ...props } />
@@ -47,8 +48,6 @@ type ExtraProps = {
 }
 
 export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
-	const { direction } = useTheme();
-
 	const isExternal = href && target === '_blank';
 	const arrowStyle = { marginInlineStart: 'auto' };
 
@@ -67,7 +66,7 @@ export default function PopoverMenuItem( { children, onClick, href, target, disa
 				{ children }
 				{
 					isExternal && (
-						direction === 'rtl'
+						isRTL()
 							? <ArrowUpLeftIcon sx={ arrowStyle } />
 							: <ArrowUpRightIcon sx={ arrowStyle } />
 					)
