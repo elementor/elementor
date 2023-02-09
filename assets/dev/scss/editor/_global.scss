@@ -106,7 +106,7 @@
 	}
 
 	&-disabled {
-		background: $editor-background;
+		background: var(--e-admin-bg-default);
 		pointer-events: none;
 
 		i {
@@ -121,13 +121,6 @@
 		transform: translateX(-50%) translateY(-50%);
 		color: $editor-dark;
 		font-size: 13px;
-	}
-}
-
-#e-enable-unfiltered-files-dialog {
-
-	.dialog-confirm-ok {
-		color: $editor-success;
 	}
 }
 
