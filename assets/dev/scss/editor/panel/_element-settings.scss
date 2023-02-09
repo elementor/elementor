@@ -9,7 +9,7 @@
 
 	.elementor-panel-navigation-tab {
 		flex: auto;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
 			background-color: var(--e-a-bg-hover);
@@ -95,10 +95,10 @@
 		font-size: 85%;
 		color: inherit;
 		font-weight: 500;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			color: $editor-info;
+			color: var(--e-a-color-info);
 		}
 
 		i {

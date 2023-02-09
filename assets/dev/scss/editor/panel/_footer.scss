@@ -8,7 +8,8 @@
 	left: 0;
 	right: 0;
 	height: 40px;
-	background-color: $editor-darkest;
+	background-color: var(--e-a-bg-invert);
+	color: var(--e-a-dark-color-txt);
 }
 
 #elementor-panel-footer-tools {
@@ -22,16 +23,14 @@
 	align-items: center;
 	justify-content: center;
 	width: 15%;
-	color: $editor-light;
 	cursor: pointer;
-	transition: $transition-hover;
+	transition: var(--e-a-transition-hover);
 
 	i {
 		font-size: 15px;
 	}
 
 	#elementor-panel-saver-button-save-options {
-		float: $start;
 
 		i.eicon-chevron-right {
 			margin: auto;
@@ -46,19 +45,13 @@
 	&:not(.e-open) {
 
 		&:hover {
-			color: $editor-lightest;
+			color: var(--e-a-dark-color-txt-hover);
 		}
 
 		.elementor-panel-footer-sub-menu-wrapper {
 			display: none;
 		}
 	}
-}
-
-#elementor-panel-footer-help-title {
-	text-align: $start;
-	padding: 10px 0;
-	color: $editor-lightest;
 }
 
 #elementor-panel-footer-saver-publish {
@@ -83,7 +76,6 @@
 	.elementor-last-edited-wrapper {
 		font-size: 11px;
 		font-style: italic;
-		color: $e-gray-200;
 		padding: 5px 0 15px;
 
 		&:not(.elementor-state-active) {
@@ -108,7 +100,6 @@
 	&.e-open {
 
 		i.eicon-chevron-right {
-			color: $e-gray-100;
 			transform: rotate(90deg);
 		}
 	}
@@ -117,24 +108,18 @@
 #elementor-panel-saver- {
 
 	&button-{
-		&preview {
-			a {
-				color: $editor-light;
-			}
-		}
 
 		&publish,
 		&save-options {
 			padding: 0;
 			font-size: 11px;
-			text-transform: uppercase;
 			height: 100%;
 			width: 100%;
 			border-radius: 0;
 
 			&.elementor-disabled {
-				background-color: $editor-darker;
-				color: $editor-light;
+				background-color: $e-gray-800;
+				color: $e-gray-300;
 			}
 		}
 
@@ -150,7 +135,6 @@
 		}
 	}
 }
-
 
 .elementor-panel-footer-sub-menu-wrapper {
 	position: absolute;
@@ -177,7 +161,7 @@
 	align-items: center;
 	column-gap: 10px;
 	padding: 0 20px;
-	transition: $transition-hover;
+	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&.elementor-disabled {

@@ -21,7 +21,7 @@ $title-size: 12px;
 		width: 100%;
 		top: 0;
 		background-color: var(--e-a-bg-default);
-		border-radius: 3px;
+		border-radius: var(--e-a-border-radius);
 		transition: 0.15s;
 		border: 1px solid transparent;
 	}
@@ -35,7 +35,7 @@ $title-size: 12px;
 			opacity: 1;
 
 			&:hover {
-				color: $editor-accent;
+				color: var(--e-a-color-primary);
 			}
 		}
 
@@ -63,7 +63,7 @@ $title-size: 12px;
 a.elementor-responsive-switcher {
 
 	&:hover {
-		color: $editor-accent;
+		color: var(--e-a-color-primary);
 	}
 }
 
@@ -76,7 +76,7 @@ a.elementor-responsive-switcher {
 		}
 		.elementor-responsive-switchers-open:not(:hover) {
 			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: $editor-accent;
+				color: var(--e-a-color-primary);
 			}
 		}
 	}
@@ -97,9 +97,9 @@ a.elementor-responsive-switcher {
 		transition: all ease-in-out .15s;
 
 		&:hover {
-			color: $editor-accent;
-			background-color: $editor-background-light;
-			border-radius: 3px;
+			color: var(--e-a-color-primary);
+			background-color: var(--e-a-bg-hover);
+			border-radius: var(--e-a-border-radius);
 		}
 
 		&:not([data-selected="custom"]) {
@@ -128,7 +128,7 @@ a.elementor-responsive-switcher {
 		display: none;
 
 		&:checked + label {
-			color: $editor-accent;
+			color: var(--e-a-color-primary);
 		}
 	}
 
@@ -147,8 +147,7 @@ a.elementor-responsive-switcher {
 		width: $item-size;
 		text-align: center;
 		background-color: var(--e-a-bg-default);
-		border-radius: 3px;
-		border: 1px solid transparent;
+		border-radius: var(--e-a-border-radius);
 		box-shadow: 0 0 3px rgba(0,0,0,0.2);
 		animation-timing-function: linear;
 		animation-delay: 0s;
@@ -165,7 +164,7 @@ a.elementor-responsive-switcher {
 			transition: 0.15s;
 
 			&:hover {
-				color: $editor-accent;
+				color: var(--e-a-color-primary);
 			}
 
 			&:not([data-choose="custom"]) {

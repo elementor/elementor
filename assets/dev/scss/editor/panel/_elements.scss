@@ -64,7 +64,7 @@
 		position: absolute;
 		@include start(10px);
 		top: 50%;
-		color: $editor-light;
+		color: var(--e-a-color-txt-disabled);
 		transform: translateY(-50%);
 	}
 
@@ -82,7 +82,7 @@
 		border-radius: 3px;
 		cursor: move;
 		position: relative;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&--promotion {
 
@@ -117,7 +117,7 @@
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $e-gray-100;
+			color: var(--e-a-color-txt-disabled);
 		}
 
 		&:active {
@@ -167,10 +167,10 @@
 
 			.eicon-close {
 				cursor: pointer;
-				color: $editor-light;
+				color: var(--e-a-color-txt-disabled);
 
 				&:hover {
-					color: $e-gray-400;
+					color: var(--e-a-color-txt-muted);
 				}
 			}
 		}
