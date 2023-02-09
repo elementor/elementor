@@ -1,4 +1,5 @@
-import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button } from '@elementor/ui';
+import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button, useTheme } from '@elementor/ui';
+import { ArrowUpLeftIcon, ArrowUpRightIcon } from '../../icons';
 
 const StyledMenuItem = styled( ( props: MenuItemProps ) => (
 	<MenuItem { ...props } />
@@ -46,6 +47,11 @@ type ExtraProps = {
 }
 
 export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
+	const { direction } = useTheme();
+
+	const isExternal = href && target === '_blank';
+	const arrowStyle = { marginInlineStart: 'auto' };
+
 	return (
 		<StyledMenuItem { ...props } disabled={ disabled }>
 			<StyledButton
@@ -54,8 +60,18 @@ export default function PopoverMenuItem( { children, onClick, href, target, disa
 				href={ href }
 				target={ target }
 				disabled={ disabled }
+				sx={ {
+					display: 'flex',
+				} }
 			>
 				{ children }
+				{
+					isExternal && (
+						direction === 'rtl'
+							? <ArrowUpLeftIcon sx={ arrowStyle } />
+							: <ArrowUpRightIcon sx={ arrowStyle } />
+					)
+				}
 			</StyledButton>
 		</StyledMenuItem>
 	);
