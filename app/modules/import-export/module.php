@@ -413,17 +413,6 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
-
-		add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
-	}
-
-	/**
-	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
-	 *
-	 * @return array
-	 */
-	public function empty_pages(): array {
-		return [];
 	}
 
 	private function ensure_writing_permissions() {
