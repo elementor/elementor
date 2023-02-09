@@ -8,9 +8,9 @@ inputs:
   MAINTAIN_EMAIL:
     description: 'The email of the user that will create the tag.'
     required: true
-  TAG:
+  TAG_NAME:
     description: 'The message of the tag.'
-    required: false
+    required: true
 
 runs:
   using: "composite"
