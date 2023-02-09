@@ -20,4 +20,3 @@ runs:
         git config user.name ${{ inputs.MAINTAIN_USERNAME }}
         git config user.email ${{ inputs.MAINTAIN_EMAIL }}
         git push origin :refs/tags/${{ inputs.TAG_NAME }}
-        echo "Remove tag v${{ inputs.TAG_NAME }}"
