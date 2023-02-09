@@ -100,6 +100,12 @@ jobs:
       #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
       #   run: |
       #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Remove git tag
+        uses : ./.github/workflows/remove-git-tag
+        with:
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
