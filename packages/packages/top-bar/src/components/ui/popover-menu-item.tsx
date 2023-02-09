@@ -29,7 +29,12 @@ const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, 
 	}
 
 	return (
-		<StyleListItemButton component="a" role="menuitem" href={ href } target={ target }>
+		<StyleListItemButton
+			component="a"
+			role="menuitem"
+			href={ href }
+			target={ target }
+		>
 			{ children }
 		</StyleListItemButton>
 	);
@@ -37,7 +42,12 @@ const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, 
 
 export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
 	return (
-		<MenuItem { ...props } disabled={ disabled } onClick={ onClick } role={ href ? 'presentation' : 'menuitem' }>
+		<MenuItem
+			{ ...props }
+			disabled={ disabled }
+			onClick={ onClick }
+			role={ href ? 'presentation' : 'menuitem' }
+		>
 			<MenuItemInnerWrapper href={ href } target={ target }>
 				<ListItemIcon>{ icon }</ListItemIcon>
 				<ListItemText primary={ text } />
