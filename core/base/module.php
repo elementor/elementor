@@ -128,11 +128,7 @@ abstract class Module extends Base_Object {
 	public function __clone() {
 		_doing_it_wrong(
 			__FUNCTION__,
-			sprintf(
-				/* translators: %s: Class name. */
-				esc_html__( 'Cloning instances of the singleton "%s" class is forbidden.', 'elementor' ),
-				get_class( $this ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			),
+			sprintf( 'Cloning instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'1.0.0'
 		);
 	}
@@ -148,11 +144,7 @@ abstract class Module extends Base_Object {
 	public function __wakeup() {
 		_doing_it_wrong(
 			__FUNCTION__,
-			sprintf(
-				/* translators: %s: Class name. */
-				esc_html__( 'Unserializing instances of the singleton "%s" class is forbidden.', 'elementor' ),
-				get_class( $this ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			),
+			sprintf( 'Unserializing instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'1.0.0'
 		);
 	}
