@@ -8,6 +8,7 @@ import {
 	dispatchV1ReadyEvent,
 	makeDocumentsManager,
 	makeMockV1Document,
+	makeV1Settings,
 } from './test-utils';
 import { selectActiveDocument } from '../../store/selectors';
 
@@ -128,6 +129,48 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 	} );
 
+	it( 'should normalize `undefined` status to `pending`', () => {
+		// Arrange.
+		const mockDocument = makeMockV1Document();
+
+		mockV1DocumentsManager( [ {
+			...mockDocument,
+			container: {
+				settings: makeV1Settings( {
+					post_title: 'Document 1',
+					post_status: undefined,
+				} ),
+			},
+		} ] );
+
+		// Act.
+		dispatchV1ReadyEvent();
+
+		// Assert.
+		expect( selectActiveDocument( store.getState() )?.status ).toBe( 'pending' );
+	} );
+
+	it( 'should sync saving state of a document on V1 load', () => {
+		// Arrange.
+		const mockDocument = makeMockV1Document();
+
+		mockV1DocumentsManager( [
+			{
+				...mockDocument,
+				editor: {
+					...mockDocument.editor,
+					isSaving: true,
+				},
+			},
+		] );
+
+		// Act.
+		dispatchV1ReadyEvent();
+
+		// Assert.
+		expect( selectActiveDocument( store.getState() )?.isSaving ).toBe( true );
+	} );
+
 	it( 'should sync saving state of a document on save', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
@@ -186,7 +229,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		expect( selectActiveDocument( store.getState() )?.isSavingDraft ).toBe( false );
 	} );
 
-	it( 'should sync dirty state of a document on V1 load', () => {
+	it( 'should sync dirty state of a document when it has an autosave', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document( { id: 1 } );
 
@@ -219,13 +262,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		dispatchV1ReadyEvent();
 
 		// Mock a change.
-		mockV1DocumentsManager( [ {
-			...mockDocument,
-			editor: {
-				...mockDocument.editor,
-				isChanged: true,
-			},
-		} ] );
+		mockDocument.editor.isChanged = true;
 
 		// Assert - Default state.
 		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( false );
@@ -235,6 +272,14 @@ describe( '@elementor/documents - Sync Store', () => {
 
 		// Assert - After change.
 		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( true );
+
+		// Emulate a save / undo action that flips the `isChanged` back to `false`.
+		mockDocument.editor.isChanged = false;
+
+		dispatchCommandAfter( 'document/save/set-is-modified' );
+
+		// Assert - After change.
+		expect( selectActiveDocument( store.getState() )?.isDirty ).toBe( false );
 	} );
 
 	it( 'should update the document when finish saving', () => {

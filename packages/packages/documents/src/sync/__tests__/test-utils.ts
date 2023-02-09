@@ -81,17 +81,18 @@ export function makeMockV1Document( {
 			isSaving: false,
 		},
 		container: {
-			settings: makeSettings( {
+			settings: makeV1Settings( {
 				post_title: title,
-			} ) as V1Document['container']['settings'],
+			} ),
 		},
 	};
 }
 
-function makeSettings<T extends object>( settings: T ) {
+// Mock Backbone's settings model.
+export function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];
 		},
-	};
+	} as V1Document['container']['settings'];
 }
