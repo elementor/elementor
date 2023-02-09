@@ -48,7 +48,7 @@ type ExtraProps = {
 }
 
 export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
-	const isExternal = href && target === '_blank';
+	const isExternalLink = href && target === '_blank';
 	const arrowStyle = { marginInlineStart: 'auto' };
 
 	return (
@@ -61,11 +61,12 @@ export default function PopoverMenuItem( { children, onClick, href, target, disa
 				disabled={ disabled }
 				sx={ {
 					display: 'flex',
+					alignItems: 'center',
 				} }
 			>
 				{ children }
 				{
-					isExternal && (
+					isExternalLink && (
 						isRTL()
 							? <ArrowUpLeftIcon sx={ arrowStyle } />
 							: <ArrowUpRightIcon sx={ arrowStyle } />

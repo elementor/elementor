@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useContext } from 'react';
 
 export interface Settings {
 	urls: {
-		dashboard: string,
+		admin: string,
 	},
 }
 

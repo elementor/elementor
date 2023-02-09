@@ -82,7 +82,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'name' => 'elementorEditorV2Config',
 			'config' => [
 				'urls' => [
-					'dashboard' => admin_url(),
+					'admin' => admin_url(),
 				],
 			],
 		];

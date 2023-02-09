@@ -11,8 +11,8 @@ if ( ! window.__UNSTABLE__elementorPackages?.editor ) {
 }
 
 window.__UNSTABLE__elementorPackages
-    .editor
-    .init(
+	.editor
+	.init(
 		document.getElementById( 'elementor-editor-wrapper-v2' ),
 		window.elementorEditorV2Config,
 	);

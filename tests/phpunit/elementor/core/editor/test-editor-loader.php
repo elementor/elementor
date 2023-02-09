@@ -130,6 +130,88 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_print_client_settings() {
+		// Arrange
+		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [
+			[
+				'handle' => 'existing-handle',
+				'src' => 'source.js',
+				'deps' => [],
+				'version' => '1.0.0',
+			],
+			[
+				'handle' => 'no-config',
+				'src' => 'source.js',
+				'deps' => [],
+				'version' => '1.0.0',
+			],
+			[
+				'handle' => 'no-name',
+				'src' => 'source.js',
+				'deps' => [],
+				'version' => '1.0.0',
+			],
+		] );
+
+		$this->mock_config_provider->method( 'get_client_settings' )
+			->willReturn( [
+				[
+					'handle' => 'not-registered',
+					'name' => 'notRegistered',
+					'config' => [
+						'test' => 'not-registered',
+					],
+				],
+				[
+					'handle' => 'existing-handle',
+					'name' => 'existingHandle',
+					'config' => [
+						'test' => 'existing-handle',
+					],
+				],
+				[
+					'handle' => 'no-config',
+					'name' => 'noConfig',
+				],
+				[
+					'handle' => 'no-name',
+					'config' => [
+						'test' => 'no-name',
+					],
+				],
+				[
+					'name' => 'noHandle',
+					'config' => [
+						'test' => 'test-value',
+					],
+				],
+			] );
+
+		$editor_loader = new Editor_Loader( $this->mock_config_provider );
+		$editor_loader->register_scripts();
+
+		// Act
+		$editor_loader->print_client_settings();
+
+		// Assert
+		$this->assertEquals(
+			'var existingHandle = {"test":"existing-handle"};',
+			wp_scripts()->get_data( 'existing-handle', 'before' )[ 1 ]
+		);
+
+		$this->assertFalse(
+			wp_scripts()->get_data( 'not-registered', 'before' )
+		);
+
+		$this->assertFalse(
+			wp_scripts()->get_data( 'no-config', 'before' )
+		);
+
+		$this->assertFalse(
+			wp_scripts()->get_data( 'no-name', 'before' )
+		);
+	}
+
 	/** @dataProvider load_script_translations__with_replace_requested_file__data_provider */
 	public function load_script_translations__with_replace_requested_file( $script_config, $expected_relative_path ) {
 		// Arrange

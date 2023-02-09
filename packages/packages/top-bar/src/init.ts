@@ -18,7 +18,7 @@ export default function init() {
 
 			return {
 				title: __( 'Manage Website', 'elementor' ),
-				href: urls.dashboard,
+				href: urls.admin,
 				icon: WordpressIcon,
 				target: '_blank',
 			};
