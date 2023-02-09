@@ -18,21 +18,20 @@
 			cursor: pointer;
 
 			&--active i {
-				color: $e-primary;
+				color: var(--e-a-color-primary);
 			}
 		}
 
 		&-container {
 			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-			border-radius: 3px;
-			background-color: #fff;
+			border-radius: var(--e-a-border-radius);
+			background-color: var(--e-a-bg-default);
 			padding-bottom: 5px;
 		}
 
 		&-title {
 			padding: 15px 20px;
 			font-weight: 500;
-			color: $editor-dark;
 			border-bottom: var(--e-a-border);
 			display: flex;
 
@@ -84,14 +83,6 @@
 	&__manage-button {
 		font-weight: 500;
 		cursor: pointer;
-
-		&:hover i {
-				color: $editor-kit-accent;
-		}
-
-		i {
-			color: $editor-dark;
-		}
 	}
 
 	// Typography Globals

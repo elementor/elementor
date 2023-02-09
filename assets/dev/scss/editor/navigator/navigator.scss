@@ -8,7 +8,7 @@ body {
 	width: var(--e-editor-navigator-width);
 	height: 50vh;
 	@include end(30px);
-	background-color: var(--e-a-color-white);
+	background-color: var(--e-a-bg-default);
 	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
@@ -137,7 +137,6 @@ body {
 
 			&__title {
 				@include margin-start(23px);
-				color: $editor-lighter;
 				font-size: 10px;
 				font-style: italic;
 			}
@@ -162,7 +161,7 @@ body {
 			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
-					border-top: 2px solid $e-gray-900;
+					border-top: var(--e-a-border);
 
 					.elementor-empty-view__title {
 						display: none;
@@ -187,10 +186,10 @@ body {
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__toggle {
-					color: $e-gray-600;
+					color: var(--e-a-color-txt-default);
 
 					&:hover {
-						color: $e-gray-900;
+						color: var(--e-a-color-txt-hover);
 					}
 				}
 
@@ -205,7 +204,7 @@ body {
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $e-gray-50;
+					background-color: var(--e-a-bg-active);
 				}
 			}
 		}
@@ -229,8 +228,8 @@ body {
 
 				&[contenteditable="true"] {
 					outline: none;
-					background-color: var(--e-a-color-white);
-					padding: 3px;
+					background-color: var(--e-a-bg-hover);
+					padding: var(--e-admin-border-radius);
 					border: var(--e-a-border);
 				}
 

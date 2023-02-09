@@ -28,8 +28,13 @@
 
 .pcr {
 
-	&-app[data-theme=monolith] {
-		padding: 0;
+	&-app {
+		background-color: var(--e-a-bg-default);
+		color: var(--e-a-color-default);
+
+		&[data-theme=monolith] {
+			padding: 0;
+		}
 	}
 
 	&-result {

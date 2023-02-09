@@ -12,9 +12,9 @@
 
 // Alert
 .elementor-panel-alert {
-    background-color: $e-gray-25;
+    background-color: var(--e-a-bg-primary);
 	padding: 15px;
-    @include border-start(3px solid transparent);
+    @include border-start(3px solid var(--e-a-color-primary));
 	position: relative;
 	font-size: 12px;
 	font-weight: 300;
@@ -30,55 +30,24 @@
 	&.elementor-panel-alert- {
 
 		&info {
-			border-color: $editor-alert-info;
-			background: $editor-alert-info-bg;
+			border-color: var(--e-a-color-info);
+			background: var(--e-a-bg-info);
 		}
 
 		&success {
-			border-color: $editor-success;
+			border-color: var(--e-a-color-success);
+			background: var(--e-a-bg-success);
 		}
 
 		&warning {
-			border-color: $editor-alert-warning;
+			border-color: var(--e-a-color-warning);
+			background: var(--e-a-bg-warning);
 		}
 
 		&danger {
-			border-color: $editor-danger;
+			border-color: var(--e-a-color-danger);
+			background: var(--e-a-bg-danger);
 		}
-	}
-}
-
-.elementor-label {
-	display: inline;
-	padding: .2em .6em .3em;
-	font-size: 75%;
-	font-weight: 700;
-	line-height: 1;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	border-radius: .25em;
-	text-transform: capitalize;
-
-	&.elementor-label-default {
-		background-color: $editor-light;
-	}
-
-	&.elementor-label-info {
-		background-color: $info;
-	}
-
-	&.elementor-label-success {
-		background-color: $success;
-	}
-
-	&.elementor-label-warning {
-		background-color: $warning;
-	}
-
-	&.elementor-label-danger {
-		background-color: $danger;
 	}
 }
 
@@ -86,7 +55,7 @@
 	font-size: 11px;
 	font-style: italic;
 	line-height: 1.4;
-	color: $e-gray-500;
+	color: var(--e-a-color-txt-muted);
 }
 
 .elementor-controls-popover {
@@ -100,7 +69,7 @@
 	padding-top: 15px;
 	width: 90%;
 	z-index: $super-layer; // Above the select2 select boxes
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 
 	$triangle-size: 8px;
 
@@ -110,7 +79,7 @@
 		top: -$triangle-size * 2;
 		@include end(22px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: #fff;
+		border-bottom-color: var(--e-a-bg-default);
 	}
 
 	div.elementor-control { // Harder selector to override default settings

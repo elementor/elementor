@@ -22,10 +22,10 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 
 	i {
-		color: $editor-lightest;
+		color: var(--e-a-color-txt-disabled);
 		font-size: 50px;
 	}
 }
@@ -98,7 +98,7 @@
 	margin: 0 3px 0;
 	border: 0;
 	position: relative;
-	background-color: var(--e-a-color-white);
+	background-color: var(--e-a-bg-default);
 
 	&:not(.e-control-tool-disabled) {
 		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
@@ -106,11 +106,11 @@
 	}
 
 	&-disabled {
-		background: var(--e-admin-bg-default);
+		background: var(--e-a-bg-default);
 		pointer-events: none;
 
 		i {
-			color: var(--e-a-color-white);
+			color: var(--e-a-color-txt-disabled);
 		}
 	}
 
@@ -119,7 +119,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
-		color: $editor-dark;
+		color: var(--e-a-color-txt-default);
 		font-size: 13px;
 	}
 }

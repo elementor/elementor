@@ -113,12 +113,12 @@
 		justify-content: center;
 		flex-grow: 1;
 		color: var(--e-a-color-white);
-		background-color: rgba(0, 0, 0, .5);
+		background-color: rgba(0, 0, 0, .9);
 		font-size: 11px;
 		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			background-color: rgba(0, 0, 0, .6);
+			background-color: rgba(0, 0, 0, .8);
 		}
 	}
 
