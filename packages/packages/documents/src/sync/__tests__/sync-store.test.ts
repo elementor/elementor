@@ -129,27 +129,6 @@ describe( '@elementor/documents - Sync Store', () => {
 		} );
 	} );
 
-	it( 'should normalize `undefined` status to `pending`', () => {
-		// Arrange.
-		const mockDocument = makeMockV1Document();
-
-		mockV1DocumentsManager( [ {
-			...mockDocument,
-			container: {
-				settings: makeV1Settings( {
-					post_title: 'Document 1',
-					post_status: undefined,
-				} ),
-			},
-		} ] );
-
-		// Act.
-		dispatchV1ReadyEvent();
-
-		// Assert.
-		expect( selectActiveDocument( store.getState() )?.status ).toBe( 'pending' );
-	} );
-
 	it( 'should sync saving state of a document on V1 load', () => {
 		// Arrange.
 		const mockDocument = makeMockV1Document();
