@@ -5,7 +5,7 @@ export function createMockDocument(): Document {
 		id: 1,
 		title: 'Document 1',
 		status: 'publish',
-		type: 'wp-page;',
+		type: 'wp-page',
 		isDirty: false,
 		isSaving: false,
 		isSavingDraft: false,
