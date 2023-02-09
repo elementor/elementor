@@ -20,6 +20,7 @@ export default function KitDialog( props ) {
 
 	return (
 		<ApplyKitDialog
+			id={ props.id }
 			downloadLink={ props.downloadLinkData.data.download_link }
 			nonce={ props.downloadLinkData.meta.nonce }
 			onClose={ props.onClose }
