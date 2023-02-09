@@ -4,7 +4,7 @@ export default function BarHeading( props ) {
 			<div className="e-admin-top-bar__heading-logo">
 				<i className="eicon-elementor" aria-hidden="true"></i>
 			</div>
-			<h1 className="e-admin-top-bar__heading-title">{ props.children }</h1>
+			<span className="e-admin-top-bar__heading-title">{ props.children }</span>
 		</div>
 	);
 }
