@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { ToggleButton, ToggleButtonProps, SvgIconProps, SvgIcon, styled } from '@elementor/ui';
 
@@ -63,10 +63,7 @@ const StyledElementorLogo = styled( ElementorLogo, {
 
 export default function ToolbarLogo( props: ToolbarLogoProps ) {
 	const [ isHoverState, setIsHoverState ] = useState( () => props.selected );
-
-	useEffect( () => {
-		setIsHoverState( props.selected );
-	}, [ props.selected ] );
+	const showMenuIcon = props.selected || isHoverState;
 
 	return (
 		<StyledToggleButton
@@ -74,9 +71,9 @@ export default function ToolbarLogo( props: ToolbarLogoProps ) {
 			value="selected"
 			size="small"
 			onMouseEnter={ () => setIsHoverState( true ) }
-			onMouseLeave={ () => setIsHoverState( props.selected ) }
+			onMouseLeave={ () => setIsHoverState( false ) }
 		>
-			<StyledElementorLogo titleAccess={ __( 'Elementor Logo', 'elementor' ) } showMenuIcon={ isHoverState } />
+			<StyledElementorLogo titleAccess={ __( 'Elementor Logo', 'elementor' ) } showMenuIcon={ showMenuIcon } />
 		</StyledToggleButton>
 	);
 }
