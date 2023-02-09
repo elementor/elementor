@@ -1,5 +1,5 @@
-import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button, useTheme } from '@elementor/ui';
 import { ArrowUpLeftIcon, ArrowUpRightIcon } from '../../icons';
+import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button, useTheme } from '@elementor/ui';
 
 const StyledMenuItem = styled( ( props: MenuItemProps ) => (
 	<MenuItem { ...props } />

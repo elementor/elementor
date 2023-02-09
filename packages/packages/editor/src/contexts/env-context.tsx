@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, useContext } from 'react';
 
 export type EnvOptions = {
 	urls: {
-		exit: string,
+		dashboard: string,
 	},
 }
 

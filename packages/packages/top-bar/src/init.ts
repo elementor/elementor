@@ -17,7 +17,7 @@ registerLink( 'main', {
 
 		return {
 			title: __( 'Manage Website', 'elementor' ),
-			href: urls.exit,
+			href: urls.dashboard,
 			icon: WordpressIcon,
 			target: '_blank',
 		};

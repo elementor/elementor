@@ -101,7 +101,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_app_env() {
 		return [
 			'urls' => [
-				'exit' => admin_url(),
+				'dashboard' => admin_url(),
 			],
 		];
 	}
