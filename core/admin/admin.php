@@ -354,7 +354,7 @@ class Admin extends App {
 
 		if ( $is_elementor_screen ) {
 			$footer_text = sprintf(
-				/* translators: 1: Elementor, 2: Link to plugin review */
+			/* translators: 1: Elementor, 2: Link to plugin review */
 				__( 'Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!', 'elementor' ),
 				'<strong>' . esc_html__( 'Elementor', 'elementor' ) . '</strong>',
 				'<a href="https://go.elementor.com/admin-review/" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
@@ -394,15 +394,16 @@ class Admin extends App {
 	 * Fired by `wp_add_dashboard_widget` function.
 	 *
 	 * @since 1.9.0
+	 * @access public
 	 */
 	public function elementor_dashboard_overview_widget() {
 		?>
 		<div class="e-dashboard-overview e-dashboard-widget">
 			<?php
-			$this->elementor_dashboard_overview_header();
-			$this->elementor_dashboard_overview_recently_edited();
-			$this->elementor_dashboard_overview_news_updates();
-			$this->elementor_dashboard_overview_footer();
+			self::elementor_dashboard_overview_header();
+			self::elementor_dashboard_overview_recently_edited();
+			self::elementor_dashboard_overview_news_updates();
+			self::elementor_dashboard_overview_footer();
 			?>
 		</div>
 		<?php
@@ -418,7 +419,7 @@ class Admin extends App {
 	 * @return void
 	 * @since 3.12.0
 	 */
-	public function elementor_dashboard_overview_header( bool $show_versions = true, bool $is_create_post_enabled = true ) {
+	public static function elementor_dashboard_overview_header( bool $show_versions = true, bool $is_create_post_enabled = true ) {
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = esc_html__( 'Create New Page', 'elementor' );
 			$create_new_post_type = 'page';
@@ -464,7 +465,7 @@ class Admin extends App {
 	 * @return void
 	 * @since 3.12.0
 	 */
-	public function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
+	public static function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
 		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
 
 		if ( $recently_edited_query->have_posts() ) { ?>
@@ -502,7 +503,7 @@ class Admin extends App {
 	 * @since 3.12.0
 	 * @access public
 	 */
-	public function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
+	public static function elementor_dashboard_overview_news_updates( int $limit_feed = 0, bool $show_heading = true ) {
 		$elementor_feed = Api::get_feed_data();
 		if ( $limit_feed > 0 ) {
 			$elementor_feed = array_slice( $elementor_feed, 0, $limit_feed );
@@ -511,7 +512,7 @@ class Admin extends App {
 		if ( ! empty( $elementor_feed ) ) { ?>
 			<div class="e-overview__feed">
 				<?php if ( $show_heading ) { ?>
-				<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'News & Updates', 'elementor' ); ?></h3>
+					<h3 class="e-heading e-divider_bottom"><?php echo esc_html__( 'News & Updates', 'elementor' ); ?></h3>
 				<?php } ?>
 				<ul class="e-overview__posts">
 					<?php foreach ( $elementor_feed as $feed_item ) { ?>
@@ -536,11 +537,11 @@ class Admin extends App {
 	 *
 	 * @since 3.12.0
 	 */
-	public function elementor_dashboard_overview_footer() {
+	public static function elementor_dashboard_overview_footer() {
 		?>
 		<div class="e-overview__footer e-divider_top">
 			<ul>
-				<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) { ?>
+				<?php foreach ( self::static_get_dashboard_overview_widget_footer_actions() as $action_id => $action ) { ?>
 					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>">
 						<a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
 							<span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span>
@@ -557,10 +558,10 @@ class Admin extends App {
 	 *
 	 * Retrieves the footer action links displayed in elementor dashboard widget.
 	 *
-	 * @since 1.9.0
-	 * @access private
+	 * @since 3.12.0
+	 * @access public
 	 */
-	private function get_dashboard_overview_widget_footer_actions() {
+	public static function static_get_dashboard_overview_widget_footer_actions() {
 		$base_actions = [
 			'blog' => [
 				'title' => esc_html__( 'Blog', 'elementor' ),
@@ -602,6 +603,18 @@ class Admin extends App {
 		$actions = $base_actions + $additions_actions;
 
 		return $actions;
+	}
+
+	/**
+	 * Get elementor dashboard overview widget footer actions.
+	 *
+	 * Retrieves the footer action links displayed in elementor dashboard widget.
+	 *
+	 * @since 1.9.0
+	 * @access private
+	 */
+	private function get_dashboard_overview_widget_footer_actions() {
+		return self::static_get_dashboard_overview_widget_footer_actions();
 	}
 
 	/**
@@ -739,12 +752,12 @@ class Admin extends App {
 				</div>
 				<div class="e-major-update-warning__message">
 					<?php
-						printf(
-							/* translators: %1$s Link open tag, %2$s: Link close tag. */
-							esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
-							'<a href="https://go.elementor.com/wp-dash-update-backup/">',
-							'</a>'
-						);
+					printf(
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
+						'<a href="https://go.elementor.com/wp-dash-update-backup/">',
+						'</a>'
+					);
 					?>
 				</div>
 			</div>
