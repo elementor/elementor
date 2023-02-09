@@ -40,4 +40,11 @@ interface Config_Provider_Interface {
 	 * @return string
 	 */
 	public function get_template_body_file_path();
+
+	/**
+	 * Return the Environment variables for the app.
+	 *
+	 * @return array
+	 */
+	public function get_app_env();
 }

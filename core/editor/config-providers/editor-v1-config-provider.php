@@ -35,4 +35,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v1.view.php';
 	}
+
+	public function get_app_env() {
+		return [];
+	}
 }

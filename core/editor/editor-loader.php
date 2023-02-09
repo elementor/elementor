@@ -110,6 +110,8 @@ class Editor_Loader {
 		// Exposing the path for the view part to render the body of the editor template.
 		$body_file_path = $this->config_provider->get_template_body_file_path();
 
+		$app_env = $this->config_provider->get_app_env();
+
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 

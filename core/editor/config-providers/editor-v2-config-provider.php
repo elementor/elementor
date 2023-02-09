@@ -98,6 +98,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
 	}
 
+	public function get_app_env() {
+		return [
+			'urls' => [
+				'exit' => admin_url(),
+			],
+		];
+	}
+
 	private function get_packages_script_assets() {
 		if ( ! $this->packages_script_assets ) {
 			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
