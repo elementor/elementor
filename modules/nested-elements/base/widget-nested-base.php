@@ -77,6 +77,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
 			],
 			'support_nesting' => true,
+			'force_child_container' => true,
 		] );
 	}
 

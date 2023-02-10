@@ -21,8 +21,14 @@ export class NestedRepeaterRemoveContainer extends Base {
 	}
 
 	apply( { container, index } ) {
+		const childContainer = findChildContainerOrFail( container, index );
+
+		if ( ! childContainer ) {
+			return;
+		}
+
 		$e.run( 'document/elements/delete', {
-			container: findChildContainerOrFail( container, index ),
+			container: childContainer,
 			force: true,
 		} );
 	}

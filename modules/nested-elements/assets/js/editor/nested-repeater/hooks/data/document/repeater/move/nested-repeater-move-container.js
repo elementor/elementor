@@ -11,8 +11,14 @@ export class NestedRepeaterMoveContainer extends Base {
 	}
 
 	apply( { container, sourceIndex, targetIndex } ) {
+		const childContainer = findChildContainerOrFail( container, index );
+
+		if ( ! childContainer ) {
+			return;
+		}
+
 		$e.run( 'document/elements/move', {
-			container: findChildContainerOrFail( container, sourceIndex ),
+			container: childContainer,
 			target: container,
 			options: {
 				at: targetIndex,
