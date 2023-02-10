@@ -23,7 +23,7 @@ async function run( args ) {
 		'--tty',
 	];
 	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion }-focal`;
-	const commandToRun = `/bin/bash -c "npm i && npm run test:elements-regression -- ${ args.join( ' ' ) }"`;
+	const commandToRun = `/bin/bash -c "npm ci && npm run test:elements-regression -- ${ args.join( ' ' ) }"`;
 
 	spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
 		stdio: 'inherit',
