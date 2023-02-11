@@ -85,7 +85,10 @@ jobs:
       - name: Install playwright/test
         run: |
           # See: https://github.com/microsoft/playwright/issues/20678#issuecomment-1419487523
-          sudo apt-get update && npx playwright install --with-deps chromium
+          sudo gem install apt-spy2
+          sudo apt-spy2 fix --commit --launchpad --country=US
+          sudo apt-get update
+          npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: |
           npm run test:elements-regression
