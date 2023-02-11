@@ -34,9 +34,7 @@ test.describe( 'Elements regression', () => {
 			await test.step( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				const clip = await editorPage.prepareScreenshotElement( elementId );
-				await expect( editorPage.page ).toHaveScreenshot( [ widgetType, 'default.png' ], {
-					clip,
+				await expect( await editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, 'default.png' ], {
 					timeout: 5000,
 				} );
 
