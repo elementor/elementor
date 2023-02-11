@@ -84,11 +84,7 @@ jobs:
           npx wp-env run cli "wp --info"
       - name: Install playwright/test
         run: |
-          # See: https://github.com/microsoft/playwright/issues/20678#issuecomment-1419487523
-          sudo gem install apt-spy2
-          sudo apt-spy2 fix --commit --launchpad --country=US
-          sudo apt-get update
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
       - name: Run Playwright tests
         run: |
           npm run test:elements-regression
