@@ -16,10 +16,6 @@ export function isWidgetSupportNesting( widgetType ) {
 }
 
 export function findChildContainerOrFail( container, index ) {
-	if ( ! elementor.widgetsCache[ container.view.model.config.name ].force_child_container ) {
-		return false;
-	}
-
 	const childView = container.view.children.findByIndex( index );
 
 	if ( ! childView ) {
