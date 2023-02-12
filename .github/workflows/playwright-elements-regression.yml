@@ -67,17 +67,6 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
-      # In this step, this action saves a list of existing images,
-      # the cache is created without them in the post run.
-      # It also restores the cache if it exists.
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-        with:
-          key: ${{ runner.os }}-dockercache-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-dockercache-${{ env.cache-name }}-
-            ${{ runner.os }}-dockercache-
-            ${{ runner.os }}-
       - name: Update wp-env.json file
         env:
           PHP_VERSION: ${{ matrix.phpVersion }}
