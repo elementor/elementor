@@ -20,6 +20,19 @@ describe( '@elementor/editor - useSettings()', () => {
 			},
 		} );
 	} );
+
+	it( 'should throw when not rendered inside a <SettingsContextProvider />', () => {
+		// Arrange.
+		// TODO: Mock the `console.error` because `@testing-library/react-hooks` takes over the `console.error`
+		//  which breaks `@wordpress/jest-console` assertions.
+		console.error = jest.fn();
+
+		// Act.
+		const { result } = renderHook( () => useSettings() );
+
+		// Assert.
+		expect( result.error?.message ).toEqual( 'The `useSettings()` hook must be used within an `<SettingsContextProvider />`' );
+	} );
 } );
 
 function renderHookWithSettings( hook: () => unknown, settings: Settings ) {
