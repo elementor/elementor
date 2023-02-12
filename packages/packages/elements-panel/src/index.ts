@@ -1,1 +1,3 @@
-import './init';
+import init from './init';
+
+init();
