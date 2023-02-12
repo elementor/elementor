@@ -19,19 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_Common_Client_Settings {
 	public static function get_client_settings() {
-		if ( empty( $_REQUEST['post'] ) ) {
-			return [];
-		}
-
-		$post_id = absint( $_REQUEST['post'] );
-
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( Plugin::$instance->editor->get_post_id() );
 		$kits_manager = Plugin::$instance->kits_manager;
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
