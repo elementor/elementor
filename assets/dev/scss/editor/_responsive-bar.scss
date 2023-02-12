@@ -45,8 +45,8 @@
 
 		&:hover,
 		&[aria-selected="true"] {
-			color: $e-gray-50;
-			background-color: var(--e-a-bg-primary);
+			color: var(--e-a-color-txt-invert);
+			background-color: var(--e-a-color-primary);
 		}
 
 		input {
