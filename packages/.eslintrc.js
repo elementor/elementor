@@ -10,7 +10,7 @@ module.exports = {
 		'plugin:import/typescript',
 	],
 	settings: {
-		// Override import/internal-regex that defined in @wordpress/eslint-plugin.
+		// Override `import/internal-regex` that is defined in `@wordpress/eslint-plugin`.
 		'import/internal-regex': false,
 		'import/resolver': {
 			typescript: {},
@@ -31,6 +31,7 @@ module.exports = {
 		'import/no-extraneous-dependencies': [
 			'error',
 			{
+				// Don't allow importing dev dependencies.
 				devDependencies: false,
 			},
 		],
@@ -51,7 +52,7 @@ module.exports = {
 			// Development files.
 			files: [
 				'**/tools/**/*', // Tools files.
-				'*.js', // Root level files.
+				'*.[tj]s?(x)', // Root level files.
 				'**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)', // Test files.
 			],
 			rules: {
