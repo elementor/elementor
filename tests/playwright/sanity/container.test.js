@@ -83,13 +83,11 @@ test.describe( 'Container tests', () => {
 
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-row.png', {
+			timeout: 5000,
+		} );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -99,12 +97,9 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
 
-		await page.waitForLoadState( 'networkidle' );
-
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-row-full.png', {
+			timeout: 5000,
+		} );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -117,13 +112,11 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-column-full-start.png', {
+			timeout: 5000,
+		} );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -132,13 +125,11 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-column-boxed-start.png', {
+			timeout: 5000,
+		} );
 	} );
 
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {

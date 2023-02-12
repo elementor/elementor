@@ -90,3 +90,9 @@ jobs:
           name: playwright-test-results
           path: test-results/
           retention-days: 14
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-test-results-snapshots
+          path: tests/playwright/sanity/container.test.js-snapshots/
+          retention-days: 2
