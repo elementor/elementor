@@ -1,0 +1,42 @@
+name: Get Previous Release
+description: Get the previous release name from the current tag and set it as an environment variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (ga, cloud, beta)."
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        #if channel is cloud or beta
+
+        if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
+           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | awk '{print $2}')
+        fi
+
+        if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+           tags=$(git ls-remote --tags | grep "refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$")
+        fi
+
+        git fetch --tags
+        
+        # Loop through the list of tags and get their creation date
+        latest_date=""
+        latest_tag=""
+        for tag in $tags; do
+          date=$(git log -1 --pretty=format:"%ai" $tag)
+          if [ -z "$latest_date" ] || [ "$date" \> "$latest_date" ]; then
+            latest_date="$date"
+            latest_tag="$tag"
+          fi
+        done
+
+        tag_sha=$(git rev-parse $latest_tag)
+        PREVIOUS_TAG_SHA=$tag_sha
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}"
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
+
+        echo "tag_sha=${tag_sha} \n tag=${latest_tag}"

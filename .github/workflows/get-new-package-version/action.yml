@@ -1,0 +1,23 @@
+name: Get New Package Version
+description: Sets the version as ENV variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version to (ga, cloud, beta).'
+  TYPE:
+    description: 'The type of version to get (rc, hotfix)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
+            PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-${{ inputs.TYPE }}
+
+            echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+            echo "PACKAGE_VERSION_CLEAN=${PACKAGE_VERSION_CLEAN}" >> $GITHUB_ENV
+  
+            echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"

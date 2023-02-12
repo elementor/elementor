@@ -572,10 +572,6 @@ a.elementor-responsive-switcher {
 		color: $theme-dark-light;
 	}
 
-	.elementor-control-media__tool {
-		background-color: $theme-dark-gray-lighter;
-	}
-
 	&__file {
 
 		&,
@@ -1490,6 +1486,19 @@ label.elementor-template-library-order-label,
 
 		&--shortcut span {
 			background-color: $theme-dark-gray-light;
+		}
+	}
+}
+
+//Paste Area
+#elementor-paste-area-dialog {
+	.dialog-header {
+		color: inherit;
+	}
+	#elementor-paste-area-dialog__error {
+
+		&:before {
+			border-top-color: $theme-dark-gray;
 		}
 	}
 }
