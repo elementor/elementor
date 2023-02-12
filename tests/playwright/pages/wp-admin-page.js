@@ -1,3 +1,4 @@
+const { execSync } = require( 'child_process' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
@@ -84,6 +85,16 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
+			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
+			// but actually exist and need to be tested.
+			await this.page.evaluate( ( el ) => {
+				const element = document.querySelector( el );
+
+				if ( element ) {
+					element.style.display = 'block';
+				}
+			}, `.elementor_experiment-${ id }` );
+
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 		}
 
@@ -94,5 +105,13 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
+	}
+
+	getActiveTheme() {
+		return execSync( `npx wp-env run cli "wp theme list --status=active --field=name --format=csv"` ).toString().trim();
+	}
+
+	activateTheme( theme ) {
+		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
 	}
 };

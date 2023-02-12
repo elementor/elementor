@@ -16,8 +16,12 @@ class Kit_Library extends Library {
 		return esc_html__( 'Kit Library', 'elementor' );
 	}
 
-	public function get_all() {
-		return $this->http_request( 'GET', 'kits' );
+	public function get_all( $args = [] ) {
+		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION, $args );
+	}
+
+	public function get_by_id( $id ) {
+		return $this->http_request( 'GET', 'kits/' . $id );
 	}
 
 	public function get_taxonomies() {

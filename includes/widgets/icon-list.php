@@ -320,6 +320,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px', 'vw' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -338,7 +339,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ '%', 'px', 'vh' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -348,6 +349,10 @@ class Widget_Icon_List extends Widget_Base {
 						'max' => 100,
 					],
 					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'vh' => [
 						'min' => 1,
 						'max' => 100,
 					],
@@ -424,11 +429,19 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
 				'default' => [
+					'unit' => 'px',
 					'size' => 14,
 				],
 				'range' => [
 					'px' => [
+						'min' => 6,
+					],
+					'%' => [
+						'min' => 6,
+					],
+					'vw' => [
 						'min' => 6,
 					],
 				],
@@ -446,7 +459,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_self_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -470,6 +483,59 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_self_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'flex-start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--icon-vertical-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_vertical_offset',
+			[
+				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em' ],
+				'default' => [
+					'unit' => 'px',
+					'size' => 0,
+				],
+				'range' => [
+					'px' => [
+						'min' => -15,
+						'max' => 15,
+					],
+					'em' => [
+						'min' => -1,
+						'max' => 1,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--icon-vertical-offset: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

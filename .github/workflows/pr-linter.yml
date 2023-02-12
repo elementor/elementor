@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+      - uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Install Dependencies
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter

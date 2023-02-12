@@ -1,15 +1,20 @@
 {
-    "core": null,
-    "phpVersion": "7.4",
-    "plugins": [
-        "./build"
-    ],
-    "themes": [
-        "https://downloads.wordpress.org/theme/hello-elementor.zip"
-    ],
-    "mappings": {
-        "elementor-templates": "./tests/lighthouse/templates",
-        "elementor-config": "./tests/wp-env/config",
-        "elementor-playwright-templates": "./tests/playwright/templates"
-    }
+	"core": null,
+	"phpVersion": "7.4",
+	"plugins": [
+		"./build"
+	],
+	"themes": [
+		"https://downloads.wordpress.org/theme/hello-elementor.zip"
+	],
+	"mappings": {
+		"elementor-templates": "./tests/playwright/templates",
+		"elementor-config": "./tests/wp-env/config",
+		"elementor-playwright-templates": "./templates/playwright"
+	},
+	"config": {
+		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
+		"SCRIPT_DEBUG": false,
+		"WP_DEBUG": false
+	}
 }

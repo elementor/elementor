@@ -2,11 +2,13 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
+	const MOCK_KIT_ZIP_PATH = __DIR__ . '/mock/sample-kit.zip';
 
 	private $elementor_upload_dir;
 	private $elementor_upload_dir_permission;
@@ -71,6 +73,90 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		( new Module() )->import_kit( '', [] );
+	}
+
+	public function test_import_kit__by_chunks() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$import = $import_export_module->import_kit( static::MOCK_KIT_ZIP_PATH, [], true );
+
+		// Assert
+		$this->assertArrayHasKey( 'session', $import );
+		$this->assertArrayHasKey( 'runners', $import );
+	}
+
+	public function test_import_kit_by_runner() {
+		// Arrange
+		$import_settings = [
+			'include' => [
+				'settings',
+				'content',
+			]
+		];
+		$import_export_module = new Module();
+		$import = $import_export_module->import_kit( static::MOCK_KIT_ZIP_PATH, $import_settings, true );
+
+		$runners_result = [];
+		// Act
+		foreach ( $import['runners'] as $runner ) {
+			$runners_result[$runner] = $import_export_module->import_kit_by_runner( $import['session'], $runner );
+		}
+
+		$last_runner = array_pop( $runners_result );
+
+		// Assert
+		foreach ( $runners_result as $runner_name => $runner_result ) {
+			$this->assertEquals( $runner_name, $runner_result['runner'] );
+		}
+
+		$this->assertTrue( $last_runner['site-settings'] );
+		$this->assertCount( 1, $last_runner['content']['post']['succeed'] );
+		$this->assertCount( 1, $last_runner['content']['page']['succeed'] );
+		$this->assertCount( 1, $last_runner['wp-content']['post']['succeed'] );
+		$this->assertCount( 1, $last_runner['wp-content']['page']['succeed'] );
+		$this->assertCount( 7, $last_runner['wp-content']['nav_menu_item']['succeed'] );
+
+		self::assert_valid_import_session( $this, $import['session'] );
+	}
+
+	public function test_revert_last_imported_kit__with_import_by_runner() {
+		// Arrange
+		$taxonomies = get_taxonomies();
+
+		$base_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
+		$base_posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
+
+		$import_settings = [
+			'include' => [
+				'settings',
+				'content',
+			]
+		];
+		$import_export_module = new Module();
+		$import = $import_export_module->import_kit( static::MOCK_KIT_ZIP_PATH, $import_settings, true );
+
+		$runners_result = [];
+		foreach ( $import['runners'] as $runner ) {
+			$runners_result[$runner] = $import_export_module->import_kit_by_runner( $import['session'], $runner );
+		}
+
+		$after_import__terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
+		$after_import__posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
+
+		// Act
+		$import_export_module->revert_last_imported_kit();
+
+		// Assert
+		$after_revert__terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
+		$after_revert__posts = get_posts( [ 'post_type' =>  'any', 'numberposts' => -1 ] );
+
+		$this->assertEquals( $base_terms, $after_revert__terms );
+		$this->assertNotEquals( $after_import__terms, $after_revert__terms );
+
+		$this->assertEquals( $base_posts, $after_revert__posts );
+		$this->assertNotEquals( $after_import__posts, $after_revert__posts );
 	}
 
 	/**
@@ -163,5 +249,24 @@ class Test_Module extends Elementor_Test_Base {
 				'should_show' => false,
 			],
 		];
+	}
+
+	public static function assert_valid_import_session( $instance, $session_id )
+	{
+		$import_session_keys = [
+			'session_id',
+			'kit_title',
+			'kit_name',
+			'kit_thumbnail',
+			'kit_source',
+			'user_id',
+			'start_timestamp',
+			'end_timestamp',
+			'runners',
+		];
+		$import_sessions = Revert::get_import_sessions();
+		$instance->assert_array_have_keys( $import_session_keys, $import_sessions[0] );
+
+		$instance->assertEquals( $session_id, $import_sessions[0]['session_id'] );
 	}
 }

@@ -239,12 +239,14 @@ class Widget_Google_Maps extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
-				'default' => [
-					'unit' => 's',
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
 				],
 			]
 		);
@@ -292,7 +294,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		?>
 		<div class="elementor-custom-embed">
-			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+			<iframe loading="lazy"
 					src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
 					title="<?php echo esc_attr( $settings['address'] ); ?>"
 					aria-label="<?php echo esc_attr( $settings['address'] ); ?>"

@@ -429,12 +429,14 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
-				'default' => [
-					'unit' => 's',
+				'range' => [
+					'px' => [
+						'max' => 3,
+						'step' => 0.1,
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
 				],
 			]
 		);
@@ -491,7 +493,7 @@ class Widget_Alert extends Widget_Base {
 					} else { ?>
 						<span aria-hidden="true">&times;</span>
 					<?php } ?>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 				</button>
 			<?php endif; ?>
 		</div>
@@ -530,7 +532,7 @@ class Widget_Alert extends Widget_Base {
 						<# } else { #>
 							<span aria-hidden="true">&times;</span>
 						<# } #>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss alert', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 					</button>
 				<# } #>
 			</div>

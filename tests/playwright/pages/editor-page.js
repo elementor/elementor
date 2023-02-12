@@ -2,14 +2,41 @@ const { addElement, getElementSelector } = require( '../assets/elements-utils' )
 const BasePage = require( './base-page.js' );
 
 module.exports = class EditorPage extends BasePage {
-	isPanelLoaded = false;
-
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 
 		this.postId = cleanPostId;
+	}
+
+	async gotoPostId( id = this.postId ) {
+		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+
+		await this.ensurePanelLoaded();
+	}
+
+	async loadTemplate( template ) {
+		const templateData = require( `../templates/${ template }.json` );
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async cleanContent() {
+		await this.page.evaluate( () => {
+			$e.run( 'document/elements/empty', { force: true } );
+		} );
 	}
 
 	async openNavigator() {
@@ -56,36 +83,32 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensurePanelLoaded() {
-		if ( this.isPanelLoaded ) {
-			return;
-		}
-
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
-		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-
-		this.isPanelLoaded = true;
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
 	 * Add element to the page using a model.
 	 *
-	 * @param {Object} model     - Model definition.
-	 * @param {string} container - Optional Container to create the element in.
+	 * @param {Object}  model               - Model definition.
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 *
 	 * @return {Promise<*>} Element ID
 	 */
-	async addElement( model, container = null ) {
-		return await this.page.evaluate( addElement, { model, container } );
+	async addElement( model, container = null, isContainerASection = false ) {
+		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string} widgetType
-	 * @param {string} container  - Optional Container to create the element in.
+	 * @param {string}  widgetType
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 */
-	async addWidget( widgetType, container = null ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container );
+	async addWidget( widgetType, container = null, isContainerASection = false ) {
+		return await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 	}
 
 	/**
@@ -157,6 +180,24 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
+	async copyElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
+		await this.page.waitForSelector( copyListItemSelector );
+		await this.page.locator( copyListItemSelector ).click();
+	}
+
+	async pasteStyleElement( elementId ) {
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.click( { button: 'right' } );
+
+		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
+		await this.page.waitForSelector( pasteListItemSelector );
+		await this.page.locator( pasteListItemSelector ).click();
+	}
+
 	/**
 	 * Activate a tab inside the panel editor.
 	 *
@@ -187,6 +228,18 @@ module.exports = class EditorPage extends BasePage {
 		await this.activatePanelTab( 'advanced' );
 		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
 		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+	}
+
+	/**
+	 * Set a custom width value to a widget.
+	 *
+	 * @param {string} controlId - The control to set the value to;
+	 * @param {string|number} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSliderControlValue( controlId, value ) {
+		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
 	/**
@@ -360,5 +413,50 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
 		await this.page.selectOption( '.elementor-control-ui_theme  select', uiMode );
+	}
+
+	/**
+	 * Select a responsive view.
+	 *
+	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async changeResponsiveView( device ) {
+		const hasResponsiveViewBar = await this.page.evaluate( () => {
+			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
+		} );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
+	}
+
+	async publishAndViewPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await Promise.all( [
+			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+		] );
+
+		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	async previewChanges( context ) {
+		const previewPagePromise = context.waitForEvent( 'page' );
+
+		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
+		await this.page.waitForLoadState( 'networkidle' );
+
+		const previewPage = await previewPagePromise;
+		await previewPage.waitForLoadState();
+
+		return previewPage;
 	}
 };
