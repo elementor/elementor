@@ -4,8 +4,8 @@ $button-line-height: 16px;
 $button-padding-y: 0.5em;
 $button-padding-x: 1.5em;
 $button-border-radius: $eps-radius;
-$button-hover-constant: 5%;
-$button-active-constant: 3%;
+$button-hover-constant: 10%;
+$button-active-constant: 20%;
 // sizing
 // -- sm
 $button-sm-font-size: type(text,xs);
@@ -14,7 +14,7 @@ $button-sm-line-height: 14px;
 $button-lg-font-size: type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
-$button-primary-background-color: theme-colors(success);
+$button-primary-background-color: theme-colors(accent);
 $button-primary-hover-background-color: darken($button-primary-background-color, $button-hover-constant);
 $button-primary-active-background-color: darken($button-primary-background-color, $button-active-constant);
 $button-primary-color: theme-colors(light);

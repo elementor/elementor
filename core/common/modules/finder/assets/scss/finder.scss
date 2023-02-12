@@ -8,11 +8,14 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		.dialog-widget-content {
 			$modal-width: 650px;
-
 			width: $modal-width;
 			max-width: 98%;
 			top: 18vh;
 			left: calc( 50% - #{$modal-width} / 2 );
+		}
+
+		.dialog-content {
+			text-align: start;
 		}
 
 		.dialog-message {
@@ -24,9 +27,8 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 	}
 
 	&__search {
-		padding: 14px 15px 14px 21px;
+		padding: 15px;
 		display: flex;
-		box-shadow: 0 -3px 15px 6px rgba(0, 0, 0, 0.03);
 
 		i {
 			font-size: 16px;
@@ -78,9 +80,8 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		&__title {
 			padding: 5px 25px;
 			color: $editor-dark;
-			background-color: $editor-background;
 			font-size: 9px;
-			text-transform: uppercase;
+			border-bottom: var(--e-a-border);
 		}
 
 		&--dynamic {
@@ -102,22 +103,18 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 	&__item {
 		$item-height: 35px;
-
 		display: flex;
 
 		a {
 			text-decoration: none;
-			box-shadow: none;
-			outline: none;
+			color: inherit;
 		}
 
 		&.elementor-active {
-			background-color: $editor-info;
-			box-shadow: none;
-			outline: none;
+			background-color: var(--e-a-bg-hover);
 
-			* {
-				color: #fff;
+			a {
+				color: inherit;
 			}
 		}
 
@@ -138,12 +135,10 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		&__icon {
 			width: 60px;
 			text-align: center;
-			color: $editor-dark;
 			font-size: 17px;
 		}
 
 		&__title {
-			color: $editor-dark;
 			font-size: 13px;
 		}
 

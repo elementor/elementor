@@ -14,8 +14,6 @@ $eps-text-field-placeholder-dark-color: dark-tints(300);
 	font-size: $eps-body-font-size;
 	font-weight: $eps-font-weight-base;
 	line-height: $eps-line-height-base;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
 }
 
 $root: eps-text-field;

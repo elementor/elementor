@@ -441,7 +441,7 @@ module.exports = class EditorPage extends BasePage {
 			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
 			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
 			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
 		] );
 
 		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();

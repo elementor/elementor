@@ -1,6 +1,7 @@
-//Variables
 @import "../helpers/variables";
 @import "../helpers/mixins";
+
+// Theme Dark - CSS Vars
 
 $theme-dark-gray-darkest: #34383C;
 $theme-dark-gray-darker: #475158;
@@ -93,44 +94,6 @@ body {
 	}
 }
 
-// Globals
-.e-global {
-
-	&__popover {
-
-		&-toggle {
-			border-color: $theme-dark-gray-light;
-			background-color: $theme-dark-gray-darkest;
-		}
-
-		&-container {
-			background-color: $theme-dark-gray;
-			color: $theme-dark-light;
-		}
-
-		&-title {
-			border-bottom-color: $theme-dark-gray-dark;
-		}
-	}
-
-	&__color-title,
-	&__manage-button,
-	&__popover-title {
-		color: $theme-dark-light;
-	}
-
-	&__manage-button {
-		border-top-color: $theme-dark-gray-dark;
-	}
-
-	&__preview-item {
-
-		&:hover {
-			background-color: $theme-dark-gray-dark;
-		}
-	}
-}
-
 // Global Settings
 .elementor-control {
 
@@ -168,24 +131,7 @@ body {
 	background-color: $theme-dark-gray;
 }
 
-//Safemode Toast
-.elementor-safe-mode-toast {
-	background-color: $theme-dark-gray;
-
-	header h2,
-	.elementor-toast-content {
-		color: $theme-dark-light;
-	}
-}
-.elementor-units-choices {
-	input {
-		&.e-units-placeholder + label {
-			color: $theme-dark-gray-lightest;
-		}
-	}
-}
-
-input, select, textarea, .elementor-input-style {
+input, select, textarea, .e-input-style {
 	color: $theme-dark-light;
 	background-color: $theme-dark-gray-darkest;
 
@@ -299,10 +245,6 @@ select {
 		}
 	}
 
-	#elementor-panel-elements-search-area {
-		background-color: $theme-dark-gray-darkest;
-	}
-
 	#elementor-panel-elements-search-input {
 		background-color: $theme-dark-gray;
 		color: $theme-dark-light;
@@ -336,11 +278,6 @@ select {
 		& > .eicon-lock {
 			color: $theme-dark-gray-light;
 		}
-	}
-
-	//WordPress Widgets
-	.widget-inside {
-		background-color: inherit;
 	}
 
 	//Footer
@@ -392,15 +329,6 @@ select {
 			&info {
 				background-color: $theme-dark-gray;
 			}
-		}
-	}
-
-	//Help Link
-	#elementor-panel__editor__help__link {
-		color: $theme-dark-gray-lightest;
-
-		&:hover {
-			color: $theme-dark-light;
 		}
 	}
 
@@ -818,7 +746,7 @@ body.rtl .elementor-control-type-gallery {
 		border-color: $theme-dark-gray-light;
 	}
 
-	&.elementor-tab-active {
+	&.e-tab-active {
 		background-color: $theme-dark-gray-lighter;
 		border-color: $theme-dark-gray-lighter;
 	}
@@ -1525,7 +1453,7 @@ label.elementor-template-library-order-label,
 	input,
 	select,
 	textarea,
-	.elementor-input-style {
+	.e-input-style {
 		color: $editor-dark;
 		background-color: transparent;
 

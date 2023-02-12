@@ -1,6 +1,7 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
 @import "../../helpers/direction";
+@import "../../direction/theme-light";
 
 @import "../container";
 
@@ -226,7 +227,8 @@ html.elementor-html {
 		}
 	}
 
-	&.elementor-absolute, &.elementor-fixed {
+	&.elementor-absolute,
+	&.elementor-fixed {
 		cursor: grab;
 
 		&:active {
@@ -312,7 +314,7 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
@@ -485,12 +487,13 @@ html.elementor-html {
 
 .elementor-sortable-helper {
 	position: absolute;
-	border-radius: 3px;
-	background-color: #fff;
-	text-align: center;
-	color: $editor-darker;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 	cursor: move;
+	border: var(--e-a-border);
+	border-radius: 3px;
+	background-color: var(--e-a-bg-active);
+	border-color: var(--e-a-border-color-accent);
+	color: var(--e-a-color-active);
+	text-align: center;
 
 	.icon {
 		font-size: 28px;
@@ -498,19 +501,15 @@ html.elementor-html {
 		line-height: 1;
 	}
 
-	.elementor-element-title-wrapper {
-		display: table;
-		width: 100%;
+	.title-wrapper {
+		display: flex;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.title {
 		font-size: 11px;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		display: table-cell;
-		vertical-align: middle;
-		height: 40px;
 	}
 }
 
@@ -605,7 +604,8 @@ html.elementor-html {
 .elementor-column-placeholder {
 	position: relative;
 
-	&:before, &:after {
+	&:before,
+	&:after {
 		content: '';
 		position: absolute;
 		top: 10px;
@@ -711,53 +711,40 @@ html.elementor-html {
 	text-align: center;
 	margin: 20px;
 	padding: 40px 0;
+	display: flex;
+	justify-content: center;
 	flex-grow: 1;
 }
 
 .elementor-add-new-section {
-	display: inline-block; // For smooth dragging above
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 5px;
 
 	.elementor-add-section-area-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+		padding: 12px;
 		height: 40px;
 		width: 40px;
-		color: #fff;
-		font-size: 16px;
 		border-radius: 50%;
-		transition: all .3s;
-		cursor: pointer;
+		font-size: 16px;
+		display: flex;
 
-		&:hover {
-			opacity: 0.85;
-			box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
+		i {
+			margin: 0;
 		}
-
-		&:active {
-			box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
-		}
-	}
-
-	.elementor-add-section-button {
-		background-color: $editor-accent;
-		margin-inline-start: 5px;
-	}
-
-	.elementor-add-template-button {
-		background-color: $editor-dark;
-		@include margin-start(5px);
 	}
 }
 
 .elementor-add-section-drag-title {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: normal;
 	font-style: italic;
 	line-height: 1;
 	color: $editor-darker;
-	margin-top: 15px;
+	margin-top: 10px;
+	width: 100%;
 }
 
 .elementor-add-section-close {
@@ -775,7 +762,7 @@ html.elementor-html {
 }
 
 .elementor-select-preset-title {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: $admin-font-family;
 	font-size: 13px;
 	font-weight: 500;
 	font-style: normal;
