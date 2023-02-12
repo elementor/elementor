@@ -42,7 +42,7 @@
 	}
 
 	&__teaser {
-		border-top: 2px solid $e-gray-50;
+		border-top: 2px solid var(--e-a-border-color);
 		padding-top: 4px;
 		margin-top: 4px;
 
@@ -76,12 +76,11 @@
 
 	&__settings,
 	&__remove {
-		color: $editor-lighter;
 		cursor: pointer;
 		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			color: $editor-light;
+			color: var(--e-a-color-txt-hover);
 		}
 	}
 
@@ -94,6 +93,7 @@
 	position: absolute;
 	width: 260px;
 	background-color: var(--e-a-bg-default);
+	border: var(--e-a-border);
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
 	z-index: 1;
 
@@ -105,7 +105,7 @@
 		top: -#{$triangle-size * 2};
 		@include start(5px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: #fff;
+		border-bottom-color: var(--e-a-border-color);
 	}
 
 	.elementor-control {

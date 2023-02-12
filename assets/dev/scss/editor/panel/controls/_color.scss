@@ -5,6 +5,7 @@
 		.e-global__popover-toggle ~ .pickr {
 			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 			flex-shrink: 0;
+			border-color: var(--e-a-border-color-bold);
 		}
 	}
 

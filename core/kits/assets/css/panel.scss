@@ -75,11 +75,11 @@
 
 			&-row-tool {
 				cursor: pointer;
-				color: $e-gray-200;
+				color: var(--e-a-color-txt);
 				padding: 5px;
 
 				&:hover {
-					color: $e-gray-600;
+					color: var(--e-a-color-txt-hover);
 				}
 			}
 		}

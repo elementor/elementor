@@ -32,8 +32,6 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		i {
 			font-size: 16px;
-			color: $editor-light;
-			font-weight: bold;
 			@include margin-end(15px);
 		}
 
@@ -45,11 +43,9 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 			margin: 0;
 			flex-grow: 1;
 			font-size: 14px;
-			color: $editor-darkest;
 			box-shadow: none;
 
 			&::placeholder {
-				color: $editor-light;
 				font-style: italic;
 				font-weight: 300;
 			}
@@ -64,7 +60,6 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 	&__no-results {
 		display: none;
 		padding: 20px;
-		color: $editor-light;
 	}
 
 	&__lock-dialog {
@@ -79,7 +74,6 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		&__title {
 			padding: 5px 25px;
-			color: $editor-dark;
 			font-size: 9px;
 			border-bottom: var(--e-a-border);
 		}
@@ -96,7 +90,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 			position: absolute;
 			@include end(10px);
 			top: 30px;
-			color: $editor-info;
+			color: var(--e-a-color-info);
 			font-size: 14px;
 		}
 	}
@@ -144,7 +138,6 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		&__description {
 			@include margin-start(5px);
-			color: $editor-light;
 			font-style: italic;
 		}
 
@@ -152,7 +145,6 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 			text-transform: uppercase;
 			position: absolute;
 			inset-inline-end: 16px;
-			color: $editor-darker;
 			font-size: 8px;
 			font-weight: 500;
 			display: flex;
