@@ -23,7 +23,6 @@ const fetchPluginsList = async ( url, filename ) => {
 			pluginsList.push( plugin.slug );
 		} );
 
-		// Sort the list
 		pluginsList.sort();
 
 		// eslint-disable-next-line no-console
