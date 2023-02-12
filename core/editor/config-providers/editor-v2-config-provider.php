@@ -79,8 +79,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 		$v2_config = [
 			'handle' => 'elementor-editor-loader-v2',
-			'name' => 'elementorEditorV2Config',
-			'config' => [
+			'name' => 'elementorEditorV2Settings',
+			'settings' => [
 				'urls' => [
 					'admin' => admin_url(),
 				],

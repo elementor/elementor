@@ -23,8 +23,10 @@ describe( '@elementor/editor - useSettings()', () => {
 
 	it( 'should throw when not rendered inside a <SettingsContextProvider />', () => {
 		// Arrange.
-		// TODO: Mock the `console.error` because `@testing-library/react-hooks` takes over the `console.error`
-		//  which breaks `@wordpress/jest-console` assertions.
+		// Mock the `console.error` because `@testing-library/react-hooks` takes over the `console.error`
+		// which breaks `@wordpress/jest-console` assertions.
+
+		// eslint-disable-next-line no-console
 		console.error = jest.fn();
 
 		// Act.

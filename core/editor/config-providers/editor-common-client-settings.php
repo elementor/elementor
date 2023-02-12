@@ -32,7 +32,7 @@ class Editor_Common_Client_Settings {
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
-		$config = [
+		$client_settings = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
@@ -106,7 +106,7 @@ class Editor_Common_Client_Settings {
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$config['promotionWidgets'] = Api::get_promotion_widgets();
+			$client_settings['promotionWidgets'] = Api::get_promotion_widgets();
 		}
 
 		static::bc_move_document_filters();
@@ -118,10 +118,10 @@ class Editor_Common_Client_Settings {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $config  Editor configuration.
+		 * @param array $client_settings  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		return apply_filters( 'elementor/editor/localize_settings', $config );
+		return apply_filters( 'elementor/editor/localize_settings', $client_settings );
 	}
 
 	private static function bc_move_document_filters() {

@@ -60,7 +60,7 @@ class Editor_Loader {
 				return (
 					! empty( $config['handle'] ) &&
 					! empty( $config['name'] ) &&
-					! empty( $config['config'] )
+					! empty( $config['settings'] )
 				);
 			} );
 
@@ -68,7 +68,7 @@ class Editor_Loader {
 			Utils::print_js_config(
 				$client_setting['handle'],
 				$client_setting['name'],
-				$client_setting['config']
+				$client_setting['settings']
 			);
 		}
 	}

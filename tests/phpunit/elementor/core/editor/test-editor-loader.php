@@ -130,62 +130,23 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_print_client_settings() {
+	/**
+	 * @dataProvider print_client_settings_data_provider
+	 */
+	public function test_print_client_settings( $is_registered, $client_settings, $expected ) {
 		// Arrange
-		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [
-			[
-				'handle' => 'existing-handle',
+		$script_config = $is_registered
+			? [
+				'handle' => $client_settings['handle'],
 				'src' => 'source.js',
 				'deps' => [],
 				'version' => '1.0.0',
-			],
-			[
-				'handle' => 'no-config',
-				'src' => 'source.js',
-				'deps' => [],
-				'version' => '1.0.0',
-			],
-			[
-				'handle' => 'no-name',
-				'src' => 'source.js',
-				'deps' => [],
-				'version' => '1.0.0',
-			],
-		] );
+			]
+			: [];
 
-		$this->mock_config_provider->method( 'get_client_settings' )
-			->willReturn( [
-				[
-					'handle' => 'not-registered',
-					'name' => 'notRegistered',
-					'config' => [
-						'test' => 'not-registered',
-					],
-				],
-				[
-					'handle' => 'existing-handle',
-					'name' => 'existingHandle',
-					'config' => [
-						'test' => 'existing-handle',
-					],
-				],
-				[
-					'handle' => 'no-config',
-					'name' => 'noConfig',
-				],
-				[
-					'handle' => 'no-name',
-					'config' => [
-						'test' => 'no-name',
-					],
-				],
-				[
-					'name' => 'noHandle',
-					'config' => [
-						'test' => 'test-value',
-					],
-				],
-			] );
+		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [ $script_config ] );
+
+		$this->mock_config_provider->method( 'get_client_settings' )->willReturn( [ $client_settings ] );
 
 		$editor_loader = new Editor_Loader( $this->mock_config_provider );
 		$editor_loader->register_scripts();
@@ -195,21 +156,67 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals(
-			'var existingHandle = {"test":"existing-handle"};',
-			wp_scripts()->get_data( 'existing-handle', 'before' )[ 1 ]
+			$expected,
+			wp_scripts()->get_data( $client_settings['handle'] ?? null, 'before' )
 		);
+	}
 
-		$this->assertFalse(
-			wp_scripts()->get_data( 'not-registered', 'before' )
-		);
-
-		$this->assertFalse(
-			wp_scripts()->get_data( 'no-config', 'before' )
-		);
-
-		$this->assertFalse(
-			wp_scripts()->get_data( 'no-name', 'before' )
-		);
+	public function print_client_settings_data_provider() {
+		return [
+			[
+				'is_registered' => false,
+				'client_settings' => [
+					'handle' => 'not-registered',
+					'name' => 'notRegistered',
+					'settings' => [
+						'test' => 'not-registered',
+					],
+				],
+				'expected' => false,
+			],
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'existing-handle',
+					'name' => 'existingHandle',
+					'settings' => [
+						'test' => 'existing-handle',
+					],
+				],
+				'expected' => [
+					0 => '',
+					1 => 'var existingHandle = {"test":"existing-handle"};',
+				],
+			],
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'no-settings',
+					'name' => 'noSettings',
+				],
+				'expected' => false,
+			],
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'no-name',
+					'settings' => [
+						'test' => 'no-name',
+					],
+				],
+				'expected' => false,
+			],
+			[
+				'is_registered' => false,
+				'client_settings' => [
+					'name' => 'noHandle',
+					'settings' => [
+						'test' => 'no-handle',
+					],
+				],
+				'expected' => false,
+			],
+		];
 	}
 
 	/** @dataProvider load_script_translations__with_replace_requested_file__data_provider */
@@ -284,4 +291,6 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 			],
 		];
 	}
+
+
 }

@@ -164,7 +164,7 @@ class Editor_Common_Configs {
 			[
 				'handle' => 'elementor-editor',
 				'name' => 'ElementorConfig',
-				'config' => Editor_Common_Client_Settings::get_client_settings(),
+				'settings' => Editor_Common_Client_Settings::get_client_settings(),
 			],
 		];
 	}
