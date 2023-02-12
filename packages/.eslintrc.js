@@ -10,6 +10,8 @@ module.exports = {
 		'plugin:import/typescript',
 	],
 	settings: {
+		// Override import/internal-regex that defined in @wordpress/eslint-plugin.
+		'import/internal-regex': false,
 		'import/resolver': {
 			typescript: {},
 			node: {},
