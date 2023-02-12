@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
 	MenuItem,
 	MenuItemProps,
-	styled,
 	ListItemText,
 	ListItemIcon,
 	ListItemButton,
@@ -16,27 +15,20 @@ type ExtraProps = {
 	icon?: JSX.Element;
 }
 
-// The 'a' tag color is affected on hover by a global CSS color that applies on 'body a:hover {}'.
-const StyleListItemButton = styled( ListItemButton )( ( { theme } ) => ( {
-	'&.MuiListItemButton-root:hover': {
-		color: theme.palette.text.primary,
-	},
-} ) );
-
 const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, target } ) => {
 	if ( ! href ) {
 		return <>{ children }</>;
 	}
 
 	return (
-		<StyleListItemButton
+		<ListItemButton
 			component="a"
 			role="menuitem"
 			href={ href }
 			target={ target }
 		>
 			{ children }
-		</StyleListItemButton>
+		</ListItemButton>
 	);
 };
 
