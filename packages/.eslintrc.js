@@ -37,6 +37,12 @@ module.exports = {
 		// Disable the js no-unused-vars rule, and enable the TS version.
 		'no-unused-vars': [ 'off' ],
 		'@typescript-eslint/no-unused-vars': [ 'error' ],
+
+		// Make sure there are:
+		// - No more than 1 empty line between blocks.
+		// - No empty lines at the beginning of the file.
+		// - No empty lines at the end of the file. (By default there is line break at the end of the file.)
+		'no-multiple-empty-lines': [ 'error', { max: 1, maxEOF: 0, maxBOF: 0 } ],
 	},
 	overrides: [
 		{

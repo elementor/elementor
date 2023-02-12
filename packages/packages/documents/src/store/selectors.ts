@@ -10,23 +10,15 @@ const selectHostId = ( state: State ) => state.documents.hostId;
 export const selectActiveDocument = createSelector(
 	selectEntities,
 	selectActiveId,
-	( entities, activeId ) => {
-		if ( ! activeId ) {
-			return null;
-		}
-
-		return entities[ activeId ];
-	},
+	( entities, activeId ) => activeId && entities[ activeId ]
+		? entities[ activeId ]
+		: null,
 );
 
 export const selectHostDocument = createSelector(
 	selectEntities,
 	selectHostId,
-	( entities, hostId ) => {
-		if ( ! hostId ) {
-			return null;
-		}
-
-		return entities[ hostId ];
-	}
+	( entities, hostId ) => hostId && entities[ hostId ]
+		? entities[ hostId ]
+		: null,
 );

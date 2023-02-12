@@ -25,13 +25,15 @@ function syncInitialization( slice: Slice ) {
 		() => {
 			const documentsManager = getV1DocumentsManager();
 
-			dispatch( init( {
-				entities: Object.entries( documentsManager.documents )
-					.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
-						acc[ id ] = normalizeV1Document( document );
+			const entities = Object.entries( documentsManager.documents )
+				.reduce( ( acc: Record<string, Document>, [ id, document ] ) => {
+					acc[ id ] = normalizeV1Document( document );
 
-						return acc;
-					}, {} ),
+					return acc;
+				}, {} );
+
+			dispatch( init( {
+				entities,
 				hostId: documentsManager.getInitialId(),
 				activeId: documentsManager.getCurrentId(),
 			} ) );

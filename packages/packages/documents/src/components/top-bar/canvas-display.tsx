@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { Stack } from '@elementor/ui';
 import { useActiveDocument } from '../../hooks';
 import useHostDocument from '../../hooks/use-host-document';
@@ -9,17 +8,9 @@ export default function CanvasDisplay() {
 	const activeDocument = useActiveDocument();
 	const hostDocument = useHostDocument();
 
-	const document = useMemo( () => {
-		if ( activeDocument && activeDocument.type.value !== 'kit' ) {
-			return activeDocument;
-		}
-
-		if ( hostDocument ) {
-			return hostDocument;
-		}
-
-		return null;
-	}, [ activeDocument, hostDocument ] );
+	const document = activeDocument && activeDocument?.type?.value !== 'kit'
+		? activeDocument
+		: hostDocument;
 
 	if ( ! document ) {
 		return null;

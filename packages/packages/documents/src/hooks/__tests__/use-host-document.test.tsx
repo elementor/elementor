@@ -46,4 +46,3 @@ describe( '@elementor/documents - useHostDocument', () => {
 		expect( result.current ).toBeNull();
 	} );
 } );
-

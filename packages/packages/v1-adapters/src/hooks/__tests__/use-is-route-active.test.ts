@@ -91,4 +91,3 @@ describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 		expect( result.current ).toBe( false );
 	} );
 } );
-

@@ -7,7 +7,7 @@ import {
 	routeCloseEvent,
 	windowEvent,
 	v1ReadyEvent,
-	setIsReady,
+	setReady,
 	ExtendedWindow,
 } from '../';
 
@@ -308,14 +308,11 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
-
-		// Cleanup.
-		delete extendedWindow.__elementorEditorV1LoadingPromise;
 	} );
 
-	it( 'should not listen to event if isReady equals to `false`', () => {
+	it( 'should not trigger callback when the application is not ready', () => {
 		// Arrange
-		setIsReady( false );
+		setReady( false );
 
 		const event = 'test-event';
 		const callback = jest.fn();

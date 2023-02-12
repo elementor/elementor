@@ -1,4 +1,4 @@
-export type EditMode = 'edit' | 'preview' | 'picker'
+export type EditMode = 'edit' | 'preview' | 'picker';
 
 export type ExtendedWindow = Window & {
 	$e: {

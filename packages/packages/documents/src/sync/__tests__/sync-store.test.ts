@@ -18,19 +18,12 @@ type WindowWithOptionalElementor = Omit<ExtendedWindow, 'elementor'> & {
 describe( '@elementor/documents - Sync Store', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
-	let extendedWindow: WindowWithOptionalElementor;
 
 	beforeEach( () => {
 		slice = createSlice();
 		store = createStore();
 
 		syncStore( slice );
-
-		extendedWindow = ( window as unknown as WindowWithOptionalElementor );
-	} );
-
-	afterEach( () => {
-		delete extendedWindow.elementor;
 	} );
 
 	it( 'should sync documents on V1 load', () => {

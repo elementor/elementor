@@ -3,27 +3,28 @@ import { useHostDocument, useActiveDocument } from '../../../hooks';
 import CanvasDisplay from '../canvas-display';
 import { createMockDocument } from '../../../__tests__/test-utils';
 
-jest.mock<typeof import( '../../../hooks/use-active-document' )>( '../../../hooks/use-active-document', () => ( {
+jest.mock( '../../../hooks/use-active-document', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
 
-jest.mock<typeof import( '../../../hooks/use-host-document' )>( '../../../hooks/use-host-document', () => ( {
+jest.mock( '../../../hooks/use-host-document', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
 
-describe( '@elementor/documents - top bar canvas display', () => {
+describe( '@elementor/documents - Top bar Canvas display', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( { id: 1, title: 'Active Document' } )
 		);
+
 		jest.mocked( useHostDocument ).mockImplementation( () =>
 			createMockDocument( { id: 2, title: 'Host Document' } )
 		);
 	} );
 
-	it( 'should show the title of the active document without the status', () => {
+	it( 'should show the title of the active document without the status (for non-publish status)', () => {
 		// Act.
 		const { queryByText } = render( <CanvasDisplay /> );
 
@@ -85,7 +86,7 @@ describe( '@elementor/documents - top bar canvas display', () => {
 		expect( queryByText( 'Host Document' ) ).toBeTruthy();
 	} );
 
-	it( 'should not show nothing if there is no documents', () => {
+	it( 'should show nothing if there are no documents', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 		jest.mocked( useHostDocument ).mockImplementation( () => null );

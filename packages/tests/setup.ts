@@ -1,11 +1,13 @@
 import { flushInjections } from '@elementor/locations';
-import { flushListeners, setIsReady } from '@elementor/v1-adapters';
+import { flushListeners, setReady } from '@elementor/v1-adapters';
 import { deleteStore } from '@elementor/store';
 
 // Add JSDOM matchers.
 import '@testing-library/jest-dom';
 
 import '@wordpress/jest-console';
+
+let windowOriginalProps: string[];
 
 beforeEach( () => {
 	/* eslint-disable no-console */
@@ -20,5 +22,16 @@ beforeEach( () => {
 	flushListeners();
 	deleteStore();
 
-	setIsReady( true );
+	setReady( true );
+
+	windowOriginalProps = Object.keys( window );
+} );
+
+afterEach( () => {
+	// Delete all the props that were added to the window.
+	Object.keys( window ).forEach( ( key ) => {
+		if ( ! windowOriginalProps.includes( key ) ) {
+			delete ( window as unknown as {[key: string]: unknown} )[ key ];
+		}
+	} );
 } );

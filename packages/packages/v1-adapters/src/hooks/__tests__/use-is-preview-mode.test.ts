@@ -45,4 +45,3 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 		expect( result.current ).toBe( false );
 	} );
 } );
-
