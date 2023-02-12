@@ -105,18 +105,6 @@ function syncOnDocumentChange( slice: Slice ) {
 	const { markAsDirty, markAsPristine } = slice.actions;
 
 	listenTo(
-		v1ReadyEvent(),
-		() => {
-			const currentDocument = getV1DocumentsManager().getCurrent();
-			const isAutoSave = currentDocument.config.revisions.current_id !== currentDocument.id;
-
-			if ( isAutoSave ) {
-				dispatch( markAsDirty() );
-			}
-		}
-	);
-
-	listenTo(
 		commandEndEvent( 'document/save/set-is-modified' ),
 		() => {
 			const currentDocument = getV1DocumentsManager().getCurrent();

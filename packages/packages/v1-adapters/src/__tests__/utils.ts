@@ -30,6 +30,10 @@ export function dispatchRouteClose( route: string ) {
 	} ) );
 }
 
+export function dispatchEditModeChange() {
+	window.dispatchEvent( new CustomEvent( 'elementor/edit-mode/change' ) );
+}
+
 export function dispatchWindowEvent( event: string ) {
 	window.dispatchEvent( new CustomEvent( event ) );
 }
