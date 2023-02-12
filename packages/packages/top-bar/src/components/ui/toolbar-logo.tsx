@@ -62,7 +62,7 @@ const StyledElementorLogo = styled( ElementorLogo, {
 } ) );
 
 export default function ToolbarLogo( props: ToolbarLogoProps ) {
-	const [ isHoverState, setIsHoverState ] = useState( () => props.selected );
+	const [ isHoverState, setIsHoverState ] = useState( false );
 	const showMenuIcon = props.selected || isHoverState;
 
 	return (
