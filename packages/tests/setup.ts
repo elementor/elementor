@@ -1,5 +1,8 @@
 import { resetInjections } from '@elementor/locations';
 
+// Add JSDOM matchers.
+import '@testing-library/jest-dom';
+
 import '@wordpress/jest-console';
 
 beforeEach( () => {
