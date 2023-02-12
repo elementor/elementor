@@ -26,6 +26,12 @@ module.exports = {
 				message: 'Path import of Elementor dependencies is not allowed, please use the package root (e.g: use "@elementor/locations" instead of "@elementor/locations/src/index.ts").',
 			},
 		],
+		'import/no-extraneous-dependencies': [
+			'error',
+			{
+				devDependencies: false,
+			},
+		],
 
 		// Strict mode.
 		'@typescript-eslint/no-non-null-assertion': [ 'error' ],
@@ -42,7 +48,9 @@ module.exports = {
 		{
 			// Development files.
 			files: [
-				'**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)',
+				'**/tools/**/*', // Tools files.
+				'*.js', // Root level files.
+				'**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)', // Test files.
 			],
 			rules: {
 				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
