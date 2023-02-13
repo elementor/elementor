@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.10.2
+Stable tag: 3.11.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,32 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.11.0 - 2023-02-13 =
+
+* New: Introducing Copy and Paste Between Websites functionality ([#9424](https://github.com/elementor/elementor/issues/9424), [#19183](https://github.com/elementor/elementor/issues/19183))
+* New: Responsive background Image Size - Adjust image size per device to improve performance ([#6778](https://github.com/elementor/elementor/issues/6778), [#3722](https://github.com/elementor/elementor/issues/3722))
+* New: Updated Swiper Library to 8.4.5 as a Beta experiment ([#18724](https://github.com/elementor/elementor/issues/18724))
+* Tweak: Updated Google Fonts list with 125 new fonts ([#20229](https://github.com/elementor/elementor/issues/20229))
+* Tweak: Added `accent-color` support to Form fields in Site Settings
+* Tweak: Use `aspect-ratio` property instead of CSS trick in Video widget
+* Tweak: Updated `eicons` library to v5.18.0
+* Tweak: Added `generator` meta tag to identify active performance settings and experiments
+* Tweak: Improved logo visibility in Site Logo widget
+* Tweak: Updated error messages when replacing URLs in Elementor Tools screen
+* Tweak: Updated error messages on import/export functionality
+* Tweak: Added a responsive control to custom image spacing in Image Carousel widget
+* Tweak: Renamed "Experiments" settings tab to "Features" for better clarity
+* Tweak: Merged "Hide WP widgets from search" experiment to the version
+* Tweak: Promoted "Nested Elements" experiment to BETA status
+* Tweak: Promoted "Flexbox Container" experiment to RC status
+* Tweak: Promoted "Save as Default" experiment to Stable status
+* Fix: Rename `e-action-hash` attribute to `data-e-action-hash` attribute ([#20513](https://github.com/elementor/elementor/issues/20513), [#16418](https://github.com/elementor/elementor/issues/16418), props [@huubl](https://github.com/huubl))
+* Fix: Justify Content icons are inverted in RTL when direction is set to column in Container ([#20083](https://github.com/elementor/elementor/issues/20083))
+* Fix: Various issues when using the convert-to-container functionality
+* Fix: Tabs widget changes width size when direction set to row or column in Container
+* Fix: Adjusted right-click menu dark mode for blocked options
+* Fix: Can't rollback Elementor version to older Core version
 
 = 3.10.2 - 2023-01-29 =
 
