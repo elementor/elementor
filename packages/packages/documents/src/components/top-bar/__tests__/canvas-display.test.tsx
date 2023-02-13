@@ -24,7 +24,7 @@ describe( '@elementor/documents - Top bar Canvas display', () => {
 		);
 	} );
 
-	it( 'should show the title of the active document without the status (for non-publish status)', () => {
+	it( 'should show the title of the active document without its status when the document is published', () => {
 		// Act.
 		const { queryByText } = render( <CanvasDisplay /> );
 
@@ -33,7 +33,7 @@ describe( '@elementor/documents - Top bar Canvas display', () => {
 		expect( queryByText( '(publish)' ) ).not.toBeTruthy();
 	} );
 
-	it( 'should show the title of the active document with the status', () => {
+	it( 'should show the title of the active document with its status when the document is not published', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( {

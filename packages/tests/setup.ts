@@ -4,10 +4,9 @@ import { deleteStore } from '@elementor/store';
 
 // Add JSDOM matchers.
 import '@testing-library/jest-dom';
-
 import '@wordpress/jest-console';
 
-let windowOriginalProps: string[];
+let windowOriginalProps: PropertyKey[];
 
 beforeEach( () => {
 	/* eslint-disable no-console */
@@ -31,7 +30,7 @@ afterEach( () => {
 	// Delete all the props that were added to the window.
 	Object.keys( window ).forEach( ( key ) => {
 		if ( ! windowOriginalProps.includes( key ) ) {
-			delete ( window as unknown as {[key: string]: unknown} )[ key ];
+			delete ( window as unknown as Record<PropertyKey, unknown> )[ key ];
 		}
 	} );
 } );

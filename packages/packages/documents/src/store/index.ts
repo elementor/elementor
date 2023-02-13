@@ -17,7 +17,7 @@ const createActiveDocumentReducer = (
 	callback: ( document: Document ) => void
 ) => {
 	return ( state: State ) => {
-		if ( ! state.activeId ) {
+		if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
 			return;
 		}
 
@@ -48,7 +48,7 @@ export function createSlice() {
 			startSaving: createActiveDocumentReducer( ( document ) => document.isSaving = true ),
 
 			endSaving( state, action: PayloadAction<Document> ) {
-				if ( ! state.activeId ) {
+				if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
 					return;
 				}
 
@@ -59,7 +59,7 @@ export function createSlice() {
 			startSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = true ),
 
 			endSavingDraft( state, action: PayloadAction<Document> ) {
-				if ( ! state.activeId ) {
+				if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
 					return;
 				}
 

@@ -8,7 +8,7 @@ export default function CanvasDisplay() {
 	const activeDocument = useActiveDocument();
 	const hostDocument = useHostDocument();
 
-	const document = activeDocument && activeDocument?.type?.value !== 'kit'
+	const document = activeDocument && activeDocument.type.value !== 'kit'
 		? activeDocument
 		: hostDocument;
 
