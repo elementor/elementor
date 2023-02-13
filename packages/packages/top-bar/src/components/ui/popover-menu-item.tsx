@@ -39,7 +39,7 @@ const StyledArrowUpRightIcon = withDirection( ArrowUpRightIcon );
 
 export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
 	const isExternalLink = href && target === '_blank';
-	
+
 	return (
 		<MenuItem
 			{ ...props }
