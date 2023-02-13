@@ -1,0 +1,56 @@
+body {
+    background-color: #fff !important;
+}
+
+#adminmenu {
+
+	#toplevel_page_elementor {
+
+		div.wp-menu-image:before {
+			content: "\e813";
+			font-family: eicons;
+			font-size: 18px;
+			margin-top: 1px;
+		}
+	}
+}
+
+#adminmenumain {
+    display: none;
+}
+
+#wpadminbar {
+    display: none;
+}
+
+#wp-toolbar {
+	padding-top: 0 !important;
+}
+
+#wpcontent {
+	margin-left: 0 !important;
+
+	#e-admin-top-bar-root {
+		display: none;
+	}
+
+	#wpbody-content {
+		margin-top: 0 !important;
+
+		#ame-plugin-menu-notice {
+			display: none;
+		}
+
+		#elementor-settings-tabs-wrapper {
+			display: none;
+		}
+
+		.elementor-settings-form-page {
+			padding-top: 0 !important;
+		}
+	}
+}
+
+#wpfooter {
+	display: none;
+}

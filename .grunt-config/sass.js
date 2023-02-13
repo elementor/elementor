@@ -44,6 +44,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'app/modules/dashboard',
+				src: 'module.scss',
+				dest: 'assets/css/modules/dashboard',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',

@@ -218,7 +218,7 @@ class App extends BaseApp {
 			true
 		);
 
-		$this->enqueue_dark_theme_detection_script();
+//		$this->enqueue_dark_theme_detection_script();
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
@@ -252,6 +252,8 @@ class App extends BaseApp {
 
 		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
+		$this->add_component( 'dashboard', new Modules\Dashboard\Module() );
+
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
@@ -263,6 +265,15 @@ class App extends BaseApp {
 			add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
 		} else {
 			add_action( 'elementor/common/after_register_scripts', [ $this, 'enqueue_app_loader' ] );
+		}
+
+		if ( ( ! empty( $_GET['hide_wp'] ) && 'true' === $_GET['hide_wp'] ) ) {
+			wp_enqueue_style(
+				'elementor-hide-wp',
+				$this->get_css_assets_url( 'modules/dashboard/module' ),
+				[],
+				ELEMENTOR_VERSION
+			);
 		}
 	}
 }
