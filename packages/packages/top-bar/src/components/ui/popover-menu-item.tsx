@@ -6,7 +6,9 @@ import {
 	ListItemIcon,
 	ListItemButton,
 	ListItemButtonProps,
+	withDirection,
 } from '@elementor/ui';
+import ArrowUpRightIcon from '../../icons/arrow-up-right-icon';
 
 type ExtraProps = {
 	href?: string;
@@ -26,13 +28,18 @@ const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, 
 			role="menuitem"
 			href={ href }
 			target={ target }
+			sx={ { px: 0 } }
 		>
 			{ children }
 		</ListItemButton>
 	);
 };
 
+const StyledArrowUpRightIcon = withDirection( ArrowUpRightIcon );
+
 export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
+	const isExternalLink = href && target === '_blank';
+
 	return (
 		<MenuItem
 			{ ...props }
@@ -43,6 +50,7 @@ export default function PopoverMenuItem( { text, icon, onClick, href, target, di
 			<MenuItemInnerWrapper href={ href } target={ target }>
 				<ListItemIcon>{ icon }</ListItemIcon>
 				<ListItemText primary={ text } />
+				{ isExternalLink && <StyledArrowUpRightIcon /> }
 			</MenuItemInnerWrapper>
 		</MenuItem>
 	);

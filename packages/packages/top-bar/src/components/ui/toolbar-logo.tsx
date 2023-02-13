@@ -35,7 +35,7 @@ const StyledToggleButton = styled( ToggleButton )( () => ( {
 
 const StyledElementorLogo = styled( ElementorLogo, {
 	shouldForwardProp: ( prop ) => prop !== 'showMenuIcon',
-} )<StyledElementorLogoProps>( ( { showMenuIcon } ) => ( {
+} )<StyledElementorLogoProps>( ( { theme, showMenuIcon } ) => ( {
 	width: '100%',
 	height: '100%',
 	'& path': {
@@ -47,7 +47,8 @@ const StyledElementorLogo = styled( ElementorLogo, {
 			transform: showMenuIcon && 'translateY(-9px) scaleY(0)',
 		},
 		'&:not(:first-of-type)': {
-			transform: ! showMenuIcon && 'translateX(9px) scaleX(0.6)',
+			// Emotion automatically change 4 to -4 in RTL moode.
+			transform: ! showMenuIcon && `translateX(${ theme.direction === 'rtl' ? '4' : '9' }px) scaleX(0.6)`,
 		},
 		'&:nth-of-type(2)': {
 			transitionDelay: showMenuIcon ? '0' : '0.2s',
