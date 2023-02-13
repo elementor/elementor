@@ -424,6 +424,23 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'icon_color_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon i' => 'transition: color {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'transition: fill {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'icon_size',
 			[
@@ -578,6 +595,22 @@ class Widget_Icon_List extends Widget_Base {
 		);
 
 		$this->add_control(
+			'text_color_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-text' => 'transition: color {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
 			'text_indent',
 			[
 				'label' => esc_html__( 'Text Indent', 'elementor' ),
@@ -588,7 +621,7 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-icon' => is_rtl() ? 'padding-left: {{SIZE}}{{UNIT}};' : 'padding-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
