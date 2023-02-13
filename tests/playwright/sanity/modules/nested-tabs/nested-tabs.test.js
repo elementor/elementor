@@ -375,7 +375,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test.only( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { browser, page }, testInfo ) => {
+	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { browser, page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
