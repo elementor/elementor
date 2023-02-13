@@ -8,7 +8,7 @@ export interface Settings {
 
 const SettingsContext = createContext<Settings | null>( null );
 
-export function SettingsContextProvider( { children, settings }: PropsWithChildren<{ settings: Settings }> ) {
+export function SettingsProvider( { children, settings }: PropsWithChildren<{ settings: Settings }> ) {
 	return (
 		<SettingsContext.Provider value={ { ...settings } }>
 			{ children }
@@ -20,7 +20,7 @@ export function useSettings() {
 	const context = useContext( SettingsContext );
 
 	if ( ! context ) {
-		throw new Error( 'The `useSettings()` hook must be used within an `<SettingsContextProvider />`' );
+		throw new Error( 'The `useSettings()` hook must be used within an `<SettingsProvider />`' );
 	}
 
 	return context;

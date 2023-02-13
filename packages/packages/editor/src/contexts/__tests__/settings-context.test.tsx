@@ -1,27 +1,26 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { Settings, SettingsContextProvider, useSettings } from '../settings-context';
+import { Settings, SettingsProvider, useSettings } from '../settings-context';
 
 describe( '@elementor/editor - useSettings()', () => {
 	it( 'should return the value from the context', () => {
-		// Act.
-		const { result } = renderHookWithSettings(
-			() => useSettings(),
-			{
-				urls: {
-					admin: 'https://localhost/wp-admin/',
-				},
-			}
-		);
-
-		// Assert.
-		expect( result.current ).toEqual( {
+		// Arrange.
+		const settings = {
 			urls: {
 				admin: 'https://localhost/wp-admin/',
 			},
-		} );
+		};
+
+		// Act.
+		const { result } = renderHookWithSettings(
+			() => useSettings(),
+			settings
+		);
+
+		// Assert.
+		expect( result.current ).toEqual( settings );
 	} );
 
-	it( 'should throw when not rendered inside a <SettingsContextProvider />', () => {
+	it( 'should throw when not rendered inside a <SettingsProvider />', () => {
 		// Arrange.
 		// Mock the `console.error` because `@testing-library/react-hooks` takes over the `console.error`
 		// which breaks `@wordpress/jest-console` assertions.
@@ -33,7 +32,7 @@ describe( '@elementor/editor - useSettings()', () => {
 		const { result } = renderHook( () => useSettings() );
 
 		// Assert.
-		expect( result.error?.message ).toEqual( 'The `useSettings()` hook must be used within an `<SettingsContextProvider />`' );
+		expect( result.error?.message ).toEqual( 'The `useSettings()` hook must be used within an `<SettingsProvider />`' );
 	} );
 } );
 
@@ -41,9 +40,9 @@ function renderHookWithSettings( hook: () => unknown, settings: Settings ) {
 	return renderHook( hook, {
 		wrapper: ( { children } ) => {
 			return (
-				<SettingsContextProvider settings={ settings }>
+				<SettingsProvider settings={ settings }>
 					{ children }
-				</SettingsContextProvider>
+				</SettingsProvider>
 			);
 		},
 	} );

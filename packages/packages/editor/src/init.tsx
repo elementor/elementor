@@ -3,7 +3,7 @@ import Shell from './components/shell';
 import { ThemeProvider } from '@elementor/ui';
 import { StoreProvider, createStore } from '@elementor/store';
 import { dispatchReadyEvent } from '@elementor/v1-adapters';
-import { SettingsContextProvider, Settings } from './contexts/settings-context';
+import { SettingsProvider, Settings } from './contexts/settings-context';
 
 export default function init( domElement: HTMLElement, settings: Settings ): void {
 	const store = createStore();
@@ -11,12 +11,12 @@ export default function init( domElement: HTMLElement, settings: Settings ): voi
 	dispatchReadyEvent();
 
 	ReactDOM.render( (
-		<SettingsContextProvider settings={ settings }>
+		<SettingsProvider settings={ settings }>
 			<StoreProvider store={ store }>
 				<ThemeProvider>
 					<Shell />
 				</ThemeProvider>
 			</StoreProvider>
-		</SettingsContextProvider>
+		</SettingsProvider>
 	), domElement );
 }

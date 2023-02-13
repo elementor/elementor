@@ -163,6 +163,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 
 	public function print_client_settings_data_provider() {
 		return [
+			// Non registered script, should not print anything.
 			[
 				'is_registered' => false,
 				'client_settings' => [
@@ -174,6 +175,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				],
 				'expected' => false,
 			],
+			// Registered script, should print settings in a global variable.
 			[
 				'is_registered' => true,
 				'client_settings' => [
@@ -188,6 +190,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 					1 => 'var existingHandle = {"test":"existing-handle"};',
 				],
 			],
+			// Config without settings, should not print anything.
 			[
 				'is_registered' => true,
 				'client_settings' => [
@@ -196,6 +199,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				],
 				'expected' => false,
 			],
+			// Config without name, should not print anything.
 			[
 				'is_registered' => true,
 				'client_settings' => [
@@ -206,6 +210,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				],
 				'expected' => false,
 			],
+			// Config without handle, should not print anything.
 			[
 				'is_registered' => false,
 				'client_settings' => [
@@ -291,6 +296,4 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 			],
 		];
 	}
-
-
 }
