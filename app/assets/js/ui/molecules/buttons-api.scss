@@ -39,7 +39,7 @@ $button-disabled-hover-background-color: darken($button-disabled-background-colo
 $button-disabled-active-background-color: darken($button-disabled-background-color, $button-active-constant);
 $button-disabled-color: theme-colors(light);
 // -- dark
-$button-dark-primary-background-color: dark-theme-colors(success);
+$button-dark-primary-background-color: dark-theme-colors(accent);
 $button-dark-primary-color: dark-theme-colors(light);
 $button-dark-primary-hover-background-color: darken($button-dark-primary-background-color, $button-hover-constant);
 $button-dark-primary-active-background-color: darken($button-dark-primary-background-color, $button-active-constant);

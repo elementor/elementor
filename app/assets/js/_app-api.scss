@@ -1,7 +1,7 @@
 // APP : private API
 // - local tokens mapped to EPS global tokens
 
-$app-background-color: var(--e-a-bg-default);
+$app-background-color: $eps-theme-light;
 $spp-font-size: type(text, base);
 $app-box-shadow-color: $eps-box-shadow-size-3;
 $app-radius: 0;
@@ -49,7 +49,7 @@ $app-lightbox-background-color: rgba($eps-dark-theme-dark, $opacity-08);
 $app-lightbox-z-index: $eps-zindex-modal;
 
 // dark theme tokens
-$app-dark-background-color: dark-tints(700);
+$app-dark-background-color: dark-tints(800);
 $app-dark-box-shadow-color: rgba(var(--box-shadow-color, #{$eps-dark-box-shadow-color}), 4 * $eps-box-shadow-alpha-unit);
 $app-dark-header-color: dark-tints(100);
 
