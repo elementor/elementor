@@ -375,7 +375,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { page }, testInfo ) => {
+	test.only( 'Verify that the tab width doesn\'t change when changing between normal and active state', async ( { browser, page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -384,24 +384,23 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// The preview frame some times detaches and accessing the locator does not work, so we set up the locator each time
-		const getFirstTabLocator = () => editor.getPreviewFrame().locator( '.e-normal:first-child' );
-		const getLastTabLocator = () => editor.getPreviewFrame().locator( '.e-normal:last-child' );
+		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
+		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
 
 		// Set first tab to active tab.
-		await getFirstTabLocator().click();
+		await firstTab.click();
 		// Get last tab width.
-		const lastTabWidth = await getLastTabLocator().boundingBox().width;
+		const lastTabWidth = ( await lastTab.boundingBox() ).width;
 		// Set last tab to active tab.
-		await getLastTabLocator().click();
+		await lastTab.click();
 		// Get last tab active width.
-		const lastTabActiveWidth = await getLastTabLocator().boundingBox().width;
+		const lastTabActiveWidth = ( await lastTab.boundingBox() ).width;
 
 		// Assert.
 		// Verify that the last tab is active.
-		await expect( getLastTabLocator() ).toHaveClass( 'e-n-tab-title e-normal e-active' );
+		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 		// Check if the normal tab width is equal to the active tab width.
-		expect( lastTabWidth ).toBe( lastTabActiveWidth );
+		expect( lastTabWidth ).toEqual( lastTabActiveWidth );
 
 		await cleanup( wpAdmin );
 	} );

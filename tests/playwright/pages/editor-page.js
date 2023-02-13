@@ -125,6 +125,9 @@ module.exports = class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	/**
+	 * @return {import('@playwright/test').Frame|null}
+	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
@@ -233,7 +236,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a custom width value to a widget.
 	 *
-	 * @param {string} controlId - The control to set the value to;
+	 * @param {string}        controlId - The control to set the value to;
 	 * @param {string|number} value     - The value to set;
 	 *
 	 * @return {Promise<void>}
