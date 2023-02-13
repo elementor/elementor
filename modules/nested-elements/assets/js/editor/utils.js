@@ -15,8 +15,8 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
-export function findChildContainerOrFail(container, index) {
-	const childView = container.view.children.findByIndex(index);
+export function findChildContainerOrFail( container, index ) {
+	const childView = container.view.children.findByIndex( index );
   
 	if ( childView ) {
 	  return childView.getContainer();
