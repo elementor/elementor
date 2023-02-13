@@ -13,18 +13,16 @@ export class NestedRepeaterDuplicateContainer extends Base {
 	apply( { container, index } ) {
 		const childContainer = findChildContainerOrFail( container, index );
 
-		if ( ! childContainer ) {
-			return;
+		if ( childContainer ) {
+			$e.run( 'document/elements/duplicate', {
+				container: childContainer,
+				options: {
+					edit: false, // Not losing focus.
+				},
+			} );
+	
+			container.render();
 		}
-
-		$e.run( 'document/elements/duplicate', {
-			container: childContainer,
-			options: {
-				edit: false, // Not losing focus.
-			},
-		} );
-
-		container.render();
 	}
 }
 
