@@ -27,4 +27,4 @@ export function findChildContainerOrFail( container, index ) {
 	}
 
 	return false;
-  }
+}
