@@ -281,7 +281,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -446,7 +445,6 @@ class Widget_Toggle extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,

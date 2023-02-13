@@ -185,7 +185,6 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,

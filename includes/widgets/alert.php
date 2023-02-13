@@ -342,7 +342,6 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,

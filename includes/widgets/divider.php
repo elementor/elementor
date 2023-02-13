@@ -676,7 +676,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => esc_html__( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 15,
 				],
@@ -813,7 +812,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -831,7 +829,6 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],

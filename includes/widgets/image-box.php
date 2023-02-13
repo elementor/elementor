@@ -461,7 +461,6 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,

@@ -216,7 +216,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,
@@ -297,7 +296,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 1,
 				],
@@ -584,7 +582,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text Indent', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,
