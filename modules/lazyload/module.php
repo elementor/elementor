@@ -87,6 +87,23 @@ class Module extends BaseModule {
 		return $control;
 	}
 
+	private function is_document_support_lazyload( $post_id ) {
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+
+		if ( $document ) {
+			$support_lazyload = $document->get_property( 'support_lazyload' );
+			if ( false === $support_lazyload ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -96,12 +113,36 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
+
+			$current_document = \Elementor\Plugin::$instance->documents->get_current();
+
+			if ( ! $current_document ) {
+				return;
+			}
+
+			$post_id = $current_document->get_main_id();
+
+			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
+				return;
+			}
+
 			$this->update_element_attributes( $element );
 		} );
 
-		add_filter('elementor/files/css/selectors', function( $control, $value ) {
+		add_filter('elementor/files/css/selectors', function( $control, $value, $css_instance ) {
+
+			$post_id = method_exists( $css_instance, 'get_post_id' ) ? $css_instance->get_post_id() : false;
+
+			if ( ! $post_id ) {
+				return $control;
+			}
+
+			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
+				return $control;
+			}
+
 			return $this->append_lazyload_selector( $control, $value );
-		}, 10, 2 );
+		}, 10, 3);
 
 		add_filter( 'body_class', function( $classes ) {
 			$classes[] = 'e-lazyload';
