@@ -57,7 +57,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		];
 
 		return array_merge(
-			Editor_Common_Assets::get_script_configs(),
+			Editor_Common_Configs::get_script_configs(),
 			$packages_script_configs->values(),
 			[ $loader_script_config ]
 		);
@@ -75,9 +75,25 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->values();
 	}
 
+	public function get_client_settings() {
+		$common_configs = Editor_Common_Configs::get_client_settings();
+
+		$v2_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'name' => 'elementorEditorV2Settings',
+			'settings' => [
+				'urls' => [
+					'admin' => admin_url(),
+				],
+			],
+		];
+
+		return array_merge( $common_configs, [ $v2_config ] );
+	}
+
 	public function get_style_configs() {
 		return array_merge(
-			Editor_Common_Assets::get_style_configs(),
+			Editor_Common_Configs::get_style_configs(),
 			[
 				[
 					'handle' => 'elementor-editor-v2-overrides',

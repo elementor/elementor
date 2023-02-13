@@ -52,6 +52,27 @@ class Editor_Loader {
 		}
 	}
 
+	public function print_client_settings() {
+		$client_settings = $this->config_provider->get_client_settings();
+
+		$client_settings = Collection::make( $client_settings )
+			->filter( function ( $config ) {
+				return (
+					! empty( $config['handle'] ) &&
+					! empty( $config['name'] ) &&
+					! empty( $config['settings'] )
+				);
+			} );
+
+		foreach ( $client_settings as $client_setting ) {
+			Utils::print_js_config(
+				$client_setting['handle'],
+				$client_setting['name'],
+				$client_setting['settings']
+			);
+		}
+	}
+
 	/**
 	 * @return void
 	 */
