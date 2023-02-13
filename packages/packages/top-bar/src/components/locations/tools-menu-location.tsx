@@ -6,7 +6,7 @@ import { LOCATION_TOOLS_MENU_DEFAULT } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuItem from '../ui/toolbar-menu-item';
 import PopoverMenu from '../ui/popover-menu';
-import DotsVerticalIcon from '../icons/dots-vertical-icon';
+import DotsVerticalIcon from '../../icons/dots-vertical-icon';
 
 const MAX_TOOLBAR_ACTIONS = 5;
 
