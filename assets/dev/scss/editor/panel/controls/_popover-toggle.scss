@@ -43,3 +43,18 @@
 		border: 1px solid $editor-lightest;
 	}
 }
+
+.elementor-controls-popover {
+
+	&.e-controls-popover--typography {
+		padding-top: 0;
+	}
+}
+
+.e-control-global {
+
+	.elementor-control-popover-toggle-toggle-label {
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		flex-shrink: 0;
+	}
+}

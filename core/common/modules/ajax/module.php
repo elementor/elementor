@@ -4,6 +4,7 @@ namespace Elementor\Core\Common\Modules\Ajax;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -127,7 +128,7 @@ class Module extends BaseModule {
 	 */
 	public function handle_ajax_request() {
 		if ( ! $this->verify_request_nonce() ) {
-			$this->add_response_data( false, __( 'Token Expired.', 'elementor' ) )
+			$this->add_response_data( false, esc_html__( 'Token Expired.', 'elementor' ) )
 				->send_error( Exceptions::UNAUTHORIZED );
 		}
 
@@ -152,13 +153,16 @@ class Module extends BaseModule {
 		 */
 		do_action( 'elementor/ajax/register_actions', $this );
 
-		$this->requests = json_decode( stripslashes( $_REQUEST['actions'] ), true );
+		if ( ! empty( $_REQUEST['actions'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, each action should sanitize its own data.
+			$this->requests = json_decode( wp_unslash( $_REQUEST['actions'] ), true );
+		}
 
 		foreach ( $this->requests as $id => $action_data ) {
 			$this->current_action_id = $id;
 
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$this->add_response_data( false, __( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
+				$this->add_response_data( false, esc_html__( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
 
 				continue;
 			}
@@ -229,7 +233,7 @@ class Module extends BaseModule {
 	 * @return bool True if request nonce verified, False otherwise.
 	 */
 	public function verify_request_nonce() {
-		return ! empty( $_REQUEST['_nonce'] ) && wp_verify_nonce( $_REQUEST['_nonce'], self::NONCE_KEY );
+		return wp_verify_nonce( Utils::get_super_global_value( $_REQUEST, '_nonce' ), self::NONCE_KEY );
 	}
 
 	protected function get_init_settings() {
@@ -268,9 +272,9 @@ class Module extends BaseModule {
 			header( 'Content-Encoding: gzip' );
 			header( 'Content-Length: ' . strlen( $response ) );
 
-			echo $response;
+			echo $response; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
-			echo $json;
+			echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		wp_die( '', '', [ 'response' => null ] );

@@ -1,6 +1,6 @@
-import History from 'elementor-document/commands/base/history';
+import { removeElementFromDocumentState } from 'elementor-document/elements/utils';
 
-export class Delete extends History {
+export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
@@ -37,6 +37,14 @@ export class Delete extends History {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			$e.store.dispatch(
+				this.component.store.actions.delete( {
+					documentId: elementor.documents.getCurrentId(),
+					elementId: container.id,
+					parentId: container.parent.id,
+				} ),
+			);
+
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
 					container,
@@ -50,14 +58,7 @@ export class Delete extends History {
 				} );
 			}
 
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:before:remove', container.model );
-
 			container.model.destroy();
-
-			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-			elementor.channels.data.trigger( 'element:after:remove', container.model );
-
 			container.panel.refresh();
 		} );
 
@@ -68,8 +69,12 @@ export class Delete extends History {
 		return containers;
 	}
 
-	isDataChanged() {
-		return true;
+	static reducer( state, { payload } ) {
+		const { elementId, parentId, documentId } = payload;
+
+		if ( state[ documentId ] ) {
+			removeElementFromDocumentState( elementId, parentId, state[ documentId ] );
+		}
 	}
 }
 

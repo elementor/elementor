@@ -3,6 +3,10 @@ import * as commands from './commands/';
 import * as commandsInternal from './commands/internal';
 import * as hooks from './hooks/';
 
+/**
+ * @typedef {import('./behaviors/footer-saver')} FooterSaver
+ */
+
 export default class Component extends BackwardsCompatibility {
 	/**
 	 * Footer saver behavior.
@@ -31,7 +35,7 @@ export default class Component extends BackwardsCompatibility {
 		elementorCommon.elements.$window.on( 'beforeunload', () => {
 			if ( this.isEditorChanged() ) {
 				// Returns a message to confirm dialog.
-				return elementor.translate( 'before_unload_alert' );
+				return __( 'Please note: All unsaved changes will be lost.', 'elementor' );
 			}
 		} );
 	}
@@ -42,6 +46,7 @@ export default class Component extends BackwardsCompatibility {
 
 	/**
 	 * TODO: test
+	 *
 	 * @param {Document} document
 	 */
 	startAutoSave( document ) {
@@ -56,6 +61,7 @@ export default class Component extends BackwardsCompatibility {
 
 	/**
 	 * TODO: test
+	 *
 	 * @param {Document} document
 	 */
 	stopAutoSave( document ) {
@@ -67,22 +73,11 @@ export default class Component extends BackwardsCompatibility {
 	}
 
 	defaultCommands() {
-		return {
-			auto: ( args ) => ( new commands.Auto( args ).run() ),
-			default: ( args ) => ( new commands.Default( args ).run() ),
-			discard: ( args ) => ( new commands.Discard( args ).run() ),
-			draft: ( args ) => ( new commands.Draft( args ).run() ),
-			pending: ( args ) => ( new commands.Pending( args ).run() ),
-			publish: ( args ) => ( new commands.Publish( args ).run() ),
-			update: ( args ) => ( new commands.Update( args ).run() ),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultCommandsInternal() {
-		return {
-			save: ( args ) => ( new commandsInternal.Save( args ).run() ),
-			'set-is-modified': ( args ) => ( new commandsInternal.SetIsModified( args ).run() ),
-		};
+		return this.importCommands( commandsInternal );
 	}
 
 	defaultHooks() {

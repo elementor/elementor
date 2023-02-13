@@ -7,6 +7,10 @@
 		}
 	}
 
+	.elementor-control-unit-2 {
+		width: 21%;
+	}
+
 	// Hard selector
 	&.elementor-control-type-slider--multiple {
 
@@ -79,6 +83,19 @@
 	.elementor-dynamic-cover {
 		margin-top: 10px;
 	}
+
+	&.e-units-custom {
+
+		.elementor-slider {
+			display: none;
+
+			&-input {
+				width: 100%;
+				margin: 0;
+				transition: none;
+			}
+		}
+	}
 }
 
 .elementor-slider {
@@ -90,7 +107,10 @@
 	cursor: pointer;
 
 	&-input {
-		@include margin-start(10px);
+		width: 21%;
+		min-width: 54px;
+		@include margin-start(12px);
+		transition: width .3s ease-in-out;
 	}
 
 	&__extra {

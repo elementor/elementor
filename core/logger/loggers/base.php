@@ -15,7 +15,7 @@ abstract class Base implements Logger_Interface {
 	/**
 	 * @return Log_Item_Interface[]
 	 */
-	abstract protected function get_log();
+	abstract public function get_log();
 
 	public function log( $item, $type = self::LEVEL_INFO, $args = [] ) {
 		if ( ! $item instanceof Log_Item ) {

@@ -1,178 +1,221 @@
-var PanelMenuGroupView = require( 'elementor-panel/pages/menu/views/group' ),
-	PanelMenuPageView;
+import MenuPageView from 'elementor-panel/pages/menu/base';
 
-PanelMenuPageView = Marionette.CompositeView.extend( {
-	id: 'elementor-panel-page-menu',
+export default class PanelMenu extends MenuPageView {
+	initialize() {
+		this.collection = PanelMenu.getGroups();
+	}
 
-	template: '#tmpl-elementor-panel-menu',
-
-	childView: PanelMenuGroupView,
-
-	childViewContainer: '#elementor-panel-page-menu-content',
-
-	initialize: function() {
-		this.collection = PanelMenuPageView.getGroups();
-
-		this.registerDocumentItems();
-
-		// On switch a document, re create document items.
-		elementor.once( 'document:loaded', this.registerDocumentItems );
-	},
-
-	getArrowClass: function() {
+	getArrowClass() {
 		return 'eicon-chevron-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
-	},
+	}
 
-	onRender: function() {
+	onRender() {
 		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( 'eicon-menu-bar' ).addClass( this.getArrowClass() );
-	},
+	}
 
-	onDestroy: function() {
+	onDestroy() {
 		elementor.getPanelView().getHeaderView().ui.menuIcon.removeClass( this.getArrowClass() ).addClass( 'eicon-menu-bar' );
-	},
+	}
+}
 
-	registerDocumentItems() {
-		// Todo: internal command.
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
-			name: 'view-page',
-			icon: 'eicon-preview-medium',
-			title: elementor.translate( 'view_page' ),
+PanelMenu.groups = null;
+
+PanelMenu.initGroups = () => {
+	PanelMenu.groups = new Backbone.Collection( [] );
+
+	// Keep the old `more` for BC, since 3.0.0.
+	PanelMenu.groups.add( {
+		name: 'more',
+		title: __( 'More', 'elementor' ),
+		items: [],
+	} );
+
+	PanelMenu.groups.add( {
+		name: 'navigate_from_page',
+		title: __( 'Navigate From Page', 'elementor' ),
+		items: [
+			// Todo: internal command.
+			{
+				name: 'view-page',
+				icon: 'eicon-preview-thin',
+				title: __( 'View Page', 'elementor' ),
+				type: 'link',
+				link: elementor.config.document.urls.permalink,
+			},
+		],
+	} );
+
+	if ( elementor.config.user.is_administrator ) {
+		PanelMenu.addAdminMenu();
+	}
+
+	PanelMenu.addExitItem();
+};
+
+PanelMenu.addAdminMenu = () => {
+	PanelMenu.groups.add( {
+		name: 'style',
+		title: __( 'Settings', 'elementor' ),
+		items: [
+			{
+				name: 'editor-preferences',
+				icon: 'eicon-user-preferences',
+				title: __( 'User Preferences', 'elementor' ),
+				type: 'page',
+				callback: () => $e.route( 'panel/editor-preferences' ),
+			},
+		],
+	}, { at: 0 } );
+
+	PanelMenu.addItem( {
+		name: 'finder',
+		icon: 'eicon-search',
+		title: __( 'Finder', 'elementor' ),
+		callback: () => $e.route( 'finder' ),
+	}, 'navigate_from_page', 'view-page' );
+};
+
+PanelMenu.addExitItem = () => {
+	let itemArgs;
+
+	if ( ! elementor.config.user.introduction.exit_to && elementor.config.user.is_administrator ) {
+		PanelMenu.exitShouldRedirect = false;
+
+		itemArgs = {
+			callback: () => PanelMenu.clickExitItem(),
+		};
+	} else {
+		itemArgs = {
 			type: 'link',
-			link: elementor.config.document.urls.permalink,
-		}, 'more' );
+			link: PanelMenu.getExitUrl(),
+		};
+	}
 
-		// Todo: internal command.
-		elementor.modules.layouts.panel.pages.menu.Menu.addItem( {
-			name: 'exit-to-dashboard',
-			icon: 'eicon-wordpress',
-			title: elementor.translate( 'exit_to_dashboard' ),
-			type: 'link',
-			link: elementor.config.document.urls.exit_to_dashboard,
-		}, 'more' );
-	},
-}, {
-	groups: null,
+	PanelMenu.addItem( {
+		name: 'exit',
+		icon: 'eicon-exit',
+		title: __( 'Exit', 'elementor' ),
+		...itemArgs,
+	}, 'navigate_from_page' );
+};
 
-	initGroups: function() {
-		this.groups = new Backbone.Collection( [] );
+// Callback being used to determine when to open the modal or redirect the user.
+PanelMenu.clickExitItem = () => {
+	const currentValue = elementor.getPreferences( 'exit_to' );
+	const defaultValue = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to.default;
 
-		this.groups.add( {
-			name: 'more',
-			title: elementor.translate( 'more' ),
-			items: [],
-		} );
+	// The modal will pop if the user has not set the exit to preference yet or if the model never showed before.
+	if ( currentValue !== defaultValue || PanelMenu.exitShouldRedirect ) {
+		window.location.href = PanelMenu.getExitUrl();
+	} else {
+		const exitIntroduction = PanelMenu.createExitIntroductionDialog();
 
-		this.addItem( {
-			name: 'editor-preferences',
-			icon: 'eicon-preferences',
-			title: elementor.translate( 'preferences' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/editor-preferences' ),
-		}, 'more' );
+		exitIntroduction.show();
+	}
+};
 
-		if ( elementor.config.user.is_administrator ) {
-			this.addAdminMenu();
-		}
-	},
+PanelMenu.createExitIntroductionDialog = () => {
+	const template = document.querySelector( '#tmpl-elementor-exit-dialog' );
+	const { options } = elementor.settings.editorPreferences.getEditedView().getContainer().controls.exit_to;
 
-	addAdminMenu: function() {
-		this.groups.add( {
-			name: 'style',
-			title: elementor.translate( 'global_style' ),
-			items: [],
-		}, { at: 0 } );
+	const introduction = new elementorModules.editor.utils.Introduction( {
+		introductionKey: 'exit_to',
+		dialogType: 'confirm',
+		dialogOptions: {
+			id: 'elementor-change-exit-preference-dialog',
+			className: 'dialog-exit-preferences',
+			headerMessage: __( 'New options for "Exit to..."', 'elementor' ),
+			message: template.innerHTML,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: __( 'Apply', 'elementor' ),
+				cancel: __( 'Decide Later', 'elementor' ),
+			},
+			effects: {
+				show: 'fadeIn',
+				hide: 'fadeOut',
+			},
+			onShow: () => {
+				introduction.setViewed();
+				elementor.config.user.introduction.exit_to = true;
+				PanelMenu.exitShouldRedirect = true;
+			},
+			onConfirm: async () => {
+				$e.run( 'document/elements/settings', {
+					container: elementor.settings.editorPreferences.getEditedView().getContainer(),
+					settings: {
+						exit_to: select.value,
+					},
+					options: {
+						external: true,
+					},
+				} );
 
-		this.groups.add( {
-			name: 'settings',
-			title: elementor.translate( 'settings' ),
-			items: [],
-		}, { at: 1 } );
+				await elementor.settings.editorPreferences.save();
+				window.location.href = PanelMenu.getExitUrl();
+			},
+			onCancel: () => {
+				window.location.href = PanelMenu.getExitUrl();
+			},
+		},
+	} );
 
-		this.addItem( {
-			name: 'finder',
-			icon: 'eicon-search-bold',
-			title: elementorCommon.translate( 'finder', 'finder' ),
-			callback: () => $e.route( 'finder' ),
-		}, 'more', 'view-page' );
+	// Edit the template inside the dialog
+	const messageContainer = introduction.getDialog().getElements().message[ 0 ],
+		select = messageContainer.querySelector( '#exit-to-preferences' ),
+		link = messageContainer.querySelector( '#user-preferences' );
 
-		this.addItem( {
-			name: 'global-colors',
-			icon: 'eicon-paint-brush',
-			title: elementor.translate( 'global_colors' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-colors' ),
-		}, 'style' );
+	for ( const [ key, value ] of Object.entries( options ) ) {
+		const option = document.createElement( 'option' );
+		option.innerText = value;
+		option.value = key;
+		select.appendChild( option );
+	}
 
-		this.addItem( {
-			name: 'global-fonts',
-			icon: 'eicon-font',
-			title: elementor.translate( 'global_fonts' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/global-fonts' ),
-		}, 'style' );
+	// Bind click event to the link in the dialog to open the editor preferences.
+	link.addEventListener( 'click', ( e ) => {
+		e.preventDefault();
 
-		this.addItem( {
-			name: 'global-settings',
-			icon: 'eicon-cogs',
-			title: elementor.translate( 'global_settings' ),
-			type: 'page',
-			callback: () => $e.route( 'panel/general-settings/style' ),
-		}, 'settings', 'elementor-settings' );
+		introduction.getDialog().hide();
+		$e.route( 'panel/editor-preferences' );
 
-		this.addItem( {
-			name: 'elementor-settings',
-			icon: 'eicon-editor-external-link',
-			title: elementor.translate( 'elementor_settings' ),
-			type: 'link',
-			link: elementor.config.settings_page_link,
-			newTab: true,
-		}, 'settings' );
+		// Force the exit button to rerender by creating new exit button.
+		PanelMenu.addExitItem();
+	} );
 
-		this.addItem( {
-			name: 'about-elementor',
-			icon: 'eicon-info-circle',
-			title: elementor.translate( 'about_elementor' ),
-			type: 'link',
-			link: elementor.config.elementor_site,
-			newTab: true,
-		}, 'settings' );
-	},
+	return introduction;
+};
 
-	getGroups: function() {
-		if ( ! this.groups ) {
-			this.initGroups();
-		}
+/**
+ * Get the exit url according to the 'exit_to' user preference.
+ */
+PanelMenu.getExitUrl = () => {
+	const exitPreference = elementor.getPreferences( 'exit_to' );
 
-		return this.groups;
-	},
+	switch ( exitPreference ) {
+		case 'dashboard':
+			return elementor.config.document.urls.main_dashboard;
 
-	addItem: function( itemData, groupName, before ) {
-		var group = this.getGroups().findWhere( { name: groupName } );
+		case 'all_posts':
+			return elementor.config.document.urls.all_post_type;
 
-		if ( ! group ) {
-			return;
-		}
+		case 'this_post':
+		default:
+			return elementor.config.document.urls.exit_to_dashboard;
+	}
+};
 
-		var items = group.get( 'items' ),
-			beforeItem;
+PanelMenu.getGroups = () => {
+	if ( ! PanelMenu.groups ) {
+		PanelMenu.initGroups();
+	}
 
-		// Remove if exist.
-		const exists = _.findWhere( items, { name: itemData.name } );
+	return PanelMenu.groups;
+};
 
-		if ( exists ) {
-			items.splice( items.indexOf( exists ), 1 );
-		}
-
-		if ( before ) {
-			beforeItem = _.findWhere( items, { name: before } );
-		}
-
-		if ( beforeItem ) {
-			items.splice( items.indexOf( beforeItem ), 0, itemData );
-		} else {
-			items.push( itemData );
-		}
-	},
-} );
-
-module.exports = PanelMenuPageView;
+PanelMenu.addItem = ( itemData, groupName, before ) => {
+	MenuPageView.addItem( PanelMenu.getGroups(), itemData, groupName, before );
+};

@@ -1,8 +1,8 @@
 <?php
-
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Core\Base\BackgroundProcess\WP_Background_Process;
 
 /**
  * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php
@@ -11,13 +11,10 @@ use Elementor\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-async-request.php';
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-background-process.php';
-
 /**
  * WC_Background_Process class.
  */
-abstract class Background_Task extends \WP_Background_Process {
+abstract class Background_Task extends WP_Background_Process {
 	protected $current_item;
 
 	/**
@@ -29,7 +26,7 @@ abstract class Background_Task extends \WP_Background_Process {
 		$dispatched = parent::dispatch();
 
 		if ( is_wp_error( $dispatched ) ) {
-			wp_die( $dispatched );
+			wp_die( esc_html( $dispatched ) );
 		}
 	}
 
@@ -310,8 +307,8 @@ abstract class Background_Task extends \WP_Background_Process {
 		// Adds every 5 minutes to the existing schedules.
 		$schedules[ $this->identifier . '_cron_interval' ] = array(
 			'interval' => MINUTE_IN_SECONDS * $interval,
-			/* translators: %d: interval */
-			'display' => sprintf( __( 'Every %d minutes', 'elementor' ), $interval ),
+			/* translators: %d: Interval in minutes. */
+			'display' => sprintf( esc_html__( 'Every %d minutes', 'elementor' ), $interval ),
 		);
 
 		return $schedules;

@@ -3,8 +3,9 @@ namespace Elementor\Core\Admin;
 
 use Elementor\Api;
 use Elementor\Core\Base\Module;
+use Elementor\Plugin;
 use Elementor\Tracker;
-use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,8 +24,6 @@ class Feedback extends Module {
 			}
 
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ] );
-
-			add_filter( 'elementor/admin/localize_settings', [ $this, 'localize_feedback_dialog_settings' ] );
 		} );
 
 		// Ajax.
@@ -73,13 +72,12 @@ class Feedback extends Module {
 
 	/**
 	 * @since 2.3.0
-	 * @access public
+	 * @deprecated 3.1.0
 	 */
-	public function localize_feedback_dialog_settings( $localized_settings ) {
-		$localized_settings['i18n']['submit_n_deactivate'] = __( 'Submit & Deactivate', 'elementor' );
-		$localized_settings['i18n']['skip_n_deactivate'] = __( 'Skip & Deactivate', 'elementor' );
+	public function localize_feedback_dialog_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return $localized_settings;
+		return [];
 	}
 
 	/**
@@ -95,29 +93,29 @@ class Feedback extends Module {
 	public function print_deactivate_feedback_dialog() {
 		$deactivate_reasons = [
 			'no_longer_needed' => [
-				'title' => __( 'I no longer need the plugin', 'elementor' ),
+				'title' => esc_html__( 'I no longer need the plugin', 'elementor' ),
 				'input_placeholder' => '',
 			],
 			'found_a_better_plugin' => [
-				'title' => __( 'I found a better plugin', 'elementor' ),
-				'input_placeholder' => __( 'Please share which plugin', 'elementor' ),
+				'title' => esc_html__( 'I found a better plugin', 'elementor' ),
+				'input_placeholder' => esc_html__( 'Please share which plugin', 'elementor' ),
 			],
 			'couldnt_get_the_plugin_to_work' => [
-				'title' => __( 'I couldn\'t get the plugin to work', 'elementor' ),
+				'title' => esc_html__( 'I couldn\'t get the plugin to work', 'elementor' ),
 				'input_placeholder' => '',
 			],
 			'temporary_deactivation' => [
-				'title' => __( 'It\'s a temporary deactivation', 'elementor' ),
+				'title' => esc_html__( 'It\'s a temporary deactivation', 'elementor' ),
 				'input_placeholder' => '',
 			],
 			'elementor_pro' => [
-				'title' => __( 'I have Elementor Pro', 'elementor' ),
+				'title' => esc_html__( 'I have Elementor Pro', 'elementor' ),
 				'input_placeholder' => '',
-				'alert' => __( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
+				'alert' => esc_html__( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
 			],
 			'other' => [
-				'title' => __( 'Other', 'elementor' ),
-				'input_placeholder' => __( 'Please share the reason', 'elementor' ),
+				'title' => esc_html__( 'Other', 'elementor' ),
+				'input_placeholder' => esc_html__( 'Please share the reason', 'elementor' ),
 			],
 		];
 
@@ -125,7 +123,7 @@ class Feedback extends Module {
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
 			<div id="elementor-deactivate-feedback-dialog-header">
 				<i class="eicon-elementor-square" aria-hidden="true"></i>
-				<span id="elementor-deactivate-feedback-dialog-header-title"><?php echo __( 'Quick Feedback', 'elementor' ); ?></span>
+				<span id="elementor-deactivate-feedback-dialog-header-title"><?php echo esc_html__( 'Quick Feedback', 'elementor' ); ?></span>
 			</div>
 			<form id="elementor-deactivate-feedback-dialog-form" method="post">
 				<?php
@@ -133,7 +131,7 @@ class Feedback extends Module {
 				?>
 				<input type="hidden" name="action" value="elementor_deactivate_feedback" />
 
-				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php echo __( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
+				<div id="elementor-deactivate-feedback-dialog-form-caption"><?php echo esc_html__( 'If you have a moment, please share why you are deactivating Elementor:', 'elementor' ); ?></div>
 				<div id="elementor-deactivate-feedback-dialog-form-body">
 					<?php foreach ( $deactivate_reasons as $reason_key => $reason ) : ?>
 						<div class="elementor-deactivate-feedback-dialog-input-wrapper">
@@ -164,36 +162,17 @@ class Feedback extends Module {
 	 * @access public
 	 */
 	public function ajax_elementor_deactivate_feedback() {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_elementor_deactivate_feedback_nonce' ) ) {
+		$wpnonce = Utils::get_super_global_value( $_POST, '_wpnonce' ); // phpcs:ignore -- Nonce verification is made in `wp_verify_nonce()`.
+		if ( ! wp_verify_nonce( $wpnonce, '_elementor_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
 		}
 
-		$reason_text = '';
-		$reason_key = '';
-
-		if ( ! empty( $_POST['reason_key'] ) ) {
-			$reason_key = $_POST['reason_key'];
-		}
-
-		if ( ! empty( $_POST[ "reason_{$reason_key}" ] ) ) {
-			$reason_text = $_POST[ "reason_{$reason_key}" ];
-		}
+		$reason_key = Utils::get_super_global_value( $_POST, 'reason_key' ) ?? '';
+		$reason_text = Utils::get_super_global_value( $_POST, "reason_{$reason_key}" ) ?? '';
 
 		Api::send_feedback( $reason_key, $reason_text );
 
 		wp_send_json_success();
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access protected
-	 */
-	protected function get_init_settings() {
-		if ( ! $this->is_plugins_screen() ) {
-			return [];
-		}
-
-		return [ 'is_tracker_opted_in' => Tracker::is_allow_track() ];
 	}
 
 	/**

@@ -1,11 +1,12 @@
-export default class BackgroundSlideshow extends elementorModules.frontend.handlers.Base {
+export default class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			classes: {
-				swiperContainer: 'elementor-background-slideshow swiper-container',
+				swiperContainer: `elementor-background-slideshow ${ elementorFrontend.config.swiperClass }`,
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
-				swiperSlideInner: 'elementor-background-slideshow__slide__image',
+				swiperPreloader: 'swiper-lazy-preloader',
+				slideBackground: 'elementor-background-slideshow__slide__image',
 				kenBurns: 'elementor-ken-burns',
 				kenBurnsActive: 'elementor-ken-burns--active',
 				kenBurnsIn: 'elementor-ken-burns--in',
@@ -14,22 +15,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		};
 	}
 
-	getDefaultElements() {
-		const classes = this.getSettings( 'classes' );
-
-		const elements = {
-			$slider: this.$element.find( '.' + classes.swiperContainer ),
-		};
-
-		elements.$mainSwiperSlides = elements.$slider.find( '.' + classes.swiperSlide );
-
-		return elements;
-	}
-
 	getSwiperOptions() {
-		const elementSettings = this.getElementSettings();
-
-		const swiperOptions = {
+		const elementSettings = this.getElementSettings(),
+			swiperOptions = {
 			grabCursor: false,
 			slidesPerView: 1,
 			slidesPerGroup: 1,
@@ -42,7 +30,9 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			handleElementorBreakpoints: true,
 			on: {
 				slideChange: () => {
-					this.handleKenBurns();
+					if ( elementSettings.background_slideshow_ken_burns ) {
+						this.handleKenBurns();
+					}
 				},
 			},
 		};
@@ -60,46 +50,21 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 				break;
 			case 'slide_down':
 				swiperOptions.autoplay.reverseDirection = true;
+				swiperOptions.direction = 'vertical';
+				break;
 			case 'slide_up':
 				swiperOptions.direction = 'vertical';
 				break;
 		}
 
+		if ( 'yes' === elementSettings.background_slideshow_lazyload ) {
+			swiperOptions.lazy = {
+				loadPrevNext: true,
+				loadPrevNextAmount: 1,
+			};
+		}
+
 		return swiperOptions;
-	}
-
-	getInitialSlide() {
-		const editSettings = this.getEditSettings();
-
-		return editSettings.activeItemIndex ? editSettings.activeItemIndex - 1 : 0;
-	}
-
-	handleKenBurns() {
-		const elementSettings = this.getElementSettings();
-
-		if ( ! elementSettings.background_slideshow_ken_burns ) {
-			return;
-		}
-
-		const settings = this.getSettings();
-
-		if ( this.$activeImageBg ) {
-			this.$activeImageBg.removeClass( settings.classes.kenBurnsActive );
-		}
-
-		this.activeItemIndex = this.swiper ? this.swiper.activeIndex : this.getInitialSlide();
-
-		if ( this.swiper ) {
-			this.$activeImageBg = jQuery( this.swiper.slides[ this.activeItemIndex ] ).children( '.' + settings.classes.swiperSlideInner );
-		} else {
-			this.$activeImageBg = jQuery( this.elements.$mainSwiperSlides[ 0 ] ).children( '.' + settings.classes.swiperSlideInner );
-		}
-
-		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
-	}
-
-	getSlidesCount() {
-		return this.elements.$slides.length;
 	}
 
 	buildSwiperElements() {
@@ -108,9 +73,10 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			direction = 'slide_left' === elementSettings.background_slideshow_slide_transition ? 'ltr' : 'rtl',
 			$container = jQuery( '<div>', { class: classes.swiperContainer, dir: direction } ),
 			$wrapper = jQuery( '<div>', { class: classes.swiperWrapper } ),
-			kenBurnsActive = elementSettings.background_slideshow_ken_burns;
+			kenBurnsActive = elementSettings.background_slideshow_ken_burns,
+			lazyload = 'yes' === elementSettings.background_slideshow_lazyload;
 
-		let slideInnerClass = classes.swiperSlideInner;
+		let slideInnerClass = classes.slideBackground;
 
 		if ( kenBurnsActive ) {
 			slideInnerClass += ' ' + classes.kenBurns;
@@ -120,14 +86,32 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 			slideInnerClass += ' ' + classes[ kenBurnsDirection ];
 		}
 
+		if ( lazyload ) {
+			slideInnerClass += ' swiper-lazy';
+		}
+
 		this.elements.$slides = jQuery();
 
 		elementSettings.background_slideshow_gallery.forEach( ( slide ) => {
-			const $slide = jQuery( '<div>', { class: classes.swiperSlide } ),
+			const $slide = jQuery( '<div>', { class: classes.swiperSlide } );
+
+			let $slidebg;
+
+			if ( lazyload ) {
+				const $slideloader = jQuery( '<div>', { class: classes.swiperPreloader } );
+
+				$slidebg = jQuery( '<div>', {
+					class: slideInnerClass,
+					'data-background': slide.url,
+				} );
+
+				$slidebg.append( $slideloader );
+			} else {
 				$slidebg = jQuery( '<div>', {
 					class: slideInnerClass,
 					style: 'background-image: url("' + slide.url + '");',
 				} );
+			}
 
 			$slide.append( $slidebg );
 			$wrapper.append( $slide );
@@ -142,17 +126,23 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		this.elements.$backgroundSlideShowContainer = $container;
 	}
 
-	initSlider() {
+	async initSlider() {
 		if ( 1 >= this.getSlidesCount() ) {
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
+		const elementSettings = this.getElementSettings();
+
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$backgroundSlideShowContainer.data( 'swiper', this.swiper );
 
-		this.handleKenBurns();
+		if ( elementSettings.background_slideshow_ken_burns ) {
+			this.handleKenBurns();
+		}
 	}
 
 	activate() {

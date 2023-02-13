@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -29,24 +29,6 @@ class Manager extends CSS_Manager {
 	 * Meta key for the page settings.
 	 */
 	const META_KEY = '_elementor_page_settings';
-
-	/**
-	 * Is CPT supports custom templates.
-	 *
-	 * Whether the Custom Post Type supports templates.
-	 *
-	 * @since 1.6.0
-	 * @deprecated 2.0.0 Use `Utils::is_cpt_custom_templates_supported()` method instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True is templates are supported, False otherwise.
-	 */
-	public static function is_cpt_custom_templates_supported() {
-		_deprecated_function( __METHOD__, '2.0.0', 'Utils::is_cpt_custom_templates_supported()' );
-
-		return Utils::is_cpt_custom_templates_supported();
-	}
 
 	/**
 	 * Get manager name.
@@ -119,7 +101,7 @@ class Manager extends CSS_Manager {
 			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
-		if ( ! current_user_can( 'edit_post', $id ) ) {
+		if ( ! Utils::is_wp_cli() && ! current_user_can( 'edit_post', $id ) ) {
 			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
@@ -140,7 +122,7 @@ class Manager extends CSS_Manager {
 		wp_update_post( $post );
 
 		// Check updated status
-		if ( DB::STATUS_PUBLISH === get_post_status( $id ) ) {
+		if ( Document::STATUS_PUBLISH === get_post_status( $id ) ) {
 			$autosave = wp_get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				wp_delete_post_revision( $autosave->ID );
@@ -183,14 +165,15 @@ class Manager extends CSS_Manager {
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 		<div class="elementor-panel-navigation">
-			<# _.each( tabs, function( tabTitle, tabSlug ) { #>
+			<# _.each( tabs, function( tabTitle, tabSlug ) {
+			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>
 			<# } ); #>
 		</div>
 		<# } #>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 

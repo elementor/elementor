@@ -1,20 +1,22 @@
 # directories
+coverage-report/
 node_modules/
 .sass-cache/
 log/
 vendor/
 local-site/
+tmp/
 
 # build outputs
 build/
 assets/css/
 assets/js/
+assets/lib/swiper/css/swiper*.css
 *.log
 *.map
+/templates/
 
 # build tools lock
-composer.lock
-package-lock.json
 yarn.lock
 
 # IDE's
@@ -26,3 +28,8 @@ yarn.lock
 Thumbs.db
 *.DS_Store
 coverage/
+
+# playwright
+test-results/
+tests/playwright/config/storageState.json
+tests/playwright/config/local.config.js

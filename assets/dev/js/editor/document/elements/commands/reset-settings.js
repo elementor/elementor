@@ -1,6 +1,4 @@
-import History from '../../commands/base/history';
-
-export class ResetSettings extends History {
+export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -15,7 +13,7 @@ export class ResetSettings extends History {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], settings = [] } = args;
+		const { containers = [ args.container ], options = {}, settings = [] } = args;
 
 		containers.forEach( ( container ) => {
 			const controls = Object.entries( container.settings.controls ),
@@ -34,6 +32,7 @@ export class ResetSettings extends History {
 
 			$e.run( 'document/elements/settings', {
 				container,
+				options,
 				settings: defaultValues,
 			} );
 

@@ -13,7 +13,7 @@ export class ColumnIsEmpty extends After {
 		const { containers = [ args.container ] } = args;
 
 		// If the deleted element, was deleted from column.
-		return containers.some( ( /**Container*/ container ) => (
+		return containers.some( ( /** Container*/ container ) => (
 			'column' === container.parent.model.get( 'elType' )
 		) );
 	}

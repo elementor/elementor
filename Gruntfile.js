@@ -2,7 +2,12 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	const fs = require( 'fs' ),
-		pkgInfo = grunt.file.readJSON( 'package.json' );
+		pkgInfo = grunt.file.readJSON( 'package.json' ),
+		WidgetsCss = require( './.grunt-config/widgets-css' ),
+		Eicons = require( './.grunt-config/eicons' );
+
+	const widgetsCss = new WidgetsCss( 'production' ),
+		eicons = new Eicons();
 
 	require( 'load-grunt-tasks' )( grunt );
 
@@ -18,7 +23,6 @@ module.exports = function( grunt ) {
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
 		watch: require( './.grunt-config/watch' ),
-		wp_readme_to_markdown: require( './.grunt-config/wp_readme_to_markdown' ),
 		bumpup: require( './.grunt-config/bumpup' ),
 		replace: require( './.grunt-config/replace' ),
 		shell: require( './.grunt-config/shell' ),
@@ -32,20 +36,27 @@ module.exports = function( grunt ) {
 	// Default task(s).
 	grunt.registerTask( 'default', [
 		'i18n',
-		'wp_readme_to_markdown',
 		'scripts',
 		'styles',
 	] );
+
+	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
+
+	grunt.registerTask( 'remove_widgets_unused_style_files', () => widgetsCss.removeWidgetsUnusedStyleFiles() );
+
+	grunt.registerTask( 'create_eicons_frontend_js_file', () => eicons.createFrontendIconsFile() );
 
 	grunt.registerTask( 'i18n', [
 		'checktextdomain',
 	] );
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
-		let taskName = 'webpack:production';
+		const taskName = isDevMode ? 'webpack:development' : 'webpack:production';
 
-		if ( isDevMode ) {
-			taskName = 'webpack:development';
+		grunt.task.run( 'create_eicons_frontend_js_file' );
+
+		if ( ! isDevMode ) {
+			grunt.task.run( 'webpack:developmentNoWatch' );
 		}
 
 		grunt.task.run( taskName );
@@ -55,12 +66,22 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'webpack:development' );
 	} );
 
+	grunt.registerTask( 'watch_scripts:production', () => {
+		grunt.task.run( 'webpack:productionWatch' );
+	} );
+
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
+		if ( ! isDevMode ) {
+			grunt.task.run( 'create_widgets_temp_scss_files' );
+		}
+
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
 			grunt.task.run( 'postcss' );
 			grunt.task.run( 'css_templates' );
+
+			grunt.task.run( 'remove_widgets_unused_style_files' );
 		}
 	} );
 
@@ -71,11 +92,21 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'css_templates', () => {
 		grunt.task.run( 'css_templates_proxy:templates' );
 
+		const responsiveWidgetsList = widgetsCss.getResponsiveWidgetsList();
+
 		grunt.config( 'sass.dist', {
 			files: [ {
 				expand: true,
 				cwd: 'assets/dev/scss/direction',
-				src: [ 'frontend.scss', 'frontend-rtl.scss' ],
+				src: [
+					'frontend.scss',
+					'frontend-rtl.scss',
+					'frontend-lite.scss',
+					'frontend-lite-rtl.scss',
+					'frontend-legacy.scss',
+					'frontend-legacy-rtl.scss',
+					...responsiveWidgetsList,
+				],
 				dest: 'assets/css/templates',
 				ext: '.css',
 			} ],
@@ -100,6 +131,7 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'build', [
 		'default',
+		'shell:packages_build',
 		'usebanner',
 		'clean',
 		'copy',

@@ -3,6 +3,7 @@
 //
 
 .elementor-control {
+	--control-title-size: 12px;
 	background-color: #fff;
 	position: relative;
 	padding: 0 20px 15px;
@@ -16,6 +17,10 @@
 		&:hover {
 			border-bottom-color: inherit;
 		}
+
+		&.elementor-responsive-switcher {
+			border-bottom: 0;
+		}
 	}
 
 	//Avoid collapsing margin in the repeater control
@@ -25,7 +30,7 @@
 	}
 
 	.elementor-control-title {
-		font-size: 12px;
+		font-size: var(--control-title-size);
 		line-height: 1;
 		@include margin-end(5px);
 	}
@@ -133,63 +138,16 @@
 
 	&.elementor-control-responsive- {
 
-		&desktop {
+		@each $device in $devices {
 
-			body:not(.elementor-device-desktop) & {
-				display: none;
-			}
-		}
-
-		&tablet {
-
-			body:not(.elementor-device-tablet) & {
-				display: none;
-			}
-		}
-
-		&mobile {
-
-			body:not(.elementor-device-mobile) & {
-				display: none;
+			&#{ $device } {
+				body:not(.elementor-device-#{ $device }) & {
+					display: none;
+				}
 			}
 		}
 	}
 
-	//Select
-	&.elementor-control-type-select {
-
-		.elementor-control-input-wrapper {
-			position: relative;
-
-			select {
-				appearance: none;
-				-webkit-appearance: none;
-				-moz-appearance: none;
-				font-size: 12px;
-				font-family: inherit;
-				font-weight: inherit;
-				font-style: inherit;
-				text-transform: inherit;
-				letter-spacing: inherit;
-				line-height: inherit;
-				flex-basis: 100%;
-				@include padding-start(5px); //fix for Chrome
-				@include padding-end(20px);
-				cursor: pointer;
-			}
-
-			&:after {
-				font-family: eicons;
-				content: '\e8ad';
-				font-size: 12px;
-				position: absolute;
-				top: 50%;
-				transform: translateY(-50%);
-				@include end(5px);
-				pointer-events: none;
-			}
-		}
-	}
 
 	&-custom_css_pro,
 	&-custom_attributes_pro {
@@ -200,6 +158,10 @@
 				margin-top: 5px;
 			}
 		}
+	}
+
+	&.elementor-control-custom_css_title {
+		font-size: 12px;
 	}
 }
 
@@ -281,12 +243,37 @@
 
 			> .elementor-control-input-wrapper {
 				width: 100%;
+				max-width: 100%;
 				margin-top: 10px;
+
+				// TODO: Hack to make choices full width when label is block.
+				> .elementor-choices {
+					label {
+						width: auto;
+						flex: 1 1 27px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+					}
+				}
 			}
 		}
 	}
 
 	&.elementor-control-hidden-label:not(.elementor-control-dynamic) {
+
+		> .elementor-control-content {
+
+			> .elementor-control-field {
+
+				> .elementor-control-input-wrapper {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	&.elementor-control-hidden-label.elementor-label-block {
 
 		> .elementor-control-content {
 
@@ -308,6 +295,7 @@
 
 			> .elementor-control-title {
 				flex-shrink: 0;
+				max-width: 60%;
 			}
 
 			> .elementor-control-input-wrapper {
@@ -333,116 +321,12 @@
 	color: $editor-warning;
 }
 
-.elementor-units-choices {
-	flex-grow: 1;
-	text-align: $end;
-
-	input {
-		display: none;
-
-		&:not(:checked) + label {
-			color: $editor-light;
-		}
-
-		&:checked + label {
-			text-decoration: underline;
-		}
-	}
-
-	label {
-		cursor: pointer;
-		padding: 0 2px;
-		text-transform: uppercase;
-		font-size: 9px;
-	}
-}
-
 @if $direction == rtl {
 
 	.elementor-control-start-end {
 
 		.eicon-h-align-left, .eicon-h-align-right {
 			transform: rotate(180deg);
-		}
-	}
-}
-
-$item-size: 2em;
-
-.elementor-control-responsive-switchers {
-	@include margin-end(5px);
-	--selected-option: 0;
-	--pointer-position: var(--selected-option);
-
-	position: relative;
-	width: $item-size;
-	height: $item-size;
-
-	&__holder {
-		position: absolute;
-		width: 100%;
-		top: 0;
-		background-color: #fff;
-		border-radius: 3px;
-		transition: 0.15s;
-		border: 1px transparent solid;
-	}
-
-	&.elementor-responsive-switchers-open {
-		z-index: 11000;
-
-		.elementor-responsive-switcher {
-			height: $item-size;
-			transform: scale(1);
-			opacity: 1;
-
-			&:hover {
-				color: $editor-info;
-			}
-		}
-
-		.elementor-control-responsive-switchers__holder {
-			top: calc(-1 * var(--selected-option) * #{$item-size});
-			box-shadow: 0 0 3px rgba(0,0,0,0.2);
-		}
-	}
-}
-
-.elementor-responsive-switcher {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	z-index: 2;
-	cursor: pointer;
-	height: 0;
-	transform: scale(0);
-	opacity: 0;
-	transition: 0.15s;
-	font-size: 12px;
-}
-
-a.elementor-responsive-switcher {
-	color: $editor-light;
-
-	&:hover {
-		color: $editor-info;
-	}
-}
-
-$devices: 'desktop', 'tablet', 'mobile';
-
-@each $device in $devices {
-	.elementor-device-#{ $device } {
-		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
-			height: $item-size;
-			transform: scale(1);
-			opacity: 1;
-		}
-		.elementor-responsive-switchers-open:not(:hover) {
-			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: $editor-info;
-			}
 		}
 	}
 }
@@ -483,6 +367,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 	}
 }
 
+@import "controls-utility";
+
 @import "controls/button";
 
 @import "controls/choose";
@@ -496,6 +382,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 @import "controls/icons";
 
 @import "controls/gallery";
+
+@import "controls/globals";
 
 @import "controls/hidden";
 
@@ -515,6 +403,8 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 @import "controls/section";
 
+@import "controls/select";
+
 @import "controls/shadow";
 
 @import "controls/slider";
@@ -525,7 +415,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 @import "controls/tabs";
 
-@import "controls/textarea";
+@import "controls/textarea_and_code";
 
 @import "controls/url";
 
@@ -534,3 +424,5 @@ $devices: 'desktop', 'tablet', 'mobile';
 @import "controls/wysiwyg";
 
 @import "controls/text";
+
+@import "controls/date-time";

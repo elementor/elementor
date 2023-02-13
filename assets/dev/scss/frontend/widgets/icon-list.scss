@@ -3,6 +3,7 @@
 //
 
 .elementor-widget {
+	$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
 
 	&.elementor-icon-list--layout-inline {
 
@@ -26,8 +27,6 @@
 				right: auto;
 				position: relative;
 				height: 100%;
-				top: 50%;
-				transform: translateY(-50%);
 				border-top: 0;
 				border-bottom: 0;
 				border-right: 0;
@@ -57,11 +56,8 @@
 
 		&, a {
 			display: flex;
-			align-items: flex-start;
-		}
-
-		a {
-			width: 100%;
+			font-size: inherit;
+			align-items: var(--icon-vertical-align, center);
 		}
 	}
 
@@ -71,135 +67,93 @@
 	}
 
 	.elementor-icon-list-icon {
-		flex-shrink: 0;
+		display: flex;
+		position: relative;
+		top: var(--icon-vertical-offset, initial);
+
+		svg {
+			width: $e-icon-list-svg-icon-size;
+			height: $e-icon-list-svg-icon-size;
+		}
 
 		i {
 			width: 1.25em;
-		}
-
-		svg {
-			width: 1em;
+			font-size: var(--e-icon-list-icon-size);
 		}
 	}
 
-	&.elementor-align-center {
+	// Should be applied only on the icon-list widget, and not on any other widget that rely on this CSS.
+	&.elementor-widget-icon-list {
 
-		.elementor-icon-list-item {
+		.elementor-icon-list-icon {
+			text-align: var(--e-icon-list-icon-align);
 
-			&, a {
+			svg {
+				$e-icon-list-svg-icon-margin-default-size: 0 calc(#{$e-icon-list-svg-icon-size} * 0.25) 0 0;
+
+				margin: var(--e-icon-list-icon-margin, $e-icon-list-svg-icon-margin-default-size);
+			}
+		}
+	}
+
+	&.elementor-list-item-link-full_width {
+
+		a {
+			width: 100%;
+		}
+	}
+
+	@mixin align-list( $device ) {
+
+		&.elementor#{$device}-align-center {
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: center;
+				}
+
+				&:after {
+					margin: auto;
+				}
+			}
+
+			.elementor-inline-items {
 				justify-content: center;
 			}
+		}
 
-			&:after {
-				margin: auto;
+		&.elementor#{$device}-align-left {
+
+			.elementor-icon-list-item {
+
+				&, a {
+					justify-content: getValueByDirection(flex-start, flex-end);
+					text-align: left;
+				}
 			}
-		}
 
-		.elementor-inline-items {
-			justify-content: center;
-		}
-	}
-
-	&.elementor-align-left {
-
-		.elementor-icon-list-item {
-
-			&, a {
+			.elementor-inline-items {
 				justify-content: getValueByDirection(flex-start, flex-end);
-				text-align: left;
 			}
 		}
 
-		.elementor-inline-items {
-			justify-content: getValueByDirection(flex-start, flex-end);
-		}
-	}
+		&.elementor#{$device}-align-right {
 
-	&.elementor-align-right {
+			.elementor-icon-list-item {
 
-		.elementor-icon-list-item {
+				&, a {
+					justify-content: getValueByDirection(flex-end, flex-start);
+					text-align: right;
+				}
+			}
 
-			&, a {
+			.elementor-icon-list-items {
 				justify-content: getValueByDirection(flex-end, flex-start);
-				text-align: right;
 			}
 		}
 
-		.elementor-icon-list-items {
-			justify-content: getValueByDirection(flex-end, flex-start);
-		}
-	}
-
-	&:not(.elementor-align-right) {
-
-		.elementor-icon-list-item {
-
-			&:after {
-				@include start(0);
-			}
-		}
-	}
-
-	&:not(.elementor-align-left) {
-
-		.elementor-icon-list-item {
-
-			&:after {
-				@include end(0);
-			}
-		}
-	}
-
-	@media (max-width: $screen-md-max) {
-		&.elementor-tablet-align-center {
-
-			.elementor-icon-list-items {
-				justify-content: center;
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: center;
-				}
-
-				&:after {
-					margin: auto;
-				}
-			}
-		}
-
-		&.elementor-tablet-align-left {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-start, flex-end );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: left;
-				}
-			}
-		}
-
-		&.elementor-tablet-align-right {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-end, flex-start );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: right;
-				}
-			}
-		}
-
-		&:not(.elementor-tablet-align-right) {
+		&:not(.elementor#{$device}-align-right) {
 
 			.elementor-icon-list-item {
 
@@ -209,7 +163,7 @@
 			}
 		}
 
-		&:not(.elementor-tablet-align-left) {
+		&:not(.elementor#{$device}-align-left) {
 
 			.elementor-icon-list-item {
 
@@ -220,73 +174,29 @@
 		}
 	}
 
-	@media (max-width: $screen-sm-max) {
-		&.elementor-mobile-align-center {
+	@include align-list('');
 
-			.elementor-icon-list-items {
-				justify-content: center;
-			}
+	@media (min-width: $screen-widescreen-min) {
+		@include align-list('-widescreen');
+	}
 
-			.elementor-icon-list-item {
+	@media (max-width: $screen-laptop-max) {
+		@include align-list('-laptop');
+	}
 
-				&, a {
-					justify-content: center;
-				}
+	@media (max-width: $screen-tablet-extra-max) {
+		@include align-list('-tablet_extra');
+	}
 
-				&:after {
-					margin: auto;
-				}
-			}
-		}
+	@media (max-width: $screen-tablet-max) {
+		@include align-list('-tablet');
+	}
 
-		&.elementor-mobile-align-left {
+	@media (max-width: $screen-mobile-extra-max) {
+		@include align-list('-mobile_extra');
+	}
 
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-start, flex-end );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-start, flex-end );
-					text-align: left;
-				}
-			}
-		}
-
-		&.elementor-mobile-align-right {
-
-			.elementor-icon-list-items {
-				justify-content: getValueByDirection( flex-end, flex-start );
-			}
-
-			.elementor-icon-list-item {
-
-				&, a {
-					justify-content: getValueByDirection( flex-end, flex-start );
-					text-align: right;
-				}
-			}
-		}
-
-		&:not(.elementor-mobile-align-right) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include start(0);
-				}
-			}
-		}
-
-		&:not(.elementor-mobile-align-left) {
-
-			.elementor-icon-list-item {
-
-				&:after {
-					@include end(0);
-				}
-			}
-		}
+	@media (max-width: $screen-mobile-max) {
+		@include align-list('-mobile');
 	}
 }

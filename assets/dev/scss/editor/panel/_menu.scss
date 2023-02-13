@@ -23,7 +23,8 @@
 	}
 
 	&-item {
-		display: table;
+		display: flex;
+		align-items: center;
 		width: 100%;
 		height: 40px;
 		cursor: pointer;
@@ -34,15 +35,14 @@
 			background-color: rgba( 255, 255, 255, .8 );
 		}
 
-		> * {
-			display: table-cell;
-			vertical-align: middle;
-		}
-
 		&-icon {
 			text-align: center;
-			width: 50px;
+			width: 30px;
+		  	flex-shrink: 0;
+		  	padding: 10px 0;
+			margin-inline-start: 10px;
 			color: $editor-light;
+			font-size: 19px;
 
 			.eicon-editor-external-link {
 				font-size: 18px;
@@ -50,7 +50,16 @@
 		}
 
 		&-title {
+			display: flex;
+			flex-grow: 1;
 			font-weight: 500;
+			justify-content: space-between;
+
+			&-badge {
+				margin: 0 10px;
+			  	background: #FFFFFFFF;
+			  	border-radius: 3px;
+			}
 
 			> span {
 				color: $editor-success;
@@ -58,10 +67,16 @@
 		}
 
 		a {
+		  	display: flex;
+		  	align-items: center;
 			color: $editor-dark;
+		  	width: 100%;
+		  	height: 100%;
+			padding-inline-start: 10px;
+		  	padding: 10px 0;
 		}
 
-		&-exit-to-dashboard {
+		&-exit {
 			background-color: $wp-primary;
 			color: #fff;
 			text-transform: uppercase;
@@ -75,6 +90,10 @@
 			.elementor-panel-menu-item-icon {
 				color: #fff;
 			}
+		}
+
+		&-settings-additional-settings {
+			background-color: $editor-background-light;
 		}
 	}
 }

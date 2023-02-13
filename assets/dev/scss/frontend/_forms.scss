@@ -8,7 +8,7 @@
 
 	&.elementor-labels-above {
 
-		> .elementor-field-group {
+		.elementor-field-group {
 
 			> input, > textarea, > .elementor-select-wrapper, .elementor-field-subgroup {
 				flex-basis: 100%;
@@ -61,8 +61,6 @@
 
 		select {
 			appearance: none;
-			-webkit-appearance: none;
-			-moz-appearance: none;
 			color: inherit;
 			font-size: inherit;
 			font-family: inherit;
@@ -84,6 +82,7 @@
 			transform: translateY(-50%);
 			@include end(10px);
 			pointer-events: none;
+			text-shadow: 0 0 3px rgba(0,0,0,0.3);//To show when the border color is lighter (#12053)
 		}
 	}
 
@@ -199,7 +198,9 @@
 		}
 
 		.e-form__buttons__wrapper {
-			&,
+			flex-basis: 50%;
+			flex-grow: 1;
+
 			&__button {
 				flex-basis: 100%;
 			}
@@ -237,6 +238,8 @@
 		}
 
 		.e-form__buttons__wrapper {
+			flex-grow: initial;
+
 			&,
 			&__button {
 				flex-basis: initial;
@@ -249,14 +252,14 @@
 	@include btn-align();
 }
 
-@media screen and ( max-width: $screen-md-max ){
+@media screen and ( max-width: $screen-tablet-max ){
 
 	.elementor-tablet-button-align- {
 		@include btn-align();
 	}
 }
 
-@media screen and ( max-width: $screen-sm-max ){
+@media screen and ( max-width: $screen-mobile-max ){
 
 	.elementor-mobile-button-align- {
 		@include btn-align();
@@ -288,7 +291,7 @@
 		font-weight: normal;
 		font-style: normal;
 		vertical-align: middle;
-		margin-right: 5px;
+		@include margin-end(5px);
 	}
 
 	&.elementor-message-danger {

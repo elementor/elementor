@@ -3,14 +3,21 @@ namespace Elementor\Core\Common\Modules\Connect;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Plugin;
+use Elementor\Utils;
+use WP_User_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
+	const ACCESS_LEVEL_CORE = 0;
+	const ACCESS_LEVEL_PRO = 1;
+	const ACCESS_LEVEL_EXPERT = 20;
 
 	/**
 	 * @since 2.3.0
@@ -61,8 +68,18 @@ class Module extends BaseModule {
 			'library' => Library::get_class_name(),
 		];
 
-		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-		add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		// When using REST API the parent module is construct after the action 'elementor/init'
+		// so this part of code make sure to register the module "apps".
+		if ( did_action( 'elementor/init' ) ) {
+			$this->init();
+		} else {
+			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
+			add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		}
+
+		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
+			return $this->add_tracking_data( $params );
+		} );
 	}
 
 	/**
@@ -92,17 +109,15 @@ class Module extends BaseModule {
 		foreach ( $this->registered_apps as $slug => $class ) {
 			$this->apps[ $slug ] = new $class();
 		}
-
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
-	public function localize_settings( $settings ) {
-		return array_replace_recursive( $settings, [
-			'i18n' => [
-				'connect_error' => __( 'Unable to connect', 'elementor' ),
-				'connected_successfully' => __( 'Connected successfully', 'elementor' ),
-			],
-		] );
+	/**
+	 * @deprecated 3.1.0
+	 */
+	public function localize_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
+		return [];
 	}
 
 	/**
@@ -170,4 +185,55 @@ class Module extends BaseModule {
 		return $this->categories;
 	}
 
+	/**
+	 * @param string $context Where this subscription plan should be shown.
+	 *
+	 * @return array
+	 */
+	public function get_subscription_plans( $context = '' ) {
+		return [
+			static::ACCESS_LEVEL_CORE => [
+				'label' => null,
+				'promotion_url' => null,
+				'color' => null,
+			],
+			static::ACCESS_LEVEL_PRO => [
+				'label' => 'Pro',
+				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
+				'color' => '#92003B',
+			],
+		];
+	}
+
+	private function add_tracking_data( $params ) {
+		$users = [];
+
+		$users_query = new WP_User_Query( [
+			'count_total' => false, // Disable SQL_CALC_FOUND_ROWS.
+			'meta_query' => [
+				'key' => Common_App::OPTION_CONNECT_COMMON_DATA_KEY,
+				'compare' => 'EXISTS',
+			],
+		] );
+
+		foreach ( $users_query->get_results() as $user ) {
+			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
+
+			if ( $connect_common_data ) {
+				$users [] = [
+					'id' => $user->ID,
+					'email' => $connect_common_data['user']->email,
+					'roles' => implode( ', ', $user->roles ),
+				];
+			}
+		}
+
+		$params['usages'][ $this->get_name() ] = [
+			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+			'count' => count( $users ),
+			'users' => $users,
+		];
+
+		return $params;
+	}
 }

@@ -1,0 +1,85 @@
+@import 'select2-api';
+
+.select2-container {
+	&:not(.select2-container--open):not(.select2-container--focus) {
+
+		.select2-selection--single,
+		.select2-selection--multiple {
+			background-color: var(--select2-selection-background-color);
+			color: var(--select2-selection-color);
+			border-color: var(--select2-selection-border-color);
+		}
+	}
+
+	&.select2-container--open,
+	&.select2-container--focus {
+
+		.select2-selection--single,
+		.select2-selection--multiple {
+			border-color: var(--select2-selection-opened-focused-border-color);
+		}
+	}
+
+	&.select2-container--default {
+
+		.select2-selection--single {
+
+			.select2-selection__rendered {
+				color: var(--select2-single-selection-rendered-color);
+			}
+		}
+	}
+
+	&--default {
+
+		.select2-selection {
+
+			&--single {
+				background-color: var(--select2-default-single-selection-background-color);
+				border-color: var(--select2-default-single-selection-border-color);
+			}
+
+			&--multiple {
+				background-color: var(--select2-default-multiple-selection-background-color);
+
+				.select2-selection__choice {
+					background-color: var(--select2-default-multiple-selection-choice-background-color);
+					color: var(--select2-default-multiple-selection-choice-color);
+					border-color: var(--select2-default-multiple-selection-choice-border-color);
+
+					&__remove {
+						color: var(--select2-default-multiple-selection-choice-remove-color);
+
+						&:hover {
+							color: var(--select2-default-multiple-selection-choice-remove-hover-color);
+						}
+					}
+				}
+			}
+		}
+
+		.select2-results {
+
+			&__option[aria-selected] {
+				background-color: var(--select2-default-results-selected-option-background-color);
+				color: var(--select2-default-results-selected-option-color);
+			}
+
+			&__option--highlighted[aria-selected] {
+				background-color: var(--select2-default-results-highlighted-option-background-color);
+				color: var(--select2-default-results-highlighted-option-color);
+			}
+
+		}
+	}
+
+	.select2-results__option[aria-selected=true] {
+		background-color: var(--select2-results-selected-option-background-color);
+		color: var(--select2-results-selected-option-color);
+	}
+
+	.select2-dropdown {
+		background-color: var(--select2-dropdown-background-color);
+		border-color: var(--select2-dropdown-border-color);
+	}
+}

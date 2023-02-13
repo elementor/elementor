@@ -1,6 +1,4 @@
-import History from 'elementor-document/commands/base/history';
-
-export class Insert extends History {
+export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const containers = historyItem.get( 'containers' ),
 			data = historyItem.get( 'data' );
@@ -25,7 +23,7 @@ export class Insert extends History {
 		super.initialize( args );
 
 		if ( ! args.model._id ) {
-			args.model._id = elementor.helpers.getUniqueID();
+			args.model._id = elementorCommon.helpers.getUniqueId();
 		}
 	}
 
@@ -43,7 +41,7 @@ export class Insert extends History {
 		return {
 			containers,
 			type: 'add',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 			data: {
 				model,
 				name,
@@ -53,12 +51,8 @@ export class Insert extends History {
 		};
 	}
 
-	isDataChanged() {
-		return true;
-	}
-
 	apply( args ) {
-		const { model, name, options = { at: null }, containers = [ args.container ] } = args,
+		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true } = args,
 			result = [];
 
 		containers.forEach( ( container ) => {
@@ -66,9 +60,18 @@ export class Insert extends History {
 
 			const collection = container.settings.get( name );
 
-			result.push( collection.push( model, options ) );
+			options.at = null === options.at ? collection.length : options.at;
 
-			container.render();
+			// On `collection.push` the renderer needs a container, the container needs a settingsModel.
+			const rowSettingsModel = collection._prepareModel( model ),
+				repeaterContainer = container.addRepeaterItem( name, rowSettingsModel, options.at );
+
+			result.push( collection.push( rowSettingsModel, options ) );
+
+			if ( renderAfterInsert ) {
+				// Trigger render on widget but with the settings of the control.
+				repeaterContainer.render();
+			}
 		} );
 
 		if ( 1 === result.length ) {

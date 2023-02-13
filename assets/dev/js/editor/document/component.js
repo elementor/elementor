@@ -1,35 +1,34 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import BackwardsCompatibility from './backwards-compatibility.js';
-import CommandHistoryBase from './commands/base/history';
-import CommandHistoryDebounceBase from './commands/base/history/debounce';
+
+import * as components from './';
 import * as hooks from './hooks/';
+import * as uiStates from './ui-states';
 
 export default class Component extends ComponentBase {
-	static getModules() {
-		return {
-			CommandHistoryBase,
-			CommandHistoryDebounceBase,
-		};
-	}
-
 	getNamespace() {
 		return 'document';
 	}
 
 	registerAPI() {
-		new BackwardsCompatibility();
+		Object.values( components ).forEach( ( ComponentClass ) =>
+			$e.components.register( new ComponentClass ),
+		);
 
 		super.registerAPI();
 	}
 
 	defaultCommands() {
 		return {
-			//example: ( args ) => ( new Commands.Example( args ).run() ),
+			// Example: ( args ) => ( new Commands.Example( args ).run() ),
 		};
 	}
 
 	defaultHooks() {
 		return this.importHooks( hooks );
+	}
+
+	defaultUiStates() {
+		return this.importUiStates( uiStates );
 	}
 
 	defaultUtils() {
@@ -64,7 +63,7 @@ export default class Component extends ComponentBase {
 					elementor.getPreviewView().children,
 					'id',
 					id,
-					false
+					false,
 				);
 
 				return elements ? elements[ 0 ] : false;

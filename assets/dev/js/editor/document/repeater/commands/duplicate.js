@@ -1,6 +1,4 @@
-import History from 'elementor-document/commands/base/history';
-
-export class Duplicate extends History {
+export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -14,7 +12,7 @@ export class Duplicate extends History {
 		return {
 			containers,
 			type: 'duplicate',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 		};
 	}
 
@@ -39,6 +37,7 @@ export class Duplicate extends History {
 				options: Object.assign( {
 					at: index + 1,
 				}, options ),
+				renderAfterInsert: args.renderAfterInsert,
 			} ) );
 		} );
 

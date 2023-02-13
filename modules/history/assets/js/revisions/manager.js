@@ -35,7 +35,7 @@ export default class RevisionsManager {
 	}
 
 	setEditorData( data ) {
-		const collection = elementor.getRegion( 'sections' ).currentView.collection;
+		const collection = elementor.getPreviewView().collection;
 
 		collection.reset( data );
 	}
@@ -43,7 +43,7 @@ export default class RevisionsManager {
 	getRevisionDataAsync( id, options ) {
 		_.extend( options, {
 			data: {
-				id: id,
+				id,
 			},
 		} );
 

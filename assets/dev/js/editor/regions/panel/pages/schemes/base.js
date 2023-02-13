@@ -5,29 +5,29 @@ var childViewTypes = {
 	PanelSchemeBaseView;
 
 PanelSchemeBaseView = Marionette.CompositeView.extend( {
-	id: function() {
+	id() {
 		return 'elementor-panel-scheme-' + this.getType();
 	},
 
-	className: function() {
+	className() {
 		return 'elementor-panel-scheme elementor-panel-scheme-' + this.getUIType();
 	},
 
 	childViewContainer: '.elementor-panel-scheme-items',
 
-	getTemplate: function() {
+	getTemplate() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-panel-schemes-' + this.getType() );
 	},
 
-	getChildView: function() {
+	getChildView() {
 		return childViewTypes[ this.getUIType() ];
 	},
 
-	getUIType: function() {
+	getUIType() {
 		return this.getType();
 	},
 
-	ui: function() {
+	ui() {
 		return {
 			saveButton: '.elementor-panel-scheme-save .elementor-button',
 			discardButton: '.elementor-panel-scheme-discard .elementor-button',
@@ -35,7 +35,7 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.saveButton': 'saveScheme',
 			'click @ui.discardButton': 'discardScheme',
@@ -43,30 +43,30 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		};
 	},
 
-	initialize: function() {
+	initialize() {
 		this.model = new Backbone.Model();
 
 		this.resetScheme();
 	},
 
-	getType: function() {},
+	getType() {},
 
-	getScheme: function() {
+	getScheme() {
 		return elementor.schemes.getScheme( this.getType() );
 	},
 
-	changeChildrenUIValues: function( schemeItems ) {
+	changeChildrenUIValues( schemeItems ) {
 		var self = this;
 
 		_.each( schemeItems, function( value, key ) {
-			const model = self.collection.findWhere( { key: key } ),
+			const model = self.collection.findWhere( { key } ),
 				childView = self.children.findByModelCid( model.cid );
 
 			childView.changeUIValue( value );
 		} );
 	},
 
-	discardScheme: function() {
+	discardScheme() {
 		elementor.schemes.resetSchemes( this.getType() );
 
 		this.onSchemeChange();
@@ -76,13 +76,13 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	setSchemeValue: function( key, value ) {
+	setSchemeValue( key, value ) {
 		elementor.schemes.setSchemeValue( this.getType(), key, value );
 
 		this.onSchemeChange();
 	},
 
-	saveScheme: function() {
+	saveScheme() {
 		NProgress.start();
 
 		elementor.schemes.saveScheme( this.getType() ).done( NProgress.done );
@@ -94,17 +94,17 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		this._renderChildren();
 	},
 
-	setDefaultScheme: function() {
+	setDefaultScheme() {
 		var defaultScheme = elementor.config.default_schemes[ this.getType() ].items;
 
 		this.changeChildrenUIValues( defaultScheme );
 	},
 
-	resetItems: function() {
+	resetItems() {
 		this.model.set( 'items', this.getScheme().items );
 	},
 
-	resetCollection: function() {
+	resetCollection() {
 		var self = this,
 			items = self.model.get( 'items' );
 
@@ -118,16 +118,16 @@ PanelSchemeBaseView = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	resetScheme: function() {
+	resetScheme() {
 		this.resetItems();
 		this.resetCollection();
 	},
 
-	onSchemeChange: function() {
+	onSchemeChange() {
 		elementor.schemes.printSchemesStyle();
 	},
 
-	onChildviewValueChange: function( childView, newValue ) {
+	onChildviewValueChange( childView, newValue ) {
 		this.ui.saveButton.removeProp( 'disabled' );
 
 		this.setSchemeValue( childView.model.get( 'key' ), newValue );

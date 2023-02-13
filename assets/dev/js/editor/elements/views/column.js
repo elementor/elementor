@@ -9,11 +9,11 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
@@ -29,63 +29,61 @@ ColumnView = BaseElementView.extend( {
 		return elementor.hooks.applyFilters( 'elements/column/behaviors', behaviors, this );
 	},
 
-	className: function() {
+	className() {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
 		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
-	tagName: function() {
+	tagName() {
 		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
-	ui: function() {
+	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = '> .elementor-column-wrap';
+		ui.columnInner = elementorCommon.config.experimentalFeatures.e_dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
 		return ui;
 	},
 
-	getEditButtons: function() {
+	getEditButtons() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
 		editTools.edit = {
-			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			/* Translators: %s: Element name. */
+			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'column',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				/* Translators: %s: Element name. */
+				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 
 			editTools.add = {
-				title: elementor.translate( 'add_element', [ elementData.title ] ),
+				/* Translators: %s: Element name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
-			};
-
-			editTools.remove = {
-				title: elementor.translate( 'delete_element', [ elementData.title ] ),
-				icon: 'close',
 			};
 		}
 
 		return editTools;
 	},
 
-	initialize: function() {
+	initialize() {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
-	attachElContent: function() {
+	attachElContent() {
 		BaseElementView.prototype.attachElContent.apply( this, arguments );
 
 		const $tooltip = jQuery( '<div>', { class: 'elementor-column-percents-tooltip' } );
@@ -93,7 +91,7 @@ ColumnView = BaseElementView.extend( {
 		this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		const self = this,
 			groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
 			generalGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'general' } ) );
@@ -104,9 +102,9 @@ ColumnView = BaseElementView.extend( {
 				{
 					name: 'addNew',
                     icon: 'eicon-plus',
-					title: elementor.translate( 'new_column' ),
+					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
-					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementor.selection.isMultiple(),
 				},
 			],
 		} );
@@ -114,7 +112,7 @@ ColumnView = BaseElementView.extend( {
 		return groups;
 	},
 
-	isDroppingAllowed: function() {
+	isDroppingAllowed() {
 		// Don't allow dragging items to document which is not editable.
 		if ( ! this.getContainer().isEditable() ) {
 			return false;
@@ -128,6 +126,10 @@ ColumnView = BaseElementView.extend( {
 
 		var elType = elementView.model.get( 'elType' );
 
+		if ( 'container' === elType ) {
+			return true;
+		}
+
 		if ( 'section' === elType ) {
 			return ! this.isInner();
 		}
@@ -135,13 +137,13 @@ ColumnView = BaseElementView.extend( {
 		return 'widget' === elType;
 	},
 
-	getPercentsForDisplay: function() {
+	getPercentsForDisplay() {
 		const inlineSize = +this.model.getSetting( '_inline_size' ) || this.getPercentSize();
 
 		return inlineSize.toFixed( 1 ) + '%';
 	},
 
-	changeSizeUI: function() {
+	changeSizeUI() {
 		const self = this,
 			columnSize = self.model.getSetting( '_column_size' );
 
@@ -154,7 +156,7 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
-	getPercentSize: function( size ) {
+	getPercentSize( size ) {
 		if ( ! size ) {
 			size = this.el.getBoundingClientRect().width;
 		}
@@ -162,14 +164,14 @@ ColumnView = BaseElementView.extend( {
 		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
 	},
 
-	getSortableOptions: function() {
+	getSortableOptions() {
 		return {
 			connectWith: '.elementor-widget-wrap',
 			items: '> .elementor-element',
 		};
 	},
 
-	changeChildContainerClasses: function() {
+	changeChildContainerClasses() {
 		const emptyClass = 'elementor-element-empty',
 			populatedClass = 'elementor-element-populated';
 
@@ -182,7 +184,7 @@ ColumnView = BaseElementView.extend( {
 		}
 	},
 
-	addNewColumn: function() {
+	addNewColumn() {
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'column',
@@ -194,41 +196,56 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
-	onRender: function() {
-		var self = this;
+	onRender() {
+		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures.e_dom_optimization,
+			getDropIndex = ( side, event ) => {
+				let newIndex = jQuery( event.currentTarget ).index();
 
-		BaseElementView.prototype.onRender.apply( self, arguments );
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && ! isDomOptimizationActive ) {
+					newIndex++;
+				} else if ( 'top' === side && isDomOptimizationActive ) {
+					newIndex--;
+				}
 
-		self.changeChildContainerClasses();
+				return newIndex;
+			};
 
-		self.changeSizeUI();
+		let itemsClasses = '';
 
-		self.$el.html5Droppable( {
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+		if ( isDomOptimizationActive ) {
+			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		} else {
+			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		}
+
+		BaseElementView.prototype.onRender.apply( this, arguments );
+
+		this.changeChildContainerClasses();
+
+		this.changeSizeUI();
+
+		this.$el.html5Droppable( {
+			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
-			isDroppingAllowed: self.isDroppingAllowed.bind( self ),
+			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function( side, event ) {
-				event.stopPropagation();
-
+			onDropping: ( side, event ) => {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				var newIndex = jQuery( this ).index();
-
-				if ( 'bottom' === side ) {
-					newIndex++;
-				}
-
-				self.addElementFromPanel( { at: newIndex } );
+				this.onDrop(
+					event,
+					{ side, at: getDropIndex( side, event ) },
+				);
 			},
 		} );
 	},
 
-	onAddButtonClick: function( event ) {
+	onAddButtonClick( event ) {
 		event.stopPropagation();
 
 		this.addNewColumn();

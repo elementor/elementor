@@ -5,7 +5,9 @@
 		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 	}
 
-	input {
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+	&.elementor-control-dynamic {
+		input {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		}
 	}
 }
