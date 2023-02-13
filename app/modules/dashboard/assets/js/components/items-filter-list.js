@@ -24,6 +24,7 @@ const ItemsFilterList = ( props ) => {
 						// eslint-disable-next-line jsx-a11y/label-has-associated-control
 						return 'link' === item.linkType
 							? <Button
+									key={ item.text }
 									url={ item.url }
 									target="_blank"
 									rel="noreferrer"

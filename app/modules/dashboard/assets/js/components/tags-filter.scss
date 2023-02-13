@@ -42,15 +42,14 @@ $root: e-kit-library__tags-filter;
 
 	&-list-item {
 		padding: spacing(10) 0;
-		margin-left: 20px;
 		display: flex;
 		align-items: center;
 		font-weight: 500;
 
-		//&.active-item {
-		//	background-color: transparent;
-		//	color: #0275d8;
-		//}
+		&.active-item {
+			background-color: transparent;
+			color: #0275d8 !important;
+		}
 
 		input {
 			@include margin-end(spacing(5))
