@@ -6,4 +6,6 @@ export {
 	injectIntoPrimaryAction,
 } from './locations/index';
 
-import './init';
+import init from './init';
+
+init();
