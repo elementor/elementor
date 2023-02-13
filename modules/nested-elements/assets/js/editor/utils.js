@@ -15,16 +15,16 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
-export function findChildContainerOrFail( container, index ) {
-	const childView = container.view.children.findByIndex( index );
-
-	if ( ! childView ) {
-		if ( elementor.widgetsCache[ container.view.model.config.name ].force_child_container ) {
-			throw new Error( 'Child container was not found for the current repeater item.' );
-		} else {
-			return false;
-		}
+export function findChildContainerOrFail(container, index) {
+	const childView = container.view.children.findByIndex(index);
+  
+	if ( childView ) {
+	  return childView.getContainer();
 	}
-
-	return childView.getContainer();
-}
+  
+	if ( elementor.widgetsCache[container.view.model.config.name].force_child_container ) {
+	  throw new Error( 'Child container was not found for the current repeater item.' );
+	}
+  
+	return false;
+  }
