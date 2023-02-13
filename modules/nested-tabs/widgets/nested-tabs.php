@@ -380,7 +380,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'max' => 400,
 				],
 			],
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-title-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -395,7 +395,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'max' => 400,
 				],
 			],
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'size_units' => [ 'px' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-gap: {{SIZE}}{{UNIT}}',
 			],
