@@ -13,6 +13,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Elementor\App\ImportExport\Test_Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
@@ -77,6 +78,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$this->assert_valid_terms_with_elementor_content( $result, $manifest );
 		$this->assert_valid_terms_with_wp_content( $result );
+		Test_Module::assert_valid_import_session( $this, $import->get_session_id() );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -87,7 +89,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify import runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 
 		// Arrange
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );
@@ -449,7 +451,7 @@ class Test_Import extends Elementor_Test_Base {
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectExceptionMessage( 'session-does-not-exits-error' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exist.' );
 
 		// Act
 		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );

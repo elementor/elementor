@@ -252,6 +252,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-image: url("{{URL}}");',
 			],
+			'has_sizes' => true,
 			'render_type' => 'template',
 			'condition' => [
 				'background' => [ 'classic' ],
@@ -262,6 +263,7 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => esc_html_x( 'Position', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
+			'separator' => 'before',
 			'responsive' => true,
 			'options' => [
 				'' => esc_html_x( 'Default', 'Background Control', 'elementor' ),
@@ -430,7 +432,7 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['size'] = [
-			'label' => esc_html_x( 'Size', 'Background Control', 'elementor' ),
+			'label' => esc_html_x( 'Display Size', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'responsive' => true,
 			'default' => '',
