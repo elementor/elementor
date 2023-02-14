@@ -641,7 +641,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Get the initial first tab width.
 		await editor.getPreviewFrame().locator( '.e-normal:first-child' ).click();
 		await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
-		const initialTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+		const initialTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -650,7 +650,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert
 		// Verify that the tab width doesn't change after adding the content.
-		const finalTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+		const finalTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -725,7 +725,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Check if content tab contains the class 'e-con-full'.
-		const containerFullWidthCheck = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+		const containerFullWidthCheck = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
 			return element.classList.contains( 'e-con-full' );
 		} );
 		expect( containerFullWidthCheck ).toBe( true );
@@ -858,21 +858,21 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tab 1 & Content Container 1.
 		await tabButtonOne.click();
 
-		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
+		const contentContainerOneWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 2 & Content Container 2.
 		await tabButtonTwo.click();
 
-		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
+		const contentContainerTwoWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 3 & Content Container 3.
 		await tabButtonThree.click();
 
-		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
+		const contentContainerThreeWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -894,15 +894,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs' );
-		await editor.getFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
 
-		await clickTab( editor.getFrame(), 2 );
+		await clickTab( editor.getPreviewFrame(), 2 );
 
 		// Assert.
-		await expect( editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
 	} );
 } );
 

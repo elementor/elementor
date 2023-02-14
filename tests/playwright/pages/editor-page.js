@@ -5,7 +5,7 @@ module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 
 		this.postId = cleanPostId;
 	}
@@ -70,12 +70,8 @@ module.exports = class EditorPage extends BasePage {
 	async reload() {
 		await this.page.reload();
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 	}
-
-    getFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
-    }
 
 	/**
 	 * Make sure that the elements panel is loaded.
