@@ -35,7 +35,7 @@ const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, 
 	);
 };
 
-const StyledArrowUpRightIcon = withDirection( ArrowUpRightIcon );
+const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
 
 export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
 	const isExternalLink = href && target === '_blank';
@@ -50,7 +50,7 @@ export default function PopoverMenuItem( { text, icon, onClick, href, target, di
 			<MenuItemInnerWrapper href={ href } target={ target }>
 				<ListItemIcon>{ icon }</ListItemIcon>
 				<ListItemText primary={ text } />
-				{ isExternalLink && <StyledArrowUpRightIcon /> }
+				{ isExternalLink && <DirectionalArrowIcon /> }
 			</MenuItemInnerWrapper>
 		</MenuItem>
 	);
