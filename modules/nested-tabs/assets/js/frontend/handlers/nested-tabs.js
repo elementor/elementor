@@ -197,15 +197,8 @@ export default class NestedTabs extends Base {
 	}
 
 	onTabKeyDown( event ) {
-		// Support for old markup that includes an `<a>` tag in the tab
-		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
-			event.preventDefault();
-		}
-
-		// We listen to keydowon event for these keys in order to prevent undesired page scrolling
-		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
-			this.handleKeyboardNavigation( event );
-		}
+		this.preventDefaultLinkBehaviourForTabTitle( event );
+		this.onKeydownAvoidUndesiredPageScrolling( event );
 	}
 
 	onTabKeyUp( event ) {
@@ -233,6 +226,20 @@ export default class NestedTabs extends Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+	}
+
+	preventDefaultLinkBehaviourForTabTitle( event ) {
+		// Support for old markup that includes an `<a>` tag in the tab
+		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
+			event.preventDefault();
+		}
+	}
+
+	onKeydownAvoidUndesiredPageScrolling( event ) {
+		// We listen to keydowon event for these keys in order to prevent undesired page scrolling
+		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
+			this.handleKeyboardNavigation( event );
+		}
 	}
 
 	/**
@@ -379,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( ( pressShiftTabOnFirstFocusableItem ) || isEscapePressed ) {
 			event.preventDefault();
 
-			$activeTabTitleVisible?.focus();
+			$activeTabTitleVisible?.trigger( 'focus' );
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			$nextTabTitleVisible?.focus();
+			$nextTabTitleVisible?.trigger( 'focus' );
 		}
 	}
 
@@ -398,7 +405,7 @@ export default class NestedTabs extends Base {
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.focus();
+			$firstFocusableItem.trigger( 'focus' );
 		}
 	}
 
