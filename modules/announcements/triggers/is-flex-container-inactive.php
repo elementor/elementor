@@ -14,6 +14,24 @@ class IsFlexContainerInactive extends Trigger_Base {
 	 * @var string
 	 */
 	protected string $name = 'is-flex-container-inactive';
+	const USER_META_KEY = 'announcements_user_counter';
+
+	/**
+	 * @return int
+	 */
+	protected function get_view_count(): int {
+		$user_counter = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+
+		return ! empty( $user_counter ) ? (int) $user_counter : 0;
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function after_triggered(): void {
+		$new_counter = $this->get_view_count() + 1;
+		update_user_meta( get_current_user_id(), self::USER_META_KEY, $new_counter );
+	}
 
 	/**
 	 * @return bool

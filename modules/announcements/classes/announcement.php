@@ -11,16 +11,31 @@ class Announcement {
 	 * @var array
 	 */
 	protected array $raw_data;
+	/**
+	 * @var array
+	 */
+	protected array $triggers;
 
 	public function __construct( array $data ) {
 		$this->raw_data = $data;
+		$this->set_triggers();
 	}
 
 	/**
 	 * @return array
 	 */
 	protected function get_triggers(): array {
-		return $this->raw_data['triggers'] ?? [];
+		return $this->triggers;
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function set_triggers(): void {
+		$triggers = $this->raw_data['triggers'] ?? [];
+		foreach ( $triggers as $trigger ) {
+			$this->triggers[] = Utils::get_trigger_object( $trigger );
+		}
 	}
 
 	/**
@@ -35,18 +50,19 @@ class Announcement {
 		}
 
 		foreach ( $triggers as $trigger ) {
-			$trigger_object = Utils::get_trigger_object( $trigger );
-
-			if ( ! $trigger_object ) {
-				return false;
-			}
-
-			if ( ! $trigger_object->is_active() ) {
+			if ( ! $trigger->is_active() ) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function after_triggered(): void {
+
 	}
 
 	/**

@@ -25,4 +25,10 @@ abstract class Trigger_Base {
 	public function is_active(): bool {
 		return true;
 	}
+
+	/**
+	 * @return void
+	 */
+	protected function after_triggered(): void {
+	}
 }
