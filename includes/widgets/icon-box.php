@@ -153,7 +153,7 @@ class Widget_Icon_Box extends Widget_Base {
 			'description_text',
 			[
 				'label' => esc_html__( 'Description', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
+				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,
 				],
