@@ -83,15 +83,16 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
-		echo ($is_editor_v2_active)
-				? esc_attr_e( 'Structure', 'elementor' )
-				: esc_attr_e( 'Navigator', 'elementor' ); ?>">
+		echo $is_editor_v2_active
+			? esc_attr_e( 'Structure', 'elementor' )
+			: esc_attr_e( 'Navigator', 'elementor' );
+	?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php
-			echo ($is_editor_v2_active)
-					? esc_html__( 'Structure', 'elementor' )
-					: esc_html__( 'Navigator', 'elementor' );
-			?></span>
+			echo $is_editor_v2_active
+				? esc_html__( 'Structure', 'elementor' )
+				: esc_html__( 'Navigator', 'elementor' );
+		?></span>
 	</div>
 	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>

@@ -128,10 +128,10 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 
 				<div class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php
-						echo ($is_editor_v2_active)
-								? esc_html__( 'Structure', 'elementor' )
-								: esc_html__( 'Navigator', 'elementor' );
-						?></div>
+						echo $is_editor_v2_active
+							? esc_html__( 'Structure', 'elementor' )
+							: esc_html__( 'Navigator', 'elementor' );
+					?></div>
 					<div class="elementor-hotkeys__item--shortcut">
 						<span>{{{ ctrlLabel }}}</span>
 						<span>I</span>
