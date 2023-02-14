@@ -69,6 +69,10 @@ body {
 		.elementor-nerd-box {
 			padding: 25px;
 		}
+
+		> &-section {
+			border-bottom: var(--e-a-border);
+		}
 	}
 
 	&__footer {
@@ -91,7 +95,6 @@ body {
 		position: relative;
 		display: flex;
 		height: 30px;
-		border-bottom: var(--e-a-border);
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
@@ -131,9 +134,13 @@ body {
 
 	&__elements {
 
+		> .elementor-navigator__element-section,
+		> .elementor-navigator__element-container:not(:last-child),{
+			border-bottom: var(--e-a-border);
+		}
+
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: var(--e-a-border);
 
 			&__title {
 				@include margin-start(23px);
@@ -156,6 +163,7 @@ body {
 	}
 
 	&__element {
+
 		&.elementor-dragging-on-child {
 
 			> .elementor-navigator__elements {

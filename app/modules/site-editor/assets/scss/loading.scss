@@ -1,12 +1,12 @@
-$e-elementor-loader-container-background-color: tints(200);
-$e-elementor-loader-background-color: rgba(theme-colors(light), .9);
+$e-elementor-loader-container-background-color: tints(25);
+$e-elementor-loader-background-color: tints(75);
 
 :root {
 	--e-elementor-loader-container-background-color: #{$e-elementor-loader-container-background-color};
 	--e-elementor-loader-background-color: #{$e-elementor-loader-background-color};
 }
 
-$e-elementor-loader-dark-background-color: dark-tints(500);
+$e-elementor-loader-dark-background-color: dark-tints(725);
 $e-elementor-loader-container-dark-background-color: dark-tints(700);
 
 .eps-theme-dark {
@@ -47,7 +47,7 @@ $e-elementor-loader-container-dark-background-color: dark-tints(700);
 	$animation-time: 1.8s;
 
 	position: absolute;
-	background-color: $editor-lightest;
+	background-color: var(--e-elementor-loader-background-color);
 	animation: load $animation-time linear infinite;
 
 	&:nth-of-type(1) {

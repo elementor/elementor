@@ -12,7 +12,7 @@
 		cursor: pointer;
 		transition: var(--e-a-transition-hover);
 
-		&:hover {
+		&:hover:not(.elementor-history-item-current) {
 			background-color: var(--e-a-bg-hover);
 			color: var(--e-a-txt-color-hover);
 

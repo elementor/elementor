@@ -771,6 +771,7 @@ label.elementor-template-library-order-label {
 	left: 50%;
 	transform: translateX(-50%);
 	font-style: italic;
+	color: var(--e-a-color-txt-muted);
 
 	@media (max-height: 700px) {
 		display: none;
