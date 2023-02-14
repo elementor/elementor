@@ -15,8 +15,18 @@ export function isWidgetSupportNesting( widgetType ) {
 	return widgetConfig.support_nesting;
 }
 
-export function findChildContainerOrFail( container, index ) {
-	const childView = container.view.children.findByIndex( index );
+export function findChildContainerOrFail( container, index, containerModelCid = false ) {
+	let childView = false;
+
+	if ( ! containerModelCid ) {
+		childView = container.view.children.findByIndex( index );
+	} else {
+		childView = container.view.children.findByModelCid( containerModelCid );
+	}
+
+	if ( ! childView && ! containerModelCid ) {
+		return false;
+	}
 
 	if ( ! childView ) {
 		throw new Error( 'Child container was not found for the current repeater item.' );
