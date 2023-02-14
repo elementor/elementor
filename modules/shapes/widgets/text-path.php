@@ -234,7 +234,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'%' => [
 						'min' => 0,
@@ -270,7 +270,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg', 'grad', 'rad', 'turn' ],
+				'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
 				'default' => [
 					'unit' => 'deg',
 				],
@@ -448,7 +448,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
+				'size_units' => [ 's', 'ms', 'custom' ],
 				'default' => [
 					'unit' => 's',
 					'size' => 0.3,
@@ -616,7 +616,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms' ],
+				'size_units' => [ 's', 'ms', 'custom' ],
 				'default' => [
 					'unit' => 's',
 					'size' => 0.3,

@@ -5,10 +5,11 @@ body:
       value: |
         ## ⚠️ BEFORE POSTING YOUR REQUEST
         ### 🙏 Follow these best practices to help save you time
-        - 🔍 **Search Before Posting:** Before creating a new Feature Request, please search for similar requests to prevent creating duplicates.
-        - 🆕 **Stay Up-to-date:** Make sure you are using the most recent and stable versions of [Elementor](https://wordpress.org/plugins/elementor/#developers), and [Elementor Pro](https://elementor.com/pro/changelog/), and that the request you're suggesting is not already available with the latest versions.
-        - ⬆️ **Use the Upvote Button:** Rather than posting “+1” or “Agreed” on threads, use the upvote button to express your opinion. 
-        - 1️⃣ **One Request Per Thread:** If you have more than one request, please submit only **<ins>ONE REQUEST PER THREAD</ins>**, so we can properly track them and reference them without any confusion.
+        - 🔍 **Search Before Posting:** Before creating a new Feature Request, please [search for similar requests](https://github.com/orgs/elementor/discussions/categories/feature-request) to prevent creating duplicates.
+        - ⬆️ **Use the Upvote Button:** Rather than posting “+1” or “Agreed” on threads, use the upvote button to express your opinion.
+        - ✒️ **Clear and concise title:** Please provide a clear and concise title that gives context to your request.
+        - 💬 **Description:** In your description, provide examples, screenshots, and screen recordings if you have them (just drag and drop in the field), and explain in detail what your request is going to solve. Describe the solution and give context. Be thorough.
+        - ☝️ **One Request Per Thread:** If you have more than one request, please submit only **<ins>ONE REQUEST PER THREAD</ins>**, so we can properly track them and reference them without any confusion.
 
         ## The Feature
   - type: checkboxes
@@ -48,3 +49,8 @@ body:
       label: "Additional context"
       description: "Add any other context or screenshots about the feature request here."
       placeholder: "N.B ..."
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ⚠️ Please follow all the instructions indicated above, and fill all the required fields with valid information. We reserve the right to close issues that do not comply with these guidelines without any warning.

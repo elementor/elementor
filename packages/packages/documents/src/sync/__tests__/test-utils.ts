@@ -23,7 +23,7 @@ export function dispatchWindowEvent( event: string ) {
 }
 
 export function dispatchV1ReadyEvent() {
-	dispatchWindowEvent( 'elementor/v1/initialized' );
+	dispatchWindowEvent( 'elementor/initialized' );
 }
 
 export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
@@ -48,6 +48,7 @@ export function makeMockV1Document( id = 1 ): V1Document {
 	return {
 		id,
 		config: {
+			type: 'wp-page',
 			user: {
 				can_publish: true,
 			},
@@ -60,18 +61,19 @@ export function makeMockV1Document( id = 1 ): V1Document {
 			isSaving: false,
 		},
 		container: {
-			settings: makeSettings( {
+			settings: makeV1Settings( {
 				post_title: 'Document ' + id,
 				post_status: 'publish',
-			} ) as V1Document['container']['settings'],
+			} ),
 		},
 	};
 }
 
-function makeSettings<T extends object>( settings: T ) {
+// Mock Backbone's settings model.
+export function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];
 		},
-	};
+	} as V1Document['container']['settings'];
 }
