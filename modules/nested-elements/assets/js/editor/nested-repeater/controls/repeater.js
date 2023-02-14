@@ -33,7 +33,7 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			index: childView._index,
 			renderAfterInsert: shouldRenderAferInsert,
 			options: {
-				containerModelCid: containerModelCid,
+				containerModelCid,
 			},
 		} );
 
@@ -54,15 +54,15 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 
 	getRepeaterItemContainerModelCidIfExists( childView ) {
 		if ( 'yes' !== childView.model.attributes.item_dropdown_content ) {
-		   return false;
+			return false;
 		}
-	 
+
 		const container = this.container.children.filter( ( child ) => parseInt( child.view.el.dataset.content ) === childView._index + 1 );
-	 
+
 		if ( ! container.length ) {
-		   return false;
+			return false;
 		}
-	 
+
 		return container[ 0 ].model.cid;
 	}
 }
