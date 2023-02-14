@@ -1,18 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useDocumentPreviewProps from '../use-document-preview-props';
 import { runCommand } from '@elementor/v1-adapters';
+import { createMockDocument } from '../../__tests__/test-utils';
 
-const mockDocument = {
-	id: 1,
-	title: 'Document 1',
-	status: 'publish' as const,
-	isDirty: false,
-	isSaving: false,
-	isSavingDraft: false,
-	userCan: {
-		publish: true,
-	},
-};
+const mockDocument = createMockDocument();
 
 jest.mock( '../use-active-document.ts', () => ( {
 	__esModule: true,
