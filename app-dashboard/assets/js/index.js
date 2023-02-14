@@ -12,6 +12,10 @@ const AppWrapper = React.Fragment;
 const appDashboard = document.getElementById( 'e-app-dashboard' );
 
 if ( appDashboard ) {
+	document.getElementById( 'wp-admin-bar-wp-logo' ).classList.add( 'hidden' );
+	document.getElementById( 'wp-admin-bar-updates' ).classList.add( 'hidden' );
+	document.getElementById( 'wp-admin-bar-comments' ).classList.add( 'hidden' );
+
 	document.body.classList.add( 'folded' );
 
 	ReactDOM.render(

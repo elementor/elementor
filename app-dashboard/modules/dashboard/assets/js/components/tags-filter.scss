@@ -59,22 +59,22 @@ $root: e-kit-library__tags-filter;
 	}
 }
 
-	.eps-menu-item__external-link {
-		position: relative;
+.eps-menu-item__external-link {
+	position: relative;
 
-		i {
-			position: absolute;
-			right: 0;
-			margin-block-end: 0;
-		}
-	}
-
-	.e-kit-library__tags-filter-list-container {
-		max-height: 400px !important;
-	}
-
-	.eps-button--primary {
-		background-color: #7B61FF !important;
-		border: none !important;
+	i {
+		position: absolute;
+		right: 0;
+		margin-block-end: 0;
 	}
 }
+
+.e-kit-library__tags-filter-list-container {
+	max-height: 400px !important;
+}
+
+.eps-button--primary {
+	background-color: #7B61FF !important;
+	border: none !important;
+}
+
