@@ -1,3 +1,5 @@
+import { isRTL } from '@wordpress/i18n';
+import { ArrowUpLeftIcon, ArrowUpRightIcon } from '../../icons';
 import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button } from '@elementor/ui';
 
 const StyledMenuItem = styled( ( props: MenuItemProps ) => (
@@ -46,6 +48,9 @@ type ExtraProps = {
 }
 
 export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
+	const isExternalLink = href && target === '_blank';
+	const arrowStyle = { marginInlineStart: 'auto' };
+
 	return (
 		<StyledMenuItem { ...props } disabled={ disabled }>
 			<StyledButton
@@ -54,8 +59,19 @@ export default function PopoverMenuItem( { children, onClick, href, target, disa
 				href={ href }
 				target={ target }
 				disabled={ disabled }
+				sx={ {
+					display: 'flex',
+					alignItems: 'center',
+				} }
 			>
 				{ children }
+				{
+					isExternalLink && (
+						isRTL()
+							? <ArrowUpLeftIcon sx={ arrowStyle } />
+							: <ArrowUpRightIcon sx={ arrowStyle } />
+					)
+				}
 			</StyledButton>
 		</StyledMenuItem>
 	);

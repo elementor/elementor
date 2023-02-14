@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import '@testing-library/jest-dom';
 import {
 	injectIntoCanvasDisplay,
 	injectIntoPrimaryAction,

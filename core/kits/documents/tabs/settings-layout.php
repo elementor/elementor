@@ -87,7 +87,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => esc_html__( 'Container Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'default' => [
 						'unit' => 'px',
 					],
