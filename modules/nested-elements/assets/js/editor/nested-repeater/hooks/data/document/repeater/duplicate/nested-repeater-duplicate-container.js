@@ -1,5 +1,4 @@
 import Base from '../../../base';
-import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export class NestedRepeaterDuplicateContainer extends Base {
 	getId() {
@@ -10,9 +9,13 @@ export class NestedRepeaterDuplicateContainer extends Base {
 		return 'document/repeater/duplicate';
 	}
 
-	apply( { container, index } ) {
+	apply( { container, options } ) {
+		if ( ! options.containerModelCid ) {
+			return;
+		}
+
 		$e.run( 'document/elements/duplicate', {
-			container: findChildContainerOrFail( container, index ),
+			container: container.view.children.findByModelCid( options.containerModelCid ).getContainer(),
 			options: {
 				edit: false, // Not losing focus.
 			},
