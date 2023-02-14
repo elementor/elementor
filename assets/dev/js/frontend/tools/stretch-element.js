@@ -6,6 +6,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			selectors: {
 				container: window,
 			},
+			considerScrollbar: false,
 		};
 	},
 
@@ -16,11 +17,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	stretch() {
-		var containerSelector = this.getSettings( 'selectors.container' ),
+		var settings = this.getSettings(),
 			$container;
 
 		try {
-			$container = jQuery( containerSelector );
+			$container = jQuery( settings.selectors.container );
 			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 
@@ -32,6 +33,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		var $element = this.elements.$element,
 			containerWidth = $container.innerWidth(),
+			scrollbarWidth = window.innerWidth - containerWidth,
 			elementOffset = $element.offset().left,
 			isFixed = 'fixed' === $element.css( 'position' ),
 			correctOffset = isFixed ? 0 : elementOffset;
@@ -47,6 +49,10 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 		}
 
+		if ( settings.considerScrollbar ) {
+			correctOffset -= scrollbarWidth;
+		}
+
 		if ( ! isFixed ) {
 			if ( elementorFrontend.config.is_rtl ) {
 				correctOffset = containerWidth - ( $element.outerWidth() + correctOffset );
@@ -59,7 +65,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css.width = containerWidth + 'px';
 
-		css[ this.getSettings( 'direction' ) ] = correctOffset + 'px';
+		css[ settings.direction ] = correctOffset + 'px';
 
 		$element.css( css );
 	},
