@@ -122,7 +122,7 @@ export default class NestedTabs extends Base {
 			nextTab = $tabs[ tabIndex + direction ];
 
 		if ( nextTab ) {
-			nextTab.trigger( 'focus' );
+			nextTab.focus();
 		} else if ( -1 === tabIndex + direction ) {
 			$tabs.last().trigger( 'focus' );
 		} else {
