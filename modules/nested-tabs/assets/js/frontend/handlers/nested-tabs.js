@@ -107,11 +107,11 @@ export default class NestedTabs extends Base {
 				break;
 			case 'Home':
 				event.preventDefault();
-				$tabs.first().trigger( 'focus' );
+				$tabs.first().focus();
 				return;
 			case 'End':
 				event.preventDefault();
-				$tabs.last().trigger( 'focus' );
+				$tabs.last().focus();
 				return;
 			default:
 				return;
@@ -124,9 +124,9 @@ export default class NestedTabs extends Base {
 		if ( nextTab ) {
 			nextTab.focus();
 		} else if ( -1 === tabIndex + direction ) {
-			$tabs.last().trigger( 'focus' );
+			$tabs.last().focus();
 		} else {
-			$tabs.first().trigger( 'focus' );
+			$tabs.first().focus();
 		}
 	}
 
@@ -324,5 +324,118 @@ export default class NestedTabs extends Base {
 				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
 			}
 		}
+	}
+
+	getActiveClass() {
+		const settings = this.getSettings();
+
+		return settings.classes.active;
+	}
+
+	getVisibleTabTitle( tabTitleFilter ) {
+		const $tabTitle = this.elements.$tabTitles.filter( tabTitleFilter ),
+			isTabTitleDesktopVisible = null !== $tabTitle[ 0 ]?.offsetParent,
+			$visibleTabTitle = isTabTitleDesktopVisible ? $tabTitle[ 0 ] : $tabTitle[ 1 ];
+
+		return $visibleTabTitle;
+	}
+
+	getKeyPressed( event ) {
+		const keyTab = 9,
+			keyEscape = 27,
+			isTabPressed = keyTab === event?.which,
+			isShiftPressed = event?.shiftKey,
+			isShiftAndTabPressed = !! isTabPressed && isShiftPressed,
+			isOnlyTabPressed = !! isTabPressed && ! isShiftPressed,
+			isEscapePressed = keyEscape === event?.which;
+
+		if ( isShiftAndTabPressed ) {
+			return 'ShiftTab';
+		} else if ( isOnlyTabPressed ) {
+			return 'Tab';
+		} else if ( isEscapePressed ) {
+			return 'Escape';
+		}
+	}
+
+	changeFocusFromContentContainerItemBackToTabTitle( event ) {
+		if ( this.hasDropdownLayout() ) {
+			return;
+		}
+
+		const isShiftAndTabPressed = 'ShiftTab' === this.getKeyPressed( event ),
+			isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
+			isEscapePressed = 'Escape' === this.getKeyPressed( event ),
+			firstItemIsInFocus = this.itemInsideContentContainerHasFocus( 0 ),
+			lastItemIsInFocus = this.itemInsideContentContainerHasFocus( 'last' ),
+			activeTabTitleFilter = `.${ this.getActiveClass() }`,
+			$activeTabTitleVisible = this.getVisibleTabTitle( activeTabTitleFilter ),
+			activeTabTitleIndex = parseInt( $activeTabTitleVisible?.getAttribute( 'data-tab' ) ),
+			nextTabTitleFilter = this.getTabTitleFilterSelector( activeTabTitleIndex + 1 ),
+			$nextTabTitleVisible = this.getVisibleTabTitle( nextTabTitleFilter ),
+			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! $activeTabTitleVisible,
+			pressTabOnLastFocusableItem = isOnlyTabPressed && lastItemIsInFocus && !! $nextTabTitleVisible;
+
+		if ( ( pressShiftTabOnFirstFocusableItem ) || isEscapePressed ) {
+			event.preventDefault();
+
+			$activeTabTitleVisible?.focus();
+		} else if ( pressTabOnLastFocusableItem ) {
+			event.preventDefault();
+
+			this.setTabindexOfActiveContainerItems( '-1' );
+
+			$nextTabTitleVisible?.focus();
+		}
+	}
+
+	changeFocusFromActiveTabTitleToContentContainer( event ) {
+		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
+			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
+			$firstFocusableItem = $focusableItems[ 0 ],
+			$currentTabTitle = elementorFrontend.elements.window.document.activeElement,
+			currentTabTitleIndex = parseInt( $currentTabTitle?.getAttribute( 'data-tab' ) );
+
+		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
+			event.preventDefault();
+			$firstFocusableItem.focus();
+		}
+	}
+
+	itemInsideContentContainerHasFocus( position ) {
+		const $currentItem = elementorFrontend.elements.window.document.activeElement,
+			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
+			itemIndex = 'last' === position ? $focusableItems.length - 1 : position;
+
+		return $focusableItems[ itemIndex ] === $currentItem;
+	}
+
+	getFocusableItemsInsideActiveContentContainer() {
+		const settings = this.getSettings();
+
+		return this.$element.find( settings.selectors.activeTabContentContainers ).find( ':focusable' );
+	}
+
+	setTabindexOfActiveContainerItems( tabIndex ) {
+		const $focusableItems = this.getFocusableItemsInsideActiveContentContainer();
+
+		$focusableItems.attr( 'tabindex', tabIndex );
+	}
+
+	setActiveCurrentContainerItemsToFocusable() {
+		const $currentTabTitle = elementorFrontend.elements.window.document.activeElement,
+			currentTabTitleIndex = parseInt( $currentTabTitle?.getAttribute( 'data-tab' ) );
+
+		if ( this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) ) {
+			this.setTabindexOfActiveContainerItems( '0' );
+		}
+	}
+
+	tabTitleHasActiveContentContainer( index ) {
+		const $tabTitleElement = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( index ) ),
+			isTabTitleActive = $tabTitleElement[ 0 ]?.classList.contains( `${ this.getActiveClass() }` ),
+			$tabTitleContainerElement = this.elements.$tabContents.filter( this.getTabContentFilterSelector( index ) );
+
+		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
 	}
 }
