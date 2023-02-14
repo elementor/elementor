@@ -84,8 +84,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	</div>
 	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
 		echo $is_editor_v2_active
-			? esc_attr_e( 'Structure', 'elementor' )
-			: esc_attr_e( 'Navigator', 'elementor' );
+			? esc_attr__( 'Structure', 'elementor' )
+			: esc_attr__( 'Navigator', 'elementor' );
 	?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php
