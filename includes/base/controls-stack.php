@@ -935,6 +935,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			if ( ! empty( $options['overwrite'] ) ) {
+				Plugin::$instance->files_manager->clear_cache();
 				$this->update_control( $control_name, $control_args, [
 					'recursive' => ! empty( $options['recursive'] ),
 				] );
