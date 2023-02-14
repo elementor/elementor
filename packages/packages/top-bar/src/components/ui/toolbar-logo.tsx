@@ -13,7 +13,6 @@ const ElementorLogo = ( props: SvgIconProps ) => {
 		<SvgIcon viewBox="0 0 32 32" { ...props }>
 			<g>
 				<circle cx="16" cy="16" r="16" />
-
 				<path d="M11.7 9H9V22.3H11.7V9Z" />
 				<path d="M22.4 9H9V11.7H22.4V9Z" />
 				<path d="M22.4 14.4004H9V17.1004H22.4V14.4004Z" />
