@@ -99,13 +99,6 @@ class ControlBase {
 	}
 
 	/**
-	 * @return {boolean}
-	 */
-	isForcingServerRender() {
-		return 'template' === this.config.render_type;
-	}
-
-	/**
 	 * Test's setup.
 	 * Can be overriden in sub-classes.
 	 *

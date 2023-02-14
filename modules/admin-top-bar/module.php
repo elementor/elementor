@@ -19,18 +19,6 @@ class Module extends BaseApp {
 		return is_admin();
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name' => 'admin-top-bar',
-			'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
-			'description' => esc_html__( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-			],
-		];
-	}
-
 	/**
 	 * @return string
 	 */
@@ -49,7 +37,7 @@ class Module extends BaseApp {
 	 * Enqueue admin scripts
 	 */
 	private function enqueue_scripts() {
-		wp_enqueue_style( 'elementor-admin-top-bar-fonts', 'https://fonts.googleapis.com/css2?family=Roboto&display=swap', [], ELEMENTOR_VERSION );
+		wp_enqueue_style( 'elementor-admin-top-bar-fonts', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', [], ELEMENTOR_VERSION );
 
 		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), [], ELEMENTOR_VERSION );
 

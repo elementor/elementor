@@ -45,7 +45,7 @@ const WidgetView = BaseWidget.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as a Global', 'elementor' ),
+					title: __( 'Save as a global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
 						! elementor.selection.isMultiple(),
@@ -123,14 +123,7 @@ const WidgetView = BaseWidget.extend( {
 
 		BaseWidget.prototype.onRender.apply( self, arguments );
 
-		var editModel = self.getEditModel(),
-			skinType = editModel.getSetting( '_skin' ) || 'default';
-
-		self.$el
-			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
-			.removeClass( 'elementor-widget-empty' )
-			.children( '.elementor-widget-empty-icon' )
-			.remove();
+		this.normalizeAttributes();
 
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {

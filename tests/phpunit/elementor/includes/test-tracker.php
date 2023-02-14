@@ -46,7 +46,11 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
 
+		update_option( 'elementor_google_font', '1' );
+
 		update_option( 'elementor_font_display', 'block' );
+
+		update_option( 'elementor_meta_generator_tag', '1' );
 
 		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
 
@@ -58,8 +62,10 @@ class Test_Tracker extends Elementor_Test_Base {
 			'css_print_method' => 'internal',
 			'switch_editor_loader_method' => '',
 			'enable_unfiltered_file_uploads' => '1',
+			'google_font' => '1',
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
+			'meta_generator_tag' => '1',
 		], $actual );
 	}
 

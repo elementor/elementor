@@ -8,6 +8,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -156,7 +157,7 @@ class Module extends BaseModule {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
 
 		if ( ! isset( $data['siteName'] ) ) {
 			return $problem_error;
@@ -213,7 +214,7 @@ class Module extends BaseModule {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		$data = json_decode( Utils::get_super_global_value( $_POST, 'data' ), true );
 
 		// If there is no attachment ID passed or it is not a valid ID, exit here.
 		if ( empty( $data['attachmentId'] ) ) {
@@ -255,8 +256,10 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -267,7 +270,7 @@ class Module extends BaseModule {
 
 		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
 		// support for non-standard file uploads.
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] ) {
+		if ( 'image/svg+xml' === $file['type'] ) {
 			if ( Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 			} else {
@@ -276,9 +279,9 @@ class Module extends BaseModule {
 		}
 
 		// If the image is an SVG file, sanitation is performed during the import (upload) process.
-		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $_FILES['fileToUpload'] );
+		$image_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $file );
 
-		if ( 'image/svg+xml' === $_FILES['fileToUpload']['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+		if ( 'image/svg+xml' === $file['type'] && Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 			// Reset Upload state.
 			Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 		}
@@ -338,8 +341,10 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $_FILES['fileToUpload'] ) || ! is_array( $_FILES['fileToUpload'] ) ) {
+		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
 				'payload' => [
@@ -356,7 +361,7 @@ class Module extends BaseModule {
 
 		$skin = new Automatic_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result = $upgrader->install( $_FILES['fileToUpload']['tmp_name'], [ 'overwrite_package' => false ] );
+		$upload_result = $upgrader->install( $file['tmp_name'], [ 'overwrite_package' => false ] );
 
 		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
 			$result = [
@@ -414,7 +419,7 @@ class Module extends BaseModule {
 		$result = [];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
 			case 'elementor_update_site_name':
 				// If no value is passed for any reason, no need ot update the site name.
 				$result = $this->maybe_update_site_name();
@@ -453,22 +458,24 @@ class Module extends BaseModule {
 				wp_enqueue_script( 'updates' );
 				// Needed for uploading Logo from WP Media Library.
 				wp_enqueue_media();
-
-				Plugin::$instance->app->set_settings( 'disable_dark_theme', true );
 			}
 		}, 12 );
 
 		// Needed for uploading Logo from WP Media Library. The 'admin_menu' hook is used because it runs before
 		// 'admin_init', and the App triggers printing footer scripts on 'admin_init' at priority 0.
-		add_action( 'admin_menu', function() {
-			add_action( 'wp_print_footer_scripts', 'wp_print_media_templates' );
+		add_action( 'admin_menu', function () {
+			add_action( 'wp_print_footer_scripts', function () {
+				if ( function_exists( 'wp_print_media_templates' ) ) {
+					wp_print_media_templates();
+				}
+			} );
 		} );
 
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				wp_verify_nonce( Utils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();

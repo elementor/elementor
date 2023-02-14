@@ -341,10 +341,10 @@ abstract class Document extends Controls_Stack {
 		$document = $this;
 
 		// Ajax request from editor.
-		// PHPCS - only reading the value from $_POST['initial_document_id'].
-		if ( ! empty( $_POST['initial_document_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			// PHPCS - only reading the value from $_POST['initial_document_id'].
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$initial_document_id = Utils::get_super_global_value( $_POST, 'initial_document_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( ! empty( $initial_document_id ) ) {
+			$document = Plugin::$instance->documents->get( $initial_document_id ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$url = get_preview_post_link(
@@ -913,6 +913,14 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $meta;
+	}
+
+	public function update_json_meta( $key, $value ) {
+		$this->update_meta(
+			$key,
+			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			wp_slash( wp_json_encode( $value ) )
+		);
 	}
 
 	/**
@@ -1562,8 +1570,10 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	private function process_element_import_export( Controls_Stack $element, $method ) {
-		$element_data = $element->get_data();
+	public function process_element_import_export( Controls_Stack $element, $method, $element_data = null ) {
+		if ( null === $element_data ) {
+			$element_data = $element->get_data();
+		}
 
 		if ( method_exists( $element, $method ) ) {
 			// TODO: Use the internal element data without parameters.
@@ -1578,8 +1588,15 @@ abstract class Document extends Controls_Stack {
 				return $element_data;
 			}
 
-			if ( method_exists( $control_class, $method ) ) {
-				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			// Do not add default value to the final settings, if there is no value at the
+			// data before the methods `on_import` or `on_export` called.
+			$has_value = isset( $element_data['settings'][ $control['name'] ] );
+
+			if ( $has_value && method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}(
+					$element_data['settings'][ $control['name'] ],
+					$control
+				);
 			}
 
 			// On Export, check if the control has an argument 'export' => false.

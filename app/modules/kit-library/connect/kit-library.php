@@ -13,11 +13,15 @@ class Kit_Library extends Library {
 	const FALLBACK_BASE_ENDPOINT = 'https://ms-8874.elementor.com/api/v1/kits-library';
 
 	public function get_title() {
-		return __( 'Kit Library', 'elementor' );
+		return esc_html__( 'Kit Library', 'elementor' );
 	}
 
-	public function get_all() {
-		return $this->http_request( 'GET', 'kits' );
+	public function get_all( $args = [] ) {
+		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION, $args );
+	}
+
+	public function get_by_id( $id ) {
+		return $this->http_request( 'GET', 'kits/' . $id );
 	}
 
 	public function get_taxonomies() {

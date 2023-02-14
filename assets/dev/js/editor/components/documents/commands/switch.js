@@ -10,9 +10,10 @@ export class Switch extends $e.modules.CommandBase {
 			id: elementor.documents.getCurrentId(),
 			mode,
 			onClose,
+			selector: args.selector,
 		} )
 		.then( () => {
-			return $e.run( 'editor/documents/open', { id, shouldScroll } );
+			return $e.run( 'editor/documents/open', { id, shouldScroll, selector: args.selector } );
 		} )
 		.then( () => {
 			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();

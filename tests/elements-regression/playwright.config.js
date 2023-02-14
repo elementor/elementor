@@ -15,7 +15,7 @@ const config = {
 	testDir: './tests/',
 	/* Maximum time one test can run for. */
 	timeout: 2 * 60 * 1000, // 2 minutes
-	globalSetup: path.resolve( __dirname, './global-setup.js' ),
+	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
@@ -26,15 +26,15 @@ const config = {
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !! process.env.CI,
 	/* Retry on CI only */
-	retries: process.env.CI ? 2 : 0,
+	retries: process.env.CI ? 1 : 0,
 	/* Retry on CI only */
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: process.env.CI ? 'github' : 'list',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
-		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-		actionTimeout: 0,
+		actionTimeout: 10 * 1000, // 4 seconds
+		navigationTimeout: 10 * 1000, // 10 seconds
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
 		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),

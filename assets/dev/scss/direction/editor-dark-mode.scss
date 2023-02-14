@@ -11,6 +11,7 @@ $theme-dark-gray-lighter: #7D7E82;
 $theme-dark-gray-lightest: #B4B5B7;
 
 $theme-dark-light: #E0E1E3;
+$theme-dark-lighter: #f1f3f5;
 $theme-dark-dark: #26292C;
 $theme-dark-accent: #71D7F7;
 $theme-dark-success: $editor-success;
@@ -467,6 +468,7 @@ select {
 	}
 }
 
+//Controls Utility
 .elementor-control-responsive-switchers {
 
 	&__holder {
@@ -499,6 +501,45 @@ a.elementor-responsive-switcher {
 	}
 }
 
+.e-units-wrapper {
+
+	.e-units-switcher {
+		color: $theme-dark-lighter;
+
+		&:hover {
+			color: $theme-dark-accent;
+			background-color: $theme-dark-gray-darkest;
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+
+		&:checked + label {
+			color: $theme-dark-accent;
+		}
+
+		&.e-units-placeholder + label {
+			color: $theme-dark-light;
+		}
+	}
+
+	&.e-units-choices-open {
+		background-color: $theme-dark-gray-dark;
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+
+		.elementor-units-choices-label {
+
+			&:hover {
+				color: $theme-dark-accent;
+			}
+		}
+	}
+}
+
+
 .elementor-control-type-popover_toggle {
 
 	.elementor-control-popover-toggle-toggle-label {
@@ -529,10 +570,6 @@ a.elementor-responsive-switcher {
 
 	.eicon-plus-circle {
 		color: $theme-dark-light;
-	}
-
-	.elementor-control-media__tool {
-		background-color: $theme-dark-gray-lighter;
 	}
 
 	&__file {
@@ -1299,6 +1336,15 @@ label.elementor-template-library-order-label,
 
 .elementor-context-menu-list__item {
 
+	&--disabled {
+
+		.elementor-context-menu-list__item__icon,
+		.elementor-context-menu-list__item__title,
+		.elementor-context-menu-list__item__shortcut {
+			color: $theme-dark-gray-lighter;
+		}
+	}
+
 	&:not(.elementor-context-menu-list__item--disabled):hover {
 		background-color: $theme-dark-gray;
 	}
@@ -1338,7 +1384,8 @@ label.elementor-template-library-order-label,
 		background-color: transparent;
 	}
 
-	&__item {
+	&__item,
+	&__elements {
 		background-color: $theme-dark-gray-dark;
 		border-color: $theme-dark-gray-darkest;
 
@@ -1452,8 +1499,22 @@ label.elementor-template-library-order-label,
 	}
 }
 
+//Paste Area
+#elementor-paste-area-dialog {
+	.dialog-header {
+		color: inherit;
+	}
+	#elementor-paste-area-dialog__error {
+
+		&:before {
+			border-top-color: $theme-dark-gray;
+		}
+	}
+}
+
 //WP Media Modal
 .media-modal {
+	color-scheme: light;
 	color: $editor-dark;
 }
 

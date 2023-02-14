@@ -224,25 +224,25 @@ class Source_Local extends Source_Base {
 		$admin_menu_rearrangement_active = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' );
 
 		if ( $admin_menu_rearrangement_active ) {
-			$name = _x( 'Templates', 'Template Library', 'elementor' );
+			$name = esc_html_x( 'Templates', 'Template Library', 'elementor' );
 		} else {
-			$name = _x( 'My Templates', 'Template Library', 'elementor' );
+			$name = esc_html_x( 'My Templates', 'Template Library', 'elementor' );
 		}
 
 		$labels = [
 			'name' => $name,
-			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
-			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
-			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
-			'edit_item' => _x( 'Edit Template', 'Template Library', 'elementor' ),
-			'new_item' => _x( 'New Template', 'Template Library', 'elementor' ),
-			'all_items' => _x( 'All Templates', 'Template Library', 'elementor' ),
-			'view_item' => _x( 'View Template', 'Template Library', 'elementor' ),
-			'search_items' => _x( 'Search Template', 'Template Library', 'elementor' ),
-			'not_found' => _x( 'No Templates found', 'Template Library', 'elementor' ),
-			'not_found_in_trash' => _x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
+			'singular_name' => esc_html_x( 'Template', 'Template Library', 'elementor' ),
+			'add_new' => esc_html_x( 'Add New', 'Template Library', 'elementor' ),
+			'add_new_item' => esc_html_x( 'Add New Template', 'Template Library', 'elementor' ),
+			'edit_item' => esc_html_x( 'Edit Template', 'Template Library', 'elementor' ),
+			'new_item' => esc_html_x( 'New Template', 'Template Library', 'elementor' ),
+			'all_items' => esc_html_x( 'All Templates', 'Template Library', 'elementor' ),
+			'view_item' => esc_html_x( 'View Template', 'Template Library', 'elementor' ),
+			'search_items' => esc_html_x( 'Search Template', 'Template Library', 'elementor' ),
+			'not_found' => esc_html_x( 'No Templates found', 'Template Library', 'elementor' ),
+			'not_found_in_trash' => esc_html_x( 'No Templates found in Trash', 'Template Library', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => _x( 'Templates', 'Template Library', 'elementor' ),
+			'menu_name' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 		];
 
 		$args = [
@@ -280,7 +280,7 @@ class Source_Local extends Source_Base {
 			'query_var' => is_admin(),
 			'rewrite' => false,
 			'public' => false,
-			'label' => _x( 'Type', 'Template Library', 'elementor' ),
+			'label' => esc_html_x( 'Type', 'Template Library', 'elementor' ),
 		];
 
 		/**
@@ -321,9 +321,9 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'public' => false,
 			'labels' => [
-				'name' => _x( 'Categories', 'Template Library', 'elementor' ),
-				'singular_name' => _x( 'Category', 'Template Library', 'elementor' ),
-				'all_items' => _x( 'All Categories', 'Template Library', 'elementor' ),
+				'name' => esc_html_x( 'Categories', 'Template Library', 'elementor' ),
+				'singular_name' => esc_html_x( 'Category', 'Template Library', 'elementor' ),
+				'all_items' => esc_html_x( 'All Categories', 'Template Library', 'elementor' ),
 			],
 		];
 
@@ -1172,14 +1172,10 @@ class Source_Local extends Source_Base {
 	 * @return array An updated array of available list table views.
 	 */
 	public function admin_print_tabs( $views ) {
-		$current_type = '';
-		$active_class = ' nav-tab-active';
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
+		$current_type = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG ) ?? '';
+		$active_class = $current_type ? '' : ' nav-tab-active';
 		$current_tabs_group = $this->get_current_tab_group();
-
-		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
-			$current_type = $_REQUEST[ self::TAXONOMY_TYPE_SLUG ];
-			$active_class = '';
-		}
 
 		$url_args = [
 			'post_type' => self::CPT,
@@ -1262,6 +1258,7 @@ class Source_Local extends Source_Base {
 
 		$total_items = $wp_list_table->get_pagination_arg( 'total_items' );
 
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 		if ( ! empty( $total_items ) || ! empty( $_REQUEST['s'] ) ) {
 			return;
 		}
@@ -1357,7 +1354,6 @@ class Source_Local extends Source_Base {
 		}
 
 		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
-
 		$dropdown_options = array(
 			'show_option_all' => $all_items,
 			'show_option_none' => $all_items,
@@ -1368,7 +1364,8 @@ class Source_Local extends Source_Base {
 			'value_field' => 'slug',
 			'taxonomy' => self::TAXONOMY_CATEGORY_SLUG,
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
-			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
+			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
+			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
 		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
@@ -1653,17 +1650,17 @@ class Source_Local extends Source_Base {
 	}
 
 	public function get_current_tab_group( $default = '' ) {
-		$current_tabs_group = $default;
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? '';
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$type_slug = Utils::get_super_global_value( $_REQUEST, self::TAXONOMY_TYPE_SLUG );
 
-		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {
-			$doc_type = Plugin::$instance->documents->get_document_type( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ], '' );
+		if ( $type_slug ) {
+			$doc_type = Plugin::$instance->documents->get_document_type( $type_slug, '' );
 			if ( $doc_type ) {
 				$current_tabs_group = $doc_type::get_property( 'admin_tab_group' );
 			}
-		} elseif ( ! empty( $_REQUEST['tabs_group'] ) ) {
-			$current_tabs_group = $_REQUEST['tabs_group'];
 		}
-
 		return $current_tabs_group;
 	}
 

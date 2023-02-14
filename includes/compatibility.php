@@ -1,8 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -33,6 +35,7 @@ class Compatibility {
 		add_action( 'init', [ __CLASS__, 'init' ] );
 
 		self::polylang_compatibility();
+		self::yoast_duplicate_post();
 
 		if ( is_admin() || defined( 'WP_LOAD_IMPORTERS' ) ) {
 			add_filter( 'wp_import_post_meta', [ __CLASS__, 'on_wp_import_post_meta' ] );
@@ -205,7 +208,7 @@ class Compatibility {
 		// Fix Preview URL for https://github.com/wpmudev/domain-mapping plugin
 		if ( class_exists( 'domain_map' ) ) {
 			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
-				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== $_SERVER['HTTP_HOST'] ) {
+				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== Utils::get_super_global_value( $_SERVER, 'HTTP_HOST' ) ) {
 					$preview_url = \domain_map::utils()->unswap_url( $preview_url );
 					$preview_url = add_query_arg( [
 						'dm' => \Domainmap_Module_Mapping::BYPASS,
@@ -267,6 +270,27 @@ class Compatibility {
 		}
 
 		return $keys;
+	}
+
+	private static function yoast_duplicate_post() {
+		add_filter( 'duplicate_post_excludelist_filter', function( $meta_excludelist ) {
+			$exclude_list = [
+				Document::TYPE_META_KEY,
+				'_elementor_page_assets',
+				'_elementor_controls_usage',
+				'_elementor_css',
+				'_elementor_screenshot',
+			];
+
+			return array_merge( $meta_excludelist, $exclude_list );
+		} );
+
+		add_action( 'duplicate_post_post_copy', function( $new_post_id, $post ) {
+			$original_template_type = get_post_meta( $post->ID, Document::TYPE_META_KEY, true );
+			if ( ! empty( $original_template_type ) ) {
+				update_post_meta( $new_post_id, Document::TYPE_META_KEY, $original_template_type );
+			}
+		}, 10, 2 );
 	}
 
 	/**

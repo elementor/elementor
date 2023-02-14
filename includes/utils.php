@@ -115,6 +115,15 @@ class Utils {
 	}
 
 	/**
+	 * Whether elementor test mode is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_tests() {
+		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+	}
+
+	/**
 	 * Get pro link.
 	 *
 	 * Retrieve the link to Elementor Pro.
@@ -165,13 +174,21 @@ class Utils {
 		$from = trim( $from );
 		$to = trim( $to );
 
+		if ( empty( $from ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL.' );
+		}
+
+		if ( empty( $to ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL.' );
+		}
+
 		if ( $from === $to ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
@@ -184,7 +201,7 @@ class Utils {
 		// @codingStandardsIgnoreEnd
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
+			throw new \Exception( 'An error occurred while replacing URL\'s.' );
 		}
 
 		// Allow externals to replace-urls, when they have to.
@@ -194,7 +211,7 @@ class Utils {
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
-			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
 	}
@@ -791,6 +808,20 @@ class Utils {
 		return file_get_contents( $file, ...$args );
 	}
 
+	public static function get_super_global_value( $super_global, $key ) {
+		if ( ! isset( $super_global[ $key ] ) ) {
+			return null;
+		}
+
+		if ( $_FILES === $super_global ) {
+			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+
+			return $super_global[ $key ];
+		}
+
+		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
 	/**
 	 * Return specific object property value if exist from array of keys.
 	 *
@@ -808,5 +839,4 @@ class Utils {
 		}
 		return $array;
 	}
-
 }

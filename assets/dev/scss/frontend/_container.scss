@@ -6,6 +6,10 @@
 	--flex-basis: auto;
 	--flex-grow: 0;
 	--flex-shrink: 1;
+	--container-widget-width: 100%;
+	--container-widget-height: initial;
+	--container-widget-flex-grow: 0;
+	--container-widget-align-self: initial;
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
 	// isn't working properly.
@@ -25,7 +29,6 @@
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
-	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
@@ -45,7 +48,7 @@
 	padding-right: var( --padding-right );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: var( --transition );
+	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 	&-full,
 	& > .e-con-inner {
@@ -112,8 +115,9 @@
 	&::before,
 	> .elementor-background-video-container::before,
 	> .e-con-inner > .elementor-background-video-container::before,
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before,
+	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
@@ -125,17 +129,21 @@
 		top: 0;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
-		transition: var( --overlay-transition );
+		transition: var( --overlay-transition, 0.3s );
 		border-radius: var( --border-radius );
 	}
 
-	> .elementor-background-video-container:before,
-	> .e-con-inner > .elementor-background-video-container:before {
+	&::before {
+		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
+	}
+
+	> .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
@@ -152,7 +160,7 @@
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			width: 100%;
 		}

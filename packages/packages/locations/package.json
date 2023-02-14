@@ -1,0 +1,6 @@
+{
+	"name": "@elementor/locations",
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}
