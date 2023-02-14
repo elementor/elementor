@@ -5,7 +5,7 @@ module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 
 		this.postId = cleanPostId;
 	}
@@ -70,12 +70,8 @@ module.exports = class EditorPage extends BasePage {
 	async reload() {
 		await this.page.reload();
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 	}
-
-    getFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
-    }
 
 	/**
 	 * Make sure that the elements panel is loaded.
@@ -125,6 +121,9 @@ module.exports = class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	/**
+	 * @return {import('@playwright/test').Frame|null}
+	 */
 	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
@@ -233,7 +232,7 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a custom width value to a widget.
 	 *
-	 * @param {string} controlId - The control to set the value to;
+	 * @param {string}        controlId - The control to set the value to;
 	 * @param {string|number} value     - The value to set;
 	 *
 	 * @return {Promise<void>}
