@@ -4,7 +4,8 @@
 		"@elementor/store": "*",
 		"@elementor/top-bar": "*",
 		"@elementor/v1-adapters": "*",
-		"@elementor/ui": "*"
+		"@elementor/ui": "*",
+		"@wordpress/i18n": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"
