@@ -13,46 +13,55 @@ class Admin {
 	 */
 	cachedKitData;
 
+	/**
+	 * The 'Remove Kit' revert button
+	 *
+	 * @type {Element}
+	 */
+	revertBtn;
+
+	/**
+	 * Name of the kit currently active (last imported)
+	 *
+	 * @type {string}
+	 */
+	activeKitName;
+
 	constructor() {
-		this.configureRevertBtn();
+		this.activeKitName = this.getActiveKitName();
+		this.revertBtn = document.getElementById( 'elementor-import-export__revert_kit' );
+
+		if ( this.revertBtn ) {
+			this.revertBtn.addEventListener( 'click', this.revertBtnOnClick.bind( this ) );
+			this.maybeAddRevertBtnMargin();
+		}
+
 		this.maybeShowReferrerKitDialog();
 	}
 
-	configureRevertBtn() {
-		const revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
-		if ( ! revertButton ) {
-			return;
-		}
-		revertButton.addEventListener( 'click', this.revertBtnOnClick.bind( this ) );
-		this.maybeAddRevertBtnMargin( revertButton );
-	}
-
 	/**
-	 * MaybeAddRevertBtnMargin
-	 *
-	 * @param {HTMLAnchorElement} revertButton
+	 * Add bottom margin to revert btn if referred from Kit library
 	 */
-	maybeAddRevertBtnMargin( revertButton ) {
-		const referrerKitId = new URLSearchParams( revertButton.href ).get( 'referrer_kit' );
+	maybeAddRevertBtnMargin() {
+		const referrerKitId = new URLSearchParams( this.revertBtn.href ).get( 'referrer_kit' );
 		if ( ! referrerKitId ) {
 			return;
 		}
-		revertButton.style.marginBottom = this.calculateMargin( revertButton );
+
+		this.revertBtn.style.marginBottom = this.calculateMargin();
 		this.scrollToBottom();
 	}
 
 	/**
 	 * CalculateMargin
 	 *
-	 * @param {HTMLAnchorElement} revertButton
-	 *
 	 * @return {string}
 	 */
-	calculateMargin( revertButton ) {
+	calculateMargin() {
 		const adminBar = document.getElementById( 'wpadminbar' );
 		const adminBarHeight = adminBar ? adminBar.offsetHeight : 0;
 
-		const revertKitHeight = revertButton.parentElement.offsetHeight;
+		const revertKitHeight = this.revertBtn.parentElement.offsetHeight;
 
 		return (
 			document.body.clientHeight -
@@ -80,25 +89,24 @@ class Admin {
 	revertBtnOnClick( event ) {
 		event.preventDefault();
 
-		const kitNameToRemove = this.getKitNameToRemove();
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
-			message: __( 'Removing ', 'elementor' ) + kitNameToRemove + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
+			message: __( 'Removing ', 'elementor' ) + this.activeKitName + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: () => this.onRevertConfirm( event.target, kitNameToRemove ),
+			onConfirm: this.onRevertConfirm,
 		} ).show();
 	}
 
-	onRevertConfirm( revertBtn, kitNameToRemove ) {
-		const referrerKitId = new URLSearchParams( revertBtn.href ).get( 'referrer_kit' );
+	onRevertConfirm() {
+		const referrerKitId = new URLSearchParams( this.revertBtn.href ).get( 'referrer_kit' );
 
-		this.saveToCache( referrerKitId ?? '', kitNameToRemove );
+		this.saveToCache( referrerKitId ?? '', this.activeKitName );
 
-		location.href = revertBtn.href;
+		location.href = this.revertBtn.href;
 	}
 
 	maybeShowReferrerKitDialog() {
@@ -142,11 +150,11 @@ class Admin {
 	 * @param {Object} options
 	 */
 	createKitDeletedWidget( options ) {
-		const { kitNameToRemove } = this.getDataFromCache();
+		const { activeKitName } = this.getDataFromCache();
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-revert-kit-deleted-dialog',
-			headerMessage: kitNameToRemove + __( ' was successfully deleted', 'elementor' ),
+			headerMessage: activeKitName + __( ' was successfully deleted', 'elementor' ),
 			message: options.message,
 			strings: {
 				confirm: options.strings.confirm,
@@ -162,7 +170,7 @@ class Admin {
 	 *
 	 * @return {string}
 	 */
-	getKitNameToRemove() {
+	getActiveKitName() {
 		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
 
 		if ( lastKit.kit_title ) {
@@ -190,8 +198,8 @@ class Admin {
 			.join( ' ' );
 	}
 
-	saveToCache( referrerKitId, kitNameToRemove ) {
-		sessionStorage.setItem( this.KIT_DATA_KEY, JSON.stringify( { referrerKitId, kitNameToRemove } ) );
+	saveToCache( referrerKitId, activeKitName ) {
+		sessionStorage.setItem( this.KIT_DATA_KEY, JSON.stringify( { referrerKitId, activeKitName } ) );
 	}
 
 	getDataFromCache() {
