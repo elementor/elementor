@@ -1,9 +1,9 @@
 {
     "name": "elementor",
     "slug": "elementor",
-    "version": "3.10.0",
-    "last_beta_version": "3.10.0-beta3",
-    "last_cloud_version": "3.10.0-cloud3",
+    "version": "3.11.0",
+    "last_beta_version": "3.11.0-beta3",
+    "last_cloud_version": "3.12.0-cloud1",
     "last_dev_version": "3.9.0-dev2",
     "prev_stable_version": "3.1.4",
     "author": "Elementor Team",

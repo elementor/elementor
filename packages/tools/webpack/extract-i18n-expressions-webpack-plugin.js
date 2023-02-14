@@ -1,11 +1,16 @@
 const { sources: { RawSource } } = require( 'webpack' );
 
-const MODULE_FILTERS = Object.freeze( [ /((?:[^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
+const MODULE_FILTERS = Object.freeze( [ /(([^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
 module.exports = class ExtractI18nExpressionsWebpackPlugin {
-	translationsRegexps = [];
+	translationsRegexps;
+	generateTranslationFilename;
 
-	constructor( { translationsRegexps } = {} ) {
+	constructor( {
+		// WordPress i18n function, example for regex match: `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
+		translationsRegexps = [ /\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\)/ ],
+		generateTranslationFilename,
+	} = {} ) {
 		if (
 			! translationsRegexps ||
 			! Array.isArray( translationsRegexps ) ||
@@ -14,6 +19,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			throw new Error( '`translationsRegexps` must be an array of RegExp' );
 		}
 
+		this.generateTranslationFilename = generateTranslationFilename || this.defaultGenerateTranslationFilename;
 		this.translationsRegexps = translationsRegexps.map( ( regex ) => {
 			const flags = [ ...new Set( [ 'g', 'm', ...regex.flags.split( '' ) ] ) ].join( '' );
 
@@ -72,7 +78,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 	addTranslationCallExpressionsToAssets( compilation, translationCallExpressions ) {
 		[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
-			const chunk = entrypoint.chunks[ 0 ];
+			const chunk = entrypoint.chunks.find( ( { name } ) => name === id );
 			const chunkJSFile = this.getFileFromChunk( chunk );
 
 			if ( ! chunkJSFile ) {
@@ -81,9 +87,9 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 			const mainFilePath = compilation.options.entry[ id ].import[ 0 ];
 
-			const assetFilename = compilation
-				.getPath( '[file]', { filename: chunkJSFile } )
-				.replace( /(\.min)?\.js$/i, '.strings.js' );
+			const assetFilename = this.generateTranslationFilename(
+				compilation.getPath( '[file]', { filename: chunkJSFile } )
+			);
 
 			// Create Webpack source object which represents a new file, and add it to Webpack assets array.
 			compilation.assets[ assetFilename ] = new RawSource(
@@ -107,7 +113,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 	}
 
 	shouldCheckModule( module ) {
-		return MODULE_FILTERS.every( ( filter ) => filter.test( module.userRequest ) );
+		return MODULE_FILTERS.every( ( filter ) => !! filter.test( module.userRequest ) );
 	}
 
 	findMainModuleOfEntry( module, compilation ) {
@@ -134,5 +140,9 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		} );
 
 		return translationCallExpressions;
+	}
+
+	defaultGenerateTranslationFilename( filename ) {
+		return filename.replace( /(\.min)?\.js$/i, '.strings.js' );
 	}
 };

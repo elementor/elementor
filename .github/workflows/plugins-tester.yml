@@ -11,7 +11,7 @@ on:
         type: string
         description: 'Ignore mismatch threshold'
         required: false
-        default: '0.9'
+        default: '0.2'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -83,14 +83,8 @@ jobs:
       - name: Run tests
         run: cd ./tests/plugins-tester && npm test
       - uses: actions/upload-artifact@v2
-        if: always()
+        if: failure()
         with:
-          name: reports
-          path: ./tests/plugins-tester/reports/
-          retention-days: 7
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: results
-          path: ./tests/plugins-tester/results/
+          name: errors-reports
+          path: ./tests/plugins-tester/errors-reports/
           retention-days: 7

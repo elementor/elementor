@@ -1,8 +1,19 @@
 const { test, expect } = require( '@playwright/test' );
+const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
+	let pageId;
+
+	test.beforeEach( async () => {
+		pageId = await createPage();
+	} );
+
+	test.afterEach( async () => {
+		await deletePage( pageId );
+	} );
+
 	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -87,17 +98,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( `Check visibility of icon svg file when font icons experiment is active`, async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
-		await wpAdmin.openNewPage();
 
-		const editor = new EditorPage( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Set icons to tabs according 'tabIcons' array.
-		await setIconsToTabs( page, tabIcons );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -119,19 +123,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		// Set experiments.
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
-		await wpAdmin.openNewPage();
 
-		const editor = new EditorPage( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Set icons to tabs according 'tabIcons' array.
-		await setIconsToTabs( page, tabIcons );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Set icon size.
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
@@ -229,18 +227,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
-
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		// Act.
-		// Set icons to tabs.
-		await setIconsToTabs( page, tabIcons );
-
 		// Set icon hover color.
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
@@ -300,19 +292,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// Add tab icons.
-		await setIconsToTabs( page, tabIcons );
+		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Update active tab title.
+		await page.locator( '.elementor-repeater-fields:nth-child( 3 )' ).click();
 		await page.locator( '.elementor-repeater-fields:nth-child( 3 ) .elementor-control-tab_title input' ).fill( 'Title change' );
 		const activeTabUpdatedSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
@@ -327,19 +316,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsId = await editor.addWidget( 'nested-tabs', container );
-
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
+		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
+		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
-		const activeTab = editor.getPreviewFrame().locator( '.e-normal.e-active' );
-
 		// Tabs styling scenario 1: Direction: Top, Align Title: Left, Icon Position: Right.
-		await editor.selectElement( tabsId );
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		// Set icon position to 'right'.
@@ -358,7 +343,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.selectElement( tabsId );
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -370,7 +355,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
-		await editor.selectElement( tabsId );
+		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		// Unset Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -394,16 +379,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
 		const lastTab = editor.getPreviewFrame().locator( '.e-normal:last-child' );
 
@@ -469,17 +449,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
-
 		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
@@ -496,17 +470,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
-
 		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
@@ -568,8 +536,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ).click();
 
 		// Hex colors.
 		const colorGreen = '#95E46E',
@@ -584,12 +555,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			colorBrownRgb = 'rgb(150, 112, 8)',
 			colorRedRgb = 'rgb(150, 23, 8)',
 			colorPinkRgb = 'rgb(225, 8, 110)';
-
-		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title.e-normal.e-active' );
-		// Add icons.
-		await setIconsToTabs( page, tabIcons );
 
 		// Normal tab styling: text color green, border color: green and icon color: yellow.
 		await editor.activatePanelTab( 'style' );
@@ -662,19 +627,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsWidgetId = await editor.addWidget( 'nested-tabs', container ),
-			activeContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con.e-active` ),
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
+		const activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ),
 			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
 		// Act.
-		// Add Icons.
-		await setIconsToTabs( page, tabIcons );
 		// Set Direction: Left.
-		await editor.selectElement( tabsWidgetId );
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Get the initial first tab width.
@@ -702,8 +663,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = new EditorPage( page, testInfo );
+		await editor.gotoPostId( pageId );
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
@@ -849,6 +811,99 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Test the nested tabs behaviour when using container flex row @latest', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'heading', container );
+		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'heading', container );
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		const tabButtonOne = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=0' ),
+			contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
+			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			tabButtonTwo = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=1' ),
+			contentContainerTwo = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=1` ),
+			contentContainerTwoId = await contentContainerTwo.getAttribute( 'data-id' ),
+			tabButtonThree = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=2' ),
+			contentContainerThree = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=2` ),
+			contentContainerThreeId = await contentContainerThree.getAttribute( 'data-id' );
+
+		// Act.
+		// Add content
+		// Tab 1.
+		await editor.addWidget( 'video', contentContainerOneId );
+
+		// Tab 2.
+		await tabButtonTwo.click();
+		await editor.addWidget( 'heading', contentContainerTwoId );
+
+		// Tab 3.
+		await tabButtonThree.click();
+		await editor.addWidget( 'image', contentContainerThreeId );
+		await editor.addWidget( 'text-editor', contentContainerThreeId );
+
+		// Set container direction to `row`.
+		await editor.selectElement( container );
+		await page.locator( '.elementor-control-flex_direction .eicon-arrow-left' ).click();
+
+		// Assert
+		// Get content container widths.
+		// Tab 1 & Content Container 1.
+		await tabButtonOne.click();
+
+		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Tab 2 & Content Container 2.
+		await tabButtonTwo.click();
+
+		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Tab 3 & Content Container 3.
+		await tabButtonThree.click();
+
+		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
+			return window.getComputedStyle( element ).getPropertyValue( 'width' );
+		} );
+
+		// Verify that the content width doesn't change after changing the active tab.
+		expect( contentContainerOneWidth === contentContainerTwoWidth && contentContainerOneWidth === contentContainerThreeWidth ).toBeTruthy();
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Tabs and containers are duplicated correctly @latest', async ( { page }, testInfo ) => {
+		/**
+		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
+		 * receives the correct index.
+		 */
+			// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add widgets.
+		await editor.addWidget( 'nested-tabs' );
+		await editor.getFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
+
+		await clickTab( editor.getFrame(), 2 );
+
+		// Assert.
+		await expect( editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+	} );
 } );
 
 async function editTab( editor, tabIndex ) {
@@ -863,39 +918,6 @@ async function editTab( editor, tabIndex ) {
 const viewportSize = {
     desktop: { width: 1920, height: 1080 },
     mobile: { width: 400, height: 480 },
-};
-
-const tabIcons = [
-	{
-		icon: 'fa-arrow-alt-circle-right',
-		activeIcon: 'fa-bookmark',
-	},
-	{
-		icon: 'fa-clipboard',
-		activeIcon: 'fa-clock',
-	},
-	{
-		icon: 'fa-clipboard',
-		activeIcon: 'fa-address-card',
-	},
-];
-
-// Set icons to tabs, used in setIconsToTabs function.
-const addIcon = async ( page, selectedIcon ) => {
-	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
-	await page.locator( '.dialog-lightbox-insert_icon' ).click();
-};
-
-// Iterate tabs and add an icon and an active Icon to each one.
-const setIconsToTabs = async ( page, TabIcons ) => {
-	for ( const tab of TabIcons ) {
-		const index = tabIcons.indexOf( tab ) + 1;
-		await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
-		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
-		await addIcon( page, tab.icon );
-		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
-		await addIcon( page, tab.activeIcon );
-	}
 };
 
 // Click on tab by position.

@@ -1,81 +1,99 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
+	const APP_PACKAGE = 'editor';
+
+	const EXTENSION_PACKAGES = [
+		'documents',
+		'elements-panel',
+		'structure',
+		'top-bar',
+	];
+
+	const UTIL_PACKAGES = [
+		'locations',
+		'ui',
+		'v1-adapters',
+		'store',
+	];
+
+	/**
+	 * Cached script assets.
+	 *
+	 * @var Collection
+	 */
+	private $packages_script_assets;
+
 	public function get_script_configs() {
-		// TODO: Hook to register script configs.
+		$packages_script_configs = $this->get_packages_script_assets()
+			->map( function ( $script_asset, $package_name ) {
+				return [
+					'handle' => $script_asset['handle'],
+					'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
+					'deps' => $script_asset['deps'],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
+				];
+			} );
+
+		$editor_script_config = $packages_script_configs->get( static::APP_PACKAGE );
+
+		$loader_script_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
+			'deps' => array_merge(
+				[ 'elementor-editor' ],
+				$editor_script_config ? [ $editor_script_config['handle'] ] : []
+			),
+		];
 
 		return array_merge(
-			Editor_Common_Assets::get_script_configs(),
-			[
-				[
-					'handle' => 'elementor-packages-locations',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/locations{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react' ],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				],
-				[
-					'handle' => 'elementor-packages-top-bar',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/top-bar{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'elementor-packages-editor', 'elementor-packages-ui', 'wp-i18n' ],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				],
-				[
-					'handle' => 'elementor-packages-editor',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/editor{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom', 'elementor-packages-locations', 'elementor-packages-ui' ],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				],
-				[
-					'handle' => 'elementor-packages-ui',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}js/packages/ui{{MIN_SUFFIX}}.js',
-					'deps' => [ 'react', 'react-dom' ],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				],
-
-				// Loader script
-				[
-					'handle' => 'elementor-editor-loader-v2',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
-					'deps' => [
-						'elementor-editor',
-						'elementor-packages-editor',
-					],
-				],
-			]
+			Editor_Common_Configs::get_script_configs(),
+			$packages_script_configs->values(),
+			[ $loader_script_config ]
 		);
 	}
 
 	public function get_script_handles_to_enqueue() {
-		// TODO: Hook to enqueue scripts.
+		return $this->get_packages_script_assets()
+			->filter( function ( $script_asset, $package_name ) {
+				return in_array( $package_name, static::EXTENSION_PACKAGES, true );
+			} )
+			->map( function ( $script_asset ) {
+				return $script_asset['handle'];
+			} )
+			->push( 'elementor-editor-loader-v2' )
+			->values();
+	}
 
-		return [
-			'elementor-packages-top-bar',
+	public function get_client_settings() {
+		$common_configs = Editor_Common_Configs::get_client_settings();
 
-			// Loader script - must be last.
-			'elementor-editor-loader-v2',
+		$v2_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'name' => 'elementorEditorV2Settings',
+			'settings' => [
+				'urls' => [
+					'admin' => admin_url(),
+				],
+			],
 		];
+
+		return array_merge( $common_configs, [ $v2_config ] );
 	}
 
 	public function get_style_configs() {
 		return array_merge(
-			Editor_Common_Assets::get_style_configs(),
+			Editor_Common_Configs::get_style_configs(),
 			[
 				[
 					'handle' => 'elementor-editor-v2-overrides',
@@ -95,5 +113,28 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	private function get_packages_script_assets() {
+		if ( ! $this->packages_script_assets ) {
+			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
+				->merge( static::EXTENSION_PACKAGES )
+				->merge( static::UTIL_PACKAGES )
+				->map_with_keys( function ( $package_name ) {
+					$assets_path = ELEMENTOR_ASSETS_PATH;
+					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
+
+					if ( ! file_exists( $script_asset_path ) ) {
+						return [];
+					}
+
+					/** @var array{ handle: string, deps: string[] } $script_asset */
+					$script_asset = require $script_asset_path;
+
+					return [ $package_name => $script_asset ];
+				} );
+		}
+
+		return $this->packages_script_assets;
 	}
 }

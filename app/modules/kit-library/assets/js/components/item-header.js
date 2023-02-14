@@ -156,6 +156,7 @@ export default function ItemHeader( props ) {
 			}
 			{
 				downloadLinkData && <ApplyKitDialog
+					id={ props.model.id }
 					downloadLink={ downloadLinkData.data.download_link }
 					nonce={ downloadLinkData.meta.nonce }
 					onClose={ () => setDownloadLinkData( null ) }

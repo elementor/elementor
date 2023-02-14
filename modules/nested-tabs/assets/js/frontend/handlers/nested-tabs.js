@@ -145,9 +145,11 @@ export default class NestedTabs extends Base {
 			'aria-expanded': 'false',
 		} );
 
-		$activeContent[ settings.hideTabFn ]();
+		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
 		$activeContent.attr( 'hidden', 'hidden' );
 	}
+
+	onHideTabContent( $activeContent ) {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
@@ -175,12 +177,14 @@ export default class NestedTabs extends Base {
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
-			() => {
-				elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
-				elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
-			},
+			() => this.onShowTabContent( $requestedContent ),
 		);
 		$requestedContent.removeAttr( 'hidden' );
+	}
+
+	onShowTabContent( $requestedContent ) {
+		elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
+		elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
 	}
 
 	isActiveTab( tabIndex ) {
@@ -241,7 +245,7 @@ export default class NestedTabs extends Base {
 	 * @param {Object} content - Active nested tab dom element.
 	 */
 	reInitSwipers( event, content ) {
-		const swiperElements = content.querySelectorAll( '.swiper-container' );
+		const swiperElements = content.querySelectorAll( `.${ elementorFrontend.config.swiperClass }` );
 		for ( const element of swiperElements ) {
 			if ( ! element.swiper ) {
 				return;
