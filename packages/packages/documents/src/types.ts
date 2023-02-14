@@ -11,6 +11,7 @@ export type Document = {
 	id: number,
 	title: string,
 	status: DocumentStatus,
+	type: string,
 	isDirty: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
@@ -36,6 +37,7 @@ export type ExtendedWindow = Window & {
 export type V1Document = {
 	id: number,
 	config: {
+		type: string,
 		user: {
 			can_publish: boolean,
 		},
@@ -50,7 +52,7 @@ export type V1Document = {
 	container: {
 		settings: V1Model<{
 			post_title: string,
-			post_status: DocumentStatus
+			post_status: DocumentStatus | undefined,
 		}>,
 	}
 }
