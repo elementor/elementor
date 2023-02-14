@@ -101,19 +101,18 @@ describe( '@elementor/top-bar API', () => {
 			getByRole( 'button' ).click(); // Opens the popover menu
 
 			const menuItem = getByRole( 'menuitem' );
-			const menuItemButton = getByText( 'Test' );
+			const menuItemContent = getByText( 'Test' );
 
 			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
 
-			menuItemButton.click();
+			menuItemContent.click();
 
 			expect( menuItem ).toHaveClass( 'Mui-selected' );
 
-			menuItemButton.click();
+			menuItemContent.click();
 
 			expect( menuItem ).not.toHaveClass( 'Mui-selected' );
 			expect( menuItem ).toHaveAttribute( 'aria-disabled', 'true' );
-			expect( menuItemButton ).toHaveAttribute( 'disabled' );
 		} );
 
 		it( 'should render a link', () => {
@@ -125,7 +124,7 @@ describe( '@elementor/top-bar API', () => {
 
 			getByRole( 'button' ).click(); // Opens the popover menu
 
-			const link = getByRole( 'link' );
+			const link = getByRole( 'menuitem' );
 
 			expect( link ).toHaveAttribute( 'href', 'https://elementor.com' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
