@@ -239,6 +239,8 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerButtonClick() {
+		this.triggerMethod( 'ui:global-color:clicked' );
+
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unset:global:value' );
 		} else if ( this.isGlobalActive() && ! this.getControlValue() && this.getGlobalDefault() ) {

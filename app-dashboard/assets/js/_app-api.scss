@@ -1,0 +1,85 @@
+// APP : private API
+// - local tokens mapped to EPS global tokens
+
+$app-background-color: tints(200);
+$spp-font-size: type(text, base);
+$app-box-shadow-color: $eps-box-shadow-size-3;
+$app-radius: 0;
+$app-max-width: 100%;
+
+$app-header-background-color: theme-colors(light);
+$app-header-box-shadow: $eps-box-shadow-2;
+$app-header-height: px-to-rem(50);
+$app-header-color: tints(800);
+$app-header-font-size: type(size, "15");
+$spp-header-padding-x: spacing(16);
+$app-header-padding-y: 0;
+$app-header-z-index: 3;
+
+$app-main-height: 100%;
+
+$app-sidebar-background-color: rgba(theme-colors(light), $opacity-05);
+$app-sidebar-padding-top: spacing(20);
+$app-sidebar-width: 30%;
+$app-sidebar-max-width: px-to-rem(275);
+$app-sidebar-box-shadow: $eps-box-shadow-3;
+$app-sidebar-z-index: 4;
+
+$app-logo-size: px-to-rem(28);
+$app-logo-font-size: calc(0.4 * #{$app-logo-size});
+$app-logo-radius: 50%;
+$app-logo-color: theme-colors(light);
+$app-logo-background-color: theme-colors(cta);
+$app-logo-margin-end: spacing(10);
+
+$app-header-buttons-separator-color: tints(300);
+$app-header-buttons-color: tints(500);
+$app-header-buttons-font-size: type(size, "18");
+
+$app-header-btn-padding-x: spacing(16);
+
+$app-header-btn-font-size: type(size, "18");
+$app-header-btn-line-height: spacing(20);
+
+$app-title-font-size: type(text, lg);
+$app-title-font-weight: $eps-font-weight-bold;
+
+$app-content-padding: spacing(44);
+
+$app-lightbox-background-color: rgba($eps-dark-theme-dark, $opacity-08);
+$app-lightbox-z-index: $eps-zindex-modal;
+
+// dark theme tokens
+$app-dark-background-color: dark-tints(700);
+$app-dark-box-shadow-color: rgba(var(--box-shadow-color, #{$eps-dark-box-shadow-color}), 4 * $eps-box-shadow-alpha-unit);
+$app-dark-header-background-color: dark-tints(800);
+$app-dark-header-color: dark-tints(100);
+
+$app-dark-header-buttons-separator-color: dark-tints(400);
+$app-dark-header-buttons-color: dark-tints(200);
+
+$app-dark-sidebar-background-color: dark-tints(700);
+
+$app-dark-lightbox-background-color: rgba(dark-theme-colors(dark), $opacity-08);
+
+:root {
+	--app-background-color: #{$app-background-color};
+	--app-box-shadow-color: #{$app-dark-box-shadow-color};
+	--app-header-background-color: #{$app-header-background-color};
+	--app-header-color: #{$app-header-color};
+	--app-sidebar-background-color: #{$app-sidebar-background-color};
+	--app-header-buttons-separator-color: #{$app-header-buttons-separator-color};
+	--app-header-buttons-color: #{$app-header-buttons-color};
+	--app-lightbox-background-color: #{$app-lightbox-background-color};
+}
+
+.eps-theme-dark {
+	--app-background-color: #{$app-dark-background-color};
+	--app-box-shadow-color: #{$app-dark-box-shadow-color};
+	--app-header-background-color: #{$app-dark-header-background-color};
+	--app-header-color: #{$app-dark-header-color};
+	--app-sidebar-background-color: #{$app-dark-sidebar-background-color};
+	--app-header-buttons-separator-color: #{$app-dark-header-buttons-separator-color};
+	--app-header-buttons-color: #{$app-dark-header-buttons-color};
+	--app-lightbox-background-color: #{$app-dark-lightbox-background-color};
+}

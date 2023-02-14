@@ -2,6 +2,15 @@
 // Dashboard Icon
 #adminmenu {
 
+	.toplevel_page_elementor-dashboard {
+		div.wp-menu-image:before {
+			content: "\e813";
+			font-family: eicons;
+			font-size: 18px;
+			margin-top: 1px;
+		}
+	}
+
 	#toplevel_page_elementor {
 
 		div.wp-menu-image:before {

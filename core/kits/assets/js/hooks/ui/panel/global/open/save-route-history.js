@@ -14,6 +14,7 @@ export class KitSaveRouteHistory extends BaseOpenClose {
 	}
 
 	apply( args ) {
+		console.log('aaa');
 		this.component.routeHistory = args;
 	}
 }

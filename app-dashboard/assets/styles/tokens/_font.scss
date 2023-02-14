@@ -1,0 +1,22 @@
+// Font
+//$eps-font-weight-thin: 200;
+//$eps-font-weight-light: 300;
+$eps-font-weight-normal: 400;
+$eps-font-weight-medium: 500;
+$eps-font-weight-bold: 700;
+$eps-font-weight-base: $eps-font-weight-normal;
+
+//font face names
+$font-src-roboto: 'roboto';
+
+// generic, check if exist
+$font-family-monospace: monospace;
+$font-family-roboto: Roboto;
+$font-family-arial: Arial;
+$font-family-helvetica: Helvetica;
+$font-family-verdana: Verdana;
+
+$eps-font-family-code: $font-family-monospace;
+$eps-font-family-fallback: sans-serif;
+$eps-font-family-base: $font-family-roboto, $font-family-arial, $font-family-helvetica, $font-family-verdana;
+$eps-font-family: $eps-font-family-base, $eps-font-family-fallback;

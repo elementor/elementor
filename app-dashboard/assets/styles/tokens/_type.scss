@@ -1,0 +1,53 @@
+// TYPE
+$eps-font-size-base: 1rem;
+
+// Font sizes registration
+$font-size-10: (0.625 * $eps-font-size-base); //~10px
+$font-size-11: (0.6875 * $eps-font-size-base); //~11px
+$font-size-12: (0.75 * $eps-font-size-base); //~12px
+$font-size-13: (0.8125 * $eps-font-size-base); //~13px
+$font-size-14: (0.875 * $eps-font-size-base); //~14px
+$font-size-15: (0.9375 * $eps-font-size-base); //~15px
+$font-size-18: (1.125 * $eps-font-size-base); //~18px
+$font-size-20: (1.25 * $eps-font-size-base); //~20px
+$font-size-26: (1.625 * $eps-font-size-base); //~26
+$font-size-30: (1.85 * $eps-font-size-base); //~30px
+
+// Line heights
+// Registration (temps)
+$line-height-2: 2; // [$card-headline-line-height,];
+
+// Semantics
+$eps-line-height-flat: 1; //can be hardcoded as 1
+$eps-line-height-base: 1.5;
+$eps-line-height-sm: 1.2;
+$eps-line-height-lg: 1.8;
+
+// scale
+$eps-display-1-font-size: $font-size-30;
+$eps-display-2-font-size: $font-size-30;
+$eps-display-3-font-size: $font-size-30;
+$eps-display-4-font-size: $font-size-30;
+//
+$eps-h-1-font-size: $font-size-26;
+$eps-h-2-font-size: $font-size-20;
+$eps-h-3-font-size: $eps-font-size-base;
+$eps-h-4-font-size: $font-size-15;
+$eps-h-5-font-size: $font-size-14;
+$eps-h-6-font-size: $font-size-14;
+
+$eps-text-xl-font-size: $eps-font-size-base;//16px
+$eps-text-lg-font-size: $font-size-15;
+$eps-text-md-font-size: $font-size-14;
+$eps-text-sm-font-size: $font-size-13;
+$eps-text-xs-font-size: $font-size-12;
+$eps-text-xxs-font-size: $font-size-11;
+$eps-font-size-micro: $font-size-10; //10px
+
+$eps-body-font-size: $eps-text-md-font-size;
+$eps-font-size-caption: $eps-text-xs-font-size;
+//
+
+$eps-small-font-size: 80%;
+$eps-paragraph-margin-bottom: null;
+$eps-headings-margin-bottom: null;

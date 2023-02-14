@@ -1,0 +1,45 @@
+// Dark Theme
+// - Gray Semantics
+$eps-dark-gray-800: $color-gray-anthracite;
+$eps-dark-gray-700: $color-gray-metalise;
+$eps-dark-gray-600: $color-gray-napoleon;
+$eps-dark-gray-500: $color-gray-abbey;
+$eps-dark-gray-400: $color-gray-stone-hearth;
+$eps-dark-gray-300: $color-gray-silver-filigree;
+$eps-dark-gray-200: $color-gray-brainstem;
+$eps-dark-gray-100: $color-gray-yin-bai-silver;
+
+// Theme semantics
+// - data context
+$eps-dark-theme-text-muted: $eps-dark-gray-300;
+$eps-dark-theme-disabled: $eps-dark-gray-400;
+$eps-dark-theme-light: $color-white;
+$eps-dark-theme-dark: $color-black;
+$eps-dark-theme-info: $color-cyan-ionized-air-glow;
+$eps-dark-theme-accent: $color-cyan-ionized-air-glow;
+$eps-dark-theme-danger: $color-red-tomato-frog;
+$eps-dark-theme-cta: $color-red-rose-garnet;
+$eps-dark-theme-warning: $color-yellow-hot-sun;
+$eps-dark-theme-success: $color-green-spandex;
+// - use context
+$eps-dark-theme-body-color: $eps-dark-gray-100;
+$eps-dark-theme-body-bg: $eps-dark-theme-light;
+$eps-dark-theme-link-color: $color-cyan-ionized-air-glow;
+$eps-dark-theme-link-hover-color: darken($eps-link-color, 15%);
+$eps-dark-theme-hr-color: $eps-dark-gray-500;
+$eps-dark-theme-display-1-color: $eps-dark-gray-100;
+$eps-dark-theme-display-2-color: $eps-dark-gray-100;
+$eps-dark-theme-display-3-color: $eps-dark-gray-100;
+$eps-dark-theme-display-4-color: $eps-dark-gray-100;
+$eps-dark-theme-h1-color: $eps-dark-gray-100;
+$eps-dark-theme-h2-color: $eps-dark-gray-100;
+$eps-dark-theme-h3-color: $eps-dark-gray-100;
+$eps-dark-theme-h4-color: $eps-dark-gray-100;
+$eps-dark-theme-h5-color: $eps-dark-gray-100;
+$eps-dark-theme-h6-color: $eps-dark-gray-100;
+$eps-dark-theme-text-base-color: $eps-dark-gray-200;
+$eps-dark-theme-text-xl-color: $eps-dark-gray-200;
+$eps-dark-theme-text-lg-color: $eps-dark-gray-200;
+$eps-dark-theme-text-sm-color: $eps-dark-gray-200;
+$eps-dark-theme-text-xs-color: $eps-dark-gray-200;
+$eps-dark-theme-text-xxs-color: $eps-dark-gray-200;

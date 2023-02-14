@@ -69,7 +69,7 @@ class App extends BaseApp {
 	}
 
 	public function admin_init() {
-		do_action( 'elementor/app/init', $this );
+//		do_action( 'elementor/app/init', $this );
 
 		$this->enqueue_assets();
 
@@ -80,8 +80,10 @@ class App extends BaseApp {
 			return $settings;
 		} );
 
-		$this->render();
-		die;
+		if ( $this->is_current() ) {
+			$this->render();
+			die;
+		}
 	}
 
 	protected function get_init_settings() {
@@ -134,7 +136,7 @@ class App extends BaseApp {
 		}
 	}
 
-	private function enqueue_assets() {
+	public function enqueue_assets() {
 		Plugin::$instance->init_common();
 
 		/** @var WebCLIModule $web_cli */
@@ -252,8 +254,6 @@ class App extends BaseApp {
 
 		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
 
-		$this->add_component( 'dashboard', new Modules\Dashboard\Module() );
-
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
@@ -261,16 +261,13 @@ class App extends BaseApp {
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );
 
-		if ( $this->is_current() ) {
-			add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
-		} else {
-			add_action( 'elementor/common/after_register_scripts', [ $this, 'enqueue_app_loader' ] );
-		}
+		add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
+//		add_action( 'elementor/common/after_register_scripts', [ $this, 'enqueue_app_loader' ] );
 
 		if ( ( ! empty( $_GET['hide_wp'] ) && 'true' === $_GET['hide_wp'] ) ) {
 			wp_enqueue_style(
 				'elementor-hide-wp',
-				$this->get_css_assets_url( 'modules/dashboard/module' ),
+				$this->get_css_assets_url( 'modules/app-dashboard/app' ),
 				[],
 				ELEMENTOR_VERSION
 			);

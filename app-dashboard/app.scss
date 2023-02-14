@@ -1,0 +1,59 @@
+body {
+    background-color: #fff !important;
+}
+
+.wp-toolbar {
+	padding-top: 0 !important;
+}
+
+#adminmenumain {
+    display: none;
+}
+
+#wpadminbar {
+    display: none;
+}
+
+#wp-toolbar {
+	padding-top: 0 !important;
+}
+
+#wpcontent {
+	margin-left: 0 !important;
+
+	#e-admin-top-bar-root {
+		display: none;
+	}
+
+	#wpbody-content {
+		margin-top: 25px !important;
+
+		#ame-plugin-menu-notice {
+			display: none;
+		}
+
+		#elementor-settings-tabs-wrapper {
+			display: none;
+		}
+
+		.elementor-settings-form-page {
+			padding-top: 0 !important;
+		}
+	}
+}
+
+#wpfooter {
+	display: none;
+}
+
+.eps-app__close-button {
+	display: none !important;
+}
+
+.post-type-elementor_library,
+.post-type-elementor_icons,
+.post-type-elementor_font, {
+	#e-admin-top-bar-root.e-admin-top-bar--active ~ #wpbody .wrap h1 {
+		display: block;
+	}
+}

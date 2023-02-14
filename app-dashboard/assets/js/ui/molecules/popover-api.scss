@@ -1,0 +1,51 @@
+// POPOVER: API
+$eps-popover-padding-y: 10px;
+$eps-popover-background-color: theme-colors(light);
+$eps-popover-border-radius: $eps-radius;
+$eps-popover-arrow-color: theme-colors(light);
+$eps-popover-arrow-width: 16px;
+$eps-popover-arrow-height: 9px;
+$eps-popover-arrow-position-start: 14px;
+$eps-popover-box-shadow-color: rgba(0, 0, 0, 0.15);
+$eps-popover-box-shadow-size: 0px 1px 20px; // add to globals
+$eps-popover-item-font-size: type(size, "11");
+$eps-popover-item-line-height: type(size, "13"); //todo: refactor
+$eps-popover-font-weight: $eps-font-weight-medium;
+$eps-popover-item-spacing-y: spacing(5);
+$eps-popover-item-spacing-x: spacing(16);
+$eps-popover-item-background-color: theme-colors(light);
+$eps-popover-item-color: tints(600);
+$eps-popover-item-hover-color: tints(700);
+$eps-popover-item-danger-hover-color: theme-colors(danger);
+
+// dark theme
+$eps-dark-popover-background-color: dark-tints(500);
+$eps-dark-popover-item-color: theme-colors(light);
+$eps-dark-popover-item-hover-color: dark-tints(100);
+$eps-dark-popover-item-danger-hover-color: dark-theme-colors(danger);
+$eps-dark-popover-item-background-color: $eps-dark-popover-background-color;
+$eps-dark-popover-box-shadow-color: rgba(0, 0, 0, 0.15);
+$eps-dark-popover-box-shadow-size: 0px 1px 20px;
+$eps-dark-popover-arrow-color: $eps-dark-popover-background-color;
+
+:root {
+	--popover-background-color: #{$eps-popover-background-color};
+	--popover-item-color: #{$eps-popover-item-color};
+	--popover-item-hover-color: #{$eps-popover-item-hover-color};
+	--popover-item-danger-hover-color: #{$eps-popover-item-danger-hover-color};
+	--popover-item-background-color: #{$eps-popover-item-background-color};
+	--popover-box-shadow-color: #{$eps-popover-box-shadow-color};
+	--popover-box-shadow-size: #{$eps-popover-box-shadow-size};
+	--popover-arrow-color: #{$eps-popover-arrow-color};
+}
+
+.eps-theme-dark {
+	--popover-background-color: #{$eps-dark-popover-background-color};
+	--popover-item-color: #{$eps-dark-popover-item-color};
+	--popover-item-hover-color: #{$eps-dark-popover-item-hover-color};
+	--popover-item-danger-hover-color: #{$eps-dark-popover-item-danger-hover-color};
+	--popover-item-background-color: #{$eps-dark-popover-item-background-color};
+	--popover-box-shadow-color: #{$eps-dark-popover-box-shadow-color};
+	--popover-box-shadow-size: #{$eps-dark-popover-box-shadow-size};
+	--popover-arrow-color: #{$eps-dark-popover-arrow-color};
+}

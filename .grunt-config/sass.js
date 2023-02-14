@@ -44,9 +44,16 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'app/modules/dashboard',
+				cwd: 'app-dashboard',
+				src: 'app.scss',
+				dest: 'assets/css/modules/app-dashboard',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'app-dashboard/modules/dashboard',
 				src: 'module.scss',
-				dest: 'assets/css/modules/dashboard',
+				dest: 'assets/css/modules/app-dashboard',
 				ext: '.css',
 			},
 			{

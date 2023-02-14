@@ -1,0 +1,81 @@
+// TYPOGRAPHY: Atoms, tags, reusable typography elements
+.#{$eps-prefix}display-1 {
+	@include create-atom(typography, display, 1);
+}
+
+.#{$eps-prefix}display-2 {
+	@include create-atom(typography, display, 2);
+}
+
+.#{$eps-prefix}display-3 {
+	@include create-atom(typography, display, 3);
+}
+
+.#{$eps-prefix}display-4 {
+	@include create-atom(typography, display, 4);
+}
+
+
+h1,
+.#{$eps-prefix}h1 {
+	@include create-atom(typography, heading, 1);
+}
+
+h2,
+.#{$eps-prefix}h2 {
+	@include create-atom(typography, heading, 2);
+}
+
+h3,
+.#{$eps-prefix}h3 {
+	@include create-atom(typography, heading, 3);
+}
+
+h4,
+.#{$eps-prefix}h4 {
+	@include create-atom(typography, heading, 4);
+}
+
+h5,
+.#{$eps-prefix}h5 {
+	@include create-atom(typography, heading, 5);
+}
+
+h6,
+.#{$eps-prefix}h6 {
+	@include create-atom(typography, heading, 6);
+}
+
+// semantic sizing for text
+// todo: should be put !importatnt here? update code and remove comment
+.#{$eps-prefix}text-xxs {
+	@include create-atom(typography, text, xxs);
+}
+
+.#{$eps-prefix}text-xs {
+	@include create-atom(typography, text, xs);
+}
+
+.#{$eps-prefix}text {
+	@include create-atom(typography, text, base);
+}
+
+.#{$eps-prefix}text-sm {
+	@include create-atom(typography, text, sm);
+}
+
+.#{$eps-prefix}text-lg {
+	@include create-atom(typography, text, lg);
+}
+
+.#{$eps-prefix}text-xl {
+	@include create-atom(typography, text, xl);
+}
+
+// todo: placeholders for future semantic work, update or remove
+//.page-title{}
+//.section-title{}
+//.component-title{}
+//.page-subtitle{}
+//.section-subtitle{}
+//.component-subtitle{}

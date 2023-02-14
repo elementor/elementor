@@ -570,6 +570,11 @@ class Plugin {
 	public $assets_loader;
 
 	/**
+	 * @var App_Dashboard\App
+	 */
+	private $app_dashboard;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -742,6 +747,7 @@ class Plugin {
 		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
 		$this->app = new App\App();
+		$this->app_dashboard = new App_Dashboard\App();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();

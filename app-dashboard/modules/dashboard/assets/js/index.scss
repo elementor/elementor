@@ -1,0 +1,17 @@
+.eps-app__sidebar {
+	width: 30%;
+	min-width: 17.1875rem;
+}
+
+.e-dashboard {
+	&__container {
+		background-color: #fff;
+		width: -webkit-fill-available;
+	}
+
+	&__iframe {
+		width: 100%;
+		height: calc(100vh - 82px);
+		border: none;
+	}
+}

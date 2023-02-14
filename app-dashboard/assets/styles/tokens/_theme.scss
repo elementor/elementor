@@ -1,0 +1,48 @@
+// Default, Light Theme
+// - Gray Semantics
+$eps-gray-800: $color-gray-lamp-post;
+$eps-gray-700: $color-gray-blue-planet;
+$eps-gray-600: $color-gray-sheffield;
+$eps-gray-500: $color-gray-special-delivery;
+$eps-gray-400: $color-gray-stone-golem;
+$eps-gray-300: $color-gray-hidden-creek;
+$eps-gray-200: $color-gray-anti-flash;
+$eps-gray-100: $color-gray-emptiness;
+
+// Theme semantics
+// - data context
+$eps-theme-text-muted: $eps-gray-300;
+$eps-theme-disabled: $eps-gray-400;
+//
+$eps-theme-light: $color-white;
+$eps-theme-dark: $color-black;
+//
+$eps-theme-info: $color-cyan-ionized-air-glow;
+$eps-theme-accent: $color-cyan-ionized-air-glow;
+$eps-theme-danger: $color-red-carnelian;
+$eps-theme-cta: $color-red-rose-garnet;
+$eps-theme-warning: $color-yellow-hot-sun;
+$eps-theme-success: $color-green-spandex;
+
+// -use context
+$eps-body-color: $eps-gray-600;
+$eps-body-bg: null;
+$eps-link-color: $color-cyan-ionized-air-glow;
+$eps-link-hover-color: darken($eps-link-color, 15%);
+$eps-hr-color: $eps-gray-300;
+$eps-display-1-color: $eps-gray-800;
+$eps-display-2-color: $eps-gray-800;
+$eps-display-3-color: $eps-gray-600;
+$eps-display-4-color: $eps-gray-800;
+$eps-h1-color: $eps-gray-600;
+$eps-h2-color: $eps-gray-600;
+$eps-h3-color: $eps-gray-800;
+$eps-h4-color: $eps-gray-800;
+$eps-h5-color: $eps-gray-800;
+$eps-h6-color: $eps-gray-800;
+$eps-text-base-color: $eps-gray-800;
+$eps-text-xl-color: $eps-gray-800;
+$eps-text-lg-color: $eps-gray-800;
+$eps-text-sm-color: $eps-gray-800;
+$eps-text-xs-color: $eps-gray-800;
+$eps-text-xxs-color: $eps-gray-800;

@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require ABSPATH . '/wp-includes/class-wp-admin-bar.php';
+
 /**
  * @var App $this
  */
