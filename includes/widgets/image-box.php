@@ -130,7 +130,7 @@ class Widget_Image_Box extends Widget_Base {
 			'description_text',
 			[
 				'label' => esc_html__( 'Content', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
+				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,
 				],
