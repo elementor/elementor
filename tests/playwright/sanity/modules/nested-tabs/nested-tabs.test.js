@@ -390,17 +390,17 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set first tab to active tab.
 		await firstTab.click();
 		// Get last tab width.
-		const lastTabWidth = await lastTab.boundingBox().width;
+		const lastTabWidth = ( await lastTab.boundingBox() ).width;
 		// Set last tab to active tab.
 		await lastTab.click();
 		// Get last tab active width.
-		const lastTabActiveWidth = await lastTab.boundingBox().width;
+		const lastTabActiveWidth = ( await lastTab.boundingBox() ).width;
 
 		// Assert.
 		// Verify that the last tab is active.
 		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 		// Check if the normal tab width is equal to the active tab width.
-		expect( lastTabWidth ).toBe( lastTabActiveWidth );
+		expect( lastTabWidth ).toEqual( lastTabActiveWidth );
 
 		await cleanup( wpAdmin );
 	} );
