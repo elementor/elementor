@@ -52,26 +52,29 @@ $root: e-kit-library__tags-filter;
 	}
 }
 
-.eps-menu-item__link__active {
-	background-color: transparent;
-	color: #0275d8 !important;
-}
-
-.eps-menu-item__external-link {
-	position: relative;
-
-	i {
-		position: absolute;
-		right: 0;
-		margin-block-end: 0;
+.eps-menu-item__link {
+	&[aria-current="page"] {
+		background-color: transparent;
+		color: #0275d8 !important;
 	}
 }
 
-.e-kit-library__tags-filter-list-container {
-	max-height: 400px !important;
-}
+	.eps-menu-item__external-link {
+		position: relative;
 
-.eps-button--primary {
-	background-color: #7B61FF !important;
-	border: none !important;
+		i {
+			position: absolute;
+			right: 0;
+			margin-block-end: 0;
+		}
+	}
+
+	.e-kit-library__tags-filter-list-container {
+		max-height: 400px !important;
+	}
+
+	.eps-button--primary {
+		background-color: #7B61FF !important;
+		border: none !important;
+	}
 }

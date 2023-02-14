@@ -126,9 +126,10 @@ class App extends BaseApp {
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_menu' ] );
 
+		add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
+
 		if ( $this->is_current() ) {
 			add_filter( 'add_menu_classes', [ $this, 'fix_active_menu' ] );
-			add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
 		}
 
 		if ( ( ! empty( $_GET['hide_wp'] ) && 'true' === $_GET['hide_wp'] ) ) {

@@ -29,13 +29,13 @@ const ItemsFilterList = ( props ) => {
 									url={ item.url }
 									target="_blank"
 									rel="noreferrer"
-									className={ `e-kit-library__tags-filter-list-item eps-menu-item__link${ item.isActive ? '__active' : '' } eps-menu-item__external-link` }
+									className={ `e-kit-library__tags-filter-list-item eps-menu-item__link eps-menu-item__external-link` }
 									text={ item.text }
 									icon={ 'eicon-editor-external-link' }
 							/> : <Button
 								key={ item.text }
 								text={ item.text }
-								className={ `e-kit-library__tags-filter-list-item eps-menu-item__link${ item.isActive ? '__active' : '' }` }
+								className={ `e-kit-library__tags-filter-list-item eps-menu-item__link` }
 								url={ item.url }
 							/>
 					} )

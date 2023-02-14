@@ -69,7 +69,7 @@ class App extends BaseApp {
 	}
 
 	public function admin_init() {
-//		do_action( 'elementor/app/init', $this );
+		do_action( 'elementor/app/init', $this );
 
 		$this->enqueue_assets();
 

@@ -16,15 +16,12 @@ import DisplayContent from './pages/display-content';
  */
 function useMenuItems( path ) {
 	return useMemo( () => {
-		const page = path.replace( '/', '' );
-
-		// const page =hashString = window.location.hash.substring(1)
-
+		console.log( path );
 		return [
 			{
 				text: 'Home',
 				type: 'home',
-				isActive: '/dashboard' === page,
+				isActive: '/dashboard' === path,
 				url: '/dashboard',
 				display: {
 					path: '/',
@@ -35,7 +32,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Add New',
 				type: 'home',
-				isActive: 'add-new' === page,
+				isActive: 'add-new' === path,
 				url: '/dashboard/add-new',
 				display: {
 					path: '/add-new',
@@ -46,7 +43,7 @@ function useMenuItems( path ) {
 			{
 				text: 'General',
 				type: 'setup',
-				isActive: 'setup/general' === page,
+				isActive: 'setup/general' === path,
 				url: '/dashboard/setup/general',
 				display: {
 					path: '/setup/general',
@@ -57,7 +54,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Features',
 				type: 'setup',
-				isActive: 'setup-features' === page,
+				isActive: 'setup-features' === path,
 				url: '/dashboard/setup/features',
 				display: {
 					path: '/setup/features',
@@ -68,7 +65,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Role Manager',
 				type: 'setup',
-				isActive: 'role-manager' === page,
+				isActive: 'role-manager' === path,
 				url: '/dashboard/setup/role-manager',
 				display: {
 					path: '/setup/role-manager',
@@ -79,7 +76,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Tools',
 				type: 'setup',
-				isActive: 'tools' === page,
+				isActive: 'tools' === path,
 				url: '/dashboard/setup/tools',
 				display: {
 					path: '/setup/tools',
@@ -90,7 +87,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Elementor Settings',
 				type: 'setup',
-				isActive: 'elementor-settings' === page,
+				isActive: 'elementor-settings' === path,
 				url: '/dashboard/setup/elementor-settings',
 				display: {
 					path: '/setup/elementor-settings',
@@ -101,7 +98,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Integrations',
 				type: 'setup',
-				isActive: 'integrations' === page,
+				isActive: 'integrations' === path,
 				url: '/dashboard/setup/integrations',
 				display: {
 					path: '/setup/integrations',
@@ -113,14 +110,14 @@ function useMenuItems( path ) {
 			{
 				text: 'Backups',
 				type: 'setup',
-				isActive: '' === page,
+				isActive: '' === path,
 				url: 'https://go.elementor.com/app-kit-library-how-to-use-kits/',
 				linkType: 'link',
 			},
 			{
 				text: 'Theme Builder',
 				type: 'design',
-				isActive: 'theme-builder' === page,
+				isActive: 'theme-builder' === path,
 				url: '/dashboard/design/theme-builder',
 				display: {
 					path: '/design/theme-builder',
@@ -132,7 +129,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Kit Library',
 				type: 'design',
-				isActive: 'kit-library' === page,
+				isActive: 'kit-library' === path,
 				url: '/dashboard/design/kit-library',
 				display: {
 					path: '/design/kit-library',
@@ -144,7 +141,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Saved Templates',
 				type: 'design',
-				isActive: 'saved-templates' === page,
+				isActive: 'saved-templates' === path,
 				url: '/dashboard/design/saved-templates',
 				display: {
 					path: '/design/saved-templates',
@@ -155,7 +152,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Kit Actions',
 				type: 'design',
-				isActive: 'kit-actions' === page,
+				isActive: 'kit-actions' === path,
 				url: '/dashboard/design/kit-actions',
 				display: {
 					path: '/design/kit-actions',
@@ -166,7 +163,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Custom Fonts',
 				type: 'design',
-				isActive: 'custom-fonts' === page,
+				isActive: 'custom-fonts' === path,
 				url: '/dashboard/design/custom-fonts',
 				display: {
 					path: '/design/custom-fonts',
@@ -177,7 +174,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Custom Icons',
 				type: 'design',
-				isActive: 'custom-icons' === page,
+				isActive: 'custom-icons' === path,
 				url: '/dashboard/design/custom-icons',
 				display: {
 					path: '/design/custom-icons',
@@ -188,7 +185,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Popups',
 				type: 'marketing',
-				isActive: 'popups' === page,
+				isActive: 'popups' === path,
 				url: '/dashboard/marketing/popups',
 				display: {
 					path: '/marketing/popups',
@@ -199,7 +196,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Landing Pages',
 				type: 'marketing',
-				isActive: 'landing-pages' === page,
+				isActive: 'landing-pages' === path,
 				url: '/dashboard/marketing/landing-pages',
 				display: {
 					path: '/marketing/landing-pages',
@@ -210,7 +207,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Form submissions',
 				type: 'marketing',
-				isActive: 'form-submissions' === page,
+				isActive: 'form-submissions' === path,
 				url: '/dashboard/marketing/form-submissions',
 				display: {
 					path: '/marketing/form-submissions',
@@ -221,7 +218,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Marketing Integrations',
 				type: 'marketing',
-				isActive: 'marketing-integration' === page,
+				isActive: 'marketing-integration' === path,
 				url: '/dashboard/marketing/marketing-integration',
 				display: {
 					path: '/marketing/marketing-integration',
@@ -232,7 +229,7 @@ function useMenuItems( path ) {
 			{
 				text: 'Custom Code',
 				type: 'setup',
-				isActive: 'custom-code' === page,
+				isActive: 'custom-code' === path,
 				url: '/dashboard/setup/custom-code',
 				display: {
 					path: '/setup/custom-code',
@@ -242,7 +239,7 @@ function useMenuItems( path ) {
 
 			},
 		];
-	}, [ path ] );
+	}, [ location ] );
 }
 
 export default function Index() {
@@ -251,13 +248,7 @@ export default function Index() {
 	} );
 
 	const location = useLocation();
-
-	history.listen((location, action) => {
-		console.log(`The current URL is ${location.pathname}${location.search}${location.hash}`)
-		console.log(`The last navigation action was ${action}`)
-	})
-
-	const sideBarItems = useMenuItems( '/' );
+	const sideBarItems = useMenuItems( location.pathname );
 
 	return (
 		<Layout

@@ -13,16 +13,16 @@ const appDashboard = document.getElementById( 'e-app-dashboard' );
 
 if ( appDashboard ) {
 	document.body.classList.add( 'folded' );
+
+	ReactDOM.render(
+		<AppWrapper>
+			<AppProvider>
+				<App />
+			</AppProvider>
+		</AppWrapper>,
+		appDashboard,
+	);
 } else {
 	document.body.classList.remove( 'folded' );
 }
-
-ReactDOM.render(
-	<AppWrapper>
-		<AppProvider>
-			<App />
-		</AppProvider>
-	</AppWrapper>,
-	appDashboard,
-);
 
