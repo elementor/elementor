@@ -61,7 +61,7 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		const container = this.container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
 
 		if ( ! container ) {
-		  return false;
+			return false;
 		}
 
 		return container.model.cid;
