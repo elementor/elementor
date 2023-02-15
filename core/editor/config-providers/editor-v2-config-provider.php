@@ -15,6 +15,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		'elements-panel',
 		'structure',
 		'top-bar',
+		'theme-builder',
 	];
 
 	const UTIL_PACKAGES = [
