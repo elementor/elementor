@@ -341,10 +341,9 @@ export default class NestedTabs extends Base {
 
 	getVisibleTabTitle( tabTitleFilter ) {
 		const $tabTitle = this.elements.$tabTitles.filter( tabTitleFilter ),
-			isTabTitleDesktopVisible = null !== $tabTitle[ 0 ]?.offsetParent,
-			$visibleTabTitle = isTabTitleDesktopVisible ? $tabTitle[ 0 ] : $tabTitle[ 1 ];
+			isTabTitleDesktopVisible = null !== $tabTitle[ 0 ]?.offsetParent;
 
-		return $visibleTabTitle;
+		return isTabTitleDesktopVisible ? $tabTitle[ 0 ] : $tabTitle[ 1 ];
 	}
 
 	getKeyPressed( event ) {
@@ -383,16 +382,16 @@ export default class NestedTabs extends Base {
 			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! $activeTabTitleVisible,
 			pressTabOnLastFocusableItem = isOnlyTabPressed && lastItemIsInFocus && !! $nextTabTitleVisible;
 
-		if ( ( pressShiftTabOnFirstFocusableItem ) || isEscapePressed ) {
+		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			$activeTabTitleVisible?.focus();
+			$activeTabTitleVisible?.trigger( 'focus' );
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			$nextTabTitleVisible?.focus();
+			$nextTabTitleVisible?.trigger( 'focus' );
 		}
 	}
 
@@ -401,11 +400,11 @@ export default class NestedTabs extends Base {
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
 			$firstFocusableItem = $focusableItems[ 0 ],
 			$currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( $currentTabTitle?.getAttribute( 'data-tab' ) );
+			currentTabTitleIndex = parseInt( $currentTabTitle.getAttribute( 'data-tab' ) );
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.focus();
+			$firstFocusableItem.trigger( 'focus' );
 		}
 	}
 
