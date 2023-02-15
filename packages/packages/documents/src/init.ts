@@ -1,7 +1,8 @@
 import { createSlice } from './store';
 import { syncStore } from './sync';
-import { injectIntoCanvasDisplay, injectIntoPrimaryAction } from '@elementor/top-bar';
+import { injectIntoCanvasDisplay, injectIntoPrimaryAction, registerAction } from '@elementor/top-bar';
 import TopBarIndicator from './components/top-bar-indicator';
+import useDocumentPreviewProps from './hooks/use-document-preview-props';
 import PrimaryAction from './components/top-bar/primary-action';
 
 const slice = createSlice();
@@ -16,4 +17,9 @@ injectIntoCanvasDisplay( {
 injectIntoPrimaryAction( {
 	name: 'top-bar-primary-action',
 	filler: PrimaryAction,
+} );
+
+registerAction( 'utilities', {
+	name: 'document-preview-button',
+	useProps: useDocumentPreviewProps,
 } );

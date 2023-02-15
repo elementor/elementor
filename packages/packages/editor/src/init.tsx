@@ -1,6 +1,7 @@
 import * as ReactDOM from 'react-dom';
+import { isRTL } from '@wordpress/i18n';
 import Shell from './components/shell';
-import { ThemeProvider } from '@elementor/ui';
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { StoreProvider, createStore } from '@elementor/store';
 import { dispatchReadyEvent } from '@elementor/v1-adapters';
 import { SettingsProvider, Settings } from './contexts/settings-context';
@@ -13,9 +14,11 @@ export default function init( domElement: HTMLElement, settings: Settings ): voi
 	ReactDOM.render( (
 		<SettingsProvider settings={ settings }>
 			<StoreProvider store={ store }>
-				<ThemeProvider>
-					<Shell />
-				</ThemeProvider>
+				<DirectionProvider rtl={ isRTL() }>
+					<ThemeProvider>
+						<Shell />
+					</ThemeProvider>
+				</DirectionProvider>
 			</StoreProvider>
 		</SettingsProvider>
 	), domElement );
