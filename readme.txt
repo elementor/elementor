@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.11.1 - 2023-02-15 =
+
+* Fix: Featured Image dynamic tag is not working in Background images ([#21313](https://github.com/elementor/elementor/issues/21313))
+
 = 3.11.0 - 2023-02-13 =
 
 * New: Introducing Copy and Paste Between Websites functionality ([#9424](https://github.com/elementor/elementor/issues/9424), [#19183](https://github.com/elementor/elementor/issues/19183))
