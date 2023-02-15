@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor;
 
+use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Editor\Editor_Loader;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -295,5 +297,36 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				'assets/js/script-without-replace-requested-file.js',
 			],
 		];
+	}
+
+	public function test_register_additional_templates() {
+		// Arrange.
+		$original_common = Plugin::$instance->common;
+
+		Plugin::$instance->common = $this->createMock( CommonApp::class );
+
+		// Expect.
+		Plugin::$instance->common
+			->expects( $this->exactly( 2 ) )
+			->method( 'add_template' )
+			->withConsecutive(
+				[ ELEMENTOR_PATH . "includes/editor-templates/test-1.php" ],
+				[ ELEMENTOR_PATH . "includes/editor-templates/test-2.php" ]
+			);
+
+		$this->mock_config_provider
+			->method( 'get_additional_template_names' )
+			->willReturn( [
+				'test-1',
+				'test-2',
+			] );
+
+		// Act.
+		$loader = new Editor_Loader( $this->mock_config_provider );
+		
+		$loader->register_additional_templates();
+
+		// Cleanup.
+		Plugin::$instance->common = $original_common;
 	}
 }
