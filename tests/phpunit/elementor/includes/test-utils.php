@@ -9,6 +9,14 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
+	public function tearDown() {
+		parent::tearDown();
+
+		// Clean up.
+		$_FILES = [];
+		$_REQUEST = [];
+	}
+
 	public function test_should_return_elementor_pro_link() {
 		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
@@ -306,7 +314,8 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$sanitized = [
 			'name' => [
 				'2ffile_upload_test.php',
-				'2ffile_upload_test2.php'			],
+				'2ffile_upload_test2.php'
+			],
 			'type' => [
 				'text/plain',
 				'text/plain',
@@ -329,6 +338,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$file = Utils::get_super_global_value( $_FILES,  'file' );
 
 		// Assert
-		$this->assertEquals( $sanitized, $file);
+		$this->assertEquals( $sanitized, $file );
 	}
 }
