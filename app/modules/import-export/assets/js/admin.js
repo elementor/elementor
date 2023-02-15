@@ -89,7 +89,6 @@ class Admin {
 	revertBtnOnClick( event ) {
 		event.preventDefault();
 
-
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			message: __( 'Removing ', 'elementor' ) + this.activeKitName + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
@@ -104,7 +103,7 @@ class Admin {
 	onRevertConfirm() {
 		const referrerKitId = new URLSearchParams( this.revertBtn.href ).get( 'referrer_kit' );
 
-		this.saveToCache( referrerKitId ?? '', this.activeKitName );
+		this.saveToCache( referrerKitId ?? '' );
 
 		location.href = this.revertBtn.href;
 	}
@@ -198,8 +197,14 @@ class Admin {
 			.join( ' ' );
 	}
 
-	saveToCache( referrerKitId, activeKitName ) {
-		sessionStorage.setItem( this.KIT_DATA_KEY, JSON.stringify( { referrerKitId, activeKitName } ) );
+	saveToCache( referrerKitId ) {
+		sessionStorage.setItem(
+			this.KIT_DATA_KEY,
+			JSON.stringify( {
+				referrerKitId,
+				activeKitName: this.activeKitName
+			} )
+		);
 	}
 
 	getDataFromCache() {
