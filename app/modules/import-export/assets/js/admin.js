@@ -202,8 +202,8 @@ class Admin {
 			this.KIT_DATA_KEY,
 			JSON.stringify( {
 				referrerKitId,
-				activeKitName: this.activeKitName
-			} )
+				activeKitName: this.activeKitName,
+			} ),
 		);
 	}
 
