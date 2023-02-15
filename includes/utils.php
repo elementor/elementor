@@ -814,6 +814,12 @@ class Utils {
 		}
 
 		if ( $_FILES === $super_global ) {
+			if ( is_array( $super_global[ $key ]['name'] ) ) {
+				$super_global[ $key ]['name'] = array_map( 'sanitize_file_name', $super_global[ $key ]['name'] );
+
+				return $super_global[ $key ];
+			}
+
 			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
 
 			return $super_global[ $key ];

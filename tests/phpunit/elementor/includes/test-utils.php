@@ -277,4 +277,58 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( $sanitized, $file);
 	}
+
+	public function test_get_super_global_value__files_when_each_key_is_an_array() {
+		// Arrange
+		$_FILES['file'] = [
+			'name' => [
+				'..%2ffile_upload_test.php',
+				'..%2ffile_upload_test2.php',
+			],
+			'type' => [
+				'text/plain',
+				'text/plain',
+			],
+			'tmp_name' => [
+				'/tmp/php/php123456',
+				'/tmp/php/php1234567',
+			],
+			'error' => [
+				0,
+				0,
+			],
+			'size' => [
+				123,
+				123,
+			],
+		];
+
+		$sanitized = [
+			'name' => [
+				'2ffile_upload_test.php',
+				'2ffile_upload_test2.php'			],
+			'type' => [
+				'text/plain',
+				'text/plain',
+			],
+			'tmp_name' => [
+				'/tmp/php/php123456',
+				'/tmp/php/php1234567',
+			],
+			'error' => [
+				0,
+				0,
+			],
+			'size' => [
+				123,
+				123,
+			],
+		];
+
+		// Act
+		$file = Utils::get_super_global_value( $_FILES,  'file' );
+
+		// Assert
+		$this->assertEquals( $sanitized, $file);
+	}
 }
