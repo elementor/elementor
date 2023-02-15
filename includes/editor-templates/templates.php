@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="radio" id="elementor-template-library-order-popular" class="elementor-template-library-order-input" name="elementor-template-library-order" value="popularityIndex">
 						<label for="elementor-template-library-order-popular" class="elementor-template-library-order-label"><?php echo esc_html__( 'Popular', 'elementor' ); ?></label>
 					</div>
-				<# } else {
+				<# } else if ( 'lb' !== activeType ) {
 					var config = elementor.templates.getConfig( activeType );
 					if ( config.categories ) { #>
 						<div id="elementor-template-library-filter">
