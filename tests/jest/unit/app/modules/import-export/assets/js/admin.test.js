@@ -13,7 +13,7 @@ describe( 'Import Export Admin Test', () => {
 		// Arrange
 		window.elementorCommon = {
 			dialogsManager: {
-				createWidget: jest.fn( ( type, options ) => {
+				createWidget: jest.fn( () => {
 					return {
 						show: jest.fn( () => {} ),
 					};
@@ -36,17 +36,15 @@ describe( 'Import Export Admin Test', () => {
 					// Auto confirm
 					sessionStorage.setItem( 'elementor-kit-data', JSON.stringify( {
 						referrerKitId: '123',
-						activeKitName: 'Active Kit Name'
+						activeKitName: 'Active Kit Name',
 					} ) );
 
 					// To expect
 					window.elementorCommon.lastWidgetHeaderMessage = options.headerMessage;
 					window.elementorCommon.lastWidgetMessage = options.message;
-
 					return {
 						show: jest.fn( () => {} ),
 					};
-
 				} ),
 			},
 		};
@@ -73,7 +71,7 @@ describe( 'Import Export Admin Test', () => {
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 2 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Active Kit Name was successfully deleted' );
 		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'You\'re ready to apply a new Kit!' );
-	} )
+	} );
 
 	it( 'should check if the non-referred "kit deleted" dialog is shown', () => {
 		// Arrange
@@ -83,7 +81,7 @@ describe( 'Import Export Admin Test', () => {
 					// Auto confirm
 					sessionStorage.setItem( 'elementor-kit-data', JSON.stringify( {
 						referrerKitId: '', // Non referred
-						activeKitName: 'Active Kit Name'
+						activeKitName: 'Active Kit Name',
 					} ) );
 
 					// To expect
@@ -93,7 +91,6 @@ describe( 'Import Export Admin Test', () => {
 					return {
 						show: jest.fn( () => {} ),
 					};
-
 				} ),
 			},
 		};
@@ -120,5 +117,5 @@ describe( 'Import Export Admin Test', () => {
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 2 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Active Kit Name was successfully deleted' );
 		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Try a different Kit or build your site from scratch.' );
-	} )
+	} );
 } );
