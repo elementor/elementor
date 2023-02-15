@@ -7,7 +7,7 @@
 	left: 0;
 	bottom: 0;
 	right: 0;
-	background: $editor-background-light;
+	background: var(--e-a-bg-default);
 	z-index: $editor-layer;
 }
 

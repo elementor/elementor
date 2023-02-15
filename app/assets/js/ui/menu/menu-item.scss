@@ -96,7 +96,6 @@ $menu-item-action-button-dark-color: dark-tints(400);
 	}
 
 	&__action-button {
-		color: var(--menu-item-action-button-color);
 		opacity: var(--action-button-opacity);
 		padding: $menu-item-action-button-padding;
 		transition: $menu-item-transition;

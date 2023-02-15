@@ -38,14 +38,14 @@
 
 //Elementor icon logo wrapper
 .e-logo-wrapper {
-	background: var(--e-a-color-black);
+	background: var(--e-a-bg-logo);
 	display: inline-block;
 	padding: 0.75em;
 	border-radius: 50%;
 	line-height: 1;
 
 	i {
-		color: var(--e-a-color-white);
+		color: var(--e-a-color-logo);
 		font-size: 1em;
 	}
 }

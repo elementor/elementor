@@ -88,6 +88,7 @@
 
 	//todo: consider refactoring as logo element.
 	&__title {
+		color: $app-title-color;
 		font-size: $app-title-font-size;
 		font-weight: $app-title-font-weight;
 		text-transform: uppercase;

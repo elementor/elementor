@@ -15,6 +15,8 @@ $spp-header-padding-x: spacing(16);
 $app-header-padding-y: 0;
 $app-header-z-index: 3;
 
+$app-title-color: tints(900);
+
 $app-main-height: 100%;
 
 $app-sidebar-padding-top: spacing(20);
@@ -53,6 +55,8 @@ $app-dark-background-color: dark-tints(800);
 $app-dark-box-shadow-color: rgba(var(--box-shadow-color, #{$eps-dark-box-shadow-color}), 4 * $eps-box-shadow-alpha-unit);
 $app-dark-header-color: dark-tints(100);
 
+$app-dark-title-color: dark-theme-colors(light);
+
 $app-dark-header-buttons-separator-color: dark-tints(400);
 $app-dark-header-buttons-color: dark-tints(200);
 $app-dark-header-buttons-color-hover: dark-tints(300);
@@ -63,6 +67,7 @@ $app-dark-lightbox-background-color: rgba(dark-theme-colors(dark), $opacity-08);
 	--app-background-color: #{$app-background-color};
 	--app-box-shadow-color: #{$app-dark-box-shadow-color};
 	--app-header-color: #{$app-header-color};
+	--app-title-color: #{$app-title-color};
 	--app-header-buttons-separator-color: #{$app-header-buttons-separator-color};
 	--app-header-buttons-color: #{$app-header-buttons-color};
 	--app-header-buttons-color-hover: #{$app-header-buttons-color-hover};
@@ -73,6 +78,7 @@ $app-dark-lightbox-background-color: rgba(dark-theme-colors(dark), $opacity-08);
 	--app-background-color: #{$app-dark-background-color};
 	--app-box-shadow-color: #{$app-dark-box-shadow-color};
 	--app-header-color: #{$app-dark-header-color};
+	--app-title-color: #{$app-dark-title-color};
 	--app-header-buttons-separator-color: #{$app-dark-header-buttons-separator-color};
 	--app-header-buttons-color: #{$app-dark-header-buttons-color};
 	--app-header-buttons-color-hover: #{$app-dark-header-buttons-color-hover};
