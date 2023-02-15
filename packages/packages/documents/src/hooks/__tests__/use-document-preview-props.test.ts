@@ -2,12 +2,11 @@ import { renderHook } from '@testing-library/react-hooks';
 import useDocumentPreviewProps from '../use-document-preview-props';
 import { runCommand } from '@elementor/v1-adapters';
 import { createMockDocument } from '../../__tests__/test-utils';
+import useActiveDocument from '../use-active-document';
 
-const mockDocument = createMockDocument();
-
-jest.mock( '../use-active-document.ts', () => ( {
+jest.mock( '../use-active-document', () => ( {
 	__esModule: true,
-	default: jest.fn( () => mockDocument ),
+	default: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/v1-adapters', () => ( {
@@ -15,8 +14,14 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/documents - useDocumentPreviewProps', () => {
-	it( 'should trigger the preview command', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+	
+	it( 'should open the document preview', () => {
 		// Arrange.
+		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );
+
 		const command = 'editor/documents/preview';
 		const args = { id: 1 };
 
@@ -27,5 +32,20 @@ describe( '@elementor/documents - useDocumentPreviewProps', () => {
 		// Assert.
 		expect( runCommand ).toBeCalledTimes( 1 );
 		expect( runCommand ).toHaveBeenCalledWith( command, args );
+	} );
+
+	it( 'should not run the command when there is no document', () => {
+		// Arrange.
+		jest.mocked( useActiveDocument ).mockReturnValue( null );
+
+		const command = 'editor/documents/preview';
+		const args = { id: 1 };
+
+		// Act.
+		const { result } = renderHook( () => useDocumentPreviewProps() );
+		result.current.onClick();
+
+		// Assert.
+		expect( runCommand ).toBeCalledTimes( 0 );
 	} );
 } );
