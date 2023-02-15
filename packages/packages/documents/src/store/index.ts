@@ -1,5 +1,6 @@
 import { Document } from '../types';
 import { addSlice, PayloadAction } from '@elementor/store';
+import { selectActiveDocument } from './selectors';
 
 type State = {
 	entities: Record<Document['id'], Document>,
@@ -30,11 +31,7 @@ export function createSlice() {
 		name: 'documents',
 		initialState,
 		reducers: {
-			init( state, { payload } : PayloadAction<{
-				entities: State['entities'],
-				hostId: State['hostId'],
-				activeId: State['activeId'] }>
-			) {
+			init( state, { payload } : PayloadAction<State> ) {
 				state.entities = payload.entities;
 				state.hostId = payload.hostId;
 				state.activeId = payload.activeId;

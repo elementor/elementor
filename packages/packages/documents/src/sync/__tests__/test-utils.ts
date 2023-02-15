@@ -69,10 +69,10 @@ export function makeMockV1Document( {
 				current_id: id,
 			},
 			panel: {
-				title: type,
+				title: type.toUpperCase(),
 			},
 			status: {
-				label: status,
+				label: status.toUpperCase(),
 				value: status,
 			},
 		},

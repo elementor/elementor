@@ -45,11 +45,11 @@ describe( '@elementor/documents - Sync Store', () => {
 				title: 'Document 1',
 				type: {
 					value: 'wp-page',
-					label: 'wp-page',
+					label: 'WP-PAGE',
 				},
 				status: {
 					value: 'publish',
-					label: 'publish',
+					label: 'PUBLISH',
 				},
 				isDirty: false,
 				isSaving: false,
@@ -63,11 +63,11 @@ describe( '@elementor/documents - Sync Store', () => {
 				title: 'Document 2',
 				type: {
 					value: 'wp-page',
-					label: 'wp-page',
+					label: 'WP-PAGE',
 				},
 				status: {
 					value: 'publish',
-					label: 'publish',
+					label: 'PUBLISH',
 				},
 				isDirty: false,
 				isSaving: false,
@@ -106,11 +106,11 @@ describe( '@elementor/documents - Sync Store', () => {
 			title: 'Document 2',
 			type: {
 				value: 'wp-page',
-				label: 'wp-page',
+				label: 'WP-PAGE',
 			},
 			status: {
 				value: 'publish',
-				label: 'publish',
+				label: 'PUBLISH',
 			},
 			isDirty: false,
 			isSaving: false,
