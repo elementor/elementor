@@ -57,12 +57,13 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			return false;
 		}
 
-		const container = this.container.children.filter( ( child ) => parseInt( child.view.el.dataset.content ) === childView._index + 1 );
+		const contentIndex = childView._index + 1;
+		const container = this.container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
 
-		if ( ! container.length ) {
-			return false;
+		if ( ! container ) {
+		  return false;
 		}
 
-		return container[ 0 ].model.cid;
+		return container.model.cid;
 	}
 }

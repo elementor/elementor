@@ -16,13 +16,9 @@ export function isWidgetSupportNesting( widgetType ) {
 }
 
 export function findChildContainerOrFail( container, index, containerModelCid = false ) {
-	let childView = false;
-
-	if ( ! containerModelCid ) {
-		childView = container.view.children.findByIndex( index );
-	} else {
-		childView = container.view.children.findByModelCid( containerModelCid );
-	}
+	let childView = containerModelCid
+		? container.view.children.findByModelCid( containerModelCid )
+		: container.view.children.findByIndex( index );
 
 	if ( ! childView && ! containerModelCid ) {
 		return false;
