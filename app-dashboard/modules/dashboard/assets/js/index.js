@@ -108,10 +108,22 @@ function useMenuItems( path ) {
 
 			},
 			{
+				text: 'Custom Code',
+				type: 'setup',
+				isActive: 'custom-code' === path,
+				url: '/dashboard/setup/custom-code',
+				display: {
+					path: '/setup/custom-code',
+					type: 'iframe',
+					src: 'edit.php?post_type=elementor_snippet&hide_wp=true',
+				},
+
+			},
+			{
 				text: 'Backups',
 				type: 'setup',
 				isActive: '' === path,
-				url: 'https://go.elementor.com/app-kit-library-how-to-use-kits/',
+				url: 'https://my.elementor.com/',
 				linkType: 'link',
 			},
 			{
@@ -214,29 +226,6 @@ function useMenuItems( path ) {
 					type: 'iframe',
 					src: 'admin.php?page=e-form-submissions&hide_wp=true',
 				},
-			},
-			{
-				text: 'Marketing Integrations',
-				type: 'marketing',
-				isActive: 'marketing-integration' === path,
-				url: '/dashboard/marketing/marketing-integration',
-				display: {
-					path: '/marketing/marketing-integration',
-					type: 'image',
-					src: 'integrations.png',
-				},
-			},
-			{
-				text: 'Custom Code',
-				type: 'setup',
-				isActive: 'custom-code' === path,
-				url: '/dashboard/setup/custom-code',
-				display: {
-					path: '/setup/custom-code',
-					type: 'iframe',
-					src: 'edit.php?post_type=elementor_snippet&hide_wp=true',
-				},
-
 			},
 		];
 	}, [ location ] );

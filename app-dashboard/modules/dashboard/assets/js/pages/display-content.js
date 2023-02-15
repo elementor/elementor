@@ -11,7 +11,7 @@ export default function DisplayContent( props ) {
 			{
 				'image' === props.type &&
 				<img
-					width={ '1024px' }
+					width={ '1440px' }
 					className={ 'e-dashboard__img' }
 					src={ `${ elementorAppConfig.assets_url }images/dashboard/${ props.src }` }
 				/>

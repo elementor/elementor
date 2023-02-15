@@ -12,6 +12,7 @@ const AppWrapper = React.Fragment;
 const appDashboard = document.getElementById( 'e-app-dashboard' );
 
 if ( appDashboard ) {
+	document.querySelector( '#adminmenu .toplevel_page_elementor-dashboard' ).classList.add( 'current' );
 	document.getElementById( 'wp-admin-bar-wp-logo' ).classList.add( 'hidden' );
 	document.getElementById( 'wp-admin-bar-updates' ).classList.add( 'hidden' );
 	document.getElementById( 'wp-admin-bar-comments' ).classList.add( 'hidden' );

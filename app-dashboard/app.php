@@ -41,20 +41,30 @@ class App extends BaseApp {
 	}
 
 	public function fix_menu( $menu ) {
-		$dashboard_item = $menu[16];
-		$wp_item = $menu[17];
-		$separator = $menu[6];
+		$dashboard_item = [];
+		$wp_item = [];
+		$separator = [];
 
+		foreach ( $menu as $item_key => $menu_item ) {
+			if ( 'New Elementor' === $menu_item[0] ) {
+				$dashboard_item = $menu_item;
+				unset( $menu[ $item_key ] );
+			}
+
+			if ( 'Wordpress' === $menu_item[0] ) {
+				$wp_item = $menu_item;
+				unset( $menu[ $item_key ] );
+			}
+
+			if ( '' === $menu_item[0] || 'Dashboard' === $menu_item[0] || 'Elementor' === $menu_item[0] || 'Templates' === $menu_item[0] ) {
+				unset( $menu[ $item_key ] );
+			}
+		}
+
+		$dashboard_item[0] = 'Elementor';
 		$dashboard_item[2] = $this->get_base_url();
 		$wp_item[2] = admin_url( 'options-general.php' );
 		$wp_item[6] = 'dashicons-wordpress';
-
-		unset( $menu[6] );
-		unset( $menu[7] );
-		unset( $menu[8] );
-		unset( $menu[9] );
-		unset( $menu[16] );
-		unset( $menu[17] );
 
 		$new_menu = [];
 		$new_menu[] = $dashboard_item;
@@ -68,10 +78,15 @@ class App extends BaseApp {
 	}
 
 	public function fix_active_menu( $menu ) {
-		return [
-			$menu[0],
-			$menu[1],
-		];
+		foreach ( $menu as $item_key => $menu_item ) {
+			if ('Wordpress' === $menu_item[0] || 'Elementor' === $menu_item[0]) {
+				continue;
+			}
+
+			unset($menu[$item_key]);
+		}
+
+		return $menu;
 	}
 
 	public function admin_init() {
