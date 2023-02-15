@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { EyeIcon } from '../icons/eye-icon';
+import EyeIcon from '../icons/eye-icon';
 import { runCommand } from '@elementor/v1-adapters';
 import useActiveDocument from '../hooks/use-active-document';
 

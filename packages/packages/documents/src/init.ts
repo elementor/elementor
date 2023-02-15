@@ -20,6 +20,6 @@ injectIntoPrimaryAction( {
 } );
 
 registerAction( 'utilities', {
-	name: 'top-bar-document-preview',
+	name: 'document-preview-button',
 	useProps: useDocumentPreviewProps,
 } );
