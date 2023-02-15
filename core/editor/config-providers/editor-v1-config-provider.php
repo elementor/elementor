@@ -10,6 +10,14 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
 			[
+				[
+					'handle' => 'elementor-responsive-bar',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
+					'deps' => [ 'elementor-editor' ],
+					'i18n' => [
+						'domain' => 'elementor',
+					],
+				],
 				// Loader script
 				[
 					'handle' => 'elementor-editor-loader-v1',
@@ -32,7 +40,15 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_style_configs() {
-		return Editor_Common_Configs::get_style_configs();
+		return array_merge(
+			Editor_Common_Configs::get_style_configs(),
+			[
+				[
+				'handle' => 'elementor-responsive-bar',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
+				],
+			]
+		);
 	}
 
 	public function get_style_handles_to_enqueue() {

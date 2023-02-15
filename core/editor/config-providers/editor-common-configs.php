@@ -114,14 +114,6 @@ class Editor_Common_Configs {
 					'domain' => 'elementor',
 				],
 			],
-			[
-				'handle' => 'elementor-responsive-bar',
-				'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
-				'deps' => [ 'elementor-editor' ],
-				'i18n' => [
-					'domain' => 'elementor',
-				],
-			],
 		];
 	}
 
@@ -163,10 +155,6 @@ class Editor_Common_Configs {
 					'flatpickr',
 					'pickr',
 				],
-			],
-			[
-				'handle' => 'elementor-responsive-bar',
-				'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
 			],
 		];
 	}
