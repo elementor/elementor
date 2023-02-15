@@ -44,6 +44,7 @@ class Experiments_Reporter extends Base {
 		$tracking_keys = [
 			'default',
 			'state',
+			'tags',
 		];
 
 		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
