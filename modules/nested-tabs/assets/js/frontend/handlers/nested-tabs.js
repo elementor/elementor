@@ -386,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( ( pressShiftTabOnFirstFocusableItem ) || isEscapePressed ) {
 			event.preventDefault();
 
-			$activeTabTitleVisible?.trigger( 'focus' );
+			$activeTabTitleVisible?.focus();
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			$nextTabTitleVisible?.trigger( 'focus' );
+			$nextTabTitleVisible?.focus();
 		}
 	}
 
@@ -405,7 +405,7 @@ export default class NestedTabs extends Base {
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.trigger( 'focus' );
+			$firstFocusableItem.focus();
 		}
 	}
 
