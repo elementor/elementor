@@ -50,6 +50,7 @@ class Manager extends Base_Object {
 	 *     @type string $name
 	 *     @type string $title
 	 *     @type string $tag
+	 *     @type array $tags
 	 *     @type string $description
 	 *     @type string $release_status
 	 *     @type string $default
