@@ -18,7 +18,7 @@ class Dashboard_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Elementor', 'elementor' );
+		return esc_html__( 'New Elementor', 'elementor' );
 	}
 
 	public function get_capability() {
