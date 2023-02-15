@@ -18,13 +18,11 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 
 //		add_filter('update_post_metadata', function($check, $object_id, $meta_key, $meta_value, $prev_value) {
 //			if ($meta_key === '_wp_page_template'){
 //				var_dump('update_post_metadata');
-//				die();
 //			}
 //			return $check;
 //		}, 10, 5);
