@@ -781,8 +781,6 @@ class Manager extends Base_Object {
 
 		$feature_option_key = $this->get_feature_option_key( $feature['name'] );
 
-		error_log( 'new state: ' . $new_state );
-
 		if ( self::STATE_ACTIVE === $new_state ) {
 			if ( empty( $feature['dependencies'] ) ) {
 				return;
