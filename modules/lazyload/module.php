@@ -38,108 +38,32 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function get_repeaters_selectors( $controls, $settings ) {
-		$selectors = [];
-		$repeater = array_filter( $controls, function( $control ) {
-			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
-				return true;
-			}
-		} );
-		if ( empty( $repeater ) ) {
-			return false;
-		}
-		$repeater = array_shift( $repeater );
-
-		if ( $repeater ) {
-			$repeater_settings = $settings[ $repeater['name'] ][0];
-			$repeater_selector = $this->get_repeater_selector( $repeater_settings, $repeater );
-			if ( $repeater_selector ) {
-				$selectors[] = $repeater_selector;
-			}
-		}
-
-		return $selectors;
-	}
-
-	private function get_repeater_selector( $repeater_settings, $repeater ) {
-		$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
-		if ( ! $lazyload_options['active'] ) {
-			return false;
-		}
-
-		$repeater_selector = Utils::get_array_value_by_keys( $lazyload_options, [ 'selector' ] );
-		if ( ! $repeater_selector ) {
-			return false;
-		}
-
-		$repeater_keys = Utils::get_array_value_by_keys( $repeater_settings, [ 'background_lazyload', 'keys' ] );
-		$repeater_background_image_url = Utils::get_array_value_by_keys( $repeater_settings, $repeater_keys );
-
-		if ( $repeater_background_image_url ) {
-			return $repeater_selector;
-		}
-
-		return false;
-	}
-
 	private function update_element_attributes( Element_Base $element ) {
-
-		$settings = $element->get_settings_for_display();
+		$element_settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
-		$attributes = [];
-		$controls_with_background_image = array_filter( $controls, function( $control ) {
-			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
-		} );
 
-		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
+		$controls_with_background_image = array_filter( $controls, fn( $control) => Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) );
+		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $element_settings );
+		$attributes = [];
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
+			$selectors = $this->get_selectors( $control_data, $repeaters_selectors, $element, $lazyload_attribute_name );
 
-			$selectors = [];
-
-			if ( $repeaters_selectors ) {
-				$selectors = array_merge( $repeaters_selectors, $selectors );
+			if ( empty( $selectors ) ) {
+				continue;
 			}
 
-			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
-
-			if ( $background_image_url || $selectors ) {
-
-				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
-				if ( ! $has_attribute ) {
-
-					$wrapper_bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] );
-					$bg_selector = $wrapper_bg_selector ?? '';
-
-					$bg_selector = implode( ',', $selectors ) . $bg_selector;
-					$selectors[] = $bg_selector;
-
-					$wrapper_selector = $element->get_unique_selector();
-					$selectors = array_map( function( $selector ) use ( $wrapper_selector ) {
-						return $wrapper_selector . ' ' . $selector;
-					}, $selectors );
-
-					if ( $background_image_url && ! $wrapper_bg_selector ) {
-						$selectors[] = $wrapper_selector;
-					}
-
-					// Trim spaces and remove duplicates.
-					$selectors = array_unique( array_map( 'trim', $selectors ) );
-
-					$attributes[ $lazyload_attribute_name ] = implode( ',', $selectors );
-
-				}
+			if ( $element->get_render_attributes( '_wrapper', $lazyload_attribute_name ) ) {
+				continue;
 			}
+
+			$attributes[ $lazyload_attribute_name ] = implode( ',', $selectors );
 		}
 
 		if ( ! empty( $attributes ) ) {
-			$element->add_render_attribute( '_wrapper',
-				$attributes
-			);
+			$element->add_render_attribute( '_wrapper', $attributes );
 		}
-
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
@@ -189,6 +113,80 @@ class Module extends BaseModule {
 		}
 
 		return true;
+	}
+
+	private function get_repeaters_selectors( $controls, $settings ) {
+		$selectors = [];
+		$repeater = array_filter( $controls, function( $control ) {
+			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
+				return true;
+			}
+		} );
+		if ( empty( $repeater ) ) {
+			return false;
+		}
+		$repeater = array_shift( $repeater );
+
+		if ( $repeater ) {
+			$repeater_settings = $settings[ $repeater['name'] ][0];
+			$repeater_selector = $this->get_repeater_selector( $repeater_settings, $repeater );
+			if ( $repeater_selector ) {
+				$selectors[] = $repeater_selector;
+			}
+		}
+
+		return $selectors;
+	}
+
+	private function get_selectors( $control_data, $repeaters_selectors, $element, $lazyload_attribute_name ) {
+		$selectors = [];
+
+		if ( $repeaters_selectors ) {
+			$selectors = array_merge( $repeaters_selectors, $selectors );
+		}
+
+		$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
+		$background_image_url = Utils::get_array_value_by_keys( $element->get_settings_for_display(), $keys );
+
+		if ( ! $background_image_url ) {
+			return $selectors;
+		}
+
+		$wrapper_bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] );
+		$bg_selector = $wrapper_bg_selector ?? '';
+
+		$bg_selector = implode( ',', $selectors ) . $bg_selector;
+		$selectors[] = $bg_selector;
+
+		$wrapper_selector = $element->get_unique_selector();
+		$selectors = array_map( fn( $selector) => $wrapper_selector . ' ' . $selector, $selectors );
+
+		if ( ! $wrapper_bg_selector ) {
+			$selectors[] = $wrapper_selector;
+		}
+
+		return array_unique( array_map( 'trim', $selectors ) );
+	}
+
+	private function get_repeater_selector( $repeater_settings, $repeater ) {
+		$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
+		if ( ! $lazyload_options['active'] ) {
+			return false;
+		}
+
+		$repeater_selector = Utils::get_array_value_by_keys( $lazyload_options, [ 'selector' ] );
+		if ( ! $repeater_selector ) {
+			return false;
+		}
+
+		$repeater_keys = Utils::get_array_value_by_keys( $repeater_settings, [ 'background_lazyload', 'keys' ] );
+		$repeater_background_image_url = Utils::get_array_value_by_keys( $repeater_settings, $repeater_keys );
+
+		if ( $repeater_background_image_url ) {
+			return $repeater_selector;
+		}
+
+		return false;
 	}
 
 	public function __construct() {
