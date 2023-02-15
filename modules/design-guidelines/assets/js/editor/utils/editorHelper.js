@@ -69,24 +69,6 @@ export default class EditorHelper {
 
 		return result;
 	}
-	//
-	// findElementsByClass( container, className ) {
-	// 	const result = [];
-	// 	const cssClasses = this.getElementClasses( container );
-	// 	if ( cssClasses.includes( className ) ) {
-	// 		result.push( container );
-	// 	}
-	//
-	// 	if ( 0 === container.children.length ) {
-	// 		return result;
-	// 	}
-	//
-	// 	for ( const child of container.children ) {
-	// 		result.push( ...this.findElementsByClass( child, className ) );
-	// 	}
-	//
-	// 	return result;
-	// }
 
 	/**
 	 * Inject container after another container

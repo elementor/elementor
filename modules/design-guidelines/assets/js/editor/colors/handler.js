@@ -1,19 +1,30 @@
-import DesignElementBase from '../bases/design-element-base';
+import DesignElementHandler from '../bases/design-element-handler';
 
-export default class Colors extends DesignElementBase {
-
-	constructor( editorHelper ) {
-		super( editorHelper );
+export default class ColorsHandler extends DesignElementHandler {
+	constructor( editorHelper, config ) {
+		super( editorHelper, config );
 		this.selectors = {
-			defaultColorContainer: 'design-guidelines-default-color-container',
-			colorsSection: 'design-guidelines-colors-section',
-			defaultTitleContainer: 'design-guidelines-default-title-container',
-			colorWidgetClass: 'design-guidelines-color-widget',
-			colorTitleClass: 'design-guidelines-color-title',
-			customTitleContainer: 'design-guidelines-custom-colors-title-container',
-			customColorSectionClass: 'design-guidelines-custom-color-section',
-			EmptyColumnClass: 'design-guidelines-empty-column',
+			mainElement: 'colors-main-element',
+			defaultColorContainer: 'default-color-container',
+			colorsSection: 'colors-section',
+			defaultTitleContainer: 'default-title-container',
+			colorWidgetClass: 'color-widget',
+			colorTitleClass: 'color-title',
+			customTitleContainer: 'custom-colors-title-container',
+			customColorSectionClass: 'custom-color-section',
+			EmptyColumnClass: 'empty-column',
 		};
+	}
+
+	scrollToMain( document ) {
+		const container = this.helper.findElementById( document.container, this.getSelector( 'mainElement' ) );
+
+		if ( ! container ) {
+			throw new Error( 'No main element found' );
+		}
+
+		console.log( container );
+		elementor.helpers.scrollToView( container.view?.$el );
 	}
 
 	/**
@@ -21,12 +32,26 @@ export default class Colors extends DesignElementBase {
 	 * @param document {Document}
 	 * @param config {Object}
 	 */
-	applyChanges( document, config ) {
+	applyChanges( document ) {
+		const loader = window.document.querySelector( '#elementor-preview-loading' );
+
+
 		const rootContainer = document.container;
 
 		// Change hex before injection because injecting already handles it.
-		this.modifyHexInWidgets( rootContainer, config[ 'systemColors' ] );
-		this.injectCustomElements( rootContainer, config[ 'customColors' ] );
+		this.modifyHexInWidgets( rootContainer, this.config[ 'systemColors' ] );
+		this.injectCustomElements( rootContainer, this.config[ 'customColors' ] );
+
+		// console.log( loader);
+		// if ( loader ) {
+		// 	loader.style.display = 'block';
+		// }
+		// // setTimeout( () => {
+		// // 	if ( loader ) {
+		// 		loader.style.display = 'block';
+		// 	}
+		// }, 5000 );
+
 	}
 
 	/**
@@ -178,7 +203,7 @@ export default class Colors extends DesignElementBase {
 
 		let injected = this.helper.injectAfter( injectionContainer, defaultContainer.model.toJSON() );
 
-		if (! injected ) {
+		if ( ! injected ) {
 			throw new Error( 'Could not inject custom colors section' );
 		}
 
@@ -198,7 +223,7 @@ export default class Colors extends DesignElementBase {
 		for ( let i = 0; i < maxItems - 1; i ++ ) {
 			const newColumn = this.helper.cloneWithoutChildren( injected.children[ 0 ] );
 
-			if (! newColumn ) {
+			if ( ! newColumn ) {
 				throw new Error( 'Could not create empty column' );
 			}
 
@@ -243,7 +268,7 @@ export default class Colors extends DesignElementBase {
 		// Add widgets from default container
 		defaultColorContainer.children.forEach( ( child ) => {
 			const success = this.helper.appendInContainer( parentContainer, child.model.toJSON() );
-			if (! success ) {
+			if ( ! success ) {
 				throw new Error( 'Could not populate color column' );
 			}
 		} );
@@ -258,7 +283,7 @@ export default class Colors extends DesignElementBase {
 	 * @param color {Object} - Color object { _id, title, color: {hex string}}
 	 */
 	setColorValues( container, color ) {
-		const { _id : id, title , color: hexString } = color;
+		const { _id: id, title, color: hexString } = color;
 
 		// Get the title widgets by class - should be only one
 		const titles = this.helper.findElementsByClass( container, this.getSelector( 'colorTitleClass' ) );
@@ -268,11 +293,11 @@ export default class Colors extends DesignElementBase {
 		const colorWidget = colorWidgets[ 0 ];
 		let titleWidget = titles[ 0 ];
 
-		if (! colorWidget ) {
+		if ( ! colorWidget ) {
 			throw new Error( 'Could not find color widget' );
 		}
 
-		if (! titleWidget ) {
+		if ( ! titleWidget ) {
 			throw new Error( 'Could not find color title' );
 		}
 
@@ -287,11 +312,12 @@ export default class Colors extends DesignElementBase {
 			_element_id: this.getSelector( 'colorWidgetClass' ) + '__' + id,
 		};
 
-		this.helper.setElementSettings(colorWidget, settings );
-
+		this.helper.setElementSettings( colorWidget, settings );
 
 		if ( hexString ) {
 			this.setHexString( colorWidget, hexString );
+		} else {
+			this.setHexString( colorWidget, '     ' );
 		}
 	}
 

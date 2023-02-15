@@ -13,13 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Design_Guidelines extends Page {
 
-
 	const TYPE = 'design-guidelines';
-
-	public function __construct( array $data = [] ) {
-		parent::__construct( $data );
-		$this->enqueue_styles();
-	}
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -101,23 +95,6 @@ class Design_Guidelines extends Page {
 		] );
 
 
-	}
-
-	public function enqueue_styles() {
-		/** @var \Elementor\Modules\DesignGuidelines\Module $module */
-		$module = Plugin::instance()->modules_manager->get_modules( 'design-guidelines' );
-
-		if ( ! isset( $module ) ) {
-			return;
-		}
-
-		$handle = 'design-guidelines';
-		wp_enqueue_style(
-			$handle,
-			$module->get_style_url(),
-			[],
-			ELEMENTOR_VERSION
-		);
 	}
 
 	public function get_color_element( $global_name, $title ) {

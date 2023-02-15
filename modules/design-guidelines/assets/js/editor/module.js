@@ -1,24 +1,17 @@
-import Colors from './design-elements/colors';
-import Fonts from "./design-elements/fonts";
 import EditorHelper from "./utils/editorHelper";
+import ColorsComponent from './colors/component';
+import FontsComponent from './fonts/component';
 
-class Module {
-	constructor() {
-		this.config = window[ 'elementorDesignGuidelinesConfig' ];
+class Module extends elementorModules.editor.utils.Module {
+	onInit() {
+		const config = window[ 'elementorDesignGuidelinesConfig' ];
 
-		if ( ! this.config ) {
+		if ( ! config ) {
 			return;
 		}
-
-		elementor.on( 'document:loaded', async ( document ) => {
-			if ( document.id !== parseInt( this.config[ 'postId' ] ) ) {
-				return;
-			}
-
-			const helper = new EditorHelper();
-			new Colors( helper ).applyChanges( document, this.config );
-			new Fonts( helper ).applyChanges( document, this.config );
-		} );
+		const helper = new EditorHelper();
+		$e.components.register( new ColorsComponent(helper, config) );
+		$e.components.register( new FontsComponent(helper, config) );
 	}
 }
 

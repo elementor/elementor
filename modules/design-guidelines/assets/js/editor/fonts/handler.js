@@ -1,16 +1,16 @@
-import DesignElementBase from '../bases/design-element-base';
+import DesignElementHandler from '../bases/design-element-handler';
 
-export default class Fonts extends DesignElementBase {
+export default class FontsHandler extends DesignElementHandler {
 
-	constructor( editorHelper ) {
-		super( editorHelper );
+	constructor( editorHelper, config ) {
+		super( editorHelper, config );
 		this.selectors = {
-			defaultContainer: 'design-guidelines-default-font-container',
-			fontsSection: 'design-guidelines-font-section',
-			defaultTitleContainer: 'design-guidelines-default-title-container',
-			fontWidgetClass: 'design-guidelines-font-widget',
-			fontTitleClass: 'design-guidelines-font-title',
-			customTitleContainer: 'design-guidelines-custom-fonts-title-container',
+			defaultContainer: 'default-font-container',
+			fontsSection: 'font-section',
+			defaultTitleContainer: 'default-title-container',
+			fontWidgetClass: 'font-widget',
+			fontTitleClass: 'font-title',
+			customTitleContainer: 'custom-fonts-title-container',
 		};
 	}
 
@@ -19,10 +19,10 @@ export default class Fonts extends DesignElementBase {
 	 * @param document {Document}
 	 * @param config {Object}
 	 */
-	applyChanges( document, config ) {
+	applyChanges( document ) {
 		const rootContainer = document.container;
 
-		this.injectCustomElements( rootContainer, config[ 'customFonts' ] );
+		this.injectCustomElements( rootContainer, this.config[ 'customFonts' ] );
 	}
 
 	/**
@@ -34,7 +34,7 @@ export default class Fonts extends DesignElementBase {
 		const sections = this.helper.findElementsByClass( rootContainer, this.getSelector( 'fontsSection' ) );
 
 		if ( 0 === sections.length ) {
-			throw new Error( 'No fonts section found' );
+			throw new Error( 'No fonts sections found' );
 		}
 
 		const lastFontSection = sections[ sections.length - 1 ];
