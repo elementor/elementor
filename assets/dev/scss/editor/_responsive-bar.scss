@@ -1,3 +1,5 @@
+@import "../helpers/variables";
+
 :root {
 	--e-is-device-mode: 0;
 }
@@ -89,7 +91,7 @@
 			width: 1px;
 			background-color: $editor-dark;
 			position: absolute;
-			@include end(-5px);
+			inset-inline-end: -5px;
 			top: calc(50% - 10px);
 		}
 	}
@@ -140,8 +142,8 @@
 
 	@media ( min-width:1400px ) {
 		&__center {
-			margin-#{ $start }: 50%;
-			transform: translate( getValueByDirection( -50%, 50% ), 0 );
+			margin-left: 50%;
+			transform: translate( -50%, 0 );
 		}
 	}
 
@@ -197,8 +199,5 @@
 		&__reset {
 			margin: 0px 8px;
 		}
-
 	}
-
-
 }

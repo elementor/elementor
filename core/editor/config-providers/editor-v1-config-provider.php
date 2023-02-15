@@ -21,7 +21,10 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_script_handles_to_enqueue() {
-		return [ 'elementor-editor-loader-v1' ];
+		return [
+			'elementor-editor-loader-v1',
+			'elementor-responsive-bar',
+		];
 	}
 
 	public function get_client_settings() {
@@ -33,10 +36,20 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_style_handles_to_enqueue() {
-		return [ 'elementor-editor' ];
+		return [
+			'elementor-editor',
+			'elementor-responsive-bar',
+		];
 	}
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v1.view.php';
+	}
+
+	public function get_additional_template_names() {
+		return array_merge(
+			Editor_Common_Configs::get_additional_template_names(),
+			[ 'responsive-bar' ]
+		);
 	}
 }

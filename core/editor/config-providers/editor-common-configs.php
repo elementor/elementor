@@ -114,6 +114,14 @@ class Editor_Common_Configs {
 					'domain' => 'elementor',
 				],
 			],
+			[
+				'handle' => 'elementor-responsive-bar',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
+				'deps' => [ 'elementor-editor' ],
+				'i18n' => [
+					'domain' => 'elementor',
+				],
+			],
 		];
 	}
 
@@ -156,6 +164,10 @@ class Editor_Common_Configs {
 					'pickr',
 				],
 			],
+			[
+				'handle' => 'elementor-responsive-bar',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
+			],
 		];
 	}
 
@@ -166,6 +178,18 @@ class Editor_Common_Configs {
 				'name' => 'ElementorConfig',
 				'settings' => Editor_Common_Client_Settings::get_client_settings(),
 			],
+		];
+	}
+
+	public static function get_additional_template_names() {
+		return [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+			'navigator',
+			'hotkeys',
 		];
 	}
 }
