@@ -136,7 +136,7 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		// Add extra sleep to make sure the element is fully loaded.
-		await sleep( 200 );
+		await this.page.waitForTimeout( 200 );
 	}
 
 	/**
