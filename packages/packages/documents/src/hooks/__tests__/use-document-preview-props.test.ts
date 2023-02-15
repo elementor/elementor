@@ -17,7 +17,7 @@ describe( '@elementor/documents - useDocumentPreviewProps', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
-	
+
 	it( 'should open the document preview', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );
@@ -37,9 +37,6 @@ describe( '@elementor/documents - useDocumentPreviewProps', () => {
 	it( 'should not run the command when there is no document', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue( null );
-
-		const command = 'editor/documents/preview';
-		const args = { id: 1 };
 
 		// Act.
 		const { result } = renderHook( () => useDocumentPreviewProps() );
