@@ -265,7 +265,7 @@ html.elementor-html {
 	&.elementor-element-editable {
 
 		> .elementor-element-overlay {
-			border: 1px solid $white;
+			border: 1px solid var(--e-a-color-white);
 
 			&:after {
 				content: '';
@@ -276,7 +276,7 @@ html.elementor-html {
 	&.elementor-dragging-on-child {
 
 		> .elementor-element-overlay {
-			border: 1px solid $editor-info;
+			border: 1px solid var(--e-a-color-info);
 
 			&:after {
 				display: none;
@@ -314,7 +314,7 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: $admin-font-family;
+	font-family: var(--editor-font-family);
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
@@ -470,7 +470,7 @@ html.elementor-html {
 
 .elementor-first-add {
 	text-align: center;
-	border: 1px dashed $editor-lightest;
+	border: 1px dashed var(--e-a-border-color);
 	display: flex;
 	height: 100%;
 	width: 100%;
@@ -578,7 +578,7 @@ html.elementor-html {
 .elementor-sortable-placeholder {
 
 	&:not(.elementor-column-placeholder) {
-		background-color: $editor-info;
+		background-color: var(--e-a-color-info);
 		animation-duration: 250ms;
 		opacity: .9;
 		width: 100%;
@@ -619,7 +619,7 @@ html.elementor-html {
 	}
 
 	&:after {
-		border: 1px dashed #fff;
+		border: 1px dashed var(--e-a-color-white);
 	}
 }
 
@@ -673,7 +673,7 @@ html.elementor-html {
 	&:not(.elementor-dragging-on-child) {
 
 		.elementor-add-section-inner {
-			border: 2px dashed $editor-lightest;
+			border: 2px dashed var(--e-a-border-color-bold);
 			background-color: rgba(255, 255, 255, .5);
 		}
 	}
@@ -681,7 +681,7 @@ html.elementor-html {
 	&.elementor-dragging-on-child {
 
 		.elementor-add-section-inner {
-			border: 3px dashed $editor-info;
+			border: 3px dashed var(--e-a-color-primary);
 		}
 	}
 
@@ -920,7 +920,7 @@ html.elementor-html {
 	&.e-con {
 
 		> .elementor-element-overlay {
-			background-color: $editor-lightest;
+			background-color: var(--e-a-bg-hover);
 			mix-blend-mode: color;
 		}
 

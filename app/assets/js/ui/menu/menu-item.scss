@@ -15,9 +15,10 @@ $menu-item-active-box-shadow: $eps-box-shadow;
 $menu-item-transition: $eps-transition-duration;
 
 $menu-item-color: tints(600);
-$menu-item-color-hover: tints(900);
-$menu-item-background-color-hover: var(--e-a-bg-hover);
-$menu-item-background-color-active: var(--e-a-bg-active);
+$menu-item-color-hover: tints(700);
+$menu-item-color-active: tints(900);
+$menu-item-background-color-hover: tints(25);
+$menu-item-background-color-active: tints(75);
 
 :root {
 	--menu-item-color: #{$menu-item-color};
@@ -28,13 +29,16 @@ $menu-item-background-color-active: var(--e-a-bg-active);
 }
 
 $menu-item-dark-color: dark-tints(100);
-$menu-item-dark-color-hover: dark-tints(100);
-$menu-item-dark-background-color-active: dark-tints(600);
+$menu-item-dark-color-hover: dark-tints(300);
+$menu-item-dark-color-active: $eps-dark-theme-light;
+$menu-item-dark-background-color-hover: dark-tints(750);
+$menu-item-dark-background-color-active: dark-tints(725);
 $menu-item-action-button-dark-color: dark-tints(400);
 
 .eps-theme-dark {
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
+	--menu-item-color-active: #{$menu-item-dark-color-active};
 	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
 	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
 }
@@ -57,19 +61,17 @@ $menu-item-action-button-dark-color: dark-tints(400);
 		background-color: $menu-item-pointer-color;
 	}
 
-	&:hover {
+	&:hover:not(.eps-menu-item--active) {
 		background-color: var(--menu-item-background-color-hover);
 		--action-button-opacity: 1;
-	}
-
-	&:hover,
-	&--active {
 		--menu-item-color: var(--menu-item-color-hover);
 		--eps-link-color: var(--menu-item-color-hover);
 	}
 
 	&--active {
 		background-color: var(--menu-item-background-color-active);
+		--menu-item-color: var(--menu-item-color-active);
+		--eps-link-color: var(--menu-item-color-active);
 	}
 
 	&__link {
