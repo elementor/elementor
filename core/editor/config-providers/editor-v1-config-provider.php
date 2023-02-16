@@ -22,8 +22,10 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 
 	public function get_script_handles_to_enqueue() {
 		return [
-			'elementor-editor-loader-v1',
 			'elementor-responsive-bar',
+
+			// Must be last.
+			'elementor-editor-loader-v1',
 		];
 	}
 
