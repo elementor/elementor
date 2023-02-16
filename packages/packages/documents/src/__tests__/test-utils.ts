@@ -1,15 +1,30 @@
-import { Document } from '../';
+import { Document } from '../types';
 
-export function createMockDocument(): Document {
+export function createMockDocument( {
+	id,
+	title,
+	status,
+	type,
+	isDirty,
+	isSaving,
+	isSavingDraft,
+	userCan,
+}: Partial<Document> = {} ): Document {
 	return {
-		id: 1,
-		title: 'Document 1',
-		status: 'publish',
-		type: 'wp-page',
-		isDirty: false,
-		isSaving: false,
-		isSavingDraft: false,
-		userCan: {
+		id: id ?? 1,
+		title: title ?? `Document ${ id }`,
+		status: status ?? {
+			value: 'publish',
+			label: 'Published',
+		},
+		type: type ?? {
+			value: 'wp-page',
+			label: 'Page',
+		},
+		isDirty: isDirty ?? false,
+		isSaving: isSaving ?? false,
+		isSavingDraft: isSavingDraft ?? false,
+		userCan: userCan ?? {
 			publish: true,
 		},
 	};
