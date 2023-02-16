@@ -4,7 +4,7 @@ import { Breakpoint, Slice } from '../../types';
 import useBreakpoints from '../use-breakpoints';
 import { runCommand } from '@elementor/v1-adapters';
 import { renderHook } from '@testing-library/react-hooks';
-import { createStore, deleteStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
+import { createStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
 import { getNormalizedBreakpointsConfig, getSortedBreakpoints } from '../../__tests__/breakpoints-config';
 
 jest.mock( '@elementor/v1-adapters', () => ( {

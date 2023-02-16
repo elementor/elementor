@@ -1,9 +1,8 @@
 import syncStore from '../sync-store';
 import { createSlice } from '../../store';
 import { ExtendedWindow, Slice } from '../../types';
-import { flushListeners } from '@elementor/v1-adapters';
+import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { selectActiveBreakpoint, selectEntities } from '../../store/selectors';
-import { createStore, deleteStore, dispatch, SliceState, Store } from '@elementor/store';
 import { getBreakpointsConfig, getNormalizedBreakpointsConfig } from '../../__tests__/breakpoints-config';
 
 describe( '@elementor/responsive - Sync Store', () => {
