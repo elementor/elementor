@@ -46,8 +46,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 			Editor_Common_Configs::get_style_configs(),
 			[
 				[
-				'handle' => 'elementor-responsive-bar',
-				'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
+					'handle' => 'elementor-responsive-bar',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
 				],
 			]
 		);
