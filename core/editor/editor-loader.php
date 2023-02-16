@@ -136,10 +136,10 @@ class Editor_Loader {
 	}
 
 	public function register_additional_templates() {
-		$templates = $this->config_provider->get_additional_template_names();
+		$templates = $this->config_provider->get_additional_template_paths();
 
-		foreach ( $templates as $template_name ) {
-			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
+		foreach ( $templates as $template_path ) {
+			Plugin::$instance->common->add_template( $template_path );
 		}
 	}
 

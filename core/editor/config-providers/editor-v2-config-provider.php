@@ -118,10 +118,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
 	}
 
-	public function get_additional_template_names() {
+	public function get_additional_template_paths() {
 		return array_merge(
-			Editor_Common_Configs::get_additional_template_names(),
-			[ 'responsive-bar' ]
+			Editor_Common_Configs::get_additional_template_paths(),
+			[ ELEMENTOR_PATH . 'includes/editor-templates/responsive-bar.php' ]
 		);
 	}
 
