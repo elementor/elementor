@@ -1,30 +1,30 @@
 import { Document } from '../types';
 
 export function createMockDocument( {
-	id = 1,
-	title = `Document ${ id }`,
+	id,
+	title,
 	status,
 	type,
-	isDirty = false,
-	isSaving = false,
-	isSavingDraft = false,
+	isDirty,
+	isSaving,
+	isSavingDraft,
 	userCan,
 }: Partial<Document> = {} ): Document {
 	return {
-		id,
-		title,
-		status: status || {
+		id: id ?? 1,
+		title: title ?? `Document ${ id }`,
+		status: status ?? {
 			value: 'publish',
 			label: 'Published',
 		},
-		type: type || {
+		type: type ?? {
 			value: 'wp-page',
 			label: 'Page',
 		},
-		isDirty,
-		isSaving,
-		isSavingDraft,
-		userCan: userCan || {
+		isDirty: isDirty ?? false,
+		isSaving: isSaving ?? false,
+		isSavingDraft: isSavingDraft ?? false,
+		userCan: userCan ?? {
 			publish: true,
 		},
 	};
