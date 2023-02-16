@@ -86,7 +86,7 @@ class Manager extends Base_Object {
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
-		$experimental_data['tags'] = $this->format_feature_tags( $experimental_data['tag'], $experimental_data['tags'] );
+		$experimental_data = $this->unify_feature_tags( $experimental_data );
 
 		$new_site = $experimental_data['new_site'];
 
@@ -154,35 +154,63 @@ class Manager extends Base_Object {
 	}
 
 	/**
-	 * Structurize the feature tags.
+	 * Combine 'tag' and 'tags' into one property.
 	 *
-	 * @param string $tag
-	 * @param array $tags
+	 * @param array $experimental_data
 	 *
 	 * @return array
 	 */
-	private function format_feature_tags( string $tag, array $tags ) {
-		if ( ! empty( $tag ) ) {
-			$tags[] = [
-				'type' => 'default',
-				'label' => $tag,
-			];
+	private function unify_feature_tags( array $experimental_data ) {
+		foreach ( [ 'tag', 'tags' ] as $key ) {
+			if ( ! empty( $experimental_data[ $key ] ) ) {
+				$experimental_data[ $key ] = $this->format_feature_tags( $experimental_data[ $key ] );
+			}
 		}
 
-		if ( empty( $tags ) ) {
-			return $tags;
+		if ( is_array( $experimental_data['tag'] ) ) {
+			$experimental_data['tags'] = array_merge( $experimental_data['tags'], $experimental_data['tag'] );
 		}
 
-		$allowed_tag_properties = [ 'type', 'label' ];
+		return $experimental_data;
+	}
+
+	/**
+	 * Format feature tags into the right format.
+	 *
+	 * @param string|array[
+	 *    [
+	 *       'type' => string,
+	 *       'label' => string
+	 *    ]
+	 * ] $tag
+	 *
+	 * @return array
+	 */
+	private function format_feature_tags( $tags ) {
+		if ( ! is_string( $tags ) && ! is_array( $tags ) ) {
+			return [];
+		}
 
 		$default_tag = [
 			'type' => 'default',
 			'label' => '',
 		];
 
+		$allowed_tag_properties = [ 'type', 'label' ];
+
+		// If $tags is string, explode by commas and convert to array.
+		if ( is_string( $tags ) ) {
+			$tags = explode( ',', $tags );
+
+			foreach ( $tags as &$tag ) {
+				$tag = [ 'label' => trim( $tag ) ];
+			}
+		}
+
 		foreach ( $tags as &$tag ) {
 			if ( empty( $tag['label'] ) ) {
 				unset( $tag );
+				continue;
 			}
 
 			$tag = $this->merge_properties( $default_tag, $tag, $allowed_tag_properties );
