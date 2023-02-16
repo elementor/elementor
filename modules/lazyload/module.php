@@ -82,63 +82,81 @@ class Module extends BaseModule {
 		return false;
 	}
 
+	private function get_controls_with_background_image( $controls ) {
+		return array_filter( $controls, function( $control ) {
+			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
+		} );
+	}
+
+	private function has_background_image( $control_data, $settings ) {
+
+		$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
+		$background_image_controls = array_filter( array_keys( $settings ), function( $key ) use ( $keys ) {
+			return false !== strpos( $key, $keys[0] );
+		} );
+
+		foreach ( $background_image_controls as $background_image_control ) {
+			$breakpoint_background_keys = $keys;
+			$breakpoint_background_keys[0] = $background_image_control;
+			$background_image_url = Utils::get_array_value_by_keys( $settings, $breakpoint_background_keys );
+			if ( $background_image_url ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private function update_element_attributes( Element_Base $element ) {
 
 		$settings = $element->get_settings_for_display();
 		$controls = $element->get_controls();
+		$controls_with_background_image = $this->get_controls_with_background_image( $controls );
+		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
+
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
 		$attributes = [];
-		$controls_with_background_image = array_filter( $controls, function( $control ) {
-			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
-		} );
-
-		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
 
-			$selectors = [];
+			$control_selectors = [];
 
+			// Marge repeaters selectors to the wrapper control selectors if exist.
 			if ( $repeaters_selectors ) {
-				$selectors = array_merge( $repeaters_selectors, $selectors );
+				$control_selectors = array_merge( $repeaters_selectors, $control_selectors );
 			}
 
-			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
+			// If the control has a any background image at all.
+			$background_image_url = $this->has_background_image( $control_data, $settings );
 
-			if ( $background_image_url || $selectors ) {
+			if ( $background_image_url || $control_selectors ) {
 
-				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
-				if ( ! $has_attribute ) {
+				$control_selectors[] = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+				$wrapper_selector = $element->get_unique_selector();
 
-					$wrapper_bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] );
-					$bg_selector = $wrapper_bg_selector ?? '';
+				// Add the wrapper selector to the control selectors, To create a full & strong selector for the control.
+				$control_selectors = array_map( function( $selector ) use ( $wrapper_selector ) {
+					return $wrapper_selector . ' ' . $selector;
+				}, $control_selectors );
 
-					$bg_selector = implode( ',', $selectors ) . $bg_selector;
-					$selectors[] = $bg_selector;
-
-					$wrapper_selector = $element->get_unique_selector();
-					$selectors = array_map( function( $selector ) use ( $wrapper_selector ) {
-						return $wrapper_selector . ' ' . $selector;
-					}, $selectors );
-
-					if ( $background_image_url && ! $wrapper_bg_selector ) {
-						$selectors[] = $wrapper_selector;
-					}
-
-					// Trim spaces and remove duplicates.
-					$selectors = array_unique( array_map( 'trim', $selectors ) );
-
-					$attributes[ $lazyload_attribute_name ] = implode( ',', $selectors );
-
+				// If the control (wrapper) has a background image, add the wrapper selector to the control selectors.
+				if ( $background_image_url ) {
+					$control_selectors[] = $wrapper_selector;
 				}
+
+				// Trim spaces and remove duplicates.
+				$control_selectors = array_unique( array_map( 'trim', $control_selectors ) );
+
+				// Build the lazyload attribute selectors value. e.g. ".elementor-element-123 .selector1, .elementor-element-123 .selector2".
+				$attributes[ $lazyload_attribute_name ] = implode( ',', $control_selectors );
+
 			}
 		}
 
-		if ( ! empty( $attributes ) ) {
-			$element->add_render_attribute( '_wrapper',
-				$attributes
-			);
-		}
+		// Add the lazyload attribute to the wrapper.
+		$element->add_render_attribute( '_wrapper',
+			$attributes
+		);
 
 	}
 
