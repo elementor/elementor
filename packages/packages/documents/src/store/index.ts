@@ -13,17 +13,11 @@ const initialState: State = {
 	hostId: null,
 };
 
-const createActiveDocumentReducer = (
-	callback: ( document: Document ) => void
-) => {
-	return ( state: State ) => {
-		if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
-			return;
-		}
+type StateWithActiveId = Omit<State, 'activeId'> & { activeId: NonNullable<State['activeId']> };
 
-		callback( state.entities[ state.activeId ] );
-	};
-};
+function hasActiveEntity( state: State ): state is StateWithActiveId {
+	return !! ( state.activeId && state.entities[ state.activeId ] );
+}
 
 export function createSlice() {
 	return addSlice( {
@@ -41,30 +35,43 @@ export function createSlice() {
 				state.activeId = action.payload.id;
 			},
 
-			startSaving: createActiveDocumentReducer( ( document ) => document.isSaving = true ),
+			startSaving( state ) {
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ].isSaving = true;
+				}
+			},
 
 			endSaving( state, action: PayloadAction<Document> ) {
-				if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
-					return;
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ] = action.payload;
+					state.entities[ state.activeId ].isSaving = false;
 				}
-
-				state.entities[ state.activeId ] = action.payload;
-				state.entities[ state.activeId ].isSaving = false;
 			},
 
-			startSavingDraft: createActiveDocumentReducer( ( document ) => document.isSavingDraft = true ),
+			startSavingDraft: ( state ) => {
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ].isSavingDraft = true;
+				}
+			},
 
 			endSavingDraft( state, action: PayloadAction<Document> ) {
-				if ( ! state.activeId || ! state.entities[ state.activeId ] ) {
-					return;
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ] = action.payload;
+					state.entities[ state.activeId ].isSavingDraft = false;
 				}
-
-				state.entities[ state.activeId ] = action.payload;
-				state.entities[ state.activeId ].isSavingDraft = false;
 			},
 
-			markAsDirty: createActiveDocumentReducer( ( document ) => document.isDirty = true ),
-			markAsPristine: createActiveDocumentReducer( ( document ) => document.isDirty = false ),
+			markAsDirty( state ) {
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ].isDirty = true;
+				}
+			},
+
+			markAsPristine( state ) {
+				if ( hasActiveEntity( state ) ) {
+					state.entities[ state.activeId ].isDirty = false;
+				}
+			},
 		},
 	} );
 }
