@@ -36,6 +36,7 @@ export default class NestedTabs extends Base {
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
 				headingContainer: '.e-n-tabs-heading',
+				activeTabContentContainers: '.e-con.e-active';
 			},
 			classes: {
 				active: 'e-active',
