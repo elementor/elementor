@@ -37,8 +37,6 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		flushListeners();
 
 		jest.clearAllMocks();
-
-		delete ( window as unknown as ExtendedWindow ).elementor;
 	} );
 
 	it( 'should change the panel title when opening the elements panel', () => {
