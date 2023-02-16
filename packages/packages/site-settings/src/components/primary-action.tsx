@@ -1,4 +1,4 @@
-import { useActiveDocument, useActiveDocumentActions } from '../../hooks';
+import { useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
 import { Button, CircularProgress, Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 

@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import PrimaryAction from '../primary-action';
-import { createMockDocument } from '../../../__tests__/test-utils';
-import { useActiveDocument, useActiveDocumentActions } from '../../../hooks';
+import { createMockDocument } from 'test-utils';
+import { useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
 
-jest.mock( '../../../hooks', () => ( {
+jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
 	useActiveDocumentActions: jest.fn(),
 } ) );

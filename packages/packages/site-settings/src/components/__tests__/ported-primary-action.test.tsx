@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { isRouteActive } from '@elementor/v1-adapters';
-import { useActiveDocument } from '../../../hooks';
+import { useActiveDocument } from '@elementor/documents';
 import PortedPrimaryAction from '../ported-primary-action';
-import { createMockDocument } from '../../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 
 jest.mock( '@elementor/v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/v1-adapters' ),
 	isRouteActive: jest.fn(),
 } ) );
 
-jest.mock( '../../../hooks', () => ( {
+jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
 	useActiveDocumentActions: jest.fn( () => ( {
 		save: jest.fn(),
