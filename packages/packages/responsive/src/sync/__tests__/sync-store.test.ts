@@ -6,11 +6,6 @@ import { selectActiveBreakpoint, selectEntities } from '../../store/selectors';
 import { createStore, deleteStore, dispatch, SliceState, Store } from '@elementor/store';
 import { getBreakpointsConfig, getNormalizedBreakpointsConfig } from '../../__tests__/breakpoints-config';
 
-// TODO: Remove when TopBar indicator is merged.
-type WindowWithOptionalElementor = Omit<ExtendedWindow, 'elementor'> & {
-	elementor?: ExtendedWindow['elementor'];
-}
-
 describe( '@elementor/responsive - Sync Store', () => {
 	let store: Store<SliceState<Slice>>;
 	let slice: Slice;
@@ -23,14 +18,6 @@ describe( '@elementor/responsive - Sync Store', () => {
 		syncStore( slice );
 
 		extendedWindow = ( window as unknown as ExtendedWindow );
-	} );
-
-	// TODO: Remove when TopBar indicator is merged.
-	afterEach( () => {
-		delete ( extendedWindow as WindowWithOptionalElementor ).elementor;
-
-		flushListeners();
-		deleteStore();
 	} );
 
 	it( 'should initialize the store when V1 is ready', () => {

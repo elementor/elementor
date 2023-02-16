@@ -20,11 +20,6 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 		store = createStore();
 	} );
 
-	// TODO: Remove when TopBar indicator is merged.
-	afterEach( () => {
-		deleteStore();
-	} );
-
 	it( 'should return all breakpoints sorted by size', () => {
 		// Arrange - Populate the store.
 		const entities = Object.values( getNormalizedBreakpointsConfig() );
