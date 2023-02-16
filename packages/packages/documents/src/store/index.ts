@@ -1,6 +1,5 @@
 import { Document } from '../types';
 import { addSlice, PayloadAction } from '@elementor/store';
-import { selectActiveDocument } from './selectors';
 
 type State = {
 	entities: Record<Document['id'], Document>,
