@@ -23,7 +23,7 @@ export const selectSortedBreakpoints = createSelector(
 
 		const all = Object.values( entities );
 
-		const defaults = all.filter( ( breakpoint ) => ! breakpoint.size );
+		const defaults = all.filter( ( breakpoint ) => ! breakpoint.size ); // AKA Desktop.
 		const from = all.filter( ( breakpoint ) => breakpoint.type === 'from' );
 		const upTo = all.filter( ( breakpoint ) => breakpoint.type === 'up-to' );
 
