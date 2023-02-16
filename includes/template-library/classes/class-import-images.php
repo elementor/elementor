@@ -114,8 +114,15 @@ class Import_Images {
 			return $attachment;
 		}
 
-		if ( ! empty( $attachment['id'] ) ) {
-			$saved_image = $this->get_saved_image( $attachment );
+		if ( isset( $attachment['tmp_name'] ) ) {
+			// Used when called to import a directly-uploaded file.
+			$filename = $attachment['name'];
+
+			$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
+		} else {
+			// Used when attachment information is passed to this method.
+			if ( ! empty( $attachment['id'] ) ) {
+				$saved_image = $this->get_saved_image( $attachment );
 
 				if ( $saved_image ) {
 					return $saved_image;
