@@ -229,25 +229,22 @@
 		}
 	}
 
-	.e-con,
 	.e-n-tabs-content {
-		border: 1px none var( --n-tabs-border-color );
-		border-width: var( --n-tabs-border-width );
 
-		.e-collapse {
+		:where( & > .e-con ) {
+			border-radius: var(--border-radius);
+			padding-right: var(--padding-right);
+			padding-left: var(--padding-left);
 
-			&:not(:first-child) {
-				  margin-top: var( --n-tabs-title-gap );
-			}
-
-			&.e-active {
-				  margin-bottom: var( --n-tabs-gap );
+			> .e-con-inner {
+				padding-top: var(--padding-top);
+				padding-bottom: var(--padding-bottom);
 			}
 		}
-	}
 
-	.e-n-tabs-content > .e-con:not(.e-active) {
-		display: none;
+		> .e-con:not(.e-active) {
+			display: none;
+		}
 	}
 }
 
