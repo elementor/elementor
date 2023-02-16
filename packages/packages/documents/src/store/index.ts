@@ -43,8 +43,10 @@ export function createSlice() {
 
 			endSaving( state, action: PayloadAction<Document> ) {
 				if ( hasActiveEntity( state ) ) {
-					state.entities[ state.activeId ] = action.payload;
-					state.entities[ state.activeId ].isSaving = false;
+					state.entities[ state.activeId ] = {
+						...action.payload,
+						isSaving: false,
+					};
 				}
 			},
 
@@ -56,8 +58,10 @@ export function createSlice() {
 
 			endSavingDraft( state, action: PayloadAction<Document> ) {
 				if ( hasActiveEntity( state ) ) {
-					state.entities[ state.activeId ] = action.payload;
-					state.entities[ state.activeId ].isSavingDraft = false;
+					state.entities[ state.activeId ] = {
+						...action.payload,
+						isSavingDraft: false,
+					};
 				}
 			},
 
