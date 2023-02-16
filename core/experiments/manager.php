@@ -160,7 +160,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function unify_feature_tags( array $experimental_data ) {
+	private function unify_feature_tags( array $experimental_data ) : array {
 		foreach ( [ 'tag', 'tags' ] as $key ) {
 			if ( ! empty( $experimental_data[ $key ] ) ) {
 				$experimental_data[ $key ] = $this->format_feature_tags( $experimental_data[ $key ] );
@@ -186,7 +186,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function format_feature_tags( $tags ) {
+	private function format_feature_tags( $tags ) : array {
 		if ( ! is_string( $tags ) && ! is_array( $tags ) ) {
 			return [];
 		}
