@@ -20,9 +20,10 @@ export default function ToggleAction( { icon: Icon, title, value, ...props }: Pr
 			<Icon />
 		</ToolbarMenuToggleItem>
 	) : (
-		<PopoverMenuItem { ...props }>
-			<Icon />
-			{ title }
-		</PopoverMenuItem>
+		<PopoverMenuItem
+			{ ...props }
+			text={ title }
+			icon={ <Icon /> }
+		/>
 	);
 }
