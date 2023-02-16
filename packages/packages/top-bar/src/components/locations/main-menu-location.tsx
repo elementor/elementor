@@ -16,7 +16,7 @@ export default function MainMenuLocation() {
 	} );
 
 	return (
-		<Stack sx={ { px: 4 } } direction="row" alignItems="center">
+		<Stack sx={ { paddingInlineStart: 4 } } direction="row" alignItems="center">
 			<ToolbarLogo
 				{ ...bindTrigger( popupState ) }
 				selected={ popupState.isOpen }
