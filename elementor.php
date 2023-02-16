@@ -111,3 +111,9 @@ function elementor_fail_wp_version() {
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
 	echo wp_kses_post( $html_message );
 }
+
+add_action( 'admin_init', function () {
+	if ( is_user_logged_in() && '/wp-admin/' === $_SERVER[ 'REQUEST_URI' ] ) {
+		wp_redirect( admin_url( 'admin.php?page=elementor-dashboard#/dashboard' ) );
+	}
+} );
