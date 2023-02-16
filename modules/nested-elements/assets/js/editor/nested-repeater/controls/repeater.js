@@ -40,6 +40,17 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		this.toggleMinRowsClass();
 	}
 
+	getChildViewRemoveConfig( childView ) {
+		const config = super.getChildViewRemoveConfig( childView );
+		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
+
+		config.options = {
+			containerModelCid,
+		};
+
+		return config;
+	}
+
 	updateActiveRow() {
 		if ( ! this.currentEditableChild ) {
 			return;

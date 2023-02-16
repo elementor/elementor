@@ -20,9 +20,15 @@ export class NestedRepeaterRemoveContainer extends Base {
 		return super.getConditions( args ) && isCommandCalledDirectly;
 	}
 
-	apply( { container, index } ) {
+	apply( { container, index, options } ) {
+		const childView = findChildContainerOrFail( container, index, options.containerModelCid );
+
+		if ( ! childView ) {
+			return;
+		}
+
 		$e.run( 'document/elements/delete', {
-			container: findChildContainerOrFail( container, index ),
+			container: childView,
 			force: true,
 		} );
 	}
