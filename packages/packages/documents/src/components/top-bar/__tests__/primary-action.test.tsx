@@ -36,14 +36,13 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should have "Submit" text when the user cannot publish the document', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
+		const mockDocument = createMockDocument( {
 			userCan: {
 				publish: false,
 			},
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -54,14 +53,13 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should have "Publish" text when the user can publish the document', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
+		const mockDocument = createMockDocument( {
 			userCan: {
 				publish: true,
 			},
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -72,13 +70,15 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should be disabled when the document is a Kit', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
-			type: 'kit',
+		const mockDocument = createMockDocument( {
 			isDirty: true,
+			type: {
+				value: 'kit',
+				label: 'Kit',
+			},
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -89,12 +89,9 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should be disabled when the document is pristine', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
+		const mockDocument = createMockDocument( { isDirty: false } );
 
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
-			isDirty: false,
-		} );
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -105,13 +102,15 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should always be enabled when the document status is draft', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
+		const mockDocument = createMockDocument( {
 			isDirty: false,
-			status: 'draft',
+			status: {
+				value: 'draft',
+				label: 'Draft',
+			},
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -122,12 +121,9 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should save the active document on click', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
+		const mockDocument = createMockDocument( { isDirty: true } );
 
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
-			isDirty: true,
-		} );
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -140,13 +136,12 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should show a loader & not save when there is save in progress', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
+		const mockDocument = createMockDocument( {
 			isDirty: true,
 			isSaving: true,
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -164,13 +159,15 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 
 	it( 'should not show a loader when the button is disabled', () => {
 		// Arrange.
-		const mockDocument = createMockDocument();
-
-		mockedUseActiveDocument.mockReturnValue( {
-			...mockDocument,
-			type: 'kit', // Disables the button.
+		const mockDocument = createMockDocument( {
+			type: {
+				value: 'kit',
+				label: 'Kit',
+			}, // Disables the button.
 			isSaving: true,
 		} );
+
+		mockedUseActiveDocument.mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole, queryByRole } = render( <PrimaryAction /> );
