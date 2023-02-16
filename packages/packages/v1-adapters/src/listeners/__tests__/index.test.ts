@@ -2,12 +2,12 @@ import {
 	commandEndEvent,
 	commandStartEvent,
 	dispatchReadyEvent,
-	flushListeners,
 	listenTo,
 	routeOpenEvent,
 	routeCloseEvent,
 	windowEvent,
 	v1ReadyEvent,
+	setReady,
 	ExtendedWindow,
 } from '../';
 
@@ -25,8 +25,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 	} );
 
 	afterEach( () => {
-		flushListeners();
-
 		jest.useRealTimers();
 	} );
 
@@ -235,39 +233,6 @@ describe( '@elementor/v1-adapters/listeners', () => {
 		} );
 	} );
 
-	it( 'should flush listeners & re-listen', () => {
-		// Arrange.
-		const event1 = 'test-event-1',
-			event2 = 'test-event-2',
-			callback = jest.fn();
-
-		listenTo(
-			windowEvent( event1 ),
-			callback,
-		);
-
-		// Act.
-		flushListeners();
-
-		// Dispatch events.
-		dispatchWindowEvent( event1 );
-
-		// Assert.
-		expect( callback ).toHaveBeenCalledTimes( 0 );
-
-		// Act.
-		listenTo(
-			windowEvent( event2 ),
-			callback,
-		);
-
-		// Dispatch events.
-		dispatchWindowEvent( event2 );
-
-		// Assert.
-		expect( callback ).toHaveBeenCalledTimes( 1 );
-	} );
-
 	it( 'should cleanup listeners', () => {
 		// Arrange.
 		const event1 = 'test-event-1',
@@ -343,9 +308,26 @@ describe( '@elementor/v1-adapters/listeners', () => {
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
+	} );
 
-		// Cleanup.
-		delete extendedWindow.__elementorEditorV1LoadingPromise;
+	it( 'should not trigger callback when the application is not ready', () => {
+		// Arrange
+		setReady( false );
+
+		const event = 'test-event';
+		const callback = jest.fn();
+
+		// Act.
+		listenTo(
+			windowEvent( event ),
+			callback
+		);
+
+		// Dispatch events.
+		dispatchWindowEvent( event );
+
+		// Assert.
+		expect( callback ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should throw when v1 is not loaded', async () => {
