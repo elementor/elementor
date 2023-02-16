@@ -72,6 +72,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
+			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
