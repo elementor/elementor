@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -169,8 +171,8 @@ class Editor_Common_Configs {
 		];
 	}
 
-	public static function get_additional_template_names() {
-		return [
+	public static function get_additional_template_paths() {
+		return Collection::make( [
 			'global',
 			'panel',
 			'panel-elements',
@@ -178,6 +180,8 @@ class Editor_Common_Configs {
 			'templates',
 			'navigator',
 			'hotkeys',
-		];
+		] )->map( function ( $template ) {
+			return ELEMENTOR_PATH . "includes/editor-templates/{$template}.php";
+		} )->all();
 	}
 }

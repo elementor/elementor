@@ -306,10 +306,10 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		Plugin::$instance->common = $this->createMock( CommonApp::class );
 
 		$this->mock_config_provider
-			->method( 'get_additional_template_names' )
+			->method( 'get_additional_template_paths' )
 			->willReturn( [
-				'test-1',
-				'test-2',
+				'path/to/file-1.php',
+				'path/to/file-2.php',
 			] );
 
 		// Expect.
@@ -317,8 +317,8 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 			->expects( $this->exactly( 2 ) )
 			->method( 'add_template' )
 			->withConsecutive(
-				[ ELEMENTOR_PATH . "includes/editor-templates/test-1.php" ],
-				[ ELEMENTOR_PATH . "includes/editor-templates/test-2.php" ]
+				[ 'path/to/file-1.php' ],
+				[ 'path/to/file-2.php' ]
 			);
 
 		// Act.

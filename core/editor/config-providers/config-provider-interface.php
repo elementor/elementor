@@ -53,5 +53,5 @@ interface Config_Provider_Interface {
 	 *
 	 * @return string[]
 	 */
-	public function get_additional_template_names();
+	public function get_additional_template_paths();
 }
