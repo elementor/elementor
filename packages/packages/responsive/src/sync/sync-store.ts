@@ -47,8 +47,8 @@ function getBreakpoints() {
 		.map( ( [ id, { value, direction } ] ) => {
 			return {
 				id,
-				type: direction === 'min' ? 'from' : 'up-to',
 				size: value,
+				type: direction === 'min' ? 'from' : 'up-to',
 			} as Breakpoint;
 		} );
 
@@ -61,11 +61,9 @@ function getBreakpoints() {
 }
 
 function getActiveBreakpoint() {
-	return ( window as unknown as ExtendedWindow )
-		.elementor
-		?.channels
-		?.deviceMode
-		?.request?.( 'currentMode' ) ?? null;
+	const extendedWindow = window as unknown as ExtendedWindow;
+
+	return extendedWindow.elementor?.channels?.deviceMode?.request?.( 'currentMode' ) ?? null;
 }
 
 function deviceModeChangeEvent() {

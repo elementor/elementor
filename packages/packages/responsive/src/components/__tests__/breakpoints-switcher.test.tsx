@@ -6,7 +6,7 @@ import { getSortedBreakpoints } from '../../__tests__/breakpoints-config';
 jest.mock( '../../hooks/use-breakpoints', () => jest.fn() );
 
 describe( '@elementor/responsive - Breakpoints Switcher', () => {
-	it( 'should no render when there are no breakpoints', () => {
+	it( 'should not render when there are no breakpoints', () => {
 		// Arrange.
 		jest.mocked( useBreakpoints ).mockReturnValue( {
 			all: [],
@@ -23,7 +23,7 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should no render when there is no active breakpoint', () => {
+	it( 'should not render when there is no active breakpoint', () => {
 		// Arrange.
 		jest.mocked( useBreakpoints ).mockReturnValue( {
 			active: null,

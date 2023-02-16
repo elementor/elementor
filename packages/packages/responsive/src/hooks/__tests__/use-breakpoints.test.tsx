@@ -21,7 +21,7 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 	} );
 
 	it( 'should return all breakpoints sorted by size', () => {
-		// Arrange - Populate the store.
+		// Arrange.
 		const entities = Object.values( getNormalizedBreakpointsConfig() );
 
 		dispatch( slice.actions.init( {
@@ -37,7 +37,7 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 	} );
 
 	it( 'should return the active breakpoint', () => {
-		// Arrange - Populate the store.
+		// Arrange.
 		const entities: Breakpoint[] = [
 			{
 				id: 'desktop',

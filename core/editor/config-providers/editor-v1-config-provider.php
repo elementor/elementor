@@ -47,7 +47,7 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 			[
 				[
 					'handle' => 'elementor-responsive-bar',
-					'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{MIN_SUFFIX}}.css',
 				],
 			]
 		);

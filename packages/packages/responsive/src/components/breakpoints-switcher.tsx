@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BreakpointId } from '../types';
-import { Tab, Tabs, Tooltip } from '@elementor/ui';
 import useBreakpoints from '../hooks/use-breakpoints';
+import { Tab, Tabs, Tooltip as BaseTooltip, TooltipProps } from '@elementor/ui';
 import {
 	DesktopIcon,
 	TabletPortraitIcon,
@@ -38,22 +38,9 @@ export default function BreakpointsSwitcher() {
 					return (
 						<Tab value={ id }
 							key={ id }
-							icon={ (
-								<Tooltip
-									title={ title }
-									PopperProps={ {
-										sx: {
-											'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
-												mt: 7,
-											},
-										},
-									} }
-								>
-									<Icon />
-								</Tooltip>
-							) }
 							aria-label={ title }
 							sx={ { padding: '4px' } }
+							icon={ <Tooltip title={ title }><Icon /></Tooltip> }
 						/>
 					);
 				} )
@@ -63,6 +50,18 @@ export default function BreakpointsSwitcher() {
 	);
 }
 
+function Tooltip( props: TooltipProps ) {
+	return <BaseTooltip
+		PopperProps={ {
+			sx: {
+				'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
+					mt: 7,
+				},
+			},
+		} }
+		{ ...props }
+	/>;
+}
 const breakpointsUiMap = {
 	widescreen: {
 		icon: WidescreenIcon,

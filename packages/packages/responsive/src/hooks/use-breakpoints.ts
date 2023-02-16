@@ -9,9 +9,7 @@ export default function useBreakpoints() {
 	const active = useSelector( selectActiveBreakpoint );
 
 	const activate = useCallback( ( device: BreakpointId ) => {
-		return runCommand( 'panel/change-device-mode', {
-			device,
-		} );
+		return runCommand( 'panel/change-device-mode', { device } );
 	}, [] );
 
 	return {
