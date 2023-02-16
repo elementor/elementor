@@ -60,8 +60,7 @@
 
 .elementor-loading-title {
 	$spacing: 7px;
-
-	color: $editor-light;
+	color: var(--e-a-color-txt);
 	text-align: center;
 	text-transform: uppercase;
 	margin-top: 30px;

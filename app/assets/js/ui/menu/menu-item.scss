@@ -20,17 +20,19 @@ $menu-item-color-active: tints(900);
 $menu-item-background-color-hover: tints(25);
 $menu-item-background-color-active: tints(75);
 
+
 :root {
 	--menu-item-color: #{$menu-item-color};
 	--menu-item-color-hover: #{$menu-item-color-hover};
+	--menu-item-color-active: #{$menu-item-color-active};
 	--menu-item-background-color-hover: #{$menu-item-background-color-hover};
 	--menu-item-background-color-active: #{$menu-item-background-color-active};
 	--menu-item-action-button-color: #{$menu-item-action-button-color};
 }
 
 $menu-item-dark-color: dark-tints(100);
-$menu-item-dark-color-hover: dark-tints(300);
-$menu-item-dark-color-active: $eps-dark-theme-light;
+$menu-item-dark-color-hover: dark-tints(200);
+$menu-item-dark-color-active: dark-tints(300);
 $menu-item-dark-background-color-hover: dark-tints(750);
 $menu-item-dark-background-color-active: dark-tints(725);
 $menu-item-action-button-dark-color: dark-tints(400);
@@ -39,6 +41,7 @@ $menu-item-action-button-dark-color: dark-tints(400);
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
 	--menu-item-color-active: #{$menu-item-dark-color-active};
+	--menu-item-background-color-hover: #{$menu-item-dark-background-color-hover};
 	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
 	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
 }
