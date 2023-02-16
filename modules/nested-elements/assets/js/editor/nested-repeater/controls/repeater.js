@@ -53,7 +53,7 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	getRepeaterItemContainerModelCidIfExists( childView ) {
-		if ( 'yes' !== childView.model.attributes.item_dropdown_content ) {
+		if ( this.itemDoesNotNeedChildContainer() ) {
 			return false;
 		}
 
@@ -65,5 +65,9 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		}
 
 		return container.model.cid;
+	}
+
+	itemDoesNotNeedChildContainer( childView ) {
+		return this?._parent?.model?.config?.child_container_active_return_value !== childView.model.attributes[ this?._parent?.model?.config?.child_container_control_key ];
 	}
 }
