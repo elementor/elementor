@@ -242,6 +242,17 @@
 			}
 		}
 
+		.e-collapse {
+
+			&:not(:first-child) {
+				margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				margin-bottom: var( --n-tabs-gap );
+			}
+		}
+
 		> .e-con:not(.e-active) {
 			display: none;
 		}
