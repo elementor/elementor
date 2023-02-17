@@ -946,7 +946,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Define css attributes we'll be expecting for each of the widgets.
 		const widgetsToTest = {
 			defaultWidget: {
-				containerBackgroundColor: 'rgba(0, 0, 0, 0)',
+				containerPadding: '10px',
 			},
 			styledWidget: {
 				containerBackgroundColor: 'rgb(255, 199, 199)',

@@ -231,17 +231,6 @@
 
 	.e-n-tabs-content {
 
-		:where( & > .e-con ) {
-			border-radius: var(--border-radius);
-			padding-right: var(--padding-right);
-			padding-left: var(--padding-left);
-
-			> .e-con-inner {
-				padding-top: var(--padding-top);
-				padding-bottom: var(--padding-bottom);
-			}
-		}
-
 		.e-collapse {
 
 			&:not(:first-child) {
