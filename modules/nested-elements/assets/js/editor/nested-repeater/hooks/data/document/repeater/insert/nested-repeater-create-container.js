@@ -24,20 +24,32 @@ export class NestedRepeaterCreateContainer extends Base {
 		return super.getConditions( args ) && isCommandCalledDirectly;
 	}
 
-	apply( { container, name } ) {
-		const index = container.repeaters[ name ].children.length;
+	apply( args ) {
+		if ( this.shouldNotCreateChildContainerByDefault( args ) ) {
+			return;
+		}
+
+		const index = args.container.repeaters[ args.name ].children.length;
 
 		$e.run( 'document/elements/create', {
-			container,
+			container: args.container,
 			model: {
 				elType: 'container',
 				isLocked: true,
-				_title: extractNestedItemTitle( container, index ),
+				_title: extractNestedItemTitle( args.container, index ),
 			},
 			options: {
 				edit: false, // Not losing focus.
 			},
 		} );
+	}
+
+	shouldNotCreateChildContainerByDefault( args ) {
+		if ( undefined === args.container.model.config.child_container_control_key ) {
+			return false;
+		}
+
+		return 'yes' !== args.model[ args?.container?.model?.config?.child_container_control_key ];
 	}
 }
 

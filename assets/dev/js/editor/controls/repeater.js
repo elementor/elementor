@@ -232,16 +232,20 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.toggleMinRowsClass();
 	},
 
+	getChildViewRemoveConfig( childView ) {
+		return {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
+		};
+	},
+
 	onChildviewClickRemove( childView ) {
 		if ( childView === this.currentEditableChild ) {
 			delete this.currentEditableChild;
 		}
 
-		$e.run( 'document/repeater/remove', {
-			container: this.options.container,
-			name: this.model.get( 'name' ),
-			index: childView._index,
-		} );
+		$e.run( 'document/repeater/remove', this.getChildViewRemoveConfig( childView ) );
 
 		this.updateActiveRow();
 		this.updateChildIndexes();
