@@ -263,6 +263,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'nested-tabs', tabsContainerId );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
 
+		await editor.closeNavigatorIfOpen();
+
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
 		await editor.selectElement( parentWidgetId );
@@ -904,6 +906,123 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert.
 		await expect( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
 	} );
+
+	test( "Check widget content styling doesn't override the content container styling when they are used together", async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Define Nested Tabs widget instances, and custom settings to apply to one of the dropdown Containers.
+		const defaultWidgetInstance = {
+			elType: 'widget',
+			widgetType: 'nested-tabs',
+		};
+		const styledWidgetInstance = {
+			elType: 'widget',
+			widgetType: 'nested-tabs',
+			settings: {
+				box_background_color_background: 'classic',
+				box_background_color_color: 'rgb(255, 199, 199)',
+				box_border_border: 'dotted',
+				box_border_width: { unit: 'px', top: '2', right: '2', bottom: '2', left: '2' },
+				box_border_color: 'rgb(106, 0, 0)',
+				box_border_radius: { unit: 'px', top: '7', right: '7', bottom: '7', left: '7' },
+				box_padding: { unit: 'px', top: '5', right: '5', bottom: '5', left: '5' },
+			},
+		};
+		const styledWidgetContainerSettings = {
+			background_background: 'classic',
+			background_color: 'rgb(199, 255, 197)',
+			border_border: 'dashed',
+			border_width: { unit: 'px', top: '3', right: '3', bottom: '3', left: '3' },
+			border_color: 'rgb(0, 156, 65)',
+			padding: { unit: 'px', top: '13', right: '13', bottom: '13', left: '13'	},
+			border_radius: { unit: 'px', top: '15', right: '15', bottom: '15', left: '15' },
+			box_shadow_box_shadow_type: 'yes',
+			box_shadow_box_shadow: { horizontal: 0, vertical: 6, blur: 15, spread: 0, color: 'rgba(0, 165, 20, 0.5)' },
+		};
+
+		// Define css attributes we'll be expecting for each of the widgets.
+		const widgetsToTest = {
+			defaultWidget: {
+				containerPadding: '10px',
+			},
+			styledWidget: {
+				containerBackgroundColor: 'rgb(255, 199, 199)',
+				containerBorderStyle: 'dotted',
+				containerBorderWidth: '2px',
+				containerBorderColor: 'rgb(106, 0, 0)',
+				containerPadding: '5px',
+			},
+			styledWidgetContainer: {
+				containerBackgroundColor: 'rgb(199, 255, 197)',
+				containerBorderStyle: 'dashed',
+				containerBorderWidth: '3px',
+				containerBorderColor: 'rgb(0, 156, 65)',
+				containerBoxedShadow: 'rgba(0, 165, 20, 0.5) 0px 6px 15px 0px',
+				containerPadding: '13px',
+			},
+		};
+
+		let widgetId, activeContainerId;
+
+		// Add first default Nested Tabs widget with no styling.
+		widgetId = await editor.addElement( defaultWidgetInstance );
+		widgetsToTest.defaultWidget.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		// Add second Nested Tabs widget with custom styled dropdown container via the widget settings.
+		widgetId = await editor.addElement( styledWidgetInstance );
+		widgetsToTest.styledWidget.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		// Add third Nested Tabs widget with custom styled dropdown container via the widget settings, and custom
+		// styled dropdown container via the containers settings too, to make sure the container styling takes preference.
+		widgetId = await editor.addElement( styledWidgetInstance );
+		widgetsToTest.styledWidgetContainer.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.applyElementSettings( activeContainerId, styledWidgetContainerSettings );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		await editor.togglePreviewMode();
+
+		// Test.
+		for ( const widgetIdentifier in widgetsToTest ) {
+			const widgetToTest = widgetsToTest[ widgetIdentifier ],
+				widgetSelector = `.elementor-widget-n-tabs.elementor-element-${ widgetToTest.widgetId }`,
+				activeContainer = editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tabs-content > .e-con.e-active` );
+
+			for ( const valueToTest in widgetToTest ) {
+				const expectedCssValue = widgetToTest[ valueToTest ];
+
+				switch ( valueToTest ) {
+					case 'containerBackgroundColor':
+						await expect( activeContainer ).toHaveCSS( 'background-color', expectedCssValue );
+						break;
+					case 'containerBorderStyle':
+						await expect( activeContainer ).toHaveCSS( 'border-style', expectedCssValue );
+						break;
+					case 'containerBorderWidth':
+						await expect( activeContainer ).toHaveCSS( 'border-width', expectedCssValue );
+						break;
+					case 'containerBorderColor':
+						await expect( activeContainer ).toHaveCSS( 'border-color', expectedCssValue );
+						break;
+					case 'containerBoxedShadow':
+						await expect( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
+						break;
+					case 'containerPadding':
+						await expect( activeContainer ).toHaveCSS( 'padding', expectedCssValue );
+						break;
+				}
+			}
+		}
+
+		await cleanup( wpAdmin );
+	} );
 } );
 
 async function editTab( editor, tabIndex ) {
@@ -963,4 +1082,11 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` ).first().fill( borderWidth );
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+}
+
+async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
+	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
+	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector }.elementor-element-editable` );
+	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title.e-normal:nth-child(${ itemNumber })` ).click();
+	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-con.e-active` ).getAttribute( 'data-id' );
 }
