@@ -131,7 +131,10 @@ class Module extends BaseModule {
 
 			if ( $background_image_url || $control_selectors ) {
 
-				$control_selectors[] = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+				// Prevent from common widgets to inherit the lazyload attribute in case they have a repeater with background image
+				if ( ! $control_selectors ) {
+					$control_selectors[] = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+				}
 				$wrapper_selector = $element->get_unique_selector();
 
 				// Add the wrapper selector to the control selectors, To create a full & strong selector for the control.
