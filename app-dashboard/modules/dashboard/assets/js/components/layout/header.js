@@ -43,9 +43,6 @@ export default function Header() {
 				<Select
 					options={ options }
 					value={ 'manageSite' }
-					onChange={ ( e ) => {
-						window.open( e.target.value );
-					} }
 					className="eps-sort-select__select"
 				/>
 			</div>
