@@ -680,7 +680,7 @@ class Widget_Image_Carousel extends Widget_Base {
 						'min' => 0,
 						'max' => 100,
 					],
-					'vw' => [
+					'vh' => [
 						'min' => 0,
 						'max' => 100,
 					],
