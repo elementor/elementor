@@ -640,7 +640,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}};',
 				],
@@ -655,6 +654,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space Between Dots', 'elementor' ),
        				'type' => Controls_Manager::SLIDER,
+				'separator' => 'after',
 				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'margin-left: {{SIZE}}{{UNIT}};',
