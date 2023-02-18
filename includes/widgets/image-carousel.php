@@ -649,6 +649,21 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 			]
 		);
+		
+		$this->add_control(
+    			'dots_space',
+			[
+				'label' => esc_html__( 'Space Between Dots', 'elementor' ),
+       				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet' => 'margin-left: {{SIZE}}{{UNIT}};',
+					],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
 
 		$this->add_responsive_control(
 			'bottom_space',
