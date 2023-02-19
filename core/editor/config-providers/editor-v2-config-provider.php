@@ -72,6 +72,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
+			->push( 'elementor-responsive-bar' )
+			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
@@ -109,11 +111,19 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return [
 			'elementor-editor-v2-overrides',
 			'elementor-editor',
+			'elementor-responsive-bar',
 		];
 	}
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	public function get_additional_template_paths() {
+		return array_merge(
+			Editor_Common_Configs::get_additional_template_paths(),
+			[ ELEMENTOR_PATH . 'includes/editor-templates/responsive-bar.php' ]
+		);
 	}
 
 	private function get_packages_script_assets() {
