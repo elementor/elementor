@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -114,6 +116,14 @@ class Editor_Common_Configs {
 					'domain' => 'elementor',
 				],
 			],
+			[
+				'handle' => 'elementor-responsive-bar',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
+				'deps' => [ 'elementor-editor', 'elementor-common' ],
+				'i18n' => [
+					'domain' => 'elementor',
+				],
+			],
 		];
 	}
 
@@ -156,6 +166,10 @@ class Editor_Common_Configs {
 					'pickr',
 				],
 			],
+			[
+				'handle' => 'elementor-responsive-bar',
+				'src' => '{{ELEMENTOR_ASSETS_URL}}css/responsive-bar{{MIN_SUFFIX}}.css',
+			],
 		];
 	}
 
@@ -167,5 +181,19 @@ class Editor_Common_Configs {
 				'settings' => Editor_Common_Client_Settings::get_client_settings(),
 			],
 		];
+	}
+
+	public static function get_additional_template_paths() {
+		return Collection::make( [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+			'navigator',
+			'hotkeys',
+		] )->map( function ( $template ) {
+			return ELEMENTOR_PATH . "includes/editor-templates/{$template}.php";
+		} )->all();
 	}
 }
