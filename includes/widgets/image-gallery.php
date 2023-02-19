@@ -348,7 +348,7 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => 'px',
 				],
