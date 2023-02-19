@@ -7,7 +7,7 @@ inputs:
     description: 'The channel to bump the version to (cloud, beta).'
   CLEAN_PACKAGE_VERSION:
     required: true
-    description: 'The current package version.'
+    description: 'The current package version, e.g. "3.11.7".'
 
 runs:
   using: "composite"
