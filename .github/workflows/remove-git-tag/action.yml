@@ -1,5 +1,5 @@
-name: Create Git Tag
-description: Generate a new Git version and push it to the remote repository.
+name: Remove Git Tag
+description: Remove a Git tag from the remote repository.
 
 inputs:
   MAINTAIN_USERNAME:
@@ -8,9 +8,9 @@ inputs:
   MAINTAIN_EMAIL:
     description: 'The email of the user that will create the tag.'
     required: true
-  MESSAGE:
+  TAG_NAME:
     description: 'The message of the tag.'
-    required: false
+    required: true
 
 runs:
   using: "composite"
@@ -19,6 +19,4 @@ runs:
       run: |
         git config user.name ${{ inputs.MAINTAIN_USERNAME }}
         git config user.email ${{ inputs.MAINTAIN_EMAIL }}
-        echo "Create tag v${{ inputs.MESSAGE }}"
-        git tag -f "${{ inputs.MESSAGE }}"
-        git push origin "${{ inputs.MESSAGE }}" --force
+        git push origin :refs/tags/${{ inputs.TAG_NAME }}
