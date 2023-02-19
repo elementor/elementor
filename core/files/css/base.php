@@ -755,6 +755,10 @@ abstract class Base extends Base_File {
 			$value = $control['selectors_dictionary'][ $value ];
 		}
 
+		if ( isset( $control['units_dictionary'][ $value ] ) && is_array( $value ) && isset( $value['unit'] ) ) {
+			$value['unit'] = $control['units_dictionary'][ $value ];
+		}
+
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
 			return null;
 		}

@@ -247,6 +247,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			value = control.selectors_dictionary[ value ] || value;
 		}
 
+		if ( control.units_dictionary && Array.isArray( value ) && value.unit ) {
+			value.unit = control.units_dictionary[ value ] || value;
+		}
+
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {
 			return;
 		}
