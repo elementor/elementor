@@ -62,18 +62,22 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_add_feature__with_tags() {
 		// Arrange.
 		$test_feature_data__with_tag1 = [
+			'name' => 'test_feature_with_tag1',
 			'tag' => 'First tag',
 		];
 
 		$test_feature_data__with_tag2 = [
+			'name' => 'test_feature_with_tag2',
 			'tag' => 'Second tag, Third tag',
 		];
 
 		$test_feature_data__with_tag3 = [
+			'name' => 'test_feature_with_tag3',
 			'tag' => 'Second tag, Third tag,',
 		];
 
 		$test_feature_data__with_tag4 = [
+			'name' => 'test_feature_with_tag4',
 			'tag' => [
 				'Second tag',
 				'Third tag',
@@ -81,6 +85,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 
 		$test_feature_data__with_tags1 = [
+			'name' => 'test_feature_data__with_tags1',
 			'tag' => [
 				'Second tag',
 				'Third tag',
@@ -88,6 +93,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 
 		$test_feature_data__with_tags2 = [
+			'name' => 'test_feature_data__with_tags2',
 			'tag' => [
 				[
 					'type' => 'default',
@@ -101,6 +107,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 
 		$test_feature_data__with_tags3 = [
+			'name' => 'test_feature_data__with_tags3',
 			'tag' => 'First tag',
 			'tags' => [
 				[
