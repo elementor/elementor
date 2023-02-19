@@ -6,6 +6,7 @@ import {
 	RouteEventDescriptor,
 	WindowEventDescriptor,
 } from './types';
+import { isReady, setReady } from './is-ready';
 
 const callbacksByEvent = new Map<EventDescriptor['name'], ListenerCallback[]>();
 let abortController = new AbortController();
@@ -43,6 +44,7 @@ export function listenTo(
 export function flushListeners() {
 	abortController.abort();
 	callbacksByEvent.clear();
+	setReady( false );
 
 	abortController = new AbortController();
 }
@@ -109,6 +111,10 @@ function addListener( event: EventDescriptor['name'] ) {
 
 function makeEventHandler( event: EventDescriptor['name'] ): EventListener {
 	return ( e ) => {
+		if ( ! isReady() ) {
+			return;
+		}
+
 		const normalizedEvent = normalizeEvent( e );
 
 		callbacksByEvent.get( event )?.forEach( ( callback ) => {

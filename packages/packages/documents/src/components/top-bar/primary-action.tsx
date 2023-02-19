@@ -41,9 +41,9 @@ function getLabel( document: Document ) {
 }
 
 function isEnabled( document: Document ) {
-	if ( document.type === 'kit' ) {
+	if ( document.type.value === 'kit' ) {
 		return false;
 	}
 
-	return document.isDirty || document.status === 'draft';
+	return document.isDirty || document.status.value === 'draft';
 }
