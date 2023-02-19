@@ -47,7 +47,6 @@ jobs:
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
-          REPO_NAME: ${{ github.event.repository.name }}
           CLEAN_PACKAGE_VERSION: ${{ env.PACKAGE_VERSION_CLEAN }}
           CHANNEL: ${{ github.event.inputs.channel }}
       - name: Install Dependencies
