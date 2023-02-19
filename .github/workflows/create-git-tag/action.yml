@@ -19,3 +19,4 @@ runs:
             echo "Create tag v${PACKAGE_VERSION}"
             git tag "v${PACKAGE_VERSION}"
             git push origin "v${PACKAGE_VERSION}"
+      
