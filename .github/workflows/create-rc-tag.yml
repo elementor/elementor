@@ -2,7 +2,6 @@ name: Create Rc Tag
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, MAINTAIN_TOKEN, and a var: SLACK_TAG_CHANNELS.
 
 env:
-  TYPE: 'rc'
   CHANGELOG_FILE: 'temp-changelog.txt'
 
 on:
@@ -45,7 +44,6 @@ jobs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
-          TYPE: ${{ env.TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
