@@ -1018,7 +1018,7 @@ class WP_Import extends \WP_Importer {
 		$file_name = basename( parse_url( $url, PHP_URL_PATH ) );
 
 		if ( ! $file_name ) {
-			$file_name = md5( $url );
+			$file_name = sha256( $url );
 		}
 
 		$tmp_file_name = wp_tempnam( $file_name );
