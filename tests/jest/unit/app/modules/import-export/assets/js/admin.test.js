@@ -10,7 +10,9 @@ describe( 'Import Export Admin Test', () => {
 	} );
 
 	afterEach( () => {
+		// Cleanup
 		delete window.elementorAppConfig;
+		window.document.body.innerHTML = '';
 	} );
 
 	require( 'elementor/app/modules/import-export/assets/js/admin.js' );
@@ -77,9 +79,6 @@ describe( 'Import Export Admin Test', () => {
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 2 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Active Kit Name was successfully deleted' );
 		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'You\'re ready to apply a new Kit!' );
-
-		// Cleanup
-		window.document.body = '';
 	} );
 
 	it( 'should check if the non-referred "kit deleted" dialog is shown when not referred from Kit library', () => {
