@@ -48,6 +48,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'mutable' => true,
 			'hidden' => false,
 			'generator_tag' => false,
+			'tags' => [],
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
