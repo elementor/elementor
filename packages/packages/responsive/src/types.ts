@@ -6,8 +6,8 @@ export type BreakpointSize = number;
 
 export type Breakpoint = {
 	id: BreakpointId,
-	size?: BreakpointSize,
-	type?: 'from' | 'up-to',
+	width?: BreakpointSize,
+	type?: 'min-width' | 'max-width',
 }
 
 export type Slice = ReturnType<typeof createSlice>;

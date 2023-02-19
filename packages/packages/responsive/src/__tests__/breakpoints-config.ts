@@ -40,33 +40,33 @@ export function getNormalizedBreakpointsConfig(): State['entities'] {
 	return {
 		mobile: {
 			id: 'mobile',
-			size: 767,
-			type: 'up-to',
+			width: 767,
+			type: 'max-width',
 		},
 		mobile_extra: {
 			id: 'mobile_extra',
-			size: 880,
-			type: 'up-to',
+			width: 880,
+			type: 'max-width',
 		},
 		tablet: {
 			id: 'tablet',
-			size: 1024,
-			type: 'up-to',
+			width: 1024,
+			type: 'max-width',
 		},
 		tablet_extra: {
 			id: 'tablet_extra',
-			size: 1200,
-			type: 'up-to',
+			width: 1200,
+			type: 'max-width',
 		},
 		laptop: {
 			id: 'laptop',
-			size: 1366,
-			type: 'up-to',
+			width: 1366,
+			type: 'max-width',
 		},
 		widescreen: {
 			id: 'widescreen',
-			size: 2400,
-			type: 'from',
+			width: 2400,
+			type: 'min-width',
 		},
 		desktop: {
 			id: 'desktop',
@@ -78,36 +78,36 @@ export function getSortedBreakpoints(): Breakpoint[] {
 	return [
 		{
 			id: 'widescreen',
-			size: 2400,
-			type: 'from',
+			width: 2400,
+			type: 'min-width',
 		},
 		{
 			id: 'desktop',
 		},
 		{
 			id: 'laptop',
-			size: 1366,
-			type: 'up-to',
+			width: 1366,
+			type: 'max-width',
 		},
 		{
 			id: 'tablet_extra',
-			size: 1200,
-			type: 'up-to',
+			width: 1200,
+			type: 'max-width',
 		},
 		{
 			id: 'tablet',
-			size: 1024,
-			type: 'up-to',
+			width: 1024,
+			type: 'max-width',
 		},
 		{
 			id: 'mobile_extra',
-			size: 880,
-			type: 'up-to',
+			width: 880,
+			type: 'max-width',
 		},
 		{
 			id: 'mobile',
-			size: 767,
-			type: 'up-to',
+			width: 767,
+			type: 'max-width',
 		},
 	];
 }

@@ -47,8 +47,8 @@ function getBreakpoints() {
 		.map( ( [ id, { value, direction } ] ) => {
 			return {
 				id,
-				size: value,
-				type: direction === 'min' ? 'from' : 'up-to',
+				width: value,
+				type: direction === 'min' ? 'min-width' : 'max-width',
 			} as Breakpoint;
 		} );
 

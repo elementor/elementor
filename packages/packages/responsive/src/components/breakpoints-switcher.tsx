@@ -28,12 +28,12 @@ export default function BreakpointsSwitcher() {
 			},
 		} }>
 			{
-				all.map( ( { id, type, size } ) => {
+				all.map( ( { id, type, width } ) => {
 					const { label, icon: Icon } = breakpointsUiMap[ id ];
 
 					const title = labelsMap[ type ?? 'default' ]
 						.replace( '%s', label )
-						.replace( '%d', size?.toString() ?? '' );
+						.replace( '%d', width?.toString() ?? '' );
 
 					return (
 						<Tab value={ id }
@@ -96,8 +96,8 @@ const breakpointsUiMap = {
 const labelsMap = {
 	default: '%s',
 	// translators: %s: Breakpoint label, %d: Breakpoint size.
-	from: __( '%s (%dpx and up)', 'elementor' ),
+	'min-width': __( '%s (%dpx and up)', 'elementor' ),
 
 	// translators: %s: Breakpoint label, %d: Breakpoint size.
-	'up-to': __( '%s (up to %dpx)', 'elementor' ),
+	'max-width': __( '%s (up to %dpx)', 'elementor' ),
 } as const;

@@ -44,8 +44,8 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 			},
 			{
 				id: 'tablet',
-				type: 'up-to',
-				size: 1024,
+				type: 'max-width',
+				width: 1024,
 			},
 		];
 

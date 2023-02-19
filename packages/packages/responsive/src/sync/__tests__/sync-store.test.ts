@@ -34,8 +34,8 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( {
 			id: 'mobile',
-			size: 767,
-			type: 'up-to',
+			width: 767,
+			type: 'max-width',
 		} );
 	} );
 

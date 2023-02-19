@@ -17,21 +17,21 @@ export const selectActiveBreakpoint = createSelector(
 export const selectSortedBreakpoints = createSelector(
 	selectEntities,
 	( entities ) => {
-		const bySize = ( a: Breakpoint, b: Breakpoint ) => {
-			return ( a.size && b.size ) ? b.size - a.size : 0;
+		const byWidth = ( a: Breakpoint, b: Breakpoint ) => {
+			return ( a.width && b.width ) ? b.width - a.width : 0;
 		};
 
 		const all = Object.values( entities );
 
-		const defaults = all.filter( ( breakpoint ) => ! breakpoint.size ); // AKA Desktop.
-		const from = all.filter( ( breakpoint ) => breakpoint.type === 'from' );
-		const upTo = all.filter( ( breakpoint ) => breakpoint.type === 'up-to' );
+		const defaults = all.filter( ( breakpoint ) => ! breakpoint.width ); // AKA Desktop.
+		const minWidth = all.filter( ( breakpoint ) => breakpoint.type === 'min-width' );
+		const maxWidth = all.filter( ( breakpoint ) => breakpoint.type === 'max-width' );
 
 		// Sort by size, big to small.
 		return [
-			...from.sort( bySize ),
+			...minWidth.sort( byWidth ),
 			...defaults,
-			...upTo.sort( bySize ),
+			...maxWidth.sort( byWidth ),
 		];
 	},
 );
