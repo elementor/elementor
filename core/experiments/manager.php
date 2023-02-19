@@ -170,7 +170,7 @@ class Manager extends Base_Object {
 		}
 
 		if ( is_array( $experimental_data['tag'] ) ) {
-			$experimental_data['tags'] = array_merge( $experimental_data['tags'], $experimental_data['tag'] );
+			$experimental_data['tags'] = array_merge( $experimental_data['tag'], $experimental_data['tags'] );
 		}
 
 		return $experimental_data;

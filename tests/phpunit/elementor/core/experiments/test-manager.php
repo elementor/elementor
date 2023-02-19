@@ -59,6 +59,173 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( null, $re_added_feature );
 	}
 
+	public function test_add_feature__with_tags() {
+		// Arrange.
+		$test_feature_data__with_tag1 = [
+			'tag' => 'First tag',
+		];
+
+		$test_feature_data__with_tag2 = [
+			'tag' => 'Second tag, Third tag',
+		];
+
+		$test_feature_data__with_tag3 = [
+			'tag' => 'Second tag, Third tag,',
+		];
+
+		$test_feature_data__with_tag4 = [
+			'tag' => [
+				'Second tag',
+				'Third tag',
+			],
+		];
+
+		$test_feature_data__with_tags1 = [
+			'tag' => [
+				'Second tag',
+				'Third tag',
+			],
+		];
+
+		$test_feature_data__with_tags2 = [
+			'tag' => [
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'secondary',
+					'label' => 'Third tag',
+				],
+			],
+		];
+
+		$test_feature_data__with_tags3 = [
+			'tag' => 'First tag',
+			'tags' => [
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'secondary',
+					'label' => 'Third tag',
+				],
+			],
+		];
+
+		$test_set1 = [
+			'tag' => [
+				[
+					'type' => 'default',
+					'label' => 'First tag',
+				]
+			],
+			'tags' => [
+				[
+					'type' => 'default',
+					'label' => 'First tag',
+				]
+			],
+		];
+
+		$test_set2 = [
+			'tag' => [
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'default',
+					'label' => 'Third tag',
+				],
+			],
+			'tags' => [
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'default',
+					'label' => 'Third tag',
+				],
+			],
+		];
+
+		$test_set3 = [
+			'tags' => [
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'secondary',
+					'label' => 'Third tag',
+				],
+			],
+		];
+
+		$test_set4 = [
+			'tag' => [
+				[
+					'type' => 'default',
+					'label' => 'First tag',
+				],
+			],
+			'tags' => [
+				[
+					'type' => 'default',
+					'label' => 'First tag',
+				],
+				[
+					'type' => 'default',
+					'label' => 'Second tag',
+				],
+				[
+					'type' => 'secondary',
+					'label' => 'Third tag',
+				],
+			],
+		];
+
+		// Act.
+		$new_feature_with_tag1 = $this->add_test_feature( $test_feature_data__with_tag1 );
+		$new_feature_with_tag2 = $this->add_test_feature( $test_feature_data__with_tag2 );
+		$new_feature_with_tag3 = $this->add_test_feature( $test_feature_data__with_tag3 );
+		$new_feature_with_tag4 = $this->add_test_feature( $test_feature_data__with_tag4 );
+
+		$new_feature_with_tags1 = $this->add_test_feature( $test_feature_data__with_tags1 );
+		$new_feature_with_tags2 = $this->add_test_feature( $test_feature_data__with_tags2 );
+
+		$new_feature_with_tags3 = $this->add_test_feature( $test_feature_data__with_tags3 );
+
+		// Assert.
+		// Passing one tag to "tag" as a string:
+		$this->assertEquals( $test_set1['tag'], $new_feature_with_tag1['tag'] );
+		$this->assertEquals( $test_set1['tags'], $new_feature_with_tag1['tags'] );
+
+		// Passing two tags to "tag" as a comma separated string:
+		$this->assertEquals( $test_set2['tag'], $new_feature_with_tag2['tag'] );
+		$this->assertEquals( $test_set2['tags'], $new_feature_with_tag2['tags'] );
+
+		// Passing two tags to "tag" as a comma separated string with a trailing comma:
+		$this->assertEquals( $test_set2['tags'], $new_feature_with_tag3['tags'] );
+
+		// Passing two tags to "tag" as an incorrectly structured array:
+		$this->assertEmpty( $new_feature_with_tag4['tag'] );
+		$this->assertEmpty( $new_feature_with_tag4['tags'] );
+
+		// Passing two tags to "tags" as an incorrectly structured array:
+		$this->assertEmpty( $new_feature_with_tags1['tags'] );
+
+		// Passing two tags to "tags" as a correctly structured array:
+		$this->assertEquals( $test_set3['tags'], $new_feature_with_tags2['tags'] );
+
+		// Passing tags to both "tag" and "tags":
+		$this->assertEquals( $test_set4['tag'], $new_feature_with_tags3['tag'] );
+		$this->assertEquals( $test_set4['tags'], $new_feature_with_tags3['tags'] );
+	}
+
 	public function test_add_feature__ensure_wrap_core_dependency() {
 		// Arrange.
 		$test_core_feature = [
