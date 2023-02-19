@@ -2,7 +2,6 @@ name: Create Rc Tag
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, MAINTAIN_TOKEN, and a var: SLACK_TAG_CHANNELS.
 
 env:
-  TYPE: 'rc'
   CHANGELOG_FILE: 'temp-changelog.txt'
 
 on:
@@ -45,11 +44,9 @@ jobs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
-          TYPE: ${{ env.TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
-          REPO_NAME: ${{ github.event.repository.name }}
           CLEAN_PACKAGE_VERSION: ${{ env.PACKAGE_VERSION_CLEAN }}
           CHANNEL: ${{ github.event.inputs.channel }}
       - name: Install Dependencies
@@ -67,12 +64,6 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
-      - name: Create Git tag
-        uses : ./.github/workflows/create-git-tag
-        with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: v${{ env.PACKAGE_VERSION }}
       - name: Get Previous Release
         uses : ./.github/workflows/get-previous-release
         with:
@@ -82,18 +73,9 @@ jobs:
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
-      - name: Set empty changelog if no changes
-        run: |
-            # upload-artifact action fails if the file size is 0.
-            
-            # Check the file size
-            size=$(wc -c < "${{ env.CHANGELOG_FILE }}")
-            if [ $size -eq 0 ]; then
-              echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
-            fi
-            
+          GENERATE_EMPTY_CHANGELOG: true
       - name: Upload changelog to GitHub actions artifact
         uses: actions/upload-artifact@v3
         with:
