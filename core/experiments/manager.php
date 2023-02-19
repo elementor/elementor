@@ -162,9 +162,11 @@ class Manager extends Base_Object {
 	 */
 	private function unify_feature_tags( array $experimental_data ) : array {
 		foreach ( [ 'tag', 'tags' ] as $key ) {
-			if ( ! empty( $experimental_data[ $key ] ) ) {
-				$experimental_data[ $key ] = $this->format_feature_tags( $experimental_data[ $key ] );
+			if ( empty( $experimental_data[ $key ] ) ) {
+				continue;
 			}
+
+			$experimental_data[ $key ] = $this->format_feature_tags( $experimental_data[ $key ] );
 		}
 
 		if ( is_array( $experimental_data['tag'] ) ) {
