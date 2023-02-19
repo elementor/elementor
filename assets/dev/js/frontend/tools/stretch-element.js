@@ -61,9 +61,20 @@ module.exports = elementorModules.ViewModule.extend( {
 			correctOffset = -correctOffset;
 		}
 
+		// Consider margin
+		if ( settings.margin ) {
+			correctOffset += settings.margin;
+		}
+
 		var css = {};
 
-		css.width = containerWidth + 'px';
+		let width = containerWidth;
+
+		if ( settings.margin ) {
+			width = width - ( settings.margin * 2 );
+		}
+
+		css.width = width + 'px';
 
 		css[ settings.direction ] = correctOffset + 'px';
 
