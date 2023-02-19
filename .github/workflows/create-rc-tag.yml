@@ -76,7 +76,7 @@ jobs:
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          HEAD_BRANCH_NAME: ${{ GITHUB_REF }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
       - name: Upload changelog to GitHub actions artifact
