@@ -1,15 +1,22 @@
 describe( 'Import Export Admin Test', () => {
-	window.elementorAppConfig = {
-		'import-export': {
-			lastImportedSession: {
-				kit_title: 'Kit Title',
+	beforeEach( () => {
+		window.elementorAppConfig = {
+			'import-export': {
+				lastImportedSession: {
+					kit_title: 'Kit Title',
+				},
 			},
-		},
-	};
+		};
+	} );
+
+	afterEach( () => {
+		delete window.elementorAppConfig;
+	} );
+
 
 	require( 'elementor/app/modules/import-export/assets/js/admin.js' );
 
-	it( 'should check if "kit deleted" dialog is not shown without cache', () => {
+	it( 'should check if "kit deleted" dialog is not shown without confirming a delete when on the admin page', () => {
 		// Arrange
 		window.elementorCommon = {
 			dialogsManager: {
@@ -28,7 +35,7 @@ describe( 'Import Export Admin Test', () => {
 		expect( window.elementorCommon.dialogsManager.createWidget ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should check if the referred "kit deleted" dialog is shown', () => {
+	it( 'should check if the referred "kit deleted" dialog is shown when referred from Kit library', () => {
 		// Arrange
 		window.elementorCommon = {
 			dialogsManager: {
@@ -71,9 +78,12 @@ describe( 'Import Export Admin Test', () => {
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 2 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Active Kit Name was successfully deleted' );
 		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'You\'re ready to apply a new Kit!' );
+
+		// Cleanup
+		window.document.body = '';
 	} );
 
-	it( 'should check if the non-referred "kit deleted" dialog is shown', () => {
+	it( 'should check if the non-referred "kit deleted" dialog is shown when not referred from Kit library', () => {
 		// Arrange
 		window.elementorCommon = {
 			dialogsManager: {
