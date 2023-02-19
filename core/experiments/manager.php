@@ -761,7 +761,7 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	private function get_feature_actual_state( array $feature ) {
-		if ( self::STATE_DEFAULT !== $feature['state'] ) {
+		if ( ! empty( $feature['state'] ) && self::STATE_DEFAULT !== $feature['state'] ) {
 			return $feature['state'];
 		}
 

@@ -1006,17 +1006,17 @@
 											"title": "Tags of the experiment",
 											"type": "array",
 											"items": {
-												"$id": "#/usages/settings/experiments/$experiment/tags/$tag",
+												"$id": "#/usages/settings/experiments/$experiment/tags/tag",
 												"title": "The tag schema",
 												"type": "array",
 												"properties": {
 													"type": {
-														"$id": "#/usages/settings/experiments/$experiment/tags/$tag/type",
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/type",
 														"type": "string",
 														"title": "The tag type"
 													},
 													"label": {
-														"$id": "#/usages/settings/experiments/$experiment/tags/$tag/label",
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/label",
 														"type": "string",
 														"title": "The tag label"
 													}
@@ -1081,18 +1081,15 @@
 								},
 								"a11y_improvements": {
 									"default": "active",
-									"state": "default",
-								  	"tags": []
+									"state": "default"
 								},
 								"landing-pages": {
 									"default": "active",
-									"state": "default",
-								  	"tags": []
+									"state": "default"
 								},
 								"form-submissions": {
 									"default": "active",
-									"state": "default",
-								  	"tags": []
+									"state": "default"
 								}
 							}
 						}
