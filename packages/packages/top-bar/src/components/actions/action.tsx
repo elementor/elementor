@@ -18,9 +18,10 @@ export default function Action( { icon: Icon, title, ...props }: Props ) {
 			<Icon />
 		</ToolbarMenuItem>
 	) : (
-		<PopoverMenuItem { ...props }>
-			<Icon />
-			{ title }
-		</PopoverMenuItem>
+		<PopoverMenuItem
+			{ ...props }
+			text={ title }
+			icon={ <Icon /> }
+		/>
 	);
 }
