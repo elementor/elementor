@@ -286,7 +286,7 @@ export default class NestedTabs extends Base {
 	changeActiveTab( tabIndex, fromUser = false ) {
 		// `document/repeater/select` is used only in edit mod, and only when its not internal call,
 		// in other words only in editor and when user triggered the change.
-		if ( fromUser && this.isEdit ) {
+		if ( fromUser && this.isEdit && this.isElementInTheCurrentDocument() ) {
 			return window.top.$e.run( 'document/repeater/select', {
 				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
 				index: parseInt( tabIndex ),
