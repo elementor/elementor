@@ -17,6 +17,8 @@ runs:
   steps:
     - shell: bash
       run: |
+
+            echo "${{ github.event.repository.name }} : ${{ github.event.repository.name }}"
             # This command retrieves the latest tag that matches the specified channel and package version, 
             # and extracts the version number from the tag name using awk.
             CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep "${{ inputs.CHANNEL }}" | grep "${{ inputs.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
