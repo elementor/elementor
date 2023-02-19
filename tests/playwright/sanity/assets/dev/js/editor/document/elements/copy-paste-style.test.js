@@ -24,7 +24,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 
 	await editor.pasteStyleElement( heading2 );
 
-	const heading2Title = await editor.getFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
+	const heading2Title = await editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 
 	// Assert.
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );

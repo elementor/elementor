@@ -52,7 +52,7 @@ test.describe( 'Container tests', () => {
 
 		// Assert.
 		// Test that the image is between the heading & button.
-		expect( elBeforeButton ).toBe( elAfterHeading );
+		expect( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
@@ -278,7 +278,7 @@ test.describe( 'Container tests', () => {
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
+		await editor.getPreviewFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
@@ -375,7 +375,7 @@ test.describe( 'Container tests', () => {
 		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
 			editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getFrame().locator( '.elementor-element-' + containerId );
+			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
@@ -456,11 +456,11 @@ test.describe( 'Container tests', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
+			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
-
 			expect( await container.screenshot( {
 				type: 'jpeg',
-				quality: 90,
+				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
