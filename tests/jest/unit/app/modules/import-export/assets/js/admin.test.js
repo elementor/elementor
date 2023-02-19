@@ -13,7 +13,6 @@ describe( 'Import Export Admin Test', () => {
 		delete window.elementorAppConfig;
 	} );
 
-
 	require( 'elementor/app/modules/import-export/assets/js/admin.js' );
 
 	it( 'should check if "kit deleted" dialog is not shown without confirming a delete when on the admin page', () => {
