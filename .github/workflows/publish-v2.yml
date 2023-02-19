@@ -49,12 +49,6 @@ jobs:
         with:
           SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           DESTINATION_PATH: /tmp/${{ env.RELEASE_FILENAME }}.zip
-      - name: Create Git tag
-        uses : ./.github/workflows/create-git-tag
-        with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: ${{ env.RELEASE_NAME }}
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
