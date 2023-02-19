@@ -15,6 +15,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		'elements-panel',
 		'responsive',
 		'structure',
+		'theme-builder',
 		'top-bar',
 	];
 
