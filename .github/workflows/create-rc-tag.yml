@@ -67,12 +67,6 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
-      - name: Create Git tag
-        uses : ./.github/workflows/create-git-tag
-        with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
-          MESSAGE: v${{ env.PACKAGE_VERSION }}
       - name: Get Previous Release
         uses : ./.github/workflows/get-previous-release
         with:
