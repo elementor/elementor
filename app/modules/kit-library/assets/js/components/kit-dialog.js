@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import KitAlreadyAppliedDialog from './kit-already-applied-dialog';
 import ApplyKitDialog from './apply-kit-dialog';
 

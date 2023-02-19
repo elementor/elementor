@@ -18,7 +18,7 @@ class Admin {
 	 *
 	 * @type {Element}
 	 */
-	revertBtn;
+	revertButton;
 
 	/**
 	 * Name of the kit currently active (last imported)
@@ -29,10 +29,10 @@ class Admin {
 
 	constructor() {
 		this.activeKitName = this.getActiveKitName();
-		this.revertBtn = document.getElementById( 'elementor-import-export__revert_kit' );
+		this.revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
 
-		if ( this.revertBtn ) {
-			this.revertBtn.addEventListener( 'click', this.revertBtnOnClick.bind( this ) );
+		if ( this.revertButton ) {
+			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
 			this.maybeAddRevertBtnMargin();
 		}
 
@@ -43,12 +43,12 @@ class Admin {
 	 * Add bottom margin to revert btn if referred from Kit library
 	 */
 	maybeAddRevertBtnMargin() {
-		const referrerKitId = new URLSearchParams( this.revertBtn.href ).get( 'referrer_kit' );
+		const referrerKitId = new URLSearchParams( this.revertButton.href ).get( 'referrer_kit' );
 		if ( ! referrerKitId ) {
 			return;
 		}
 
-		this.revertBtn.style.marginBottom = this.calculateMargin();
+		this.revertButton.style.marginBottom = this.calculateMargin();
 		this.scrollToBottom();
 	}
 
@@ -61,7 +61,7 @@ class Admin {
 		const adminBar = document.getElementById( 'wpadminbar' );
 		const adminBarHeight = adminBar ? adminBar.offsetHeight : 0;
 
-		const revertKitHeight = this.revertBtn.parentElement.offsetHeight;
+		const revertKitHeight = this.revertButton.parentElement.offsetHeight;
 
 		return (
 			document.body.clientHeight -
@@ -86,12 +86,12 @@ class Admin {
 	 *
 	 * @param {Event} event
 	 */
-	revertBtnOnClick( event ) {
+	onRevertButtonClick( event ) {
 		event.preventDefault();
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
-			message: __( 'Removing ', 'elementor' ) + this.activeKitName + __( ' will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ),
+			message: __( 'Removing %s will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ).replace( '%s', this.activeKitName ),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
@@ -101,11 +101,11 @@ class Admin {
 	}
 
 	onRevertConfirm() {
-		const referrerKitId = new URLSearchParams( this.revertBtn.href ).get( 'referrer_kit' );
+		const referrerKitId = new URLSearchParams( this.revertButton.href ).get( 'referrer_kit' );
 
 		this.saveToCache( referrerKitId ?? '' );
 
-		location.href = this.revertBtn.href;
+		location.href = this.revertButton.href;
 	}
 
 	maybeShowReferrerKitDialog() {
@@ -153,7 +153,7 @@ class Admin {
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-revert-kit-deleted-dialog',
-			headerMessage: activeKitName + __( ' was successfully deleted', 'elementor' ),
+			headerMessage: __( '%s was successfully deleted', 'elementor' ).replace( '%s', activeKitName ),
 			message: options.message,
 			strings: {
 				confirm: options.strings.confirm,
