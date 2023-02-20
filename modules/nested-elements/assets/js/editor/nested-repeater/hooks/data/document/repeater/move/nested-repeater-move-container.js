@@ -10,9 +10,9 @@ export class NestedRepeaterMoveContainer extends Base {
 		return 'document/repeater/move';
 	}
 
-	apply( { container, sourceIndex, targetIndex } ) {
+	apply( { container, sourceIndex, targetIndex, options } ) {
 		$e.run( 'document/elements/move', {
-			container: findChildContainerOrFail( container, sourceIndex ),
+			container: findChildContainerOrFail( container, sourceIndex, options.containerModelCid ),
 			target: container,
 			options: {
 				at: targetIndex,

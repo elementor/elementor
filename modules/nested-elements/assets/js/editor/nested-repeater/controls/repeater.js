@@ -1,4 +1,5 @@
 import { extractNestedItemTitle } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { findChildContainerOrFail } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 export default class Repeater extends elementor.modules.controls.Repeater {
 	className() {
@@ -24,7 +25,13 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	onChildviewClickDuplicate( childView ) {
-		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
+		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists(
+			this.container,
+			childView._index,
+			childView.model.attributes,
+			this._parent.model.config.child_container_control_key
+		);
+
 		const renderAfterInsert = ! containerModelCid;
 
 		$e.run( 'document/repeater/duplicate', {
@@ -42,7 +49,12 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 
 	getChildViewRemoveConfig( childView ) {
 		const config = super.getChildViewRemoveConfig( childView );
-		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
+		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists(
+			this.container,
+			childView._index,
+			childView.model.attributes,
+			this._parent.model.config.child_container_control_key
+		);
 
 		config.options = {
 			containerModelCid,
@@ -63,22 +75,50 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		} );
 	}
 
-	getRepeaterItemContainerModelCidIfExists( childView ) {
-		if ( this.itemDoesNotNeedChildContainer( childView ) ) {
+	getRepeaterItemContainerModelCidIfExists( container, index, attribute_path, control_key ) {
+		if ( this.itemDoesNotNeedChildContainer( attribute_path, control_key ) ) {
 			return false;
 		}
 
-		const contentIndex = childView._index + 1;
-		const container = this.container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
+		const contentIndex = index + 1;
+		const childContainer = container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
 
-		if ( ! container ) {
+		if ( ! childContainer ) {
 			return false;
 		}
 
-		return container.model.cid;
+		return childContainer.model.cid;
 	}
 
-	itemDoesNotNeedChildContainer( childView ) {
-		return 'yes' !== childView.model.attributes[ this._parent.model.config.child_container_control_key ];
+	itemDoesNotNeedChildContainer( attribute_path, control_key ) {
+		if ( undefined === control_key ) {
+			return true;
+		}
+		return 'yes' !== attribute_path[ control_key ];
+	}
+
+	onSortUpdate( event, ui ) {
+		const oldIndex = ui.item.data( 'oldIndex' ),
+			newIndex = ui.item.index();
+
+		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists(
+			this.options.container,
+			oldIndex,
+			this.options.container.panel.container.model.attributes.settings.attributes.menu_items?.models[ oldIndex ].attributes,
+			this.options.container.args.model.config.child_container_control_key
+		);
+
+		const currentContainer = this.options.container;
+
+		$e.run( 'document/repeater/move', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			sourceIndex: oldIndex,
+			targetIndex: newIndex,
+			options: {
+				containerModelCid,
+				test: currentContainer
+			},
+		} );
 	}
 }
