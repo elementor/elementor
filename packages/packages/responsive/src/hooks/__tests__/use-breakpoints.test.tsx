@@ -5,7 +5,6 @@ import useBreakpoints from '../use-breakpoints';
 import { runCommand } from '@elementor/v1-adapters';
 import { renderHook } from '@testing-library/react-hooks';
 import { createStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
-import { getNormalizedBreakpointsConfig, getSortedBreakpoints } from '../../__tests__/breakpoints-config';
 
 jest.mock( '@elementor/v1-adapters', () => ( {
 	runCommand: jest.fn(),
@@ -22,43 +21,47 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 
 	it( 'should return all breakpoints sorted by size', () => {
 		// Arrange.
-		const entities = Object.values( getNormalizedBreakpointsConfig() );
-
 		dispatch( slice.actions.init( {
 			activeId: null,
-			entities,
+			entities: [
+				{ id: 'tablet', width: 1024, type: 'max-width' },
+				{ id: 'mobile', width: 767, type: 'max-width' },
+				{ id: 'widescreen', width: 2400, type: 'min-width' },
+				{ id: 'desktop' },
+			],
 		} ) );
 
 		// Act.
 		const { result } = renderHookWithStore( () => useBreakpoints(), store );
 
 		// Assert.
-		expect( result.current.all ).toEqual( getSortedBreakpoints() );
+		expect( result.current.all ).toEqual( [
+			{ id: 'widescreen', width: 2400, type: 'min-width' },
+			{ id: 'desktop' },
+			{ id: 'tablet', width: 1024, type: 'max-width' },
+			{ id: 'mobile', width: 767, type: 'max-width' },
+		] );
 	} );
 
 	it( 'should return the active breakpoint', () => {
 		// Arrange.
-		const entities: Breakpoint[] = [
-			{
-				id: 'desktop',
-			},
-			{
-				id: 'tablet',
-				type: 'max-width',
-				width: 1024,
-			},
-		];
-
 		dispatch( slice.actions.init( {
 			activeId: 'tablet',
-			entities,
+			entities: [
+				{ id: 'desktop' },
+				{ id: 'tablet', type: 'max-width', width: 1024 },
+			],
 		} ) );
 
 		// Act.
 		const { result } = renderHookWithStore( () => useBreakpoints(), store );
 
 		// Assert.
-		expect( result.current.active ).toEqual( entities[ 1 ] );
+		expect( result.current.active ).toEqual( {
+			id: 'tablet',
+			type: 'max-width',
+			width: 1024,
+		} );
 	} );
 
 	it( 'should activate a breakpoint', () => {
@@ -69,9 +72,9 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 
 		// Assert.
 		expect( jest.mocked( runCommand ) ).toHaveBeenCalledTimes( 1 );
-		expect( jest.mocked( runCommand ) ).toHaveBeenCalledWith( 'panel/change-device-mode', {
-			device: 'tablet',
-		} );
+		expect( jest.mocked( runCommand ) ).toHaveBeenCalledWith(
+			'panel/change-device-mode', { device: 'tablet' }
+		);
 	} );
 } );
 

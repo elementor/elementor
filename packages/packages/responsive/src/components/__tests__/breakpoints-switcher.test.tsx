@@ -1,7 +1,7 @@
+import { Breakpoint } from '../../types';
 import { render } from '@testing-library/react';
 import useBreakpoints from '../../hooks/use-breakpoints';
 import BreakpointsSwitcher from '../breakpoints-switcher';
-import { getSortedBreakpoints } from '../../__tests__/breakpoints-config';
 
 jest.mock( '../../hooks/use-breakpoints', () => jest.fn() );
 
@@ -42,12 +42,20 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 
 	it( 'should render all of the breakpoints', () => {
 		// Arrange.
+		const sortedBreakpoints: Breakpoint[] = [
+			{ id: 'widescreen', width: 2400, type: 'min-width' },
+			{ id: 'desktop' },
+			{ id: 'laptop', width: 1366, type: 'max-width' },
+			{ id: 'tablet_extra', width: 1200, type: 'max-width' },
+			{ id: 'tablet', width: 1024, type: 'max-width' },
+			{ id: 'mobile_extra', width: 880, type: 'max-width' },
+			{ id: 'mobile', width: 767, type: 'max-width' },
+		];
+
 		jest.mocked( useBreakpoints ).mockReturnValue( {
-			active: {
-				id: 'desktop',
-			},
 			activate: jest.fn(),
-			all: getSortedBreakpoints(),
+			all: sortedBreakpoints,
+			active: { id: 'desktop' },
 		} );
 
 		// Act.
@@ -85,12 +93,8 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 				id: 'desktop',
 			},
 			all: [
-				{
-					id: 'desktop',
-				},
-				{
-					id: 'mobile',
-				},
+				{ id: 'mobile' },
+				{ id: 'desktop' },
 			],
 		} );
 
@@ -103,7 +107,6 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 		mobileTab.click();
 
 		// Assert.
-
 		expect( activate ).toHaveBeenCalledWith( 'mobile' );
 	} );
 } );

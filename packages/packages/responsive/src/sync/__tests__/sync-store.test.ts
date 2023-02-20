@@ -3,7 +3,6 @@ import { createSlice } from '../../store';
 import { ExtendedWindow, Slice } from '../../types';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { selectActiveBreakpoint, selectEntities } from '../../store/selectors';
-import { getBreakpointsConfig, getNormalizedBreakpointsConfig } from '../../__tests__/breakpoints-config';
 
 describe( '@elementor/responsive - Sync Store', () => {
 	let store: Store<SliceState<Slice>>;
@@ -21,13 +20,21 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 	it( 'should initialize the store when V1 is ready', () => {
 		// Arrange.
-		mockBreakpointsConfig();
+		mockV1BreakpointsConfig();
 
 		// Act.
 		dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
-		expect( selectEntities( store.getState() ) ).toEqual( getNormalizedBreakpointsConfig() );
+		expect( selectEntities( store.getState() ) ).toEqual( {
+			desktop: { id: 'desktop' },
+			mobile: { id: 'mobile', width: 767, type: 'max-width' },
+			tablet: { id: 'tablet', width: 1024, type: 'max-width' },
+			laptop: { id: 'laptop', width: 1366, type: 'max-width' },
+			widescreen: { id: 'widescreen', width: 2400, type: 'min-width' },
+			mobile_extra: { id: 'mobile_extra', width: 880, type: 'max-width' },
+			tablet_extra: { id: 'tablet_extra', width: 1200, type: 'max-width' },
+		} );
 
 		expect( extendedWindow.elementor.channels.deviceMode.request ).toHaveBeenCalledTimes( 1 );
 		expect( extendedWindow.elementor.channels.deviceMode.request ).toHaveBeenCalledWith( 'currentMode' );
@@ -49,10 +56,13 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 	it( 'should sync the active breakpoint on change', () => {
 		// Arrange.
-		mockBreakpointsConfig();
+		mockV1BreakpointsConfig();
 
 		dispatch( slice.actions.init( {
-			entities: Object.values( getNormalizedBreakpointsConfig() ),
+			entities: [
+				{ id: 'desktop' },
+				{ id: 'mobile', width: 767, type: 'max-width' },
+			],
 			activeId: 'mobile',
 		} ) );
 
@@ -61,20 +71,49 @@ describe( '@elementor/responsive - Sync Store', () => {
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change' ) );
 
 		// Assert.
-		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( {
-			id: 'desktop',
-		} );
+		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop' } );
 	} );
 } );
 
-function mockBreakpointsConfig() {
+function mockV1BreakpointsConfig() {
 	( window as unknown as ExtendedWindow ).elementor = {
 		channels: {
 			deviceMode: { request: jest.fn( () => 'mobile' ) },
 		},
 		config: {
 			responsive: {
-				breakpoints: getBreakpointsConfig(),
+				breakpoints: {
+					mobile: {
+						value: 767,
+						direction: 'max',
+						is_enabled: true,
+					},
+					mobile_extra: {
+						value: 880,
+						direction: 'max',
+						is_enabled: true,
+					},
+					tablet: {
+						value: 1024,
+						direction: 'max',
+						is_enabled: true,
+					},
+					tablet_extra: {
+						value: 1200,
+						direction: 'max',
+						is_enabled: true,
+					},
+					laptop: {
+						value: 1366,
+						direction: 'max',
+						is_enabled: true,
+					},
+					widescreen: {
+						value: 2400,
+						direction: 'min',
+						is_enabled: true,
+					},
+				} as const,
 			},
 		},
 	};
