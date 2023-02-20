@@ -38,9 +38,6 @@ runs:
           fi
         done
 
-
         PREVIOUS_TAG_SHA=$(git rev-parse $latest_tag)
-        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}"
-        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
-
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA} \n tag=${latest_tag}"
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
