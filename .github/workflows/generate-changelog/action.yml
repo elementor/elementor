@@ -10,6 +10,7 @@ inputs:
     required: true
   BASE_TAG_NAME:
     required: true
+  # TODO - Remove this when publish-cloud is removed.
   GENERATE_EMPTY_CHANGELOG:
     required: false
     default: false

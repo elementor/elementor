@@ -6,7 +6,8 @@ inputs:
     required: true
     description: 'The version to inject into the plugin package.json file.'
   UPDATE_VERSIONS_SCRIPT_PATH:
-    required: true
+    required: false
+    default: ""
     description: 'The path to the script that updates the versions in the plugin PHP files.'
   BUILD_SCRIPT_PATH:
     required: true

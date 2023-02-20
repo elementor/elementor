@@ -11,11 +11,14 @@ runs:
   steps:
     - shell: bash
       run: |
-
+        # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
+        # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
         if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
         fi
 
+        # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
+        # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
         if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
            tags=$(git ls-remote --tags | grep "refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$")
         fi
@@ -35,9 +38,9 @@ runs:
           fi
         done
 
-        tag_sha=$(git rev-parse $latest_tag)
-        PREVIOUS_TAG_SHA=$tag_sha
+
+        PREVIOUS_TAG_SHA=$(git rev-parse $latest_tag)
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}"
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
 
-        echo "tag_sha=${tag_sha} \n tag=${latest_tag}"
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA} \n tag=${latest_tag}"

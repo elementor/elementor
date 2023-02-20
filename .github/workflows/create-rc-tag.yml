@@ -57,7 +57,6 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-          UPDATE_VERSIONS_SCRIPT_PATH: ""
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v3
         with:

@@ -4,7 +4,7 @@ description: Bump the version of the current channel, and set it as an environme
 inputs:
   CHANNEL:
     required: true
-    description: 'The channel to bump the version to (cloud, beta).'
+    description: 'The channel to bump the version to (cloud, beta or ga).'
   CLEAN_PACKAGE_VERSION:
     required: true
     description: 'The current package version, e.g. "3.11.7".'
