@@ -91,6 +91,7 @@ class Admin {
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
+			// Translators: %s is the name of the active Kit
 			message: __( 'Removing %s will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ).replace( '%s', this.activeKitName ),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
@@ -153,6 +154,7 @@ class Admin {
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'e-revert-kit-deleted-dialog',
+			// Translators: %s is the name of the active Kit
 			headerMessage: __( '%s was successfully deleted', 'elementor' ).replace( '%s', activeKitName ),
 			message: options.message,
 			strings: {
