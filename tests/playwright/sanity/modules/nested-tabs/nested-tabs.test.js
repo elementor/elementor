@@ -128,6 +128,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
+		await editor.closeNavigatorIfOpen();
+
 		// Set icon size.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
