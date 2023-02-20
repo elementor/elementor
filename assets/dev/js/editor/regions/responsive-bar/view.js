@@ -88,10 +88,6 @@ export default class View extends Marionette.ItemView {
 		this.ui.scaleValue.text( this.scalePercentage );
 	}
 
-	getRoundedScale() {
-		return Math.round( this.scalePercentage / 10 ) * 10;
-	}
-
 	onRender() {
 		this.addTipsyToIconButtons();
 		this.setScalePercentage();
@@ -186,6 +182,10 @@ export default class View extends Marionette.ItemView {
 		};
 
 		elementor.updatePreviewSize( size );
+	}
+
+	getRoundedScale() {
+		return Math.round( this.scalePercentage / 10 ) * 10;
 	}
 
 	onScalePlusButtonClick() {
