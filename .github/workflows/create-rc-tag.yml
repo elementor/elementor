@@ -40,8 +40,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: Get New Package Version
-        uses: ./.github/workflows/get-new-package-version
+      - name: Env Vars Configure
+        uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
       - name: Bump Channel Version
@@ -64,10 +64,6 @@ jobs:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
           path: ${{ env.PLUGIN_ZIP_PATH }}
           if-no-files-found: error
-      - name: Get Previous Release
-        uses : ./.github/workflows/get-previous-release
-        with:
-          CHANNEL: ${{ github.event.inputs.channel }}
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
