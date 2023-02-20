@@ -129,7 +129,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Set icon size.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
@@ -232,7 +233,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		// Act.
 		// Set icon hover color.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
@@ -299,7 +301,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
 		// Act.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Update active tab title.
