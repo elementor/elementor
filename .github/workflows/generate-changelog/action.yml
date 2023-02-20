@@ -15,16 +15,10 @@ inputs:
     required: false
     default: "false"
 
-outputs:
-  prev_version:
-    description: "previous cloud version"
-    value: ${{ steps.generate-changelog.outputs.changelog }}
-
 runs:
   using: "composite"
   steps:
     - shell: bash
-      id : generate-changelog
       env:
         TOKEN: ${{ inputs.TOKEN }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
@@ -43,5 +37,5 @@ runs:
               fi
             fi
             
-            CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
-            echo "::set-output name=changelog::$CHANGELOG"
+            # File content is used by slack-notify action.
+            echo "CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})" >> $GITHUB_ENV

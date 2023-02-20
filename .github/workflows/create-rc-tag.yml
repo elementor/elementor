@@ -57,7 +57,6 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Generate changelog
-        id : generate-changelog
         uses : ./.github/workflows/generate-changelog
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
@@ -82,7 +81,7 @@ jobs:
                 Please test it and report any issues. \n
                 \n\n
                 Changelog:
-                ${{ steps.generate-changelog.outputs.changelog }} \n
+                ${{ env.CHANGELOG }} \n
                 \n\n
                 https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
