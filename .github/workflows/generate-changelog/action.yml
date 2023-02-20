@@ -38,9 +38,4 @@ runs:
             fi
             
             CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
-            
-            # Transform to comma separated string
-            CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }} | tr '\n' ',' | sed 's/,$//')
-            
-            # Used for slack notification
-            echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
+            echo "::set-output name=changelog::$CHANGELOG"
