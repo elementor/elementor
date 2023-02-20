@@ -36,3 +36,7 @@ runs:
                 echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
               fi
             fi
+
+            # Used for slack notification
+            $CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
+            echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
