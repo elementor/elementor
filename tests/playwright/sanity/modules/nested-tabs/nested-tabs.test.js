@@ -233,6 +233,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
+
+		await editor.closeNavigatorIfOpen();
+
 		// Act.
 		// Set icon hover color.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
@@ -301,6 +304,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
+
+		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
