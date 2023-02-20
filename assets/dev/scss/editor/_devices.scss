@@ -8,18 +8,6 @@ body {
 	&.elementor-navigator-docked {
 		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px));
 	}
-
-	&.elementor-device-desktop {
-
-		#elementor-preview {
-			overflow-y: hidden;
-			align-items: flex-start;
-		}
-	}
-
-	&:not(.elementor-device-desktop) & {
-		overflow-y: auto;
-	}
 }
 
 #elementor-preview {
@@ -45,19 +33,17 @@ body {
 #elementor-preview-responsive-wrapper {
 	transform-origin: top center;
 	padding: 20px;
+	width: var( --e-editor-preview-width, 100% );
+	height: var( --e-editor-preview-height, 100% );
 	transform: scale( var( --e-preview-scale, 1 ) );
 
 	.elementor-device-desktop & {
 		min-width: map_get($breakpoints, lg);
-		width: 100%;
-		height: 100%;
 		padding: 0;
 		position: relative;
 	}
 
 	body.e-is-device-mode:not(.elementor-device-desktop) & {
-		width: var(--e-editor-preview-width);
-		height: var(--e-editor-preview-height);
 		margin: 0 Max(calc((100vw - var(--e-editor-panel-width) - var(--e-editor-preview-width)) / 2), 20px );
 		box-sizing: content-box;
 		position: relative;
@@ -136,7 +122,7 @@ body {
 	.ui-resizable-e {
 		right: 0;
 	}
-	
+
 	.ui-resizable-w {
 		left: 0;
 	}

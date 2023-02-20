@@ -41,6 +41,7 @@ export default class View extends Marionette.ItemView {
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
+		this.listenTo( elementor.channels.responsivePreview, 'scale', this.onPreviewScale );
 		this.listenTo( elementor.channels.responsivePreview, 'open', this.onPreviewOpen );
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 	}
@@ -76,36 +77,19 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => tipsy.hide(), 3000 );
 	}
 
-	autoScale() {
-		const handlesWidth = 40 * this.scalePercentage / 100,
-			previewWidth = elementor.$previewWrapper.width() - handlesWidth,
-			iframeWidth = parseInt( elementor.$preview.css( '--e-editor-preview-width' ) ),
-			iframeScaleWidth = iframeWidth * this.scalePercentage / 100;
-
-		if ( iframeScaleWidth > previewWidth ) {
-			const scalePercentage = previewWidth / iframeWidth * 100;
-
-			this.setScalePercentage( scalePercentage );
-		} else {
-			this.setScalePercentage();
-		}
-
-		this.scalePreview();
-	}
-
-	scalePreview() {
-		const scale = this.scalePercentage / 100;
-		elementor.$previewWrapper.css( '--e-preview-scale', scale );
-	}
-
 	resetScale() {
-		this.setScalePercentage();
-		this.scalePreview();
+		elementor.setPreviewScale( 1 );
 	}
 
-	setScalePercentage( scalePercentage = 100 ) {
-		this.scalePercentage = scalePercentage;
-		this.ui.scaleValue.text( parseInt( this.scalePercentage ) );
+	setScalePercentage() {
+		const roundedTo5 = Math.round( elementor.getPreviewScale() * 100 / 5 ) * 5;
+
+		this.scalePercentage = roundedTo5;
+		this.ui.scaleValue.text( this.scalePercentage );
+	}
+
+	getRoundedScale() {
+		return Math.round( this.scalePercentage / 10 ) * 10;
 	}
 
 	onRender() {
@@ -131,8 +115,6 @@ export default class View extends Marionette.ItemView {
 		const selectedDeviceMode = e.target.value;
 
 		elementor.changeDeviceMode( selectedDeviceMode, false );
-
-		this.autoScale();
 	}
 
 	onBreakpointSettingsOpen() {
@@ -171,6 +153,10 @@ export default class View extends Marionette.ItemView {
 		this.ui.sizeInputHeight.val( Math.round( size.height ) );
 	}
 
+	onPreviewScale() {
+		this.setScalePercentage();
+	}
+
 	onPreviewOpen() {
 		this.setWidthHeightInputsEditableState();
 	}
@@ -194,50 +180,32 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onSizeInputChange() {
-		clearTimeout( this.restorePreviewSizeTimeout );
-
 		const size = {
 			width: this.ui.sizeInputWidth.val(),
 			height: this.ui.sizeInputHeight.val(),
 		};
 
-		const currentDeviceConstrains = elementor.getCurrentDeviceConstrains();
-
-		if ( size.width < currentDeviceConstrains.minWidth || size.width > currentDeviceConstrains.maxWidth ) {
-			this.restorePreviewSizeTimeout = setTimeout( () => this.restoreLastValidPreviewSize(), 1500 );
-
-			return;
-		}
-
-		this.updatingPreviewSize = true;
-
-		setTimeout( () => this.updatingPreviewSize = false, 300 );
-
 		elementor.updatePreviewSize( size );
-
-		this.autoScale();
 	}
 
 	onScalePlusButtonClick() {
-		const scaleUp = 0 === this.scalePercentage % 10 ? this.scalePercentage + 10 : Math.ceil( this.scalePercentage / 10 ) * 10;
+		const scaleUp = this.getRoundedScale() + 10;
 
 		if ( scaleUp > 200 ) {
 			return;
 		}
 
-		this.setScalePercentage( scaleUp );
-		this.scalePreview();
+		elementor.setPreviewScale( scaleUp / 100 );
 	}
 
 	onScaleMinusButtonClick() {
-		const scaleDown = 0 === this.scalePercentage % 10 ? this.scalePercentage - 10 : Math.floor( this.scalePercentage / 10 ) * 10;
+		const scaleDown = this.getRoundedScale() - 10;
 
 		if ( scaleDown < 50 ) {
 			return;
 		}
 
-		this.setScalePercentage( scaleDown );
-		this.scalePreview();
+		elementor.setPreviewScale( scaleDown / 100 );
 	}
 
 	onScaleResetButtonClick() {
