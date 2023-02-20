@@ -1,19 +1,34 @@
 import { createSlice } from './store';
 import { syncStore } from './sync';
-import { injectIntoCanvasDisplay, injectIntoPrimaryAction } from '@elementor/top-bar';
-import TopBarIndicator from './components/top-bar-indicator';
+import { injectIntoCanvasDisplay, injectIntoPrimaryAction, registerAction } from '@elementor/top-bar';
+import CanvasDisplay from './components/top-bar/canvas-display';
+import useDocumentPreviewProps from './hooks/use-document-preview-props';
 import PrimaryAction from './components/top-bar/primary-action';
 
-const slice = createSlice();
+export default function init() {
+	initStore();
+	registerTopBarMenuItems();
+}
 
-syncStore( slice );
+function initStore() {
+	const slice = createSlice();
 
-injectIntoCanvasDisplay( {
-	name: 'top-bar-indicator',
-	filler: TopBarIndicator,
-} );
+	syncStore( slice );
+}
 
-injectIntoPrimaryAction( {
-	name: 'top-bar-primary-action',
-	filler: PrimaryAction,
-} );
+function registerTopBarMenuItems() {
+	injectIntoCanvasDisplay( {
+		name: 'documents-canvas-display',
+		filler: CanvasDisplay,
+	} );
+
+	injectIntoPrimaryAction( {
+		name: 'primary-action',
+		filler: PrimaryAction,
+	} );
+
+	registerAction( 'utilities', {
+		name: 'document-preview-button',
+		useProps: useDocumentPreviewProps,
+	} );
+}
