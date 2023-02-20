@@ -1,6 +1,6 @@
 import syncStore from '../sync-store';
 import { createSlice } from '../../store';
-import { ExtendedWindow, Slice } from '../../types';
+import { BreakpointId, ExtendedWindow, Slice } from '../../types';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { selectActiveBreakpoint, selectEntities } from '../../store/selectors';
 
@@ -68,6 +68,26 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		// Act - Mock a change.
 		jest.mocked( extendedWindow.elementor.channels.deviceMode.request ).mockReturnValue( 'desktop' );
+		dispatchEvent( new CustomEvent( 'elementor/device-mode/change' ) );
+
+		// Assert.
+		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop' } );
+	} );
+
+	it( "should not change the active breakpoint when it's empty", () => {
+		// Arrange.
+		mockV1BreakpointsConfig();
+
+		dispatch( slice.actions.init( {
+			entities: [
+				{ id: 'desktop' },
+				{ id: 'mobile', width: 767, type: 'max-width' },
+			],
+			activeId: 'desktop',
+		} ) );
+
+		// Act - Mock a change.
+		jest.mocked( extendedWindow.elementor.channels.deviceMode.request ).mockReturnValue( '' as BreakpointId );
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change' ) );
 
 		// Assert.

@@ -6,7 +6,7 @@ import {
 	DesktopIcon,
 	TabletPortraitIcon,
 	MobilePortraitIcon,
-	WidescreenIcon,
+	WideScreenIcon,
 	LaptopIcon,
 	TabletLandscapeIcon,
 	MobileLandscapeIcon,
@@ -19,27 +19,22 @@ export default function BreakpointsSwitcher() {
 		return null;
 	}
 
-	const onChange = ( e: unknown, value: BreakpointId ) => activate( value );
+	const onChange = ( _: unknown, value: BreakpointId ) => activate( value );
 
 	return (
-		<Tabs value={ active.id } onChange={ onChange } sx={ {
-			'& .MuiTabs-flexContainer': {
-				gap: 0,
-			},
-		} }>
+		<Tabs value={ active.id } onChange={ onChange }>
 			{
 				all.map( ( { id, type, width } ) => {
 					const { label, icon: Icon } = breakpointsUiMap[ id ];
 
-					const title = labelsMap[ type ?? 'default' ]
+					const title = labelsMap[ type || 'default' ]
 						.replace( '%s', label )
-						.replace( '%d', width?.toString() ?? '' );
+						.replace( '%d', width?.toString() || '' );
 
 					return (
 						<Tab value={ id }
 							key={ id }
 							aria-label={ title }
-							sx={ { padding: '4px' } }
 							icon={ <Tooltip title={ title }><Icon /></Tooltip> }
 						/>
 					);
@@ -64,7 +59,7 @@ function Tooltip( props: TooltipProps ) {
 }
 const breakpointsUiMap = {
 	widescreen: {
-		icon: WidescreenIcon,
+		icon: WideScreenIcon,
 		label: __( 'Widescreen', 'elementor' ),
 	},
 	desktop: {

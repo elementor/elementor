@@ -63,7 +63,7 @@ function getBreakpoints() {
 function getActiveBreakpoint() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return extendedWindow.elementor?.channels?.deviceMode?.request?.( 'currentMode' ) ?? null;
+	return extendedWindow.elementor?.channels?.deviceMode?.request?.( 'currentMode' ) || null;
 }
 
 function deviceModeChangeEvent() {

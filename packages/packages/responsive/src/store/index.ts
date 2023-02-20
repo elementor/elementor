@@ -20,20 +20,23 @@ export function createSlice() {
 				activeId: State['activeId'],
 			}> ) {
 				state.activeId = action.payload.activeId;
-
-				// Normalize the breakpoints array to object.
-				state.entities = action.payload.entities
-					.reduce( ( acc, breakpoint ) => {
-						return {
-							...acc,
-							[ breakpoint.id ]: breakpoint,
-						};
-					}, {} as State['entities'] );
+				state.entities = normalizeEntities( action.payload.entities );
 			},
 
 			activateBreakpoint( state, action: PayloadAction<BreakpointId> ) {
-				state.activeId = action.payload;
+				if ( state.entities[ action.payload ] ) {
+					state.activeId = action.payload;
+				}
 			},
 		},
 	} );
+}
+
+function normalizeEntities( entities: Breakpoint[] ) {
+	return entities.reduce( ( acc, breakpoint ) => {
+		return {
+			...acc,
+			[ breakpoint.id ]: breakpoint,
+		};
+	}, {} as State['entities'] );
 }
