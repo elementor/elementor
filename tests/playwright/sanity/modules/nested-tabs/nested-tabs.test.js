@@ -332,7 +332,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
-		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
+
+		const thirdItemTitle = await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' );
+		await thirdItemTitle.click();
+
+		if ( 0 === await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal.e-active' ).count() ) {
+			await thirdItemTitle.click();
+		}
 		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
 
 		// Act.
