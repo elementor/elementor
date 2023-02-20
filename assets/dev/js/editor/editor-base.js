@@ -1039,8 +1039,6 @@ export default class EditorBase extends Marionette.Application {
 			this.enterDeviceMode();
 		}
 
-		this.autoScalePreview();
-
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change', {
 			detail: {
 				activeMode: newDeviceMode,
@@ -1178,7 +1176,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOptions );
+		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 
 		this.initClearPageDialog();
 
@@ -1272,6 +1270,12 @@ export default class EditorBase extends Marionette.Application {
 		} else {
 			this.enterPreviewMode( 'preview' === activeMode );
 		}
+	}
+
+	onDeviceModeChange() {
+		this.updatePreviewResizeOptions();
+
+		this.autoScalePreview();
 	}
 
 	onEnvNotCompatible() {
