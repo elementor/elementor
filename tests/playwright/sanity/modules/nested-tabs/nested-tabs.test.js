@@ -331,7 +331,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
-		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
+
+		await editor.closeNavigatorIfOpen();
 
 		const thirdItemTitle = await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' );
 		await thirdItemTitle.click();
@@ -361,7 +362,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
