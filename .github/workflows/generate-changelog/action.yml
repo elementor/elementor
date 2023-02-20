@@ -41,7 +41,7 @@ runs:
             # so we need to create a new env var with the content of the changelog file.
             # This env var will be used in slack-notify action.
             CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
-            echo "CHANGELOG_ENV_VAR<<EOF" >> $GITHUB_ENV
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
             echo $CHANGELOG >> $GITHUB_ENV 
             echo "EOF" >> $GITHUB_ENV
 
