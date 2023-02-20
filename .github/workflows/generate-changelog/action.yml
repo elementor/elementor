@@ -15,10 +15,16 @@ inputs:
     required: false
     default: "false"
 
+outputs:
+  prev_version:
+    description: "previous cloud version"
+    value: ${{ steps.generate-changelog.outputs.changelog }}
+
 runs:
   using: "composite"
   steps:
     - shell: bash
+      id : generate-changelog
       env:
         TOKEN: ${{ inputs.TOKEN }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
