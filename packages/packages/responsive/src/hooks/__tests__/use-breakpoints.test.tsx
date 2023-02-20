@@ -1,6 +1,6 @@
+import { Slice } from '../../types';
 import { PropsWithChildren } from 'react';
 import { createSlice } from '../../store';
-import { Breakpoint, Slice } from '../../types';
 import useBreakpoints from '../use-breakpoints';
 import { runCommand } from '@elementor/v1-adapters';
 import { renderHook } from '@testing-library/react-hooks';
@@ -73,7 +73,8 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 		// Assert.
 		expect( jest.mocked( runCommand ) ).toHaveBeenCalledTimes( 1 );
 		expect( jest.mocked( runCommand ) ).toHaveBeenCalledWith(
-			'panel/change-device-mode', { device: 'tablet' }
+			'panel/change-device-mode',
+			{ device: 'tablet' }
 		);
 	} );
 } );
