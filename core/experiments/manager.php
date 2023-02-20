@@ -202,7 +202,7 @@ class Manager extends Base_Object {
 
 		// If $tags is string, explode by commas and convert to array.
 		if ( is_string( $tags ) ) {
-			$tags = explode( ',', $tags );
+			$tags = array_filter( explode( ',', $tags ) );
 
 			foreach ( $tags as &$tag ) {
 				$tag = [ 'label' => trim( $tag ) ];
@@ -361,7 +361,7 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'tag' => esc_html__( 'Performance, Shushu,', 'elementor' ),
 			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awesome and the eicons libraries and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
