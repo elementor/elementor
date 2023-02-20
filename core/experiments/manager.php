@@ -204,8 +204,8 @@ class Manager extends Base_Object {
 		if ( is_string( $tags ) ) {
 			$tags = array_filter( explode( ',', $tags ) );
 
-			foreach ( $tags as &$tag ) {
-				$tag = [ 'label' => trim( $tag ) ];
+			foreach ( $tags as $i => $tag ) {
+				$tags[ $i ] = [ 'label' => trim( $tag ) ];
 			}
 		}
 
@@ -215,7 +215,7 @@ class Manager extends Base_Object {
 				continue;
 			}
 
-			$tag = $this->merge_properties( $default_tag, $tag, $allowed_tag_properties );
+			$tags[ $i ] = $this->merge_properties( $default_tag, $tag, $allowed_tag_properties );
 		}
 
 		return $tags;
