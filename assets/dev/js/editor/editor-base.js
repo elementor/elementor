@@ -917,6 +917,8 @@ export default class EditorBase extends Marionette.Application {
 
 		style.setProperty( '--e-editor-preview-width', size.width + 'px' );
 		style.setProperty( '--e-editor-preview-height', size.height + 'px' );
+
+		this.autoScalePreview();
 	}
 
 	autoScalePreview() {
@@ -950,7 +952,7 @@ export default class EditorBase extends Marionette.Application {
 		const height = style.getPropertyValue( '--e-editor-preview-height' );
 
 		return {
-			height: parseInt( height ),
+			height: parseInt( height ) || this.$previewWrapper.height(),
 			width: parseInt( width ) || this.$previewWrapper.width(),
 		};
 	}
@@ -1036,6 +1038,8 @@ export default class EditorBase extends Marionette.Application {
 		} else if ( 'desktop' !== newDeviceMode ) {
 			this.enterDeviceMode();
 		}
+
+		this.autoScalePreview();
 
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change', {
 			detail: {
