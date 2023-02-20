@@ -1,5 +1,5 @@
 name: Create RC Tag
-# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, MAINTAIN_TOKEN, and a var: SLACK_TAG_CHANNELS.
+# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN & repo env var : SLACK_TAG_CHANNELS
 
 env:
   CHANGELOG_FILE: 'temp-changelog.txt'
@@ -16,6 +16,7 @@ on:
           - 'ga'
           - 'cloud'
           - 'beta'
+
 jobs:
   create-tag:
     runs-on: ubuntu-22.04
@@ -84,8 +85,6 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Send slack message
         uses: ./.github/workflows/slack-notify
         with:
