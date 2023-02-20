@@ -25,13 +25,12 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 
 	onChildviewClickDuplicate( childView ) {
 		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
-		const renderAfterInsert = ! containerModelCid;
 
 		$e.run( 'document/repeater/duplicate', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
-			renderAfterInsert,
+			renderAfterInsert: ! containerModelCid,
 			options: {
 				containerModelCid,
 			},
