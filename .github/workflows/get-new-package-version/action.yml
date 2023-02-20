@@ -11,10 +11,10 @@ runs:
   steps:
     - shell: bash
       run: |
-            PACKAGE_VERSION_CLEAN=$(node -p "require('./package.json').version")
-            PACKAGE_VERSION=${PACKAGE_VERSION_CLEAN}-${{ inputs.CHANNEL }}-rc
+            CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
 
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-            echo "PACKAGE_VERSION_CLEAN=${PACKAGE_VERSION_CLEAN}" >> $GITHUB_ENV
+            echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_ENV
   
             echo "PACKAGE_VERSION : ${PACKAGE_VERSION}"

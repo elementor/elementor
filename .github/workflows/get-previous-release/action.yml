@@ -13,7 +13,7 @@ runs:
       run: |
 
         if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
-           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | awk '{print $2}')
+           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
         fi
 
         if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
@@ -22,7 +22,9 @@ runs:
 
         git fetch --tags
         
-        # Loop through the list of tags and get their creation date
+        # Get the last release of a specific channel (ga, cloud, beta) by datetime descending order
+        # This parameter PREVIOUS_TAG_SHA will be used in the next action ./.github/workflows/generate-changelog
+        # as BASE_TAG_NAME while the HEAD_BRANCH_NAME is the current ${{ github.ref }}
         latest_date=""
         latest_tag=""
         for tag in $tags; do
