@@ -38,9 +38,34 @@ class Module extends BaseApp {
 	 * Enqueue app scripts
 	 */
 	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'announcements-app',
+			$this->get_js_assets_url( 'announcements-app' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
 
+		$this->print_config( 'announcements-app' );
 	}
-
+	protected function get_init_settings() {
+		return [
+			'nisim' => 'bisim',
+		];
+	}
+	/**
+	 * Enqueue the module styles.
+	 *
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		wp_enqueue_style(
+			'announcements-app',
+			$this->get_css_assets_url( 'modules/announcements/announcements' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
 	/**
 	 * Retrieve all announcement in raw format ( array )
 	 * @return array[]
@@ -57,10 +82,21 @@ class Module extends BaseApp {
 				],
 				"cta" => [
 					[
-						"label" => 'Button',
+						"label" => 'Main CTA',
 						"variant" => 'primary',
 						"target" => '_blank',
 						"url" => 'https://google.co.il',
+					],
+					[
+						"label" => 'Secondary now',
+						"variant" => 'secondary',
+						"target" => '_blank',
+						"url" => 'https://walla.co.il',
+					],
+					[
+						"label" => 'Learn more',
+						"target" => '_blank',
+						"url" => 'https://ynet.co.il',
 					],
 				],
 				"triggers" => [
@@ -127,7 +163,6 @@ class Module extends BaseApp {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;
 		}
-
 		parent::__construct();
 
 		add_action( 'in_admin_footer', function () {
@@ -136,8 +171,9 @@ class Module extends BaseApp {
 
 		add_action( 'admin_enqueue_scripts', function () {
 			$this->enqueue_scripts();
+			$this->enqueue_styles();
 		} );
-
+		//@TODO - replace with settings ( module config )
 		add_filter( 'elementor/admin/localize_settings', function ( $settings ) {
 			return $this->get_localize_data_admin_settings( $settings );
 		} );

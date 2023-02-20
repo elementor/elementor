@@ -29,6 +29,6 @@ abstract class Trigger_Base {
 	/**
 	 * @return void
 	 */
-	protected function after_triggered(): void {
+	public function after_triggered(): void {
 	}
 }
