@@ -13,7 +13,7 @@ inputs:
   # TODO - Remove this when publish-cloud is removed.
   GENERATE_EMPTY_CHANGELOG:
     required: false
-    default: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -38,5 +38,5 @@ runs:
             fi
 
             # Used for slack notification
-            $CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
+            CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }})
             echo "CHANGELOG=$CHANGELOG" >> $GITHUB_ENV
