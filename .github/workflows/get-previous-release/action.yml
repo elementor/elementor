@@ -11,7 +11,6 @@ runs:
   steps:
     - shell: bash
       run: |
-        #if channel is cloud or beta
 
         if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v -E '.*-rc.*' | awk '{print $2}')

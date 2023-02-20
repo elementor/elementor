@@ -1,4 +1,4 @@
-name: Create Rc Tag
+name: Create RC Tag
 # Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, MAINTAIN_TOKEN, and a var: SLACK_TAG_CHANNELS.
 
 env:
@@ -18,7 +18,7 @@ on:
           - 'beta'
 jobs:
   create-tag:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
