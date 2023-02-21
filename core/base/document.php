@@ -586,7 +586,9 @@ abstract class Document extends Controls_Stack {
 			$locked_user = $locked_user->display_name;
 		}
 
-		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
+		$post = $this->get_main_post();
+
+		$post_type_object = get_post_type_object( $post->post_type );
 
 		$settings = SettingsManager::get_settings_managers_config();
 
@@ -616,6 +618,15 @@ abstract class Document extends Controls_Stack {
 				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
+
+		$post_status_object = get_post_status_object( $post->post_status );
+
+		if ( $post_status_object ) {
+			$config['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		do_action( 'elementor/document/before_get_config', $this );
 

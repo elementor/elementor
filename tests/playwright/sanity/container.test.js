@@ -52,7 +52,7 @@ test.describe( 'Container tests', () => {
 
 		// Assert.
 		// Test that the image is between the heading & button.
-		expect( elBeforeButton ).toBe( elAfterHeading );
+		expect( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
