@@ -40,7 +40,7 @@ jobs:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
     steps:
       - name: Startup MySQL service
-        run: sudo /etc/init.d/mysql start
+        run: sudo systemctl start mysql
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Setup PHP
