@@ -3,6 +3,11 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 		const events = super.events();
 
 		events.click = ( e ) => {
+			// If the clicked Nested Element is not within the currently edited document, don't do anything with it.
+			if ( elementor.documents.currentDocument.id.toString() !== e.target.closest( '.elementor' ).dataset.elementorId ) {
+				return;
+			}
+
 			const closest = e.target.closest( '.elementor-element' );
 
 			let model = this.options.model,
