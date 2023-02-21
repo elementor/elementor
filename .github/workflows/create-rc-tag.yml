@@ -74,7 +74,6 @@ jobs:
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Post to a Slack channel
-        id: slack
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: ${{ vars.SLACK_TAG_CHANNELS }}
@@ -107,6 +106,7 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
+                  }
               ]
             }
         env:
