@@ -81,7 +81,7 @@ jobs:
                 Please test it and report any issues. \n
                 \n\n
                 Changelog:
-                ${{ cat ${{ env.CHANGELOG_FILE }} }} \n
+                $(cat ${{ env.CHANGELOG_FILE }}) \n
                 \n\n
                 https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
