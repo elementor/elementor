@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { isRouteActive } from '@elementor/v1-adapters';
 import { useActiveDocument } from '@elementor/documents';
-import PortedPrimaryAction from '../ported-primary-action';
+import PortalledPrimaryAction from '../portalled-primary-action';
 import { createMockDocument } from 'test-utils';
 
 jest.mock( '@elementor/v1-adapters', () => ( {
@@ -16,7 +16,7 @@ jest.mock( '@elementor/documents', () => ( {
 	} ) ),
 } ) );
 
-describe( '@elementor/documents - Site settings ported primary action', () => {
+describe( '@elementor/site-settings - Portalled primary action', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveDocument ).mockImplementation( () => createMockDocument() );
 	} );
@@ -27,11 +27,11 @@ describe( '@elementor/documents - Site settings ported primary action', () => {
 		document.body.innerHTML = '';
 	} );
 
-	it( 'should render the button when navigating to site-settings route', () => {
+	it( 'should render the button when opening the site-settings panel', () => {
 		// Arrange.
 		createRootElement();
 
-		render( <PortedPrimaryAction /> );
+		render( <PortalledPrimaryAction /> );
 
 		// Assert.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
@@ -45,13 +45,13 @@ describe( '@elementor/documents - Site settings ported primary action', () => {
 		expect( screen.queryByRole( 'button' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not render button when navigation to another route', () => {
+	it( 'should not render the button when opening another panel', () => {
 		// Arrange.
 		createRootElement();
 
 		jest.mocked( isRouteActive ).mockImplementation( () => false );
 
-		render( <PortedPrimaryAction /> );
+		render( <PortalledPrimaryAction /> );
 
 		// Assert.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
@@ -65,13 +65,13 @@ describe( '@elementor/documents - Site settings ported primary action', () => {
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should not render button when root element not exists', () => {
+	it( 'should not render the button when the root element does not exist', () => {
 		// Arrange.
 		createRootElement( 'some-fake-id' );
 
 		jest.mocked( isRouteActive ).mockImplementation( () => true );
 
-		render( <PortedPrimaryAction /> );
+		render( <PortalledPrimaryAction /> );
 
 		// Assert.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();

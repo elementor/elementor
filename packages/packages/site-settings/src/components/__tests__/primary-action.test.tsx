@@ -8,7 +8,7 @@ jest.mock( '@elementor/documents', () => ( {
 	useActiveDocumentActions: jest.fn(),
 } ) );
 
-describe( '@elementor/documents - Site settings primary action', () => {
+describe( '@elementor/site-settings - Primary action', () => {
 	let saveFn: () => Promise<void>;
 
 	beforeEach( () => {
@@ -22,12 +22,9 @@ describe( '@elementor/documents - Site settings primary action', () => {
 		} ) );
 	} );
 
-	it( 'should save the document on click', () => {
+	it( 'should save site settings on click', () => {
 		// Arrange.
-		jest.mocked( useActiveDocument ).mockImplementation( () => ( {
-			...createMockDocument(),
-			isDirty: true,
-		} ) );
+		jest.mocked( useActiveDocument ).mockImplementation( () => createMockDocument( { isDirty: true } ) );
 
 		render( <PrimaryAction /> );
 
@@ -40,18 +37,18 @@ describe( '@elementor/documents - Site settings primary action', () => {
 
 	it.each( [
 		{
-			title: 'document is pristine',
-			document: { ...createMockDocument(), isDirty: false },
+			title: "it's pristine",
+			document: createMockDocument( { isDirty: false } ),
 		},
 		{
-			title: 'document in saving mode',
-			document: { ...createMockDocument(), isDirty: true, isSaving: true },
+			title: "it's in saving mode",
+			document: createMockDocument( { isDirty: true, isSaving: true } ),
 		},
 		{
-			title: 'document not exists',
+			title: "it doesn't exist",
 			document: null,
 		},
-	] )( 'should save the document when $title', ( { document } ) => {
+	] )( 'should not save site settings when $title', ( { document } ) => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => document );
 
@@ -66,14 +63,14 @@ describe( '@elementor/documents - Site settings primary action', () => {
 
 	it.each( [
 		{
-			title: 'document is pristine',
-			document: { ...createMockDocument(), isDirty: false },
+			title: 'site settings is pristine',
+			document: createMockDocument( { isDirty: false } ),
 		},
 		{
-			title: 'document not exists',
+			title: "site settings doesn't exist",
 			document: null,
 		},
-	] )( 'should make the button disabled when $title', ( { document } ) => {
+	] )( 'should be disabled when $title', ( { document } ) => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => document );
 
@@ -82,5 +79,21 @@ describe( '@elementor/documents - Site settings primary action', () => {
 
 		// Assert.
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
+	} );
+
+	it( 'should show a loader when saving site settings', () => {
+		// Arrange.
+		jest.mocked( useActiveDocument ).mockImplementation( () => createMockDocument( {
+			isDirty: true,
+			isSaving: true,
+		} ) );
+
+		// Act.
+		const { getByRole } = render( <PrimaryAction /> );
+
+		const loader = getByRole( 'progressbar' );
+
+		// Assert.
+		expect( loader ).toBeInTheDocument();
 	} );
 } );

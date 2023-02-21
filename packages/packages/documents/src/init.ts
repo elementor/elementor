@@ -23,7 +23,7 @@ function registerTopBarMenuItems() {
 	} );
 
 	injectIntoPrimaryAction( {
-		name: 'top-bar-primary-action',
+		name: 'document-primary-action',
 		filler: PrimaryAction,
 	} );
 

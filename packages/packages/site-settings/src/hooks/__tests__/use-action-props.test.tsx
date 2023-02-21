@@ -13,9 +13,17 @@ describe( '@elementor/site-settings - useActionProps', () => {
 	} );
 
 	it.each( [
-		{ title: 'open', input: { isActive: false, isBlocked: false }, expectedRoute: 'panel/global/open' },
-		{ title: 'close', input: { isActive: true, isBlocked: false }, expectedRoute: 'panel/global/close' },
-	] )( 'should $title the site-settings state when clicked', ( { input, expectedRoute } ) => {
+		{
+			action: 'open',
+			input: { isActive: false, isBlocked: false },
+			expectedCommand: 'panel/global/open',
+		},
+		{
+			action: 'close',
+			input: { isActive: true, isBlocked: false },
+			expectedCommand: 'panel/global/close',
+		},
+	] )( 'should $action the site-settings panel on click', ( { input, expectedCommand } ) => {
 		// Arrange.
 		jest.mocked( useRouteStatus ).mockImplementation( () => input );
 
@@ -26,7 +34,7 @@ describe( '@elementor/site-settings - useActionProps', () => {
 
 		// Assert.
 		expect( runCommand ).toHaveBeenCalledTimes( 1 );
-		expect( runCommand ).toHaveBeenCalledWith( expectedRoute );
+		expect( runCommand ).toHaveBeenCalledWith( expectedCommand );
 	} );
 
 	it( 'should have the correct props for disabled and selected', () => {

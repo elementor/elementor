@@ -1,4 +1,4 @@
-import PortedPrimaryAction from './components/ported-primary-action';
+import PortalledPrimaryAction from './components/portalled-primary-action';
 import { injectIntoTop } from '@elementor/editor';
 import { registerToggleAction } from '@elementor/top-bar';
 import useActionProps from './hooks/use-action-props';
@@ -20,6 +20,6 @@ function registerPrimaryAction() {
 	// This is portal, so it injected into the top of the editor, but renders inside the site-settings panel.
 	injectIntoTop( {
 		name: 'site-settings-primary-action-portal',
-		filler: PortedPrimaryAction,
+		filler: PortalledPrimaryAction,
 	} );
 }
