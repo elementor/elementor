@@ -79,12 +79,11 @@ jobs:
           channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
           payload: |
                   {
-                    "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues",
                     "blocks": [{
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues"
+                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues"
                         }
                       },
                       {
@@ -94,7 +93,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Changelog:\n\n${{ env.CHANGELOG_CONTENT }}
+                          "text": "*Changelog*:\n\n${{ env.CHANGELOG_CONTENT }}"
                         }
                       },
                       {
