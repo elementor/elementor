@@ -94,7 +94,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Changelog:\n\n${{  ${{ env.CHANGELOG_CONTENT }}
+                          "text": "Changelog:\n\n${{ env.CHANGELOG_CONTENT }}
                         }
                       },
                       {
