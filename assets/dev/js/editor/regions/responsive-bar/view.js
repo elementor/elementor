@@ -1,3 +1,6 @@
+const MAX_SCALE = 2;
+const MIN_SCALE = 0.5;
+
 export default class View extends Marionette.ItemView {
 	getTemplate() {
 		return '#tmpl-elementor-templates-responsive-bar';
@@ -81,7 +84,8 @@ export default class View extends Marionette.ItemView {
 		elementor.setPreviewScale( 1 );
 	}
 
-	setScalePercentage() {
+	updateScalePercentageUI() {
+		// Round the scale to the nearest 5, for better UX.
 		const roundedTo5 = Math.round( elementor.getPreviewScale() * 100 / 5 ) * 5;
 
 		this.scalePercentage = roundedTo5;
@@ -90,7 +94,7 @@ export default class View extends Marionette.ItemView {
 
 	onRender() {
 		this.addTipsyToIconButtons();
-		this.setScalePercentage();
+		this.updateScalePercentageUI();
 	}
 
 	onDeviceModeChange() {
@@ -150,7 +154,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onPreviewScale() {
-		this.setScalePercentage();
+		this.updateScalePercentageUI();
 	}
 
 	onPreviewOpen() {
@@ -176,36 +180,43 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onSizeInputChange() {
+		clearTimeout( this.restorePreviewSizeTimeout );
+
 		const size = {
 			width: this.ui.sizeInputWidth.val(),
 			height: this.ui.sizeInputHeight.val(),
 		};
 
+		const currentDeviceConstrains = elementor.getCurrentDeviceConstrains();
+
+		if ( size.width < currentDeviceConstrains.minWidth || size.width > currentDeviceConstrains.maxWidth ) {
+			this.restorePreviewSizeTimeout = setTimeout( () => this.restoreLastValidPreviewSize(), 1500 );
+
+			return;
+		}
+
+		this.updatingPreviewSize = true;
+
+		setTimeout( () => this.updatingPreviewSize = false, 300 );
+
 		elementor.updatePreviewSize( size );
 	}
 
-	getRoundedScale() {
-		return Math.round( this.scalePercentage / 10 ) * 10;
+	scalePreviewBy( percentage ) {
+		let newScale = ( this.scalePercentage + percentage ) / 100;
+
+		newScale = Math.max( newScale, MIN_SCALE );
+		newScale = Math.min( newScale, MAX_SCALE );
+
+		elementor.setPreviewScale( newScale );
 	}
 
 	onScalePlusButtonClick() {
-		const scaleUp = this.getRoundedScale() + 10;
-
-		if ( scaleUp > 200 ) {
-			return;
-		}
-
-		elementor.setPreviewScale( scaleUp / 100 );
+		this.scalePreviewBy( 10 );
 	}
 
 	onScaleMinusButtonClick() {
-		const scaleDown = this.getRoundedScale() - 10;
-
-		if ( scaleDown < 50 ) {
-			return;
-		}
-
-		elementor.setPreviewScale( scaleDown / 100 );
+		this.scalePreviewBy( -10 );
 	}
 
 	onScaleResetButtonClick() {
