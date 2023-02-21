@@ -13,7 +13,9 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const EXTENSION_PACKAGES = [
 		'documents',
 		'elements-panel',
+		'responsive',
 		'structure',
+		'theme-builder',
 		'top-bar',
 	];
 
@@ -71,6 +73,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
+			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
@@ -108,11 +111,16 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return [
 			'elementor-editor-v2-overrides',
 			'elementor-editor',
+			'elementor-responsive-bar',
 		];
 	}
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	public function get_additional_template_paths() {
+		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
 	private function get_packages_script_assets() {

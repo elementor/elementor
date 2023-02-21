@@ -17,7 +17,7 @@ module.exports = class {
 		await this.page.click( '#e-responsive-bar__settings-button' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
-		const devices = [ 'Mobile Extra', 'Tablet Extra', 'Laptop', 'Widescreen' ];
+		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
 
 		for ( const device of devices ) {
 			if ( await this.page.$( '.select2-selection__e-plus-button' ) ) {

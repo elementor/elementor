@@ -1,3 +1,5 @@
+export type EditMode = 'edit' | 'preview' | 'picker';
+
 export type ExtendedWindow = Window & {
 	$e: {
 		routes: {
@@ -7,7 +9,7 @@ export type ExtendedWindow = Window & {
 	elementor: {
 		channels: {
 			dataEditMode: {
-				request: ( key: 'activeMode' ) => 'edit' | 'preview' | 'picker';
+				request: ( key: 'activeMode' ) => EditMode;
 			}
 		}
 	}

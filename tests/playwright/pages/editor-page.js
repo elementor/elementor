@@ -55,7 +55,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
 			await this.page.click( '#elementor-navigator__close' );
@@ -125,7 +125,13 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {import('@playwright/test').Frame|null}
 	 */
 	getPreviewFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+		const previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		if ( ! this.previewFrame ) {
+			this.previewFrame = previewFrame;
+		}
+
+		return previewFrame;
 	}
 
 	/**
@@ -457,5 +463,37 @@ module.exports = class EditorPage extends BasePage {
 		await previewPage.waitForLoadState();
 
 		return previewPage;
+	}
+
+	/**
+	 * Apply Element Settings
+	 *
+	 * Apply settings to a widget without having to navigate through its Panels and Sections to set each individual
+	 * control value.
+	 *
+	 * You can get the Element settings by right-clicking an existing widget or element in the Editor, choose "Copy",
+	 * then paste the content into a text editor and filter out just the settings you want to apply to your element.
+	 *
+	 * Example usage:
+	 * ```
+	 * await editor.applyElementSettings( 'cdefd82', {
+	 *     background_background: 'classic',
+	 *     background_color: 'rgb(255, 10, 10)',
+	 * } );
+	 * ```
+	 *
+	 * @param {string} elementId - Id of the element you intend to apply the settings to.
+	 * @param {Object} settings  - Object settings from the Editor > choose element > right-click > "Copy".
+	 *
+	 * @return {Promise<void>}
+	 */
+	async applyElementSettings( elementId, settings ) {
+		await this.page.evaluate(
+			( args ) => $e.run( 'document/elements/settings', {
+				container: elementor.getContainer( args.elementId ),
+				settings: args.settings,
+			} ),
+			{ elementId, settings },
+		);
 	}
 };
