@@ -90,26 +90,24 @@ jobs:
                   }
                 },
                 {
+                  "type": "divider"
+                },
+                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
                     "text": "Changelog:\n$(cat ${{ env.CHANGELOG_FILE }})"
                   }
-                }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
               ]
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      # - name: Send slack message
-      #   uses: ./.github/workflows/slack-notify
-      #   with:
-      #     MESSAGE: | 
-      #           "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. \n
-      #           Please test it and report any issues. \n
-      #           \n\n
-      #           Changelog:
-      #           $(cat ${{ env.CHANGELOG_FILE }}) \n
-      #           \n\n
-      #           https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
-      #     SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      #     SLACK_CHANNELS: ${{ vars.SLACK_TAG_CHANNELS }}
