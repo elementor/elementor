@@ -76,7 +76,7 @@ jobs:
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.23.0
         with:
-          channel-id: ${{ vars.SLACK_TAG_CHANNELS }}
+          channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
           payload: |
             {
               "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues",
