@@ -11,9 +11,11 @@ import {
 	TabletLandscapeIcon,
 	MobileLandscapeIcon,
 } from '../icons';
+import useBreakpointsActions from '../hooks/use-breakpoints-actions';
 
 export default function BreakpointsSwitcher() {
-	const { all, active, activate } = useBreakpoints();
+	const { all, active } = useBreakpoints();
+	const { activate } = useBreakpointsActions();
 
 	if ( ! all.length || ! active ) {
 		return null;
@@ -24,8 +26,8 @@ export default function BreakpointsSwitcher() {
 	return (
 		<Tabs value={ active.id } onChange={ onChange }>
 			{
-				all.map( ( { id, type, width } ) => {
-					const { label, icon: Icon } = breakpointsUiMap[ id ];
+				all.map( ( { id, label, type, width } ) => {
+					const Icon = iconsMap[ id ];
 
 					const title = labelsMap[ type || 'default' ]
 						.replace( '%s', label )
@@ -57,35 +59,14 @@ function Tooltip( props: TooltipProps ) {
 		{ ...props }
 	/>;
 }
-const breakpointsUiMap = {
-	widescreen: {
-		icon: WideScreenIcon,
-		label: __( 'Widescreen', 'elementor' ),
-	},
-	desktop: {
-		icon: DesktopIcon,
-		label: __( 'Desktop', 'elementor' ),
-	},
-	laptop: {
-		icon: LaptopIcon,
-		label: __( 'Laptop', 'elementor' ),
-	},
-	tablet_extra: {
-		icon: TabletLandscapeIcon,
-		label: __( 'Tablet Landscape', 'elementor' ),
-	},
-	tablet: {
-		icon: TabletPortraitIcon,
-		label: __( 'Tablet Portrait', 'elementor' ),
-	},
-	mobile_extra: {
-		icon: MobileLandscapeIcon,
-		label: __( 'Mobile Landscape', 'elementor' ),
-	},
-	mobile: {
-		icon: MobilePortraitIcon,
-		label: __( 'Mobile Portrait', 'elementor' ),
-	},
+const iconsMap = {
+	widescreen: WideScreenIcon,
+	desktop: DesktopIcon,
+	laptop: LaptopIcon,
+	tablet_extra: TabletLandscapeIcon,
+	tablet: TabletPortraitIcon,
+	mobile_extra: MobileLandscapeIcon,
+	mobile: MobilePortraitIcon,
 };
 
 const labelsMap = {

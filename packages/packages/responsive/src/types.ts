@@ -4,8 +4,11 @@ export type BreakpointId = 'widescreen' | 'desktop' | 'laptop' | 'tablet_extra' 
 
 export type BreakpointSize = number;
 
+export type BreakpointLabel = string;
+
 export type Breakpoint = {
 	id: BreakpointId,
+	label: BreakpointLabel,
 	width?: BreakpointSize,
 	type?: 'min-width' | 'max-width',
 }
@@ -20,6 +23,7 @@ export type ExtendedWindow = Window & {
 					direction: 'min' | 'max',
 					is_enabled: boolean,
 					value: BreakpointSize,
+					label: BreakpointLabel,
 				}>
 			}
 		},

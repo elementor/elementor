@@ -2,17 +2,21 @@ import { Breakpoint } from '../../types';
 import { render } from '@testing-library/react';
 import useBreakpoints from '../../hooks/use-breakpoints';
 import BreakpointsSwitcher from '../breakpoints-switcher';
+import useBreakpointsActions from '../../hooks/use-breakpoints-actions';
 
 jest.mock( '../../hooks/use-breakpoints', () => jest.fn() );
+jest.mock( '../../hooks/use-breakpoints-actions', () => jest.fn().mockReturnValue( {
+	activate: jest.fn(),
+} ) );
 
 describe( '@elementor/responsive - Breakpoints Switcher', () => {
 	it( 'should not render when there are no breakpoints', () => {
 		// Arrange.
 		jest.mocked( useBreakpoints ).mockReturnValue( {
 			all: [],
-			activate: jest.fn(),
 			active: {
 				id: 'desktop',
+				label: 'Desktop',
 			},
 		} );
 
@@ -27,9 +31,9 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 		// Arrange.
 		jest.mocked( useBreakpoints ).mockReturnValue( {
 			active: null,
-			activate: jest.fn(),
 			all: [ {
 				id: 'desktop',
+				label: 'Desktop',
 			} ],
 		} );
 
@@ -43,19 +47,18 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 	it( 'should render all of the breakpoints', () => {
 		// Arrange.
 		const sortedBreakpoints: Breakpoint[] = [
-			{ id: 'widescreen', width: 2400, type: 'min-width' },
-			{ id: 'desktop' },
-			{ id: 'laptop', width: 1366, type: 'max-width' },
-			{ id: 'tablet_extra', width: 1200, type: 'max-width' },
-			{ id: 'tablet', width: 1024, type: 'max-width' },
-			{ id: 'mobile_extra', width: 880, type: 'max-width' },
-			{ id: 'mobile', width: 767, type: 'max-width' },
+			{ id: 'widescreen', label: 'Widescreen', width: 2400, type: 'min-width' },
+			{ id: 'desktop', label: 'Desktop' },
+			{ id: 'laptop', label: 'Laptop', width: 1366, type: 'max-width' },
+			{ id: 'tablet_extra', label: 'Tablet Landscape', width: 1200, type: 'max-width' },
+			{ id: 'tablet', label: 'Tablet Portrait', width: 1024, type: 'max-width' },
+			{ id: 'mobile_extra', label: 'Mobile Landscape', width: 880, type: 'max-width' },
+			{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
 		];
 
 		jest.mocked( useBreakpoints ).mockReturnValue( {
-			activate: jest.fn(),
 			all: sortedBreakpoints,
-			active: { id: 'desktop' },
+			active: { id: 'desktop', label: 'Desktop' },
 		} );
 
 		// Act.
@@ -87,14 +90,18 @@ describe( '@elementor/responsive - Breakpoints Switcher', () => {
 		// Arrange.
 		const activate = jest.fn();
 
-		jest.mocked( useBreakpoints ).mockReturnValue( {
+		jest.mocked( useBreakpointsActions ).mockReturnValue( {
 			activate,
+		} );
+
+		jest.mocked( useBreakpoints ).mockReturnValue( {
 			active: {
 				id: 'desktop',
+				label: 'Desktop',
 			},
 			all: [
-				{ id: 'mobile' },
-				{ id: 'desktop' },
+				{ id: 'mobile', label: 'Mobile Portrait' },
+				{ id: 'desktop', label: 'Desktop' },
 			],
 		} );
 

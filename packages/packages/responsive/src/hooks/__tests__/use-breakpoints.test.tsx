@@ -2,7 +2,6 @@ import { Slice } from '../../types';
 import { PropsWithChildren } from 'react';
 import { createSlice } from '../../store';
 import useBreakpoints from '../use-breakpoints';
-import { runCommand } from '@elementor/v1-adapters';
 import { renderHook } from '@testing-library/react-hooks';
 import { createStore, dispatch, SliceState, Store, StoreProvider } from '@elementor/store';
 
@@ -24,10 +23,10 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 		dispatch( slice.actions.init( {
 			activeId: null,
 			entities: [
-				{ id: 'tablet', width: 1024, type: 'max-width' },
-				{ id: 'mobile', width: 767, type: 'max-width' },
-				{ id: 'widescreen', width: 2400, type: 'min-width' },
-				{ id: 'desktop' },
+				{ id: 'tablet', label: 'Tablet Portrait', width: 1024, type: 'max-width' },
+				{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
+				{ id: 'widescreen', label: 'Widescreen', width: 2400, type: 'min-width' },
+				{ id: 'desktop', label: 'Desktop' },
 			],
 		} ) );
 
@@ -36,10 +35,10 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 
 		// Assert.
 		expect( result.current.all ).toEqual( [
-			{ id: 'widescreen', width: 2400, type: 'min-width' },
-			{ id: 'desktop' },
-			{ id: 'tablet', width: 1024, type: 'max-width' },
-			{ id: 'mobile', width: 767, type: 'max-width' },
+			{ id: 'widescreen', label: 'Widescreen', width: 2400, type: 'min-width' },
+			{ id: 'desktop', label: 'Desktop' },
+			{ id: 'tablet', label: 'Tablet Portrait', width: 1024, type: 'max-width' },
+			{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
 		] );
 	} );
 
@@ -48,8 +47,8 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 		dispatch( slice.actions.init( {
 			activeId: 'tablet',
 			entities: [
-				{ id: 'desktop' },
-				{ id: 'tablet', type: 'max-width', width: 1024 },
+				{ id: 'desktop', label: 'Desktop' },
+				{ id: 'tablet', label: 'Tablet Portrait', type: 'max-width', width: 1024 },
 			],
 		} ) );
 
@@ -59,23 +58,10 @@ describe( '@elementor/responsive - useBreakpoints', () => {
 		// Assert.
 		expect( result.current.active ).toEqual( {
 			id: 'tablet',
+			label: 'Tablet Portrait',
 			type: 'max-width',
 			width: 1024,
 		} );
-	} );
-
-	it( 'should activate a breakpoint', () => {
-		// Act.
-		const { result } = renderHookWithStore( () => useBreakpoints(), store );
-
-		result.current.activate( 'tablet' );
-
-		// Assert.
-		expect( jest.mocked( runCommand ) ).toHaveBeenCalledTimes( 1 );
-		expect( jest.mocked( runCommand ) ).toHaveBeenCalledWith(
-			'panel/change-device-mode',
-			{ device: 'tablet' }
-		);
 	} );
 } );
 

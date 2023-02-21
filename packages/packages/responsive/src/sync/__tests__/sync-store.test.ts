@@ -27,13 +27,13 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		// Assert.
 		expect( selectEntities( store.getState() ) ).toEqual( {
-			desktop: { id: 'desktop' },
-			mobile: { id: 'mobile', width: 767, type: 'max-width' },
-			tablet: { id: 'tablet', width: 1024, type: 'max-width' },
-			laptop: { id: 'laptop', width: 1366, type: 'max-width' },
-			widescreen: { id: 'widescreen', width: 2400, type: 'min-width' },
-			mobile_extra: { id: 'mobile_extra', width: 880, type: 'max-width' },
-			tablet_extra: { id: 'tablet_extra', width: 1200, type: 'max-width' },
+			desktop: { id: 'desktop', label: 'Desktop' },
+			mobile: { id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
+			tablet: { id: 'tablet', label: 'Tablet Portrait', width: 1024, type: 'max-width' },
+			laptop: { id: 'laptop', label: 'Laptop', width: 1366, type: 'max-width' },
+			widescreen: { id: 'widescreen', label: 'Widescreen', width: 2400, type: 'min-width' },
+			mobile_extra: { id: 'mobile_extra', label: 'Mobile Landscape', width: 880, type: 'max-width' },
+			tablet_extra: { id: 'tablet_extra', label: 'Tablet Landscape', width: 1200, type: 'max-width' },
 		} );
 
 		expect( extendedWindow.elementor.channels.deviceMode.request ).toHaveBeenCalledTimes( 1 );
@@ -41,6 +41,7 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( {
 			id: 'mobile',
+			label: 'Mobile Portrait',
 			width: 767,
 			type: 'max-width',
 		} );
@@ -60,8 +61,8 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		dispatch( slice.actions.init( {
 			entities: [
-				{ id: 'desktop' },
-				{ id: 'mobile', width: 767, type: 'max-width' },
+				{ id: 'desktop', label: 'Desktop' },
+				{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
 			],
 			activeId: 'mobile',
 		} ) );
@@ -71,7 +72,7 @@ describe( '@elementor/responsive - Sync Store', () => {
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change' ) );
 
 		// Assert.
-		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop' } );
+		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop', label: 'Desktop' } );
 	} );
 
 	it( "should not change the active breakpoint when it's empty", () => {
@@ -80,8 +81,8 @@ describe( '@elementor/responsive - Sync Store', () => {
 
 		dispatch( slice.actions.init( {
 			entities: [
-				{ id: 'desktop' },
-				{ id: 'mobile', width: 767, type: 'max-width' },
+				{ id: 'desktop', label: 'Desktop' },
+				{ id: 'mobile', label: 'Mobile Portrait', width: 767, type: 'max-width' },
 			],
 			activeId: 'desktop',
 		} ) );
@@ -91,7 +92,7 @@ describe( '@elementor/responsive - Sync Store', () => {
 		dispatchEvent( new CustomEvent( 'elementor/device-mode/change' ) );
 
 		// Assert.
-		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop' } );
+		expect( selectActiveBreakpoint( store.getState() ) ).toEqual( { id: 'desktop', label: 'Desktop' } );
 	} );
 } );
 
@@ -104,31 +105,37 @@ function mockV1BreakpointsConfig() {
 			responsive: {
 				breakpoints: {
 					mobile: {
+						label: 'Mobile Portrait',
 						value: 767,
 						direction: 'max',
 						is_enabled: true,
 					},
 					mobile_extra: {
+						label: 'Mobile Landscape',
 						value: 880,
 						direction: 'max',
 						is_enabled: true,
 					},
 					tablet: {
+						label: 'Tablet Portrait',
 						value: 1024,
 						direction: 'max',
 						is_enabled: true,
 					},
 					tablet_extra: {
+						label: 'Tablet Landscape',
 						value: 1200,
 						direction: 'max',
 						is_enabled: true,
 					},
 					laptop: {
+						label: 'Laptop',
 						value: 1366,
 						direction: 'max',
 						is_enabled: true,
 					},
 					widescreen: {
+						label: 'Widescreen',
 						value: 2400,
 						direction: 'min',
 						is_enabled: true,

@@ -1,6 +1,7 @@
 import { dispatch } from '@elementor/store';
 import { Breakpoint, ExtendedWindow, Slice } from '../types';
 import { listenTo, v1ReadyEvent, windowEvent } from '@elementor/v1-adapters';
+import { __ } from '@wordpress/i18n';
 
 export default function syncStore( slice: Slice ) {
 	syncInitialization( slice );
@@ -44,9 +45,10 @@ function getBreakpoints() {
 	const entities = Object
 		.entries( breakpoints )
 		.filter( ( [ , breakpoint ] ) => breakpoint.is_enabled )
-		.map( ( [ id, { value, direction } ] ) => {
+		.map( ( [ id, { value, direction, label } ] ) => {
 			return {
 				id,
+				label,
 				width: value,
 				type: direction === 'min' ? 'min-width' : 'max-width',
 			} as Breakpoint;
@@ -55,6 +57,7 @@ function getBreakpoints() {
 	// Desktop breakpoint is not included in V1 config.
 	entities.push( {
 		id: 'desktop',
+		label: __( 'Desktop', 'elementor' ),
 	} );
 
 	return entities;
