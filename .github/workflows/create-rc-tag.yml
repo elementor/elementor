@@ -73,16 +73,43 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Send slack message
-        uses: ./.github/workflows/slack-notify
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
         with:
-          MESSAGE: | 
-                "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. \n
-                Please test it and report any issues. \n
-                \n\n
-                Changelog:
-                $(cat ${{ env.CHANGELOG_FILE }}) \n
-                \n\n
-                https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ vars.SLACK_TAG_CHANNELS }}
+          channel-id: ${{ vars.SLACK_TAG_CHANNELS }}
+          payload: |
+            {
+              "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Changelog:\n$(cat ${{ env.CHANGELOG_FILE }})"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      # - name: Send slack message
+      #   uses: ./.github/workflows/slack-notify
+      #   with:
+      #     MESSAGE: | 
+      #           "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. \n
+      #           Please test it and report any issues. \n
+      #           \n\n
+      #           Changelog:
+      #           $(cat ${{ env.CHANGELOG_FILE }}) \n
+      #           \n\n
+      #           https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
+      #     SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      #     SLACK_CHANNELS: ${{ vars.SLACK_TAG_CHANNELS }}
