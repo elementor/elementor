@@ -107,6 +107,7 @@ jobs:
                     "type": "mrkdwn",
                     "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
                   }
+                }
               ]
             }
         env:
