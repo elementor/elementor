@@ -386,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			jQuery( $activeTabTitleVisible ).trigger( 'focus' );
+			$activeTabTitleVisible?.focus();
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			jQuery( $nextTabTitleVisible ).trigger( 'focus' );
+			$nextTabTitleVisible?.focus();
 		}
 	}
 
@@ -400,21 +400,21 @@ export default class NestedTabs extends Base {
 		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
 			$firstFocusableItem = $focusableItems[ 0 ],
-			currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab' ) );
+			$currentTabTitle = elementorFrontend.elements.window.document.activeElement,
+			currentTabTitleIndex = parseInt( $currentTabTitle.getAttribute( 'data-tab' ) );
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			jQuery( $firstFocusableItem ).trigger( 'focus' );
+			$firstFocusableItem.focus();
 		}
 	}
 
 	itemInsideContentContainerHasFocus( position ) {
-		const currentItem = elementorFrontend.elements.window.document.activeElement,
+		const $currentItem = elementorFrontend.elements.window.document.activeElement,
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
 			itemIndex = 'last' === position ? $focusableItems.length - 1 : position;
 
-		return $focusableItems[ itemIndex ] === currentItem;
+		return $focusableItems[ itemIndex ] === $currentItem;
 	}
 
 	getFocusableItemsInsideActiveContentContainer() {
@@ -430,8 +430,8 @@ export default class NestedTabs extends Base {
 	}
 
 	setActiveCurrentContainerItemsToFocusable() {
-		const currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle?.getAttribute( 'data-tab' ) );
+		const $currentTabTitle = elementorFrontend.elements.window.document.activeElement,
+			currentTabTitleIndex = parseInt( $currentTabTitle?.getAttribute( 'data-tab' ) );
 
 		if ( this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) ) {
 			this.setTabindexOfActiveContainerItems( '0' );
