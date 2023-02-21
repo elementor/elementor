@@ -39,11 +39,11 @@ runs:
 
             CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
 
-            # Escape double quotes and newlines
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            # Escape double quotes and add two line breaks after each newline
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
 
-            # Replace ED-XXXX patterns with links in Markdown format
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/[ED-\1](https:\/\/elementor.atlassian.net\/browse\/ED-\1)/g')
+            # Replace ED-XXXX patterns with links
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/<a href="https:\/\/elementor.atlassian.net\/browse\/ED-\1">ED-\1<\/a>/g')
 
             # Multi-line env vars are not supported,
             # so we need to create a new env var with the content of the changelog file.
