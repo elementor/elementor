@@ -1,5 +1,5 @@
 import { useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
-import { Button, CircularProgress, Box } from '@elementor/ui';
+import { Button, CircularProgress, Paper } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export default function PrimaryAction() {
@@ -7,7 +7,7 @@ export default function PrimaryAction() {
 	const { save } = useActiveDocumentActions();
 
 	return (
-		<Box sx={ {
+		<Paper sx={ {
 			position: 'absolute',
 			bottom: 0,
 			right: 0,
@@ -15,8 +15,7 @@ export default function PrimaryAction() {
 			px: 5,
 			py: 4,
 			borderTop: 1,
-			borderColor: 'grey.200',
-			background: 'white',
+			borderColor: 'divider',
 		} }>
 			<Button
 				variant="contained"
@@ -31,6 +30,6 @@ export default function PrimaryAction() {
 						: __( 'Save Changes', 'elementor' )
 				}
 			</Button>
-		</Box>
+		</Paper>
 	);
 }
