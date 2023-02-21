@@ -95,7 +95,6 @@ jobs:
                       {
                         "type": "divider"
                       },
-                      ## Using shell redirection to get the changelog file content
                       {
                         "type": "section",
                         "text": {
