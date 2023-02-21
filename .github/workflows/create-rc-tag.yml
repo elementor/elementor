@@ -73,6 +73,11 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Read Changelog File Content
+        id: read_file
+        uses: andstor/file-reader-action@v1
+        with:
+          path: ${{ env.CHANGELOG_FILE }}
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.23.0
         with:
@@ -90,11 +95,12 @@ jobs:
                       {
                         "type": "divider"
                       },
+                      ## Using shell redirection to get the changelog file content
                       {
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Changelog:\n\n${{ $(< ${{ env.CHANGELOG_FILE }}) }}"
+                          "text": "Changelog:\n\n${ steps.read_file.outputs.contents }"
                         }
                       },
                       {
