@@ -40,7 +40,7 @@ runs:
             CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
 
             # Escape double quotes and newlines
-            CHANGELOG_CONTENT=$(CHANGELOG_CONTENT "$TEST" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
             # Replace ED-XXXX patterns with links in Markdown format
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/[ED-\1](https:\/\/elementor.atlassian.net\/browse\/ED-\1)/g')

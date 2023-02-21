@@ -22,7 +22,7 @@ runs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\nPlease test it and report any issues"
+                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` *RC Release* created by ${{ github.actor }}.\nPlease test it and report any issues"
                         }
                       },
                       {
