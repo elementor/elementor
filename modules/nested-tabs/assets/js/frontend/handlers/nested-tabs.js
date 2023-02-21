@@ -376,36 +376,36 @@ export default class NestedTabs extends Base {
 			firstItemIsInFocus = this.itemInsideContentContainerHasFocus( 0 ),
 			lastItemIsInFocus = this.itemInsideContentContainerHasFocus( 'last' ),
 			activeTabTitleFilter = `.${ this.getActiveClass() }`,
-			$activeTabTitleVisible = this.getVisibleTabTitle( activeTabTitleFilter ),
-			activeTabTitleIndex = parseInt( $activeTabTitleVisible?.getAttribute( 'data-tab' ) ),
+			activeTabTitleVisible = this.getVisibleTabTitle( activeTabTitleFilter ),
+			activeTabTitleIndex = parseInt( activeTabTitleVisible?.getAttribute( 'data-tab' ) ),
 			nextTabTitleFilter = this.getTabTitleFilterSelector( activeTabTitleIndex + 1 ),
-			$nextTabTitleVisible = this.getVisibleTabTitle( nextTabTitleFilter ),
-			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! $activeTabTitleVisible,
-			pressTabOnLastFocusableItem = isOnlyTabPressed && lastItemIsInFocus && !! $nextTabTitleVisible;
+			nextTabTitleVisible = this.getVisibleTabTitle( nextTabTitleFilter ),
+			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! activeTabTitleVisible,
+			pressTabOnLastFocusableItem = isOnlyTabPressed && lastItemIsInFocus && !! nextTabTitleVisible;
 
 		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			jQuery( $activeTabTitleVisible ).trigger( 'focus' );
+			jQuery( activeTabTitleVisible ).trigger( 'focus' );
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			jQuery( $nextTabTitleVisible ).trigger( 'focus' );
+			jQuery( nextTabTitleVisible ).trigger( 'focus' );
 		}
 	}
 
 	changeFocusFromActiveTabTitleToContentContainer( event ) {
 		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
-			$firstFocusableItem = $focusableItems[ 0 ],
-			$currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( $currentTabTitle.getAttribute( 'data-tab' ) );
+			$firstFocusableItem = $focusableItems.first(),
+			currentTabTitle = elementorFrontend.elements.window.document.activeElement,
+			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab' ) );
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			jQuery( $firstFocusableItem ).trigger( 'focus' );
+			$firstFocusableItem.trigger( 'focus' );
 		}
 	}
 
