@@ -18,5 +18,5 @@ runs:
             SLACK_BOT_NAME="ElementorBot"
             for CHANNEL in "${SLACK_CHANNELS_ARRAY[@]}"
             do
-              curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${CHANNEL}&text=${{ inputs.MESSAGE }}&link_names=true"
+              curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${{ inputs.SLACK_TOKEN }}&channel=${CHANNEL}&blocks=[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"${{ inputs.MESSAGE }}\"}}]&link_names=true"
             done
