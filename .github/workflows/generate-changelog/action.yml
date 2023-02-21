@@ -36,11 +36,14 @@ runs:
                 echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
               fi
             fi
-
-
-            # Format the changelog to be used as an environment variable for slack notification.
-            CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
-            CHANGELOG_CONTENT=$(echo $CHANGELOG_CONTENT | tr '\n' ' ')
-            CHANGELOG_CONTENT=$(echo $CHANGELOG_CONTENT | sed 's/*/\ n/g')
-            echo "CHANGELOG_CONTENT=$CHANGELOG_CONTENT" >> $GITHUB_ENV
             
+            # Multi-line env vars are not supported,
+            # so we need to create a new env var with the content of the changelog file.
+            # This env var will be used in slack-notify action.
+
+            CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+            echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+
+
