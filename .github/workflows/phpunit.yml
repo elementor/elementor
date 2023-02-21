@@ -40,7 +40,7 @@ jobs:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: wordpress_test
@@ -59,7 +59,7 @@ jobs:
           php-version: ${{ matrix.php_versions }}
       - name: Install Dependencies
         run: |
-          bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
+          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wordpress_versions }}
       - name: Run Tests with Coverage (latest PHP & WP)
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
         run: |
