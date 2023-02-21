@@ -411,6 +411,19 @@ class Settings extends Settings_Page {
 		remove_all_actions( 'admin_notices' );
 	}
 
+	public function add_generator_tag_settings( $settings ) {
+		$css_print_method = get_option( 'elementor_css_print_method', 'external' );
+		$settings[] = 'css_print_method-' . $css_print_method;
+
+		$google_font = Fonts::is_google_fonts_enabled() ? 'enabled' : 'disabled';
+		$settings[] = 'google_font-' . $google_font;
+
+		$font_display = Fonts::get_font_display_setting();
+		$settings[] = 'font_display-' . $font_display;
+
+		return $settings;
+	}
+
 	/**
 	 * Settings page constructor.
 	 *
@@ -423,6 +436,7 @@ class Settings extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
+		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
 			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );

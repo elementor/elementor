@@ -113,6 +113,9 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
+	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
+	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
+	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 };
 
 const frontendEntries = {

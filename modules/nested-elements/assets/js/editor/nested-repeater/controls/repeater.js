@@ -23,17 +23,50 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		};
 	}
 
-	updateActiveRow() {
-		let activeItemIndex = 1;
+	onChildviewClickDuplicate( childView ) {
+		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
 
-		if ( this.currentEditableChild ) {
-			activeItemIndex = this.currentEditableChild.itemIndex;
+		$e.run( 'document/repeater/duplicate', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
+			renderAfterInsert: ! containerModelCid,
+			options: {
+				containerModelCid,
+			},
+		} );
+
+		this.toggleMinRowsClass();
+	}
+
+	updateActiveRow() {
+		if ( ! this.currentEditableChild ) {
+			return;
 		}
 
 		$e.run( 'document/repeater/select', {
 			container: this.container,
-			index: activeItemIndex,
+			index: this.currentEditableChild.itemIndex,
 			options: { useHistory: false },
 		} );
+	}
+
+	getRepeaterItemContainerModelCidIfExists( childView ) {
+		if ( this.itemDoesNotNeedChildContainer( childView ) ) {
+			return false;
+		}
+
+		const contentIndex = childView._index + 1;
+		const container = this.container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
+
+		if ( ! container ) {
+			return false;
+		}
+
+		return container.model.cid;
+	}
+
+	itemDoesNotNeedChildContainer( childView ) {
+		return 'yes' !== childView.model.attributes[ this._parent.model.config.child_container_control_key ];
 	}
 }

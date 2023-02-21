@@ -1,34 +1,151 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
-	public function get_scripts() {
-		$scripts = Editor_Common_Assets::get_scripts();
+	const APP_PACKAGE = 'editor';
 
-		// Here we should add a filter to allow packages to REGISTER their scripts.
+	const EXTENSION_PACKAGES = [
+		'documents',
+		'elements-panel',
+		'structure',
+		'theme-builder',
+		'top-bar',
+	];
 
-		return $scripts;
+	const UTIL_PACKAGES = [
+		'locations',
+		'ui',
+		'v1-adapters',
+		'store',
+	];
+
+	/**
+	 * Cached script assets.
+	 *
+	 * @var Collection
+	 */
+	private $packages_script_assets;
+
+	public function get_script_configs() {
+		$packages_script_configs = $this->get_packages_script_assets()
+			->map( function ( $script_asset, $package_name ) {
+				return [
+					'handle' => $script_asset['handle'],
+					'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
+					'deps' => $script_asset['deps'],
+					'i18n' => [
+						'domain' => 'elementor',
+						'replace_requested_file' => true,
+					],
+				];
+			} );
+
+		$editor_script_config = $packages_script_configs->get( static::APP_PACKAGE );
+
+		$loader_script_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
+			'deps' => array_merge(
+				[ 'elementor-editor' ],
+				$editor_script_config ? [ $editor_script_config['handle'] ] : []
+			),
+		];
+
+		return array_merge(
+			Editor_Common_Configs::get_script_configs(),
+			$packages_script_configs->values(),
+			[ $loader_script_config ]
+		);
 	}
 
-	public function get_loader_scripts() {
-		$deps = [ 'elementor-editor' ];
+	public function get_script_handles_to_enqueue() {
+		return $this->get_packages_script_assets()
+			->filter( function ( $script_asset, $package_name ) {
+				return in_array( $package_name, static::EXTENSION_PACKAGES, true );
+			} )
+			->map( function ( $script_asset ) {
+				return $script_asset['handle'];
+			} )
+			->push( 'elementor-responsive-bar' )
+			// Must be last.
+			->push( 'elementor-editor-loader-v2' )
+			->values();
+	}
 
-		// Here we should add filter to allow packages LOAD their scripts with the loader.
+	public function get_client_settings() {
+		$common_configs = Editor_Common_Configs::get_client_settings();
 
-		return [
-			[
-				'handle' => 'elementor-editor-loader-v2',
-				'src' => ELEMENTOR_URL . 'core/editor/assets/js/editor-loader-v2.js',
-				'deps' => $deps,
+		$v2_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'name' => 'elementorEditorV2Settings',
+			'settings' => [
+				'urls' => [
+					'admin' => admin_url(),
+				],
 			],
+		];
+
+		return array_merge( $common_configs, [ $v2_config ] );
+	}
+
+	public function get_style_configs() {
+		return array_merge(
+			Editor_Common_Configs::get_style_configs(),
+			[
+				[
+					'handle' => 'elementor-editor-v2-overrides',
+					'src' => '{{ELEMENTOR_ASSETS_URL}}css/editor-v2-overrides{{MIN_SUFFIX}}.css',
+					'deps' => [ 'elementor-editor' ],
+				],
+			]
+		);
+	}
+
+	public function get_style_handles_to_enqueue() {
+		return [
+			'elementor-editor-v2-overrides',
+			'elementor-editor',
+			'elementor-responsive-bar',
 		];
 	}
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	public function get_additional_template_paths() {
+		return array_merge(
+			Editor_Common_Configs::get_additional_template_paths(),
+			[ ELEMENTOR_PATH . 'includes/editor-templates/responsive-bar.php' ]
+		);
+	}
+
+	private function get_packages_script_assets() {
+		if ( ! $this->packages_script_assets ) {
+			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
+				->merge( static::EXTENSION_PACKAGES )
+				->merge( static::UTIL_PACKAGES )
+				->map_with_keys( function ( $package_name ) {
+					$assets_path = ELEMENTOR_ASSETS_PATH;
+					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
+
+					if ( ! file_exists( $script_asset_path ) ) {
+						return [];
+					}
+
+					/** @var array{ handle: string, deps: string[] } $script_asset */
+					$script_asset = require $script_asset_path;
+
+					return [ $package_name => $script_asset ];
+				} );
+		}
+
+		return $this->packages_script_assets;
 	}
 }

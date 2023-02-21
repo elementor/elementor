@@ -1,17 +1,20 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 🚀 Feature Request
+    url: https://github.com/orgs/elementor/discussions/new?category=feature-request
+    about: Suggest new ideas, features, or enhancements
   - name: ❓ Support Question
     url: https://wordpress.org/support/plugin/elementor/
-    about: Elementor users who need assistant and have general usage questions.
-  - name: ❓ Elementor Support
+    about: For Elementor users who need assistant and have general usage questions.
+  - name: 💎 Elementor Pro Support
     url: https://elementor.com/support/
-    about: Customer experience for Elementor Pro users having questions or seeking general support.
-  - name: ❓ Elementor Community Support
+    about: If you have an active Elementor Pro license you are entitled to personal support, please see your purchase email or visit your Elementor Account page for details.
+  - name: 🗨️ Elementor Global Community
     url: https://www.facebook.com/groups/Elementors/
-    about: Users looking for help and support from the Elementor community.
-  - name: 🎓 Elementor Documentation
-    url: https://elementor.com/help/
-    about: Information and documentation about Elementor.
-  - name: 🎓 Elementor Developers
+    about: The main Facebook group where all kinds of users come together to help each other.
+  - name: 🎓 Elementor Academy
+    url: https://elementor.com/academy/
+    about: Learn everything you need to know about using Elementor.
+  - name: 📚 Elementor Developers Documentation
     url: https://developers.elementor.com/
-    about: Technical information and Elementor developers docs.
+    about: Technical information and Elementor developers docs. Learn everything about our Developer-API.

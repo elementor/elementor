@@ -1,15 +1,22 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
 		<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
-		<div id="elementor-navigator__header__title"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></div>
+		<div id="elementor-navigator__header__title"><?php
+			echo $is_editor_v2_active
+				? esc_html__( 'Structure', 'elementor' )
+				: esc_html__( 'Navigator', 'elementor' );
+		?></div>
 		<i id="elementor-navigator__close" class="eicon-close"></i>
 	</div>
 	<div id="elementor-navigator__elements"></div>

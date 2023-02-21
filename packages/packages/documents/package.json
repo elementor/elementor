@@ -1,0 +1,13 @@
+{
+	"name": "@elementor/documents",
+	"dependencies": {
+		"@elementor/store": "*",
+		"@elementor/top-bar": "*",
+		"@elementor/v1-adapters": "*",
+		"@elementor/ui": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}

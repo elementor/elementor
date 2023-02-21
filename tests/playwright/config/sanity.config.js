@@ -1,12 +1,29 @@
 // @ts-check
 
+function getGrepInvert() {
+	if ( '@default' === process.env.TEST_SUITE ) {
+		return [ /@reverse-columns/, /@nested-tabs/ ];
+	}
+	return [];
+}
+
+function getGrep() {
+	if ( undefined === process.env.TEST_SUITE || '@default' === process.env.TEST_SUITE ) {
+		return [ /.*/ ];
+	} else if ( 'default' !== process.env.TEST_SUITE ) {
+		return [ new RegExp( `${ process.env.TEST_SUITE }` ) ];
+	}
+	return [ /.*/ ];
+}
+
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
 	timeout: 90_000, // 90 seconds
 	globalTimeout: 60 * 15_000, // 15 minutes
 	reporter: 'list',
 	testDir: '../sanity/',
-	grepInvert: [ /@reverse-columns/, /@nested-tabs/ ],
+	grepInvert: getGrepInvert(),
+	grep: getGrep(),
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
 	forbidOnly: !! process.env.CI,
@@ -22,7 +39,7 @@ const config = {
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
 		video: 'on',
-		trace: 'on-first-retry',
+		trace: 'retain-on-failure',
 		user: {
 			username: process.env.USERNAME || 'admin',
 			password: process.env.PASSWORD || 'password',

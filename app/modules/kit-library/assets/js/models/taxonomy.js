@@ -14,11 +14,15 @@ export const taxonomyType = [
 		key: 'features',
 		label: __( 'Features', 'elementor' ),
 	},
-	{
-		key: 'subscription_plans',
-		label: __( 'Kits by plan', 'elementor' ),
-	},
 ];
+
+if ( ! elementorAppConfig.hasPro ) {
+	taxonomyType.push( 	{
+			key: 'subscription_plans',
+			label: __( 'Kits by plan', 'elementor' ),
+		},
+	);
+}
 
 export default class Taxonomy extends BaseModel {
 	text = '';

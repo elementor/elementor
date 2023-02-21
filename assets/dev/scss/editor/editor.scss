@@ -17,7 +17,6 @@
 @import "panel/panel";
 @import "panel/controls";
 @import "mode-switcher";
-@import "responsive-bar";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
 @import "../../../../core/kits/assets/css/panel";
@@ -26,7 +25,6 @@
 @import "devices";
 @import "templates-modal";
 @import "dynamic-tags";
-@import "notifications";
 @import "context-menu";
 @import "hotkeys";
 
@@ -38,6 +36,7 @@
 @import "color-picker";
 @import "select2";
 @import "control-scrubbing";
+@import "paste-area";
 
 // Temp flex icons
 @import "flex-icons";

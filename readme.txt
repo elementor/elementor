@@ -1,10 +1,10 @@
 === Elementor Website Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 5.0
+Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.9.2
+Stable tag: 3.11.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,7 +146,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
+* WordPress 5.9 or greater
 * PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
@@ -239,6 +239,74 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.11.1 - 2023-02-15 =
+
+* Fix: Featured Image dynamic tag is not working in Background images ([#21313](https://github.com/elementor/elementor/issues/21313))
+
+= 3.11.0 - 2023-02-13 =
+
+* New: Introducing Copy and Paste Between Websites functionality ([#9424](https://github.com/elementor/elementor/issues/9424), [#19183](https://github.com/elementor/elementor/issues/19183))
+* New: Responsive background Image Size - Adjust image size per device to improve performance ([#6778](https://github.com/elementor/elementor/issues/6778), [#3722](https://github.com/elementor/elementor/issues/3722))
+* New: Updated Swiper Library to 8.4.5 as a Beta experiment ([#18724](https://github.com/elementor/elementor/issues/18724))
+* Tweak: Updated Google Fonts list with 125 new fonts ([#20229](https://github.com/elementor/elementor/issues/20229))
+* Tweak: Added `accent-color` support to Form fields in Site Settings
+* Tweak: Use `aspect-ratio` property instead of CSS trick in Video widget
+* Tweak: Updated `eicons` library to v5.18.0
+* Tweak: Added `generator` meta tag to identify active performance settings and experiments
+* Tweak: Improved logo visibility in Site Logo widget
+* Tweak: Updated error messages when replacing URLs in Elementor Tools screen
+* Tweak: Updated error messages on import/export functionality
+* Tweak: Added a responsive control to custom image spacing in Image Carousel widget
+* Tweak: Renamed "Experiments" settings tab to "Features" for better clarity
+* Tweak: Merged "Hide WP widgets from search" experiment to the version
+* Tweak: Promoted "Nested Elements" experiment to BETA status
+* Tweak: Promoted "Flexbox Container" experiment to RC status
+* Tweak: Promoted "Save as Default" experiment to Stable status
+* Fix: Rename `e-action-hash` attribute to `data-e-action-hash` attribute ([#20513](https://github.com/elementor/elementor/issues/20513), [#16418](https://github.com/elementor/elementor/issues/16418), props [@huubl](https://github.com/huubl))
+* Fix: Justify Content icons are inverted in RTL when direction is set to column in Container ([#20083](https://github.com/elementor/elementor/issues/20083))
+* Fix: Various issues when using the convert-to-container functionality
+* Fix: Tabs widget changes width size when direction set to row or column in Container
+* Fix: Adjusted right-click menu dark mode for blocked options
+* Fix: Can't rollback Elementor version to older Core version
+
+= 3.10.2 - 2023-01-29 =
+
+* Fix: PHP 8.x throws errors and notices in some cases ([#21087](https://github.com/elementor/elementor/issues/21087))
+* Fix: Keyboard actions are not blocked on main tab container in Tabs widget
+
+= 3.10.1 - 2023-01-17 =
+
+* Fix: Child containers inheriting styles from parent container ([#20669](https://github.com/elementor/elementor/issues/20669))
+* Fix: Lazyload not working after load more action in loop builder items
+* Fix: Tab toggle is not working as expected after dragging a widget to any tab in Tabs widget
+* Fix: Elementor Top bar is not fully responsive when WP sidebar is collapsed
+
+= 3.10.0 - 2023-01-09 =
+
+* New: Introducing the renewed Tabs widget - Enable more design options, and nesting capabilities ([#2587](https://github.com/elementor/elementor/issues/2587))
+* New: Introducing Custom Units - A new way to choose any unit you want, including CSS Math Functions ([#2219](https://github.com/elementor/elementor/issues/2219), [#19935](https://github.com/elementor/elementor/issues/19935), [#18738](https://github.com/elementor/elementor/issues/18738), [#8307](https://github.com/elementor/elementor/issues/8307), [#11335](https://github.com/elementor/elementor/issues/11335))
+* New: Container-based website assets - Kickstart your website creation and design process with container-based full website kits, templates and blocks
+* New: Added an option to disable Google Fonts integration from font-family control
+* Tweak: Added `preload="metadata"` to self hosted videos in Video widget ([#17308](https://github.com/elementor/elementor/issues/17308))
+* Tweak: Added `preload` selector to self hosted videos in Video widget ([#17308](https://github.com/elementor/elementor/issues/17308))
+* Tweak: Added `loading="lazy"` for custom size in media control ([#17884](https://github.com/elementor/elementor/issues/17884))
+* Tweak: Added additional units for width and height in Icon List widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added additional units for icon size in Icon List Widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added `loading="lazy"` to Google Map widget
+* Tweak: Updated `eicons` library to 5.17.0
+* Tweak: Merged various experiments to the version
+* Tweak: Promoted various experiments to Beta and Stable status
+* Tweak: Added Undo option into success toast in "Save as Default" experiment
+* Tweak: Media control return image URL from WordPress in Style CSS
+* Tweak: General infrastructure changes to Import Export Website Kit experiment
+* Fix: RTL text is printed backward in Text Path widget ([#17309](https://github.com/elementor/elementor/issues/17309))
+* Fix: Unnecessary `non-existing control` errors are thrown on page load ([#20027](https://github.com/elementor/elementor/issues/20027))
+* Fix: Post type is overridden on autosave for library documents ([#1994](https://github.com/elementor/elementor/issues/1994))
+* Fix: Compatibility issue with Rank Math plugin due to `wp_print_media_template()` in onboarding module ([#18368](https://github.com/elementor/elementor/issues/18368))
+* Fix: Auto detection of dark mode not working in the Theme Builder ([#19670](https://github.com/elementor/elementor/issues/19670))
+* Fix: Missing escaping translation in Experiments screen
+* Fix: Motion effect on background image disables background overlay in Container
 
 = 3.9.2 - 2022-12-21 =
 

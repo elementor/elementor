@@ -81,7 +81,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 		$nested_tabs_heading_selector_class = ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading, {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content )';
-		$nested_tabs_content_selector_class = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content';
+		$nested_tabs_content_selector_class = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -285,7 +285,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'default' => [
 				'unit' => '%',
 			],
-			'size_units' => [ '%', 'px' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-heading-width: {{SIZE}}{{UNIT}}',
 			],
@@ -605,7 +605,7 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => '--n-tabs-title-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -618,7 +618,7 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};',
 				],
@@ -852,7 +852,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', 'em', 'rem' ],
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-icon-size: {{SIZE}}{{UNIT}}',
 			],
@@ -875,7 +875,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'size_units' => [ 'px', 'vw' ],
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-icon-gap: {{SIZE}}{{UNIT}}',
 			],
@@ -949,7 +949,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'box_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_content_selector_class}",
+				'selector' => $nested_tabs_content_selector_class,
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -962,7 +962,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'box_border',
-				'selector' => "{$nested_tabs_content_selector_class}",
+				'selector' => $nested_tabs_content_selector_class,
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -979,9 +979,9 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-content-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$nested_tabs_content_selector_class => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -990,7 +990,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_box_shadow',
-				'selector' => "{$nested_tabs_content_selector_class}",
+				'selector' => $nested_tabs_content_selector_class,
 				'condition' => [
 					'box_height!' => 'height',
 				],
@@ -1002,9 +1002,9 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-content-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$nested_tabs_content_selector_class => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

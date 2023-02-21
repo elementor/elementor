@@ -1,3 +1,1 @@
-( function() {
-	window.elementor.start();
-} )();
+window.elementor.start();
