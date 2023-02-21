@@ -73,40 +73,5 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Post to a Slack channel
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
-          payload: |
-                  {
-                    "blocks": [{
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\nPlease test it and report any issues"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Changelog*:\n\n${{ env.CHANGELOG_CONTENT }}"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
-                        }
-                      }
-                    ]
-                  }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      - name: Post to Slack
+        uses : ./.github/workflows/post-to-slack
