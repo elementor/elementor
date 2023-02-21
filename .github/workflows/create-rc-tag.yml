@@ -73,23 +73,18 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Read Changelog File Content
-        id: read_file
-        uses: andstor/file-reader-action@v1
-        with:
-          path: ${{ env.CHANGELOG_FILE }}
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
           payload: |
                   {
-                    "text": "<b>Elementor</b> `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues",
+                    "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues",
                     "blocks": [{
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues"
+                          "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues"
                         }
                       },
                       {
@@ -99,7 +94,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "<b>Changelog:</b>\n\n${{  steps.read_file.outputs.content }}"
+                          "text": "Changelog:\n\n${{  ${{ env.CHANGELOG_CONTENT }}
                         }
                       },
                       {
