@@ -46,7 +46,7 @@ runs:
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/<a href="https:\/\/elementor.atlassian.net\/browse\/ED-\1">ED-\1<\/a>/g')
 
             # Replace * xxx: patterns with *xxx:* \n
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\* ([a-zA-Z]+):/*\1:* \\n/g')
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\* ([a-zA-Z]+):/\*\1:\n/g')
 
             # Multi-line env vars are not supported,
             # so we need to create a new env var with the content of the changelog file.
