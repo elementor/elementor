@@ -78,37 +78,36 @@ jobs:
         with:
           channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
           payload: |
-            {
-              "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues"
+                  {
+                    "text": "@here Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}.\n Please test it and report any issues",
+                    "blocks": [{
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Elementor `${{ env.PACKAGE_VERSION }}` RC release created by ${{ github.actor }}. Please test it and report any issues"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Changelog:\n\n${{ cat ${{ env.CHANGELOG_FILE }} }}"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
+                        }
+                      }
+                    ]
                   }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Changelog:\n$(cat ${{ env.CHANGELOG_FILE }})"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
-                  }
-                }
-              ]
-            }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
