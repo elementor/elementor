@@ -73,5 +73,9 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Post to Slack
+      - name: Post To Slack Created RC Release
         uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_TAG_CHANNELS }}
+          

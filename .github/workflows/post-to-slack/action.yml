@@ -1,5 +1,13 @@
-name: Post to Slack
+name: Post To Slack Created RC Release
 description: Post a message to a Slack channel
+
+inputs:
+  SLACK_BOT_TOKEN:
+    description: 'The Slack token to use'
+    required: true
+  SLACK_TAG_CHANNELS:
+    description: 'The Slack channel to post to'
+    required: true
 
 runs:
   using: "composite"
@@ -7,7 +15,7 @@ runs:
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.23.0
         with:
-          channel-id: ${{ secrets.SLACK_TAG_CHANNELS }}
+          channel-id: ${{ inputs.SLACK_TAG_CHANNELS }}
           payload: |
                   {
                     "blocks": [{
@@ -40,4 +48,4 @@ runs:
                     ]
                   }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ inputs.SLACK_TOKEN }}
