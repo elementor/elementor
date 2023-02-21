@@ -38,9 +38,19 @@ jobs:
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      - name: Startup MySQL service
-        run: sudo systemctl start mysql
+      # - name: Startup MySQL service
+      #   run: sudo systemctl start mysql
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Setup PHP
