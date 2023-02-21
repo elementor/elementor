@@ -1,8 +1,7 @@
-import { ReactNode } from 'react';
-import { Portal as BasePortal } from '@elementor/ui';
+import { Portal as BasePortal, PortalProps } from '@elementor/ui';
 import { isRouteActive, routeCloseEvent, routeOpenEvent, useListenTo } from '@elementor/v1-adapters';
 
-export default function Portal( { children }: { children: ReactNode } ) {
+export default function Portal( props: Omit<PortalProps, 'container'> ) {
 	const containerRef = useListenTo(
 		[
 			routeOpenEvent( 'panel/global' ),
@@ -16,9 +15,7 @@ export default function Portal( { children }: { children: ReactNode } ) {
 	}
 
 	return (
-		<BasePortal container={ containerRef.current }>
-			{ children }
-		</BasePortal>
+		<BasePortal container={ containerRef.current } { ...props } />
 	);
 }
 
