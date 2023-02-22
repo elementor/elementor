@@ -1,6 +1,10 @@
 import After from 'elementor-api/modules/hooks/ui/after';
 
 /**
+ * @typedef {import('../../../../container/container')} Container
+ */
+
+/**
  * UI hook to set direction mode when changing element's settings.
  * Currently used to determine the direction of the flex icons in the Container element.
  * It should be generic and work with any element, and since each element might use a different
@@ -16,12 +20,22 @@ export class SetDirectionMode extends After {
 		return 'set-direction-mode--document/elements/settings';
 	}
 
+	hasUiStates( container ) {
+		return !! container.renderer?.view?.getCurrentUiStates;
+	}
+
 	getConditions( args = {} ) {
-		return ! ! args.container.renderer?.view?.getCurrentUiStates;
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		return containers.some( this.hasUiStates );
 	}
 
 	apply( args ) {
-		SetDirectionMode.set( args.container );
+		const containers = args.container ? [ args.container ] : args.containers;
+
+		containers
+			.filter( this.hasUiStates )
+			.forEach( ( container ) => SetDirectionMode.set( container ) );
 	}
 
 	/**

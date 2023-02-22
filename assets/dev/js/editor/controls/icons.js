@@ -64,8 +64,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	getControlValue() {
-		const value = super.getControlValue(),
-			model = this.model,
+		const model = this.model,
 			valueToMigrate = this.getValueToMigrate();
 
 		if ( ! this.isMigrationAllowed() ) {
@@ -73,18 +72,19 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		// Bail if no migration flag or no value to migrate
+		const value = super.getControlValue();
 		if ( ! valueToMigrate ) {
 			return value;
 		}
 
-		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
-			controlName = model.get( 'name' );
+		const controlName = model.get( 'name' );
 
 		// Check if migration had been done and is stored locally
 		if ( this.cache.migratedFlag[ controlName ] ) {
 			return this.cache.migratedFlag[ controlName ];
 		}
 		// Check if already migrated
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey );
 		if ( didMigration && didMigration[ controlName ] ) {
 			return value;
 		}
@@ -107,7 +107,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	isMigrationAllowed() {
-		return ! elementor.config[ 'icons_update_needed' ];
+		return ! elementor.config.icons_update_needed;
 	}
 
 	getValueToMigrate() {
@@ -125,7 +125,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	onReady() {
-		// is migration allowed from fa4
+		// Is migration allowed from fa4
 		if ( ! this.isMigrationAllowed() ) {
 			const migrationPopupTrigger = 'media' === this.model.get( 'skin' ) ? this.ui.previewContainer[ 0 ] : this.ui.inlineIconContainer[ 0 ];
 
@@ -135,14 +135,17 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.stopPropagation();
 
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
 					__( 'Elementor\'s New Icon Library', 'elementor' ),
 					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
 					__( 'Update', 'elementor' ),
-					onConfirm
+					onConfirm,
 				);
 				enableMigrationDialog.show();
 				return false;
@@ -199,7 +202,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		} );
 
 		this.frame.on( 'close', () => {
-			// restore allowed upload extensions
+			// Restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
 		} );
 	}
@@ -273,7 +276,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		if ( 'media' === skin ) {
-			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
+			this.ui.controlMedia.toggleClass( 'e-media-empty', ! iconValue );
 		}
 
 		if ( ( 'inline' === skin && ! disableActiveState ) || iconType ) {

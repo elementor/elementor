@@ -19,7 +19,7 @@ const matchUserAgent = ( UserAgentStr ) => {
 		} )( ! window.safari || ( typeof safari !== 'undefined' && safari.pushNotification ) ),
 
 	// Internet Explorer 6-11
-	isIE = /Trident|MSIE/.test( userAgent ) && ( /*@cc_on!@*/false || !! document.documentMode ),
+	isIE = /Trident|MSIE/.test( userAgent ) && ( /* @cc_on!@*/false || !! document.documentMode ),
 
 	// Edge 20+
 	isEdge = ( ! isIE && !! window.StyleMedia ) || matchUserAgent( 'Edg' ),
@@ -33,7 +33,12 @@ const matchUserAgent = ( UserAgentStr ) => {
 	// Apple Webkit engine
 	isAppleWebkit = matchUserAgent( 'AppleWebKit' ) && ! isBlink,
 
+	isTouchDevice = ( 'ontouchstart' in window ) ||
+		( navigator.maxTouchPoints > 0 ) ||
+		( navigator.msMaxTouchPoints > 0 ),
+
 	environment = {
+		isTouchDevice,
 		appleWebkit: isAppleWebkit,
 		blink: isBlink,
 		chrome: isChrome,

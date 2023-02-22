@@ -9,7 +9,7 @@ export default class ItemCollection {
 	/**
 	 * ItemCollection constructor.
 	 *
-	 * @param items
+	 * @param {Array<*>} items
 	 */
 	constructor( items = [] ) {
 		this.setItems( items );
@@ -18,7 +18,7 @@ export default class ItemCollection {
 	/**
 	 * Set the Item objects list.
 	 *
-	 * @param items
+	 * @param {Array<*>} items
 	 */
 	setItems( items = [] ) {
 		for ( const item of items ) {
@@ -32,7 +32,8 @@ export default class ItemCollection {
 
 	/**
 	 * Get the Item objects list.
-	 * @returns {[]}
+	 *
+	 * @return {[]} items
 	 */
 	getItems() {
 		return this.items;
@@ -40,7 +41,8 @@ export default class ItemCollection {
 
 	/**
 	 * Get files of all items.
-	 * @returns {[]}
+	 *
+	 * @return {[]} files
 	 */
 	getFiles() {
 		return this.items.map( ( item ) => item.getFile() );

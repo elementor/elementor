@@ -2,7 +2,7 @@ import getUserTimestamp from 'elementor-utils/time';
 
 export default class Events {
 	dispatchEvent( eventData ) {
-		if ( ! elementorCommon.config[ 'event-tracker' ].isUserDataShared || ! eventData ) {
+		if ( ! eventData ) {
 			return;
 		}
 

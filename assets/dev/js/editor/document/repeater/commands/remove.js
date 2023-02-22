@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Remove extends CommandHistory {
+export class Remove extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' );
@@ -25,7 +23,7 @@ export class Remove extends CommandHistory {
 		this.requireContainer( args );
 
 		this.requireArgumentType( 'name', 'string', args );
-		this.requireArgument( 'index', args ); // sometimes null.
+		this.requireArgument( 'index', args ); // Sometimes null.
 	}
 
 	getHistory( args ) {
@@ -36,10 +34,6 @@ export class Remove extends CommandHistory {
 			type: 'remove',
 			subTitle: __( 'Item', 'elementor' ),
 		};
-	}
-
-	isDataChanged() {
-		return true;
 	}
 
 	apply( args ) {

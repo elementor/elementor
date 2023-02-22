@@ -5,11 +5,11 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=5.6"
+		"php": ">=7.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-		"inewlegend/elementor-editor-testing": "0.0.1",
+		"matipojo/elementor-editor-testing": "0.0.2",
 		"justinrainbow/json-schema": "^5.2",
 		"phpunit/phpunit": "^5|^6|^7",
 		"squizlabs/php_codesniffer": "^3.6",
@@ -18,12 +18,17 @@
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0"
 	},
 	"scripts": {
-	  "lint": "phpcs --standard=phpcs.xml",
+	  "lint": "phpcs --standard=ruleset.xml",
 	  "test": "phpunit",
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
 	  "coverage": "composer run coverage:test && composer run coverage:check",
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	},
 	"authors": [
 		{

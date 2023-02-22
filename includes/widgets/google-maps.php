@@ -176,7 +176,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'vh' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],
@@ -294,7 +294,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		?>
 		<div class="elementor-custom-embed">
-			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+			<iframe loading="lazy"
 					src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
 					title="<?php echo esc_attr( $settings['address'] ); ?>"
 					aria-label="<?php echo esc_attr( $settings['address'] ); ?>"

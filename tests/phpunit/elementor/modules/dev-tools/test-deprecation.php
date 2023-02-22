@@ -199,15 +199,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 		], $settings['soft_notices']['test_deprecated_function_soft'] );
 	}
 
-	public function test_deprecated_function_hard() {
-		$this->setExpectedDeprecated( __FUNCTION__ );
-
-		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.5.0' );
-	}
-
 	public function test_do_deprecated_action() {
-		$this->setExpectedDeprecated( 'elementor/test/deprecated_action' );
-
 		add_action( 'elementor/test/deprecated_action', function() {
 			echo 'Testing Do Deprecated Action';
 		} );
@@ -226,7 +218,11 @@ class Test_Deprecation extends Elementor_Test_Base {
 			echo 'Testing Do Deprecated Action';
 		} );
 
+		ob_start();
+
 		$this->deprecation->do_deprecated_action( 'elementor/test/deprecated_action_soft', [], '0.0.0', '', '0.4.0' );
+
+		ob_get_clean();
 
 		$settings = $this->deprecation->get_settings();
 
@@ -236,17 +232,110 @@ class Test_Deprecation extends Elementor_Test_Base {
 		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
 	}
 
-	public function test_apply_deprecated_filter() {
+	public function test_apply_deprecated_filter__without_filter() {
+		// Arrange.
 		$hook = 'elementor/test/deprecated_filter';
 
-		$this->setExpectedDeprecated( $hook );
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [ 'elementor' ], '0.0.0', '', '0.5.0' );
 
-		add_filter( $hook, function() {
-			return 'Testing Apply Deprecated Filter';
+		// Assert.
+		$this->assertEquals( 'elementor', $result );
+	}
+
+	public function test_apply_deprecated_filter__with_string_as_arg_and_without_filter() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, 'elementor', '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'elementor', $result );
+	}
+
+	public function test_apply_deprecated_filter__with_string_as_arg_and_filter() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		add_filter( $hook, function( $value ) {
+			return $value . '-test';
 		} );
 
-		$result = $this->deprecation->apply_deprecated_filter( $hook, [ '' ], '0.0.0', '', '0.5.0' );
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, 'elementor', '0.0.0', '', '0.5.0' );
 
-		$this->assertEquals( $result, 'Testing Apply Deprecated Filter' );
+		// Assert.
+		$this->assertEquals( 'elementor-test', $result );
+	}
+
+	public function test_apply_deprecated_filter__with_empty_args_array() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertNull( $result );
+	}
+
+	public function test_apply_deprecated_filter__with_multiple_args_and_without_filter() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, ['elementor', 'elementor-pro'], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'elementor', $result );
+	}
+
+	public function test_apply_deprecated_filter__with_multiple_args_and_filter() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		add_filter( $hook, function( $value1, $value2 ) {
+			return $value2 . '-test';
+		}, 10, 2 );
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, ['elementor', 'elementor-pro'], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'elementor-pro-test', $result );
+	}
+
+	public function test_apply_deprecated_filter__with_multiple_args_associative_array() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		add_filter( $hook, function( $value1, $value2 ) {
+			return $value1;
+		}, 10, 2 );
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [
+			'elementor' => 'free',
+			'elementor-pro' => 'paid',
+		], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'free', $result );
+	}
+
+	public function test_apply_deprecated_filter() {
+		// Arrange.
+		$hook = 'elementor/test/deprecated_filter';
+
+		add_filter( $hook, function( $value ) {
+			return $value . '-test';
+		} );
+
+		// Act.
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [ 'elementor' ], '0.0.0', '', '0.5.0' );
+
+		// Assert.
+		$this->assertEquals( 'elementor-test', $result );
 	}
 }

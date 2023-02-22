@@ -1,6 +1,10 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import environment from 'elementor-common/utils/environment';
 
-class AddSectionBase extends Marionette.ItemView {
+/**
+ * @typedef {import('../../container/container')} Container
+ */
+ class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
 
 	// Views.
@@ -25,7 +29,7 @@ class AddSectionBase extends Marionette.ItemView {
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
-			containerPresets: '.e-container-preset',
+			containerPresets: '.e-con-preset',
 		};
 	}
 
@@ -38,12 +42,12 @@ class AddSectionBase extends Marionette.ItemView {
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 		};
 	}
-
 	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: this.getContextMenuGroups(),
+				eventTargets: [ '.elementor-add-section-inner' ],
 			},
 		};
 	}
@@ -77,6 +81,8 @@ class AddSectionBase extends Marionette.ItemView {
 			return elementor.elements.length > 0;
 		};
 
+		const controlSign = environment.mac ? '&#8984;' : '^';
+
 		return [
 			{
 				name: 'paste',
@@ -84,6 +90,7 @@ class AddSectionBase extends Marionette.ItemView {
 					{
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
+						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
@@ -92,6 +99,17 @@ class AddSectionBase extends Marionette.ItemView {
 								rebuild: true,
 							},
 							onAfter: () => this.onAfterPaste(),
+						} ),
+					}, {
+						name: 'paste_area',
+						icon: 'eicon-import-export',
+						title: __( 'Paste from other site', 'elementor' ),
+						callback: () => $e.run( 'document/elements/paste-area', {
+							container: elementor.getPreviewContainer(),
+							options: {
+								at: this.getOption( 'at' ),
+								rebuild: true,
+							},
 						} ),
 					},
 				],
@@ -136,10 +154,13 @@ class AddSectionBase extends Marionette.ItemView {
 
 	getDroppableOptions() {
 		return {
+			isDroppingAllowed: ( ) => {
+				return ! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
+			},
 			onDropping: ( side, event ) => {
 				elementor.getPreviewView().onDrop(
 					event,
-					{ side, at: this.getOption( 'at' ) }
+					{ side, at: this.getOption( 'at' ) },
 				);
 			},
 		};
@@ -167,7 +188,7 @@ class AddSectionBase extends Marionette.ItemView {
 	 *
 	 * @param {MouseEvent} e - Click event.
 	 *
-	 * @return {Container}
+	 * @return {Container} container
 	 */
 	onContainerPresetSelected( e ) {
 		this.closeSelectPresets();
@@ -175,7 +196,7 @@ class AddSectionBase extends Marionette.ItemView {
 		return ContainerHelper.createContainerFromPreset(
 			e.currentTarget.dataset.preset,
 			elementor.getPreviewContainer(),
-			this.options
+			this.options,
 		);
 	}
 

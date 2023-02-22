@@ -1,3 +1,6 @@
+/**
+ * @typedef {import('../../container/container')} Container
+ */
 export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Selected elements.
@@ -21,7 +24,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Manager constructor.
 	 *
-	 * @returns {Manager}
+	 * @return {Manager} manager
 	 */
 	constructor() {
 		super();
@@ -29,7 +32,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
 		// `remove` methods may be executed many times, when update methods will be used only once.
 		return new Proxy( this, {
-			get: function( target, prop ) {
+			get( target, prop ) {
 				if ( [ 'add', 'remove' ].includes( prop ) ) {
 					return ( ...args ) => {
 						const result = target[ prop ]( ...args );
@@ -55,7 +58,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * be returned when there are no selected elements.
 	 *
 	 * @param {Container[]|Container} fallback
-	 * @returns {Container[]}
+	 * @return {Container[]} selection elements
 	 */
 	getElements( fallback = null ) {
 		let result = Object.values( this.elements );
@@ -74,7 +77,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the new elements are just added to the current selection.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} append
+	 * @param {boolean}               append
 	 */
 	add( containers, append = false ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
@@ -98,7 +101,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the the whole selection is cleared.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} all
+	 * @param {boolean}               all
 	 */
 	remove( containers, all = false ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
@@ -120,7 +123,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * Check whether an element container exists in the selected elements.
 	 *
 	 * @param {Container} container
-	 * @returns {boolean}
+	 * @return {boolean} true if the container exists in the selected elements
 	 */
 	has( container ) {
 		return this.getElements()
@@ -192,7 +195,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * Check whether multiple elements were selected.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} true if multiple elements were selected
 	 */
 	isMultiple() {
 		return this.getElements().length > 1;
@@ -203,7 +206,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * Check whether the selected elements are of same type.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} true if the selected elements are of same type
 	 */
 	isSameType() {
 		return ! this.getElements().length ||

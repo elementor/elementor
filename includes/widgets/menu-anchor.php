@@ -151,4 +151,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 		<div class="elementor-menu-anchor"{{{ settings.anchor ? ' id="' + settings.anchor + '"' : '' }}}></div>
 		<?php
 	}
+
+	protected function on_save( array $settings ) {
+		$settings['anchor'] = sanitize_html_class( $settings['anchor'] );
+
+		return $settings;
+	}
 }

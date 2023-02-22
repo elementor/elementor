@@ -5,9 +5,11 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Testing\Core\Base\Mock\Mock_Template;
 use Elementor\Testing\Core\Base\Mock\Mock_Internal_URL;
+use Elementor\Testing\Core\Base\Mock\Mock_Popup;
 
 require_once 'mock/mock-internal-url.php';
 require_once 'mock/mock-template.php';
+require_once 'mock/mock-popup.php';
 
 class Test_Document extends Elementor_Test_Base {
 
@@ -75,13 +77,60 @@ class Test_Document extends Elementor_Test_Base {
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
 
-	public function test_on_import_replace_dynamic_content() {
+	public function test_on_import_update_dynamic_content__using_on_import_replace_dynamic_content() {
+		// Arrange.
+		require_once __DIR__ . '/document.php';
+
+		$this->act_as_admin();
+
+		plugin::$instance->widgets_manager->register( new Mock_Popup() );
+
+		$post = $this->factory()->create_and_get_default_post();
+
+		$document = new Document( [
+			'post_id' => $post->ID,
+		] );
+
+		$replace_data = [
+			'post_ids' => [ '22' => '23' ],
+			'term_ids' => [ '41' => '42' ],
+		];
+
+		$config = self::$document_mock_default[ 'elements' ];
+
+		$widgets = [
+			[
+				'id' => '75431642',
+				'elType' => 'widget',
+				'settings' => [
+					'popup' => '22',
+				],
+				'elements' => [],
+				'widgetType' => 'popup',
+			],
+		];
+
+		// Act.
+
+		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
+
+		$updated_config = $document::on_import_update_dynamic_content( $config, $replace_data );
+
+		// Assert.
+
+		$this->assertEquals(
+			'23',
+			$updated_config[0][ 'elements' ][0][ 'elements' ][1][ 'settings' ][ 'popup' ]
+		);
+	}
+
+	public function test_on_import_update_dynamic_content() {
+		// Arrange.
 		require_once __DIR__ . '/document.php';
 
 		$this->act_as_admin();
 
 		Plugin::$instance->dynamic_tags->register( new Mock_Internal_URL() );
-
 		plugin::$instance->widgets_manager->register( new Mock_Template() );
 
 		$post = $this->factory()->create_and_get_default_post();
@@ -90,17 +139,20 @@ class Test_Document extends Elementor_Test_Base {
 			'post_id' => $post->ID,
 		] );
 
-		$map_old_new_post_ids = [ '35' => '36', '37' => '38' ];
+		$replace_data = [
+			'post_ids' => [ '35' => '36', '37' => '38' ],
+			'term_ids' => [ '42' => '43' ],
+		];
 
 		$config = self::$document_mock_default[ 'elements' ];
 
-		$dynamic_widgets = [
+		$widgets = [
 			[
 				'id' => '233273c4',
 				'elType' => 'widget',
 				'settings' => [
 					'__dynamic__' => [
-						'link' => '[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2235%22%7D"]'
+						'link' => '[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2235%22%7D"]',
 					],
 				],
 				'elements' => [],
@@ -117,16 +169,20 @@ class Test_Document extends Elementor_Test_Base {
 			],
 		];
 
-		$config[0]['elements'][0]['elements'] = array_merge(  $config[0]['elements'][0]['elements'], $dynamic_widgets);
-		
-		$updated_config = $document::on_import_replace_dynamic_content( $config, $map_old_new_post_ids );
+		// Act.
 
-		$this->assertEquals( 
+		$config[0]['elements'][0]['elements'] = array_merge( $config[0]['elements'][0]['elements'], $widgets );
+
+		$updated_config = $document::on_import_update_dynamic_content( $config, $replace_data );
+
+		// Assert.
+
+		$this->assertEquals(
 			'[elementor-tag id="70ab2b2" name="internal-url" settings="%7B%22type%22%3A%22post%22%2C%22post_id%22%3A%2236%22%7D"]',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][1][ 'settings' ][ '__dynamic__' ][ 'link' ]
 		);
 
-		$this->assertEquals( 
+		$this->assertEquals(
 			'38',
 			$updated_config[0][ 'elements' ][0][ 'elements' ][2][ 'settings' ][ 'template_id' ]
 		);

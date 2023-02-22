@@ -1,6 +1,7 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class PasteStyle extends CommandHistory {
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
+ export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -41,7 +42,11 @@ export class PasteStyle extends CommandHistory {
 		const { containers = [ args.container ], storageKey = 'clipboard' } = args,
 			storageData = elementorCommon.storage.get( storageKey );
 
-		this.applyPasteStyleData( containers, storageData );
+		if ( ! storageData || ! storageData?.elements?.length || 'elementor' !== storageData?.type ) {
+			return false;
+		}
+
+		this.applyPasteStyleData( containers, storageData.elements );
 	}
 
 	applyPasteStyleData( containers, data ) {
@@ -81,6 +86,7 @@ export class PasteStyle extends CommandHistory {
 					}
 
 					if ( 'object' === typeof controlSourceValue ) {
+						// eslint-disable-next-line array-callback-return
 						const isEqual = Object.keys( controlSourceValue ).some( ( propertyKey ) => {
 							if ( controlSourceValue[ propertyKey ] !== controlTargetValue[ propertyKey ] ) {
 								return false;
@@ -107,7 +113,7 @@ export class PasteStyle extends CommandHistory {
 
 	/**
 	 * @param {Container} targetContainer
-	 * @param {{}} settings
+	 * @param {{}}        settings
 	 */
 	pasteStyle( targetContainer, settings ) {
 		const globals = settings.__globals__;
@@ -118,7 +124,7 @@ export class PasteStyle extends CommandHistory {
 
 		$e.run( 'document/elements/settings', {
 			container: targetContainer,
-			settings: settings,
+			settings,
 			options: {
 				external: true,
 				render: false,

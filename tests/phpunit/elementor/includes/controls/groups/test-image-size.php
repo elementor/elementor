@@ -30,10 +30,20 @@ class Test_Image_Size extends Elementor_Test_Base {
 
 		$html = ob_get_clean();
 
+		$wp_attachment = wp_get_attachment_image( $attachment_id, 'large', false, [ 'class' => "attachment-large size-large wp-image-{$attachment_id}" ] );
+		
+		// WordPress 6.1 removed the `decoding` attribute, so we need to remove it  to support all versions.
+		if ( version_compare( get_bloginfo( 'version' ), '6.1', '>=' ) ) {
+			$wp_attachment = str_replace( ' decoding="async"', '', $wp_attachment );
+		}
+
 		// Assert
 		$this->assertEquals(
-			wp_get_attachment_image( $attachment_id, 'large',false, [ 'class' => 'attachment-large size-large' ] ),
+			$wp_attachment,
 			$html
 		);
+
+		// Clean up
+		wp_delete_attachment( $attachment_id, true );
 	}
 }

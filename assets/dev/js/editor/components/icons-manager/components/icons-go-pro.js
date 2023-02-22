@@ -12,7 +12,7 @@ class IconsGoPro extends Component {
 					className="elementor-button elementor-button-default elementor-button-go-pro"
 					target="_blank"
 					rel="noopener noreferrer"
-				>{ __( 'Go Pro', 'elementor' ) }</a>
+				>{ __( 'Upgrade Now', 'elementor' ) }</a>
 			</div>
 		);
 	};

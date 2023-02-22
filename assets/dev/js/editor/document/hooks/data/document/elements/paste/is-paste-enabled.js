@@ -17,7 +17,7 @@ export class IsPasteEnabled extends Dependency {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( container ) =>
-			$e.components.get( 'document/elements' ).utils.isPasteEnabled( container )
+			$e.components.get( 'document/elements' ).utils.isPasteEnabled( container ),
 		);
 	}
 }

@@ -53,7 +53,7 @@ export default class View extends Marionette.ItemView {
 				title() {
 					return jQuery( this ).data( 'tooltip' );
 				},
-			}
+			},
 		);
 	}
 
@@ -177,7 +177,7 @@ export default class View extends Marionette.ItemView {
 
 	setWidthHeightInputsEditableState() {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-		//TODO: disable inputs
+		// TODO: disable inputs
 		if ( 'desktop' === currentDeviceMode ) {
 			this.ui.sizeInputWidth.attr( 'disabled', 'disabled' );
 			this.ui.sizeInputHeight.attr( 'disabled', 'disabled' );

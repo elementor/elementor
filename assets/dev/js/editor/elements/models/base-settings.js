@@ -1,9 +1,12 @@
 var BaseSettingsModel;
 
+/**
+ * @name BaseSettingsModel
+ */
 BaseSettingsModel = Backbone.Model.extend( {
 	options: {},
 
-	initialize: function( data, options ) {
+	initialize( data, options ) {
 		var self = this;
 
 		// Keep the options for cloning
@@ -55,7 +58,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 				elementorCommon.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
-					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
+					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.',
 				);
 
 				delete attrs[ controlName ];
@@ -73,29 +76,35 @@ BaseSettingsModel = Backbone.Model.extend( {
 		self.set( attrs );
 	},
 
-	handleRepeaterData: function( attrs ) {
+	convertRepeaterValueToCollection( attrs, repeaterControl ) {
+		return new Backbone.Collection( attrs[ repeaterControl.name ], {
+			model( attributes, options ) {
+				options = options || {};
+
+				options.controls = {};
+
+				Object.values( repeaterControl.fields ).forEach( ( item ) => {
+					options.controls[ item.name ] = item;
+				} );
+
+				// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
+				if ( ! attributes._id ) {
+					attributes._id = elementorCommon.helpers.getUniqueId();
+				}
+
+				return new BaseSettingsModel( attributes, options );
+			},
+		} );
+	},
+
+	handleRepeaterData( attrs ) {
+		const self = this;
+
 		_.each( this.controls, function( field ) {
 			if ( field.is_repeater ) {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
-					attrs[ field.name ] = new Backbone.Collection( attrs[ field.name ], {
-						model: function( attributes, options ) {
-							options = options || {};
-
-							options.controls = {};
-
-							Object.values( field.fields ).map( ( item ) => {
-								options.controls[ item.name ] = item;
-							} );
-
-							// TODO: Cannot be deleted, since it handle repeater items after repeater widget creation.
-							if ( ! attributes._id ) {
-								attributes._id = elementorCommon.helpers.getUniqueId();
-							}
-
-							return new BaseSettingsModel( attributes, options );
-						},
-					} );
+					attrs[ field.name ] = self.convertRepeaterValueToCollection( attrs, field );
 				}
 			}
 		} );
@@ -115,7 +124,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	getStyleControls: function( controls, attributes ) {
+	getStyleControls( controls, attributes ) {
 		var self = this;
 
 		controls = elementorCommon.helpers.cloneObject( self.getActiveControls( controls, attributes ) );
@@ -130,6 +139,10 @@ BaseSettingsModel = Backbone.Model.extend( {
 
 			if ( control.fields ) {
 				var styleFields = [];
+
+				if ( ! ( self.attributes[ control.name ] instanceof Backbone.Collection ) ) {
+					self.attributes[ control.name ] = self.convertRepeaterValueToCollection( self.attributes, control );
+				}
 
 				self.attributes[ control.name ].each( function( item ) {
 					styleFields.push( self.getStyleControls( control.fields, item.attributes ) );
@@ -146,7 +159,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return styleControls;
 	},
 
-	isGlobalControl: function( control, controls ) {
+	isGlobalControl( control, controls ) {
 		let controlGlobalKey = control.name;
 
 		if ( control.groupType ) {
@@ -164,7 +177,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return !! globalValue;
 	},
 
-	isStyleControl: function( attribute, controls ) {
+	isStyleControl( attribute, controls ) {
 		controls = controls || this.controls;
 
 		var currentControl = _.find( controls, function( control ) {
@@ -174,7 +187,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return currentControl && ! _.isEmpty( currentControl.selectors );
 	},
 
-	getClassControls: function( controls ) {
+	getClassControls( controls ) {
 		controls = controls || this.controls;
 
 		return _.filter( controls, function( control ) {
@@ -182,7 +195,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	isClassControl: function( attribute ) {
+	isClassControl( attribute ) {
 		var currentControl = _.find( this.controls, function( control ) {
 			return attribute === control.name;
 		} );
@@ -190,13 +203,13 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return currentControl && ! _.isUndefined( currentControl.prefix_class );
 	},
 
-	getControl: function( id ) {
+	getControl( id ) {
 		return _.find( this.controls, function( control ) {
 			return id === control.name;
 		} );
 	},
 
-	getActiveControls: function( controls, attributes ) {
+	getActiveControls( controls, attributes ) {
 		const activeControls = {};
 
 		if ( ! controls ) {
@@ -218,11 +231,11 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return activeControls;
 	},
 
-	clone: function() {
+	clone() {
 		return new BaseSettingsModel( elementorCommon.helpers.cloneObject( this.attributes ), elementorCommon.helpers.cloneObject( this.options ) );
 	},
 
-	setExternalChange: function( key, value ) {
+	setExternalChange( key, value ) {
 		var self = this,
 			settingsToChange;
 
@@ -241,7 +254,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	parseDynamicSettings: function( settings, options, controls ) {
+	parseDynamicSettings( settings, options, controls ) {
 		var self = this;
 
 		settings = elementorCommon.helpers.cloneObject( settings || self.attributes );
@@ -311,7 +324,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return settings;
 	},
 
-	parseGlobalSettings: function( settings, controls ) {
+	parseGlobalSettings( settings, controls ) {
 		settings = elementorCommon.helpers.cloneObject( settings );
 
 		controls = controls || this.controls;
@@ -385,7 +398,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		} );
 	},
 
-	toJSON: function( options ) {
+	toJSON( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
 		options = options || {};
@@ -408,4 +421,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	},
 } );
 
+/**
+ * @name BaseSettingsModel
+ */
 module.exports = BaseSettingsModel;

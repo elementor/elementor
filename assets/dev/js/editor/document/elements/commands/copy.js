@@ -1,13 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Copy extends CommandBase {
+export class Copy extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
 
 	apply( args ) {
-		const { storageKey = 'clipboard', containers = [ args.container ] } = args,
-			elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
 		if ( ! elementor.selection.isSameType() ) {
 			elementor.notifications.showToast( {
@@ -23,12 +20,30 @@ export class Copy extends CommandBase {
 			return false;
 		}
 
+		const elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+
+		const elementsData = containers.sort( ( first, second ) => {
+			return elements.index( first.view.el ) - elements.index( second.view.el );
+		} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) );
+
+		const storageData = {
+			type: 'elementor',
+			siteurl: elementorCommon.config.urls.rest,
+			elements: elementsData,
+		};
+
 		elementorCommon.storage.set(
 			storageKey,
-			containers.sort( ( first, second ) => {
-				return elements.index( first.view.el ) - elements.index( second.view.el );
-			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
+			storageData,
 		);
+
+		// TODO: Use package for clipboard saving
+		const clipboard = document.createElement( 'textarea' );
+		clipboard.value = JSON.stringify( storageData );
+		document.body.appendChild( clipboard );
+		clipboard.select();
+		document.execCommand( 'copy' );
+		document.body.removeChild( clipboard );
 	}
 }
 

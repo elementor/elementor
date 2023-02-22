@@ -1,7 +1,7 @@
 export const Auto = () => {
 	QUnit.module( 'Auto', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
-			// set is modified, 'true' since it will be rejected if 'editor.isChanged = false'.
+			// Set is modified, 'true' since it will be rejected if 'editor.isChanged = false'.
 			$e.internal( 'document/save/set-is-modified', { status: true } );
 
 			const response = await $e.run( 'document/save/auto' );
@@ -17,15 +17,15 @@ export const Auto = () => {
 			// Editor is not edit able!
 			document.editor.status = 'closed';
 
-			assert.throws(
-				() => {
-					// Put back as it was before.
-					$e.run( 'document/save/auto', { document } ).always( () => {
-						document.editor.status = defaultStatus;
-					} );
-				},
-				new Error( 'Document is not editable' ),
-			);
+			assert.expect( 1 );
+
+			$e.tests.commands.exceptCatchApply( ( e ) => {
+				assert.equal( e, 'Document is not editable' );
+			} );
+
+			$e.run( 'document/save/auto', { document } ).always( () => {
+				document.editor.status = defaultStatus;
+			} );
 		} );
 
 		QUnit.test( 'Resolved: "Document is not changed"', async ( assert ) => {

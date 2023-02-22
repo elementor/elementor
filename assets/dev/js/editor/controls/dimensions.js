@@ -1,8 +1,33 @@
+import Scrubbing from './behaviors/scrubbing';
+
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlDimensionsItemView;
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
-	ui: function() {
+
+	behaviors() {
+		return {
+			...ControlBaseUnitsItemView.prototype.behaviors.apply( this ),
+			Scrubbing: {
+				behaviorClass: Scrubbing,
+				scrubSettings: {
+					intentTime: 800,
+					valueModifier: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.1 : 1;
+					},
+					enhancedNumber: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.5 : 10;
+					},
+				},
+			},
+		};
+	},
+
+	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
 		ui.controls = '.elementor-control-dimension > input:enabled';
@@ -11,22 +36,23 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return _.extend( ControlBaseUnitsItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.link': 'onLinkDimensionsClicked',
 		} );
 	},
 
+	// Default value must be 0, because the CSS generator (in dimensions) expects the 4 dimensions to be filled together (or all are empty).
 	defaultDimensionValue: 0,
 
-	initialize: function() {
+	initialize() {
 		ControlBaseUnitsItemView.prototype.initialize.apply( this, arguments );
 
 		// TODO: Need to be in helpers, and not in variable
 		this.model.set( 'allowed_dimensions', this.filterDimensions( this.model.get( 'allowed_dimensions' ) ) );
 	},
 
-	getPossibleDimensions: function() {
+	getPossibleDimensions() {
 		return [
 			'top',
 			'right',
@@ -35,7 +61,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		];
 	},
 
-	filterDimensions: function( filter ) {
+	filterDimensions( filter ) {
 		filter = filter || 'all';
 
 		var dimensions = this.getPossibleDimensions();
@@ -55,7 +81,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		return filter;
 	},
 
-	onReady: function() {
+	onReady() {
 		var self = this,
 			currentValue = self.getControlValue();
 
@@ -76,7 +102,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		self.fillEmptyDimensions();
 	},
 
-	updateDimensionsValue: function() {
+	updateDimensionsValue() {
 		var currentValue = {},
 			dimensions = this.getPossibleDimensions(),
 			$controls = this.ui.controls,
@@ -91,16 +117,16 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.setValue( currentValue );
 	},
 
-	fillEmptyDimensions: function() {
-		var dimensions = this.getPossibleDimensions(),
-			allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			$controls = this.ui.controls,
+	fillEmptyDimensions() {
+		const $controls = this.ui.controls,
 			defaultDimensionValue = this.defaultDimensionValue;
 
 		if ( this.isLinkedDimensions() ) {
 			return;
 		}
 
+		const allowedDimensions = this.model.get( 'allowed_dimensions' ),
+			dimensions = this.getPossibleDimensions();
 		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
@@ -111,18 +137,18 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		} );
 	},
 
-	updateDimensions: function() {
+	updateDimensions() {
 		this.fillEmptyDimensions();
 		this.updateDimensionsValue();
 	},
 
-	resetDimensions: function() {
+	resetDimensions() {
 		this.ui.controls.val( '' );
 
 		this.updateDimensionsValue();
 	},
 
-	onInputChange: function( event ) {
+	onInputChange( event ) {
 		var inputSetting = event.target.dataset.setting;
 
 		if ( 'unit' === inputSetting ) {
@@ -130,6 +156,15 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		if ( ! _.contains( this.getPossibleDimensions(), inputSetting ) ) {
+			return;
+		}
+
+		// When using input with type="number" and the user starts typing `-`, the actual value (`event.target.value`) is
+		// an empty string. Since the user probably has the intention to insert a negative value, the methods below will
+		// not be triggered. This will prevent updating the input again with an empty string.
+		const hasIntentionForNegativeNumber = '-' === event?.originalEvent?.data && ! event.target.value;
+
+		if ( hasIntentionForNegativeNumber ) {
 			return;
 		}
 
@@ -142,7 +177,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.updateDimensions();
 	},
 
-	onLinkDimensionsClicked: function( event ) {
+	onLinkDimensionsClicked( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -158,8 +193,20 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		this.updateDimensions();
 	},
 
-	isLinkedDimensions: function() {
+	isLinkedDimensions() {
 		return this.getControlValue( 'isLinked' );
+	},
+
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
+
+		let inputType = 'number';
+
+		if ( this.isCustomUnit() ) {
+			inputType = 'text';
+		}
+
+		this.ui.controls.attr( 'type', inputType );
 	},
 } );
 

@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Move extends CommandHistory {
+export class Move extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -29,7 +27,7 @@ export class Move extends CommandHistory {
 		let count = 0;
 		reCreate.forEach( ( model ) => {
 			// If multiple fix position.
-			if ( options.hasOwnProperty( 'at' ) && reCreate.length > 1 ) {
+			if ( Object.prototype.hasOwnProperty.call( options, 'at' ) && reCreate.length > 1 ) {
 				if ( 0 !== count ) {
 					options.at += count;
 				}

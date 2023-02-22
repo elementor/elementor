@@ -1,14 +1,13 @@
-import CommandBase from 'elementor-api/modules/command-base';
 import { removeNamespaceHandler } from '../utils';
 
 /**
  * End the color picking process and return to the normal editor state.
  */
-export class End extends CommandBase {
+export class End extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply() {
 		// In-Activate the component since the default behavior will in-activate it only on route change,

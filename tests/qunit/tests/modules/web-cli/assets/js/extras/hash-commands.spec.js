@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Component from './mock/component.spec';
 
 QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks ) => {
@@ -7,12 +8,12 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 		$e.components.register( new Component() );
 
 		// Make sure the original warn function will not be triggered to avoid printing on the console.
-		originalWarnFunction = elementorCommon.helpers.consoleWarn;
-		elementorCommon.helpers.consoleWarn = () => {};
+		originalWarnFunction = console.warn;
+		console.warn = () => {};
 	} );
 
 	hooks.after( () => {
-		elementorCommon.helpers.consoleWarn = originalWarnFunction;
+		console.warn = originalWarnFunction;
 	} );
 
 	QUnit.test( 'get(): Ensure valid return format', ( assert ) => {
@@ -34,7 +35,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 	QUnit.test( 'get(): Ensure valid return format - Command with args', ( assert ) => {
 		// Act.
 		const actual = $e.extras.hashCommands.get(
-			'#e:run:test/command?{"number":1,"string":"test-string"}&e:run:test/command2&e:run:test/command3?{invalid-json}'
+			'#e:run:test/command?{"number":1,"string":"test-string"}&e:run:test/command2&e:run:test/command3?{invalid-json}',
 		);
 
 		// Assert.
@@ -110,7 +111,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:run',
 			} ] ),
-			new Error( 'Attempting to run unsafe or non exist command: `test-hash-commands/insecure-command`.' )
+			new Error( 'Attempting to run unsafe or non exist command: `test-hash-commands/insecure-command`.' ),
 		);
 	} );
 
@@ -121,7 +122,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:non-exist-method',
 			} ] ),
-			new Error( 'No dispatcher found for the command: `test-hash-commands/insecure-command`.' )
+			new Error( 'No dispatcher found for the command: `test-hash-commands/insecure-command`.' ),
 		);
 	} );
 
@@ -129,7 +130,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 		// Arrange.
 		let sharedReference = 0;
 
-		const callback = $e.commands.on( 'run:after', () => {
+		const callback = $e.commands.on( 'run', () => {
 			sharedReference++;
 		} );
 
@@ -150,9 +151,6 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 
 		// Ensure initial 'safe-command' run.
 		assert.equal( sharedReference, 1 );
-		// Why it works?
-		// Since the 'async-command' is still in callstack.
-		// Only the promise of 'async-command' is in the callstack.
 
 		// Give him tick to reach 2.
 		// When a waiting for promise, it will release the event loop, to run other callbacks in the stack.

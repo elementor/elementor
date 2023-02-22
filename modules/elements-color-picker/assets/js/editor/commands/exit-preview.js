@@ -1,13 +1,11 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
 /**
  * Exit the UI preview mode on mouseout.
  */
-export class ExitPreview extends CommandBase {
+export class ExitPreview extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply() {
 		const { initialColor } = this.component.currentPicker;

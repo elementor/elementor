@@ -26,7 +26,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			// Set cache test item.
@@ -34,7 +34,7 @@ jQuery( () => {
 
 			const result = await $e.data.cache.getAsync( requestData );
 
-			assert.equal( requestData.cache, 'hit' ); // added to requestData by receive.
+			assert.equal( requestData.cache, 'hit' ); // Added to requestData by receive.
 			assert.equal( randomValue, result );
 		} );
 
@@ -48,7 +48,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			$e.data.cache.set( requestData, randomValue );
@@ -65,7 +65,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			$e.data.cache.set( requestData, TEST_OBJECT );
@@ -82,7 +82,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			// Load TEST_OBJECT to cache 'load-deep-component = TEST_OBJECT'.
@@ -128,7 +128,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			$e.data.cache.set( requestData, randomValue );
@@ -147,7 +147,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 				};
 
 			$e.data.cache.set( requestData, TEST_OBJECT );
@@ -188,7 +188,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 					args: {},
 				},
 				randomValue = Math.random().toString();
@@ -219,7 +219,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 					args: {},
 				},
 				randomValue = Math.random().toString();
@@ -276,8 +276,8 @@ jQuery( () => {
 				randomValue = Math.random().toString(),
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( command, {} ),
-					command: command,
-					component: component,
+					command,
+					component,
 				};
 
 			$e.data.cache.set( requestData, {
@@ -302,7 +302,7 @@ jQuery( () => {
 				requestData = {
 					endpoint: $e.data.commandToEndpoint( component.getNamespace(), {} ),
 					command: component.getNamespace(),
-					component: component,
+					component,
 					args: {},
 				};
 

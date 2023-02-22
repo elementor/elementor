@@ -29,7 +29,7 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-site-identity';
+		return 'https://go.elementor.com/global-site-identity/';
 	}
 
 	protected function register_tab_controls() {
@@ -91,7 +91,12 @@ class Settings_Site_Identity extends Tab_Base {
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
-				'description' => esc_html__( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'description' => sprintf(
+					/* translators: 1: Width number pixel, 2: Height number pixel. */
+					esc_html__( 'Suggested image dimensions: %1$s × %2$s pixels.', 'elementor' ),
+					'350',
+					'100'
+				),
 				'export' => false,
 			]
 		);

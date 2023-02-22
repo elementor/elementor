@@ -25,13 +25,13 @@ export default class ArgsObject extends InstanceType {
 	 * Validate property in args.
 	 *
 	 * @param {string} property
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
 	 */
 	requireArgument( property, args = this.args ) {
-		if ( ! args.hasOwnProperty( property ) ) {
+		if ( ! Object.prototype.hasOwnProperty.call( args, property ) ) {
 			throw Error( `${ property } is required.` );
 		}
 	}
@@ -43,7 +43,7 @@ export default class ArgsObject extends InstanceType {
 	 *
 	 * @param {string} property
 	 * @param {string} type
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
@@ -62,8 +62,8 @@ export default class ArgsObject extends InstanceType {
 	 * Validate property in args using `args.whatever instanceof instance`.
 	 *
 	 * @param {string} property
-	 * @param {instanceof} instance
-	 * @param {{}} args
+	 * @param {*}      instance
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *
@@ -82,8 +82,8 @@ export default class ArgsObject extends InstanceType {
 	 * Validate property in args using `type === args.whatever.constructor`.
 	 *
 	 * @param {string} property
-	 * @param {*} type
-	 * @param {{}} args
+	 * @param {*}      type
+	 * @param {{}}     args
 	 *
 	 * @throws {Error}
 	 *

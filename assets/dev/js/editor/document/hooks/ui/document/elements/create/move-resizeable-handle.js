@@ -17,7 +17,7 @@ export class MoveResizeableHandle extends After {
 		const { containers = [ args.container ] } = args;
 
 		// If the element was created in a Container.
-		return containers.some( ( /**Container*/ container ) => (
+		return containers.some( ( /** Container*/ container ) => (
 			'container' === container.model.get( 'elType' )
 		) );
 	}

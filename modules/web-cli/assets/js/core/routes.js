@@ -36,10 +36,11 @@ export default class Routes extends Commands {
 			return;
 		}
 
-		delete this.current[ container ];
-		delete this.currentArgs[ container ];
+		this.detachCurrent( container );
 
 		this.getComponent( route ).onCloseRoute( route );
+
+		this.dispatchOnClose( route );
 	}
 
 	clear() {
@@ -65,8 +66,8 @@ export default class Routes extends Commands {
 		return true;
 	}
 
-	beforeRun( route, args ) {
-		if ( ! super.beforeRun( route, args ) ) {
+	validateRun( route, args = {} ) {
+		if ( ! super.validateRun( route, args ) ) {
 			return false;
 		}
 
@@ -74,13 +75,7 @@ export default class Routes extends Commands {
 			return false;
 		}
 
-		const component = this.getComponent( route ),
-			container = component.getRootContainer(),
-			oldRoute = this.current[ container ];
-
-		if ( oldRoute ) {
-			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
-		}
+		const component = this.getComponent( route );
 
 		if ( ! component.isOpen || args.reOpen ) {
 			component.isOpen = component.open( args );
@@ -89,10 +84,35 @@ export default class Routes extends Commands {
 		return component.isOpen;
 	}
 
+	/**
+	 * @override
+	 */
+	beforeRun( route, args ) {
+		const component = this.getComponent( route ),
+			container = component.getServiceName(),
+			oldRoute = this.current[ container ];
+
+		if ( oldRoute ) {
+			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
+		}
+
+		Commands.trace.push( route );
+
+		super.beforeRun( route, args, false );
+
+		this.attachCurrent( container, route, args );
+
+		// In the previous condition, `$e.routes.is()` resolves the old route as active (because the actual route
+		// switching happens inside `this.attachCurrent()`), so we can't use it there.
+		if ( oldRoute ) {
+			this.dispatchOnClose( oldRoute );
+		}
+	}
+
 	to( route, args ) {
 		this.run( route, args );
 
-		const namespaceRoot = this.getComponent( route ).getRootContainer();
+		const namespaceRoot = this.getComponent( route ).getServiceName();
 
 		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
 			this.historyPerComponent[ namespaceRoot ] = [];
@@ -125,8 +145,16 @@ export default class Routes extends Commands {
 	}
 
 	// Don't clear current route.
-	afterRun( route, args ) {
-		this.getComponent( route ).onRoute( route, args );
+	afterRun( route, args, results = undefined ) {
+		const component = this.getComponent( route );
+
+		component.onRoute( route, args );
+
+		this.dispatchOnOpen( route );
+
+		super.afterRun( route, args, results, false );
+
+		Commands.trace.pop();
 	}
 
 	is( route, args = {} ) {
@@ -134,7 +162,7 @@ export default class Routes extends Commands {
 			return false;
 		}
 
-		const container = this.getComponent( route ).getRootContainer();
+		const container = this.getComponent( route ).getServiceName();
 
 		return _.isEqual( args, this.currentArgs[ container ] );
 	}
@@ -164,5 +192,21 @@ export default class Routes extends Commands {
 
 	error( message ) {
 		throw Error( 'Routes: ' + message );
+	}
+
+	dispatchOnOpen( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
+			detail: {
+				route,
+			},
+		} ) );
+	}
+
+	dispatchOnClose( route ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/close', {
+			detail: {
+				route,
+			},
+		} ) );
 	}
 }

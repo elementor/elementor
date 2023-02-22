@@ -1,11 +1,14 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
+$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-mode-switcher"></div>
@@ -49,6 +52,19 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# } #>
 </script>
 
+<script type="text/template" id="tmpl-elementor-exit-dialog">
+	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
+	<div>
+		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
+		<?php echo sprintf(
+			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
+			'<a id="user-preferences">',
+			'</a>'
+		); ?>
+	</div>
+	<select id="exit-to-preferences"></select> <!--  Adding options by JS  -->
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-header">
 	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
@@ -66,9 +82,17 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
+		echo $is_editor_v2_active
+			? esc_attr__( 'Structure', 'elementor' )
+			: esc_attr__( 'Navigator', 'elementor' );
+	?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php
+			echo $is_editor_v2_active
+				? esc_html__( 'Structure', 'elementor' )
+				: esc_html__( 'Navigator', 'elementor' );
+		?></span>
 	</div>
 	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
@@ -283,7 +307,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
 			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
-				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
+				<?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 			</a>
 		</div>
 	</div>

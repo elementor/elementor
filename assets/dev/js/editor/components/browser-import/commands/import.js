@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Import extends CommandBase {
+export class Import extends $e.modules.CommandBase {
 	/**
 	 * @inheritDoc
 	 */
@@ -23,7 +21,7 @@ export class Import extends CommandBase {
 					if ( await session.validate() ) {
 						session.apply();
 					}
-				} )
+				} ),
 			);
 		} );
 

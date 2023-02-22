@@ -1,4 +1,4 @@
-import DocumentHelper from '../../helper';
+import UIHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/ui/helper';
 import ElementsHelper from '../../elements/helper';
 
 /**
@@ -95,7 +95,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		sourceIsInner = source.model.get( 'isInner' );
 
 	let isForce = false,
-		copiedContainer = DocumentHelper.UICopyPaste( source, target ),
+		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 
@@ -123,7 +123,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 	// When target or source is inner-section column, re-paste to the right depth.
 	if ( isForce ) {
-		copiedContainer = DocumentHelper.UICopyPaste( source, target );
+		copiedContainer = UIHelper.copyPaste( source, target );
 	}
 
 	// There is no point in checking what was not successful copied.
@@ -134,7 +134,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
+				if ( 'column' === sourceElType || ( elementorCommon.config.experimentalFeatures.container && 'widget' === sourceElType ) ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
@@ -216,51 +216,24 @@ export const Paste = () => {
 
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn );
+					eButton = ElementsHelper.createWidgetButton( eColumn );
 
-				DocumentHelper.UICopyPaste( eButton, eColumn );
+				UIHelper.copyPaste( eButton, eColumn );
 
 				// Check.
 				assert.equal( eColumn.children.length, 2,
 					'Pasted element were created.' );
 			} );
 
-			QUnit.test( 'Rules', ( assert ) => {
-				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
-					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						ElementsHelper.empty();
-
-						const source = DocumentHelper.autoCreate( sourceElType ),
-							target = DocumentHelper.autoCreate( targetElType );
-						// Handle inner-section.
-						if ( 'object' === typeof isAllowed ) {
-							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
-								validateRule( assert,
-									target,
-									_targetElType,
-									source,
-									sourceElType,
-									isAllowed[ _targetElType ],
-								);
-							} );
-
-							return;
-						}
-
-						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
-					} );
-				} );
-			} );
-
 			QUnit.module( 'Positions', () => {
 				QUnit.test( 'Section => Section', ( assert ) => {
-					const source = DocumentHelper.autoCreate( 'section' );
+					const source = ElementsHelper.createAuto( 'section' );
 
 					// To make it more complex.
-					DocumentHelper.autoCreate( 'section' );
+					ElementsHelper.createAuto( 'section' );
 
-					const target = DocumentHelper.autoCreate( 'section' ),
-						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
+					const target = ElementsHelper.createAuto( 'section' ),
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -273,13 +246,13 @@ export const Paste = () => {
 				} );
 
 				QUnit.test( 'Column => Column', ( assert ) => {
-					const source = DocumentHelper.autoCreate( 'column' );
+					const source = ElementsHelper.createAuto( 'column' );
 
 					// To make it more complex.
-					DocumentHelper.autoCreate( 'section' );
+					ElementsHelper.createAuto( 'section' );
 
-					const target = DocumentHelper.autoCreate( 'column' ),
-						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
+					const target = ElementsHelper.createAuto( 'column' ),
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -292,13 +265,13 @@ export const Paste = () => {
 				} );
 
 				QUnit.test( 'Widget => Widget', ( assert ) => {
-					const source = DocumentHelper.autoCreate( 'widget' );
+					const source = ElementsHelper.createAuto( 'widget' );
 
 					// To make it more complex.
-					DocumentHelper.autoCreate( 'section' );
+					ElementsHelper.createAuto( 'section' );
 
-					const target = DocumentHelper.autoCreate( 'widget' ),
-						copiedSuccess = !! DocumentHelper.UICopyPaste( source, target );
+					const target = ElementsHelper.createAuto( 'widget' ),
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 

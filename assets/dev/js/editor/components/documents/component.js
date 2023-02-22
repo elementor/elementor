@@ -2,6 +2,7 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import Document from './document';
 import * as commands from './commands/';
 import * as internalCommands from './commands/internal/';
+import * as hooks from './hooks';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -32,6 +33,10 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commands );
 	}
 
+	defaultHooks() {
+		return this.importHooks( hooks );
+	}
+
 	defaultCommandsInternal() {
 		return this.importCommands( internalCommands );
 	}
@@ -43,7 +48,7 @@ export default class Component extends ComponentBase {
 	 *
 	 * @param {Document} document
 	 *
-	 * @returns {Document}
+	 * @return {Document} document
 	 */
 	add( document ) {
 		const { id } = document;
@@ -61,7 +66,7 @@ export default class Component extends ComponentBase {
 	 *
 	 * @param {{}} config
 	 *
-	 * @returns {Document}
+	 * @return {Document} document
 	 */
 	addDocumentByConfig( config ) {
 		return this.add( new Document( config ) );
@@ -74,7 +79,7 @@ export default class Component extends ComponentBase {
 	 *
 	 * @param {number} id
 	 *
-	 * @returns {Document|boolean}
+	 * @return {Document|boolean} document, or false if doesn't exist
 	 */
 	get( id ) {
 		if ( undefined !== this.documents[ id ] ) {
@@ -89,7 +94,7 @@ export default class Component extends ComponentBase {
 	 *
 	 * Return's current document.
 	 *
-	 * @returns {Document}
+	 * @return {Document} document
 	 */
 	getCurrent() {
 		return this.currentDocument;
@@ -100,10 +105,14 @@ export default class Component extends ComponentBase {
 	 *
 	 * Return's current document id.
 	 *
-	 * @returns {number}
+	 * @return {number} document id
 	 */
 	getCurrentId() {
 		return this.currentDocument.id;
+	}
+
+	getInitialId() {
+		return elementor.config.initial_document.id;
 	}
 
 	/**
@@ -168,6 +177,7 @@ export default class Component extends ComponentBase {
 					message = __( 'Server Error', 'elementor' ) + ' ' + data[ 0 ].code;
 				}
 
+				// eslint-disable-next-line no-alert
 				alert( message );
 			},
 		};

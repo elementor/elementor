@@ -106,6 +106,10 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				muted: true,
 			};
 
+		if ( elementSettings.background_privacy_mode ) {
+			vimeoOptions.dnt = true;
+		}
+
 		this.player = new Vimeo.Player( this.elements.$backgroundVideoContainer, vimeoOptions );
 
 		// Handle user-defined start/end times
@@ -179,7 +183,9 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 							break;
 						case YT.PlayerState.ENDED:
-							this.player.seekTo( elementSettings.background_video_start || 0 );
+							if ( 'function' === typeof this.player.seekTo ) {
+								this.player.seekTo( elementSettings.background_video_start || 0 );
+							}
 							if ( elementSettings.background_play_once ) {
 								this.player.destroy();
 							}

@@ -1,9 +1,5 @@
-var Conditions;
-
-Conditions = function() {
-	const self = this;
-
-	this.compare = function( leftValue, rightValue, operator ) {
+export default class Conditions {
+	compare( leftValue, rightValue, operator ) {
 		switch ( operator ) {
 			/* eslint-disable eqeqeq */
 			case '==':
@@ -32,52 +28,80 @@ Conditions = function() {
 			default:
 				return leftValue === rightValue;
 		}
-	};
+	}
 
-	this.check = function( conditions, comparisonObject, controls ) {
+	/**
+	 * Get Operator
+	 *
+	 * Returns the condition's comparison operator according to the structure of the condition and item values.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param {*}       conditionValue
+	 * @param {boolean} isNegativeCondition
+	 * @param {8}       currentValue
+	 * @return {string} The operator to use.
+	 */
+	getOperator( conditionValue, isNegativeCondition, currentValue ) {
+		let operator;
+
+		if ( Array.isArray( conditionValue ) && conditionValue.length ) {
+			operator = isNegativeCondition ? '!in' : 'in';
+		} else if ( Array.isArray( currentValue ) && currentValue.length ) {
+			operator = isNegativeCondition ? '!contains' : 'contains';
+		} else if ( isNegativeCondition ) {
+			operator = '!==';
+		}
+
+		return operator;
+	}
+
+	/**
+	 * Get Condition Value
+	 *
+	 * Retrieves a passed condition's value.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param {{}}     comparisonObject A settings object (e.g. element settings - keys and values)
+	 * @param {string} conditionName    The conditioning item's name
+	 * @param {string} subConditionName If the conditioning item's value is an object, and the condition checks for a
+	 *                                  specific property, this is the property name.
+	 * @return {*} Condition Value
+	 */
+	getConditionValue( comparisonObject, conditionName, subConditionName ) {
+		let value;
+
+		if ( 'object' === typeof comparisonObject[ conditionName ] && subConditionName ) {
+			value = comparisonObject[ conditionName ][ subConditionName ];
+		} else {
+			value = comparisonObject[ conditionName ];
+		}
+
+		return value;
+	}
+
+	check( conditions, comparisonObject ) {
 		const isOrCondition = 'or' === conditions.relation;
 		let conditionSucceed = ! isOrCondition;
 
-		jQuery.each( conditions.terms, function() {
-			const term = this;
+		conditions.terms.forEach( ( term ) => {
 			let comparisonResult;
 
 			if ( term.terms ) {
-				comparisonResult = self.check( term, comparisonObject, controls );
+				comparisonResult = this.check( term, comparisonObject );
 			} else {
-				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
-				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
-				// condition name and the sub key, so later it can be retrieved and examined.
+				// A term consists of a condition name (id) to be examined, and a sub key if the condition source is
+				// an object. For example, a term can look like 'image_overlay[url]' (the 'url' is the sub key). Here
+				// we want to isolate the condition name and the sub key, so later it can be retrieved and examined.
 				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
 					conditionSubKey = parsedName[ 2 ];
 
-				let value = comparisonObject[ conditionRealName ];
-
-				if ( ! value ) {
-					let parent = controls[ conditionRealName ]?.parent;
-
-					while ( parent ) {
-						value = comparisonObject[ parent ];
-
-						if ( value ) {
-							break;
-						}
-
-						parent = controls[ parent ]?.parent;
-					}
-				}
-
-				if ( comparisonObject.__dynamic__ && comparisonObject.__dynamic__[ conditionRealName ] ) {
-					value = comparisonObject.__dynamic__[ conditionRealName ];
-				}
-
-				if ( 'object' === typeof value && conditionSubKey ) {
-					value = value[ conditionSubKey ];
-				}
+				const value = this.getConditionValue( comparisonObject, conditionRealName, conditionSubKey );
 
 				comparisonResult = ( undefined !== value ) &&
-					self.compare( value, term.value, term.operator );
+					this.compare( value, term.value, term.operator );
 			}
 
 			if ( isOrCondition ) {
@@ -94,7 +118,5 @@ Conditions = function() {
 		} );
 
 		return conditionSucceed;
-	};
-};
-
-module.exports = new Conditions();
+	}
+}

@@ -43,7 +43,7 @@ class IconsManager extends Component {
 		loaded.all = true;
 		loaded.recommended = true;
 		this.setState( {
-			loaded: loaded,
+			loaded,
 		} );
 	};
 
@@ -86,7 +86,7 @@ class IconsManager extends Component {
 	updateLoaded( libraryName ) {
 		const { loaded } = this.state;
 		loaded[ libraryName ] = true;
-		this.setState( { loaded: loaded } );
+		this.setState( { loaded } );
 	}
 
 	isNativeTab( tab ) {
@@ -108,6 +108,7 @@ class IconsManager extends Component {
 			}
 
 			return (
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 				<div
 					className={ className }
 					key={ tab.name }
@@ -164,7 +165,7 @@ class IconsManager extends Component {
 			}
 			icons[ tabSettings.name ] = this.getActiveTabIcons( tabSettings.name );
 		} );
-		this.cache.all = { icons: icons };
+		this.cache.all = { icons };
 		return icons;
 	};
 
@@ -179,13 +180,13 @@ class IconsManager extends Component {
 		} else {
 			filter = '';
 		}
-		this.setState( { filter: filter } );
+		this.setState( { filter } );
 	};
 
 	setSelected = ( selected ) => {
 		elementor.iconManager.setSettings( 'selectedIcon', selected );
 
-		this.setState( { selected: selected } );
+		this.setState( { selected } );
 	};
 
 	getSelected = () => {
@@ -221,7 +222,7 @@ class IconsManager extends Component {
 	getSearchHTML() {
 		return (
 			<div id="elementor-icons-manager__search">
-				<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch }/>
+				<input placeholder={ 'Filter by name...' } onInput={ this.handleSearch } />
 				<i className={ 'eicon-search' }></i>
 			</div>
 		);
@@ -231,8 +232,7 @@ class IconsManager extends Component {
 		const activeTab = this.getActiveTab(),
 			activeTabName = ( activeTab.name ) ? activeTab.name : activeTab,
 			{ showSearch = true } = this.props,
-			{ filter } = this.state,
-			selected = this.getSelected();
+			{ filter } = this.state;
 
 		if ( 'GoPro' !== activeTab ) {
 			if ( ! activeTabName || ! this.state.loaded[ activeTabName ] ) {
@@ -244,6 +244,7 @@ class IconsManager extends Component {
 			}
 		}
 
+		const selected = this.getSelected();
 		return (
 			<Fragment>
 				<div id="elementor-icons-manager__sidebar" className={ 'elementor-templates-modal__sidebar' }>
@@ -254,14 +255,14 @@ class IconsManager extends Component {
 					</div>
 				</div>
 				<div id="elementor-icons-manager__main" className={ 'elementor-templates-modal__content' }>
-					{ 'GoPro' === activeTabName ? <IconsGoPro /> :
-						<Fragment>
+					{ 'GoPro' === activeTabName ? <IconsGoPro />
+						: <Fragment>
 							{ showSearch ? this.getSearchHTML() : '' }
 							<div id="elementor-icons-manager__tab__wrapper" ref={ this.scrollViewRef }>
 								<div id="elementor-icons-manager__tab__title">{ activeTab.label }</div>
 								<div id="elementor-icons-manager__tab__content_wrapper">
-									<input type="hidden" name="icon_value" id="icon_value" value={ selected.value }/>
-									<input type="hidden" name="icon_type" id="icon_type" value={ selected.library }/>
+									<input type="hidden" name="icon_value" id="icon_value" value={ selected.value } />
+									<input type="hidden" name="icon_type" id="icon_type" value={ selected.library } />
 									{ this.state.loaded[ activeTab.name ] ? (
 										<Tab
 											setSelected={ this.setSelected }
@@ -289,9 +290,9 @@ const renderIconManager = function( props ) {
 	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
 	return render( <IconsManager
-			{ ... props }
-			containerElement={ containerElement } />,
-		containerElement
+		{ ... props }
+		containerElement={ containerElement } />,
+		containerElement,
 	);
 };
 export { renderIconManager };

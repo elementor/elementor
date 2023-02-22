@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class SelectAll extends CommandBase {
+export class SelectAll extends $e.modules.CommandBase {
 	apply() {
 		elementor.selection.add(
 			this.flattenContainersList(
@@ -8,16 +6,16 @@ export class SelectAll extends CommandBase {
 				// select all document elements, we should convert them into a flatten, single-dimension array.
 				elementor.elementsModel.get( 'elements' ).map( ( element ) => {
 					return elementor.getContainer( element.id );
-				} )
-			)
+				} ),
+			),
 		);
 	}
 
 	/**
 	 * Recursively iterate over all container children and make a flatten array of their instances.
 	 *
-	 * @param containers
-	 * @returns {*[]}
+	 * @param {*} containers
+	 * @return {*[]} flattened array of container children
 	 */
 	flattenContainersList( containers = [] ) {
 		let flatten = [];

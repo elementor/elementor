@@ -110,7 +110,7 @@ class Widget_Spacer extends Widget_Base {
 				'default' => [
 					'size' => 50,
 				],
-				'size_units' => [ 'px', 'vh', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 10,
@@ -122,7 +122,7 @@ class Widget_Spacer extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-spacer-inner' => '--spacer-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--spacer-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

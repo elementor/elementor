@@ -25,7 +25,7 @@ export default class FilesUploadHandler {
 			__( 'Enable Unfiltered File Uploads', 'elementor' ),
 			__( 'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
 			__( 'Enable', 'elementor' ),
-			onConfirm
+			onConfirm,
 		);
 	}
 
