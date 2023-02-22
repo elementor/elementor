@@ -123,7 +123,7 @@ export default class NestedTabs extends Base {
 			nextTab = $tabs[ tabIndex + direction ];
 
 		if ( nextTab ) {
-			jQuery( nextTab ).trigger( 'focus' );
+			nextTab.focus();
 		} else if ( -1 === tabIndex + direction ) {
 			$tabs.last().trigger( 'focus' );
 		} else {
@@ -386,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			jQuery( activeTabTitleVisible ).trigger( 'focus' );
+			activeTabTitleVisible.focus();
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			jQuery( nextTabTitleVisible ).trigger( 'focus' );
+			nextTabTitleVisible.focus();
 		}
 	}
 
