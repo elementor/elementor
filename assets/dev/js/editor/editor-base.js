@@ -936,7 +936,7 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		const expectedWidth = breakpointWidth + ( resizeHandleWidth * 2 );
-		const hasEnoughSpace = expectedWidth < availablePreviewWidth;
+		const hasEnoughSpace = expectedWidth <= availablePreviewWidth;
 
 		if ( hasEnoughSpace ) {
 			this.setPreviewScale( 1 );

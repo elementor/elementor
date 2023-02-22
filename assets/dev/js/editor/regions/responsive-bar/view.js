@@ -202,16 +202,6 @@ export default class View extends Marionette.ItemView {
 		elementor.updatePreviewSize( size );
 	}
 
-	scalePreviewBy( percentage ) {
-		let newScale = ( this.scalePercentage + percentage ) / 100;
-
-		// Ensure the scaling is within the boundaries.
-		newScale = Math.max( newScale, MIN_SCALE );
-		newScale = Math.min( newScale, MAX_SCALE );
-
-		elementor.setPreviewScale( newScale );
-	}
-
 	onScalePlusButtonClick() {
 		this.scalePreviewBy( 10 );
 	}
@@ -222,5 +212,15 @@ export default class View extends Marionette.ItemView {
 
 	onScaleResetButtonClick() {
 		this.resetScale();
+	}
+
+	scalePreviewBy( percentage ) {
+		let newScale = ( this.scalePercentage + percentage ) / 100;
+
+		// Ensure the scaling is within the boundaries.
+		newScale = Math.max( newScale, MIN_SCALE );
+		newScale = Math.min( newScale, MAX_SCALE );
+
+		elementor.setPreviewScale( newScale );
 	}
 }
