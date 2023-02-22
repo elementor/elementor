@@ -22,7 +22,7 @@ runs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` *RC Release* created by ${{ github.actor }}.\nPlease test it and report any issues"
+                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` *RC Release*\ncreated by ${{ github.actor }}.\nPlease test it and report any issues\n<https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}|*Release v${{ env.PACKAGE_VERSION }}*>"
                         }
                       },
                       {
@@ -33,16 +33,6 @@ runs:
                         "text": {
                           "type": "mrkdwn",
                           "text": "*Changelog*:\n\n${{ env.CHANGELOG_CONTENT }}"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}"
                         }
                       }
                     ]
