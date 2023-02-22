@@ -42,7 +42,7 @@
 
 	&-area {
 		@include checkers-background(16px);
-		background-color: var(--e-a-bg-active-bold);
+		background-color: var(--e-a-bg-default);
 		border: var(--e-a-border-bold);
 		aspect-ratio: 21 / 9;
 

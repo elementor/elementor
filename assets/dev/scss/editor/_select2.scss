@@ -12,6 +12,7 @@
 
 		.select2-selection--single {
 			height: $control-unit;
+			background-color: transparent;
 
 			.select2-selection__rendered {
 				color: var(--e-a-color-txt);
