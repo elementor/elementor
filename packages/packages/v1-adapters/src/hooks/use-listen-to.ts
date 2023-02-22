@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { EventDescriptor, listenTo } from '../';
+import { EventDescriptor, listenTo } from '../listeners';
 
 export default function useListenTo<T>(
 	event: EventDescriptor | EventDescriptor[],

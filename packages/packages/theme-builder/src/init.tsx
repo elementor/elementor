@@ -1,4 +1,4 @@
-import { registerToggleAction } from '@elementor/top-bar';
+import { registerAction } from '@elementor/top-bar';
 import useActionProps from './hooks/use-action-props';
 
 export default function init() {
@@ -6,8 +6,8 @@ export default function init() {
 }
 
 function registerTopBarMenuItems() {
-	registerToggleAction( 'tools', {
-		name: 'toggle-structure-view',
-		useProps: () => useActionProps(),
+	registerAction( 'main', {
+		name: 'open-theme-builder',
+		useProps: useActionProps,
 	} );
 }

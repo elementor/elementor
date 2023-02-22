@@ -36,6 +36,7 @@ export default class NestedTabs extends Base {
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
 				headingContainer: '.e-n-tabs-heading',
+				activeTabContentContainers: '.e-con.e-active',
 			},
 			classes: {
 				active: 'e-active',
@@ -283,9 +284,9 @@ export default class NestedTabs extends Base {
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
 	 */
 	changeActiveTab( tabIndex, fromUser = false ) {
-		// `document/repeater/select` is used only in edit mod, and only when its not internal call,
-		// in other words only in editor and when user triggered the change.
-		if ( fromUser && this.isEdit ) {
+		// `document/repeater/select` is used only in the editor, only when the element
+		// is in the currently-edited document, and only when its not internal call,
+		if ( fromUser && this.isEdit && this.isElementInTheCurrentDocument() ) {
 			return window.top.$e.run( 'document/repeater/select', {
 				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
 				index: parseInt( tabIndex ),
@@ -385,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			$activeTabTitleVisible?.trigger( 'focus' );
+			$activeTabTitleVisible?.focus();
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			$nextTabTitleVisible?.trigger( 'focus' );
+			$nextTabTitleVisible?.focus();
 		}
 	}
 
@@ -404,7 +405,7 @@ export default class NestedTabs extends Base {
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.trigger( 'focus' );
+			$firstFocusableItem.focus();
 		}
 	}
 

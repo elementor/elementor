@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useDocumentPreviewProps from '../use-document-preview-props';
 import { runCommand } from '@elementor/v1-adapters';
-import { createMockDocument } from '../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 import useActiveDocument from '../use-active-document';
 
 jest.mock( '../use-active-document', () => ( {
