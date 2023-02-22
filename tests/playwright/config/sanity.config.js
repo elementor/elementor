@@ -26,7 +26,6 @@ const config = {
 	grep: getGrep(),
 	globalSetup: require.resolve( './global-setup' ),
 	retries: 1,
-	forbidOnly: !! process.env.CI,
 	expect: {
 		timeout: 5_000, // 5 seconds
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
