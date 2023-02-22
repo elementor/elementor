@@ -27,7 +27,7 @@ jobs:
             .github/**/*.yml
 
   test:
-    runs-on: ubuntu-22.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
@@ -49,8 +49,6 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      # - name: Startup MySQL service
-      #   run: sudo systemctl start mysql
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Setup PHP
