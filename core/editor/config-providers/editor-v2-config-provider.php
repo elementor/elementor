@@ -25,6 +25,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		'ui',
 		'v1-adapters',
 		'store',
+		'icons',
 	];
 
 	/**

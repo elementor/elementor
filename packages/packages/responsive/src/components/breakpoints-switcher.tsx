@@ -10,7 +10,7 @@ import {
 	LaptopIcon,
 	TabletLandscapeIcon,
 	MobileLandscapeIcon,
-} from '../icons';
+} from '@elementor/icons';
 import useBreakpointsActions from '../hooks/use-breakpoints-actions';
 
 export default function BreakpointsSwitcher() {

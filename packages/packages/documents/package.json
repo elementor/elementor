@@ -1,6 +1,7 @@
 {
 	"name": "@elementor/documents",
 	"dependencies": {
+		"@elementor/icons": "*",
 		"@elementor/store": "*",
 		"@elementor/top-bar": "*",
 		"@elementor/v1-adapters": "*",
