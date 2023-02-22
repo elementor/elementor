@@ -111,7 +111,7 @@ class Settings_Layout extends Tab_Base {
 				'default' => [
 					'size' => 20,
 				],
-				'size_units' => [ 'px', 'em', '%', 'rem', 'vw', 'custom' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
