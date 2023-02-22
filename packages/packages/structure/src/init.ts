@@ -8,6 +8,7 @@ export default function init() {
 function registerTopBarMenuItems() {
 	registerToggleAction( 'tools', {
 		name: 'toggle-structure-view',
+		priority: 3,
 		useProps: () => useActionProps(),
 	} );
 }

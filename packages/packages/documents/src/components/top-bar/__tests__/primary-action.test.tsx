@@ -1,6 +1,6 @@
 import PrimaryAction from '../primary-action';
 import { render } from '@testing-library/react';
-import { createMockDocument } from '../../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 import { useActiveDocument, useActiveDocumentActions } from '../../../hooks';
 
 jest.mock( '../../../hooks', () => ( {
