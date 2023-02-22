@@ -128,8 +128,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
+		await editor.closeNavigatorIfOpen();
+
 		// Set icon size.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
@@ -230,9 +233,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
+
+		await editor.closeNavigatorIfOpen();
+
 		// Act.
 		// Set icon hover color.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
@@ -262,6 +269,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await editor.addWidget( 'nested-tabs', tabsContainerId );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
+
+		await editor.closeNavigatorIfOpen();
 
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
@@ -296,8 +305,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
 
+		await editor.closeNavigatorIfOpen();
+
 		// Act.
-		await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Update active tab title.
@@ -319,8 +331,15 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( 'nested-tabs-with-icons' );
-		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
-		await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' ).click();
+
+		await editor.closeNavigatorIfOpen();
+
+		const thirdItemTitle = await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal > .e-n-tab-title-text' );
+		await thirdItemTitle.click();
+
+		if ( 0 === await editor.getPreviewFrame().locator( '[data-tab="3"].e-normal.e-active' ).count() ) {
+			await thirdItemTitle.click();
+		}
 		const activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
 
 		// Act.
@@ -343,7 +362,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -355,7 +375,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-icon_position i.eicon-v-align-top' ).click();
 
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
-		await editor.getPreviewFrame().locator( '.e-n-tabs' ).click();
 		// Unset Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -390,17 +409,17 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Set first tab to active tab.
 		await firstTab.click();
 		// Get last tab width.
-		const lastTabWidth = await lastTab.boundingBox().width;
+		const lastTabWidth = ( await lastTab.boundingBox() ).width;
 		// Set last tab to active tab.
 		await lastTab.click();
 		// Get last tab active width.
-		const lastTabActiveWidth = await lastTab.boundingBox().width;
+		const lastTabActiveWidth = ( await lastTab.boundingBox() ).width;
 
 		// Assert.
 		// Verify that the last tab is active.
 		await expect( lastTab ).toHaveClass( 'e-n-tab-title e-normal e-active' );
 		// Check if the normal tab width is equal to the active tab width.
-		expect( lastTabWidth ).toBe( lastTabActiveWidth );
+		expect( lastTabWidth ).toEqual( lastTabActiveWidth );
 
 		await cleanup( wpAdmin );
 	} );
@@ -641,7 +660,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Get the initial first tab width.
 		await editor.getPreviewFrame().locator( '.e-normal:first-child' ).click();
 		await editor.getPreviewFrame().waitForSelector( '.e-normal.e-active' );
-		const initialTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+		const initialTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -650,7 +669,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert
 		// Verify that the tab width doesn't change after adding the content.
-		const finalTabWidth = await editor.getFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
+		const finalTabWidth = await editor.getPreviewFrame().locator( '.e-normal.e-active' ).last().evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -725,7 +744,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Check if content tab contains the class 'e-con-full'.
-		const containerFullWidthCheck = await editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
+		const containerFullWidthCheck = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ).evaluate( ( element ) => {
 			return element.classList.contains( 'e-con-full' );
 		} );
 		expect( containerFullWidthCheck ).toBe( true );
@@ -858,21 +877,21 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tab 1 & Content Container 1.
 		await tabButtonOne.click();
 
-		const contentContainerOneWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
+		const contentContainerOneWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=0' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 2 & Content Container 2.
 		await tabButtonTwo.click();
 
-		const contentContainerTwoWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
+		const contentContainerTwoWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=1' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
 		// Tab 3 & Content Container 3.
 		await tabButtonThree.click();
 
-		const contentContainerThreeWidth = await editor.getFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
+		const contentContainerThreeWidth = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con >> nth=2' ).evaluate( ( element ) => {
 			return window.getComputedStyle( element ).getPropertyValue( 'width' );
 		} );
 
@@ -894,15 +913,132 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs' );
-		await editor.getFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
 
-		await clickTab( editor.getFrame(), 2 );
+		await clickTab( editor.getPreviewFrame(), 2 );
 
 		// Assert.
-		await expect( editor.getFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+		await expect( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
+	} );
+
+	test( "Check widget content styling doesn't override the content container styling when they are used together", async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Define Nested Tabs widget instances, and custom settings to apply to one of the dropdown Containers.
+		const defaultWidgetInstance = {
+			elType: 'widget',
+			widgetType: 'nested-tabs',
+		};
+		const styledWidgetInstance = {
+			elType: 'widget',
+			widgetType: 'nested-tabs',
+			settings: {
+				box_background_color_background: 'classic',
+				box_background_color_color: 'rgb(255, 199, 199)',
+				box_border_border: 'dotted',
+				box_border_width: { unit: 'px', top: '2', right: '2', bottom: '2', left: '2' },
+				box_border_color: 'rgb(106, 0, 0)',
+				box_border_radius: { unit: 'px', top: '7', right: '7', bottom: '7', left: '7' },
+				box_padding: { unit: 'px', top: '5', right: '5', bottom: '5', left: '5' },
+			},
+		};
+		const styledWidgetContainerSettings = {
+			background_background: 'classic',
+			background_color: 'rgb(199, 255, 197)',
+			border_border: 'dashed',
+			border_width: { unit: 'px', top: '3', right: '3', bottom: '3', left: '3' },
+			border_color: 'rgb(0, 156, 65)',
+			padding: { unit: 'px', top: '13', right: '13', bottom: '13', left: '13'	},
+			border_radius: { unit: 'px', top: '15', right: '15', bottom: '15', left: '15' },
+			box_shadow_box_shadow_type: 'yes',
+			box_shadow_box_shadow: { horizontal: 0, vertical: 6, blur: 15, spread: 0, color: 'rgba(0, 165, 20, 0.5)' },
+		};
+
+		// Define css attributes we'll be expecting for each of the widgets.
+		const widgetsToTest = {
+			defaultWidget: {
+				containerPadding: '10px',
+			},
+			styledWidget: {
+				containerBackgroundColor: 'rgb(255, 199, 199)',
+				containerBorderStyle: 'dotted',
+				containerBorderWidth: '2px',
+				containerBorderColor: 'rgb(106, 0, 0)',
+				containerPadding: '5px',
+			},
+			styledWidgetContainer: {
+				containerBackgroundColor: 'rgb(199, 255, 197)',
+				containerBorderStyle: 'dashed',
+				containerBorderWidth: '3px',
+				containerBorderColor: 'rgb(0, 156, 65)',
+				containerBoxedShadow: 'rgba(0, 165, 20, 0.5) 0px 6px 15px 0px',
+				containerPadding: '13px',
+			},
+		};
+
+		let widgetId, activeContainerId;
+
+		// Add first default Nested Tabs widget with no styling.
+		widgetId = await editor.addElement( defaultWidgetInstance );
+		widgetsToTest.defaultWidget.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		// Add second Nested Tabs widget with custom styled dropdown container via the widget settings.
+		widgetId = await editor.addElement( styledWidgetInstance );
+		widgetsToTest.styledWidget.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		// Add third Nested Tabs widget with custom styled dropdown container via the widget settings, and custom
+		// styled dropdown container via the containers settings too, to make sure the container styling takes preference.
+		widgetId = await editor.addElement( styledWidgetInstance );
+		widgetsToTest.styledWidgetContainer.widgetId = widgetId;
+		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		await editor.applyElementSettings( activeContainerId, styledWidgetContainerSettings );
+		await editor.addWidget( 'heading', activeContainerId );
+
+		await editor.togglePreviewMode();
+
+		// Test.
+		for ( const widgetIdentifier in widgetsToTest ) {
+			const widgetToTest = widgetsToTest[ widgetIdentifier ],
+				widgetSelector = `.elementor-widget-n-tabs.elementor-element-${ widgetToTest.widgetId }`,
+				activeContainer = editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tabs-content > .e-con.e-active` );
+
+			for ( const valueToTest in widgetToTest ) {
+				const expectedCssValue = widgetToTest[ valueToTest ];
+
+				switch ( valueToTest ) {
+					case 'containerBackgroundColor':
+						await expect( activeContainer ).toHaveCSS( 'background-color', expectedCssValue );
+						break;
+					case 'containerBorderStyle':
+						await expect( activeContainer ).toHaveCSS( 'border-style', expectedCssValue );
+						break;
+					case 'containerBorderWidth':
+						await expect( activeContainer ).toHaveCSS( 'border-width', expectedCssValue );
+						break;
+					case 'containerBorderColor':
+						await expect( activeContainer ).toHaveCSS( 'border-color', expectedCssValue );
+						break;
+					case 'containerBoxedShadow':
+						await expect( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
+						break;
+					case 'containerPadding':
+						await expect( activeContainer ).toHaveCSS( 'padding', expectedCssValue );
+						break;
+				}
+			}
+		}
+
+		await cleanup( wpAdmin );
 	} );
 } );
 
@@ -963,4 +1099,11 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` ).first().fill( borderWidth );
 	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
+}
+
+async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
+	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
+	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector }.elementor-element-editable` );
+	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title.e-normal:nth-child(${ itemNumber })` ).click();
+	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-con.e-active` ).getAttribute( 'data-id' );
 }

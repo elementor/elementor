@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor;
 
+use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Editor\Editor_Loader;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -130,6 +132,100 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		);
 	}
 
+	/**
+	 * @dataProvider print_client_settings_data_provider
+	 */
+	public function test_print_client_settings( $is_registered, $client_settings, $expected ) {
+		// Arrange
+		$script_config = $is_registered
+			? [
+				'handle' => $client_settings['handle'],
+				'src' => 'source.js',
+				'deps' => [],
+				'version' => '1.0.0',
+			]
+			: [];
+
+		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [ $script_config ] );
+
+		$this->mock_config_provider->method( 'get_client_settings' )->willReturn( [ $client_settings ] );
+
+		$editor_loader = new Editor_Loader( $this->mock_config_provider );
+		$editor_loader->register_scripts();
+
+		// Act
+		$editor_loader->print_client_settings();
+
+		// Assert
+		$this->assertEquals(
+			$expected,
+			wp_scripts()->get_data( $client_settings['handle'] ?? null, 'before' )
+		);
+	}
+
+	public function print_client_settings_data_provider() {
+		return [
+			// Non registered script, should not print anything.
+			[
+				'is_registered' => false,
+				'client_settings' => [
+					'handle' => 'not-registered',
+					'name' => 'notRegistered',
+					'settings' => [
+						'test' => 'not-registered',
+					],
+				],
+				'expected' => false,
+			],
+			// Registered script, should print settings in a global variable.
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'existing-handle',
+					'name' => 'existingHandle',
+					'settings' => [
+						'test' => 'existing-handle',
+					],
+				],
+				'expected' => [
+					0 => '',
+					1 => 'var existingHandle = {"test":"existing-handle"};',
+				],
+			],
+			// Config without settings, should not print anything.
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'no-settings',
+					'name' => 'noSettings',
+				],
+				'expected' => false,
+			],
+			// Config without name, should not print anything.
+			[
+				'is_registered' => true,
+				'client_settings' => [
+					'handle' => 'no-name',
+					'settings' => [
+						'test' => 'no-name',
+					],
+				],
+				'expected' => false,
+			],
+			// Config without handle, should not print anything.
+			[
+				'is_registered' => false,
+				'client_settings' => [
+					'name' => 'noHandle',
+					'settings' => [
+						'test' => 'no-handle',
+					],
+				],
+				'expected' => false,
+			],
+		];
+	}
+
 	/** @dataProvider load_script_translations__with_replace_requested_file__data_provider */
 	public function load_script_translations__with_replace_requested_file( $script_config, $expected_relative_path ) {
 		// Arrange
@@ -201,5 +297,36 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 				'assets/js/script-without-replace-requested-file.js',
 			],
 		];
+	}
+
+	public function test_register_additional_templates() {
+		// Arrange.
+		$original_common = Plugin::$instance->common;
+
+		Plugin::$instance->common = $this->createMock( CommonApp::class );
+
+		$this->mock_config_provider
+			->method( 'get_additional_template_paths' )
+			->willReturn( [
+				'path/to/file-1.php',
+				'path/to/file-2.php',
+			] );
+
+		// Expect.
+		Plugin::$instance->common
+			->expects( $this->exactly( 2 ) )
+			->method( 'add_template' )
+			->withConsecutive(
+				[ 'path/to/file-1.php' ],
+				[ 'path/to/file-2.php' ]
+			);
+
+		// Act.
+		$loader = new Editor_Loader( $this->mock_config_provider );
+
+		$loader->register_additional_templates();
+
+		// Cleanup.
+		Plugin::$instance->common = $original_common;
 	}
 }
