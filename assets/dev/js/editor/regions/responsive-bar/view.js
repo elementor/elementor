@@ -85,7 +85,6 @@ export default class View extends Marionette.ItemView {
 	}
 
 	updateScalePercentageUI() {
-		return;
 		// Round the scale to the nearest 5, for better UX.
 		const roundedTo5 = Math.round( elementor.getPreviewScale() * 100 / 5 ) * 5;
 
