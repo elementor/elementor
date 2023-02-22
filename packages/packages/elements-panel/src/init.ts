@@ -11,6 +11,7 @@ export default function init() {
 function registerTopBarMenuItems() {
 	registerToggleAction( 'tools', {
 		name: 'open-elements-panel',
+		priority: 1,
 		useProps: useActionProps,
 	} );
 }
