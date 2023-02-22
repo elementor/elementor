@@ -399,13 +399,13 @@ export default class NestedTabs extends Base {
 	changeFocusFromActiveTabTitleToContentContainer( event ) {
 		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
-			$firstFocusableItem = $focusableItems.first(),
+			$firstFocusableItem = $focusableItems[ 0 ],
 			currentTabTitle = elementorFrontend.elements.window.document.activeElement,
 			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab' ) );
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.trigger( 'focus' );
+			$firstFocusableItem.focus();
 		}
 	}
 
