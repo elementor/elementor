@@ -5,7 +5,7 @@ on: [workflow_dispatch]
 
 jobs:
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
@@ -94,9 +94,19 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
-      - name: Send slack message
-        uses: ./.github/workflows/slack-notify
+      - name: Post To Slack Created Release
+        uses : ./.github/workflows/post-to-slack
         with:
-          MESSAGE: "@here Elementor ${{ env.RELEASE_NAME }} has been released! Saddle up partners! :tada:"
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_TAG_CHANNELS }}
+          PAYLOAD: |
+                {
+                  "blocks": [{
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*Elementor* `${{ env.RELEASE_NAME }}` *RC Release*\n\ncreated by ${{ github.actor }}.\n\n<https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}|*Release ${{ env.RELEASE_NAME }}*> Saddle up partners! :tada:"
+                      }
+                    }
+                  ]
+                }
