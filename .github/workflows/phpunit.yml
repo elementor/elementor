@@ -57,7 +57,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_versions }}
-          coverage: xdebug
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
@@ -65,7 +64,6 @@ jobs:
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
         run: |
           composer update --no-interaction
-          # vendor/bin/phpunit --coverage-clover coverage-report/clover.xml
           composer run coverage
       - name: Run Tests without Coverage
         if: ${{ ! ( matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' ) }}
