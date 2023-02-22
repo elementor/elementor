@@ -97,7 +97,7 @@ class Admin {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: this.onRevertConfirm,
+			onConfirm: () => this.onRevertConfirm(),
 		} ).show();
 	}
 
