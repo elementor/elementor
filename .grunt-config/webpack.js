@@ -116,6 +116,7 @@ const entry = {
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
+	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 };
 
 const frontendEntries = {
