@@ -28,7 +28,6 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 				<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
 			</div>
 		</div>
-		<div id="elementor-responsive-bar"></div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
 			<div id="elementor-preview-loading">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
