@@ -1,6 +1,6 @@
 import { AnnouncementsHeader,Announcement } from './';
 
-export default function Announcements({announcments}) {
+export default function Announcements( { announcments } ) {
 	return (
 		<div className="announcements-container">
 			<AnnouncementsHeader/>

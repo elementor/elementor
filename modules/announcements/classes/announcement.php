@@ -62,8 +62,8 @@ class Announcement {
 	 * @return void
 	 */
 	public function after_triggered(): void {
-		foreach($this->get_triggers() as $trigger ){
-			if( ! $trigger->is_active() ){
+		foreach ( $this->get_triggers() as $trigger ) {
+			if ( ! $trigger->is_active() ) {
 				continue;
 			}
 			$trigger->after_triggered();

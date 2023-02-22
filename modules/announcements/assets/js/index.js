@@ -1,12 +1,14 @@
 import { Announcements } from './components';
 import { Overlay } from './components';
 
-if( window.elementorAdminConfig.announcements ){
+const container = document.getElementById( 'e-announcements-root' );
+
+if ( window.elementorAnnouncementsConfig.announcements && container ) {
 	ReactDOM.render(
 		<>
 			<Overlay/>
-			<Announcements announcments={window.elementorAdminConfig.announcements}/>
+			<Announcements announcments={ window.elementorAnnouncementsConfig.announcements }/>
 		</>,
-		document.getElementById( 'e-announcements-root' ),
+		container,
 	);
 }

@@ -1,7 +1,9 @@
 @import "assets/dev/scss/helpers/variables.scss";
-#e-announcements-root{
+$base-color: #79173A;
+
+#e-announcements-root {
 	position: fixed;
-	display:flex;
+	display: flex;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -11,28 +13,33 @@
 	color: $platform-darker-gray;
 	font-family: $admin-font-family;
 	z-index: 999;
-	.announcements-container{
-		width:637px;
+
+	.announcements-container {
+		width: 637px;
 		background-color: $white;
-		z-index:9999;
-		.announcements-heading-container{
+		z-index: 9999;
+
+		.announcements-heading-container {
 			display: flex;
 			align-items: center;
-			padding:16px 32px;
+			padding: 16px 32px;
 			border-bottom: 1px solid $platform-gray-lightest;
-			.eicon-elementor{
-				color:$white;
+
+			.eicon-elementor {
+				color: $white;
 				background-color: $platform-accent;
-				border-radius:50%;
-				padding:8px;
+				border-radius: 50%;
+				padding: 8px;
 			}
-			.heading-title{
-				margin-left:12px;
+
+			.heading-title {
+				margin-left: 12px;
 				text-transform: uppercase;
 				font-size: 13px;
 			}
-			.close-button{
-				margin-left:auto;
+
+			.close-button {
+				margin-left: auto;
 				background: none;
 				color: inherit;
 				border: none;
@@ -42,38 +49,64 @@
 				outline: inherit;
 			}
 		}
-		.announcement-body-container{
-			padding:32px;
+
+		.announcement-body-container {
+			padding: 32px;
+
+			.announcement-body-media img {
+				width: 573px;
+				height: 316px;
+				object-fit: contain;
+			}
+
+			.announcement-body-title {
+				font-size: 18px;
+				font-weight: 700;
+				color: #3A3F45;
+				padding: 20px 0 12px;
+			}
+
+			.announcement-body-description {
+				font-size: 16px;
+				line-height: 24px;
+				font-weight: 400;
+				color: #69727D;
+			}
 		}
-		.announcement-footer-container{
+
+		.announcement-footer-container {
 			display: flex;
 			flex-direction: row-reverse;
-			padding:12px 32px 32px;
-			.button-item{
-				margin-left:12px;
+			padding: 12px 32px 32px;
+
+			.button-item {
+				margin-left: 12px;
 				padding: 12px;
-				color: #79173A;
-				font-size:16px;
+				color: $base-color;
+				font-size: 16px;
 				font-weight: 500;
 				border-radius: 4px;
 				padding: 8px 12px;
 				text-decoration: none;
 				font-family: $admin-font-family;
-				&.primary{
+
+				&.primary {
 					color: $white;
-					background-color: #79173A;
-					border: 1px solid #79173A;
+					background-color: $base-color;
+					border: 1px solid $base-color;
 				}
-				&.secondary{
-					border: 1px solid #79173A;
+
+				&.secondary {
+					border: 1px solid $base-color;
 				}
 			}
 		}
 	}
-	.announcements-screen-overlay{
+
+	.announcements-screen-overlay {
 		position: fixed;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0,0,0,0.6);
+		background-color: rgba(0, 0, 0, 0.6);
 	}
 }

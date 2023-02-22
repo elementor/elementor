@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Utils {
 	/**
 	 * get_trigger_object
+	 *
 	 * @param $trigger
 	 *
 	 * @return IsFlexContainerInactive|false
