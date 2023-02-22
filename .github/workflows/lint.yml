@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -37,7 +37,7 @@ jobs:
             composer.+(json|lock)
 
   JS-Lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
@@ -81,10 +81,6 @@ jobs:
       - name: Run Lint
         run: |
           vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
-      - name: Run PHP Syntax Lint
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php8.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
       - name: Setup PHP 7.1 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:
@@ -126,6 +122,15 @@ jobs:
         with:
           php-version: '8.0'
       - name: Run PHP Syntax Lint 8.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 8.1 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Run PHP Syntax Lint 8.1
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
