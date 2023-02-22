@@ -1,6 +1,6 @@
-import { Document } from '../types';
+import { Document } from '@elementor/documents';
 
-export function createMockDocument( {
+export default function createMockDocument( {
 	id,
 	title,
 	status,

@@ -3,7 +3,7 @@ import { createSlice } from '../../store';
 import useActiveDocument from '../use-active-document';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { renderHookWithStore } from './test-utils';
-import { createMockDocument } from '../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 
 describe( '@elementor/documents - useActiveDocument', () => {
 	let store: Store<SliceState<Slice>>;

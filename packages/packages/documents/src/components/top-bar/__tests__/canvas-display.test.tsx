@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '../../../hooks';
 import CanvasDisplay from '../canvas-display';
-import { createMockDocument } from '../../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 
 jest.mock( '../../../hooks/use-active-document', () => ( {
 	__esModule: true,

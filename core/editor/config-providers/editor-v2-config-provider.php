@@ -13,6 +13,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const EXTENSION_PACKAGES = [
 		'documents',
 		'elements-panel',
+		'responsive',
+		'site-settings',
 		'structure',
 		'theme-builder',
 		'top-bar',
@@ -72,7 +74,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
-			->push( 'elementor-responsive-bar' )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
@@ -120,10 +121,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_additional_template_paths() {
-		return array_merge(
-			Editor_Common_Configs::get_additional_template_paths(),
-			[ ELEMENTOR_PATH . 'includes/editor-templates/responsive-bar.php' ]
-		);
+		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
 	private function get_packages_script_assets() {
