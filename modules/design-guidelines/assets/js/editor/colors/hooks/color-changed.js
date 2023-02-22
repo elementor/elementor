@@ -1,6 +1,4 @@
-import After from 'elementor-api/modules/hooks/ui/after';
-
-export class ColorChanged extends After {
+export class ColorChanged extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'document/elements/settings';
 	}
@@ -9,23 +7,16 @@ export class ColorChanged extends After {
 		return 'color-changed';
 	}
 
-	getConditions( args ) {
-		const { containers = [ args.container ] } = args;
+	getConditions(args) {
+		const isKit = 'kit' === elementor.documents.getCurrent().config.type;
+		const attribute = args?.container?.model?.attributes?.name;
+		const isColor = ['system_color', 'custom_color'].includes(attribute);
 
-		// If the created element, was created at column.
-		return containers.some( ( /** Container*/ container ) => (
-			'column' === container.model.get( 'elType' )
-		) );
+		return isKit && isColor;
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( /* Container */ container ) => {
-			if ( 'column' === container.model.get( 'elType' ) ) {
-				container.view.changeChildContainerClasses();
-			}
-		} );
 	}
 }
 

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
@@ -27,13 +28,21 @@ class Kit extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['has_elements'] = false;
+		$properties['has_elements'] = true;
 		$properties['show_in_finder'] = false;
 		$properties['show_on_admin_bar'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
 		$properties['support_kit'] = true;
 
 		return $properties;
+	}
+
+	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
+		$document = Plugin::$instance->documents->get( 428 );
+
+		$elements_data = $document->get_elements_data( $status );
+
+		return $elements_data;
 	}
 
 	public static function get_type() {

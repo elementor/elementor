@@ -1,29 +1,17 @@
-import DesignElementHandler from '../bases/design-element-handler';
+import PreviewElementHandler from '../bases/preview-element-handler';
 
-export default class ColorsHandler extends DesignElementHandler {
+export default class ColorsHandler extends PreviewElementHandler {
 	constructor( editorHelper, config ) {
 		super( editorHelper, config );
-		this.selectors = {
-			mainElement: 'colors-main-element',
-			defaultColorContainer: 'default-color-container',
-			colorsSection: 'colors-section',
-			defaultTitleContainer: 'default-title-container',
-			colorWidgetClass: 'color-widget',
-			colorTitleClass: 'color-title',
-			customTitleContainer: 'custom-colors-title-container',
-			customColorSectionClass: 'custom-color-section',
-			EmptyColumnClass: 'empty-column',
-		};
 	}
 
 	scrollToMain( document ) {
-		const container = this.helper.findElementById( document.container, this.getSelector( 'mainElement' ) );
+		const container = this.helper.findElementById( document.container, this.getSelector( 'colors_injection_container' ) );
 
 		if ( ! container ) {
 			throw new Error( 'No main element found' );
 		}
 
-		console.log( container );
 		elementor.helpers.scrollToView( container.view?.$el );
 	}
 
@@ -33,25 +21,10 @@ export default class ColorsHandler extends DesignElementHandler {
 	 * @param config {Object}
 	 */
 	applyChanges( document ) {
-		const loader = window.document.querySelector( '#elementor-preview-loading' );
-
-
 		const rootContainer = document.container;
 
-		// Change hex before injection because injecting already handles it.
+		// Custom colors comes with right hex from the backend
 		this.modifyHexInWidgets( rootContainer, this.config[ 'systemColors' ] );
-		this.injectCustomElements( rootContainer, this.config[ 'customColors' ] );
-
-		// console.log( loader);
-		// if ( loader ) {
-		// 	loader.style.display = 'block';
-		// }
-		// // setTimeout( () => {
-		// // 	if ( loader ) {
-		// 		loader.style.display = 'block';
-		// 	}
-		// }, 5000 );
-
 	}
 
 	/**
@@ -64,15 +37,15 @@ export default class ColorsHandler extends DesignElementHandler {
 			acc[ color._id ] = color;
 			return acc;
 		}, {} );
-
-		const colorWidgets = this.helper.findElementsByClass( rootContainer, this.getSelector( 'colorWidgetClass' ) );
+		let selector = this.getSelector( 'color_widget' );
+		const colorWidgets = this.helper.findElementsByClass( rootContainer, selector );
 
 		if ( ! colorWidgets.length ) {
 			throw new Error( 'Could not find color widgets of system colors' );
 		}
 
 		colorWidgets.forEach( ( colorWidget ) => {
-			const global = this.helper.getElementId( colorWidget ).split( '__' )[ 1 ];
+			const global = this.helper.getElementId( colorWidget.parent ).split( '__' )[ 1 ];
 			const color = mappedColors[ global ];
 
 			if ( ! color ) {
@@ -85,13 +58,27 @@ export default class ColorsHandler extends DesignElementHandler {
 		} );
 	}
 
+	changeColor( color ) {
+		let id = 428;
+		let document = elementor.documents.get( id );
+
+		const container = this.helper.findElementById( document.container, this.getSelector( 'color_container' ) + '__' + color._id );
+		const colorWidgets = this.helper.findElementsByClass( container, this.getSelector( 'color_widget' ) );
+		const colorWidget = colorWidgets[ 0 ];
+		console.log( colorWidget);
+
+		window.abcde = true;
+
+		this.setHexString( colorWidget, color.color );
+	}
+
 	/**
 	 * Inject custom colors into the document
 	 * @param rootContainer {Container}
 	 * @param customColors {Array} - Array of colors values { _id, title, color: {hex string}}
 	 */
 	injectCustomElements( rootContainer, customColors ) {
-		const systemColorsSection = this.helper.findElementById( rootContainer, this.getSelector( 'colorsSection' ) );
+		const systemColorsSection = this.helper.findElementById( rootContainer, this.getSelector( 'default_colors_section' ) );
 
 		if ( ! systemColorsSection ) {
 			throw new Error( 'Could not find system colors section' );
@@ -135,7 +122,7 @@ export default class ColorsHandler extends DesignElementHandler {
 
 		this.helper.setElementSettings( newTitle, {
 			title: 'Custom Colors',
-			_element_id: this.getSelector( 'customTitleContainer' ),
+			_element_id: this.getSelector( 'custom_colors_title' ),
 		} );
 
 		return newTitle;
@@ -147,7 +134,7 @@ export default class ColorsHandler extends DesignElementHandler {
 	 * @return {Container}
 	 */
 	getDefaultTitleContainer( rootContainer ) {
-		return this.helper.findElementById( rootContainer, this.getSelector( 'defaultTitleContainer' ) );
+		return this.helper.findElementById( rootContainer, this.getSelector( 'default_title_container' ) );
 	}
 
 	/**
@@ -187,7 +174,7 @@ export default class ColorsHandler extends DesignElementHandler {
 	 * @return {Container|null}
 	 */
 	getDefaultColorContainer( rootContainer ) {
-		const defaultColorId = this.getSelector( 'defaultColorContainer' );
+		const defaultColorId = this.getSelector( 'default_colors_container' );
 		return this.helper.findElementById( rootContainer, defaultColorId );
 	}
 
@@ -207,7 +194,7 @@ export default class ColorsHandler extends DesignElementHandler {
 			throw new Error( 'Could not inject custom colors section' );
 		}
 
-		this.helper.addClass( injected, this.getSelector( 'customColorSectionClass' ) );
+		this.helper.addClass( injected, this.getSelector( 'custom_colors_section' ) );
 
 		const toDelete = [ ...injected.children ];
 
@@ -230,7 +217,7 @@ export default class ColorsHandler extends DesignElementHandler {
 			this.helper.setElementSettings( newColumn, {
 				_element_id: '',
 			} );
-			this.helper.addClass( newColumn, this.getSelector( 'EmptyColumnClass' ) );
+			this.helper.addClass( newColumn, this.getSelector( 'empty_color_container' ) );
 		}
 
 		return injected;
@@ -244,14 +231,14 @@ export default class ColorsHandler extends DesignElementHandler {
 	 * @return {Container|null} - The new color container or null if no empty column was found
 	 */
 	addColorToCustomSection( customColorsSection, defaultColorContainer, color ) {
-		const emptyColors = this.helper.findElementsByClass( customColorsSection, this.getSelector( 'EmptyColumnClass' ) );
+		const emptyColors = this.helper.findElementsByClass( customColorsSection, this.getSelector( 'empty_color_container' ) );
 
 		if ( 0 === emptyColors.length ) {
 			return null;
 		}
 
 		let emptyColor = emptyColors[ 0 ];
-		this.helper.removeClass( emptyColor, this.getSelector( 'EmptyColumnClass' ) );
+		this.helper.removeClass( emptyColor, this.getSelector( 'empty_color_container' ) );
 
 		this.addColorContainerContent( emptyColor, defaultColorContainer, color );
 
@@ -286,9 +273,9 @@ export default class ColorsHandler extends DesignElementHandler {
 		const { _id: id, title, color: hexString } = color;
 
 		// Get the title widgets by class - should be only one
-		const titles = this.helper.findElementsByClass( container, this.getSelector( 'colorTitleClass' ) );
+		const titles = this.helper.findElementsByClass( container, this.getSelector( 'color_title_widget' ) );
 		// Get the color widgets by class - should be only one
-		const colorWidgets = this.helper.findElementsByClass( container, this.getSelector( 'colorWidgetClass' ) );
+		const colorWidgets = this.helper.findElementsByClass( container, this.getSelector( 'color_widget' ) );
 
 		const colorWidget = colorWidgets[ 0 ];
 		let titleWidget = titles[ 0 ];
@@ -309,10 +296,10 @@ export default class ColorsHandler extends DesignElementHandler {
 		// Set id
 
 		let settings = {
-			_element_id: this.getSelector( 'colorWidgetClass' ) + '__' + id,
+			_element_id: this.getSelector( 'color_widget' ) + '__' + id,
 		};
 
-		this.helper.setElementSettings( colorWidget, settings );
+		this.helper.setElementSettings( container, settings );
 
 		if ( hexString ) {
 			this.setHexString( colorWidget, hexString );
@@ -326,8 +313,8 @@ export default class ColorsHandler extends DesignElementHandler {
 	 * @param colorWidget {Container} - The color widget
 	 * @param hexString {string} - The hex string
 	 */
-	setHexString( colorWidget, hexString ) {
-		this.helper.setElementSettings( colorWidget, {
+	setHexString( container, hexString ) {
+		this.helper.setElementSettings( container, {
 			title: hexString,
 		} );
 	}
