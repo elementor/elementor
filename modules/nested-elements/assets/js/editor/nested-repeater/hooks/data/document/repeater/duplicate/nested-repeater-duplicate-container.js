@@ -10,15 +10,9 @@ export class NestedRepeaterDuplicateContainer extends Base {
 		return 'document/repeater/duplicate';
 	}
 
-	apply( { container, index, options } ) {
-		const childView = findChildContainerOrFail( container, index, options.containerModelCid );
-
-		if ( ! childView ) {
-			return;
-		}
-
+	apply( { container, index } ) {
 		$e.run( 'document/elements/duplicate', {
-			container: childView,
+			container: findChildContainerOrFail( container, index ),
 			options: {
 				edit: false, // Not losing focus.
 			},

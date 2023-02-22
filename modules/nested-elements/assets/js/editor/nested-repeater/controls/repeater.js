@@ -24,16 +24,11 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 	}
 
 	onChildviewClickDuplicate( childView ) {
-		const containerModelCid = this.getRepeaterItemContainerModelCidIfExists( childView );
-
 		$e.run( 'document/repeater/duplicate', {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
-			renderAfterInsert: ! containerModelCid,
-			options: {
-				containerModelCid,
-			},
+			renderAfterInsert: false,
 		} );
 
 		this.toggleMinRowsClass();
@@ -49,24 +44,5 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			index: this.currentEditableChild.itemIndex,
 			options: { useHistory: false },
 		} );
-	}
-
-	getRepeaterItemContainerModelCidIfExists( childView ) {
-		if ( this.itemDoesNotNeedChildContainer( childView ) ) {
-			return false;
-		}
-
-		const contentIndex = childView._index + 1;
-		const container = this.container.children.find( ( child ) => +child.view.el.dataset.content === contentIndex );
-
-		if ( ! container ) {
-			return false;
-		}
-
-		return container.model.cid;
-	}
-
-	itemDoesNotNeedChildContainer( childView ) {
-		return 'yes' !== childView.model.attributes[ this._parent.model.config.child_container_control_key ];
 	}
 }
