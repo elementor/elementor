@@ -8,6 +8,9 @@ inputs:
   SLACK_TAG_CHANNELS:
     description: 'The Slack channel to post to'
     required: true
+  PAYLOAD:
+    description: 'The payload to send to Slack'
+    required: true
 
 runs:
   using: "composite"
@@ -16,26 +19,6 @@ runs:
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: ${{ inputs.SLACK_TAG_CHANNELS }}
-          payload: |
-                  {
-                    "blocks": [{
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` *RC Release*\n\ncreated by ${{ github.actor }}.\n\nPlease test it and report any issues\n\n<https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}|*Release v${{ env.PACKAGE_VERSION }}*>"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Changelog*:\n\n${{ env.CHANGELOG_CONTENT }}"
-                        }
-                      }
-                    ]
-                  }
+          payload: ${{ inputs.PAYLOAD }}
         env:
           SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}
