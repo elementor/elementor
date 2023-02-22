@@ -386,13 +386,13 @@ export default class NestedTabs extends Base {
 		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
 			event.preventDefault();
 
-			activeTabTitleVisible.focus();
+			activeTabTitleVisible?.focus();
 		} else if ( pressTabOnLastFocusableItem ) {
 			event.preventDefault();
 
 			this.setTabindexOfActiveContainerItems( '-1' );
 
-			nextTabTitleVisible.focus();
+			nextTabTitleVisible?.focus();
 		}
 	}
 
