@@ -1,12 +1,9 @@
+// Global for all (editor, admin, preview, front-end USER)
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
-@import "dialog";
-@import "dialog-confirm";
+@import "dialog-base";
 @import "dialog-lightbox";
-@import "dialog-templates";
 @import "flatpicker";
-@import "notifications";
-@import "app/modules/site-editor/assets/scss/admin/admin-bar";
 
 .elementor-hidden {
 	display: none;
@@ -49,3 +46,4 @@
 		font-size: 1em;
 	}
 }
+

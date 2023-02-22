@@ -29,7 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<i class="eicon-plus"></i>
 			</div>
 			<# if ( 'loop-item' !== elementor.documents.getCurrent()?.config?.type || elementorCommon.config.experimentalFeatures[ 'container' ] ) { #>
-			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 			<div class="elementor-add-section-area-button elementor-add-template-button e-btn" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 				<i class="eicon-folder"></i>
 			</div>

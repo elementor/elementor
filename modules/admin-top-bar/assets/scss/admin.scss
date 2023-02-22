@@ -89,6 +89,11 @@ $top-bar-height: 50px;
 		line-height: normal;
 	}
 
+	.e-admin-top-bar__main-area-buttons {
+		display: inline-flex;
+		gap: 5px;
+	}
+
 	&.e-admin-top-bar--active {
 		display: block;
 
