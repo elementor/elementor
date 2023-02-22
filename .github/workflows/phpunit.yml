@@ -65,8 +65,8 @@ jobs:
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
         run: |
           composer update --no-interaction
-          vendor/bin/phpunit --coverage-clover coverage-report/clover.xml
-          composer run coverage:check
+          # vendor/bin/phpunit --coverage-clover coverage-report/clover.xml
+          composer run coverage
       - name: Run Tests without Coverage
         if: ${{ ! ( matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' ) }}
         run: | # remove unsupported packages PHP < 7.4
