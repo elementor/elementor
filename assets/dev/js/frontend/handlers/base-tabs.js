@@ -51,6 +51,12 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 			hideTabFn: 'hide',
 		} );
 
+		// skip active tab if data-closed is set to 1
+		if (this.$element[0].querySelector(".elementor-accordion") &&
+			this.$element[0].querySelector(".elementor-accordion").getAttribute("data-closed") == 1) {
+			return;
+		}
+
 		this.changeActiveTab( defaultActiveTab );
 
 		// Return back original toggle effects

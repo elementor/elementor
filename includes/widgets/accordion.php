@@ -229,6 +229,16 @@ class Widget_Accordion extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'open_first_item',
+			[
+				'label' => esc_html__( 'Open first item', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'separator' => 'before',
+				'default' => 'yes'
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -532,8 +542,9 @@ class Widget_Accordion extends Widget_Base {
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
+		$open_first_item = ( $settings["open_first_item"] != "yes" ) ? ' data-closed="1"' : '';
 		?>
-		<div class="elementor-accordion" role="tablist">
+		<div class="elementor-accordion" role="tablist"<?php echo $openFirstItem;?>>
 			<?php
 			foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
