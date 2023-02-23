@@ -84,10 +84,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row.jpeg' );
+		expect( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -95,10 +92,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
+		expect( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -111,10 +105,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
+		expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -123,10 +114,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
+		expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
 	} );
 
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
