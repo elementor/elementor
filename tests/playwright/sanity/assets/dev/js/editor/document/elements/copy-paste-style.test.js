@@ -31,15 +31,15 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 
 	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
 
-	// Check that the panel footer save button is green.
-	await expect( publishButton ).not.toHaveClass( 'elementor-disabled' );
+	// Check that the panel footer save button is enabled.
+	await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
 
 	// Act.
 	await publishButton.click();
 	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
-	await expect( publishButton ).toHaveClass( 'elementor-disabled', {
+	await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {
 		timeout: 10000,
 	} );
 } );
