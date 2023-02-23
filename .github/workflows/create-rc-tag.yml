@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - name: Get Configuration
         id: configuration
         uses: maork-elementor/json-to-variables@main
