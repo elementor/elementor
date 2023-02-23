@@ -1,4 +1,4 @@
-import StructureIcon from '../icons/structure-icon';
+import { StructureIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import { runCommand, useRouteStatus } from '@elementor/v1-adapters';
 
