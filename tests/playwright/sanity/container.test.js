@@ -84,7 +84,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( container ).toHaveScreenshot( 'container-row.png' );
+		await expect( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -92,7 +92,7 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 
-		expect( container ).toHaveScreenshot( 'container-row-full.png' );
+		await expect( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -105,7 +105,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
+		await expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
 
 		// Act
 		await editor.selectElement( containerId );
@@ -114,7 +114,7 @@ test.describe( 'Container tests', () => {
 		await editor.hideVideoControls();
 
 		// Assert
-		expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
+		await expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
 	} );
 
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
