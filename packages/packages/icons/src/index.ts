@@ -12,5 +12,5 @@ export { default as StructureIcon } from './components/structure-icon';
 export { default as TabletLandscapeIcon } from './components/tablet-landscape-icon';
 export { default as TabletPortraitIcon } from './components/tablet-icon';
 export { default as ThemeBuilderIcon } from './components/theme-builder-icon';
-export { default as WideScreenIcon } from './components/wide-screen-icon';
+export { default as WidescreenIcon } from './components/widescreen-icon';
 export { default as WordpressIcon } from './components/wordpress-icon';

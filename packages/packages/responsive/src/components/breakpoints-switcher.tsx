@@ -6,7 +6,7 @@ import {
 	DesktopIcon,
 	TabletPortraitIcon,
 	MobilePortraitIcon,
-	WideScreenIcon,
+	WidescreenIcon,
 	LaptopIcon,
 	TabletLandscapeIcon,
 	MobileLandscapeIcon,
@@ -60,7 +60,7 @@ function Tooltip( props: TooltipProps ) {
 	/>;
 }
 const iconsMap = {
-	widescreen: WideScreenIcon,
+	widescreen: WidescreenIcon,
 	desktop: DesktopIcon,
 	laptop: LaptopIcon,
 	tablet_extra: TabletLandscapeIcon,
