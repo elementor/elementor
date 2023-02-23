@@ -673,13 +673,9 @@ label.elementor-template-library-order-label {
 	&-form {
 		width: 95%;
 		padding: 60px;
-		border: 2px dashed var(--e-a-border-color);
+		border: 2px dashed var(--e-a-border-color-bold);
 		margin: 35px auto;
 		transition: var(--e-a-transition-hover);
-
-		&:hover {
-			border-color: var(--e-a-color-secondary);
-		}
 
 		&-or {
 			margin-top: 15px;
@@ -771,6 +767,7 @@ label.elementor-template-library-order-label {
 	left: 50%;
 	transform: translateX(-50%);
 	font-style: italic;
+	color: var(--e-a-color-txt-muted);
 
 	@media (max-height: 700px) {
 		display: none;

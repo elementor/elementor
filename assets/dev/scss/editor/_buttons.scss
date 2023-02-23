@@ -5,14 +5,13 @@
 .elementor-button,
 .e-btn {
 	font-size: 12px;
-	font-family: var(--e-a-font-family);
 	font-weight: 500;
 	line-height: 1.2;
 	text-transform: uppercase;
 	padding: 8px 16px;
 	outline: none;
 	border: none;
-	border-radius: 3px;
+	border-radius: var(--e-a-border-radius);
 	background-color: var(--e-a-btn-bg);
 	color: var(--e-a-btn-color);
 	transition: var(--e-a-transition-hover);
@@ -48,6 +47,7 @@
 
 		&:hover {
 			background: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
 		}
 
 		&:disabled {

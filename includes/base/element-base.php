@@ -923,7 +923,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -949,7 +949,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -1166,7 +1166,7 @@ abstract class Element_Base extends Controls_Stack {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 						'type' => Controls_Manager::SLIDER,
 						'device_args' => $default_unit_values_ms,
 						'range' => [

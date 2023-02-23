@@ -12,6 +12,7 @@
 @import "../panel/controls";
 @import "../resizable";
 
+@import "add-new";
 @import "animations";
 @import "compatibility";
 @import "inline-editor";
@@ -265,7 +266,7 @@ html.elementor-html {
 	&.elementor-element-editable {
 
 		> .elementor-element-overlay {
-			border: 1px solid $white;
+			border: 1px solid var(--e-a-color-white);
 
 			&:after {
 				content: '';
@@ -276,7 +277,7 @@ html.elementor-html {
 	&.elementor-dragging-on-child {
 
 		> .elementor-element-overlay {
-			border: 1px solid $editor-info;
+			border: 1px solid var(--e-a-color-info);
 
 			&:after {
 				display: none;
@@ -314,7 +315,7 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: $admin-font-family;
+	font-family: var(--editor-font-family);
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
@@ -470,7 +471,7 @@ html.elementor-html {
 
 .elementor-first-add {
 	text-align: center;
-	border: 1px dashed $editor-lightest;
+	border: 1px dashed var(--e-a-border-color);
 	display: flex;
 	height: 100%;
 	width: 100%;
@@ -578,7 +579,7 @@ html.elementor-html {
 .elementor-sortable-placeholder {
 
 	&:not(.elementor-column-placeholder) {
-		background-color: $editor-info;
+		background-color: var(--e-a-color-info);
 		animation-duration: 250ms;
 		opacity: .9;
 		width: 100%;
@@ -619,7 +620,7 @@ html.elementor-html {
 	}
 
 	&:after {
-		border: 1px dashed #fff;
+		border: 1px dashed var(--e-a-color-white);
 	}
 }
 
@@ -659,189 +660,6 @@ html.elementor-html {
 			display: none;
 		}
 	}
-}
-
-// Add new Section
-.elementor-add-section {
-	// Avoid theme conflicts.
-	all: initial;
-	display: flex;
-	max-width: 1160px;
-	position: relative;
-	margin-inline: auto;
-
-	&:not(.elementor-dragging-on-child) {
-
-		.elementor-add-section-inner {
-			border: 2px dashed $editor-lightest;
-			background-color: rgba(255, 255, 255, .5);
-		}
-	}
-
-	&.elementor-dragging-on-child {
-
-		.elementor-add-section-inner {
-			border: 3px dashed $editor-info;
-		}
-	}
-
-	&[data-view="choose-action"] {
-
-		.e-view:not( .elementor-add-new-section ) {
-			display: none;
-		}
-	}
-
-	&[data-view="select-preset"] {
-
-		.e-view:not( .elementor-select-preset ) {
-			display: none;
-		}
-	}
-
-	&[data-view="select-container-preset"] {
-
-		.e-view:not( .e-con-select-preset ) {
-			display: none;
-		}
-	}
-}
-
-.elementor-add-section-inner {
-	text-align: center;
-	margin: 20px;
-	padding: 40px 0;
-	display: flex;
-	justify-content: center;
-	flex-grow: 1;
-}
-
-.elementor-add-new-section {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-	gap: 5px;
-
-	.elementor-add-section-area-button {
-		padding: 12px;
-		height: 40px;
-		width: 40px;
-		border-radius: 50%;
-		font-size: 16px;
-		display: flex;
-
-		i {
-			margin: 0;
-		}
-	}
-}
-
-.elementor-add-section-drag-title {
-	font-family: $admin-font-family;
-	font-size: 13px;
-	font-weight: normal;
-	font-style: italic;
-	line-height: 1;
-	color: $editor-darker;
-	margin-top: 10px;
-	width: 100%;
-}
-
-.elementor-add-section-close {
-	position: absolute;
-	right: 40px;
-	top: 40px;
-	font-size: 20px;
-	cursor: pointer;
-	line-height: 1;
-	color: $editor-lightest;
-
-	&:hover {
-		color: $editor-dark;
-	}
-}
-
-.elementor-select-preset-title {
-	font-family: $admin-font-family;
-	font-size: 13px;
-	font-weight: 500;
-	font-style: normal;
-	text-transform: uppercase;
-	color: $editor-darker;
-}
-
-.elementor-select-preset-list {
-	list-style: none;
-	padding: 0 25px;
-	margin: 20px auto 0;
-	overflow: hidden;
-	max-width: 700px;
-
-	.elementor-preset {
-		cursor: pointer;
-		margin: 0;
-		padding: 10px;
-		float: $start;
-		max-width: 33.333%;
-
-		&:hover {
-
-			path,
-			rect {
-				fill: $editor-dark;
-			}
-		}
-
-		&:not(:hover) {
-
-			path,
-			rect {
-				fill: $editor-lightest;
-			}
-		}
-
-		.e-preset--container {
-			position: relative;
-			display: flex;
-
-			&::before {
-				content: var( --text );
-				font-family: $admin-font-family;
-				font-size: 13px;
-				font-weight: 500;
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				color: $white;
-				transform: translate( -50%, -50% );
-			}
-		}
-
-		svg {
-			height: 50px;
-			width: 100%;
-
-			@if 'rtl' == $direction {
-				transform: rotate(180deg);
-			}
-		}
-	}
-}
-
-#elementor-add-new-section {
-	margin: 60px auto;
-
-	&[data-view="choose-action"] {
-
-		.elementor-add-section-close {
-			display: none;
-		}
-	}
-}
-
-.elementor-add-section-inline {
-	margin: 10px auto;
-	width: 100%;
 }
 
 .elementor-column-percents-tooltip {
@@ -920,7 +738,7 @@ html.elementor-html {
 	&.e-con {
 
 		> .elementor-element-overlay {
-			background-color: $editor-lightest;
+			background-color: var(--e-a-bg-hover);
 			mix-blend-mode: color;
 		}
 

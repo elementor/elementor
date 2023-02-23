@@ -1,3 +1,5 @@
+@import "../../../../assets/dev/scss/helpers/variables";
+
 // Default, Light Theme
 // - Gray Semantics
 $eps-gray-900: $e-gray-900;
@@ -14,6 +16,8 @@ $eps-gray-100: $e-gray-100;
 $eps-gray-75:  $e-gray-75;
 $eps-gray-50:  $e-gray-50;
 $eps-gray-25:  $e-gray-25;
+$black:         #000000;
+$white:         #ffffff;
 
 // Theme semantics
 // - data context
@@ -23,8 +27,9 @@ $eps-theme-disabled: $eps-gray-100;
 $eps-theme-light: $white;
 $eps-theme-dark: $black;
 //
-$eps-theme-accent: $e-brand;
-$eps-theme-cta: $e-primary;
+$eps-theme-accent: $e-primary;
+$eps-theme-cta: $e-brand;
+$eps-theme-brand: $e-brand;
 $eps-theme-danger: $e-danger;
 $eps-theme-danger-bg: $e-danger-bg;
 $eps-theme-info: $e-info;
@@ -36,10 +41,10 @@ $eps-theme-success-bg: $e-success-bg;
 
 // -use context
 $eps-body-color: $eps-gray-600;
-$eps-body-bg: null;
+$eps-body-bg: $white;
 $eps-link-color: $eps-gray-600;
 $eps-link-hover-color: darken($eps-link-color, 15%);
-$eps-hr-color: var(--e-a-border-color);
+$eps-hr-color: $eps-gray-75;
 $eps-display-1-color: $eps-gray-600;
 $eps-display-2-color: $eps-gray-600;
 $eps-display-3-color: $eps-gray-600;

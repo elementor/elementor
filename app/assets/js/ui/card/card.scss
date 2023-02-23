@@ -85,9 +85,5 @@ $root: $eps-prefix + card;
 			padding: var(--eps-card-footer-padding);
 		}
 	}
-
-	&:hover {
-		background-color: var(--card-background-color-hover);
-	}
 }
 

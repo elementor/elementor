@@ -23,7 +23,7 @@
 		display: block;
 		height: inherit;
 		font-size: 7px;
-		background: #eceeef;
+		background: var(--e-a-bg-active-bold);
 		border-radius: inherit;
 		transition: 0.15s ease-out;
 		transition-property: opacity, background;

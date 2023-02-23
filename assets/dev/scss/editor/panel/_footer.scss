@@ -149,7 +149,7 @@
 }
 
 .elementor-panel-footer-sub-menu {
-	border-radius: 8px;
+	border-radius: var(--e-border-radius);
 	overflow: hidden;
 	border: 1px solid $e-gray-700;
 }

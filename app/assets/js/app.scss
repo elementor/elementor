@@ -78,8 +78,8 @@
 		text-align: center;
 		font-size: $app-logo-font-size;
 		border-radius: $app-logo-radius;
-		color: $app-logo-color;
-		background-color: $app-logo-background-color;
+		color: var(--app-logo-color);
+		background-color: var(--app-logo-background-color);
 
 		&:not(:last-child) {
 			margin-inline-end: $app-logo-margin-end;
@@ -88,6 +88,7 @@
 
 	//todo: consider refactoring as logo element.
 	&__title {
+		color: var(--app-title-color);
 		font-size: $app-title-font-size;
 		font-weight: $app-title-font-weight;
 		text-transform: uppercase;

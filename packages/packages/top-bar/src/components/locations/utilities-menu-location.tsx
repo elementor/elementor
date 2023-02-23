@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { useInjectionsOf } from '@elementor/locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import { LOCATION_UTILITIES_MENU_DEFAULT } from '../../locations';
-import Divider from '../ui/divider';
+import { Divider } from '@elementor/ui';
 
 export default function UtilitiesMenuLocation() {
 	const injections = useInjectionsOf( LOCATION_UTILITIES_MENU_DEFAULT );
