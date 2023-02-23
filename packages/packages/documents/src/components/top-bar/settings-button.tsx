@@ -18,12 +18,13 @@ export default function SettingsButton( { type }: Props ) {
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-			<span>
+			<span aria-label={ undefined }>
 				<ToggleButton
 					value="document-settings"
 					selected={ isActive }
 					disabled={ isBlocked }
 					onChange={ () => openRoute( 'panel/page-settings/settings' ) }
+					aria-label={ title }
 				>
 					<CogIcon />
 				</ToggleButton>
