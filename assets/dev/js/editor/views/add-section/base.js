@@ -121,7 +121,7 @@ import environment from 'elementor-common/utils/environment';
 					{
 						name: 'paste_area',
 						title: __( 'Paste Area', 'elementor' ),
-						//callback: () => this.ui.pasteArea.show(),
+						// Callback: () => this.ui.pasteArea.show(),
 						callback: () => $e.run( 'document/elements/paste-area' ),
 					},
 				],

@@ -151,7 +151,6 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentPreviewId = null;
 
 		this.exitReviewMode();
-
 	},
 
 	onDestroy() {
