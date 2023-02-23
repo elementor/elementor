@@ -6,11 +6,11 @@ import {
 	DesktopIcon,
 	TabletPortraitIcon,
 	MobilePortraitIcon,
-	WideScreenIcon,
+	WidescreenIcon,
 	LaptopIcon,
 	TabletLandscapeIcon,
 	MobileLandscapeIcon,
-} from '../icons';
+} from '@elementor/icons';
 import useBreakpointsActions from '../hooks/use-breakpoints-actions';
 
 export default function BreakpointsSwitcher() {
@@ -60,7 +60,7 @@ function Tooltip( props: TooltipProps ) {
 	/>;
 }
 const iconsMap = {
-	widescreen: WideScreenIcon,
+	widescreen: WidescreenIcon,
 	desktop: DesktopIcon,
 	laptop: LaptopIcon,
 	tablet_extra: TabletLandscapeIcon,
