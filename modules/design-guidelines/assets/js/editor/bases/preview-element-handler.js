@@ -1,8 +1,8 @@
-export default class DesignElementHandler {
+export default class PreviewElementHandler {
 	constructor( editorHelper, config ) {
 		this.config = config;
 		this.helper = editorHelper;
-		this.selectors = {};
+		this.selectors = config['selectors'];
 	}
 
 	bindEvents() {
@@ -20,11 +20,6 @@ export default class DesignElementHandler {
 	}
 
 	getSelector( name ) {
-		const selector = this.selectors[ name ];
-		return this.getSelectorPrefix() + selector;
-	}
-
-	getSelectorPrefix() {
-		return 'design-guidelines-';
+		return this.selectors[ name ];
 	}
 }

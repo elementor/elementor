@@ -4,8 +4,10 @@ namespace Elementor\Modules\DesignGuidelines\Documents;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Page;
+use Elementor\Modules\DesignGuidelines\PreviewElementHandlers\Colors_Handler;
+use Elementor\Modules\DesignGuidelines\PreviewElementHandlers\Fonts_Handler;
+use Elementor\Modules\DesignGuidelines\Utils\Elements_Data_Helper;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -34,7 +36,7 @@ class Design_Guidelines extends Page {
 	}
 
 	public function save( $data ) {
-		return false; // TODO : POC! Change this.
+		//		return false; // TODO : POC! Change this.
 		if ( isset( $data['settings']['post_status'] ) && Document::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 			return false;
 		}
@@ -42,23 +44,45 @@ class Design_Guidelines extends Page {
 		return parent::save( $data );
 	}
 
+	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
+
+		return parent::get_elements_raw_data( $data, $with_html_content );
+	}
+
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
 		if ( ! isset( $_GET['active-document'] ) ) { // todo implement a better way to check if this is a request from the design guidelines module.
 			//			wp_die('You are not allowed to access this page.');
 		}
 
+		$selectors = $this->get_selectors();
+
 		$this->enqueue_scripts();
 		// TODO : POC! Change this.
 		$elements_data = parent::get_elements_data( $status );
 
-		//
-		//		foreach ( $settings['custom_colors'] as $color ) {
-		//			$color_element = $this->get_color_element( $color['_id'], $color['title'] );
-		//			$elements_data[0]['elements'][] = $color_element;
-		//		}
+		$helper = new Elements_Data_Helper();
+		$colors_handler = new Colors_Handler( $helper, $selectors, $elements_data );
+		$fonts_handler = new Fonts_Handler( $helper, $selectors, $elements_data );
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$settings = $kit->get_settings();
+
+		$elements_data = Plugin::$instance->db->iterate_data( $elements_data, function( array $element_data ) use ( $colors_handler, $fonts_handler, $helper, $settings ) {
+			$fonts_injection = $fonts_handler->get_injection_point_id();
+			$colors_injection = $colors_handler->get_injection_point_id();
+
+			$element_id = $helper->get_element_id( $element_data );
+			if ( $element_id === $fonts_injection ) {
+				$element_data['elements'] = array_merge( $element_data['elements'], $fonts_handler->create_elements_to_inject( $element_data, $settings['custom_typography'] ) );
+			} else if ( $element_id === $colors_injection ) {
+				$element_data['elements'] = array_merge( $element_data['elements'], $colors_handler->create_elements_to_inject( $element_data, $settings['custom_colors'] ) );
+			}
+
+			return $element_data;
+		} );
 
 		return $elements_data;
 	}
+
 
 	/**
 	 * Enqueue scripts.
@@ -82,6 +106,7 @@ class Design_Guidelines extends Page {
 			true
 		);
 
+		// todo : should do this?
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$settings = $kit->get_settings();
 
@@ -92,196 +117,29 @@ class Design_Guidelines extends Page {
 			'systemColors' => $settings['system_colors'],
 			'customFonts' => $settings['custom_typography'],
 			'postId' => $this->get_main_id(),
+			'selectors' => $this->get_selectors(),
 		] );
-
-
 	}
 
-	public function get_color_element( $global_name, $title ) {
-		$random_id = Utils::generate_random_string();
-
+	public function get_selectors(): array {
 		return [
-			'id' => $random_id,
-			'elType' => 'column',
-			'settings' =>
-				[
-					'_column_size' => 25,
-					'_inline_size' => null,
-					'background_background' => 'classic',
-					'__globals__' =>
-						[
-							'background_color' => "globals/colors?id=$global_name",
-						],
-				],
-			'elements' =>
-				[
-					0 =>
-						[
-							'id' => 'cb9273d',
-							'elType' => 'widget',
-							'settings' =>
-								[
-									'title' => $title,
-									'title_color' => '#FFFFFF',
-								],
-							'elements' =>
-								[
-								],
-							'widgetType' => 'heading',
-						],
-				],
-			'isInner' => false,
+			'default_title_container' => 'design-guidelines-default-title-container',
+			'custom_colors_title' => 'design-guidelines-custom-colors-title',
+			'empty_color_container' => 'design-guidelines-empty-color-container',
+			'custom_colors_section' => 'design-guidelines-custom-colors-section',
+			'color_title_widget' => 'design-guidelines-color-title-widget',
+			'color_widget' => 'design-guidelines-color-widget',
+			'color_container' => 'design-guidelines-color-container',
+			'default_colors_section' => 'design-guidelines-default-colors-section',
+			'default_colors_container' => 'design-guidelines-color-container__primary',
+			'colors_injection_container' => 'design-guidelines-colors-injection-container',
+			'custom_fonts_title' => 'design-guidelines-custom-fonts-title',
+			'font_title_widget' => 'design-guidelines-font-title-widget',
+			'font_widget' => 'design-guidelines-font-widget',
+			'font_section' => 'design-guidelines-font-section',
+			'default_fonts_section' => 'design-guidelines-font-section__primary',
+			'fonts_injection_container' => 'design-guidelines-fonts-injection-container',
+
 		];
 	}
-
-	public function get_elements_skeleton() {
-		return [
-			0 =>
-				[
-					'id' => '10dac3d',
-					'elType' => 'section',
-					'settings' =>
-						[
-							'structure' => '40',
-						],
-					'elements' =>
-						[
-							0 =>
-								[
-									'id' => '3c53c6a',
-									'elType' => 'column',
-									'settings' =>
-										[
-											'_column_size' => 25,
-											'_inline_size' => null,
-											'background_background' => 'classic',
-											'__globals__' =>
-												[
-													'background_color' => 'globals/colors?id=primary',
-												],
-										],
-									'elements' =>
-										[
-											0 =>
-												[
-													'id' => 'cb9273d',
-													'elType' => 'widget',
-													'settings' =>
-														[
-															'title' => 'Primary',
-															'title_color' => '#FFFFFF',
-														],
-													'elements' =>
-														[
-														],
-													'widgetType' => 'heading',
-												],
-										],
-									'isInner' => false,
-								],
-							1 =>
-								[
-									'id' => 'cda2a51',
-									'elType' => 'column',
-									'settings' =>
-										[
-											'_column_size' => 25,
-											'_inline_size' => null,
-											'background_background' => 'classic',
-											'__globals__' =>
-												[
-													'background_color' => 'globals/colors?id=secondary',
-												],
-										],
-									'elements' =>
-										[
-											0 =>
-												[
-													'id' => '7e89a0f',
-													'elType' => 'widget',
-													'settings' =>
-														[
-															'title' => 'Secondary',
-															'title_color' => '#FFFFFF',
-														],
-													'elements' =>
-														[
-														],
-													'widgetType' => 'heading',
-												],
-										],
-									'isInner' => false,
-								],
-							2 =>
-								[
-									'id' => 'e0b2a61',
-									'elType' => 'column',
-									'settings' =>
-										[
-											'_column_size' => 25,
-											'_inline_size' => null,
-											'background_background' => 'classic',
-											'__globals__' =>
-												[
-													'background_color' => 'globals/colors?id=text',
-												],
-										],
-									'elements' =>
-										[
-											0 =>
-												[
-													'id' => '89e3840',
-													'elType' => 'widget',
-													'settings' =>
-														[
-															'title' => 'Body text',
-															'title_color' => '#FFFFFF',
-														],
-													'elements' =>
-														[
-														],
-													'widgetType' => 'heading',
-												],
-										],
-									'isInner' => false,
-								],
-							3 =>
-								[
-									'id' => '2366871',
-									'elType' => 'column',
-									'settings' =>
-										[
-											'_column_size' => 25,
-											'_inline_size' => null,
-											'background_background' => 'classic',
-											'__globals__' =>
-												[
-													'background_color' => 'globals/colors?id=accent',
-												],
-										],
-									'elements' =>
-										[
-											0 =>
-												[
-													'id' => 'd821ddd',
-													'elType' => 'widget',
-													'settings' =>
-														[
-															'title' => 'Accent',
-															'title_color' => '#FFFFFF',
-														],
-													'elements' =>
-														[
-														],
-													'widgetType' => 'heading',
-												],
-										],
-									'isInner' => false,
-								],
-						],
-					'isInner' => false,
-				],
-		];
-	}
-
 }

@@ -80,6 +80,7 @@ export default class EditorHelper {
 		let index = injectionContainer.view._index;
 		const at = index + 1;
 
+		console.log( 'injectAfter');
 		return $e.run( 'document/elements/create', {
 			model,
 			container: injectionContainer.parent,

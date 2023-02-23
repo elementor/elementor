@@ -1,28 +1,9 @@
-import DesignElementHandler from '../bases/design-element-handler';
+import PreviewElementHandler from '../bases/preview-element-handler';
 
-export default class FontsHandler extends DesignElementHandler {
+export default class FontsHandler extends PreviewElementHandler {
 
 	constructor( editorHelper, config ) {
 		super( editorHelper, config );
-		this.selectors = {
-			defaultContainer: 'default-font-container',
-			fontsSection: 'font-section',
-			defaultTitleContainer: 'default-title-container',
-			fontWidgetClass: 'font-widget',
-			fontTitleClass: 'font-title',
-			customTitleContainer: 'custom-fonts-title-container',
-		};
-	}
-
-	/**
-	 * apply changes to document
-	 * @param document {Document}
-	 * @param config {Object}
-	 */
-	applyChanges( document ) {
-		const rootContainer = document.container;
-
-		this.injectCustomElements( rootContainer, this.config[ 'customFonts' ] );
 	}
 
 	/**
@@ -31,7 +12,7 @@ export default class FontsHandler extends DesignElementHandler {
 	 * @param customFonts {Object[]} - custom fonts { _id, title}
 	 */
 	injectCustomElements( rootContainer, customFonts ) {
-		const sections = this.helper.findElementsByClass( rootContainer, this.getSelector( 'fontsSection' ) );
+		const sections = this.helper.findElementsByClass( rootContainer, this.getSelector( 'font_section' ) );
 
 		if ( 0 === sections.length ) {
 			throw new Error( 'No fonts sections found' );
@@ -79,9 +60,9 @@ export default class FontsHandler extends DesignElementHandler {
 		const { _id: id, title } = font;
 
 		// Get the title widgets by class - should be only one
-		const titleWidgets = this.helper.findElementsByClass( container, this.getSelector( 'fontTitleClass' ) );
+		const titleWidgets = this.helper.findElementsByClass( container, this.getSelector( 'font_title_widget' ) );
 		// Get the font widgets by class - should be only one
-		const fontWidgets = this.helper.findElementsByClass( container, this.getSelector( 'fontWidgetClass' ) );
+		const fontWidgets = this.helper.findElementsByClass( container, this.getSelector( 'font_widget' ) );
 
 		let titleWidget = titleWidgets[ 0 ];
 		let fontWidget = fontWidgets[ 0 ];
@@ -97,7 +78,7 @@ export default class FontsHandler extends DesignElementHandler {
 		this.helper.setElementSettings(
 			fontWidget,
 			{
-				_element_id: this.getSelector( 'fontWidgetClass' ) + '__' + font._id,
+				_element_id: this.getSelector( 'font_widget' ) + '__' + font._id,
 				header_size: 'p',
 			}
 		);
@@ -153,7 +134,7 @@ export default class FontsHandler extends DesignElementHandler {
 
 		this.helper.setElementSettings( newTitle, {
 			title: 'Custom Fonts',
-			_element_id: this.getSelector( 'customTitleContainer' ),
+			_element_id: this.getSelector( 'custom_fonts_title' ),
 		} );
 
 		return newTitle;
@@ -165,7 +146,7 @@ export default class FontsHandler extends DesignElementHandler {
 	 * @return {Container|null}
 	 */
 	getDefaultTitleContainer( rootContainer ) {
-		return this.helper.findElementById( rootContainer, this.getSelector( 'defaultTitleContainer' ) );
+		return this.helper.findElementById( rootContainer, this.getSelector( 'default_title_container' ) );
 	}
 
 	/**
@@ -174,6 +155,6 @@ export default class FontsHandler extends DesignElementHandler {
 	 * @return {Container|null}
 	 */
 	getDefaultContainer( rootContainer ) {
-		return this.helper.findElementById( rootContainer, this.getSelector( 'defaultContainer' ) );
+		return this.helper.findElementById( rootContainer, this.getSelector( 'default_fonts_section' ) );
 	}
 }
