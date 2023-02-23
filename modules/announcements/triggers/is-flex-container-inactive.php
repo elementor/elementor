@@ -29,8 +29,6 @@ class IsFlexContainerInactive extends Trigger_Base {
 	 * @return void
 	 */
 	public function after_triggered(): void {
-		//@TODO - remove, for dev
-		return;
 		$new_counter = $this->get_view_count() + 1;
 		update_user_meta( get_current_user_id(), self::USER_META_KEY, $new_counter );
 	}
@@ -38,10 +36,10 @@ class IsFlexContainerInactive extends Trigger_Base {
 	/**
 	 * @return bool
 	 */
-	public function is_active(): bool {
+	public function is_inactive(): bool {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( 'container' );
-		$counter = (int)get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+		$counter = (int) get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
-		return $is_feature_active && $counter < 1;
+		return ! $is_feature_active && $counter < 1;
 	}
 }

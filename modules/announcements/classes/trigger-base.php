@@ -22,7 +22,7 @@ abstract class Trigger_Base {
 	/**
 	 * @return bool
 	 */
-	public function is_active(): bool {
+	public function is_inactive(): bool {
 		return true;
 	}
 

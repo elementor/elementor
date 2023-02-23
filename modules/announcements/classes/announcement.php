@@ -39,10 +39,10 @@ class Announcement {
 	}
 
 	/**
-	 * is_active
+	 * is_inactive
 	 * @return bool
 	 */
-	public function is_active(): bool {
+	public function is_inactive(): bool {
 		$triggers = $this->get_triggers();
 
 		if ( empty( $triggers ) ) {
@@ -50,7 +50,7 @@ class Announcement {
 		}
 
 		foreach ( $triggers as $trigger ) {
-			if ( ! $trigger->is_active() ) {
+			if ( ! $trigger->is_inactive() ) {
 				return false;
 			}
 		}
@@ -63,7 +63,7 @@ class Announcement {
 	 */
 	public function after_triggered(): void {
 		foreach ( $this->get_triggers() as $trigger ) {
-			if ( ! $trigger->is_active() ) {
+			if ( $trigger->is_inactive() ) {
 				continue;
 			}
 			$trigger->after_triggered();

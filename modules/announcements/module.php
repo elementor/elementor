@@ -53,7 +53,7 @@ class Module extends BaseApp {
 	 * Get init settings to use in frontend
 	 * @return array[]
 	 */
-	protected function get_init_settings():array {
+	protected function get_init_settings(): array {
 		$active_announcements = $this->get_active_announcements();
 		$additional_settings = [];
 
@@ -118,8 +118,8 @@ class Module extends BaseApp {
 					[
 						"action" => 'isFlexContainerInactive',
 					],
-				]
-			]
+				],
+			],
 		];
 	}
 
@@ -143,7 +143,7 @@ class Module extends BaseApp {
 	private function get_active_announcements(): array {
 		$active_announcements = [];
 		foreach ( $this->get_announcements() as $announcement ) {
-			if ( $announcement->is_active() ) {
+			if ( ! $announcement->is_inactive() ) {
 				continue;
 			}
 			$active_announcements[] = $announcement;
