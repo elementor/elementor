@@ -77,7 +77,7 @@ jobs:
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_TAG_CHANNELS }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
           PAYLOAD: |
                 {
                   "blocks": [{
