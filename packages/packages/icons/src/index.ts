@@ -3,6 +3,7 @@ export { default as ArrowUpRightIcon } from './components/arrow-up-right-icon';
 export { default as DesktopIcon } from './components/desktop-icon';
 export { default as DotsVerticalIcon } from './components/dots-vertical-icon';
 export { default as EyeIcon } from './components/eye-icon';
+export { default as HistoryIcon } from './components/history-icon';
 export { default as LaptopIcon } from './components/laptop-icon';
 export { default as MobileLandscapeIcon } from './components/mobile-landscape-icon';
 export { default as MobilePortraitIcon } from './components/mobile-icon';
