@@ -6,6 +6,10 @@
 	--flex-basis: auto;
 	--flex-grow: 0;
 	--flex-shrink: 1;
+	--container-widget-width: 100%;
+	--container-widget-height: initial;
+	--container-widget-flex-grow: 0;
+	--container-widget-align-self: initial;
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
 	// isn't working properly.
@@ -156,7 +160,7 @@
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			width: 100%;
 		}

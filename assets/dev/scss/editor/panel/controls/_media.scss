@@ -1,6 +1,6 @@
 .elementor-control-media {
 
-	&.elementor-media-empty {
+	&.e-media-empty {
 
 		.elementor-control-media-area {
 			.elementor-control-media__remove, .elementor-control-media__content__remove {
@@ -9,7 +9,14 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) {
+	&.e-media-empty-placeholder {
+
+		.e-control-image-size {
+			display: none;
+		}
+	}
+
+	&:not(.e-media-empty) {
 		.elementor-control-media__content {
 			&__upload-button {
 				display: none;
@@ -17,13 +24,9 @@
 		}
 	}
 
-	.elementor-control-input-wrapper {
-		border: 1px solid $editor-lightest;
-	}
-
 	.eicon-plus-circle {
 		@include absolute-center;
-		color: #fff;
+		color: $white;
 		font-size: 20px;
 	}
 
@@ -40,6 +43,7 @@
 	&-area {
 		@include checkers-background(16px);
 		background-color: #f6f6f6;
+		aspect-ratio: 21 / 9;
 
 		&:not(:hover) {
 			.elementor-control-media__remove {
@@ -55,6 +59,8 @@
 	}
 
 	& &__content {
+		aspect-ratio: 21 / 9;
+		position: relative;
 		cursor: pointer;
 		overflow: hidden;
 
@@ -105,7 +111,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-grow: 1;
-		color: #fff;
+		color: $white;
 		background-color: rgba($editor-dark, .85);
 		font-size: 11px;
 		transition: background .3s;
@@ -130,18 +136,19 @@
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		color: $editor-light;
-		background-color: rgba(#fff, .9);
+		color: $white;
+		background-color: rgba($editor-dark, .85);
 		border-radius: 3px;
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		transition: background .3s;
 
 		&:hover {
-			background-color: rgba(#fff, 1);
+			background-color: rgba($editor-dark, .95);
 			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 		}
 	}
 
-	&.elementor-media-empty .elementor-control-file-area {
+	&.e-media-empty .elementor-control-file-area {
 		display: none;
 	}
 
@@ -196,7 +203,7 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) &__file  {
+	&:not(.e-media-empty) &__file  {
 		&__content {
 			&__label {
 				display: none;
@@ -204,7 +211,7 @@
 		}
 	}
 
-	&.elementor-media-empty &__file {
+	&.e-media-empty &__file {
 		&__content {
 			&__info {
 				display: none;
@@ -221,10 +228,21 @@
 		border: none;
 		border-radius: 0;
 		background-color: rgba($editor-dark, .85);
-		color: #fff;
+		color: $white;
 
 		&:hover {
 			background-color: rgba($editor-dark, .95);
+		}
+	}
+
+	.e-control-image-size {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		padding-top: 20px;
+
+		.elementor-control-input-wrapper {
+			@include margin-start(auto);
 		}
 	}
 }
