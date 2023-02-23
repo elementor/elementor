@@ -17,6 +17,7 @@ export default function SettingsButton( { type }: Props ) {
 
 	return (
 		<Tooltip title={ title }>
+			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
 			<span>
 				<ToggleButton
 					value="document-settings"

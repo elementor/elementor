@@ -17,6 +17,7 @@ export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Pro
 				},
 			} }
 		>
+			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
 			<span>
 				<ToggleButton { ...props } onChange={ onClick } size="small" />
 			</span>

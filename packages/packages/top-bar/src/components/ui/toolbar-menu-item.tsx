@@ -8,6 +8,7 @@ type Props = IconButtonProps & {
 export default function ToolbarMenuItem( { title, ...props }: Props ) {
 	return (
 		<Tooltip title={ title }>
+			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
 			<span>
 				<IconButton { ...props } aria-label={ title } />
 			</span>
