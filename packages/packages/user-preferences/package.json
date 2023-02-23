@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/user-pereferences",
+  "name": "@elementor/user-preferences",
   "dependencies": {
     "@elementor/top-bar": "*",
     "@elementor/ui": "*",
