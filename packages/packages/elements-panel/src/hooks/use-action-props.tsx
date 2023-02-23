@@ -1,4 +1,4 @@
-import { PlusIcon } from '../icons/plus-icon';
+import { PlusIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
 
