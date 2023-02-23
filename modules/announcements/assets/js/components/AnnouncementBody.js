@@ -7,11 +7,11 @@ export default function AnnouncementBody( { announcement } ) {
 		<div className="announcement-body-container">
 			<div className={ `announcement-body-media announcement-body-${ media.type }` }>
 				{ 'image' === media.type ? (
-					<img src={ media.src } alt="Announcement Image" />
+					<img src={ media.src } alt="Announcement" />
 				) : (
 					<video controls width="100%">
 						<source src={ media.src } type="video/mp4" />
-						Sorry, your browser doesn't support videos. </video>
+						Sorry, your browser doesn&apos;t support videos. </video>
 				) }
 			</div>
 			<div className="announcement-body-title">
@@ -25,6 +25,7 @@ export default function AnnouncementBody( { announcement } ) {
 }
 
 AnnouncementBody.propTypes = {
+	announcement: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	media: PropTypes.object,

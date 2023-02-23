@@ -12,7 +12,7 @@ export default function AnnouncementFooter( { buttons } ) {
 						target={ button.target }>
 						{ button.label }
 					</a>
-				)
+				);
 			} ) }
 		</div>
 	);
