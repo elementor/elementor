@@ -1,5 +1,8 @@
 @import "assets/dev/scss/helpers/variables.scss";
-$base-color: #79173A;
+
+$base-color: #0C0D0E;
+$button-base-color: #524CFF;
+$description-color: #515962;
 
 #e-announcements-root {
 	position: fixed;
@@ -27,7 +30,7 @@ $base-color: #79173A;
 
 			.eicon-elementor {
 				color: $white;
-				background-color: $platform-accent;
+				background-color: $base-color;
 				border-radius: 50%;
 				padding: 8px;
 			}
@@ -62,7 +65,7 @@ $base-color: #79173A;
 			.announcement-body-title {
 				font-size: 18px;
 				font-weight: 700;
-				color: #3A3F45;
+				color: $base-color;
 				padding: 20px 0 12px;
 			}
 
@@ -70,7 +73,7 @@ $base-color: #79173A;
 				font-size: 16px;
 				line-height: 24px;
 				font-weight: 400;
-				color: #69727D;
+				color: $description-color;
 			}
 		}
 
@@ -82,22 +85,22 @@ $base-color: #79173A;
 			.button-item {
 				margin-left: 12px;
 				padding: 12px;
-				color: $base-color;
+				color: $button-base-color;
 				font-size: 16px;
 				font-weight: 500;
-				border-radius: 4px;
+				border-radius: 3px;
 				padding: 8px 12px;
 				text-decoration: none;
 				font-family: $admin-font-family;
 
 				&.primary {
 					color: $white;
-					background-color: $base-color;
-					border: 1px solid $base-color;
+					background-color: $button-base-color;
+					border: 1px solid $button-base-color;
 				}
 
 				&.secondary {
-					border: 1px solid $base-color;
+					border: 1px solid $button-base-color;
 				}
 			}
 		}

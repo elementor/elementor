@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Announcements\Triggers;
 
 use Elementor\Modules\Announcements\Classes\Trigger_Base;
-use ElementorPro\Plugin;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,7 +39,7 @@ class IsFlexContainerInactive extends Trigger_Base {
 	 * @return bool
 	 */
 	public function is_active(): bool {
-		$is_feature_active = Plugin::elementor()->experiments->is_feature_active( 'container' );
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( 'container' );
 		$counter = (int)get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
 		return !$is_feature_active && $counter < 1;

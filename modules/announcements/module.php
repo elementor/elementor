@@ -143,7 +143,7 @@ class Module extends BaseApp {
 	private function get_active_announcements(): array {
 		$active_announcements = [];
 		foreach ( $this->get_announcements() as $announcement ) {
-			if ( ! $announcement->is_active() ) {
+			if ( $announcement->is_active() ) {
 				continue;
 			}
 			$active_announcements[] = $announcement;
