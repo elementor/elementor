@@ -3,7 +3,7 @@ description: Remove a Git tag from the remote repository.
 
 inputs:
   TAG_NAME:
-    description: 'The message of the tag.'
+    description: 'The tag name to remove (e.g. v3.11.2-cloud-rc)'
     required: true
 
 runs:
