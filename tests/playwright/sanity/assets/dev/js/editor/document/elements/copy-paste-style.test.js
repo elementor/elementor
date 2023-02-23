@@ -32,7 +32,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
 
 	// Check that the panel footer save button is green.
-	await expect( publishButton ).toHaveCSS( 'background-color', 'rgb(57, 181, 74)' );
+	await expect( publishButton ).toHaveCSS( 'background-color', 'rgb(82, 76, 255)' );
 
 	// Act.
 	await publishButton.click();
