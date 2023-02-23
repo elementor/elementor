@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\Announcements;
 
 use Elementor\Modules\Announcements\Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +25,19 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		parent::setUp();
 
 		wp_set_current_user( self::factory()->get_administrator_user()->ID );
-		//To be in admin page
+		//To be in admin page in Elementor editor
+		$post_id = $this->factory()->post->create( [
+			'post_type' => 'post',
+		] );
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return false;
+		}
+
+		$document->set_is_built_with_elementor( true );
+
 		set_current_screen( 'edit-post' );
 
 		$this->module = new Module();
