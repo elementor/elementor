@@ -3,7 +3,6 @@
 namespace Elementor\Testing\Modules\Announcements;
 
 use Elementor\Modules\Announcements\Module;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,12 +23,13 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( self::factory()->get_administrator_user()->ID );
+		$this->act_as_admin();
 
 		$this->module = new Module();
 	}
 
 	public function test_get_name(): void {
+		set_current_screen('edit-page');
 		$this->assertTrue(
 			$this->name === $this->module->get_name(),
 			'Test module name is correct'
@@ -37,6 +37,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_is_active(): void {
+		set_current_screen('edit-page');
 		$this->assertTrue(
 			$this->module->is_active(),
 			'Test module name is correct'
