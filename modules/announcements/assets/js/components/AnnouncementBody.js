@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function AnnouncementBody( { announcement } ) {
 	const { title, description, media } = announcement;
 
@@ -5,10 +7,10 @@ export default function AnnouncementBody( { announcement } ) {
 		<div className="announcement-body-container">
 			<div className={ `announcement-body-media announcement-body-${ media.type }` }>
 				{ 'image' === media.type ? (
-					<img src={ media.src }/>
+					<img src={ media.src } alt="Announcement Image" />
 				) : (
 					<video controls width="100%">
-						<source src={ media.src } type="video/mp4"/>
+						<source src={ media.src } type="video/mp4" />
 						Sorry, your browser doesn't support videos. </video>
 				) }
 			</div>
@@ -21,3 +23,9 @@ export default function AnnouncementBody( { announcement } ) {
 		</div>
 	);
 }
+
+AnnouncementBody.propTypes = {
+	title: PropTypes.string.isRequired,
+	description: PropTypes.string.isRequired,
+	media: PropTypes.object,
+};

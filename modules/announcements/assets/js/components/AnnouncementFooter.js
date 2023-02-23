@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function AnnouncementFooter( { buttons } ) {
 	return (
 		<div className="announcement-footer-container">
@@ -15,3 +17,7 @@ export default function AnnouncementFooter( { buttons } ) {
 		</div>
 	);
 }
+
+AnnouncementFooter.propTypes = {
+	buttons: PropTypes.object,
+};
