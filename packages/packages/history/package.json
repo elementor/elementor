@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/structure",
+  "name": "@elementor/history",
   "dependencies": {
     "@elementor/icons": "*",
     "@elementor/top-bar": "*",

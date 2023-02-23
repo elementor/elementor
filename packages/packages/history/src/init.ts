@@ -9,6 +9,6 @@ function registerTopBarMenuItems() {
 	registerToggleAction( 'main', {
 		name: 'open-history',
 		priority: 20,
-		useProps: () => useActionProps(),
+		useProps: useActionProps,
 	} );
 }
