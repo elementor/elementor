@@ -8,7 +8,9 @@ type Props = IconButtonProps & {
 export default function ToolbarMenuItem( { title, ...props }: Props ) {
 	return (
 		<Tooltip title={ title }>
-			<IconButton { ...props } aria-label={ title } />
+			<span>
+				<IconButton { ...props } aria-label={ title } />
+			</span>
 		</Tooltip>
 	);
 }

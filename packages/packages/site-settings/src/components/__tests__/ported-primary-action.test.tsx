@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { isRouteActive } from '@elementor/v1-adapters';
 import { useActiveDocument } from '@elementor/documents';
 import PortalledPrimaryAction from '../portalled-primary-action';
@@ -22,8 +22,6 @@ describe( '@elementor/site-settings - Portalled primary action', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
-
 		document.body.innerHTML = '';
 	} );
 
@@ -87,7 +85,9 @@ function createRootElement( id = 'elementor-panel-inner' ) {
 }
 
 function navigateTo( route: string ) {
-	window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
-		detail: { route },
-	} ) );
+	act( () => {
+		window.dispatchEvent( new CustomEvent( 'elementor/routes/open', {
+			detail: { route },
+		} ) );
+	} );
 }

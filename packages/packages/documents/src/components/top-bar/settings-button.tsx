@@ -17,14 +17,16 @@ export default function SettingsButton( { type }: Props ) {
 
 	return (
 		<Tooltip title={ title }>
-			<ToggleButton
-				value="document-settings"
-				selected={ isActive }
-				disabled={ isBlocked }
-				onChange={ () => openRoute( 'panel/page-settings/settings' ) }
-			>
-				<CogIcon />
-			</ToggleButton>
+			<span>
+				<ToggleButton
+					value="document-settings"
+					selected={ isActive }
+					disabled={ isBlocked }
+					onChange={ () => openRoute( 'panel/page-settings/settings' ) }
+				>
+					<CogIcon />
+				</ToggleButton>
+			</span>
 		</Tooltip>
 	);
 }

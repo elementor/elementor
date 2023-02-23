@@ -17,7 +17,9 @@ export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Pro
 				},
 			} }
 		>
-			<ToggleButton { ...props } onChange={ onClick } size="small" />
+			<span>
+				<ToggleButton { ...props } onChange={ onClick } size="small" />
+			</span>
 		</Tooltip>
 	);
 }
