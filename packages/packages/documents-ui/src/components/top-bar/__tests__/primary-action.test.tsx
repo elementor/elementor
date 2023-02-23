@@ -1,14 +1,12 @@
 import PrimaryAction from '../primary-action';
 import { render } from '@testing-library/react';
 import { createMockDocument } from 'test-utils';
-import { useActiveDocument, useActiveDocumentActions } from '../../../hooks';
+import { useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
 
-jest.mock( '../../../hooks', () => ( {
+jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
 	useActiveDocumentActions: jest.fn(),
 } ) );
-
-const mockedUseActiveDocument = jest.mocked( useActiveDocument );
 
 const actionsMock = {
 	save: jest.fn(),
@@ -18,14 +16,14 @@ const actionsMock = {
 
 jest.mocked( useActiveDocumentActions ).mockReturnValue( actionsMock );
 
-describe( '@elementor/documents - Top Bar Primary Action', () => {
+describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
 	it( 'should not render when there is no active document', () => {
 		// Arrange.
-		mockedUseActiveDocument.mockReturnValue( null );
+		jest.mocked( useActiveDocument ).mockReturnValue( null );
 
 		// Act.
 		const { container } = render( <PrimaryAction /> );
@@ -42,7 +40,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			},
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -59,7 +57,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			},
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -78,7 +76,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			},
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -91,7 +89,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		// Arrange.
 		const mockDocument = createMockDocument( { isDirty: false } );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -110,7 +108,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			},
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -123,7 +121,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 		// Arrange.
 		const mockDocument = createMockDocument( { isDirty: true } );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -141,7 +139,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			isSaving: true,
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole } = render( <PrimaryAction /> );
@@ -167,7 +165,7 @@ describe( '@elementor/documents - Top Bar Primary Action', () => {
 			isSaving: true,
 		} );
 
-		mockedUseActiveDocument.mockReturnValue( mockDocument );
+		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
 		const { getByRole, queryByRole } = render( <PrimaryAction /> );
