@@ -89,34 +89,34 @@ class Module extends BaseApp {
 		//@TODO - Change to real data
 		return [
 			[
-				"title" => 'Title of the announcement',
-				"description" => 'Description of the announcement, of the announcement of the announcement, of the announcement of the announcement.',
-				"media" => [
-					"type" => 'image',
-					"src" => 'https://dalicanvas.co.il/wp-content/uploads/2020/02/אריה-צבעוני-1200x839.jpg',
+				'title' => 'Title of the announcement',
+				'description' => 'Description of the announcement, of the announcement of the announcement, of the announcement of the announcement.',
+				'media' => [
+					'type' => 'image',
+					'src' => 'https://dalicanvas.co.il/wp-content/uploads/2020/02/אריה-צבעוני-1200x839.jpg',
 				],
-				"cta" => [
+				'cta' => [
 					[
-						"label" => 'Main CTA',
-						"variant" => 'primary',
-						"target" => '_blank',
-						"url" => 'https://google.co.il',
+						'label' => 'Main CTA',
+						'variant' => 'primary',
+						'target' => '_blank',
+						'url' => 'https://google.co.il',
 					],
 					[
-						"label" => 'Secondary now',
-						"variant" => 'secondary',
-						"target" => '_blank',
-						"url" => 'https://walla.co.il',
+						'label' => 'Secondary now',
+						'variant' => 'secondary',
+						'target' => '_blank',
+						'url' => 'https://walla.co.il',
 					],
 					[
-						"label" => 'Learn more',
-						"target" => '_blank',
-						"url" => 'https://ynet.co.il',
+						'label' => 'Learn more',
+						'target' => '_blank',
+						'url' => 'https://ynet.co.il',
 					],
 				],
-				"triggers" => [
+				'triggers' => [
 					[
-						"action" => 'isFlexContainerInactive',
+						'action' => 'isFlexContainerInactive',
 					],
 				],
 			],

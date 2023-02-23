@@ -19,7 +19,7 @@ class Utils {
 	public static function get_trigger_object( $trigger ) {
 		//@TODO - replace with trigger manager
 		switch ( $trigger['action'] ) {
-			case "isFlexContainerInactive":
+			case 'isFlexContainerInactive':
 				return new IsFlexContainerInactive();
 			default:
 				return false;
