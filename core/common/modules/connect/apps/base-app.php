@@ -501,7 +501,8 @@ abstract class Base_App {
 			if ( 401 === $code ) {
 				$this->delete();
 
-				if ( 'xhr' !== $this->auth_mode ) {
+				// Should try to re authorize only in `popup` and default mode.
+				if ( ! in_array( $this->auth_mode, [ 'xhr', 'cli' ], true ) ) {
 					$this->action_authorize();
 				}
 			}
