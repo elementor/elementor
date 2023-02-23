@@ -82,8 +82,6 @@ test.describe( 'Container tests', () => {
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		await editor.hideVideoControls();
-		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -92,14 +90,10 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row.jpeg' );
 
 		// Act
-		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
-		await editor.togglePreviewMode();
-
-		await page.waitForLoadState( 'networkidle' );
 
 		expect( await container.screenshot( {
 			type: 'jpeg',
@@ -107,7 +101,6 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
 
 		// Act
-		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
@@ -116,8 +109,6 @@ test.describe( 'Container tests', () => {
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
-		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
@@ -126,13 +117,10 @@ test.describe( 'Container tests', () => {
 		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
 
 		// Act
-		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
-		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'networkidle' );
 
 		// Assert
 		expect( await container.screenshot( {
