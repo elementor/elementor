@@ -97,7 +97,11 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
           PAYLOAD: |
                 {
-                  "blocks": [{
+                  "blocks": [
+                    {
+                      "type": "divider"
+                    },
+                    {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
