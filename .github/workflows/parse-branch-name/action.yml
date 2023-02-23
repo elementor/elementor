@@ -3,6 +3,7 @@ description: Parse the branch name, and set parts as environment variables (PACK
 
 inputs:
   BRANCH_NAME:
+    description: The branch name to parse (e.g. refs/tags/v3.11.2-cloud-rc) 
     required: true
 
 runs:
