@@ -118,8 +118,8 @@ class Module extends BaseApp {
 					[
 						"action" => 'isFlexContainerInactive',
 					],
-				],
-			],
+				]
+			]
 		];
 	}
 
