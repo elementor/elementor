@@ -11,6 +11,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const APP_PACKAGE = 'editor';
 
 	const EXTENSION_PACKAGES = [
+		'documents',
 		'documents-ui',
 		'elements-panel',
 		'responsive',
@@ -21,7 +22,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	];
 
 	const UTIL_PACKAGES = [
-		'documents',
 		'icons',
 		'locations',
 		'ui',
