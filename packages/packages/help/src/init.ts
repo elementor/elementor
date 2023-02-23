@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import HelpIcon from './icons/help-icon';
+import { HelpIcon } from '@elementor/icons';
 import { useSettings } from '@elementor/editor';
 import { registerAction, registerLink } from '@elementor/top-bar';
 import useKeyboardShortcutsActionProps from './hooks/use-keyboard-shortcuts-action-props';

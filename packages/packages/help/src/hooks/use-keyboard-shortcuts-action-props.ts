@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { ActionProps } from '@elementor/top-bar';
-import KeyboardIcon from '../icons/keyboard-icon';
+import { KeyboardIcon } from '@elementor/icons';
 import { runCommand } from '@elementor/v1-adapters';
 
 export default function useKeyboardShortcutsActionProps(): ActionProps {
