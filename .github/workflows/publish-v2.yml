@@ -1,5 +1,5 @@
 name: Publish V2
-# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS, MAINTAIN_TOKEN
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNELS
 
 on: [workflow_dispatch]
 
@@ -9,10 +9,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
       - name: Parse ref branch name
@@ -49,8 +47,6 @@ jobs:
           tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
           body_path: /tmp/temp-changelog.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Read changelog and set current date
         if: ${{ env.CHANNEL == "ga" }} # Only for GA releases
         uses : ./.github/workflows/get-changelog-datetime
@@ -91,14 +87,12 @@ jobs:
       - name: Remove git tag
         uses : ./.github/workflows/remove-git-tag
         with:
-          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
-          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
           TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
       - name: Post To Slack Created Release
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_TAG_CHANNELS }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
           PAYLOAD: |
                 {
                   "blocks": [{

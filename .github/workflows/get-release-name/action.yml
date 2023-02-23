@@ -34,6 +34,7 @@ runs:
             # e.g. elementor-3.11.0-cloud20 => v3.11.0-cloud20
             RELEASE_NAME=${RELEASE_NAME/${{ inputs.PLUGIN_NAME }}-/v}
 
+            # e.g. v3.11.0
             if [ ${{ inputs.CHANNEL }} == "ga" ]; then
               RELEASE_NAME=v${{ inputs.PACKAGE_VERSION }}
               RELEASE_FILENAME=${{ inputs.PLUGIN_NAME }}-${{ inputs.PACKAGE_VERSION }}

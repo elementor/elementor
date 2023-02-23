@@ -1,5 +1,5 @@
 name: Parse Branch Name
-description: Parse the branch name, and set parts as environment variable.
+description: Parse the branch name, and set parts as environment variables (PACKAGE_VERSION, CHANNEL, CLEAN_PACKAGE_NAME).
 
 inputs:
   BRANCH_NAME:
@@ -10,16 +10,18 @@ runs:
   steps:
     - shell: bash 
       run: |
-            string=${{ inputs.BRANCH_NAME }}
-            PACKAGE_VERSION=$(echo $string | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
-            CHANNEL=$(echo $string | cut -d "-" -f2)
-            CHANNEL_TYPE=$(echo $string | cut -d "-" -f3)
-
             CLEAN_PACKAGE_NAME=${{ inputs.BRANCH_NAME }}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
+
+            PACKAGE_VERSION=$(echo $CLEAN_PACKAGE_NAME | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
+            CHANNEL=$(echo $CLEAN_PACKAGE_NAME | cut -d "-" -f2)
             
+            # e.g. 3.11.1
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+            # e.g. beta, cloud, ga
             echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
-            echo "CHANNEL_TYPE=${CHANNEL_TYPE}" >> $GITHUB_ENV
+
+            # e.g. 3.11.1-cloud-rc
             echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV
