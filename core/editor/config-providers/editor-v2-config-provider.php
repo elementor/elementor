@@ -13,6 +13,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const EXTENSION_PACKAGES = [
 		'documents',
 		'elements-panel',
+		'help',
 		'responsive',
 		'site-settings',
 		'structure',
@@ -88,6 +89,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'settings' => [
 				'urls' => [
 					'admin' => admin_url(),
+					// TODO: Replace with the final one once available.
+					'help' => 'https://elementor.com/help/',
 				],
 			],
 		];

@@ -17,7 +17,7 @@ describe( '@elementor/structure - useActionProps', () => {
 		const { result } = renderHook( () => useActionProps() );
 
 		// Act.
-		result.current.onClick();
+		result.current.onClick?.();
 
 		// Assert.
 		expect( runCommand ).toHaveBeenCalledTimes( 1 );

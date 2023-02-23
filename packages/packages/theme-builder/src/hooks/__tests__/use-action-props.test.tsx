@@ -17,7 +17,7 @@ describe( '@elementor/theme-builder - useActionProps', () => {
 
 		// Act.
 		const { result } = renderHook( () => useActionProps() );
-		result.current.onClick();
+		result.current.onClick?.();
 
 		// Assert.
 		expect( runCommand ).toBeCalledTimes( 1 );
