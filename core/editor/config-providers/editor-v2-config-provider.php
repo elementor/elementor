@@ -21,6 +21,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	];
 
 	const UTIL_PACKAGES = [
+		'icons',
 		'locations',
 		'ui',
 		'v1-adapters',
@@ -112,7 +113,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return [
 			'elementor-editor-v2-overrides',
 			'elementor-editor',
-			'elementor-responsive-bar',
 		];
 	}
 
