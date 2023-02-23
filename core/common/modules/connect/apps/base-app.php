@@ -501,8 +501,9 @@ abstract class Base_App {
 			if ( 401 === $code ) {
 				$this->delete();
 
-				// Should try to re authorize only in `popup` and default mode.
-				if ( ! in_array( $this->auth_mode, [ 'xhr', 'cli' ], true ) ) {
+				$should_retry = ! in_array( $this->auth_mode, [ 'xhr', 'cli' ], true );
+
+				if ( $should_retry ) {
 					$this->action_authorize();
 				}
 			}
