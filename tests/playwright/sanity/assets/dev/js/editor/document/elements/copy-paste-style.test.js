@@ -24,7 +24,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 
 	await editor.pasteStyleElement( heading2 );
 
-	const heading2Title = await editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
+	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 
 	// Assert.
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
@@ -32,12 +32,12 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
 
 	// Check that the panel footer save button is green.
-	await expect( publishButton ).toHaveCSS( 'background-color', 'rgb(57, 181, 74)' );
+	await expect( publishButton ).not.toHaveClass( 'elementor-button-disabled' );
 
 	// Act.
 	await publishButton.click();
 	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
-	await expect( page.locator( '#elementor-panel-saver-button-publish' ) ).toHaveCSS( 'background-color', 'rgb(85, 96, 104)' );
+	await expect( publishButton ).toHaveClass( 'elementor-button-disabled' );
 } );
