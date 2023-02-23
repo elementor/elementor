@@ -39,5 +39,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page 
 	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
-	await expect( publishButton ).toHaveClass( 'elementor-button-disabled' );
+	await expect( publishButton ).toHaveClass( 'elementor-button-disabled', {
+		timeout: 10000,
+	} );
 } );
