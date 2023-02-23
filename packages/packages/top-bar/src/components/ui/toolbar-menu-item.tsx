@@ -10,7 +10,7 @@ export default function ToolbarMenuItem( { title, ...props }: Props ) {
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
 			<span aria-label={ undefined }>
-				<IconButton { ...props } aria-label={ title } />
+				<IconButton { ...props } aria-label={ title } size="small" />
 			</span>
 		</Tooltip>
 	);
