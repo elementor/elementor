@@ -92,10 +92,7 @@ jobs:
           npx playwright install chromium
       - name: Add user meta for announcement
         run: |
-          npx wp-env run cli "for id in $(wp user list --field=ID)
-          do
-          wp user meta add $id "announcements_user_counter" 1
-          done"
+          npx wp-env run cli "for id in $(wp user list --field=ID) do wp user meta add $id "announcements_user_counter" 1 done"
       - name: Run Playwright tests
         run: |
           npm run test:playwright:${{ matrix.testSuite }}

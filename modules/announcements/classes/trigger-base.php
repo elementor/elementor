@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Trigger_Base {
+
 	/**
 	 * @var string
 	 */
