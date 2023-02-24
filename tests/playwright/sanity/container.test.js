@@ -82,19 +82,23 @@ test.describe( 'Container tests', () => {
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		await expect( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Set full content width.
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		await expect( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Flex-direction: column
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
@@ -103,15 +107,18 @@ test.describe( 'Container tests', () => {
 		// Set `min-height` to test if there are `flex-grow` issues.
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		await expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
 
 		// Act
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		// Content Width: boxed
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
+		await editor.togglePreviewMode();
 
 		// Assert
 		await expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
