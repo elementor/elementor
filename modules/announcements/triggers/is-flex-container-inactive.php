@@ -13,7 +13,7 @@ class IsFlexContainerInactive extends Trigger_Base {
 	/**
 	 * @var string
 	 */
-	protected string $name = 'is-flex-container-inactive';
+	protected $name = 'is-flex-container-inactive';
 	const USER_META_KEY = 'announcements_user_counter';
 
 	/**
@@ -29,8 +29,6 @@ class IsFlexContainerInactive extends Trigger_Base {
 	 * @return void
 	 */
 	public function after_triggered(): void {
-		//@TODO - remove, for dev
-		return;
 		$new_counter = $this->get_view_count() + 1;
 		update_user_meta( get_current_user_id(), self::USER_META_KEY, $new_counter );
 	}

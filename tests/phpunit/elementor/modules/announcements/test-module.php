@@ -2,7 +2,9 @@
 
 namespace Elementor\Testing\Modules\Announcements;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Announcements\Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,16 +22,46 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	 */
 	public $name = 'announcements';
 
+	/**
+	 * @var string experiment name
+	 */
+	private $experiment = 'container';
+
+	private $original_experiment_default_state;
+
 	public function setUp() {
 		parent::setUp();
 
+		$this->original_experiment_default_state = Plugin::$instance->experiments
+			->get_features( $this->experiment )['default'];
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			$this->experiment,
+			Experiments_Manager::STATE_INACTIVE
+		);
+
 		$this->act_as_admin();
+
+		//To be in admin page in Elementor editor
+
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
+		$document = Plugin::$instance->documents->get( $post_id );
+		$document->set_is_built_with_elementor( true );
+		$edit_link = $document->get_edit_url();
+		$this->go_to($edit_link);
+		set_current_screen( 'edit-post' );
 
 		$this->module = new Module();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+
+		Plugin::$instance->experiments
+			->set_feature_default_state( $this->experiment, $this->original_experiment_default_state );
+	}
+
 	public function test_get_name(): void {
-		set_current_screen('edit-page');
 		$this->assertTrue(
 			$this->name === $this->module->get_name(),
 			'Test module name is correct'
@@ -37,10 +69,9 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_is_active(): void {
-		set_current_screen('edit-page');
 		$this->assertTrue(
 			$this->module->is_active(),
-			'Test module name is correct'
+			'Test module is active'
 		);
 	}
 

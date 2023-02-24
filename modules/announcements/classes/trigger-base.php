@@ -10,7 +10,7 @@ abstract class Trigger_Base {
 	/**
 	 * @var string
 	 */
-	protected string $name = 'trigger-base';
+	protected $name = 'trigger-base';
 
 	/**
 	 * @return string
