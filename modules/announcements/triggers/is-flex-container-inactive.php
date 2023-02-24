@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class IsFlexContainerInactive extends Trigger_Base {
+
 	/**
 	 * @var string
 	 */

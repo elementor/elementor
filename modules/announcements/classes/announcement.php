@@ -10,11 +10,11 @@ class Announcement {
 	/**
 	 * @var array
 	 */
-	protected array $raw_data;
+	protected $raw_data;
 	/**
 	 * @var array
 	 */
-	protected array $triggers;
+	protected $triggers;
 
 	public function __construct( array $data ) {
 		$this->raw_data = $data;
