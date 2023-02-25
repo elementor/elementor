@@ -45,8 +45,8 @@ runs:
             # Replace ED-xxxx with a link to the corresponding Jira issue
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/<https:\/\/elementor.atlassian.net\/browse\/ED-\1|\*ED-\1*\>/g')
 
-            # Remove parentheses and everything inside them (e.g. "(#21267)" ) , and add a newline after each one
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/ ([^)]*)/\n/g')
+            # Remove parentheses and everything inside them (e.g. "(#21267)" )
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/([^)]*)//g')
 
             # Escape double quotes and add two line breaks after each newline
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
