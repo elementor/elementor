@@ -42,11 +42,8 @@ runs:
             # Replace ED-xxxx with a link to the corresponding Jira issue
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed -E 's/\[ED-([0-9]+)\]/<https:\/\/elementor.atlassian.net\/browse\/ED-\1|\*ED-\1*\>/g')
 
-            # Add asterisk after colon and a line break after each line
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\(^\*\s*[^:]*:\)/\1\*/g' | sed 's/$/\\n/')
-
-            # Escape double quotes and add two line breaks after each newline
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
+            # reaplcce * with •
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\*/•/g')
 
             # Multi-line env vars are not supported,
             # so we need to create a new env var with the content of the changelog file.
