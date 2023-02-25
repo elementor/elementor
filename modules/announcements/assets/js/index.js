@@ -6,7 +6,7 @@ if ( window.elementorAnnouncementsConfig.announcements && container ) {
 	ReactDOM.render(
 		<>
 			<Overlay />
-			<Announcements announcments={ window.elementorAnnouncementsConfig.announcements } />
+			<Announcements announcements={ window.elementorAnnouncementsConfig.announcements } />
 		</>,
 		container,
 	);

@@ -30,6 +30,8 @@ class IsFlexContainerInactive extends Trigger_Base {
 	 * @return void
 	 */
 	public function after_triggered(): void {
+		// Dev only
+		return;
 		$new_counter = $this->get_view_count() + 1;
 		update_user_meta( get_current_user_id(), self::USER_META_KEY, $new_counter );
 	}
