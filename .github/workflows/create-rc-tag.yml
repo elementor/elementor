@@ -88,7 +88,6 @@ jobs:
                         "text": {
                           "type": "mrkdwn",
                           "text": "Hi All :smile:,\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`.",
-                          "emoji": true
                         }
                       },
                       {
