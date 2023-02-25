@@ -8,7 +8,7 @@ import {
 	ListItemButtonProps,
 	withDirection,
 } from '@elementor/ui';
-import ArrowUpRightIcon from '../../icons/arrow-up-right-icon';
+import { ArrowUpRightIcon } from '@elementor/icons';
 
 type ExtraProps = {
 	href?: string;

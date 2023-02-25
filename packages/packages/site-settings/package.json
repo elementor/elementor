@@ -1,6 +1,7 @@
 {
 	"name": "@elementor/site-settings",
 	"dependencies": {
+		"@elementor/icons": "*",
 		"@elementor/top-bar": "*",
 		"@elementor/editor": "*",
 		"@elementor/ui": "*",
