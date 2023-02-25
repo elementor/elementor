@@ -30,5 +30,6 @@ abstract class Trigger_Base {
 	/**
 	 * @return void
 	 */
-	abstract public function after_triggered();
+	public function after_triggered(): void {
+	}
 }
