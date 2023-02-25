@@ -11,5 +11,5 @@ export default function Announcements( { announcements } ) {
 }
 
 Announcements.propTypes = {
-	announcements: PropTypes.object.isRequired,
+	announcements: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ).isRequired,
 };

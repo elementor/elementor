@@ -26,7 +26,7 @@ export default function AnnouncementBody( { announcement } ) {
 
 AnnouncementBody.propTypes = {
 	announcement: PropTypes.object.isRequired,
-	title: PropTypes.string.isRequired,
-	description: PropTypes.string.isRequired,
+	title: PropTypes.string,
+	description: PropTypes.string,
 	media: PropTypes.object,
 };

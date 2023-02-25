@@ -19,5 +19,5 @@ export default function AnnouncementFooter( { buttons } ) {
 }
 
 AnnouncementFooter.propTypes = {
-	buttons: PropTypes.object,
+	buttons: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
 };
