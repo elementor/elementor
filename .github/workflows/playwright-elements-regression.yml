@@ -92,5 +92,6 @@ jobs:
         if: always()
         with:
           name: playwright-test-results
-          path: test-results/
+          # path: test-results/
+          path: tests/elements-regression/tests/elements-regression.test.js-snapshots/
           retention-days: 3
