@@ -46,10 +46,7 @@ runs:
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\*/•/g')
 
             # Escape double quotes and add two line breaks after each newline
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' )
-
-            #replace line breaks with \n
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/$/\\n/g' )
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
 
             # Multi-line env vars are not supported,
             # so we need to create a new env var with the content of the changelog file.
