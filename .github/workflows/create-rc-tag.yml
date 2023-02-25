@@ -87,7 +87,8 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Hi All,\nWe just released Elementor\n`${{ env.PACKAGE_VERSION }}`\nCreated by ${{ github.actor }}."
+                          "text": "Hi All :smile:,\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`.",
+                          "emoji": true
                         }
                       },
                       {
@@ -97,7 +98,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release v${{ env.PACKAGE_VERSION }}"
+                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \n Created by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",
