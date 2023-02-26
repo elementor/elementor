@@ -8,7 +8,7 @@ export default function init() {
 function registerTopBarMenuItems() {
 	registerToggleAction( 'main', {
 		name: 'open-user-preferences',
-		priority: 19, // Before keyboard shortcuts.
+		priority: 30, // After history.
 		useProps: useActionProps,
 	} );
 }
