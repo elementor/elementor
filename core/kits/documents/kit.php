@@ -29,7 +29,7 @@ class Kit extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['has_elements'] = false;
+		$properties['has_elements'] = true;
 		$properties['show_in_finder'] = false;
 		$properties['show_on_admin_bar'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
