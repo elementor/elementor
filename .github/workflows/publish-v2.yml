@@ -3,6 +3,9 @@ name: Publish V2
 
 on: [workflow_dispatch]
 
+env:
+  CHANGELOG_FILE: '/tmp/temp-changelog.txt'
+
 jobs:
   publish:
     runs-on: ubuntu-22.04
@@ -48,7 +51,7 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
-          body_path: /tmp/temp-changelog.txt
+          body_path: ${{ env.CHANGELOG_FILE }}
       # - name: Read changelog and set current date
       #   if: ${{ env.CHANNEL == "ga" }} # Only for GA releases
       #   uses : ./.github/workflows/get-changelog-datetime
@@ -86,27 +89,59 @@ jobs:
       #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
       #   run: |
       #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-      - name: Remove git tag
-        uses : ./.github/workflows/remove-git-tag
-        with:
-          TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
+      - name: Generate Changelog Content For Slack
+        if: ${{ env.CHANNEL == "ga" || env.CHANNEL == "cloud" }} # Only for GA and Cloud releases
+        uses: ./.github/workflows/generate-slack-changelog
       - name: Post To Slack Created Release
+        if: ${{ env.CHANNEL == "ga" || env.CHANNEL == "cloud" }} # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
           PAYLOAD: |
-                {
-                  "blocks": [
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Elementor* `${{ env.RELEASE_NAME }}` *Release*\n\ncreated by ${{ github.actor }}.\n\n<https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}|*Release ${{ env.RELEASE_NAME }}*> has been created."
+                  {
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "GitHub Release *v${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                        },
+                        "accessory": {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "Open :point_left:",
+                            "emoji": true
+                          },
+                          "value": "open-release",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.RELEASE_NAME }}",
+                          "action_id": "button-action"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*v${{ env.RELEASE_NAME }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
+                        }
                       }
-                    }
-                  ]
-                }
+                    ]
+                  }
+      - name: Remove git tag
+        uses : ./.github/workflows/remove-git-tag
+        with:
+          TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
