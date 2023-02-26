@@ -142,6 +142,13 @@
 	}
 }
 
+#e-revert-kit-deleted-dialog {
+
+	.dialog-ok {
+		color: $editor-success;
+	}
+}
+
 #e-experiments-dependency-dialog {
 	.dialog-confirm-header {
 		font-weight: 600;
