@@ -23,12 +23,13 @@ function registerTopBarMenuItems() {
 	} );
 
 	injectIntoPrimaryAction( {
-		name: 'primary-action',
+		name: 'document-primary-action',
 		filler: PrimaryAction,
 	} );
 
 	registerAction( 'utilities', {
 		name: 'document-preview-button',
+		priority: 30,
 		useProps: useDocumentPreviewProps,
 	} );
 }

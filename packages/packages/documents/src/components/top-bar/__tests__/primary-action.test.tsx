@@ -1,6 +1,6 @@
 import PrimaryAction from '../primary-action';
 import { render } from '@testing-library/react';
-import { createMockDocument } from '../../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 import { useActiveDocument, useActiveDocumentActions } from '../../../hooks';
 
 jest.mock( '../../../hooks', () => ( {
@@ -19,10 +19,6 @@ const actionsMock = {
 jest.mocked( useActiveDocumentActions ).mockReturnValue( actionsMock );
 
 describe( '@elementor/documents - Top Bar Primary Action', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should not render when there is no active document', () => {
 		// Arrange.
 		mockedUseActiveDocument.mockReturnValue( null );

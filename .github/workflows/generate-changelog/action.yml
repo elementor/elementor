@@ -10,6 +10,10 @@ inputs:
     required: true
   BASE_TAG_NAME:
     required: true
+  # TODO - Remove this when publish-cloud is removed.
+  GENERATE_EMPTY_CHANGELOG:
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -23,3 +27,27 @@ runs:
       run: |
             npm install --no-package-lock --no-save @octokit/core@3.4.0
             node ./.github/scripts/generate-changelog.js
+
+            # Upload-artifact action fails if the file size is 0.
+            if [[ ${{ inputs.GENERATE_EMPTY_CHANGELOG }} == "true" ]]; then
+              # Check the file size
+              size=$(wc -c < "${{ env.CHANGELOG_FILE }}")
+              if [ $size -eq 0 ]; then
+                echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
+              fi
+            fi
+
+            CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
+
+            # Add asterisk after colon and a line break after each line
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\(^\*\s*[^:]*:\)/\1\*/g' | sed 's/$/\\n/')
+
+            # Escape double quotes and add two line breaks after each newline
+            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
+
+            # Multi-line env vars are not supported,
+            # so we need to create a new env var with the content of the changelog file.
+            # This env var will be used in slack-notify action.
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+            echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
