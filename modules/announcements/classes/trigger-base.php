@@ -27,9 +27,6 @@ abstract class Trigger_Base {
 		return true;
 	}
 
-	/**
-	 * @return void
-	 */
-	public function after_triggered(): void {
+	public function after_triggered() {
 	}
 }
