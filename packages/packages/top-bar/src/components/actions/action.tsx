@@ -3,7 +3,7 @@ import ToolbarMenuItem from '../ui/toolbar-menu-item';
 import PopoverMenuItem from '../ui/popover-menu-item';
 import { ElementType } from 'react';
 
-type Props = {
+export type Props = {
 	title: string;
 	icon: ElementType;
 	disabled?: boolean;
