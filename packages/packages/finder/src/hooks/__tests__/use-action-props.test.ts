@@ -8,10 +8,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/finder - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should toggle the finder state on click', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
