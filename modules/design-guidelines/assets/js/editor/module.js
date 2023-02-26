@@ -1,6 +1,7 @@
 import EditorHelper from "./utils/editorHelper";
 import ColorsComponent from './colors/component';
 import FontsComponent from './fonts/component';
+import Component from './component';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -20,6 +21,7 @@ class Module extends elementorModules.editor.utils.Module {
 		$e.components.register( new ColorsComponent( helper, config ) );
 		$e.components.register( new FontsComponent( helper, config ) );
 
+		$e.components.register( new Component() );
 	}
 }
 
