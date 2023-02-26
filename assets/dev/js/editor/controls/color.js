@@ -46,6 +46,7 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
+			onPickerShow: () => this.onPickerShow(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -257,6 +258,14 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
+	onPickerShow() {
+		window.dispatchEvent( new CustomEvent( 'elementor/global-color/show', {
+			detail: {
+				cid: this.cid,
+				instance: this,
+			},
+		} ) );
+	}
 	onBeforeDestroy() {
 		if ( this.colorPicker ) {
 			this.colorPicker.destroy();

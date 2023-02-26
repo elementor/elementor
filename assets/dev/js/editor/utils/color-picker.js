@@ -172,6 +172,11 @@ export default class ColorPicker extends elementorModules.Module {
 
 	onPickerShow() {
 		const { result: resultInput } = this.picker.getRoot().interaction;
+		const onPickerShow = this.getSettings( 'onPickerShow' );
+
+		if ( onPickerShow ) {
+			onPickerShow();
+		}
 
 		setTimeout( () => {
 			resultInput.select();
