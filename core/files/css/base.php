@@ -648,6 +648,10 @@ abstract class Base extends Base_File {
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
 
+		// The Common widget instance used in all widgets needs to be refreshed so the controls are re-registered
+		// according to the CSS file's control duplication mode.
+		$this->delete_common_widget_instance_controls_stack();
+
 		$this->render_css();
 
 		$name = $this->get_name();
@@ -668,6 +672,21 @@ abstract class Base extends Base_File {
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 
 		return $this->get_stylesheet()->__toString();
+	}
+
+	/**
+	 * Delete Common Widget Instance Controls Stack
+	 *
+	 * This method is used when you want to refresh the Common stack before re-registering controls.
+	 * The common stack will be re-registered the next time its controls are called for (e.g. when any widget's CSS
+	 * needs to be rendered).
+	 *
+	 * @return void
+	 */
+	private function delete_common_widget_instance_controls_stack() {
+		$common_widget_instance = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+
+		Plugin::$instance->controls_manager->delete_stack( $common_widget_instance );
 	}
 
 	/**
