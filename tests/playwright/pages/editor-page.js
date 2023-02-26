@@ -55,7 +55,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
 			await this.page.click( '#elementor-navigator__close' );
@@ -125,7 +125,13 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {import('@playwright/test').Frame|null}
 	 */
 	getPreviewFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+		const previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		if ( ! this.previewFrame ) {
+			this.previewFrame = previewFrame;
+		}
+
+		return previewFrame;
 	}
 
 	/**

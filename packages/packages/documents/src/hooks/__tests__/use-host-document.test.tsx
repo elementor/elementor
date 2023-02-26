@@ -3,7 +3,7 @@ import { createSlice } from '../../store';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import useHostDocument from '../use-host-document';
 import { renderHookWithStore } from './test-utils';
-import { createMockDocument } from '../../__tests__/test-utils';
+import { createMockDocument } from 'test-utils';
 
 describe( '@elementor/documents - useHostDocument', () => {
 	const mockDocument = createMockDocument();

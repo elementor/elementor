@@ -58,12 +58,17 @@ module.exports = {
 			// Development files.
 			files: [
 				'**/tools/**/*', // Tools files.
-				'*.[tj]s?(x)', // Root level files.
+				'./*.[tj]s?(x)', // Root level files.
 				'**/@(__mocks__|__tests__|tests|test)/**/*.[tj]s?(x)', // Test files.
 			],
 			rules: {
 				// In tests, we are importing dev dependencies of the root directory, so we need to disable this rule.
 				'import/no-extraneous-dependencies': [ 'off' ],
+				'import/no-unresolved': [ 'error', {
+					ignore: [
+						'^test-utils$', // In tests, it should ignore the test-utils helper.
+					],
+				} ],
 			},
 		},
 	],
