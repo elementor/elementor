@@ -12,7 +12,7 @@ function registerTopBarMenuItems() {
 	registerAction( 'main', {
 		name: 'open-keyboard-shortcuts',
 		group: 'default',
-		priority: 20, // After theme builder.
+		priority: 40, // After user preferences.
 		useProps: useKeyboardShortcutsActionProps,
 	} );
 
