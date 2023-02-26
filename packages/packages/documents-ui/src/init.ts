@@ -9,7 +9,7 @@ export default function init() {
 
 function registerTopBarMenuItems() {
 	injectIntoCanvasDisplay( {
-		name: 'documents-canvas-display',
+		name: 'document-canvas-display',
 		filler: CanvasDisplay,
 	} );
 
