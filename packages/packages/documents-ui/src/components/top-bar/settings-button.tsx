@@ -1,6 +1,6 @@
 import { Box, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { Document } from '../../types';
+import { Document } from '@elementor/documents';
 import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
 import { SettingsIcon } from '@elementor/icons';
 
