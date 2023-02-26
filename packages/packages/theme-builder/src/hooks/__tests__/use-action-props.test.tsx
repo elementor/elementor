@@ -7,17 +7,13 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/theme-builder - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the theme builder', () => {
 		// Arrange.
 		const command = 'app/open';
 
 		// Act.
 		const { result } = renderHook( () => useActionProps() );
-		result.current.onClick();
+		result.current.onClick?.();
 
 		// Assert.
 		expect( runCommand ).toBeCalledTimes( 1 );
