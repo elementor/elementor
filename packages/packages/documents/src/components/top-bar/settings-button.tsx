@@ -1,4 +1,4 @@
-import { ToggleButton, Tooltip } from '@elementor/ui';
+import { Box, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { Document } from '../../types';
 import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
@@ -18,7 +18,7 @@ export default function SettingsButton( { type }: Props ) {
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-			<span aria-label={ undefined }>
+			<Box component="span" aria-label={ undefined }>
 				<ToggleButton
 					value="document-settings"
 					selected={ isActive }
@@ -29,7 +29,7 @@ export default function SettingsButton( { type }: Props ) {
 				>
 					<SettingsIcon />
 				</ToggleButton>
-			</span>
+			</Box>
 		</Tooltip>
 	);
 }
