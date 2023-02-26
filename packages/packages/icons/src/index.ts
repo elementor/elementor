@@ -7,6 +7,7 @@ export { default as LaptopIcon } from './components/laptop-icon';
 export { default as MobileLandscapeIcon } from './components/mobile-landscape-icon';
 export { default as MobilePortraitIcon } from './components/mobile-icon';
 export { default as PlusIcon } from './components/plus-icon';
+export { default as SearchIcon } from './components/search-icon';
 export { default as SettingsIcon } from './components/settings-icon';
 export { default as StructureIcon } from './components/structure-icon';
 export { default as TabletLandscapeIcon } from './components/tablet-landscape-icon';
