@@ -671,6 +671,9 @@ abstract class Base extends Base_File {
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 
+		// Refresh the Common widget instance's stack again to restore the controls to their original state.
+		$this->delete_common_widget_instance_controls_stack();
+
 		return $this->get_stylesheet()->__toString();
 	}
 
