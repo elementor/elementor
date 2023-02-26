@@ -61,14 +61,14 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			->set_feature_default_state( $this->experiment, $this->original_experiment_default_state );
 	}
 
-	public function test_get_name(): void {
+	public function test_get_name() {
 		$this->assertTrue(
 			$this->name === $this->module->get_name(),
 			'Test module name is correct'
 		);
 	}
 
-	public function test_is_active(): void {
+	public function test_is_active() {
 		$this->assertTrue(
 			$this->module->is_active(),
 			'Test module is active'
