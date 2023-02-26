@@ -1,7 +1,3 @@
-import EditorHelper from './utils/editorHelper';
-import ColorsComponent from './colors/component';
-import FontsComponent from './fonts/component';
-
 class Module extends elementorModules.editor.utils.Module {
 	activeKitId = 0;
 

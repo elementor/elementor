@@ -20,7 +20,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
+		parent::__construct();
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 
@@ -35,8 +35,8 @@ class Module extends \Elementor\Core\Base\Module {
 //		new Design_Guidelines_Post();
 	}
 
-	public function get_script_url() {
-		return $this->get_js_assets_url( 'design-guidelines' );
+	public function get_script_url( $filename ) {
+		return $this->get_js_assets_url( $filename );
 	}
 
 	public function get_style_url() {
@@ -50,6 +50,12 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function get_name() {
 		return 'design-guidelines';
+	}
+
+	protected function get_widgets() {
+		return [
+			'GlobalSettings\Global_Settings',
+		];
 	}
 
 	/**
@@ -103,13 +109,6 @@ class Module extends \Elementor\Core\Base\Module {
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	/**
-	 * @param Documents_Manager $documents_manager
-	 */
-	public function register_document( $documents_manager ) {
-		$documents_manager->register_document_type( Design_Guidelines::TYPE, Design_Guidelines::get_class_full_name() );
 	}
 
 	/**
