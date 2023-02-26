@@ -1,5 +1,5 @@
 name: Create RC Tag
-# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN & repo env var : SLACK_TAG_CHANNELS
+# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN , SLACK_CHANNEL_RELEASEBOT
 
 env:
   CHANGELOG_FILE: 'temp-changelog.txt'
@@ -79,7 +79,7 @@ jobs:
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASEBOT }}
           PAYLOAD: |
                   {
                     "blocks": [
