@@ -4,6 +4,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Repeater;
+use Elementor\Modules\DesignGuidelines\Module as DesignGuidelinesModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -36,12 +37,35 @@ class Global_Colors extends Tab_Base {
 		return 'https://go.elementor.com/global-colors/';
 	}
 
+	public function get_action_show() {
+		return 'elementor/preview/style-guide/colors';
+	}
+
+	public function get_action_hide() {
+		return 'elementor/preview/style-guide/hide';
+	}
+
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_global_colors',
 			[
 				'label' => esc_html__( 'Global Colors', 'elementor' ),
 				'tab' => $this->get_id(),
+			]
+		);
+
+		$this->add_control(
+			'colors_enable_style_guide_preview',
+			[
+				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors.', 'elementor' ),
+				'separator' => 'after',
+				'label_off' => esc_html__( 'Off', 'elementor-pro' ),
+				'label_on' => esc_html__( 'On', 'elementor-pro' ),
+				'default' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'value' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'event' => 'elementorPreferences:styleGuidePreview:toggle',
 			]
 		);
 

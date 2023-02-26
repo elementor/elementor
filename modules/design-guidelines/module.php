@@ -3,6 +3,7 @@
 namespace Elementor\Modules\DesignGuidelines;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Modules\DesignGuidelines\Components\Design_Guidelines_Post;
 use Elementor\Modules\DesignGuidelines\documents\Design_Guidelines;
 use Elementor\Plugin;
@@ -111,5 +112,14 @@ class Module extends \Elementor\Core\Base\Module {
 		$documents_manager->register_document_type( Design_Guidelines::TYPE, Design_Guidelines::get_class_full_name() );
 	}
 
+	/**
+	 * Check whether the user has Styleguide Preview enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_styleguide_preview_enabled() : bool {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
 
+		return $editor_preferences->get_settings( 'enable_style_guide_preview' );
+	}
 }

@@ -1008,6 +1008,8 @@
 		}
 	}));
 
+	DialogsManager.addWidgetType('fillscreen', DialogsManager.getWidgetType('lightbox').extend('alert'));
+
 	// Exporting the DialogsManager variable to global
 	global.DialogsManager = DialogsManager;
 })(

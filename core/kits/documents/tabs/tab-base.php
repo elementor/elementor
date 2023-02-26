@@ -37,6 +37,14 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		return '';
 	}
 
+	public function get_action_show() {
+		return '';
+	}
+
+	public function get_action_hide() {
+		return '';
+	}
+
 	public function register_controls() {
 		$this->register_tab();
 
