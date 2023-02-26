@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\DesignGuidelines\Widgets\GlobalSettings;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
 
@@ -20,7 +21,7 @@ class Global_Settings extends Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-sidebar'; // todo
+		return 'eicon-globe';
 	}
 
 	public function get_keywords() {
@@ -50,8 +51,15 @@ class Global_Settings extends Widget_Base {
 	}
 
 	private function get_site_settings() {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$documents_manager = Plugin::$instance->documents;
+		$kits_manager = Plugin::$instance->kits_manager;
 
-		return $kit->get_settings();
+	  $kit = $documents_manager->get_doc_or_auto_save( $kits_manager->get_active_id(), get_current_user_id() );
+
+		if ( ! $kit instanceof Kit ) {
+			return [];
+		}
+
+		return $kit->get_active_settings();
 	}
 }

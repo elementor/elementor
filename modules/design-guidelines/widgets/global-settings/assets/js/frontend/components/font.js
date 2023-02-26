@@ -17,7 +17,6 @@ const parseFontToStyle = ( font ) => {
 	};
 	const defaultParser = ( value ) => value;
 
-	// TODO 23/02/2023 : what if family not exist?
 	const allowedProperties = {
 		'typography_font_family': { valueParser: familyParser, keyParser: defaultKeyParser, },
 		'typography_font_size': { valueParser: sizeParser, keyParser: defaultKeyParser, },
@@ -73,7 +72,6 @@ const parseFontToStyle = ( font ) => {
 
 const Font = ( { font, } ) => {
 	const style = useMemo( () => parseFontToStyle( font ), [ font ] );
-	// TODO 23/02/2023 : if default property it will not pull from right parent.
 	const Title = styled( ElementTitle )`
       font-size: 18px;
 	`;

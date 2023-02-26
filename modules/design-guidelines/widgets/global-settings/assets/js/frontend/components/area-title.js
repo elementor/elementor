@@ -23,6 +23,7 @@ const AreaTitle = ( props ) => {
       letter-spacing: 0;
       word-spacing: 0;
       text-align: center;
+	  padding: 15px 0 0 0;
 	`;
 
 	return (

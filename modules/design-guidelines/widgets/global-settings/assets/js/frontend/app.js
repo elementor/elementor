@@ -13,7 +13,7 @@ const App = ( { config } ) => {
 	const { settings, setActive } = useSettings( config.settings );
 
 	const Content = styled.div`
-      padding: 15px 5% 0 5%;
+      padding: 0 5% 0 5%;
 	`;
 
 	return (

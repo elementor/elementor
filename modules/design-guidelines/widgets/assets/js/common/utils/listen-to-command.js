@@ -11,7 +11,6 @@ const listenToCommand = ( command, handler, shouldDebounce = true ) => {
 		if ( event.detail.command !== command ) {
 			return;
 		}
-		console.log({event});
 		preparedHandler( event.detail.args);
 	} );
 };

@@ -35,10 +35,14 @@ const useSiteSettings = ( initial ) => {
 			setSettings( ( settings ) => {
 				const newSettings = { ...settings };
 
-				newSettings[ name ] = [ ...newSettings[ name ], args.model ];
+				const newFieldArray = [ ...newSettings[ name ] ];
+
+				const at = undefined === args.options?.at ? newFieldArray.length : args.options.at;
+
+				newSettings[ name ] = [ ...newFieldArray.slice( 0, at ), args.model, ...newFieldArray.slice( at ) ];
 				return newSettings;
 			} );
-		} , false);
+		}, false );
 
 		listenToCommand( 'document/repeater/remove', ( args ) => {
 			let name = args.name;
@@ -47,11 +51,13 @@ const useSiteSettings = ( initial ) => {
 			}
 
 			setSettings( ( settings ) => {
+
 				const newSettings = { ...settings };
-				newSettings[ name ] = newSettings[ name ].filter( ( item, index ) => index !== args.index );
+				const newFieldArray = [ ...newSettings[ name ] ];
+				newSettings[ name ] = newFieldArray.filter( ( item, index ) => index !== args.index );
 				return newSettings;
 			} );
-		} , false);
+		}, false );
 	}, [] );
 
 	const setActive = ( id, source ) => {
