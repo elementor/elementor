@@ -5,7 +5,7 @@ export default function Announcements( { announcements } ) {
 	return (
 		<div className="announcements-container">
 			<AnnouncementsHeader />
-			{ announcements.map( ( announcement, index ) => <Announcement key={ `announcement${ index }` } announcement={ announcement } /> ) }
+			{ Object.values( announcements ).map( ( announcement, index ) => <Announcement key={ `announcement${ index }` } announcement={ announcement } /> ) }
 		</div>
 	);
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 export default function AnnouncementFooter( { buttons } ) {
 	return (
 		<div className="announcement-footer-container">
-			{ buttons.map( ( button, index ) => {
+			{ Object.values( buttons ).map( ( button, index ) => {
 				return (
 					<a
 						key={ `button${ index }` }
