@@ -1,14 +1,14 @@
 import useActionProps from '../use-action-props';
 import { renderHook } from '@testing-library/react-hooks';
-import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
+import { runCommand, useRouteStatus } from '@elementor/v1-adapters';
 
 jest.mock( '@elementor/v1-adapters', () => ( {
-	openRoute: jest.fn(),
+	runCommand: jest.fn(),
 	useRouteStatus: jest.fn( () => ( { isActive: true, isBlocked: true } ) ),
 } ) );
 
-describe( '@elementor/elements-panel - useActionProps', () => {
-	it( 'should open the elements panel on click', () => {
+describe( '@elementor/finder - useActionProps', () => {
+	it( 'should toggle the finder state on click', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
 
@@ -16,8 +16,8 @@ describe( '@elementor/elements-panel - useActionProps', () => {
 		result.current.onClick();
 
 		// Assert.
-		expect( openRoute ).toHaveBeenCalledTimes( 1 );
-		expect( openRoute ).toHaveBeenCalledWith( 'panel/elements/categories' );
+		expect( runCommand ).toHaveBeenCalledTimes( 1 );
+		expect( runCommand ).toHaveBeenCalledWith( 'finder/toggle' );
 	} );
 
 	it( 'should have the correct props for disabled and selected', () => {
@@ -28,6 +28,6 @@ describe( '@elementor/elements-panel - useActionProps', () => {
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.disabled ).toBe( true );
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
-		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/elements' );
+		expect( useRouteStatus ).toHaveBeenCalledWith( 'finder' );
 	} );
 } );

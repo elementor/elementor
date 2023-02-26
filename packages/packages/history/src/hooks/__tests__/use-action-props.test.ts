@@ -7,8 +7,8 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 	useRouteStatus: jest.fn( () => ( { isActive: true, isBlocked: true } ) ),
 } ) );
 
-describe( '@elementor/elements-panel - useActionProps', () => {
-	it( 'should open the elements panel on click', () => {
+describe( '@elementor/history - useActionProps', () => {
+	it( 'should open the history panel when clicked', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
 
@@ -17,7 +17,7 @@ describe( '@elementor/elements-panel - useActionProps', () => {
 
 		// Assert.
 		expect( openRoute ).toHaveBeenCalledTimes( 1 );
-		expect( openRoute ).toHaveBeenCalledWith( 'panel/elements/categories' );
+		expect( openRoute ).toHaveBeenCalledWith( 'panel/history/actions' );
 	} );
 
 	it( 'should have the correct props for disabled and selected', () => {
@@ -28,6 +28,6 @@ describe( '@elementor/elements-panel - useActionProps', () => {
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.disabled ).toBe( true );
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
-		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/elements' );
+		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/history' );
 	} );
 } );
