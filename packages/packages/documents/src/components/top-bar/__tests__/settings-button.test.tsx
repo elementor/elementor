@@ -10,10 +10,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 describe( '@elementor/documents - Top bar settings button', () => {
 	const Component = () => <SettingsButton type={ { value: 'wp-page', label: 'Page' } } />;
 
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the document settings panel on click', () => {
 		// Arrange.
 		const { getByRole } = render( <Component /> );

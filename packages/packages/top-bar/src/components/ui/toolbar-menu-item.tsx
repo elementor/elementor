@@ -1,4 +1,4 @@
-import { IconButton, IconButtonProps, Tooltip } from '@elementor/ui';
+import { Box, IconButton, IconButtonProps, Tooltip } from '@elementor/ui';
 
 type Props = IconButtonProps & {
 	title?: string;
@@ -8,7 +8,10 @@ type Props = IconButtonProps & {
 export default function ToolbarMenuItem( { title, ...props }: Props ) {
 	return (
 		<Tooltip title={ title }>
-			<IconButton { ...props } aria-label={ title } size="small" />
+			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
+			<Box component="span" aria-label={ undefined }>
+				<IconButton { ...props } aria-label={ title } size="small" />
+			</Box>
 		</Tooltip>
 	);
 }
