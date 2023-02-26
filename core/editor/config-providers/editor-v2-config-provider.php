@@ -92,7 +92,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'settings' => [
 				'urls' => [
 					'admin' => admin_url(),
-					'help' => 'https://elementor.com/help/',
+					'help' => 'https://elementor.com/help',
 				],
 			],
 		];
