@@ -13,10 +13,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/documents-ui - useDocumentPreviewProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the document preview', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );

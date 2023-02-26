@@ -17,10 +17,6 @@ const actionsMock = {
 jest.mocked( useActiveDocumentActions ).mockReturnValue( actionsMock );
 
 describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should not render when there is no active document', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue( null );
