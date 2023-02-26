@@ -8,10 +8,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/user-preferences - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the user preferences', () => {
 		// Arrange.
 		const route = 'panel/editor-preferences';
