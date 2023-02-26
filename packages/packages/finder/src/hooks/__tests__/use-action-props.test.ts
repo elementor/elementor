@@ -20,12 +20,13 @@ describe( '@elementor/finder - useActionProps', () => {
 		expect( runCommand ).toHaveBeenCalledWith( 'finder/toggle' );
 	} );
 
-	it( 'should have the correct props for selected', () => {
+	it( 'should have the correct props for disabled and selected', () => {
 		// Act.
 		const { result } = renderHook( () => useActionProps() );
 
 		// Assert.
 		expect( result.current.selected ).toBe( true );
+		expect( result.current.disabled ).toBe( true );
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
 		expect( useRouteStatus ).toHaveBeenCalledWith( 'finder', {
 			blockOnKitRoutes: false,
