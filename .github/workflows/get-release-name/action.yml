@@ -8,12 +8,6 @@ inputs:
   PLUGIN_NAME:
     description: 'The name of the plugin.'
     required: true
-  CHANNEL:
-    description: 'The channel to get the version to (ga, cloud, beta).'
-    required: true
-  PACKAGE_VERSION:
-    description: 'The clean package version e.g. 3.10.1'
-    required: true
 
 runs:
   using: "composite"
@@ -34,10 +28,9 @@ runs:
             # e.g. elementor-3.11.0-cloud20 => v3.11.0-cloud20
             RELEASE_NAME=${RELEASE_NAME/${{ inputs.PLUGIN_NAME }}-/v}
 
-            # e.g. v3.11.0
-            if [ ${{ inputs.CHANNEL }} == "ga" ]; then
-              RELEASE_NAME=v${{ inputs.PACKAGE_VERSION }}
-              RELEASE_FILENAME=${{ inputs.PLUGIN_NAME }}-${{ inputs.PACKAGE_VERSION }}
+            # e.g. 3.11.0 => v3.11.0
+            if [[ ! $RELEASE_NAME =~ ^v ]]; then
+              RELEASE_NAME=v$RELEASE_NAME
             fi
 
             echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
