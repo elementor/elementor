@@ -38,4 +38,4 @@ runs:
               fi
             fi
     - name: Generate Changelog Content For Slack
-      uses: ./.github/actions/generate-slack-changelog
+      uses: ./.github/workflows/generate-slack-changelog
