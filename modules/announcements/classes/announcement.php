@@ -28,10 +28,7 @@ class Announcement {
 		return $this->triggers;
 	}
 
-	/**
-	 * @return void
-	 */
-	protected function set_triggers(): void {
+	protected function set_triggers() {
 		$triggers = $this->raw_data['triggers'] ?? [];
 		foreach ( $triggers as $trigger ) {
 			$this->triggers[] = Utils::get_trigger_object( $trigger );
@@ -58,10 +55,7 @@ class Announcement {
 		return true;
 	}
 
-	/**
-	 * @return void
-	 */
-	public function after_triggered(): void {
+	public function after_triggered() {
 		foreach ( $this->get_triggers() as $trigger ) {
 			if ( ! $trigger->is_active() ) {
 				continue;

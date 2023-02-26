@@ -53,7 +53,7 @@ class Module extends BaseApp {
 	 * Get init settings to use in frontend
 	 * @return array[]
 	 */
-	protected function get_init_settings():array {
+	protected function get_init_settings(): array {
 		$active_announcements = $this->get_active_announcements();
 		$additional_settings = [];
 
@@ -70,7 +70,6 @@ class Module extends BaseApp {
 
 	/**
 	 * Enqueue the module styles.
-	 * @return void
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style(
