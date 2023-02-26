@@ -13,5 +13,6 @@ export default function useActionProps() {
 		icon: SearchIcon,
 		onClick: () => runCommand( 'finder/toggle' ),
 		selected: isActive,
+		disabled: isBlocked,
 	};
 }
