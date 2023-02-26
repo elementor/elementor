@@ -17,16 +17,18 @@ beforeEach( () => {
 	jest.mocked( console.info ).mockImplementation( () => null );
 	/* eslint-enable no-console */
 
-	flushInjections();
-	flushListeners();
-	deleteStore();
-
 	setReady( true );
 
 	windowOriginalProps = Object.keys( window );
 } );
 
 afterEach( () => {
+	jest.clearAllMocks();
+
+	flushInjections();
+	flushListeners();
+	deleteStore();
+
 	// Delete all the props that were added to the window.
 	Object.keys( window ).forEach( ( key ) => {
 		if ( ! windowOriginalProps.includes( key ) ) {
