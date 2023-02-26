@@ -41,6 +41,7 @@ async function testStretchedSection( page, editor, direction ) {
 	await editor.setBackgroundColor( '#cae0bc', spacerID );
 
 	const directionSuffix = 'ltr' === direction ? '' : '-rtl';
+
 	/**
 	 * Test in Editor
 	 */
@@ -59,6 +60,18 @@ async function testStretchedSection( page, editor, direction ) {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `section-stretched${ directionSuffix }.jpeg` );
+
+	if ( 'rtl' === direction ) {
+		const isSectionConsideringScrollbar = await editor.getPreviewFrame().evaluate( ( { selector } ) => {
+			const section = document.querySelector( '.elementor-element-' + selector ),
+				sectionBoundingBox = section.getBoundingClientRect(),
+				scrollbarWidth = window.innerWidth - document.body.clientWidth;
+
+			return sectionBoundingBox.left === scrollbarWidth && sectionBoundingBox.right === window.innerWidth;
+		}, { selector: sectionID } );
+
+		expect( isSectionConsideringScrollbar ).toBe( true );
+	}
 
 	/**
 	 * Test in Front End
