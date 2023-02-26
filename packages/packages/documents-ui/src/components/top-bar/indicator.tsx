@@ -1,5 +1,5 @@
 import { Tooltip, Typography, Stack } from '@elementor/ui';
-import { Document } from '../../types';
+import { Document } from '@elementor/documents';
 
 type Props = {
 	title: Document['title'],
