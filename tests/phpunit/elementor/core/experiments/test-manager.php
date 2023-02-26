@@ -175,7 +175,7 @@ class Test_Manager extends Elementor_Test_Base {
 					],
 				],
 				'expected' => [
-					'tag' => [],
+					'tag' => '',
 					'tags' => [],
 				]
 			],
