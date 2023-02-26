@@ -33,12 +33,12 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		var $element = this.elements.$element,
 			containerWidth = $container.innerWidth(),
-			scrollbarWidth = window.innerWidth - containerWidth,
 			elementOffset = $element.offset().left,
 			isFixed = 'fixed' === $element.css( 'position' ),
-			correctOffset = isFixed ? 0 : elementOffset;
+			correctOffset = isFixed ? 0 : elementOffset,
+			isContainerFullScreen = window === $container[ 0 ];
 
-		if ( window !== $container[ 0 ] ) {
+		if ( ! isContainerFullScreen ) {
 			var containerOffset = $container.offset().left;
 
 			if ( isFixed ) {
@@ -49,7 +49,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 		}
 
-		if ( settings.considerScrollbar ) {
+		if ( settings.considerScrollbar && isContainerFullScreen ) {
+			const scrollbarWidth = window.innerWidth - containerWidth;
 			correctOffset -= scrollbarWidth;
 		}
 
