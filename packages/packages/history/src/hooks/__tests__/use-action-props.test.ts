@@ -8,10 +8,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/history - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the history panel when clicked', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
