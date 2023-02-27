@@ -19,7 +19,6 @@ class Module extends elementorModules.editor.utils.Module {
 			}
 
 			// TODO 21/02/2023 : get active kit id from the server.
-			// TODO 21/02/2023 : enqueue styles in iframe somehow.
 
 			this.initModal();
 			this.getModal().show();
