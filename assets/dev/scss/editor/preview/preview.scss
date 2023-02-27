@@ -115,7 +115,7 @@ html.elementor-html {
 		font-size: 11px;
 		color: var(--e-p-border-widget-invert);
 		width: 25px;
-		transition: margin .3s, width .3s, font .3s;
+		transition: var(--e-a-transition-hover);
 	}
 
 	.elementor-inline-editing {
@@ -257,6 +257,7 @@ html.elementor-html {
 	line-height: 1;
 	z-index: $first-layer;
 	pointer-events: all;
+	transition: var(--e-a-transition-hover);
 }
 
 .elementor-editor-element-edit {
