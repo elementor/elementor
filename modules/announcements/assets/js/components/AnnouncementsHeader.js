@@ -1,14 +1,17 @@
-export default function AnnouncementsHeader() {
-	const onCloseButton = () => {
-		document.getElementById( 'e-announcements-root' ).remove();
-	};
+import PropTypes from 'prop-types';
+
+export default function AnnouncementsHeader( { onClose } ) {
 	return (
 		<div className="announcements-heading-container">
 			<i className="eicon-elementor" aria-hidden="true" />
-			<span className="heading-title">What&apos;s New</span>
-			<button className="close-button" onClick={ onCloseButton }>
+			<span className="heading-title">{ __( 'What’s New', 'elementor' ) }</span>
+			<button className="close-button" onClick={ () => onClose( 'close' ) }>
 				<i className="eicon-close" aria-hidden="true" />
 			</button>
 		</div>
 	);
 }
+
+AnnouncementsHeader.propTypes = {
+	onClose: PropTypes.func.isRequired,
+};

@@ -48,7 +48,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		$document->set_is_built_with_elementor( true );
 		$edit_link = $document->get_edit_url();
-		$this->go_to($edit_link);
+		$this->go_to( $edit_link );
 		set_current_screen( 'edit-post' );
 
 		$this->module = new Module();
@@ -57,8 +57,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function tearDown() {
 		parent::tearDown();
 
-		Plugin::$instance->experiments
-			->set_feature_default_state( $this->experiment, $this->original_experiment_default_state );
+		Plugin::$instance->experiments->set_feature_default_state(
+			$this->experiment,
+			$this->original_experiment_default_state
+		);
 	}
 
 	public function test_get_name() {
@@ -93,7 +95,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->module->__construct();
 
 		ob_start();
-		do_action( 'elementor/editor/footer');
+		do_action( 'elementor/editor/footer' );
 		$result = ob_get_clean();
 
 		// Assert

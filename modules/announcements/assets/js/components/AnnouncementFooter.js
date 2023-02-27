@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementFooter( { buttons } ) {
+export default function AnnouncementFooter( { buttons, onClose } ) {
 	return (
 		<div className="announcement-footer-container">
 			{ Object.values( buttons ).map( ( button, index ) => {
@@ -9,7 +9,8 @@ export default function AnnouncementFooter( { buttons } ) {
 						key={ `button${ index }` }
 						className={ `button-item ${ button.variant }` }
 						href={ button.url }
-						target={ button.target }>
+						target={ button.target }
+						onClick={ () => onClose( 'cta' ) } >
 						{ button.label }
 					</a>
 				);
@@ -20,4 +21,5 @@ export default function AnnouncementFooter( { buttons } ) {
 
 AnnouncementFooter.propTypes = {
 	buttons: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
+	onClose: PropTypes.func.isRequired,
 };

@@ -2,6 +2,7 @@
 
 $base-color: #0C0D0E;
 $button-base-color: #524CFF;
+$button-base-color-hover: #4C43E5;
 $description-color: #515962;
 
 #e-announcements-root {
@@ -58,7 +59,7 @@ $description-color: #515962;
 
 			.announcement-body-media img {
 				width: 573px;
-				height: 316px;
+				height: 322px;
 				object-fit: contain;
 			}
 
@@ -97,6 +98,9 @@ $description-color: #515962;
 					color: $white;
 					background-color: $button-base-color;
 					border: 1px solid $button-base-color;
+
+					&:hover {
+						background-color: $button-base-color-hover;					}
 				}
 
 				&.secondary {

@@ -1,5 +1,12 @@
+import { freeMock, setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
+
 describe( 'modules/announcements/assets/js/index.js', () => {
-	beforeAll( () => {
+	beforeAll( async () => {
+		await setupMock();
+		global.$e.modules.editor = {
+			CommandContainerBase: ( await import( 'elementor-editor/command-bases/command-container-base' ) ).default,
+		};
+
 		document.body.innerHTML = '<div id="e-announcements-root"></div>';
 
 		global.elementorAnnouncementsConfig = {
@@ -22,6 +29,9 @@ describe( 'modules/announcements/assets/js/index.js', () => {
 
 	afterAll( () => {
 		delete global.elementorAnnouncementsConfig;
+		delete global.$e;
+
+		freeMock();
 	} );
 
 	test( 'Should render react app', async () => {
