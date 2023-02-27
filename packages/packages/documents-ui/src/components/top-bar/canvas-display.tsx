@@ -1,6 +1,5 @@
 import { Stack } from '@elementor/ui';
-import { useActiveDocument } from '../../hooks';
-import useHostDocument from '../../hooks/use-host-document';
+import { useActiveDocument, useHostDocument } from '@elementor/documents';
 import SettingsButton from './settings-button';
 import Indicator from './indicator';
 

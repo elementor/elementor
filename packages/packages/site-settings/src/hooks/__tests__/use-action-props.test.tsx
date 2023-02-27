@@ -8,10 +8,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/site-settings - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it.each( [
 		{
 			action: 'open',
@@ -30,7 +26,7 @@ describe( '@elementor/site-settings - useActionProps', () => {
 		const { result } = renderHook( () => useActionProps() );
 
 		// Act.
-		result.current.onClick();
+		result.current.onClick?.();
 
 		// Assert.
 		expect( runCommand ).toHaveBeenCalledTimes( 1 );

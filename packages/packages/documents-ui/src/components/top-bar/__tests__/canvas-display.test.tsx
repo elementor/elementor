@@ -1,19 +1,14 @@
 import { render } from '@testing-library/react';
-import { useHostDocument, useActiveDocument } from '../../../hooks';
+import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import CanvasDisplay from '../canvas-display';
 import { createMockDocument } from 'test-utils';
 
-jest.mock( '../../../hooks/use-active-document', () => ( {
-	__esModule: true,
-	default: jest.fn( () => null ),
+jest.mock( '@elementor/documents', () => ( {
+	useActiveDocument: jest.fn(),
+	useHostDocument: jest.fn(),
 } ) );
 
-jest.mock( '../../../hooks/use-host-document', () => ( {
-	__esModule: true,
-	default: jest.fn( () => null ),
-} ) );
-
-describe( '@elementor/documents - Top bar Canvas display', () => {
+describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( { id: 1, title: 'Active Document' } )

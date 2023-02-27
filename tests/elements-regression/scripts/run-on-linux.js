@@ -22,7 +22,7 @@ async function run( args ) {
 		'--interactive',
 		process.env.CI ? '' : '--tty',
 	];
-	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion }-focal`;
+	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion }-jammy`;
 	const commandToRun = `/bin/bash -c "npm run test:elements-regression -- ${ args.join( ' ' ) }"`;
 
 	spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
