@@ -294,15 +294,12 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'tablet_default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'mobile_default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'range' => [
@@ -340,15 +337,12 @@ class Group_Control_Background extends Group_Control_Base {
 			'responsive' => true,
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 			'default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'tablet_default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'mobile_default' => [
-				'unit' => 'px',
 				'size' => 0,
 			],
 			'range' => [
