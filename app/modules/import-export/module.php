@@ -279,7 +279,7 @@ class Module extends BaseModule {
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
-			$this->import->init_import_session();
+			$this->import->init_import_session( true );
 
 			return [
 				'session' => $this->import->get_session_id(),
@@ -383,17 +383,6 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
-
-		add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
-	}
-
-	/**
-	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
-	 *
-	 * @return array
-	 */
-	public function empty_pages(): array {
-		return [];
 	}
 
 	private function ensure_writing_permissions() {
@@ -609,6 +598,7 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+			'importSessions' => Revert::get_import_sessions(),
 		];
 	}
 
