@@ -6,7 +6,7 @@ export default function PopoverMenu( { children, ...props }: MenuProps ) {
 		<MenuContextProvider type={ 'popover' }>
 			<Menu
 				PaperProps={ {
-					sx: { mt: 4, marginInlineStart: -2 },
+					sx: { mt: 4 },
 				} }
 				{ ...props }
 			>
