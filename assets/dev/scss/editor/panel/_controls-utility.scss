@@ -46,6 +46,7 @@ $item-size: 2.5em;
 }
 
 .elementor-responsive-switcher {
+	all: unset;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -53,13 +54,11 @@ $item-size: 2.5em;
 	z-index: 2;
 	cursor: pointer;
 	height: 0;
+	width: 100%;
 	transform: scale(0);
 	opacity: 0;
 	transition: 0.15s;
 	font-size: 12px;
-}
-
-a.elementor-responsive-switcher {
 	color: $editor-light;
 
 	&:hover {
