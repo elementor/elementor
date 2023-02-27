@@ -53,6 +53,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 
 		this.$el.next( '.elementor-controls-popover' ).toggle();
+
+		window.dispatchEvent( new CustomEvent( 'elementor/popover/toggle', {
+			detail: {
+				container: this.options.container,
+			},
+		} ) );
 	}
 
 	getGlobalCommand() {
