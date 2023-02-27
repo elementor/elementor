@@ -7,12 +7,8 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 	useRouteStatus: jest.fn( () => ( { isActive: false, isBlocked: false } ) ),
 } ) );
 
-describe( '@elementor/documents - Top bar settings button', () => {
+describe( '@elementor/documents-ui - Top bar settings button', () => {
 	const Component = () => <SettingsButton type={ { value: 'wp-page', label: 'Page' } } />;
-
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
 
 	it( 'should open the document settings panel on click', () => {
 		// Arrange.
