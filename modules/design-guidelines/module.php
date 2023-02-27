@@ -22,8 +22,9 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
-
+		add_action( 'wp_enqueue_scripts', function() {
+			$this->enqueue_styles();
+		} );
 
 //		add_filter('update_post_metadata', function($check, $object_id, $meta_key, $meta_value, $prev_value) {
 //			if ($meta_key === '_wp_page_template'){
@@ -100,7 +101,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			'design-guidelines',
-			$this->get_css_assets_url( 'modules/design-guidelines/editor' ),
+			$this->get_css_assets_url( 'modules/design-guidelines/frontend' ),
 			[],
 			ELEMENTOR_VERSION
 		);

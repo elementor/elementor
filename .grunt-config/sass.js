@@ -48,7 +48,14 @@ const sass = {
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
 				ext: '.css',
-			}
+			},
+			{
+				expand: true,
+				cwd: 'modules/design-guidelines/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/design-guidelines',
+				ext: '.css',
+			},
 		]
 	}
 };

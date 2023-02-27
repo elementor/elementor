@@ -1,4 +1,4 @@
-// require( '../lib/dialog' );
+require( '../lib/dialog' );
 
 class Module extends elementorModules.editor.utils.Module {
 	activeKitId = 0;
@@ -39,7 +39,7 @@ class Module extends elementorModules.editor.utils.Module {
 				return modal;
 			}
 
-			modal = elementorCommon.dialogsManager.createWidget( 'fillscreen', {
+			modal = elementorCommon.dialogsManager.createWidget( 'styleguide-preview', {
 				id: 'e-design-guidelines',
 				className: 'e-hidden',
 				message: `<div class="elementor-${ this.activeKitId } e-design-guidelines-root"></div>`,
@@ -62,7 +62,7 @@ class Module extends elementorModules.editor.utils.Module {
 
 	showStyleguidePreview() {
 		elementor.changeEditMode( 'picker' );
-		this.getModal().classList.remove( 'e-hidden' );
+		this.getModal().getElements( 'widget' ).removeClass( 'e-hidden' );
 		this.getModal().show();
 	}
 
