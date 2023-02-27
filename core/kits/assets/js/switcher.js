@@ -1,10 +1,11 @@
-import RepeaterRow from '../../../../assets/dev/js/editor/controls/repeater-row';
+import Switcher from '../../../../assets/dev/js/editor/controls/switcher';
 
-export default class extends RepeaterRow {
+export default class extends Switcher {
 	ui() {
 		const ui = super.ui();
 
-		ui.sortButton = '.elementor-repeater-tool-sort';
+		// ui.sortButton = '.elementor-repeater-tool-sort';
+		debugger;
 
 		return ui;
 	}
@@ -37,61 +38,6 @@ export default class extends RepeaterRow {
 
 	triggers() {
 		return {};
-	}
-
-	onChildviewRender( childView ) {
-		const isColor = 'color' === childView.model.get( 'type' ),
-			isPopoverToggle = 'popover_toggle' === childView.model.get( 'type' ),
-			$controlInputWrapper = childView.$el.find( '.elementor-control-input-wrapper' );
-
-		let globalType = '',
-			globalTypeTranslated = '';
-
-		if ( isColor ) {
-			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value elementor-control-unit-3' } );
-
-			$controlInputWrapper
-				.prepend( this.getRemoveButton(), this.$colorValue )
-				.prepend( this.ui.sortButton );
-
-			globalType = 'color';
-			globalTypeTranslated = __( 'Color', 'elementor' );
-
-			this.updateColorValue();
-		}
-
-		if ( isPopoverToggle ) {
-			$controlInputWrapper
-				.append( this.getRemoveButton() )
-				.append( this.ui.sortButton );
-
-			globalType = 'font';
-			globalTypeTranslated = __( 'Font', 'elementor' );
-		}
-
-		if ( isColor || isPopoverToggle ) {
-			const removeButtons = this.getDisabledRemoveButtons();
-
-			this.ui.removeButton.data( 'e-global-type', globalType );
-
-			this.ui.removeButton.tipsy( {
-				/* Translators: %s: Font/Color. */
-				title: () => sprintf( __( 'Delete Global %s', 'elementor' ), globalTypeTranslated ),
-				gravity: () => 's',
-			} );
-
-			removeButtons.tipsy( {
-				/* Translators: %s: Font/Color. */
-				title: () => sprintf( __( 'System %s can\'t be deleted', 'elementor' ), globalTypeTranslated ),
-				gravity: () => 's',
-			} );
-		}
-	}
-
-	onModelChange( model ) {
-		if ( undefined !== model.changed.color ) {
-			this.updateColorValue();
-		}
 	}
 
 	onRemoveButtonClick() {
