@@ -359,6 +359,7 @@ class Controls_Manager {
 			'css-filter',
 			'text-shadow',
 			'flex-container',
+			'grid-container',
 			'flex-item',
 			'text-stroke',
 		];

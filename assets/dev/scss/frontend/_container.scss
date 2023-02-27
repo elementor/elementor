@@ -1,7 +1,6 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--display: flex;
 	--flex-direction: column;
 	--flex-basis: auto;
 	--flex-grow: 0;
@@ -61,6 +60,7 @@
 	&,
 	& > .e-con-inner {
 		display: var( --display );
+		grid-template-columns: var( --e-con-grid-template-columns );
 	}
 
 	// Set default values to the outer div of the boxed container.
@@ -70,14 +70,17 @@
 		flex-wrap: initial;
 		justify-content: initial;
 		align-items: initial;
+		justify-items: initial;
 		align-content: initial;
 		gap: initial;
+		grid-template-columns: initial;
 	}
 
 	& > .e-con-inner {
 		flex-wrap: var( --flex-wrap );
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
+		justify-items: var( --justify-items );
 		align-content: var( --align-content );
 		gap: var( --gap );
 		width: 100%;
