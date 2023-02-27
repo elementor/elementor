@@ -113,48 +113,29 @@ class Module extends BaseModule {
 		$controls = $element->get_controls();
 		$controls_with_background_image = $this->get_controls_with_background_image( $controls );
 		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
+		$wrapper_selector = $element->get_unique_selector();
 
 		$lazyload_attribute_name = 'data-e-bg-lazyload';
 		$attributes = [];
+		$control_selectors = [];
+
+		if ( $repeaters_selectors ) {
+			$control_selectors = array_merge( $repeaters_selectors, $control_selectors );
+		}
 
 		foreach ( $controls_with_background_image as $control_name => $control_data ) {
-
-			$control_selectors = [];
-
-			// Marge repeaters selectors to the wrapper control selectors if exist.
-			if ( $repeaters_selectors ) {
-				$control_selectors = array_merge( $repeaters_selectors, $control_selectors );
-			}
-
-			// If the control has a any background image at all.
 			$background_image_url = $this->has_background_image( $control_data, $settings );
 
-			if ( $background_image_url || $control_selectors ) {
-
-				// Prevent from common widgets to inherit the lazyload attribute in case they have a repeater with background image
-				if ( ! $control_selectors ) {
-					$control_selectors[] = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-				}
-				$wrapper_selector = $element->get_unique_selector();
-
-				// Add the wrapper selector to the control selectors, To create a full & strong selector for the control.
-				$control_selectors = array_map( function( $selector ) use ( $wrapper_selector ) {
-					return $wrapper_selector . ' ' . $selector;
-				}, $control_selectors );
-
-				// If the control (wrapper) has a background image, add the wrapper selector to the control selectors.
-				if ( $background_image_url ) {
-					$control_selectors[] = $wrapper_selector;
-				}
-
-				// Trim spaces and remove duplicates.
-				$control_selectors = array_unique( array_map( 'trim', $control_selectors ) );
-
-				// Build the lazyload attribute selectors value. e.g. ".elementor-element-123 .selector1, .elementor-element-123 .selector2".
-				$attributes[ $lazyload_attribute_name ] = implode( ',', $control_selectors );
-
+			if ( $background_image_url ) {
+				$control_selectors[] = $wrapper_selector . ' ' . Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
 			}
 		}
+
+		// Trim spaces and remove duplicates.
+		$control_selectors = array_unique( array_map( 'trim', $control_selectors ) );
+
+		// Build the lazyload attribute selectors value. e.g. ".elementor-element-123 .selector1, .elementor-element-123 .selector2".
+		$attributes[ $lazyload_attribute_name ] = implode( ',', $control_selectors );
 
 		// Add the lazyload attribute to the wrapper.
 		$element->add_render_attribute( '_wrapper',
@@ -170,9 +151,8 @@ class Module extends BaseModule {
 
 		if ( $is_background_lazyload ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
-				if ( 0 === strpos( $css_property, 'background-image' ) ) {
+				if ( false === strpos( $selector, 'motion-effects-layer' ) && 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
-
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						// Support for background repeaters, control is without quotes.
 						$css_property  = str_replace( 'url({{URL}})', 'var(--e-bg-lazyload-loaded)', $css_property );
@@ -280,7 +260,6 @@ class Module extends BaseModule {
 
 					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
 					let elementsToObserve = [];
-
 					lazyloadBackgrounds.forEach( ( lazyloadBackgroundWrapper ) => {
 						const selectors = lazyloadBackgroundWrapper.getAttribute( dataAttribute );
 						if ( selectors ) {
