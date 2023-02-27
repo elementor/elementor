@@ -8,7 +8,7 @@ export default function init() {
 function registerTopBarMenuItems() {
 	registerToggleAction( 'utilities', {
 		name: 'toggle-finder',
-		priority: 10,
+		priority: 10, // Before help.
 		useProps: () => useActionProps(),
 	} );
 }
