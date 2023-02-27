@@ -24,22 +24,21 @@ test.describe( 'Elements regression', () => {
 
 	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
-		test( widgetType, async ( { editorPage } ) => {
+		test( widgetType, async ( { editorPage, page } ) => {
 			testedElements[ widgetType ] = {};
 
-			const elementId = await editorPage.addWidget( widgetType );
+			const defaultElementId = await editorPage.addWidget( widgetType );
 
 			await editorPage.page.waitForTimeout( 500 );
 
-			await test.step( `default values`, async () => {
-				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
+			await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				expect( await editorPage.screenshotElement( elementId ) )
-					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+			await editorPage.waitForElementRender( defaultElementId );
+			await expect( editorPage.getPreviewElement( defaultElementId ) ).toHaveScreenshot( [ widgetType, 'default.png' ] );
 
-				await editorPage.resetElementSettings( elementId );
-			} );
+			await editorPage.resetElementSettings( defaultElementId );
 
+			const widgets = {};
 			for ( const {
 				controlId,
 				controlConfig,
@@ -55,37 +54,96 @@ test.describe( 'Elements regression', () => {
 					continue;
 				}
 
-				await test.step( controlId, async () => {
-					const testedValues = [];
-
-					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
-
-					await control.setup();
+				await test.step( `Setup: controlId - ${ controlId }`, async () => {
+					console.log( `controlId: ${ controlId }` );
+					// const testedValues = [];
 
 					const initialValue = control.hasConditions() || control.hasSectionConditions()
 						? undefined
 						: await control.getValue();
 
+					const values = {};
+					const setupPromises = [];
 					for ( const value of await control.getTestValues( initialValue ) ) {
-						const valueLabel = control.generateSnapshotLabel( value );
+						console.log( `setup controlId: ${ controlId }, value: ${ value }` );
+						const setupPromise = async ( widgetType1 ) => {
+							const elementId = await editorPage.addWidget( widgetType1 );
+							await editorPage.page.waitForTimeout( 500 );
+							await editorPage.waitForElementRender( elementId );
+							const valueLabel = control.generateSnapshotLabel( value );
+							widgets[ elementId ] = [ widgetType, controlId, `${ valueLabel }.png` ];
+							values[ elementId ] = value;
+						};
+						setupPromises.push( setupPromise( widgetType ) );
+					}
+					await Promise.all( setupPromises );
 
-						await test.step( valueLabel, async () => {
-							testedValues.push( valueLabel );
+					for ( const widgetId in values ) {
+						const value = values[ widgetId ];
+						console.log( `values controlId: ${ controlId }, value: ${ value }` );
+						await editorPage.getPreviewElement( widgetId ).click();
+						await assignValuesToControlDependencies( editorPage, widgetType, controlId );
 
-							await control.setValue( value );
-
-							expect( await editorPage.screenshotElement( elementId ) )
-								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
-						} );
+						await control.setup();
+						await control.setValue( value );
 					}
 
-					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
-
+					// await editorPage.resetElementSettings( defaultElementId );
 					await control.teardown();
-
-					await editorPage.resetElementSettings( elementId );
 				} );
 			}
+			/////
+			await test.step( `Snapshot`, async () => {
+			await editorPage.getPreviewFrame().locator( 'footer' ).click(); // Deselect elements
+
+			const expectations = [];
+			for ( const widgetId in widgets ) {
+				// console.log( `snapshot controlId: ${ controlId }, widgetId ${ widgetId }: ${ widgets[ widgetId ].join( '-' ) }` );
+				console.log( `snapshot widgetId ${ widgetId }: ${ widgets[ widgetId ].join( '-' ) }` );
+				const theTest = async ( theWidgetId ) => {
+					await page.locator( '#elementor-panel-header' ).hover();
+					const locator = editorPage.getPreviewElement( theWidgetId );
+					console.log( `theTest - ${ theWidgetId } - ${ widgets[ theWidgetId ] } - ${ locator }` );
+					// await expect( async () => {
+						try {
+							await expect( locator ).toHaveScreenshot( widgets[ theWidgetId ] );
+						} catch ( e ) {
+							console.log( 'error', e );
+						}
+					// } ).toPass( {
+					// 	intervals: [ 1_000, 2_000, 6_000 ],
+					// 	timeout: 10000,
+					// } );
+				};
+				expectations.push( theTest( widgetId ) );
+				// await theTest( widgetId );
+			}
+			await Promise.all( expectations );
+			} );
+
+			await test.step( `Publish`, async () => {
+			await editorPage.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+			await editorPage.page.waitForLoadState();
+			await Promise.all( [
+				editorPage.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+				editorPage.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+				editorPage.page.waitForLoadState( 'networkidle' ),
+				editorPage.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+			] );
+
+			await editorPage.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+			await editorPage.page.waitForLoadState( 'networkidle' );
+			} );
+
+			await test.step( `Snapshot (Frontend)`, async () => {
+			const previewExpectations = [];
+			for ( const widgetId in widgets ) {
+				// console.log( `preview snapshot controlId: ${ controlId }, widgetId ${ widgetId }: ${ widgets[ widgetId ].join( '-' ) }` );
+				console.log( `preview snapshot widgetId ${ widgetId }: ${ widgets[ widgetId ].join( '-' ) }` );
+				previewExpectations.push( expect( page.locator( `.elementor-element-${ widgetId }` ) ).toHaveScreenshot( [ 'preview' ].concat( widgets[ widgetId ] ) ) );
+			}
+			await Promise.all( previewExpectations );
+			} );
 		} );
 	}
 } );

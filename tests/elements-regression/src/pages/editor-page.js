@@ -90,7 +90,11 @@ module.exports = class EditorPage extends BasePage {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
-	async getPreviewElement( id ) {
+	/**
+	 * @param {string} id Element ID
+	 * @return {import('@playwright/test').Locator} Element Locator
+	 */
+	getPreviewElement( id ) {
 		return this.getPreviewFrame().locator( `.elementor-element-${ id }` );
 	}
 
@@ -145,7 +149,7 @@ module.exports = class EditorPage extends BasePage {
 		await this.waitForElementRender( id );
 
 		const frameRect = await this.page.locator( '#elementor-preview-iframe' ).boundingBox();
-		const elementRect = await ( await this.getPreviewElement( id ) ).boundingBox();
+		const elementRect = await ( this.getPreviewElement( id ) ).boundingBox();
 
 		return await this.page.screenshot( {
 			type: 'jpeg',

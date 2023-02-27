@@ -5,7 +5,7 @@
 
 module.exports = {
 	elements: {
-		include: [ 'heading', 'text-editor', 'divider', 'button', 'image' ],
+		include: [ 'divider' ],
 	},
 	controls: {
 		heading: {

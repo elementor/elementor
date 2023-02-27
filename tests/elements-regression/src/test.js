@@ -16,7 +16,7 @@ module.exports = base.test.extend( {
 
 		await use( editorPage );
 
-		await wpAdminPage.moveElementorPageToTrash( pageId );
-		await wpAdminPage.deletePermenantlyElementorPageFromTrash( pageId );
+		// await wpAdminPage.moveElementorPageToTrash( pageId );
+		// await wpAdminPage.deletePermenantlyElementorPageFromTrash( pageId );
 	},
 } );

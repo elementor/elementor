@@ -30,14 +30,14 @@ const config = {
 	/* Retry on CI only */
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: process.env.CI ? 'github' : 'list',
+	reporter: process.env.CI ? 'github' : 'html',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		actionTimeout: 10 * 1000, // 4 seconds
 		navigationTimeout: 10 * 1000, // 10 seconds
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-		trace: 'on-first-retry',
-		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
+		trace: 'on',
+		video: 'on',
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
 		storageState: path.resolve( __dirname, 'storage-state.json' ),
