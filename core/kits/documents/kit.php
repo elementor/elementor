@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents;
 
+use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -38,11 +39,25 @@ class Kit extends PageBase {
 	}
 
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
-		$document = Plugin::$instance->documents->get( 428 );
+		$data = parent::get_elements_data( $status );
 
-		$elements_data = $document->get_elements_data( $status );
+		if ( empty( $data ) ) {
+			$this->import_styleguide_skeleton();
+			$data = parent::get_elements_data( $status );
+		}
 
-		return $elements_data;
+		return $data;
+	}
+
+	public function import_styleguide_skeleton() {
+		$json_data = Utils::read_json_file( ELEMENTOR_PATH . '/assets/data/global-styleguide.json' );
+
+		// TODO 14/02/2023 : Should be removed when bug is fixed in document->import
+		if ( isset( $json_data['page_settings'] ) ) {
+			$json_data['settings'] = $json_data['page_settings'];
+		}
+
+		$this->import( $json_data );
 	}
 
 	public static function get_type() {
