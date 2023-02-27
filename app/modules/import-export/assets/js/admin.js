@@ -123,7 +123,7 @@ class Admin {
 					cancel: __( 'Kit Library', 'elementor' ),
 				},
 				onCancel: () => {
-					location.href = elementorAppConfig[ 'kit-library' ].app_url;
+					location.href = elementorImportExport.appUrl;
 				},
 			} );
 			this.clearCache();
@@ -138,7 +138,7 @@ class Admin {
 				cancel: __( 'Close', 'elementor' ),
 			},
 			onConfirm: () => {
-				location.href = elementorAppConfig[ 'kit-library' ].app_url + '/preview/' + referrerKitId;
+				location.href = elementorImportExport.appUrl + '/preview/' + referrerKitId;
 			},
 		} );
 		this.clearCache();
@@ -172,7 +172,7 @@ class Admin {
 	 * @return {string}
 	 */
 	getActiveKitName() {
-		const lastKit = elementorAppConfig[ 'import-export' ].lastImportedSession;
+		const lastKit = elementorImportExport.lastImportedSession;
 
 		if ( lastKit.kit_title ) {
 			return lastKit.kit_title;
