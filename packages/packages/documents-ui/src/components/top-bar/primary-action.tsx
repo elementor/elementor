@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { Document } from '../../types';
 import { Button, CircularProgress } from '@elementor/ui';
-import { useActiveDocument, useActiveDocumentActions } from '../../hooks';
+import { Document, useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
 
 export default function PrimaryAction() {
 	const document = useActiveDocument();
