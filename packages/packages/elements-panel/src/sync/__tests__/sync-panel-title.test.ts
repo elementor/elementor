@@ -1,5 +1,5 @@
 import syncPanelTitle from '../sync-panel-title';
-import { flushListeners, isRouteActive } from '@elementor/v1-adapters';
+import { isRouteActive } from '@elementor/v1-adapters';
 
 type ExtendedWindow = Window & {
 	elementor?: {
@@ -31,12 +31,6 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 				} ),
 			} ),
 		};
-	} );
-
-	afterEach( () => {
-		flushListeners();
-
-		jest.clearAllMocks();
 	} );
 
 	it( 'should change the panel title when opening the elements panel', () => {

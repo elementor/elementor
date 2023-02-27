@@ -2,22 +2,17 @@ import { renderHook } from '@testing-library/react-hooks';
 import useDocumentPreviewProps from '../use-document-preview-props';
 import { runCommand } from '@elementor/v1-adapters';
 import { createMockDocument } from 'test-utils';
-import useActiveDocument from '../use-active-document';
+import { useActiveDocument } from '@elementor/documents';
 
-jest.mock( '../use-active-document', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+jest.mock( '@elementor/documents', () => ( {
+	useActiveDocument: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/v1-adapters', () => ( {
 	runCommand: jest.fn(),
 } ) );
 
-describe( '@elementor/documents - useDocumentPreviewProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
+describe( '@elementor/documents-ui - useDocumentPreviewProps', () => {
 	it( 'should open the document preview', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );
