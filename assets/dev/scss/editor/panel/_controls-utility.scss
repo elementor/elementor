@@ -46,6 +46,7 @@ $title-size: 12px;
 }
 
 .elementor-responsive-switcher {
+	all: unset;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -53,6 +54,7 @@ $title-size: 12px;
 	z-index: 2;
 	cursor: pointer;
 	height: 0;
+	width: 100%;
 	transform: scale(0);
 	opacity: 0;
 	transition: 0.15s;

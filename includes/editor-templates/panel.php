@@ -266,9 +266,10 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
-					<i class="{{ elementor.config.responsive.icons_map[ device ] }}"></i>
-				</a>
+				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
+					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
+					<span class="elementor-screen-only">{{ deviceLabel }}</span>
+				</button>
 			<# } );
 		#>
 		</div>

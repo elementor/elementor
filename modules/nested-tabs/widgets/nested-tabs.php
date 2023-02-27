@@ -849,9 +849,6 @@ class NestedTabs extends Widget_Nested_Base {
 					'step' => 0.1,
 				],
 			],
-			'default' => [
-				'unit' => 'px',
-			],
 			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-tabs-icon-size: {{SIZE}}{{UNIT}}',
@@ -871,9 +868,6 @@ class NestedTabs extends Widget_Nested_Base {
 					'max' => 50,
 					'step' => 0.1,
 				],
-			],
-			'default' => [
-				'unit' => 'px',
 			],
 			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
