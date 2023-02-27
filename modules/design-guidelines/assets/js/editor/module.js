@@ -1,3 +1,5 @@
+// require( '../lib/dialog' );
+
 class Module extends elementorModules.editor.utils.Module {
 	activeKitId = 0;
 
@@ -20,7 +22,7 @@ class Module extends elementorModules.editor.utils.Module {
 			// TODO 21/02/2023 : enqueue styles in iframe somehow.
 
 			this.initModal();
-			this.getModal().show().hide();
+			this.getModal().show();
 		} );
 
 		elementor.hooks.addAction( 'elementor/preview/style-guide/colors', this.showStyleguidePreview.bind( this ) );
@@ -38,7 +40,9 @@ class Module extends elementorModules.editor.utils.Module {
 			}
 
 			modal = elementorCommon.dialogsManager.createWidget( 'fillscreen', {
-				message: `<div class="elementor-${ this.activeKitId } e-design-guidelines-root" id="e-design-guidelines"></div>`,
+				id: 'e-design-guidelines',
+				className: 'e-hidden',
+				message: `<div class="elementor-${ this.activeKitId } e-design-guidelines-root"></div>`,
 				position: {
 					my: 'center center',
 					at: 'center center',
@@ -58,6 +62,7 @@ class Module extends elementorModules.editor.utils.Module {
 
 	showStyleguidePreview() {
 		elementor.changeEditMode( 'picker' );
+		this.getModal().classList.remove( 'e-hidden' );
 		this.getModal().show();
 	}
 
