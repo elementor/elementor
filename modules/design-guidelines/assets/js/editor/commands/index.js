@@ -1,1 +1,1 @@
-export { ToggleGlobalPicker } from './toggle-picker';
+export { default as ToggleGlobalPicker } from './toggle-picker';

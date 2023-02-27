@@ -1,7 +1,7 @@
 /**
  * Toggle the relevant global picker in the side panel.
  */
-export class ToggleGlobalPicker extends $e.modules.CommandBase {
+export default class ToggleGlobalPicker extends $e.modules.CommandBase {
 	/**
 	 * Validate the command arguments.
 	 *
