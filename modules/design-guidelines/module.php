@@ -90,15 +90,10 @@ class Module extends \Elementor\Core\Base\Module {
 		);
 
 		// todo : should do this?
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$settings = $kit->get_settings();
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		wp_localize_script( $handle, 'elementorDesignGuidelinesConfig', [
-			//			'ajaxUrl' => admin_url( 'admin-ajax.php' ), todo
-			//			'nonce' => wp_create_nonce( 'elementor_design_guidelines' ), todo
-			'customColors' => $settings['custom_colors'],
-			'systemColors' => $settings['system_colors'],
-			'customFonts' => $settings['custom_typography'],
+			'activeKitId' => $kit_id,
 		] );
 	}
 

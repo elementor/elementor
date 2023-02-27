@@ -20,16 +20,13 @@ class Module extends elementorModules.editor.utils.Module {
 			// TODO 21/02/2023 : enqueue styles in iframe somehow.
 
 			this.initModal();
+			this.getModal().show().hide();
 		} );
 
 		elementor.hooks.addAction( 'elementor/preview/style-guide/colors', this.showStyleguidePreview.bind( this ) );
 		elementor.hooks.addAction( 'elementor/preview/style-guide/typography', this.showStyleguidePreview.bind( this ) );
 
 		elementor.hooks.addAction( 'elementor/preview/style-guide/hide', this.hideStyleguidePreview.bind( this ) );
-
-		const helper = new EditorHelper();
-		$e.components.register( new ColorsComponent( helper, config ) );
-		$e.components.register( new FontsComponent( helper, config ) );
 	}
 
 	initModal() {
@@ -41,10 +38,7 @@ class Module extends elementorModules.editor.utils.Module {
 			}
 
 			modal = elementorCommon.dialogsManager.createWidget( 'fillscreen', {
-				className: `e-${ this.activeKitId } e-design-guidelines-root`,
-				id: 'e-design-guidelines',
-				headerMessage: __( 'Style Guide', 'elementor-pro' ),
-				message: __( 'Content has to be inserted here.', 'elementor-pro' ),
+				message: `<div class="elementor-${ this.activeKitId } e-design-guidelines-root" id="e-design-guidelines"></div>`,
 				position: {
 					my: 'center center',
 					at: 'center center',
@@ -63,10 +57,12 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	showStyleguidePreview() {
+		elementor.changeEditMode( 'picker' );
 		this.getModal().show();
 	}
 
 	hideStyleguidePreview() {
+		elementor.changeEditMode( 'edit' );
 		this.getModal().hide();
 	}
 }
