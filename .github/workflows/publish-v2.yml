@@ -113,7 +113,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release *v${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                          "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",
@@ -134,7 +134,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*v${{ env.RELEASE_NAME }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
+                          "text": "*${{ env.RELEASE_NAME }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
                         }
                       }
                     ]
