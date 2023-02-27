@@ -1,3 +1,4 @@
+import Component from './component';
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
 		const config = window[ 'elementorDesignGuidelinesConfig' ];
