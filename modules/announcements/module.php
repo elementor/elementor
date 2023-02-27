@@ -50,7 +50,7 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Get init settings to use in frontend
+	 * Get initialization settings to use in frontend
 	 * @return array[]
 	 */
 	protected function get_init_settings(): array {
@@ -142,10 +142,9 @@ class Module extends BaseApp {
 	private function get_active_announcements(): array {
 		$active_announcements = [];
 		foreach ( $this->get_announcements() as $announcement ) {
-			if ( ! $announcement->is_active() ) {
-				continue;
+			if ( $announcement->is_active() ) {
+				$active_announcements[] = $announcement;
 			}
-			$active_announcements[] = $announcement;
 		}
 
 		return $active_announcements;

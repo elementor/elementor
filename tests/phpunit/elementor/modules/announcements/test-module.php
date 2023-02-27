@@ -83,10 +83,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		do_action( 'elementor/editor/after_enqueue_scripts' );
 
 		// Assert
-		$announcement_script = array_search( 'announcements-app', wp_scripts()->queue );
+		$announcement_script = array_search( 'elementor-announcements-app', wp_scripts()->queue );
 		$this->assertTrue( $announcement_script >= 0 );
 
-		$announcement_style = array_search( 'announcements-app', wp_styles()->queue );
+		$announcement_style = array_search( 'elementor-announcements-app', wp_styles()->queue );
 		$this->assertTrue( $announcement_style >= 0 );
 	}
 

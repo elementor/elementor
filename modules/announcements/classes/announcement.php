@@ -57,10 +57,9 @@ class Announcement {
 
 	public function after_triggered() {
 		foreach ( $this->get_triggers() as $trigger ) {
-			if ( ! $trigger->is_active() ) {
-				continue;
+			if ( $trigger->is_active() ) {
+				$trigger->after_triggered();
 			}
-			$trigger->after_triggered();
 		}
 	}
 
