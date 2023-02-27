@@ -89,11 +89,13 @@ class Module extends BaseModule {
 		}
 
 		( new Usage() )->register();
-
-		$this->revert = new Revert();
 	}
 
 	public function get_init_settings() {
+		if ( ! Plugin::$instance->app->is_current() ) {
+			return [];
+		}
+
 		return $this->get_config_data();
 	}
 
@@ -155,6 +157,7 @@ class Module extends BaseModule {
 			],
 		];
 
+		$this->revert = new Revert();
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
 
@@ -205,9 +208,8 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $should_show_revert_section ) {
-
 				$link_attributes = [
-					'href' => $this->get_revert_href(),
+					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];
@@ -227,29 +229,6 @@ class Module extends BaseModule {
 			<?php } ?>
 		</div>
 		<?php
-	}
-
-	private function get_revert_href(): string {
-		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
-		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
-		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
-	}
-
-	/**
-	 * Checks if referred by a kit and adds the referrer ID to the href
-	 *
-	 * @param string $href
-	 *
-	 * @return string
-	 */
-	private function maybe_add_referrer_param( string $href ): string {
-		$param_name = 'referrer_kit';
-
-		if ( empty( $_GET[ $param_name ] ) ) {
-			return $href;
-		}
-
-		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
 	}
 
 	/**
@@ -649,9 +628,7 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
-			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
-			'lastImportedSession' => $this->revert->get_last_import_session(),
 		];
 	}
 
