@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementBody( { announcement } ) {
-	const { title, description, media } = announcement;
+export default function AnnouncementBody( props ) {
+	const { title, description, media } = props.announcement;
 
 	return (
 		<div className="announcement-body-container">
