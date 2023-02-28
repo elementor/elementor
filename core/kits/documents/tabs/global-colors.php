@@ -3,6 +3,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
+use Elementor\Core\Kits\Controls\Switcher as Global_Style_Switcher;
 use Elementor\Repeater;
 use Elementor\Modules\DesignGuidelines\Module as DesignGuidelinesModule;
 
@@ -58,14 +59,14 @@ class Global_Colors extends Tab_Base {
 			'colors_enable_style_guide_preview',
 			[
 				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
+				'type' => Global_Style_Switcher::CONTROL_TYPE,
 				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors.', 'elementor' ),
 				'separator' => 'after',
 				'label_off' => esc_html__( 'Off', 'elementor-pro' ),
 				'label_on' => esc_html__( 'On', 'elementor-pro' ),
 				'default' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
 				'value' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'event' => 'elementorPreferences:styleGuidePreview:toggle',
+				'on_change_hook' => 'elementor/preview/style-guide/enable',
 			]
 		);
 

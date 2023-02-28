@@ -1,69 +1,25 @@
 import Switcher from '../../../../assets/dev/js/editor/controls/switcher';
+import ControlBaseDataView from 'elementor-controls/base-data';
 
 export default class extends Switcher {
-	ui() {
-		const ui = super.ui();
+	initialize() {
+		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
-		// ui.sortButton = '.elementor-repeater-tool-sort';
-		debugger;
-
-		return ui;
+		this.$el.addClass( 'elementor-control-type-switcher' );
 	}
 
-	getTemplate() {
-		return '#tmpl-elementor-global-style-repeater-row';
-	}
+	onBaseInputChange( event ) {
+		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
 
-	events() {
-		return {
-			'click @ui.removeButton': 'onRemoveButtonClick',
-		};
-	}
+		var input = event.currentTarget,
+			value = this.getInputValue( input );
 
-	updateColorValue() {
-		this.$colorValue.text( this.model.get( 'color' ) );
-	}
-
-	getDisabledRemoveButtons() {
-		if ( ! this.ui.disabledRemoveButtons ) {
-			this.ui.disabledRemoveButtons = this.$el.find( '.elementor-repeater-tool-remove--disabled' );
+		if ( this.model.get( 'on_change_hook' ) ) {
+			this.setHook( value );
 		}
-
-		return this.ui.disabledRemoveButtons;
 	}
 
-	getRemoveButton() {
-		return this.ui.removeButton.add( this.getDisabledRemoveButtons() );
-	}
-
-	triggers() {
-		return {};
-	}
-
-	onRemoveButtonClick() {
-		const globalType = this.ui.removeButton.data( 'e-global-type' ),
-			globalTypeTranslatedCapitalized = 'font' === globalType ? __( 'Font', 'elementor' ) : __( 'Color', 'elementor' ),
-			globalTypeTranslatedLowercase = 'font' === globalType ? __( 'font', 'elementor' ) : __( 'color', 'elementor' ),
-			/* Translators: 1: Font/Color, 2: typography/color. */
-			translatedMessage = sprintf( __( 'You\'re about to delete a Global %1$s. Note that if it\'s being used anywhere on your site, it will inherit a default %1$s.', 'elementor' ), globalTypeTranslatedCapitalized, globalTypeTranslatedLowercase );
-
-		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
-			className: 'e-global__confirm-delete',
-			/* Translators: %s: Font/Color. */
-			headerMessage: sprintf( __( 'Delete Global %s', 'elementor' ), globalTypeTranslatedCapitalized ),
-			message: '<i class="eicon-info-circle"></i> ' + translatedMessage,
-			strings: {
-				confirm: __( 'Delete', 'elementor' ),
-				cancel: __( 'Cancel', 'elementor' ),
-			},
-			hide: {
-				onBackgroundClick: false,
-			},
-			onConfirm: () => {
-				this.trigger( 'click:remove' );
-			},
-		} );
-
-		this.confirmDeleteModal.show();
+	setHook( value ) {
+		elementor.hooks.doAction( this.model.get( 'on_change_hook' ), { value } );
 	}
 }

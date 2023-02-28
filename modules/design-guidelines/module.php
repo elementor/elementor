@@ -36,14 +36,6 @@ class Module extends \Elementor\Core\Base\Module {
 //		new Design_Guidelines_Post();
 	}
 
-	public function get_script_url( $filename ) {
-		return $this->get_js_assets_url( $filename );
-	}
-
-	public function get_style_url() {
-		return $this->get_css_assets_url( 'modules/design-guidelines/module' );
-	}
-
 	/**
 	 * Retrieve the module name.
 	 *

@@ -1,6 +1,7 @@
 import * as hooks from './hooks';
 import * as commands from './commands/';
 import Repeater from './repeater';
+import Switcher from './switcher';
 
 export default class extends $e.modules.ComponentBase {
 	pages = {};
@@ -17,6 +18,7 @@ export default class extends $e.modules.ComponentBase {
 		elementor.hooks.addFilter( 'panel/header/behaviors', args.manager.addHeaderBehavior );
 
 		elementor.addControlView( 'global-style-repeater', Repeater );
+		elementor.addControlView( 'global-style-switcher', Switcher );
 	}
 
 	getNamespace() {

@@ -4,10 +4,9 @@ class Module extends elementorModules.editor.utils.Module {
 	activeKitId = 0;
 
 	onInit() {
-		const isStyleguidePreviewEnabled = elementor.getPreferences( 'enable_style_guide_preview' );
 		const config = window.elementorDesignGuidelinesConfig;
 
-		if ( ! config || ! isStyleguidePreviewEnabled ) {
+		if ( ! config ) {
 			return;
 		}
 
@@ -28,6 +27,8 @@ class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addAction( 'elementor/preview/style-guide/typography', this.showStyleguidePreview.bind( this ) );
 
 		elementor.hooks.addAction( 'elementor/preview/style-guide/hide', this.hideStyleguidePreview.bind( this ) );
+
+		elementor.hooks.addAction( 'elementor/preview/style-guide/enable', this.enableStyleguidePreview.bind( this ) );
 	}
 
 	initModal() {
@@ -59,15 +60,35 @@ class Module extends elementorModules.editor.utils.Module {
 		};
 	}
 
-	showStyleguidePreview() {
-		elementor.changeEditMode( 'picker' );
+	showStyleguidePreview( skipPreferencesCheck = false ) {
+		if ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_style_guide_preview' ) ) {
+			return;
+		}
+
 		this.getModal().getElements( 'widget' ).removeClass( 'e-hidden' );
 		this.getModal().show();
 	}
 
 	hideStyleguidePreview() {
-		elementor.changeEditMode( 'edit' );
 		this.getModal().hide();
+	}
+
+	enableStyleguidePreview( options ) {
+		if ( options.value ) {
+			this.showStyleguidePreview( true );
+		} else {
+			this.hideStyleguidePreview();
+		}
+
+		$e.run( 'document/elements/settings', {
+			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
+			settings: {
+				enable_style_guide_preview: options.value,
+			},
+			options: {
+				external: true,
+			},
+		} );
 	}
 }
 
