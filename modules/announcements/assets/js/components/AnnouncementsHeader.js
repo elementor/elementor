@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementsHeader( { onClose } ) {
+export default function AnnouncementsHeader( props ) {
+	const { onClose } = props;
+
 	return (
 		<div className="announcements-heading-container">
 			<i className="eicon-elementor" aria-hidden="true" />

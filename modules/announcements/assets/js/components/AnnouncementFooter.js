@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementFooter( { buttons, onClose } ) {
+export default function AnnouncementFooter( props ) {
+	const { buttons, onClose } = props;
+
 	return (
 		<div className="announcement-footer-container">
 			{ Object.values( buttons ).map( ( button, index ) => {
@@ -20,6 +22,9 @@ export default function AnnouncementFooter( { buttons, onClose } ) {
 }
 
 AnnouncementFooter.propTypes = {
-	buttons: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
+	buttons: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+	] ),
 	onClose: PropTypes.func.isRequired,
 };

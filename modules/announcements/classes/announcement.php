@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Announcement {
+
 	/**
 	 * @var array
 	 */

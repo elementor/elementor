@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class IsFlexContainerInactive extends Trigger_Base {
 
+	const USER_META_KEY = 'announcements_user_counter';
 	/**
 	 * @var string
 	 */
 	protected $name = 'is-flex-container-inactive';
-	const USER_META_KEY = 'announcements_user_counter';
 
 	/**
 	 * @return int

@@ -27,7 +27,7 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Render wrapper for the app to load
+	 * Render wrapper for the app to load.
 	 */
 	private function render_app_wrapper() {
 		?>
@@ -36,7 +36,7 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Enqueue app scripts
+	 * Enqueue app scripts.
 	 */
 	private function enqueue_scripts() {
 		wp_enqueue_script(
@@ -51,7 +51,8 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Get initialization settings to use in frontend
+	 * Get initialization settings to use in frontend.
+	 *
 	 * @return array[]
 	 */
 	protected function get_init_settings(): array {
@@ -82,7 +83,8 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Retrieve all announcement in raw format ( array )
+	 * Retrieve all announcement in raw format ( array ).
+	 *
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
@@ -117,7 +119,8 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Retrieve all announcement objects
+	 * Retrieve all announcement objects.
+	 *
 	 * @return array
 	 */
 	private function get_announcements(): array {
@@ -130,7 +133,8 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Retrieve all active announcement objects
+	 * Retrieve all active announcement objects.
+	 *
 	 * @return array
 	 */
 	private function get_active_announcements(): array {
@@ -144,9 +148,6 @@ class Module extends BaseApp {
 		return $active_announcements;
 	}
 
-	/**
-	 * Module constructor.
-	 */
 	public function __construct() {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;

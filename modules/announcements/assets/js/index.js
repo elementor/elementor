@@ -3,25 +3,25 @@ import AnnouncementCommands from './e-component';
 
 export default class AnnouncementIndex {
 	constructor() {
-		this.container = document.getElementById( 'e-announcements-root' );
-		if ( window.elementorAnnouncementsConfig.announcements && this.container ) {
-			this.showAnnouncement = true;
-			$e.components.register( new AnnouncementCommands() );
-		}
+		this.initAnnouncement();
 	}
 
-	initAnnouncement() {
-		if ( this.showAnnouncement ) {
-			ReactDOM.render(
-				<>
-					<Overlay />
-					<Announcements announcements={ window.elementorAnnouncementsConfig.announcements } />
-				</>,
-				this.container,
-			);
+	async initAnnouncement() {
+		const container = document.getElementById( 'e-announcements-root' );
+		const announcements = window.elementorAnnouncementsConfig?.announcements;
+		if ( ! announcements || ! container ) {
+			return;
 		}
+		await $e.components.register( new AnnouncementCommands() );
+
+		ReactDOM.render(
+			<>
+				<Overlay />
+				<Announcements announcements={ announcements } />
+			</>,
+			container,
+		);
 	}
 }
 
-const announcementIndex = new AnnouncementIndex();
-announcementIndex.initAnnouncement();
+new AnnouncementIndex();

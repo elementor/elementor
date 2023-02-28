@@ -79,11 +79,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_construct_assets() {
 		// Act
-		$this->module->__construct();
 		do_action( 'elementor/editor/after_enqueue_scripts' );
+		$announcement_script = array_search( 'elementor-announcements-app', wp_scripts()->queue );
 
 		// Assert
-		$announcement_script = array_search( 'elementor-announcements-app', wp_scripts()->queue );
 		$this->assertTrue( $announcement_script >= 0 );
 
 		$announcement_style = array_search( 'elementor-announcements-app', wp_styles()->queue );
@@ -92,8 +91,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_construct_render() {
 		// Act
-		$this->module->__construct();
-
 		ob_start();
 		do_action( 'elementor/editor/footer' );
 		$result = ob_get_clean();

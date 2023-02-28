@@ -3,7 +3,8 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 
-export default function Announcements( { announcements } ) {
+export default function Announcements( props ) {
+	const { announcements } = props;
 	const announcementTitle = Object.values( announcements )[ 0 ].title;
 
 	// Send event when the popup is presented
