@@ -107,6 +107,6 @@ class Module extends \Elementor\Core\Base\Module {
 	public static function is_styleguide_preview_enabled() : bool {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
 
-		return $editor_preferences->get_settings( 'enable_style_guide_preview' );
+		return $editor_preferences->get_settings( 'enable_styleguide_preview' );
 	}
 }

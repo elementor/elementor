@@ -23,12 +23,12 @@ class Module extends elementorModules.editor.utils.Module {
 			this.getModal().show();
 		} );
 
-		elementor.hooks.addAction( 'elementor/preview/style-guide/colors', this.showStyleguidePreview.bind( this ) );
-		elementor.hooks.addAction( 'elementor/preview/style-guide/typography', this.showStyleguidePreview.bind( this ) );
+		elementor.hooks.addAction( 'elementor/preview/styleguide/colors', this.showStyleguidePreview.bind( this ) );
+		elementor.hooks.addAction( 'elementor/preview/styleguide/typography', this.showStyleguidePreview.bind( this ) );
 
-		elementor.hooks.addAction( 'elementor/preview/style-guide/hide', this.hideStyleguidePreview.bind( this ) );
+		elementor.hooks.addAction( 'elementor/preview/styleguide/hide', this.hideStyleguidePreview.bind( this ) );
 
-		elementor.hooks.addAction( 'elementor/preview/style-guide/enable', this.enableStyleguidePreview.bind( this ) );
+		elementor.hooks.addAction( 'elementor/preview/styleguide/enable', this.enableStyleguidePreview.bind( this ) );
 	}
 
 	initModal() {
@@ -67,7 +67,7 @@ class Module extends elementorModules.editor.utils.Module {
 	 * @param {boolean} skipPreferencesCheck
 	 */
 	showStyleguidePreview( skipPreferencesCheck = false ) {
-		if ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_style_guide_preview' ) ) {
+		if ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_styleguide_preview' ) ) {
 			return;
 		}
 
@@ -98,7 +98,7 @@ class Module extends elementorModules.editor.utils.Module {
 		$e.run( 'document/elements/settings', {
 			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 			settings: {
-				enable_style_guide_preview: options.value,
+				enable_styleguide_preview: options.value,
 			},
 			options: {
 				external: true,

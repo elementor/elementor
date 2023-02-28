@@ -5,7 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Core\Kits\Controls\Switcher as Global_Style_Switcher;
 use Elementor\Repeater;
-use Elementor\Modules\DesignGuidelines\Module as DesignGuidelinesModule;
+use Elementor\Modules\Styleguide\Module as Styleguide;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -39,11 +39,11 @@ class Global_Colors extends Tab_Base {
 	}
 
 	public function get_action_show() {
-		return 'elementor/preview/style-guide/colors';
+		return 'elementor/preview/styleguide/colors';
 	}
 
 	public function get_action_hide() {
-		return 'elementor/preview/style-guide/hide';
+		return 'elementor/preview/styleguide/hide';
 	}
 
 	protected function register_tab_controls() {
@@ -56,7 +56,7 @@ class Global_Colors extends Tab_Base {
 		);
 
 		$this->add_control(
-			'colors_enable_style_guide_preview',
+			'colors_enable_styleguide_preview',
 			[
 				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
 				'type' => Global_Style_Switcher::CONTROL_TYPE,
@@ -64,9 +64,9 @@ class Global_Colors extends Tab_Base {
 				'separator' => 'after',
 				'label_off' => esc_html__( 'Off', 'elementor' ),
 				'label_on' => esc_html__( 'On', 'elementor' ),
-				'default' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'value' => DesignGuidelinesModule::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'on_change_hook' => 'elementor/preview/style-guide/enable',
+				'default' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'value' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'on_change_hook' => 'elementor/preview/styleguide/enable',
 			]
 		);
 

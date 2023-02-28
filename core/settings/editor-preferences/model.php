@@ -154,7 +154,7 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'enable_style_guide_preview',
+			'enable_styleguide_preview',
 			[
 				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
