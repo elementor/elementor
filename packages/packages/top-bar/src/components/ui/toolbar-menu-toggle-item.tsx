@@ -7,16 +7,7 @@ type Props = Omit<ToggleButtonProps, 'onChange'> & {
 
 export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Props ) {
 	return (
-		<Tooltip
-			title={ title }
-			PopperProps={ {
-				sx: {
-					'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
-						mt: 6,
-					},
-				},
-			} }
-		>
+		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
 			<Box component="span" aria-label={ undefined }>
 				<ToggleButton { ...props } onChange={ onClick } aria-label={ title } size="small" />
