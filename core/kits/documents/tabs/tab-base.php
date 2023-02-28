@@ -37,10 +37,20 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		return '';
 	}
 
+	/**
+	 * Action to run upon showing the tab.
+	 *
+	 * @return string
+	 */
 	public function get_action_show() {
 		return '';
 	}
 
+	/**
+	 * Action to run upon hiding the tab.
+	 * 
+	 * @return string
+	 */
 	public function get_action_hide() {
 		return '';
 	}

@@ -60,6 +60,12 @@ class Module extends elementorModules.editor.utils.Module {
 		};
 	}
 
+	/**
+	 * Show the Style Guide Preview.
+	 * If skipPreferences is true, it will not check the User Preferences before showing the dialog.
+	 *
+	 * @param {boolean} skipPreferencesCheck
+	 */
 	showStyleguidePreview( skipPreferencesCheck = false ) {
 		if ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_style_guide_preview' ) ) {
 			return;
@@ -69,10 +75,19 @@ class Module extends elementorModules.editor.utils.Module {
 		this.getModal().show();
 	}
 
+	/**
+	 * Hide the Style Guide Preview.
+	 */
 	hideStyleguidePreview() {
 		this.getModal().hide();
 	}
 
+	/**
+	 * Update the User Preferences to enable/disable the Style Guide Preview.
+	 * Triggered on switcher change at Global Colors / Global Typography panels.
+	 *
+	 * @param {Array} options
+	 */
 	enableStyleguidePreview( options ) {
 		if ( options.value ) {
 			this.showStyleguidePreview( true );
