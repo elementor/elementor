@@ -8,12 +8,16 @@ export default function Announcements( { announcements } ) {
 
 	// Send event when the popup is presented
 	useEffect( () => {
-		const eventArgs = {
-			event_name: 'element_impression',
-			element_type: 'popup',
-			eventNonInteraction: 1,
-		};
-		eventTrackingHandle( 'impression', eventArgs );
+		const timer = setTimeout( () => {
+			const eventArgs = {
+				event_name: 'element_impression',
+				element_type: 'popup',
+				eventNonInteraction: 1,
+			};
+			eventTrackingHandle( 'impression', eventArgs );
+		}, 200 );
+
+		return () => clearTimeout( timer );
 	}, [] );
 
 	const onCloseHandle = ( eventName ) => {
@@ -27,7 +31,6 @@ export default function Announcements( { announcements } ) {
 
 	const eventTrackingHandle = ( eventName, additionalArgs ) => {
 		const eventBaseArgs = {
-			page_source: 'popup',
 			event: 'fireEvent',
 			eventCategory: 'editor',
 			eventAction: 'whats new popup',

@@ -1,20 +1,18 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementBody( { announcement } ) {
-	const { title, description, media } = announcement;
+export default function AnnouncementBody( props ) {
+	const { title, description, media } = props.announcement;
 
 	return (
 		<div className="announcement-body-container">
+			{ 'image' === media.type && (
 			<div className={ `announcement-body-media announcement-body-${ media.type }` }>
-				{ 'image' === media.type && (
-					<img src={ media.src } alt="Announcement" />
-				) }
+				<img src={ media.src } alt="Announcement" />
 			</div>
-			<div className="announcement-body-title">
-				{ title }
-			</div>
-			<div className="announcement-body-description">
-				{ description }
+			) }
+			<div className="announcement-body-content">
+				<div className="announcement-body-title">{ title }</div>
+				<div className="announcement-body-description" dangerouslySetInnerHTML={ { __html: description } }></div>
 			</div>
 		</div>
 	);
@@ -22,7 +20,4 @@ export default function AnnouncementBody( { announcement } ) {
 
 AnnouncementBody.propTypes = {
 	announcement: PropTypes.object.isRequired,
-	title: PropTypes.string,
-	description: PropTypes.string,
-	media: PropTypes.object,
 };

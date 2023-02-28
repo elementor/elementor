@@ -1,4 +1,5 @@
 @import "assets/dev/scss/helpers/variables.scss";
+@import "app/assets/styles/tokens/_font.scss";
 
 $base-color: #0C0D0E;
 $button-base-color: #524CFF;
@@ -16,12 +17,12 @@ $description-color: #515962;
 	justify-content: center;
 	color: $platform-darker-gray;
 	font-family: $admin-font-family;
-	z-index: 999;
+	z-index: $element-overlay;
 
 	.announcements-container {
 		width: 637px;
 		background-color: $white;
-		z-index: 9999;
+		z-index: $element-overlay;
 
 		.announcements-heading-container {
 			display: flex;
@@ -37,13 +38,13 @@ $description-color: #515962;
 			}
 
 			.heading-title {
-				margin-left: 12px;
+				margin-inline-start: 12px;
 				text-transform: uppercase;
 				font-size: 13px;
 			}
 
 			.close-button {
-				margin-left: auto;
+				margin-inline-start: auto;
 				background: none;
 				color: inherit;
 				border: none;
@@ -55,26 +56,28 @@ $description-color: #515962;
 		}
 
 		.announcement-body-container {
-			padding: 32px;
-
 			.announcement-body-media img {
-				width: 573px;
-				height: 322px;
+				width: 100%;
+				max-height: 360px;
 				object-fit: contain;
 			}
 
-			.announcement-body-title {
-				font-size: 18px;
-				font-weight: 700;
-				color: $base-color;
-				padding: 20px 0 12px;
-			}
+			.announcement-body-content{
+				padding: 32px;
 
-			.announcement-body-description {
-				font-size: 16px;
-				line-height: 24px;
-				font-weight: 400;
-				color: $description-color;
+				.announcement-body-title {
+					font-size: 18px;
+					font-weight: $eps-font-weight-bold;
+					color: $base-color;
+					padding: 20px 0 12px;
+				}
+
+				.announcement-body-description {
+					font-size: 16px;
+					line-height: 24px;
+					font-weight: $eps-font-weight-normal;
+					color: $description-color;
+				}
 			}
 		}
 
@@ -84,11 +87,11 @@ $description-color: #515962;
 			padding: 12px 32px 32px;
 
 			.button-item {
-				margin-left: 12px;
+				margin-inline-start: 12px;
 				padding: 12px;
 				color: $button-base-color;
 				font-size: 18px;
-				font-weight: 500;
+				font-weight: $eps-font-weight-medium;
 				border-radius: 3px;
 				padding: 12px 16px;
 				text-decoration: none;
