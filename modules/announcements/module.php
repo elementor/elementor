@@ -4,6 +4,7 @@ namespace Elementor\Modules\Announcements;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Modules\Announcements\Classes\Announcement;
+use Elementor\Settings as ElementorSettings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -85,32 +86,25 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		//@TODO - Change to real data
 		return [
 			[
-				'title' => 'Title of the announcement',
-				'description' => 'Description of the announcement, of the announcement of the announcement, of the announcement of the announcement.',
+				'title' => 'Activate Containers for Brilliant Layouts',
+				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
 				'media' => [
 					'type' => 'image',
-					'src' => 'https://dalicanvas.co.il/wp-content/uploads/2020/02/אריה-צבעוני-1200x839.jpg',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
 				],
 				'cta' => [
 					[
-						'label' => 'Main CTA',
+						'label' => 'Activate Containers',
 						'variant' => 'primary',
 						'target' => '_blank',
-						'url' => 'https://google.co.il',
+						'url' => ElementorSettings::get_url() . '#tab-experiments',
 					],
 					[
-						'label' => 'Secondary now',
-						'variant' => 'secondary',
+						'label' => 'Try It First',
 						'target' => '_blank',
-						'url' => 'https://walla.co.il',
-					],
-					[
-						'label' => 'Learn more',
-						'target' => '_blank',
-						'url' => 'https://ynet.co.il',
+						'url' => 'https://playground.elementor.com/demo/flexbox/#',
 					],
 				],
 				'triggers' => [
