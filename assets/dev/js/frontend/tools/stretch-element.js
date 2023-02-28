@@ -72,7 +72,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		let width = containerWidth;
 
 		if ( settings.margin ) {
-			width = width - ( settings.margin * 2 );
+			width -= settings.margin * 2;
 		}
 
 		css.width = width + 'px';
