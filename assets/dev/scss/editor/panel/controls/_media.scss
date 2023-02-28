@@ -36,7 +36,7 @@
 
 	&__preview {
 		height: 100%;
-		padding-bottom: 42.8571%; // BC: Fix for Safari 13 and other browsers that don't support aspect-ratio
+		padding-bottom: 42.8571%; // BC: Fix for older browsers that don't support "aspect-ratio: 21 / 9;"
 		background-size: cover;
 		background-position: center;
 	}
