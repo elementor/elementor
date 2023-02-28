@@ -16,7 +16,7 @@ class Switcher extends Control_Switcher {
 	 *
 	 * Retrieve the control type, in this case `global-style-switcher`.
 	 *
-	 * @since 3.12.0
+	 * @since 3.13.0
 	 * @access public
 	 *
 	 * @return string Control type.
