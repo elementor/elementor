@@ -18,7 +18,7 @@ function registerTopBarMenuItems() {
 
 	registerLink( 'utilities', {
 		name: 'open-help-center',
-		priority: 20,
+		priority: 20, // After Finder.
 		useProps: () => {
 			const { urls } = useSettings();
 

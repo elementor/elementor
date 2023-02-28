@@ -1,4 +1,4 @@
-import KitDialog from './kit-dialog';
+import ApplyKitDialog from './apply-kit-dialog';
 import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
@@ -155,9 +155,10 @@ export default function ItemHeader( props ) {
 				)
 			}
 			{
-				downloadLinkData && <KitDialog
+				downloadLinkData && <ApplyKitDialog
 					id={ props.model.id }
-					downloadLinkData={ downloadLinkData }
+					downloadLink={ downloadLinkData.data.download_link }
+					nonce={ downloadLinkData.meta.nonce }
 					onClose={ () => setDownloadLinkData( null ) }
 				/>
 			}
