@@ -94,6 +94,10 @@ class Module extends BaseModule {
 	}
 
 	public function get_init_settings() {
+		if ( ! Plugin::$instance->app->is_current() ) {
+			return [];
+		}
+
 		return $this->get_config_data();
 	}
 
@@ -475,6 +479,15 @@ class Module extends BaseModule {
 			[ 'elementor-common' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			'elementor-import-export-admin',
+			'elementorImportExport',
+			[
+				'lastImportedSession' => $this->revert->get_last_import_session(),
+				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			]
 		);
 	}
 
