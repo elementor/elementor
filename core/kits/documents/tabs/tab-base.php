@@ -48,7 +48,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 
 	/**
 	 * Action to run upon hiding the tab.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_action_hide() {

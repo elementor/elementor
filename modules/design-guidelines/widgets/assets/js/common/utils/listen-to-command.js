@@ -1,4 +1,4 @@
-import debounce from "./debounce";
+import debounce from './debounce';
 
 const listenToCommand = ( command, handler, shouldDebounce = true ) => {
 	if ( ! window.top ) {
@@ -11,7 +11,8 @@ const listenToCommand = ( command, handler, shouldDebounce = true ) => {
 		if ( event.detail.command !== command ) {
 			return;
 		}
-		preparedHandler( event.detail.args);
+
+		preparedHandler( event.detail.args );
 	} );
 };
 
