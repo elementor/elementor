@@ -36,6 +36,7 @@
 
 	&__preview {
 		height: 100%;
+		min-height: 100px; // Fix for Safari 13 and other browsers that don't support aspect-ratio
 		background-size: cover;
 		background-position: center;
 	}
