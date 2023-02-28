@@ -17,8 +17,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	stretch() {
-		var settings = this.getSettings(),
-			$container;
+		const settings = this.getSettings();
+
+		let $container;
 
 		try {
 			$container = jQuery( settings.selectors.container );
