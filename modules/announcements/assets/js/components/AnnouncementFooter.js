@@ -12,7 +12,7 @@ export default function AnnouncementFooter( props ) {
 						className={ `button-item ${ button.variant }` }
 						href={ button.url }
 						target={ button.target }
-						onClick={ () => onClose( 'cta' ) } >
+						onClick={ onClose( 'cta' ) } >
 						{ button.label }
 					</a>
 				);
@@ -22,9 +22,11 @@ export default function AnnouncementFooter( props ) {
 }
 
 AnnouncementFooter.propTypes = {
-	buttons: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.object,
-	] ),
+	buttons: PropTypes.shape( {
+		label: PropTypes.string.isRequired,
+		variant: PropTypes.string,
+		target: PropTypes.string,
+		url: PropTypes.string.isRequired,
+	} ).isRequired,
 	onClose: PropTypes.func.isRequired,
 };

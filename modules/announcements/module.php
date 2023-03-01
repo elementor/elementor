@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Announcements;
 
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Modules\Announcements\Classes\Announcement;
 use Elementor\Settings as ElementorSettings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -152,6 +151,7 @@ class Module extends BaseApp {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;
 		}
+
 		parent::__construct();
 
 		add_action( 'elementor/editor/footer', function () {

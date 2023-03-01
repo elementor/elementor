@@ -19,5 +19,12 @@ export default function AnnouncementBody( props ) {
 }
 
 AnnouncementBody.propTypes = {
-	announcement: PropTypes.object.isRequired,
+	announcement: PropTypes.shape( {
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		media: PropTypes.shape( {
+			type: PropTypes.string.isRequired,
+			src: PropTypes.string.isRequired,
+		} ),
+	} ).isRequired,
 };

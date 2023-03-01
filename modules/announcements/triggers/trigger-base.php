@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Announcements\Classes;
+namespace Elementor\Modules\Announcements\Triggers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

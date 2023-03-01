@@ -29,7 +29,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	private $original_experiment_default_state;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
@@ -54,7 +54,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->module = new Module();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		Plugin::$instance->experiments->set_feature_default_state(
@@ -81,11 +81,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		// Act
 		do_action( 'elementor/editor/after_enqueue_scripts' );
 		$announcement_script = array_search( 'elementor-announcements-app', wp_scripts()->queue );
+		$announcement_style = array_search( 'elementor-announcements-app', wp_styles()->queue );
 
 		// Assert
 		$this->assertTrue( $announcement_script >= 0 );
-
-		$announcement_style = array_search( 'elementor-announcements-app', wp_styles()->queue );
 		$this->assertTrue( $announcement_style >= 0 );
 	}
 

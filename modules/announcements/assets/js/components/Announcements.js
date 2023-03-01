@@ -54,11 +54,16 @@ export default function Announcements( props ) {
 	return (
 		<div className="announcements-container">
 			<AnnouncementsHeader onClose={ onCloseHandle } />
-			{ Object.values( announcements ).map( ( announcement, index ) => <Announcement key={ `announcement${ index }` } announcement={ announcement } onClose={ onCloseHandle } /> ) }
+			{ Object.values( announcements ).map( ( announcement, index ) =>
+				<Announcement key={ `announcement${ index }` } announcement={ announcement } onClose={ onCloseHandle } />
+			) }
 		</div>
 	);
 }
 
 Announcements.propTypes = {
-	announcements: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ).isRequired,
+	announcements: PropTypes.oneOfType( [
+		PropTypes.array,
+		PropTypes.object,
+	] ).isRequired,
 };

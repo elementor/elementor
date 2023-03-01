@@ -1,6 +1,7 @@
 <?php
+namespace Elementor\Modules\Announcements;
 
-namespace Elementor\Modules\Announcements\Classes;
+use Elementor\Modules\Announcements\Utils\Triggers as Utils_Triggers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,6 +13,7 @@ class Announcement {
 	 * @var array
 	 */
 	protected $raw_data;
+
 	/**
 	 * @var array
 	 */
@@ -32,7 +34,7 @@ class Announcement {
 	protected function set_triggers() {
 		$triggers = $this->raw_data['triggers'] ?? [];
 		foreach ( $triggers as $trigger ) {
-			$this->triggers[] = Utils::get_trigger_object( $trigger );
+			$this->triggers[] = Utils_Triggers::get_trigger_object( $trigger );
 		}
 	}
 

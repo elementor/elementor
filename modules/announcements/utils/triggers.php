@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Announcements\Classes;
+namespace Elementor\Modules\Announcements\Utils;
 
 use Elementor\Modules\Announcements\Triggers\IsFlexContainerInactive;
 
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Utils {
+class Triggers {
 	/**
 	 * get_trigger_object
 	 *
