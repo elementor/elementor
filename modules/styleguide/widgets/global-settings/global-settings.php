@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\DesignGuidelines\Widgets\GlobalSettings;
+namespace Elementor\Modules\Styleguide\Widgets\GlobalSettings;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
