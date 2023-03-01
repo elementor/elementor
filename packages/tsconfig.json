@@ -3,7 +3,6 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
-		"types": ["react", "jest"],
 		"jsx": "react-jsx",
 		"moduleResolution": "Node",
 		"esModuleInterop": false,
@@ -25,6 +24,9 @@
 		/** Aliases for the packages */
 		"paths": {
 			"@elementor/*": ["./packages/*/src"],
+			"test-utils": ["./tests/test-utils"]
 		},
+
+		"typeRoots": ["./node_modules/@types"]
 	}
 }

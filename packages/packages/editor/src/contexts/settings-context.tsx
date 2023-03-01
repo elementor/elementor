@@ -3,6 +3,7 @@ import { createContext, PropsWithChildren, useContext } from 'react';
 export interface Settings {
 	urls: {
 		admin: string,
+		help: string,
 	},
 }
 

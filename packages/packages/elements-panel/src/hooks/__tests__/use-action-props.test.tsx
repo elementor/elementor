@@ -8,10 +8,6 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/elements-panel - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should open the elements panel on click', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
