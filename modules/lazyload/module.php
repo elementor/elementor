@@ -151,7 +151,7 @@ class Module extends BaseModule {
 
 		if ( $is_background_lazyload ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
-				if ( false === strpos( $selector, 'motion-effects-layer' ) && 0 === strpos( $css_property, 'background-image' ) ) {
+				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						// Support for background repeaters, control is without quotes.
