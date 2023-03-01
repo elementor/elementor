@@ -30,7 +30,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				event.preventDefault();
 			} )
 			.on( 'blur', () => {
-				_.defer( () => $inputArea.trigger( 'focus' ) );
+				_.defer( () => $inputArea.focus() );
 			} )
 			.on( 'paste', async ( event ) => {
 				event.preventDefault();
