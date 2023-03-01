@@ -5,16 +5,13 @@ inputs:
   PACKAGE_VERSION:
     required: true
     description: 'The version to inject into the plugin package.json file.'
+  UPDATE_VERSIONS_SCRIPT_PATH:
+    required: false
+    default: ""
+    description: 'The path to the script that updates the versions in the plugin PHP files.'
   BUILD_SCRIPT_PATH:
     required: true
     description: 'The full path of the script to build the plugin.'
-  UPDATE_VERSION:
-    required: false
-    description: 'Whether to create a new version or not. If true, provide a new version path UPDATE_VERSION_SCRIPT_PATH'
-    default: 'false'
-  UPDATE_VERSION_SCRIPT_PATH:
-    required: false
-    description: 'The path to the script that updates the version in the plugin PHP files.'
 
 runs:
   using: "composite"
@@ -27,12 +24,13 @@ runs:
                 exit 1
             fi
 
-            if [ -f "${{ inputs.UPDATE_VERSION }}" ] && [ "${{ inputs.UPDATE_VERSION }}" == "true" ];
+            # TODO - Remove this when publish-cloud is removed.
+            if [ "${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}" != "" ];
               then
-               bash ${{ inputs.UPDATE_VERSION_SCRIPT_PATH }}
+                echo "Running update version script"
+                bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
             fi
-
-            bash ${{ inputs.BUILD_SCRIPT_PATH }}
             
+            bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}

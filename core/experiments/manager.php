@@ -50,6 +50,7 @@ class Manager extends Base_Object {
 	 *     @type string $name
 	 *     @type string $title
 	 *     @type string $tag
+	 *     @type array $tags
 	 *     @type string $description
 	 *     @type string $release_status
 	 *     @type string $default
@@ -65,7 +66,8 @@ class Manager extends Base_Object {
 		}
 
 		$default_experimental_data = [
-			'tag' => '',
+			'tag' => '', // Deprecated, use 'tags' instead.
+			'tags' => [],
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
@@ -80,9 +82,11 @@ class Manager extends Base_Object {
 			'generator_tag' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
+
+		$experimental_data = $this->unify_feature_tags( $experimental_data );
 
 		$new_site = $experimental_data['new_site'];
 
@@ -147,6 +151,74 @@ class Manager extends Base_Object {
 		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
 
 		return $experimental_data;
+	}
+
+	/**
+	 * Combine 'tag' and 'tags' into one property.
+	 *
+	 * @param array $experimental_data
+	 *
+	 * @return array
+	 */
+	private function unify_feature_tags( array $experimental_data ) : array {
+		foreach ( [ 'tag', 'tags' ] as $key ) {
+			if ( empty( $experimental_data[ $key ] ) ) {
+				continue;
+			}
+
+			$experimental_data[ $key ] = $this->format_feature_tags( $experimental_data[ $key ] );
+		}
+
+		if ( is_array( $experimental_data['tag'] ) ) {
+			$experimental_data['tags'] = array_merge( $experimental_data['tag'], $experimental_data['tags'] );
+		}
+
+		return $experimental_data;
+	}
+
+	/**
+	 * Format feature tags into the right format.
+	 *
+	 * @param string|array[
+	 *    [
+	 *       'type' => string,
+	 *       'label' => string
+	 *    ]
+	 * ] $tag
+	 *
+	 * @return array
+	 */
+	private function format_feature_tags( $tags ) : array {
+		if ( ! is_string( $tags ) && ! is_array( $tags ) ) {
+			return [];
+		}
+
+		$default_tag = [
+			'type' => 'default',
+			'label' => '',
+		];
+
+		$allowed_tag_properties = [ 'type', 'label' ];
+
+		// If $tags is string, explode by commas and convert to array.
+		if ( is_string( $tags ) ) {
+			$tags = array_filter( explode( ',', $tags ) );
+
+			foreach ( $tags as $i => $tag ) {
+				$tags[ $i ] = [ 'label' => trim( $tag ) ];
+			}
+		}
+
+		foreach ( $tags as $i => $tag ) {
+			if ( empty( $tag['label'] ) ) {
+				unset( $tags[ $i ] );
+				continue;
+			}
+
+			$tags[ $i ] = $this->merge_properties( $default_tag, $tag, $allowed_tag_properties );
+		}
+
+		return $tags;
 	}
 
 	/**
@@ -631,9 +703,9 @@ class Manager extends Base_Object {
 		<div class="e-experiment__title">
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
-			<?php if ( ! empty( $feature['tag'] ) ) : ?>
-				<span class="e-experiment__title__tag"><?php echo $feature['tag']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-			<?php endif; ?>
+			<?php foreach ( $feature['tags'] as $tag ) { ?>
+				<span class="e-experiment__title__tag e-experiment__title__tag__<?php echo $tag['type']; ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php } ?>
 		</div>
 		<?php
 
@@ -686,7 +758,7 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	private function get_feature_actual_state( array $feature ) {
-		if ( self::STATE_DEFAULT !== $feature['state'] ) {
+		if ( ! empty( $feature['state'] ) && self::STATE_DEFAULT !== $feature['state'] ) {
 			return $feature['state'];
 		}
 

@@ -11,11 +11,21 @@ export function getV1DocumentsManager() {
 }
 
 export function normalizeV1Document( documentData: V1Document ): Document {
+	// Draft or autosave.
+	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
+
 	return {
 		id: documentData.id,
 		title: documentData.container.settings.get( 'post_title' ),
-		status: documentData.container.settings.get( 'post_status' ),
-		isDirty: documentData.editor.isChanged,
+		type: {
+			value: documentData.config.type,
+			label: documentData.config.panel.title,
+		},
+		status: {
+			value: documentData.config.status.value,
+			label: documentData.config.status.label,
+		},
+		isDirty: documentData.editor.isChanged || isUnpublishedRevision,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,
 		userCan: {

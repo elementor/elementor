@@ -1,21 +1,14 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useIsRouteActive, isRouteActive } from '@elementor/v1-adapters';
+import useIsRouteActive from '../use-is-route-active';
 import { dispatchRouteClose, dispatchRouteOpen } from '../../__tests__/utils';
+import { mockIsRouteActive } from './test-utils';
 
-jest.mock( '../../dispatchers', () => {
-	return {
-		isRouteActive: jest.fn(),
-	};
-} );
-
-const mockedIsRouteActive = jest.mocked( isRouteActive );
-
-describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
+describe( '@elementor/v1-adapters - useIsRouteActive', () => {
 	it( 'should return false when a route is inactive by default', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockedIsRouteActive.mockReturnValue( false );
+		mockIsRouteActive( () => false );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -28,7 +21,7 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockedIsRouteActive.mockReturnValue( true );
+		mockIsRouteActive( () => true );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
@@ -41,13 +34,13 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockedIsRouteActive.mockReturnValue( false );
+		mockIsRouteActive( () => false );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
-			mockedIsRouteActive.mockReturnValue( true );
+			mockIsRouteActive( () => true );
 			dispatchRouteOpen( route );
 		} );
 
@@ -59,13 +52,13 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 		// Arrange.
 		const route = 'panel/menu';
 
-		mockedIsRouteActive.mockReturnValue( true );
+		mockIsRouteActive( () => true );
 
 		// Act.
 		const { result } = renderHook( () => useIsRouteActive( route ) );
 
 		act( () => {
-			mockedIsRouteActive.mockReturnValue( false );
+			mockIsRouteActive( () => false );
 			dispatchRouteClose( route );
 		} );
 
@@ -75,7 +68,7 @@ describe( '@elementor/v1-adapters/hooks/useIsRouteActive', () => {
 
 	it( 'should re-check whether the route is active when changing it', () => {
 		// Arrange.
-		mockedIsRouteActive.mockImplementation( ( r ) => {
+		mockIsRouteActive( ( r ) => {
 			return 'active/route' === r;
 		} );
 
