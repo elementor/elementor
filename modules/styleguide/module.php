@@ -78,7 +78,6 @@ class Module extends \Elementor\Core\Base\Module {
 			true
 		);
 
-		// todo : should do this?
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		wp_localize_script( $this::ASSETS_HANDLE, 'elementorStyleguideConfig', [

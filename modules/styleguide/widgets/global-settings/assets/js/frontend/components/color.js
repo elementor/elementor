@@ -1,19 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useRef } from 'react';
 import styled from "styled-components";
-import { ActiveElementContext } from "../app";
 import ElementTitle from "./element-title";
 import ElementWrapper from "./element-wrapper";
+import useIsActive from "../hooks/use-is-active";
+import { togglePopover } from "../utils/panel-behaviour";
+import { goToRoute, isInRoute, MAIN_ROUTE } from "../../../../../assets/js/common/utils/web-cli";
 
-/**
- *
- * @param color { _id, title, color, isActive}
- * @return {JSX.Element}
- * @constructor
- */
-const Color = ( { color, width } ) => {
 
-	const Content = styled.div`
-      background-color: ${ color.color };
+const Content = styled.div`
+      background-color: ${ props => props.hex };
       padding: 74px 1px 7px 10px;
       border-style: solid;
       border-width: 1px 1px 1px 1px;
@@ -21,11 +16,27 @@ const Color = ( { color, width } ) => {
       border-radius: 3px 3px 3px 3px;
 	`;
 
+
+/**
+ *
+ * @param color { _id, title, color}
+ * @param width
+ * @param type
+ * @return {JSX.Element}
+ * @constructor
+ */
+const Color = ( { color, width, type } ) => {
+	const source = 'colors';
+	const { _id, title, color: hex } = color;
+
+	const ref = useRef( null );
+	const { isActive } = useIsActive( source, _id, ref );
+
 	const HexString = styled.p`
       width: ${ width };
       margin: 0;
       color: #FFFFFF;
-      font-family: "Roboto", Sans-serif;
+      font-family: Roboto, sans-serif;
       height: 12px;
       font-size: 12px;
       font-weight: 500;
@@ -33,15 +44,25 @@ const Color = ( { color, width } ) => {
       font-style: normal;
       text-decoration: none;
       line-height: 1.1em;
-      letter-spacing: 0px;
-      word-spacing: 0px;
+      letter-spacing: 0;
+      word-spacing: 0;
 	`;
 
 	return (
-		<ElementWrapper isActive={color.isActive} id={color._id} source='colors'>
-			<ElementTitle>{ color.title }</ElementTitle>
-			<Content>
-				<HexString>{ color.color }</HexString>
+		<ElementWrapper ref={ ref }
+		                isActive={ isActive }
+		                onClick={ () => {
+			                const route = 'panel/global/global-colors';
+
+			                if ( ! isInRoute( route ) ) {
+				                goToRoute( route, {shouldNotScroll: true} )
+			                }
+
+			                togglePopover( source, type, _id )
+		                } }>
+			<ElementTitle>{ title }</ElementTitle>
+			<Content hex={hex}>
+				<HexString>{ hex }</HexString>
 			</Content>
         </ElementWrapper>
 	);

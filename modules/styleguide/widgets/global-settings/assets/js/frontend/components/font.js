@@ -1,13 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import styled from "styled-components";
 import ElementWrapper from "./element-wrapper";
 import ElementTitle from "./element-title";
+import { ConfigContext } from "../app";
+import useIsActive from "../hooks/use-is-active";
+import { togglePopover } from "../utils/panel-behaviour";
+import { goToRoute, isInRoute, MAIN_ROUTE } from "../../../../../assets/js/common/utils/web-cli";
 
-const parseFontToStyle = ( font ) => {
+const parseFontToStyle = ( font, fallbackFamily ) => {
 
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
 
-	const familyParser = ( value ) => value ? value + ', sans-serif' : 'sans-serif'; // TODO 23/02/2023 : get fallback from backend kit settings
+	let fallbackLowered = fallbackFamily.toLowerCase();
+	const familyParser = ( value ) => value ? value + `, ${ fallbackLowered }` : fallbackLowered;
 	const sizeParser = ( value ) => {
 		if ( ! value || ! value.size ) {
 			return '';
@@ -70,8 +75,15 @@ const parseFontToStyle = ( font ) => {
 
 };
 
-const Font = ( { font, } ) => {
-	const style = useMemo( () => parseFontToStyle( font ), [ font ] );
+const Font = ( { font, type } ) => {
+	const source = 'typography';
+	const { _id, title } = font;
+
+	const ref = useRef( null );
+	const { isActive } = useIsActive( source, _id, ref );
+
+	const config = useContext( ConfigContext );
+	const style = useMemo( () => parseFontToStyle( font, config.settings[ 'fallback_font' ] ), [ font, config ] );
 	const Title = styled( ElementTitle )`
       font-size: 18px;
 	`;
@@ -80,10 +92,26 @@ const Font = ( { font, } ) => {
       ${ style }
 	`;
 
+	let onClick = () => {
+		// Typography popover closes on every click in the window so only need to open.
+		if ( isActive ) {
+			return;
+		}
+
+		const route = 'panel/global/global-typography';
+
+		if ( ! isInRoute( route ) ) {
+			goToRoute( route, {shouldNotScroll: true})
+		}
+
+		togglePopover( source, type, _id )
+	};
+
 	return (
-		<ElementWrapper isActive={ font.isActive }
-		                id={ font._id } source='typography'>
-			<Title>{ font.title }</Title>
+		<ElementWrapper ref={ ref }
+		                isActive={ isActive }
+		                onClick={ onClick }>
+			<Title>{ title }</Title>
 			<Content>
 				the five boxing wizards jump quickly.
 			</Content>
