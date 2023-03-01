@@ -155,6 +155,10 @@ class Kit extends PageBase {
 				'group' => $tab->get_group(),
 				'helpUrl' => $tab->get_help_url(),
 				'additionalContent' => $tab->get_additional_tab_content(),
+				'actions' => [
+					'show' => $tab->get_action_show(),
+					'hide' => $tab->get_action_hide(),
+				],
 			];
 		}
 

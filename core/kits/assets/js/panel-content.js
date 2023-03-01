@@ -11,6 +11,22 @@ export default class extends elementorModules.editor.views.ControlsStack {
 		return '#elementor-kit-panel-content-controls';
 	}
 
+	onBeforeShow() {
+		const onShowAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.show;
+
+		if ( onShowAction ) {
+			elementor.hooks.doAction( onShowAction );
+		}
+	}
+
+	onBeforeDestroy() {
+		const onHideAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.hide;
+
+		if ( onHideAction ) {
+			elementor.hooks.doAction( onHideAction );
+		}
+	}
+
 	childViewOptions() {
 		const container = this.getOption( 'container' );
 
