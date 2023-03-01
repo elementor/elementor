@@ -89,7 +89,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				$inputArea.focus();
 
 				this.getDialog().getElements( 'widgetContent' ).on( 'click', () => {
-					$inputArea.trigger( 'focus' );
+					$inputArea.focus();
 				} );
 			},
 		} );
