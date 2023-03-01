@@ -1,11 +1,7 @@
 <?php
+namespace Elementor\Modules\Styleguide;
 
-namespace Elementor\Modules\DesignGuidelines;
-
-use Elementor\Core\Documents_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Modules\DesignGuidelines\Components\Design_Guidelines_Post;
-use Elementor\Modules\DesignGuidelines\documents\Design_Guidelines;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends \Elementor\Core\Base\Module {
+
+	const ASSETS_HANDLE = 'styleguide';
 
 	/**
 	 * Initialize the Container-Converter module.
@@ -42,7 +40,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return string
 	 */
 	public function get_name() {
-		return 'design-guidelines';
+		return 'styleguide';
 	}
 
 	protected function get_widgets() {
@@ -62,7 +60,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public static function get_experimental_data() {
-		return false; //todo
+		return false; // TODO
 	}
 
 	/**
@@ -72,11 +70,9 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function enqueue_scripts() {
 
-		$handle = 'design-guidelines';
-
 		wp_enqueue_script(
-			$handle,
-			$this->get_js_assets_url( 'design-guidelines' ),
+			$this::ASSETS_HANDLE,
+			$this->get_js_assets_url( $this::ASSETS_HANDLE ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -85,15 +81,15 @@ class Module extends \Elementor\Core\Base\Module {
 		// todo : should do this?
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-		wp_localize_script( $handle, 'elementorDesignGuidelinesConfig', [
+		wp_localize_script( $this::ASSETS_HANDLE, 'elementorStyleguideConfig', [
 			'activeKitId' => $kit_id,
 		] );
 	}
 
 	public function enqueue_styles() {
 		wp_enqueue_style(
-			'design-guidelines',
-			$this->get_css_assets_url( 'modules/design-guidelines/frontend' ),
+			$this::ASSETS_HANDLE,
+			$this->get_css_assets_url( 'modules/styleguide/frontend' ),
 			[],
 			ELEMENTOR_VERSION
 		);
