@@ -1,11 +1,10 @@
 describe( 'Import Export Admin Test', () => {
 	beforeEach( () => {
-		window.elementorAppConfig = {
-			'import-export': {
-				lastImportedSession: {
-					kit_title: 'Kit Title',
-				},
+		window.elementorImportExport = {
+			lastImportedSession: {
+				kit_title: 'Kit Title',
 			},
+			appUrl: 'https://example.com/kit-library',
 		};
 	} );
 
