@@ -20,7 +20,7 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 		
 		$control = [
 			'selectors' => [
-				'{{WRAPPER}}' => 'background-image: url("{{URL}}");',
+				'{{WRAPPER}}' => 'background-image: url("{{URL}}")',
 			],
 			'background_lazyload' => [
 				'active' => true,
