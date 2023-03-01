@@ -4,7 +4,7 @@ class Module extends elementorModules.editor.utils.Module {
 	activeKitId = 0;
 
 	onInit() {
-		const config = window.elementorDesignGuidelinesConfig;
+		const config = window.elementorStyleguideConfig;
 
 		if ( ! config ) {
 			return;
@@ -40,9 +40,9 @@ class Module extends elementorModules.editor.utils.Module {
 			}
 
 			modal = elementorCommon.dialogsManager.createWidget( 'styleguide-preview', {
-				id: 'e-design-guidelines',
+				id: 'e-styleguide-preview',
 				className: 'e-hidden',
-				message: `<div class="elementor-${ this.activeKitId } e-design-guidelines-root"></div>`,
+				message: `<div class="elementor-${ this.activeKitId } e-styleguide-preview-root"></div>`,
 				position: {
 					my: 'center center',
 					at: 'center center',
