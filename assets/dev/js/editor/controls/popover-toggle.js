@@ -55,10 +55,13 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const popover = this.$el.next( '.elementor-controls-popover' );
 		popover.toggle();
 
-		window.dispatchEvent( new CustomEvent( 'elementor/popover/toggle', {
+		this.dispatchPopoverEvent( popover.is( ':visible' ) ? 'show' : 'hide' );
+	}
+
+	dispatchPopoverEvent( eventName ) {
+		window.dispatchEvent( new CustomEvent( `elementor/popover/${ eventName }`, {
 			detail: {
 				container: this.options.container,
-				visible: popover.is(':visible')
 			},
 		} ) );
 	}
