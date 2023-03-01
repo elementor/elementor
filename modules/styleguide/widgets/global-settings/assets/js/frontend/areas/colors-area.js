@@ -9,13 +9,10 @@ const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 
 	useEffect( () => {
 		const onPickerHide = ( event ) => {
-			console.log('onPickerHide' );
 			unsetActive( event.detail.instance.options.container.id, 'colors' );
 		};
 
 		const onPickerShow = ( event ) => {
-			console.log('onPickerShow' );
-
 			setActive( event.detail.instance.options.container.id, 'colors' );
 		};
 

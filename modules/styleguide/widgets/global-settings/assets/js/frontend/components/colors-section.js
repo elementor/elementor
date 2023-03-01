@@ -1,14 +1,14 @@
 import React from 'react';
-import Color from "../components/color";
-import SectionTitle from "../components/section-title";
+import Color from "./color";
+import SectionTitle from "./section-title";
 import styled from "styled-components";
 
-const ColorsSection = ( { title, source, width } ) => {
+const Wrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
-	const Wrapper = styled.div`
-      display: flex;
-      flex-wrap: wrap;
-	`;
+const ColorsSection = ( { title, source, colorWidth } ) => {
 
 	return (
 		<>
@@ -17,7 +17,7 @@ const ColorsSection = ( { title, source, width } ) => {
 				{ source.map( ( color ) =>
 					<Color key={ color._id }
 					       color={ color }
-					       width={ width }
+					       width={ colorWidth }
 					/> )
 				}
 			</Wrapper>
