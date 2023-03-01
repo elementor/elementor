@@ -1,6 +1,8 @@
 <?php
+
 namespace Elementor\Modules\Styleguide;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 
@@ -11,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	const ASSETS_HANDLE = 'styleguide';
+	const EXPERIMENT_NAME = 'e_global_styleguide';
 
 	/**
 	 * Initialize the Container-Converter module.
@@ -20,18 +23,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', function() {
-			$this->enqueue_styles();
-		} );
-
-//		add_filter('update_post_metadata', function($check, $object_id, $meta_key, $meta_value, $prev_value) {
-//			if ($meta_key === '_wp_page_template'){
-//				var_dump('update_post_metadata');
-//			}
-//			return $check;
-//		}, 10, 5);
-
-//		new Design_Guidelines_Post();
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 	}
 
 	/**
@@ -49,18 +41,15 @@ class Module extends \Elementor\Core\Base\Module {
 		];
 	}
 
-	/**
-	 * Determine whether the module is active.
-	 *
-	 * @return bool
-	 */
-	public static function is_active() {
-		return true;
-		//		return Plugin::$instance->experiments->is_feature_active( 'container' );// TODO 06/02/2023 : Add check for design guidelines experiment.
-	}
-
 	public static function get_experimental_data() {
-		return false; // TODO
+		return [
+			'name' => static::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Global style guide', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ), //todo : add tag
+			'description' => esc_html__( 'Display a live preview of changes to global colors and fonts in a sleek style guide from the site’s settings. You will be able to toggle between the style guide and the page to see your changes in action.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
 	}
 
 	/**
@@ -99,7 +88,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 *
 	 * @return bool
 	 */
-	public static function is_styleguide_preview_enabled() : bool {
+	public static function is_styleguide_preview_enabled(): bool {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
 
 		return $editor_preferences->get_settings( 'enable_styleguide_preview' );

@@ -1,13 +1,14 @@
 <?php
+
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\App\Modules\ImportExport\Utils;
-use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Modules\Styleguide\Module as Styleguide_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +30,7 @@ class Kit extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['has_elements'] = true;
+		$properties['has_elements'] = self::is_styleguide_feature_active();
 		$properties['show_in_finder'] = false;
 		$properties['show_on_admin_bar'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
@@ -39,6 +40,10 @@ class Kit extends PageBase {
 	}
 
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
+		if ( ! self::is_styleguide_feature_active() ) {
+			return [];
+		}
+
 		$data = parent::get_elements_data( $status );
 
 		if ( empty( $data ) ) {
@@ -259,5 +264,9 @@ class Kit extends PageBase {
 		}
 
 		do_action( 'elementor/kit/register_tabs', $this );
+	}
+
+	private static function is_styleguide_feature_active() {
+		return Plugin::$instance->experiments->is_feature_active( Styleguide_Module::EXPERIMENT_NAME );
 	}
 }

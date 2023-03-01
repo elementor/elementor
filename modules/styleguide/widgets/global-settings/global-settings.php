@@ -28,8 +28,9 @@ class Global_Settings extends Widget_Base {
 		return [ 'global-settings', 'design' ];
 	}
 
-	protected function register_controls() {
-	}
+	public function show_in_panel() {
+	  return false;
+  }
 
 	protected function render() {
 		$site_settings = $this->get_site_settings();
