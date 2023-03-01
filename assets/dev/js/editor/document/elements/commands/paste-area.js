@@ -86,7 +86,7 @@ export class PasteArea extends $e.modules.editor.document.CommandHistoryBase {
 				iconClass: 'eicon-close',
 			},
 			onShow: () => {
-				$inputArea.trigger( 'focus' );
+				$inputArea.focus();
 
 				this.getDialog().getElements( 'widgetContent' ).on( 'click', () => {
 					$inputArea.trigger( 'focus' );
