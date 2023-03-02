@@ -4,6 +4,7 @@ namespace Elementor\Modules\WpCli;
 use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use ElementorPro\Modules\ThemeBuilder\Classes\Conditions_Cache;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -66,6 +67,10 @@ class Library extends \WP_CLI_Command {
 	/**
 	 * Import template files to the Library.
 	 *
+	 *  [--returnType]
+	 *      Forms of output. Possible values are 'ids', 'info'.
+	 *      if this parameter won't be specified, the import info will be output.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor library import <file-path>
@@ -77,12 +82,14 @@ class Library extends \WP_CLI_Command {
 	 * @since  2.8.0
 	 * @access public
 	 */
-	public function import( $args ) {
+	public function import( $args, $assoc_args ) {
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please set file path.' );
 		}
 
 		$file = $args[0];
+		$imported_items_ids = [];
+		$return_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'returnType', 'info' );
 
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
@@ -93,9 +100,39 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::error( $imported_items->get_error_message() );
 		}
 
-		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
+		foreach ( $imported_items as $item ) {
+			$imported_items_ids[] = $item['template_id'];
+		}
+		$imported_items_ids = implode( ',', $imported_items_ids );
+
+		if ( 'ids' === $return_type ) {
+			\WP_CLI::line( $imported_items_ids );
+		} else {
+			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
+		}
 	}
 
+	/**
+	 * Clear template conditions cache.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor library clear-conditions
+	 *
+	 * @since  3.13.0
+	 * @access public
+	 * @alias clear-conditions
+	 */
+	public function clear_conditions() {
+		$cache = new Conditions_Cache();
+		$cache_cleared = $cache->regenerate();
+
+		if ( is_wp_error( $cache_cleared ) ) {
+			\WP_CLI::error( $cache_cleared->get_error_message() );
+		}
+
+		\WP_CLI::success( "Template conditions cache is cleared." );
+	}
 
 	/**
 	 * Import all template files from a directory.
