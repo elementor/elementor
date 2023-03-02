@@ -11,11 +11,19 @@
 }
 
 .elementor-panel-scheme-buttons {
-	padding: 15px 20px;
-	display: flex;
-	justify-content: space-between;
+	padding: 0 20px;
+	display: table;
+	table-layout: fixed;
 	width: 100%;
-	border-bottom: var(--e-a-border);
+	height: 40px;
+	background-color: #fff;
+	box-shadow: $panel-bottom-shadow;
+
+	.elementor-button {
+		font-family: $admin-font-family;
+		font-size: 11px;
+		font-weight: 400;
+	}
 }
 
 .elementor-panel-scheme-button-wrapper {
@@ -29,6 +37,21 @@
 
 	&:last-child {
 		text-align: $end;
+	}
+}
+
+.elementor-panel-scheme-save {
+
+	.elementor-button {
+		padding: 6px 18px;
+	}
+}
+
+.elementor-panel-scheme-reset, .elementor-panel-scheme-discard {
+
+	.elementor-button {
+		color: $editor-light;
+		background: none;
 	}
 }
 
@@ -64,15 +87,14 @@
 
 .elementor-panel-scheme-typography-item-value {
 
-	select,
-	input {
+	select, input {
 		width: 100%;
 	}
 }
 
 .elementor-panel-scheme-item {
 
-	&:not(.e-open) {
+	&:not(.elementor-open) {
 
 		.elementor-panel-scheme-typography-items {
 			display: none;

@@ -22,19 +22,14 @@
 		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
 		background-size: cover;
 		background-color: transparent;
-		border: var(--e-a-border);
+		border: 1px solid $editor-lightest;
 	}
 }
 
 .pcr {
 
-	&-app {
-		background-color: var(--e-a-bg-default);
-		color: var(--e-a-color-default);
-
-		&[data-theme=monolith] {
-			padding: 0;
-		}
+	&-app[data-theme=monolith] {
+		padding: 0;
 	}
 
 	&-result {

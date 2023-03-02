@@ -138,7 +138,7 @@ class ControlBase {
 		await this.page.locator( `.elementor-panel-navigation-tab[data-tab="${ this.config.tab }"]` ).click();
 
 		// Open section.
-		const section = await this.page.$( `.elementor-control-${ this.config.section }:not( .e-open )` );
+		const section = await this.page.$( `.elementor-control-${ this.config.section }:not( .elementor-open )` );
 
 		if ( section ) {
 			await section.click();

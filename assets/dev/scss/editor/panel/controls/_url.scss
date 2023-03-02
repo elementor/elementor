@@ -1,34 +1,27 @@
 .elementor-control-type-url {
 
+	&.elementor-control-dynamic {
+
+		.elementor-input {
+			border-radius: 3px 0 0 3px;
+		}
+	}
+
 	.elementor-control-field {
 		position: relative;
 	}
 
-	.elementor-control-input-wrapper {
-		display: flex;
-	}
-
-	&.elementor-control-dynamic {
-
-		.elementor-control-url-more-options {
-
-			input {
-				border-radius: var(--e-a-border-radius);
-			}
-		}
-	}
-
+	&:not(.elementor-control-dynamic),
 	&.elementor-control-dynamic-value {
 
-		.e-input-style {
-			border-start-end-radius: 0;
-			border-end-end-radius: 0;
-		}
-
 		.elementor-control-url-more {
-			border-start-end-radius: var(--e-a-border-radius);
-			border-end-end-radius: var(--e-a-border-radius);
+			border-radius: 0 3px 3px 0;
 		}
+	}
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		flex-direction: getValueByDirection(row, row-reverse);
 	}
 
 	.elementor-control-url {
@@ -38,8 +31,8 @@
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			border: var(--e-a-border-bold);
-			border-inline-start-width: 0;
+			border: 1px solid $editor-lightest;
+			border-left: none;
 			cursor: pointer;
 
 			i {
@@ -60,7 +53,7 @@
 			display: flex;
 			align-items: center;
 
-			&:not(:last-child) {
+			&:not(:last-child){
 				padding-bottom: 10px;
 			}
 
@@ -68,23 +61,83 @@
 			label {
 				cursor: pointer;
 			}
+
+			&-input {
+				margin: 0;
+				padding: 0;
+				border-radius: 2px;
+				@include margin-end(5px);
+
+				//hide the browser input style
+				appearance: none;
+				outline: none;
+				content: none;
+
+				//instead of the original style
+				height: 15px;
+				width: 15px;
+				border: 1px solid $editor-lightest;
+
+				//align the mark in the input
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+
+				&:checked  {
+					background: $editor-info;
+					border: none;
+
+					&:before  {
+						display: block;
+						content: "";
+						width: 4px;
+						height: 7px;
+						border: solid white;
+						border-width: 0 2px 2px 0;
+						transform: rotate(45deg);
+					}
+				}
+			}
+
+			label {
+				font-size: 12px;
+			}
+		}
+
+		&-external {
+
+			&-hide {
+
+				.elementor-control-url-more {
+					display: none;
+				}
+			}
+
+			&-show {
+
+				.elementor-input,
+				.elementor-dynamic-cover {
+					border-radius: 3px 0 0 3px;
+				}
+			}
 		}
 
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
 			top: 5px;
-			right: 0;
+			right: 0px;
 			width: 10px;
 			height: 10px;
 			font-size: 10px;
-			color: var(--e-a-color-txt-disabled);
+			color: $gray-light;
 		}
 
 		&__custom-attributes {
+			margin-top: 5px;
 
 			label {
-				font-size: var(--control-title-size);
+				font-size: 12px;
 			}
 
 			input {
@@ -95,21 +148,35 @@
 	}
 
 	.elementor-input {
+		direction: ltr; // Force LTR also in RTL languages
+
+		&:not(:focus) {
+
+			+ .elementor-control-url-more {
+				border-color: $editor-lightest;
+			}
+		}
 
 		&:focus {
 
 			~ div {
-				border-color: var(--e-a-border-color-focus);
+				border-color: $editor-light;
 			}
 		}
+	}
+
+	.elementor-control-dynamic-switcher {
+		border-left: none;
+		border-radius: 0 3px 3px 0;
 	}
 }
 
 //Autocomplete URL
 .elementor-autocomplete-menu {
 	position: absolute;
-	background: var(--e-a-bg-default);
-	border: var(--e-a-border);
+	background: #fff;
+	color: $editor-darkest;
+	border: 1px solid $editor-light;
 	margin: 0;
 	list-style: none;
 	padding: 4px 0;
@@ -120,7 +187,7 @@
 	max-height: 200px;
 	overflow-y: auto;
 	border-radius: 3px;
-	transition: var(--e-a-transition-hover);
+	transition: all .3s ease-in-out;
 	cursor: default;
 	z-index: 1;
 
@@ -137,7 +204,7 @@
 		&.ui-state-hover,
 		&.ui-state-active,
 		&.ui-state-focus {
-			background: var(--e-a-bg-hover);
+			background: $editor-background;
 		}
 	}
 

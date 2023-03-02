@@ -6,7 +6,8 @@
 $root: $eps-prefix + card;
 
 .#{$root} {
-	border: var(--card-border);
+	background-color: var(--card-background-color);
+	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
 	font-size: $card-font-size;
@@ -84,6 +85,10 @@ $root: $eps-prefix + card;
 		&--padding {
 			padding: var(--eps-card-footer-padding);
 		}
+	}
+
+	&:hover {
+		background-color: var(--card-background-color-hover);
 	}
 }
 

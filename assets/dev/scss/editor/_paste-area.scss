@@ -3,6 +3,7 @@
 	.dialog-header {
 		padding-top: 60px;
 		font-size: 30px;
+		color: $editor-light;
 	}
 
 	.dialog-message {
@@ -45,12 +46,12 @@
 	}
 
 	#elementor-paste-area-dialog__error {
-		color: var(--e-global-color-danger);
+		color: $editor-danger;
 		font-size: 12px;
 
 		&:before {
 			content: '';
-			border-top: var(--e-a-border);
+			border-top: 1px solid $editor-background-light;
 			display: block;
 			margin: 10px -15px;
 		}

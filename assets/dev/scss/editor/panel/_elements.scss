@@ -35,15 +35,15 @@
 
 	.eicon-loading {
 		font-size: 25px;
-		color: $editor-accent;
+		color: $editor-info;
 	}
 }
 
 #elementor-panel-elements-search-area {
-	background-color: var(--e-a-bg-default);
 	position: sticky;
 	top: 0;
-	padding: 15px;
+	padding: 10px;
+	background-color: $editor-background;
 	z-index: $first-layer;
 }
 
@@ -52,24 +52,26 @@
 }
 
 #elementor-panel-elements-search-input {
+	background-color: rgba(255,255,255,.7);
 	font-size: 11px;
 	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
-	border: var(--e-a-border);
-	border-radius: 0;
+	color: $editor-light;
+	border: none;
 	transition: all 1s;
+	border-radius: 3px;
 	appearance: none;
 
 	+ i {
 		position: absolute;
 		@include start(10px);
 		top: 50%;
-		color: var(--e-a-color-txt-disabled);
+		color: $editor-light;
 		transform: translateY(-50%);
 	}
 
 	&:focus {
-		border-color: var(--e-a-border-color-focus);
+		background-color: rgba(255,255,255,1);
 		@include padding-end(15px);
 	}
 }
@@ -77,12 +79,15 @@
 .elementor-panel {
 
 	.elementor-element {
-		text-align: center;
-		border: var(--e-a-border);
 		border-radius: 3px;
+		background-color: #fff;
 		cursor: move;
 		position: relative;
-		transition: var(--e-a-transition-hover);
+
+		&-wrapper {
+			text-align: center;
+			box-sizing: border-box;
+		}
 
 		&--promotion {
 
@@ -92,9 +97,18 @@
 			}
 		}
 
+		.icon,
+		.title {
+			color: $editor-darker;
+			transition: $transition-hover;
+		}
+
 		&:hover {
-			background-color: var(--e-a-bg-hover);
-			border-color: var(--e-a-border-color-bold);
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+			.icon, .title {
+				color: $editor-accent;
+			}
 		}
 
 		.icon {
@@ -102,28 +116,23 @@
 			padding-top: 15px;
 		}
 
-		.title-wrapper {
-			display: flex;
-			height: 40px;
-			align-items: center;
-			justify-content: center;
+		.elementor-element-title-wrapper {
+			display: table;
+			width: 100%;
 		}
 
 		.title {
 			font-size: 11px;
+			display: table-cell;
+			vertical-align: middle;
+			height: 40px;
 		}
 
 		> .eicon-lock {
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: var(--e-a-color-txt-disabled);
-		}
-
-		&:active {
-			background-color: var(--e-a-bg-hover);
-			border-color: var(--e-a-border-color-accent);
-			color: var(--e-a-color-txt-accent);
+			color: $editor-background;
 		}
 	}
 }
@@ -132,7 +141,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: var(--e-a-bg-default);
+	background-color: #fff;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -143,7 +152,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-a-color-white));
+		@include border-end-property(color, #fff);
 	}
 
 	&__title {
@@ -155,23 +164,20 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			border-bottom: var(--e-a-border);
+			color: $editor-darkest;
+			border-bottom: 1px solid $editor-background;
 			font-weight: 500;
 
 			.eicon-pro-icon {
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
-				color: var(--e-a-color-brand);
+				color: $editor-accent;
 			}
 
 			.eicon-close {
 				cursor: pointer;
-				color: var(--e-a-color-txt-disabled);
-
-				&:hover {
-					color: var(--e-a-color-txt-muted);
-				}
+				color: $editor-light;
 			}
 		}
 
@@ -180,12 +186,16 @@
 		}
 
 		&-buttons-wrapper {
-			padding: 0 20px 20px;
+			padding: 0 20px 20px 20px;
 		}
 
 		&-button {
 			padding: 7px 25px;
 			font-size: 12px;
+
+			&::-moz-focus-inner {
+				border: 0;
+			}
 		}
 	}
 }

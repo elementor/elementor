@@ -28,9 +28,6 @@ describe( '@elementor/finder - useActionProps', () => {
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.disabled ).toBe( true );
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
-		expect( useRouteStatus ).toHaveBeenCalledWith( 'finder', {
-			blockOnKitRoutes: false,
-			blockOnPreviewMode: false,
-		} );
+		expect( useRouteStatus ).toHaveBeenCalledWith( 'finder' );
 	} );
 } );

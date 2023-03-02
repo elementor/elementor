@@ -6,7 +6,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			selectors: {
 				container: window,
 			},
-			considerScrollbar: false,
 		};
 	},
 
@@ -17,12 +16,11 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	stretch() {
-		const settings = this.getSettings();
-
-		let $container;
+		var containerSelector = this.getSettings( 'selectors.container' ),
+			$container;
 
 		try {
-			$container = jQuery( settings.selectors.container );
+			$container = jQuery( containerSelector );
 			// eslint-disable-next-line no-empty
 		} catch ( e ) {}
 
@@ -36,10 +34,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			containerWidth = $container.innerWidth(),
 			elementOffset = $element.offset().left,
 			isFixed = 'fixed' === $element.css( 'position' ),
-			correctOffset = isFixed ? 0 : elementOffset,
-			isContainerFullScreen = window === $container[ 0 ];
+			correctOffset = isFixed ? 0 : elementOffset;
 
-		if ( ! isContainerFullScreen ) {
+		if ( window !== $container[ 0 ] ) {
 			var containerOffset = $container.offset().left;
 
 			if ( isFixed ) {
@@ -50,11 +47,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 		}
 
-		if ( settings.considerScrollbar && isContainerFullScreen ) {
-			const scrollbarWidth = window.innerWidth - containerWidth;
-			correctOffset -= scrollbarWidth;
-		}
-
 		if ( ! isFixed ) {
 			if ( elementorFrontend.config.is_rtl ) {
 				correctOffset = containerWidth - ( $element.outerWidth() + correctOffset );
@@ -63,22 +55,11 @@ module.exports = elementorModules.ViewModule.extend( {
 			correctOffset = -correctOffset;
 		}
 
-		// Consider margin
-		if ( settings.margin ) {
-			correctOffset += settings.margin;
-		}
-
 		var css = {};
 
-		let width = containerWidth;
+		css.width = containerWidth + 'px';
 
-		if ( settings.margin ) {
-			width -= settings.margin * 2;
-		}
-
-		css.width = width + 'px';
-
-		css[ settings.direction ] = correctOffset + 'px';
+		css[ this.getSettings( 'direction' ) ] = correctOffset + 'px';
 
 		$element.css( css );
 	},

@@ -2,6 +2,11 @@
 // Panel Global
 //
 
+.elementor-panel-box {
+	margin-top: 10px;
+	background-color: #fff;
+}
+
 .elementor-panel-box-content {
 	padding: 20px 20px 10px;
 }
@@ -12,9 +17,9 @@
 
 // Alert
 .elementor-panel-alert {
-    background-color: var(--e-a-bg-primary);
+    background-color: $editor-background-lighter;
 	padding: 15px;
-    @include border-start(3px solid var(--e-a-color-primary));
+    @include border-start(3px solid transparent);
 	position: relative;
 	font-size: 12px;
 	font-weight: 300;
@@ -22,6 +27,7 @@
 	line-height: 1.5;
 	text-align: $start;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.07);
 
 	a {
 		color: inherit;
@@ -30,24 +36,55 @@
 	&.elementor-panel-alert- {
 
 		&info {
-			border-color: var(--e-a-color-info);
-			background: var(--e-a-bg-info);
+			border-color: $editor-alert-info;
+			background-color: $editor-alert-info-bg;
 		}
 
 		&success {
-			border-color: var(--e-a-color-success);
-			background: var(--e-a-bg-success);
+			border-color: $editor-success;
 		}
 
 		&warning {
-			border-color: var(--e-a-color-warning);
-			background: var(--e-a-bg-warning);
+			border-color: $editor-alert-warning;
 		}
 
 		&danger {
-			border-color: var(--e-a-color-danger);
-			background: var(--e-a-bg-danger);
+			border-color: $editor-danger;
 		}
+	}
+}
+
+.elementor-label {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	text-transform: capitalize;
+
+	&.elementor-label-default {
+		background-color: $editor-light;
+	}
+
+	&.elementor-label-info {
+		background-color: $info;
+	}
+
+	&.elementor-label-success {
+		background-color: $success;
+	}
+
+	&.elementor-label-warning {
+		background-color: $warning;
+	}
+
+	&.elementor-label-danger {
+		background-color: $danger;
 	}
 }
 
@@ -55,7 +92,7 @@
 	font-size: 11px;
 	font-style: italic;
 	line-height: 1.4;
-	color: var(--e-a-color-txt-muted);
+	color: $editor-light;
 }
 
 .elementor-controls-popover {
@@ -69,7 +106,7 @@
 	padding-top: 15px;
 	width: 90%;
 	z-index: $super-layer; // Above the select2 select boxes
-	background-color: var(--e-a-bg-default);
+	background-color: #fff;
 
 	$triangle-size: 8px;
 
@@ -79,7 +116,7 @@
 		top: -$triangle-size * 2;
 		@include end(22px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: var(--e-a-bg-default);
+		border-bottom-color: #fff;
 	}
 
 	div.elementor-control { // Harder selector to override default settings
@@ -88,6 +125,13 @@
 		&:before {
 			content: none;
 		}
+	}
+}
+
+// Pojo Theme Support
+#elementor-controls {
+	.pojo-widget-button-collapse {
+		display: none;
 	}
 }
 

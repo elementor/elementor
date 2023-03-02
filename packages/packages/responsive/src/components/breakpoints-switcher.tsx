@@ -59,7 +59,6 @@ function Tooltip( props: TooltipProps ) {
 		{ ...props }
 	/>;
 }
-
 const iconsMap = {
 	widescreen: WidescreenIcon,
 	desktop: DesktopIcon,

@@ -3,7 +3,12 @@
 //
 
 ::selection {
-	background: var(--e-a-bg-primary);
+	background: $blue-light;
+	color: $white;
+}
+
+a {
+	color: $editor-accent;
 }
 
 h1,
@@ -33,6 +38,11 @@ sub {
 img {
 	max-width: 100%;
 	height: auto;
+	border: 0;
+}
+
+::-moz-focus-inner {
+	padding: 0;
 	border: 0;
 }
 

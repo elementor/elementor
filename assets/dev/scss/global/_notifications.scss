@@ -3,7 +3,7 @@
 	width: 280px;
 	padding: 20px;
 	border-radius: 5px;
-	color: var(--e-a-dark-color-txt);
+	color: $editor-lightest;
 	background-color: rgba(0, 0, 0, .8);
 	z-index: $super-layer;
 
@@ -25,7 +25,7 @@
 	}
 
 	.dialog-button {
-		color: var(--e-a-color-warning);
+		color: $editor-orange;
 		margin: 0 5px;
 		text-transform: uppercase;
 		cursor: pointer;

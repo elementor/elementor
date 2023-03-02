@@ -3,9 +3,8 @@
 	&.e-control-global {
 
 		.e-global__popover-toggle ~ .pickr {
-			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+			border-radius: getValueByDirection(0px 3px 3px 0, 3px 0 0 3px);
 			flex-shrink: 0;
-			border-color: var(--e-a-border-color-bold);
 		}
 	}
 
@@ -16,5 +15,17 @@
 	.elementor-control-input-wrapper {
 		display: flex;
 		justify-content: flex-end;
+	}
+
+	.elementor-control-dynamic-switcher {
+		@include border-start-property(width, 0);
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	}
+
+	&.elementor-control-dynamic {
+
+		.pickr {
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+		}
 	}
 }

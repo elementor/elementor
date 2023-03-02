@@ -3,33 +3,26 @@
 //
 
 .elementor-panel-navigation {
-	display: flex;
+	background-color: $white;
+	box-shadow: $panel-bottom-shadow;
+	display: table;
+	table-layout: fixed;
 	width: 100%;
-	border-bottom: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
-		flex: auto;
-		transition: var(--e-a-transition-hover);
-
-		&:hover {
-			background-color: var(--e-a-bg-hover);
-		}
+		display: table-cell;
 
 		&.elementor-active {
-			border-bottom: 3px solid var(--e-a-border-color-accent);
-			color: var(--e-a-color-txt-accent);
-
-			a {
-				color: var(--e-a-color-txt-accent);
-			}
+			background-image: linear-gradient(to bottom, $editor-background-light, #fff);
+			border-bottom: 3px solid $editor-accent;
 		}
 
 		a {
-			color: inherit;
 			display: block;
 			text-align: center;
 			padding: 12px 0 8px;
 			font-size: 10px;
+			color: $editor-dark;
 
 			&:before {
 				font-family: eicons;
@@ -53,32 +46,27 @@
 	}
 }
 
-.elementor-tab-control-advanced,
-.elementor-tab-control-settings,
-.elementor-tab-control-general_style {
+.elementor-tab-control-advanced, .elementor-tab-control-settings, .elementor-tab-control-general_style {
 	a:before {
 		content: '\e916';
 	}
 }
 
-//TODO: Remove
 .elementor-tab-control-responsive {
 	a:before {
 		content: '\e885';
 	}
 }
 
+.elementor-tab-control-layout, .elementor-tab-control-column {
+	a:before {
+		content: '\e899';
+	}
+}
+
 .elementor-tab-control-lightbox {
 	a:before {
 		content: '\e922';
-	}
-}
-//END
-
-.elementor-tab-control-layout,
-.elementor-tab-control-column {
-	a:before {
-		content: '\e899';
 	}
 }
 
@@ -92,18 +80,15 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 85%;
-		color: inherit;
+		color: $editor-dark;
+		font-size: 12px;
 		font-weight: 500;
-		transition: var(--e-a-transition-hover);
-
-		&:hover {
-			color: var(--e-a-color-info);
-		}
+		transition: $transition-hover;
 
 		i {
 			padding: 0 5px;
-			font-size: 125%;
+			color: $editor-light;
+			font-size: 18px;
 			position: relative;
 
 			&:after {
@@ -117,6 +102,22 @@
 				#{$end}: 0;
 				border-radius: 50%;
 				z-index: -1;
+			}
+		}
+
+		&:hover {
+			color: $editor-darkest;
+
+			i {
+				color: $editor-info;
+
+				&:before {
+					content: '\e941';
+				}
+
+				&:after {
+					background: #fff;
+				}
 			}
 		}
 	}

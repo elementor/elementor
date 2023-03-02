@@ -1,10 +1,10 @@
 export default function BarHeading( props ) {
 	return (
 		<div className="e-admin-top-bar__heading">
-			<div className="e-logo-wrapper">
+			<div className="e-admin-top-bar__heading-logo">
 				<i className="eicon-elementor" aria-hidden="true"></i>
 			</div>
-			<span className="e-admin-top-bar__heading-title">{ props.children }</span>
+			<h1 className="e-admin-top-bar__heading-title">{ props.children }</h1>
 		</div>
 	);
 }

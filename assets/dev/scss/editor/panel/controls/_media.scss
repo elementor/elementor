@@ -26,27 +26,23 @@
 
 	.eicon-plus-circle {
 		@include absolute-center;
-		color: var(--e-a-color-white);
+		color: $white;
 		font-size: 20px;
 	}
 
 	&__content__upload-button {
-		background-color: var(--e-a-bg-active-bold);
+		background-color: $editor-lightest;
 	}
 
 	&__preview {
 		height: 100%;
 		background-size: cover;
 		background-position: center;
-		// BC: Fix for Safari 13 and older browsers that don't support "aspect-ratio: 21 / 9;"
-		// TODO: Remove this line when we stop supporting Safari 13
-		padding-bottom: 42.8571%;
 	}
 
 	&-area {
 		@include checkers-background(16px);
-		background-color: var(--e-a-bg-default);
-		border: var(--e-a-border-bold);
+		background-color: #f6f6f6;
 		aspect-ratio: 21 / 9;
 
 		&:not(:hover) {
@@ -115,13 +111,13 @@
 		align-items: center;
 		justify-content: center;
 		flex-grow: 1;
-		color: var(--e-a-color-white);
-		background-color: rgba(0, 0, 0, .9);
+		color: $white;
+		background-color: rgba($editor-dark, .85);
 		font-size: 11px;
-		transition: var(--e-a-transition-hover);
+		transition: background .3s;
 
 		&:hover {
-			background-color: rgba(0, 0, 0, .8);
+			background-color: rgba($editor-dark, .95);
 		}
 	}
 
@@ -140,14 +136,15 @@
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		color: var(--e-a-color-white);
-		background-color: rgba(0, 0, 0, .5);
-		border-radius: var(--e-border-radius);
-		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.2);
-		transition: var(--e-a-transition-hover);
+		color: $white;
+		background-color: rgba($editor-dark, .85);
+		border-radius: 3px;
+		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		transition: background .3s;
 
 		&:hover {
-			background-color: rgba(0, 0, 0, .6);
+			background-color: rgba($editor-dark, .95);
+			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
 		}
 	}
 
@@ -162,7 +159,7 @@
 		align-items: center;
 		width: 100%;
 		margin-top: 10px;
-		border: var(--e-a-border);
+		border: 1px solid $editor-lightest;
 
 		&__content {
 			@include padding-start(5px);
@@ -185,7 +182,7 @@
 
 		&__controls {
 			display: flex;
-			@include border-start(var(--e-a-border));
+			@include border-start(1px solid $editor-lightest);
 
 			&__upload-button,
 			&__remove {
@@ -201,7 +198,7 @@
 			}
 
 			&__remove {
-				@include border-end(var(--e-a-border));
+				@include border-end(1px solid $editor-lightest);
 			}
 		}
 	}
@@ -230,12 +227,11 @@
 	.elementor-control-dynamic-switcher {
 		border: none;
 		border-radius: 0;
-		background-color: rgba(0, 0, 0, .9);
-		color: var(--e-a-color-white);
+		background-color: rgba($editor-dark, .85);
+		color: $white;
 
 		&:hover {
-			background-color: rgba(0, 0, 0, .8);
-			color: var(--e-a-color-white);
+			background-color: rgba($editor-dark, .95);
 		}
 	}
 
@@ -260,11 +256,10 @@
 		}
 	}
 }
-
 .elementor-control:not( .elementor-control-type-icons ) {
 	.elementor-control-media {
 		&__preview {
-			background-color: var(--e-a-bg-active-bold);
+			background-color: $editor-lightest;
 		}
 	}
 }

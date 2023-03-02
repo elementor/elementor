@@ -3,21 +3,9 @@ const WpAdminPage = require( '../../../../pages/wp-admin-page' );
 
 test( 'Stretch section', async ( { page }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
-
-	try {
-		let editor = await wpAdmin.useElementorCleanPost();
-		await testStretchedSection( page, editor, 'ltr' );
-
-		await wpAdmin.setLanguage( 'he_IL' );
+	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
-		await testStretchedSection( page, editor, 'rtl' );
-	} finally {
-		await wpAdmin.setLanguage( '' );
-	}
-} );
 
-async function testStretchedSection( page, editor, direction ) {
 	await editor.closeNavigatorIfOpen();
 
 	await editor.getPreviewFrame().evaluate( () => {
@@ -40,8 +28,6 @@ async function testStretchedSection( page, editor, direction ) {
 	await editor.setSliderControlValue( 'space', 200 );
 	await editor.setBackgroundColor( '#cae0bc', spacerID );
 
-	const directionSuffix = 'ltr' === direction ? '' : '-rtl';
-
 	/**
 	 * Test in Editor
 	 */
@@ -49,7 +35,7 @@ async function testStretchedSection( page, editor, direction ) {
 	expect( await sectionElement.screenshot( {
 		type: 'jpeg',
 		quality: 90,
-	} ) ).toMatchSnapshot( `section-NOT-stretched${ directionSuffix }.jpeg` );
+	} ) ).toMatchSnapshot( 'section-NOT-stretched.jpeg' );
 
 	// Act.
 	await editor.selectElement( sectionID );
@@ -59,19 +45,7 @@ async function testStretchedSection( page, editor, direction ) {
 	expect( await sectionElement.screenshot( {
 		type: 'jpeg',
 		quality: 90,
-	} ) ).toMatchSnapshot( `section-stretched${ directionSuffix }.jpeg` );
-
-	if ( 'rtl' === direction ) {
-		const isSectionConsideringScrollbar = await editor.getPreviewFrame().evaluate( ( { selector } ) => {
-			const section = document.querySelector( '.elementor-element-' + selector ),
-				sectionBoundingBox = section.getBoundingClientRect(),
-				scrollbarWidth = window.innerWidth - document.body.clientWidth;
-
-			return sectionBoundingBox.left === scrollbarWidth && sectionBoundingBox.right === window.innerWidth;
-		}, { selector: sectionID } );
-
-		expect( isSectionConsideringScrollbar ).toBe( true );
-	}
+	} ) ).toMatchSnapshot( 'section-stretched.jpeg' );
 
 	/**
 	 * Test in Front End
@@ -95,5 +69,5 @@ async function testStretchedSection( page, editor, direction ) {
 	expect( await sectionElementFE.screenshot( {
 		type: 'jpeg',
 		quality: 90,
-	} ) ).toMatchSnapshot( `section-stretched-FE${ directionSuffix }.jpeg` );
-}
+	} ) ).toMatchSnapshot( 'section-stretched-FE.jpeg' );
+} );

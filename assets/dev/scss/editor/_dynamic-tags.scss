@@ -5,13 +5,13 @@
 	max-height: 300px;
 	overflow: auto;
 	padding-bottom: 5px;
-	background-color: var(--e-a-bg-default);
-	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
-	border: var(--e-a-border);
+	background-color: #fff;
+	border: 1px solid $editor-light;
 	border-radius: 3px;
 	z-index: $super-layer;
 
 	&__group-title {
+		color: $editor-darkest;
 		font-weight: bold;
 		font-size: 12px;
 		padding: 10px 15px;
@@ -20,7 +20,7 @@
 
 		.eicon-info-circle {
 			@include padding-end(5px);
-			color: var(--e-a-color-primary);
+			color: $editor-info;
 			font-size: 14px;
 		}
 	}
@@ -37,14 +37,18 @@
 		}
 
 		&:hover {
-			background-color: var(--e-a-bg-hover);
+			background-color: $editor-background;
 		}
 	}
 
 	&__teaser {
-		border-top: 2px solid var(--e-a-border-color);
+		border-top: 2px solid $editor-lightest;
 		padding-top: 4px;
 		margin-top: 4px;
+
+		&-title {
+			color: $editor-dark;
+		}
 
 		&-text {
 			padding: 2px 15px 8px;
@@ -53,7 +57,7 @@
 		}
 
 		&-link {
-			color: var(--e-a-color-primary);
+			color: $editor-accent;
 			text-decoration: underline;
 			font-style: italic;
 			font-weight: bold;
@@ -76,11 +80,12 @@
 
 	&__settings,
 	&__remove {
+		color: $editor-lighter;
 		cursor: pointer;
-		transition: var(--e-a-transition-hover);
+		transition: $transition-hover;
 
 		&:hover {
-			color: var(--e-a-color-txt-hover);
+			color: $editor-light;
 		}
 	}
 
@@ -92,8 +97,7 @@
 .elementor-tag-settings-popup {
 	position: absolute;
 	width: 260px;
-	background-color: var(--e-a-bg-default);
-	border: var(--e-a-border);
+	background-color: $editor-background;
 	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
 	z-index: 1;
 
@@ -105,7 +109,7 @@
 		top: -#{$triangle-size * 2};
 		@include start(5px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: var(--e-a-border-color);
+		border-bottom-color: #fff;
 	}
 
 	.elementor-control {
@@ -120,21 +124,13 @@
 }
 
 .elementor-tag-controls-stack-empty {
-	background-color: var(--e-a-bg-default);
+	background-color: #fff;
 	padding: 10px;
 	font-size: 13px;
 	text-align: center;
 }
 
 .elementor-control-dynamic {
-
-	input {
-		// Equivalent to `3px 0 0 3px` in LTR.
-		border-start-start-radius: var(--e-a-border-radius);
-		border-start-end-radius: 0;
-		border-end-end-radius: 0;
-		border-end-start-radius: var(--e-a-border-radius);
-	}
 
 	&-switcher {
 		display: inline-flex;
@@ -143,18 +139,9 @@
 		flex-shrink: 0;
 		height: $control-unit;
 		cursor: pointer;
-		border: var(--e-a-border-bold);
-		background: var(--e-a-bg-default);
-		border-inline-start-width: 0;
-		// Equivalent to `0 3px 3px 0` in LTR.
-		border-start-start-radius: 0;
-		border-start-end-radius: var(--e-a-border-radius);
-		border-end-end-radius: var(--e-a-border-radius);
-		border-end-start-radius: 0;
-
-		&:hover {
-			color: var(--e-a-color-primary);
-		}
+		border: 1px solid $editor-lightest;
+		border-radius: 3px;
+		background: #fff;
 
 		&.e-control-tool {
 			height: 20px;

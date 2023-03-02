@@ -1,12 +1,8 @@
-//
-// Dialog for templates, icons, kits, etc.
-//
-
 .elementor-templates-modal {
 
 	.dialog-widget-content {
 		font-family: $admin-font-family;
-		background-color: var(--e-a-bg-default);
+		background-color: $editor-background-light;
 		width: 100%;
 
 		@media (max-width: $library_screen_breakpoint) {
@@ -21,29 +17,48 @@
 	.dialog {
 
 		&-header {
-			border-bottom: var(--e-a-border);
 			padding: 0;
+			background-color: #fff;
+			box-shadow: $panel-bottom-shadow;
+			position: relative; // Show the shadow above the scrolled list
 			z-index: 1;
 		}
 
 		&-buttons-wrapper {
-			border-top: var(--e-a-border);
-			padding: 10px;
-			display: flex;
-			justify-content: end;
-			gap: 15px;
+			background-color: #fff;
+			border: none;
+			display: none;
+			justify-content: flex-end;
+			padding: 5px;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+			position: relative;
+
+			.elementor-button {
+				height: 40px;
+				@include margin-start(5px);
+
+				&-success {
+					padding: 12px 36px;
+					color: #fff;
+					width: initial;
+					font-size: 15px;
+
+					&:hover {
+						background-color: $editor-success;
+					}
+				}
+			}
 		}
 
 		&-message {
 			height: 750px;
 			max-height: 85vh;
 			overflow-y: scroll;
-			padding: 20px;
+			padding-top: 25px;
 		}
 
 		&-content {
 			height: 100%;
-			text-align: center;
 		}
 
 		&-loading {
@@ -79,7 +94,6 @@
 			}
 
 			&__title {
-				color: var(--e-a-color-txt-active);
 				padding-top: 2px;
 			}
 		}
@@ -98,11 +112,11 @@
 
 			> i {
 				font-size: 20px;
-				transition: var(--e-a-transition-hover);
+				transition: $transition-hover;
 				cursor: pointer;
 
-				&:hover {
-					color: var(--e-a-color-txt-hover);
+				&:not(:hover) {
+					color: $editor-light;
 				}
 			}
 		}
@@ -111,7 +125,7 @@
 
 			&--normal {
 				width: 47px;
-				@include border-start(var(--e-a-border));
+				@include border-start(1px solid $editor-background);
 
 				i {
 					font-size: 18px;
@@ -122,6 +136,8 @@
 				padding: 10px;
 				@include padding-start(20px);
 				@include margin-end(10px);
+				color: #fff;
+				background-color: $editor-light;
 				font-size: 11px;
 				font-weight: normal;
 				line-height: 1;
@@ -136,7 +152,7 @@
 					@include border-start(1px solid);
 
 					&:not(:hover) { // Overwrite the default
-						color: var(--e-a-color-white);
+						color: #fff;
 					}
 				}
 			}
@@ -146,10 +162,11 @@
 	&__sidebar {
 		flex-shrink: 0;
 		width: 25%;
-		border-inline-end: var(--e-a-border);
+		background-color: rgba(255, 255, 255, 0.3);
 	}
 
 	&__content {
 		flex-grow: 1;
+		box-shadow: 0 0 13px inset rgba(0, 0, 0, 0.05);
 	}
 }

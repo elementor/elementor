@@ -6,14 +6,13 @@
 	align-items: center;
 	height: 40px;
 	color: #fff;
-	background-color: var(--e-a-color-brand);
+	background-color: $editor-accent;
 	padding: 0 25px;
 
 	&__message {
-
 		a {
 			text-decoration: underline;
-			color: var(--e-a-color-txt-invert);
+			color: #fff;
 
 			&:hover {
 				color: $editor-lightest;
@@ -77,7 +76,7 @@
 
 	a,
 	i {
-		transition: var(--e-a-transition-hover);
+		transition: $transition-hover;
 	}
 }
 

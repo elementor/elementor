@@ -7,7 +7,7 @@
 
 		select {
 			appearance: none;
-			font-size: var(--control-title-size);
+			font-size: 12px;
 			font-family: inherit;
 			font-weight: inherit;
 			font-style: inherit;
@@ -20,7 +20,7 @@
 			cursor: pointer;
 
 			&.e-select-placeholder {
-				color: var(--e-a-color-txt-disabled);
+				color: $editor-light;
 			}
 		}
 

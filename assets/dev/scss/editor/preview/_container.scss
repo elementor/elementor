@@ -69,10 +69,11 @@
 		}
 
 		&__title {
-			font-family: var(--e-a-font-family);
+			font-family: $admin-font-family;
 			font-size: 13px;
 			font-weight: 500;
-			color: var(--e-a-color-txt);
+			text-transform: uppercase;
+			color: $editor-darker;
 		}
 
 		&__list {
@@ -93,17 +94,17 @@
 				}
 
 				path {
-					fill: var(--e-a-color-white);
+					fill: $white;
 				}
 
 				rect {
-					fill: var(--e-a-bg-active-bold);
+					fill: $editor-lightest;
 					transition: .3s all;
 				}
 
 				&:hover {
 					rect {
-						fill: var(--e-a-color-txt);
+						fill: $editor-dark;
 					}
 				}
 

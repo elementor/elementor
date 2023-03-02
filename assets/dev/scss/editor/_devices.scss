@@ -102,8 +102,7 @@ body {
 		}
 	}
 
-	.ui-resizable-e,
-	.ui-resizable-w {
+	.ui-resizable-e, .ui-resizable-w {
 		align-items: center;
 		justify-content: center;
 		width: 20px;
@@ -137,7 +136,7 @@ body {
 	.ui-resizable-e {
 		right: 0;
 	}
-
+	
 	.ui-resizable-w {
 		left: 0;
 	}
@@ -149,3 +148,4 @@ body {
 	background-color: #fff;
 	box-shadow: 0 0 3px rgba(0, 0, 0, .3), 0 0 20px rgba(0, 0, 0, .15);
 }
+

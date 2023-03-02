@@ -5,29 +5,22 @@
 	}
 
 	.wp-editor-container {
-		border: var(--e-a-border);
+		border: 1px solid $editor-background;
 	}
 
 	.wp-editor-tabs {
-		border: var(--e-a-border-bold);
+		border: 1px solid $editor-lightest;
 		border-bottom: none;
-		border-start-start-radius: var(--e-a-border-radius);
-		border-start-end-radius: var(--e-a-border-radius);
-		border-end-end-radius: 0;
-		border-end-start-radius: 0;
-
-		button:hover {
-			background-color: var(--e-a-bg-hover);
-		}
+		border-radius: 3px 3px 0 0;
 	}
 
 	#insert-media-button {
 		height: initial;
 		line-height: 24px;
 		font-size: 10px;
-		color: var(--e-a-color-txt);
-		border-color: var(--e-a-border-color-bold);
-		background-color: var(--e-a-bg-default);
+		color: $editor-dark;
+		border-color: $editor-lightest;
+		background-color: $editor-background;
 		min-height: initial;
 	}
 
@@ -49,13 +42,13 @@
 		position: static;
 		border: none;
 		margin: 0;
-		color: var(--e-a-color-txt);
+		color: $editor-dark;
 		font-size: 10px;
 		padding: 3px 9px 4px;
 	}
 
 	.switch-html {
-		border: solid var(--e-a-border-color-bold);
+		border: solid $editor-lightest;
 		border-width: 0 1px;
 	}
 
@@ -66,14 +59,14 @@
 		}
 
 		.switch-html {
-			background-color: var(--e-a-bg-active);
+			background-color: $editor-background;
 		}
 	}
 
 	.tmce-active {
 
 		.switch-tmce {
-			background-color: var(--e-a-bg-active);
+			background-color: $editor-background;
 		}
 
 		.switch-html {
@@ -81,9 +74,8 @@
 		}
 	}
 
-	.mce-toolbar-grp,
-	.quicktags-toolbar {
-		background-color: var(--e-a-bg-default);
+	.mce-toolbar-grp, .quicktags-toolbar {
+		background-color: $editor-background;
 	}
 
 	.mce-toolbar-grp {
@@ -98,23 +90,16 @@
 	}
 
 	.mce-ico {
-		color: var(--e-a-color-txt);
+		color: $editor-dark;
 		font-size: 16px;
 	}
 
-	.mce-btn-group {
+	.mce-btn {
+		margin-right: 0;
+		margin-left: 0;
 
-		.mce-btn {
-
-			&:hover,
-			&:active,
-			&.mce-active {
-				color: var(--e-a-color-txt-active);
-
-				i {
-					color: var(--e-a-color-txt-active);
-				}
-			}
+		&:hover, &:active, &.mce-active {
+			border-color: $editor-lightest;
 		}
 	}
 
@@ -124,14 +109,7 @@
 
 	.mce-path-item {
 		font-size: 12px;
-		color: var(--e-a-color-txt);
-	}
-
-	.mce-top-part {
-
-		&:before {
-			box-shadow: none;
-		}
+		color: $editor-dark;
 	}
 
 	.elementor-control-dynamic-switcher {

@@ -2,17 +2,11 @@
 #elementor-hotkeys {
 	text-align: $start;
 
-	&__modal {
-
-		.dialog-buttons-wrapper {
-			display: none;
-		}
-	}
-
 	&__content {
 		display: flex;
 		width: 100%;
 		overflow: hidden;
+		margin-bottom: 30px;
 
 		@media (max-width: $editor-screen-md-max) {
 			flex-direction: column;
@@ -25,7 +19,7 @@
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 
 			@media (max-width: $editor-screen-md-max) {
-				border-radius: var(--e-global-radius);
+				border-radius: 3px;
 			}
 		}
 
@@ -47,7 +41,7 @@
 			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 
 			@media (max-width: $editor-screen-md-max) {
-				border-radius: var(--e-global-radius);
+				border-radius: 3px;
 			}
 		}
 
@@ -99,7 +93,7 @@
 	}
 
 	&__list {
-		background-color: var(--e-a-bg-default);
+		background-color: #ffffff;
 		height: calc(100% - 42px);
 		padding: 10px 20px;
 
@@ -120,10 +114,14 @@
 		display: flex;
 		align-items: center;
 		padding: 20px 10px;
-		border-bottom: var(--e-a-border);
+		border-bottom: 1px solid $gray-lighter;
 
 		&:last-child {
-			border-bottom: none;
+			margin-bottom: 30px;
+
+			@media (max-width: $editor-screen-xs-max) {
+				margin-bottom: 0;
+			}
 		}
 
 		&--label {

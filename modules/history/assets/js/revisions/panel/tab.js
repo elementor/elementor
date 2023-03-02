@@ -151,6 +151,10 @@ module.exports = Marionette.CompositeView.extend( {
 		this.currentPreviewId = null;
 
 		this.exitReviewMode();
+
+		if ( this.currentPreviewItem ) {
+			this.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
+		}
 	},
 
 	onDestroy() {

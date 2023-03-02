@@ -248,12 +248,15 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'px',
 					'size' => 500,
 				],
 				'tablet_default' => [
+					'unit' => 'px',
 					'size' => 500,
 				],
 				'mobile_default' => [
+					'unit' => 'px',
 					'size' => 500,
 				],
 				'selectors' => [
@@ -345,12 +348,15 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'px',
 					'size' => '',
 				],
 				'tablet_default' => [
+					'unit' => 'px',
 					'size' => '',
 				],
 				'mobile_default' => [
+					'unit' => 'px',
 					'size' => '',
 				],
 				'selectors' => [
@@ -524,6 +530,7 @@ class TextPath extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 1,
+					'unit' => 'px',
 				],
 				'range' => [
 					'px' => [
@@ -589,6 +596,7 @@ class TextPath extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => '',
+					'unit' => 'px',
 				],
 				'range' => [
 					'px' => [

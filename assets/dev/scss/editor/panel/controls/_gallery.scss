@@ -3,7 +3,7 @@
 	.elementor-control {
 
 		&-media__content {
-			border: var(--e-a-border-bold);
+			border: 1px solid $editor-lightest;
 			border-radius: 3px;
 		}
 
@@ -11,7 +11,7 @@
 			font-size: 12px;
 			height: 27px;
 			@include padding-start(10px);
-			border-bottom: var(--e-a-border-bold);
+			border-bottom: 1px solid $editor-lightest;
 			display: flex;
 
 			> * {
@@ -49,7 +49,6 @@
 			height: 48px;
 			background-size: cover;
 			background-position: 50% 50%;
-			border: var(--e-a-border);
 		}
 
 		&-gallery-edit {
@@ -58,7 +57,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background-color: rgba(0, 0, 0, .2);
+			background-color: rgba($editor-dark, .3);
 			padding: 10px;
 			font-size: 11px;
 			transition: all .3s ease-in-out;
@@ -72,18 +71,14 @@
 				@include end(10px);
 				width: 21px;
 				height: 21px;
-				color: var(--e-a-color-white);
-				background-color: rgba(0, 0, 0, .5);
+				background-color: rgba(#fff, .9);
+				color: $editor-light;
 				box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.2);
-				transition: var(--e-a-transition-hover);
+				border-radius: 3px;
 
 				i {
 					font-size: 11px;
 					padding: 5px;
-				}
-
-				&:hover {
-					background-color: rgba(0, 0, 0, .6);
 				}
 			}
 		}
@@ -130,7 +125,7 @@
 	&.elementor-control-dynamic {
 
 		.elementor-control-gallery-clear {
-			@include border-start(var(--e-a-border));
+			@include border-start(1px solid $editor-lightest);
 		}
 	}
 
@@ -139,14 +134,14 @@
 		justify-content: center;
 
 		&:hover {
-			color: var(--e-a-color-danger);
+			color: $editor-warning;
 		}
 	}
 
 	.elementor-control-dynamic-switcher {
-		border-width: 0;
-		border-inline-start-width: 1px;
-		border-bottom-width: 1px;
-		border-radius: 0;
+		border: none;
+		border-bottom: 1px solid $editor-lightest;
+		@include border-start(1px solid $editor-lightest);
+		border-radius: getValueByDirection(0 3px 0 0, 3px 0 0 0);
 	}
 }

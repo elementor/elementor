@@ -118,6 +118,8 @@
 			border-radius: 20px;
 			speak: none;
 			text-align: center;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
 		}
 
 		&:hover:before,

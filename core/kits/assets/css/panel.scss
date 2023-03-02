@@ -14,10 +14,11 @@
 	.elementor-panel {
 
 		#elementor-panel-header {
+			background-color: $editor-kit-accent;
 
 			#elementor-panel-header-kit-close,
 			#elementor-panel-header-kit-back {
-				display: flex;
+				display: table-cell;
 			}
 
 			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
@@ -33,10 +34,28 @@
 			}
 		}
 
+		.elementor-panel-navigation {
+
+			.elementor-panel-navigation-tab{
+
+				&.elementor-active{
+					border-bottom-color: $editor-kit-accent;
+				}
+			}
+		}
+
 		#elementor-panel-page-settings {
 
 			.elementor-panel-navigation {
 				display: none;
+			}
+		}
+
+		#elementor-panel-saver-button-publish,
+		#elementor-panel-saver-button-save-options {
+
+			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
+				background-color: $editor-kit-accent;
 			}
 		}
 
@@ -64,7 +83,7 @@
 				position: relative;
 
 				&.ui-sortable-helper {
-					background-color: var(--e-a-bg-default);
+					background-color: $white;
 				}
 			}
 
@@ -75,12 +94,8 @@
 
 			&-row-tool {
 				cursor: pointer;
-				color: var(--e-a-color-txt);
+				color: $editor-lightest;
 				padding: 5px;
-
-				&:hover {
-					color: var(--e-a-color-txt-hover);
-				}
 			}
 		}
 
@@ -166,7 +181,7 @@
 
 		.elementor-button-wrapper {
 			text-align: center;
-			border-top: var(--e-a-border);
+			border-top: 1px solid $editor-background;
 			padding-top: 15px;
 		}
 
@@ -176,7 +191,7 @@
 		}
 
 		.e-sortable-placeholder {
-			background-color: var(--e-a-color-info);
+			background-color: $editor-info;
 			opacity: .9;
 			width: 100%;
 			margin: 8px 0;
@@ -191,6 +206,7 @@
 }
 
 .e-global-colors__color-value {
+	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
 	text-align: $end;

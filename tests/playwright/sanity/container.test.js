@@ -504,29 +504,6 @@ test.describe( 'Container tests', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 	} );
-
-	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
-
-		// Add widgets.
-		await editor.addWidget( widgets.button, container );
-		await editor.addWidget( widgets.heading, container );
-		await editor.addWidget( widgets.image, container );
-
-		const preview = editor.getPreviewFrame();
-
-		const resizers = await preview.locator( '.ui-resizable-handle.ui-resizable-e' );
-		await expect( resizers ).toHaveCount( 4 );
-
-		await editor.togglePreviewMode();
-		await expect( resizers ).toHaveCount( 0 );
-	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {

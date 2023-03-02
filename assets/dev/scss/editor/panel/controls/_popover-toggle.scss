@@ -17,8 +17,7 @@
 		&:checked {
 
 			+ .elementor-control-popover-toggle-toggle-label {
-				color: var(--e-a-color-primary);
-				border-color: var(--e-a-border-color-focus);
+				color: $editor-info;
 			}
 		}
 
@@ -31,12 +30,8 @@
 	}
 
 	.elementor-control-popover-toggle-reset-label {
-		color: var(--e-a-color-txt-muted);
+		color: $editor-lighter;
 		@include margin-end(5px);
-
-		&:hover {
-			color: var(--e-a-color-txt);
-		}
 	}
 
 	.elementor-control-popover-toggle-toggle-label {
@@ -45,7 +40,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 3px;
-		border: var(--e-a-border-bold);
+		border: 1px solid $editor-lightest;
 	}
 }
 
@@ -59,7 +54,7 @@
 .e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
-		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 		flex-shrink: 0;
 	}
 }

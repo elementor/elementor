@@ -18,24 +18,40 @@ export default class extends BaseManager {
 		};
 	}
 
-	onUIThemeChanged( newValue ) {
-		const $lightUi = jQuery( '#e-theme-ui-light-css' );
-		const $darkUi = jQuery( '#e-theme-ui-dark-css' );
+	createDarkModeStylesheetLink() {
+		const darkModeLinkID = this.getSettings( 'darkModeLinkID' );
 
-		if ( 'auto' === newValue ) {
-			$lightUi.attr( 'media', '(prefers-color-scheme: light)' );
-			$darkUi.attr( 'media', '(prefers-color-scheme: dark)' );
+		let $darkModeLink = jQuery( '#' + darkModeLinkID );
+
+		if ( ! $darkModeLink.length ) {
+			$darkModeLink = jQuery( '<link>', {
+				id: darkModeLinkID,
+				rel: 'stylesheet',
+				href: elementor.config.ui.darkModeStylesheetURL,
+			} );
+		}
+
+		this.$link = $darkModeLink;
+	}
+
+	getDarkModeStylesheetLink() {
+		if ( ! this.$link ) {
+			this.createDarkModeStylesheetLink();
+		}
+
+		return this.$link;
+	}
+
+	onUIThemeChanged( newValue ) {
+		const $link = this.getDarkModeStylesheetLink();
+
+		if ( 'light' === newValue ) {
+			$link.remove();
 
 			return;
 		}
 
-		if ( 'light' === newValue ) {
-			$lightUi.attr( 'media', 'all' );
-			$darkUi.attr( 'media', 'none' );
-		} else {
-			$lightUi.attr( 'media', 'none' );
-			$darkUi.attr( 'media', 'all' );
-		}
+		$link.attr( 'media', 'auto' === newValue ? '(prefers-color-scheme: dark)' : '' ).appendTo( elementorCommon.elements.$body );
 	}
 
 	onPanelWidthChanged( newValue ) {

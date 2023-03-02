@@ -54,7 +54,6 @@ export default class StretchedElement extends Base {
 			selectors: {
 				container: this.getStretchContainer(),
 			},
-			considerScrollbar: elementorFrontend.isEditMode() && elementorFrontend.config.is_rtl,
 		};
 	}
 

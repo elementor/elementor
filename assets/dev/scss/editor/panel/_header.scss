@@ -3,18 +3,16 @@
 //
 
 #elementor-panel-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	display: table;
 	height: 40px;
 	width: 100%;
-	background-color: var(--e-a-dark-bg);
-	color: var(--e-a-color-white);
+	background-color: $editor-accent;
+	color: #fff;
 
 	> * {
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		display: table-cell;
+		vertical-align: middle;
+		text-align: center;
 	}
 }
 
@@ -27,14 +25,14 @@
 		font-size: 19px;
 		height: 40px;
 		line-height: 40px;
-		transition: var(--e-a-transition-hover);
+		transition: $transition-hover;
 
 		&.eicon-menu-bar {
 			font-size: 18px;
 		}
 
 		&:hover {
-			color: var(--e-a-dark-color-txt-hover);
+			color: $editor-lightest;
 		}
 	}
 }

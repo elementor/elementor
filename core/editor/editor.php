@@ -388,8 +388,30 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
+		$suffix = Utils::is_script_debug() ? '' : '.min';
+
 		$this->get_loader()->register_styles();
 		$this->get_loader()->enqueue_styles();
+
+		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
+
+		if ( 'light' !== $ui_theme ) {
+			$ui_theme_media_queries = 'all';
+
+			if ( 'auto' === $ui_theme ) {
+				$ui_theme_media_queries = '(prefers-color-scheme: dark)';
+			}
+
+			wp_enqueue_style(
+				'elementor-editor-dark-mode',
+				ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+				[
+					'elementor-editor',
+				],
+				ELEMENTOR_VERSION,
+				$ui_theme_media_queries
+			);
+		}
 
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 

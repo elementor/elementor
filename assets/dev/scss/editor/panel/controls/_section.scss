@@ -1,12 +1,9 @@
-#elementor-controls {
-	padding-top: 15px;
-}
-
 .elementor-control-type-section {
+	margin-top: 10px;
 	padding: 0;
 
-	&.e-open {
-		padding-bottom: 10px;
+	&.elementor-open {
+		padding-bottom: 15px;
 	}
 
 	+ .elementor-control {

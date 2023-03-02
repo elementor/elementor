@@ -4,6 +4,7 @@
 
 .elementor-control {
 	--control-title-size: 12px;
+	background-color: #fff;
 	position: relative;
 	padding: 0 20px 15px;
 
@@ -15,6 +16,10 @@
 
 		&:hover {
 			border-bottom-color: inherit;
+		}
+
+		&.elementor-responsive-switcher {
+			border-bottom: 0;
 		}
 	}
 
@@ -37,19 +42,37 @@
 
 	&.elementor-control-type-divider {
 		padding: 0;
-
+		background-color: transparent;
 
 		.elementor-control-content {
 			border-width: 0;
-			border-top: var(--e-a-border);
+			border-color: $editor-background;
+			border-style: solid;
+			border-top-width: 1px;
 
 			//For the next control in the panel
-			background-color: var(--e-a-bg-default);
+			background-color: #ffffff;
 			height: 15px;
 		}
 	}
 
 	&.elementor-control-separator- {
+
+		&default:not(.elementor-control-type-divider) {
+
+			// WP Widgets
+			&.elementor-control-wp {
+				margin-top: 15px;
+
+				&:before {
+					content: '';
+					height: 1px;
+					display: block;
+					margin-bottom: 15px;
+					background-color: transparent;
+				}
+			}
+		}
 
 		&before {
 			padding-top: 15px;
@@ -58,10 +81,10 @@
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: calc(100% - 40px);
+				width: 100%;
 				top: 0;
-				@include start(20px);
-				background-color: var(--e-a-border-color);
+				left: 0;
+				background-color: $editor-background;
 			}
 		}
 
@@ -71,10 +94,10 @@
 				content: '';
 				position: absolute;
 				height: 1px;
-				width: calc(100% - 40px);
+				width: 100%;
 				bottom: 0;
-				@include start(20px);
-				background-color: var(--e-a-border-color);
+				left: 0;
+				background-color: $editor-background;
 			}
 
 			+ .elementor-control-type-tabs,
@@ -143,11 +166,9 @@
 }
 
 .elementor-control,
-.elementor-panel-category,
 .elementor-panel-scheme-item {
 
-	&.e-open,
-	&.elementor-active{
+	&.elementor-open {
 
 		.elementor-panel-heading-toggle {
 
@@ -160,7 +181,7 @@
 		}
 	}
 
-	&:not(.e-open):not(.elementor-active) {
+	&:not(.elementor-open) {
 
 		.elementor-panel-heading-toggle {
 
@@ -175,34 +196,36 @@
 }
 
 .elementor-panel-heading {
-	display: flex;
-	align-items: center;
-	gap: 5px;
+	display: table;
+	table-layout: fixed;
 	height: 40px;
 	padding: 0 20px;
 	width: 100%;
-	border-top: var(--e-a-border); //todo: remove
+	border-bottom: 1px solid $editor-background;
 	cursor: pointer;
 
+	> * {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
 	&-toggle {
-		width: 10px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
+		width: 20px;
+		color: $editor-darkest;
 	}
 
 	&-title {
+		color: $editor-darkest;
 		font-weight: bold;
 	}
 }
 
-#elementor-controls {
+// WP Widgets
+.elementor-control-wp {
+	line-height: 1.5;
 
-	.elementor-control-type-section:first-child {
-
-		.elementor-panel-heading {
-			border-top: none;
-		}
+	p {
+		margin: 15px 0;
 	}
 }
 
@@ -294,12 +317,15 @@
 	}
 }
 
+.elementor-required {
+	color: $editor-warning;
+}
+
 @if $direction == rtl {
 
 	.elementor-control-start-end {
 
-		.eicon-h-align-left,
-		.eicon-h-align-right {
+		.eicon-h-align-left, .eicon-h-align-right {
 			transform: rotate(180deg);
 		}
 	}
@@ -367,6 +393,10 @@
 
 @import "controls/media";
 
+@import "controls/number";
+
+@import "controls/order";
+
 @import "controls/popover-toggle";
 
 @import "controls/repeater";
@@ -392,3 +422,7 @@
 @import "controls/wp-widget";
 
 @import "controls/wysiwyg";
+
+@import "controls/text";
+
+@import "controls/date-time";

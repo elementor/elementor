@@ -6,19 +6,19 @@
 	}
 
 	.elementor-control-input-wrapper {
-		display: flex;
-		align-items: start;
+		overflow: hidden;
 	}
 
 	.elementor-image-dimensions-field {
 		width: 65px;
+		float: $start;
 
 		input {
 
 			&:focus {
 
 				+ .elementor-image-dimensions-field-description {
-					color: var(--e-a-color-txt);
+					color: $editor-light;
 				}
 			}
 		}
@@ -27,18 +27,22 @@
 	.elementor-image-dimensions-separator {
 		width: 20px;
 		text-align: center;
+		float: $start;
 		padding-top: 4px;
 	}
 
 	.elementor-image-dimensions-field-description {
 		display: block;
+		text-transform: uppercase;
 		margin-top: 5px;
-		color: var(--e-a-color-txt-disabled);
+		color: $editor-lightest;
 		font-size: 9px;
 		text-align: center;
 	}
 
 	.elementor-image-dimensions-apply-button {
-		@include margin-start(auto);
+		float: $end;
+		height: $control-unit;
+		width: 65px;
 	}
 }
