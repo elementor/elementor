@@ -20,7 +20,17 @@ $e-gray-750:	#222325;
 $e-gray-800:	#1A1C1E;
 $e-gray-900:	#0C0D0E;
 
-//Editor Facelift 2023 - Purples
+//Editor Facelift 2023 - Indigo
+$e-indigo-600:	#524CFF;
+$e-indigo-700:	#4C43E5;
+$e-indigo-800:	#4338CA;
+
+//Editor Facelift 2023 - Teal
+$e-teal-300:	#5EEAD4;
+$e-teal-400:	#1DDDBF;
+$e-teal-500:	#12AA9A;
+
+//Editor Facelift 2023 - Temp Aliases
 $e-purple:		#524CFF;
 $e-purple-tint:	#6661FF;
 $e-purple-shade:#EBEBFF;
@@ -116,7 +126,6 @@ $transition-hover: all .3s;
 
 // Container element primary color.
 // TODO: Need a final color from the Design.
-$editor-container-primary: #0098c7;
 $editor-kit-accent: #4ab7f4;
 
 // Platform

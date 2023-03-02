@@ -12,6 +12,7 @@
 @import "../panel/controls";
 @import "../resizable";
 
+@import "theme";
 @import "add-new";
 @import "animations";
 @import "compatibility";
@@ -39,13 +40,13 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
-	--primary-color: #{ $editor-info };
-	--secondary-color: #{ darken($editor-info, 20%) };
+	--primary-color: var(--e-p-border-con);
+	--secondary-color: var(--e-p-border-con-hover);
 	--outline-color: var( --primary-color );
 
 	.e-con {
-		--primary-color: #{ $editor-container-primary };
-		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
+		--primary-color: var(--e-p-border-con);
+		--secondary-color: var(--e-p-border-con-hover);
 		--outline-color: var( --primary-color );
 
 		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
@@ -86,13 +87,9 @@ html.elementor-html {
 			opacity: .3;
 		}
 
-		&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
-			//transition: all .1s;
-		}
-
 		&.elementor-element-editable,
 		&.elementor-element-edit-mode:hover {
-			box-shadow: 0 0 0 1px $editor-info;
+			box-shadow: 0 0 0 1px var(--e-p-border-widget);
 		}
 
 		&:not(:hover) {
@@ -116,9 +113,9 @@ html.elementor-html {
 		padding: 0;
 		margin: 0;
 		font-size: 11px;
-		color: #fff;
+		color: var(--e-p-border-widget-invert);
 		width: 25px;
-		transition: margin .3s, width .3s, font .3s;
+		transition: var(--e-a-transition-hover);
 	}
 
 	.elementor-inline-editing {
@@ -206,7 +203,7 @@ html.elementor-html {
 
 		&:before {
 			content: '';
-			background-color: $editor-info;
+			background-color: var(--e-p-draggable-color);
 			transition-timing-function: ease-out;
 			opacity: .9;
 			height: $widget-placeholder-size;
@@ -219,7 +216,7 @@ html.elementor-html {
 
 		&:after {
 			content: '';
-			background-color: $editor-info;
+			background-color: var(--e-p-draggable-color);
 			transition-timing-function: ease-out;
 			opacity: .9;
 			height: $widget-placeholder-size;
@@ -245,68 +242,6 @@ html.elementor-html {
 	}
 }
 
-// Column
-.elementor-column {
-
-	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
-
-		&:after {
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			outline: 1px dashed $editor-dark;
-		}
-	}
-
-	&:hover,
-	&.elementor-element-editable {
-
-		> .elementor-element-overlay {
-			border: 1px solid var(--e-a-color-white);
-
-			&:after {
-				content: '';
-			}
-		}
-	}
-
-	&.elementor-dragging-on-child {
-
-		> .elementor-element-overlay {
-			border: 1px solid var(--e-a-color-info);
-
-			&:after {
-				display: none;
-			}
-		}
-	}
-
-	> .ui-resizable-e, > .ui-resizable-w {
-		cursor: col-resize;
-		width: 7px;
-		position: absolute;
-		@include end(-5px);
-		top: 0;
-		height: 100%;
-	}
-
-	&:last-of-type {
-		> .ui-resizable-e, > .ui-resizable-w {
-			display: none !important;
-		}
-	}
-
-	@media (max-width: $editor-screen-md-max) {
-		> .ui-resizable-e, > .ui-resizable-w {
-			display: none !important;
-		}
-	}
-}
-
 // General - Overlay Settings
 .elementor-editor-element-settings {
 	position: absolute;
@@ -315,148 +250,20 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: var(--editor-font-family);
+	font-family: var(--e-a-font-family);
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
 	line-height: 1;
 	z-index: $first-layer;
 	pointer-events: all;
+	transition: var(--e-a-transition-hover);
 }
 
 .elementor-editor-element-edit {
 
 	@media(min-width: $editor-screen-lg-min) {
 		cursor: move;
-	}
-}
-
-// Section & Container - Overlay Settings
-.elementor-editor-section-settings,
-.elementor-editor-container-settings {
-	height: 24px;
-	top: 1px;
-  	left: 50%;
-  	transform: translateX( -50% ) translateY( -100% );
-	background-color: var( --primary-color );
-	border-radius: 5px 5px 0 0;
-	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
-
-	i.eicon-handle {
-		font-size: 16px;
-	}
-
-	.elementor-editor-element-setting {
-
-		&:hover {
-			background-color: var( --secondary-color );
-		}
-
-		&:first-child {
-			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
-
-			&:before {
-				content: '';
-				position: absolute;
-				border: solid transparent;
-				top: 2px;
-				@include border-end-property(color, var( --primary-color ));
-				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
-				@include end(calc(100% - 1px));
-			}
-
-			&:hover {
-
-				&:before {
-					@include border-end-property(color, var( --secondary-color ));
-				}
-			}
-		}
-
-		&:last-child {
-			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
-
-			&:after {
-				content: '';
-				position: absolute;
-				border: solid transparent;
-				top: 2px;
-				@include border-start-property(color, var( --primary-color ));
-				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
-				@include start(calc(100% - 1px));
-			}
-
-			&:hover {
-
-				&:after {
-					@include border-start-property(color, var( --secondary-color ));
-				}
-			}
-		}
-	}
-}
-
-// Top Section / Container (Handles inside)
-.e-handles-inside,
-.elementor-section--handles-inside {
-
-	> .elementor-element-overlay > .elementor-editor-element-settings {
-		transform: translateX(-50%);
-		border-radius: 0 0 5px 5px;
-
-		.elementor-editor-element-setting {
-			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
-
-				&:before {
-					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
-				}
-			}
-
-			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
-
-				&:after {
-					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
-				}
-			}
-		}
-	}
-}
-
-// Column - Overlay Settings
-.elementor-editor-column-settings {
-	top: -1px;
-	@include start(-1px);
-	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
-	overflow: hidden;
-
-	.elementor-editor-element-setting {
-		background-color: $editor-darkest;
-
-		&:not(:hover) {
-			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
-		}
-	}
-}
-
-// Widget - Overlay Settings
-.elementor-editor-widget-settings {
-	z-index: $second-layer;
-	top: -1px;
-	@include end(-1px);
-	flex-direction: row-reverse;
-	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
-	overflow: hidden;
-
-	.elementor-editor-element-setting {
-		background-color: darken($editor-info, 20%);
-
-		&:not(:hover) {
-			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-		}
 	}
 }
 
@@ -490,7 +297,7 @@ html.elementor-html {
 	position: absolute;
 	cursor: move;
 	border: var(--e-a-border);
-	border-radius: 3px;
+	border-radius: var(--e-a-border-radius);
 	background-color: var(--e-a-bg-active);
 	border-color: var(--e-a-border-color-accent);
 	color: var(--e-a-color-active);
@@ -514,72 +321,11 @@ html.elementor-html {
 	}
 }
 
-//Content Only - Role Manager
-.elementor-editor-content-only {
-	//Empty Section
-	.elementor-first-add {
-		display: none;
-	}
-
-	// Section
-	.elementor-section {
-
-		> .elementor-element-overlay {
-			display: none;
-
-			&:after {
-				display: none;
-			}
-		}
-
-		&:hover,
-		&.elementor-element-editable {
-
-			> .elementor-element-overlay {
-
-				&:after {
-					display: none;
-				}
-			}
-		}
-	}
-
-	// Column
-	.elementor-column {
-
-		> .elementor-element-overlay {
-			display: none;
-
-			&:after {
-				display: none;
-			}
-		}
-
-		&:hover,
-		&.elementor-element-editable {
-
-			> .elementor-element-overlay {
-
-				&:after {
-					display: none;
-				}
-			}
-		}
-	}
-
-	.elementor-editor-element-edit {
-
-		@media(min-width: $editor-screen-lg-min) {
-			cursor: pointer;
-		}
-	}
-}
-
 // Drag/sort placeholder
 .elementor-sortable-placeholder {
 
 	&:not(.elementor-column-placeholder) {
-		background-color: var(--e-a-color-info);
+		background-color: var(--e-p-draggable-color);
 		animation-duration: 250ms;
 		opacity: .9;
 		width: 100%;
@@ -602,28 +348,6 @@ html.elementor-html {
 	animation-name: placeholder-section;
 }
 
-.elementor-column-placeholder {
-	position: relative;
-
-	&:before,
-	&:after {
-		content: '';
-		position: absolute;
-		top: 10px;
-		bottom: 10px;
-		right: 10px;
-		left: 10px;
-	}
-
-	&:before {
-		border: 1px solid $editor-dark;
-	}
-
-	&:after {
-		border: 1px dashed var(--e-a-color-white);
-	}
-}
-
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
@@ -634,7 +358,7 @@ html.elementor-html {
 
 	&:after {
 		content: '';
-		background-color: $editor-info;
+		background-color: var(--e-p-draggable-color);
 		transition-timing-function: ease-out;
 		opacity: .9;
 		height: $widget-placeholder-size;
@@ -658,53 +382,6 @@ html.elementor-html {
 
 		.elementor-sortable-placeholder {
 			display: none;
-		}
-	}
-}
-
-.elementor-column-percents-tooltip {
-	position: absolute;
-	display: none;
-	pointer-events: none;
-	top: 50%;
-	transform: translateY(-50%);
-	color: #fff;
-	font-size: 10px;
-	background-color: $editor-darker;
-	width: 40px;
-	padding: 3.5px 0;
-	text-align: center;
-	z-index: 1;
-	line-height: 1;
-
-	&:after {
-		content: '';
-		position: absolute;
-		width: 0;
-		height: 0;
-		border: 8.5px solid transparent;
-		top: 0;
-	}
-
-	&[data-side="left"] {
-		border-radius: 3px 0 0 3px;
-		right: 15px;
-
-		&:after {
-			left: 100%;
-			border-left-color: $editor-darker;
-			border-right-width: 0;
-		}
-	}
-
-	&[data-side="right"] {
-		border-radius: 0 3px 3px 0;
-		left: 15px;
-
-		&:after {
-			right: 100%;
-			border-right-color: $editor-darker;
-			border-left-width: 0;
 		}
 	}
 }
@@ -778,4 +455,7 @@ html.elementor-html {
 	}
 }
 
+@import "section";
+@import "column";
+@import "widget";
 @import "container";
