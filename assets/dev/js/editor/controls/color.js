@@ -260,21 +260,18 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerShow() {
-		window.dispatchEvent( new CustomEvent( 'elementor/global-color/show', {
-			detail: {
-				cid: this.cid,
-				instance: this,
-			},
-		} ) );
+		this.dispatchPickerEvent( 'shown' );
 	}
 
 	onPickerHide() {
-		window.dispatchEvent( new CustomEvent( 'elementor/global-color/hide', {
-			detail: {
-				cid: this.cid,
-				instance: this,
-			},
-		} ) );
+		this.dispatchPickerEvent( 'hidden' );
+	}
+
+	dispatchPickerEvent( eventName ) {
+		elementor.hooks.doAction( `panel/global/global-color/picker/${ eventName }`, {
+			cid: this.cid,
+			instance: this,
+		} );
 	}
 
 	onBeforeDestroy() {
