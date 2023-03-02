@@ -24,7 +24,7 @@ export default class extends elementorModules.Module {
 			layoutModal.addButton( {
 				name: 'insert_icon',
 				text: __( 'Insert', 'elementor' ),
-				classes: 'elementor-button elementor-button-success',
+				classes: 'elementor-button e-primary',
 				callback: () => {
 					this.updateControlValue();
 					this.unMountIconManager();
