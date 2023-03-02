@@ -1,78 +1,57 @@
-import { isRTL } from '@wordpress/i18n';
-import { ArrowUpLeftIcon, ArrowUpRightIcon } from '../../icons';
-import { MenuItem, styled, MenuItemProps, menuItemClasses, svgIconClasses, Button } from '@elementor/ui';
-
-const StyledMenuItem = styled( ( props: MenuItemProps ) => (
-	<MenuItem { ...props } />
-) )( () => ( {
-	padding: 0,
-
-	[ `& .${ svgIconClasses.root }` ]: {
-		width: '14px',
-		height: '14px',
-	},
-
-	[ [
-		'&:hover',
-		`&.${ menuItemClasses.focusVisible }`,
-		`&.${ menuItemClasses.focusVisible }:hover`,
-		`&.${ menuItemClasses.selected }`,
-		`&.${ menuItemClasses.selected }:hover`,
-		`&.${ menuItemClasses.selected }.${ menuItemClasses.focusVisible }`,
-	].join( ', ' ) ]: {
-		backgroundColor: 'rgba(255, 255, 255, 0.06)',
-	},
-} ) );
-
-const StyledButton = styled( Button )( () => ( {
-	color: '#fff',
-	fontSize: '12px',
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'start',
-	gap: '12px',
-	padding: '8px 16px',
-	width: '100%',
-	textTransform: 'none',
-	fontWeight: 400,
-
-	'&:hover': {
-		backgroundColor: 'transparent',
-		color: '#fff',
-	},
-} ) );
+import * as React from 'react';
+import {
+	MenuItem,
+	MenuItemProps,
+	ListItemText,
+	ListItemIcon,
+	ListItemButton,
+	ListItemButtonProps,
+	withDirection,
+} from '@elementor/ui';
+import { ArrowUpRightIcon } from '@elementor/icons';
 
 type ExtraProps = {
 	href?: string;
 	target?: string;
+	text?: string;
+	icon?: JSX.Element;
 }
 
-export default function PopoverMenuItem( { children, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
-	const isExternalLink = href && target === '_blank';
-	const arrowStyle = { marginInlineStart: 'auto' };
+const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, target } ) => {
+	if ( ! href ) {
+		return <>{ children }</>;
+	}
 
 	return (
-		<StyledMenuItem { ...props } disabled={ disabled }>
-			<StyledButton
-				disableRipple
-				onClick={ onClick }
-				href={ href }
-				target={ target }
-				disabled={ disabled }
-				sx={ {
-					display: 'flex',
-					alignItems: 'center',
-				} }
-			>
-				{ children }
-				{
-					isExternalLink && (
-						isRTL()
-							? <ArrowUpLeftIcon sx={ arrowStyle } />
-							: <ArrowUpRightIcon sx={ arrowStyle } />
-					)
-				}
-			</StyledButton>
-		</StyledMenuItem>
+		<ListItemButton
+			component="a"
+			role="menuitem"
+			href={ href }
+			target={ target }
+			sx={ { px: 0 } }
+		>
+			{ children }
+		</ListItemButton>
+	);
+};
+
+const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
+
+export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
+	const isExternalLink = href && target === '_blank';
+
+	return (
+		<MenuItem
+			{ ...props }
+			disabled={ disabled }
+			onClick={ onClick }
+			role={ href ? 'presentation' : 'menuitem' }
+		>
+			<MenuItemInnerWrapper href={ href } target={ target }>
+				<ListItemIcon>{ icon }</ListItemIcon>
+				<ListItemText primary={ text } />
+				{ isExternalLink && <DirectionalArrowIcon /> }
+			</MenuItemInnerWrapper>
+		</MenuItem>
 	);
 }

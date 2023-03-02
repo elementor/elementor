@@ -40,11 +40,6 @@ describe( '@elementor/v1-adapters - Readers', () => {
 		eGetEditMode = extendedWindow.elementor.channels.dataEditMode.request;
 	} );
 
-	afterEach( () => {
-		delete ( window as unknown as { $e?: unknown } ).$e;
-		delete ( window as unknown as { elementor?: unknown } ).elementor;
-	} );
-
 	it( 'should determine if a route is active', () => {
 		// Arrange.
 		const route = 'test/route';

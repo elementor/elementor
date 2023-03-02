@@ -477,7 +477,7 @@ class Editor {
 
 		$plugin->dynamic_tags->print_templates();
 
-		$this->init_editor_templates();
+		$this->get_loader()->register_additional_templates();
 
 		/**
 		 * Elementor editor footer.
@@ -562,31 +562,6 @@ class Editor {
 		}
 
 		return $results;
-	}
-
-	/**
-	 * Init editor templates.
-	 *
-	 * Initialize default elementor templates used in the editor panel.
-	 *
-	 * @since 1.7.0
-	 * @access private
-	 */
-	private function init_editor_templates() {
-		$template_names = [
-			'global',
-			'panel',
-			'panel-elements',
-			'repeater',
-			'templates',
-			'navigator',
-			'hotkeys',
-			'responsive-bar',
-		];
-
-		foreach ( $template_names as $template_name ) {
-			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
-		}
 	}
 
 	public function set_post_id( $post_id ) {

@@ -1,21 +1,16 @@
-import * as React from 'react';
-import StructureIcon from '../icons/structure-icon';
+import { StructureIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
-import { runCommand, useIsPreviewMode, useIsRouteActive } from '@elementor/v1-adapters';
+import { runCommand, useRouteStatus } from '@elementor/v1-adapters';
+import { ToggleActionProps } from '@elementor/top-bar';
 
-export default function useActionProps() {
-	const isNavigatorActive = useIsRouteActive( 'navigator' );
-	const isSiteSettingsActive = useIsRouteActive( 'panel/global' );
-	const isPreviewMode = useIsPreviewMode();
-
-	const selected = isNavigatorActive && ! isPreviewMode;
-	const disabled = isPreviewMode || isSiteSettingsActive;
+export default function useActionProps(): ToggleActionProps {
+	const { isActive, isBlocked } = useRouteStatus( 'navigator' );
 
 	return {
 		title: __( 'Structure', 'elementor' ),
-		icon: () => <StructureIcon />,
+		icon: StructureIcon,
 		onClick: () => runCommand( 'navigator/toggle' ),
-		selected,
-		disabled,
+		selected: isActive,
+		disabled: isBlocked,
 	};
 }

@@ -229,7 +229,7 @@ class Widget_Alert extends Widget_Base {
 			[
 				'label' => esc_html__( 'Left Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
@@ -365,7 +365,7 @@ class Widget_Alert extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-vertical-position: {{SIZE}}{{UNIT}};',
 				],
@@ -383,7 +383,7 @@ class Widget_Alert extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-horizontal-position: {{SIZE}}{{UNIT}};',
 				],

@@ -3,7 +3,7 @@ import PopoverMenuItem from '../ui/popover-menu-item';
 import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';
 import { ElementType } from 'react';
 
-type Props = {
+export type Props = {
 	title: string;
 	icon: ElementType;
 	selected?: boolean;
@@ -20,9 +20,10 @@ export default function ToggleAction( { icon: Icon, title, value, ...props }: Pr
 			<Icon />
 		</ToolbarMenuToggleItem>
 	) : (
-		<PopoverMenuItem { ...props }>
-			<Icon />
-			{ title }
-		</PopoverMenuItem>
+		<PopoverMenuItem
+			{ ...props }
+			text={ title }
+			icon={ <Icon /> }
+		/>
 	);
 }

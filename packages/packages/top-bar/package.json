@@ -1,7 +1,7 @@
 {
 	"name": "@elementor/top-bar",
 	"dependencies": {
-		"@elementor/documents": "*",
+		"@elementor/icons": "*",
 		"@elementor/editor": "*",
 		"@elementor/locations": "*",
 		"@elementor/ui": "*",

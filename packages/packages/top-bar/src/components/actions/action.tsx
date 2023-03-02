@@ -3,7 +3,7 @@ import ToolbarMenuItem from '../ui/toolbar-menu-item';
 import PopoverMenuItem from '../ui/popover-menu-item';
 import { ElementType } from 'react';
 
-type Props = {
+export type Props = {
 	title: string;
 	icon: ElementType;
 	disabled?: boolean;
@@ -18,9 +18,10 @@ export default function Action( { icon: Icon, title, ...props }: Props ) {
 			<Icon />
 		</ToolbarMenuItem>
 	) : (
-		<PopoverMenuItem { ...props }>
-			<Icon />
-			{ title }
-		</PopoverMenuItem>
+		<PopoverMenuItem
+			{ ...props }
+			text={ title }
+			icon={ <Icon /> }
+		/>
 	);
 }
