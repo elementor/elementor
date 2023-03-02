@@ -1,7 +1,6 @@
 import { freeMock, setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
 
 describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
-
 	window.document.body.innerHTML = `
 		<div class="elementor-control elementor-control-system_colors">
 			<div class="elementor-repeater-row-controls">
@@ -45,7 +44,7 @@ describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 			trigger( event ) {
 				this.element.dispatchEvent( new Event( event ) );
 			}
-		}
+		};
 
 		global.elementor = {
 			getPanelView: () => {
@@ -106,7 +105,7 @@ describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 				name: 'colors',
 				type: 'custom', // Document does not have custom colors.
 				id: 'primary',
-			} )
+			} ),
 		).toThrow( TypeError );
 
 		// Act.
