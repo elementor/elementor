@@ -20,7 +20,7 @@ class Module extends elementorModules.editor.utils.Module {
 			// TODO 21/02/2023 : get active kit id from the server.
 
 			this.initModal();
-			// this.getModal().show();
+			this.getModal().show().hide();
 		} );
 
 		elementor.hooks.addAction( 'elementor/preview/styleguide/colors', this.showStyleguidePreview.bind( this ) );
