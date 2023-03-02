@@ -16,7 +16,7 @@ export default function CanvasDisplay() {
 	}
 
 	return (
-		<Stack direction="row" spacing={ 3 } sx={ { paddingInlineStart: 3 } }>
+		<Stack direction="row" spacing={ 3 } sx={ { paddingInlineStart: 3, cursor: 'default' } }>
 			<Indicator title={ document.title } status={ document.status } />
 			<SettingsButton type={ document.type } />
 		</Stack>
