@@ -131,7 +131,7 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::error( $cache_cleared->get_error_message() );
 		}
 
-		\WP_CLI::success( "Template conditions cache is cleared." );
+		\WP_CLI::success( 'Template conditions cache is cleared.' );
 	}
 
 	/**
