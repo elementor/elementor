@@ -24,7 +24,7 @@ class Revisions_Manager {
 	/**
 	 * Maximum number of revisions to display.
 	 */
-	const MAX_REVISIONS_TO_DISPLAY = 100;
+	const MAX_REVISIONS_TO_DISPLAY = 50;
 
 	/**
 	 * Authors list.
