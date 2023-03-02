@@ -1421,9 +1421,6 @@ class Source_Local extends Source_Base {
 			'page_settings' => $page_settings,
 		] );
 
-		// Remove the temporary file, now that we're done with it.
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $file_path );
-
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;
 		}
