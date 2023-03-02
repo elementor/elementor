@@ -163,7 +163,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.currentPageView;
 	},
 
-	toggleDesignSystemPicker( { name, type, id } ) {
+	toggleDesignSystemPicker( name, { type, id } ) {
 		const controlViewElement = elementor.getPanelView().getCurrentPageView().content.currentView.getControlViewByName( `${ type }_${ name }` ).$el;
 
 		const idInput = controlViewElement.find( `input[type="hidden"][data-setting="_id"][value="${ id }"]` );

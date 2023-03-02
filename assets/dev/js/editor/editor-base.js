@@ -78,8 +78,7 @@ export default class EditorBase extends Marionette.Application {
 	backgroundClickListeners = {
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
-			callback: ( $elementsToHide ) => {
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .elementor-ignore-background-click, .pickr',			callback: ( $elementsToHide ) => {
 				$elementsToHide.hide();
 				window.dispatchEvent( new CustomEvent( 'elementor/popover/hide' ) );
 			},

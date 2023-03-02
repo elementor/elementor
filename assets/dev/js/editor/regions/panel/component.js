@@ -15,8 +15,10 @@ export default class Component extends ComponentBase {
 			'global-colors': () => this.manager.setPage( 'colorScheme' ),
 			'global-fonts': () => this.manager.setPage( 'typographyScheme' ),
 			'editor-preferences': () => this.manager.setPage( 'editorPreferences_settings' ).activateTab( 'settings' ),
-			'design-system-picker/show': ( args ) => this.manager.toggleDesignSystemPicker( args ),
-			'design-system-picker/hide': ( args ) => this.manager.toggleDesignSystemPicker( args ),
+			'global/global-colors/picker/show': ( args ) => this.manager.toggleDesignSystemPicker( 'colors', args ),
+			'global/global-colors/picker/hide': ( args ) => this.manager.toggleDesignSystemPicker( 'colors', args ),
+			'global/global-typography/picker/show': ( args ) => this.manager.toggleDesignSystemPicker( 'typography', args ),
+			'global/global-typography/picker/hide': ( args ) => this.manager.toggleDesignSystemPicker( 'typography', args ),
 		};
 	}
 
