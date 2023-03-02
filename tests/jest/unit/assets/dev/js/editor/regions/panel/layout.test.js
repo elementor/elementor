@@ -83,8 +83,8 @@ describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 
 			defaultRoutes() {
 				return {
-					'design-system-picker/show': ( args ) => layout.toggleDesignSystemPicker( args ),
-					'design-system-picker/hide': ( args ) => layout.toggleDesignSystemPicker( args ),
+					'global/global-colors/picker/show': ( args ) => layout.toggleDesignSystemPicker( 'colors', args ),
+					'global/global-colors/picker/hide': ( args ) => layout.toggleDesignSystemPicker( 'colors', args ),
 				};
 			}
 		} );
@@ -97,12 +97,11 @@ describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 
 	it( 'should call mock onclick for picker button when route is correct and throw error if not', () => {
 		// Arrange.
-		const route = 'panel/design-system-picker/show';
+		const route = 'panel/global/global-colors/picker/show';
 
 		// Act & Assert.
 		expect(
 			() => $e.route( route, {
-				name: 'colors',
 				type: 'custom', // Document does not have custom colors.
 				id: 'primary',
 			} ),
@@ -110,7 +109,6 @@ describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 
 		// Act.
 		$e.route( route, {
-			name: 'colors',
 			type: 'system', // Document has system colors.
 			id: 'primary',
 		} );
