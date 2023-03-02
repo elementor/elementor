@@ -51,6 +51,14 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/announcements/assets/scss',
+				src: 'announcements.scss',
+				dest: 'assets/css/modules/announcements',
+				ext: '.css',
+			}
+			},
+			{
+				expand: true,
 				cwd: 'modules/styleguide/assets/scss',
 				src: '*.scss',
 				dest: 'assets/css/modules/styleguide',
