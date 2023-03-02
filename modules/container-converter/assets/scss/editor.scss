@@ -21,10 +21,5 @@
 				margin-top: -6px;
 			}
 		}
-
-		&[disabled] {
-			background-color: $editor-lightest;
-			pointer-events: none;
-		}
 	}
 }
