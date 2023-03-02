@@ -4,7 +4,6 @@ namespace Elementor\Modules\WpCli;
 use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use ElementorPro\Modules\ThemeBuilder\Classes\Conditions_Cache;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -110,28 +109,6 @@ class Library extends \WP_CLI_Command {
 		} else {
 			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 		}
-	}
-
-	/**
-	 * Clear template conditions cache.
-	 *
-	 * ## EXAMPLES
-	 *
-	 *  1. wp elementor library clear-conditions
-	 *
-	 * @since  3.13.0
-	 * @access public
-	 * @alias clear-conditions
-	 */
-	public function clear_conditions() {
-		$cache = new Conditions_Cache();
-		$cache_cleared = $cache->regenerate();
-
-		if ( is_wp_error( $cache_cleared ) ) {
-			\WP_CLI::error( $cache_cleared->get_error_message() );
-		}
-
-		\WP_CLI::success( 'Template conditions cache is cleared.' );
 	}
 
 	/**
