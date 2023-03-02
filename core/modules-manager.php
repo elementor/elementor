@@ -106,7 +106,6 @@ class Modules_Manager {
 			'lazyload',
 			'kit-elements-defaults',
 			'announcements',
-			'styleguide',
 		];
 	}
 

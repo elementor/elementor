@@ -3,7 +3,6 @@ namespace Elementor\Core\Kits;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Controls\Repeater;
-use Elementor\Core\Kits\Controls\Switcher;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
@@ -348,7 +347,6 @@ class Manager {
 		$controls_manager = Plugin::$instance->controls_manager;
 
 		$controls_manager->register( new Repeater() );
-		$controls_manager->register( new Switcher() );
 	}
 
 	public function is_custom_colors_enabled() {

@@ -3,10 +3,8 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
-use Elementor\Core\Kits\Controls\Switcher as Global_Style_Switcher;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
-use Elementor\Modules\Styleguide\Module as Styleguide;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -42,35 +40,12 @@ class Global_Typography extends Tab_Base {
 		return 'https://go.elementor.com/global-fonts/';
 	}
 
-	public function get_action_show() {
-		return 'elementor/preview/styleguide/typography';
-	}
-
-	public function get_action_hide() {
-		return 'elementor/preview/styleguide/hide';
-	}
-
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_text_style',
 			[
 				'label' => esc_html__( 'Global Fonts', 'elementor' ),
 				'tab' => $this->get_id(),
-			]
-		);
-
-		$this->add_control(
-			'typography_enable_styleguide_preview',
-			[
-				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
-				'type' => Global_Style_Switcher::CONTROL_TYPE,
-				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global fonts.', 'elementor' ),
-				'separator' => 'after',
-				'label_off' => esc_html__( 'Off', 'elementor' ),
-				'label_on' => esc_html__( 'On', 'elementor' ),
-				'default' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'value' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'on_change_hook' => 'elementor/preview/styleguide/enable',
 			]
 		);
 

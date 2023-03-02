@@ -1,8 +1,10 @@
 <?php
+
 namespace Elementor\Core\Settings\EditorPreferences;
 
 use Elementor\Core\Settings\Base\Manager as BaseManager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

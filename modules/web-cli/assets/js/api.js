@@ -73,7 +73,6 @@ export default class API {
 	 * @return {*} result
 	 */
 	run( command, args = {} ) {
-		console.log( 'run', command, args);
 		return $e.commands.run( command, args );
 	}
 
