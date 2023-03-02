@@ -18,7 +18,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - shell: bash
+    - name: Generate Changelog
+      shell: bash
       env:
         TOKEN: ${{ inputs.TOKEN }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
@@ -36,18 +37,5 @@ runs:
                 echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
               fi
             fi
-
-            CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
-
-            # Add asterisk after colon and a line break after each line
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\(^\*\s*[^:]*:\)/\1\*/g' | sed 's/$/\\n/')
-
-            # Escape double quotes and add two line breaks after each newline
-            CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n\\n/g')
-
-            # Multi-line env vars are not supported,
-            # so we need to create a new env var with the content of the changelog file.
-            # This env var will be used in slack-notify action.
-            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
-            echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
+    - name: Generate Changelog Content For Slack
+      uses: ./.github/workflows/generate-slack-changelog
