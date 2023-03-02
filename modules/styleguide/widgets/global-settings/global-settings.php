@@ -28,8 +28,9 @@ class Global_Settings extends Widget_Base {
 		return [ 'global-settings', 'design' ];
 	}
 
-	protected function register_controls() {
-	}
+	public function show_in_panel() {
+	  return false;
+  }
 
 	protected function render() {
 		$site_settings = $this->get_site_settings();
@@ -39,6 +40,7 @@ class Global_Settings extends Widget_Base {
 			'custom_colors' => $site_settings['custom_colors'],
 			'custom_typography' => $site_settings['custom_typography'],
 			'system_typography' => $site_settings['system_typography'],
+			'fallback_font' => $site_settings['default_generic_fonts'],
 		];
 
 		$settings = htmlspecialchars( json_encode( $site_settings_reduced ) );
@@ -54,7 +56,7 @@ class Global_Settings extends Widget_Base {
 		$documents_manager = Plugin::$instance->documents;
 		$kits_manager = Plugin::$instance->kits_manager;
 
-	  $kit = $documents_manager->get_doc_or_auto_save( $kits_manager->get_active_id(), get_current_user_id() );
+		$kit = $documents_manager->get_doc_or_auto_save( $kits_manager->get_active_id(), get_current_user_id() );
 
 		if ( ! $kit instanceof Kit ) {
 			return [];

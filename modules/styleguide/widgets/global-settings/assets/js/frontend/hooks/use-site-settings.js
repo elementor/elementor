@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import listenToCommand from "../../../../../assets/js/common/utils/listen-to-command";
+import { addEventListener, AFTER_COMMAND_EVENT, } from "../../../../../assets/js/common/utils/top-events";
+import debounce from "../../../../../assets/js/common/utils/debounce";
 
 const useSiteSettings = ( initial ) => {
 	const [ settings, setSettings ] = useState( initial );
 
 	useEffect( () => {
-		listenToCommand( 'document/elements/settings', ( args ) => {
-			let name = args.container.model.attributes.name;
+		const onSettingsChange = debounce( ( event ) => {
+			const command = 'document/elements/settings';
+
+			if ( event.detail.command !== command ) {
+				return;
+			}
+
+			const args = event.detail.args;
+
+			const name = args.container.model.attributes.name;
 			if ( ! settings[ name ] ) {
 				return;
 			}
@@ -26,8 +35,17 @@ const useSiteSettings = ( initial ) => {
 			} );
 		} );
 
-		listenToCommand( 'document/repeater/insert', ( args ) => {
-			let name = args.name;
+		const onInsert = ( event ) => {
+
+			const command = 'document/repeater/insert';
+
+			if ( event.detail.command !== command ) {
+				return;
+			}
+
+			const args = event.detail.args;
+
+			const name = args.name;
 			if ( ! settings[ name ] ) {
 				return;
 			}
@@ -42,10 +60,18 @@ const useSiteSettings = ( initial ) => {
 				newSettings[ name ] = [ ...newFieldArray.slice( 0, at ), args.model, ...newFieldArray.slice( at ) ];
 				return newSettings;
 			} );
-		}, false );
+		};
 
-		listenToCommand( 'document/repeater/remove', ( args ) => {
-			let name = args.name;
+		const onRemove = ( event ) => {
+			const command = 'document/repeater/remove';
+
+			if ( event.detail.command !== command ) {
+				return;
+			}
+
+			const args = event.detail.args;
+
+			const name = args.name;
 			if ( ! settings[ name ] ) {
 				return;
 			}
@@ -57,28 +83,22 @@ const useSiteSettings = ( initial ) => {
 				newSettings[ name ] = newFieldArray.filter( ( item, index ) => index !== args.index );
 				return newSettings;
 			} );
-		}, false );
+		};
+
+		addEventListener( AFTER_COMMAND_EVENT, onSettingsChange );
+		addEventListener( AFTER_COMMAND_EVENT, onInsert );
+		addEventListener( AFTER_COMMAND_EVENT, onRemove );
+
+		return () => {
+			addEventListener( AFTER_COMMAND_EVENT, onSettingsChange );
+			addEventListener( AFTER_COMMAND_EVENT, onInsert );
+			addEventListener( AFTER_COMMAND_EVENT, onRemove );
+		};
 	}, [] );
-
-	const setActive = ( id, source ) => {
-		setSettings( ( settings ) => {
-			const newSettings = { ...settings };
-
-			Object.getOwnPropertyNames( newSettings ).forEach( ( setting ) => {
-				newSettings[ setting ] = newSettings[ setting ].map( ( item ) => {
-					item.isActive = setting.includes( source ) && item._id === id;
-					return item;
-				} );
-			} );
-
-			return newSettings;
-		} );
-	};
 
 	return {
 		settings,
-		setActive,
-	}
+	};
 
 };
 

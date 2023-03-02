@@ -115,7 +115,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'title_text',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
@@ -129,7 +129,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'description_text',
 			[
-				'label' => esc_html__( 'Content', 'elementor' ),
+				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,
@@ -138,7 +138,6 @@ class Widget_Image_Box extends Widget_Base {
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'separator' => 'none',
 				'rows' => 10,
-				'show_label' => false,
 			]
 		);
 
@@ -224,7 +223,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'size' => 15,
 				],
@@ -285,7 +284,7 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
