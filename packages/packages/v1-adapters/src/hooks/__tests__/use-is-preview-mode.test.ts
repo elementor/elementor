@@ -1,14 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { getCurrentEditMode, useIsPreviewMode } from '../../';
+import { useIsPreviewMode } from '../../';
 import { dispatchEditModeChange } from '../../__tests__/utils';
-
-jest.mock( '../../readers', () => {
-	return {
-		getCurrentEditMode: jest.fn(),
-	};
-} );
-
-const mockedGetCurrentEditMode = jest.mocked( getCurrentEditMode );
+import { mockGetCurrentEditMode } from './test-utils';
 
 describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 	it.each( [
@@ -17,7 +10,7 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 		{ mode: 'picker', expected: false },
 	] as const )( 'should return $expected when the current edit mode is $mode', ( { mode, expected } ) => {
 		// Arrange.
-		mockedGetCurrentEditMode.mockReturnValue( mode );
+		mockGetCurrentEditMode( () => mode );
 
 		// Act.
 		const { result } = renderHook( () => useIsPreviewMode() );
@@ -35,7 +28,7 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 
 		// Act.
 		act( () => {
-			mockedGetCurrentEditMode.mockReturnValue( 'preview' );
+			mockGetCurrentEditMode( () => 'preview' );
 			dispatchEditModeChange();
 		} );
 
@@ -44,7 +37,7 @@ describe( '@elementor/v1-adapters - useIsPreviewMode', () => {
 
 		// Act.
 		act( () => {
-			mockedGetCurrentEditMode.mockReturnValue( 'edit' );
+			mockGetCurrentEditMode( () => 'edit' );
 			dispatchEditModeChange();
 		} );
 

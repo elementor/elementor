@@ -1,0 +1,101 @@
+name: Playwright
+
+on:
+  push:
+  pull_request:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Cache node modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npx grunt build
+      - name: Save build to cache
+        uses: actions/cache@v3
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+
+  Playwright:
+    name: Playwright test (Performance on) - ${{ matrix.testSuite }} on PHP 7.4
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    strategy:
+      matrix:
+        testSuite: ['default', 'nested-tabs', 'reverse-columns']
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Restore build from cache
+        uses: actions/cache@v3
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+      - name: Update wp-env.json file
+        env:
+          PHP_VERSION: 7.4
+          WP_CORE_VERSION: 'latest'
+        run: node ./.github/scripts/build-wp-env.js
+      - name: Install dependencies
+        run: npm ci
+      - name: Install WordPress environment
+        run: |
+          npm run start-local-server
+          npm run test:setup:playwright-sanity
+      - name: WordPress debug information
+        run: |
+          npx wp-env run cli "wp core version"
+          npx wp-env run cli "wp --info"
+      - name: Activate performance experiments
+        run: |
+          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg"
+          npx wp-env run cli "wp elementor experiments activate e_lazyload"
+          npx wp-env run cli "wp elementor experiments activate e_dom_optimization"
+          npx wp-env run cli "wp elementor experiments activate e_optimized_assets_loading"
+          npx wp-env run cli "wp elementor experiments activate e_optimized_css_loading"
+          npx wp-env run cli "wp elementor experiments activate a11y_improvements"
+          npx wp-env run cli "wp elementor experiments activate additional_custom_breakpoints"
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+      - name: Run Playwright tests
+        run: |
+          npm run test:playwright:${{ matrix.testSuite }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-test-results-${{ matrix.testSuite }}
+          path: test-results/
+          retention-days: 3

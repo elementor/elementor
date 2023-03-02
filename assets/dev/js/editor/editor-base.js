@@ -18,7 +18,6 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Selection from './components/selection/manager';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
@@ -569,17 +568,6 @@ export default class EditorBase extends Marionette.Application {
 		this.trigger( 'panel:init' );
 	}
 
-	initResponsiveBar() {
-		this.addRegions( {
-			responsiveBar: {
-				el: '#elementor-responsive-bar',
-				regionClass: ResponsiveBar,
-			},
-		} );
-
-		this.trigger( 'responsiveBar:init' );
-	}
-
 	initNavigator() {
 		this.addRegions( {
 			navigator: {
@@ -998,6 +986,13 @@ export default class EditorBase extends Marionette.Application {
 		} else if ( 'desktop' !== newDeviceMode ) {
 			this.enterDeviceMode();
 		}
+
+		dispatchEvent( new CustomEvent( 'elementor/device-mode/change', {
+			detail: {
+				activeMode: newDeviceMode,
+
+			},
+		} ) );
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
@@ -1205,8 +1200,6 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
-
-		this.initResponsiveBar();
 
 		this.previewLoadedOnce = true;
 	}
