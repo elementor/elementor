@@ -163,6 +163,16 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.currentPageView;
 	},
 
+	toggleDesignSystemPicker( { name, type, id } ) {
+		const controlViewElement = elementor.getPanelView().getCurrentPageView().content.currentView.getControlViewByName( `${ type }_${ name }` ).$el;
+
+		const idInput = controlViewElement.find( `input[type="hidden"][data-setting="_id"][value="${ id }"]` );
+		const repeaterRowControls = idInput.closest( '.elementor-repeater-row-controls' );
+
+		const toggle = repeaterRowControls.find( 'div.pickr button.pcr-button, input.elementor-control-popover-toggle-toggle' );
+		toggle.trigger( 'click' );
+	},
+
 	onBeforeShow() {
 		var PanelFooterItemView = require( 'elementor-regions/panel/footer' ),
 			PanelHeaderItemView = require( 'elementor-regions/panel/header' );

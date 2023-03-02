@@ -79,6 +79,10 @@ export default class EditorBase extends Marionette.Application {
 		popover: {
 			element: '.elementor-controls-popover',
 			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.hide();
+				window.dispatchEvent( new CustomEvent( 'elementor/popover/hide' ) );
+			}
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
