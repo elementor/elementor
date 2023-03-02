@@ -15,10 +15,10 @@ body.elementor-navigator-docked #elementor-navigator {
 	top: var(--editor-v2-top-bar-height);
 }
 
-#elementor-panel-header-menu-button,
-#elementor-panel-header-add-button,
-#elementor-panel-footer {
-	display: none !important;
+.elementor-panel #elementor-panel-header-menu-button,
+.elementor-panel #elementor-panel-header-add-button,
+.elementor-panel #elementor-panel-footer {
+	display: none;
 }
 
 .elementor-panel #elementor-panel-header {
