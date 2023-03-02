@@ -59,7 +59,10 @@ $title-size: 12px;
 	opacity: 0;
 	transition: 0.15s;
 	font-size: 12px;
-	color: $editor-light;
+	color: inherit;
+}
+
+a.elementor-responsive-switcher {
 
 	&:hover {
 		color: var(--e-a-color-primary);
