@@ -378,10 +378,7 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.1.0-beta',
-			],
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
@@ -393,10 +390,7 @@ class Manager extends Base_Object {
 						. ' <a href="https://go.elementor.com/wp-dash-additional-custom-breakpoints/" target="_blank">'
 						. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.4.0-beta',
-			],
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
@@ -408,7 +402,6 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
 			'description' => sprintf( esc_html__(
 				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
 				This experiment replaces the current section/column structure, but you\'ll still keep your existing
@@ -423,7 +416,7 @@ class Manager extends Base_Object {
 			'name' => 'e_swiper_latest',
 			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
 			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.11.0',
@@ -593,8 +586,9 @@ class Manager extends Base_Object {
 		</p>
 
 		<?php if ( $this->get_features() ) { ?>
-		<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All', 'elementor' ); ?></button>
-		<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All', 'elementor' ); ?></button>
+			<button type="button" class="button e-experiment__button" value="active"><?php echo esc_html__( 'Activate All', 'elementor' ); ?></button>
+			<button type="button" class="button e-experiment__button" value="inactive"><?php echo esc_html__( 'Deactivate All', 'elementor' ); ?></button>
+			<button type="button" class="button e-experiment__button" value="default"><?php echo esc_html__( 'Back to default', 'elementor' ); ?></button>
 		<?php } ?>
 		<hr>
 		<h2 class="e-experiment__table-title">
