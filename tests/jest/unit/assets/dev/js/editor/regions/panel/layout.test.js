@@ -1,5 +1,6 @@
-describe( `$e.commands.run( 'design-guidelines/toggle-global-picker' )`, () => {
-	let ToggleGlobalPickerCommand;
+import { freeMock, setupMock } from 'elementor/tests/jest/unit/modules/web-cli/assets/js/core/mock/api';
+
+describe( `assets/dev/js/editor/regions/panel/layout.js`, () => {
 
 	window.document.body.innerHTML = `
 		<div class="elementor-control elementor-control-system_colors">
@@ -24,12 +25,9 @@ describe( `$e.commands.run( 'design-guidelines/toggle-global-picker' )`, () => {
 	document.querySelector( 'div.pickr button.pcr-button' ).addEventListener( 'click', mockCallBack );
 
 	beforeEach( async () => {
-		global.$e = {
-			internal: jest.fn(),
-			modules: {
-				CommandBase: class {},
-			},
-		};
+		await setupMock();
+
+		jest.mock( 'elementor-document/hooks', () => {} );
 
 		const jqueryMock = class {
 			constructor( element ) {
@@ -69,23 +67,42 @@ describe( `$e.commands.run( 'design-guidelines/toggle-global-picker' )`, () => {
 			},
 		};
 
-		ToggleGlobalPickerCommand = ( await import( 'elementor/modules/design-guidelines/assets/js/editor/commands/toggle-global-picker' ) ).default;
+		global.Marionette = {
+			LayoutView: {
+				extend: ( obj ) => obj,
+			},
+			ItemView: {
+				extend: ( obj ) => obj,
+			},
+		};
+		const layout = require( 'elementor-panel/layout' );
+
+		$e.components.register( new class extends $e.modules.ComponentBase {
+			getNamespace() {
+				return 'panel';
+			}
+
+			defaultRoutes() {
+				return {
+					'design-system-picker/show': ( args ) => layout.toggleDesignSystemPicker( args ),
+					'design-system-picker/hide': ( args ) => layout.toggleDesignSystemPicker( args ),
+				};
+			}
+		} );
 	} );
 
 	afterEach( () => {
-		delete global.$e;
-		delete global.elementor;
-
+		freeMock();
 		jest.resetAllMocks();
 	} );
 
-	it( 'should call mock onclick for picker button when command is correct and throw error if not', () => {
+	it( 'should call mock onclick for picker button when route is correct and throw error if not', () => {
 		// Arrange.
-		const command = new ToggleGlobalPickerCommand();
+		const route = 'panel/design-system-picker/show';
 
 		// Act & Assert.
 		expect(
-			() => command.apply( {
+			() => $e.route( route, {
 				name: 'colors',
 				type: 'custom', // Document does not have custom colors.
 				id: 'primary',
@@ -93,7 +110,7 @@ describe( `$e.commands.run( 'design-guidelines/toggle-global-picker' )`, () => {
 		).toThrow( TypeError );
 
 		// Act.
-		command.apply( {
+		$e.route( route, {
 			name: 'colors',
 			type: 'system', // Document has system colors.
 			id: 'primary',
@@ -103,7 +120,7 @@ describe( `$e.commands.run( 'design-guidelines/toggle-global-picker' )`, () => {
 		expect( mockCallBack ).toHaveBeenCalledTimes( 1 );
 
 		// Act.
-		command.apply( {
+		$e.route( route, {
 			name: 'colors',
 			type: 'system',
 			id: 'secondary',
