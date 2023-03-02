@@ -1,16 +1,16 @@
 import { createSlice } from './store';
 
-export type State = {
-	entities: Record<Document['id'], Document>,
-	activeId: Document['id'],
-}
-
-export type DocumentStatus = 'publish' | 'future' | 'draft' | 'pending' | 'private' | 'trash' | 'auto-draft' | 'inherit';
-
 export type Document = {
 	id: number,
 	title: string,
-	status: DocumentStatus,
+	type: {
+		value: string,
+		label: string,
+	},
+	status: {
+		value: string,
+		label: string,
+	},
 	isDirty: boolean,
 	isSaving: boolean,
 	isSavingDraft: boolean,
@@ -21,13 +21,12 @@ export type Document = {
 
 export type Slice = ReturnType<typeof createSlice>;
 
-export type PartialDocument = Partial<Omit<Document, 'id'>> & Pick<Document, 'id'>;
-
 export type ExtendedWindow = Window & {
 	elementor: {
 		documents: {
 			documents: Record<string, V1Document>,
 			getCurrentId: () => number,
+			getInitialId: () => number,
 			getCurrent: () => V1Document,
 		}
 	}
@@ -36,11 +35,19 @@ export type ExtendedWindow = Window & {
 export type V1Document = {
 	id: number,
 	config: {
+		type: string,
 		user: {
 			can_publish: boolean,
 		},
 		revisions: {
 			current_id: number,
+		}
+		panel: {
+			title: string,
+		}
+		status: {
+			value: string,
+			label: string,
 		}
 	},
 	editor: {
@@ -50,7 +57,6 @@ export type V1Document = {
 	container: {
 		settings: V1Model<{
 			post_title: string,
-			post_status: DocumentStatus
 		}>,
 	}
 }

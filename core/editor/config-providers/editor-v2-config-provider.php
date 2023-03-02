@@ -12,11 +12,21 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	const EXTENSION_PACKAGES = [
 		'documents',
+		'documents-ui',
 		'elements-panel',
+		'finder',
+		'help',
+		'history',
+		'responsive',
+		'site-settings',
+		'structure',
+		'theme-builder',
 		'top-bar',
+		'user-preferences',
 	];
 
 	const UTIL_PACKAGES = [
+		'icons',
 		'locations',
 		'ui',
 		'v1-adapters',
@@ -56,7 +66,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		];
 
 		return array_merge(
-			Editor_Common_Assets::get_script_configs(),
+			Editor_Common_Configs::get_script_configs(),
 			$packages_script_configs->values(),
 			[ $loader_script_config ]
 		);
@@ -70,13 +80,31 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $script_asset ) {
 				return $script_asset['handle'];
 			} )
+			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
 
+	public function get_client_settings() {
+		$common_configs = Editor_Common_Configs::get_client_settings();
+
+		$v2_config = [
+			'handle' => 'elementor-editor-loader-v2',
+			'name' => 'elementorEditorV2Settings',
+			'settings' => [
+				'urls' => [
+					'admin' => admin_url(),
+					'help' => 'https://elementor.com/help/',
+				],
+			],
+		];
+
+		return array_merge( $common_configs, [ $v2_config ] );
+	}
+
 	public function get_style_configs() {
 		return array_merge(
-			Editor_Common_Assets::get_style_configs(),
+			Editor_Common_Configs::get_style_configs(),
 			[
 				[
 					'handle' => 'elementor-editor-v2-overrides',
@@ -96,6 +124,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	public function get_template_body_file_path() {
 		return __DIR__ . '/../templates/editor-body-v2.view.php';
+	}
+
+	public function get_additional_template_paths() {
+		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
 	private function get_packages_script_assets() {

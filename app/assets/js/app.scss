@@ -31,9 +31,7 @@
 	&__header {
 		flex-shrink: 0;
 		font-size: $app-header-font-size;
-		color: var(--app-header-color);
-		background-color: var(--app-header-background-color);
-		box-shadow: $app-header-box-shadow;
+		border-bottom: var(--e-a-border);
 		position: relative;
 		z-index: $app-header-z-index;
 		height: $app-header-height;
@@ -48,10 +46,13 @@
 	}
 
 	&__header-btn {
-		--button-background-color: var(--app-header-buttons-color);
 		padding-inline-start: $app-header-btn-padding-x;
 		font-size: $app-header-btn-font-size;
 		line-height: $app-header-btn-line-height;
+
+		&:hover {
+			color: var(--app-header-buttons-color-hover);
+		}
 
 		&:first-child {
 			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
@@ -77,8 +78,8 @@
 		text-align: center;
 		font-size: $app-logo-font-size;
 		border-radius: $app-logo-radius;
-		color: $app-logo-color;
-		background-color: $app-logo-background-color;
+		color: var(--app-logo-color);
+		background-color: var(--app-logo-background-color);
 
 		&:not(:last-child) {
 			margin-inline-end: $app-logo-margin-end;
@@ -87,6 +88,7 @@
 
 	//todo: consider refactoring as logo element.
 	&__title {
+		color: var(--app-title-color);
 		font-size: $app-title-font-size;
 		font-weight: $app-title-font-weight;
 		text-transform: uppercase;
@@ -104,9 +106,9 @@
 		padding-top: $app-sidebar-padding-top;
 		width: $app-sidebar-width;
 		max-width: $app-sidebar-max-width;
+		border-inline-end: var(--e-a-border);
 		flex-grow: 0;
 		overflow-y: auto;
-		box-shadow: $app-sidebar-box-shadow;
 		z-index: $app-sidebar-z-index;
 	}
 

@@ -4,6 +4,7 @@
 
 //Start responsive switcher
 $item-size: 2.5em;
+$title-size: 12px;
 
 .elementor-control-responsive-switchers {
 	--selected-option: 0;
@@ -12,15 +13,15 @@ $item-size: 2.5em;
 	position: relative;
 	width: $item-size;
 	height: $item-size;
-	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	margin: calc( -#{$item-size} + #{$title-size}) 0;
 	@include margin-end(5px);
 
 	&__holder {
 		position: absolute;
 		width: 100%;
 		top: 0;
-		background-color: $white;
-		border-radius: 3px;
+		background-color: var(--e-a-bg-default);
+		border-radius: var(--e-a-border-radius);
 		transition: 0.15s;
 		border: 1px solid transparent;
 	}
@@ -34,18 +35,18 @@ $item-size: 2.5em;
 			opacity: 1;
 
 			&:hover {
-				color: $editor-info;
+				color: var(--e-a-color-primary);
 			}
 		}
 
 		.elementor-control-responsive-switchers__holder {
-			//top: calc(-1 * var(--selected-option) * #{$item-size});
 			box-shadow: 0 0 3px rgba(0,0,0,0.2);
 		}
 	}
 }
 
 .elementor-responsive-switcher {
+	all: unset;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -53,17 +54,18 @@ $item-size: 2.5em;
 	z-index: 2;
 	cursor: pointer;
 	height: 0;
+	width: 100%;
 	transform: scale(0);
 	opacity: 0;
 	transition: 0.15s;
 	font-size: 12px;
+	color: inherit;
 }
 
 a.elementor-responsive-switcher {
-	color: $editor-light;
 
 	&:hover {
-		color: $editor-info;
+		color: var(--e-a-color-primary);
 	}
 }
 
@@ -76,7 +78,7 @@ a.elementor-responsive-switcher {
 		}
 		.elementor-responsive-switchers-open:not(:hover) {
 			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: $editor-info;
+				color: var(--e-a-color-primary);
 			}
 		}
 	}
@@ -89,7 +91,6 @@ a.elementor-responsive-switcher {
 	@include margin-start(auto);
 
 	.e-units-switcher {
-		color: $editor-dark;
 		cursor: pointer;
 		text-transform: uppercase;
 		font-size: 9px;
@@ -98,9 +99,9 @@ a.elementor-responsive-switcher {
 		transition: all ease-in-out .15s;
 
 		&:hover {
-			color: $editor-info;
-			background-color: $editor-background-light;
-			border-radius: 3px;
+			color: var(--e-a-color-primary);
+			background-color: var(--e-a-bg-hover);
+			border-radius: var(--e-a-border-radius);
 		}
 
 		&:not([data-selected="custom"]) {
@@ -129,7 +130,7 @@ a.elementor-responsive-switcher {
 		display: none;
 
 		&:checked + label {
-			color: $editor-info;
+			color: var(--e-a-color-primary);
 		}
 	}
 
@@ -147,9 +148,8 @@ a.elementor-responsive-switcher {
 		@include start(-.5em);
 		width: $item-size;
 		text-align: center;
-		background-color: $white;
-		border-radius: 3px;
-		border: 1px solid transparent;
+		background-color: var(--e-a-bg-default);
+		border-radius: var(--e-a-border-radius);
 		box-shadow: 0 0 3px rgba(0,0,0,0.2);
 		animation-timing-function: linear;
 		animation-delay: 0s;
@@ -166,7 +166,7 @@ a.elementor-responsive-switcher {
 			transition: 0.15s;
 
 			&:hover {
-				color: $editor-info;
+				color: var(--e-a-color-primary);
 			}
 
 			&:not([data-choose="custom"]) {

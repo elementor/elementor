@@ -2,9 +2,7 @@
 	"name": "@elementor/documents",
 	"dependencies": {
 		"@elementor/store": "*",
-		"@elementor/top-bar": "*",
-		"@elementor/v1-adapters": "*",
-		"@elementor/ui": "*"
+		"@elementor/v1-adapters": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"

@@ -10,11 +10,16 @@ inputs:
     required: true
   BASE_TAG_NAME:
     required: true
+  # TODO - Remove this when publish-cloud is removed.
+  GENERATE_EMPTY_CHANGELOG:
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
   steps:
-    - shell: bash
+    - name: Generate Changelog
+      shell: bash
       env:
         TOKEN: ${{ inputs.TOKEN }}
         REPOSITORY: ${{ inputs.REPOSITORY }}
@@ -23,3 +28,14 @@ runs:
       run: |
             npm install --no-package-lock --no-save @octokit/core@3.4.0
             node ./.github/scripts/generate-changelog.js
+
+            # Upload-artifact action fails if the file size is 0.
+            if [[ ${{ inputs.GENERATE_EMPTY_CHANGELOG }} == "true" ]]; then
+              # Check the file size
+              size=$(wc -c < "${{ env.CHANGELOG_FILE }}")
+              if [ $size -eq 0 ]; then
+                echo "No changelog" > "${{ env.CHANGELOG_FILE }}"
+              fi
+            fi
+    - name: Generate Changelog Content For Slack
+      uses: ./.github/workflows/generate-slack-changelog

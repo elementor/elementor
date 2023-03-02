@@ -53,10 +53,6 @@ const createStoreEntities = ( { initialValue = 1 }: Config = {} ) => {
 };
 
 describe( '@elementor/store', () => {
-	afterEach( () => {
-		deleteStore();
-	} );
-
 	it( 'should set an initial state of a slice', () => {
 		// Arrange.
 		const { wrapper } = createStoreEntities();
@@ -124,7 +120,9 @@ describe( '@elementor/store', () => {
 
 	it( 'should add a middleware that blocks the state update by not running next(action)', () => {
 		// Arrange.
-		addMiddleware( () => () => () => {} );
+		addMiddleware( () => () => () => {
+			return null;
+		} );
 
 		const { slice, wrapper } = createStoreEntities();
 
@@ -145,7 +143,7 @@ describe( '@elementor/store', () => {
 		// Arrange.
 		const middlewareNextAction = jest.fn();
 
-		addMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: any ) => {
+		addMiddleware( () => ( next: Dispatch<AnyAction> ) => ( action: AnyAction ) => {
 			middlewareNextAction( action );
 
 			next( action );
@@ -226,7 +224,7 @@ describe( '@elementor/store', () => {
 	it( 'should delete the added slices', () => {
 		// Arrange.
 		// Redux sends an error to the console when trying to create a store without slices.
-		const spyOnConsoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const spyOnConsoleError = jest.spyOn( console, 'error' ).mockReturnValue( undefined );
 
 		createStoreEntities();
 
@@ -253,7 +251,9 @@ describe( '@elementor/store', () => {
 	it( 'should delete the added middlewares', () => {
 		// Arrange.
 		// Registering a middleware that blocks the state update by not running next(action).
-		addMiddleware( () => () => () => {} );
+		addMiddleware( () => () => () => {
+			return null;
+		} );
 
 		createStoreEntities();
 

@@ -23,10 +23,10 @@ export function dispatchWindowEvent( event: string ) {
 }
 
 export function dispatchV1ReadyEvent() {
-	dispatchWindowEvent( 'elementor/v1/initialized' );
+	dispatchWindowEvent( 'elementor/initialized' );
 }
 
-export function makeDocumentsManager( documentsArray: V1Document[], current = 1 ) {
+export function makeDocumentsManager( documentsArray: V1Document[], current = 1, initial = current ) {
 	const documents = documentsArray.reduce( ( acc: Record<number, V1Document>, document ) => {
 		acc[ document.id ] = document;
 
@@ -38,21 +38,42 @@ export function makeDocumentsManager( documentsArray: V1Document[], current = 1 
 		getCurrentId() {
 			return current;
 		},
+		getInitialId() {
+			return initial;
+		},
 		getCurrent() {
 			return this.documents[ this.getCurrentId() ];
 		},
 	};
 }
 
-export function makeMockV1Document( id = 1 ): V1Document {
+export function makeMockV1Document( {
+	id = 1,
+	title = 'Document ' + id,
+	status = 'publish',
+	type = 'wp-page',
+}: {
+	id?: number,
+	status?: string,
+	title?: string,
+	type?: string,
+} = {} ): V1Document {
 	return {
 		id,
 		config: {
+			type,
 			user: {
 				can_publish: true,
 			},
 			revisions: {
 				current_id: id,
+			},
+			panel: {
+				title: type.toUpperCase(),
+			},
+			status: {
+				label: status.toUpperCase(),
+				value: status,
 			},
 		},
 		editor: {
@@ -60,18 +81,18 @@ export function makeMockV1Document( id = 1 ): V1Document {
 			isSaving: false,
 		},
 		container: {
-			settings: makeSettings( {
-				post_title: 'Document ' + id,
-				post_status: 'publish',
-			} ) as V1Document['container']['settings'],
+			settings: makeV1Settings( {
+				post_title: title,
+			} ),
 		},
 	};
 }
 
-function makeSettings<T extends object>( settings: T ) {
+// Mock Backbone's settings model.
+function makeV1Settings<T extends object>( settings: T ) {
 	return {
 		get( key: keyof T ) {
 			return settings[ key ];
 		},
-	};
+	} as V1Document['container']['settings'];
 }

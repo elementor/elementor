@@ -52,8 +52,9 @@ class Settings_Layout extends Tab_Base {
 		$this->add_responsive_control(
 			'container_width',
 			[
-				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'size' => '1140',
 				],
@@ -70,7 +71,7 @@ class Settings_Layout extends Tab_Base {
 						'step' => 10,
 					],
 				],
-				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140px)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
 					'.e-con' => '--container-max-width: {{SIZE}}{{UNIT}}',
@@ -86,10 +87,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => esc_html__( 'Container Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'size_units' => [ 'px', 'em', '%', 'rem' ],
-					'default' => [
-						'unit' => 'px',
-					],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
 						'.e-con' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
@@ -105,11 +103,12 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => $widgets_space_label . ' (px)',
+				'label' => $widgets_space_label,
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 20,
 				],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -117,9 +116,9 @@ class Settings_Layout extends Tab_Base {
 					],
 				],
 				'placeholder' => [
-					'size' => '20',
+					'size' => 20,
 				],
-				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
+				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
@@ -326,6 +325,7 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
+				'separator' => 'after',
 				'validators' => [
 					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,
