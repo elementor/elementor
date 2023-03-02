@@ -82,7 +82,7 @@ export default class EditorBase extends Marionette.Application {
 			callback: ( $elementsToHide ) => {
 				$elementsToHide.hide();
 				window.dispatchEvent( new CustomEvent( 'elementor/popover/hide' ) );
-			}
+			},
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
