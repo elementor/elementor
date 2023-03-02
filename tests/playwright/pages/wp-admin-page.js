@@ -114,4 +114,18 @@ module.exports = class WpAdminPage extends BasePage {
 	activateTheme( theme ) {
 		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
 	}
+
+	async openSiteSettings( wait = true ) {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+
+		if ( wait ) {
+			await this.page.waitForLoadState( 'networkidle' );
+		}
+
+		await this.page.click( 'text=Site Settings' );
+
+		if ( wait ) {
+			await this.page.waitForLoadState( 'networkidle' );
+		}
+	}
 };
