@@ -18,10 +18,13 @@ body.elementor-navigator-docked #elementor-navigator {
 #elementor-panel-header-menu-button,
 #elementor-panel-header-add-button,
 #elementor-panel-footer {
-	// TODO: Uncomment when we have enough buttons, to prevent insanity.
-	//display: none !important;
+	display: none !important;
 }
 
-#elementor-panel-content-wrapper {
-	bottom: 0;
+#elementor-panel-header {
+	font-weight: 700 !important;
+	background-color: var( --e-a-bg-default ) !important;
+	color: var( --e-a-color-txt-accent ) !important;
+	border-bottom: var( --e-a-border ) !important;
+	height: 48px !important;
 }
