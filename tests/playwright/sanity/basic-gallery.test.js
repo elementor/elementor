@@ -71,8 +71,9 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	await editor.togglePreviewMode();
 	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
 	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
+	await page.waitForTimeout( 500 );
 
-	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper-latest.jpeg' );
+	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper.jpeg' );
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
@@ -116,6 +117,7 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 	await editor.togglePreviewMode();
 	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
 	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
+	await page.waitForTimeout( 500 );
 
-	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper-old.jpeg' );
+	expect( await editor.getPreviewFrame().locator( '.elementor-lightbox' ).screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'gallery-lightbox-swiper.jpeg' );
 } );
