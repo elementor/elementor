@@ -34,8 +34,8 @@ test.describe( 'Elements regression', () => {
 			await test.step( `default values`, async () => {
 				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
 
-				expect( await editorPage.screenshotElement( elementId ) )
-					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
+				await editorPage.waitForElementRender( elementId );
+				await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, 'default.png' ] );
 
 				await editorPage.resetElementSettings( elementId );
 			} );
@@ -74,8 +74,8 @@ test.describe( 'Elements regression', () => {
 
 							await control.setValue( value );
 
-							expect( await editorPage.screenshotElement( elementId ) )
-								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
+							await editorPage.waitForElementRender( elementId );
+							await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, controlId, `${ valueLabel }.png` ] );
 						} );
 					}
 
