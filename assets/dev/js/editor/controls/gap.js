@@ -30,8 +30,8 @@ ControlGapsItemView = ControlBaseUnitsItemView.extend( {
 	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
-		ui.controls = '.elementor-control-dimension > input:enabled';
-		ui.link = 'button.elementor-link-dimensions';
+		ui.controls = '.elementor-control-gap > input:enabled';
+		ui.link = 'button.elementor-link-gap';
 
 		return ui;
 	},
