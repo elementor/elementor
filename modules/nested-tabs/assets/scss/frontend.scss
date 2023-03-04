@@ -243,7 +243,8 @@
 		}
 
 		> .e-con:not(.e-active) {
-			display: none;
+			max-height: 0;
+			visibility: hidden;
 		}
 	}
 }
