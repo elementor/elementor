@@ -388,30 +388,8 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
-		$suffix = Utils::is_script_debug() ? '' : '.min';
-
 		$this->get_loader()->register_styles();
 		$this->get_loader()->enqueue_styles();
-
-		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
-
-		if ( 'light' !== $ui_theme ) {
-			$ui_theme_media_queries = 'all';
-
-			if ( 'auto' === $ui_theme ) {
-				$ui_theme_media_queries = '(prefers-color-scheme: dark)';
-			}
-
-			wp_enqueue_style(
-				'elementor-editor-dark-mode',
-				ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
-				[
-					'elementor-editor',
-				],
-				ELEMENTOR_VERSION,
-				$ui_theme_media_queries
-			);
-		}
 
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
@@ -591,9 +569,14 @@ class Editor {
 	private function register_editor_v2_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
-			'title' => esc_html__( 'Editor V2', 'elementor' ),
-			'description' => esc_html__( 'Enable the new editor.', 'elementor' ),
-			'hidden' => true,
+			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
+			'description' => sprintf(
+				esc_html__(
+					'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way. %s',
+					'elementor'
+				),
+				'<a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">' . esc_html__( 'Learn more', 'elementor' ) . '</a>'
+			),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );

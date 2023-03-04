@@ -21,7 +21,13 @@ export default function MainMenuLocation() {
 				{ ...bindTrigger( popupState ) }
 				selected={ popupState.isOpen }
 			/>
-			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } sx={ { mt: 2 } }>
+			<PopoverMenu
+				onClick={ popupState.close }
+				{ ...bindMenu( popupState ) }
+				PaperProps={ {
+					sx: { mt: 4, marginInlineStart: -2 },
+				} }
+			>
 				{
 					injectionsGroups
 						.filter( ( injections ) => injections.length )
