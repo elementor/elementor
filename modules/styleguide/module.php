@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\Styleguide;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -23,7 +22,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_styles' ] );
 	}
 
 	/**
@@ -58,7 +57,6 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-
 		wp_enqueue_script(
 			$this::ASSETS_HANDLE,
 			$this->get_js_assets_url( $this::ASSETS_HANDLE ),
