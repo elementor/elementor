@@ -8,16 +8,12 @@ jest.mock( '@elementor/v1-adapters', () => ( {
 } ) );
 
 describe( '@elementor/structure - useActionProps', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should toggle the navigator state when clicked', () => {
 		// Arrange.
 		const { result } = renderHook( () => useActionProps() );
 
 		// Act.
-		result.current.onClick();
+		result.current.onClick?.();
 
 		// Assert.
 		expect( runCommand ).toHaveBeenCalledTimes( 1 );

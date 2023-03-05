@@ -1,6 +1,7 @@
 {
   "name": "@elementor/responsive",
   "dependencies": {
+    "@elementor/icons": "*",
     "@elementor/store": "*",
     "@elementor/top-bar": "*",
     "@elementor/ui": "*",

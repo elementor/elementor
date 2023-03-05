@@ -12,15 +12,21 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	const EXTENSION_PACKAGES = [
 		'documents',
+		'documents-ui',
 		'elements-panel',
+		'finder',
+		'help',
+		'history',
 		'responsive',
 		'site-settings',
 		'structure',
 		'theme-builder',
 		'top-bar',
+		'user-preferences',
 	];
 
 	const UTIL_PACKAGES = [
+		'icons',
 		'locations',
 		'ui',
 		'v1-adapters',
@@ -88,6 +94,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'settings' => [
 				'urls' => [
 					'admin' => admin_url(),
+					'help' => 'https://elementor.com/help/',
 				],
 			],
 		];
@@ -112,7 +119,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return [
 			'elementor-editor-v2-overrides',
 			'elementor-editor',
-			'elementor-responsive-bar',
 		];
 	}
 
