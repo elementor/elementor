@@ -12,7 +12,7 @@ export default function SettingsButton( { type }: Props ) {
 	const { isActive, isBlocked } = useRouteStatus( 'panel/page-settings' );
 
 	/* translators: %s: Post type label. */
-	const title = __( '%s settings', 'elementor' )
+	const title = __( '%s Settings', 'elementor' )
 		.replace( '%s', type.label );
 
 	return (

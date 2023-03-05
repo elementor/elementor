@@ -6,13 +6,56 @@
 $white:         #ffffff;
 $black:         #000000;
 
-$gray-darkest:  #2C2C2C;
-$gray-darker:   #373a3c;
-$gray-dark:     #55595c;
-$gray:          #818a91;
-$gray-light:    #D4D4D4;
-$gray-lighter:  #eceeef;
-$gray-lightest: #f7f7f7;
+//Editor Facelift 2023 - Indigo
+$e-indigo-600:	#524CFF;
+$e-indigo-700:	#4C43E5;
+$e-indigo-800:	#4338CA;
+
+//Editor Facelift 2023 - Teal
+$e-teal-300:	#5EEAD4;
+$e-teal-400:	#1DDDBF;
+$e-teal-500:	#12AA9A;
+
+//Editor Facelift 2023 - Temp Aliases
+$e-purple:		#524CFF;
+$e-purple-tint:	#6661FF;
+$e-purple-shade:#EBEBFF;
+
+//Editor Facelift 2023 - Semantic Colors
+$e-primary:		$e-purple;
+$e-secondary: 	$e-gray-600;
+$e-success:		#16883C;
+$e-danger:		#DD132F;
+$e-info: 		#0077CC;
+$e-warning: 	#FCB92C;
+$e-brand: 		#0600A8;
+$e-success-bg:	#F2FDF5;
+$e-danger-bg:	#FEF1F4;
+$e-info-bg: 	#F0F7FF;
+$e-warning-bg: 	#FFF9F0;
+
+// Editor Facelift 2023 - Aliases for backwards compatible
+$editor-danger: $e-danger;
+$editor-warning: $e-warning;
+$editor-success: $e-success;
+$editor-info: $e-info;
+$editor-alert-danger: $e-danger;
+$editor-alert-warning: $e-warning;
+$editor-alert-info: $e-info;
+$editor-alert-success: $e-success;
+$editor-alert-danger-bg: $e-danger-bg;
+$editor-alert-warning-bg: $e-warning-bg;
+$editor-alert-info-bg: $e-info-bg;
+$editor-alert-success-bg: $e-success-bg;
+
+// Primary Colors
+$gray-darkest:  $e-gray-900;
+$gray-darker:   $e-gray-800;
+$gray-dark:     $e-gray-700;
+$gray:          $e-gray-500;
+$gray-light:    $e-gray-100;
+$gray-lighter:  $e-gray-50;
+$gray-lightest: $e-gray-25;
 $gray-mouse:    #CCD6DF;
 $gray-bg:       #e6e9ec;
 
@@ -25,6 +68,52 @@ $green-light:   #2ecc71;
 $orange:        #f0ad4e;
 $red:           #d9534f;
 $purple:		#9C7AC1;
+
+// WordPress Admin
+$wp-primary: #0085ba;
+$admin-font-family: Roboto, Arial, Helvetica, sans-serif; // Default fonts for admin
+
+//Brand Colors
+$brand-color-dark-pink: $e-purple;
+$brand-color-royal-blue: #010150;
+$brand-color-dark: #434363;
+$brand-color-light: $brand-color-dark-pink; //fallback (deprecated v3.0)
+
+// Editor colors
+$editor-darkest:$e-gray-900;
+$editor-darker: $e-gray-800;
+$editor-dark: 	$e-gray-700;
+
+$editor-light: $e-gray-300;
+$editor-lighter: $e-gray-200;
+$editor-lightest: $e-gray-100;
+
+$editor-accent: $brand-color-dark-pink;
+$editor-background: $white;
+$editor-background-light: $e-gray-50;
+$editor-background-lighter: $e-gray-100;
+
+$editor-orange: $e-warning;
+$editor-red: $e-danger;
+
+// WordPress colors
+$wp-warning: #ffb900;
+$wp-warning-text: #f56e28;
+$wp-success: #46b450;
+$wp-success-text: #79ba49;
+
+// Panel style
+$panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
+$panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+
+$slides_gui: rgba(238, 238, 238, .9);
+
+// Panel Transition
+$transition-hover: all .3s;
+
+// Container element primary color.
+// TODO: Need a final color from the Design.
+$editor-kit-accent: #4ab7f4;
 
 // Platform
 $platform-primary: #040080;

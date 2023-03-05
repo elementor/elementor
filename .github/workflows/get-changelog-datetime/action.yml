@@ -1,0 +1,12 @@
+name: Get Changelog Datetime
+description: Get the changelog datetime from the changelog file and set it as an environment variable.
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+          CHANGELOG=$(cat ${{ env.CHANGELOG_FILE }} | tr -d '\n')
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV
+          echo "NOW=${NOW}" >> $GITHUB_ENV

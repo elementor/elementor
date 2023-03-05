@@ -45,7 +45,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		} ) );
 
 		// Assert.
-		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Elements' );
 	} );
 
 	it( 'should change the panel title when V1 is ready and the elements panel is open', () => {
@@ -57,7 +57,7 @@ describe( '@elementor/elements-panel - syncPanelTitle', () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/initialized' ) );
 
 		// Assert.
-		expect( mockSetTitle ).toHaveBeenCalledWith( 'Widget Panel' );
+		expect( mockSetTitle ).toHaveBeenCalledWith( 'Elements' );
 		expect( mockIsRouteActive ).toHaveBeenCalledWith( 'panel/elements' );
 	} );
 
