@@ -240,7 +240,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onPickerShow() {
-		window.dispatchEvent( new CustomEvent( 'elementor/global-color/show', {
+		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
 			detail: {
 				el: this.$el,
 			},

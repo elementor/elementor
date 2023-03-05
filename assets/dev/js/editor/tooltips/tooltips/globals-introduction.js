@@ -1,5 +1,5 @@
-export default class GlobalColorTooltip {
-	introductionKey = 'global_color';
+export default class GlobalsIntroduction {
+	introductionKey = 'globals_introduction_tooltip';
 	introductionViewed = elementor.config.user.introduction[ this.introductionKey ] ?? false;
 
 	constructor() {
@@ -10,7 +10,7 @@ export default class GlobalColorTooltip {
 	}
 
 	bindEvent() {
-		window.addEventListener( 'elementor/global-color/show', ( e ) => {
+		window.addEventListener( 'elementor/color-picker/show', ( e ) => {
 			if ( e.detail.el ) {
 				this.setTooltipTitle( __( 'Great choice! Planning to use it again?', 'elementor' ) );
 				this.setTooltipContent( __(
@@ -23,13 +23,8 @@ export default class GlobalColorTooltip {
 		} );
 
 		window.addEventListener( 'elementor/popover/show', ( e ) => {
-			let $popoverElement;
-			if ( e.detail.el.hasClass( 'e-controls-popover--typography' ) ) {
-				const popoverToggleCid = e.detail.el.data( 'popover-cid' ),
-					popoverToggleModel = elementor.getPanelView().getCurrentPageView().children.findByModelCid( popoverToggleCid );
+			let $popoverElement = null;
 
-				$popoverElement = popoverToggleModel.$el;
-			}
 			if ( e.detail.el.hasClass( 'elementor-control-typography_typography' ) ) {
 				$popoverElement = e.detail.el;
 			}

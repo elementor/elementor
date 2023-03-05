@@ -80,13 +80,6 @@ export default class EditorBase extends Marionette.Application {
 		tooltip: {
 			element: '#elementor-element--tooltip__dialog',
 			ignore: '.dialog-widget, .elementor-controls-popover',
-			// callback: () => {
-			// 	elementor.tooltips.forEach( ( tooltip ) => {
-			// 		if ( tooltip.isActive ) {
-			// 			tooltip.hideTooltip();
-			// 		}
-			// 	} );
-			// },
 		},
 		popover: {
 			element: '.elementor-controls-popover',

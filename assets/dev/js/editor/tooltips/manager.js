@@ -1,4 +1,4 @@
-import GlobalColorTooltip from './tooltips/global-color';
+import GlobalsIntroduction from './tooltips/globals-introduction';
 
 export default class TooltipsManager {
 	tooltips = [];
@@ -35,6 +35,6 @@ export default class TooltipsManager {
 	 * Register all base elements types.
 	 */
 	registerTooltips() {
-		this.tooltips.push( new GlobalColorTooltip() );
+		this.tooltips.push( new GlobalsIntroduction() );
 	}
 }

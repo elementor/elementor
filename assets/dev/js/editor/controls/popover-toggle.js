@@ -70,18 +70,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return 'globals/typography';
 	}
 
-	getPopover() {
-		return this.$el.next( '.elementor-controls-popover' );
-	}
-
-	dispatchHideEvent() {
-		window.dispatchEvent( new CustomEvent( 'elementor/popover/hide', {
-			detail: {
-				el: this.$el,
-			},
-		} ) );
-	}
-
 	buildPreviewItemCSS( globalValue ) {
 		const cssObject = {};
 
