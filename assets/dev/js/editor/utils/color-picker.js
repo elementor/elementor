@@ -44,6 +44,7 @@ export default class ColorPicker extends elementorModules.Module {
 		this.picker
 			.on( 'change', () => this.onPickerChange() )
 			.on( 'clear', () => this.onPickerClear() )
+			.on( 'hide', () => this.onPickerHide() )
 			.on( 'show', () => this.onPickerShow() );
 
 		this.$pickerAppContainer = jQuery( this.picker.getRoot().app );
@@ -170,6 +171,14 @@ export default class ColorPicker extends elementorModules.Module {
 		}
 	}
 
+	onPickerHide() {
+		const onHide = this.getSettings( 'onHide' );
+
+		if ( onHide ) {
+			onHide();
+		}
+	}
+
 	onPickerShow() {
 		const { result: resultInput } = this.picker.getRoot().interaction;
 
@@ -178,6 +187,12 @@ export default class ColorPicker extends elementorModules.Module {
 
 			this.picker._recalc = true;
 		}, 100 );
+
+		const onShow = this.getSettings( 'onShow' );
+
+		if ( onShow ) {
+			onShow();
+		}
 	}
 
 	onAddButtonClick() {

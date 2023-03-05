@@ -5,6 +5,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import ElementsManager from './elements/manager';
+import TooltipsManager from './tooltips/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -76,9 +77,35 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	backgroundClickListeners = {
+		tooltip: {
+			element: '#elementor-element--tooltip__dialog',
+			ignore: '.dialog-widget',
+			// callback: () => {
+			// 	elementor.tooltips.forEach( ( tooltip ) => {
+			// 		if ( tooltip.isActive ) {
+			// 			tooltip.hideTooltip();
+			// 		}
+			// 	} );
+			// },
+		},
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+			ignore: '.select2-container, .pcr-app, .dialog-widget',
+			callback: ( $popovers ) => {
+				const $activePopovers = $popovers.filter( function() {
+					return jQuery( this ).is( ':visible' ) ? jQuery( this ) : null;
+				} );
+
+				if ( $activePopovers.length !== 0 ) {
+					$activePopovers.hide();
+
+					window.dispatchEvent( new CustomEvent( 'elementor/popover/hide', {
+						detail: {
+							el: $activePopovers.first(),
+						},
+					} ) );
+				}
+			},
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
@@ -383,6 +410,8 @@ export default class EditorBase extends Marionette.Application {
 		this.promotion = new Promotion();
 
 		this.browserImport = new BrowserImport();
+
+		this.tooltips = new TooltipsManager();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
