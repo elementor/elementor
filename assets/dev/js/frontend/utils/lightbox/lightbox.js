@@ -382,6 +382,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elements.$iconShare = $( iconElement, {
 				class: slideshowClasses.iconShare,
 				role: 'button',
+				tabindex: 0,
 				'aria-label': i18n.share,
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
