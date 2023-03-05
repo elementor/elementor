@@ -1,5 +1,46 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.13.0-dev1 - 2023-03-05
+* Tweak: Refactor - separate overview widget to sections [ED-9724] (#21270)
+* Tweak: Update obscure error messages [ED-9591] (#21213)
+* Tweak: Update minimum required WordPress version to 5.9 [ED-9466] (#21269)
+* Fix: Set padding on icon span instead of text span (#9831) [ED-9757] (#9832)
+* Tweak: Add transition duration to icon list hover color [ED-9742] (#21274)
+* Tweak: Update icons-list controls view [ED-9767] (#21311)
+* Tweak: Add custom units everywhere [ED-9743] (#21277)
+* Tweak: Hide Category selector if in loop builder tab in Template Library [ED-7383] (#21310)
+* Fix: Issue with Featured Image and Loop experiment [ED-9788] (#21354)
+* Fix: Passing an HTMLElement to the Swiper instance utility doesn't work [ED-9810] (#21369)
+* New: [Mega Menu] [Infra] Ensure the Mega Menu is A11Y - Core code [ED-9775] (#21336)
+* Fix: [Mega Menu] [Infra] Ensure the Mega Menu is A11Y - Core code [ED-9775] (#21374)
+* Fix: Content styling controls are not targeting the right container in Tabs widget [ED-9752] (#21381)
+* Tweak: Add "description" argument to Popover Toggle control [ED-9784] (#11895)
+* Tweak: Editor V2 - Theme-Builder button [ED-9716] (#21352)
+* Fix: Problem when duplicating a 'link only' menu item in Mega menu [ED-9535] (#21323)
+* Fix: Nested Elements - JS error thrown a nested item is clicked when in... [ED-9495] (#21123)
+* Tweak: Move the unit from the control label to the unit dropdown [ED-9820] (#21389)
+* Tweak: Add size units for social icons widget [ED-9782] (#20989)
+* Tweak: Update control labels for icon-box and image-box widgets (#18154)
+* Tweak: Add units to `container_width` and `widgets_gap` site settings [ED-9783] (#21211)
+* New: [Mega Menu] [Infra] Ensure the Mega Menu is A11Y - Core code [ED-9775] (#21410)
+* Tweak: Added units to text-path widget word-spacing control [ED-9850] (#21370)
+* Fix: Revert: Problem when duplicating a 'link only' menu item in Mega menu [ED-9535] (#21414)
+* Fix: Connect - Retry only on web [ED-9857] (#21440)
+* Tweak: Remove Kit alert - flow [ED-9421] (#21064)
+* Tweak: Remove redundant default units [ED-9873] (#21462)
+* Tweak: Accessible responsive control switcher [ED-9842] (#21412)
+* Revert "Tweak: Remove Kit alert - flow [ED-9421]" (#21479)
+* Fix: Editor V2 - Typing issues [ED-9922] (#21482)
+* Fix: Containers are still editable in preview mode [ED-8696] (#21443)
+* Fix: Stretch element - In the Editor, in RTL sites, calculations do not consider scrollbar [ED-9781] (#21332)
+* Fix: Show media preview in Safari 13 and other browsers that don't support `aspect-ratio` [ED-9847] (#21485)
+* Tweak: Remove Kit alert - flow [ED-9421] (#21480)
+* Tweak: Announcement Screen [ED-9723] (#21442)
+* Tweak: Changed experiments statuses for the next version [ED-9607] (#21216)
+* Tweak: Editor facelift for future new UI and better dark mode support [ED-9262] (#21499)
+* Fix: Editor - Save options sub-menu does not appear [ED-9958] (#21525)
+* Tweak: Accessible navigation arrows in Image Carousel [ED-9947] (#21501)
+
 #### 3.12.0-dev4 - 2023-02-08
 * Fix: Dynamic background video of section/container is not working in Loop Carousel widget [ED-9516] (#21267)
 * Tweak: Use accessible dismiss notices [ED-9672] (#21241)
@@ -455,34 +496,3 @@
 * Fix: Menu Cart Widget with 3.6.4 Pro - The icon moved to the left [ED-6797] (#18158)
 * Revert "Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)" (#18159)
 * Tweak: Import All command should skip the Plugins screen and start import process[ED-6510] (#18131)
-
-#### 3.6.0-dev45 - 2022-03-03
-* Fix: Initial site name loads incorrectly in input, selecting image for logo causes JS error (#18036)
-* Fix: Revert `elementSettingsModel` deprecation from #17374 [ED-6575] (#18044)
-
-#### 3.6.0-dev44 - 2022-03-02
-* Fix: Lower custom breakpoints didn't inherits upper breakpoints values in frontend [ED-6235] (#17475)
-* New: Updated Elementor Icons library to v5.15.0 (#17632)
-* Fix: Elementor React App - Back to Dashboard and Close (x) button can lead to wrong page [ED-6443] (#17752)
-
-#### 3.6.0-dev43 - 2022-03-01
-* Tweak: Added focus state and description on play icon in Video widget (#17559)
-* Tweak: Added new variables colors to variables.scss file [OBXT-361] (#17560)
-* Tweak: Added dynamic tag control to various core widgets and features [OBXT-384] (#17588)
-* Tweak: Adjusted the inline icon control for design flexibility [OBXT-… (#17696)
-* Tweak: Add Lazy load to all the widgets using Swiper [ED-2409] (#17734)
-* Fix: Hash Commands [ED-6664] (#18018)
-* Fix: Mobile browser background didn't work (#16566) [ED-6612] (#17972)
-* New: Onboarding [ED-6175, PRDH-871] (#17605)
-
-#### 3.6.0-dev42 - 2022-02-28
-* Tweak: Added responsive capability to Icon Position control in Icon Box widget (#3040) [OBXT-573] (#17781)
-* Tweak: Updated changelog for v3.5.6 (#18003)
-* Tweak: One click site [ED-6569] (#17947)
-
-#### 3.6.0-dev41 - 2022-02-24
-* Fix: GitHub issue creation minor fixes [ED-6376] (#17918)
-* Fix: GitHub issue creation minor fixes (#2) [ED-6376]
-* Fix: GitHub issue creation minor fixes (#3) [ED-6376] (#17936)
-* Tweak: Lightbox [ED-6517] (#17847)
-* Tweak: Nested Infra - Allow dependencies for experiments [ED-6421] (#17663)
