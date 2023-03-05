@@ -2,18 +2,26 @@ import React, { useContext, useEffect } from 'react';
 import AreaTitle from "../components/area-title";
 import ColorsSection from "../components/colors-section";
 import { ActiveElementContext } from "../providers/active-element-provider";
-import { addEventListener, AFTER_COMMAND_EVENT } from "../../../../../assets/js/common/utils/top-events";
+import {
+	addEventListener,
+	addHook,
+	AFTER_COMMAND_EVENT,
+	removeHook
+} from "../../../../../assets/js/common/utils/top-events";
 
 const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
 
 	useEffect( () => {
-		const onPickerHide = ( event ) => {
-			unsetActive( event.detail.instance.options.container.id, 'colors' );
+		const shownEvent = 'panel/global/global-colors/picker/shown';
+		const hiddenEvent = 'panel/global/global-colors/picker/hidden';
+
+		const onPickerHide = () => {
+			unsetActive();
 		};
 
 		const onPickerShow = ( event ) => {
-			setActive( event.detail.instance.options.container.id, 'colors' );
+			setActive( event.instance.options.container.id, 'colors' );
 		};
 
 		const onPanelShow = ( event ) => {
@@ -33,13 +41,13 @@ const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 
 		};
 
-		addEventListener( 'elementor/global-color/show', onPickerShow );
-		addEventListener( 'elementor/global-color/hide', onPickerHide );
+		addHook( shownEvent, onPickerShow );
+		addHook( hiddenEvent, onPickerHide );
 		addEventListener( AFTER_COMMAND_EVENT, onPanelShow );
 
 		return () => {
-			removeEventListener( 'elementor/global-color/show', onPickerShow );
-			removeEventListener( 'elementor/global-color/hide', onPickerHide );
+			removeHook( shownEvent, onPickerShow );
+			removeHook( hiddenEvent, onPickerHide );
 			removeEventListener( AFTER_COMMAND_EVENT, onPanelShow );
 		};
 

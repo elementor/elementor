@@ -28,13 +28,12 @@ const Button = styled.button`
   }
 `;
 
-const GoToAnchor = ( { anchor, children } ) => {
-
+const HeaderButton = ( { label, onClick } ) => {
 	return <Button variant='transparent'
 	               size='s'
-	               onClick={ () => anchor.current.scrollIntoView( { behaviour: 'smooth' } ) }
+	               onClick={ onClick }
 	>
-				{ children }
+				{ label }
 			</Button>
 };
 
@@ -74,13 +73,16 @@ const Title = styled.h2`
   margin: 0;
 `;
 
-const Header = ( { anchors } ) => {
+const Header = ( { buttons } ) => {
 	return (
 		<Wrapper>
 			<Title>style guide preview</Title>
 			<ButtonsWrapper>
-				<GoToAnchor anchor={ anchors[ 'colors' ] }>colors</GoToAnchor>
-				<GoToAnchor anchor={ anchors[ 'fonts' ] }>fonts</GoToAnchor>
+				{ buttons.map( ( { name, label, onClick } ) => {
+					return <HeaderButton key={ name }
+					                     label={ label }
+					                     onClick={ onClick }/>
+				} ) }
 			</ButtonsWrapper>
         </Wrapper>
 	);

@@ -2,23 +2,30 @@ import React, { useContext, useEffect } from 'react';
 import AreaTitle from "../components/area-title";
 import FontsSection from "../components/fonts-section";
 import { ActiveElementContext } from "../providers/active-element-provider";
-import { addEventListener, AFTER_COMMAND_EVENT, } from "../../../../../assets/js/common/utils/top-events";
+import {
+	AFTER_COMMAND_EVENT,
+	addEventListener,
+	addHook,
+	removeHook,
+} from "../../../../../assets/js/common/utils/top-events";
 
 const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
 
 	useEffect( () => {
-		const onPopoverToggle = ( event ) => {
-			let name = event.detail.container.model.attributes.name;
+		const shownEvent = 'panel/global/global-typography/picker/shown';
+		const hiddenEvent = 'panel/global/global-typography/picker/hidden';
+
+		const onPopoverShow = ( event ) => {
+			let name = event.container.model.attributes.name;
 			if ( ! name.includes( 'typography' ) ) {
 				return;
 			}
 
-			if ( event.detail.visible ) {
-				setActive( event.detail.container.id, 'typography' );
-			} else {
-				unsetActive( event.detail.container.id, 'typography' );
-			}
+			setActive( event.container.id, 'typography' );
+		};
+		const onPopoverHide = () => {
+			unsetActive();
 		};
 
 		const onPanelShow = ( event ) => {
@@ -37,11 +44,13 @@ const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 
 		};
 
-		addEventListener( 'elementor/popover/toggle', onPopoverToggle );
+		addHook( shownEvent, onPopoverShow );
+		addHook( hiddenEvent, onPopoverHide );
 		addEventListener( AFTER_COMMAND_EVENT, onPanelShow );
 
 		return () => {
-			removeEventListener( 'elementor/popover/toggle', onPopoverToggle );
+			removeHook( shownEvent, onPopoverShow );
+			removeHook( hiddenEvent, onPopoverHide );
 			removeEventListener( AFTER_COMMAND_EVENT, onPanelShow );
 		}
 	}, [] );

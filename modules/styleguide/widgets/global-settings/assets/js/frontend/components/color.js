@@ -4,7 +4,7 @@ import ElementTitle from "./element-title";
 import ElementWrapper from "./element-wrapper";
 import useIsActive from "../hooks/use-is-active";
 import { togglePopover } from "../utils/panel-behaviour";
-import { goToRoute, isInRoute } from "../../../../../assets/js/common/utils/web-cli";
+import { goToMainRoute, goToRoute, isInRoute } from "../../../../../assets/js/common/utils/web-cli";
 
 const Content = styled.div`
   background-color: ${ props => props.hex };
@@ -54,10 +54,12 @@ const Color = ( { color, width, type } ) => {
 			                const route = 'panel/global/global-colors';
 
 			                if ( ! isInRoute( route ) ) {
+				                // Must go through main panel to allow back button to work
+				                goToMainRoute();
 				                goToRoute( route, { shouldNotScroll: true } )
 			                }
 
-			                togglePopover( source, type, _id )
+			                togglePopover( source, type, _id, !isActive );
 		                } }>
 			<ElementTitle>{ title }</ElementTitle>
 			<Content hex={ hex }>

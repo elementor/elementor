@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const FontsSection = ( { title, source } ) => {
+const FontsSection = ( { title, source, type } ) => {
 
 	return (
 		<>
@@ -16,6 +16,7 @@ const FontsSection = ( { title, source } ) => {
 			<Wrapper>
 				{ source.map( ( font ) => <Font key={ font._id }
 				                                font={ font }
+				                                type={ type }
 				/> ) }
 			</Wrapper>
         </>

@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const ColorsSection = ( { title, source, colorWidth } ) => {
+const ColorsSection = ( { title, source, type, colorWidth } ) => {
 
 	return (
 		<>
@@ -17,6 +17,7 @@ const ColorsSection = ( { title, source, colorWidth } ) => {
 				{ source.map( ( color ) =>
 					<Color key={ color._id }
 					       color={ color }
+					       type={ type }
 					       width={ colorWidth }
 					/> )
 				}

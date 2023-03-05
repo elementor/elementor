@@ -13,7 +13,6 @@ const Wrapper = styled.div`
     border: 1px solid #424344;
     border-radius: 3px;
     margin: -1px;
-    background-color: #F1F2F3;
   }
 
   &:hover:not(.active) {
@@ -21,17 +20,22 @@ const Wrapper = styled.div`
     border: 1px solid #D5DADF;
     border-radius: 3px;
     margin: -1px;
-    background-color: #F9FAFA;
   }
 `;
 
 const ElementWrapper = React.forwardRef( ( props, ref ) => {
 	const { isActive, children } = props;
 
+	const classes = [ 'elementor-ignore-background-click' ];
+
+	if ( isActive ) {
+		classes.push( 'active' );
+	}
+
 	return (
 		<Wrapper { ...props }
 		         ref={ ref }
-		         className={ isActive ? 'active' : '' }
+		         className={ classes.join( ' ' ) }
 		>{ children }</Wrapper>
 	);
 } );

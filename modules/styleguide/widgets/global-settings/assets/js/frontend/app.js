@@ -2,7 +2,7 @@ import useSettings from "./hooks/use-site-settings";
 import Header from "./areas/header";
 import styled from "styled-components";
 import ActiveElementProvider from "./providers/active-element-provider";
-import { createContext, useEffect, useRef } from "react";
+import { createContext, useRef } from "react";
 import ColorsArea from "./areas/colors-area";
 import FontsArea from "./areas/fonts-area";
 
@@ -20,9 +20,14 @@ const App = ( { config } ) => {
 		fonts: fontsRef,
 	};
 
-	useEffect( () => {
-		window.top.elementor.changeEditMode( 'picker' );
-	}, [] ); // todo remove this
+	const headerButtons = [
+		{ name: 'colors', label: 'Colors', onClick: () => colorsRef.current.scrollIntoView( { behaviour: 'smooth' } ) },
+		{ name: 'fonts', label: 'Fonts', onClick: () => fontsRef.current.scrollIntoView( { behaviour: 'smooth' } ) },
+	];
+
+	// useEffect( () => {
+	// 	window.top.elementor.changeEditMode( 'picker' );
+	// }, [] ); // todo remove this
 
 	const { settings } = useSettings( config.settings );
 
@@ -30,7 +35,7 @@ const App = ( { config } ) => {
 		<div className='App'>
 			<ActiveElementProvider>
 			<ConfigContext.Provider value={ config }>
-				<Header anchors={ anchors }/>
+				<Header buttons={headerButtons}/>
 				<Content>
 					<ColorsArea ref={ colorsRef }
 					            settings={ settings }/>

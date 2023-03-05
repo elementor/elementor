@@ -4,7 +4,7 @@ export const isInRoute = ( route ) => {
 		return false;
 	}
 
-	return window.top.$e.routes.is( route );
+	return window.top.$e.routes.isPartOf( route );
 };
 
 export const goToRoute = (route, args) => {
@@ -12,13 +12,11 @@ export const goToRoute = (route, args) => {
 		return;
 	}
 
-	// Must go through main panel to allow back button to work
-	goToMainRoute();
 	window.top.$e.route( route, args );
 };
 
-const goToMainRoute = () => {
-	window.top.$e.route( MAIN_ROUTE );
+export const goToMainRoute = () => {
+	goToRoute( MAIN_ROUTE );
 };
 
 export const MAIN_ROUTE = 'panel/global/menu';

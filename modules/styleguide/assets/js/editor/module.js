@@ -14,6 +14,7 @@ class Module extends elementorModules.editor.utils.Module {
 			this.activeKitId = config.activeKitId;
 
 			if ( elementor.documents.getCurrentId() === this.activeKitId ) {
+				elementor.changeEditMode( 'picker' ); // todo should do this somewhere else
 				return;
 			}
 

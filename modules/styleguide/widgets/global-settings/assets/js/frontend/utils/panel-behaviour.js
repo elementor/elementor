@@ -1,7 +1,8 @@
-import sendCommand from "../../../../../assets/js/common/utils/send-command";
+import { goToRoute } from "../../../../../assets/js/common/utils/web-cli";
 
-export const togglePopover = ( name, type, id ) => {
-	sendCommand( 'design-guidelines/toggle-global-picker', {
-		name, type, id
+export const togglePopover = ( name, type, id, show ) => {
+	const endpoint = show ? 'show' : 'hide';
+	goToRoute( `panel/global/global-${ name }/picker/${ endpoint }`, {
+		type, id
 	} );
 };

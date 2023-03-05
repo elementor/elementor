@@ -5,9 +5,14 @@ import ElementTitle from "./element-title";
 import { ConfigContext } from "../app";
 import useIsActive from "../hooks/use-is-active";
 import { togglePopover } from "../utils/panel-behaviour";
-import { goToRoute, isInRoute, MAIN_ROUTE } from "../../../../../assets/js/common/utils/web-cli";
+import { goToMainRoute, goToRoute, isInRoute } from "../../../../../assets/js/common/utils/web-cli";
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
+
+	// When the font is only defaults
+	if ( '' === font[ 'typography_typography' ] ) {
+		return '';
+	}
 
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
 
@@ -63,6 +68,8 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 
 	const objectToString = ( obj ) => Object.keys( obj ).reduce( ( acc, key ) => acc + `${ key }: ${ obj[ key ] };`, '' );
 
+	// TODO 02/03/2023 : use styled components css helper
+
 	return `
 		  ${ objectToString( style ) }
 		  @media (max-width: 1024px) {
@@ -75,6 +82,10 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 
 };
 
+const Title = styled( ElementTitle )`
+  font-size: 18px;
+`;
+
 const Font = ( { font, type } ) => {
 	const source = 'typography';
 	const { _id, title } = font;
@@ -84,27 +95,22 @@ const Font = ( { font, type } ) => {
 
 	const config = useContext( ConfigContext );
 	const style = useMemo( () => parseFontToStyle( font, config.settings[ 'fallback_font' ] ), [ font, config ] );
-	const Title = styled( ElementTitle )`
-      font-size: 18px;
-	`;
 
+	// TODO move outside of component
 	const Content = styled.p`
       ${ style }
 	`;
 
 	let onClick = () => {
-		// Typography popover closes on every click in the window so only need to open.
-		if ( isActive ) {
-			return;
-		}
-
 		const route = 'panel/global/global-typography';
 
 		if ( ! isInRoute( route ) ) {
-			goToRoute( route, {shouldNotScroll: true})
+			// Must go through main panel to allow back button to work
+			goToMainRoute();
+			goToRoute( route, { shouldNotScroll: true } )
 		}
 
-		togglePopover( source, type, _id )
+		togglePopover( source, type, _id, ! isActive );
 	};
 
 	return (
