@@ -44,7 +44,6 @@ export default class ColorPicker extends elementorModules.Module {
 		this.picker
 			.on( 'change', () => this.onPickerChange() )
 			.on( 'clear', () => this.onPickerClear() )
-			.on( 'hide', () => this.onPickerHide() )
 			.on( 'show', () => this.onPickerShow() );
 
 		this.$pickerAppContainer = jQuery( this.picker.getRoot().app );
@@ -168,14 +167,6 @@ export default class ColorPicker extends elementorModules.Module {
 
 		if ( onClear ) {
 			onClear();
-		}
-	}
-
-	onPickerHide() {
-		const onHide = this.getSettings( 'onHide' );
-
-		if ( onHide ) {
-			onHide();
 		}
 	}
 

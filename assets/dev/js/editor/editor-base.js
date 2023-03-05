@@ -79,7 +79,7 @@ export default class EditorBase extends Marionette.Application {
 	backgroundClickListeners = {
 		tooltip: {
 			element: '#elementor-element--tooltip__dialog',
-			ignore: '.dialog-widget',
+			ignore: '.dialog-widget, .elementor-controls-popover',
 			// callback: () => {
 			// 	elementor.tooltips.forEach( ( tooltip ) => {
 			// 		if ( tooltip.isActive ) {
@@ -90,22 +90,7 @@ export default class EditorBase extends Marionette.Application {
 		},
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.select2-container, .pcr-app, .dialog-widget',
-			callback: ( $popovers ) => {
-				const $activePopovers = $popovers.filter( function() {
-					return jQuery( this ).is( ':visible' ) ? jQuery( this ) : null;
-				} );
-
-				if ( $activePopovers.length !== 0 ) {
-					$activePopovers.hide();
-
-					window.dispatchEvent( new CustomEvent( 'elementor/popover/hide', {
-						detail: {
-							el: $activePopovers.first(),
-						},
-					} ) );
-				}
-			},
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .dialog-widget',
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',

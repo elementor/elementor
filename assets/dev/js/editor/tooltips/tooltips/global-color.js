@@ -1,7 +1,6 @@
 export default class GlobalColorTooltip {
 	introductionKey = 'global_color';
 	introductionViewed = elementor.config.user.introduction[ this.introductionKey ] ?? false;
-	isActive = false;
 
 	constructor() {
 		if ( ! this.introductionViewed ) {
@@ -58,10 +57,6 @@ export default class GlobalColorTooltip {
 		const buttonOptions = {
 			text: __( 'Got it!', 'elementor' ),
 			classes: [ 'elementor-button' ],
-			callback: ( e ) => {
-				e.preventDefault();
-				this.hideTooltip();
-			},
 		};
 
 		this.setTooltipButton( buttonOptions );
@@ -83,7 +78,6 @@ export default class GlobalColorTooltip {
 		if ( this.introductionViewed ) {
 			return;
 		}
-		this.isActive = true;
 
 		this.tooltip.show( {
 			targetElement: element,
@@ -91,12 +85,6 @@ export default class GlobalColorTooltip {
 				blockStart: '-10',
 			},
 		} );
-	}
-
-	hideTooltip() {
-		this.tooltip.hide();
-
-		this.isActive = false;
 	}
 
 	setViewed() {

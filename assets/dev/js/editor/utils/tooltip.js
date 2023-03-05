@@ -13,6 +13,7 @@ export default class extends Introduction {
 					hide: 'hide',
 				},
 				hide: {
+					// TODO: Ask Roi if he wants to keep the tooltip on change of the popovers.
 					onOutsideClick: true,
 					onBackgroundClick: true,
 					onEscKeyPress: true,
@@ -47,7 +48,7 @@ export default class extends Introduction {
 				name: 'action',
 				text: buttonOptions.text,
 				classes: buttonOptions.classes.join( ' ' ),
-				callback: () => buttonOptions.callback,
+				callback: () => this.dialog.hide(),
 			} );
 		}
 	}

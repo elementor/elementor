@@ -19,7 +19,7 @@ export default class TooltipsManager {
 				elements.$title = jQuery( '<div>', { id: 'elementor-element--tooltip__dialog__title' } );
 
 				elements.$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
-				elements.$closeButton.on( 'click', () => this.hideTooltip() );
+				elements.$closeButton.on( 'click', () => this.hide() );
 
 				elements.header.append(
 					elements.$title,
