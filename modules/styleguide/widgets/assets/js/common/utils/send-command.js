@@ -1,4 +1,3 @@
-
 const sendCommand = ( command, args ) => {
 	if ( ! window.top || ! window.top.$e ) {
 		return null;

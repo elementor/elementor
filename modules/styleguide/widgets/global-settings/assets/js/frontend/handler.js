@@ -5,8 +5,13 @@ import App from './app';
 export default class Handler extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
-		let querySelector = document.querySelector('#wpadminbar');
-		if (querySelector) querySelector.style.display = 'none';
+
+		const querySelector = document.querySelector( '#wpadminbar' );
+
+		if ( querySelector ) {
+			querySelector.style.display = 'none';
+		}
+
 		document.querySelectorAll( '.elementor-global-settings-widget' ).forEach(
 			( element ) => {
 				element.innerHTML = '';
@@ -16,10 +21,10 @@ export default class Handler extends elementorModules.frontend.handlers.Base {
 				};
 
 				ReactDOM.render(
-					<App config={config}/>,
-					element
+					<App config={ config } />,
+					element,
 				);
-			}
+			},
 		);
 	}
 }

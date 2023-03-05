@@ -1,7 +1,7 @@
 import React from 'react';
-import styled from "styled-components";
-import SectionTitle from "./section-title";
-import Font from "./font";
+import styled from 'styled-components';
+import SectionTitle from './section-title';
+import Font from './font';
 
 const Wrapper = styled.div`
   display: flex;
@@ -9,16 +9,13 @@ const Wrapper = styled.div`
 `;
 
 const FontsSection = ( { title, source } ) => {
-
 	return (
 		<>
 			<SectionTitle> { title } </SectionTitle>
 			<Wrapper>
-				{ source.map( ( font ) => <Font key={ font._id }
-				                                font={ font }
-				/> ) }
+				{ source.map( ( font ) => <Font key={ font._id } font={ font } /> ) }
 			</Wrapper>
-        </>
+		</>
 	);
 };
 

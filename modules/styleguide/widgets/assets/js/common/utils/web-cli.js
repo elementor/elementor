@@ -1,4 +1,3 @@
-
 export const isInRoute = ( route ) => {
 	if ( ! window.top || ! window.top.$e) {
 		return false;

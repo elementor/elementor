@@ -1,41 +1,42 @@
 import React from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const Button = styled.button`
-  font-size: 16px;
-  height: 100%;
-  font-weight: 500;
-  font-style: normal;
-  text-decoration: none;
-  line-height: 1.5em;
-  letter-spacing: 0;
-  color: #515962;
-  border: none;
-  background: none;
-  text-transform: capitalize;
-  font-family: Roboto, sans-serif;
-  padding: 0;
+	font-size: 16px;
+	height: 100%;
+	font-weight: 500;
+	font-style: normal;
+	text-decoration: none;
+	line-height: 1.5em;
+	letter-spacing: 0;
+	color: #515962;
+	border: none;
+	background: none;
+	text-transform: capitalize;
+	font-family: Roboto, sans-serif;
+	padding: 0;
 
-  &:hover {
-    background: none;
-    color: #51585e;
-  }
+	&:hover {
+		background: none;
+		color: #51585e;
+	}
 
-  &:focus {
-    outline: none;
-    background: none;
-    color: #51585e;
-  }
+	&:focus {
+		outline: none;
+		background: none;
+		color: #51585e;
+	}
 `;
 
 const GoToAnchor = ( { anchor, children } ) => {
-
-	return <Button variant='transparent'
-	               size='s'
-	               onClick={ () => anchor.current.scrollIntoView( { behaviour: 'smooth' } ) }
-	>
-				{ children }
-			</Button>
+	return (
+		<Button variant="transparent"
+			size="s"
+			onClick={ () => anchor.current.scrollIntoView( { behaviour: 'smooth' } ) }
+		>
+			{ children }
+		</Button>
+	);
 };
 
 const Wrapper = styled.div`
@@ -79,10 +80,10 @@ const Header = ( { anchors } ) => {
 		<Wrapper>
 			<Title>style guide preview</Title>
 			<ButtonsWrapper>
-				<GoToAnchor anchor={ anchors[ 'colors' ] }>colors</GoToAnchor>
-				<GoToAnchor anchor={ anchors[ 'fonts' ] }>fonts</GoToAnchor>
+				<GoToAnchor anchor={ anchors.colors }>colors</GoToAnchor>
+				<GoToAnchor anchor={ anchors.fonts }>fonts</GoToAnchor>
 			</ButtonsWrapper>
-        </Wrapper>
+		</Wrapper>
 	);
 };
 

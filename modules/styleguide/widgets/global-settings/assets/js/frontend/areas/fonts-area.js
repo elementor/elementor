@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from 'react';
-import AreaTitle from "../components/area-title";
-import FontsSection from "../components/fonts-section";
-import { ActiveElementContext } from "../providers/active-element-provider";
-import { addEventListener, AFTER_COMMAND_EVENT, } from "../../../../../assets/js/common/utils/top-events";
+import AreaTitle from '../components/area-title';
+import FontsSection from '../components/fonts-section';
+import { ActiveElementContext } from '../providers/active-element-provider';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../../../../assets/js/common/utils/top-events';
 
 const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
 
 	useEffect( () => {
 		const onPopoverToggle = ( event ) => {
-			let name = event.detail.container.model.attributes.name;
+			const name = event.detail.container.model.attributes.name;
+
 			if ( ! name.includes( 'typography' ) ) {
 				return;
 			}
@@ -34,7 +35,6 @@ const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 			setTimeout( () => {
 				ref.current.scrollIntoView( { behavior: 'smooth' } );
 			}, 100 );
-
 		};
 
 		addEventListener( 'elementor/popover/toggle', onPopoverToggle );
@@ -48,16 +48,16 @@ const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 
 	return (
 		<div ref={ ref }>
-			<AreaTitle name='fonts'>global fonts</AreaTitle>
-			<FontsSection title='System Fonts'
-			              source={ settings[ 'system_typography' ] }
-			              type='system'
+			<AreaTitle name="fonts">global fonts</AreaTitle>
+			<FontsSection title="System Fonts"
+				source={ settings.system_typography }
+				type="system"
 			/>
-			<FontsSection title='Custom Fonts'
-			              source={ settings[ 'custom_typography' ] }
-			              type='custom'
+			<FontsSection title="Custom Fonts"
+				source={ settings.custom_typography }
+				type="custom"
 			/>
-        </div>
+		</div>
 	);
 } );
 

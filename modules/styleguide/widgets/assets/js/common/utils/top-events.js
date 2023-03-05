@@ -14,6 +14,4 @@ export const removeEventListener = ( event, handler ) => {
 	window.top.removeEventListener( event, handler );
 };
 
-
-
 export const AFTER_COMMAND_EVENT = 'elementor/commands/run/after';

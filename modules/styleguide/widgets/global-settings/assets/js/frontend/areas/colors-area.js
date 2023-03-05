@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import AreaTitle from "../components/area-title";
-import ColorsSection from "../components/colors-section";
-import { ActiveElementContext } from "../providers/active-element-provider";
-import { addEventListener, AFTER_COMMAND_EVENT } from "../../../../../assets/js/common/utils/top-events";
+import AreaTitle from '../components/area-title';
+import ColorsSection from '../components/colors-section';
+import { ActiveElementContext } from '../providers/active-element-provider';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../../../../assets/js/common/utils/top-events';
 
 const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
@@ -30,7 +30,6 @@ const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 			setTimeout( () => {
 				ref.current.scrollIntoView( { behavior: 'smooth' } );
 			}, 100 );
-
 		};
 
 		addEventListener( 'elementor/global-color/show', onPickerShow );
@@ -47,18 +46,18 @@ const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 
 	return (
 		<div ref={ ref }>
-			<AreaTitle name='colors'>global colors</AreaTitle>
-			<ColorsSection title='System Colors'
-			               source={ settings[ 'system_colors' ] }
-			               colorWidth='191px'
-			               type='system'
+			<AreaTitle name="colors">global colors</AreaTitle>
+			<ColorsSection title="System Colors"
+				source={ settings.system_colors }
+				colorWidth="191px"
+				type="system"
 			/>
-			<ColorsSection title='Custom Colors'
-			               source={ settings[ 'custom_colors' ] }
-			               colorWidth='114px'
-			               type='custom'
+			<ColorsSection title="Custom Colors"
+				source={ settings.custom_colors }
+				colorWidth="114px"
+				type="custom"
 			/>
-        </div>
+		</div>
 	);
 } );
 

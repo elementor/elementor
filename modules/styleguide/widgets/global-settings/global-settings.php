@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\Styleguide\Widgets\GlobalSettings;
 
 use Elementor\Core\Kits\Documents\Kit;

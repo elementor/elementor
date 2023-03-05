@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useMemo } from 'react';
-import { ActiveElementContext } from "../providers/active-element-provider";
+import { useContext, useEffect, useMemo } from 'react';
+import { ActiveElementContext } from '../providers/active-element-provider';
 
 const useIsActive = ( source, id, ref ) => {
 	const context = useContext( ActiveElementContext );

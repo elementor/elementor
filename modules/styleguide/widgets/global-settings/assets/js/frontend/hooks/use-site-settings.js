@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { addEventListener, AFTER_COMMAND_EVENT, } from "../../../../../assets/js/common/utils/top-events";
-import debounce from "../../../../../assets/js/common/utils/debounce";
+import { useEffect, useState } from 'react';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../../../../assets/js/common/utils/top-events';
+import debounce from '../../../../../assets/js/common/utils/debounce';
 
 const useSiteSettings = ( initial ) => {
 	const [ settings, setSettings ] = useState( initial );
@@ -77,7 +77,6 @@ const useSiteSettings = ( initial ) => {
 			}
 
 			setSettings( ( settings ) => {
-
 				const newSettings = { ...settings };
 				const newFieldArray = [ ...newSettings[ name ] ];
 				newSettings[ name ] = newFieldArray.filter( ( item, index ) => index !== args.index );
@@ -99,7 +98,6 @@ const useSiteSettings = ( initial ) => {
 	return {
 		settings,
 	};
-
 };
 
 export default useSiteSettings;

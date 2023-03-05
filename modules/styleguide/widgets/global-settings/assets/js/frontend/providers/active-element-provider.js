@@ -25,7 +25,7 @@ const ActiveElementProvider = ( { children } ) => {
 	return (
 		<ActiveElementContext.Provider value={ { isActive, setActive, unsetActive } }>
 			{ children }
-        </ActiveElementContext.Provider>
+		</ActiveElementContext.Provider>
 	);
 };
 
