@@ -133,13 +133,14 @@
 			&-prev {
 				left: 0;
 			}
-	
+
 			&-next {
 				right: 0;
 			}
 		}
 
 		.swiper-pagination-fraction {
+			width: max-content;
 			color: $white;
 		}
 	}
