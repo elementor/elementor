@@ -31,6 +31,4 @@ export const removeHook = ( event, handler ) => {
 };
 
 
-
-
-export const AFTER_COMMAND_EVENT = 'elementor/commands/run/after';
+export const AFTER_COMMAND_EVENT = 'elementor/commands/run/after'; // todo maybe move this to web-cli.js

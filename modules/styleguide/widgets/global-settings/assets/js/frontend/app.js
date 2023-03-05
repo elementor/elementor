@@ -15,10 +15,6 @@ const Content = styled.div`
 const App = ( { config } ) => {
 	const fontsRef = useRef( null );
 	const colorsRef = useRef( null );
-	const anchors = {
-		colors: colorsRef,
-		fonts: fontsRef,
-	};
 
 	const headerButtons = [
 		{ name: 'colors', label: 'Colors', onClick: () => colorsRef.current.scrollIntoView( { behaviour: 'smooth' } ) },

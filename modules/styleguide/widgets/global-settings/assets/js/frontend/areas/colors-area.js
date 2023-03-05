@@ -25,9 +25,9 @@ const ColorsArea = React.forwardRef( ( { settings }, ref ) => {
 		};
 
 		const onPanelShow = ( event ) => {
-			const command = 'panel/global/global-colors';
+			const colorsRoute = 'panel/global/global-colors';
 
-			if ( event.detail.command !== command ) {
+			if ( route !== colorsRoute ) {
 				return;
 			}
 

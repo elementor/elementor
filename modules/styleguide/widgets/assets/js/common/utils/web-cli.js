@@ -20,3 +20,5 @@ export const goToMainRoute = () => {
 };
 
 export const MAIN_ROUTE = 'panel/global/menu';
+
+export const ROUTE_OPEN_EVENT = 'elementor/routes/open';
