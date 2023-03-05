@@ -18,7 +18,7 @@ export default class GlobalsIntroduction {
 					'elementor',
 				) );
 				this.showTooltip( e.detail.el );
-				// this.setViewed();
+				this.setViewed();
 			}
 		} );
 
@@ -37,21 +37,21 @@ export default class GlobalsIntroduction {
 				) );
 
 				this.showTooltip( $popoverElement );
-				// this.setViewed();
+				this.setViewed();
 			}
 		} );
 	}
 
 	initTooltip() {
 		this.tooltip = new elementorModules.editor.utils.Tooltip( {
-			introductionKey: 'global_color',
+			introductionKey: this.introductionKey,
 			dialogType: 'tooltip',
 			dialogOptions: {},
 		} );
 
 		const buttonOptions = {
 			text: __( 'Got it!', 'elementor' ),
-			classes: [ 'elementor-button' ],
+			classes: [ 'elementor-button', 'e-brand' ],
 		};
 
 		this.setTooltipButton( buttonOptions );
