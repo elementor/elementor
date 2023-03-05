@@ -406,7 +406,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				showZoomElements = [],
 				showZoomAttrs = {
 					role: 'switch',
-					'tabindex': 0,
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.zoom,
 				},
@@ -441,7 +441,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				fullScreenElements = [],
 				fullScreenAttrs = {
 					role: 'switch',
-					'tabindex': 0,
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.fullscreen,
 				},
