@@ -6,8 +6,6 @@ export default class TooltipsManager {
 	constructor() {
 		this.addTooltipWidget();
 		this.registerTooltips();
-
-		return this.tooltips;
 	}
 
 	addTooltipWidget() {
@@ -29,11 +27,6 @@ export default class TooltipsManager {
 		} ) );
 	}
 
-	/**
-	 * Function registerElements().
-	 *
-	 * Register all base elements types.
-	 */
 	registerTooltips() {
 		this.tooltips.push( new GlobalsIntroduction() );
 	}

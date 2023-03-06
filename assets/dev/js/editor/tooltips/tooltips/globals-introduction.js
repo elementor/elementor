@@ -12,7 +12,7 @@ export default class GlobalsIntroduction {
 	bindEvent() {
 		window.addEventListener( 'elementor/color-picker/show', ( e ) => {
 			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
-			if ( elementor.documents.getCurrent().config.type === 'kit' ) {
+			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
 				return;
 			}
 
@@ -29,7 +29,7 @@ export default class GlobalsIntroduction {
 
 		window.addEventListener( 'elementor/popover/show', ( e ) => {
 			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
-			if ( elementor.documents.getCurrent().config.type === 'kit' ) {
+			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
 				return;
 			}
 
