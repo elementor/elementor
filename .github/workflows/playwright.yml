@@ -4,10 +4,10 @@ on:
   push:
   pull_request:
 
-# # This allows a subsequently queued workflow run to interrupt previous runs
-# concurrency:
-#   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-#   cancel-in-progress: true
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   build-plugin:
@@ -92,16 +92,10 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright:${{ matrix.testSuite }} -- -u
+          npm run test:playwright:${{ matrix.testSuite }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: test-results/
-          retention-days: 3
-      - uses: actions/upload-artifact@v3
-        if: matrix.testSuite == 'elements-regression'
-        with:
-          name: elements-regression-snapshot
-          path: tests/elements-regression/tests/elements-regression.test.js-snapshots/
           retention-days: 3
