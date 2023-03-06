@@ -106,7 +106,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async addWidget( widgetType, container = null, isContainerASection = false ) {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
-		await this.getFrame().waitForSelector( `[data-id=${ widgetId }]` );
+		await this.getPreviewFrame().waitForSelector( `[data-id=${ widgetId }]` );
 		return widgetId;
 	}
 
