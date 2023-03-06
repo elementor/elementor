@@ -73,7 +73,7 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:playwright-sanity
+          npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-env run cli "wp core version"
