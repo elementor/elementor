@@ -38,38 +38,126 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function update_element_attributes( Element_Base $element ) {
-		$settings = $element->get_settings_for_display();
-		$controls = $element->get_controls();
-		$lazyload_attribute_name = 'data-e-bg-lazyload';
-
-		$controls_with_background_image = array_filter( $controls, function( $control ) {
-			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
+	private function get_repeaters_selectors( $controls, $settings ) {
+		$selectors = [];
+		$repeater = array_filter( $controls, function( $control ) {
+			if ( 'repeater' === $control['type'] && Utils::get_array_value_by_keys( $control, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload', 'active' ] ) ) {
+				return true;
+			}
 		} );
+		if ( empty( $repeater ) ) {
+			return false;
+		}
+		$repeater = array_shift( $repeater );
 
-		foreach ( $controls_with_background_image as $control_name => $control_data ) {
-			$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
-			$background_image_url = Utils::get_array_value_by_keys( $settings, $keys );
-			if ( $background_image_url ) {
-
-				$has_attribute = $element->get_render_attributes( '_wrapper', $lazyload_attribute_name );
-				if ( ! $has_attribute ) {
-					$bg_selector = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
-					$element->add_render_attribute( '_wrapper', [
-						$lazyload_attribute_name => $bg_selector,
-					] );
-				}
+		if ( $repeater ) {
+			$repeater_settings = $settings[ $repeater['name'] ][0];
+			$repeater_selector = $this->get_repeater_selector( $repeater_settings, $repeater );
+			if ( $repeater_selector ) {
+				$selectors[] = $repeater_selector;
 			}
 		}
+
+		return $selectors;
+	}
+
+	private function get_repeater_selector( $repeater_settings, $repeater ) {
+		$lazyload_options = Utils::get_array_value_by_keys( $repeater, [ 'fields', 'background_image', 'fields_options', 'image', 'background_lazyload' ] );
+		if ( ! $lazyload_options['active'] ) {
+			return false;
+		}
+
+		$repeater_selector = Utils::get_array_value_by_keys( $lazyload_options, [ 'selector' ] );
+		if ( ! $repeater_selector ) {
+			return false;
+		}
+
+		$repeater_keys = Utils::get_array_value_by_keys( $repeater_settings, [ 'background_lazyload', 'keys' ] );
+		$repeater_background_image_url = Utils::get_array_value_by_keys( $repeater_settings, $repeater_keys );
+
+		if ( $repeater_background_image_url ) {
+			return $repeater_selector;
+		}
+
+		return false;
+	}
+
+	private function get_controls_with_background_image( $controls ) {
+		return array_filter( $controls, function( $control ) {
+			return Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] );
+		} );
+	}
+
+	private function has_background_image( $control_data, $settings ) {
+
+		$keys = Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'keys' ] );
+		$background_image_controls = array_filter( array_keys( $settings ), function( $key ) use ( $keys ) {
+			return false !== strpos( $key, $keys[0] );
+		} );
+
+		foreach ( $background_image_controls as $background_image_control ) {
+			$breakpoint_background_keys = $keys;
+			$breakpoint_background_keys[0] = $background_image_control;
+			$background_image_url = Utils::get_array_value_by_keys( $settings, $breakpoint_background_keys );
+			if ( $background_image_url ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function update_element_attributes( Element_Base $element ) {
+
+		$settings = $element->get_settings_for_display();
+		$controls = $element->get_controls();
+		$controls_with_background_image = $this->get_controls_with_background_image( $controls );
+		$repeaters_selectors = $this->get_repeaters_selectors( $controls, $settings );
+		$wrapper_selector = $element->get_unique_selector();
+
+		$lazyload_attribute_name = 'data-e-bg-lazyload';
+		$attributes = [];
+		$control_selectors = [];
+
+		if ( $repeaters_selectors ) {
+			$control_selectors = array_merge( $repeaters_selectors, $control_selectors );
+		}
+
+		foreach ( $controls_with_background_image as $control_name => $control_data ) {
+			$background_image_url = $this->has_background_image( $control_data, $settings );
+
+			if ( $background_image_url ) {
+				$control_selectors[] = $wrapper_selector . ' ' . Utils::get_array_value_by_keys( $control_data, [ 'background_lazyload', 'selector' ] ) ?? '';
+			}
+		}
+
+		// Trim spaces and remove duplicates.
+		$control_selectors = array_unique( array_map( 'trim', $control_selectors ) );
+
+		// Build the lazyload attribute selectors value. e.g. ".elementor-element-123 .selector1, .elementor-element-123 .selector2".
+		$attributes[ $lazyload_attribute_name ] = implode( ',', $control_selectors );
+
+		// Add the lazyload attribute to the wrapper.
+		$element->add_render_attribute( '_wrapper',
+			$attributes
+		);
+
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
-		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
+
+		// If the control is a repeater, we need to loop over the repeater fields options to get the background_lazyload property.
+		$is_background_lazyload = Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ?? Utils::get_array_value_by_keys( $control, [ 'fields_options', 'image', 'background_lazyload', 'active' ] );
+
+		if ( $is_background_lazyload ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
-						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
+						// Support for background repeaters, control is without quotes.
+						$css_property  = str_replace( 'url({{URL}})', 'var(--e-bg-lazyload-loaded)', $css_property );
+
+						$control['selectors'][ $selector ] = $css_property . ';--e-bg-lazyload: url("' . $value['url'] . '");';
 						$control = $this->apply_dominant_color_background( $control, $value, $selector );
 					}
 				}
@@ -156,23 +244,31 @@ class Module extends BaseModule {
 		add_action( 'wp_footer', function() {
 			?>
 			<script type='text/javascript'>
+
 				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
-					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					const reapterAttribute = 'data-e-bg-repeater';
+
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
 					entries.forEach( ( entry ) => {
 						if ( entry.isIntersecting ) {
-							let lazyloadBackground = entry.target;
-							const lazyloadSelector = lazyloadBackground.getAttribute( dataAttribute );
-							if ( lazyloadSelector ) {
-								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
-							}
-							lazyloadBackground.classList.add( 'lazyloaded' );
+							entry.target.classList.add( 'lazyloaded' );
 							lazyloadBackgroundObserver.unobserve( entry.target );
 						}
 					});
 					}, { rootMargin: '100px 0px 100px 0px' } );
-					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+
+					let lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
+					let elementsToObserve = [];
+					lazyloadBackgrounds.forEach( ( lazyloadBackgroundWrapper ) => {
+						const selectors = lazyloadBackgroundWrapper.getAttribute( dataAttribute );
+						if ( selectors ) {
+							const innerSelectors = document.querySelectorAll( selectors );
+							elementsToObserve = [...elementsToObserve, ...innerSelectors];
+						}
+					} );
+
+					elementsToObserve.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
 				};
