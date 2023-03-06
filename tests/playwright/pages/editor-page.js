@@ -104,7 +104,9 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 */
 	async addWidget( widgetType, container = null, isContainerASection = false ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		await this.getFrame().waitForSelector( `[data-id=${ widgetId }]` );
+		return widgetId;
 	}
 
 	/**
