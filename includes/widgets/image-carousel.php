@@ -934,13 +934,13 @@ class Widget_Image_Carousel extends Widget_Base {
 					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
-					<div class="elementor-swiper-button elementor-swiper-button-prev">
+					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'previous' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous image', 'elementor' ); ?></span>
 					</div>
-					<div class="elementor-swiper-button elementor-swiper-button-next">
+					<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'next' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Next', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Next image', 'elementor' ); ?></span>
 					</div>
 				<?php endif; ?>
 			<?php endif; ?>
