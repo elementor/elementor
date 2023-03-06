@@ -44,8 +44,8 @@ class Control_Gap extends Control_Base_Units {
 	public function get_default_value() {
 		return array_merge(
 			parent::get_default_value(), [
-				'row-gap' => '',
-				'column-gap' => '',
+				'row' => '',
+				'column' => '',
 				'isLinked' => true,
 			]
 		);
@@ -63,17 +63,12 @@ class Control_Gap extends Control_Base_Units {
 	 * @return array Control default settings.
 	 */
 	public function get_default_settings() {
-			return array_merge(
-				parent::get_default_settings(), [
-					'label_block' => true,
-					'allowed_dimensions' => 'all',
-					'titles' => [
-						'row' => esc_html__( 'Row', 'elementor' ),
-						'column' => esc_html__( 'Column', 'elementor' ),
-					],
-					'placeholder' => '',
-				]
-			);
+		return array_merge(
+			parent::get_default_settings(), [
+				'label_block' => true,
+				'placeholder' => '',
+			]
+		);
 	}
 
 	/**
@@ -86,53 +81,69 @@ class Control_Gap extends Control_Base_Units {
 	 * @access public
 	 */
 	public function content_template() {
+		$dimensions = [
+			'row' => esc_html__( 'Row', 'elementor' ),
+			'column' => esc_html__( 'Column', 'elementor' ),
+		];
 		?>
-			<div class="elementor-control-field">
-				<label class="elementor-control-title">{{{ data.label }}}</label>
-				<?php $this->print_units_template(); ?>
-				<div class="elementor-control-input-wrapper">
-					<ul class="elementor-control-gaps">
-					<# _.each ( data.titles, function( title, property )  {
-						const controlUid = `elementor-control-${ property }-${ data._cid }`;
-						#>
+		<div class="elementor-control-field">
+			<label class="elementor-control-title">{{{ data.label }}}</label>
+			<?php $this->print_units_template(); ?>
+			<div class="elementor-control-input-wrapper">
+				<ul class="elementor-control-gaps">
+					<?php
+					foreach ( $dimensions as $dimension_key => $dimension_title ) :
+						?>
 						<li class="elementor-control-gap">
-							<input
-									id="{{ controlUid }}"
-									type="text"
-									data-setting="{{{property}}}"
-									placeholder="<#
-									placeholder = view.getControlPlaceholder();
-									if ( _.isObject( placeholder ) ) {
-										if ( ! _.isUndefined( placeholder[property] ) ) {
-											print( placeholder[property] );
-										}
-									} else {
-										print( placeholder );
-									} #>"
-								/>
-							<label for="{{ controlUid }}" class="elementor-control-gap-label">
-								{{{title}}}
-							</label>
+							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
+							// PHPCS - the variable $dimension_key is a plain text.
+							echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>" placeholder="<#
+								placeholder = view.getControlPlaceholder();
+								if ( _.isObject( placeholder ) ) {
+									if ( ! _.isUndefined( placeholder.<?php
+									// PHPCS - the variable $dimension_key is a plain text.
+									echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									?> ) ) {
+										print( placeholder.<?php
+										// PHPCS - the variable $dimension_key is a plain text.
+										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										?> );
+									}
+								} else {
+								print( placeholder );
+								} #>"
+							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
+							// PHPCS - the variable $dimension_key is a plain text.
+							echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>' ) ) { #>
+							disabled
+							<# } #>
+							/>
+							<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-gap-label"><?php
+								// PHPCS - the variable $dimension_title holds an escaped translated value.
+								echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?></label>
 						</li>
-					<# } ) #>
-						<li>
-							<button class="elementor-link-gaps tooltip-target" data-tooltip="<?php echo esc_attr__( 'Link values together', 'elementor' ); ?>">
+					<?php endforeach; ?>
+					<li>
+						<button class="elementor-link-gaps tooltip-target" data-tooltip="<?php echo esc_attr__( 'Link values together', 'elementor' ); ?>">
 							<span class="elementor-linked">
 								<i class="eicon-link" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo esc_html__( 'Link values together', 'elementor' ); ?></span>
 							</span>
-								<span class="elementor-unlinked">
+							<span class="elementor-unlinked">
 								<i class="eicon-chain-broken" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo esc_html__( 'Unlinked values', 'elementor' ); ?></span>
 							</span>
-							</button>
-						</li>
-					</ul>
-				</div>
+						</button>
+					</li>
+				</ul>
 			</div>
-			<# if ( data.description ) { #>
-			<div class="elementor-control-field-description">{{{ data.description }}}</div>
-			<# } #>
-			<?php
+		</div>
+		<# if ( data.description ) { #>
+		<div class="elementor-control-field-description">{{{ data.description }}}</div>
+		<# } #>
+		<?php
 	}
 }
