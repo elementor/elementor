@@ -92,7 +92,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright:${{ matrix.testSuite }} -- u
+          npm run test:playwright:${{ matrix.testSuite }} -- -u
       - uses: actions/upload-artifact@v3
         if: always()
         with:
