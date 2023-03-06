@@ -30,7 +30,7 @@ test.describe( 'Video tests inside a container', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
             videoId = await editor.addWidget( widgets.video, containerId );
 
-		// Act.
+	// Act.
         // Set container padding to 0.
         await editor.selectElement( containerId );
         await editor.activatePanelTab( 'advanced' );
@@ -76,7 +76,7 @@ test.describe( 'Video tests inside a section', () => {
             columnId = await column.getAttribute( 'data-id' ),
             videoId = await editor.addWidget( widgets.video, columnId );
 
-		// Act.
+	// Act.
         // Set section padding to 0.
         await editor.selectElement( columnId );
         await editor.activatePanelTab( 'advanced' );
