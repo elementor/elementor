@@ -135,15 +135,21 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'PUT', '/kit-elements-defaults/button', [
 			'settings' => [
 				'text' => 'Text before <script>alert("error")</script> Some text after',
+				'__globals__' => [
+					'button_text_color' => '<script>globals/colors?id=secondary</script>',
+				],
 			],
 		] );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertEquals( [
+		$this->assertSame( [
 			'button' => [
 				'text' => 'Text before alert("error") Some text after',
+				'__globals__' => [
+					'button_text_color' => 'globals/colors?id=secondary',
+				]
 			],
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}
