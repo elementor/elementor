@@ -102,6 +102,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {string}  widgetType
 	 * @param {string}  container           - Optional Container to create the element in.
 	 * @param {boolean} isContainerASection - Optional. Is the container a section.
+	 * @return {Promise<string>}			- widget ID
 	 */
 	async addWidget( widgetType, container = null, isContainerASection = false ) {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
