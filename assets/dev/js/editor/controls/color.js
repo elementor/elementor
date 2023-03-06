@@ -112,7 +112,7 @@ export default class extends ControlBaseDataView {
 		$colorPickerToolsContainer.append( $colorPicker );
 	}
 
-	toggle() {
+	toggle() { // eslint-disable-next-line no-unused-expressions
 		this.colorPicker.picker.isOpen() ? this.colorPicker.picker.hide() : this.colorPicker.picker.show();
 	}
 
@@ -266,13 +266,13 @@ export default class extends ControlBaseDataView {
 	onPickerShow() {
 		// Running the command with "ignore" to trigger hooks - this.colorPicker.picker's show click cannot be overridden.
 		$e.run( 'panel/global/toggle-picker', {
-			ignore: true
+			ignore: true,
 		} );
 	}
 
 	onPickerHide() {
 		$e.run( 'panel/global/toggle-picker', {
-			ignore: true
+			ignore: true,
 		} );
 	}
 

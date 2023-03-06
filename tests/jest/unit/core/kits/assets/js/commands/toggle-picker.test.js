@@ -49,7 +49,7 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 			trigger( event ) {
 				this.element.dispatchEvent( new Event( event ) );
 			}
-		}
+		};
 
 		global.elementor = {
 			getPanelView: () => {
@@ -63,9 +63,9 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 											throw new TypeError( 'Document does not have control' );
 										}
 										return {
-											getChildControlView: ( id ) => {
+											getChildControlView: () => {
 												return {
-													getChildControlView: ( name ) => {
+													getChildControlView: () => {
 														return {
 															toggle: () => {
 																document.querySelector( 'div.pickr button.pcr-button' ).click();
@@ -104,7 +104,7 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 				name: 'colors',
 				type: 'custom', // Document does not have custom colors.
 				id: 'primary',
-			} )
+			} ),
 		).toThrow( TypeError );
 
 		// Act.
