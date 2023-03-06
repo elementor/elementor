@@ -39,7 +39,7 @@ export default class extends Introduction {
 	}
 
 	setContent( content ) {
-		this.dialog.setMessage( content )
+		this.dialog.setMessage( content );
 	}
 
 	setButton( buttonOptions ) {
