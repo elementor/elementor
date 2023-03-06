@@ -72,9 +72,9 @@ test.describe( 'Video tests inside a section', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-				column = editor.getFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
-				columnId = await column.getAttribute( 'data-id' ),
-				videoId = await editor.addWidget( widgets.video, columnId );
+			column = editor.getFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			columnId = await column.getAttribute( 'data-id' ),
+			videoId = await editor.addWidget( widgets.video, columnId );
 
 		// Act.
 		// Set section padding to 0.
