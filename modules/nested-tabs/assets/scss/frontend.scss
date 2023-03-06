@@ -6,9 +6,6 @@
 	--n-tabs-color-secondary-fallback: #54595F;
 	--n-tabs-default-padding-block: 15px;
 	--n-tabs-default-padding-inline: 35px;
-	--n-tabs-height: initial;
-	--n-tabs-overflow-x: hidden;
-	--n-tabs-overflow-y: auto;
 	--n-tabs-background-color: transparent;
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
@@ -18,7 +15,6 @@
 	--n-tabs-heading-grow: initial;
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
-	--n-tabs-height: initial;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -56,9 +52,6 @@
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
 		text-align: $start;
-		height: var( --n-tabs-height );
-		overflow-x: var( --n-tabs-overflow-x );
-		overflow-y: var( --n-tabs-overflow-y );
 
 		&-heading {
 			display: var( --n-tabs-heading-display );
@@ -244,86 +237,87 @@
 
 		> .e-con:not(.e-active) {
 			max-height: 0;
-			visibility: hidden;
+			padding: 0;
+		  	overflow: hidden;
 		}
 	}
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
 :is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
 
-	&:hover {
-		background-color: var( --n-tabs-title-background-color-hover );
-		background-image: initial;
-	}
+&:hover {
+	background-color: var( --n-tabs-title-background-color-hover );
+	background-image: initial;
+}
 
-	&.e-active {
-		background-color: var( --n-tabs-title-background-color-active );
-		background-image: initial;
-	}
+&.e-active {
+	background-color: var( --n-tabs-title-background-color-active );
+	background-image: initial;
+}
 }
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
-	.e-n-tabs-#{$device} {
+.e-n-tabs-#{$device} {
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
-			display: none;
-		}
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
+		display: none;
 	}
+}
 }
 
 @mixin hide-collapse-tabs-($device) {
-	.e-n-tabs-#{$device} {
+.e-n-tabs-#{$device} {
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-			display: none;
-		}
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+		display: none;
 	}
+}
 }
 
 // Mobile.
 @media (min-width: $screen-mobile-next) {
-	@include hide-collapse-tabs-(mobile);
+@include hide-collapse-tabs-(mobile);
 }
 
 @media (max-width: $screen-mobile-max) {
-	@include hide-normal-tabs-(mobile);
+@include hide-normal-tabs-(mobile);
 }
 
 // Mobile Extra.
 @media (min-width: $screen-mobile-extra-next) {
-	@include hide-collapse-tabs-(mobile_extra);
+@include hide-collapse-tabs-(mobile_extra);
 }
 
 @media (max-width: $screen-mobile-extra-max) {
-	@include hide-normal-tabs-(mobile_extra);
+@include hide-normal-tabs-(mobile_extra);
 }
 
 // Tablet.
 @media (min-width: $screen-tablet-next) {
-	@include hide-collapse-tabs-(tablet);
+@include hide-collapse-tabs-(tablet);
 }
 
 @media (max-width: $screen-tablet-max) {
-	@include hide-normal-tabs-(tablet);
+@include hide-normal-tabs-(tablet);
 }
 
 // Tablet Extra.
 @media (min-width: $screen-tablet-extra-next) {
-	@include hide-collapse-tabs-(tablet_extra);
+@include hide-collapse-tabs-(tablet_extra);
 }
 
 @media (max-width: $screen-tablet-extra-max) {
-	@include hide-normal-tabs-(tablet_extra);
+@include hide-normal-tabs-(tablet_extra);
 }
 
 // Laptop.
 @media (min-width: $screen-desktop-min) {
-	@include hide-collapse-tabs-(laptop);
+@include hide-collapse-tabs-(laptop);
 }
 
 @media (max-width: $screen-laptop-max) {
-	@include hide-normal-tabs-(laptop);
+@include hide-normal-tabs-(laptop);
 }
