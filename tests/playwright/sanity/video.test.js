@@ -42,7 +42,7 @@ test.describe( 'Video tests inside a container', () => {
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
-		expect( containerHeight ).toBe( videoIframeHeight );
+		expect( containerHeight ).toEqual( videoIframeHeight );
 	} );
 } );
 
@@ -87,6 +87,6 @@ test.describe( 'Video tests inside a section', () => {
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
-		expect( columnHeight ).toBe( videoIframeHeight );
+		expect( columnHeight ).toEqual( videoIframeHeight );
 	} );
 } );
