@@ -46,6 +46,8 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
+			onPickerShow: () => this.onPickerShow(),
+			onPickerHide: () => this.onPickerHide(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -108,6 +110,10 @@ export default class extends ControlBaseDataView {
 		} );
 
 		$colorPickerToolsContainer.append( $colorPicker );
+	}
+
+	toggle() {
+		this.colorPicker.picker.isOpen() ? this.colorPicker.picker.hide() : this.colorPicker.picker.show();
 	}
 
 	getGlobalMeta() {
@@ -254,6 +260,19 @@ export default class extends ControlBaseDataView {
 			this.globalsList = globalsList;
 
 			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
+		} );
+	}
+
+	onPickerShow() {
+		// Running the command with "ignore" to trigger hooks - this.colorPicker.picker's show click cannot be overridden.
+		$e.run( 'panel/global/toggle-picker', {
+			ignore: true
+		} );
+	}
+
+	onPickerHide() {
+		$e.run( 'panel/global/toggle-picker', {
+			ignore: true
 		} );
 	}
 
