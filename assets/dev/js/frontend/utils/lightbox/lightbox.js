@@ -110,8 +110,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			closeButtonOptions: {
 				...closeIcon,
 				attributes: {
-					tabindex: 0,
 					role: 'button',
+					tabindex: 0,
 					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
 				},
 			},
