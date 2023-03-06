@@ -200,7 +200,7 @@ class Test_Controller extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_update_item() {
+	public function test_update_item1() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -227,6 +227,10 @@ class Test_Controller extends Elementor_Test_Base {
 				'text_align_mobile' => 'left',
 				'text_align_widescreen' => 'left',
 				'invalid_control' => 'that_should_be_removed',
+				"content_width" => [
+					"size" => 50,
+					"unit" => "px",
+				],
 				'__globals__' => [
 					'color_link' => 'globals/colors?id=secondary',
 					'color_link_mobile' => 'globals/colors?id=primary',
@@ -242,7 +246,7 @@ class Test_Controller extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertEquals( [
+		$this->assertSame( [
 			'section' => [
 				'heading_color' => 'red',
 				'color_text' => '#FFF',
@@ -250,6 +254,10 @@ class Test_Controller extends Elementor_Test_Base {
 				'text_align_tablet' => 'right',
 				'text_align_mobile' => 'left',
 				'text_align_widescreen' => 'left',
+				'content_width' => [
+					'size' => 50,
+					'unit' => 'px',
+				],
 				'__globals__' => [
 					'color_link' => 'globals/colors?id=secondary',
 					'color_link_mobile' => 'globals/colors?id=primary',

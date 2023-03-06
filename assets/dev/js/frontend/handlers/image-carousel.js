@@ -33,7 +33,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
 			loop: 'yes' === elementSettings.infinite,
-			speed: +elementSettings.speed,
+			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
 		};
 
@@ -182,7 +182,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	}
 
 	getSpaceBetween( device = null ) {
-		return +elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
