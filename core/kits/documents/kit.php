@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Kits\Documents;
 
 use Elementor\App\Modules\ImportExport\Utils;
