@@ -60,7 +60,7 @@ jobs:
         with:
           commit-message: '${{ env.CHANGELOG }}'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Push Deployment Info to Jira
         if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' # Only for GA releases
         uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
@@ -144,4 +144,4 @@ jobs:
         with:
           tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
