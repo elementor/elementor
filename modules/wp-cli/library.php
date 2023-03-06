@@ -75,6 +75,8 @@ class Library extends \WP_CLI_Command {
 	 *  1. wp elementor library import <file-path>
 	 *      - This will import a file or a zip of multiple files to the library.
 	 *
+	 *  2. wp elementor library import <file-path> --returnType=info,ids
+	 *
 	 * @param $args
 	 * @param $assoc_args
 	 *
