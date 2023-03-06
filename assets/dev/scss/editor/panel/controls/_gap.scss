@@ -1,6 +1,6 @@
 .elementor-control-type-gap {
 
-	.elementor-control-gap {
+	.elementor-control-gaps {
 		display: flex;
 	}
 
@@ -10,7 +10,7 @@
 		flex-direction: column;
 
 		input,
-		.elementor-link-gap {
+		.elementor-link-gaps {
 			display: block;
 			text-align: center;
 			width: 100%;
@@ -34,7 +34,7 @@
 			}
 		}
 
-		.elementor-link-gap {
+		.elementor-link-gaps {
 			border: var(--e-a-border-bold);
 			@include border-start(none);
 			background-color: var(--e-a-bg-default);
@@ -81,7 +81,7 @@
 		padding-top: 5px;
 	}
 
-	.elementor-link-gap {
+	.elementor-link-gaps {
 
 		&.unlinked {
 			background-color: var(--e-a-bg-default);

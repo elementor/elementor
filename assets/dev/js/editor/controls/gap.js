@@ -1,6 +1,6 @@
 import Scrubbing from './behaviors/scrubbing';
 
-var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
+	var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlGapsItemView;
 
 ControlGapsItemView = ControlBaseUnitsItemView.extend( {
@@ -31,7 +31,7 @@ ControlGapsItemView = ControlBaseUnitsItemView.extend( {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
 
 		ui.controls = '.elementor-control-gap > input:enabled';
-		ui.link = 'button.elementor-link-gap';
+		ui.link = 'button.elementor-link-gaps';
 
 		return ui;
 	},
@@ -47,36 +47,24 @@ ControlGapsItemView = ControlBaseUnitsItemView.extend( {
 
 	initialize() {
 		ControlBaseUnitsItemView.prototype.initialize.apply( this, arguments );
-
-		// TODO: Need to be in helpers, and not in variable
-		this.model.set( 'allowed_dimensions', this.filterDimensions( this.model.get( 'allowed_dimensions' ) ) );
+		this.setCustomProperties( this.model.get( 'titles' ) );
 	},
 
 	getPossibleDimensions() {
-		return [
-			'row',
-			'column',
-		];
+		const allowedDimensions = this.model.get( 'default' );
+		delete allowedDimensions.unit;
+		delete allowedDimensions.isLinked;
+
+		return allowedDimensions;
 	},
 
-	filterDimensions( filter ) {
-		filter = filter || 'all';
+	setCustomProperties( titles ) {
+		if ( Object.keys( titles ).length > 2 ) {
+			const [ key, value ] = Object.entries( titles )[ Object.entries( titles ).length - 1 ];
+			const [ key1, value1 ] = Object.entries( titles )[ Object.entries( titles ).length - 2 ];
 
-		var dimensions = this.getPossibleDimensions();
-
-		if ( 'all' === filter ) {
-			return dimensions;
+			this.model.set( 'titles', { [ key ]: value, [ key1 ]: value1 } );
 		}
-
-		if ( ! _.isArray( filter ) ) {
-			if ( 'horizontal' === filter ) {
-				filter = [ 'right', 'left' ];
-			} else if ( 'vertical' === filter ) {
-				filter = [ 'top', 'bottom' ];
-			}
-		}
-
-		return filter;
 	},
 
 	onReady() {
@@ -102,7 +90,7 @@ ControlGapsItemView = ControlBaseUnitsItemView.extend( {
 
 	updateDimensionsValue() {
 		var currentValue = {},
-			dimensions = this.getPossibleDimensions(),
+			dimensions = Object.keys( this.model.set( 'titles' ) ),
 			$controls = this.ui.controls,
 			defaultDimensionValue = this.defaultDimensionValue;
 
@@ -124,7 +112,7 @@ ControlGapsItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		const allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			dimensions = this.getPossibleDimensions();
+			dimensions = Object.keys( this.model.set( 'titles' ) );
 		dimensions.forEach( function( dimension ) {
 			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
 				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
