@@ -6,9 +6,6 @@
 	--n-tabs-color-secondary-fallback: #54595F;
 	--n-tabs-default-padding-block: 15px;
 	--n-tabs-default-padding-inline: 35px;
-	--n-tabs-height: initial;
-	--n-tabs-overflow-x: hidden;
-	--n-tabs-overflow-y: auto;
 	--n-tabs-background-color: transparent;
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
@@ -18,7 +15,6 @@
 	--n-tabs-heading-grow: initial;
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
-	--n-tabs-height: initial;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -56,9 +52,6 @@
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
 		text-align: $start;
-		height: var( --n-tabs-height );
-		overflow-x: var( --n-tabs-overflow-x );
-		overflow-y: var( --n-tabs-overflow-y );
 
 		&-heading {
 			display: var( --n-tabs-heading-display );
@@ -243,7 +236,9 @@
 		}
 
 		> .e-con:not(.e-active) {
-			display: none;
+			max-height: 0;
+			padding: 0;
+			overflow: hidden;
 		}
 	}
 }
