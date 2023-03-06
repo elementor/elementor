@@ -15,7 +15,7 @@ export default class extends elementorModules.editor.views.ControlsStack {
 		const onShowAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.show;
 
 		if ( onShowAction ) {
-			elementor.hooks.doAction( onShowAction );
+			$e.run( onShowAction );
 		}
 	}
 
@@ -23,7 +23,7 @@ export default class extends elementorModules.editor.views.ControlsStack {
 		const onHideAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.hide;
 
 		if ( onHideAction ) {
-			elementor.hooks.doAction( onHideAction );
+			$e.run( onHideAction );
 		}
 	}
 

@@ -1,1 +1,4 @@
-export { default as ToggleGlobalPicker } from './toggle-global-picker';
+export { Colors } from './colors';
+export { Enable } from './enable';
+export { Hide } from './hide';
+export { Typography } from './typography';

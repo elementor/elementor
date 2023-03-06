@@ -1,13 +1,13 @@
 export const isInRoute = ( route ) => {
-	if ( ! window.top || ! window.top.$e) {
+	if ( ! window.top || ! window.top.$e ) {
 		return false;
 	}
 
 	return window.top.$e.routes.is( route );
 };
 
-export const goToRoute = (route, args) => {
-	if ( ! window.top || ! window.top.$e) {
+export const goToRoute = ( route, args ) => {
+	if ( ! window.top || ! window.top.$e ) {
 		return;
 	}
 
