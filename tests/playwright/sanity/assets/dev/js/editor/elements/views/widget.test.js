@@ -1,15 +1,17 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../../../pages/wp-admin-page' );
 
-test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
-	test( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
+test.describe.only( `$e.run( 'editor/elements/views/widget' )`, () => {
+	test.only( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
 
 		// Act.
 		await editor.addWidget( 'image-carousel' );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon', {
+			state: 'visible',
+		} );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).count();
 
