@@ -1,8 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../../../pages/wp-admin-page' );
 
-test.describe.only( `$e.run( 'editor/elements/views/widget' )`, () => {
-	test.only( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
+test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
+	test( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
