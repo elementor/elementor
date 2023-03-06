@@ -77,7 +77,7 @@ test.describe( 'Video tests inside a section', () => {
         await editor.selectElement( sectionId );
         await editor.activatePanelTab( 'advanced' );
         await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
-                
+
         const section = await editor.getFrame().locator( `.elementor-element-${ sectionId }` ),
             sectionHeight = await section.boundingBox().height,
             videoIframeHeight = await editor.getFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox().height;
