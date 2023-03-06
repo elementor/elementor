@@ -20,6 +20,7 @@ function registerTopBarMenuItems() {
 
 	registerAction( 'utilities', {
 		name: 'document-preview-button',
+		priority: 30, // After help.
 		useProps: useDocumentPreviewProps,
 	} );
 }
