@@ -200,7 +200,7 @@ class Test_Controller extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_update_item1() {
+	public function test_update_item() {
 		// Arrange.
 		$this->act_as_admin();
 
