@@ -74,16 +74,17 @@ test.describe( 'Video tests inside a section', () => {
 
 		// Act.
         // Set section padding to 0.
-        await editor.selectElement( sectionId );
+        await editor.selectElement( columnId );
         await editor.activatePanelTab( 'advanced' );
         await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
 
-        const section = await editor.getFrame().locator( `.elementor-element-${ sectionId }` ),
-            sectionHeight = await section.boundingBox().height,
+        page.pause();
+
+        const columnHeight = await column.boundingBox().height,
             videoIframeHeight = await editor.getFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox().height;
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
-		expect( sectionHeight ).toBe( videoIframeHeight );
+		expect( columnHeight ).toBe( videoIframeHeight );
 	} );
 } );
