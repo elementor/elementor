@@ -472,7 +472,6 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 14,
 				],
 				'range' => [
@@ -580,7 +579,6 @@ class Widget_Icon_List extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 0,
 				],
 				'range' => [
