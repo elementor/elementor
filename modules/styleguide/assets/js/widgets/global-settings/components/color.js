@@ -5,6 +5,7 @@ import ElementWrapper from './element-wrapper';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
 import { goToRoute, isInRoute } from '../../utils/web-cli';
+import { sendCommand } from '../../utils/send-command';
 
 const Content = styled.div`
 	background-color: ${ ( props ) => props.hex };
@@ -53,7 +54,7 @@ const Color = ( { color, width, type } ) => {
 				const route = 'panel/global/global-colors';
 
 				if ( ! isInRoute( route ) ) {
-					goToRoute( route, { shouldNotScroll: true } );
+					sendCommand( `${ route }/route`, { shouldNotScroll: true } );
 				}
 
 				togglePopover( source, type, _id );
