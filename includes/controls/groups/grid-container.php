@@ -27,11 +27,15 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'fr' => [
-					'min' => 0,
-					'max' => 500,
+					'min' => 1,
+					'max' => 12,
 				],
 			],
-			'size_units' => [ 'fr', 'custom' ],
+			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
+			'default' => [
+				'unit' => 'fr',
+				'size' => 3,
+			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)'
 			],
@@ -43,11 +47,15 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'fr' => [
-					'min' => 0,
-					'max' => 500,
+					'min' => 1,
+					'max' => 12,
 				],
 			],
-			'size_units' => [ 'fr', 'custom' ],
+			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
+			'default' => [
+				'unit' => 'fr',
+				'size' => 2,
+			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)'
 			],
