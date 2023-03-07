@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.11.3 - 2023-03-07 =
+
+* Fix: Lightbox is not presented as expected when Upgrade Swiper Library experiment is activated ([#21413](https://github.com/elementor/elementor/issues/21413))
+* Fix: "Choose Image" control is missing in Safari 14 in various image elements
+
 = 3.11.2 - 2023-02-22 =
 
 * Fix: Passing an HTMLElement to the Swiper instance utility doesn't work
