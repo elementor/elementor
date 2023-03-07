@@ -71,6 +71,13 @@ class Control_Gap extends Control_Base_Units {
 		);
 	}
 
+	private function dimensions() {
+		return [
+			'row' => esc_html__( 'Row', 'elementor' ),
+			'column' => esc_html__( 'Column', 'elementor' ),
+		];
+	}
+
 	/**
 	 * Render gap control output in the editor.
 	 *
@@ -81,10 +88,6 @@ class Control_Gap extends Control_Base_Units {
 	 * @access public
 	 */
 	public function content_template() {
-		$dimensions = [
-			'row' => esc_html__( 'Row', 'elementor' ),
-			'column' => esc_html__( 'Column', 'elementor' ),
-		];
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
@@ -92,7 +95,7 @@ class Control_Gap extends Control_Base_Units {
 			<div class="elementor-control-input-wrapper">
 				<ul class="elementor-control-gaps">
 					<?php
-					foreach ( $dimensions as $dimension_key => $dimension_title ) :
+					foreach ( $this->dimensions() as $dimension_key => $dimension_title ) :
 						?>
 						<li class="elementor-control-gap">
 							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
@@ -100,18 +103,16 @@ class Control_Gap extends Control_Base_Units {
 							echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?>" placeholder="<#
 								placeholder = view.getControlPlaceholder();
-								if ( _.isObject( placeholder ) ) {
-									if ( ! _.isUndefined( placeholder.<?php
+								if ( _.isObject( placeholder ) && ! _.isUndefined( placeholder.<?php
 									// PHPCS - the variable $dimension_key is a plain text.
 									echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									?> ) ) {
+								?> ) ) {
 										print( placeholder.<?php
 										// PHPCS - the variable $dimension_key is a plain text.
 										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										?> );
-									}
 								} else {
-								print( placeholder );
+									print( placeholder );
 								} #>"
 							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
 							// PHPCS - the variable $dimension_key is a plain text.
