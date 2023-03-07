@@ -15,12 +15,12 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	addHooks() {
-		elementor.hooks.addAction( 'panel/global/tab/before-show', this.show );
-		elementor.hooks.addAction( 'panel/global/tab/before-destroy', this.hide );
+		elementor.hooks.addAction( 'panel/global/tab/before-show', this.show.bind( this ) );
+		elementor.hooks.addAction( 'panel/global/tab/before-destroy', this.hide.bind( this ) );
 	}
 
 	show( args ) {
-		if ( ! args.id || ! ( args.id in Object.keys( this.getGlobalRoutes() ) ) ) {
+		if ( ! args.id || ! ( args.id in this.getGlobalRoutes() ) ) {
 			return;
 		}
 
@@ -28,7 +28,7 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	hide( args ) {
-		if ( ! args.id || ! ( args.id in Object.keys( this.getGlobalRoutes() ) ) ) {
+		if ( ! args.id || ! ( args.id in this.getGlobalRoutes() ) ) {
 			return;
 		}
 

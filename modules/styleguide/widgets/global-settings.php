@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\Styleguide\Widgets\GlobalSettings;
+namespace Elementor\Modules\Styleguide\Widgets;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;

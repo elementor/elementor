@@ -36,7 +36,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 	protected function get_widgets() {
 		return [
-			'GlobalSettings\Global_Settings',
+			'Global_Settings',
 		];
 	}
 
@@ -75,7 +75,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			$this::ASSETS_HANDLE,
-			$this->get_css_assets_url( `modules/${ $this::ASSETS_HANDLE }/${ $this::ASSETS_HANDLE }` ),
+			$this->get_css_assets_url( 'modules/' . $this::ASSETS_HANDLE . '/' . $this::ASSETS_HANDLE ),
 			[],
 			ELEMENTOR_VERSION
 		);
