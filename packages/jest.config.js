@@ -5,11 +5,7 @@ module.exports = {
 	transform: {
 		'\\.(j|t)sx?$': [ 'babel-jest', {
 			presets: [
-				[
-					'@babel/preset-react', {
-						runtime: 'automatic',
-					},
-				],
+				[ '@babel/preset-react', { runtime: 'automatic' } ],
 				'@babel/preset-typescript',
 			],
 			plugins: [

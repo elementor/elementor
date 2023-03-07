@@ -12,14 +12,21 @@ const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
 const { dependencies } = require("../package.json");
 
 const packages = Object.keys( dependencies )
-	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) )
+	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) && packageName !== '@elementor/ui' )
 	.map( ( packageName ) => {
 		return {
 			name: packageName.replace( '@elementor/', ''),
 			packageName,
-			path: path.resolve( __dirname, `../node_modules/${ packageName }/dist/index` ),
+			path: path.resolve( __dirname, `../node_modules/${ packageName }/dist/index.js` ),
 		}
 	} );
+
+// TODO: Need to find a better way to handle this, maybe the ui package should be the same as all the other packages.
+packages.push( {
+	name: 'ui',
+	packageName: '@elementor/ui',
+	path: path.resolve( __dirname, `../node_modules/@elementor/ui/index.js` ),
+});
 
 
 const externals = [
@@ -55,6 +62,21 @@ const common = {
 			},
 		},
 	} ), {} ),
+	module: {
+		// TODO: `rules` is no required when "@elementor/ui" will be build as the other packages.
+		rules: [
+			{
+				test: /\.[jt]sx?$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [ '@babel/preset-react' ],
+					},
+				},
+			},
+		],
+	},
 	externals: externals.reduce( ( acc, { packageName, global } ) => ( {
 		...acc,
 		[ packageName ]: global,

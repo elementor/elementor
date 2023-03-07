@@ -1,5 +1,10 @@
 {
   "name": "@elementor/help",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts"
+  },
   "dependencies": {
     "@elementor/editor": "*",
     "@elementor/icons": "*",
