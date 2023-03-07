@@ -744,8 +744,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( ! isSingleSlide ) {
 				swiperOptions.navigation = {
-					prevEl: $prevButton[ 0 ],
-					nextEl: $nextButton[ 0 ],
+					prevEl: $prevButton,
+					nextEl: $nextButton,
 				};
 			}
 

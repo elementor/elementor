@@ -17,7 +17,8 @@
 		align-items: center;
 		height: 100%;
 		text-align: $start;
-
+		color: $editor-dark;
+		
 		@media (max-width: $library_screen_breakpoint) {
 			padding: 0 50px;
 		}
@@ -34,6 +35,7 @@
 
 		&__title {
 			font-size: 30px;
+			color: $editor-darker;
 
 			span {
 				font-weight: bold;
@@ -52,11 +54,12 @@
 		font-size: 15px;
 
 		i {
-			color: var(--e-a-color-brand);
+			color: $brand-color-light;
 			font-size: 30px;
 		}
 
 		a {
+			color: $editor-dark;
 			@include padding-start(10px);
 			text-decoration: none;
 			font-weight: 500;
@@ -67,12 +70,13 @@
 		flex-grow: 1;
 		max-width: 440px;
 		padding: 55px;
-		background-color: var(--e-a-color-white);
-		border-radius: var(--e-a-border-radius);
-		border: var(--e-a-border);
+		background-color: #fff;
+		border-radius: 3px;
+		box-shadow: 0 2px 30px 0 rgba(0,0,0,0.08);
 
 		&__title {
 			font-size: 23px;
+			color: $editor-darker;
 		}
 
 		&__template-type.elementor-form-field__select {
@@ -114,13 +118,18 @@
 				padding: 10px;
 				font-size: 14px;
 				box-shadow: none;
-				border-radius: var(--e-a-border-radius);
+				border-radius: 3px;
 				background: none;
-				border: var(--e-a-border-bold);
+				color: $editor-darkest;
+				border: 1px solid;
 				outline: none;
 
+				&:not(:focus) {
+					border-color: $editor-lightest;
+				}
+
 				&:focus {
-					border-color: var(--e-a-border-color-focus);
+					border-color: $editor-light;
 				}
 			}
 
