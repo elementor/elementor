@@ -4,14 +4,14 @@ const path = require( 'path' );
 const MODULE_FILTERS = Object.freeze( [ /(([^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
 const COMMENTS_REGEXPS = Object.freeze( [
-	// `/* translators: %s is a placeholder for the name of the plugin. */`.
+	// Matches translators comment block: `/* translators: %s */`.
 	/\/\*[\t ]*translators:.*\*\//gm,
-	// `// translators: %s is a placeholder for the name of the plugin.`.
+	/// Matches translators inline comment: `// translators: %s`.
 	/(\/\/)[\t ]*translators:[^\r\n]*/gm,
 ] );
 
 const TRANSLATIONS_REGEXPS = Object.freeze( [
-	// `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
+	// Matches translation functions: `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
 	/\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\)/gm,
 ] );
 
@@ -26,7 +26,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			// We tap into the time that Webpack has finished processing all the other assets
 			// learn more: https://webpack.js.org/api/compilation-hooks/#processassets.
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
-				translationCallExpressions = this.getTranslationCallExpressions( compilation );
+				translationCallExpressions = this.getModuleExpressionsMap( compilation );
 			} );
 		} );
 
@@ -36,8 +36,8 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		} );
 	}
 
-	getTranslationCallExpressions( compilation ) {
-		const translationCallExpressions = new Map();
+	getModuleExpressionsMap( compilation ) {
+		const moduleExpressionsMap = new Map();
 
 		[ ...compilation.chunks ].forEach( ( chunk ) => {
 			const chunkJSFile = this.getFileFromChunk( chunk );
@@ -51,22 +51,22 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
 					const mainEntryFile = this.findMainModuleOfEntry( subModule, compilation );
 
-					if ( ! translationCallExpressions.has( mainEntryFile ) ) {
-						translationCallExpressions.set( mainEntryFile, [] );
+					if ( ! moduleExpressionsMap.has( mainEntryFile ) ) {
+						moduleExpressionsMap.set( mainEntryFile, [] );
 					}
 
 					// Running over the submodules and find all the translation call expressions and their translators comment
 					// (e.g `/* translators: %s: name*/ __('Hello %s', 'elementor')`),
 					// extract them and add them to a Map, where the key is the main entry file, and the value is an array of all the
 					// translation call expressions.
-					this.getTranslationCallExpressionsFromSubmodule( subModule ).forEach( ( callExpression ) => {
-						translationCallExpressions.get( mainEntryFile ).push( callExpression );
+					this.extractExpressionsFromSubmodule( subModule ).forEach( ( expression ) => {
+						moduleExpressionsMap.get( mainEntryFile ).push( expression );
 					} );
 				} );
 			} );
 		} );
 
-		return translationCallExpressions;
+		return moduleExpressionsMap;
 	}
 
 	async createTranslationsFiles( compilation, translationCallExpressions ) {
@@ -87,7 +87,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			);
 
 			const assetFileContent = this.generateTranslationFileContent(
-				translationCallExpressions.get( mainFilePath )
+				translationCallExpressions.get( mainFilePath ) || []
 			);
 
 			return fs.promises.writeFile( assetFilename, assetFileContent );
@@ -117,7 +117,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		return module.rawRequest;
 	}
 
-	getTranslationCallExpressionsFromSubmodule( subModule ) {
+	extractExpressionsFromSubmodule( subModule ) {
 		const source = subModule?._source?._valueAsString;
 
 		if ( ! source ) {
@@ -149,13 +149,13 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		);
 	}
 
-	generateTranslationFileContent( translationCallExpressions ) {
-		return ( translationCallExpressions || [] )
-			// Sort by the index it was founded in the file based on the regexp (and not by the order it was added to the array).
+	generateTranslationFileContent( expressions ) {
+		return expressions
+			// Sort by the index it was found in the file based on the regexp (and not by the order it was added to the array).
 			.sort( ( a, b ) => a.index - b.index )
-			// Add semicolon when needed.
+			// Add a semicolon when needed.
 			.map( ( expr ) => `${ expr.value }${ expr.type === 'comment' ? '' : ';' }` )
-			// Join all the expressions to a single string with line-break between them.
+			// Join all the expressions to a single string with line-breaks between them.
 			.join( '\n' );
 	}
 };
