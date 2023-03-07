@@ -13,12 +13,26 @@ PanelMenu.createGroupItems = ( groupName ) => {
 		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
 
 	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
+		PanelMenu.registerCommands( tabId, tabConfig );
+
 		return {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
 			callback: () => $e.route( 'panel/global/' + tabId ),
 		};
+	} );
+};
+
+PanelMenu.registerCommands = ( tabId, tabConfig ) => {
+	const components = $e.components.getAll();
+
+	if ( ! components.includes( `panel/${ tabConfig.group }` ) ) {
+		return;
+	}
+
+	$e.commands.register( `panel/${ tabConfig.group }`, `${ tabId }/route`, ( args ) => {
+		$e.route( `panel/${ tabConfig.group }/${ tabId }`, args );
 	} );
 };
 

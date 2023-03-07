@@ -1,11 +1,13 @@
 <?php
 namespace Elementor\Core\Kits\Documents;
 
+use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as PageManager;
+use Elementor\Modules\Styleguide\Module as Styleguide_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,13 +29,39 @@ class Kit extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['has_elements'] = false;
+		$properties['has_elements'] = self::is_styleguide_feature_active();
 		$properties['show_in_finder'] = false;
 		$properties['show_on_admin_bar'] = false;
 		$properties['edit_capability'] = 'edit_theme_options';
 		$properties['support_kit'] = true;
 
 		return $properties;
+	}
+
+	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
+		if ( ! self::is_styleguide_feature_active() ) {
+			return [];
+		}
+
+		$data = parent::get_elements_data( $status );
+
+		if ( empty( $data ) ) {
+			$this->import_styleguide_skeleton();
+			$data = parent::get_elements_data( $status );
+		}
+
+		return $data;
+	}
+
+	public function import_styleguide_skeleton() {
+		$json_data = Utils::read_json_file( ELEMENTOR_PATH . '/assets/data/global-styleguide.json' );
+
+		// TODO 14/02/2023 : Should be removed when bug is fixed in document->import
+		if ( isset( $json_data['page_settings'] ) ) {
+			$json_data['settings'] = $json_data['page_settings'];
+		}
+
+		$this->import( $json_data );
 	}
 
 	public static function get_type() {
@@ -126,6 +154,7 @@ class Kit extends PageBase {
 
 		foreach ( $this->tabs as $id => $tab ) {
 			$config['tabs'][ $id ] = [
+				'id' => $id,
 				'title' => $tab->get_title(),
 				'icon' => $tab->get_icon(),
 				'group' => $tab->get_group(),
@@ -231,5 +260,9 @@ class Kit extends PageBase {
 		}
 
 		do_action( 'elementor/kit/register_tabs', $this );
+	}
+
+	private static function is_styleguide_feature_active() {
+		return Plugin::$instance->experiments->is_feature_active( Styleguide_Module::EXPERIMENT_NAME );
 	}
 }
