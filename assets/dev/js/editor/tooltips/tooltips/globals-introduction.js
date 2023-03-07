@@ -17,11 +17,14 @@ export default class GlobalsIntroduction {
 			}
 
 			if ( e.detail.el ) {
-				this.setTooltipTitle( __( 'Great choice! Planning to use it again?', 'elementor' ) );
-				this.setTooltipContent( __(
-					'Save time by applying Global Colors to change the style of multiple elements at once. Click  to see what Global Colors you already have.',
-					'elementor',
-				) );
+				this.setTooltipTitle( __( 'Check out Global Colors', 'elementor' ) );
+				this.setTooltipContent(
+					sprintf(
+						// eslint-disable-next-line @wordpress/i18n-translator-comments
+						__( 'Save time by applying Global Colors to change the style of multiple elements at once. Click %s to see what Global Colors you already have.', 'elementor' ),
+						"<i class='eicon-globe'></i>",
+					),
+				);
 				this.showTooltip( e.detail.el );
 				this.setViewed();
 			}
@@ -41,10 +44,13 @@ export default class GlobalsIntroduction {
 
 			if ( $popoverElement ) {
 				this.setTooltipTitle( __( 'Check out Global Fonts', 'elementor' ) );
-				this.setTooltipContent( __(
-					'Save time by applying Global Fonts to change the style of multiple elements at once. Click  to see what Global Fonts you already have. ',
-					'elementor',
-				) );
+				this.setTooltipContent(
+					sprintf(
+						// eslint-disable-next-line @wordpress/i18n-translator-comments
+						__( 'Save time by applying Global Fonts to change the style of multiple elements at once. Click %s to see what Global Fonts you already have.', 'elementor' ),
+						"<i class='eicon-globe'></i>",
+					),
+				);
 
 				this.showTooltip( $popoverElement );
 				this.setViewed();
