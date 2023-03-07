@@ -172,33 +172,33 @@ const devSharedConfig = {
 };
 
 const webpackConfig = [
-	// {
-	// 	...devSharedConfig,
-	// 	module: moduleRules,
-	// 	plugins: [
-	// 		...plugins,
-	// 	],
-	// 	name: 'base',
-	// 	entry: entry,
-	// },
-	// {
-	// 	...devSharedConfig,
-	// 	module: frontendModuleRules,
-	// 	plugins: [
-	// 		new RemoveChunksPlugin( '.bundle.js' ),
-	// 		...plugins,
-	// 	],
-	// 	name: 'frontend',
-	// 	optimization: {
-	// 		runtimeChunk:  {
-	// 			name: 'webpack.runtime',
-	// 		},
-	// 		splitChunks: {
-	// 			minChunks: 2,
-	// 		},
-	// 	},
-	// 	entry: frontendEntries,
-	// },
+	{
+		...devSharedConfig,
+		module: moduleRules,
+		plugins: [
+			...plugins,
+		],
+		name: 'base',
+		entry: entry,
+	},
+	{
+		...devSharedConfig,
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.js' ),
+			...plugins,
+		],
+		name: 'frontend',
+		optimization: {
+			runtimeChunk:  {
+				name: 'webpack.runtime',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+		entry: frontendEntries,
+	},
 	packagesConfigs.dev,
 ];
 
