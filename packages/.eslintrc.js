@@ -36,6 +36,9 @@ module.exports = {
 			},
 		],
 
+		// Prevent circular dependencies.
+		'import/no-cycle': [ 'error' ],
+
 		// Strict mode.
 		'@typescript-eslint/no-non-null-assertion': [ 'error' ],
 		'@typescript-eslint/no-explicit-any': [ 'error' ],

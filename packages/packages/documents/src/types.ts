@@ -1,4 +1,4 @@
-import { createSlice } from './store';
+import type { createSlice } from './store';
 
 export type Document = {
 	id: number,
