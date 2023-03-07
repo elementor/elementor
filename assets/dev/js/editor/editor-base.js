@@ -1310,16 +1310,16 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			$elementsToHide.each( ( index, element ) => {
-				const isVisible = jQuery( element ).is( ':visible' );
+			$elementsToHide.each( ( elementIndex, element ) => {
+				const $element = jQuery( element );
+				const isVisible = $element.is( ':visible' );
 
-				jQuery( element ).hide();
+				$element.hide();
 
 				if ( isVisible ) {
-					jQuery( element ).trigger( 'onHide' );
+					$element.trigger( 'onHide' );
 				}
 			} );
-
 		} );
 	}
 

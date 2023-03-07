@@ -24,7 +24,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		if ( $popover.length ) {
 			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
 
-			$popover.on( 'onHide', ( e ) => this.onHide() );
+			$popover.on( 'onHide', () => this.onHide() );
 		}
 	}
 
