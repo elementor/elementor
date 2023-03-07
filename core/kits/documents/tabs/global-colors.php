@@ -58,7 +58,7 @@ class Global_Colors extends Tab_Base {
 				'label_on' => esc_html__( 'On', 'elementor' ),
 				'default' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
 				'value' => Styleguide::is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'on_change_hook' => 'elementor/preview/styleguide/enable',
+				'on_change_command' => 'preview/styleguide/enable',
 			]
 		);
 

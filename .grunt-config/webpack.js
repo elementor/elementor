@@ -117,7 +117,7 @@ const entry = {
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
-	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/editor/module.js' ),
+	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/module.js' ),
 };
 
 const frontendEntries = {

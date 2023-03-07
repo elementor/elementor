@@ -14,12 +14,12 @@ export default class extends Switcher {
 		var input = event.currentTarget,
 			value = this.getInputValue( input );
 
-		if ( this.model.get( 'on_change_hook' ) ) {
-			this.setHook( value );
+		if ( this.model.get( 'on_change_command' ) ) {
+			this.runCommand( value );
 		}
 	}
 
-	setHook( value ) {
-		elementor.hooks.doAction( this.model.get( 'on_change_hook' ), { value } );
+	runCommand( value ) {
+		$e.run( this.model.get( 'on_change_command' ), { value } );
 	}
 }

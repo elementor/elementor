@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { addEventListener, AFTER_COMMAND_EVENT } from '../../../../../assets/js/common/utils/top-events';
-import debounce from '../../../../../assets/js/common/utils/debounce';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
+import debounce from '../../utils/debounce';
 
 const useSiteSettings = ( initial ) => {
 	const [ settings, setSettings ] = useState( initial );

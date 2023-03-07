@@ -5,8 +5,8 @@ import ElementTitle from './element-title';
 import { ConfigContext } from '../app';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../../../../../assets/js/common/utils/web-cli';
-import { sendCommand } from '../../../../../assets/js/common/utils/send-command';
+import { goToRoute, isInRoute } from '../../utils/web-cli';
+import { sendCommand } from '../../utils/send-command';
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );

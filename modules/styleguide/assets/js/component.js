@@ -1,7 +1,7 @@
 import * as commands from './commands';
 // import * as hooks from './hooks';
 
-require( '../lib/dialog' );
+require( './lib/dialog' );
 
 export default class extends $e.modules.ComponentBase {
 	activeKitId = 0;

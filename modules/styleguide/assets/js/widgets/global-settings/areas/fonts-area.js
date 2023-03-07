@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import AreaTitle from '../components/area-title';
 import FontsSection from '../components/fonts-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
-import { addEventListener, AFTER_COMMAND_EVENT } from '../../../../../assets/js/common/utils/top-events';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
 
 const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );

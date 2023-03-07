@@ -4,7 +4,7 @@ import ElementTitle from './element-title';
 import ElementWrapper from './element-wrapper';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../../../../../assets/js/common/utils/web-cli';
+import { goToRoute, isInRoute } from '../../utils/web-cli';
 
 const Content = styled.div`
 	background-color: ${ ( props ) => props.hex };
