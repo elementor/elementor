@@ -1,6 +1,5 @@
 const path = require( 'path' );
 const { readdirSync } = require( 'fs' );
-const ExtractDependenciesWebpackPlugin = require( './tools/webpack/extract-depndencies-webpack-plugin' );
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
@@ -12,7 +11,7 @@ const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
 const packages = [
 	// Elementor packages from the monorepo.
 	...readdirSync( path.resolve( __dirname, 'packages' ), { withFileTypes: true } )
-		.filter( ( dirent ) => dirent.isDirectory() )
+		.filter( ( dirent ) => !! dirent.isDirectory() )
 		.map( ( dirent ) => dirent.name )
 		.map( ( name ) => ( {
 			name,
@@ -49,13 +48,7 @@ const externals = [
 module.exports = {
 	entry: packages.reduce( ( acc, pkg ) => ( {
 		...acc,
-		[ pkg.name ]: {
-			import: pkg.path,
-			library: {
-				name: [ globalObjectKey, kebabToCamelCase( pkg.name ) ],
-				type: 'window',
-			},
-		},
+		[ pkg.name ]: pkg.path,
 	} ), {} ),
 	externals: externals.reduce( ( acc, { name, global } ) => ( {
 		...acc,
@@ -81,11 +74,12 @@ module.exports = {
 	resolve: {
 		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
 	},
-	plugins: [
-		new ExtractDependenciesWebpackPlugin(),
-	],
+	experiments: {
+		outputModule: true,
+	},
 	output: {
-		clean: true,
-		path: path.resolve( __dirname, '../assets/js/packages/' ),
+		path: path.resolve( __dirname ),
+		filename: 'packages/[name]/dist/index.js',
+		module: true,
 	},
 };

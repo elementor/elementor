@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const packagesConfigs = require( './webpack.packages.js' );
+
 // Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
@@ -170,33 +172,34 @@ const devSharedConfig = {
 };
 
 const webpackConfig = [
-	{
-		...devSharedConfig,
-		module: moduleRules,
-		plugins: [
-			...plugins,
-		],
-		name: 'base',
-		entry: entry,
-	},
-	{
-		...devSharedConfig,
-		module: frontendModuleRules,
-		plugins: [
-			new RemoveChunksPlugin( '.bundle.js' ),
-			...plugins,
-		],
-		name: 'frontend',
-		optimization: {
-			runtimeChunk:  {
-				name: 'webpack.runtime',
-			},
-			splitChunks: {
-				minChunks: 2,
-			},
-		},
-		entry: frontendEntries,
-	},
+	// {
+	// 	...devSharedConfig,
+	// 	module: moduleRules,
+	// 	plugins: [
+	// 		...plugins,
+	// 	],
+	// 	name: 'base',
+	// 	entry: entry,
+	// },
+	// {
+	// 	...devSharedConfig,
+	// 	module: frontendModuleRules,
+	// 	plugins: [
+	// 		new RemoveChunksPlugin( '.bundle.js' ),
+	// 		...plugins,
+	// 	],
+	// 	name: 'frontend',
+	// 	optimization: {
+	// 		runtimeChunk:  {
+	// 			name: 'webpack.runtime',
+	// 		},
+	// 		splitChunks: {
+	// 			minChunks: 2,
+	// 		},
+	// 	},
+	// 	entry: frontendEntries,
+	// },
+	packagesConfigs.dev,
 ];
 
 const prodSharedOptimization = {
@@ -262,6 +265,7 @@ const webpackProductionConfig = [
 			},
 		},
 	},
+	packagesConfigs.prod,
 ];
 
 // Adding .min suffix to production entries.

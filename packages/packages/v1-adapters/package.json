@@ -1,6 +1,7 @@
 {
-  "name": "@elementor/v1-adapters",
-  "peerDependencies": {
-	"react": "17.x"
-  }
+	"name": "@elementor/v1-adapters",
+	"main": "dist/index.js",
+	"peerDependencies": {
+		"react": "17.x"
+	}
 }

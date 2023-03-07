@@ -118,6 +118,24 @@
         "prop-types": "^15.8.1",
         "reach-router-hash-history": "0.0.3",
         "react-redux": "^7.2.6",
-        "write": "^2.0.0"
+        "write": "^2.0.0",
+        "@elementor/documents":  "file:./packages/packages/documents",
+        "@elementor/documents-ui": "file:./packages/packages/documents-ui",
+        "@elementor/editor":  "file:./packages/packages/editor",
+        "@elementor/elements-panel": "file:./packages/packages/elements-panel",
+        "@elementor/finder":  "file:./packages/packages/finder",
+        "@elementor/help": "file:./packages/packages/help",
+        "@elementor/history":  "file:./packages/packages/history",
+        "@elementor/icons": "file:./packages/packages/icons",
+        "@elementor/locations":  "file:./packages/packages/locations",
+        "@elementor/responsive": "file:./packages/packages/responsive",
+        "@elementor/site-settings":  "file:./packages/packages/site-settings",
+        "@elementor/store": "file:./packages/packages/store",
+        "@elementor/structure":  "file:./packages/packages/structure",
+        "@elementor/theme-builder": "file:./packages/packages/theme-builder",
+        "@elementor/top-bar":  "file:./packages/packages/top-bar",
+        "@elementor/ui": "file:./packages/packages/ui",
+        "@elementor/user-preferences":  "file:./packages/packages/user-preferences",
+        "@elementor/v1-adapters": "file:./packages/packages/v1-adapters"
     }
 }
