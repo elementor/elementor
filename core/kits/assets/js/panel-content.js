@@ -12,19 +12,15 @@ export default class extends elementorModules.editor.views.ControlsStack {
 	}
 
 	onBeforeShow() {
-		const onShowAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.show;
+		const tabConfig = $e.components.get( 'panel/global' ).getActiveTabConfig();
 
-		if ( onShowAction ) {
-			$e.run( onShowAction );
-		}
+		elementor.hooks.doAction( `panel/${ tabConfig.group }/tab/before-show`, { id: tabConfig.id } );
 	}
 
 	onBeforeDestroy() {
-		const onHideAction = $e.components.get( 'panel/global' ).getActiveTabConfig().actions.hide;
+		const tabConfig = $e.components.get( 'panel/global' ).getActiveTabConfig();
 
-		if ( onHideAction ) {
-			$e.run( onHideAction );
-		}
+		elementor.hooks.doAction( `panel/${ tabConfig.group }/tab/before-destroy`, { id: tabConfig.id } );
 	}
 
 	childViewOptions() {

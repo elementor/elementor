@@ -1,4 +1,7 @@
 import * as commands from './commands';
+// import * as hooks from './hooks';
+
+require( '../lib/dialog' );
 
 export default class extends $e.modules.ComponentBase {
 	activeKitId = 0;
@@ -31,6 +34,10 @@ export default class extends $e.modules.ComponentBase {
 	defaultCommands() {
 		return this.importCommands( commands );
 	}
+
+	// defaultHooks() {
+	// 	return this.importHooks( hooks );
+	// }
 
 	initModal() {
 		let modal;

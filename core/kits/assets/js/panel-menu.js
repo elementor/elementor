@@ -13,6 +13,10 @@ PanelMenu.createGroupItems = ( groupName ) => {
 		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
 
 	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
+		$e.commands.register( `panel/${ tabConfig.group }`, `${ tabId }/route`, ( args ) => {
+			$e.route( `panel/${ tabConfig.group }/${ tabId }`, args );
+		} );
+
 		return {
 			name: tabId,
 			icon: tabConfig.icon,

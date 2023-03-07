@@ -154,15 +154,12 @@ class Kit extends PageBase {
 
 		foreach ( $this->tabs as $id => $tab ) {
 			$config['tabs'][ $id ] = [
+				'id' => $id,
 				'title' => $tab->get_title(),
 				'icon' => $tab->get_icon(),
 				'group' => $tab->get_group(),
 				'helpUrl' => $tab->get_help_url(),
 				'additionalContent' => $tab->get_additional_tab_content(),
-				'actions' => [
-					'show' => $tab->get_action_show(),
-					'hide' => $tab->get_action_hide(),
-				],
 			];
 		}
 

@@ -42,14 +42,6 @@ class Global_Typography extends Tab_Base {
 		return 'https://go.elementor.com/global-fonts/';
 	}
 
-	public function get_action_show() {
-		return 'elementor/preview/styleguide/typography';
-	}
-
-	public function get_action_hide() {
-		return 'elementor/preview/styleguide/hide';
-	}
-
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_text_style',

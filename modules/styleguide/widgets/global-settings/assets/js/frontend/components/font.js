@@ -6,6 +6,7 @@ import { ConfigContext } from '../app';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
 import { goToRoute, isInRoute } from '../../../../../assets/js/common/utils/web-cli';
+import { sendCommand } from '../../../../../assets/js/common/utils/send-command';
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
@@ -99,10 +100,10 @@ const Font = ( { font, type } ) => {
 		const route = 'panel/global/global-typography';
 
 		if ( ! isInRoute( route ) ) {
-			goToRoute( route, { shouldNotScroll: true } );
+			sendCommand( `${ route }/route`, { shouldNotScroll: true } );
 		}
 
-		togglePopover( source, type, _id );
+		// togglePopover( source, type, _id );
 	};
 
 	return (

@@ -38,14 +38,6 @@ class Global_Colors extends Tab_Base {
 		return 'https://go.elementor.com/global-colors/';
 	}
 
-	public function get_action_show() {
-		return 'elementor/preview/styleguide/colors';
-	}
-
-	public function get_action_hide() {
-		return 'elementor/preview/styleguide/hide';
-	}
-
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_global_colors',
