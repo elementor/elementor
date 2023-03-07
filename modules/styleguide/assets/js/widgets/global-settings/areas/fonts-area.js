@@ -3,6 +3,12 @@ import AreaTitle from '../components/area-title';
 import FontsSection from '../components/fonts-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+	width:100%;
+  margin-top:95px;
+`;
 
 const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
@@ -47,7 +53,7 @@ const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 	}, [] );
 
 	return (
-		<div ref={ ref }>
+		<Wrapper ref={ ref }>
 			<AreaTitle name="fonts">global fonts</AreaTitle>
 			<FontsSection title="System Fonts"
 				source={ settings.system_typography }
@@ -57,7 +63,7 @@ const FontsArea = React.forwardRef( ( { settings }, ref ) => {
 				source={ settings.custom_typography }
 				type="custom"
 			/>
-		</div>
+		</Wrapper>
 	);
 } );
 

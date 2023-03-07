@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import InnerWrapper from './inner-wrapper';
 
 const Button = styled.button`
 	font-size: 16px;
@@ -46,8 +47,8 @@ const Wrapper = styled.div`
   border-width: 0 0 1px 0;
   border-color: #C2CBD2;
   transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
-  padding: 0 5% 15px 5%;
   width: 100%;
+  height: 49px;
   background: #fff;
   z-index: 1;
   position: fixed;
@@ -78,11 +79,13 @@ const Title = styled.h2`
 const Header = ( { anchors } ) => {
 	return (
 		<Wrapper>
-			<Title>style guide preview</Title>
-			<ButtonsWrapper>
-				<GoToAnchor anchor={ anchors.colors }>colors</GoToAnchor>
-				<GoToAnchor anchor={ anchors.fonts }>fonts</GoToAnchor>
-			</ButtonsWrapper>
+			<InnerWrapper>
+				<Title>style guide preview</Title>
+				<ButtonsWrapper>
+					<GoToAnchor anchor={ anchors.colors }>colors</GoToAnchor>
+					<GoToAnchor anchor={ anchors.fonts }>fonts</GoToAnchor>
+				</ButtonsWrapper>
+			</InnerWrapper>
 		</Wrapper>
 	);
 };

@@ -8,17 +8,18 @@ import { goToRoute, isInRoute } from '../../utils/web-cli';
 import { sendCommand } from '../../utils/send-command';
 
 const Content = styled.div`
+  display: flex;
+  width: ${ ( props ) => 'system' === props.type ? '260px' : '166px' };
+  height:100px;
 	background-color: ${ ( props ) => props.hex };
-	padding: 74px 1px 7px 10px;
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #D5DADF;
 	border-radius: 3px 3px 3px 3px;
+  align-items: end;
 `;
 
 const HexString = styled.p`
-	width: ${ ( props ) => props.width };
-	margin: 0;
 	color: #FFFFFF;
 	font-family: Roboto, sans-serif;
 	height: 12px;
@@ -30,6 +31,7 @@ const HexString = styled.p`
 	line-height: 1.1em;
 	letter-spacing: 0;
 	word-spacing: 0;
+  margin: 12px;
 `;
 
 /**
@@ -40,7 +42,7 @@ const HexString = styled.p`
  * @return {JSX.Element}
  * @constructor
  */
-const Color = ( { color, width, type } ) => {
+const Color = ( { color, type } ) => {
 	const source = 'colors';
 	const { _id, title, color: hex } = color;
 
@@ -60,8 +62,8 @@ const Color = ( { color, width, type } ) => {
 				togglePopover( source, type, _id );
 			} }>
 			<ElementTitle>{ title }</ElementTitle>
-			<Content hex={ hex }>
-				<HexString width={ width }>{ hex }</HexString>
+			<Content hex={ hex } type={ type }>
+				<HexString>{ hex }</HexString>
 			</Content>
 		</ElementWrapper>
 	);

@@ -5,11 +5,12 @@ import ActiveElementProvider from './providers/active-element-provider';
 import { createContext, useEffect, useRef } from 'react';
 import ColorsArea from './areas/colors-area';
 import FontsArea from './areas/fonts-area';
+import InnerWrapper from "./areas/inner-wrapper";
 
 export const ConfigContext = createContext( {} );
 
-const Content = styled.div`
-	padding: 0 5% 0 5%;
+const Wrapper = styled.div`
+  margin-top:50px;
 `;
 
 const App = ( { config } ) => {
@@ -27,17 +28,17 @@ const App = ( { config } ) => {
 	const { settings } = useSettings( config.settings );
 
 	return (
-		<div className="App">
+		<Wrapper className="App">
 			<ActiveElementProvider>
 				<ConfigContext.Provider value={ config }>
 					<Header anchors={ anchors } />
-					<Content>
+					<InnerWrapper flexDirection="column">
 						<ColorsArea ref={ colorsRef } settings={ settings } />
 						<FontsArea ref={ fontsRef } settings={ settings } />
-					</Content>
+					</InnerWrapper>
 				</ConfigContext.Provider>
 			</ActiveElementProvider>
-		</div>
+		</Wrapper>
 	);
 };
 
