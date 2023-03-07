@@ -49,7 +49,7 @@ export default class extends $e.modules.ComponentBase {
 
 			modal = elementorCommon.dialogsManager.createWidget( 'styleguide-preview', {
 				id: 'e-styleguide-preview',
-				className: 'e-hidden',
+				className: 'elementor-hidden e-hidden',
 				message: `<div class="elementor-${ this.activeKitId } e-styleguide-preview-root"></div>`,
 				position: {
 					my: 'center center',
@@ -87,7 +87,7 @@ export default class extends $e.modules.ComponentBase {
 	 * Hide the Style Guide Preview.
 	 */
 	hideStyleguidePreview() {
-		this.getModal().hide();
+		this.getModal().getElements( 'widget' ).addClass( 'e-hidden' );
 	}
 
 	/**

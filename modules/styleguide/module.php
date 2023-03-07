@@ -43,7 +43,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public static function get_experimental_data() {
 		return [
 			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Global style guide', 'elementor' ),
+			'title' => esc_html__( 'Global Style Guide', 'elementor' ),
 			'tag' => esc_html__( 'Feature', 'elementor' ), //todo : add tag
 			'description' => esc_html__( 'Display a live preview of changes to global colors and fonts in a sleek style guide from the site’s settings. You will be able to toggle between the style guide and the page to see your changes in action.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
