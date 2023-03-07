@@ -145,7 +145,7 @@ jobs:
           TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
       - name: Merge to master
         if: env.CHANNEL == 'ga' # Only for GA releases
-        uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
+        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
         with:
           type: now
           from_branch: ${{ github.ref }}
