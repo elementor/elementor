@@ -103,7 +103,7 @@ const Font = ( { font, type } ) => {
 			sendCommand( `${ route }/route`, { shouldNotScroll: true } );
 		}
 
-		// togglePopover( source, type, _id );
+		togglePopover( source, type, _id );
 	};
 
 	return (
