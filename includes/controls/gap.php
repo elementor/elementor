@@ -66,6 +66,7 @@ class Control_Gap extends Control_Base_Units {
 		return array_merge(
 			parent::get_default_settings(), [
 				'label_block' => true,
+				'allowed_dimensions' => 'all',
 				'placeholder' => '',
 			]
 		);
