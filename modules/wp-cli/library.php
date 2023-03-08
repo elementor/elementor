@@ -70,12 +70,18 @@ class Library extends \WP_CLI_Command {
 	 *      Forms of output. Possible values are 'ids', 'info'.
 	 *      if this parameter won't be specified, the import info will be output.
 	 *
+	 *  [--pathType]
+	 *      Forms of file source. Possible values are 'path', 'url'.
+	 *      if this parameter won't be specified, path will be the default.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor library import <file-path>
 	 *      - This will import a file or a zip of multiple files to the library.
 	 *
 	 *  2. wp elementor library import <file-path> --returnType=info,ids
+	 *
+	 *  3. wp elementor library import <file-path> --pathType=path,url
 	 *
 	 * @param $args
 	 * @param $assoc_args
@@ -91,9 +97,22 @@ class Library extends \WP_CLI_Command {
 		$file = $args[0];
 		$imported_items_ids = [];
 		$return_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'returnType', 'info' );
+		$path_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'pathType', 'path' );
 
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+
+		if ( 'url' === $path_type ) {
+			if ( false === filter_var( $file, FILTER_VALIDATE_URL ) ) {
+				\WP_CLI::error( "Invalid file URL" );
+			}
+
+			$file_path = $source->download_single_template( $file );
+			if ( is_wp_error( $file_path ) ) {
+				\WP_CLI::error( $file_path->get_error_message() );
+			}
+			$file = $file_path;
+		}
 
 		$imported_items = $source->import_template( basename( $file ), $file );
 
