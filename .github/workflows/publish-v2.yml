@@ -152,5 +152,4 @@ jobs:
           type: now
           from_branch: ${{ github.ref }}
           target_branch: master
-          label_name: 'Publish version "${{ env.RELEASE_NAME }}" merge "${{ github.ref }}" to master'
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
