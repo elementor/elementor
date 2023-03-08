@@ -29,7 +29,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverHide() {
-		$e.run( 'panel/global/toggle-picker', { ignore: true } );
+		$e.run( 'panel/control-toggled', { controlView: this } );
 	}
 
 	onResetInputClick() {
@@ -63,6 +63,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 
 	toggle() {
 		this.$el.next( '.elementor-controls-popover' ).toggle();
+		$e.run( 'panel/control-toggled', { controlView: this } );
 	}
 
 	getGlobalCommand() {

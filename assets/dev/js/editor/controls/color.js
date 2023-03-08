@@ -46,8 +46,8 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
-			onPickerShow: () => this.runToggleCommand(),
-			onPickerHide: () => this.runToggleCommand(),
+			onPickerShow: () => this.runToggledCommand(),
+			onPickerHide: () => this.runToggledCommand(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -266,9 +266,8 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
-	runToggleCommand() {
-		// Running the command with "ignore" to trigger hooks - this.colorPicker.picker's show click cannot be overridden.
-		$e.run( 'panel/global/toggle-picker', { ignore: true } );
+	runToggledCommand() {
+		$e.run( 'panel/control-toggled', { controlView: this } );
 	}
 
 	onBeforeDestroy() {
