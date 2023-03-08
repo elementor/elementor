@@ -112,8 +112,11 @@ export default class extends ControlBaseDataView {
 		$colorPickerToolsContainer.append( $colorPicker );
 	}
 
-	toggle() { // eslint-disable-next-line no-unused-expressions
-		this.colorPicker.picker.isOpen() ? this.colorPicker.picker.hide() : this.colorPicker.picker.show();
+	toggle() {
+		if ( this.colorPicker.picker.isOpen() ) {
+			this.colorPicker.picker.hide();
+		}
+		this.colorPicker.picker.show();
 	}
 
 	getGlobalMeta() {
