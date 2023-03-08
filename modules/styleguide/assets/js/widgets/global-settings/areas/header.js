@@ -78,10 +78,10 @@ const Title = styled.h2`
 const Header = ( { anchors } ) => {
 	return (
 		<Wrapper>
-			<Title>style guide preview</Title>
+			<Title>Style Guide Preview</Title>
 			<ButtonsWrapper>
-				<GoToAnchor anchor={ anchors.colors }>colors</GoToAnchor>
-				<GoToAnchor anchor={ anchors.fonts }>fonts</GoToAnchor>
+				<GoToAnchor anchor={ anchors.colors }>Colors</GoToAnchor>
+				<GoToAnchor anchor={ anchors.fonts }>Fonts</GoToAnchor>
 			</ButtonsWrapper>
 		</Wrapper>
 	);

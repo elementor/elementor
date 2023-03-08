@@ -29,10 +29,12 @@ class Global_Settings extends Widget_Base {
 
 	public function show_in_panel() {
 	  return false;
-  }
+	}
 
 	protected function render() {
 		$site_settings = $this->get_site_settings();
+
+		$site_settings['is_debug'] = defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
 
 		$site_settings_reduced = [
 			'system_colors' => $site_settings['system_colors'],
@@ -40,14 +42,13 @@ class Global_Settings extends Widget_Base {
 			'custom_typography' => $site_settings['custom_typography'],
 			'system_typography' => $site_settings['system_typography'],
 			'fallback_font' => $site_settings['default_generic_fonts'],
+			'is_debug' => $site_settings['is_debug'],
 		];
 
 		$settings = htmlspecialchars( json_encode( $site_settings_reduced ) );
 
 		?>
-			<div class="elementor-global-settings-widget"
-			     data-settings="<?php echo $settings; ?>"
-			>.</div>
+			<div class="elementor-global-settings-widget" data-settings="<?php echo $settings; ?>">.</div>
 		<?php
 	}
 
