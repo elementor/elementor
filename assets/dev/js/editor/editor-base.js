@@ -1317,7 +1317,7 @@ export default class EditorBase extends Marionette.Application {
 				$element.hide();
 
 				if ( isVisible ) {
-					$element.trigger( 'onHide' );
+					$element.trigger( 'hide' );
 				}
 			} );
 		} );

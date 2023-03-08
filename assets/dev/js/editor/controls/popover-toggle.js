@@ -25,7 +25,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
 		}
 
-		$popover.on( 'onHide', () => this.onPopoverHide() );
+		$popover.on( 'hide', () => this.onPopoverHide() );
 	}
 
 	onPopoverHide() {
@@ -58,7 +58,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		$e.run( 'panel/global/toggle-picker', { controlView: this } );
+		$e.run( 'panel/toggle-control', { controlView: this } );
 	}
 
 	toggle() {
