@@ -1447,7 +1447,7 @@ class Source_Local extends Source_Base {
 		$file_name = basename( $file_url );
 		$wp_upload_dir = wp_upload_dir();
 
-		$temp_path = $wp_upload_dir['basedir'] . '/elementor/tmp';
+		$temp_path = $wp_upload_dir['basedir'] . '/elementor/tmp/import';
 		// Create temp path if it doesn't exist
 		wp_mkdir_p( $temp_path );
 		$complete_path = $temp_path . '/' . $file_name;

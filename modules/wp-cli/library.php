@@ -98,6 +98,7 @@ class Library extends \WP_CLI_Command {
 		$imported_items_ids = [];
 		$return_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'returnType', 'info' );
 		$path_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'pathType', 'path' );
+		$is_url_path = false;
 
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
@@ -106,7 +107,7 @@ class Library extends \WP_CLI_Command {
 			if ( false === filter_var( $file, FILTER_VALIDATE_URL ) ) {
 				\WP_CLI::error( "Invalid file URL" );
 			}
-
+			$is_url_path = true;
 			$file_path = $source->download_single_template( $file );
 			if ( is_wp_error( $file_path ) ) {
 				\WP_CLI::error( $file_path->get_error_message() );
@@ -129,6 +130,11 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::line( $imported_items_ids );
 		} else {
 			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
+		}
+
+		if ( $is_url_path ) {
+			// Remove the temporary file, now that we're done with it.
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $file );
 		}
 	}
 
