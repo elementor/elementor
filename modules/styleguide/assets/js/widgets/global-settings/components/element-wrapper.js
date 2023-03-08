@@ -6,7 +6,7 @@ const Wrapper = styled.div`
 	flex-direction: column;
 	gap: 12px;
 	align-items: flex-start;
-  border: 1px solid transparent;
+	border: 1px solid transparent;
 	padding: 12px;
 	flex-grow: 1;
 	flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
