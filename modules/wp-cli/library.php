@@ -104,7 +104,7 @@ class Library extends \WP_CLI_Command {
 
 		if ( 'url' === $file_protocol ) {
 			if ( false === filter_var( $file, FILTER_VALIDATE_URL ) ) {
-				\WP_CLI::error( "Invalid file URL" );
+				\WP_CLI::error( 'Invalid file URL' );
 			}
 
 			$file_path = download_url( $file );
