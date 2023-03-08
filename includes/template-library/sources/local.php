@@ -1432,36 +1432,6 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * Download single template.
-	 *
-	 * Download single template from url and return file path.
-	 *
-	 * @since 3.13.0
-	 * @access public
-	 *
-	 * @param string $file_url File url.
-	 *
-	 * @return \WP_Error|string file path or `WP_Error`.
-	 */
-	public function download_single_template( $file_url ) {
-		$file_name = basename( $file_url );
-		$wp_upload_dir = wp_upload_dir();
-
-		$temp_path = $wp_upload_dir['basedir'] . '/elementor/tmp/import';
-		// Create temp path if it doesn't exist
-		wp_mkdir_p( $temp_path );
-		$complete_path = $temp_path . '/' . $file_name;
-		$put_contents = file_put_contents( $complete_path, file_get_contents( $file_url ) );
-
-		if ( ! $put_contents ) {
-			return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_name ) );
-		}
-
-		return $complete_path;
-	}
-
-
-	/**
 	 * Prepare template to export.
 	 *
 	 * Retrieve the relevant template data and return them as an array.
