@@ -5,7 +5,7 @@ import Font from './font';
 import InnerWrapper from '../areas/inner-wrapper';
 
 const Wrapper = styled.div`
-  margin-top:55px;
+	margin-top:55px;
 `;
 
 
