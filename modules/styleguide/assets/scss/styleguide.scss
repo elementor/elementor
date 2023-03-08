@@ -1,8 +1,10 @@
 #e-styleguide-preview.dialog-styleguide-preview-widget {
 
 	&.e-hidden {
-		visibility: hidden;
-		pointer-events: none;
+		&, & * {
+			visibility: hidden;
+			pointer-events: none;
+		}
 	}
 
 	.dialog-styleguide-preview-widget-content {

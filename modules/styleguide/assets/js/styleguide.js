@@ -1,6 +1,6 @@
 import Component from './component';
 
-class Module extends elementorModules.editor.utils.Module {
+class Styleguide extends elementorModules.editor.utils.Module {
 	onInit() {
 		$e.components.register( new Component() );
 
@@ -48,4 +48,4 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 }
 
-new Module();
+new Styleguide();

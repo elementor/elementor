@@ -1,10 +1,11 @@
 import * as commands from './commands';
-// import * as hooks from './hooks';
 
 require( './lib/dialog' );
 
 export default class extends $e.modules.ComponentBase {
 	activeKitId = 0;
+
+	isShown = false;
 
 	constructor( args ) {
 		super( args );
@@ -34,10 +35,6 @@ export default class extends $e.modules.ComponentBase {
 	defaultCommands() {
 		return this.importCommands( commands );
 	}
-
-	// defaultHooks() {
-	// 	return this.importHooks( hooks );
-	// }
 
 	initModal() {
 		let modal;
@@ -75,19 +72,28 @@ export default class extends $e.modules.ComponentBase {
 	 * @param {boolean} skipPreferencesCheck
 	 */
 	showStyleguidePreview( skipPreferencesCheck = false ) {
-		if ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_styleguide_preview' ) ) {
+		if ( this.isShown || ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_styleguide_preview' ) ) ) {
 			return;
 		}
 
+		this.getPreviewFrame().postMessage(
+			{ name: 'elementor/styleguide/preview/show' },
+			'*',
+		);
 		this.getModal().getElements( 'widget' ).removeClass( 'e-hidden' );
-		this.getModal().show();
+		this.isShown = true;
 	}
 
 	/**
 	 * Hide the Style Guide Preview.
 	 */
 	hideStyleguidePreview() {
+		this.getPreviewFrame().postMessage(
+			{ name: 'elementor/styleguide/preview/hide' },
+			'*',
+		);
 		this.getModal().getElements( 'widget' ).addClass( 'e-hidden' );
+		this.isShown = false;
 	}
 
 	/**
@@ -112,5 +118,15 @@ export default class extends $e.modules.ComponentBase {
 				external: true,
 			},
 		} );
+	}
+
+	isInEditor() {
+		return !! window.elementor;
+	}
+
+	getPreviewFrame() {
+		return this.isInEditor()
+			? elementor.$preview[ 0 ].contentWindow
+			: window;
 	}
 }
