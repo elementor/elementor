@@ -1,14 +1,16 @@
 {
-  "name": "@elementor/icons",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts"
-  },
-  "dependencies": {
-    "@elementor/ui": "*"
-  },
-  "peerDependencies": {
-    "react": "17.x"
-  }
+	"name": "@elementor/icons",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs --dts",
+		"dev": "tsup src/index.ts --format esm"
+	},
+	"dependencies": {
+		"@elementor/ui": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
 }

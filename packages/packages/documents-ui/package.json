@@ -1,9 +1,11 @@
 {
 	"name": "@elementor/documents-ui",
+	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsup src/index.ts --format esm,cjs --dts"
+		"build": "tsup src/index.ts --format esm,cjs --dts --clean",
+		"dev": "tsup src/index.ts --format esm --clean"
 	},
 	"dependencies": {
 		"@elementor/documents": "*",

@@ -1,17 +1,19 @@
 {
-  "name": "@elementor/user-preferences",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts"
-  },
-  "dependencies": {
-    "@elementor/icons": "*",
-    "@elementor/top-bar": "*",
-    "@elementor/v1-adapters": "*",
-    "@wordpress/i18n": "*"
-  },
-  "peerDependencies": {
-    "react": "17.x"
-  }
+	"name": "@elementor/user-preferences",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs --dts",
+		"dev": "tsup src/index.ts --format esm"
+	},
+	"dependencies": {
+		"@elementor/icons": "*",
+		"@elementor/top-bar": "*",
+		"@elementor/v1-adapters": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
 }

@@ -3,8 +3,9 @@
   "author": "Elementor's Team",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "build": "webpack --config=webpack.prod.js",
-    "dev": "concurrently -n webpack,tsc -c blue,green \"webpack -w --config webpack.dev.js\" \"tsc --watch\"",
+    "build": "lerna run build",
+    "watch": "lerna watch -- lerna run dev --scope=\\$LERNA_PACKAGE_NAME",
+    "dev": "npm run build && concurrently -n lerna,tsc -c blue,green \"npm run watch\" \"tsc -w\"",
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
     "lint": "concurrently -n eslint,tsc -c magenta,green \"eslint .\" \"tsc\""
@@ -31,6 +32,7 @@
     "eslint-import-resolver-typescript": "^3.5.3",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
+    "lerna": "^6.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tsup": "^6.6.3",

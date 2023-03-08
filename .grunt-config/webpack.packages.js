@@ -17,7 +17,7 @@ const packages = Object.keys( dependencies )
 		return {
 			name: packageName.replace( '@elementor/', ''),
 			packageName,
-			path: path.resolve( __dirname, `../node_modules/${ packageName }/dist/index.js` ),
+			path: path.resolve( __dirname, `../node_modules/${ packageName }/dist/index.mjs` ),
 		}
 	} );
 

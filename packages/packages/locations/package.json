@@ -1,9 +1,11 @@
 {
 	"name": "@elementor/locations",
+	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsup src/index.ts --format esm,cjs --dts"
+		"build": "tsup src/index.ts --format esm,cjs --dts",
+		"dev": "tsup src/index.ts --format esm"
 	},
 	"peerDependencies": {
 		"react": "17.x"
