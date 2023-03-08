@@ -1,8 +1,8 @@
-import useSettings from './hooks/use-site-settings';
-import Header from './areas/header';
+import React, { createContext, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import useSettings from './hooks/use-site-settings';
 import ActiveElementProvider from './providers/active-element-provider';
-import { createContext, useEffect, useRef } from 'react';
+import Header from './areas/header';
 import ColorsArea from './areas/colors-area';
 import FontsArea from './areas/fonts-area';
 
@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   padding-top:50px;
 `;
 
-const App = ( { config } ) => {
+export default function App( { config } ) {
 	const fontsRef = useRef( null );
 	const colorsRef = useRef( null );
 	const anchors = {
@@ -20,14 +20,12 @@ const App = ( { config } ) => {
 		fonts: fontsRef,
 	};
 
-	useEffect( () => {
-		window.top.elementor.changeEditMode( 'picker' );
-	}, [] ); // TODO remove this
-
 	const { settings } = useSettings( config.settings );
+	const { is_debug: isDebug } = settings,
+		Wrapper = isDebug ? React.StrictMode : React.Fragment;
 
 	return (
-		<Wrapper className="App">
+		<Wrapper>
 			<ActiveElementProvider>
 				<ConfigContext.Provider value={ config }>
 					<Header anchors={ anchors } />
@@ -37,6 +35,4 @@ const App = ( { config } ) => {
 			</ActiveElementProvider>
 		</Wrapper>
 	);
-};
-
-export default App;
+}

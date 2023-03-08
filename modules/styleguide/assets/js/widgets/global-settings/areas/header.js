@@ -80,12 +80,12 @@ const Header = ( { anchors } ) => {
 	return (
 		<Wrapper>
 			<InnerWrapper>
-				<Title>style guide preview</Title>
-				<ButtonsWrapper>
-					<GoToAnchor anchor={ anchors.colors }>colors</GoToAnchor>
-					<GoToAnchor anchor={ anchors.fonts }>fonts</GoToAnchor>
-				</ButtonsWrapper>
-			</InnerWrapper>
+			<Title>Style Guide Preview</Title>
+			<ButtonsWrapper>
+				<GoToAnchor anchor={ anchors.colors }>Colors</GoToAnchor>
+				<GoToAnchor anchor={ anchors.fonts }>Fonts</GoToAnchor>
+                </ButtonsWrapper>
+            </InnerWrapper>
 		</Wrapper>
 	);
 };
