@@ -73,6 +73,15 @@ class Control_Dimensions extends Control_Base_Units {
 		);
 	}
 
+	private function dimensions() {
+		return [
+			'top' => __( 'Top', 'elementor' ),
+			'right' => __( 'Right', 'elementor' ),
+			'bottom' => __( 'Bottom', 'elementor' ),
+			'left' => __( 'Left', 'elementor' ),
+		];
+	}
+
 	/**
 	 * Render dimensions control output in the editor.
 	 *
@@ -84,12 +93,6 @@ class Control_Dimensions extends Control_Base_Units {
 	 * @access public
 	 */
 	public function content_template() {
-		$dimensions = [
-			'top' => esc_html__( 'Top', 'elementor' ),
-			'right' => esc_html__( 'Right', 'elementor' ),
-			'bottom' => esc_html__( 'Bottom', 'elementor' ),
-			'left' => esc_html__( 'Left', 'elementor' ),
-		];
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
@@ -97,7 +100,7 @@ class Control_Dimensions extends Control_Base_Units {
 			<div class="elementor-control-input-wrapper">
 				<ul class="elementor-control-dimensions">
 					<?php
-					foreach ( $dimensions as $dimension_key => $dimension_title ) :
+					foreach ( $this->dimensions() as $dimension_key => $dimension_title ) :
 						?>
 						<li class="elementor-control-dimension">
 							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php

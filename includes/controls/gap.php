@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 class Control_Gap extends Control_Base_Units {
-
 	/**
 	 * Get gap control type.
 	 *
