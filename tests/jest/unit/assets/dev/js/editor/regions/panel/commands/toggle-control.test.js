@@ -1,5 +1,5 @@
-describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
-	let TogglePickerCommand;
+describe( `$e.commands.run( 'panel/toggle-control' )`, () => {
+	let ToggleControlCommand;
 
 	jest.mock( 'elementor-controls/base-data', () => {} );
 
@@ -84,7 +84,7 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 			},
 		};
 
-		TogglePickerCommand = ( await import( 'elementor/core/kits/assets/js/commands/toggle-picker' ) ).default;
+		ToggleControlCommand = ( await import( 'elementor/assets/dev/js/editor/regions/panel/commands/toggle-control' ) ).default;
 	} );
 
 	afterEach( () => {
@@ -96,22 +96,18 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 
 	it( 'should call mock onclick for picker button when command is correct and throw error if not', () => {
 		// Arrange.
-		const command = new TogglePickerCommand();
+		const command = new ToggleControlCommand();
 
 		// Act & Assert.
 		expect(
 			() => command.apply( {
-				name: 'colors',
-				type: 'custom', // Document does not have custom colors.
-				id: 'primary',
+				controlPath: 'custom_colors/primary/color', // Document does not have custom colors.
 			} ),
 		).toThrow( TypeError );
 
 		// Act.
 		command.apply( {
-			name: 'colors',
-			type: 'system', // Document has system colors.
-			id: 'primary',
+			controlPath: 'system_colors/primary/color', // Document has system colors.
 		} );
 
 		// Assert.
@@ -119,9 +115,7 @@ describe( `$e.commands.run( 'panel/global/toggle-picker' )`, () => {
 
 		// Act.
 		command.apply( {
-			name: 'colors',
-			type: 'system',
-			id: 'secondary',
+			controlPath: 'system_colors/secondary/color',
 		} );
 
 		// Assert.
