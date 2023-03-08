@@ -130,6 +130,11 @@ class Library extends \WP_CLI_Command {
 		} else {
 			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 		}
+
+		if ( 'url' === $file_protocol ) {
+			// Remove the temporary file, now that we're done with it.
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $file );
+		}
 	}
 
 	/**
