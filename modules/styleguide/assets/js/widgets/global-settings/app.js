@@ -5,12 +5,11 @@ import ActiveElementProvider from './providers/active-element-provider';
 import { createContext, useEffect, useRef } from 'react';
 import ColorsArea from './areas/colors-area';
 import FontsArea from './areas/fonts-area';
-import InnerWrapper from "./areas/inner-wrapper";
 
 export const ConfigContext = createContext( {} );
 
 const Wrapper = styled.div`
-  margin-top:50px;
+  padding-top:50px;
 `;
 
 const App = ( { config } ) => {
@@ -32,10 +31,8 @@ const App = ( { config } ) => {
 			<ActiveElementProvider>
 				<ConfigContext.Provider value={ config }>
 					<Header anchors={ anchors } />
-					<InnerWrapper flexDirection="column">
 						<ColorsArea ref={ colorsRef } settings={ settings } />
 						<FontsArea ref={ fontsRef } settings={ settings } />
-					</InnerWrapper>
 				</ConfigContext.Provider>
 			</ActiveElementProvider>
 		</Wrapper>

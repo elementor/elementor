@@ -107,7 +107,7 @@ const Font = ( { font, type } ) => {
 	};
 
 	return (
-		<ElementWrapper ref={ ref }
+		<ElementWrapper type="font" ref={ ref }
 			isActive={ isActive }
 			onClick={ onClick }>
 			<Title>{ title }</Title>

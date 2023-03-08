@@ -9,7 +9,7 @@ import { sendCommand } from '../../utils/send-command';
 
 const Content = styled.div`
   display: flex;
-  width: ${ ( props ) => 'system' === props.type ? '260px' : '166px' };
+  width: 100%;
   height:100px;
 	background-color: ${ ( props ) => props.hex };
 	border-style: solid;
@@ -50,7 +50,7 @@ const Color = ( { color, type } ) => {
 	const { isActive } = useIsActive( source, _id, ref );
 
 	return (
-		<ElementWrapper ref={ ref }
+		<ElementWrapper type="color" ref={ ref }
 			isActive={ isActive }
 			onClick={ () => {
 				const route = 'panel/global/global-colors';
@@ -62,7 +62,7 @@ const Color = ( { color, type } ) => {
 				togglePopover( source, type, _id );
 			} }>
 			<ElementTitle>{ title }</ElementTitle>
-			<Content hex={ hex } type={ type }>
+			<Content hex={ hex }>
 				<HexString>{ hex }</HexString>
 			</Content>
 		</ElementWrapper>

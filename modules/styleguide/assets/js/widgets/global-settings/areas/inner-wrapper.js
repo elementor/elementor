@@ -9,12 +9,12 @@ const innerWrapper = styled.div`
   flex-wrap: wrap;
 	flex-direction:${ ( props ) => props.flexDirection ?? 'row' };
   @media (max-width: 1140px) {
-    margin-left:15px;
-    margin-right:15px;
+    padding-left:15px;
+    padding-right:15px;
   }
-  @media (max-width: 640px) {
-    margin-left:13px;
-    margin-right:13px;
+  @media (max-width: 767px) {
+    padding-left:13px;
+    padding-right:13px;
   }
 `;
 

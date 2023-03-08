@@ -6,23 +6,30 @@ const Wrapper = styled.div`
 	flex-direction: column;
 	gap: 12px;
 	align-items: flex-start;
+  border: 1px solid transparent;
 	padding: 12px;
-
+  flex-grow: 1;
+  flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
+  max-width: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
+  margin-top: 24px;
 	&.active {
 		cursor: pointer;
-		border: 1px solid #424344;
+		border-color: #424344;
 		border-radius: 3px;
-		margin: -1px;
 		background-color: #F1F2F3;
 	}
 
 	&:hover:not(.active) {
 		cursor: pointer;
-		border: 1px solid #D5DADF;
+		border-color: #D5DADF;
 		border-radius: 3px;
-		margin: -1px;
 		background-color: #F9FAFA;
 	}
+
+  @media (max-width: 767px) {
+    flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+    max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+  }
 `;
 
 const ElementWrapper = React.forwardRef( ( props, ref ) => {
