@@ -29,6 +29,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'fr' => [
 					'min' => 1,
 					'max' => 12,
+					'step' => 1,
 				],
 			],
 			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
@@ -37,7 +38,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'size' => 3,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
+				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr);',
 			],
 			'responsive' => true,
 		];
@@ -49,6 +50,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'fr' => [
 					'min' => 1,
 					'max' => 12,
+					'step' => 1,
 				],
 			],
 			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
@@ -57,7 +59,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'size' => 2,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
+				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr);',
 			],
 			'responsive' => true,
 		];
