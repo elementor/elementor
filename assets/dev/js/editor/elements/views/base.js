@@ -833,15 +833,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Defer to wait for all of the children to render.
-		setTimeout( () => {
-			this.initDraggable();
-			this.dispatchElementLifeCycleEvent( 'rendered' );
-		}, 0 );
-	},
-
-	dispatchElementLifeCycleEvent( eventType ) {
-		const renderedEvent = new CustomEvent( `elementor/editor/element-${ eventType }`, { detail: { elementView: this } } );
-		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+		setTimeout( () => this.initDraggable(), 0 );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -921,8 +913,6 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
-
-		this.dispatchElementLifeCycleEvent( 'destroyed' );
 	},
 
 	// eslint-disable-next-line jsdoc/require-returns-check
