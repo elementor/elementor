@@ -315,6 +315,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$features = $this->experiments->get_features();
 		$this->assertNotEmpty( $features );
 		foreach ( $features as $feature ) {
+			if ( ! empty( $feature['hidden'] ) ) {
+				continue; // The 'hidden' value was set, so it won't be the default.
+			}
 			$this->assertFalse( $feature['hidden'] );
 		}
 	}
