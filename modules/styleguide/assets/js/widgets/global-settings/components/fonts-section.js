@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import SectionTitle from './section-title';
 import Font from './font';
-import InnerWrapper from "../areas/inner-wrapper";
+import InnerWrapper from '../areas/inner-wrapper';
 
 const Wrapper = styled.div`
-  margin-top:55px;
+	margin-top:55px;
 `;
 
 

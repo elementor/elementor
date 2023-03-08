@@ -16,8 +16,8 @@ const SectionTitle = styled.h2`
 	letter-spacing: 0;
 	word-spacing: 0;
 	margin:0 auto 25px;
-  width: 100%;
-  max-width: 1140px;
+	width: 100%;
+	max-width: 1140px;
 `;
 
 export default SectionTitle;

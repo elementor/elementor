@@ -9,7 +9,7 @@ import FontsArea from './areas/fonts-area';
 export const ConfigContext = createContext( {} );
 
 const Wrapper = styled.div`
-  padding-top:50px;
+	padding-top: 50px;
 `;
 
 export default function App( { config } ) {

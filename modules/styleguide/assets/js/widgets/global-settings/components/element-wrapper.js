@@ -6,11 +6,11 @@ const Wrapper = styled.div`
 	flex-direction: column;
 	gap: 12px;
 	align-items: flex-start;
-  border: 1px solid transparent;
+	border: 1px solid transparent;
 	padding: 12px;
-  flex-grow: 1;
-  flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
-  max-width: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
+	flex-grow: 1;
+	flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
+	max-width: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
 	&.active {
 		cursor: pointer;
 		border-color: #424344;
@@ -25,10 +25,10 @@ const Wrapper = styled.div`
 		background-color: #F9FAFA;
 	}
 
-  @media (max-width: 767px) {
-    flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
-    max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
-  }
+	@media (max-width: 767px) {
+		flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+		max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+	}
 `;
 
 const ElementWrapper = React.forwardRef( ( props, ref ) => {
