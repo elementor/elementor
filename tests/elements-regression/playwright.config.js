@@ -39,7 +39,7 @@ const config = {
 		trace: 'on-first-retry',
 		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
 		viewport: { width: 1920, height: 1080 },
-		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
+		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
 		storageState: path.resolve( __dirname, 'storage-state.json' ),
 		validateAllPreviousCasesChecked: process.env.ELEMENTS_REGRESSION_VALIDATE_ALL_PREVIOUS_TEST_CASES || ( process.env.CI ? 'on' : 'off' ),
 		user: {
