@@ -36,7 +36,7 @@ module.exports = {
 			},
 		],
 
-		// Prevent circular dependencies. (if the lint is slow consider removing it)
+		// Prevent circular dependencies (if the lint is slow, consider removing it).
 		'import/no-cycle': [ 'error' ],
 
 		// Strict mode.
