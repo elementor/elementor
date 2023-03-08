@@ -3,7 +3,7 @@ import AreaTitle from '../components/area-title';
 import ColorsSection from '../components/colors-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
 	width:100%;
