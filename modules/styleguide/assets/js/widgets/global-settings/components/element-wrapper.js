@@ -26,10 +26,10 @@ const Wrapper = styled.div`
 		background-color: #F9FAFA;
 	}
 
-  @media (max-width: 767px) {
-    flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
-    max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
-  }
+	@media (max-width: 767px) {
+		flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+		max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+	}
 `;
 
 const ElementWrapper = React.forwardRef( ( props, ref ) => {
