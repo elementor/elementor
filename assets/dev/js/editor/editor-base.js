@@ -78,12 +78,12 @@ export default class EditorBase extends Marionette.Application {
 
 	backgroundClickListeners = {
 		tooltip: {
-			element: '#elementor-element--tooltip__dialog',
-			ignore: '.dialog-widget, .elementor-controls-popover',
+			element: '.dialog-tooltip-widget',
+			ignore: '.dialog-widget, .elementor-controls-popover, .pcr-selection',
 		},
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .dialog-widget',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .dialog-tooltip-widget',
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',

@@ -1,20 +1,19 @@
-import GlobalsIntroduction from './tooltips/globals-introduction';
+import GlobalColorIntroduction from './tooltips/global-color-introduction';
+import GlobalFontIntroduction from './tooltips/global-font-introduction';
 
 export default class TooltipsManager {
-	tooltips = [];
-
 	constructor() {
-		this.addTooltipWidget();
+		this.registerTooltipWidget();
 		this.registerTooltips();
 	}
 
-	addTooltipWidget() {
+	registerTooltipWidget() {
 		DialogsManager.addWidgetType( 'tooltip', DialogsManager.getWidgetType( 'buttons' ).extend( 'tooltip', {
 			buildWidget() {
 				DialogsManager.getWidgetType( 'buttons' ).prototype.buildWidget.apply( this, arguments );
 
 				const elements = this.getElements();
-				elements.$title = jQuery( '<div>', { id: 'elementor-element--tooltip__dialog__title' } );
+				elements.$title = jQuery( '<div>', { class: 'elementor-element--tooltip__dialog__title' } );
 
 				elements.$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
 				elements.$closeButton.on( 'click', () => this.hide() );
@@ -28,6 +27,16 @@ export default class TooltipsManager {
 	}
 
 	registerTooltips() {
-		this.tooltips.push( new GlobalsIntroduction() );
+		const tooltips = [
+			new GlobalColorIntroduction( 'globals_introduction' ),
+			new GlobalFontIntroduction( 'globals_introduction' ),
+		];
+
+		tooltips.forEach( ( tooltip ) => {
+			if ( ! elementor.config.user.introduction[ tooltip.introductionKey ] ) {
+				tooltip.initTooltip();
+				tooltip.bindEvent();
+			}
+		} );
 	}
 }

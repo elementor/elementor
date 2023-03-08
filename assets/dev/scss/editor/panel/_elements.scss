@@ -190,67 +190,66 @@
 	}
 }
 
-#elementor-element--tooltip__dialog {
-  position: absolute;
-  width: 300px;
-  z-index: 1;
-  background-color: #fff;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-
-  &:after {
-	content: '';
+.dialog-tooltip-widget {
 	position: absolute;
-	top: 15px;
-	@include end(100%);
-	transform: scaleY(0.7);
-	border: 10px solid transparent;
-	@include border-end-property(color, #fff);
-  }
+	width: 300px;
+	z-index: 1;
+	background-color: #fff;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
 
-  &__title {
-	font-size: 14px;
-  }
+	&:after {
+		content: '';
+		position: absolute;
+		top: 15px;
+		@include end(100%);
+		transform: scaleY(0.7);
+		border: 10px solid transparent;
+		@include border-end-property(color, #fff);
+	}
 
-  .dialog {
-
-	&-header {
-	  display: flex;
-	  padding: 20px;
-	  color: $editor-darkest;
-	  border-bottom: 1px solid $editor-background;
-	  font-weight: 500;
-
-	  .eicon-pro-icon {
-		flex-grow: 1;
-		@include margin-start(10px);
+	&__title {
 		font-size: 14px;
-		color: $editor-accent;
-	  }
-
-	  .eicon-close {
-		cursor: pointer;
-		margin-inline-start: auto;
-		color: $editor-light;
-	  }
 	}
 
-	&-message {
-	  padding: 20px;
-	}
+	.dialog {
+		&-header {
+			display: flex;
+			padding: 20px;
+			color: $editor-darkest;
+			border-bottom: 1px solid $editor-background;
+			font-weight: 500;
 
-	&-buttons-wrapper {
-	  padding: 0 20px 20px 20px;
-	  text-align: end;
-	}
+			.eicon-pro-icon {
+				flex-grow: 1;
+				@include margin-start(10px);
+				font-size: 14px;
+				color: $editor-accent;
+			}
 
-	&-button {
-	  padding: 7px 25px;
-	  font-size: 12px;
+			.eicon-close {
+				cursor: pointer;
+				margin-inline-start: auto;
+				color: $editor-light;
+			}
+		}
 
-	  &::-moz-focus-inner {
-		border: 0;
-	  }
+		&-message {
+			padding: 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 20px 20px;
+			text-align: end;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 12px;
+
+			&::-moz-focus-inner {
+			border: 0;
+			}
+		}
 	}
-  }
 }
