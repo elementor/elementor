@@ -139,7 +139,10 @@ export default class NestedTabs extends Base {
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
+		// $activeTitle.add( $activeContent ).removeClass( activeClass );
+		$activeContent.removeClass( activeClass );
+		setTimeout( $activeTitle.removeClass( activeClass ), 50 );
+
 		$activeTitle.attr( {
 			tabindex: '-1',
 			'aria-selected': 'false',
@@ -169,7 +172,11 @@ export default class NestedTabs extends Base {
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		$requestedTitle.add( $requestedContent ).addClass( activeClass );
+		// $requestedTitle.add( $requestedContent ).addClass( activeClass );
+
+		$requestedContent.addClass( activeClass );
+		setTimeout( $requestedTitle.addClass( activeClass ), 50 );
+
 		$requestedTitle.attr( {
 			tabindex: '0',
 			'aria-selected': 'true',
