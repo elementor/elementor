@@ -32,13 +32,13 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'step' => 1,
 				],
 			],
-			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
+			'size_units' => [ 'fr' ],
 			'default' => [
 				'unit' => 'fr',
 				'size' => 3,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr);',
+				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{VALUE}}, 1fr)'
 			],
 			'responsive' => true,
 		];
@@ -53,13 +53,13 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'step' => 1,
 				],
 			],
-			'size_units' => [ 'fr', 'px', '%', 'vw', 'custom' ],
+			'size_units' => [ 'fr' ],
 			'default' => [
 				'unit' => 'fr',
 				'size' => 2,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr);',
+				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{VALUE}}, 1fr)'
 			],
 			'responsive' => true,
 		];
