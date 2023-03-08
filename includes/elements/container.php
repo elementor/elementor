@@ -322,7 +322,7 @@ class Container extends Element_Base {
 		];
 
 		if ( $is_container_grid_active ) {
-			$flex_control_options[ 'condition' ] = [
+			$flex_control_options['condition'] = [
 				'container_type' => 'flex',
 			];
 		}
@@ -485,18 +485,18 @@ class Container extends Element_Base {
 		if ( $is_container_grid_active ) {
 			$this->add_control(
 				'container_type',
-					[
-						'label' => esc_html__( 'Container Type', 'elementor' ),
-						'type' => Controls_Manager::SELECT,
-						'default' => 'flex',
-						'options' => [
-							'flex' => esc_html__( 'Flexbox', 'elementor' ),
-							'grid' => esc_html__( 'Grid', 'elementor' ),
-						],
-						'selectors' => [
-							'{{WRAPPER}}' => '--display: {{VALUE}}',
-						],
-					]
+				[
+					'label' => esc_html__( 'Container Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'flex',
+					'options' => [
+						'flex' => esc_html__( 'Flexbox', 'elementor' ),
+						'grid' => esc_html__( 'Grid', 'elementor' ),
+					],
+					'selectors' => [
+						'{{WRAPPER}}' => '--display: {{VALUE}}',
+					],
+				]
 			);
 		}
 
