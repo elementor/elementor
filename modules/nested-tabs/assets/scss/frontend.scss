@@ -236,9 +236,7 @@
 		}
 
 		> .e-con:not(.e-active) {
-			max-height: 0;
-			padding: 0;
-			overflow: hidden;
+			display: none;
 		}
 	}
 }
@@ -264,6 +262,16 @@
 
 		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
 			display: none;
+		}
+
+		.e-n-tabs-content > .e-con:not(.e-active) {
+			display: flex;
+			max-height: 0;
+			overflow: hidden;
+			padding: 0;
+			margin: 0;
+			opacity: 0;
+			border: none;
 		}
 	}
 }
