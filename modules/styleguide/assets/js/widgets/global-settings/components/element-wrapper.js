@@ -11,7 +11,6 @@ const Wrapper = styled.div`
   flex-grow: 1;
   flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
   max-width: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
-  margin-top: 24px;
 	&.active {
 		cursor: pointer;
 		border-color: #424344;
