@@ -2,15 +2,14 @@ import { useState } from 'react';
 import {
 	injectIntoCanvasDisplay,
 	injectIntoPrimaryAction,
-	registerAction,
-	registerLink,
-	registerToggleAction,
+	mainMenu,
+	utilitiesMenu,
+	toolsMenu,
 } from '../locations/index';
 import { render, fireEvent, act } from '@testing-library/react';
 import ToolsMenuLocation from '../components/locations/tools-menu-location';
 import UtilitiesMenuLocation from '../components/locations/utilities-menu-location';
 import MainMenuLocation from '../components/locations/main-menu-location';
-import { MenuName } from '../locations/register-menu-item';
 import CanvasDisplayLocation from '../components/locations/canvas-display-location';
 import PrimaryActionLocation from '../components/locations/primary-action-location';
 
@@ -19,12 +18,14 @@ describe( '@elementor/top-bar API', () => {
 		{ component: ToolsMenuLocation, name: 'tools' } as const,
 		{ component: UtilitiesMenuLocation, name: 'utilities' } as const,
 	] )( 'horizontal menu location: $name', ( { component: Component, name } ) => {
+		const menu = ( name === 'tools' ) ? toolsMenu : utilitiesMenu;
+
 		it( 'should render an action', () => {
 			// Arrange.
 			const onClick = jest.fn();
 
 			// Act.
-			registerExampleAction( name, { onClick } );
+			menu.registerAction( makeExampleAction( { onClick } ) );
 
 			// Assert.
 			const { getByLabelText } = render( <Component /> );
@@ -36,7 +37,7 @@ describe( '@elementor/top-bar API', () => {
 
 		it( 'should render a toggle action', () => {
 			// Act.
-			registerExampleToggleAction( name );
+			menu.registerToggleAction( makeExampleToggleAction() );
 
 			// Assert.
 			const { getByLabelText } = render( <Component /> );
@@ -58,7 +59,7 @@ describe( '@elementor/top-bar API', () => {
 
 		it( 'should render a link', () => {
 			// Act.
-			registerExampleLink( name );
+			menu.registerLink( makeExampleLink() );
 
 			// Assert.
 			const { getByRole } = render( <Component /> );
@@ -77,7 +78,7 @@ describe( '@elementor/top-bar API', () => {
 			const onClick = jest.fn();
 
 			// Act
-			registerExampleAction( 'main', { onClick } );
+			mainMenu.registerAction( makeExampleAction( { onClick } ) );
 
 			// Assert.
 			const { getByText, getByRole } = render( <MainMenuLocation /> );
@@ -93,7 +94,7 @@ describe( '@elementor/top-bar API', () => {
 
 		it( 'should render a toggle action', () => {
 			// Act.
-			registerExampleToggleAction( 'main' );
+			mainMenu.registerToggleAction( makeExampleToggleAction() );
 
 			// Assert.
 			const { getByRole, getByText } = render( <MainMenuLocation /> );
@@ -117,7 +118,7 @@ describe( '@elementor/top-bar API', () => {
 
 		it( 'should render a link', () => {
 			// Act.
-			registerExampleLink( 'main' );
+			mainMenu.registerLink( makeExampleLink() );
 
 			// Assert.
 			const { getByRole } = render( <MainMenuLocation /> );
@@ -133,7 +134,7 @@ describe( '@elementor/top-bar API', () => {
 
 	it( 'should render tooltip', async () => {
 		// Act.
-		registerExampleAction( 'tools' );
+		toolsMenu.registerAction( makeExampleAction() );
 
 		// Assert.
 		const { getByLabelText, queryByRole, findByRole } = render( <ToolsMenuLocation /> );
@@ -154,7 +155,7 @@ describe( '@elementor/top-bar API', () => {
 
 	it( 'should render icon', () => {
 		// Act.
-		registerExampleAction( 'tools' );
+		toolsMenu.registerAction( makeExampleAction() );
 
 		// Assert.
 		const { queryByText } = render( <ToolsMenuLocation /> );
@@ -204,11 +205,12 @@ describe( '@elementor/top-bar API', () => {
 		},
 	] )( 'should render $name buttons in popover after the $max button', ( { name, max, component: Component } ) => {
 		// Arrange.
+		const menu = ( name === 'tools' ) ? toolsMenu : utilitiesMenu;
 		const extraButtonsAfterMax = 2;
 
 		// Act.
 		for ( let i = 0; i < max + extraButtonsAfterMax; i++ ) {
-			registerAction( name, {
+			menu.registerAction( {
 				name: `test-${ i }`,
 				props: {
 					title: `Test ${ i }`,
@@ -234,12 +236,12 @@ describe( '@elementor/top-bar API', () => {
 
 	it( 'should render 2 actions in different groups', () => {
 		// Act.
-		registerAction( 'main', {
+		mainMenu.registerAction( {
 			name: 'test-1',
 			props: { title: 'Test 1', icon: () => <span>a</span> },
 		} );
 
-		registerAction( 'main', {
+		mainMenu.registerAction( {
 			name: 'test-1',
 			group: 'exits',
 			props: { title: 'Test 1', icon: () => <span>a</span> },
@@ -254,59 +256,47 @@ describe( '@elementor/top-bar API', () => {
 	} );
 } );
 
-function registerExampleAction(
-	menuName: MenuName,
-	{ onClick = () => null }: { onClick?: () => void } = {}
-) {
-	registerAction(
-		menuName,
-		{
-			name: 'test',
-			props: {
-				title: 'Test',
-				icon: () => <span>a</span>,
-				onClick,
-			},
-		}
-	);
+function makeExampleAction( { onClick = () => null }: { onClick?: () => void } = {} ) {
+	return {
+		name: 'test',
+		props: {
+			title: 'Test',
+			icon: () => <span>a</span>,
+			onClick,
+		},
+	};
 }
 
-function registerExampleToggleAction( menuName: MenuName ) {
-	registerToggleAction(
-		menuName,
-		{
-			name: 'test',
-			useProps: () => {
-				const [ selected, setSelected ] = useState( false );
-				const [ clicks, setClicks ] = useState( 0 );
+function makeExampleToggleAction() {
+	return {
+		name: 'test',
+		useProps: () => {
+			const [ selected, setSelected ] = useState( false );
+			const [ clicks, setClicks ] = useState( 0 );
 
-				return {
-					title: 'Test',
-					icon: () => <span>a</span>,
-					selected,
-					onClick: () => {
-						setSelected( ( prev ) => ! prev );
-						setClicks( ( prev ) => prev + 1 );
-					},
-					value: 'test-value',
-					disabled: clicks > 1,
-				};
-			},
-		}
-	);
-}
-
-function registerExampleLink( menuName: MenuName ) {
-	registerLink(
-		menuName,
-		{
-			name: 'test',
-			props: {
+			return {
 				title: 'Test',
 				icon: () => <span>a</span>,
-				href: 'https://elementor.com',
-				target: '_blank',
-			},
-		}
-	);
+				selected,
+				onClick: () => {
+					setSelected( ( prev ) => ! prev );
+					setClicks( ( prev ) => prev + 1 );
+				},
+				value: 'test-value',
+				disabled: clicks > 1,
+			};
+		},
+	};
+}
+
+function makeExampleLink() {
+	return {
+		name: 'test',
+		props: {
+			title: 'Test',
+			icon: () => <span>a</span>,
+			href: 'https://elementor.com',
+			target: '_blank',
+		},
+	};
 }
