@@ -115,8 +115,9 @@ export default class extends ControlBaseDataView {
 	toggle() {
 		if ( this.colorPicker.picker.isOpen() ) {
 			this.colorPicker.picker.hide();
+		} else {
+			this.colorPicker.picker.show();
 		}
-		this.colorPicker.picker.show();
 	}
 
 	getGlobalMeta() {
