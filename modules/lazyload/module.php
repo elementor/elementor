@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_lazyload';
+	const PERFORMANCE_LAB_OPTION_NAME = 'perflab_modules_settings';
 
 	public function get_name() {
 		return 'lazyload';
@@ -64,6 +65,8 @@ class Module extends BaseModule {
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
+		$is_dominant_color_enabled = $this->is_dominant_color_enabled();
+
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
@@ -78,12 +81,24 @@ class Module extends BaseModule {
 		return $control;
 	}
 
-	private function apply_dominant_color_background( $control, $value, $selector ) {
+	private function is_dominant_color_enabled() {
+		$performance_lab_settings = (array) get_option( self::PERFORMANCE_LAB_OPTION_NAME, [] );
+		return Utils::get_array_value_by_keys( $performance_lab_settings, [ 'images/dominant-color', 'enabled' ] );
+	}
+
+	private function image_extension_validation( $value ) {
 		// Disable 'Dominant Color' on PNG and GIF images
 		$url = $value['url'];
 		$ignored_extensions = [ 'png', 'gif' ];
-
 		if ( in_array( pathinfo( $url, PATHINFO_EXTENSION ), $ignored_extensions, true ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	private function apply_dominant_color_background( $control, $value, $selector ) {
+
+		if ( ! $this->image_extension_validation( $value ) || ! $this->is_dominant_color_enabled() ) {
 			return $control;
 		}
 
