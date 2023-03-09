@@ -8,15 +8,15 @@ import { goToRoute, isInRoute } from '../utils/web-cli';
 import { sendCommand } from '../utils/send-command';
 
 const Content = styled.div`
-  display: flex;
-  width: 100%;
-  height:100px;
+	display: flex;
+	width: 100%;
+	height: 100px;
 	background-color: ${ ( props ) => props.hex };
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #D5DADF;
 	border-radius: 3px 3px 3px 3px;
-  align-items: end;
+	align-items: end;
 `;
 
 const HexString = styled.p`
@@ -31,7 +31,7 @@ const HexString = styled.p`
 	line-height: 1.1em;
 	letter-spacing: 0;
 	word-spacing: 0;
-  margin: 12px;
+	margin: 12px;
 `;
 
 /**

@@ -8,11 +8,10 @@ const Wrapper = styled.div`
 	margin-top:55px;
 `;
 
-
 const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-	width:100%;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 `;
 
 const FontsSection = ( { title, source } ) => {

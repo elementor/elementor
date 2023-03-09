@@ -2,15 +2,15 @@ import React from 'react';
 import Color from './color';
 import SectionTitle from './section-title';
 import styled from 'styled-components';
-import InnerWrapper from "../areas/inner-wrapper";
+import InnerWrapper from '../areas/inner-wrapper';
 
 const Wrapper = styled.div`
-  margin-top:55px;
+	margin-top:55px;
 `;
 
 const Content = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 	width:100%;
 `;
 
