@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import AreaTitle from './area-title';
-import FontsSection from '../components/fonts-section';
+import Section from '../components/section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
@@ -67,14 +67,16 @@ export default function FontsArea() {
 
 	return (
 		<Wrapper ref={ ref }>
-			<AreaTitle name="fonts">global fonts</AreaTitle>
-			<FontsSection title="System Fonts"
+			<AreaTitle name="fonts">Global Fonts</AreaTitle>
+			<Section title="System Fonts"
 				source={ settings.system_typography }
 				type="system"
+				component="Font"
 			/>
-			<FontsSection title="Custom Fonts"
+			<Section title="Custom Fonts"
 				source={ settings.custom_typography }
 				type="custom"
+				component="Font"
 			/>
 		</Wrapper>
 	);

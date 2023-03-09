@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import AreaTitle from './area-title';
-import ColorsSection from '../components/colors-section';
 import Section from '../components/section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
@@ -69,13 +68,13 @@ export default function ColorsArea() {
 			<Section title="System Colors"
 				source={ settings.system_colors }
 				colorWidth="191px"
-				component="colors"
+				component="Color"
 				type="system"
 			/>
 			<Section title="Custom Colors"
 				source={ settings.custom_colors }
 				colorWidth="114px"
-				component="fonts"
+				component="Color"
 				type="custom"
 			/>
 		</Wrapper>

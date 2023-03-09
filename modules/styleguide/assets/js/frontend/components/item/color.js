@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import ElementTitle from './global/element-title';
-import ElementWrapper from './global/element-wrapper';
-import useIsActive from '../hooks/use-is-active';
-import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../utils/web-cli';
-import { sendCommand } from '../utils/send-command';
+import ElementTitle from '../global/element-title';
+import ElementWrapper from '../global/element-wrapper';
+import useIsActive from '../../hooks/use-is-active';
+import { isInRoute } from '../../utils/web-cli';
+import { sendCommand } from '../../utils/send-command';
 
 const Content = styled.div`
 	display: flex;
@@ -35,10 +34,10 @@ const HexString = styled.p`
 `;
 
 export default function Color( props ) {
-	const { color, type } = props;
+	const { item, type } = props;
 
 	const source = 'colors';
-	const { _id, title, color: hex } = color;
+	const { _id, title, color: hex } = item;
 
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
@@ -64,7 +63,7 @@ export default function Color( props ) {
 }
 
 Color.propTypes = {
-	color: PropTypes.shape( {
+	item: PropTypes.shape( {
 		_id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		color: PropTypes.string.isRequired,

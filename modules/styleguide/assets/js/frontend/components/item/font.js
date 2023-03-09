@@ -1,13 +1,11 @@
-import React, { useContext, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import ElementWrapper from './global/element-wrapper';
-import ElementTitle from './global/element-title';
-import { ConfigContext } from '../app';
-import useIsActive from '../hooks/use-is-active';
-import { togglePopover } from '../utils/panel-behaviour';
-import { isInRoute } from '../utils/web-cli';
-import { sendCommand } from '../utils/send-command';
-import useSettings from '../hooks/use-settings';
+import ElementWrapper from '../global/element-wrapper';
+import ElementTitle from '../global/element-title';
+import useIsActive from '../../hooks/use-is-active';
+import { isInRoute } from '../../utils/web-cli';
+import { sendCommand } from '../../utils/send-command';
+import useSettings from '../../hooks/use-settings';
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
@@ -78,10 +76,10 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 };
 
 export default function Font( props ) {
-	const { font, type } = props;
+	const { item, type } = props;
 
 	const source = 'typography';
-	const { _id, title } = font;
+	const { _id, title } = item;
 
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );

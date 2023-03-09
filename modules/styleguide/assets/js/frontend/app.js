@@ -27,7 +27,7 @@ export default function App() {
 		return <Loader />;
 	}
 
-	const { is_debug: isDebug } = settings.config,
+	const { is_debug: isDebug } = settings,
 		Wrapper = isDebug ? React.StrictMode : React.Fragment;
 
 	return (
