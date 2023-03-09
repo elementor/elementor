@@ -1,4 +1,4 @@
-import Component from './component';
+import Component from './e-component';
 
 class Styleguide extends elementorModules.editor.utils.Module {
 	onInit() {

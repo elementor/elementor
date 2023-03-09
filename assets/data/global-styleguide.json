@@ -18,7 +18,7 @@
               "settings": [],
               "elements": [],
               "isInner": false,
-              "widgetType": "global-settings",
+              "widgetType": "global-styleguide",
               "elType": "widget"
             }
           ],
@@ -32,6 +32,6 @@
   ],
   "page_settings": [],
   "version": "0.4",
-  "title": "global styleguide v1",
+  "title": "Global Styleguide v1",
   "type": "page"
 }

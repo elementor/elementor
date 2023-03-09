@@ -4,6 +4,7 @@ namespace Elementor\Modules\Styleguide;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
+use Elementor\Modules\Styleguide\Widgets\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -36,6 +37,7 @@ class Module extends \Elementor\Core\Base\Module {
 			$this->enqueue_app_initiator( $is_preview );
 		} );
 
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 
 	/**
@@ -49,7 +51,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 	protected function get_widgets() {
 		return [
-			'Global_Settings',
+			'Global_Styleguide',
 		];
 	}
 

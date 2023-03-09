@@ -3,26 +3,22 @@
 	 * Add the app into the page.
 	 */
 	async function mount() {
-		const appRootElement = document.querySelector( '.elementor-global-settings-widget' );
+		const appRootElement = document.querySelector( '.elementor-global-styleguide-widget' );
 
 		if ( ! appRootElement ) {
 			return;
 		}
 
-		const config = {
-			settings: JSON.parse( appRootElement.dataset.settings ),
-		};
+		const { default: App } = await import( './frontend/app' );
 
-		const { default: App } = await import( './widgets/global-settings/app' );
-
-		ReactDOM.render( <App config={ config } />, appRootElement );
+		ReactDOM.render( <App />, appRootElement );
 	}
 
 	/**
 	 * Remove the app from the page
 	 */
 	function unmount() {
-		const appRootElement = document.querySelector( '.elementor-global-settings-widget' );
+		const appRootElement = document.querySelector( '.elementor-global-styleguide-widget' );
 
 		if ( ! appRootElement ) {
 			return;

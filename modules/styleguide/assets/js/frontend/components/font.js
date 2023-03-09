@@ -5,8 +5,9 @@ import ElementTitle from './element-title';
 import { ConfigContext } from '../app';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../../utils/web-cli';
-import { sendCommand } from '../../utils/send-command';
+import { isInRoute } from '../utils/web-cli';
+import { sendCommand } from '../utils/send-command';
+import useSettings from '../hooks/use-settings';
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
@@ -81,8 +82,16 @@ const Font = ( { font, type } ) => {
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
 
-	const config = useContext( ConfigContext );
-	const style = useMemo( () => parseFontToStyle( font, config.settings.fallback_font ), [ font, config ] );
+	const { isLoading, settings } = useSettings();
+
+	const style = useMemo( () => {
+		if ( isLoading ) {
+			return {};
+		}
+
+		parseFontToStyle( font, settings.fallback_font );
+	}, [ font, settings ] );
+
 	const Title = styled( ElementTitle )`
       font-size: 18px;
 	`;
