@@ -130,7 +130,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php
 				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );
-			?>" />
+			?>" loading="lazy" />
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( 'page' === type || 'lp' === type ) { #>
 			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
 		<# } else { #>
-			<img src="{{ thumbnail }}">
+			<img src="{{ thumbnail }}" loading="lazy">
 		<# } #>
 		<div class="elementor-template-library-template-preview">
 			<i class="eicon-zoom-in-bold" aria-hidden="true"></i>
@@ -253,7 +253,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<div class="elementor-template-library-blank-icon">
-		<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg' ); ?>" class="elementor-template-library-no-results" />
+		<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg' ); ?>" class="elementor-template-library-no-results" loading="lazy" />
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
@@ -294,6 +294,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
 
 	foreach ( $images as $image ) : ?>
-		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false"/>
+		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false" loading="lazy" />
 	<?php endforeach; ?>
 </script>

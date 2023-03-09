@@ -188,7 +188,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(
