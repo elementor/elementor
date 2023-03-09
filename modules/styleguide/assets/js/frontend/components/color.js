@@ -59,7 +59,7 @@ const Color = ( { color, type } ) => {
 					sendCommand( `${ route }/route`, { shouldNotScroll: true } );
 				}
 
-				// togglePopover( source, type, _id );
+				togglePopover( type, source, _id, 'color' );
 			} }>
 			<ElementTitle>{ title }</ElementTitle>
 			<Content hex={ hex }>
