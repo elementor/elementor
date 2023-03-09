@@ -849,6 +849,15 @@ abstract class Controls_Stack extends Base_Object {
 		$is_frontend_available = ! empty( $control_to_check['frontend_available'] );
 		$has_prefix_class = ! empty( $control_to_check['prefix_class'] );
 
+		$enable_duplication_mode = [
+			'loop-item',
+			'kit',
+			'common',
+		];
+		if ( in_array( $this->get_name(), $enable_duplication_mode, true ) ) {
+			$responsive_duplication_mode = 'on';
+		}
+
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
 		if (
