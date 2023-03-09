@@ -1,5 +1,5 @@
 name: Create RC Tag
-# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN & repo env var : SLACK_TAG_CHANNELS
+# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN , SLACK_CHANNEL_RELEASEBOT
 
 env:
   CHANGELOG_FILE: 'temp-changelog.txt'
@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - name: Get Configuration
         id: configuration
         uses: maork-elementor/json-to-variables@main
@@ -77,26 +79,47 @@ jobs:
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASEBOT }}
           PAYLOAD: |
-                {
-                  "blocks": [{
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Elementor* `${{ env.PACKAGE_VERSION }}` *RC Release*\n\ncreated by ${{ github.actor }}.\n\nPlease test it and report any issues\n\n<https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}|*Release v${{ env.PACKAGE_VERSION }}*>"
+                  {
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                        },
+                        "accessory": {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "Open :point_left:",
+                            "emoji": true
+                          },
+                          "value": "open-release",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
+                          "action_id": "button-action"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
+                        }
                       }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Changelog*:\n\n${{ env.CHANGELOG_CONTENT }}"
-                      }
-                    }
-                  ]
-                }
-          
+                    ]
+                  }

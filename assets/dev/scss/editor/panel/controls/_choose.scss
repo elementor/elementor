@@ -14,44 +14,44 @@
 	line-height: $control-unit;
 	text-align: center;
 	border-spacing: 1px;
-	border-radius: 3px;
+	border-radius: var(--e-a-border-radius);
 	overflow: hidden;
 
 	.elementor-choices-label {
-		border-top: 1px solid $editor-lightest;
-		border-bottom: 1px solid $editor-lightest;
-		@include border-start(1px solid $editor-lightest);
+		border-top: var(--e-a-border-bold);
+		border-bottom: var(--e-a-border-bold);
+		@include border-start(var(--e-a-border-bold));
 		@include border-end(none);
 		font-size: 12px;
-		transition: all .5s;
+		transition: var(--e-a-transition-hover);
 		cursor: pointer;
 		overflow: hidden;
 
 		&:nth-child(2) {
-			@include _dimension_side_property(border-top, start, radius, 3px);
-			@include _dimension_side_property(border-bottom, start, radius, 3px);
+			@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
+			@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
 		}
 
 		&:last-child {
-			@include border-end(1px solid $editor-lightest);
-			@include _dimension_side_property(border-top, end, radius, 3px);
-			@include _dimension_side_property(border-bottom, end, radius, 3px);
+			@include border-end(var(--e-a-border-bold));
+			@include _dimension_side_property(border-top, end, radius, var(--e-a-border-radius));
+			@include _dimension_side_property(border-bottom, end, radius, var(--e-a-border-radius));
 		}
 	}
 
 	input {
 		display: none;
 
-		&.e-choose-placeholder + .elementor-choices-label {
-			color: $white;
-			background-color: $editor-lighter;
-			border-color: $editor-lighter;
+		&:hover {
+			+ .elementor-choices-label {
+				background-color: var(--e-a-bg-hover);
+			}
 		}
 
+		&.e-choose-placeholder + .elementor-choices-label,
 		&:checked + .elementor-choices-label {
-			color: #fff;
-			background-color: $editor-light;
-			border-color: $editor-light;
+			background-color: var(--e-a-bg-active-bold);
+			color: var(--e-a-color-txt-accent);
 		}
 	}
 }
@@ -60,33 +60,5 @@
 
 	.elementor-choices {
 		justify-content: flex-end;
-	}
-}
-
-.rtl {
-
-	.elementor-control-type-choose {
-
-		&[class*="elementor-control-text_align"],
-		&[class*="elementor-control-align"],
-		&[class*="elementor-control-position"] {
-
-			.elementor-choices {
-				flex-direction: row-reverse; // Force ltr also in RTL languages
-
-				.elementor-choices-label {
-
-					&:nth-child(2) {
-						@include border-end(1px solid $editor-lightest);
-						border-radius: 3px 0 0 3px;
-					}
-
-					&:last-child {
-						@include border-end(none);
-						border-radius: 0 3px 3px 0;
-					}
-				}
-			}
-		}
 	}
 }

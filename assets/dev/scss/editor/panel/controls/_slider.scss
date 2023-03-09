@@ -3,7 +3,7 @@
 	&.elementor-control-dynamic {
 
 		input {
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius) 0);
 		}
 	}
 
@@ -46,7 +46,7 @@
 						height: 12px;
 						width: 11px;
 						transform: rotate(45deg);
-						background-color: #fff;
+						background-color: var(--e-a-color-white);
 						border-radius: 3px;
 					}
 
@@ -72,7 +72,7 @@
 
 	.elementor-control-dynamic-switcher {
 		@include border-start-property(width, 0);
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 	}
 
 	.elementor-control-input-wrapper {
@@ -101,7 +101,7 @@
 .elementor-slider {
 	flex-grow: 1;
 	height: 4px;
-	background-color: $editor-lightest;
+	background-color: var(--e-a-border-color-bold);
 	border-radius: 5px;
 	position: relative;
 	cursor: pointer;
@@ -124,7 +124,7 @@
 
 	&__label {
 		font-size: 9px;
-		color: $editor-lighter;
+		color: var(--e-a-color-txt-disabled);
 	}
 
 	&__scales {
@@ -138,7 +138,7 @@
 	&__scale {
 		width: 1px;
 		height: 21px;
-		background-color: $editor-light;
+		background-color: var(--e-a-border-color-focus);
 	}
 
 	.noUi {
@@ -146,7 +146,7 @@
 		&-handle {
 			height: 16px;
 			width: 16px;
-			background-color: #fff;
+			background-color: var(--e-a-color-white);
 			@include end(0);
 			transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(8px, -8px));
 			position: absolute;
@@ -169,7 +169,7 @@
 			width: 100%;
 			will-change: transform;
 			transform-origin: 0 0;
-			background-color: $editor-light;
+			background-color: var(--e-a-border-color-focus);
 		}
 
 		&-tooltip {

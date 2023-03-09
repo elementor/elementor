@@ -8,10 +8,6 @@ export default function PrimaryAction() {
 
 	return (
 		<Paper sx={ {
-			position: 'absolute',
-			bottom: 0,
-			right: 0,
-			left: 0,
 			px: 5,
 			py: 4,
 			borderTop: 1,
