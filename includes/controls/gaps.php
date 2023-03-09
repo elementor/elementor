@@ -54,7 +54,7 @@ class Control_Gaps extends Control_Dimensions {
 		return 'gap';
 	}
 
-	protected function dimensions() {
+	protected function get_dimensions() {
 		return [
 			'row' => esc_html__( 'Row', 'elementor' ),
 			'column' => esc_html__( 'Column', 'elementor' ),

@@ -77,7 +77,7 @@ class Control_Dimensions extends Control_Base_Units {
 		);
 	}
 
-	protected function dimensions() {
+	protected function get_dimensions() {
 		return [
 			'top' => __( 'Top', 'elementor' ),
 			'right' => __( 'Right', 'elementor' ),
@@ -105,7 +105,7 @@ class Control_Dimensions extends Control_Base_Units {
 			<div class="elementor-control-input-wrapper">
 				<ul class="elementor-control-<?php echo esc_attr( $class_name ); ?>s">
 					<?php
-					foreach ( $this->dimensions() as $dimension_key => $dimension_title ) :
+					foreach ( $this->get_dimensions() as $dimension_key => $dimension_title ) :
 						?>
 						<li class="elementor-control-<?php echo esc_attr( $class_name ); ?>">
 							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
