@@ -1,7 +1,6 @@
 {
   "name": "@elementor/help",
   "dependencies": {
-    "@elementor/editor": "*",
     "@elementor/icons": "*",
     "@elementor/top-bar": "*",
     "@elementor/v1-adapters": "*",
