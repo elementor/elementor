@@ -1,4 +1,5 @@
-import { Document, Slice } from '../types';
+import { Slice } from '../store';
+import { Document } from '../types';
 import { dispatch } from '@elementor/store';
 import { normalizeV1Document, getV1DocumentsManager } from './utils';
 import {
