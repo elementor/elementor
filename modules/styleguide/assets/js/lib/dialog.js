@@ -1,4 +1,4 @@
-DialogsManager.addWidgetType( 'styleguide-preview', DialogsManager.getWidgetType( 'lightbox' ).extend( 'alert', {
+DialogsManager.addWidgetType( 'styleguide', DialogsManager.getWidgetType( 'lightbox' ).extend( 'alert', {
 	buildWidget() {
 		DialogsManager.getWidgetType( 'lightbox' ).prototype.buildWidget.apply( this, arguments );
 

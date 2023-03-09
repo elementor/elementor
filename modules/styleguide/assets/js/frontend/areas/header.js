@@ -28,7 +28,8 @@ const Button = styled.button`
 	}
 `;
 
-const GoToAnchor = ( { anchor, children } ) => {
+const GoToAnchor = ( props ) => {
+	const { anchor, children } = props;
 	return (
 		<Button variant="transparent"
 			size="s"
@@ -75,16 +76,27 @@ const Title = styled.h2`
   margin: 0;
 `;
 
-const Header = ( { anchors } ) => {
+export default function Header( props ) {
+	const { colors, fonts } = props.anchors;
 	return (
 		<Wrapper>
 			<Title>Style Guide Preview</Title>
 			<ButtonsWrapper>
-				<GoToAnchor anchor={ anchors.colors }>Colors</GoToAnchor>
-				<GoToAnchor anchor={ anchors.fonts }>Fonts</GoToAnchor>
+				<GoToAnchor anchor={ colors }>Colors</GoToAnchor>
+				<GoToAnchor anchor={ fonts }>Fonts</GoToAnchor>
 			</ButtonsWrapper>
 		</Wrapper>
 	);
+}
+
+Header.propTypes = {
+	anchors: PropTypes.shape( {
+		colors: PropTypes.object.isRequired,
+		fonts: PropTypes.object.isRequired,
+	} ).isRequired,
 };
 
-export default Header;
+GoToAnchor.propTypes = {
+	anchor: PropTypes.object.isRequired,
+	children: PropTypes.node.isRequired,
+};
