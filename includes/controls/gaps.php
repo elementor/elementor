@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor gap control.
  *
- * A base control for creating gap control. Displays input fields for two values,
- * row/column, hight/width/ and the option to link them together.
+ * A base control for creating a gap control. Displays input fields for two values,
+ * row/column, height/width and the option to link them together.
  *
  * @since 3.13.0
  */
