@@ -1,4 +1,4 @@
-describe( `$e.commands.run( 'panel/toggle-control' )`, () => {
+describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
 	let ToggleControlCommand;
 
 	jest.mock( 'elementor-controls/base-data', () => {} );
@@ -84,7 +84,7 @@ describe( `$e.commands.run( 'panel/toggle-control' )`, () => {
 			},
 		};
 
-		ToggleControlCommand = ( await import( 'elementor/assets/dev/js/editor/regions/panel/commands/toggle-control' ) ).default;
+		ToggleControlCommand = ( await import( 'elementor/assets/dev/js/editor/controls/commands/toggle-control' ) ).default;
 	} );
 
 	afterEach( () => {
