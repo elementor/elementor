@@ -32,7 +32,7 @@ type MenuItem<
 	{ useProps: () => ComponentPropsWithoutRef<TComponent>, props?: never }
 )
 
-export function createMenu<TGroup extends GroupName>( { name: menuName, groups = [] }: MenuWithOptionalGroups<TGroup> ) {
+export function createMenu<TGroup extends GroupName = 'default'>( { name: menuName, groups = [] }: MenuWithOptionalGroups<TGroup> ) {
 	const menuGroups: MenuGroup<TGroup>[] = [
 		...groups,
 		'default' as const,
