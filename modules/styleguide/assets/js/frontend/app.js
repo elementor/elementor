@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState, useEffect } from 'react';
+import React, { createContext, useRef } from 'react';
 import styled from 'styled-components';
 import useSettings from './hooks/use-settings';
 import ActiveElementProvider from './providers/active-element-provider';
@@ -9,7 +9,7 @@ import FontsArea from './areas/fonts-area';
 export const ConfigContext = createContext( {} );
 
 const Content = styled.div`
-	padding: 0 5% 0 5%;
+	padding-top: 50px;
 `;
 
 export default function App() {

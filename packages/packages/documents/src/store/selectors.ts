@@ -1,4 +1,4 @@
-import { Slice } from '../types';
+import type { Slice } from './index';
 import { createSelector, SliceState } from '@elementor/store';
 
 type State = SliceState<Slice>;
