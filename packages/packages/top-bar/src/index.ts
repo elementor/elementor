@@ -1,4 +1,5 @@
 export {
+	createMenu,
 	mainMenu,
 	toolsMenu,
 	utilitiesMenu,

@@ -4,6 +4,8 @@ import { LOCATION_CANVAS_DISPLAY, LOCATION_PRIMARY_ACTION } from './consts';
 
 export * from './consts';
 
+export { createMenu } from './menus';
+
 export const injectIntoCanvasDisplay = createInjectorFor( LOCATION_CANVAS_DISPLAY );
 export const injectIntoPrimaryAction = createInjectorFor( LOCATION_PRIMARY_ACTION );
 

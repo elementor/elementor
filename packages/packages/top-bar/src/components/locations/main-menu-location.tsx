@@ -33,11 +33,11 @@ export default function MainMenuLocation() {
 			>
 				{
 					orderedGroups
-						.filter( ( items ) => items.length )
-						.map( ( items, index ) => {
+						.filter( ( group ) => group.length )
+						.map( ( group, index ) => {
 							return [
 								index > 0 ? <Divider key={ index } orientation="horizontal" /> : null,
-								...items.map(
+								...group.map(
 									( { MenuItem, id } ) => <MenuItem key={ id } />
 								),
 							];
