@@ -237,9 +237,9 @@ class Controls_Manager {
 	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
-	 * Gap control.
+	 * Gaps control.
 	 */
-	const GAP = 'gap';
+	const GAPS = 'gaps';
 
 	/**
 	 * Controls.
@@ -397,7 +397,7 @@ class Controls_Manager {
 			self::CODE,
 			self::FONT,
 			self::IMAGE_DIMENSIONS,
-			self::GAP,
+			self::GAPS,
 
 			self::WP_WIDGET,
 

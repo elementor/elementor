@@ -52,7 +52,7 @@ class Control_Dimensions extends Control_Base_Units {
 		);
 	}
 
-	public function get_single_name() {
+	public function get_singular_name() {
 		return 'dimension';
 	}
 
@@ -97,7 +97,7 @@ class Control_Dimensions extends Control_Base_Units {
 	 * @access public
 	 */
 	public function content_template() {
-		$class_name = $this->get_single_name();
+		$class_name = $this->get_singular_name();
 		?>
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>

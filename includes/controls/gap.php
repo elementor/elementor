@@ -26,7 +26,7 @@ class Control_Gap extends Control_Dimensions {
 	 * @return string Control type.
 	 */
 	public function get_type() {
-		return 'gap';
+		return 'gaps';
 	}
 
 	/**
@@ -50,7 +50,7 @@ class Control_Gap extends Control_Dimensions {
 		);
 	}
 
-	public function get_single_name() {
+	public function get_singular_name() {
 		return 'gap';
 	}
 
