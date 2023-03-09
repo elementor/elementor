@@ -6,6 +6,7 @@ import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
 import Loader from '../components/global/loader';
+import Color from "../components/item/color";
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -68,13 +69,13 @@ export default function ColorsArea() {
 			<Section title="System Colors"
 				source={ settings.system_colors }
 				colorWidth="191px"
-				component="Color"
+				component={ Color }
 				type="system"
 			/>
 			<Section title="Custom Colors"
 				source={ settings.custom_colors }
 				colorWidth="114px"
-				component="Color"
+				component={ Color}
 				type="custom"
 			/>
 		</Wrapper>

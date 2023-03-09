@@ -6,6 +6,7 @@ import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
 import Loader from '../components/global/loader';
+import Font from "../components/item/font";
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -71,12 +72,14 @@ export default function FontsArea() {
 			<Section title="System Fonts"
 				source={ settings.system_typography }
 				type="system"
-				component="Font"
+			         flex={ 'column' }
+			         component={ Font }
 			/>
 			<Section title="Custom Fonts"
 				source={ settings.custom_typography }
 				type="custom"
-				component="Font"
+			         flex={ 'column' }
+			         component={ Font }
 			/>
 		</Wrapper>
 	);

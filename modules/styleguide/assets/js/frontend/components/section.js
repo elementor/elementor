@@ -1,44 +1,34 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components'
 import SectionTitle from './section-title';
-import Font from './item/font';
-import Color from './item/color';
 import InnerWrapper from './global/inner-wrapper';
 
 const Wrapper = styled.div`
-	margin-top: 55px;
+  margin-top: 55px;
 `;
 
 const Content = styled.div`
-	display: flex;
-	width: 100%;
+  display: flex;
+  width: 100%;
 
-	${ ( { flex } ) => flex && css`
-		flex-direction: ${ 'column' === flex ? 'column' : 'row' };
-		flex-wrap: ${ 'column' === flex ? 'nowrap' : 'wrap' };
-	` };
+  ${ ( { flex } ) => flex && css`
+    flex-direction: ${ 'column' === flex ? 'column' : 'row' };
+    flex-wrap: ${ 'column' === flex ? 'nowrap' : 'wrap' };
+  ` };
 `;
 
 export default function Section( props ) {
-	const { title, source, component, type } = props;
-
-	const getComponent = ( props ) => {
-		Font: <Font { ...props } />,
-		Color: <Color { ...props } />,
-	};
-
-	const CurrentComponent = getComponent( component );
+	const { title, source, component: Item, type, flex = 'row' } = props;
 
 	return (
 		<Wrapper>
 			<SectionTitle>{ title }</SectionTitle>
 			<InnerWrapper>
-				<Content>
+				<Content flex={ flex }>
 					{
 						source.map( ( item ) => {
-							let Component = getComponent( component, item, type );
 							return (
-								<CurrentComponent
+								<Item
 									key={ item._id }
 									item={ item }
 									type={ type ? type : null }
@@ -55,6 +45,6 @@ export default function Section( props ) {
 Section.propTypes = {
 	title: PropTypes.string.isRequired,
 	source: PropTypes.array.isRequired,
-	component: PropTypes.oneOf( [ 'Color', 'Font' ] ).isRequired,
+	component: PropTypes.func.isRequired,
 	type: PropTypes.string,
 };

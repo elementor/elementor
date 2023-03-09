@@ -84,15 +84,15 @@ export default function Font( props ) {
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
 
-	const { isLoading, settings } = useSettings();
+	const { isLoading, settings } = useSettings(props);
 
 	const style = useMemo( () => {
 		if ( isLoading ) {
 			return {};
 		}
 
-		parseFontToStyle( font, settings.fallback_font );
-	}, [ font, settings ] );
+		parseFontToStyle( item, settings.fallback_font );
+	}, [ item, settings ] );
 
 	const Title = styled( ElementTitle )`
       font-size: 18px;
