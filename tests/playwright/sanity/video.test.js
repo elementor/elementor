@@ -23,7 +23,7 @@ test.describe( 'Video tests inside a container', () => {
 		} );
 	} );
 
-	test.only( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
+	test( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
@@ -67,7 +67,7 @@ test.describe( 'Video tests inside a section', () => {
 		} );
 	} );
 
-	test.only( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
+	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
