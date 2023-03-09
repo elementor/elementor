@@ -836,7 +836,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
-		}, 0 );
+		} );
 	},
 
 	dispatchElementLifeCycleEvent( eventType ) {
