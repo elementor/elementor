@@ -212,10 +212,10 @@
 		font-size: 14px;
 	}
 
-	.dialog {
+	.dialog-tooltip {
 		&-header {
 			display: flex;
-			padding: 20px;
+			padding: 20px 20px 0;
 			color: $editor-darkest;
 			border-bottom: 1px solid $editor-background;
 			font-weight: 500;
