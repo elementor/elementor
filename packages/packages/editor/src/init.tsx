@@ -1,3 +1,4 @@
+import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { isRTL } from '@wordpress/i18n';
 import Shell from './components/shell';

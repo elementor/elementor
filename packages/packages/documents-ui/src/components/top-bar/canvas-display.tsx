@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Stack } from '@elementor/ui';
 import { useActiveDocument, useHostDocument } from '@elementor/documents';
 import SettingsButton from './settings-button';

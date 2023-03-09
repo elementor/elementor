@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { ToggleButton, ToggleButtonProps, SvgIconProps, SvgIcon, styled } from '@elementor/ui';

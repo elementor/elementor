@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { isRouteActive } from '@elementor/v1-adapters';
 import { useActiveDocument } from '@elementor/documents';

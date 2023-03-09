@@ -5,7 +5,7 @@
   "scripts": {
     "build": "lerna run build",
     "watch": "lerna watch -- lerna run dev --scope=\\$LERNA_PACKAGE_NAME",
-    "dev": "npm run build && concurrently -n lerna,tsc -c blue,green \"npm run watch\" \"tsc -w\"",
+    "dev": "lerna run dev && concurrently -n lerna,tsc -c blue,green \"npm run watch\" \"tsc -w\"",
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
     "lint": "concurrently -n eslint,tsc -c magenta,green \"eslint .\" \"tsc\""
@@ -25,7 +25,6 @@
     "@typescript-eslint/parser": "^5.47.0",
     "@wordpress/eslint-plugin": "^13.7.0",
     "@wordpress/jest-console": "^6.8.0",
-    "@wordpress/readable-js-assets-webpack-plugin": "^2.7.0",
     "babel-jest": "^29.3.1",
     "concurrently": "^7.6.0",
     "eslint": "^8.30.0",

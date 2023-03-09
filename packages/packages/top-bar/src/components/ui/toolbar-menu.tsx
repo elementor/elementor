@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ReactNode } from 'react';
 import { Stack } from '@elementor/ui';
 import { MenuContextProvider } from '../../contexts/menu-context';

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render } from '@testing-library/react';
 import { lazy } from 'react';
 import { inject, getInjectionsOf } from '../injections';

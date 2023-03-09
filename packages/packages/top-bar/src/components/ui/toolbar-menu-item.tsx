@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Box, IconButton, IconButtonProps, Tooltip } from '@elementor/ui';
 
 type Props = IconButtonProps & {

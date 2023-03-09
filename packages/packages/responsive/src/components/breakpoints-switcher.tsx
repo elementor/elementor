@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { BreakpointId } from '../types';
 import useBreakpoints from '../hooks/use-breakpoints';

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { PropsWithChildren } from 'react';
 import { bindMenu, bindTrigger, usePopupState } from '@elementor/ui';
 import ToolbarMenuItem from './toolbar-menu-item';

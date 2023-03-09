@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Store, StoreProvider } from '@elementor/store';
 import { PropsWithChildren } from 'react';
 import { renderHook } from '@testing-library/react-hooks';

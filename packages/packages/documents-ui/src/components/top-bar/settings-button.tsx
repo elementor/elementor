@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Box, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { Document } from '@elementor/documents';

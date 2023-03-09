@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { usePopupState, bindMenu, bindTrigger, Stack, Divider } from '@elementor/ui';
 import { useInjectionsOf } from '@elementor/locations';
 import { LOCATION_MAIN_MENU_DEFAULT, LOCATION_MAIN_MENU_EXITS } from '../../locations';

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Box, ToggleButton, ToggleButtonProps, Tooltip } from '@elementor/ui';
 
 type Props = Omit<ToggleButtonProps, 'onChange'> & {

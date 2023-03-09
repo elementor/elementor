@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Slice } from '../../types';
 import { PropsWithChildren } from 'react';
 import { createSlice } from '../../store';

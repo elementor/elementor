@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Tooltip, Typography, Stack } from '@elementor/ui';
 import { Document } from '@elementor/documents';
 

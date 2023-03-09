@@ -71,7 +71,9 @@ const common = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-react' ],
+						presets: [ '@babel/preset-react', {
+							runtime: 'classic', // We have to use classic runtime because of WordPress which do not expose the new runtime.
+						} ],
 					},
 				},
 			},

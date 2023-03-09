@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { createContext, PropsWithChildren, useContext } from 'react';
 
 type MenuContextValue = {

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Fragment } from 'react';
 import { useInjectionsOf } from '@elementor/locations';
 import { LOCATION_CANVAS_DISPLAY } from '../../locations';

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import SettingsButton from '../settings-button';
 import { openRoute, useRouteStatus } from '@elementor/v1-adapters';
 import { render } from '@testing-library/react';

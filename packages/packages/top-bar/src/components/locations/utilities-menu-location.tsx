@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Fragment } from 'react';
 import { useInjectionsOf } from '@elementor/locations';
 import ToolbarMenu from '../ui/toolbar-menu';

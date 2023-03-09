@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Location, Filler, Injection, InjectionOptions, Name, Id } from './types';
 import FillerWrapper from './components/filler-wrapper';
 

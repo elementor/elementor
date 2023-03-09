@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { Settings, SettingsProvider, useSettings } from '../settings-context';
 

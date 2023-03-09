@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMenuContext } from '../../contexts/menu-context';
 import PopoverMenuItem from '../ui/popover-menu-item';
 import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';

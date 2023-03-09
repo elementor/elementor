@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Portal as BasePortal, PortalProps } from '@elementor/ui';
 import { isRouteActive, routeCloseEvent, routeOpenEvent, useListenTo } from '@elementor/v1-adapters';
 

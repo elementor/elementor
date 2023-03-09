@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Slot } from '@elementor/locations';
 import { LOCATION_PRIMARY_ACTION } from '../../locations';
 

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useActiveDocument, useActiveDocumentActions } from '@elementor/documents';
 import { Button, CircularProgress, Paper } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';

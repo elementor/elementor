@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import CanvasDisplay from '../canvas-display';

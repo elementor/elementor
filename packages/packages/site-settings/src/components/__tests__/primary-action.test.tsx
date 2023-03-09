@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import PrimaryAction from '../primary-action';
 import { createMockDocument } from 'test-utils';

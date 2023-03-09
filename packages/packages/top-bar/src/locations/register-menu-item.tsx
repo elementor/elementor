@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { ComponentPropsWithoutRef, ElementType } from 'react';
 import { inject } from '@elementor/locations';
 import {

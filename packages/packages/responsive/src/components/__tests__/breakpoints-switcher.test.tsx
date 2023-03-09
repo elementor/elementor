@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Breakpoint } from '../../types';
 import { render } from '@testing-library/react';
 import useBreakpoints from '../../hooks/use-breakpoints';
