@@ -171,7 +171,7 @@ export default class NestedTabs extends Base {
 
 		setTimeout( () => {
 			$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		}, 10 );
+		} );
 
 		$requestedTitle.attr( {
 			tabindex: '0',
