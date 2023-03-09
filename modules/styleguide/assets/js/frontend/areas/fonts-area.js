@@ -4,6 +4,16 @@ import FontsSection from '../components/fonts-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+	width: 100%;
+	margin-top: 95px;
+
+	@media (max-width: 640px) {
+		margin-top: 45px;
+	}
+`;
 
 export default function FontsArea() {
 	const ref = useRef( null );
@@ -55,7 +65,7 @@ export default function FontsArea() {
 	}
 
 	return (
-		<div ref={ ref }>
+		<Wrapper ref={ ref }>
 			<AreaTitle name="fonts">global fonts</AreaTitle>
 			<FontsSection title="System Fonts"
 				source={ settings.system_typography }
@@ -65,6 +75,6 @@ export default function FontsArea() {
 				source={ settings.custom_typography }
 				type="custom"
 			/>
-		</div>
+		</Wrapper>
 	);
 }
