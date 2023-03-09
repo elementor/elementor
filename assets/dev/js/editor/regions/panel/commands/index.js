@@ -5,5 +5,3 @@ export { Open } from './open';
 export { Publish } from './publish';
 export { Save } from './save';
 export { Toggle } from './toggle';
-export { ToggleControl } from './toggle-control';
-export { ControlToggled } from './control-toggled';

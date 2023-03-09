@@ -268,7 +268,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	runToggledCommand() {
-		$e.run( 'panel/control-toggled', { controlView: this } );
+		$e.run( 'controls/color-toggled', { controlView: this } );
 	}
 
 	onBeforeDestroy() {

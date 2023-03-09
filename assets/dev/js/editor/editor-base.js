@@ -26,6 +26,7 @@ import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
+import ControlsComponent from './controls/component';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -399,6 +400,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.components.register( new DocumentComponent() );
 
 		$e.components.register( new PreviewComponent() );
+
+		$e.components.register( new ControlsComponent() );
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
