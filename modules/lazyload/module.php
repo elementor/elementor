@@ -73,7 +73,10 @@ class Module extends BaseModule {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
-						$control = $this->apply_dominant_color_background( $control, $value, $selector );
+
+						if ( $is_dominant_color_enabled ) {
+							$control = $this->apply_dominant_color_background( $control, $value, $selector );
+						}
 					}
 				}
 			}
@@ -98,7 +101,7 @@ class Module extends BaseModule {
 
 	private function apply_dominant_color_background( $control, $value, $selector ) {
 
-		if ( ! $this->image_extension_validation( $value ) || ! $this->is_dominant_color_enabled() ) {
+		if ( ! $this->image_extension_validation( $value ) ) {
 			return $control;
 		}
 
