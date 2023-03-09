@@ -840,7 +840,19 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	dispatchElementLifeCycleEvent( eventType ) {
-		const renderedEvent = new CustomEvent( `elementor/editor/element-${ eventType }`, { detail: { elementView: this } } );
+		let event;
+
+		// Event name set like this for maintainability.
+		switch ( eventType ) {
+			case 'rendered':
+				event = 'elementor/editor/element-rendered';
+				break;
+			case 'destroyed':
+				event = 'elementor/editor/element-destroyed';
+				break;
+		}
+
+		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
 	},
 
@@ -923,9 +935,7 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.data.trigger( 'element:destroy', this.model );
 
 		// Defer so the event is fired after the element is removed from the DOM.
-		setTimeout( () => {
-			this.dispatchElementLifeCycleEvent( 'destroyed' );
-		}, 0 );
+		setTimeout( () => this.dispatchElementLifeCycleEvent( 'destroyed' ) );
 	},
 
 	// eslint-disable-next-line jsdoc/require-returns-check
