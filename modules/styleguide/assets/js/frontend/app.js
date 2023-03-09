@@ -1,6 +1,6 @@
-import React, { createContext, useEffect, useRef } from 'react';
+import React, { createContext, useRef } from 'react';
 import styled from 'styled-components';
-import useSettings from './hooks/use-site-settings';
+import useSettings from './hooks/use-settings';
 import ActiveElementProvider from './providers/active-element-provider';
 import Header from './areas/header';
 import ColorsArea from './areas/colors-area';
@@ -8,11 +8,12 @@ import FontsArea from './areas/fonts-area';
 
 export const ConfigContext = createContext( {} );
 
-const Wrapper = styled.div`
+const Content = styled.div`
 	padding-top: 50px;
 `;
 
-export default function App( { config } ) {
+export default function App() {
+	const { isLoading, settings } = useSettings();
 	const fontsRef = useRef( null );
 	const colorsRef = useRef( null );
 	const anchors = {
@@ -20,18 +21,22 @@ export default function App( { config } ) {
 		fonts: fontsRef,
 	};
 
-	const { settings } = useSettings( config.settings );
+	if ( isLoading ) {
+		return <div>Loading</div>;
+		// TODO: Replace by a normal loader
+	}
+
 	const { is_debug: isDebug } = settings,
 		Wrapper = isDebug ? React.StrictMode : React.Fragment;
 
 	return (
 		<Wrapper>
 			<ActiveElementProvider>
-				<ConfigContext.Provider value={ config }>
-					<Header anchors={ anchors } />
-						<ColorsArea ref={ colorsRef } settings={ settings } />
-						<FontsArea ref={ fontsRef } settings={ settings } />
-				</ConfigContext.Provider>
+				<Header anchors={ anchors } />
+				<Content>
+					<ColorsArea />
+					<FontsArea />
+				</Content>
 			</ActiveElementProvider>
 		</Wrapper>
 	);

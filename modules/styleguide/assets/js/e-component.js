@@ -1,11 +1,12 @@
-import * as commands from './commands';
+import * as commands from './commands/ui';
+import * as commandsData from './commands/data';
 
 require( './lib/dialog' );
 
 export default class extends $e.modules.ComponentBase {
 	activeKitId = 0;
 
-	isShown = false;
+	isStyleguideShown = false;
 
 	constructor( args ) {
 		super( args );
@@ -36,6 +37,10 @@ export default class extends $e.modules.ComponentBase {
 		return this.importCommands( commands );
 	}
 
+	defaultData() {
+		return this.importCommands( commandsData );
+	}
+
 	initModal() {
 		let modal;
 
@@ -44,8 +49,8 @@ export default class extends $e.modules.ComponentBase {
 				return modal;
 			}
 
-			modal = elementorCommon.dialogsManager.createWidget( 'styleguide-preview', {
-				id: 'e-styleguide-preview',
+			modal = elementorCommon.dialogsManager.createWidget( 'styleguide', {
+				id: 'e-styleguide-preview-dialog',
 				className: 'elementor-hidden e-hidden',
 				message: `<div class="elementor-${ this.activeKitId } e-styleguide-preview-root"></div>`,
 				position: {
@@ -66,13 +71,13 @@ export default class extends $e.modules.ComponentBase {
 	}
 
 	/**
-	 * Show the Style Guide Preview.
+	 * Show the Styleguide Preview.
 	 * If skipPreferences is true, it will not check the User Preferences before showing the dialog.
 	 *
 	 * @param {boolean} skipPreferencesCheck
 	 */
 	showStyleguidePreview( skipPreferencesCheck = false ) {
-		if ( this.isShown || ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_styleguide_preview' ) ) ) {
+		if ( this.isStyleguideShown || ( ! skipPreferencesCheck && ! elementor.getPreferences( 'enable_styleguide_preview' ) ) ) {
 			return;
 		}
 
@@ -81,11 +86,11 @@ export default class extends $e.modules.ComponentBase {
 			'*',
 		);
 		this.getModal().getElements( 'widget' ).removeClass( 'e-hidden' );
-		this.isShown = true;
+		this.isStyleguideShown = true;
 	}
 
 	/**
-	 * Hide the Style Guide Preview.
+	 * Hide the Styleguide Preview.
 	 */
 	hideStyleguidePreview() {
 		this.getPreviewFrame().postMessage(
@@ -93,7 +98,7 @@ export default class extends $e.modules.ComponentBase {
 			'*',
 		);
 		this.getModal().getElements( 'widget' ).addClass( 'e-hidden' );
-		this.isShown = false;
+		this.isStyleguideShown = false;
 	}
 
 	/**
@@ -120,10 +125,20 @@ export default class extends $e.modules.ComponentBase {
 		} );
 	}
 
+	/**
+	 * Check if the current script context is the Editor.
+	 *
+	 * @return {boolean}
+	 */
 	isInEditor() {
 		return !! window.elementor;
 	}
 
+	/**
+	 * Get the Preview Frame.
+	 *
+	 * @return {Window}
+	 */
 	getPreviewFrame() {
 		return this.isInEditor()
 			? elementor.$preview[ 0 ].contentWindow

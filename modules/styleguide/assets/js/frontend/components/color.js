@@ -4,8 +4,8 @@ import ElementTitle from './element-title';
 import ElementWrapper from './element-wrapper';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../../utils/web-cli';
-import { sendCommand } from '../../utils/send-command';
+import { goToRoute, isInRoute } from '../utils/web-cli';
+import { sendCommand } from '../utils/send-command';
 
 const Content = styled.div`
   display: flex;
