@@ -79,6 +79,14 @@ class Module extends BaseModule {
 	}
 
 	private function apply_dominant_color_background( $control, $value, $selector ) {
+		// Disable 'Dominant Color' on PNG and GIF images
+		$url = $value['url'];
+		$ignored_extensions = [ 'png', 'gif' ];
+
+		if ( in_array( pathinfo( $url, PATHINFO_EXTENSION ), $ignored_extensions, true ) ) {
+			return $control;
+		}
+
 		$metadata = wp_get_attachment_metadata( $value['id'] );
 		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
 		if ( $dominant_color ) {
