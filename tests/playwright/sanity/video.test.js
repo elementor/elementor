@@ -23,7 +23,7 @@ test.describe( 'Video tests inside a container', () => {
 		} );
 	} );
 
-	test( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
+	test.only( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
@@ -36,7 +36,7 @@ test.describe( 'Video tests inside a container', () => {
 		await editor.activatePanelTab( 'advanced' );
 		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
 
-		const container = editor.getFrame().locator( `.elementor-element-${ containerId }` ),
+		const container = await editor.getFrame().locator( `.elementor-element-${ containerId }` ),
 			containerHeight = await container.boundingBox().height,
 			videoIframeHeight = await editor.getFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox().height;
 
@@ -67,12 +67,12 @@ test.describe( 'Video tests inside a section', () => {
 		} );
 	} );
 
-	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
+	test.only( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = editor.getFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			column = await editor.getFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 
