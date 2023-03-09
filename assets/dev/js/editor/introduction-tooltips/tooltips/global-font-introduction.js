@@ -43,6 +43,11 @@ export default class GlobalColorIntroduction {
 					my: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + '0 top0',
 					at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ' top-10',
 				},
+				hide: {
+					onOutsideClick: false,
+					onBackgroundClick: false,
+					onEscKeyPress: false,
+				},
 			},
 		} );
 

@@ -5,7 +5,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import ElementsManager from './elements/manager';
-import TooltipsManager from './tooltips/manager';
+import IntroductionTooltipsManager from './introduction-tooltips/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -389,7 +389,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.browserImport = new BrowserImport();
 
-		this.tooltips = new TooltipsManager();
+		this.introductionTooltips = new IntroductionTooltipsManager();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
