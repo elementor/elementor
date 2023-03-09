@@ -212,8 +212,8 @@ $font-family-monospace: monospace;
 
 // Dimensions base css
 @mixin dimensions($control-name) {
-		.elementor-control-type-#{$control-name},
-		.elementor-control-type-#{$control-name}s {
+	.elementor-control-type-#{$control-name},
+	.elementor-control-type-#{$control-name}s {
 
 		.elementor-control-#{$control-name}s {
 			display: flex;
