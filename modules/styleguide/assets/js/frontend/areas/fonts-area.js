@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import AreaTitle from '../components/area-title';
+import AreaTitle from './area-title';
 import FontsSection from '../components/fonts-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
+import Loader from '../components/global/loader';
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -18,7 +19,8 @@ const Wrapper = styled.div`
 export default function FontsArea() {
 	const ref = useRef( null );
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
-	const { isLoading, settings } = useSettings();
+
+	const { isLoading, settings } = useSettings( { type: 'typography' } );
 
 	const onPopoverToggle = ( event ) => {
 		const name = event.detail.container.model.attributes.name;
@@ -60,8 +62,7 @@ export default function FontsArea() {
 	}, [] );
 
 	if ( isLoading ) {
-		return <div>Loading</div>;
-		// TODO: Replace by a normal loader
+		return <Loader />;
 	}
 
 	return (

@@ -5,7 +5,7 @@ import Font from './font';
 import InnerWrapper from './global/inner-wrapper';
 
 const Wrapper = styled.div`
-	margin-top:55px;
+	margin-top: 55px;
 `;
 
 const Content = styled.div`
@@ -14,17 +14,29 @@ const Content = styled.div`
 	width: 100%;
 `;
 
-const FontsSection = ( { title, source } ) => {
+export default function Section( props ) {
+	const { title, source, component, type } = props;
+
 	return (
 		<Wrapper>
 			<SectionTitle>{ title }</SectionTitle>
 			<InnerWrapper>
 				<Content>
-					{ source.map( ( font ) => <Font key={ font._id } font={ font } /> ) }
+					{
+						source.map( ( item ) => (
+
+							<Font key={ font._id } font={ font } />
+						) )
+					}
 				</Content>
 			</InnerWrapper>
 		</Wrapper>
 	);
-};
+}
 
-export default FontsSection;
+Section.propTypes = {
+	title: PropTypes.string.isRequired,
+	source: PropTypes.array.isRequired,
+	component: PropTypes.oneOf( [ 'colors', 'fonts' ] ).isRequired,
+	type: PropTypes.string,
+};

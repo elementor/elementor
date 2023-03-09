@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import ElementWrapper from './element-wrapper';
-import ElementTitle from './element-title';
+import ElementWrapper from './global/element-wrapper';
+import ElementTitle from './global/element-title';
 import { ConfigContext } from '../app';
 import useIsActive from '../hooks/use-is-active';
 import { togglePopover } from '../utils/panel-behaviour';
@@ -65,17 +65,21 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 	const objectToString = ( obj ) => Object.keys( obj ).reduce( ( acc, key ) => acc + `${ key }: ${ obj[ key ] };`, '' );
 
 	return `
-		  ${ objectToString( style ) }
-		  @media (max-width: 1024px) {
-		    ${ objectToString( tablet ) }
-		  }
-		  @media (max-width: 767px) {
-		    ${ objectToString( mobile ) }
-          }
+		${ objectToString( style ) }
+
+		@media (max-width: 1024px) {
+			${ objectToString( tablet ) }
+		}
+
+		@media (max-width: 767px) {
+			${ objectToString( mobile ) }
+		}
 	`;
 };
 
-const Font = ( { font, type } ) => {
+export default function Font( props ) {
+	const { font, type } = props;
+
 	const source = 'typography';
 	const { _id, title } = font;
 
@@ -125,6 +129,4 @@ const Font = ( { font, type } ) => {
 			</Content>
 		</ElementWrapper>
 	);
-};
-
-export default Font;
+}

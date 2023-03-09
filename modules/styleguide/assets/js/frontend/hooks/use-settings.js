@@ -2,7 +2,9 @@ import { useEffect, useState, useMemo } from 'react';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import debounce from '../utils/debounce';
 
-export default function useSettings() {
+export default function useSettings( props ) {
+	const { type } = props;
+
 	const STATE_LOADING = 'loading';
 	const STATE_READY = 'ready';
 	const STATE_ERROR = 'error';

@@ -2,7 +2,7 @@ import React from 'react';
 import Color from './color';
 import SectionTitle from './section-title';
 import styled from 'styled-components';
-import InnerWrapper from '../areas/inner-wrapper';
+import InnerWrapper from './global/inner-wrapper';
 
 const Wrapper = styled.div`
 	margin-top:55px;
@@ -14,10 +14,12 @@ const Content = styled.div`
 	width:100%;
 `;
 
-const ColorsSection = ( { title, source, type } ) => {
+export default function ColorsSection( props ) {
+	const { title, source, type } = props;
+
 	return (
 		<Wrapper>
-			<SectionTitle> { title } </SectionTitle>
+			<SectionTitle>{ title }</SectionTitle>
 			<InnerWrapper>
 				<Content>
 					{ source.map( ( color ) =>
@@ -30,6 +32,10 @@ const ColorsSection = ( { title, source, type } ) => {
 			</InnerWrapper>
 		</Wrapper>
 	);
-};
+}
 
-export default ColorsSection;
+ColorsSection.propTypes = {
+	title: PropTypes.string.isRequired,
+	source: PropTypes.array.isRequired,
+	type: PropTypes.string.isRequired,
+};
