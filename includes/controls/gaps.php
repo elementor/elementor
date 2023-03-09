@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.13.0
  */
 
-class Control_Gap extends Control_Dimensions {
+class Control_Gaps extends Control_Dimensions {
 	/**
 	 * Get gap control type.
 	 *
