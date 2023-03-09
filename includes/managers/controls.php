@@ -237,6 +237,11 @@ class Controls_Manager {
 	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
+	 * Gaps control.
+	 */
+	const GAPS = 'gaps';
+
+	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -393,6 +398,7 @@ class Controls_Manager {
 			self::CODE,
 			self::FONT,
 			self::IMAGE_DIMENSIONS,
+			self::GAPS,
 
 			self::WP_WIDGET,
 
