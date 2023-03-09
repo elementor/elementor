@@ -1,4 +1,4 @@
-import { Document, ExtendedWindow, V1Document } from '../';
+import { Document, ExtendedWindow, V1Document } from '../types';
 
 export function getV1DocumentsManager() {
 	const documentsManager = ( window as unknown as ExtendedWindow ).elementor?.documents;
