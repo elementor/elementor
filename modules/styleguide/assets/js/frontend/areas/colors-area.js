@@ -4,6 +4,16 @@ import ColorsSection from '../components/colors-section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+	width: 100%;
+	margin-top: 95px;
+
+	@media (max-width: 1024px) {
+		margin-top: 45px;
+	}
+`;
 
 export default function ColorsArea() {
 	const ref = useRef( null );
@@ -52,7 +62,7 @@ export default function ColorsArea() {
 	}
 
 	return (
-		<div ref={ ref }>
+		<Wrapper ref={ ref }>
 			<AreaTitle name="colors">Global Colors</AreaTitle>
 			<ColorsSection title="System Colors"
 				source={ settings.system_colors }
@@ -64,6 +74,6 @@ export default function ColorsArea() {
 				colorWidth="114px"
 				type="custom"
 			/>
-		</div>
+		</Wrapper>
 	);
 }
