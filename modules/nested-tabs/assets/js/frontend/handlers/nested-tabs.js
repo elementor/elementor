@@ -139,17 +139,17 @@ export default class NestedTabs extends Base {
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle[0]?.classList.remove( activeClass );
-		$activeContent[0]?.classList.remove( activeClass );
+			$activeTitle[0]?.classList.remove( activeClass );
+			$activeContent[0]?.classList.remove( activeClass );
 
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
+			$activeTitle.attr( {
+				tabindex: '-1',
+				'aria-selected': 'false',
+				'aria-expanded': 'false',
+			} );
 
-		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+			$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
+			$activeContent.attr( 'hidden', 'hidden' );
 	}
 
 	onHideTabContent( $activeContent ) {}
