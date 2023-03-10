@@ -139,15 +139,40 @@ export default class NestedTabs extends Base {
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
 
-		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+			$activeTitle.add( $activeContent ).removeClass( activeClass ),
+
+			$activeTitle.attr( {
+				tabindex: '-1',
+				'aria-selected': 'false',
+				'aria-expanded': 'false',
+			} ),
+
+			$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) ),
+			$activeContent.attr( 'hidden', 'hidden' )
+
+
+		// 	<h1 id="demo"></h1>
+		// <h2 id="test"></h2>
+		//
+		// <script>
+		// 	async function myDisplay() {
+		// 	let myPromise = new Promise(function(resolve, reject) {
+		// 	setTimeout( () => {
+		// 	resolve("I love You !!");
+		// }, 2000 );
+		// });
+		// 	document.getElementById("demo").innerHTML = await myPromise;
+		// 	test();
+		// }
+		//
+		// 	myDisplay();
+		//
+		// 	function test() {
+		// 	document.getElementById("test").innerHTML = 'tweede';
+		// }
+		// </script>
+
 	}
 
 	onHideTabContent( $activeContent ) {}
@@ -169,9 +194,9 @@ export default class NestedTabs extends Base {
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		setTimeout( () => {
+		// setTimeout( () => {
 			$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		} );
+		// } );
 
 		$requestedTitle.attr( {
 			tabindex: '0',
