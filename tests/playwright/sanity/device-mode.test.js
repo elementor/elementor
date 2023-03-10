@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 
 test.describe( 'Device mode', () => {
-    test.only( 'Correct device mode is returned', async ( { page }, testInfo ) => {
+    test( 'Correct device mode is returned', async ( { page }, testInfo ) => {
 		await page.goto( '/' );
 
 		const deviceMode = await page.evaluate( () => {
