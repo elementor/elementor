@@ -1,11 +1,17 @@
 const { test, expect } = require( '@playwright/test' );
 
 test.describe( 'Device mode', () => {
-    test( 'Correct device mode is returned', async ( { page }, testInfo ) => {
-		await page.goto( '/' );
+    test( 'Correct device mode is returned on Desktop', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'heading', container );
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.e-con' );
 
 		const deviceMode = await page.evaluate( () => {
-			return window.elementorFrontend.getCurrentDeviceMode();
+			return elementorFrontend.getCurrentDeviceMode();
 		} );
 
 		const isInDesktopMode = 'desktop' === deviceMode;
