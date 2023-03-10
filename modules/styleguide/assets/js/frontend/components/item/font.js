@@ -84,7 +84,7 @@ export default function Font( props ) {
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
 
-	const { isLoading, settings } = useSettings(props);
+	const { isLoading, settings } = useSettings( props );
 
 	const style = useMemo( () => {
 		if ( isLoading ) {

@@ -1,20 +1,20 @@
 import React from 'react';
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components';
 import SectionTitle from './section-title';
 import InnerWrapper from './global/inner-wrapper';
 
 const Wrapper = styled.div`
-  margin-top: 55px;
+	margin-top: 55px;
 `;
 
 const Content = styled.div`
-  display: flex;
-  width: 100%;
+	display: flex;
+	width: 100%;
 
-  ${ ( { flex } ) => flex && css`
-    flex-direction: ${ 'column' === flex ? 'column' : 'row' };
-    flex-wrap: ${ 'column' === flex ? 'nowrap' : 'wrap' };
-  ` };
+	${ ( { flex } ) => flex && css`
+		flex-direction: ${ 'column' === flex ? 'column' : 'row' };
+		flex-wrap: ${ 'column' === flex ? 'nowrap' : 'wrap' };
+	` };
 `;
 
 export default function Section( props ) {
