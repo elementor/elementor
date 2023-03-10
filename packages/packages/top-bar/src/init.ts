@@ -1,6 +1,6 @@
-import { registerLink } from './';
+import { registerLink } from './locations';
 import { __ } from '@wordpress/i18n';
-import { WordpressIcon } from './icons';
+import { WordpressIcon } from '@elementor/icons';
 import TopBar from './components/top-bar';
 import { injectIntoTop, useSettings } from '@elementor/editor';
 

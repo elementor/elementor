@@ -55,7 +55,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
 			await this.page.click( '#elementor-navigator__close' );
@@ -102,9 +102,13 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {string}  widgetType
 	 * @param {string}  container           - Optional Container to create the element in.
 	 * @param {boolean} isContainerASection - Optional. Is the container a section.
+	 * @return {Promise<string>}			- widget ID
 	 */
 	async addWidget( widgetType, container = null, isContainerASection = false ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+
+		return widgetId;
 	}
 
 	/**
@@ -125,7 +129,13 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {import('@playwright/test').Frame|null}
 	 */
 	getPreviewFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+		const previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		if ( ! this.previewFrame ) {
+			this.previewFrame = previewFrame;
+		}
+
+		return previewFrame;
 	}
 
 	/**
@@ -440,7 +450,7 @@ module.exports = class EditorPage extends BasePage {
 			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
 			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
 			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
 		] );
 
 		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();

@@ -7,6 +7,8 @@ type State = {
 	hostId: Document['id'] | null, // The document that host all the other documents.
 }
 
+export type Slice = ReturnType<typeof createSlice>;
+
 const initialState: State = {
 	entities: {},
 	activeId: null,

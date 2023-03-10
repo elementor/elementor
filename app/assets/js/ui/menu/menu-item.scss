@@ -6,7 +6,7 @@ $menu-item-padding-y: spacing(8);
 $menu-item-padding-x: spacing(30);
 $menu-item-height: spacing(44);
 $menu-item-pointer-width: spacing(5);
-$menu-item-pointer-color: theme-elements-colors(link-color);
+$menu-item-pointer-color: tints(900);
 $menu-item-action-button-padding: spacing(10);
 $menu-item-action-button-margin: spacing(20);
 $menu-item-action-button-color: tints(300);
@@ -16,28 +16,33 @@ $menu-item-transition: $eps-transition-duration;
 
 $menu-item-color: tints(600);
 $menu-item-color-hover: tints(700);
-$menu-item-background-color-active: theme-colors(light);
-$menu-item-icon-color: tints(500);
+$menu-item-color-active: tints(900);
+$menu-item-background-color-hover: tints(25);
+$menu-item-background-color-active: tints(75);
+
 
 :root {
 	--menu-item-color: #{$menu-item-color};
 	--menu-item-color-hover: #{$menu-item-color-hover};
+	--menu-item-color-active: #{$menu-item-color-active};
+	--menu-item-background-color-hover: #{$menu-item-background-color-hover};
 	--menu-item-background-color-active: #{$menu-item-background-color-active};
-	--menu-item-icon-color: #{$menu-item-icon-color};
 	--menu-item-action-button-color: #{$menu-item-action-button-color};
 }
 
 $menu-item-dark-color: dark-tints(100);
-$menu-item-dark-color-hover: dark-tints(100);
-$menu-item-dark-background-color-active: dark-tints(600);
-$menu-item-icon-dark-color: dark-tints(200);
+$menu-item-dark-color-hover: dark-tints(200);
+$menu-item-dark-color-active: dark-tints(300);
+$menu-item-dark-background-color-hover: dark-tints(750);
+$menu-item-dark-background-color-active: dark-tints(725);
 $menu-item-action-button-dark-color: dark-tints(400);
 
 .eps-theme-dark {
 	--menu-item-color: #{$menu-item-dark-color};
 	--menu-item-color-hover: #{$menu-item-dark-color-hover};
+	--menu-item-color-active: #{$menu-item-dark-color-active};
+	--menu-item-background-color-hover: #{$menu-item-dark-background-color-hover};
 	--menu-item-background-color-active: #{$menu-item-dark-background-color-active};
-	--menu-item-icon-color: #{$menu-item-icon-dark-color};
 	--menu-item-action-button-color: #{$menu-item-action-button-dark-color};
 }
 
@@ -59,18 +64,17 @@ $menu-item-action-button-dark-color: dark-tints(400);
 		background-color: $menu-item-pointer-color;
 	}
 
-	&:hover {
+	&:hover:not(.eps-menu-item--active) {
+		background-color: var(--menu-item-background-color-hover);
 		--action-button-opacity: 1;
-	}
-
-	&:hover, &--active {
 		--menu-item-color: var(--menu-item-color-hover);
 		--eps-link-color: var(--menu-item-color-hover);
-		--menu-item-icon-color: #{$menu-item-pointer-color};
 	}
 
 	&--active {
 		background-color: var(--menu-item-background-color-active);
+		--menu-item-color: var(--menu-item-color-active);
+		--eps-link-color: var(--menu-item-color-active);
 	}
 
 	&__link {
@@ -90,13 +94,11 @@ $menu-item-action-button-dark-color: dark-tints(400);
 
 		.eps-icon {
 			font-size: $menu-item-icon-size;
-			color: var(--menu-item-icon-color);
 			margin-inline-end: $menu-item-link-spacing;
 		}
 	}
 
 	&__action-button {
-		color: var(--menu-item-action-button-color);
 		opacity: var(--action-button-opacity);
 		padding: $menu-item-action-button-padding;
 		transition: $menu-item-transition;
@@ -105,10 +107,5 @@ $menu-item-action-button-dark-color: dark-tints(400);
 
 	&--active {
 		--menu-item-pointer-width: #{$menu-item-pointer-width};
-		box-shadow: $menu-item-active-box-shadow;
-
-		.#{$eps-prefix}menu-item__link .eps-icon {
-			color: $menu-item-pointer-color;
-		}
 	}
 }
