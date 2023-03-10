@@ -1,5 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
-const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Device mode', () => {
     test( 'Correct device mode is returned on Desktop', async ( { page }, testInfo ) => {
