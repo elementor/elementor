@@ -8,7 +8,7 @@ test.describe( 'Device mode', () => {
 			return elementorFrontend.getCurrentDeviceMode();
 		} );
 
-		const isInDesktopMode = deviceMode === 'desktop';
+		const isInDesktopMode = 'desktop' === deviceMode;
 
 		expect( isInDesktopMode ).toBeTruthy();
 	} );
