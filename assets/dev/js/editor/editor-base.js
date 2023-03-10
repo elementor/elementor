@@ -170,6 +170,7 @@ export default class EditorBase extends Marionette.Application {
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
+			Gaps: require( 'elementor-controls/gaps' ),
 			Gallery: require( 'elementor-controls/gallery' ),
 			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
