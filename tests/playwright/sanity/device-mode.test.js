@@ -1,15 +1,15 @@
 const { test, expect } = require( '@playwright/test' );
 
 test.describe( 'Device mode', () => {
-    test( 'Correct device mode is returned', async ( { page }, testInfo ) => {
+    test.only( 'Correct device mode is returned', async ( { page }, testInfo ) => {
 		await page.goto( '/' );
 
 		const deviceMode = await page.evaluate( () => {
-			return elementorFrontend.getCurrentDeviceMode();
+			return window.elementorFrontend.getCurrentDeviceMode();
 		} );
 
 		const isInDesktopMode = 'desktop' === deviceMode;
 
-		expect( isInDesktopMode ).toBeTruthy();
+		expect( isInDesktopMode ).toEqual( true );
 	} );
 } );
