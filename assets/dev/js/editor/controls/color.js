@@ -52,6 +52,8 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker = new ColorPicker( options );
 
+		this.hidePickerOnPreviewClick();
+
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
 		this.addTipsyToPickerButton();
@@ -61,6 +63,18 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+	}
+
+	hidePickerOnPreviewClick() {
+		const picker = this.colorPicker.picker;
+		const pickerUtils = picker.constructor.utils;
+		const pickerRoot = picker.getRoot();
+
+		pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], e => {
+			if ( picker.isOpen() && !pickerUtils.eventPath( e ).some( el => el === pickerRoot.app || el === pickerRoot.button ) ) {
+				picker.hide();
+			}
+		} )
 	}
 
 	addTipsyToPickerButton() {
