@@ -13,10 +13,16 @@
 
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
-			font-weight: 700;
+			font-weight: 600;
+			background-color: var(--e-a-btn-bg-brand);
+			color: var(--e-a-btn-color);
+			margin: 3px 10px 0;
+			border-radius: var(--e-a-border-radius);
+			transition: var(--e-a-transition);
 
 			&:hover {
-				color: lighten($editor-accent, 15%);
+				background-color: var(--e-a-btn-bg-brand-hover);
+				box-shadow: none;
 			}
 		}
 
@@ -40,20 +46,6 @@
 
 #e-admin-menu__kit-library {
 	color: $success;
-}
-
-body.admin-color-fresh {
-
-	#adminmenu {
-
-		#toplevel_page_elementor {
-
-			// Menu Go Pro
-			a[href="admin.php?page=go_elementor_pro"] {
-				color: lighten($editor-accent, 10%);
-			}
-		}
-	}
 }
 
 .elementor-plugins-gopro {
@@ -250,7 +242,6 @@ body {
 	margin: auto;
 	max-width: 520px;
 	text-align: center;
-	color: var(--e-a-color-txt);
 	font-family: var(--e-a-font-family);
 
 	i {
