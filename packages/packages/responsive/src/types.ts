@@ -1,4 +1,4 @@
-import { createSlice } from './store';
+import type { createSlice } from './store';
 
 export type BreakpointId = 'widescreen' | 'desktop' | 'laptop' | 'tablet_extra' | 'tablet' | 'mobile_extra' | 'mobile';
 

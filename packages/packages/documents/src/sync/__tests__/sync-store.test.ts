@@ -1,6 +1,6 @@
 import { syncStore } from '../';
-import { createSlice } from '../../store';
-import { ExtendedWindow, Slice, V1Document } from '../../types';
+import { Slice, createSlice } from '../../store';
+import { ExtendedWindow, V1Document } from '../../types';
 import { createStore, SliceState, Store } from '@elementor/store';
 import {
 	dispatchCommandAfter,

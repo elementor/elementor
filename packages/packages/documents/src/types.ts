@@ -1,5 +1,3 @@
-import { createSlice } from './store';
-
 export type Document = {
 	id: number,
 	title: string,
@@ -18,8 +16,6 @@ export type Document = {
 		publish?: boolean,
 	},
 };
-
-export type Slice = ReturnType<typeof createSlice>;
 
 export type ExtendedWindow = Window & {
 	elementor: {
