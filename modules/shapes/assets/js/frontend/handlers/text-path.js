@@ -163,10 +163,11 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 */
 	setText( newText ) {
 		const {
-			url,
 			is_external: isExternal,
 			nofollow,
 		} = this.getElementSettings().link;
+
+		const { linkUrl: url } = this.elements.pathContainer.dataset;
 
 		const target = isExternal ? '_blank' : '',
 			rel = nofollow ? 'nofollow' : '';
