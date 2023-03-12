@@ -170,7 +170,6 @@ export default class NestedTabs extends Base {
 		}
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
-
 		$requestedTitle.attr( {
 			tabindex: '0',
 			'aria-selected': 'true',
@@ -181,7 +180,6 @@ export default class NestedTabs extends Base {
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
-
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
