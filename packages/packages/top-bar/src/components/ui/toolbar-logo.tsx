@@ -35,7 +35,7 @@ const StyledToggleButton = styled( ToggleButton )( () => ( {
 const StyledElementorLogo = styled( ElementorLogo, {
 	shouldForwardProp: ( prop ) => prop !== 'showMenuIcon',
 } )<StyledElementorLogoProps>( ( { theme, showMenuIcon } ) => ( {
-	width: '100%',
+	width: 'auto',
 	height: '100%',
 	'& path': {
 		fill: 'initial',

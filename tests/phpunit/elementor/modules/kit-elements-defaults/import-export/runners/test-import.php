@@ -17,7 +17,6 @@ class Test_Import extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->register( new Mock_Widget_Kits_Defaults() );
 
 		parent::setUp();
-
 	}
 
 	public function tearDown() {
@@ -35,9 +34,13 @@ class Test_Import extends Elementor_Test_Base {
 		$runner->import( [ 'extracted_directory_path' => __DIR__ . '/mock', ], [] );
 
 		// Assert
-		$this->assertEquals( [
+		$this->assertSame( [
 			Mock_Widget_Kits_Defaults::NAME => [
 				'text' => 'value Test value',
+				'slider' => [
+					'size' => 10,
+					'unit' => 'px',
+				],
 				'mock-control-1' => 'value changed on import',
 				'__globals__' => [
 					'color' => 'global-color',

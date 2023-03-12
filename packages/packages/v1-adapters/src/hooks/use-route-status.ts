@@ -1,6 +1,6 @@
 import useIsPreviewMode from './use-is-preview-mode';
 import useIsRouteActive from './use-is-route-active';
-import { RouteEventDescriptor } from '@elementor/v1-adapters';
+import { RouteEventDescriptor } from '../listeners';
 
 type Options = {
 	blockOnKitRoutes?: boolean,
