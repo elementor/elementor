@@ -140,14 +140,14 @@ export default class NestedTabs extends Base {
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
-
-		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+		// $activeTitle.attr( {
+		// 	tabindex: '-1',
+		// 	'aria-selected': 'false',
+		// 	'aria-expanded': 'false',
+		// } );
+		//
+		// $activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
+		// $activeContent.attr( 'hidden', 'hidden' );
 	}
 
 	onHideTabContent( $activeContent ) {}
@@ -169,9 +169,12 @@ export default class NestedTabs extends Base {
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		setTimeout( () => {
-			$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		}, 10 );
+		$requestedTitle.add( $requestedContent ).addClass( activeClass );
+
+		$requestedContent[ settings.showTabFn ](
+			animationDuration,
+			() => this.onShowTabContent( $requestedContent ),
+		);
 
 		$requestedTitle.attr( {
 			tabindex: '0',
@@ -179,10 +182,6 @@ export default class NestedTabs extends Base {
 			'aria-expanded': 'true',
 		} );
 
-		$requestedContent[ settings.showTabFn ](
-			animationDuration,
-			() => this.onShowTabContent( $requestedContent ),
-		);
 		$requestedContent.removeAttr( 'hidden' );
 	}
 
@@ -308,7 +307,9 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			this.activateTab( tabIndex );
+			setTimeout( () => {
+				this.activateTab(tabIndex);
+			}, 10 );
 		}
 	}
 
