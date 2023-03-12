@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import InnerWrapper from './inner-wrapper';
+import InnerWrapper from '../components/global/inner-wrapper';
 
 const Button = styled.button`
 	font-size: 16px;
@@ -31,6 +31,7 @@ const Button = styled.button`
 
 const GoToAnchor = ( props ) => {
 	const { anchor, children } = props;
+
 	return (
 		<Button variant="transparent"
 			size="s"
@@ -80,6 +81,7 @@ const Title = styled.h2`
 
 export default function Header( props ) {
 	const { colors, fonts } = props.anchors;
+
 	return (
 		<Wrapper>
 			<InnerWrapper>

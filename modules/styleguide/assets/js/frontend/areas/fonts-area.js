@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import AreaTitle from '../components/area-title';
-import FontsSection from '../components/fonts-section';
+import AreaTitle from './area-title';
+import Section from '../components/section';
 import { ActiveElementContext } from '../providers/active-element-provider';
 import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
 import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
+import Loader from '../components/global/loader';
+import Font from '../components/item/font';
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -18,7 +20,8 @@ const Wrapper = styled.div`
 export default function FontsArea() {
 	const ref = useRef( null );
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
-	const { isLoading, settings } = useSettings();
+
+	const { isLoading, settings } = useSettings( { type: 'typography' } );
 
 	const onPopoverToggle = ( event ) => {
 		const name = event.detail.container.model.attributes.name;
@@ -60,20 +63,23 @@ export default function FontsArea() {
 	}, [] );
 
 	if ( isLoading ) {
-		return <div>Loading</div>;
-		// TODO: Replace by a normal loader
+		return <Loader />;
 	}
 
 	return (
 		<Wrapper ref={ ref }>
-			<AreaTitle name="fonts">global fonts</AreaTitle>
-			<FontsSection title="System Fonts"
+			<AreaTitle name="fonts">Global Fonts</AreaTitle>
+			<Section title="System Fonts"
 				source={ settings.system_typography }
 				type="system"
+				flex={ 'column' }
+				component={ Font }
 			/>
-			<FontsSection title="Custom Fonts"
+			<Section title="Custom Fonts"
 				source={ settings.custom_typography }
 				type="custom"
+				flex={ 'column' }
+				component={ Font }
 			/>
 		</Wrapper>
 	);

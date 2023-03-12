@@ -5,6 +5,7 @@ import ActiveElementProvider from './providers/active-element-provider';
 import Header from './areas/header';
 import ColorsArea from './areas/colors-area';
 import FontsArea from './areas/fonts-area';
+import Loader from './components/global/loader';
 
 export const ConfigContext = createContext( {} );
 
@@ -13,7 +14,8 @@ const Content = styled.div`
 `;
 
 export default function App() {
-	const { isLoading, settings } = useSettings();
+	const { isLoading, settings } = useSettings( { type: 'config' } );
+
 	const fontsRef = useRef( null );
 	const colorsRef = useRef( null );
 	const anchors = {
@@ -22,8 +24,7 @@ export default function App() {
 	};
 
 	if ( isLoading ) {
-		return <div>Loading</div>;
-		// TODO: Replace by a normal loader
+		return <Loader />;
 	}
 
 	const { is_debug: isDebug } = settings,
