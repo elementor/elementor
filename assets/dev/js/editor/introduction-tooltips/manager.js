@@ -1,7 +1,7 @@
 import GlobalColorIntroduction from './tooltips/global-color-introduction';
 import GlobalFontIntroduction from './tooltips/global-font-introduction';
 
-export default class TooltipsManager {
+export default class IntroductionTooltipsManager {
 	constructor() {
 		this.registerTooltipWidget();
 		this.registerTooltips();

@@ -194,7 +194,7 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: #fff;
+	background-color: $editor-background;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 	border-radius: 3px;
 
@@ -205,7 +205,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, #fff);
+		@include border-end-property(color, $editor-background);
 	}
 
 	&__title {

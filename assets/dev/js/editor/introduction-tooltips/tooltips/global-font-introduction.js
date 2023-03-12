@@ -1,12 +1,8 @@
-export default class GlobalColorIntroduction {
+export default class GlobalFontIntroduction {
 	introductionKey;
 
 	constructor( introductionKey ) {
 		this.introductionKey = introductionKey;
-	}
-
-	getIntroductionViewed() {
-		return elementor.config.user.introduction[ this.introductionKey ] ?? false;
 	}
 
 	bindEvent() {
