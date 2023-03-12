@@ -17,6 +17,8 @@
 			background-color: var(--e-a-btn-bg-brand);
 			color: var(--e-a-btn-color);
 			margin: 3px 10px 0;
+			display: block;
+			text-align: center;
 			border-radius: var(--e-a-border-radius);
 			transition: var(--e-a-transition);
 
@@ -24,10 +26,6 @@
 				background-color: var(--e-a-btn-bg-brand-hover);
 				box-shadow: none;
 			}
-		}
-
-		.dashicons.dashicons-star-filled {
-			height: auto;
 		}
 	}
 
