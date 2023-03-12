@@ -13,7 +13,7 @@ const AreaTitle = styled.h2`
 	word-spacing: 0;
 	text-align: center;
 	padding: 0;
-	margin:0 0 48px 0;
+	margin: 0 0 48px 0;
 `;
 
 export default AreaTitle;

@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import ElementTitle from './element-title';
-import ElementWrapper from './element-wrapper';
-import useIsActive from '../hooks/use-is-active';
-import { togglePopover } from '../utils/panel-behaviour';
-import { goToRoute, isInRoute } from '../utils/web-cli';
-import { sendCommand } from '../utils/send-command';
+import ElementTitle from '../global/element-title';
+import ElementWrapper from '../global/element-wrapper';
+import useIsActive from '../../hooks/use-is-active';
+import { isInRoute } from '../../utils/web-cli';
+import { sendCommand } from '../../utils/send-command';
 
 const Content = styled.div`
 	display: flex;
@@ -34,17 +33,11 @@ const HexString = styled.p`
 	margin: 12px;
 `;
 
-/**
- *
- * @param color { _id, title, color}
- * @param width
- * @param type
- * @return {JSX.Element}
- * @constructor
- */
-const Color = ( { color, type } ) => {
+export default function Color( props ) {
+	const { item, type } = props;
+
 	const source = 'colors';
-	const { _id, title, color: hex } = color;
+	const { _id, title, color: hex } = item;
 
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
@@ -67,6 +60,13 @@ const Color = ( { color, type } ) => {
 			</Content>
 		</ElementWrapper>
 	);
-};
+}
 
-export default Color;
+Color.propTypes = {
+	item: PropTypes.shape( {
+		_id: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
+		color: PropTypes.string.isRequired,
+	} ).isRequired,
+	type: PropTypes.string.isRequired,
+};
