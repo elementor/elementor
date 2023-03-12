@@ -305,9 +305,11 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
+
 			setTimeout( () => {
-				this.activateTab(tabIndex);
+				this.activateTab( tabIndex );
 			}, 10 );
+
 		}
 	}
 
