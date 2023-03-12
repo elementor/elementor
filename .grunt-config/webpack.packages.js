@@ -1,8 +1,11 @@
-const ExtractDependenciesWebpackPlugin = require("../packages/tools/webpack/extract-depndencies-webpack-plugin");
-const ExtractI18nExpressionsWebpackPlugin = require("../packages/tools/webpack/extract-i18n-expressions-webpack-plugin");
+// TODO: THE REQUIRE NOT WORKING - dont know why.
+const ExtractDependenciesWebpackPlugin = require("@elementor/extract-dependencies-webpack-plugin");
+const ExtractI18nExpressionsWebpackPlugin = require("@elementor/extract-i18n-expressions-webpack-plugin");
 const path = require("path");
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
+
+// TODO: Need to make sure it builds the packages before build them here.
 
 const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
 	/-(\w)/g,

@@ -1,9 +1,11 @@
 // Inspired by "Dependency Extraction Webpack Plugin" by @wordpress team.
 // Link: https://github.com/WordPress/gutenberg/tree/trunk/packages/dependency-extraction-webpack-plugin
 
-const { sources: { RawSource } } = require( 'webpack' );
+// TODO: Please convert me to TypeScript.
 
-module.exports = class ExtractDependenciesWebpackPlugin {
+import { sources } from 'webpack';
+
+export class ExtractDependenciesWebpackPlugin {
 	generateHandleName;
 	replaceDependencyNames;
 	generateAssetsFileName;
@@ -42,7 +44,7 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 					);
 
 					// Add source and file into compilation for webpack to output.
-					compilation.assets[ assetFilename ] = new RawSource( content );
+					compilation.assets[ assetFilename ] = new sources.RawSource( content );
 
 					chunk.files.add( assetFilename );
 				} );
@@ -128,4 +130,4 @@ return [
 	defaultGenerateHandleName( name ) {
 		return `elementor-packages-${ name }`;
 	}
-};
+}

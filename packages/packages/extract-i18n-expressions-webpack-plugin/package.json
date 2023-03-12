@@ -1,0 +1,12 @@
+{
+	"name": "@elementor/extract-i18n-experssions-webpack-plugin",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"scripts": {
+		"build": "tsup src/index.js --format esm,cjs",
+		"dev": "tsup src/index.js --format esm"
+	},
+	"peerDependencies": {
+		"webpack": "5.x"
+	}
+}

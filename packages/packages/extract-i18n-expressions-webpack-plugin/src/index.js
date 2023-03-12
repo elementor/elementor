@@ -1,5 +1,7 @@
-const fs = require( 'fs' );
-const path = require( 'path' );
+// TODO: Please convert me to TypeScript.
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 const MODULE_FILTERS = Object.freeze( [ /(([^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
@@ -15,7 +17,7 @@ const TRANSLATIONS_REGEXPS = Object.freeze( [
 	/\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\)/gm,
 ] );
 
-module.exports = class ExtractI18nExpressionsWebpackPlugin {
+export default class ExtractI18nExpressionsWebpackPlugin {
 	apply( compiler ) {
 		// Learn more about Webpack plugin system: https://webpack.js.org/api/plugins/
 
@@ -158,4 +160,4 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 			// Join all the expressions to a single string with line-breaks between them.
 			.join( '\n' );
 	}
-};
+}
