@@ -10,17 +10,12 @@ export class ToggleControl extends $e.modules.CommandBase {
 	 * @param {Object}              args
 	 * @param {string}              args.controlPath The control path.
 	 * @param {ControlBaseDataView} args.controlView The control view instance.
-	 * @param {boolean}             args.ignore      Ignore command logic (to trigger hooks).
 	 *
 	 * @return {void}
 	 */
-	apply( { controlPath, controlView, ignore } ) {
-		if ( ignore ) {
-			return;
-		}
-
+	apply( { controlPath, controlView } ) {
 		controlView = controlView || this.getControlView( controlPath );
-		controlView.toggle();
+		controlView.toggle?.();
 	}
 
 	getControlView( path ) {
