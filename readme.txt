@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.11.4 - 2023-03-12 =
+
+* Fix: Sticky and Motion Effects not working after latest Chrome update ([#21612](https://github.com/elementor/elementor/issues/21612))
+* Fix: Extra spacing appears on the bottom in Video widget
+
 = 3.11.3 - 2023-03-07 =
 
 * Fix: Lightbox is not presented as expected when Upgrade Swiper Library experiment is activated ([#21413](https://github.com/elementor/elementor/issues/21413))
