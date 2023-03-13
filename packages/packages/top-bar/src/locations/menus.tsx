@@ -78,11 +78,7 @@ function createRegisterMenuItem<
 	menuGroups: MenuGroup<TGroup>[],
 	component: TComponent,
 } ) {
-	return ( { group, name, overwrite, priority, ...args }: MenuItem<MenuGroup<TGroup>, TComponent> ) => {
-		if ( ! group ) {
-			group = 'default';
-		}
-
+	return ( { group = 'default', name, overwrite, priority, ...args }: MenuItem<MenuGroup<TGroup>, TComponent> ) => {
 		if ( ! menuGroups.includes( group ) ) {
 			return;
 		}

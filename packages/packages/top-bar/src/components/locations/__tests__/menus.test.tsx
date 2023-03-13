@@ -78,8 +78,10 @@ describe( '@elementor/top-bar - Menus components', () => {
 			expect( toolbarButtons ).toHaveLength( maxItems + 1 ); // Including the popover button.
 			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
 
+			// Act.
 			popoverButton.click();
 
+			// Assert.
 			expect( getAllByRole( 'menuitem' ) ).toHaveLength( extraAfterMax );
 		} );
 	} );

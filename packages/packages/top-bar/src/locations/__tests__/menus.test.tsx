@@ -57,8 +57,10 @@ describe( '@elementor/top-bar - Menus API', () => {
 		expect( action ).toBeInTheDocument();
 		expect( action ).toHaveAttribute( 'aria-label', 'Test' );
 
+		// Act.
 		action.click();
 
+		// Assert.
 		expect( onClick ).toHaveBeenCalled();
 	} );
 
@@ -78,12 +80,16 @@ describe( '@elementor/top-bar - Menus API', () => {
 		expect( toggleAction ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( toggleAction ).toHaveAttribute( 'value', 'test-value' );
 
+		// Act.
 		toggleAction.click();
 
+		// Assert.
 		expect( toggleAction ).toHaveAttribute( 'aria-pressed', 'true' );
 
+		// Act.
 		toggleAction.click();
 
+		// Assert.
 		expect( toggleAction ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( toggleAction ).toHaveAttribute( 'disabled' );
 	} );
@@ -140,6 +146,7 @@ describe( '@elementor/top-bar - Menus API', () => {
 
 		expect( queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
 
+		// Act.
 		act( () => {
 			fireEvent(
 				button,
@@ -147,6 +154,7 @@ describe( '@elementor/top-bar - Menus API', () => {
 			);
 		} );
 
+		// Assert.
 		expect( await findByRole( 'tooltip' ) ).toHaveTextContent( 'Test' );
 	} );
 
