@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { PopoverMenu } from '@elementor/top-bar';
-// TODO: Should the top bar expose those?
-import { Divider, MenuProps, styled } from '@elementor/ui';
+import { styled } from '@elementor/ui';
 import { documentOptionsMenu } from '../../menus';
+import { Divider, PopoverMenu, PopoverMenuProps } from '@elementor/top-bar';
 
 const { useMenuItems } = documentOptionsMenu;
 
@@ -18,7 +17,7 @@ const StyledPopoverMenu = styled( PopoverMenu )`
 	}
 `;
 
-export default function PrimaryActionMenu( props: MenuProps ) {
+export default function PrimaryActionMenu( props: PopoverMenuProps ) {
 	const { save: saveActions, default: defaultActions } = useMenuItems();
 
 	return (
@@ -33,7 +32,7 @@ export default function PrimaryActionMenu( props: MenuProps ) {
 				horizontal: 'right',
 			} }
 			PaperProps={ {
-				sx: { mt: 2, ml: 3 }, // TODO: Check RTL.
+				sx: { mt: 2, ml: 3 },
 			} }
 		>
 			{ saveActions.map( ( { MenuItem, id } ) => ( [
