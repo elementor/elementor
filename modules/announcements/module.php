@@ -106,7 +106,7 @@ class Module extends BaseApp {
 					[
 						'label' => 'Try It First',
 						'target' => '_blank',
-						'url' => 'https://playground.elementor.com/demo/flexbox/#',
+						'url' => 'https://go.elementor.com/whats-new-popup/',
 					],
 				],
 				'triggers' => [

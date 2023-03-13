@@ -11,6 +11,7 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Flex_Container;
 use Elementor\Group_Control_Flex_Item;
+use Elementor\Group_Control_Grid_Container;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
@@ -74,6 +75,16 @@ class Container extends Element_Base {
 	 */
 	public function get_icon() {
 		return 'eicon-container';
+	}
+
+	public function get_keywords() {
+		$keywords = [ 'Container', 'Flexbox', 'Flexbox Container', 'Layout' ];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+			array_push( $keywords, 'Grid', 'Grid Container' );
+		}
+
+		return $keywords;
 	}
 
 	/**
@@ -293,6 +304,62 @@ class Container extends Element_Base {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
+	protected function get_flex_control_options( $is_container_grid_active ) {
+		$flex_control_options = [
+			'name' => 'flex',
+			'selector' => '{{WRAPPER}}',
+			'fields_options' => [
+				'gap' => [
+					'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
+					'device_args' => [
+						Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+							// Use the default gap from the kit as a placeholder.
+							'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+						],
+					],
+				],
+			],
+		];
+
+		if ( $is_container_grid_active ) {
+			$flex_control_options['condition'] = [
+				'container_type' => 'flex',
+			];
+		}
+
+		return $flex_control_options;
+	}
+
+	protected function get_container_type_control_options( $is_container_grid_active ) {
+		if ( $is_container_grid_active ) {
+			return [
+				'label' => esc_html__( 'Container Type', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'flex',
+				'options' => [
+					'flex' => esc_html__( 'Flexbox', 'elementor' ),
+					'grid' => esc_html__( 'Grid', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--display: {{VALUE}}',
+				],
+				'prefix_class' => 'e-',
+			];
+		}
+
+		// TODO: This can be removed when the 'Container Grid Experiment' is merged.
+		return [
+			'label' => esc_html__( 'Container Type', 'elementor' ),
+			'type' => Controls_Manager::HIDDEN,
+			'render_type' => 'none',
+			'prefix_class' => 'e-',
+			'default' => 'flex',
+			'selectors' => [
+				'{{WRAPPER}}' => '--display: {{VALUE}}',
+			],
+		];
+	}
+
 	/**
 	 * Register the Container's layout controls.
 	 *
@@ -443,24 +510,30 @@ class Container extends Element_Base {
 			]
 		);
 
+		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
+
+		$this->add_control(
+			'container_type',
+			$this->get_container_type_control_options( $is_container_grid_active )
+		);
+
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
-			[
-				'name' => 'flex',
-				'selector' => '{{WRAPPER}}',
-				'fields_options' => [
-					'gap' => [
-						'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
-						'device_args' => [
-							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-								// Use the default gap from the kit as a placeholder.
-								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-							],
-						],
-					],
-				],
-			]
+			$this->get_flex_control_options( $is_container_grid_active )
 		);
+
+		if ( $is_container_grid_active ) {
+			$this->add_group_control(
+				Group_Control_Grid_Container::get_type(),
+				[
+					'name' => 'grid',
+					'selector' => '{{WRAPPER}}',
+					'condition' => [
+						'container_type' => [ 'grid' ],
+					],
+				]
+			);
+		}
 
 		$this->end_controls_section();
 	}

@@ -423,6 +423,19 @@ class Manager extends Base_Object {
 			],
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'container_grid',
+			'title' => esc_html__( 'Container Grid', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ),
+			'description' => esc_html__( 'Create advanced layouts and responsive designs with the new Container Grid element.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'hidden' => true,
+			'dependencies' => [
+				'container',
+			],
+		] );
 	}
 
 	/**

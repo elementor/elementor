@@ -51,18 +51,18 @@ jobs:
           files: /tmp/${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Read changelog and set current date
-        if: ${{ env.CHANNEL }} == "ga" # Only for GA releases
+        if: env.CHANNEL == 'ga' # Only for GA releases
         uses : ./.github/workflows/get-changelog-datetime
       - name: Parse Jira Keys from changelog # Only for GA releases
-        if: ${{ env.CHANNEL }} == "ga"
+        if: env.CHANNEL == 'ga' 
         id: jira_keys
         uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
         with:
           commit-message: '${{ env.CHANGELOG }}'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Push Deployment Info to Jira
-        if: ${{ env.CHANNEL }} == "ga" && steps.jira_keys.outputs.jira-keys != '' # Only for GA releases
+        if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' # Only for GA releases
         uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
         with:
           client-id: '${{ secrets.JIRA_CLIENT_ID }}'
@@ -80,7 +80,7 @@ jobs:
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
       - name: Publish to WordPress.org SVN
-        if: ${{ env.CHANNEL }} == "ga" # Only for GA releases
+        if: env.CHANNEL == 'ga'  # Only for GA releases
         env:
           PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -88,10 +88,10 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Generate Changelog Content For Slack
-        if: ${{ env.CHANNEL }} == "ga" || ${{ env.CHANNEL }} == "cloud" # Only for GA and Cloud releases
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses: ./.github/workflows/generate-slack-changelog
       - name: Post To Slack Created Release
-        if: ${{ env.CHANNEL }} == "ga" || ${{ env.CHANNEL }} == "cloud" # Only for GA and Cloud releases
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -139,7 +139,17 @@ jobs:
                       }
                     ]
                   }
-      - name: Remove git tag
-        uses : ./.github/workflows/remove-git-tag
+      - name: Merge to master
+        if: env.CHANNEL == 'ga' # Only for GA releases
+        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
         with:
-          TAG_NAME: v${{ env.CLEAN_PACKAGE_NAME }}
+          type: now
+          from_branch: ${{ github.ref }}
+          target_branch: master
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Remove git tag
+        uses: dev-drprasad/delete-tag-and-release@085c6969f18bad0de1b9f3fe6692a3cd01f64fe5 # v0.2.0
+        with:
+          tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

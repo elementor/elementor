@@ -1,5 +1,4 @@
-import { Slice } from '../../types';
-import { createSlice } from '../../store';
+import { Slice, createSlice } from '../../store';
 import useActiveDocument from '../use-active-document';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import { renderHookWithStore } from './test-utils';
