@@ -44,8 +44,10 @@ describe( '@elementor/documents-ui - Primary action menu', () => {
 		expect( menuItems[ 0 ] ).toHaveTextContent( 'First action' );
 		expect( menuItems[ 1 ] ).toHaveTextContent( 'Second action' );
 
+		// Act.
 		menuItems[ 0 ].click();
 
+		// Assert.
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
