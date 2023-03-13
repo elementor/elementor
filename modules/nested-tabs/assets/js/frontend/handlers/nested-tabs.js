@@ -194,10 +194,7 @@ export default class NestedTabs extends Base {
 
 	onTabClick( event ) {
 		event.preventDefault();
-
-		const isDesktopVersion = event.currentTarget.classList.contains( 'e-normal' );
-
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true, true );
+		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 	}
 
 	onTabKeyDown( event ) {
@@ -308,7 +305,7 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = !! event && event.currentTarget?.classList.contains( 'e-collapse' );
+			const isMobileVersion = event?.currentTarget?.classList.contains( 'e-collapse' );
 
 			if ( isMobileVersion ) {
 
