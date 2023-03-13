@@ -45,6 +45,7 @@ export default class extends ControlBaseDataView {
 			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
+			onShow: () => this.onPickerShow(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
 		};
 
@@ -236,6 +237,14 @@ export default class extends ControlBaseDataView {
 		this.applySavedValue();
 
 		this.colorPicker.toggleClearButtonState( false );
+	}
+
+	onPickerShow() {
+		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
+			detail: {
+				el: this.$el,
+			},
+		} ) );
 	}
 
 	onPickerButtonClick() {
