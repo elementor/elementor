@@ -44,6 +44,7 @@
 	overflow: var( --overflow );
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
+
 	&.e-flex {
 		--flex-direction: column;
 		--flex-basis: auto;
@@ -92,7 +93,7 @@
 
 	&-boxed {
 		text-align: initial;
-		gap: initial;		
+		gap: initial;
 	}
 
 	&.e-flex > .e-con-inner {
@@ -162,6 +163,11 @@
 
 	&::before {
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
+	}
+
+	> .elementor-background-slideshow,
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
+		border-radius: var( --border-radius );
 	}
 
 	> .elementor-background-video-container::before,
