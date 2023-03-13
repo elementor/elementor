@@ -46,8 +46,8 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
-			onPickerShow: () => this.runToggledCommand(),
-			onPickerHide: () => this.runToggledCommand(),
+			onPickerShow: () => this.runRouteHooks(),
+			onPickerHide: () => this.runRouteHooks(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -281,8 +281,11 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
-	runToggledCommand() {
-		$e.run( 'controls/color-toggled', { controlView: this } );
+	runRouteHooks() {
+		const toggledRouteArgs = this.getToggledControlInRouteArgs();
+
+		$e.routes.setCurrentArgs( 'panel', toggledRouteArgs );
+		$e.routes.afterRun( $e.routes.getCurrent( 'panel' ), toggledRouteArgs );
 	}
 
 	onBeforeDestroy() {

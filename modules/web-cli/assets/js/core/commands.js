@@ -236,6 +236,23 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
+	 * Function setCurrentArgs().
+	 *
+	 * Set currently running command args.
+	 *
+	 * @param {string}  container
+	 * @param {{}}      args
+	 */
+	setCurrentArgs( container, args ) {
+		if ( container ) {
+			this.currentArgs[ container ] = args;
+			return;
+		}
+
+		this.currentArgs = args;
+	}
+
+	/**
 	 * Function getCurrentFirst().
 	 *
 	 * Receive first command that currently running.
