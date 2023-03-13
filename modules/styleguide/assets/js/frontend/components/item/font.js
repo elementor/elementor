@@ -1,11 +1,9 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useContext, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ElementWrapper from '../global/element-wrapper';
 import ElementTitle from '../global/element-title';
-import useIsActive from '../../hooks/use-is-active';
-import { isInRoute } from '../../utils/web-cli';
-import { sendCommand } from '../../utils/send-command';
 import useSettings from '../../hooks/use-settings';
+import { ActiveContext } from '../../contexts/active-context';
 
 const parseFontToStyle = ( font, fallbackFamily ) => {
 	const defaultKeyParser = ( key ) => key.replace( 'typography_', '' ).replace( '_', '-' );
@@ -76,13 +74,15 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 };
 
 export default function Font( props ) {
+	const { activeElement, isActiveElement, activateElement } = useContext( ActiveContext );
+	const [ isActive, setIsActive ] = useState( false );
+
 	const { item, type } = props;
 
 	const source = 'typography';
 	const { _id, title } = item;
 
 	const ref = useRef( null );
-	const { isActive } = useIsActive( source, _id, ref );
 
 	const { isLoading, settings } = useSettings( props );
 
@@ -102,25 +102,29 @@ export default function Font( props ) {
 		${ style }
 	`;
 
+	useEffect( () => {
+		if ( isActiveElement( source, _id ) ) {
+			setIsActive( true );
+			ref.current.scrollIntoView( {
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'center',
+			} );
+		} else {
+			setIsActive( false );
+		}
+	}, [ activeElement ] );
+
 	const onClick = () => {
-		// Typography popover closes on every click in the window so only need to open.
-		if ( isActive ) {
-			return;
-		}
-
-		const route = 'panel/global/global-typography';
-
-		if ( ! isInRoute( route ) ) {
-			sendCommand( `${ route }/route`, { shouldNotScroll: true } );
-		}
-
-		// togglePopover( source, type, _id );
+		activateElement( type, source, _id );
 	};
 
 	return (
-		<ElementWrapper type="font" ref={ ref }
+		<ElementWrapper type="font"
+			ref={ ref }
 			isActive={ isActive }
-			onClick={ onClick }>
+			onClick={ onClick }
+		>
 			<Title>{ title }</Title>
 			<Content>
 				the five boxing wizards jump quickly.

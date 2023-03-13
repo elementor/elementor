@@ -1,7 +1,7 @@
-import { sendCommand } from './send-command';
+import { commands } from './commands';
 
 export const togglePopover = ( name, type, id ) => {
-	sendCommand( 'design-guidelines/toggle-global-picker', {
+	commands( 'design-guidelines/toggle-global-picker', {
 		name, type, id,
 	} );
 };

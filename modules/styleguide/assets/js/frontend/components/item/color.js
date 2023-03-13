@@ -1,10 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
 import styled from 'styled-components';
 import ElementTitle from '../global/element-title';
 import ElementWrapper from '../global/element-wrapper';
-import useIsActive from '../../hooks/use-is-active';
-import { isInRoute } from '../../utils/web-cli';
-import { sendCommand } from '../../utils/send-command';
+import { ActiveContext } from '../../contexts/active-context';
 
 const Content = styled.div`
 	display: flex;
@@ -34,26 +32,39 @@ const HexString = styled.p`
 `;
 
 export default function Color( props ) {
+	const { activeElement, isActiveElement, activateElement } = useContext( ActiveContext );
+	const [ isActive, setIsActive ] = useState( false );
+
 	const { item, type } = props;
 
 	const source = 'colors';
 	const { _id, title, color: hex } = item;
 
 	const ref = useRef( null );
-	const { isActive } = useIsActive( source, _id, ref );
+
+	useEffect( () => {
+		if ( isActiveElement( source, _id ) ) {
+			setIsActive( true );
+			ref.current.scrollIntoView( {
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'center',
+			} );
+		} else {
+			setIsActive( false );
+		}
+	}, [ activeElement ] );
+
+	const onClick = () => {
+		activateElement( type, source, _id );
+	};
 
 	return (
-		<ElementWrapper type="color" ref={ ref }
+		<ElementWrapper type="color"
+			ref={ ref }
 			isActive={ isActive }
-			onClick={ () => {
-				const route = 'panel/global/global-colors';
-
-				if ( ! isInRoute( route ) ) {
-					sendCommand( `${ route }/route`, { shouldNotScroll: true } );
-				}
-
-				// togglePopover( source, type, _id );
-			} }>
+			onClick={ onClick }
+		>
 			<ElementTitle>{ title }</ElementTitle>
 			<Content hex={ hex }>
 				<HexString>{ hex }</HexString>
