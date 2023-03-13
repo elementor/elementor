@@ -29,7 +29,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverHide() {
-		$e.run( 'controls/popover-toggle-toggled', { controlView: this } );
+		this.routeWithToggledControl();
 	}
 
 	onResetInputClick() {

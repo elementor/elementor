@@ -70,11 +70,13 @@ export default class extends ControlBaseDataView {
 		const pickerUtils = picker.constructor.utils;
 		const pickerRoot = picker.getRoot();
 
-		pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], e => {
-			if ( picker.isOpen() && !pickerUtils.eventPath( e ).some( el => el === pickerRoot.app || el === pickerRoot.button ) ) {
-				picker.hide();
-			}
-		} )
+		picker._eventBindings.push(
+			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], e => {
+				if ( picker.isOpen() && !pickerUtils.eventPath( e ).some( el => el === pickerRoot.app || el === pickerRoot.button ) ) {
+					picker.hide();
+				}
+			} )
+		)
 	}
 
 	addTipsyToPickerButton() {
@@ -289,6 +291,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	onBeforeDestroy() {
+		console.log( 'destroy' )
 		if ( this.colorPicker ) {
 			this.colorPicker.destroy();
 		}
