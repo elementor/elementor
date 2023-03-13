@@ -98,8 +98,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
+		<i class="eicon-device-responsive" aria-hidden="true"></i>
 		<span class="elementor-screen-only">
 			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
 		</span>

@@ -17,6 +17,7 @@
 	transition: var(--e-a-transition-hover);
 
 	&:hover {
+		border: none; //Remove border on a:hover
 		background-color: var(--e-a-btn-bg-hover);
 		color: var(--e-a-btn-color);
 	}

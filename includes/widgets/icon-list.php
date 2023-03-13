@@ -608,6 +608,25 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'icon_typography',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item > .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-item > a',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
+			]
+		);
+
 		$this->start_controls_tabs( 'text_colors' );
 
 		$this->start_controls_tab(
@@ -672,26 +691,6 @@ class Widget_Icon_List extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item > .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-item > a',
-				'global' => [
-					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
-			[
-				'name' => 'text_shadow',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
-			]
-		);
 
 		$this->end_controls_section();
 	}
