@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-export function createMockMenuAction( { onClick = () => null }: { onClick?: () => void } = {} ) {
+type MenuActionOptions = {
+	onClick?: () => void;
+}
+
+export function createMockMenuAction( { onClick = () => null }: MenuActionOptions = {} ) {
 	return {
 		name: 'test',
 		props: {
