@@ -851,7 +851,6 @@ abstract class Controls_Stack extends Base_Object {
 
 		$enable_duplication_mode = [
 			'loop-item',
-			'kit',
 			'common',
 		];
 		if ( in_array( $this->get_name(), $enable_duplication_mode, true ) ) {
