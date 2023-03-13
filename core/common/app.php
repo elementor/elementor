@@ -245,6 +245,11 @@ class App extends BaseApp {
 			}
 		}
 
+		if ( in_array( current_action(), [ 'admin_enqueue_scripts' ], true ) ) {
+			$ui_light_theme_media_queries = 'all';
+			$ui_dark_theme_media_queries = 'none';
+		}
+
 		$this->enqueue_theme_ui( 'light', $ui_light_theme_media_queries );
 		$this->enqueue_theme_ui( 'dark', $ui_dark_theme_media_queries );
 	}
