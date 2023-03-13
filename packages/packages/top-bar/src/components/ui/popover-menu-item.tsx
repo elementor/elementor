@@ -17,6 +17,8 @@ type ExtraProps = {
 	icon?: JSX.Element;
 }
 
+export type PopoverMenuItemProps = MenuItemProps & ExtraProps;
+
 const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, target } ) => {
 	if ( ! href ) {
 		return <>{ children }</>;
@@ -37,7 +39,7 @@ const MenuItemInnerWrapper: React.FC<ListItemButtonProps> = ( { children, href, 
 
 const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
 
-export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: MenuItemProps & ExtraProps ) {
+export default function PopoverMenuItem( { text, icon, onClick, href, target, disabled, ...props }: PopoverMenuItemProps ) {
 	const isExternalLink = href && target === '_blank';
 
 	return (
