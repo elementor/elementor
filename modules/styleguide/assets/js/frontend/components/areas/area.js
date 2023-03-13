@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSettings } from '../../context/settings';
+import { useSettings } from '../../contexts/settings';
 import Loader from '../global/loader';
 import AreaTitle from './area-title';
 import Section from '../section';

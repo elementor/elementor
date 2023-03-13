@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 
 const SettingsContext = createContext( null );
 

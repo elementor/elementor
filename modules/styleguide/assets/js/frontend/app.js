@@ -1,8 +1,8 @@
-import React, { createContext, useRef } from 'react';
+import React, { createContext } from 'react';
 import styled from 'styled-components';
-import { SettingsProvider } from './context/settings';
-import ActiveElement from './context/active-element';
-import Header from './components/areas/header';
+import { SettingsProvider } from './contexts/settings';
+import ActiveProvider from './contexts/active-context';
+import Header from './components/header';
 import ColorsArea from './components/areas/colors-area';
 import FontsArea from './components/areas/fonts-area';
 import AppWrapper from './components/app-wrapper';
@@ -14,24 +14,17 @@ const Content = styled.div`
 `;
 
 export default function App() {
-	const fontsRef = useRef( null );
-	const colorsRef = useRef( null );
-	const anchors = {
-		colors: colorsRef,
-		fonts: fontsRef,
-	};
-
 	return (
 		<SettingsProvider>
-			<ActiveElement>
+			<ActiveProvider>
 				<AppWrapper>
-					<Header anchors={ anchors } />
+					<Header />
 					<Content>
 						<ColorsArea />
 						<FontsArea />
 					</Content>
 				</AppWrapper>
-			</ActiveElement>
+			</ActiveProvider>
 		</SettingsProvider>
 	);
 }
