@@ -1,14 +1,10 @@
 import CanvasDisplay from './components/top-bar/canvas-display';
 import PrimaryAction from './components/top-bar/primary-action';
 import useDocumentPreviewProps from './hooks/use-document-preview-props';
-<<<<<<< HEAD
 import useDocumentSaveDraftProps from './hooks/use-document-save-draft-props';
 import useDocumentSaveTemplateProps from './hooks/use-document-save-template-props';
 import { injectIntoCanvasDisplay, injectIntoPrimaryAction, utilitiesMenu } from '@elementor/top-bar';
 import { documentOptionsMenu } from './menus';
-=======
-import { injectIntoCanvasDisplay, injectIntoPrimaryAction, utilitiesMenu } from '@elementor/top-bar';
->>>>>>> 3.12.0
 
 export default function init() {
 	registerTopBarMenuItems();
