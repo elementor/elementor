@@ -672,18 +672,63 @@ class Svg extends Base {
 			return;
 		}
 
-		$allowed_links = [
+		if ( ! $this->is_safe_href( $xlinks ) ) {
+			$element->removeAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+		}
+	}
+
+	/**
+	 * @see https://github.com/darylldoyle/svg-sanitizer/blob/2321a914e/src/Sanitizer.php#L454
+	 */
+	private function is_safe_href( $value ) {
+		// Allow empty values.
+		if ( empty( $value ) ) {
+			return true;
+		}
+
+		// Allow fragment identifiers.
+		if ( '#' === substr( $value, 0, 1 ) ) {
+			return true;
+		}
+
+		// Allow relative URIs.
+		if ( '/' === substr( $value, 0, 1 ) ) {
+			return true;
+		}
+
+		// Allow HTTPS domains.
+		if ( 'https://' === substr( $value, 0, 8 ) ) {
+			return true;
+		}
+
+		// Allow HTTP domains.
+		if ( 'http://' === substr( $value, 0, 7 ) ) {
+			return true;
+		}
+
+		// Allow known data URIs.
+		if ( in_array( substr( $value, 0, 14 ), [
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
 			'data:image/jpg', // JPG
 			'data:image/jpe', // JPEG
 			'data:image/pjp', // PJPEG
-		];
-		if ( 1 === preg_match( self::SCRIPT_REGEX, $xlinks ) ) {
-			if ( ! in_array( substr( $xlinks, 0, 14 ), $allowed_links, true ) ) {
-				$element->removeAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
-			}
+		], true ) ) {
+			return true;
 		}
+
+		// Allow known short data URIs.
+		if ( in_array( substr( $value, 0, 12 ), [
+			'data:img/png', // PNG
+			'data:img/gif', // GIF
+			'data:img/jpg', // JPG
+			'data:img/jpe', // JPEG
+			'data:img/pjp', // PJPEG
+		], true ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
