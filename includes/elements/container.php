@@ -974,6 +974,13 @@ class Container extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
+				'fields_options' => [
+					'width' => [
+						'selectors' => [
+							'{{WRAPPER}}' => '--border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+						],
+					],
+				],
 			]
 		);
 
@@ -984,7 +991,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-radius-top: {{TOP}}{{UNIT}}; --border-radius-right: {{RIGHT}}{{UNIT}}; --border-radius-bottom: {{BOTTOM}}{{UNIT}}; --border-radius-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1013,6 +1020,13 @@ class Container extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover',
+				'fields_options' => [
+					'width' => [
+						'selectors' => [
+							'{{WRAPPER}}:hover' => '--border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+						],
+					],
+				],
 			]
 		);
 
@@ -1023,7 +1037,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-radius-top: {{TOP}}{{UNIT}}: --border-radius-right: {{RIGHT}}{{UNIT}}; --border-radius-bottom: {{BOTTOM}}{{UNIT}}; --border-radius-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1067,7 +1081,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-transition: {{SIZE}}s;',
+					'{{WRAPPER}}, {{WRAPPER}}::before' => '--border-width-transition: {{SIZE}}s;',
 				],
 			]
 		);
