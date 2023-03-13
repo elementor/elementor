@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useState } from 'react';
 
 export const ActiveElementContext = createContext( null );
 
-const ActiveElementProvider = ( { children } ) => {
+const ActiveElement = ({ children } ) => {
 	const [ activeElement, setActiveElement ] = useState( null );
 
 	const getUid = ( source, id ) => `${ source }-${ id }`;
@@ -29,4 +29,4 @@ const ActiveElementProvider = ( { children } ) => {
 	);
 };
 
-export default ActiveElementProvider;
+export default ActiveElement;

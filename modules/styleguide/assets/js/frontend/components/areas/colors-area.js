@@ -1,12 +1,9 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import AreaTitle from './area-title';
-import Section from '../components/section';
-import { ActiveElementContext } from '../providers/active-element-provider';
-import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
-import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
-import Loader from '../components/global/loader';
-import Color from '../components/item/color';
+import { ActiveElementContext } from '../../context/active-element';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
+import Area from './area';
+import Color from '../item/color';
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -19,9 +16,7 @@ const Wrapper = styled.div`
 
 export default function ColorsArea() {
 	const ref = useRef( null );
-	const { setActive, unsetActive } = useContext( ActiveElementContext );
-
-	const { isLoading, settings } = useSettings( { type: 'colors' } );
+	// const { setActive, unsetActive } = useContext( ActiveElementContext );
 
 	const onPickerHide = ( event ) => {
 		unsetActive( event.detail.instance.options.container.id, 'colors' );
@@ -59,25 +54,33 @@ export default function ColorsArea() {
 		};
 	}, [] );
 
-	if ( isLoading ) {
-		return <Loader />;
-	}
+	const areaConfig = {
+		title: __( 'Global Colors', 'elementor' ),
+		type: 'colors',
+		component: Color,
+		sections: [
+			{
+				type: 'system_colors',
+				title: __( 'System Colors', 'elementor' ),
+				columns: {
+					desktop: 4,
+					mobile: 2,
+				},
+			},
+			{
+				type: 'custom_colors',
+				title: __( 'Custom Colors', 'elementor' ),
+				columns: {
+					desktop: 6,
+					mobile: 2,
+				},
+			},
+		],
+	};
 
 	return (
 		<Wrapper ref={ ref }>
-			<AreaTitle name="colors">Global Colors</AreaTitle>
-			<Section title="System Colors"
-				source={ settings.system_colors }
-				colorWidth="191px"
-				component={ Color }
-				type="system"
-			/>
-			<Section title="Custom Colors"
-				source={ settings.custom_colors }
-				colorWidth="114px"
-				component={ Color }
-				type="custom"
-			/>
+			<Area config={ areaConfig } />
 		</Wrapper>
 	);
 }

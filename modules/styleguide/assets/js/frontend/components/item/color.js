@@ -42,18 +42,23 @@ export default function Color( props ) {
 	const ref = useRef( null );
 	const { isActive } = useIsActive( source, _id, ref );
 
+	const onClick = () => {
+		const route = 'panel/global/global-colors';
+
+		if ( ! isInRoute( route ) ) {
+			sendCommand( `${ route }/route`, { shouldNotScroll: true } );
+		}
+
+		// togglePopover( source, type, _id );
+	};
+
 	return (
-		<ElementWrapper type="color" ref={ ref }
+		<ElementWrapper
+			columns={ props.columns }
+			ref={ ref }
 			isActive={ isActive }
-			onClick={ () => {
-				const route = 'panel/global/global-colors';
-
-				if ( ! isInRoute( route ) ) {
-					sendCommand( `${ route }/route`, { shouldNotScroll: true } );
-				}
-
-				// togglePopover( source, type, _id );
-			} }>
+			onClick={ onClick }
+		>
 			<ElementTitle>{ title }</ElementTitle>
 			<Content hex={ hex }>
 				<HexString>{ hex }</HexString>
@@ -66,7 +71,11 @@ Color.propTypes = {
 	item: PropTypes.shape( {
 		_id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		color: PropTypes.string.isRequired,
+		color: PropTypes.string,
 	} ).isRequired,
 	type: PropTypes.string.isRequired,
+	columns: PropTypes.shape( {
+		desktop: PropTypes.number,
+		mobile: PropTypes.number,
+	} ),
 };

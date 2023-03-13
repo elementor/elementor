@@ -1,12 +1,9 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import AreaTitle from './area-title';
-import Section from '../components/section';
-import { ActiveElementContext } from '../providers/active-element-provider';
-import { addEventListener, AFTER_COMMAND_EVENT } from '../utils/top-events';
-import useSettings from '../hooks/use-settings';
 import styled from 'styled-components';
-import Loader from '../components/global/loader';
-import Font from '../components/item/font';
+import { ActiveElementContext } from '../../context/active-element';
+import { addEventListener, AFTER_COMMAND_EVENT } from '../../utils/top-events';
+import Area from './area';
+import Font from '../item/font';
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -20,8 +17,6 @@ const Wrapper = styled.div`
 export default function FontsArea() {
 	const ref = useRef( null );
 	const { setActive, unsetActive } = useContext( ActiveElementContext );
-
-	const { isLoading, settings } = useSettings( { type: 'typography' } );
 
 	const onPopoverToggle = ( event ) => {
 		const name = event.detail.container.model.attributes.name;
@@ -62,25 +57,35 @@ export default function FontsArea() {
 		};
 	}, [] );
 
-	if ( isLoading ) {
-		return <Loader />;
-	}
+	const areaConfig = {
+		title: __( 'Global Fonts', 'elementor' ),
+		type: 'fonts',
+		component: Font,
+		sections: [
+			{
+				type: 'system_typography',
+				title: __( 'System Fonts', 'elementor' ),
+				flex: 'column',
+				columns: {
+					desktop: 1,
+					mobile: 1,
+				},
+			},
+			{
+				type: 'custom_typography',
+				title: __( 'Custom Fonts', 'elementor' ),
+				flex: 'column',
+				columns: {
+					desktop: 1,
+					mobile: 1,
+				},
+			},
+		],
+	};
 
 	return (
 		<Wrapper ref={ ref }>
-			<AreaTitle name="fonts">Global Fonts</AreaTitle>
-			<Section title="System Fonts"
-				source={ settings.system_typography }
-				type="system"
-				flex={ 'column' }
-				component={ Font }
-			/>
-			<Section title="Custom Fonts"
-				source={ settings.custom_typography }
-				type="custom"
-				flex={ 'column' }
-				component={ Font }
-			/>
+			<Area config={ areaConfig } />
 		</Wrapper>
 	);
 }

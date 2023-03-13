@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import InnerWrapper from '../components/global/inner-wrapper';
+import InnerWrapper from '../global/inner-wrapper';
 
 const Button = styled.button`
 	font-size: 16px;
