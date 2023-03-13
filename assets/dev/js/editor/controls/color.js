@@ -128,14 +128,6 @@ export default class extends ControlBaseDataView {
 		$colorPickerToolsContainer.append( $colorPicker );
 	}
 
-	toggle() {
-		if ( this.colorPicker.picker.isOpen() ) {
-			this.colorPicker.picker.hide();
-		} else {
-			this.colorPicker.picker.show();
-		}
-	}
-
 	getGlobalMeta() {
 		return {
 			commandName: this.getGlobalCommand(),
@@ -291,7 +283,6 @@ export default class extends ControlBaseDataView {
 	}
 
 	onBeforeDestroy() {
-		console.log( 'destroy' )
 		if ( this.colorPicker ) {
 			this.colorPicker.destroy();
 		}
