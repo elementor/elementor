@@ -37,7 +37,7 @@ $e-dialog-confirm-space: 20px;
 	.dialog-buttons-wrapper {
 		padding-top: 10px;
 		display: flex;
-		justify-content: end;
+		justify-content: flex-end;
 		gap: 15px;
 
 		.dialog-button {
