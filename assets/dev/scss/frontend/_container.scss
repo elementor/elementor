@@ -47,7 +47,7 @@
 	padding-right: var( --padding-right );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: background var(--background-transition, 0.3s), border var(--border-width-transition, 0.3s), box-shadow var(--border-width-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 
 	&.e-flex {
@@ -167,12 +167,16 @@
 	}
 
 	&::before {
-		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-width-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
+		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
 	:is( &, & > .e-con-inner ) > .elementor-background-video-container,
 	> .elementor-background-slideshow {
-		border-radius: calc( var(--border-radius-top) - var(--border-width-top) ) calc( var(--border-radius-right) - var(--border-width-right) ) calc( var(--border-radius-bottom) - var(--border-width-bottom) ) calc( var(--border-radius-left) - var(--border-width-left) );
+		border-top-left-radius: calc( var(--border-radius-top-left) - var(--border-width-left) );
+		border-top-right-radius: calc( var(--border-radius-top) - var(--border-width-top) );
+		border-bottom-right-radius: calc( var(--border-radius-right) - var(--border-width-right) );
+		border-bottom-left-radius: calc( var(--border-radius-bottom) - var(--border-width-bottom) );
+		border-top-left-radius: calc( var(--border-radius-left) - var(--border-width-left) );
 	}
 
 	> .elementor-background-video-container::before,
