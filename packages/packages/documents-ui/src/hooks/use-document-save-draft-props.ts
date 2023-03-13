@@ -11,6 +11,6 @@ export default function useDocumentSaveDraftProps(): ActionProps {
 		icon: FileReportIcon,
 		title: __( 'Save Draft', 'elementor' ),
 		onClick: saveDraft,
-		disabled: ! document || ( document.isSavingDraft || ! document.isDirty ),
+		disabled: ! document || document.isSavingDraft || ! document.isDirty,
 	};
 }
