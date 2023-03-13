@@ -7,7 +7,6 @@ describe( '@elementor/editor - useSettings()', () => {
 		const settings = {
 			urls: {
 				admin: 'https://localhost/wp-admin/',
-				help: 'https://localhost/help',
 			},
 		};
 
