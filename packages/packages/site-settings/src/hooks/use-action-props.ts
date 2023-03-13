@@ -9,7 +9,7 @@ export default function useActionProps(): ToggleActionProps {
 	} );
 
 	return {
-		title: __( 'Site settings', 'elementor' ),
+		title: __( 'Site Settings', 'elementor' ),
 		icon: AdjustmentsHorizontalIcon,
 		onClick: () => (
 			isActive

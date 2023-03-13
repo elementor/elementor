@@ -18,7 +18,7 @@ export default function TopBar() {
 					<Grid container justifyContent="center">
 						<CanvasDisplayLocation />
 					</Grid>
-					<Grid container justifyContent="end">
+					<Grid container justifyContent="flex-end">
 						<UtilitiesMenuLocation />
 						<PrimaryActionLocation />
 					</Grid>

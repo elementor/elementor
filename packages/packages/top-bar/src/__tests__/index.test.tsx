@@ -191,43 +191,45 @@ describe( '@elementor/top-bar API', () => {
 		expect( queryByText( 'test' ) ).toBeTruthy();
 	} );
 
-	it( 'should render tools buttons in popover after the fifth button', () => {
+	it.each( [
+		{
+			name: 'tools' as const,
+			max: 5,
+			component: ToolsMenuLocation,
+		},
+		{
+			name: 'utilities' as const,
+			max: 3,
+			component: UtilitiesMenuLocation,
+		},
+	] )( 'should render $name buttons in popover after the $max button', ( { name, max, component: Component } ) => {
 		// Arrange.
-		const buttons = [
-			{ name: 'test-1', title: 'Test 1' },
-			{ name: 'test-2', title: 'Test 2' },
-			{ name: 'test-3', title: 'Test 3' },
-			{ name: 'test-4', title: 'Test 4' },
-			{ name: 'test-5', title: 'Test 5' },
-			{ name: 'test-6', title: 'Test 6' },
-			{ name: 'test-7', title: 'Test 7' },
-		];
+		const extraButtonsAfterMax = 2;
 
 		// Act.
-		buttons.forEach( ( button ) => {
-			registerAction( 'tools', {
-				name: button.name,
+		for ( let i = 0; i < max + extraButtonsAfterMax; i++ ) {
+			registerAction( name, {
+				name: `test-${ i }`,
 				props: {
-					title: button.title,
+					title: `Test ${ i }`,
 					icon: () => <span>a</span>,
 				},
-			}
-			);
-		} );
+			} );
+		}
 
 		// Assert.
-		const { getAllByRole } = render( <ToolsMenuLocation /> );
+		const { getAllByRole } = render( <Component /> );
 
 		const horizontalButtons = getAllByRole( 'button' );
 
-		expect( horizontalButtons ).toHaveLength( 6 ); // including the popover button.
-		expect( horizontalButtons[ 5 ] ).toHaveAttribute( 'aria-label', 'More' );
+		expect( horizontalButtons ).toHaveLength( max + 1 ); // including the popover button.
+		expect( horizontalButtons[ max ] ).toHaveAttribute( 'aria-label', 'More' );
 
-		horizontalButtons[ 5 ].click();
+		horizontalButtons[ max ].click();
 
 		const menuItems = getAllByRole( 'menuitem' );
 
-		expect( menuItems ).toHaveLength( 2 );
+		expect( menuItems ).toHaveLength( extraButtonsAfterMax );
 	} );
 
 	it( 'should render 2 actions in different groups', () => {

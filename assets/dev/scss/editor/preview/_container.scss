@@ -14,7 +14,7 @@
 			right: 2px;
 			top: 2px;
 			bottom: 2px;
-			outline: 2px solid var( --outline-color );
+			outline: 2px solid var(--e-p-border-con);
 			animation: section-outline .75s;
 		}
 	}
@@ -26,24 +26,6 @@
 
 			&:after {
 				content: '';
-			}
-		}
-	}
-
-	// Section Full (No more columns) - Overlay
-	&-filled {
-
-		.elementor-sortable-placeholder {
-
-			&.elementor-column {
-				display: none;
-			}
-		}
-
-		.elementor-row {
-
-			&.elementor-draggable-over {
-				border: 1px solid $editor-danger;
 			}
 		}
 	}

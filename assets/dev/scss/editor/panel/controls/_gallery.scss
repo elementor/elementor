@@ -91,18 +91,10 @@
 		&-gallery-add {
 			width: 48px;
 			height: 48px;
-			color: #fff;
-			background-color: $editor-lightest;
 			font-size: 14px;
-			border-radius: 0;
-
-			&:hover {
-				background-color: $editor-lighter;
-			}
 
 			i {
 				margin: 0;
-				color: $editor-light;
 			}
 		}
 	}

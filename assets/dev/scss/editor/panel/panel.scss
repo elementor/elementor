@@ -67,7 +67,7 @@
     @import "categories";
 
     // Schemes
-    @import "schemes";
+    //@import "schemes"; //TODO: deprecated v3.0.0
 
 	// Menu
 	@import "menu";
@@ -91,16 +91,16 @@
 #elementor-panel-inner {
 	position: relative;
 	height: 100%;
+	display: flex;
+	flex-direction: column;
 	@include direction-box-shadow(0, 0 5px 0 rgba(0, 0, 0, 0.1));
 }
 
 // Main Panel
 #elementor-panel-content-wrapper {
-	position: absolute;
-	bottom: 40px;
-	top: 40px;
-	left: 0;
+	position: relative;
 	width: 100%;
+	flex: 1;
 }
 
 .elementor-panel-container {
