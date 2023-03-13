@@ -58,7 +58,7 @@ export class PluginsTester {
 		if ( errors.length ) {
 			this.cmd( `mkdir -p errors-reports` );
 
-			const slugs = errors.map(error => error.slug);
+			const slugs = errors.map( ( error ) => error.slug );
 			slugs.forEach( ( slug ) => {
 				this.cmd( `mv reports/${ slug } errors-reports/${ slug }` );
 			} );
