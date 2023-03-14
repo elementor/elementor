@@ -279,6 +279,7 @@ class Module extends BaseModule {
 				<img
 					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
 					alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
+					loading="lazy"
 				>
 			</article>
 		</div>
