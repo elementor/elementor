@@ -21,7 +21,7 @@
 	 * Get the Styleguide widget that serves as the App container.
 	 * Returns null if the widget does not exist.
 	 *
-	 * @return {object|null}
+	 * @return {Object|null}
 	 */
 	function getStyleguideWidget() {
 		styleguideWidget = document.querySelector( '.elementor-global-styleguide-widget' );
