@@ -1,6 +1,23 @@
+@mixin border-radius-for-background-elements {
+	border-radius: var(--border-radius);
+	border-style: solid;
+	border-color: var(--border-color);
+	border-top-width: var(--border-width-top);
+	border-right-width: var(--border-width-right);
+	border-bottom-width: var(--border-width-bottom);
+	border-left-width: var(--border-width-left);
+	inset-block-start: min( calc( -1 * var(--border-width-top) ), 0px );
+	inset-block-end: min( calc( -1 * var(--border-width-bottom) ), 0px );
+	inset-inline-end: min( calc( -1 * var(--border-width-right) ), 0px );
+	inset-inline-start: min( calc( -1 * var(--border-width-left) ), 0px );
+	width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+	height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+}
+
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
+	--border-color: transparent;
 	--border-width-top: 0px;
 	--border-width-right: 0px;
 	--border-width-bottom: 0px;
@@ -41,6 +58,7 @@
 	min-height: var( --min-height );
 	height: var( --height );
 	border-width: var(--border-width-top) var(--border-width-right) var(--border-width-bottom) var(--border-width-left);
+	border-color: var(--border-color);
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
 	padding-left: var( --padding-left );
@@ -48,7 +66,6 @@
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
-
 
 	&.e-flex {
 		--flex-direction: column;
@@ -164,27 +181,36 @@
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition, 0.3s );
 		border-radius: var( --border-radius );
+		border-color: var(--border-color);
 	}
 
 	&::before {
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container,
-	> .elementor-background-slideshow {
-		border-radius: var(--border-radius);
-		border-style: solid;
-		border-color: transparent;
-		border-top-width: var(--border-width-top);
-		border-right-width: var(--border-width-right);
-		border-bottom-width: var(--border-width-bottom);
-		border-left-width: var(--border-width-left);
-		inset-block-start: min( calc( -1 * var(--border-width-top) ), 0px );
-		inset-block-end: min( calc( -1 * var(--border-width-bottom) ), 0px );
-		inset-inline-end: min( calc( -1 * var(--border-width-right) ), 0px );
-		inset-inline-start: min( calc( -1 * var(--border-width-left) ), 0px );
-		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
-		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+	&::before,
+	:is( &, & > .e-con-inner ) > .elementor-shape,
+	> .elementor-background-slideshow,
+	> .elementor-background-slideshow::before {
+		@include border-radius-for-background-elements;
+	}
+
+	:is( &, & > .e-con-inner ) > .elementor-shape.elementor-shape-bottom {
+		border-top-width: var(--border-width-bottom);
+		border-right-width: var(--border-width-left);
+		border-bottom-width: var(--border-width-top);
+		border-left-width: var(--border-width-right);
+		//inset-block-start: min( calc( -1 * var(--border-width-bottom) ), 0px );
+		//inset-block-end: min( calc( -1 * var(--border-width-top) ), 0px );
+		//inset-inline-end: min( calc( -1 * var(--border-width-left) ), 0px );
+		//inset-inline-start: min( calc( -1 * var(--border-width-right) ), 0px );
+	}
+
+	@media (min-width: $screen-mobile-next) {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container,
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
+			@include border-radius-for-background-elements;
+		}
 	}
 
 	> .elementor-background-video-container::before,

@@ -980,6 +980,11 @@ class Container extends Element_Base {
 							'{{WRAPPER}}' => '--border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
 						],
 					],
+					'color' => [
+						'selectors' => [
+							'{{WRAPPER}}' => '--border-color: {{VALUE}};',
+						],
+					],
 				],
 			]
 		);
