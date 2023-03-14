@@ -97,11 +97,11 @@ class Library extends \WP_CLI_Command {
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
 		if ( filter_var( $file, FILTER_VALIDATE_URL ) ) {
-			$file_path = download_url( $file );
-			if ( is_wp_error( $file_path ) ) {
-				\WP_CLI::error( $file_path->get_error_message() );
+			$tmp_path = download_url( $file );
+			if ( is_wp_error( $tmp_path ) ) {
+				\WP_CLI::error( $tmp_path->get_error_message() );
 			}
-			$file = $file_path;
+			$file = $tmp_path;
 		}
 
 		$imported_items = $source->import_template( basename( $file ), $file );
@@ -121,7 +121,7 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 		}
 
-		if ( filter_var( $file, FILTER_VALIDATE_URL ) ) {
+		if ( isset( $tmp_path ) ) {
 			// Remove the temporary file, now that we're done with it.
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $file );
 		}
