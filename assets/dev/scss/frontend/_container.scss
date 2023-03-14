@@ -179,10 +179,10 @@
 		border-right-width: var(--border-width-right);
 		border-bottom-width: var(--border-width-bottom);
 		border-left-width: var(--border-width-left);
-		top: min( calc( 0px - var(--border-width-top) ), var(--0px) );
-		bottom: min( calc( 0px - var(--border-width-bottom) ), var(--0px) );
-		right: min( calc( 0px - var(--border-width-right) ), var(--0px) );
-		left: min( calc( 0px - var(--border-width-left) ), var(--0px) );
+		top: calc( 0px - abs( var(--border-width-top) ) );
+		bottom: calc( 0px - abs( var(--border-width-bottom) ) );
+		right: calc( 0px - abs( var(--border-width-right) ) );
+		left: calc( 0px - abs( var(--border-width-left) ) );
 		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
 		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
 	}
