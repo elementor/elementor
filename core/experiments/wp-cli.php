@@ -121,9 +121,9 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		$experiments_manager = Plugin::$instance->experiments;
-		$experiments_manager = $experiments_manager->is_feature_active( $args[0] ) ? 'active' : 'inactive';
+		$experiments_status = $experiments_manager->is_feature_active( $args[0] ) ? 'active' : 'inactive';
 
-		\WP_CLI::line( $experiments_manager );
+		\WP_CLI::line( $experiments_status );
 	}
 
 	/**
