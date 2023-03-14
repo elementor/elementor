@@ -392,8 +392,8 @@ test.describe( 'Container tests', () => {
 		await editor.activatePanelTab( 'style' );
 		await editor.openSection( 'section_border' );
 		await page.selectOption( '.elementor-control-border_border .elementor-control-input-wrapper select', 'solid' );
-		await page.locator( '.elementor-control-border_width .elementor-control-input-wrapper input').first().fill('30' );
-		await page.locator( '.elementor-control-border_radius .elementor-control-input-wrapper input').first().fill('60' );
+		await page.locator( '.elementor-control-border_width .elementor-control-input-wrapper input' ).first().fill( '30' );
+		await page.locator( '.elementor-control-border_radius .elementor-control-input-wrapper input' ).first().fill( '60' );
 
 		await editor.togglePreviewMode();
 
