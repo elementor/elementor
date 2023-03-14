@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 import PrimaryActionMenu from './primary-action-menu';
 import {
