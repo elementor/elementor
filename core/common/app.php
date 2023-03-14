@@ -245,7 +245,7 @@ class App extends BaseApp {
 			}
 		}
 
-		if ( in_array( current_action(), [ 'admin_enqueue_scripts' ], true ) ) {
+		if ( 'admin_enqueue_scripts' === current_action() ) {
 			$ui_light_theme_media_queries = 'all';
 			$ui_dark_theme_media_queries = 'none';
 		}
