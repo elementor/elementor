@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react';
+import useDebouncedCallback from '../hooks/use-debounced-callback';
 
 const SettingsContext = createContext( null );
 
 /**
- * @return {{settings: Map, getSettingsGroup: Function, getSetting: Function}|null} context
+ * @return {{settings: Map, isReady: boolean}|null} context
  */
 export const useSettings = () => {
 	return useContext( SettingsContext );
@@ -64,7 +65,7 @@ export const SettingsProvider = ( props ) => {
 		}
 	};
 
-	const onSettingsChange = ( args ) => {
+	const onSettingsChange = useDebouncedCallback( ( args ) => {
 		const name = args.container.model.attributes.name;
 
 		const newSettings = new Map( settingsRef.current );
@@ -88,7 +89,7 @@ export const SettingsProvider = ( props ) => {
 		}
 
 		setSettings( newSettings );
-	};
+	}, 100 );
 
 	const onInsert = ( args ) => {
 		const name = args.name;
@@ -142,7 +143,6 @@ export const SettingsProvider = ( props ) => {
 
 	const value = {
 		settings,
-		status,
 		isReady: 'loaded' === status,
 	};
 

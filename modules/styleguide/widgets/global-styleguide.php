@@ -26,7 +26,7 @@ class Global_Styleguide extends Widget_Base {
 	}
 
 	public function show_in_panel() {
-	  return false;
+		return false;
 	}
 
 	protected function render() {
