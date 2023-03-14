@@ -1,10 +1,10 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--border-width-top: 0;
-	--border-width-right: 0;
-	--border-width-bottom: 0;
-	--border-width-left: 0;
+	--border-width-top: 0px;
+	--border-width-right: 0px;
+	--border-width-bottom: 0px;
+	--border-width-left: 0px;
 	--container-widget-width: 100%;
 	--container-widget-height: initial;
 	--container-widget-flex-grow: 0;
@@ -172,11 +172,19 @@
 
 	:is( &, & > .e-con-inner ) > .elementor-background-video-container,
 	> .elementor-background-slideshow {
-		border-top-left-radius: calc( var(--border-radius-top-left) - var(--border-width-left) );
-		border-top-right-radius: calc( var(--border-radius-top) - var(--border-width-top) );
-		border-bottom-right-radius: calc( var(--border-radius-right) - var(--border-width-right) );
-		border-bottom-left-radius: calc( var(--border-radius-bottom) - var(--border-width-bottom) );
-		border-top-left-radius: calc( var(--border-radius-left) - var(--border-width-left) );
+		border-radius: var(--border-radius);
+		border-style: solid;
+		border-color: transparent;
+		border-top-width: var(--border-width-top);
+		border-right-width: var(--border-width-right);
+		border-bottom-width: var(--border-width-bottom);
+		border-left-width: var(--border-width-left);
+		inset-block-start: min( calc( -1 * var(--border-width-top) ), 0px );
+		inset-block-end: min( calc( -1 * var(--border-width-bottom) ), 0px );
+		inset-inline-end: min( calc( -1 * var(--border-width-right) ), 0px );
+		inset-inline-start: min( calc( -1 * var(--border-width-left) ), 0px );
+		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
 	}
 
 	> .elementor-background-video-container::before,
