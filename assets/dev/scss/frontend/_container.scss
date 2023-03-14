@@ -6,10 +6,10 @@
 	border-right-width: var(--border-width-right);
 	border-bottom-width: var(--border-width-bottom);
 	border-left-width: var(--border-width-left);
-	inset-block-start: min( calc( -1 * var(--border-width-top) ), 0px );
-	inset-block-end: min( calc( -1 * var(--border-width-bottom) ), 0px );
-	inset-inline-end: min( calc( -1 * var(--border-width-right) ), 0px );
-	inset-inline-start: min( calc( -1 * var(--border-width-left) ), 0px );
+	top: min( calc( -1 * var(--border-width-top) ), 0px );
+	bottom: min( calc( -1 * var(--border-width-bottom) ), 0px );
+	right: min( calc( -1 * var(--border-width-right) ), 0px );
+	left: min( calc( -1 * var(--border-width-left) ), 0px );
 	width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
 	height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
 }
@@ -200,10 +200,10 @@
 		border-right-width: var(--border-width-left);
 		border-bottom-width: var(--border-width-top);
 		border-left-width: var(--border-width-right);
-		//inset-block-start: min( calc( -1 * var(--border-width-bottom) ), 0px );
-		//inset-block-end: min( calc( -1 * var(--border-width-top) ), 0px );
-		//inset-inline-end: min( calc( -1 * var(--border-width-left) ), 0px );
-		//inset-inline-start: min( calc( -1 * var(--border-width-right) ), 0px );
+
+		&:empty {
+			display:none;
+		}
 	}
 
 	@media (min-width: $screen-mobile-next) {
