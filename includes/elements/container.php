@@ -974,15 +974,16 @@ class Container extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
+				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{WRAPPER}}' => '--border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
 						'selectors' => [
-							'{{WRAPPER}}' => '--border-color: {{VALUE}};',
+							'{{SELECTOR}}' => 'border-color: {{VALUE}}; --border-color: {{VALUE}};',
 						],
 					],
 				],
@@ -993,10 +994,11 @@ class Container extends Element_Base {
 			'border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'selector' => '{{WRAPPER}}',
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{SELECTOR}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1028,7 +1030,12 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{WRAPPER}}:hover' => '--border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+						],
+					],
+					'color' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-color: {{VALUE}}; --border-color: {{VALUE}};',
 						],
 					],
 				],
@@ -1039,10 +1046,11 @@ class Container extends Element_Base {
 			'border_radius_hover',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'selector' => '{{WRAPPER}}:hover',
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{SELECTOR}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

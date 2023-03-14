@@ -1,19 +1,3 @@
-@mixin border-radius-for-background-elements {
-	border-radius: var(--border-radius);
-	border-style: solid;
-	border-color: var(--border-color);
-	border-top-width: var(--border-width-top);
-	border-right-width: var(--border-width-right);
-	border-bottom-width: var(--border-width-bottom);
-	border-left-width: var(--border-width-left);
-	top: min( calc( -1 * var(--border-width-top) ), 0px );
-	bottom: min( calc( -1 * var(--border-width-bottom) ), 0px );
-	right: min( calc( -1 * var(--border-width-right) ), 0px );
-	left: min( calc( -1 * var(--border-width-left) ), 0px );
-	width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
-	height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
-}
-
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
@@ -57,7 +41,6 @@
 	min-width: 0;
 	min-height: var( --min-height );
 	height: var( --height );
-	border-width: var(--border-width-top) var(--border-width-right) var(--border-width-bottom) var(--border-width-left);
 	border-color: var(--border-color);
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
@@ -188,6 +171,22 @@
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
+	@mixin border-radius-for-background-elements {
+		border-radius: var(--border-radius);
+		border-style: solid;
+		border-color: var(--border-color);
+		border-top-width: var(--border-width-top);
+		border-right-width: var(--border-width-right);
+		border-bottom-width: var(--border-width-bottom);
+		border-left-width: var(--border-width-left);
+		top: min( calc( -1 * var(--border-width-top) ), 0px );
+		bottom: min( calc( -1 * var(--border-width-bottom) ), 0px );
+		right: min( calc( -1 * var(--border-width-right) ), 0px );
+		left: min( calc( -1 * var(--border-width-left) ), 0px );
+		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+	}
+
 	&::before,
 	:is( &, & > .e-con-inner ) > .elementor-shape,
 	> .elementor-background-slideshow,
@@ -195,14 +194,24 @@
 		@include border-radius-for-background-elements;
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-shape.elementor-shape-bottom {
-		border-top-width: var(--border-width-bottom);
-		border-right-width: var(--border-width-left);
-		border-bottom-width: var(--border-width-top);
-		border-left-width: var(--border-width-right);
+	:is( &, & > .e-con-inner ) > .elementor-shape {
 
 		&:empty {
 			display:none;
+		}
+
+		height: initial;
+
+		&.elementor-shape-top {
+			bottom: initial;
+		}
+
+		&.elementor-shape-bottom {
+			border-top-width: var(--border-width-bottom);
+			border-right-width: var(--border-width-left);
+			border-bottom-width: var(--border-width-top);
+			border-left-width: var(--border-width-right);
+			top: initial;
 		}
 	}
 
