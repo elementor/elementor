@@ -211,7 +211,7 @@
 			border-bottom-width: var(--border-width-top);
 			border-left-width: var(--border-width-right);
 			top: initial;
-			bottom: min( calc( -1px - ( -1 * var(--border-width-bottom) ) ), -1px );
+			bottom: min( calc( -1px - ( var(--border-width-bottom) ) ), -1px );
 		}
 	}
 
