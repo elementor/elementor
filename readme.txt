@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.11.5 - 2023-03-14 =
+
+* Tweak: Improved SVG file upload sanitization for better security enforcement
+* Tweak: Improved code security enforcement in Text Path widget
+
 = 3.11.4 - 2023-03-12 =
 
 * Fix: Sticky and Motion Effects not working after latest Chrome update ([#21612](https://github.com/elementor/elementor/issues/21612))
