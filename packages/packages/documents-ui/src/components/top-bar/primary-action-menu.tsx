@@ -35,12 +35,12 @@ export default function PrimaryActionMenu( props: PopoverMenuProps ) {
 				sx: { mt: 2, ml: 3 },
 			} }
 		>
-			{ saveActions.map( ( { MenuItem, id } ) => ( [
-				<Divider key={ `${ id }-divider` } orientation="horizontal" />,
+			{ saveActions.map( ( { MenuItem, id }, index ) => ( [
+				( index > 0 ) && <Divider key={ `${ id }-divider` } />,
 				<MenuItem key={ id } />,
 			] ) ) }
 
-			{ defaultActions.length > 0 && <Divider orientation="horizontal" /> }
+			{ defaultActions.length > 0 && <Divider /> }
 
 			{ defaultActions.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> ) }
 		</StyledPopoverMenu>

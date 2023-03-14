@@ -18,7 +18,6 @@ export default function PrimaryAction() {
 	const document = useActiveDocument();
 	const { save } = useActiveDocumentActions();
 
-	const ref = useRef( null );
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'document-save-options',
@@ -36,7 +35,7 @@ export default function PrimaryAction() {
 
 	return (
 		<>
-			<ButtonGroup ref={ ref } size="large" variant="contained">
+			<ButtonGroup size="large" variant="contained">
 				<Button
 					onClick={ () => ! document.isSaving && save() }
 					sx={ { width: '120px' } }
@@ -61,7 +60,7 @@ export default function PrimaryAction() {
 					</Button>
 				</Tooltip>
 			</ButtonGroup>
-			<PrimaryActionMenu { ...bindMenu( popupState ) } anchorEl={ ref.current } />
+			<PrimaryActionMenu { ...bindMenu( popupState ) } />
 		</>
 	);
 }

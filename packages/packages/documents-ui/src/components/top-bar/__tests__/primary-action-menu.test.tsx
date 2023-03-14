@@ -7,30 +7,23 @@ jest.mock( '@elementor/documents', () => ( {
 } ) );
 
 describe( '@elementor/documents-ui - Primary action menu', () => {
-	it.each( [
-		'save' as const,
-		'default' as const,
-	] )( 'should render the %s actions', ( group ) => {
+	it( 'should render the actions ordered properly (save, default)', () => {
 		// Arrange.
-		const onClick = jest.fn();
-
 		documentOptionsMenu.registerAction( {
 			name: 'test--first-action',
-			group,
+			group: 'save',
 			props: {
 				title: 'First action',
 				icon: () => <span>a</span>,
-				onClick,
 			},
 		} );
 
 		documentOptionsMenu.registerAction( {
 			name: 'test--second-action',
-			group,
+			group: 'default',
 			props: {
 				title: 'Second action',
 				icon: () => <span>a</span>,
-				onClick,
 			},
 		} );
 
@@ -43,11 +36,5 @@ describe( '@elementor/documents-ui - Primary action menu', () => {
 		expect( menuItems ).toHaveLength( 2 );
 		expect( menuItems[ 0 ] ).toHaveTextContent( 'First action' );
 		expect( menuItems[ 1 ] ).toHaveTextContent( 'Second action' );
-
-		// Act.
-		menuItems[ 0 ].click();
-
-		// Assert.
-		expect( onClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

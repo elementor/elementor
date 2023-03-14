@@ -40,6 +40,12 @@ describe( '@elementor/documents-ui - useDocumentSaveDraftProps', () => {
 			} ),
 		},
 		{
+			condition: 'the document is being saved',
+			document: createMockDocument( {
+				isSaving: true,
+			} ),
+		},
+		{
 			condition: 'the document is pristine',
 			document: createMockDocument( {
 				isDirty: false,
