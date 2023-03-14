@@ -28,7 +28,7 @@ class Settings extends Endpoint {
 	public function get_items( $request ) {
 		$settings = array_merge(
 			$this->get_site_settings(),
-			$this->get_additional_settings(),
+			$this->get_additional_settings()
 		);
 
 		return $this->serialize_settings( $settings );
