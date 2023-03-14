@@ -340,7 +340,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	});
 
-	test.only('Fallback image is not on top of background video AND test background video with border radius', async ({page}, testInfo) => {
+	test('Fallback image is not on top of background video AND test background video with border radius', async ({page}, testInfo) => {
 		const wpAdmin = new WpAdminPage(page, testInfo);
 		await page.goto('/wp-admin/media-new.php');
 
