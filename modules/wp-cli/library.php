@@ -70,18 +70,13 @@ class Library extends \WP_CLI_Command {
 	 *      Forms of output. Possible values are 'ids', 'info'.
 	 *      if this parameter won't be specified, the import info will be output.
 	 *
-	 *  [--fileProtocol]
-	 *      Forms of file source. Possible values are 'path', 'url'.
-	 *      if this parameter won't be specified, path will be the default.
-	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor library import <file-path>
 	 *      - This will import a file or a zip of multiple files to the library.
+	 * 			- file-path can be a path or url.
 	 *
 	 *  2. wp elementor library import <file-path> --returnType=info,ids
-	 *
-	 *  3. wp elementor library import <file-path> --fileProtocol=path,url
 	 *
 	 * @param $args
 	 * @param $assoc_args
@@ -97,16 +92,11 @@ class Library extends \WP_CLI_Command {
 		$file = $args[0];
 		$imported_items_ids = [];
 		$return_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'returnType', 'info' );
-		$file_protocol = \WP_CLI\Utils\get_flag_value( $assoc_args, 'fileProtocol', 'path' );
 
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
-		if ( 'url' === $file_protocol ) {
-			if ( false === filter_var( $file, FILTER_VALIDATE_URL ) ) {
-				\WP_CLI::error( 'Invalid file URL' );
-			}
-
+		if ( filter_var( $file, FILTER_VALIDATE_URL ) ) {
 			$file_path = download_url( $file );
 			if ( is_wp_error( $file_path ) ) {
 				\WP_CLI::error( $file_path->get_error_message() );
@@ -131,7 +121,7 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.' );
 		}
 
-		if ( 'url' === $file_protocol ) {
+		if ( filter_var( $file, FILTER_VALIDATE_URL ) ) {
 			// Remove the temporary file, now that we're done with it.
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $file );
 		}
