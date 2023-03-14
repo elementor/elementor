@@ -274,6 +274,6 @@ class Embed {
 			return null;
 		}
 
-		return '<div class="elementor-image">' . sprintf( '<img src="%1$s" alt="%2$s" title="%2$s" width="%3$s" />', $oembed_data['thumbnail_url'], esc_attr( $oembed_data['title'] ), '100%' ) . '</div>';
+		return '<div class="elementor-image">' . sprintf( '<img src="%1$s" alt="%2$s" title="%2$s" width="%3$s" loading="lazy" />', $oembed_data['thumbnail_url'], esc_attr( $oembed_data['title'] ), '100%' ) . '</div>';
 	}
 }

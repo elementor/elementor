@@ -5,11 +5,11 @@ import { __ } from '@wordpress/i18n';
 import { DotsVerticalIcon } from '@elementor/icons';
 import PopoverMenu from './popover-menu';
 
-type Props = {
+export type ToolbarMenuMoreProps = PropsWithChildren<{
 	id: string;
-}
+}>
 
-export default function ToolbarMenuMore( { children, id }: PropsWithChildren<Props> ) {
+export default function ToolbarMenuMore( { children, id }: ToolbarMenuMoreProps ) {
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: id,
