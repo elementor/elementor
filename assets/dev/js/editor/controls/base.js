@@ -146,10 +146,11 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		this.toggleControlVisibility();
 	},
-	getControlPath() {
-		let controlPath = this.model.get( 'name' );
 
-		let parent = this._parent;
+	getControlPath() {
+		let controlPath = this.model.get( 'name' ),
+			parent = this._parent;
+
 		while ( 'document' !== parent.model.id ) {
 			const parentName = parent.model.get( 'name' ) || parent.model.get( '_id' );
 			controlPath = parentName + '/' + controlPath;
@@ -159,16 +160,19 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		return controlPath;
 	},
+
 	getToggledControlInRouteArgs() {
 		const currentRouteArgs = JSON.parse( JSON.stringify( $e.routes.getCurrentArgs( 'panel' ) ) );
 		const controlPath = this.getControlPath();
 
-		let activeControls = currentRouteArgs.activeControls || [];
+		const activeControls = currentRouteArgs.activeControls || [];
+
 		if ( activeControls.includes( controlPath ) ) {
 			activeControls.splice( activeControls.indexOf( controlPath ), 1 );
 		} else {
 			activeControls.push( controlPath );
 		}
+
 		currentRouteArgs.activeControls = activeControls;
 
 		return currentRouteArgs;
