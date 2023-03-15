@@ -28,6 +28,11 @@ $e-teal-500:	#12AA9A;
 $e-teal-600:	#0A875A;
 $e-teal-900:	#032317;
 
+//Editor Facelift 2023 - Pink
+$e-pink-700:	#C62E96;
+$e-pink-800:	#AB2881;
+$e-pink-900:	#91226D;
+
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
 $e-indigo-700:	#4C43E5;
@@ -45,7 +50,7 @@ $e-success:				$e-teal-600;
 $e-info: 				#2563EB;
 $e-danger:				#DC2626;
 $e-warning: 			#F59E0B;
-$e-brand: 				#0600A8;
+$e-brand: 				$e-pink-700;
 $e-success-bg:			#F2FDF5;
 $e-danger-bg:			#FEF1F4;
 $e-info-bg: 			#F0F7FF;
