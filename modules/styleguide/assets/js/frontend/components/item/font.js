@@ -129,7 +129,9 @@ export default function Font( props ) {
 		// 	window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
 		// }
 		//
-		// // togglePopover( type, source, _id, 'typography_typography' );
+		window.top.$e.run( 'controls/toggle-control', {
+			controlPath: `${ type }_${ source }/${ _id }/typography_typography`,
+		} );
 	};
 
 	useEffect( () => {
