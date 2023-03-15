@@ -42,15 +42,11 @@ class Styleguide extends elementorModules.editor.utils.Module {
 			return;
 		}
 
-		let isStyleguideCommand = false;
+		const isGlobalsRoute = Object.values( this.getGlobalRoutes() ).some( ( route ) => (
+			$e.routes.current.panel === route
+		) );
 
-		Object.values( this.getGlobalRoutes() ).forEach( ( route ) => {
-			if ( $e.commands.currentTrace.includes( `${ route }/route` ) ) {
-				isStyleguideCommand = true;
-			}
-		} );
-
-		if ( isStyleguideCommand ) {
+		if ( isGlobalsRoute ) {
 			return;
 		}
 

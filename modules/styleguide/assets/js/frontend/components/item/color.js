@@ -58,12 +58,6 @@ export default function Color( props ) {
 	const onClick = () => {
 		activateElement( type, source, _id );
 
-		const route = 'panel/global/global-colors';
-
-		if ( ! window.top.$e.routes.is( route ) ) {
-			window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
-		}
-
 		// togglePopover( type, source, _id, 'color' );
 	};
 
