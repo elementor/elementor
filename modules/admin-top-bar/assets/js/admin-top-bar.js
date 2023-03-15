@@ -30,7 +30,7 @@ export default function AdminTopBar() {
 		$e.route( 'finder', {}, { source: Sources.ADMIN_TOP_BAR } );
 	};
 
-	const controlSign = environment.mac ? '⌘' : '^';
+	const controlSign = environment.mac ? '&#8984;' : '^';
 	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
 	return (
@@ -42,8 +42,8 @@ export default function AdminTopBar() {
 
 			<div className="e-admin-top-bar__secondary-area">
 				<div className="e-admin-top-bar__secondary-area-buttons">
-					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} dataInfo={finderTooltipText} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
-					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
+					{ window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={ finderAction } dataInfo={ finderTooltipText } icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : '' }
+					{ window.elementorCloudAdmin ? window.elementorCloudAdmin() : '' }
 				</div>
 
 				<ConnectionButton />

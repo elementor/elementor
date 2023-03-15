@@ -8,7 +8,7 @@ export const Create = () => {
 			QUnit.test( 'Section', ( assert ) => {
 				const eSection = ElementsHelper.createSection( 1 ),
 					isSectionCreated = !! elementor.getPreviewContainer().children.find(
-						( section ) => eSection.id === section.id
+						( section ) => eSection.id === section.id,
 					);
 
 				// Check.
@@ -19,7 +19,7 @@ export const Create = () => {
 			QUnit.test( 'Column', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					isColumnCreated = !! elementor.getPreviewContainer().children[ 0 ].children.find(
-						( column ) => eColumn.id === column.id
+						( column ) => eColumn.id === column.id,
 					);
 
 				// Check column exist.
@@ -31,7 +31,7 @@ export const Create = () => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					isButtonCreated = !! elementor.getPreviewContainer().children[ 0 ].children[ 0 ].children.find(
-						( widget ) => widget.id === eButton.id
+						( widget ) => widget.id === eButton.id,
 					);
 
 				// Check button exist.
@@ -178,7 +178,7 @@ export const Create = () => {
 				let count = 1;
 				eColumns.forEach( ( eColumn ) => {
 					const isColumnCreated = !! elementor.getPreviewContainer().children.find( ( section ) =>
-						!! section.children.find( ( column ) => eColumn.id === column.id )
+						!! section.children.find( ( column ) => eColumn.id === column.id ),
 					);
 
 					assert.equal( isColumnCreated, true, `Column #${ count } were created.` );
@@ -284,7 +284,7 @@ export const Create = () => {
 						}
 
 						eInnerSection.children.forEach( ( eInnerColumn ) =>
-							innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( eInnerColumn.id )
+							innerSectionAfterRedoColumnsIds[ eInnerSection.id ].push( eInnerColumn.id ),
 						);
 					} );
 

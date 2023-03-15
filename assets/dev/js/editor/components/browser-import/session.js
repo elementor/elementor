@@ -1,3 +1,13 @@
+/**
+ * @typedef {import('../../container/container')} Container
+ */
+/**
+ * @typedef {import('./manager')} Manager
+ */
+/**
+ * @typedef {import('./items/item-collection')} ItemCollection
+ */
+
 export default class Session {
 	/**
 	 * The Manager instance.
@@ -32,10 +42,10 @@ export default class Session {
 	/**
 	 * Session constructor.
 	 *
-	 * @param manager
-	 * @param itemCollection
-	 * @param target
-	 * @param options
+	 * @param {Manager}             manager
+	 * @param {ItemCollection|null} itemCollection
+	 * @param {Container|null}      target
+	 * @param {{}}                  options
 	 */
 	constructor( manager, itemCollection = null, target = null, options = {} ) {
 		this.manager = manager;
@@ -48,7 +58,7 @@ export default class Session {
 	/**
 	 * Validate all files in this session can be handled.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} true if all items are valid
 	 */
 	async validate() {
 		for ( const item of this.itemCollection.getItems() ) {
@@ -63,7 +73,7 @@ export default class Session {
 	/**
 	 * Handle files with a suitable file-parser.
 	 *
-	 * @returns {Container[]}
+	 * @return {Container[]} result
 	 */
 	async apply() {
 		const parsed = [];
@@ -85,14 +95,15 @@ export default class Session {
 	/**
 	 * Resolve containers to fulfill their purpose.
 	 *
-	 * @param containers
-	 * @returns {*}
+	 * @param {*} containers
+	 * @return {*} result
 	 */
 	resolve( containers ) {
 		if ( Object.values( containers ).some( ( element ) => 'section' === element.model.get( 'elType' ) ) ) {
 			this.target = elementor.getPreviewContainer();
 		}
 
+		// eslint-disable-next-line array-callback-return
 		return containers.map( ( element ) => {
 			switch ( element.type ) {
 				case 'container':
@@ -104,7 +115,7 @@ export default class Session {
 						Object.assign( this.options.target, {
 							event: this.options.event,
 							scrollIntoView: 0 === containers.indexOf( element ),
-						} )
+						} ),
 					);
 			}
 		} );

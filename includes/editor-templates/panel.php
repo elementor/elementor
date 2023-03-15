@@ -1,11 +1,14 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
+$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-mode-switcher"></div>
@@ -79,16 +82,24 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
+		echo $is_editor_v2_active
+			? esc_attr__( 'Structure', 'elementor' )
+			: esc_attr__( 'Navigator', 'elementor' );
+	?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php
+			echo $is_editor_v2_active
+				? esc_html__( 'Structure', 'elementor' )
+				: esc_html__( 'Navigator', 'elementor' );
+		?></span>
 	</div>
 	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
+		<i class="eicon-device-responsive" aria-hidden="true"></i>
 		<span class="elementor-screen-only">
 			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
 		</span>
@@ -100,7 +111,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		</span>
 	</div>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-disabled">
+		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
@@ -110,8 +121,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		</button>
 	</div>
 	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
-			<i class="eicon-caret-up" aria-hidden="true"></i>
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
+			<i class="eicon-chevron-right" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Save Options', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
@@ -161,7 +172,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div class="elementor-update-preview">
 			<div class="elementor-update-preview-title"><?php echo esc_html__( 'Update changes to page', 'elementor' ); ?></div>
 			<div class="elementor-update-preview-button-wrapper">
-				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+				<button class="elementor-update-preview-button elementor-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
@@ -177,7 +188,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(
@@ -255,9 +266,10 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
-					<i class="{{ elementor.config.responsive.icons_map[ device ] }}"></i>
-				</a>
+				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
+					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
+					<span class="elementor-screen-only">{{ deviceLabel }}</span>
+				</button>
 			<# } );
 		#>
 		</div>
@@ -296,7 +308,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
 			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
-				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
+				<?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 			</a>
 		</div>
 	</div>

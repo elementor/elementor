@@ -13,7 +13,7 @@ jQuery( () => {
 					assert.equal( command instanceof CommandInfra, true );
 					assert.equal( command instanceof CommandBase, true );
 					// Editor.
-					assert.equal( command instanceof CommandContainerBase, true, );
+					assert.equal( command instanceof CommandContainerBase, true );
 					assert.equal( command instanceof CommandContainerInternalBase, true );
 					// Base.
 					assert.equal( command instanceof $e.modules.CommandBase, true );

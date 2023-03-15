@@ -22,7 +22,7 @@ jQuery( () => {
 
 						instance.run( {} );
 					},
-					new Error( random )
+					new Error( random ),
 				);
 			} );
 
@@ -39,7 +39,7 @@ jQuery( () => {
 
 						instance.run( {} );
 					},
-					new Error( random )
+					new Error( random ),
 				);
 			} );
 

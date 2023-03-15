@@ -1,5 +1,6 @@
 # Contribution Guidelines
-<img src="https://i.imgur.com/9Q1FFKP.png" alt="Elementor logo" width="250px">
+# <p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=contribution">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a></p>
+
 
 Before filing a bug report or a feature request, be sure to read the contribution guidelines.
 

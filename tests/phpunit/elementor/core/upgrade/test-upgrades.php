@@ -577,4 +577,91 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$this->assertEquals( $expected_value, $actual_value );
 	}
+
+	public function test_v_3_8_0_fix_php8_image_custom_size() {
+		// Arrange
+		$attachment_id = $this->create_image();
+
+		// Act
+		$image_meta = wp_get_attachment_metadata( $attachment_id );
+
+		$image_path = 'elementor/thumbs/mock-image.png';
+		$attachment_mine_type = get_post_mime_type( $attachment_id );
+
+		$image_meta['sizes']['elementor_custom_150x150'] = [
+			'file' => $image_path,
+			'width' => '150',
+			'height' => '150',
+			'mime-type' => $attachment_mine_type,
+		];
+
+		$image_meta['sizes']['elementor_custom_100x'] = [
+			'file' => $image_path,
+			'width' => '100',
+			'height' => '',
+			'mime-type' => $attachment_mine_type,
+		];
+
+		$image_meta['sizes']['elementor_custom_x200'] = [
+			'file' => $image_path,
+			'width' => '',
+			'height' => '200',
+			'mime-type' => $attachment_mine_type,
+		];
+
+		wp_update_attachment_metadata( $attachment_id, $image_meta );
+
+		\Elementor\Core\Upgrade\Upgrades::_v_3_8_0_fix_php8_image_custom_size();
+
+		// Assert
+		$new_metadata = wp_get_attachment_metadata( $attachment_id );
+
+		$this->assertSame( [
+			'file' => $image_path,
+			'width' => 150,
+			'height' => 150,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_150x150'] );
+
+		$this->assertSame( [
+			'file' => $image_path,
+			'width' => 100,
+			'height' => 0,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_100x'] );
+
+		$this->assertSame( [
+			'file' => $image_path,
+			'width' => 0,
+			'height' => 200,
+			'mime-type' => 'image/png',
+		], $new_metadata['sizes']['elementor_custom_x200'] );
+
+		// Cleanup
+		$this->delete_image( $attachment_id );
+	}
+
+	private function create_image() {
+		$attachment_id = $this->_make_attachment( [
+			'file' => __DIR__ . '/../../../resources/mock-image.png',
+			'url' => 'https://test.local/image.png',
+		] );
+
+		$image_meta = wp_get_attachment_metadata( $attachment_id );
+
+		$image_meta['sizes']['test_size'] = [
+			'file' => 'test-image.png',
+			'width' => 300,
+			'height' => 300,
+			'mime-type' => 'image/png',
+		];
+
+		wp_update_attachment_metadata( $attachment_id, $image_meta );
+
+		return $attachment_id;
+	}
+
+	private function delete_image( $attachment_id ) {
+		wp_delete_attachment( $attachment_id, true );
+	}
 }

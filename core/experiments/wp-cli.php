@@ -106,6 +106,27 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Experiment Status
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 1. wp elementor experiments status container
+	 *      - This will return the status of Container experiment. (active/inactive)
+	 *
+	 * @param array $args
+	 */
+	public function status( $args ) {
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please specify an experiment.' );
+		}
+
+		$experiments_manager = Plugin::$instance->experiments;
+		$experiments_status = $experiments_manager->is_feature_active( $args[0] ) ? 'active' : 'inactive';
+
+		\WP_CLI::line( $experiments_status );
+	}
+
+	/**
 	 * Determine if the current website is a multisite.
 	 *
 	 * @param array|null $assoc_args - Arguments from WP CLI command.
@@ -124,13 +145,12 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return void
 	 */
 	private function foreach_sites( callable $callback ) {
-		/** @var \WP_Site[] $sites */
-		$sites = get_sites();
+		$blog_ids = get_sites( [
+			'fields' => 'ids',
+			'number' => 0,
+		] );
 
-		foreach ( $sites as $keys => $site ) {
-			// Cast $blog as an array instead of object
-			$blog_id = $site->blog_id;
-
+		foreach ( $blog_ids as $blog_id ) {
 			switch_to_blog( $blog_id );
 
 			$callback( get_option( 'home' ), $blog_id );

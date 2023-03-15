@@ -1,0 +1,56 @@
+labels: ["status/awaiting_triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ⚠️ BEFORE POSTING YOUR REQUEST
+        ### 🙏 Follow these best practices to help save you time
+        - 🔍 **Search Before Posting:** Before creating a new Feature Request, please [search for similar requests](https://github.com/orgs/elementor/discussions/categories/feature-request) to prevent creating duplicates.
+        - ⬆️ **Use the Upvote Button:** Rather than posting “+1” or “Agreed” on threads, use the upvote button to express your opinion.
+        - ✒️ **Clear and concise title:** Please provide a clear and concise title that gives context to your request.
+        - 💬 **Description:** In your description, provide examples, screenshots, and screen recordings if you have them (just drag and drop in the field), and explain in detail what your request is going to solve. Describe the solution and give context. Be thorough.
+        - ☝️ **One Request Per Thread:** If you have more than one request, please submit only **<ins>ONE REQUEST PER THREAD</ins>**, so we can properly track them and reference them without any confusion.
+
+        ## The Feature
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: "Prerequisites"
+      options:
+        - label: "I have searched for similar features requests in both open and closed tickets and cannot find a duplicate."
+          required: true
+        - label: "The feature is still missing in the latest stable version of Elementor ( Elementor Pro )"
+          required: true
+  - type: textarea
+    id: the_problem
+    validations:
+      required: true
+    attributes:
+      label: "What problem is your feature request going to solve? Please describe."
+      description: "A clear and concise description of what the problem is."
+      placeholder: "I'm always frustrated when ..."
+  - type: textarea
+    id: the_solution
+    validations:
+      required: true
+    attributes:
+      label: "Describe the solution you'd like"
+      description: "A clear and concise description of what you want to happen."
+      placeholder: "It would be nice if ..."
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Describe alternatives you've considered"
+      description: "A clear and concise description of any alternative solutions or features you've considered."
+      placeholder: "I can also be solved by ..."
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: "Additional context"
+      description: "Add any other context or screenshots about the feature request here."
+      placeholder: "N.B ..."
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ⚠️ Please follow all the instructions indicated above, and fill all the required fields with valid information. We reserve the right to close issues that do not comply with these guidelines without any warning.

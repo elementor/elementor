@@ -41,7 +41,7 @@ export default class extends $e.modules.ComponentBase {
 	/**
 	 * Get the component namespace.
 	 *
-	 * @return {string}
+	 * @return {string} component namespace
 	 */
 	getNamespace() {
 		return 'container-converter';
@@ -50,7 +50,7 @@ export default class extends $e.modules.ComponentBase {
 	/**
 	 * Get the component default commands.
 	 *
-	 * @return {Object}
+	 * @return {Object} commands
 	 */
 	defaultCommands() {
 		return this.importCommands( commands );

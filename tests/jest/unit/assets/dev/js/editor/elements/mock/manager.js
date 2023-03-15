@@ -1,4 +1,8 @@
 /**
+ * @typedef {import('elementor/assets/dev/js/editor/elements/manager')} ElementsManager
+ */
+
+/**
  * @return {Promise<ElementsManager>}
  */
 export async function setupMock() {

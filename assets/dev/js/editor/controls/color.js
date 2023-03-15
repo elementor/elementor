@@ -45,6 +45,7 @@ export default class extends ControlBaseDataView {
 			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
+			onShow: () => this.onPickerShow(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
 		};
 
@@ -79,10 +80,6 @@ export default class extends ControlBaseDataView {
 	}
 
 	addEyedropper() {
-		if ( ! elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
-			return;
-		}
-
 		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
 			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer,
 			container = this.getOption( 'container' );
@@ -240,6 +237,14 @@ export default class extends ControlBaseDataView {
 		this.applySavedValue();
 
 		this.colorPicker.toggleClearButtonState( false );
+	}
+
+	onPickerShow() {
+		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
+			detail: {
+				el: this.$el,
+			},
+		} ) );
 	}
 
 	onPickerButtonClick() {

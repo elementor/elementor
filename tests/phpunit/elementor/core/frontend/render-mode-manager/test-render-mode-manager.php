@@ -41,7 +41,12 @@ class Test_Render_Mode_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_throw_exception_if_get_permissions_callback_return_false() {
-		$this->expectException( \Requests_Exception_HTTP_403::class );
+		// WP >= 6.2-alpha
+		if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+			$this->expectException( \WpOrg\Requests\Exception\Http\Status403::class );
+		} else {
+			$this->expectException( \Requests_Exception_HTTP_403::class );
+		}
 
 		$post = $this->factory()->create_and_get_default_post();
 

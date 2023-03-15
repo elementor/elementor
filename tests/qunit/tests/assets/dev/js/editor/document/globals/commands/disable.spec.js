@@ -25,6 +25,7 @@ export const Disable = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.enable( eButton, { typography_typography } );
 
 				assert.equal( eButton.globals.attributes.typography_typography, typography_typography );
@@ -44,6 +45,7 @@ export const Disable = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.multiEnable( eButtons, { typography_typography } );
 
 				eButtons.forEach( ( eButton ) => {

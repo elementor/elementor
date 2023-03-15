@@ -1,0 +1,18 @@
+{
+  "name": "elementor-plugins-tester",
+  "version": "1.0.0",
+  "description": "Runs E2E test with top Elementor plugins from wp.org",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+	"test": "node index.js",
+	"update-baseline": "node ./scripts/run-backstop.js --slug='elementor'"
+  },
+  "author": "Elementor Team",
+  "dependencies": {
+	"backstopjs": "^6.1.4",
+	"canvas": "^2.10.2",
+	"merge-images": "^2.0.0",
+	"node-fetch": "^3.3.0"
+  }
+}

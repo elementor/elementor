@@ -112,7 +112,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		$fields['font_size'] = [
 			'label' => esc_html_x( 'Size', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem', 'vw' ],
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'range' => [
 				'px' => [
 					'min' => 1,
@@ -133,18 +133,18 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'100' => '100',
-				'200' => '200',
-				'300' => '300',
-				'400' => '400',
-				'500' => '500',
-				'600' => '600',
-				'700' => '700',
-				'800' => '800',
-				'900' => '900',
-				'' => esc_html__( 'Default', 'elementor' ),
-				'normal' => esc_html__( 'Normal', 'elementor' ),
-				'bold' => esc_html__( 'Bold', 'elementor' ),
+				'100' => '100 ' . esc_html_x( '(Thin)', 'Typography Control', 'elementor' ),
+				'200' => '200 ' . esc_html_x( '(Extra Light)', 'Typography Control', 'elementor' ),
+				'300' => '300 ' . esc_html_x( '(Light)', 'Typography Control', 'elementor' ),
+				'400' => '400 ' . esc_html_x( '(Normal)', 'Typography Control', 'elementor' ),
+				'500' => '500 ' . esc_html_x( '(Medium)', 'Typography Control', 'elementor' ),
+				'600' => '600 ' . esc_html_x( '(Semi Bold)', 'Typography Control', 'elementor' ),
+				'700' => '700 ' . esc_html_x( '(Bold)', 'Typography Control', 'elementor' ),
+				'800' => '800 ' . esc_html_x( '(Extra Bold)', 'Typography Control', 'elementor' ),
+				'900' => '900 ' . esc_html_x( '(Black)', 'Typography Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Typography Control', 'elementor' ),
+				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
+				'bold' => esc_html_x( 'Bold', 'Typography Control', 'elementor' ),
 			],
 		];
 
@@ -162,7 +162,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['font_style'] = [
-			'label' => _x( 'Style', 'Typography Control', 'elementor' ),
+			'label' => esc_html_x( 'Style', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
@@ -204,17 +204,21 @@ class Group_Control_Typography extends Group_Control_Base {
 				],
 			],
 			'responsive' => true,
-			'size_units' => [ 'px', 'em' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
 		];
 
 		$fields['letter_spacing'] = [
 			'label' => esc_html_x( 'Letter Spacing', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
 					'min' => -5,
 					'max' => 10,
+					'step' => 0.1,
+				],
+				'em' => [
 					'step' => 0.1,
 				],
 			],
@@ -234,7 +238,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'mobile_default' => [
 				'unit' => 'em',
 			],
-			'size_units' => [ 'px', 'em' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
 					'step' => 1,

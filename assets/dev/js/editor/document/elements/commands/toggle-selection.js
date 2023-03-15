@@ -8,10 +8,10 @@ export class ToggleSelection extends $e.modules.editor.CommandContainerBase {
 
 		containers.forEach( ( container ) => {
 			$e.run(
-				elementor.selection.has( container ) && append ?
-					'document/elements/deselect' :
-					'document/elements/select',
-				args
+				elementor.selection.has( container ) && append
+					? 'document/elements/deselect'
+					: 'document/elements/select',
+				args,
 			);
 		} );
 	}

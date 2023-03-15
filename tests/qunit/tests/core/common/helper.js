@@ -1,5 +1,3 @@
-/* global jQuery */
-
 export default class CommonHelper {
 	static runShortcut( which, isCtrl = false, isShift = false ) {
 		const args = { which };

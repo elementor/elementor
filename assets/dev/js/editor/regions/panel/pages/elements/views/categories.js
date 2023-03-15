@@ -10,11 +10,11 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend( {
 
 	id: 'elementor-panel-elements-categories',
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'filter:change', this.onPanelElementsFilterChange );
 	},
 
-	onPanelElementsFilterChange: function() {
+	onPanelElementsFilterChange() {
 		if ( elementor.channels.panelElements.request( 'filter:value' ) ) {
 			elementor.getPanelView().getCurrentPageView().showView( 'elements' );
 		}

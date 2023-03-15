@@ -4,6 +4,7 @@ namespace Elementor\Core\Breakpoints;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
 use Elementor\Core\Responsive\Files\Frontend;
+use Elementor\Modules\DevTools\Deprecation;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -310,22 +311,22 @@ class Manager extends Module {
 	public static function get_default_config() {
 		return [
 			self::BREAKPOINT_KEY_MOBILE => [
-				'label' => esc_html__( 'Mobile', 'elementor' ),
+				'label' => esc_html__( 'Mobile Portrait', 'elementor' ),
 				'default_value' => 767,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
-				'label' => esc_html__( 'Mobile Extra', 'elementor' ),
+				'label' => esc_html__( 'Mobile Landscape', 'elementor' ),
 				'default_value' => 880,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_TABLET => [
-				'label' => esc_html__( 'Tablet', 'elementor' ),
+				'label' => esc_html__( 'Tablet Portrait', 'elementor' ),
 				'default_value' => 1024,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
-				'label' => esc_html__( 'Tablet Extra', 'elementor' ),
+				'label' => esc_html__( 'Tablet Landscape', 'elementor' ),
 				'default_value' => 1200,
 				'direction' => 'max',
 			],
@@ -523,10 +524,13 @@ class Manager extends Module {
 		$deprecated_hook = 'elementor/core/responsive/get_stylesheet_templates';
 		$replacement_hook = 'elementor/core/breakpoints/get_stylesheet_template';
 
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_hook( $deprecated_hook, '3.2.0', $replacement_hook );
+		/**
+		 * @type Deprecation $deprecation_module
+		 */
+		$deprecation_module = Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation;
 
 		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
-		$templates = apply_filters( $deprecated_hook, $templates );
+		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, [ $templates ], '3.2.0', $replacement_hook );
 
 		return apply_filters( $replacement_hook, $templates );
 	}

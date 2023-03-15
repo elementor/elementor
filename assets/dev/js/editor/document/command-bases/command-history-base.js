@@ -27,14 +27,15 @@ export default class CommandHistoryBase extends CommandContainerBase {
 		}
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getHistory().
 	 *
 	 * Get history object from child, do nothing if it false.
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 *
-	 * @returns {({}|boolean)}
+	 * @return {({}|boolean)} history object
 	 */
 	getHistory( args = {} ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
@@ -45,7 +46,7 @@ export default class CommandHistoryBase extends CommandContainerBase {
 	 *
 	 * Return `elementor.documents.getCurrent().history.getActive()`.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is history active
 	 */
 	isHistoryActive() {
 		return elementor.documents.getCurrent().history.getActive();

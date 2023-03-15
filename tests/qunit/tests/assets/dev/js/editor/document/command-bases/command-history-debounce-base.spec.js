@@ -14,7 +14,7 @@ jQuery( () => {
 					assert.equal( historyDebounceCommand instanceof CommandInfra, true );
 					assert.equal( historyDebounceCommand instanceof CommandBase, true );
 					// Editor.
-					assert.equal( historyDebounceCommand instanceof CommandContainerBase, true, );
+					assert.equal( historyDebounceCommand instanceof CommandContainerBase, true );
 					// Editor-Document.
 					assert.equal( historyDebounceCommand instanceof CommandHistoryBase, true );
 					assert.equal( historyDebounceCommand instanceof CommandHistoryDebounceBase, true );

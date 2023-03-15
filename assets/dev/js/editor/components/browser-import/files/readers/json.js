@@ -12,7 +12,7 @@ export class Json extends FileReaderBase {
 	 * @inheritDoc
 	 */
 	static get mimeTypes() {
-		return [ 'application\/json' ];
+		return [ 'application/json' ];
 	}
 
 	/**
@@ -31,7 +31,7 @@ export class Json extends FileReaderBase {
 	/**
 	 * Returns the file content as Json object.
 	 *
-	 * @returns {{}}
+	 * @return {{}} file content
 	 */
 	async getData() {
 		if ( ! this._data ) {

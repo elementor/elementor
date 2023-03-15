@@ -40,10 +40,10 @@ if [ $? -ne 0 ]; then
 fi
 set -e
 
-# Merge next release -> developer-edition
-echo -e "${SEPARATOR}Merging next release ${NEXT_RELEASE_BRANCH} -> developer-edition"
+# Merge next next release -> developer-edition
+echo -e "${SEPARATOR}Merging next next release ${NEXT_NEXT_RELEASE_BRANCH} -> developer-edition"
 git checkout developer-edition
-git merge "${NEXT_RELEASE_BRANCH}"
+git merge "${NEXT_NEXT_RELEASE_BRANCH}"
 git push origin developer-edition
 
-echo "NEXT_RELEASE_BRANCH=${NEXT_RELEASE_BRANCH}" >> $GITHUB_ENV
+#echo "NEXT_RELEASE_BRANCH=${NEXT_RELEASE_BRANCH}" >> $GITHUB_ENV

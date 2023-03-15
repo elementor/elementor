@@ -1,5 +1,9 @@
 import Module from 'elementor-assets-js/modules/imports/module.js';
 
+/**
+ * @typedef {{}} Component
+ */
+
 export default class extends Module {
 	constructor( ...args ) {
 		super( ...args );
@@ -25,7 +29,8 @@ export default class extends Module {
 	}
 
 	/**
-	 * @returns {Component}
+	 * @param {string} id
+	 * @return {Component} component
 	 */
 	get( id ) {
 		return this.components[ id ];

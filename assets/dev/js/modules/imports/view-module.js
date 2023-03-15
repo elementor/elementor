@@ -1,21 +1,21 @@
 import Module from './module';
 
-module.exports = Module.extend( {
+export default Module.extend( {
 	elements: null,
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		return {};
 	},
 
-	bindEvents: function() {},
+	bindEvents() {},
 
-	onInit: function() {
+	onInit() {
 		this.initElements();
 
 		this.bindEvents();
 	},
 
-	initElements: function() {
+	initElements() {
 		this.elements = this.getDefaultElements();
 	},
 } );

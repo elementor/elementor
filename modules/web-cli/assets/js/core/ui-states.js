@@ -1,4 +1,8 @@
-export default class UiStates {
+/**
+ * @typedef {import('./states/ui-state-base')} UiStateBase
+ */
+
+ export default class UiStates {
 	/**
 	 * Initialize the State Manager.
 	 *
@@ -12,8 +16,6 @@ export default class UiStates {
 	 * Register a new state.
 	 *
 	 * @param {UiStateBase} instance - State instance.
-	 *
-	 * @return {void}
 	 */
 	register( instance ) {
 		const stateId = instance.getPrefixedId();
@@ -36,7 +38,7 @@ export default class UiStates {
 	 *     ],
 	 * }
 	 *
-	 * @return {Object}
+	 * @return {Object} all existing states
 	 */
 	getAll() {
 		const states = {};
@@ -55,7 +57,7 @@ export default class UiStates {
 	 *
 	 * @param {string} state - State ID.
 	 *
-	 * @return {UiStateBase}
+	 * @return {UiStateBase} state value
 	 */
 	get( state ) {
 		if ( state ) {
@@ -127,7 +129,7 @@ export default class UiStates {
 	 *
 	 * @param {string} state - State ID.
 	 *
-	 * @return {string}
+	 * @return {string} current state value
 	 */
 	getCurrent( state ) {
 		return this.get( state )?.getCurrent();

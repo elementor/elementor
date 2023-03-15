@@ -953,6 +953,46 @@ class Upgrades {
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
 	}
 
+	public static function _v_3_8_0_fix_php8_image_custom_size() {
+		global $wpdb;
+
+		$attachment_ids = $wpdb->get_col(
+			'SELECT `post_id` FROM `' . $wpdb->postmeta . '`
+				WHERE `meta_key` = "_wp_attachment_metadata"
+					AND (
+						`meta_value` LIKE \'%elementor_custom_%\'
+					);'
+		);
+
+		foreach ( $attachment_ids as $attachment_id ) {
+			$attachment_metadata = wp_get_attachment_metadata( $attachment_id );
+			if ( empty( $attachment_metadata['sizes'] ) || ! is_array( $attachment_metadata['sizes'] ) ) {
+				continue;
+			}
+
+			$old_attachment_metadata = $attachment_metadata;
+			foreach ( $attachment_metadata['sizes'] as $size_key => $size_value ) {
+				if ( 0 !== strpos( $size_key, 'elementor_custom_' ) ) {
+					continue;
+				}
+
+				if ( absint( $size_value['width'] ) !== $size_value['width'] ) {
+					$attachment_metadata['sizes'][ $size_key ]['width'] = (int) $size_value['width'];
+				}
+
+				if ( absint( $size_value['height'] ) !== $size_value['height'] ) {
+					$attachment_metadata['sizes'][ $size_key ]['height'] = (int) $size_value['height'];
+				}
+			}
+
+			if ( $old_attachment_metadata['sizes'] === $attachment_metadata['sizes'] ) {
+				continue;
+			}
+
+			wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
+		}
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 

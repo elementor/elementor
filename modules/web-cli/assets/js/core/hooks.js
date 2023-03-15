@@ -1,6 +1,10 @@
 import HooksData from './hooks/data.js';
 import HooksUI from './hooks/ui.js';
 
+/**
+ * @typedef {import('../modules/hook-base')} HookBase
+ */
+
 export default class Hooks {
 	data = new HooksData();
 	ui = new HooksUI();
@@ -46,7 +50,7 @@ export default class Hooks {
 
 	getType( type ) {
 		return this.getTypes().find(
-			( hooks ) => type === hooks.getType()
+			( hooks ) => type === hooks.getType(),
 		);
 	}
 
@@ -55,11 +59,11 @@ export default class Hooks {
 	 *
 	 * Register hook.
 	 *
-	 * @param {string} type
-	 * @param {string} event
+	 * @param {string}   type
+	 * @param {string}   event
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}} Created callback
+	 * @return {{}} Created callback
 	 */
 	register( type, event, instance ) {
 		return this.getType( type ).register( event, instance );
@@ -73,10 +77,10 @@ export default class Hooks {
 	 * @param {string} type
 	 * @param {string} event
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param {{}}     args
+	 * @param {*}      result
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	run( type, event, command, args, result = undefined ) {
 		return this.getType( type ).run( event, command, args, result );
@@ -89,7 +93,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerDataAfter( instance ) {
 		return this.register( 'data', 'after', instance );
@@ -102,7 +106,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerDataCatch( instance ) {
 		return this.register( 'data', 'catch', instance );
@@ -115,7 +119,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerDataDependency( instance ) {
 		return this.register( 'data', 'dependency', instance );
@@ -128,7 +132,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerUIAfter( instance ) {
 		return this.register( 'ui', 'after', instance );
@@ -141,7 +145,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerUICatch( instance ) {
 		return this.register( 'ui', 'catch', instance );
@@ -154,7 +158,7 @@ export default class Hooks {
 	 *
 	 * @param {HookBase} instance
 	 *
-	 * @returns {{}}
+	 * @return {{}} callback
 	 */
 	registerUIBefore( instance ) {
 		return this.register( 'ui', 'before', instance );
@@ -166,10 +170,10 @@ export default class Hooks {
 	 * Run data hook that's run after the command.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param {{}}     args
+	 * @param {*}      result
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runDataAfter( command, args, result ) {
 		return this.run( 'data', 'after', command, args, result );
@@ -181,10 +185,10 @@ export default class Hooks {
 	 * Run data hook that's run when the command fails.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} error
+	 * @param {{}}     args
+	 * @param {*}      error
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runDataCatch( command, args, error ) {
 		return this.run( 'data', 'catch', command, args, error );
@@ -196,9 +200,9 @@ export default class Hooks {
 	 * Run data hook that's run before the command as dependency.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runDataDependency( command, args ) {
 		return this.run( 'data', 'dependency', command, args );
@@ -210,10 +214,10 @@ export default class Hooks {
 	 * Run UI hook that's run after the commands run.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} result
+	 * @param {{}}     args
+	 * @param {*}      result
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runUIAfter( command, args, result ) {
 		return this.run( 'ui', 'after', command, args, result );
@@ -225,10 +229,10 @@ export default class Hooks {
 	 * Run UI hook that's run when the command fails.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} e
+	 * @param {{}}     args
+	 * @param {*}      e
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runUICatch( command, args, e ) {
 		return this.run( 'ui', 'catch', command, args, e );
@@ -240,9 +244,9 @@ export default class Hooks {
 	 * Run UI hook that's run before the command.
 	 *
 	 * @param {string} command
-	 * @param {{}} args
+	 * @param {{}}     args
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	runUIBefore( command, args ) {
 		return this.run( 'ui', 'before', command, args );

@@ -5,7 +5,7 @@ jQuery( () => {
 		QUnit.test( 'Error on register command without component', ( assert ) => {
 			assert.throws(
 				() => $e.commands.register( '', 'save', () => {} ),
-				new Error( "Commands: '' component is not exist." )
+				new Error( "Commands: '' component is not exist." ),
 			);
 		} );
 
@@ -26,7 +26,7 @@ jQuery( () => {
 
 			assert.throws(
 				() => $e.commands.register( namespace, 'commandA', () => {} ),
-				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
+				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` ),
 			);
 		} );
 
@@ -35,7 +35,7 @@ jQuery( () => {
 				() => {
 					$e.run( 'not-existing-command' );
 				},
-				new Error( 'Commands: `not-existing-command` not found.' )
+				new Error( 'Commands: `not-existing-command` not found.' ),
 			);
 		} );
 

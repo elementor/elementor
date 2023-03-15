@@ -1,7 +1,7 @@
 export const Auto = () => {
 	QUnit.module( 'Auto', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
-			// set is modified, 'true' since it will be rejected if 'editor.isChanged = false'.
+			// Set is modified, 'true' since it will be rejected if 'editor.isChanged = false'.
 			$e.internal( 'document/save/set-is-modified', { status: true } );
 
 			const response = await $e.run( 'document/save/auto' );

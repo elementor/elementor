@@ -13,9 +13,9 @@ class Mock_Template extends Widget_Base {
 		return esc_html__( 'Template', 'elementor' );
 	}
 
-    public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
-        if ( isset( $config['settings']['template_id'] ) ) {
-            $config['settings']['template_id'] = $map_old_new_post_ids[ $config['settings']['template_id'] ];
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+        if ( isset( $config['settings']['template_id'] ) && isset( $data['post_ids'] ) ) {
+            $config['settings']['template_id'] = $data['post_ids'][ $config['settings']['template_id'] ];
         }
 
         return $config;

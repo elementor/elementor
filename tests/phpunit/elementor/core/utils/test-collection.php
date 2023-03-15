@@ -9,6 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Collection extends Elementor_Test_Base {
+	public function test_make() {
+		// Act
+		$collection = Collection::make( [ 1, 2, 3 ] );
+
+		// Assert
+		$this->assertEquals( [ 1, 2, 3 ], $collection->all() );
+	}
+
 	public function test_all() {
 		// Arrange
 		$collection = new Collection( $array = [ 'a' => 'a', 'b' => 'b' ] );
@@ -409,5 +417,43 @@ class Test_Collection extends Elementor_Test_Base {
 		// Assert
 		$this->assertEqualSets( [ 'a' => 1, 'b' => 1, 'c' => 1 ], $result_asc );
 		$this->assertEqualSets( [ 'c' => 1, 'b' => 1, 'a' => 1 ], $result_desc );
+	}
+
+	public function test_each() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 3 ) )
+			->method( 'each_callback' )
+			->withConsecutive(
+				[ 1, 'a' ],
+				[ 2, 'b' ],
+				[ 3, 'c' ]
+			);
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
+	}
+
+	public function test_each__breaks_on_false() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 1, 'b' => 2, 'c' => 3 ] );
+
+		$mock = $this->getMockBuilder( \stdClass::class )
+			->setMethods( [ 'each_callback' ] )
+			->getMock();
+
+		// Expect
+		$mock->expects( $this->exactly( 1 ) )
+			->method( 'each_callback' )
+			->willReturn( false );
+
+		// Act
+		$collection->each( [ $mock, 'each_callback' ] );
 	}
 }

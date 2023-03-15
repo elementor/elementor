@@ -15,6 +15,21 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsInternal );
 	}
 
+	defaultStates() {
+		return {
+			'': {
+				initialState: {},
+				reducers: {
+					create: this.commands.create.reducer,
+					delete: this.commands.delete.reducer,
+					empty: this.commands.empty.reducer,
+					populate: this.commandsInternal.populate.reducer,
+					settings: this.commandsInternal[ 'set-settings' ].reducer,
+				},
+			},
+		};
+	}
+
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => parentModel.isValidChild( childModel ),
@@ -65,18 +80,18 @@ export default class Component extends ComponentBase {
 				const storage = elementorCommon.storage.get( 'clipboard' );
 
 				// No storage? no paste.
-				if ( ! storage || ! storage[ 0 ] ) {
+				if ( ! storage || ! storage?.elements?.length || 'elementor' !== storage?.type ) {
 					return false;
 				}
 
-				if ( ! ( storage[ 0 ] instanceof Backbone.Model ) ) {
-					storage[ 0 ] = new Backbone.Model( storage[ 0 ] );
+				if ( ! ( storage.elements[ 0 ] instanceof Backbone.Model ) ) {
+					storage.elements[ 0 ] = new Backbone.Model( storage.elements[ 0 ] );
 				}
 
-				const pasteOptions = this.utils.getPasteOptions( storage[ 0 ], targetContainer );
+				const pasteOptions = this.utils.getPasteOptions( storage.elements[ 0 ], targetContainer );
 
 				return Object.values( pasteOptions ).some(
-					( opt ) => !! opt
+					( opt ) => !! opt,
 				);
 			},
 		};

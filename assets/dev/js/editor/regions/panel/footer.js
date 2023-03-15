@@ -27,7 +27,7 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.navigator': 'onNavigatorClick',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		var behaviors = {
 			saver: {
 				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver,
@@ -37,11 +37,11 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	addSubMenuItem: function( subMenuName, itemData ) {
+	addSubMenuItem( subMenuName, itemData ) {
 		const $newItem = jQuery( '<div>', {
 				id: 'elementor-panel-footer-sub-menu-item-' + itemData.name,
 				class: 'elementor-panel-footer-sub-menu-item',
@@ -83,17 +83,17 @@ module.exports = Marionette.ItemView.extend( {
 		return $newItem.appendTo( $subMenu );
 	},
 
-	removeSubMenuItem: function( subMenuName, itemData ) {
+	removeSubMenuItem( subMenuName, itemData ) {
 		const $item = jQuery( '#elementor-panel-footer-sub-menu-item-' + itemData.name );
 
 		return $item.remove();
 	},
 
-	showSettingsPage: function() {
-		$e.route( 'panel/page-settings/settings', {}, { source: Sources.PANEL } );
+	showSettingsPage() {
+		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onMenuButtonsClick: function( event ) {
+	onMenuButtonsClick( event ) {
 		var $tool = jQuery( event.currentTarget );
 
 		// If the tool is not toggleable or the click is inside of a tool
@@ -101,20 +101,20 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
-		var isOpen = $tool.hasClass( 'elementor-open' );
+		var isOpen = $tool.hasClass( 'e-open' );
 
-		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
+		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'e-open' );
 
 		if ( ! isOpen ) {
-			$tool.addClass( 'elementor-open' );
+			$tool.addClass( 'e-open' );
 		}
 	},
 
-	onSettingsClick: function() {
-		$e.route( 'panel/page-settings/settings', {}, { source: Sources.PANEL } );
+	onSettingsClick() {
+		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onDeviceModeIconClick: function() {
+	onDeviceModeIconClick() {
 		if ( elementor.isDeviceModeActive() ) {
 			elementor.changeDeviceMode( 'desktop' );
 
@@ -131,15 +131,15 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	onSaveTemplateClick: function() {
-		$e.route( 'library/save-template', {}, { source: Sources.PANEL } );
+	onSaveTemplateClick() {
+		$e.route( 'library/save-template' );
 	},
 
-	onHistoryClick: function() {
-		$e.route( 'panel/history/actions', {}, { source: Sources.PANEL } );
+	onHistoryClick() {
+		$e.route( 'panel/history/actions' );
 	},
 
-	onNavigatorClick: function() {
-		$e.run( 'navigator/toggle', {}, { source: Sources.PANEL } );
+	onNavigatorClick() {
+		$e.run( 'navigator/toggle' );
 	},
 } );

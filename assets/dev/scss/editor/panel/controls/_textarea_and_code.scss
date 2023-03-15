@@ -1,16 +1,12 @@
 .elementor-control-type-textarea,
 .elementor-control-type-code {
 
-	&.elementor-control-dynamic-value {
-
-		.elementor-control-dynamic-switcher {
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-			@include border-start-property(width, 0);
-		}
-	}
-
 	.elementor-control-dynamic-switcher {
-		border-radius: 0 3px;
+		border-inline-start-width: 1px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-end-radius: 0;
+		border-end-start-radius: var(--e-a-border-radius);
 	}
 
 	&:not(.elementor-control-dynamic-value) {
@@ -19,7 +15,7 @@
 			position: absolute;
 			top: 0;
 			z-index: $first-layer;
-			right: 0; // It should always be LTR
+			#{$end}: 0;
 		}
 	}
 

@@ -287,7 +287,8 @@ class Test_Manager extends Data_Test_Base {
 			'globals/typography' => 'globals/typography/{id}',
 			'template-library/templates' => 'template-library/templates',
 			'favorites/index' => 'favorites/{id}',
-			'send-event/index' => 'send-event/{id}'
+			'send-event/index' => 'send-event/{id}',
+			'kit-elements-defaults/index' => 'kit-elements-defaults/{id}',
 		], $this->manager->command_formats );
 	}
 }

@@ -23,13 +23,13 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onSyncClick: function() {
+	onSyncClick() {
 		var self = this;
 
 		self.ui.sync.addClass( 'eicon-animation-spin' );
 
 		elementor.templates.requestLibraryData( {
-			onUpdate: function() {
+			onUpdate() {
 				self.ui.sync.removeClass( 'eicon-animation-spin' );
 
 				$e.routes.refreshContainer( 'library' );

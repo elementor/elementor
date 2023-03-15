@@ -44,6 +44,7 @@ class Experiments_Reporter extends Base {
 		$tracking_keys = [
 			'default',
 			'state',
+			'tags',
 		];
 
 		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
@@ -51,6 +52,10 @@ class Experiments_Reporter extends Base {
 
 			// Extract only tracking keys.
 			foreach ( $tracking_keys as $tracking_key ) {
+				if ( empty( $feature_data[ $tracking_key ] ) ) {
+					continue;
+				}
+
 				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
 			}
 
@@ -86,7 +91,9 @@ class Experiments_Reporter extends Base {
 				$output .= "\t";
 			}
 
-			$output .= $experiment['title'] . ': ' . $state . PHP_EOL;
+			$title = isset( $experiment['title'] ) ? $experiment['title'] : $experiment['name'];
+
+			$output .= $title . ': ' . $state . PHP_EOL;
 
 			$is_first_item = false;
 		}

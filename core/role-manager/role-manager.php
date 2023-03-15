@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
-use Elementor\Settings_Page;
 use Elementor\Settings;
-use Elementor\Utils;
+use Elementor\Settings_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,24 +29,15 @@ class Role_Manager extends Settings_Page {
 	 * @access protected
 	 */
 	protected function get_page_title() {
-		return __( 'Role Manager', 'elementor' );
+		return esc_html__( 'Role Manager', 'elementor' );
 	}
 
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
-	public function register_admin_menu() {
-		$sanitized_page_title = esc_html( $this->get_page_title() );
-
-		add_submenu_page(
-			Settings::PAGE_ID,
-			$sanitized_page_title,
-			$sanitized_page_title,
-			'manage_options',
-			self::PAGE_ID,
-			[ $this, 'display_settings_page' ]
-		);
+	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
 	}
 
 	/**
@@ -164,11 +155,10 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function get_go_pro_link_html() {
-		$pro_link = Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash' );
 		?>
 		<div class="elementor-role-go-pro">
 			<div class="elementor-role-go-pro__desc"><?php echo esc_html__( 'Want to give access only to content?', 'elementor' ); ?></div>
-			<div class="elementor-role-go-pro__link"><a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( $pro_link ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a></div>
+			<div class="elementor-role-go-pro__link"><a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/go-pro-role-manager/"><?php echo esc_html__( 'Upgrade', 'elementor' ); ?></a></div>
 		</div>
 		<?php
 	}
@@ -244,7 +234,9 @@ class Role_Manager extends Settings_Page {
 		parent::__construct();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 100 );
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				$this->register_admin_menu( $admin_menu );
+			}, Settings::ADMIN_MENU_PRIORITY + 10 );
 		}
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );

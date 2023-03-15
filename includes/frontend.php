@@ -140,6 +140,18 @@ class Frontend extends App {
 		'elementor-default',
 	];
 
+	private $google_fonts_index = 0;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_asset_path;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_version;
+
 	/**
 	 * Front End constructor.
 	 *
@@ -161,6 +173,7 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -228,8 +241,17 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'print_google_fonts_preconnect_tag' ], 8 );
 		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
+	}
+
+	public function print_google_fonts_preconnect_tag() {
+		if ( 0 >= $this->google_fonts_index ) {
+			return;
+		}
+
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>';
 	}
 
 	/**
@@ -311,6 +333,12 @@ class Frontend extends App {
 	 */
 	public function add_content_filter() {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	public function init_swiper_settings() {
+		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
 	}
 
 	/**
@@ -484,7 +512,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.15.0'
+			Icons_Manager::ELEMENTOR_ICONS_VERSION
 		);
 
 		wp_register_style(
@@ -530,6 +558,13 @@ class Frontend extends App {
 			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
 			$frontend_dependencies,
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'swiper',
+			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			[],
+			$this->e_swiper_version
 		);
 
 		/**
@@ -619,6 +654,8 @@ class Frontend extends App {
 			}
 
 			wp_enqueue_style( 'elementor-frontend' );
+
+			wp_enqueue_style( 'swiper' );
 
 			/**
 			 * After frontend styles enqueued.
@@ -769,16 +806,9 @@ class Frontend extends App {
 	}
 
 	/**
-	 * Print fonts links.
-	 *
-	 * Enqueue all the frontend fonts by url.
-	 *
-	 * Fired by `wp_head` action.
-	 *
-	 * @since 1.9.4
-	 * @access public
+	 * @return array|array[]
 	 */
-	public function print_fonts_links() {
+	public function get_list_of_google_fonts_by_type(): array {
 		$google_fonts = [
 			'google' => [],
 			'early' => [],
@@ -816,6 +846,22 @@ class Frontend extends App {
 		}
 		$this->fonts_to_enqueue = [];
 
+		return $google_fonts;
+	}
+
+	/**
+	 * Print fonts links.
+	 *
+	 * Enqueue all the frontend fonts by url.
+	 *
+	 * Fired by `wp_head` action.
+	 *
+	 * @since 1.9.4
+	 * @access public
+	 */
+	public function print_fonts_links() {
+		$google_fonts = $this->get_list_of_google_fonts_by_type();
+
 		$this->enqueue_google_fonts( $google_fonts );
 		$this->enqueue_icon_fonts();
 	}
@@ -851,6 +897,71 @@ class Frontend extends App {
 	}
 
 	/**
+	 * @param array $fonts Stable google fonts ($google_fonts['google']).
+	 * @return string
+	 */
+	public function get_stable_google_fonts_url( array $fonts ): string {
+		foreach ( $fonts as &$font ) {
+			$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
+		}
+
+		// Defining a font-display type to google fonts.
+		$font_display_url_str = '&display=' . Fonts::get_font_display_setting();
+
+		$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $fonts ), $font_display_url_str );
+
+		$subsets = [
+			'ru_RU' => 'cyrillic',
+			'bg_BG' => 'cyrillic',
+			'he_IL' => 'hebrew',
+			'el' => 'greek',
+			'vi' => 'vietnamese',
+			'uk' => 'cyrillic',
+			'cs_CZ' => 'latin-ext',
+			'ro_RO' => 'latin-ext',
+			'pl_PL' => 'latin-ext',
+			'hr_HR' => 'latin-ext',
+			'hu_HU' => 'latin-ext',
+			'sk_SK' => 'latin-ext',
+			'tr_TR' => 'latin-ext',
+			'lt_LT' => 'latin-ext',
+		];
+
+		/**
+		 * Google font subsets.
+		 *
+		 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $subsets A list of font subsets.
+		 */
+		$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
+		$locale = get_locale();
+
+		if ( isset( $subsets[ $locale ] ) ) {
+			$fonts_url .= '&subset=' . $subsets[ $locale ];
+		}
+
+		return $fonts_url;
+	}
+
+	/**
+	 * @param array $fonts Early Access google fonts ($google_fonts['early']).
+	 * @return array
+	 */
+	public function get_early_access_google_font_urls( array $fonts ): array {
+		$font_urls = [];
+
+		foreach ( $fonts as $font ) {
+			$font_urls[] = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $font ) ) );
+		}
+
+		return $font_urls;
+	}
+
+	/**
 	 * Print Google fonts.
 	 *
 	 * Enqueue all the frontend Google fonts.
@@ -864,9 +975,7 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
-		static $google_fonts_index = 0;
-
-		$print_google_fonts = true;
+		$print_google_fonts = Fonts::is_google_fonts_enabled();
 
 		/**
 		 * Print frontend google fonts.
@@ -885,63 +994,22 @@ class Frontend extends App {
 
 		// Print used fonts
 		if ( ! empty( $google_fonts['google'] ) ) {
-			$google_fonts_index++;
+			$this->google_fonts_index++;
 
-			foreach ( $google_fonts['google'] as &$font ) {
-				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
-			}
+			$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
 
-			// Defining a font-display type to google fonts.
-			$font_display_url_str = '&display=' . Fonts::get_font_display_setting();
-
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $google_fonts['google'] ), $font_display_url_str );
-
-			$subsets = [
-				'ru_RU' => 'cyrillic',
-				'bg_BG' => 'cyrillic',
-				'he_IL' => 'hebrew',
-				'el' => 'greek',
-				'vi' => 'vietnamese',
-				'uk' => 'cyrillic',
-				'cs_CZ' => 'latin-ext',
-				'ro_RO' => 'latin-ext',
-				'pl_PL' => 'latin-ext',
-				'hr_HR' => 'latin-ext',
-				'hu_HU' => 'latin-ext',
-				'sk_SK' => 'latin-ext',
-				'tr_TR' => 'latin-ext',
-				'lt_LT' => 'latin-ext',
-			];
-
-			/**
-			 * Google font subsets.
-			 *
-			 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param array $subsets A list of font subsets.
-			 */
-			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
-
-			$locale = get_locale();
-
-			if ( isset( $subsets[ $locale ] ) ) {
-				$fonts_url .= '&subset=' . $subsets[ $locale ];
-			}
-
-			wp_enqueue_style( 'google-fonts-' . $google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
-			foreach ( $google_fonts['early'] as $current_font ) {
-				$google_fonts_index++;
+			$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
+
+			foreach ( $early_access_font_urls as $ea_font_url ) {
+				$this->google_fonts_index++;
 
 				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
 
-				$font_url = sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $current_font ) ) );
-
-				wp_enqueue_style( 'google-earlyaccess-' . $google_fonts_index, $font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 
@@ -1075,6 +1143,15 @@ class Frontend extends App {
 				$css_file = Post_CSS::create( $post_id );
 			}
 
+			/**
+			 * Builder Content - Before Enqueue CSS File
+			 *
+			 * Allows intervening with a document's CSS file before it is enqueued.
+			 *
+			 * @param $css_file Post_CSS|Post_Preview
+			 */
+			$css_file = apply_filters( 'elementor/frontend/builder_content/before_enqueue_css_file', $css_file );
+
 			$css_file->enqueue();
 		}
 
@@ -1084,6 +1161,16 @@ class Frontend extends App {
 		if ( is_customize_preview() || wp_doing_ajax() ) {
 			$with_css = true;
 		}
+
+		/**
+		 * Builder Content - With CSS
+		 *
+		 * Allows overriding the `$with_css` parameter which is a factor in determining whether to print the document's
+		 * CSS and font links inline in a `style` tag above the document's markup.
+		 *
+		 * @param $with_css boolean
+		 */
+		$with_css = apply_filters( 'elementor/frontend/builder_content/before_print_css', $with_css );
 
 		if ( ! empty( $css_file ) && $with_css ) {
 			$css_file->print_css();
@@ -1320,6 +1407,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
+			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1469,9 +1557,9 @@ class Frontend extends App {
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
-				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
 				[],
-				'5.3.6',
+				$this->e_swiper_version,
 				true
 			);
 

@@ -79,7 +79,7 @@ describe( 'Localized value store', () => {
 
 function builtKeyInputEvent( originalEventKey, keyCode, originalEventData, targetValue ) {
 	return {
-		keyCode: keyCode,
+		keyCode,
 		originalEvent: { key: originalEventKey, data: originalEventData },
 		target: { value: targetValue },
 	};
@@ -87,8 +87,8 @@ function builtKeyInputEvent( originalEventKey, keyCode, originalEventData, targe
 
 function builtPasteEvent( originalEventInputType, ctrlKey, code ) {
 	return {
-		code: code,
-		ctrlKey: ctrlKey,
+		code,
+		ctrlKey,
 		originalEvent: { inputType: originalEventInputType },
 	};
 }

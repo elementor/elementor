@@ -29,7 +29,7 @@ test.describe( 'URL Actions', () => {
 		await imageMediaControl.click( { delay: 500, clickCount: 2 } );
 		await page.click( 'text=Media Library' );
 		await page.waitForSelector( 'text=Insert Media' );
-		// takes time to load the media library assets.
+		// Takes time to load the media library assets.
 		await page.waitForTimeout( 1000 );
 
 		// Check if previous image is already uploaded.
@@ -141,7 +141,7 @@ test.describe( 'URL Actions', () => {
 		 */
 		const frontendMountainImageElement = await page.$( '.elementor-widget-image a[href*="mountain-image"]' );
 
-		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'e-action-hash' );
+		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 
 		const pageURL = page.url();
 

@@ -75,7 +75,7 @@ jQuery( () => {
 					const instance = new Component();
 					instance.getNamespace();
 				},
-				new Error( 'Component.getNamespace() should be implemented, please provide \'getNamespace\' functionality.' )
+				new Error( 'Component.getNamespace() should be implemented, please provide \'getNamespace\' functionality.' ),
 			);
 		} );
 

@@ -7,18 +7,18 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 
 	emptyView: EmptyView,
 
-	isEmpty: function() {
+	isEmpty() {
 		// Ignore the section control
 		return this.collection.length < 2;
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			container: this.options.container,
 		};
 	},
 
-	getNamespaceArray: function() {
+	getNamespaceArray() {
 		var currentPageView = elementor.getPanelView().getCurrentPageView(),
 			eventNamespace = currentPageView.getNamespaceArray();
 
@@ -31,7 +31,7 @@ module.exports = elementorModules.editor.views.ControlsStack.extend( {
 		return eventNamespace;
 	},
 
-	onRenderTemplate: function() {
+	onRenderTemplate() {
 		this.activateFirstSection();
 	},
 } );

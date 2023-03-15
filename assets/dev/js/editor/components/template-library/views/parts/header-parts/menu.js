@@ -3,7 +3,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	id: 'elementor-template-library-header-menu',
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			tabs: $e.components.get( 'library' ).getTabs(),
 		};

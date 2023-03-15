@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Component from './mock/component.spec';
 
 QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks ) => {
@@ -34,7 +35,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 	QUnit.test( 'get(): Ensure valid return format - Command with args', ( assert ) => {
 		// Act.
 		const actual = $e.extras.hashCommands.get(
-			'#e:run:test/command?{"number":1,"string":"test-string"}&e:run:test/command2&e:run:test/command3?{invalid-json}'
+			'#e:run:test/command?{"number":1,"string":"test-string"}&e:run:test/command2&e:run:test/command3?{invalid-json}',
 		);
 
 		// Assert.
@@ -110,7 +111,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:run',
 			} ] ),
-			new Error( 'Attempting to run unsafe or non exist command: `test-hash-commands/insecure-command`.' )
+			new Error( 'Attempting to run unsafe or non exist command: `test-hash-commands/insecure-command`.' ),
 		);
 	} );
 
@@ -121,7 +122,7 @@ QUnit.module( 'File: modules/web-cli/assets/js/extras/hash-commands.js', ( hooks
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:non-exist-method',
 			} ] ),
-			new Error( 'No dispatcher found for the command: `test-hash-commands/insecure-command`.' )
+			new Error( 'No dispatcher found for the command: `test-hash-commands/insecure-command`.' ),
 		);
 	} );
 

@@ -1,9 +1,12 @@
 // TODO: Copied from `section/shapes.js`.
 export default class Shapes extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
+		const contentWidth = this.getElementSettings( 'content_width' ),
+			container = 'boxed' === contentWidth ? '> .e-con-inner > .elementor-shape-%s' : '> .elementor-shape-%s';
+
 		return {
 			selectors: {
-				container: '> .elementor-shape-%s',
+				container,
 			},
 			svgURL: elementorFrontend.config.urls.assets + 'shapes/',
 		};

@@ -3,6 +3,7 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
 use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
+use Elementor\Core\Behaviors\Interfaces\Lock_Behavior;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -261,6 +262,13 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * @return null|Lock_Behavior
+	 */
+	public static function get_lock_behavior_v2() {
+		return null;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
 	 *
@@ -320,7 +328,8 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		return $attributes;
+		// apply this filter to allow the attributes to be modified by different sources
+		return apply_filters( 'elementor/document/wrapper_attributes', $attributes, $this );
 	}
 
 	/**
@@ -332,10 +341,10 @@ abstract class Document extends Controls_Stack {
 		$document = $this;
 
 		// Ajax request from editor.
-		// PHPCS - only reading the value from $_POST['initial_document_id'].
-		if ( ! empty( $_POST['initial_document_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			// PHPCS - only reading the value from $_POST['initial_document_id'].
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$initial_document_id = Utils::get_super_global_value( $_POST, 'initial_document_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( ! empty( $initial_document_id ) ) {
+			$document = Plugin::$instance->documents->get( $initial_document_id ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$url = get_preview_post_link(
@@ -577,7 +586,9 @@ abstract class Document extends Controls_Stack {
 			$locked_user = $locked_user->display_name;
 		}
 
-		$post_type_object = get_post_type_object( $this->get_main_post()->post_type );
+		$post = $this->get_main_post();
+
+		$post_type_object = get_post_type_object( $post->post_type );
 
 		$settings = SettingsManager::get_settings_managers_config();
 
@@ -607,6 +618,15 @@ abstract class Document extends Controls_Stack {
 				'main_dashboard' => $this->get_main_dashboard_url(),
 			],
 		];
+
+		$post_status_object = get_post_status_object( $post->post_status );
+
+		if ( $post_status_object ) {
+			$config['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		do_action( 'elementor/document/before_get_config', $this );
 
@@ -906,6 +926,14 @@ abstract class Document extends Controls_Stack {
 		return $meta;
 	}
 
+	public function update_json_meta( $key, $value ) {
+		$this->update_meta(
+			$key,
+			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
+			wp_slash( wp_json_encode( $value ) )
+		);
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -943,7 +971,13 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			$editor_data[] = $element->get_raw_data( $with_html_content );
+			if ( $this->is_saving ) {
+				$element_data = $element->get_data_for_save();
+			} else {
+				$element_data = $element->get_raw_data( $with_html_content );
+			}
+
+			$editor_data[] = $element_data;
 		} // End foreach().
 
 		Plugin::$instance->documents->restore_document();
@@ -1135,23 +1169,39 @@ abstract class Document extends Controls_Stack {
 		return $deleted && ! is_wp_error( $deleted );
 	}
 
+	public function force_delete() {
+		$deleted = wp_delete_post( $this->post->ID, true );
+
+		return $deleted && ! is_wp_error( $deleted );
+	}
+
 	/**
+	 * On import update dynamic content (e.g. post and term IDs).
 	 *
-	 * @since 3.6.0
+	 * @since 3.8.0
 	 *
-	 * @param array $config
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
 	 *
-	 * @param array $map_old_new_post_ids
+	 * @return array Element data.
 	 */
-	public static function on_import_replace_dynamic_content( $config, $map_old_new_post_ids ) {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
-			if ( $element_instance ) {
-				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $map_old_new_post_ids );
-
-				$element_config['elements'] = static::on_import_replace_dynamic_content( $element_config['elements'], $map_old_new_post_ids );
+			if ( is_null( $element_instance ) ) {
+				continue;
 			}
+
+			if ( $element_instance->has_own_method( 'on_import_replace_dynamic_content' ) ) {
+				// TODO: Remove this check in the future.
+				$element_config = $element_instance::on_import_replace_dynamic_content( $element_config, $data['post_ids'] );
+			} else {
+				$element_config = $element_instance::on_import_update_dynamic_content( $element_config, $data, $element_instance->get_controls() );
+			}
+
+			$element_config['elements'] = static::on_import_update_dynamic_content( $element_config['elements'], $data );
 		}
 
 		return $config;
@@ -1531,8 +1581,10 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	private function process_element_import_export( Controls_Stack $element, $method ) {
-		$element_data = $element->get_data();
+	public function process_element_import_export( Controls_Stack $element, $method, $element_data = null ) {
+		if ( null === $element_data ) {
+			$element_data = $element->get_data();
+		}
 
 		if ( method_exists( $element, $method ) ) {
 			// TODO: Use the internal element data without parameters.
@@ -1547,8 +1599,15 @@ abstract class Document extends Controls_Stack {
 				return $element_data;
 			}
 
-			if ( method_exists( $control_class, $method ) ) {
-				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			// Do not add default value to the final settings, if there is no value at the
+			// data before the methods `on_import` or `on_export` called.
+			$has_value = isset( $element_data['settings'][ $control['name'] ] );
+
+			if ( $has_value && method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}(
+					$element_data['settings'][ $control['name'] ],
+					$control
+				);
 			}
 
 			// On Export, check if the control has an argument 'export' => false.

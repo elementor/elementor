@@ -21,7 +21,7 @@ export class Import extends $e.modules.CommandBase {
 					if ( await session.validate() ) {
 						session.apply();
 					}
-				} )
+				} ),
 			);
 		} );
 

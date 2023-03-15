@@ -5,9 +5,9 @@ export class EnterPreview extends $e.modules.CommandBase {
 	/**
 	 * Initialize the command.
 	 *
-	 * @param {object} args
+	 * @param {Object} args
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	apply( args ) {
 		this.component.renderUI( args.value );

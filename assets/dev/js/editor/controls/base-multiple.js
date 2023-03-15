@@ -3,7 +3,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 
-	applySavedValue: function() {
+	applySavedValue() {
 		var values = this.getControlValue(),
 			$inputs = this.$( '[data-setting]' ),
 			self = this;
@@ -17,7 +17,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		} );
 	},
 
-	getControlValue: function( key ) {
+	getControlValue( key ) {
 		var values = this.container.settings.get( this.model.get( 'name' ) );
 
 		if ( ! jQuery.isPlainObject( values ) ) {
@@ -40,12 +40,12 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	/**
 	 * @inheritDoc
 	 */
-	getCleanControlValue: function( key ) {
+	getCleanControlValue( key ) {
 		const values = Object.fromEntries(
 			Object.entries( this.getControlValue() )
 				.filter( ( [ k, v ] ) => {
 					return v && this.model.get( 'default' )[ k ] !== v;
-				} )
+				} ),
 		);
 
 		if ( key ) {
@@ -55,7 +55,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		return Object.keys( values ).length ? values : undefined;
 	},
 
-	setValue: function( key, value ) {
+	setValue( key, value ) {
 		var values = this.getControlValue();
 
 		if ( 'object' === typeof key ) {
@@ -69,16 +69,16 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		this.setSettingsModel( values );
 	},
 
-	updateElementModel: function( value, input ) {
+	updateElementModel( value, input ) {
 		var key = input.dataset.setting;
 
 		this.setValue( key, value );
 	},
 }, {
 	// Static methods
-	getStyleValue: function( placeholder, controlValue ) {
+	getStyleValue( placeholder, controlValue ) {
 		if ( ! _.isObject( controlValue ) ) {
-			return ''; // invalid
+			return ''; // Invalid
 		}
 
 		return controlValue[ placeholder.toLowerCase() ];

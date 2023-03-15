@@ -58,7 +58,7 @@ class Render_Mode_Manager {
 	 */
 	public function register_render_mode( $class_name ) {
 		if ( ! is_subclass_of( $class_name, Render_Mode_Base::class ) ) {
-			throw new \Exception( "'{$class_name}' must extends 'Render_Mode_Base'" );
+			throw new \Exception( "'{$class_name}' must extend 'Render_Mode_Base'." );
 		}
 
 		$this->render_modes[ $class_name::get_name() ] = $class_name;
@@ -127,10 +127,16 @@ class Render_Mode_Manager {
 	 * Add actions base on the current render.
 	 *
 	 * @throws \Requests_Exception_HTTP_403
+	 * @throws Status403
 	 */
 	private function add_current_actions() {
 		if ( ! $this->current->get_permissions_callback() ) {
-			throw new \Requests_Exception_HTTP_403();
+			// WP >= 6.2-alpha
+			if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+				throw new \WpOrg\Requests\Exception\Http\Status403();
+			} else {
+				throw new \Requests_Exception_HTTP_403();
+			}
 		}
 
 		// Run when 'template-redirect' actually because the the class is instantiate when 'template-redirect' run.

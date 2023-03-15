@@ -134,7 +134,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 				// Find source at document.
 				let searchTarget = elementor.getPreviewContainer();
 
-				if ( 'column' === sourceElType ) {
+				if ( 'column' === sourceElType || ( elementorCommon.config.experimentalFeatures.container && 'widget' === sourceElType ) ) {
 					const lastSection = lastChildrenContainer( searchTarget );
 
 					searchTarget = lastSection;
@@ -223,33 +223,6 @@ export const Paste = () => {
 				// Check.
 				assert.equal( eColumn.children.length, 2,
 					'Pasted element were created.' );
-			} );
-
-			QUnit.test( 'Rules', ( assert ) => {
-				Object.keys( DEFAULT_PASTE_RULES ).forEach( ( sourceElType ) => {
-					Object.entries( DEFAULT_PASTE_RULES[ sourceElType ] ).forEach( ( [ targetElType, isAllowed ] ) => {
-						ElementsHelper.empty();
-
-						const source = ElementsHelper.createAuto( sourceElType ),
-							target = ElementsHelper.createAuto( targetElType );
-						// Handle inner-section.
-						if ( 'object' === typeof isAllowed ) {
-							Object.keys( isAllowed ).forEach( ( _targetElType ) => {
-								validateRule( assert,
-									target,
-									_targetElType,
-									source,
-									sourceElType,
-									isAllowed[ _targetElType ],
-								);
-							} );
-
-							return;
-						}
-
-						validateRule( assert, target, targetElType, source, sourceElType, isAllowed );
-					} );
-				} );
 			} );
 
 			QUnit.module( 'Positions', () => {

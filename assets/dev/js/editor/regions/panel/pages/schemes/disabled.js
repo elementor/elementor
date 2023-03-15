@@ -9,7 +9,7 @@ PanelSchemeDisabledView = Marionette.ItemView.extend( {
 
 	disabledTitle: '',
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			disabledTitle: this.disabledTitle,
 		};

@@ -121,8 +121,8 @@ ImagesManager = function() {
 				isFirstTime = ! cache[ id ] || 0 === Object.keys( cache[ id ] ).length;
 
 			requestedItems.push( {
-				id: id,
-				size: size,
+				id,
+				size,
 				is_first_time: isFirstTime,
 			} );
 		}
@@ -149,7 +149,7 @@ ImagesManager = function() {
 
 					elementor.channels.editor.trigger( 'imagesManager:detailsReceived', data );
 				},
-			}
+			},
 		);
 	};
 

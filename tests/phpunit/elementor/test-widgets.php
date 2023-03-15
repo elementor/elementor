@@ -51,7 +51,16 @@ class Elementor_Test_Widgets extends Elementor_Test_Base {
 				}
 
 				foreach ( $control['selectors'] as $selector => $css_property ) {
+					$comma_replacement_string = '--#-#--';
+
+					preg_match('/:is\(.*\)/',  $selector, $matches);
+					foreach ( $matches as $match ) {
+						$replacement=str_replace (',', $comma_replacement_string, $match);
+						$selector= str_replace($match, $replacement, $selector);
+					}
+
 					foreach ( explode( ',', $selector ) as $item ) {
+						$item= str_replace ($comma_replacement_string, ',', $item);
 						preg_match( '/\{\{(WRAPPER)|(ID)\}\}/', $item, $matches );
 
 						$this->assertTrue( ! ! $matches );

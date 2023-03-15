@@ -29,6 +29,6 @@ class Post extends PageBase {
 	}
 
 	public static function get_plural_title() {
-		return __( 'Posts', 'elementor' );
+		return esc_html__( 'Posts', 'elementor' );
 	}
 }

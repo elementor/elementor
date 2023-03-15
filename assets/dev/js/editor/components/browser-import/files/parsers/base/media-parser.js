@@ -7,9 +7,9 @@ export class MediaParser extends FileParserBase {
 	/**
 	 * Upload a media file to the wordpress media library using the `wp/media` command.
 	 *
-	 * @param file
-	 * @param options
-	 * @returns {{}}
+	 * @param {*} file
+	 * @param {*} options
+	 * @return {{}} result
 	 */
 	upload( file, options = {} ) {
 		return $e.data.run( 'create', 'wp/media', {

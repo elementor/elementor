@@ -1,5 +1,5 @@
 export class DeselectAll extends $e.modules.CommandBase {
-	apply( args ) {
+	apply() {
 		elementor.selection.remove( [], true );
 	}
 }

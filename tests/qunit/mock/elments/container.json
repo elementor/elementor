@@ -102,7 +102,7 @@
 			"tab": "content",
 			"section": "section_content_container",
 			"default": "row",
-			"prefix_class": "e-container--placeholder-",
+			"prefix_class": "e-con--placeholder-",
 			"conditions": {
 				"relation": "or",
 				"terms": [
@@ -2385,7 +2385,7 @@
 				"%"
 			],
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-basis: {{SIZE}}{{UNIT}};"
+				"{{WRAPPER}}.e-con": "--flex-basis: {{SIZE}}{{UNIT}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_basis",
 			"responsive": {
@@ -2418,7 +2418,7 @@
 				"%"
 			],
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-basis: {{SIZE}}{{UNIT}};"
+				"{{WRAPPER}}.e-con": "--flex-basis: {{SIZE}}{{UNIT}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_basis",
 			"responsive": {
@@ -2451,7 +2451,7 @@
 				"%"
 			],
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-basis: {{SIZE}}{{UNIT}};"
+				"{{WRAPPER}}.e-con": "--flex-basis: {{SIZE}}{{UNIT}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_basis",
 			"responsive": {
@@ -2470,7 +2470,7 @@
 			"section": "section_flex",
 			"label": "Flex Grow",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-grow: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-grow: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_grow",
 			"responsive": {
@@ -2485,7 +2485,7 @@
 			"section": "section_flex",
 			"label": "Flex Grow",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-grow: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-grow: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_grow",
 			"responsive": {
@@ -2500,7 +2500,7 @@
 			"section": "section_flex",
 			"label": "Flex Grow",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-grow: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-grow: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_grow",
 			"responsive": {
@@ -2515,7 +2515,7 @@
 			"section": "section_flex",
 			"label": "Flex Shrink",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-shrink: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-shrink: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_shrink",
 			"responsive": {
@@ -2530,7 +2530,7 @@
 			"section": "section_flex",
 			"label": "Flex Shrink",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-shrink: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-shrink: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_shrink",
 			"responsive": {
@@ -2545,7 +2545,7 @@
 			"section": "section_flex",
 			"label": "Flex Shrink",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--flex-shrink: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--flex-shrink: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-flex_shrink",
 			"responsive": {
@@ -2560,7 +2560,7 @@
 			"section": "section_flex",
 			"label": "Order",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--order: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--order: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-order",
 			"responsive": {
@@ -2575,7 +2575,7 @@
 			"section": "section_flex",
 			"label": "Order",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--order: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--order: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-order",
 			"responsive": {
@@ -2590,7 +2590,7 @@
 			"section": "section_flex",
 			"label": "Order",
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--order: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--order: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-order",
 			"responsive": {
@@ -2614,7 +2614,7 @@
 				"stretch": "Stretch"
 			},
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--align-self: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--align-self: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-align_self",
 			"responsive": {
@@ -2638,7 +2638,7 @@
 				"stretch": "Stretch"
 			},
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--align-self: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--align-self: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-align_self",
 			"responsive": {
@@ -2662,7 +2662,7 @@
 				"stretch": "Stretch"
 			},
 			"selectors": {
-				"{{WRAPPER}}.e-container": "--align-self: {{VALUE}};"
+				"{{WRAPPER}}.e-con": "--align-self: {{VALUE}};"
 			},
 			"classes": "elementor-group-control-flex-item elementor-group-control elementor-group-control-align_self",
 			"responsive": {

@@ -31,8 +31,6 @@ export const ResetStyle = () => {
 
 				ElementsHelper.resetStyle( eWidgetStyled );
 
-				//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
-
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
@@ -47,7 +45,7 @@ export const ResetStyle = () => {
 				// Redo.
 				HistoryHelper.redoValidate( assert, historyItem );
 
-				/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
+				/* Assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
 					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
 		} );

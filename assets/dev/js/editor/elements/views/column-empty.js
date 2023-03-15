@@ -9,7 +9,7 @@ module.exports = Marionette.ItemView.extend( {
 		click: 'onClickAdd',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
@@ -18,7 +18,7 @@ module.exports = Marionette.ItemView.extend( {
 		};
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		return [
 			{
 				name: 'general',
@@ -36,9 +36,7 @@ module.exports = Marionette.ItemView.extend( {
 		];
 	},
 
-	onClickAdd: function() {
-		$e.route( 'panel/elements/categories', {}, {
-			source: Sources.PREVIEW,
-		} );
+	onClickAdd() {
+		$e.route( 'panel/elements/categories' );
 	},
 } );

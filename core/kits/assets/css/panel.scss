@@ -14,11 +14,10 @@
 	.elementor-panel {
 
 		#elementor-panel-header {
-			background-color: $editor-kit-accent;
 
 			#elementor-panel-header-kit-close,
 			#elementor-panel-header-kit-back {
-				display: table-cell;
+				display: flex;
 			}
 
 			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
@@ -34,28 +33,10 @@
 			}
 		}
 
-		.elementor-panel-navigation {
-
-			.elementor-panel-navigation-tab{
-
-				&.elementor-active{
-					border-bottom-color: $editor-kit-accent;
-				}
-			}
-		}
-
 		#elementor-panel-page-settings {
 
 			.elementor-panel-navigation {
 				display: none;
-			}
-		}
-
-		#elementor-panel-saver-button-publish,
-		#elementor-panel-saver-button-save-options {
-
-			&.elementor-button.elementor-button-success:not(.elementor-disabled) {
-				background-color: $editor-kit-accent;
 			}
 		}
 
@@ -83,7 +64,7 @@
 				position: relative;
 
 				&.ui-sortable-helper {
-					background-color: $white;
+					background-color: var(--e-a-bg-default);
 				}
 			}
 
@@ -94,8 +75,12 @@
 
 			&-row-tool {
 				cursor: pointer;
-				color: $editor-lightest;
+				color: var(--e-a-color-txt);
 				padding: 5px;
+
+				&:hover {
+					color: var(--e-a-color-txt-hover);
+				}
 			}
 		}
 
@@ -143,15 +128,22 @@
 		}
 
 		// Hard selector to override default margin
-		.elementor-control-content {
+		.elementor-repeater-row-controls {
 
-			> .elementor-control-field {
+			> .elementor-control {
 
-				> .elementor-control-input-wrapper {
-					margin-top: 0;
+				> .elementor-control-content {
+
+					> .elementor-control-field {
+
+						> .elementor-control-input-wrapper {
+							margin-top: 0;
+						}
+					}
 				}
 			}
 		}
+
 
 		.elementor-controls-popover {
 			align-self: end;
@@ -174,8 +166,7 @@
 
 		.elementor-button-wrapper {
 			text-align: center;
-			border-top: 1px solid $editor-background;
-			max-width: 260px;
+			border-top: var(--e-a-border);
 			padding-top: 15px;
 		}
 
@@ -185,7 +176,7 @@
 		}
 
 		.e-sortable-placeholder {
-			background-color: $editor-info;
+			background-color: var(--e-a-color-info);
 			opacity: .9;
 			width: 100%;
 			margin: 8px 0;
@@ -200,7 +191,6 @@
 }
 
 .e-global-colors__color-value {
-	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
 	text-align: $end;

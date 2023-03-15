@@ -2,7 +2,7 @@ var presetsFactory;
 
 presetsFactory = {
 
-	getPresetsDictionary: function() {
+	getPresetsDictionary() {
 		return {
 			11: 100 / 9,
 			12: 100 / 8,
@@ -14,7 +14,7 @@ presetsFactory = {
 		};
 	},
 
-	getAbsolutePresetValues: function( preset ) {
+	getAbsolutePresetValues( preset ) {
 		var clonedPreset = elementorCommon.helpers.cloneObject( preset ),
 			presetDictionary = this.getPresetsDictionary();
 
@@ -27,7 +27,7 @@ presetsFactory = {
 		return clonedPreset;
 	},
 
-	getPresets: function( columnsCount, presetIndex ) {
+	getPresets( columnsCount, presetIndex ) {
 		var presets = elementorCommon.helpers.cloneObject( elementor.config.elements.section.presets );
 
 		if ( columnsCount ) {
@@ -41,13 +41,13 @@ presetsFactory = {
 		return presets;
 	},
 
-	getPresetByStructure: function( structure ) {
+	getPresetByStructure( structure ) {
 		var parsedStructure = this.getParsedStructure( structure );
 
 		return this.getPresets( parsedStructure.columnsCount, parsedStructure.presetIndex );
 	},
 
-	getParsedStructure: function( structure ) {
+	getParsedStructure( structure ) {
 		structure += ''; // Make sure this is a string
 
 		return {
@@ -56,7 +56,7 @@ presetsFactory = {
 		};
 	},
 
-	getPresetSVG: function( preset, svgWidth, svgHeight, separatorWidth ) {
+	getPresetSVG( preset, svgWidth, svgHeight, separatorWidth ) {
 		svgWidth = svgWidth || 100;
 		svgHeight = svgHeight || 50;
 		separatorWidth = separatorWidth || 2;
@@ -67,8 +67,8 @@ presetsFactory = {
 		return this._createSVGPreset( presetSVGPath, svgWidth, svgHeight );
 	},
 
-	_createSVGPreset: function( presetPath, svgWidth, svgHeight ) {
-		// this is here to avoid being picked up by https re-write systems
+	_createSVGPreset( presetPath, svgWidth, svgHeight ) {
+		// This is here to avoid being picked up by https re-write systems
 		const protocol = 'ht' + 'tp';
 		var svg = document.createElementNS( protocol + '://www.w3.org/2000/svg', 'svg' );
 
@@ -84,7 +84,7 @@ presetsFactory = {
 		return svg;
 	},
 
-	_generatePresetSVGPath: function( preset, svgWidth, svgHeight, separatorWidth ) {
+	_generatePresetSVGPath( preset, svgWidth, svgHeight, separatorWidth ) {
 		var DRAW_SIZE = svgWidth - ( separatorWidth * ( preset.length - 1 ) );
 
 		var xPointer = 0,
@@ -117,9 +117,9 @@ presetsFactory = {
 	 * Return an SVG markup with text of a Container element (e.g. flex, grid, etc.).
 	 *
 	 * @param {string} presetId - Preset ID to retrieve.
-	 * @param {string} text - The text to show on the preset (Optional - Used only in the default preset).
+	 * @param {string} text     - The text to show on the preset (Optional - Used only in the default preset).
 	 *
-	 * @returns {string}
+	 * @return {string} preset
 	 */
 	generateContainerPreset( presetId, text = '' ) {
 		const presets = {
@@ -233,7 +233,7 @@ presetsFactory = {
 		return presets[ presetId ] || presets.default;
 	},
 
-	getContainerPresets: function() {
+	getContainerPresets() {
 		return [
 			'c100',
 			'r100',

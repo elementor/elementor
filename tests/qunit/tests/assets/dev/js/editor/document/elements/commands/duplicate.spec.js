@@ -70,7 +70,7 @@ export const Duplicate = () => {
 
 				// Element Does not exist.
 				eWidgetsDuped.forEach( ( eWidgetDuped ) =>
-					HistoryHelper.destroyedValidate( assert, eWidgetDuped )
+					HistoryHelper.destroyedValidate( assert, eWidgetDuped ),
 				);
 
 				// Redo.
@@ -78,7 +78,7 @@ export const Duplicate = () => {
 
 				// Element exist again.
 				eWidgetsDuped.forEach( ( eWidgetDuped ) =>
-					HistoryHelper.recreatedValidate( assert, eWidgetDuped )
+					HistoryHelper.recreatedValidate( assert, eWidgetDuped ),
 				);
 			} );
 		} );

@@ -136,3 +136,13 @@
 .rtl .elementor-widget-divider .elementor-divider__text {
 	direction: rtl;
 }
+
+.e-con,
+.e-con-inner {
+
+	& > .elementor-widget-divider {
+		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722).
+		width: var( --container-widget-width , 100%);
+	  	--flex-grow: var( --container-widget-flex-grow );
+	}
+}

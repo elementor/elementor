@@ -18,7 +18,7 @@ export const KitGlobalsUpdateColors = () => {
 					title: 'red',
 				} ),
 				repeaterItemContainer = container.repeaters.custom_colors.children.find( ( childContainer ) =>
-					childContainer.id === result.data.id
+					childContainer.id === result.data.id,
 				);
 
 			assert.equal( result.data.title, repeaterItemContainer.settings.get( 'title' ) );

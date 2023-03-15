@@ -46,9 +46,9 @@ jQuery( () => {
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommand = ( command ) => {
-					assert.equal( command instanceof CommandInfra, true, );
-					assert.equal( command instanceof CommandBase, true, );
-					assert.equal( command instanceof CommandData, true, );
+					assert.equal( command instanceof CommandInfra, true );
+					assert.equal( command instanceof CommandBase, true );
+					assert.equal( command instanceof CommandData, true );
 					assert.equal( command instanceof $e.modules.CommandBase, true );
 					assert.equal( command instanceof $e.modules.CommandData, true );
 				};

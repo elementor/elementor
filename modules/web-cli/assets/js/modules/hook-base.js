@@ -11,7 +11,7 @@ export default class HookBase {
 	/**
 	 * Full command address, that will hook the callback.
 	 *
-	 * @type (string)
+	 * @type {string}
 	 */
 	command;
 
@@ -54,12 +54,13 @@ export default class HookBase {
 		ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getType().
 	 *
 	 * Get type eg: ( hook, event, etc ... ).
 	 *
-	 * @returns {string}
+	 * @return {string} type
 	 *
 	 * @throws {Error}
 	 */
@@ -67,6 +68,7 @@ export default class HookBase {
 		ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getCommand().
 	 *
@@ -74,7 +76,7 @@ export default class HookBase {
 	 *
 	 * Supports array of strings ( commands ).
 	 *
-	 * @returns {string}
+	 * @return {string} command
 	 *
 	 * @throws {Error}
 	 */
@@ -82,12 +84,13 @@ export default class HookBase {
 		ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getId().
 	 *
 	 * Returns command id for the hook (should be unique).
 	 *
-	 * @returns {string}
+	 * @return {string} id
 	 *
 	 * @throws {Error}
 	 */
@@ -95,6 +98,7 @@ export default class HookBase {
 		ForceMethodImplementation();
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function getContainerType().
 	 *
@@ -111,23 +115,24 @@ export default class HookBase {
 	 *
 	 * Condition for running the callback, if true, call to apply().
 	 *
-	 * @param [args={}]
-	 * @param [result=*]
+	 * @param {*} [args={}]
+	 * @param {*} [result=*]
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} conditions
 	 */
 	getConditions( args = {}, result ) { // eslint-disable-line no-unused-vars
 		return true;
 	}
 
+	// eslint-disable-next-line jsdoc/require-returns-check
 	/**
 	 * Function apply().
 	 *
 	 * Apply the callback, ( The actual affect of the callback ).
 	 *
-	 * @param [args={}]
+	 * @param {*} [args={}]
 	 *
-	 * @returns {*}
+	 * @return {*} results
 	 */
 	apply( args ) { // eslint-disable-line no-unused-vars
 		ForceMethodImplementation();
@@ -140,7 +145,7 @@ export default class HookBase {
 	 *
 	 * @param {*} args
 	 *
-	 * @returns {*}
+	 * @return {*} results
 	 */
 	run( ... args ) {
 		const { options = {} } = args[ 0 ];

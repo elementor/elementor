@@ -32,11 +32,13 @@ class LazyIconList extends Component {
 		}
 		// CSS Item Padding
 		const itemPadding = 20,
-			wrapper = document.getElementById( this.selectors.wrapper ),
 			testElement = document.querySelector( this.selectors.item );
+
 		if ( ! testElement ) {
 			return;
 		}
+
+		const wrapper = document.getElementById( this.selectors.wrapper );
 		const newState = {
 			itemSize: {
 				width: testElement.offsetWidth + itemPadding,
@@ -144,11 +146,11 @@ class LazyIconList extends Component {
 			};
 
 		return <Fragment>
-			<div className={ 'elementor-icons-manager__tab__content__offset'} style={ offsetStyle }></div>
+			<div className={ 'elementor-icons-manager__tab__content__offset' } style={ offsetStyle }></div>
 			<div id={ 'elementor-icons-manager__tab__content' }>
 				{ itemsInView }
 			</div>
-			<div className={ 'elementor-icons-manager__tab__content__tail'} style={ tailStyle }></div>
+			<div className={ 'elementor-icons-manager__tab__content__tail' } style={ tailStyle }></div>
 		</Fragment>;
 	};
 }

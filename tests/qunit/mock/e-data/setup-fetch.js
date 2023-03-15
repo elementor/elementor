@@ -3,16 +3,23 @@ import * as mockClasses from './mock/';
 export const fetchOriginal = $e.data.fetch;
 
 /**
+ * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
+ */
+/**
+ * @typedef {{}} RequestData
+ */
+
+/**
  * @type {[].<{ type, command, callback }>}
  */
 export let mockData = [];
 
 /**
- * @param {DataTypes} type
- * @param {string} command
- * @param {function(result, RequestData)|null} [callback=null]
+ * @param {DataTypes}                      type
+ * @param {string}                         command
+ * @param {function(*,RequestData):*|null} [callback=null]
  */
-export const addMock = ( /*  */ type, command, callback = null ) => {
+export const addMock = ( type, command, callback = null ) => {
 	if ( mockData.find( ( mock ) => mock.type === type && mock.command === command ) ) {
 		throw Error( `Mock type: '${ type }', command: '${ command }' is already exist` );
 	}
@@ -53,6 +60,7 @@ export const attachMock = () => {
 
 		let result;
 
+		// eslint-disable-next-line array-callback-return
 		mockData.some( ( mockObject ) => {
 			if ( mockObject.type === requestData.type && mockObject.command === requestData.command ) {
 				result = mockObject.callback( result, requestData );

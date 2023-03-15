@@ -1,7 +1,7 @@
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
 
 var ElementsCollection = Backbone.Collection.extend( {
-	add: function( models, options, isCorrectSet ) {
+	add( models, options, isCorrectSet ) {
 		if ( ( ! options || ! options.silent ) && ! isCorrectSet ) {
 			throw 'Call Error: Adding model to element collection is allowed only by the dedicated addChildModel() method.';
 		}
@@ -9,7 +9,7 @@ var ElementsCollection = Backbone.Collection.extend( {
 		return Backbone.Collection.prototype.add.call( this, models, options );
 	},
 
-	model: function( attrs, options ) {
+	model( attrs, options ) {
 		var ModelClass = Backbone.Model;
 
 		if ( attrs.elType ) {
@@ -26,7 +26,7 @@ var ElementsCollection = Backbone.Collection.extend( {
 		return new ModelClass( attrs, options );
 	},
 
-	clone: function() {
+	clone() {
 		var tempCollection = Backbone.Collection.prototype.clone.apply( this, arguments ),
 			newCollection = new ElementsCollection();
 

@@ -1,7 +1,7 @@
 const BaseElementView = require( 'elementor-elements/views/base' );
 
 /**
- * @extends BaseElementView
+ * @augments BaseElementView
  */
 class BaseWidgetView extends BaseElementView {
 	initialize( options ) {
@@ -34,6 +34,17 @@ class BaseWidgetView extends BaseElementView {
 		return baseClasses + ' elementor-widget ' + elementor.getElementData( this.getEditModel() ).html_wrapper_class;
 	}
 
+	normalizeAttributes() {
+		const editModel = this.getEditModel(),
+			skinType = editModel.getSetting( '_skin' ) || 'default';
+
+		this.$el
+			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
+			.removeClass( 'elementor-widget-empty' )
+			.children( '.elementor-widget-empty-icon' )
+			.remove();
+	}
+
 	getTemplate() {
 		const editModel = this.getEditModel();
 
@@ -49,14 +60,14 @@ class BaseWidgetView extends BaseElementView {
 			editTools = {};
 
 		editTools.edit = {
-			/* translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'edit',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element name. */
+				/* Translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};

@@ -11,13 +11,15 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		'click @ui.insertButton': 'onInsertButtonClick',
 	},
 
-	onInsertButtonClick: function() {
+	onInsertButtonClick() {
 		const args = {
 				model: this.view.model,
 			},
 			meta = {
 				source: Sources.TEMPLATE_LIBRARY,
 			};
+
+		this.ui.insertButton.addClass( 'elementor-disabled' );
 
 		if ( 'remote' === args.model.get( 'source' ) && ! elementor.config.library_connect.is_connected ) {
 			$e.route( 'library/connect', args, meta );

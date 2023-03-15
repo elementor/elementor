@@ -26,7 +26,7 @@ class Settings_Custom_CSS extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-custom-css';
+		return 'https://go.elementor.com/global-custom-css/';
 	}
 
 	protected function register_tab_controls() {

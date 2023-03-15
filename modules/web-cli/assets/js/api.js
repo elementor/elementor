@@ -68,10 +68,10 @@ export default class API {
 	 * Alias of `$e.commands.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
-	 * @param [meta={}]
+	 * @param {*}      [args={}]
+	 * @param {*}      [meta={}]
 	 *
-	 * @returns {*}
+	 * @return {*} result
 	 */
 	run( command, args = {}, meta = {} ) {
 		return $e.commands.run( command, args, meta );
@@ -83,9 +83,9 @@ export default class API {
 	 * Alias of `$e.commandsInternal.run()`.
 	 *
 	 * @param {string} command
-	 * @param [args={}]
+	 * @param {*}      [args={}]
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} result
 	 */
 	internal( command, args = {} ) {
 		return $e.commandsInternal.run( command, args );
@@ -97,8 +97,8 @@ export default class API {
 	 * Alias of `$e.routes.to()`.
 	 *
 	 * @param {string} route
-	 * @param [args={}]
-	 * @param [meta={}]
+	 * @param {*}      [args={}]
+	 * @param {*}      [meta={}]
 	 */
 	route( route, args = {}, meta = {} ) {
 		return $e.routes.to( route, args, meta );

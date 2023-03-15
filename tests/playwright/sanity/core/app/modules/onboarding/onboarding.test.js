@@ -1,144 +1,166 @@
 const { test, expect } = require( '@playwright/test' );
+const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 
-/**
- *  Test that the "Go Pro" popover appears when overing over the "Go Pro" button.
- */
-test( 'Onboarding Go Pro Popover', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+test.describe( 'On boarding', async () => {
+	let originalActiveTheme;
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		originalActiveTheme = wpAdmin.getActiveTheme();
+		wpAdmin.activateTheme( 'twentytwentytwo' );
+	} );
 
-	const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin.activateTheme( originalActiveTheme );
+	} );
 
-	await goProHeaderButton.hover();
+	/**
+	 *  Test that the "Upgrade" popover appears when overing over the "Upgrade" button.
+	 */
+	test( 'Onboarding Upgrade Popover', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-	const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
+		const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
 
-	await expect( goProPopover ).toBeVisible();
-} );
+		await goProHeaderButton.hover();
 
-/**
- * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
- * text, And that clicking on it opens the popup to create an account in my.elementor.com
- */
-test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+		const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
 
-	const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
+		await expect( goProPopover ).toBeVisible();
+	} );
 
-	await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+	/**
+	 * Test the first onboarding page - Test that the Action button at the bottom shows the correct "Create my account"
+	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
+	 */
+	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-	const [ popup ] = await Promise.all( [
-		// It is important to call waitForEvent before click to set up waiting.
-		page.waitForEvent( 'popup' ),
-		// Opens popup.
-		page.click( 'a.e-onboarding__button-action' ),
-	] );
+		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-	await popup.waitForLoadState( 'domcontentloaded' );
+		await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
-	const createAccount = await popup.locator( 'text=Create an account' );
+		const [ popup ] = await Promise.all( [
+			// It is important to call waitForEvent before click to set up waiting.
+			page.waitForEvent( 'popup' ),
+			// Opens popup.
+			page.click( 'a.e-onboarding__button-action' ),
+		] );
 
-	// Check that the popup opens the Elementor Connect screen.
-	await expect( createAccount ).toBeVisible();
+		await popup.waitForLoadState( 'domcontentloaded' );
 
-	popup.close();
-} );
+		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
 
-/**
- * Test the "Skip" button - to make sure it skips to the next step.
- */
-test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+		const signupForm = await popup.locator( 'form#signup-form' );
 
-	const skipButton = await page.waitForSelector( 'text=Skip' );
+		// Check that the popup opens the Elementor Connect screen.
+		await expect( signupForm ).toBeVisible();
 
-	await skipButton.click();
+		popup.close();
+	} );
 
-	const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
-		pageTitleText = await PageTitle.innerText();
+	/**
+	 * Test the "Skip" button - to make sure it skips to the next step.
+	 */
+	test( 'Onboarding Skip to Hello Theme Page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
+		await page.waitForLoadState( 'networkidle' );
 
-	// Check that the screen changed to the Hello page.
-	await expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
-} );
+		const skipButton = await page.waitForSelector( 'text=Skip' );
 
-/**
- * Test the Site Name page
- *
- * 1. The 'Next' button should be disabled if the site name input is empty, and become enabled again when a text is
- * filled.
- * 2. Clicking on 'Skip' should take the user to the Site Logo screen
- */
-test( 'Onboarding Site Name Page', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteName' );
+		await skipButton.click();
 
-	await page.fill( 'input[type="text"]', '' );
+		const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
+			pageTitleText = await PageTitle.innerText();
 
-	const nextButton = await page.locator( 'text=Next' );
+		// Check that the screen changed to the Hello page.
+		expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+	} );
 
-	await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
+	/**
+	 * Test the Site Name page
+	 *
+	 * 1. The 'Next' button should be disabled if the site name input is empty, and become enabled again when a text is
+	 * filled.
+	 * 2. Clicking on 'Skip' should take the user to the Site Logo screen
+	 */
+	test( 'Onboarding Site Name Page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteName' );
 
-	await page.fill( 'input[type="text"]', 'Test' );
+		await page.fill( 'input[type="text"]', '' );
 
-	await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
+		const nextButton = await page.locator( 'text=Next' );
 
-	const skipButton = await page.waitForSelector( 'text=Skip' );
+		await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
 
-	await skipButton.click();
+		await page.fill( 'input[type="text"]', 'Test' );
 
-	const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
-		pageTitleText = await pageTitle.innerText();
+		await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
 
-	await expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
-} );
+		const skipButton = await page.waitForSelector( 'text=Skip' );
 
-/**
- * Test the Site Logo page
- *
- * 1. The 'Next' button should be disabled if there is no image selected, and become enabled again when an image is
- * selected.
- * 2. Clicking on 'Skip' should take the user to the Good to Go screen
- */
-test( 'Onboarding Site Logo Page', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
+		await skipButton.click();
 
-	const nextButton = await page.locator( 'text=Next' ),
-		activeButtonClasses = 'e-onboarding__button e-onboarding__button-action',
-		disabledButtonClasses = 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
-		siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
+		const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
+			pageTitleText = await pageTitle.innerText();
 
-	if ( siteLogoId ) {
-		// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
-		await expect( nextButton ).toHaveClass( activeButtonClasses );
+		await expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
+	} );
 
-		const removeButton = await page.locator( '.e-onboarding__logo-remove' );
+	/**
+	 * Test the Site Logo page
+	 *
+	 * 1. The 'Next' button should be disabled if there is no image selected, and become enabled again when an image is
+	 * selected.
+	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
+	 */
+	test( 'Onboarding Site Logo Page', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
-		await removeButton.click();
-	}
+		const nextButton = await page.locator( 'text=Next' ),
+			activeButtonClasses = 'e-onboarding__button e-onboarding__button-action',
+			disabledButtonClasses = 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
+			siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
-	// Make sure the "Next" button is disabled when there is no site logo.
-	await expect( nextButton ).toHaveClass( disabledButtonClasses );
+		if ( siteLogoId ) {
+			// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
+			await expect( nextButton ).toHaveClass( activeButtonClasses );
 
-	const skipButton = await page.waitForSelector( '.e-onboarding__button-skip' );
+			const removeButton = await page.locator( '.e-onboarding__logo-remove' );
 
-	await skipButton.click();
+			await removeButton.click();
+		}
 
-	const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
-		pageTitleText = await pageTitle.innerText();
+		// Make sure the "Next" button is disabled when there is no site logo.
+		await expect( nextButton ).toHaveClass( disabledButtonClasses );
 
-	// Test that the "Skip" button leads the user to the "Good to Go" screen.
-	await expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
-} );
+		const skipButton = await page.waitForSelector( '.e-onboarding__button-skip' );
 
-/**
- * In the Good to Go page - tests that clicking on the Kit Library card/button navigates the user to the Kit Library.
- */
-test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
-	await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
+		await skipButton.click();
 
-	const nextButton = await page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
+		const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
+			pageTitleText = await pageTitle.innerText();
 
-	await nextButton.click();
+		// Test that the "Skip" button leads the user to the "Good to Go" screen.
+		await expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
+	} );
 
-	const kitLibraryTitle = await page.locator( 'text=Kit Library' );
+	/**
+	 * In the Good to Go page - tests that clicking on the Kit Library card/button navigates the user to the Kit Library.
+	 */
+	test( 'Onboarding Good to Go Page - Open Kit Library', async ( { page } ) => {
+		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/goodToGo' );
 
-	await expect( kitLibraryTitle ).toBeVisible();
+		const nextButton = await page.locator( '.e-onboarding__cards-grid > a:nth-child(2)' );
+
+		await nextButton.click();
+
+		const kitLibraryTitle = await page.locator( 'text=Kit Library' );
+
+		await expect( kitLibraryTitle ).toBeVisible();
+	} );
 } );

@@ -21,8 +21,8 @@ export const Discard = () => {
 		eSections.forEach( ( eSection ) =>
 			assert.equal(
 				Boolean( $e.components.get( 'document' ).utils.findViewById( eSection.id ) ),
-				false
-			)
+				false,
+			),
 		);
 	} );
 };

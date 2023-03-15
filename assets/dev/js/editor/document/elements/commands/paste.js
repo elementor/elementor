@@ -1,12 +1,6 @@
 export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
-
-		// Validate if storage have data.
-		const { storageKey = 'clipboard' } = args,
-			storageData = elementorCommon.storage.get( storageKey );
-
-		this.requireArgumentType( 'storageData', 'object', { storageData } );
 	}
 
 	getHistory() {
@@ -16,21 +10,56 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		};
 	}
 
-	apply( args ) {
-		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
-			storageData = elementorCommon.storage.get( storageKey );
+	getStorageData( args ) {
+		const { storageType = 'localstorage', storageKey = 'clipboard', data = '' } = args;
+
+		if ( 'localstorage' === storageType ) {
+			return elementorCommon.storage.get( storageKey ) || {};
+		}
+
+		try {
+			return JSON.parse( data ) || {};
+		} catch ( e ) {
+			return {};
+		}
+	}
+
+	async apply( args ) {
+		const { at, rebuild = false, containers = [ args.container ], options = {} } = args,
+			storageData = this.getStorageData( args );
+
+		if ( ! storageData || ! storageData?.elements?.length || 'elementor' !== storageData?.type ) {
+			return false;
+		}
+
+		let storageDataElements = storageData.elements;
+
+		if ( storageData.siteurl !== elementorCommon.config.urls.rest ) {
+			try {
+				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'import_from_json', {
+						data: {
+							elements: JSON.stringify( storageDataElements ),
+						},
+						success: resolve,
+						error: reject,
+					},
+				) );
+			} catch ( e ) {
+				return false;
+			}
+		}
 
 		let result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
-			result = this.rebuild( containers, storageData, at );
+			result = this.rebuild( containers, storageDataElements, at );
 		} else {
 			if ( undefined !== at ) {
 				options.at = at;
 			}
 
-			result.push( this.pasteTo( containers, storageData, options ) );
+			result.push( this.pasteTo( containers, storageDataElements, options ) );
 		}
 
 		if ( 1 === result.length ) {
@@ -49,7 +78,12 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
-					case 'container':
+					case 'container': {
+						// Push the cloned container to the 'document'.
+						result.push( this.pasteTo( [ targetContainer ], [ model ] ) );
+					}
+						break;
+
 					case 'section': {
 						// If is inner create section for `inner-section`.
 						if ( model.isInner ) {
@@ -76,7 +110,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							{
 								at: index,
 								edit: false,
-							} )
+							} ),
 						);
 						index++;
 					}
@@ -89,7 +123,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 							model: {
 								elType: 'section',
 							},
-							columns: 0, // section with no columns.
+							columns: 0, // Section with no columns.
 							options: {
 								at: ++index,
 								edit: false,
@@ -100,15 +134,27 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 					}
 						break;
 
-					default:
-						// In case it widget:
+					default: {
+						// The 'default' case is widget.
 						let target;
 
-						// If you trying to paste widget on section, then paste should be at the first column.
 						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
+							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
+						} else if ( 'container' === targetContainer.model.get( 'elType' ) ) {
+							target = [ targetContainer ];
+						} else if ( elementorCommon.config.experimentalFeatures.container ) {
+							// If the container experiment is active, create a new wrapper container.
+							target = $e.run( 'document/elements/create', {
+								container: targetContainer,
+								model: {
+									elType: 'container',
+								},
+							} );
+
+							target = [ target ];
 						} else {
-							// Else, create section with one column for element.
+							// Else, create section with one column for the element.
 							const section = $e.run( 'document/elements/create', {
 								container: targetContainer,
 								model: {
@@ -120,11 +166,12 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								},
 							} );
 
-							// Create the element in the column that just was created.
+							// Create the element inside the column that just was created.
 							target = [ section.view.children.first().getContainer() ];
 						}
 
 						result.push( this.pasteTo( target, [ model ] ) );
+					}
 				}
 			} );
 		} );

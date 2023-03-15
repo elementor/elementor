@@ -248,7 +248,7 @@ export default class extends Marionette.CompositeView {
 			axis: 'y',
 			forcePlaceholderSize: true,
 			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' > .elementor-navigator__elements',
-			cancel: '[contenteditable="true"]',
+			cancel: '[contenteditable="true"], [data-locked="true"]',
 		} );
 	}
 

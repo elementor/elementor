@@ -27,7 +27,7 @@ export class Move extends $e.modules.editor.document.CommandHistoryBase {
 		let count = 0;
 		reCreate.forEach( ( model ) => {
 			// If multiple fix position.
-			if ( options.hasOwnProperty( 'at' ) && reCreate.length > 1 ) {
+			if ( Object.prototype.hasOwnProperty.call( options, 'at' ) && reCreate.length > 1 ) {
 				if ( 0 !== count ) {
 					options.at += count;
 				}

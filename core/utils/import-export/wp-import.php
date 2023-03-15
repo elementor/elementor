@@ -64,12 +64,12 @@ class WP_Import extends \WP_Importer {
 	private $authors = [];
 	private $posts = [];
 	private $terms = [];
-	private $categories = [];
-	private $tags = [];
 	private $base_url = '';
 	private $page_on_front;
+	private $base_blog_url = '';
 
 	// Mappings from old information to new.
+	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
 	private $processed_authors = [];
@@ -82,6 +82,16 @@ class WP_Import extends \WP_Importer {
 	private $fetch_attachments = false;
 	private $url_remap = [];
 	private $featured_images = [];
+
+	/**
+	 * @var array[] [meta_key => meta_value] Meta value that should be set for every imported post.
+	 */
+	private $posts_meta = [];
+
+	/**
+	 * @var array[] [meta_key => meta_value] Meta value that should be set for every imported term.
+	 */
+	private $terms_meta = [];
 
 	/**
 	 * Parses filename from a Content-Disposition header value.
@@ -200,8 +210,6 @@ class WP_Import extends \WP_Importer {
 
 		wp_suspend_cache_invalidation( true );
 		$imported_summary = [
-			'categories' => $this->process_categories(),
-			'tags' => $this->process_tags(),
 			'terms' => $this->process_terms(),
 			'posts' => $this->process_posts(),
 		];
@@ -252,9 +260,8 @@ class WP_Import extends \WP_Importer {
 		$this->set_authors_from_import( $import_data );
 		$this->posts = $import_data['posts'];
 		$this->terms = $import_data['terms'];
-		$this->categories = $import_data['categories'];
-		$this->tags = $import_data['tags'];
 		$this->base_url = esc_url( $import_data['base_url'] );
+		$this->base_blog_url = esc_url( $import_data['base_blog_url'] );
 		$this->page_on_front = $import_data['page_on_front'];
 
 		wp_defer_term_counting( true );
@@ -331,10 +338,10 @@ class WP_Import extends \WP_Importer {
 		foreach ( (array) $this->args['imported_authors'] as $i => $old_login ) {
 			// Multisite adds strtolower to sanitize_user. Need to sanitize here to stop breakage in process_posts.
 			$santized_old_login = sanitize_user( $old_login, true );
-			$old_id = isset( $this->authors[ $old_login ]['author_id'] ) ? intval( $this->authors[ $old_login ]['author_id'] ) : false;
+			$old_id = isset( $this->authors[ $old_login ]['author_id'] ) ? (int) $this->authors[ $old_login ]['author_id'] : false;
 
 			if ( ! empty( $this->args['user_map'][ $i ] ) ) {
-				$user = get_userdata( intval( $this->args['user_map'][ $i ] ) );
+				$user = get_userdata( (int) $this->args['user_map'][ $i ] );
 				if ( isset( $user->ID ) ) {
 					if ( $old_id ) {
 						$this->processed_authors[ $old_id ] = $user->ID;
@@ -385,140 +392,17 @@ class WP_Import extends \WP_Importer {
 	}
 
 	/**
-	 * Create new categories based on import information
-	 *
-	 * Doesn't create a new category if its slug already exists
-	 *
-	 * @return int number of imported categories.
-	 */
-	private function process_categories() {
-		$result = 0;
-
-		$this->categories = apply_filters( 'wp_import_categories', $this->categories );
-
-		if ( empty( $this->categories ) ) {
-			return $result;
-		}
-
-		foreach ( $this->categories as $cat ) {
-			// if the category already exists leave it alone
-			$term_id = term_exists( $cat['category_nicename'], 'category' );
-			if ( $term_id ) {
-				if ( is_array( $term_id ) ) {
-					$term_id = $term_id['term_id'];
-				}
-				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = (int) $term_id;
-				}
-				continue;
-			}
-
-			$parent = empty( $cat['category_parent'] ) ? 0 : category_exists( $cat['category_parent'] );
-			$description = isset( $cat['category_description'] ) ? $cat['category_description'] : '';
-
-			$data = [
-				'category_nicename' => $cat['category_nicename'],
-				'category_parent' => $parent,
-				'cat_name' => wp_slash( $cat['cat_name'] ),
-				'category_description' => wp_slash( $description ),
-			];
-
-			$id = wp_insert_category( $data );
-			if ( ! is_wp_error( $id ) && $id > 0 ) {
-				if ( isset( $cat['term_id'] ) ) {
-					$this->processed_terms[ intval( $cat['term_id'] ) ] = $id;
-				}
-				$result++;
-			} else {
-				/* translators: %s: Category name. */
-				$error = sprintf( esc_html__( 'Failed to import category %s', 'elementor' ), $cat['category_nicename'] );
-
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$error .= PHP_EOL . $id->get_error_message();
-				}
-
-				$this->output['errors'][] = $error;
-				continue;
-			}
-
-			$this->process_termmeta( $cat, $id );
-		}
-
-		unset( $this->categories );
-
-		return $result;
-	}
-
-	/**
-	 * Create new post tags based on import information
-	 *
-	 * Doesn't create a tag if its slug already exists
-	 *
-	 * @return int number of imported tags.
-	 */
-	private function process_tags() {
-		$result = 0;
-
-		$this->tags = apply_filters( 'wp_import_tags', $this->tags );
-
-		if ( empty( $this->tags ) ) {
-			return $result;
-		}
-
-		foreach ( $this->tags as $tag ) {
-			// if the tag already exists leave it alone
-			$term_id = term_exists( $tag['tag_slug'], 'post_tag' );
-			if ( $term_id ) {
-				if ( is_array( $term_id ) ) {
-					$term_id = $term_id['term_id'];
-				}
-				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = (int) $term_id;
-				}
-				continue;
-			}
-
-			$description = isset( $tag['tag_description'] ) ? $tag['tag_description'] : '';
-			$args = [
-				'slug' => $tag['tag_slug'],
-				'description' => wp_slash( $description ),
-			];
-
-			$id = wp_insert_term( wp_slash( $tag['tag_name'] ), 'post_tag', $args );
-			if ( ! is_wp_error( $id ) ) {
-				if ( isset( $tag['term_id'] ) ) {
-					$this->processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
-				}
-				$result++;
-			} else {
-				/* translators: %s: Tag name. */
-				$error = sprintf( esc_html__( 'Failed to import post tag %s', 'elementor' ), $tag['tag_name'] );
-
-				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$error .= PHP_EOL . $id->get_error_message();
-				}
-
-				$this->output['errors'][] = $error;
-				continue;
-			}
-
-			$this->process_termmeta( $tag, $id['term_id'] );
-		}
-
-		unset( $this->tags );
-
-		return $result;
-	}
-
-	/**
 	 * Create new terms based on import information
 	 *
 	 * Doesn't create a term its slug already exists
 	 *
-	 * @return int number of imported terms.
+	 * @return array|array[] the ids of succeed/failed imported terms.
 	 */
 	private function process_terms() {
-		$result = 0;
+		$result = [
+			'succeed' => [],
+			'failed' => [],
+		];
 
 		$this->terms = apply_filters( 'wp_import_terms', $this->terms );
 
@@ -537,9 +421,23 @@ class WP_Import extends \WP_Importer {
 
 				if ( isset( $term['term_id'] ) ) {
 					if ( 'nav_menu' === $term['term_taxonomy'] ) {
-						$term = $this->handle_duplicated_nav_menu_term( $term );
+						// BC - support old kits that the menu terms are part of the 'nav_menu_item' post type
+						// and not part of the taxonomies.
+						if ( ! empty( $this->processed_taxonomies[ $term['term_taxonomy'] ] ) ) {
+							foreach ( $this->processed_taxonomies[ $term['term_taxonomy'] ] as $processed_term ) {
+								$old_slug   = $processed_term['old_slug'];
+								$new_slug = $processed_term['new_slug'];
+
+								$this->mapped_terms_slug[ $old_slug ] = $new_slug;
+								$result['succeed'][ $old_slug ] = $new_slug;
+							}
+							continue;
+						} else {
+							$term = $this->handle_duplicated_nav_menu_term( $term );
+						}
 					} else {
-						$this->processed_terms[ intval( $term['term_id'] ) ] = (int) $term_id;
+						$this->processed_terms[ (int) $term['term_id'] ] = (int) $term_id;
+						$result['succeed'][ (int) $term['term_id'] ] = (int) $term_id;
 						continue;
 					}
 				}
@@ -564,10 +462,11 @@ class WP_Import extends \WP_Importer {
 			$id = wp_insert_term( wp_slash( $term['term_name'] ), $term['term_taxonomy'], $args );
 			if ( ! is_wp_error( $id ) ) {
 				if ( isset( $term['term_id'] ) ) {
-					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
-				}
-				$result++;
+					$this->processed_terms[ (int) $term['term_id'] ] = $id['term_id'];
+					$result['succeed'][ (int) $term['term_id'] ] = $id['term_id'];
 
+					$this->update_term_meta( $id['term_id'] );
+				}
 			} else {
 				/* translators: 1: Term taxonomy, 2: Term name. */
 				$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
@@ -576,6 +475,7 @@ class WP_Import extends \WP_Importer {
 					$error .= PHP_EOL . $id->get_error_message();
 				}
 
+				$result['failed'][] = $id;
 				$this->output['errors'][] = $error;
 				continue;
 			}
@@ -696,7 +596,7 @@ class WP_Import extends \WP_Importer {
 					$post_parent = $this->processed_posts[ $post_parent ];
 					// otherwise record the parent for later.
 				} else {
-					$this->post_orphans[ intval( $post['post_id'] ) ] = $post_parent;
+					$this->post_orphans[ (int) $post['post_id'] ] = $post_parent;
 					$post_parent = 0;
 				}
 			}
@@ -751,6 +651,9 @@ class WP_Import extends \WP_Importer {
 				$comment_post_id = $post_id;
 			} else {
 				$post_id = wp_insert_post( $postdata, true );
+
+				$this->update_post_meta( $post_id );
+
 				$comment_post_id = $post_id;
 				do_action( 'wp_import_insert_post', $post_id, $original_post_id, $postdata, $post );
 			}
@@ -781,7 +684,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			// Map pre-import ID to local ID.
-			$this->processed_posts[ intval( $post['post_id'] ) ] = (int) $post_id;
+			$this->processed_posts[ (int) $post['post_id'] ] = (int) $post_id;
 
 			if ( ! isset( $post['terms'] ) ) {
 				$post['terms'] = [];
@@ -801,6 +704,9 @@ class WP_Import extends \WP_Importer {
 						$t = wp_insert_term( $term['name'], $taxonomy, [ 'slug' => $term['slug'] ] );
 						if ( ! is_wp_error( $t ) ) {
 							$term_id = $t['term_id'];
+
+							$this->update_term_meta( $term_id );
+
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
 							/* translators: 1: Taxonomy name, 2: Term name. */
@@ -816,7 +722,7 @@ class WP_Import extends \WP_Importer {
 							continue;
 						}
 					}
-					$terms_to_set[ $taxonomy ][] = intval( $term_id );
+					$terms_to_set[ $taxonomy ][] = (int) $term_id;
 				}
 
 				foreach ( $terms_to_set as $tax => $ids ) {
@@ -894,8 +800,8 @@ class WP_Import extends \WP_Importer {
 					$value = false;
 
 					if ( '_edit_last' === $key ) {
-						if ( isset( $this->processed_authors[ intval( $meta['value'] ) ] ) ) {
-							$value = $this->processed_authors[ intval( $meta['value'] ) ];
+						if ( isset( $this->processed_authors[ (int) $meta['value'] ] ) ) {
+							$value = $this->processed_authors[ (int) $meta['value'] ];
 						} else {
 							$key = false;
 						}
@@ -981,23 +887,35 @@ class WP_Import extends \WP_Importer {
 			$post_meta_key_value[ $meta['key'] ] = $meta['value'];
 		}
 
+		$_menu_item_type = $post_meta_key_value['_menu_item_type'];
+		$_menu_item_url = $post_meta_key_value['_menu_item_url'];
+
 		// Skip menu items 'taxonomy' type, when the taxonomy is not exits.
-		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && ! get_taxonomy( $post_meta_key_value['_menu_item_object'] ) ) {
+		if ( 'taxonomy' === $_menu_item_type && ! taxonomy_exists( $post_meta_key_value['_menu_item_object'] ) ) {
+			return $result;
+		}
+
+		// Skip menu items 'post_type' type, when the post type is not exits.
+		if ( 'post_type' === $_menu_item_type && ! post_type_exists( $post_meta_key_value['_menu_item_object'] ) ) {
 			return $result;
 		}
 
 		$_menu_item_object_id = $post_meta_key_value['_menu_item_object_id'];
-		if ( 'taxonomy' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_terms[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_terms[ intval( $_menu_item_object_id ) ];
-		} elseif ( 'post_type' === $post_meta_key_value['_menu_item_type'] && isset( $this->processed_posts[ intval( $_menu_item_object_id ) ] ) ) {
-			$_menu_item_object_id = $this->processed_posts[ intval( $_menu_item_object_id ) ];
+		if ( 'taxonomy' === $_menu_item_type && isset( $this->processed_terms[ (int) $_menu_item_object_id ] ) ) {
+			$_menu_item_object_id = $this->processed_terms[ (int) $_menu_item_object_id ];
+		} elseif ( 'post_type' === $_menu_item_type && isset( $this->processed_posts[ (int) $_menu_item_object_id ] ) ) {
+			$_menu_item_object_id = $this->processed_posts[ (int) $_menu_item_object_id ];
+		} elseif ( 'custom' === $_menu_item_type ) {
+				$_menu_item_url = Url::migrate( $_menu_item_url, $this->base_blog_url );
+		} else {
+			return $result;
 		}
 
 		$_menu_item_menu_item_parent = $post_meta_key_value['_menu_item_menu_item_parent'];
-		if ( isset( $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ] ) ) {
-			$_menu_item_menu_item_parent = $this->processed_menu_items[ intval( $_menu_item_menu_item_parent ) ];
+		if ( isset( $this->processed_menu_items[ (int) $_menu_item_menu_item_parent ] ) ) {
+			$_menu_item_menu_item_parent = $this->processed_menu_items[ (int) $_menu_item_menu_item_parent ];
 		} elseif ( $_menu_item_menu_item_parent ) {
-			$this->menu_item_orphans[ intval( $item['post_id'] ) ] = (int) $_menu_item_menu_item_parent;
+			$this->menu_item_orphans[ (int) $item['post_id'] ] = (int) $_menu_item_menu_item_parent;
 			$_menu_item_menu_item_parent = 0;
 		}
 
@@ -1011,10 +929,10 @@ class WP_Import extends \WP_Importer {
 			'menu-item-object-id' => $_menu_item_object_id,
 			'menu-item-object' => $post_meta_key_value['_menu_item_object'],
 			'menu-item-parent-id' => $_menu_item_menu_item_parent,
-			'menu-item-position' => intval( $item['menu_order'] ),
-			'menu-item-type' => $post_meta_key_value['_menu_item_type'],
+			'menu-item-position' => (int) $item['menu_order'],
+			'menu-item-type' => $_menu_item_type,
 			'menu-item-title' => $item['post_title'],
-			'menu-item-url' => $post_meta_key_value['_menu_item_url'],
+			'menu-item-url' => $_menu_item_url,
 			'menu-item-description' => $item['post_content'],
 			'menu-item-attr-title' => $item['post_excerpt'],
 			'menu-item-target' => $post_meta_key_value['_menu_item_target'],
@@ -1025,8 +943,10 @@ class WP_Import extends \WP_Importer {
 
 		$id = wp_update_nav_menu_item( $menu_id, 0, $args );
 		if ( $id && ! is_wp_error( $id ) ) {
-			$this->processed_menu_items[ intval( $item['post_id'] ) ] = (int) $id;
+			$this->processed_menu_items[ (int) $item['post_id'] ] = (int) $id;
 			$result[ $item['post_id'] ] = $id;
+
+			$this->update_post_meta( $id );
 		}
 
 		return $result;
@@ -1066,6 +986,9 @@ class WP_Import extends \WP_Importer {
 
 		// As per wp-admin/includes/upload.php.
 		$post_id = wp_insert_attachment( $post, $upload['file'] );
+
+		$this->update_post_meta( $post_id );
+
 		wp_update_attachment_metadata( $post_id, wp_generate_attachment_metadata( $post_id, $upload['file'] ) );
 
 		// Remap resized image URLs, works by stripping the extension and remapping the URL stub.
@@ -1361,6 +1284,30 @@ class WP_Import extends \WP_Importer {
 		return $term;
 	}
 
+	/**
+	 * Add all term_meta to specified term.
+	 *
+	 * @param $term_id
+	 * @return void
+	 */
+	private function update_term_meta( $term_id ) {
+		foreach ( $this->terms_meta as $meta_key => $meta_value ) {
+			update_term_meta( $term_id, $meta_key, $meta_value );
+		}
+	}
+
+	/**
+	 * Add all post_meta to specified term.
+	 *
+	 * @param $post_id
+	 * @return void
+	 */
+	private function update_post_meta( $post_id ) {
+		foreach ( $this->posts_meta as $meta_key => $meta_value ) {
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
+	}
+
 	public function run() {
 		$this->import( $this->requested_file_path );
 
@@ -1377,6 +1324,26 @@ class WP_Import extends \WP_Importer {
 
 		if ( ! empty( $this->args['fetch_attachments'] ) ) {
 			$this->fetch_attachments = true;
+		}
+
+		if ( isset( $this->args['posts'] ) && is_array( $this->args['posts'] ) ) {
+			$this->processed_posts = $this->args['posts'];
+		}
+
+		if ( isset( $this->args['terms'] ) && is_array( $this->args['terms'] ) ) {
+			$this->processed_terms = $this->args['terms'];
+		}
+
+		if ( isset( $this->args['taxonomies'] ) && is_array( $this->args['taxonomies'] ) ) {
+			$this->processed_taxonomies = $this->args['taxonomies'];
+		}
+
+		if ( ! empty( $this->args['posts_meta'] ) ) {
+			$this->posts_meta = $this->args['posts_meta'];
+		}
+
+		if ( ! empty( $this->args['terms_meta'] ) ) {
+			$this->terms_meta = $this->args['terms_meta'];
 		}
 	}
 }

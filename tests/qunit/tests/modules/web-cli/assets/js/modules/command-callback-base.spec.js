@@ -11,7 +11,7 @@ jQuery( () => {
 
 				assert.equal( command instanceof CommandInfra, true );
 				assert.equal( command instanceof CommandBase, true );
-				assert.equal( command instanceof CommandCallbackBase, true, );
+				assert.equal( command instanceof CommandCallbackBase, true );
 				assert.equal( command instanceof $e.modules.CommandBase, true );
 			} );
 

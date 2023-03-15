@@ -38,7 +38,7 @@ export const Empty = () => {
 				tempCommand = command;
 			};
 
-			// redo: `true`
+			// Redo: `true`
 			_Empty.restore( historyItem, true );
 
 			$e.run = orig;
@@ -60,7 +60,7 @@ export const Empty = () => {
 				tempCommand = command;
 			};
 
-			// redo: `false`
+			// Redo: `false`
 			_Empty.restore( historyItem, false );
 
 			$e.run = orig;
