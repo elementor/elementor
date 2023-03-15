@@ -1,17 +1,7 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
 import { ActiveContext } from '../../contexts/active-context';
 import Area from './area';
 import Font from '../item/font';
-
-const Wrapper = styled.div`
-	width: 100%;
-	margin-top: 95px;
-
-	@media (max-width: 640px) {
-		margin-top: 45px;
-	}
-`;
 
 export default function FontsArea() {
 	const { fontsAreaRef } = useContext( ActiveContext );
@@ -43,8 +33,6 @@ export default function FontsArea() {
 	};
 
 	return (
-		<Wrapper ref={ fontsAreaRef }>
-			<Area config={ areaConfig } />
-		</Wrapper>
+		<Area ref={ fontsAreaRef } config={ areaConfig } />
 	);
 }

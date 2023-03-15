@@ -26,4 +26,28 @@
 	.elementor-widget-wrap {
 		padding: 0;
 	}
+
+	.elementor-global-styleguide-widget {
+		min-height: 100vh;
+	}
+
+	div {
+		position: relative;
+	}
+
+	.e-styleguide-loader {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.eicon-loading {
+			font-size: 25px;
+			color: var(--e-a-color-txt-muted);
+		}
+	}
 }

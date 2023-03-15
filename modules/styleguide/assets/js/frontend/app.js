@@ -16,15 +16,15 @@ const Content = styled.div`
 export default function App() {
 	return (
 		<SettingsProvider>
-			<ActiveProvider>
-				<AppWrapper>
+			<AppWrapper>
+				<ActiveProvider>
 					<Header />
 					<Content>
 						<ColorsArea />
 						<FontsArea />
 					</Content>
-				</AppWrapper>
-			</ActiveProvider>
+				</ActiveProvider>
+			</AppWrapper>
 		</SettingsProvider>
 	);
 }
