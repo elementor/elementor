@@ -20,33 +20,45 @@ $e-gray-750:	#222325;
 $e-gray-800:	#1A1C1E;
 $e-gray-900:	#0C0D0E;
 
+//Editor Facelift 2023 - Teal
+$e-teal-50: 	#ECFDF5;
+$e-teal-300:	#5EEAD4;
+$e-teal-400:	#1DDDBF;
+$e-teal-500:	#12AA9A;
+$e-teal-600:	#0A875A;
+$e-teal-900:	#032317;
+
+//Editor Facelift 2023 - Pink
+$e-pink-700:	#C62E96;
+$e-pink-800:	#AB2881;
+$e-pink-900:	#91226D;
+
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
 $e-indigo-700:	#4C43E5;
 $e-indigo-800:	#4338CA;
 
-//Editor Facelift 2023 - Teal
-$e-teal-300:	#5EEAD4;
-$e-teal-400:	#1DDDBF;
-$e-teal-500:	#12AA9A;
-
 //Editor Facelift 2023 - Temp Aliases
-$e-purple:		#524CFF;
+$e-purple:		$e-indigo-600;
 $e-purple-tint:	#6661FF;
 $e-purple-shade:#EBEBFF;
 
 //Editor Facelift 2023 - Semantic Colors
-$e-primary:		$e-purple;
-$e-secondary: 	$e-gray-600;
-$e-success:		#16883C;
-$e-danger:		#DD132F;
-$e-info: 		#0077CC;
-$e-warning: 	#FCB92C;
-$e-brand: 		#0600A8;
-$e-success-bg:	#F2FDF5;
-$e-danger-bg:	#FEF1F4;
-$e-info-bg: 	#F0F7FF;
-$e-warning-bg: 	#FFF9F0;
+$e-primary:				$e-purple;
+$e-secondary: 			$e-gray-600;
+$e-success:				$e-teal-600;
+$e-info: 				#2563EB;
+$e-danger:				#DC2626;
+$e-warning: 			#F59E0B;
+$e-brand: 				$e-pink-700;
+$e-success-bg:			#F2FDF5;
+$e-danger-bg:			#FEF1F4;
+$e-info-bg: 			#F0F7FF;
+$e-warning-bg: 			#FFFBEB;
+$e-success-dark-bg:		$e-teal-900;
+$e-info-dark-bg: 		#0A1A3D;
+$e-danger-dark-bg:		#390A0A;
+$e-warning-dark-bg: 	#311808;
 
 // Editor Facelift 2023 - Aliases for backwards compatible
 $editor-danger: $e-danger;

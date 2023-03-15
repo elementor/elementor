@@ -28,7 +28,7 @@ class Settings extends Endpoint {
 	public function get_items( $request ) {
 		$settings = array_merge(
 			$this->get_site_settings(),
-			$this->get_additional_settings(),
+			$this->get_additional_settings()
 		);
 
 		return $this->serialize_settings( $settings );
@@ -36,12 +36,18 @@ class Settings extends Endpoint {
 
 	private function serialize_settings( $settings ) {
 		return [
-			'system_colors' => $settings['system_colors'],
-			'custom_colors' => $settings['custom_colors'],
-			'custom_typography' => $settings['custom_typography'],
-			'system_typography' => $settings['system_typography'],
-			'fallback_font' => $settings['default_generic_fonts'],
-			'is_debug' => $settings['is_debug'],
+			'colors' => [
+				'system_colors' => $settings['system_colors'],
+				'custom_colors' => $settings['custom_colors'],
+			],
+			'fonts' => [
+				'custom_typography' => $settings['custom_typography'],
+				'system_typography' => $settings['system_typography'],
+				'fallback_font' => $settings['default_generic_fonts'],
+			],
+			'config' => [
+				'is_debug' => $settings['is_debug'],
+			],
 		];
 	}
 

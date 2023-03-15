@@ -28,10 +28,10 @@
 	--e-a-bg-logo: 				#{$black};
 	--e-a-bg-primary: 			#{$e-purple-shade};
 	--e-a-bg-secondary: 		#{$e-gray-600};
-	--e-a-bg-success: 			#F2FDF5;
-	--e-a-bg-danger: 			#FEF1F4;
-	--e-a-bg-info: 				#F0F7FF;
-	--e-a-bg-warning: 			#FFF9F0;
+	--e-a-bg-success: 			#{$e-success-bg};
+	--e-a-bg-info: 				#{$e-info-bg};
+	--e-a-bg-danger: 			#{$e-danger-bg};
+	--e-a-bg-warning: 			#{$e-warning-bg};
 
 	//Text & Icons
 	--e-a-color-txt: 			#{$e-gray-600};
@@ -62,8 +62,8 @@
 	--e-a-btn-bg-primary-hover: #{darken($e-primary, 10%)};
 	--e-a-btn-bg-primary-active:#{darken($e-primary, 20%)};
 	--e-a-btn-bg-brand: 		#{$e-brand};
-	--e-a-btn-bg-brand-hover:	#{darken($e-brand, 10%)};
-	--e-a-btn-bg-brand-active:	#{darken($e-brand, 20%)};
+	--e-a-btn-bg-brand-hover:	#{$e-pink-800};
+	--e-a-btn-bg-brand-active:	#{$e-pink-900};
 	--e-a-btn-bg-success: 		#{$e-success};
 	--e-a-btn-bg-success-hover:	#{darken($e-success, 10%)};
 	--e-a-btn-bg-success-active:#{darken($e-success, 20%)};

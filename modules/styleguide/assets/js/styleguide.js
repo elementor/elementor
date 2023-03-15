@@ -19,6 +19,11 @@ class Styleguide extends elementorModules.editor.utils.Module {
 		elementor.hooks.addAction( 'panel/global/tab/before-destroy', this.hide.bind( this ) );
 	}
 
+	/**
+	 * Function show() triggered before showing a new tab at the Globals panel.
+	 *
+	 * @param {Object} args
+	 */
 	show( args ) {
 		if ( ! args.id || ! ( args.id in this.getGlobalRoutes() ) ) {
 			return;
@@ -27,6 +32,11 @@ class Styleguide extends elementorModules.editor.utils.Module {
 		$e.run( `preview/styleguide/${ args.id }` );
 	}
 
+	/**
+	 * Function hide() triggered before hiding a tab at the Globals panel.
+	 *
+	 * @param {Object} args
+	 */
 	hide( args ) {
 		if ( ! args.id || ! ( args.id in this.getGlobalRoutes() ) ) {
 			return;

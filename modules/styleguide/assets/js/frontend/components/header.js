@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import InnerWrapper from '../components/global/inner-wrapper';
+import InnerWrapper from './global/inner-wrapper';
+import { ActiveContext } from '../contexts/active-context';
 
 const Button = styled.button`
 	font-size: 16px;
@@ -29,13 +30,20 @@ const Button = styled.button`
 	}
 `;
 
-const GoToAnchor = ( props ) => {
-	const { anchor, children } = props;
+const AreaButton = ( props ) => {
+	const { activateArea } = useContext( ActiveContext );
+
+	const { area, children } = props;
+	const onClick = () => {
+		activateArea( area );
+	};
+
+	// TODO: Add active state
 
 	return (
 		<Button variant="transparent"
 			size="s"
-			onClick={ () => anchor.current.scrollIntoView( { behaviour: 'smooth' } ) }
+			onClick={ onClick }
 		>
 			{ children }
 		</Button>
@@ -79,30 +87,21 @@ const Title = styled.h2`
 	margin: 0;
 `;
 
-export default function Header( props ) {
-	const { colors, fonts } = props.anchors;
-
+export default function Header() {
 	return (
 		<Wrapper>
 			<InnerWrapper>
 				<Title>Style Guide Preview</Title>
 				<ButtonsWrapper>
-					<GoToAnchor anchor={ colors }>Colors</GoToAnchor>
-					<GoToAnchor anchor={ fonts }>Fonts</GoToAnchor>
+					<AreaButton area={ 'colors' }>Colors</AreaButton>
+					<AreaButton area={ 'fonts' }>Fonts</AreaButton>
 				</ButtonsWrapper>
 			</InnerWrapper>
 		</Wrapper>
 	);
 }
 
-Header.propTypes = {
-	anchors: PropTypes.shape( {
-		colors: PropTypes.object.isRequired,
-		fonts: PropTypes.object.isRequired,
-	} ).isRequired,
-};
-
-GoToAnchor.propTypes = {
-	anchor: PropTypes.object.isRequired,
+AreaButton.propTypes = {
+	area: PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
 };

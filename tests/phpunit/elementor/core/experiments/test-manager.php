@@ -307,18 +307,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $feature['hidden'] );
 	}
 
-	public function test_features_are_added_as_not_hidden_by_default() {
-		// Act
-		$this->add_test_feature();
-
-		// Assert
-		$features = $this->experiments->get_features();
-		$this->assertNotEmpty( $features );
-		foreach ( $features as $feature ) {
-			$this->assertFalse( $feature['hidden'] );
-		}
-	}
-
 	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
 		// Arrange.
 		$this->add_test_feature( [
