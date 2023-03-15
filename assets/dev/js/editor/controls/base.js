@@ -162,7 +162,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	getToggledControlInRouteArgs() {
-		const currentRouteArgs = Object.assign( {}, $e.routes.getCurrentArgs( 'panel' ) );
+		const currentRouteArgs = JSON.parse( JSON.stringify( $e.routes.getCurrentArgs( 'panel' ) ) );
 		const controlPath = this.getControlPath();
 
 		const activeControls = currentRouteArgs.activeControls || [];

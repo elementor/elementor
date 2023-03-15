@@ -256,15 +256,6 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker.toggleClearButtonState( false );
 	}
-
-	onPickerShow() {
-		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
-			detail: {
-				el: this.$el,
-			},
-		} ) );
-	}
-
 	onPickerButtonClick() {
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unset:global:value' );
@@ -282,6 +273,15 @@ export default class extends ControlBaseDataView {
 
 			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
 		} );
+	}
+
+	toggle() {
+		const picker = this.colorPicker.picker;
+		if ( picker.isOpen() ) {
+			picker.hide();
+		} else {
+			picker.show();
+		}
 	}
 
 	runRouteHooks() {
