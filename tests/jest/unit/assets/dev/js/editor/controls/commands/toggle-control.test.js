@@ -52,36 +52,29 @@ describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
 		};
 
 		global.elementor = {
-			getPanelView: () => {
-				return {
-					getCurrentPageView: () => {
-						return {
-							content: {
-								currentView: {
-									getControlViewByName: ( name ) => {
-										if ( ! document.querySelector( `div.elementor-control-${ name }` ) ) {
-											throw new TypeError( 'Document does not have control' );
-										}
-										return {
-											getChildControlView: () => {
-												return {
-													getChildControlView: () => {
-														return {
-															toggle: () => {
-																document.querySelector( 'div.pickr button.pcr-button' ).click();
-															},
-														};
-													},
-												};
+			getPanelView: () => ( {
+				getCurrentPageView: () => ( {
+					content: {
+						currentView: {
+							getControlViewByName: ( name ) => {
+								if ( ! document.querySelector( `div.elementor-control-${ name }` ) ) {
+									throw new TypeError( 'Document does not have control' );
+								}
+
+								return {
+									getChildControlView: () => ( {
+										getChildControlView: () => ( {
+											toggle: () => {
+												document.querySelector( 'div.pickr button.pcr-button' ).click();
 											},
-										};
-									},
-								},
+										} ),
+									} ),
+								};
 							},
-						};
+						},
 					},
-				};
-			},
+				} ),
+			} ),
 		};
 
 		ToggleControlCommand = ( await import( 'elementor/assets/dev/js/editor/controls/commands/toggle-control' ) ).default;
