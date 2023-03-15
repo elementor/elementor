@@ -64,7 +64,7 @@ export default function Color( props ) {
 			window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
 		}
 
-		// togglePopover( source, type, _id );
+		// togglePopover( type, source, _id, 'color' );
 	};
 
 	return (
