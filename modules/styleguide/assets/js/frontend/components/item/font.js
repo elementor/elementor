@@ -122,15 +122,17 @@ export default function Font( props ) {
 		// if ( isActive ) {
 		// 	return;
 		// }
-		//
-		// const route = 'panel/global/global-typography';
-		//
+
+		const route = 'panel/global/global-typography';
+
 		// if ( ! window.top.$e.routes.is( route ) ) {
 		// 	window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
 		// }
-		//
-		window.top.$e.run( 'controls/toggle-control', {
-			controlPath: `${ type }_${ source }/${ _id }/typography_typography`,
+
+		window.top.$e.route( route, {
+			activeControls: [
+				`${ type }/${ _id }/typography_typography`,
+			],
 		} );
 	};
 

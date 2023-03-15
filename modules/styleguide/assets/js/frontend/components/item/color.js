@@ -60,12 +60,14 @@ export default function Color( props ) {
 
 		const route = 'panel/global/global-colors';
 
-		if ( ! window.top.$e.routes.is( route ) ) {
-			window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
-		}
+		// if ( ! window.top.$e.routes.is( route ) ) {
+		// 	window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
+		// }
 
-		window.top.$e.run( 'controls/toggle-control', {
-			controlPath: `${ type }_${ source }/${ _id }/color`,
+		window.top.$e.route( route, {
+			activeControls: [
+				`${ type }/${ _id }/color`,
+			],
 		} );
 	};
 
