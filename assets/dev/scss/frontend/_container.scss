@@ -171,8 +171,6 @@
 	}
 
 	@mixin border-radius-for-background-elements {
-		--1px: 1px;
-		--zero-px-value: calc( 1px - var(--1px) ); // Hack to force a value of 0px instead of 0, which causes problems with the `min()` function.
 		border-radius: var(--border-radius);
 		border-style: solid;
 		border-color: var(--border-color);
@@ -180,10 +178,10 @@
 		border-right-width: var(--border-width-right);
 		border-bottom-width: var(--border-width-bottom);
 		border-left-width: var(--border-width-left);
-		top: min( calc( 0px - var(--border-width-top) ), var(--zero-px-value) );
-		bottom: min( calc( 0px - var(--border-width-bottom) ), var(--zero-px-value) );
-		right: min( calc( 0px - var(--border-width-right) ), var(--zero-px-value) );
-		left: min( calc( 0px - var(--border-width-left) ), var(--zero-px-value) );
+		top: calc( 0px - var(--border-width-top) );
+		bottom: calc( 0px - var(--border-width-bottom) );
+		right: calc( 0px - var(--border-width-right) );
+		left: calc( 0px - var(--border-width-left) );
 		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
 		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
 	}
@@ -205,7 +203,7 @@
 
 		&.elementor-shape-top {
 			bottom: initial;
-			top: min( calc( -1px - var(--border-width-top) ), -1px );
+			top: calc( -1px - var(--border-width-top) );
 		}
 
 		&.elementor-shape-bottom {
@@ -214,7 +212,7 @@
 			border-bottom-width: var(--border-width-top);
 			border-left-width: var(--border-width-right);
 			top: initial;
-			bottom: min( calc( -1px - ( var(--border-width-bottom) ) ), -1px );
+			bottom: calc( -1px - var(--border-width-bottom) );
 		}
 	}
 
