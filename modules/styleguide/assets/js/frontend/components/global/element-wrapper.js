@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import React from 'react';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -8,9 +8,13 @@ const Wrapper = styled.div`
 	align-items: flex-start;
 	border: 1px solid transparent;
 	padding: 12px;
-	flex-grow: 1;
-	flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
-	max-width: ${ ( props ) => 'font' === props.type ? '100%' : '25%' };
+	${ ( { columns } ) => {
+		const columnWidth = 100 / ( columns.desktop ?? 1 );
+
+		return css`
+			flex: 0 0 ${ columnWidth }%;
+		`;
+	} }
 
 	&.active {
 		cursor: pointer;
@@ -27,8 +31,13 @@ const Wrapper = styled.div`
 	}
 
 	@media (max-width: 767px) {
-		flex-basis: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
-		max-width: ${ ( props ) => 'font' === props.type ? '100%' : '50%' };
+		${ ( { columns } ) => {
+			const columnWidth = 100 / ( columns.mobile ?? 1 );
+
+			return css`
+				flex: 0 0 ${ columnWidth }%;
+			`;
+		} }
 	}
 `;
 
@@ -44,3 +53,11 @@ const ElementWrapper = React.forwardRef( ( props, ref ) => {
 } );
 
 export default ElementWrapper;
+
+ElementWrapper.propTypes = {
+	isActive: PropTypes.bool,
+	children: PropTypes.oneOfType( [
+		PropTypes.node,
+		PropTypes.arrayOf( PropTypes.node ),
+	] ),
+};

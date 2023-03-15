@@ -1,10 +1,7 @@
-import styled from 'styled-components';
-
-const LoaderWrapper = styled.div`
-`;
-
 export default function Loader() {
 	return (
-		<LoaderWrapper>Loading</LoaderWrapper>
+		<div className="e-styleguide-loader">
+			<i className="eicon-loading eicon-animation-spin"></i>
+		</div>
 	);
 }

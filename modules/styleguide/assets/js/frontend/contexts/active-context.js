@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { commandListener, removeCommandListener } from '../utils/commands';
-import useSettings from '../hooks/use-settings';
+import { useSettings } from './settings';
 
 export const ActiveContext = createContext( null );
 
-const ActiveProvider = ( { children } ) => {
+const ActiveProvider = ( props ) => {
 	const [ active, setActive ] = useState( {
 		element: '',
 		area: '',
@@ -13,7 +13,7 @@ const ActiveProvider = ( { children } ) => {
 	const colorsAreaRef = useRef( null );
 	const fontsAreaRef = useRef( null );
 
-	const { isLoading } = useSettings();
+	const { isReady } = useSettings();
 
 	const getUid = ( source, id ) => `${ source }-${ id }`;
 
@@ -59,7 +59,7 @@ const ActiveProvider = ( { children } ) => {
 	};
 
 	useEffect( () => {
-		if ( isLoading ) {
+		if ( ! isReady ) {
 			return;
 		}
 
@@ -86,7 +86,7 @@ const ActiveProvider = ( { children } ) => {
 		return () => {
 			// TODO: ADD CLEANUP.
 		};
-	}, [ isLoading ] );
+	}, [ isReady ] );
 
 	useEffect( () => {
 		if ( ! colorsAreaRef.current || ! fontsAreaRef.current ) {
@@ -127,9 +127,7 @@ const ActiveProvider = ( { children } ) => {
 	};
 
 	return (
-		<ActiveContext.Provider value={ value }>
-			{ children }
-		</ActiveContext.Provider>
+		<ActiveContext.Provider value={ value } { ...props } />
 	);
 };
 

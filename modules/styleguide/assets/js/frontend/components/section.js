@@ -18,24 +18,23 @@ const Content = styled.div`
 `;
 
 export default function Section( props ) {
-	const { title, source, component: Item, type, flex = 'row' } = props;
+	const { title, items, columns, component: Item, type, flex = 'row' } = props;
 
 	return (
 		<Wrapper>
 			<SectionTitle>{ title }</SectionTitle>
 			<InnerWrapper>
 				<Content flex={ flex }>
-					{
-						source.map( ( item ) => {
-							return (
-								<Item
-									key={ item._id }
-									item={ item }
-									type={ type ? type : null }
-								/>
-							);
-						} )
-					}
+					{ items.map( ( item ) => {
+						return (
+							<Item
+								key={ item._id }
+								item={ item }
+								type={ type ? type : null }
+								columns={ columns }
+							/>
+						);
+					} ) }
 				</Content>
 			</InnerWrapper>
 		</Wrapper>
@@ -44,7 +43,12 @@ export default function Section( props ) {
 
 Section.propTypes = {
 	title: PropTypes.string.isRequired,
-	source: PropTypes.array.isRequired,
+	items: PropTypes.array.isRequired,
+	columns: PropTypes.shape( {
+		desktop: PropTypes.number,
+		mobile: PropTypes.number,
+	} ),
 	component: PropTypes.func.isRequired,
 	type: PropTypes.string,
+	flex: PropTypes.oneOf( [ 'row', 'column' ] ),
 };

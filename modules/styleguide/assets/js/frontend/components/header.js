@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import InnerWrapper from '../components/global/inner-wrapper';
+import InnerWrapper from './global/inner-wrapper';
 import { ActiveContext } from '../contexts/active-context';
 
 const Button = styled.button`

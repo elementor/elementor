@@ -58,15 +58,19 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		this.routeWithToggledControl();
-	}
+		const $popover = this.$el.next( '.elementor-controls-popover' );
 
-	routeWithToggledControl() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.getToggledControlInRouteArgs() );
-	}
+		$popover.toggle( 0, () => {
+			if ( $popover.is( ':visible' ) ) {
+				window.dispatchEvent( new CustomEvent( 'elementor/popover/show', {
+					detail: {
+						el: this.$el,
+					},
+				} ) );
 
-	toggle() {
-		this.$el.next( '.elementor-controls-popover' ).toggle();
+				$e.route( $e.routes.getCurrent( 'panel' ), this.getToggledControlInRouteArgs() );
+			}
+		} );
 	}
 
 	getGlobalCommand() {

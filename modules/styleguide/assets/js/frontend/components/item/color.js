@@ -57,10 +57,19 @@ export default function Color( props ) {
 
 	const onClick = () => {
 		activateElement( type, source, _id );
+
+		const route = 'panel/global/global-colors';
+
+		if ( ! window.top.$e.routes.is( route ) ) {
+			window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
+		}
+
+		// togglePopover( type, source, _id, 'color' );
 	};
 
 	return (
-		<ElementWrapper type="color"
+		<ElementWrapper
+			columns={ props.columns }
 			ref={ ref }
 			isActive={ isActive }
 			onClick={ onClick }
@@ -77,7 +86,11 @@ Color.propTypes = {
 	item: PropTypes.shape( {
 		_id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		color: PropTypes.string.isRequired,
+		color: PropTypes.string,
 	} ).isRequired,
 	type: PropTypes.string.isRequired,
+	columns: PropTypes.shape( {
+		desktop: PropTypes.number,
+		mobile: PropTypes.number,
+	} ),
 };
