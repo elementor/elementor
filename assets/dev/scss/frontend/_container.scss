@@ -204,6 +204,7 @@
 
 		&.elementor-shape-top {
 			bottom: initial;
+			top: min( calc( -1px - var(--border-width-top) ), -1px );
 		}
 
 		&.elementor-shape-bottom {
