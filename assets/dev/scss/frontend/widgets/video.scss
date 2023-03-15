@@ -18,6 +18,26 @@
 			border: none; // To deal with inconsistencies
 			background-color: $black; // To show the effect of the aspect ratio when the player does not support responsive well (e.g. Vimeo)
 		}
+
+		// BC for browsers that don't support `aspect-ratio` (browsers that were released before 2021, like Safari 14.1)
+		@supports not ( aspect-ratio: 1 / 1 ) {
+
+			& {
+				position: relative;
+				overflow: hidden;
+				height: 0;
+				padding-bottom: 56.25%; // Equals to `aspect-ratio: 16 / 9;`
+
+				iframe,
+				video {
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+				}
+			}
+		}
 	}
 
 	.elementor-open-inline {
