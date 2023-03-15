@@ -76,8 +76,8 @@ export default class extends ControlBaseDataView {
 				if ( picker.isOpen() && !pickerUtils.eventPath( e ).some( el => el === pickerRoot.app || el === pickerRoot.button ) ) {
 					picker.hide();
 				}
-			} )
-		)
+			} ),
+		);
 	}
 
 	addTipsyToPickerButton() {
