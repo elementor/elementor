@@ -103,7 +103,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
-	private function map_packages_to_wp_handle( $packages_data, $deps ) {
+	private function map_packages_to_handles( $packages_data, $deps ) {
 		return array_map( function ( $package_name ) use ( $packages_data ) {
 			return $packages_data[ $package_name ]['handle'] ?? $package_name;
 		}, $deps );
@@ -129,7 +129,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 						$name => [
 							'handle' => $data['handle'],
 							'src' => $data['url'] . $data['entry'] . '{{MIN_SUFFIX}}.js',
-							'deps' => $this->map_packages_to_wp_handle( $packages_data, $data['deps'] ),
+							'deps' => $this->map_packages_to_handles( $packages_data, $data['deps'] ),
 							'i18n' => $data['i18n'],
 							'type' => $type,
 						],
