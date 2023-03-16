@@ -82,7 +82,13 @@ module.exports = {
 		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
 	},
 	plugins: [
-		new ExtractDependenciesWebpackPlugin(),
+		new ExtractDependenciesWebpackPlugin( {
+			handlePrefix: 'elementor-packages',
+			i18n: {
+				domain: 'elementor',
+				replace_requested_file: true,
+			},
+		} ),
 	],
 	output: {
 		clean: true,

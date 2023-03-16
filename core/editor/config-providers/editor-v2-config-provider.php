@@ -8,30 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
-	const APP_PACKAGE = 'editor';
-
-	const EXTENSION_PACKAGES = [
-		'documents',
-		'documents-ui',
-		'elements-panel',
-		'finder',
-		'help',
-		'history',
-		'responsive',
-		'site-settings',
-		'structure',
-		'theme-builder',
-		'top-bar',
-		'user-preferences',
-	];
-
-	const UTIL_PACKAGES = [
-		'icons',
-		'locations',
-		'ui',
-		'v1-adapters',
-		'store',
-	];
 
 	/**
 	 * Cached script assets.
@@ -41,27 +17,23 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	private $packages_script_assets;
 
 	public function get_script_configs() {
-		$packages_script_configs = $this->get_packages_script_assets()
-			->map( function ( $script_asset, $package_name ) {
-				return [
-					'handle' => $script_asset['handle'],
-					'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
-					'deps' => $script_asset['deps'],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				];
-			} );
+		$packages_script_configs = $this->get_packages_script_assets();
 
-		$editor_script_config = $packages_script_configs->get( static::APP_PACKAGE );
+		$apps_handles = $packages_script_configs
+			->filter( function ( $script_config ) {
+				return 'app' === $script_config['type'];
+			} )
+			->map( function ( $script_config ) {
+				return $script_config['handle'];
+			} )
+			->values();
 
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 			'deps' => array_merge(
 				[ 'elementor-editor' ],
-				$editor_script_config ? [ $editor_script_config['handle'] ] : []
+				$apps_handles,
 			),
 		];
 
@@ -73,12 +45,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_script_handles_to_enqueue() {
+		$types_to_enqueue = [ 'extension' ];
+
 		return $this->get_packages_script_assets()
-			->filter( function ( $script_asset, $package_name ) {
-				return in_array( $package_name, static::EXTENSION_PACKAGES, true );
+			->filter( function ( $script_config ) use ( $types_to_enqueue ) {
+				return in_array( $script_config['type'], $types_to_enqueue, true );
 			} )
-			->map( function ( $script_asset ) {
-				return $script_asset['handle'];
+			->map( function ( $script_config ) {
+				return $script_config['handle'];
 			} )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
@@ -129,23 +103,37 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
+	private function map_packages_to_wp_handle( $packages_data, $deps ) {
+		return array_map( function ( $package_name ) use ( $packages_data ) {
+			return $packages_data[ $package_name ]['handle'] ?? $package_name;
+		}, $deps );
+	}
+
 	private function get_packages_script_assets() {
 		if ( ! $this->packages_script_assets ) {
-			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
-				->merge( static::EXTENSION_PACKAGES )
-				->merge( static::UTIL_PACKAGES )
-				->map_with_keys( function ( $package_name ) {
-					$assets_path = ELEMENTOR_ASSETS_PATH;
-					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
+			// Loading the file that is responsible for registering the packages in the filter.
+			require_once ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
 
-					if ( ! file_exists( $script_asset_path ) ) {
-						return [];
-					}
+			$packages_data = apply_filters( 'elementor/packages/config', [] );
 
-					/** @var array{ handle: string, deps: string[] } $script_asset */
-					$script_asset = require $script_asset_path;
+			// explain..
+			$type_exceptions = [
+				'@elementor/ui' => 'util',
+			];
 
-					return [ $package_name => $script_asset ];
+			$this->packages_script_assets = Collection::make( $packages_data )
+				->map_with_keys( function ( $data, $name ) use ( $packages_data, $type_exceptions ) {
+					$type = $type_exceptions[ $name ] ?? $data['type'] ?? 'extension';
+
+					return [
+						$name => [
+							'handle' => $data['handle'],
+							'src' => $data['url'] . $data['entry'] . '{{MIN_SUFFIX}}.js',
+							'deps' => $this->map_packages_to_wp_handle( $packages_data, $data['deps'] ),
+							'i18n' => $data['i18n'],
+							'type' => $type,
+						],
+					];
 				} );
 		}
 
