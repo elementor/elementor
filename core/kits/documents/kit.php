@@ -42,7 +42,7 @@ class Kit extends PageBase {
 		return [
 			'content' => [],
 			'settings' => $this->get_data( 'settings' ),
-			'metadata' => [],
+			'metadata' => $this->get_export_metadata(),
 		];
 	}
 
