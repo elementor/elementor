@@ -37,7 +37,9 @@ export default class ExperimentsDependency {
 				break;
 
 			case STATE_INACTIVE:
-				this.deactivateDependantExperiments( experimentId );
+				if ( this.shouldShowDeactivatingDialog( experimentId ) ) {
+					this.showDeactivateDialog( experimentId );
+				}
 				break;
 
 			default:
@@ -56,6 +58,17 @@ export default class ExperimentsDependency {
 			.map( ( dependencyId ) => (
 				this.getExperimentData( dependencyId )
 			) );
+	}
+
+	getExperimentDeactivatingDialog( experimentId ) {
+		return this
+			.getExperimentData( experimentId )
+			.messages
+			.on_deactivate;
+	}
+
+	getExperimentMessages( experimentId ) {
+		return this.getExperimentData( experimentId ).messages;
 	}
 
 	getExperimentSelect( experimentId ) {
@@ -109,6 +122,12 @@ export default class ExperimentsDependency {
 		return ! this.areAllDependenciesActive( dependencies );
 	}
 
+	shouldShowDeactivatingDialog( experimentId ) {
+		const message = this.getExperimentDeactivatingDialog( experimentId );
+
+		return message;
+	}
+
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			dependencies = this.getExperimentDependencies( experimentId );
@@ -146,6 +165,44 @@ export default class ExperimentsDependency {
 			},
 			onCancel: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );
+			},
+		} ).show();
+	}
+
+	showDeactivateDialog( experimentId ) {
+		const experiment = this.getExperimentData( experimentId ),
+			dependency = this.getExperimentDependencies( experimentId ),
+			deactivateMessage = this.getExperimentData( experimentId ).messages.on_deactivate;
+
+		// Translators: %1$s: Experiment title, %2$s: Experiment dependencies list
+		const message = __( 'While deactivating %1$s, %2$s.', 'elementor' )
+			.replace( '%1$s', `<strong>${ experiment.title }</strong>` )
+			.replace( '%2$s', `<strong>${ deactivateMessage }</strong>` );
+
+		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'e-experiments-dependency-dialog',
+			headerMessage: __( 'Deactivate dialog.', 'elementor' ),
+			message,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: __( 'Deactivate', 'elementor' ),
+				cancel: __( 'Dismiss', 'elementor' ),
+			},
+			hide: {
+				onOutsideClick: false,
+				onBackgroundClick: false,
+				onEscKeyPress: false,
+			},
+			onConfirm: () => {
+				this.setExperimentState( experimentId, STATE_INACTIVE );
+
+				this.elements.submit.click();
+			},
+			onCancel: () => {
+				this.setExperimentState( experimentId, STATE_ACTIVE );
 			},
 		} ).show();
 	}
