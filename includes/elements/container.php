@@ -988,9 +988,9 @@ class Container extends Element_Base {
 					],
 					'border' => [
 						'selectors' => [
-								'{{SELECTOR}}' => 'border-style: {{VALUE}}; --border-style: {{VALUE}};',
+							'{{SELECTOR}}' => 'border-style: {{VALUE}}; --border-style: {{VALUE}};',
 						],
-					]
+					],
 				],
 			]
 		);
