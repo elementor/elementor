@@ -60,7 +60,7 @@ export default class ExperimentsDependency {
 			) );
 	}
 
-	getExperimentDeactivatingDialog( experimentId ) {
+	getExperimentDeactivatingDialogMessage( experimentId ) {
 		return this
 			.getExperimentData( experimentId )
 			.messages
@@ -123,9 +123,7 @@ export default class ExperimentsDependency {
 	}
 
 	shouldShowDeactivatingDialog( experimentId ) {
-		const message = this.getExperimentDeactivatingDialog( experimentId );
-
-		return message;
+		return this.getExperimentDeactivatingDialogMessage( experimentId );
 	}
 
 	showDependenciesDialog( experimentId ) {
@@ -171,7 +169,6 @@ export default class ExperimentsDependency {
 
 	showDeactivateDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
-			dependency = this.getExperimentDependencies( experimentId ),
 			deactivateMessage = this.getExperimentData( experimentId ).messages.on_deactivate;
 
 		// Translators: %1$s: Experiment title, %2$s: Experiment dependencies list
