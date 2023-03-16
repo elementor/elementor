@@ -8,6 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
+	const PACKAGE_TYPE_APP = 'app';
+	const PACKAGE_TYPE_EXTENSION = 'extension';
+	const PACKAGE_TYPE_UTIL = 'util';
 
 	/**
 	 * Cached packages data.
@@ -21,7 +24,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 		$apps_handles = $packages_data
 			->filter( function ( $package_data ) {
-				return 'app' === $package_data['type'];
+				return static::PACKAGE_TYPE_APP === $package_data['type'];
 			} )
 			->map( function ( $package_data ) {
 				return $package_data['handle'];
@@ -45,7 +48,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_script_handles_to_enqueue() {
-		$types_to_enqueue = [ 'extension' ];
+		$types_to_enqueue = [ static::PACKAGE_TYPE_EXTENSION ];
 
 		return $this->get_packages_data()
 			->filter( function ( $package_data ) use ( $types_to_enqueue ) {
@@ -126,12 +129,12 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 			// Packages that there is no access to the package.json file.
 			$type_exceptions = [
-				'@elementor/ui' => 'util',
+				'@elementor/ui' => static::PACKAGE_TYPE_UTIL,
 			];
 
 			$this->packages_data = Collection::make( $packages_data )
 				->map_with_keys( function ( $data, $name ) use ( $packages_data, $type_exceptions ) {
-					$type = $type_exceptions[ $name ] ?? $data['type'] ?? 'extension';
+					$type = $type_exceptions[ $name ] ?? $data['type'] ?? static::PACKAGE_TYPE_EXTENSION;
 
 					return [
 						$name => [
