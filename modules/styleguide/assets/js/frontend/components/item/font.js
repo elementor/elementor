@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useContext, useRef, useState } from 'react';
 import styled from 'styled-components';
-import ElementWrapper from '../global/element-wrapper';
-import ElementTitle from '../global/element-title';
 import { ActiveContext } from '../../contexts/active-context';
 import { useSettings } from '../../contexts/settings';
+import ElementWrapper from '../global/element-wrapper';
+import ElementTitle from '../global/element-title';
 
 const Title = styled( ElementTitle )`
 	font-size: 18px;

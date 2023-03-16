@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import useDebouncedCallback from '../hooks/use-debounced-callback';
 
 const SettingsContext = createContext( null );
@@ -65,6 +65,12 @@ export const SettingsProvider = ( props ) => {
 		}
 	};
 
+	/**
+	 * Triggered when a color or font is changed.
+	 * Has a 100ms debounce.
+	 *
+	 * @param {{container: {model: {attributes: {name: string}}, id: number}, settings: {}}} args
+	 */
 	const onSettingsChange = useDebouncedCallback( ( args ) => {
 		const name = args.container.model.attributes.name;
 
@@ -91,6 +97,11 @@ export const SettingsProvider = ( props ) => {
 		setSettings( newSettings );
 	}, 100 );
 
+	/**
+	 * Triggered when a new custom color or font is created.
+	 *
+	 * @param {{name: string, model: string, options: {at: number}}} args
+	 */
 	const onInsert = ( args ) => {
 		const name = args.name;
 
@@ -113,6 +124,11 @@ export const SettingsProvider = ( props ) => {
 		setSettings( newSettings );
 	};
 
+	/**
+	 * Triggered when a custom color or font is removed.
+	 *
+	 * @param {{name: string, index: number}} args
+	 */
 	const onRemove = ( args ) => {
 		const name = args.name;
 

@@ -38,7 +38,7 @@ const AreaButton = ( props ) => {
 		activateArea( area );
 	};
 
-	// TODO: Add active state
+	// TODO: Add hover/active states
 
 	return (
 		<Button variant="transparent"
