@@ -38,6 +38,14 @@ class Kit extends PageBase {
 		return $properties;
 	}
 
+	public function get_export_data() {
+		return [
+			'content' => [],
+			'settings' => $this->get_data( 'settings' ),
+			'metadata' => [],
+		];
+	}
+
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
 		if ( ! self::is_styleguide_feature_active() ) {
 			return [];
