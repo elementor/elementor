@@ -117,7 +117,19 @@ export default function Font( props ) {
 	const onClick = () => {
 		activateElement( type, source, _id );
 
-		// TODO: togglePopover( type, source, _id, 'typography_typography' );
+		// TODO: Manor please implement
+		// Typography popover closes on every click in the window so only need to open.
+		// if ( isActive ) {
+		// 	return;
+		// }
+
+		const route = 'panel/global/global-typography';
+
+		window.top.$e.route( route, {
+			activeControls: [
+				`${ type }/${ _id }/typography_typography`,
+			],
+		} );
 	};
 
 	useEffect( () => {

@@ -24,6 +24,12 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		if ( $popover.length ) {
 			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
 		}
+
+		$popover.on( 'hide', () => this.onPopoverHide() );
+	}
+
+	onPopoverHide() {
+		this.routeWithToggledControl();
 	}
 
 	onResetInputClick() {
@@ -52,17 +58,15 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		const $popover = this.$el.next( '.elementor-controls-popover' );
+		this.routeWithToggledControl();
+	}
 
-		$popover.toggle( 0, () => {
-			if ( $popover.is( ':visible' ) ) {
-				window.dispatchEvent( new CustomEvent( 'elementor/popover/show', {
-					detail: {
-						el: this.$el,
-					},
-				} ) );
-			}
-		} );
+	routeWithToggledControl() {
+		$e.route( $e.routes.getCurrent( 'panel' ), this.getToggledControlInRouteArgs() );
+	}
+
+	toggle() {
+		this.$el.next( '.elementor-controls-popover' ).toggle();
 	}
 
 	getGlobalCommand() {

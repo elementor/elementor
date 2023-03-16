@@ -58,7 +58,13 @@ export default function Color( props ) {
 	const onClick = () => {
 		activateElement( type, source, _id );
 
-		// TODO: togglePopover( type, source, _id, 'color' );
+		const route = 'panel/global/global-colors';
+
+		window.top.$e.route( route, {
+			activeControls: [
+				`${ type }/${ _id }/color`,
+			],
+		} );
 	};
 
 	return (

@@ -47,9 +47,13 @@ export default class extends ControlBaseDataView {
 			onClear: () => this.onPickerClear(),
 			onShow: () => this.onPickerShow(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
+			onPickerShow: () => this.runRouteHooks(),
+			onPickerHide: () => this.runRouteHooks(),
 		};
 
 		this.colorPicker = new ColorPicker( options );
+
+		this.hidePickerOnPreviewClick();
 
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
@@ -60,6 +64,20 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+	}
+
+	hidePickerOnPreviewClick() {
+		const picker = this.colorPicker.picker;
+		const pickerUtils = picker.constructor.utils;
+		const pickerRoot = picker.getRoot();
+
+		picker._eventBindings.push(
+			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], e => {
+				if ( picker.isOpen() && !pickerUtils.eventPath( e ).some( el => el === pickerRoot.app || el === pickerRoot.button ) ) {
+					picker.hide();
+				}
+			} ),
+		);
 	}
 
 	addTipsyToPickerButton() {
@@ -238,15 +256,6 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker.toggleClearButtonState( false );
 	}
-
-	onPickerShow() {
-		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
-			detail: {
-				el: this.$el,
-			},
-		} ) );
-	}
-
 	onPickerButtonClick() {
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unset:global:value' );
@@ -264,6 +273,22 @@ export default class extends ControlBaseDataView {
 
 			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
 		} );
+	}
+
+	toggle() {
+		const picker = this.colorPicker.picker;
+		if ( picker.isOpen() ) {
+			picker.hide();
+		} else {
+			picker.show();
+		}
+	}
+
+	runRouteHooks() {
+		const toggledRouteArgs = this.getToggledControlInRouteArgs();
+
+		$e.routes.setCurrentArgs( 'panel', toggledRouteArgs );
+		$e.routes.afterRun( $e.routes.getCurrent( 'panel' ), toggledRouteArgs );
 	}
 
 	onBeforeDestroy() {
