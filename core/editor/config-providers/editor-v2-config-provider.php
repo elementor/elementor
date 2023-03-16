@@ -10,21 +10,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	/**
-	 * Cached script assets.
+	 * Cached packages data.
 	 *
 	 * @var Collection
 	 */
-	private $packages_script_assets;
+	private $packages_data;
 
 	public function get_script_configs() {
-		$packages_script_configs = $this->get_packages_script_assets();
+		$packages_data = $this->get_packages_data();
 
-		$apps_handles = $packages_script_configs
-			->filter( function ( $script_config ) {
-				return 'app' === $script_config['type'];
+		$apps_handles = $packages_data
+			->filter( function ( $package_data ) {
+				return 'app' === $package_data['type'];
 			} )
-			->map( function ( $script_config ) {
-				return $script_config['handle'];
+			->map( function ( $package_data ) {
+				return $package_data['handle'];
 			} )
 			->values();
 
@@ -39,7 +39,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
-			$packages_script_configs->values(),
+			$packages_data->values(),
 			[ $loader_script_config ]
 		);
 	}
@@ -47,12 +47,12 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_script_handles_to_enqueue() {
 		$types_to_enqueue = [ 'extension' ];
 
-		return $this->get_packages_script_assets()
-			->filter( function ( $script_config ) use ( $types_to_enqueue ) {
-				return in_array( $script_config['type'], $types_to_enqueue, true );
+		return $this->get_packages_data()
+			->filter( function ( $package_data ) use ( $types_to_enqueue ) {
+				return in_array( $package_data['type'], $types_to_enqueue, true );
 			} )
-			->map( function ( $script_config ) {
-				return $script_config['handle'];
+			->map( function ( $package_data ) {
+				return $package_data['handle'];
 			} )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
@@ -109,19 +109,19 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		}, $deps );
 	}
 
-	private function get_packages_script_assets() {
-		if ( ! $this->packages_script_assets ) {
+	private function get_packages_data() {
+		if ( ! $this->packages_data ) {
 			// Loading the file that is responsible for registering the packages in the filter.
 			require_once ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
 
 			$packages_data = apply_filters( 'elementor/packages/config', [] );
 
-			// explain..
+			// Packages that there is no access to the package.json file.
 			$type_exceptions = [
 				'@elementor/ui' => 'util',
 			];
 
-			$this->packages_script_assets = Collection::make( $packages_data )
+			$this->packages_data = Collection::make( $packages_data )
 				->map_with_keys( function ( $data, $name ) use ( $packages_data, $type_exceptions ) {
 					$type = $type_exceptions[ $name ] ?? $data['type'] ?? 'extension';
 
@@ -137,6 +137,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 				} );
 		}
 
-		return $this->packages_script_assets;
+		return $this->packages_data;
 	}
 }
