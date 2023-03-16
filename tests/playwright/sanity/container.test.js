@@ -526,6 +526,31 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await expect( resizers ).toHaveCount( 0 );
 	} );
+
+	test.only( 'Test grid container gap', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add container.
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Set container type to grid.
+		await page.getByRole( 'combobox', { name: 'Container Type' } ).selectOption( 'grid' );
+
+		// Set gap.
+		await page.getByRole( 'button', { name: 'Link values together' } ).click();
+		await page.getByRole( 'textbox', { name: 'Row' } ).fill( '10px' );
+		await page.getByRole( 'textbox', { name: 'Column' } ).fill( '20%' );
+
+		// Assert.
+		const frame = editor.getPreviewFrame();
+		const container = await frame.locator( '.e-con-inner' );
+		await expect( container ).toHaveCSS( 'gap', '10px 20%' );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
