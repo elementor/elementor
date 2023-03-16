@@ -139,22 +139,7 @@
 		margin-bottom: 0;
 	}
 
-	--border-width-initial-value: 3px; // See: https://developer.mozilla.org/en-US/docs/Web/CSS/border-width.
-	--maximum-border-width-top-left: max( var(--border-width-top, var(--border-width-initial-value)), var(--border-width-left, var(--border-width-initial-value)) );
-	--maximum-border-width-top-right: max( var(--border-width-top, var(--border-width-initial-value)), var(--border-width-right, var(--border-width-initial-value)) );
-	--maximum-border-width-bottom-right: max( var(--border-width-bottom, var(--border-width-initial-value)), var(--border-width-right, var(--border-width-initial-value)) );
-	--maximum-border-width-bottom-left: max( var(--border-width-bottom, var(--border-width-initial-value)), var(--border-width-left, var(--border-width-initial-value)) );
-	--border-top-left-radius-background-element: calc( var(--border-top-left-radius) - var(--maximum-border-width-top-left) );
-	--border-top-right-radius-background-element: calc( var(--border-top-right-radius) - var(--maximum-border-width-top-right) );
-	--border-bottom-right-radius-background-element: calc( var(--border-bottom-right-radius) - var(--maximum-border-width-bottom-right) );
-	--border-bottom-left-radius-background-element: calc( var(--border-bottom-left-radius) - var(--maximum-border-width-bottom-left) );
-	--border-radius-background-element: var(--border-top-left-radius-background-element) var(--border-top-right-radius-background-element) var(--border-bottom-right-radius-background-element) var(--border-bottom-left-radius-background-element);
-
 	@mixin border-radius-for-background-elements {
-		border-radius: var(--border-top-left-radius-background-element) var(--border-top-right-radius-background-element) var(--border-bottom-right-radius-background-element) var(--border-bottom-left-radius-background-element);
-	}
-
-	@mixin border-radius-for-background-pseudo-elements {
 		border-radius: var(--border-radius);
 		border-style: solid;
 		border-top-width: var(--border-width-top);
@@ -169,7 +154,7 @@
 
 	// Background overlay.
 	&::before,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container:not(.elementor-hidden-phone),
 	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
 	> .elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
@@ -180,7 +165,7 @@
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
 		transition: all var( --overlay-transition, 0.3s );
-		@include border-radius-for-background-pseudo-elements;
+		@include border-radius-for-background-elements;
 	}
 
 	&::before {
@@ -188,72 +173,15 @@
 	}
 
 	> .elementor-background-slideshow {
-		@include border-radius-for-background-pseudo-elements;
+		@include border-radius-for-background-elements;
 	}
 
 	@media (min-width: $screen-mobile-next) {
 		:is( &, & > .e-con-inner ) > .elementor-background-video-container {
-			@include border-radius-for-background-pseudo-elements;
+			display: block;
+			@include border-radius-for-background-elements;
 		}
 	}
-
-	//// Background overlay.
-	//&::before,
-	//:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
-	//> .elementor-background-slideshow::before,
-	//> .elementor-motion-effects-container > .elementor-motion-effects-layer::before {
-	//	// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
-	//	// control with an empty string (e.g. `--background-overlay: '';`).
-	//	content: var( --background-overlay );
-	//	display: block;
-	//	position: absolute;
-	//	mix-blend-mode: var( --overlay-mix-blend-mode );
-	//	opacity: var( --overlay-opacity );
-	//	transition: var( --overlay-transition, 0.3s );
-	//	@include border-radius-for-background-elements;
-	//}
-	//
-	//&::before {
-	//	transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
-	//}
-	//
-	//&::before,
-	//:is( &, & > .e-con-inner ) > .elementor-shape,
-	//> .elementor-background-slideshow,
-	//> .elementor-background-slideshow::before {
-	//	@include border-radius-for-background-elements;
-	//}
-	//
-	//:is( &, & > .e-con-inner ) > .elementor-shape {
-	//
-	//	&:empty {
-	//		display:none;
-	//	}
-	//
-	//	height: initial;
-	//
-	//	&.elementor-shape-top {
-	//		border-bottom-width: 0px;
-	//		bottom: initial;
-	//		top: calc( -1px - var(--border-width-top) );
-	//	}
-	//
-	//	&.elementor-shape-bottom {
-	//		border-top-width: var(--border-width-bottom);
-	//		border-right-width: var(--border-width-left);
-	//		border-bottom-width: 0px;
-	//		border-left-width: var(--border-width-right);
-	//		top: initial;
-	//		bottom: calc( -1px - var(--border-width-bottom) );
-	//	}
-	//}
-	//
-	//@media (min-width: $screen-mobile-next) {
-	//	:is( &, & > .e-con-inner ) > .elementor-background-video-container,
-	//	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
-	//		@include border-radius-for-background-elements;
-	//	}
-	//}
 
 	> .elementor-background-video-container::before,
 	> .e-con-inner > .elementor-background-video-container::before {
