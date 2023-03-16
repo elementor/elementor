@@ -127,7 +127,7 @@ ${ entriesContent.join( '\n' ) }
 		// TODO: verify 'replace_requested_file' - it should be false by default?
 		const i18nContent = i18n ? `[
 			'domain' => '${ i18n.domain }',
-			'replace_requested_file' => ${ ( i18n.replaceRequestedFile || false ).toString() },
+			'replace_requested_file' => ${ ( i18n.replaceRequestedFile ?? false ).toString() },
 		]` : '[]';
 
 		let content =

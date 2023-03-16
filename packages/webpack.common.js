@@ -86,7 +86,7 @@ module.exports = {
 			handlePrefix: 'elementor-packages',
 			i18n: {
 				domain: 'elementor',
-				replace_requested_file: true,
+				replaceRequestedFile: true,
 			},
 		} ),
 	],

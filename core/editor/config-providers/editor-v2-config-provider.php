@@ -105,7 +105,15 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	private function map_packages_to_handles( $packages_data, $deps ) {
 		return array_map( function ( $package_name ) use ( $packages_data ) {
-			return $packages_data[ $package_name ]['handle'] ?? $package_name;
+			if ( ! empty( $packages_data[ $package_name ]['handle'] ) ) {
+				return $packages_data[ $package_name ]['handle'];
+			}
+
+			if ( 0 === strpos( $package_name, '@wordpress/' ) ) {
+				return str_replace( '@wordpress/', 'wp-', $package_name );
+			}
+
+			return $package_name;
 		}, $deps );
 	}
 
