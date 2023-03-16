@@ -117,7 +117,7 @@ export default function Font( props ) {
 	const onClick = () => {
 		activateElement( type, source, _id );
 
-		// togglePopover( type, source, _id, 'typography_typography' );
+		// TODO: togglePopover( type, source, _id, 'typography_typography' );
 	};
 
 	useEffect( () => {

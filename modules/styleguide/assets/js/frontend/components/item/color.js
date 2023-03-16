@@ -58,7 +58,7 @@ export default function Color( props ) {
 	const onClick = () => {
 		activateElement( type, source, _id );
 
-		// togglePopover( type, source, _id, 'color' );
+		// TODO: togglePopover( type, source, _id, 'color' );
 	};
 
 	return (
