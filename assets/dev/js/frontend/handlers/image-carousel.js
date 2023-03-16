@@ -61,6 +61,9 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
 				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
+				autoplay: {
+					delay: 5000,
+				},
 			};
 		}
 
