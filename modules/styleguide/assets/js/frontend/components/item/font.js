@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useContext, useRef, useState } from 'react';
 import styled from 'styled-components';
-import ElementWrapper from '../global/element-wrapper';
-import ElementTitle from '../global/element-title';
 import { ActiveContext } from '../../contexts/active-context';
 import { useSettings } from '../../contexts/settings';
+import ElementWrapper from '../global/element-wrapper';
+import ElementTitle from '../global/element-title';
 
 const Title = styled( ElementTitle )`
 	font-size: 18px;
@@ -118,16 +118,12 @@ export default function Font( props ) {
 		activateElement( type, source, _id );
 
 		// TODO: Manor please implement
-		// // Typography popover closes on every click in the window so only need to open.
+		// Typography popover closes on every click in the window so only need to open.
 		// if ( isActive ) {
 		// 	return;
 		// }
 
 		const route = 'panel/global/global-typography';
-
-		// if ( ! window.top.$e.routes.is( route ) ) {
-		// 	window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
-		// }
 
 		window.top.$e.route( route, {
 			activeControls: [

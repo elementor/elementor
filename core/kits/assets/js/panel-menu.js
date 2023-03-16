@@ -12,28 +12,14 @@ PanelMenu.createGroupItems = ( groupName ) => {
 	const tabs = $e.components.get( 'panel/global' ).getTabs(),
 		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
 
-	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
-		PanelMenu.registerCommands( tabId, tabConfig );
-
-		return {
+	return groupTabs.map( ( [ tabId, tabConfig ] ) => (
+		{
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
 			callback: () => $e.route( 'panel/global/' + tabId ),
-		};
-	} );
-};
-
-PanelMenu.registerCommands = ( tabId, tabConfig ) => {
-	const components = $e.components.getAll();
-
-	if ( ! components.includes( `panel/${ tabConfig.group }` ) ) {
-		return;
-	}
-
-	$e.commands.register( `panel/${ tabConfig.group }`, `${ tabId }/route`, ( args ) => {
-		$e.route( `panel/${ tabConfig.group }/${ tabId }`, args );
-	} );
+		}
+	) );
 };
 
 PanelMenu.initGroups = () => {

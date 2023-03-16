@@ -60,10 +60,6 @@ export default function Color( props ) {
 
 		const route = 'panel/global/global-colors';
 
-		// if ( ! window.top.$e.routes.is( route ) ) {
-		// 	window.top.$e.run( `${ route }/route`, { shouldNotScroll: true } );
-		// }
-
 		window.top.$e.route( route, {
 			activeControls: [
 				`${ type }/${ _id }/color`,
