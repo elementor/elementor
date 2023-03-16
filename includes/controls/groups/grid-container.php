@@ -68,9 +68,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
 			'size_units' => [ 'custom', 'px', '%', 'vw', 'em', 'rem' ],
-			'range' => [
-				'min' => 0
-			],
 			'default' => [
 				'unit' => 'custom',
 			],

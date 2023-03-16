@@ -527,7 +527,7 @@ test.describe( 'Container tests', () => {
 		await expect( resizers ).toHaveCount( 0 );
 	} );
 
-	test.only( 'Test grid container gap', async ( { page }, testInfo ) => {
+	test( 'Test grid container gap', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
