@@ -526,6 +526,30 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await expect( resizers ).toHaveCount( 0 );
 	} );
+
+	test( 'Test grid container controls', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add container.
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Set container type to grid.
+		await page.locator( '.elementor-control-container_type select' ).selectOption( 'grid' );
+
+		// Set various controls
+		await page.locator( '.elementor-control-grid_justify_items .eicon-align-center-v' ).click();
+		await page.locator( '.elementor-control-grid_align_items .eicon-align-center-h' ).click();
+
+		// Assert.
+		const container = await editor.getPreviewFrame().locator( '.e-grid .e-con-inner' );
+		await expect( container ).toHaveCSS( 'justify-items', 'center' );
+		await expect( container ).toHaveCSS( 'align-items', 'center' );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {

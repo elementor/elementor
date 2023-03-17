@@ -92,7 +92,7 @@
 
 	&-boxed {
 		text-align: initial;
-		gap: initial;		
+		gap: initial;
 	}
 
 	&.e-flex > .e-con-inner {
@@ -110,6 +110,7 @@
 
 	&.e-grid > .e-con-inner {
 		justify-items: var( --justify-items );
+		align-items: var( --align-items );
 	}
 
 	& > .e-con-inner {
