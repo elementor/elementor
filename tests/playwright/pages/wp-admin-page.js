@@ -96,9 +96,6 @@ module.exports = class WpAdminPage extends BasePage {
 			}, `.elementor_experiment-${ id }` );
 
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
-
-			// Confrim any experiment dependancy modal that displays as a result of the chosen expermiments.
-			await this.maybeConfirmExpermimentDependancy();
 		}
 
 		await this.page.click( '#submit' );
@@ -108,15 +105,6 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
-	}
-
-	async maybeConfirmExpermimentDependancy() {
-		const dialogSelector = '#e-experiments-dependency-dialog',
-			dialog = await this.page.$( dialogSelector );
-
-		if ( dialog ) {
-			await this.page.locator( dialogSelector + ' .dialog-confirm-ok' ).click();
-		}
 	}
 
 	getActiveTheme() {
