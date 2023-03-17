@@ -144,7 +144,6 @@
 	}
 
 	@mixin border-radius-for-background-elements {
-		--border-width-initial-value: .5px;
 		border-radius: var(--border-radius);
 		border-style: var(--border-style);
 		border-color: var(--border-color);
@@ -154,8 +153,8 @@
 		border-left-width: var(--border-width-left);
 		top: calc( 0px - var(--border-width-top) );
 		left: calc( 0px - var(--border-width-left) );
-		width: max( calc( 100% + var(--border-width-right, var(--border-width-initial-value)) + var(--border-width-left, var(--border-width-initial-value)) ), 100% );
-		height: max( calc( 100% + var(--border-width-top, var(--border-width-initial-value)) + var(--border-width-bottom, var(--border-width-initial-value)) ), 100% );
+		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
 	}
 
 	// Background overlay.
@@ -170,7 +169,7 @@
 		position: absolute;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
-		transition: all var( --overlay-transition, 0.3s );
+		transition: var( --overlay-transition, 0.3s );
 		@include border-radius-for-background-elements;
 	}
 
