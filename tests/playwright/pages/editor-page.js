@@ -332,6 +332,22 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set a border color to a container.
+	 *
+	 * @param {string}  color     - The background color code;
+	 * @param {string}  containerId - The ID of targeted container;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setContainerBorderColor( color, containerId ) {
+		await this.selectElement( containerId );
+		await this.activatePanelTab( 'style' );
+		await this.openSection( 'section_border' );
+		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
+
+	/**
 	 * Remove the focus from the test elements by creating two new elements.
 	 *
 	 * @return {Promise<void>}
