@@ -147,22 +147,20 @@
 		--border-width-initial-value: .5px;
 		border-radius: var(--border-radius);
 		border-style: var(--border-style);
-		border-color: transparent;
+		border-color: var(--border-color);
 		border-top-width: var(--border-width-top);
 		border-right-width: var(--border-width-right);
 		border-bottom-width: var(--border-width-bottom);
 		border-left-width: var(--border-width-left);
 		top: calc( 0px - var(--border-width-top) );
 		left: calc( 0px - var(--border-width-left) );
-		bottom: calc( 0px - var(--border-width-bottom) );
-		right: calc( 0px - var(--border-width-right) );
 		width: max( calc( 100% + var(--border-width-right, var(--border-width-initial-value)) + var(--border-width-left, var(--border-width-initial-value)) ), 100% );
 		height: max( calc( 100% + var(--border-width-top, var(--border-width-initial-value)) + var(--border-width-bottom, var(--border-width-initial-value)) ), 100% );
 	}
 
 	// Background overlay.
 	&::before,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container:not(.elementor-hidden-phone),
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
 	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
 	> .elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
@@ -180,24 +178,22 @@
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	> .elementor-background-slideshow {
+	> .elementor-background-slideshow,
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
 		@include border-radius-for-background-elements;
 	}
 
-	@media (min-width: $screen-mobile-next) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container {
-			display: block;
-			@include border-radius-for-background-elements;
+	@media (max-width: $screen-mobile-max) {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+			display: none;
 		}
 	}
 
-	> .elementor-background-video-container::before,
-	> .e-con-inner > .elementor-background-video-container::before {
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	> .elementor-background-slideshow::before,
-	> .e-con-inner > .elementor-background-slideshow::before {
+	:is( &, & > .e-con-inner ) > .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
