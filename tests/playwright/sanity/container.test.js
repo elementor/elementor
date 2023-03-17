@@ -541,12 +541,12 @@ test.describe( 'Container tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Set container type to grid.
-		await page.getByRole( 'combobox', { name: 'Container Type' } ).selectOption( 'grid' );
+		await page.locator( '.elementor-control-container_type select' ).selectOption( 'grid' );
 
 		// Set gap.
-		await page.getByRole( 'button', { name: 'Link values together' } ).click();
-		await page.getByRole( 'textbox', { name: 'Row' } ).fill( '10px' );
-		await page.getByRole( 'textbox', { name: 'Column' } ).fill( '20%' );
+		await page.locator( '.elementor-control-gaps .elementor-link-gaps' ).first().click();
+		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10px' );
+		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20%' );
 
 		// Assert.
 		const frame = editor.getPreviewFrame();
