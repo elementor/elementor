@@ -1,4 +1,4 @@
-import ExperimentsDependency from 'elementor/core/experiments/assets/js/admin/behaviors/experiments-dependency';
+import ExperimentsMessages from 'elementor/core/experiments/assets/js/admin/behaviors/experiments-messages';
 import {
 	mockExperimentsConfig,
 	mockExperimentsForm,
@@ -9,8 +9,8 @@ import {
 	mockDialog,
 } from './utils';
 
-describe( 'ExperimentsDependency Behavior', () => {
-	let experimentsDependency, elements;
+describe( 'ExperimentsMessages Behavior', () => {
+	let experimentsMessages, elements;
 
 	beforeEach( () => {
 		mockExperimentsConfig();
@@ -26,8 +26,8 @@ describe( 'ExperimentsDependency Behavior', () => {
 			submit: form.querySelector( 'input[type="submit"]' ),
 		};
 
-		experimentsDependency = new ExperimentsDependency( elements );
-		experimentsDependency.bindEvents();
+		experimentsMessages = new ExperimentsMessages( elements );
+		experimentsMessages.bindEvents();
 	} );
 
 	it( 'Should show a dependency dialog when activating an experiment that has dependencies', () => {

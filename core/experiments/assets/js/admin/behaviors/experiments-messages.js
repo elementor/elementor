@@ -2,7 +2,7 @@ const STATE_ACTIVE = 'active';
 const STATE_INACTIVE = 'inactive';
 const STATE_DEFAULT = 'default';
 
-export default class ExperimentsDependency {
+export default class ExperimentsMessages {
 	elements = {};
 
 	constructor( { selects, submit } ) {
@@ -32,14 +32,16 @@ export default class ExperimentsDependency {
 		switch ( experimentNewState ) {
 			case STATE_ACTIVE:
 				if ( this.shouldShowDependenciesDialog( experimentId ) ) {
-					this.showDependenciesDialog( experimentId );
+					this.showMessageDialog( experimentId, STATE_ACTIVE );
 				}
 				break;
 
 			case STATE_INACTIVE:
-				if ( this.shouldShowDeactivatingDialog( experimentId ) ) {
-					this.showDeactivateDialog( experimentId );
-				}
+				// if ( !! this.isExperimentContainsDeactivatingMessage( experimentId ) ) {
+				// 	this.showMessageDialog( experimentId, STATE_INACTIVE );
+				// } else {
+					this.deactivateDependantExperiments( experimentId );
+				// }
 				break;
 
 			default:
@@ -122,86 +124,53 @@ export default class ExperimentsDependency {
 		return ! this.areAllDependenciesActive( dependencies );
 	}
 
-	shouldShowDeactivatingDialog( experimentId ) {
+	isExperimentContainsDeactivatingMessage(experimentId ) {
 		return this.getExperimentDeactivatingDialogMessage( experimentId );
 	}
 
-	showDependenciesDialog( experimentId ) {
-		const experiment = this.getExperimentData( experimentId ),
-			dependencies = this.getExperimentDependencies( experimentId );
-
-		const dependenciesList = this.joinDepenednciesNames( dependencies.map( ( d ) => d.title ), ', ', ' & ' );
-
-		// Translators: %1$s: Experiment title, %2$s: Experiment dependencies list
-		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
-			.replace( '%1$s', `<strong>${ experiment.title }</strong>` )
-			.replace( '%2$s', `<strong>${ dependenciesList }</strong>` );
-
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'e-experiments-dependency-dialog',
-			headerMessage: __( 'First, activate another experiment.', 'elementor' ),
-			message,
-			position: {
-				my: 'center center',
-				at: 'center center',
-			},
-			strings: {
-				confirm: __( 'Activate', 'elementor' ),
-				cancel: __( 'Cancel', 'elementor' ),
-			},
-			hide: {
-				onOutsideClick: false,
-				onBackgroundClick: false,
-				onEscKeyPress: false,
-			},
-			onConfirm: () => {
-				dependencies.forEach( ( dependency ) => {
-					this.setExperimentState( dependency.name, STATE_ACTIVE );
-				} );
-
-				this.elements.submit.click();
-			},
-			onCancel: () => {
-				this.setExperimentState( experimentId, STATE_INACTIVE );
-			},
-		} ).show();
+	dialogActivateContentMessage( title, message ) {
+		// Translators: %1$s: Experiment title, %2$s: Message content
+		return __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
+			.replace( '%1$s', `<strong>${ title }</strong>` )
+			.replace( '%2$s', `<strong>${ message }</strong>` );
 	}
 
-	showDeactivateDialog( experimentId ) {
+	dialogDeactivateContentMessage( title, message ) {
+		// Translators: %1$s: Experiment title, %2$s: Message content
+		return __( 'While deactivating %1$s, %2$s.', 'elementor' )
+			.replace( '%1$s', `<strong>${ title }</strong>` )
+			.replace( '%2$s', `<strong>${ message }</strong>` );
+	}
+
+	showMessageDialog( experimentId, state ) {
 		const experiment = this.getExperimentData( experimentId ),
-			deactivateMessage = this.getExperimentData( experimentId ).messages.on_deactivate;
+			dialog = state === STATE_INACTIVE
+				? {
+					message: this.dialogDeactivateContentMessage( experiment.title, this.getExperimentDeactivatingDialogMessage( experimentId ) ),
+					headerMessage: __( 'Deactivate dialog.', 'elementor' ),
+					confirm: __( 'Deactivate', 'elementor' ),
+					cancel: __( 'Dismiss', 'elementor' ),
+					onConfirm: () => {
+						this.setExperimentState( experimentId, STATE_INACTIVE );
+						this.elements.submit.click();
+					},
+					initialState: STATE_ACTIVE,
+				}
+				: {
+					message: this.dialogActivateContentMessage( experiment.title, this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) ) ) ,
+					headerMessage: __( 'Activate dialog.', 'elementor' ),
+					confirm: __( 'Activate', 'elementor' ),
+					cancel: __( 'Cancel', 'elementor' ),
+					onConfirm: () => {
+						this.getExperimentDependencies( experimentId ).forEach( ( dependency ) => {
+							this.setExperimentState( dependency.name, STATE_ACTIVE );
+						} );
+						this.elements.submit.click();
+					},
+					initialState: STATE_INACTIVE,
+				};
 
-		// Translators: %1$s: Experiment title, %2$s: Experiment dependencies list
-		const message = __( 'While deactivating %1$s, %2$s.', 'elementor' )
-			.replace( '%1$s', `<strong>${ experiment.title }</strong>` )
-			.replace( '%2$s', `<strong>${ deactivateMessage }</strong>` );
-
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'e-experiments-dependency-dialog',
-			headerMessage: __( 'Deactivate dialog.', 'elementor' ),
-			message,
-			position: {
-				my: 'center center',
-				at: 'center center',
-			},
-			strings: {
-				confirm: __( 'Deactivate', 'elementor' ),
-				cancel: __( 'Dismiss', 'elementor' ),
-			},
-			hide: {
-				onOutsideClick: false,
-				onBackgroundClick: false,
-				onEscKeyPress: false,
-			},
-			onConfirm: () => {
-				this.setExperimentState( experimentId, STATE_INACTIVE );
-
-				this.elements.submit.click();
-			},
-			onCancel: () => {
-				this.setExperimentState( experimentId, STATE_ACTIVE );
-			},
-		} ).show();
+		this.setDialog( experiment, dialog, experimentId ).show();
 	}
 
 	joinDepenednciesNames( array, glue, finalGlue = '' ) {
@@ -221,5 +190,32 @@ export default class ExperimentsDependency {
 			lastItem = clone.pop();
 
 		return clone.join( glue ) + finalGlue + lastItem;
+	}
+
+	setDialog( experiment, dialog, experimentId ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'e-experiments-messages-dialog',
+			headerMessage: dialog.headerMessage,
+			message: dialog.message,
+			position: {
+				my: 'center center',
+				at: 'center center',
+			},
+			strings: {
+				confirm: dialog.confirm,
+				cancel: dialog.cancel,
+			},
+			hide: {
+				onOutsideClick: false,
+				onBackgroundClick: false,
+				onEscKeyPress: false,
+			},
+			onConfirm: () => {
+				dialog.onConfirm();
+			},
+			onCancel: () => {
+				this.setExperimentState( experimentId, dialog.initialState );
+			},
+		} );
 	}
 }
