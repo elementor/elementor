@@ -1,8 +1,11 @@
 export { default as AdjustmentsHorizontalIcon } from './components/adjustments-horizontal-icon';
 export { default as ArrowUpRightIcon } from './components/arrow-up-right-icon';
+export { default as ChevronDownIcon } from './components/chevron-down-icon';
 export { default as DesktopIcon } from './components/desktop-icon';
 export { default as DotsVerticalIcon } from './components/dots-vertical-icon';
 export { default as EyeIcon } from './components/eye-icon';
+export { default as FileReportIcon } from './components/file-report-icon';
+export { default as FolderIcon } from './components/folder-icon';
 export { default as HelpIcon } from './components/help-icon';
 export { default as HistoryIcon } from './components/history-icon';
 export { default as KeyboardIcon } from './components/keyboard-icon';
