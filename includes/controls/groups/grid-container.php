@@ -63,7 +63,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'responsive' => true,
 		];
-
+		
 		$fields['justify_items'] = [
 			'label' => esc_html_x( 'Justify Items', 'Grid Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
