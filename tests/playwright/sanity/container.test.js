@@ -11,6 +11,7 @@ test.describe( 'Container tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
+			container_grid: true,
 		} );
 	} );
 
@@ -20,6 +21,7 @@ test.describe( 'Container tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: false,
+			container_grid: false,
 		} );
 	} );
 
@@ -527,7 +529,7 @@ test.describe( 'Container tests', () => {
 		await expect( resizers ).toHaveCount( 0 );
 	} );
 
-	test( 'Test grid container gap', async ( { page }, testInfo ) => {
+	test.only( 'Test grid container gap', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
@@ -548,7 +550,7 @@ test.describe( 'Container tests', () => {
 
 		// Assert.
 		const frame = editor.getPreviewFrame();
-		const container = await frame.locator( '.e-con-inner' );
+		const container = await frame.locator( '.e-grid .e-con-inner' );
 		await expect( container ).toHaveCSS( 'gap', '10px 20%' );
 	} );
 } );
