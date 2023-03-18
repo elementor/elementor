@@ -127,7 +127,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 				<span></span>
 				<i class="eicon-edit" aria-hidden="true"></i>
 				<i class="eicon-angle-right" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Switche units', 'elementor' ); ?></span>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Switch units', 'elementor' ); ?></span>
 			</div>
 			<div class="e-units-choices">
 				<# _.each( data.size_units, function( unit ) { #>
