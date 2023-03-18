@@ -279,7 +279,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
 	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
 		<i class="eicon-database" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Switche units', 'elementor' ); ?></span>
+		<span class="elementor-screen-only"><?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?></span>
 	</div>
 </script>
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
