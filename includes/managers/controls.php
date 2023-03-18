@@ -237,6 +237,11 @@ class Controls_Manager {
 	const EXIT_ANIMATION = 'exit_animation';
 
 	/**
+	 * Gaps control.
+	 */
+	const GAPS = 'gaps';
+
+	/**
 	 * Controls.
 	 *
 	 * Holds the list of all the controls. Default is `null`.
@@ -359,6 +364,7 @@ class Controls_Manager {
 			'css-filter',
 			'text-shadow',
 			'flex-container',
+			'grid-container',
 			'flex-item',
 			'text-stroke',
 		];
@@ -392,6 +398,7 @@ class Controls_Manager {
 			self::CODE,
 			self::FONT,
 			self::IMAGE_DIMENSIONS,
+			self::GAPS,
 
 			self::WP_WIDGET,
 
@@ -1060,7 +1067,7 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" />
+			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy" />
 			<div class="elementor-nerd-box-title"><?php Utils::print_unescaped_internal_string( $texts['title'] ); ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
 				<div class="elementor-nerd-box-message"><?php Utils::print_unescaped_internal_string( $message ); ?></div>
@@ -1068,7 +1075,7 @@ class Controls_Manager {
 
 			// Show the upgrade button only if the user doesn't have Pro.
 			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( ( $texts['link'] ) ); ?>" target="_blank">
+				<a class="elementor-button go-pro" href="<?php echo esc_url( ( $texts['link'] ) ); ?>" target="_blank">
 					<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
 				</a>
 			<?php } ?>

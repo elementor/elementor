@@ -1,0 +1,34 @@
+//
+// Theme preview styles / Temp Tokens
+//
+@import "../../helpers/variables";
+
+// CSS Vars
+// Prefix e = elementor
+// Prefix p = preview (Only preview editor facing)
+
+:root {
+	//Dragble colors
+	--e-p-draggable-color: 			#{$e-indigo-600};
+
+	//Handle colors
+	--e-p-border-column:			#{$e-gray-600};
+	--e-p-border-column-hover: 		#{$e-gray-700};
+	--e-p-border-column-invert: 	#{$white};
+
+	--e-p-border-section: 			#{$e-indigo-600};
+	--e-p-border-section-hover: 	#{$e-indigo-700};
+	--e-p-border-section-invert: 	#{$white};
+
+	--e-p-border-con: 				#{$e-indigo-600};
+	--e-p-border-con-hover: 		#{$e-indigo-700};
+	--e-p-border-con-invert: 		#{$white};
+
+	--e-p-border-widget: 			#{$e-indigo-600};
+	--e-p-border-widget-hover: 		#{$e-indigo-700};
+	--e-p-border-widget-invert: 	#{$white};
+
+	--e-p-border-global: 			#{$e-teal-300};
+	--e-p-border-global-hover: 		#{$e-teal-400};
+	--e-p-border-global-invert: 	#{$black};
+}

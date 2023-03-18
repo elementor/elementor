@@ -1,14 +1,17 @@
 import { usePopupState, bindMenu, bindTrigger, Stack, Divider } from '@elementor/ui';
-import { useInjectionsOf } from '@elementor/locations';
-import { LOCATION_MAIN_MENU_DEFAULT, LOCATION_MAIN_MENU_EXITS } from '../../locations';
+import { mainMenu } from '../../locations';
 import PopoverMenu from '../ui/popover-menu';
 import ToolbarLogo from '../ui/toolbar-logo';
 
+const { useMenuItems } = mainMenu;
+
 export default function MainMenuLocation() {
-	const injectionsGroups = useInjectionsOf( [
-		LOCATION_MAIN_MENU_DEFAULT,
-		LOCATION_MAIN_MENU_EXITS,
-	] );
+	const menuItems = useMenuItems();
+
+	const orderedGroups = [
+		menuItems.default,
+		menuItems.exits,
+	];
 
 	const popupState = usePopupState( {
 		variant: 'popover',
@@ -21,15 +24,21 @@ export default function MainMenuLocation() {
 				{ ...bindTrigger( popupState ) }
 				selected={ popupState.isOpen }
 			/>
-			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } sx={ { mt: 2 } }>
+			<PopoverMenu
+				onClick={ popupState.close }
+				{ ...bindMenu( popupState ) }
+				PaperProps={ {
+					sx: { mt: 4, marginInlineStart: -2 },
+				} }
+			>
 				{
-					injectionsGroups
-						.filter( ( injections ) => injections.length )
-						.map( ( injections, index ) => {
+					orderedGroups
+						.filter( ( group ) => group.length )
+						.map( ( group, index ) => {
 							return [
 								index > 0 ? <Divider key={ index } orientation="horizontal" /> : null,
-								...injections.map(
-									( { filler: Filler, id } ) => <Filler key={ id } />
+								...group.map(
+									( { MenuItem, id } ) => <MenuItem key={ id } />
 								),
 							];
 						} )

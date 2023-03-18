@@ -98,8 +98,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
+		<i class="eicon-device-responsive" aria-hidden="true"></i>
 		<span class="elementor-screen-only">
 			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
 		</span>
@@ -111,7 +111,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		</span>
 	</div>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-disabled">
+		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
@@ -121,8 +121,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		</button>
 	</div>
 	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
-			<i class="eicon-caret-up" aria-hidden="true"></i>
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
+			<i class="eicon-chevron-right" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Save Options', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
@@ -172,7 +172,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<div class="elementor-update-preview">
 			<div class="elementor-update-preview-title"><?php echo esc_html__( 'Update changes to page', 'elementor' ); ?></div>
 			<div class="elementor-update-preview-button-wrapper">
-				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+				<button class="elementor-update-preview-button elementor-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
@@ -188,7 +188,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(
@@ -266,10 +266,10 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
+				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
 					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
 					<span class="elementor-screen-only">{{{ deviceLabel }}}</span>
-				</a>
+				</button>
 			<# } );
 		#>
 		</div>
