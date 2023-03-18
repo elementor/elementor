@@ -64,7 +64,7 @@ class Control_Button extends Base_UI_Control {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<button class="elementor-button elementor-button-{{{ data.button_type }}}" data-event="{{{ data.event }}}">{{{ data.text }}}</button>
+				<button type="button" class="elementor-button elementor-button-{{{ data.button_type }}}" data-event="{{{ data.event }}}">{{{ data.text }}}</button>
 			</div>
 		</div>
 		<# if ( data.description ) { #>
