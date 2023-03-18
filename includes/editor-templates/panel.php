@@ -268,7 +268,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 			#>
 				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
 					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
-					<span class="elementor-screen-only">{{{ deviceLabel }}}</span>
+					<span class="elementor-screen-only">{{ deviceLabel }}</span>
 				</button>
 			<# } );
 		#>
