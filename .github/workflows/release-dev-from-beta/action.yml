@@ -18,22 +18,19 @@ runs:
             OUTPUT_PATH=/tmp/
             unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
             PLUGIN_FILE_PATH=$OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
-            RELEASE_NAME=$(grep "Version:" $PLUGIN_FILE_PATH | awk '{print $3}')
-            
-            if [ -z "$RELEASE_NAME" ]; then
-              echo "RELEASE_NAME is empty"
-              exit 1
-            fi
 
-            RELEASE_NAME=${RELEASE_NAME/beta/dev}
+            RELEASE_NAME=${{ env.RELEASE_NAME }}
+
+            RELEASE_NAME=$(echo "$RELEASE_NAME" | sed 's/beta/dev/')
 
             sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
 
-            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
+            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/$PLUGIN_FILE_PATH
 
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
-            DEV_BUILD_ZIP_FILE_PATH=${CURRENT_BUILD/beta/dev}
+            DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
+
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
