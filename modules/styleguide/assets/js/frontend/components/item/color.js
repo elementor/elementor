@@ -32,7 +32,7 @@ const HexString = styled.p`
 `;
 
 export default function Color( props ) {
-	const { activeElement, isActiveElement, activateElement } = useContext( ActiveContext );
+	const { activeElement, isActiveElement, activateElement, scrollToElement } = useContext( ActiveContext );
 	const [ isActive, setIsActive ] = useState( false );
 
 	const { item, type } = props;
@@ -43,7 +43,7 @@ export default function Color( props ) {
 	const ref = useRef( null );
 
 	useEffect( () => {
-		if ( isActiveElement( source, _id ) ) {
+		if ( isActiveElement( type, source, _id ) ) {
 			setIsActive( true );
 			ref.current.scrollIntoView( {
 				behavior: 'smooth',
