@@ -32,7 +32,7 @@ runs:
 
             echo "BEFORE ZIP"
 
-            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
+            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/
 
             echo "AFTER ZIP"
 
