@@ -25,6 +25,13 @@ export default class ExperimentsMessages {
 		} );
 	}
 
+	inactiveStateActivity( experimentId ) {
+		if ( !! this.isExperimentContainsDeactivatingMessage( experimentId ) && elementorAdminConfig.experiments[ experimentId ].state !== STATE_INACTIVE ) {
+			this.showDialog( experimentId, STATE_INACTIVE );
+		} else {
+			this.deactivateDependantExperiments( experimentId );
+		}
+	}
 	onExperimentStateChange( e ) {
 		const { experimentId } = e.currentTarget.dataset,
 			experimentNewState = this.getExperimentActualState( experimentId );
@@ -37,11 +44,7 @@ export default class ExperimentsMessages {
 				break;
 
 			case STATE_INACTIVE:
-				if ( !! this.isExperimentContainsDeactivatingMessage( experimentId ) && elementorAdminConfig.experiments[ experimentId ].state !== STATE_INACTIVE ) {
-					this.showDialog( experimentId, STATE_INACTIVE );
-				} else {
-					this.deactivateDependantExperiments( experimentId );
-				}
+				this.inactiveStateActivity( experimentId );
 				break;
 
 			default:
@@ -190,7 +193,7 @@ export default class ExperimentsMessages {
 				dialog.onConfirm();
 			},
 			onCancel: () => {
-				dialog.onCancel();
+				this.setExperimentState( experiment.name, dialog.initialState )
 			},
 		} );
 	}
@@ -207,9 +210,7 @@ export default class ExperimentsMessages {
 					this.deactivateDependantExperiments( experimentId );
 					this.elements.submit.click();
 				},
-				onCancel: () => {
-					this.setExperimentState( experimentId, STATE_ACTIVE );
-				},
+				initialState: STATE_ACTIVE,
 			}
 			: {
 				message: this.dialogActivateContentMessage( experiment.title, this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) ) ) ,
@@ -222,9 +223,7 @@ export default class ExperimentsMessages {
 					} );
 					this.elements.submit.click();
 				},
-				onCancel: () => {
-					this.setExperimentState( experimentId, STATE_INACTIVE );
-				},
+				initialState: STATE_INACTIVE,
 			};
 	}
 }
