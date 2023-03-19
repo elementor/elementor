@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { commandListener, removeCommandListener } from '../utils/commands';
 import { useSettings } from './settings';
+import useIntersectionObserver from '../hooks/use-intersection-observer';
 
 export const ActiveContext = createContext( null );
 
@@ -17,19 +18,29 @@ const ActiveProvider = ( props ) => {
 
 	const getUid = ( source, id ) => `${ source }-${ id }`;
 
-	const activateElement = ( type, source, id, name ) => {
-		// TODO: Run the command instead of change the state.
-		// TODO: Change route if needed.
-		// RunCommand( 'controls/toggle-control', {
-		// 	controlPath: `${ type }_${ source }/${ _id }/${ name }`,
-		// } );
+	const activateElement = ( type, source, id ) => {
+		if ( 'color' === source ) {
+			window.top.$e.route( 'panel/global/global-colors', {
+				activeControls: [
+					`${ type }/${ id }/color`,
+				],
+			} );
+		}
 
-		const uid = getUid( source, id );
+		if ( 'typography' === source ) {
+			window.top.$e.route( 'panel/global/global-typography', {
+				activeControls: [
+					`${ type }/${ id }/typography_typography`,
+				],
+			} );
+		}
 
-		setActive( ( prevState ) => ( {
-			...prevState,
-			element: uid,
-		} ) );
+		// Const uid = getUid( source, id );
+		//
+		// setActive( ( prevState ) => ( {
+		// 	...prevState,
+		// 	element: uid,
+		// } ) );
 	};
 
 	const isActiveElement = ( source, id ) => {
@@ -63,35 +74,19 @@ const ActiveProvider = ( props ) => {
 			return;
 		}
 
-		commandListener( 'controls/toggle-control', ( e ) => {
-			const source = instance.container.source,
-				id = instance.container.id,
-				type = instance.container.type,
-				uid = getUid( source, id );
-
-			setActive( ( prevState ) => ( {
-				...prevState,
-				element: uid,
-			} ) );
+		window.top.$e.routes.on( 'run:after', ( component, route, args ) => {
+			console.log( route );
+			console.log( component );
+			console.log( args );
 		} );
 
-		if ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
-			scrollToArea( 'colors' );
-		}
-
-		if ( window.top.$e.routes.is( 'panel/global/global-typography' ) ) {
-			scrollToArea( 'fonts' );
-		}
-
-		return () => {
-			// TODO: ADD CLEANUP.
-		};
-	}, [ isReady ] );
-
-	useEffect( () => {
-		if ( ! colorsAreaRef.current || ! fontsAreaRef.current ) {
-			return;
-		}
+		// If ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
+		// 	scrollToArea( 'colors' );
+		// }
+		//
+		// if ( window.top.$e.routes.is( 'panel/global/global-typography' ) ) {
+		// 	scrollToArea( 'fonts' );
+		// }
 
 		const observer = new IntersectionObserver( ( entries ) => {
 			const intersectingArea = entries.find( ( entry ) => entry.isIntersecting );
@@ -114,7 +109,22 @@ const ActiveProvider = ( props ) => {
 		return () => {
 			// TODO: ADD CLEANUP.
 		};
-	}, [] );
+	}, [ isReady ] );
+
+	// UseIntersectionObserver( ( intersectingArea ) => {
+	// 	if ( colorsAreaRef.current === intersectingArea.target ) {
+	// 		activateArea( 'colors', { scroll: false } );
+	// 		return;
+	// 	}
+	//
+	// 	if ( fontsAreaRef.current === intersectingArea.target ) {
+	// 		activateArea( 'fonts', { scroll: false } );
+	// 	}
+	// }, [ colorsAreaRef.current, fontsAreaRef.current ] );
+
+	useEffect( () => {
+		console.log( 'active', active );
+	}, [ active ] );
 
 	const value = {
 		activeElement: active.element,

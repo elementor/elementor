@@ -45,7 +45,6 @@ export default class extends ControlBaseDataView {
 			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
-			onShow: () => this.onPickerShow(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
 			onPickerShow: () => this.runRouteHooks(),
 			onPickerHide: () => this.runRouteHooks(),

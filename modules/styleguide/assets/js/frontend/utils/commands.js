@@ -13,7 +13,7 @@ export const commandListener = ( command, callback ) => {
 
 	window.top.addEventListener( 'elementor/commands/run/after', ( e ) => {
 		if ( command === e.detail.command ) {
-			callback( e.detail.instance );
+			callback( e );
 		}
 	} );
 };
@@ -25,7 +25,7 @@ export const removeCommandListener = ( command, callback ) => {
 
 	window.top.removeEventListener( 'elementor/commands/run/after', ( e ) => {
 		if ( command === e.detail.command ) {
-			callback( e.detail.instance );
+			callback( e.detail );
 		}
 	} );
 };

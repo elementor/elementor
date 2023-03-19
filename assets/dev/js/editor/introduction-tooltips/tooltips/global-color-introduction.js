@@ -6,6 +6,7 @@ export default class GlobalColorIntroduction {
 	}
 
 	bindEvent() {
+		// TODO: fix this event to listen to the route change.
 		window.addEventListener( 'elementor/color-picker/show', ( e ) => {
 			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
 			if ( 'kit' === elementor.documents.getCurrent().config.type ) {

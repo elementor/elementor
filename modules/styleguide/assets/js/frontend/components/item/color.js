@@ -37,7 +37,7 @@ export default function Color( props ) {
 
 	const { item, type } = props;
 
-	const source = 'colors';
+	const source = 'color';
 	const { _id, title, color: hex } = item;
 
 	const ref = useRef( null );
@@ -57,14 +57,6 @@ export default function Color( props ) {
 
 	const onClick = () => {
 		activateElement( type, source, _id );
-
-		const route = 'panel/global/global-colors';
-
-		window.top.$e.route( route, {
-			activeControls: [
-				`${ type }/${ _id }/color`,
-			],
-		} );
 	};
 
 	return (

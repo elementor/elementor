@@ -184,12 +184,6 @@ export default class ColorPicker extends elementorModules.Module {
 
 			this.picker._recalc = true;
 		}, 100 );
-
-		const onShow = this.getSettings( 'onShow' );
-
-		if ( onShow ) {
-			onShow();
-		}
 	}
 
 	onPickerHide() {
