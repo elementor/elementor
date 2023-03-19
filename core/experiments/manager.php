@@ -413,9 +413,7 @@ class Manager extends Base_Object {
 			'messages' => [
 				// Translators: %1$s:Experiment title, %2$s: Experiment dependencies list
 				'on_deactivate' => sprintf( esc_html__(
-					'experiment will cuases all the existing containers to disappear /n
-					 %1$s
-					 %2$sFlexbox Container element%3$s',
+					'The experiment will cause all the existing containers to disappear %1$s %2$sFlexbox Container element%3$s',
 					'elementor'
 				), '<br />', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>'),
 			],
