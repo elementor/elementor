@@ -37,7 +37,7 @@ export default class ExperimentsMessages {
 				break;
 
 			case STATE_INACTIVE:
-				if ( !! this.isExperimentContainsDeactivatingMessage( experimentId ) ) {
+				if ( !! this.isExperimentContainsDeactivatingMessage( experimentId ) && elementorAdminConfig.experiments[ experimentId ].state !== STATE_INACTIVE ) {
 					this.showDialog( experimentId, STATE_INACTIVE );
 				} else {
 					this.deactivateDependantExperiments( experimentId );
@@ -204,6 +204,7 @@ export default class ExperimentsMessages {
 				cancel: __( 'Dismiss', 'elementor' ),
 				onConfirm: () => {
 					this.setExperimentState( experimentId, STATE_INACTIVE );
+					this.deactivateDependantExperiments( experimentId );
 					this.elements.submit.click();
 				},
 				onCancel: () => {
