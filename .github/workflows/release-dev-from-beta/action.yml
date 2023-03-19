@@ -29,6 +29,7 @@ runs:
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
             DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
 
+            $DEV_BUILD_ZIP_FILE_PATH=$(echo "$DEV_BUILD_ZIP_FILE_PATH" | sed 's/-rc//')
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
@@ -39,11 +40,11 @@ runs:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
-    # - name: Publish to WordPress.org SVN
-    #   shell: bash
-    #   env:
-    #     PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
-    #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-    #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-    #   run: |
-    #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+    - name: Publish to WordPress.org SVN
+      shell: bash
+      env:
+        PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      run: |
+        bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
