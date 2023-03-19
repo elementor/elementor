@@ -16,7 +16,7 @@ runs:
       shell: bash
       run: |
             OUTPUT_PATH=/tmp/
-            unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
+            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
             PLUGIN_FILE_PATH=$OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
             RELEASE_NAME=${{ env.RELEASE_NAME }}
