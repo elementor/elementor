@@ -21,6 +21,8 @@ class Site_Settings extends Export_Runner_Base {
 		$kit_data = $kit->get_export_data();
 		$kit_tabs = $kit->get_tabs();
 
+		$kit_data['content'] = [];
+
 		$excluded_kit_settings_keys = [
 			'site_name',
 			'site_description',
