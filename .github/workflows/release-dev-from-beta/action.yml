@@ -24,7 +24,7 @@ runs:
             sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
 
-            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
+            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
             DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
