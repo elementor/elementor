@@ -20,32 +20,20 @@ runs:
             PLUGIN_FILE_PATH=$OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
             RELEASE_NAME=${{ env.RELEASE_NAME }}
-
-            echo "RELEASE_NAME=$RELEASE_NAME"
-
             RELEASE_NAME=$(echo "$RELEASE_NAME" | sed 's/beta/dev/')
-
-            echo "NEW RELEASE_NAME=$RELEASE_NAME"
 
             sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
 
-            echo "BEFORE ZIP"
-
-            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/
-
-            echo "AFTER ZIP"
+            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
             DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
-
-            echo "DEV_BUILD_ZIP_FILE_PATH=$DEV_BUILD_ZIP_FILE_PATH"
 
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
             echo "DEV_RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
-
     - name: Create Dev GitHub release
       uses: softprops/action-gh-release@v1
       with:
