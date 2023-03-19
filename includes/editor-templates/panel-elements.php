@@ -17,7 +17,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				? esc_html__( 'Widgets', 'elementor' )
 				: esc_html__( 'Elements', 'elementor' );
 		?></div>
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Global', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
