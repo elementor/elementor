@@ -32,7 +32,8 @@ runs:
 
             zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
 
-            DEV_BUILD_ZIP_FILE_PATH=${{ inputs.BUILD_ZIP_FILE_PATH/beta/dev }}
+            CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
+            DEV_BUILD_ZIP_FILE_PATH=${CURRENT_BUILD/beta/dev}
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
