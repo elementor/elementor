@@ -10,7 +10,6 @@ use Elementor\App\Modules\ImportExport\Runners\Export\Wp_Content;
 use Elementor\App\Modules\ImportExport\Processes\Export;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -82,8 +81,6 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_run__export_site_settings() {
 		// Arrange
 		$this->act_as_admin();
-
-		$this->elementor()->experiments->set_feature_default_state( 'e_global_styleguide', Experiments_Manager::STATE_INACTIVE );
 
 		$custom_colors = [
 			'_id' => '0fba91c',

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Styleguide;
 
+use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -10,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module extends \Elementor\Core\Base\Module {
+class Module extends Base_Module {
 
 	const ASSETS_HANDLE = 'elementor-styleguide';
 	const ASSETS_SRC = 'styleguide';
@@ -51,12 +52,6 @@ class Module extends \Elementor\Core\Base\Module {
 
 	public static function is_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	protected function get_widgets() {
-		return [
-			'Global_Styleguide',
-		];
 	}
 
 	public static function get_experimental_data() {
