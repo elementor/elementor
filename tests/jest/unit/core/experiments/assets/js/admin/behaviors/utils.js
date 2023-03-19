@@ -62,12 +62,16 @@ export function mockExperimentsConfig() {
 				state: 'default',
 				default: 'active',
 				dependencies: [],
+				messages: {
+					on_deactivate: 'Active dependency is active',
+				},
 			},
 			inactive_dependency: {
 				name: 'inactive_dependency',
 				state: 'inactive',
 				default: 'inactive',
 				dependencies: [],
+				messages: [],
 			},
 			depends_on_active: {
 				name: 'depends_on_active',
@@ -76,6 +80,7 @@ export function mockExperimentsConfig() {
 				dependencies: [
 					'active_dependency',
 				],
+				messages: [],
 			},
 			depends_on_inactive: {
 				name: 'depends_on_inactive',
@@ -84,6 +89,7 @@ export function mockExperimentsConfig() {
 				dependencies: [
 					'inactive_dependency',
 				],
+				messages: [],
 			},
 		},
 	};

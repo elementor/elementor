@@ -82,7 +82,7 @@ class Manager extends Base_Object {
 			'generator_tag' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -410,6 +410,15 @@ class Manager extends Base_Object {
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
+			'messages' => [
+				// Translators: %1$s:Experiment title, %2$s: Experiment dependencies list
+				'on_deactivate' => sprintf( esc_html__(
+					'experiment will cuases all the existing containers to disappear /n
+					 %1$s
+					 %2$sFlexbox Container element%3$s',
+					'elementor'
+				), '<br />', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>'),
+			],
 		] );
 
 		$this->add_feature( [
