@@ -1,0 +1,54 @@
+name: Release Dev From Beta
+description: Dev release is created from the latest beta release.
+
+inputs:
+  BUILD_ZIP_FILE_PATH:
+    description: 'The path to the zip file.'
+    required: true
+  PLUGIN_NAME:
+    description: 'The name of the plugin.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Replace Release Name In Plugin File With Dev
+      shell: bash
+      run: |
+            OUTPUT_PATH=/tmp/
+            unzip ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
+            PLUGIN_FILE_PATH=$OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
+            RELEASE_NAME=$(grep "Version:" $PLUGIN_FILE_PATH | awk '{print $3}')
+            
+            if [ -z "$RELEASE_NAME" ]; then
+              echo "RELEASE_NAME is empty"
+              exit 1
+            fi
+
+            RELEASE_NAME=${RELEASE_NAME/beta/dev}
+
+            sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
+
+            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
+
+            DEV_BUILD_ZIP_FILE_PATH=${{ inputs.BUILD_ZIP_FILE_PATH/beta/dev }}
+            mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
+
+            echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
+            echo "DEV_RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
+
+    - name: Create Dev GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.DEV_RELEASE_NAME }}
+        files: /tmp/${{ env.DEV_BUILD_ZIP_FILE_PATH }}
+        body_path: ${{ env.CHANGELOG_FILE }}
+    # - name: Publish to WordPress.org SVN
+    #   shell: bash
+    #   env:
+    #     PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+    #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+    #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+    #   run: |
+    #     bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
