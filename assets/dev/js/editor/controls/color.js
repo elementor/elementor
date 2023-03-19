@@ -32,6 +32,7 @@ export default class extends ControlBaseDataView {
 	}
 
 	initPicker() {
+		console.log( 'initPicker' );
 		const options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],
@@ -46,8 +47,8 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
-			onPickerShow: () => this.runRouteHooks(),
-			onPickerHide: () => this.runRouteHooks(),
+			onPickerShow: () => this.routeWithControlActive(),
+			onPickerHide: () => this.routeWithoutControlActive(), // // TODO ignore hide on the canvas color elements - add class to editor-base to ignore
 		};
 
 		this.colorPicker = new ColorPicker( options );
@@ -274,20 +275,8 @@ export default class extends ControlBaseDataView {
 		} );
 	}
 
-	toggle() {
-		const picker = this.colorPicker.picker;
-		if ( picker.isOpen() ) {
-			picker.hide();
-		} else {
-			picker.show();
-		}
-	}
-
-	runRouteHooks() {
-		const toggledRouteArgs = this.getToggledControlInRouteArgs();
-
-		$e.routes.setCurrentArgs( 'panel', toggledRouteArgs );
-		$e.routes.afterRun( $e.routes.getCurrent( 'panel' ), toggledRouteArgs );
+	activate() {
+		this.colorPicker.picker.show();
 	}
 
 	onBeforeDestroy() {

@@ -18,6 +18,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onShow() {
+		console.log( 'onShow' );
 		const $popover = this.$el.next( '.elementor-controls-popover' );
 
 		// Attach the current control as a toggle of its popover.
@@ -29,7 +30,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverHide() {
-		this.routeWithToggledControl();
+		this.routeWithoutControlActive();
 	}
 
 	onResetInputClick() {
@@ -58,15 +59,17 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		this.routeWithToggledControl();
+		const $popover = this.$el.next( '.elementor-controls-popover' );
+		if ( ! $popover.is( ':visible' ) ) { // Show
+			this.routeWithControlActive();
+		} else {
+			$popover.hide(); // TODO ignore hide on the canvas font elements - add class to editor-base to ignore
+			$popover.trigger( 'hide' );
+		}
 	}
 
-	routeWithToggledControl() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.getToggledControlInRouteArgs() );
-	}
-
-	toggle() {
-		this.$el.next( '.elementor-controls-popover' ).toggle();
+	activate() {
+		this.$el.next( '.elementor-controls-popover' ).show();
 	}
 
 	getGlobalCommand() {

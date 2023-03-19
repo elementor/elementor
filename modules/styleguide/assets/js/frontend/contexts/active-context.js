@@ -21,17 +21,14 @@ const ActiveProvider = ( props ) => {
 	const activateElement = ( type, source, id ) => {
 		if ( 'color' === source ) {
 			window.top.$e.route( 'panel/global/global-colors', {
-				activeControls: [
-					`${ type }/${ id }/color`,
-				],
+				activeControl: `${ type }/${ id }/color`,
 			} );
 		}
 
 		if ( 'typography' === source ) {
 			window.top.$e.route( 'panel/global/global-typography', {
-				activeControls: [
+				activeControl:
 					`${ type }/${ id }/typography_typography`,
-				],
 			} );
 		}
 

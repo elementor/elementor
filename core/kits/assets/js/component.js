@@ -60,21 +60,29 @@ export default class extends $e.modules.ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
+		// if ( this.getCurrentTab() !== tab ) {
+			elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
+			// console.log( 'renderTab' );
+		// }
 
-		if ( args.activeControls ) {
-			this.toggleControls( args.activeControls );
-		}
+		this.activateControl( args.activeControl );
 	}
 
-	toggleControls( controls ) {
+	// getCurrentTab() {
+	// 	const route = $e.routes.getCurrent( 'panel' );
+	// 	debugger;
+	// }
+
+	activateControl( controlPath ) {
+		if ( ! controlPath ) {
+			return;
+		}
+
 		const editor = elementor.getPanelView().getCurrentPageView();
 		const currentView = editor.content.currentView;
 
-		controls.forEach( ( controlPath ) => {
-			const controlView = this.getControlView( currentView, controlPath );
-			controlView.toggle?.();
-		} );
+		const controlView = this.getControlView( currentView, controlPath )
+		controlView.activate?.();
 	}
 
 	getControlView( currentView, controlPath ) {
