@@ -322,7 +322,7 @@ export default class ComponentBase extends Module {
 		this.trigger( 'route/open', route );
 	}
 
-	onCloseRoute( route ) {
+	onCloseRoute( route, newRoute = '' ) {
 		this.toggleRouteClass( route, false );
 
 		this.inactivate();
@@ -379,8 +379,9 @@ export default class ComponentBase extends Module {
 	renderTab( tab ) {} // eslint-disable-line
 
 	activateTab( tab, args ) {
+		const oldTab = this.currentTab;
 		this.currentTab = tab;
-		this.renderTab( tab, args );
+		this.renderTab( tab, args, oldTab );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )

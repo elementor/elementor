@@ -20,16 +20,19 @@ const ActiveProvider = ( props ) => {
 
 	const activateElement = ( type, source, id ) => {
 		if ( 'color' === source ) {
-			window.top.$e.route( 'panel/global/global-colors', {
-				activeControl: `${ type }/${ id }/color`,
-			} );
+			window.top.$e.route(
+				'panel/global/global-colors',
+				{ activeControl: `${ type }/${ id }/color` },
+				{ history: false }
+			);
 		}
 
 		if ( 'typography' === source ) {
-			window.top.$e.route( 'panel/global/global-typography', {
-				activeControl:
-					`${ type }/${ id }/typography_typography`,
-			} );
+			window.top.$e.route(
+				'panel/global/global-typography',
+				{ activeControl: `${ type }/${ id }/typography_typography` },
+				{ history: false }
+			);
 		}
 
 		// Const uid = getUid( source, id );
@@ -71,11 +74,11 @@ const ActiveProvider = ( props ) => {
 			return;
 		}
 
-		window.top.$e.routes.on( 'run:after', ( component, route, args ) => {
-			console.log( route );
-			console.log( component );
-			console.log( args );
-		} );
+		// window.top.$e.routes.on( 'run:after', ( component, route, args ) => {
+		// 	console.log( route );
+		// 	console.log( component );
+		// 	console.log( args );
+		// } );
 
 		// If ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
 		// 	scrollToArea( 'colors' );

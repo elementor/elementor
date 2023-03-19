@@ -98,8 +98,8 @@ export default class API {
 	 * @param {string} route
 	 * @param {*}      [args={}]
 	 */
-	route( route, args = {} ) {
-		return $e.routes.to( route, args );
+	route( route, args = {}, options = { history: true } ) {
+		return $e.routes.to( route, args, options );
 	}
 
 	// TODO: shortcut();

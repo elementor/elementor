@@ -162,11 +162,11 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	routeWithControlActive() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.addControlInRouteArgs() );
+		$e.route( $e.routes.getCurrent( 'panel' ), this.addControlInRouteArgs(), { history: false } );
 	},
 
 	routeWithoutControlActive() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.clearControlInRouteArgs() );
+		$e.route( $e.routes.getCurrent( 'panel' ), this.clearControlInRouteArgs(), { history: false } );
 	},
 
 	addControlInRouteArgs() {
