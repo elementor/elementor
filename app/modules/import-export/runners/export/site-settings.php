@@ -21,13 +21,13 @@ class Site_Settings extends Export_Runner_Base {
 		$kit_data = $kit->get_export_data();
 		$kit_tabs = $kit->get_tabs();
 
-		$kit_data['content'] = [];
-
 		$excluded_kit_settings_keys = [
 			'site_name',
 			'site_description',
 			'site_logo',
 			'site_favicon',
+			'colors_enable_styleguide_preview',
+			'typography_enable_styleguide_preview',
 		];
 
 		foreach ( $excluded_kit_settings_keys as $setting_key ) {

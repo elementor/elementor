@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\Modules\Styleguide\Widgets\Data;
+namespace Elementor\Modules\Styleguide\Data;
 
 use Elementor\Data\V2\Base\Controller as Controller_Base;
-use Elementor\Modules\Styleguide\Widgets\Data\Endpoints\Settings;
+use Elementor\Modules\Styleguide\Data\Endpoints\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

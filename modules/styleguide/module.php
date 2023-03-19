@@ -4,7 +4,7 @@ namespace Elementor\Modules\Styleguide;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
-use Elementor\Modules\Styleguide\Widgets\Data\Controller;
+use Elementor\Modules\Styleguide\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

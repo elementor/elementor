@@ -75,7 +75,7 @@ export default class extends $e.modules.ComponentBase {
 		const editor = elementor.getPanelView().getCurrentPageView();
 		const currentView = editor.content.currentView;
 
-		const controlView = this.getControlView( currentView, controlPath )
+		const controlView = this.getControlView( currentView, controlPath );
 		controlView.activate?.();
 	}
 

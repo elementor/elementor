@@ -32,7 +32,6 @@ export default class extends ControlBaseDataView {
 	}
 
 	initPicker() {
-		console.log( 'initPicker' );
 		const options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],

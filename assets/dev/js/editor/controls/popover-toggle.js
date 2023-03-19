@@ -18,7 +18,6 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onShow() {
-		console.log( 'onShow' );
 		const $popover = this.$el.next( '.elementor-controls-popover' );
 
 		// Attach the current control as a toggle of its popover.
@@ -60,7 +59,8 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 
 		const $popover = this.$el.next( '.elementor-controls-popover' );
-		if ( ! $popover.is( ':visible' ) ) { // Show
+
+		if ( ! $popover.is( ':visible' ) ) {
 			this.routeWithControlActive();
 		} else {
 			$popover.hide(); // TODO ignore hide on the canvas font elements - add class to editor-base to ignore

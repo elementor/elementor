@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\Styleguide\Widgets\Data\Endpoints;
+namespace Elementor\Modules\Styleguide\Data\Endpoints;
 
 use Elementor\Data\V2\Base\Endpoint;
 use Elementor\Plugin;

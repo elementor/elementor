@@ -31,7 +31,7 @@
 	 * @return {Object|null}
 	 */
 	function getStyleguideWidget() {
-		styleguideWidget = document.querySelector( '.elementor-global-styleguide-widget' );
+		styleguideWidget = document.querySelector( '.dialog-styleguide-message' );
 
 		return styleguideWidget;
 	}
