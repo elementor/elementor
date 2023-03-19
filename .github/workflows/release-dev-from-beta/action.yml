@@ -15,9 +15,8 @@ runs:
     - name: Replace Release Name In Plugin File With Dev
       shell: bash
       run: |
-            OUTPUT_PATH=/tmp/
-            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php -d $OUTPUT_PATH
-            PLUGIN_FILE_PATH=$OUTPUT_PATH/${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
+            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
+            PLUGIN_FILE_PATH=./${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
             RELEASE_NAME=${{ env.RELEASE_NAME }}
             RELEASE_NAME=$(echo "$RELEASE_NAME" | sed 's/beta/dev/')
@@ -25,7 +24,7 @@ runs:
             sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
 
-            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
+            zip -j ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH
 
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
             DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
