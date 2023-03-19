@@ -50,7 +50,7 @@ runs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
-        files: /tmp/${{ env.DEV_BUILD_ZIP_FILE_PATH }}
+        files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
     # - name: Publish to WordPress.org SVN
     #   shell: bash
