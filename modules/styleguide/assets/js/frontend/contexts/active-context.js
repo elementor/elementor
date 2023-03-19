@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { commandListener, removeCommandListener } from '../utils/commands';
 import { useSettings } from './settings';
 import useIntersectionObserver from '../hooks/use-intersection-observer';
@@ -16,7 +16,16 @@ const ActiveProvider = ( props ) => {
 
 	const { isReady } = useSettings();
 
-	const getUid = ( source, id ) => `${ source }-${ id }`;
+	// Const { observe, unobserve, setObservedElements } = useIntersectionObserver( ( intersectingArea ) => {
+	// 	if ( colorsAreaRef.current === intersectingArea.target ) {
+	// 		activateArea( 'colors', { scroll: false } );
+	// 		return;
+	// 	}
+	//
+	// 	if ( fontsAreaRef.current === intersectingArea.target ) {
+	// 		activateArea( 'fonts', { scroll: false } );
+	// 	}
+	// } );
 
 	const activateElement = ( type, source, id ) => {
 		if ( 'color' === source ) {
@@ -31,18 +40,19 @@ const ActiveProvider = ( props ) => {
 					`${ type }/${ id }/typography_typography`,
 			} );
 		}
-
-		// Const uid = getUid( source, id );
-		//
-		// setActive( ( prevState ) => ( {
-		// 	...prevState,
-		// 	element: uid,
-		// } ) );
 	};
 
-	const isActiveElement = ( source, id ) => {
-		if ( getUid( source, id ) === active.element ) {
-			return true;
+	const isActiveElement = ( type, source, id ) => {
+		if ( 'color' === source ) {
+			if ( `${ type }/${ id }/color` === active.element ) {
+				return true;
+			}
+		}
+
+		if ( 'typography' === source ) {
+			if ( `${ type }/${ id }/typography_typography` === active.element ) {
+				return true;
+			}
 		}
 
 		return false;
@@ -55,7 +65,6 @@ const ActiveProvider = ( props ) => {
 
 		setActive( ( prevState ) => ( {
 			...prevState,
-			element: '',
 			area,
 		} ) );
 	};
@@ -66,15 +75,38 @@ const ActiveProvider = ( props ) => {
 		ref.current.scrollIntoView( { behavior: 'smooth' } );
 	};
 
+	const scrollToElement = async ( element ) => {
+		// Unobserve();
+		await element.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'center',
+			inline: 'center',
+		} );
+		// Observe();
+	};
+
 	useEffect( () => {
 		if ( ! isReady ) {
 			return;
 		}
 
+		// SetObservedElements( [ colorsAreaRef.current, fontsAreaRef.current ] );
+		// observe();
+
 		window.top.$e.routes.on( 'run:after', ( component, route, args ) => {
-			console.log( route );
-			console.log( component );
-			console.log( args );
+			if ( 'panel/global/global-typography' === route ) {
+				setActive( () => ( {
+					area: 'fonts',
+					element: args.activeControl,
+				} ) );
+			}
+
+			if ( 'panel/global/global-colors' === route ) {
+				setActive( () => ( {
+					area: 'colors',
+					element: args.activeControl,
+				} ) );
+			}
 		} );
 
 		// If ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
@@ -85,39 +117,10 @@ const ActiveProvider = ( props ) => {
 		// 	scrollToArea( 'fonts' );
 		// }
 
-		const observer = new IntersectionObserver( ( entries ) => {
-			const intersectingArea = entries.find( ( entry ) => entry.isIntersecting );
-
-			if ( intersectingArea ) {
-				if ( colorsAreaRef.current === intersectingArea.target ) {
-					activateArea( 'colors', { scroll: false } );
-					return;
-				}
-
-				if ( fontsAreaRef.current === intersectingArea.target ) {
-					activateArea( 'fonts', { scroll: false } );
-				}
-			}
-		}, {} );
-
-		observer.observe( colorsAreaRef.current );
-		observer.observe( fontsAreaRef.current );
-
 		return () => {
-			// TODO: ADD CLEANUP.
+			// Unobserve();
 		};
 	}, [ isReady ] );
-
-	// UseIntersectionObserver( ( intersectingArea ) => {
-	// 	if ( colorsAreaRef.current === intersectingArea.target ) {
-	// 		activateArea( 'colors', { scroll: false } );
-	// 		return;
-	// 	}
-	//
-	// 	if ( fontsAreaRef.current === intersectingArea.target ) {
-	// 		activateArea( 'fonts', { scroll: false } );
-	// 	}
-	// }, [ colorsAreaRef.current, fontsAreaRef.current ] );
 
 	useEffect( () => {
 		console.log( 'active', active );
@@ -126,6 +129,7 @@ const ActiveProvider = ( props ) => {
 	const value = {
 		activeElement: active.element,
 		activeArea: active.area,
+		scrollToElement,
 		isActiveElement,
 		activateElement,
 		activateArea,

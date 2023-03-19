@@ -1,17 +1,12 @@
-import { useEffect } from 'react';
-import { useSettings } from '../contexts/settings';
+import { useEffect, useState } from 'react';
 
-export default function useIntersectionObserver( callback, observedElements ) {
-	const { isReady } = useSettings();
+export default function useIntersectionObserver( callback ) {
+	let observer;
+	let elements = [];
 
 	useEffect( () => {
-		if ( ! isReady ) {
-			return;
-		}
-
-		console.log( observedElements );
-
-		const observer = new IntersectionObserver( ( entries ) => {
+		console.log( 'useIntersectionObserver' );
+		observer = new IntersectionObserver( ( entries ) => {
 			const intersectingArea = entries.find( ( entry ) => entry.isIntersecting );
 
 			if ( intersectingArea ) {
@@ -19,14 +14,36 @@ export default function useIntersectionObserver( callback, observedElements ) {
 			}
 		}, {} );
 
-		observedElements.forEach( ( element ) => {
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
+	const observe = () => {
+		console.log( 'observe' );
+		elements.forEach( ( element ) => {
 			if ( element ) {
 				observer.observe( element );
 			}
 		} );
+	};
 
-		return () => {
-			observer.disconnect();
-		};
-	}, [ isReady ] );
+	const unobserve = () => {
+		console.log( 'unobserve' );
+		elements.forEach( ( element ) => {
+			if ( element ) {
+				observer.unobserve( element );
+			}
+		} );
+	};
+
+	const setObservedElements = ( observedElements ) => {
+		elements = observedElements;
+	};
+
+	return {
+		observe,
+		unobserve,
+		setObservedElements,
+	};
 }

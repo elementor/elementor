@@ -119,7 +119,7 @@ export default function Font( props ) {
 	};
 
 	useEffect( () => {
-		if ( isActiveElement( source, _id ) ) {
+		if ( isActiveElement( type, source, _id ) ) {
 			setIsActive( true );
 			ref.current.scrollIntoView( {
 				behavior: 'smooth',
