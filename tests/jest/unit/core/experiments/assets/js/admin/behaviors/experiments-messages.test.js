@@ -138,6 +138,68 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
 	} );
 
-	it( 'should show modal on deactivating an experimrnt witn on_deactivate message');
+	it( 'Should show a Deactivate dialog when deactivating an experiment that has a message', () => {
+		// Arrange.
+		const { show } = mockDialog();
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+
+		// Assert.
+		expect( show ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Should not show a Deactivate dialog when deactivating an experiment that has a no message', () => {
+		// Arrange.
+		const { show } = mockDialog();
+
+		// Act.
+		deactivateExperiment( 'depends_on_active' );
+
+		// Assert.
+		expect( show ).not.toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should deactivate experiment and dependencies when clicking DEACTIVATE button', () => {
+		// Arrange.
+		const { confirm } = mockDialog();
+		const submitMock = jest.fn();
+
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		confirm();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' );
+		expect( submitMock ).toHaveBeenCalled();
+	} );
+
+	it( 'should not deactivate experiment and dependencies when clicking DISMISS button', () => {
+		// Arrange.
+		const { cancel } = mockDialog();
+		const submitMock = jest.fn();
+
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		cancel();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'active' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'active' );
+		expect( submitMock ).not.toHaveBeenCalled();
+	} );
 } );
 
