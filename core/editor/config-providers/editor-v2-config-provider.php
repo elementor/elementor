@@ -40,6 +40,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	 */
 	private $packages_script_assets;
 
+	public function __construct() {
+		$this->add_actions();
+	}
+
 	public function get_script_configs() {
 		$packages_script_configs = $this->get_packages_script_assets()
 			->map( function ( $script_asset, $package_name ) {
@@ -88,14 +92,22 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_client_settings() {
 		$common_configs = Editor_Common_Configs::get_client_settings();
 
+		$client_settings = [];
+
+		$add_settings = function ( $key, $settings ) use ( &$client_settings ) {
+			if ( isset( $client_settings[ $key ] ) ) {
+				throw new \Exception( "Client settings with key `{$key}` already exists!" );
+			}
+
+			$client_settings[ $key ] = $settings;
+		};
+
+		do_action( 'elementor/editor/v2/client_settings', $add_settings );
+
 		$v2_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'name' => 'elementorEditorV2Settings',
-			'settings' => [
-				'urls' => [
-					'admin' => admin_url(),
-				],
-			],
+			'settings' => $client_settings,
 		];
 
 		return array_merge( $common_configs, [ $v2_config ] );
@@ -150,5 +162,18 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		}
 
 		return $this->packages_script_assets;
+	}
+
+	private function add_actions() {
+		add_action( 'elementor/editor/v2/client_settings', function ( $add_settings ) {
+			$add_settings(
+				'editor',
+				[
+					'urls' => [
+						'admin' => admin_url(),
+					],
+				]
+			);
+		} );
 	}
 }

@@ -4,9 +4,9 @@ import Shell from './components/shell';
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { StoreProvider, createStore } from '@elementor/store';
 import { dispatchReadyEvent } from '@elementor/v1-adapters';
-import { SettingsProvider, Settings } from './contexts/settings-context';
+import { SettingsProvider } from './contexts/settings-context';
 
-export default function init( domElement: HTMLElement, settings: Settings ): void {
+export default function init( domElement: HTMLElement, settings: Record<string, unknown> ): void {
 	const store = createStore();
 
 	dispatchReadyEvent();

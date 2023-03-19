@@ -2,7 +2,7 @@ import { mainMenu } from './locations';
 import { __ } from '@wordpress/i18n';
 import { WordpressIcon } from '@elementor/icons';
 import TopBar from './components/top-bar';
-import { injectIntoTop, useSettings } from '@elementor/editor';
+import { injectIntoTop, useEditorSettings } from '@elementor/editor';
 
 export default function init() {
 	injectIntoTop( {
@@ -14,7 +14,7 @@ export default function init() {
 		name: 'manage-website',
 		group: 'exits',
 		useProps: () => {
-			const { urls } = useSettings();
+			const { urls } = useEditorSettings();
 
 			return {
 				title: __( 'Manage Website', 'elementor' ),
