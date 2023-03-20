@@ -62,7 +62,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Push Deployment Info to Jira
-        if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' # Only for GA releases
+        if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' && startsWith(github.repository, 'elementor/')# Only for GA releases
         uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
         with:
           client-id: '${{ secrets.JIRA_CLIENT_ID }}'
@@ -80,7 +80,7 @@ jobs:
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
       - name: Publish to WordPress.org SVN
-        if: env.CHANNEL != 'cloud' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        if: env.CHANNEL != 'cloud' && startsWith(github.repository, 'elementor/')# We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
           PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
