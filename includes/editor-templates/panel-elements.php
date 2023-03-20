@@ -4,7 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
