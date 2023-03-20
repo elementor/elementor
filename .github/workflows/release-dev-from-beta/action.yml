@@ -54,11 +54,13 @@ runs:
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
     - name: Publish to WordPress.org SVN
-      if: ${{ inputs.REPOSITORY_OWNER == 'elementor' }}
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
-        bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+            if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
+              bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+            fi
+
