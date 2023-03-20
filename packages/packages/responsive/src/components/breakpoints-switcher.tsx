@@ -24,7 +24,7 @@ export default function BreakpointsSwitcher() {
 	const onChange = ( _: unknown, value: BreakpointId ) => activate( value );
 
 	return (
-		<Tabs value={ active.id } onChange={ onChange }>
+		<Tabs value={ active.id } onChange={ onChange } aria-label={ __( 'Switch Device', 'elementor' ) }>
 			{
 				all.map( ( { id, label, type, width } ) => {
 					const Icon = iconsMap[ id ];
