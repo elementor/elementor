@@ -43,8 +43,8 @@ class Control_Gaps extends Control_Dimensions {
 	public function get_default_value() {
 		return array_merge(
 			parent::get_default_value(), [
-				'row' => '',
 				'column' => '',
+				'row' => '',
 				'isLinked' => true,
 			]
 		);
@@ -56,8 +56,8 @@ class Control_Gaps extends Control_Dimensions {
 
 	protected function get_dimensions() {
 		return [
-			'row' => esc_html__( 'Row', 'elementor' ),
 			'column' => esc_html__( 'Column', 'elementor' ),
+			'row' => esc_html__( 'Row', 'elementor' ),
 		];
 	}
 }
