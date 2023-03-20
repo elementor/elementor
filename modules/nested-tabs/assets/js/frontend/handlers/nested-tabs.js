@@ -132,22 +132,28 @@ export default class NestedTabs extends Base {
 	}
 
 	deactivateActiveTab( tabIndex ) {
-		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
+		return new Promise( ( resolve, reject ) => {
+			const settings = this.getSettings(),
+				activeClass = settings.classes.active,
+				activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+				activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+				$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+				$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
+			setTimeout(async () => {
+				await $activeTitle.add($activeContent).removeClass(activeClass);
 
-		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+				$activeTitle.attr( {
+					tabindex: '-1',
+					'aria-selected': 'false',
+					'aria-expanded': 'false',
+				} );
+
+				$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
+				$activeContent.attr( 'hidden', 'hidden' );
+				resolve();
+			}, 1000);
+		});
 	}
 
 	onHideTabContent( $activeContent ) {}
@@ -283,7 +289,7 @@ export default class NestedTabs extends Base {
 	 * @param {string}  tabIndex
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
 	 */
-	changeActiveTab( tabIndex, fromUser = false ) {
+	async changeActiveTab( tabIndex, fromUser = false ) {
 		// `document/repeater/select` is used only in the editor, only when the element
 		// is in the currently-edited document, and only when its not internal call,
 		if ( fromUser && this.isEdit && this.isElementInTheCurrentDocument() ) {
@@ -297,25 +303,14 @@ export default class NestedTabs extends Base {
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
-			this.deactivateActiveTab();
+			await this.deactivateActiveTab();
 		}
 
 		if ( ! settings.hidePrevious && isActiveTab ) {
-			this.deactivateActiveTab( tabIndex );
+			await this.deactivateActiveTab( tabIndex );
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = event?.currentTarget?.classList.contains( 'e-collapse' );
-
-			if ( isMobileVersion ) {
-
-				setTimeout(() => {
-					this.activateTab( tabIndex );
-				}, 10 );
-
-				return;
-			}
-
 			this.activateTab( tabIndex );
 		}
 	}
