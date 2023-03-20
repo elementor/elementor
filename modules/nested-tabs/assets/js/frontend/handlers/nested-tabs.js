@@ -132,28 +132,22 @@ export default class NestedTabs extends Base {
 	}
 
 	deactivateActiveTab( tabIndex ) {
-		return new Promise( ( resolve, reject ) => {
-			const settings = this.getSettings(),
-				activeClass = settings.classes.active,
-				activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-				activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
-				$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
-				$activeContent = this.elements.$tabContents.filter( activeContentFilter );
+		const settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-			setTimeout(async () => {
-				await $activeTitle.add($activeContent).removeClass(activeClass);
+		$activeTitle.add( $activeContent ).removeClass( activeClass );
+		$activeTitle.attr( {
+			tabindex: '-1',
+			'aria-selected': 'false',
+			'aria-expanded': 'false',
+		} );
 
-				$activeTitle.attr( {
-					tabindex: '-1',
-					'aria-selected': 'false',
-					'aria-expanded': 'false',
-				} );
-
-				$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-				$activeContent.attr( 'hidden', 'hidden' );
-				resolve();
-			}, 1000);
-		});
+		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
+		$activeContent.attr( 'hidden', 'hidden' );
 	}
 
 	onHideTabContent( $activeContent ) {}
@@ -200,7 +194,10 @@ export default class NestedTabs extends Base {
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+
+		const isDesktopVersion = event.currentTarget.classList.contains( 'e-normal' );
+
+		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true, isDesktopVersion );
 	}
 
 	onTabKeyDown( event ) {
@@ -217,7 +214,10 @@ export default class NestedTabs extends Base {
 			case 'Enter':
 			case 'Space':
 				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+
+				const isDesktopVersion = event.currentTarget.classList.contains( 'e-normal' );
+
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true, isDesktopVersion );
 				break;
 		}
 	}
@@ -289,7 +289,7 @@ export default class NestedTabs extends Base {
 	 * @param {string}  tabIndex
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
 	 */
-	async changeActiveTab( tabIndex, fromUser = false ) {
+	changeActiveTab( tabIndex, fromUser = false, isDesktopVersion = true ) {
 		// `document/repeater/select` is used only in the editor, only when the element
 		// is in the currently-edited document, and only when its not internal call,
 		if ( fromUser && this.isEdit && this.isElementInTheCurrentDocument() ) {
@@ -303,14 +303,25 @@ export default class NestedTabs extends Base {
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
-			await this.deactivateActiveTab();
+			this.deactivateActiveTab();
 		}
 
 		if ( ! settings.hidePrevious && isActiveTab ) {
-			await this.deactivateActiveTab( tabIndex );
+			this.deactivateActiveTab( tabIndex );
 		}
 
 		if ( ! isActiveTab ) {
+
+			if ( ! isDesktopVersion ) {
+
+				// Timeout added to ensure visibility of the tab title elements on Mac devices.
+				setTimeout( () => {
+					this.activateTab( tabIndex );
+				} );
+
+				return;
+			}
+
 			this.activateTab( tabIndex );
 		}
 	}
