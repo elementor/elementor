@@ -45,7 +45,7 @@ runs:
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
     - name: Publish to WordPress.org SVN
-      if: startsWith(github.repository, 'elementor/')
+      if: github.repository_owner == 'elementor'
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
