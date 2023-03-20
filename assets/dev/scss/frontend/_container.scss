@@ -1,6 +1,12 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
+	--border-width-top: 0px;
+	--border-width-right: 0px;
+	--border-width-bottom: 0px;
+	--border-width-left: 0px;
+	--border-style: initial;
+	--border-color: initial;
 	--container-widget-width: 100%;
 	--container-widget-height: initial;
 	--container-widget-flex-grow: 0;
@@ -92,7 +98,7 @@
 
 	&-boxed {
 		text-align: initial;
-		gap: initial;		
+		gap: initial;
 	}
 
 	&.e-flex > .e-con-inner {
@@ -138,39 +144,56 @@
 		margin-bottom: 0;
 	}
 
+	@mixin border-radius-for-background-elements {
+		border-radius: var(--border-radius);
+		border-style: var(--border-style);
+		border-color: var(--border-color);
+		border-top-width: var(--border-width-top);
+		border-right-width: var(--border-width-right);
+		border-bottom-width: var(--border-width-bottom);
+		border-left-width: var(--border-width-left);
+		top: calc( 0px - var(--border-width-top) );
+		left: calc( 0px - var(--border-width-left) );
+		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+	}
+
 	// Background overlay.
 	&::before,
-	> .elementor-background-video-container::before,
-	> .e-con-inner > .elementor-background-video-container::before,
-	> .elementor-background-slideshow::before,
-	> .e-con-inner > .elementor-background-slideshow::before,
-	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before {
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
+	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
+	> .elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition, 0.3s );
-		border-radius: var( --border-radius );
+		@include border-radius-for-background-elements;
 	}
 
 	&::before {
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	> .elementor-background-video-container::before,
-	> .e-con-inner > .elementor-background-video-container::before {
+	> .elementor-background-slideshow,
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
+		@include border-radius-for-background-elements;
+	}
+
+	@media (max-width: $screen-mobile-max) {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+			display: none;
+		}
+	}
+
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	> .elementor-background-slideshow::before,
-	> .e-con-inner > .elementor-background-slideshow::before {
+	:is( &, & > .e-con-inner ) > .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
