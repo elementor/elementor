@@ -18,18 +18,23 @@ runs:
             unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
             PLUGIN_FILE_PATH=./${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
+            # Replace beta with dev
             RELEASE_NAME=${{ env.RELEASE_NAME }}
             RELEASE_NAME=$(echo "$RELEASE_NAME" | sed 's/beta/dev/')
 
+            # Remove rc
             sed -i -E "s/Version: .*/Version: ${RELEASE_NAME}/g" $PLUGIN_FILE_PATH
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
 
+            # Add the updated plugin file to the zip archive
             zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
+            
+            # Set zip file name to dev, and remove '-rc'
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
-            DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/')
+            DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/' | sed 's/-rc//')
 
-            $DEV_BUILD_ZIP_FILE_PATH=$(echo "$DEV_BUILD_ZIP_FILE_PATH" | sed 's/-rc//')
+            # Rename the zip file
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
