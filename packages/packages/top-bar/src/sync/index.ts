@@ -5,7 +5,6 @@ export function sync() {
 }
 
 function redirectOldMenus() {
-	// Redirect the old hamburger menu to the default elements panel.
 	// Currently, in V1, when you click `esc` it opens the hamburger menu in the panel.
 	// In V2, we don't have this panel, so we redirect the user to the elements panel instead.
 	listenTo( routeOpenEvent( 'panel/menu' ), () => {
