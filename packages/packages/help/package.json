@@ -8,7 +8,6 @@
 		"dev": "tsup src/index.ts --format esm"
 	},
 	"dependencies": {
-		"@elementor/editor": "*",
 		"@elementor/icons": "*",
 		"@elementor/top-bar": "*",
 		"@elementor/v1-adapters": "*",

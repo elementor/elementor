@@ -40,10 +40,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( getByRole( 'button' ) ).toHaveTextContent( 'Submit' );
+		expect( getAllByRole( 'button' )[ 0 ] ).toHaveTextContent( 'Submit' );
 	} );
 
 	it( 'should have "Publish" text when the user can publish the document', () => {
@@ -57,10 +57,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( getByRole( 'button' ) ).toHaveTextContent( 'Publish' );
+		expect( getAllByRole( 'button' )[ 0 ] ).toHaveTextContent( 'Publish' );
 	} );
 
 	it( 'should be disabled when the document is a Kit', () => {
@@ -76,10 +76,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( getByRole( 'button' ) ).toBeDisabled();
+		expect( getAllByRole( 'button' )[ 0 ] ).toBeDisabled();
 	} );
 
 	it( 'should be disabled when the document is pristine', () => {
@@ -89,10 +89,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( getByRole( 'button' ) ).toBeDisabled();
+		expect( getAllByRole( 'button' )[ 0 ] ).toBeDisabled();
 	} );
 
 	it( 'should always be enabled when the document status is draft', () => {
@@ -108,10 +108,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
 		// Assert.
-		expect( getByRole( 'button' ) ).toBeEnabled();
+		expect( getAllByRole( 'button' )[ 0 ] ).toBeEnabled();
 	} );
 
 	it( 'should save the active document on click', () => {
@@ -121,9 +121,9 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
-		getByRole( 'button' )?.click();
+		getAllByRole( 'button' )[ 0 ]?.click();
 
 		// Assert.
 		expect( actionsMock.save ).toHaveBeenCalledTimes( 1 );
@@ -139,10 +139,10 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole } = render( <PrimaryAction /> );
+		const { getAllByRole } = render( <PrimaryAction /> );
 
-		const button = getByRole( 'button' );
-		const loader = getByRole( 'progressbar' );
+		const button = getAllByRole( 'button' )[ 0 ];
+		const loader = getAllByRole( 'progressbar' )[ 0 ];
 
 		button?.click();
 
@@ -165,8 +165,8 @@ describe( '@elementor/documents-ui - Top Bar Primary Action', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( mockDocument );
 
 		// Act.
-		const { getByRole, queryByRole } = render( <PrimaryAction /> );
-		const button = getByRole( 'button' );
+		const { getAllByRole, queryByRole } = render( <PrimaryAction /> );
+		const button = getAllByRole( 'button' )[ 0 ];
 		const loader = queryByRole( 'progressbar' );
 
 		// Assert.
