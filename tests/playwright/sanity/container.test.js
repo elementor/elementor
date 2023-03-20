@@ -545,13 +545,13 @@ test.describe( 'Container tests', () => {
 
 		// Set gap.
 		await page.locator( '.elementor-control-gaps .elementor-link-gaps' ).first().click();
-		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10px' );
-		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20%' );
+		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( 10 );
+		await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( 20 );
 
 		// Assert.
 		const frame = editor.getPreviewFrame();
 		const container = await frame.locator( '.e-grid .e-con-inner' );
-		await expect( container ).toHaveCSS( 'gap', '10px 20%' );
+		await expect( container ).toHaveCSS( 'gap', '20px 10px' );
 	} );
 } );
 
