@@ -1,6 +1,6 @@
 import { syncPanelTitle } from './sync';
 import useActionProps from './hooks/use-action-props';
-import { registerToggleAction } from '@elementor/top-bar';
+import { toolsMenu } from '@elementor/top-bar';
 
 export default function init() {
 	registerTopBarMenuItems();
@@ -9,7 +9,7 @@ export default function init() {
 }
 
 function registerTopBarMenuItems() {
-	registerToggleAction( 'tools', {
+	toolsMenu.registerToggleAction( {
 		name: 'open-elements-panel',
 		priority: 1,
 		useProps: useActionProps,

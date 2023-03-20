@@ -133,8 +133,8 @@
 	width: 300px;
 	z-index: 1;
 	background-color: var(--e-a-bg-default);
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 
 	&:after {
 		content: '';
@@ -143,7 +143,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-a-color-white));
+		@include border-end-property(color, var(--e-a-bg-default));
 	}
 
 	&__title {
