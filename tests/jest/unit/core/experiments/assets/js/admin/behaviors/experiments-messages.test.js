@@ -185,6 +185,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		// Arrange.
 		const { cancel } = mockDialog();
 		const submitMock = jest.fn();
+		activateExperiment( 'depends_on_active' );
 
 		elements.form.addEventListener( 'submit', ( e ) => {
 			submitMock();
