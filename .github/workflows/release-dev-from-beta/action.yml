@@ -8,6 +8,15 @@ inputs:
   PLUGIN_NAME:
     description: 'The name of the plugin.'
     required: true
+  REPOSITORY_OWNER:
+    description: 'The owner of the repository.'
+    required: true
+  SVN_PASSWORD:
+    description: 'The password for the SVN.'
+    required: true
+  SVN_USERNAME:
+    description: 'The username for the SVN.'
+    required: true
 
 runs:
   using: "composite"
@@ -45,11 +54,11 @@ runs:
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
     - name: Publish to WordPress.org SVN
-      if: github.repository_owner == 'elementor'
+      if: ${{ inputs.REPOSITORY_OWNER == 'elementor' }}
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
         bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
