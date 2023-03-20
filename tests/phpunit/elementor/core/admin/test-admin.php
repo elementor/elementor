@@ -181,7 +181,7 @@ class Test_Admin extends Elementor_Test_Base {
 				'title' => 'Experiment 1',
 				'state' => Experiments_Manager::STATE_ACTIVE,
 				'dependencies' => [],
-				'messages' => [],
+				'messages' => (object)[],
 
 			],
 			[
@@ -192,7 +192,7 @@ class Test_Admin extends Elementor_Test_Base {
 				'dependencies' => [
 					'experiment-1',
 				],
-				'messages' => [],
+				'messages' => (object)[],
 			],
 		], $settings['experiments'] );
 

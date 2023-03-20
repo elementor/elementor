@@ -27,8 +27,7 @@ export default class ExperimentsMessages {
 
 	onExperimentStateChange( e ) {
 		const { experimentId } = e.currentTarget.dataset,
-			experimentNewState = this.getExperimentActualState( experimentId ),
-			serverState = this.getExperimentData( experimentId ).state;
+			experimentNewState = this.getExperimentActualState( experimentId );
 
 		switch ( experimentNewState ) {
 			case STATE_ACTIVE:
@@ -38,7 +37,7 @@ export default class ExperimentsMessages {
 				break;
 
 			case STATE_INACTIVE:
-				if ( this.shouldShowDeactivateModal( experimentId ) && serverState !== STATE_INACTIVE ) {
+				if ( this.shouldShowDeactivateModal( experimentId ) ) {
 					this.showDialog( this.getMessageDialogConfig( experimentId ) );
 				} else {
 					this.deactivateDependantExperiments( experimentId );
@@ -126,7 +125,9 @@ export default class ExperimentsMessages {
 	}
 
 	shouldShowDeactivateModal( experimentId ) {
-		return !! this.getMessage( experimentId );
+		const initialState = this.getExperimentData( experimentId ).state;
+
+		return !! this.getMessage( experimentId ) && initialState !== STATE_INACTIVE;
 	}
 
 	showDialog( dialog ) {
@@ -151,7 +152,7 @@ export default class ExperimentsMessages {
 				dialog.onConfirm();
 			},
 			onCancel: () => {
-				this.setExperimentState( dialog.experimentId, dialog.initialState );
+				dialog.onCancel();
 			},
 		} ).show();
 	}
@@ -177,12 +178,12 @@ export default class ExperimentsMessages {
 
 	getDependencyDialogConfig( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
-			dialogTitle = experiment.title,
+			experimentName = experiment.title,
 			dialogMessage = this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Message content
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
-			.replace( '%1$s', `<strong>${ dialogTitle }</strong>` )
+			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
 			.replace( '%2$s', dialogMessage );
 
 		return {
@@ -196,24 +197,25 @@ export default class ExperimentsMessages {
 				} );
 				this.elements.submit.click();
 			},
-			initialState: STATE_INACTIVE,
-			experimentId,
+			onCancel: () => {
+				this.setExperimentState( experimentId, STATE_INACTIVE );
+			},
 		};
 	}
 
 	getMessageDialogConfig( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
-			dialogTitle = experiment.title,
+			experimentName = experiment.title,
 			dialogMessage = this.getMessage( experimentId );
 
 		// Translators: %1$s: Experiment title, %2$s: Message content
-		const message = __( 'While deactivating %1$s, %2$s.', 'elementor' )
-			.replace( '%1$s', `<strong>${ dialogTitle }</strong>` )
+		const message = __( 'If you deactivate %1$s, %2$s.', 'elementor' )
+			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
 			.replace( '%2$s', dialogMessage );
 
 		return {
 			message,
-			headerMessage: __( 'Deactivate dialog.', 'elementor' ),
+			headerMessage: __( 'Are you sure?', 'elementor' ),
 			confirm: __( 'Deactivate', 'elementor' ),
 			cancel: __( 'Dismiss', 'elementor' ),
 			onConfirm: () => {
@@ -221,8 +223,9 @@ export default class ExperimentsMessages {
 				this.deactivateDependantExperiments( experimentId );
 				this.elements.submit.click();
 			},
-			initialState: STATE_ACTIVE,
-			experimentId,
+			onCancel: () => {
+				this.setExperimentState( experimentId, STATE_ACTIVE );
+			},
 		};
 	}
 }

@@ -411,11 +411,10 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
 			'messages' => [
-				// Translators: %1$s:Experiment title, %2$s: Experiment dependencies list
-				'on_deactivate' => sprintf( esc_html__(
-					'The experiment will cause all the existing containers to disappear %1$s %2$sFlexbox Container element%3$s',
+				'on_deactivate' => esc_html__(
+					'you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu',
 					'elementor'
-				), '<br />', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>'),
+				),
 			],
 		] );
 

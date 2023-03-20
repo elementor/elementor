@@ -157,7 +157,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		deactivateExperiment( 'depends_on_active' );
 
 		// Assert.
-		expect( show ).not.toHaveBeenCalledTimes( 1 );
+		expect( show ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should deactivate experiment and dependencies when clicking DEACTIVATE button', () => {
