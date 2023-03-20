@@ -146,7 +146,7 @@ export default function ItemHeader( props ) {
 						text={ __( 'Go to the pages screen to make sure your kit pages have been imported successfully. If not, try again.', 'elementor' ) }
 						approveButtonText={ __( 'Go to pages', 'elementor' ) }
 						approveButtonColor="primary"
-						approveButtonUrl=  { elementorAppConfig['admin_url'] + 'edit.php?post_type=page' }
+						approveButtonUrl={ elementorAppConfig[ 'admin_url' ] + 'edit.php?post_type=page' }
 						approveButtonOnClick={ () => setError( false ) }
 						dismissButtonText={ __( 'Got it', 'elementor' ) }
 						dismissButtonOnClick={ () => setError( false ) }
