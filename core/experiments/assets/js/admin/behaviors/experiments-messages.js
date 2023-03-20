@@ -78,7 +78,7 @@ export default class ExperimentsMessages {
 	}
 
 	getExperimentActualState( experimentId ) {
-		const state = this.getExperimentSelect( experimentId ).value;
+		const state = this.getExperimentSelect( experimentId )?.value;
 
 		if ( state !== STATE_DEFAULT ) {
 			return state;
@@ -107,9 +107,9 @@ export default class ExperimentsMessages {
 			.entries( elementorAdminConfig.experiments )
 			.forEach( ( [ id, experimentData ] ) => {
 				const isDependant = ( experimentData.dependencies.includes( experimentId ) ),
-					isExpActualStateNotInactive = this.getExperimentActualState( id ) !== STATE_INACTIVE;
+					isExpActualStateActive = this.getExperimentActualState( id ) === STATE_ACTIVE;
 
-				if ( isDependant && isExpActualStateNotInactive ) {
+				if ( isDependant && isExpActualStateActive ) {
 					this.setExperimentState( id, STATE_INACTIVE );
 				}
 			} );
