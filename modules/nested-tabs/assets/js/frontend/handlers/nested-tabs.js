@@ -37,6 +37,7 @@ export default class NestedTabs extends Base {
 				tabContent: '.e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
+				mobileTabTitle: '.e-collapse',
 			},
 			classes: {
 				active: 'e-active',
@@ -61,6 +62,8 @@ export default class NestedTabs extends Base {
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
+			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
+			$headingContainer: this.findElement( selectors.headingContainer ),
 		};
 	}
 
@@ -195,9 +198,7 @@ export default class NestedTabs extends Base {
 	onTabClick( event ) {
 		event.preventDefault();
 
-		const isDesktopVersion = event.currentTarget.classList.contains( 'e-normal' );
-
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true, isDesktopVersion );
+		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 	}
 
 	onTabKeyDown( event ) {
@@ -214,10 +215,7 @@ export default class NestedTabs extends Base {
 			case 'Enter':
 			case 'Space':
 				event.preventDefault();
-
-				const isDesktopVersion = event.currentTarget.classList.contains( 'e-normal' );
-
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true, isDesktopVersion );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
 				break;
 		}
 	}
@@ -289,7 +287,7 @@ export default class NestedTabs extends Base {
 	 * @param {string}  tabIndex
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
 	 */
-	changeActiveTab( tabIndex, fromUser = false, isDesktopVersion = true ) {
+	changeActiveTab( tabIndex, fromUser = false ) {
 		// `document/repeater/select` is used only in the editor, only when the element
 		// is in the currently-edited document, and only when its not internal call,
 		if ( fromUser && this.isEdit && this.isElementInTheCurrentDocument() ) {
@@ -311,18 +309,34 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
+			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' )
 
-			if ( ! isDesktopVersion ) {
+			if ( isMobileVersion ) {
 
 				// Timeout added to ensure visibility of the tab title elements on Mac devices.
 				setTimeout( () => {
 					this.activateTab( tabIndex );
 				} );
 
+				if ( elementorFrontend.isEditMode() ) {
+					this.forceActiveTabToBeInViewport(tabIndex);
+				}
+
 				return;
 			}
 
 			this.activateTab( tabIndex );
+		}
+	}
+
+	forceActiveTabToBeInViewport( tabIndex ) {
+		const activeClass = this.getActiveClass(),
+			$activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
+			boundingBox = $activeTabTitle[ 0 ]?.getBoundingClientRect(),
+			isActiveTabTitleInViewport = boundingBox?.top >= 0 && boundingBox?.bottom <= window.innerHeight;
+
+		if( ! isActiveTabTitleInViewport ) {
+			$activeTabTitle[ 0 ]?.scrollIntoView( { block: 'center' } );
 		}
 	}
 
