@@ -500,4 +500,8 @@ module.exports = class EditorPage extends BasePage {
 			{ elementId, settings },
 		);
 	}
+
+	async setSelectControlValue( controlId, value ) {
+		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
 };
