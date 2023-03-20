@@ -29,7 +29,6 @@ runs:
             # Add the updated plugin file to the zip archive
             zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p ${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
 
-            
             # Set zip file name to dev, and remove '-rc'
             CURRENT_BUILD=${{ inputs.BUILD_ZIP_FILE_PATH }}
             DEV_BUILD_ZIP_FILE_PATH=$(echo "$CURRENT_BUILD" | sed 's/beta/dev/' | sed 's/-rc//')
