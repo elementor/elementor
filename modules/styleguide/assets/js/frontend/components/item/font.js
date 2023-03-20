@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useContext, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import { ActiveContext } from '../../contexts/active-context';
+import { useActiveContext } from '../../contexts/active-context';
 import { useSettings } from '../../contexts/settings';
 import ElementWrapper from '../global/element-wrapper';
 import ElementTitle from '../global/element-title';
@@ -94,13 +94,14 @@ const parseFontToStyle = ( font, fallbackFamily ) => {
 };
 
 export default function Font( props ) {
-	const { activeElement, isActiveElement, activateElement } = useContext( ActiveContext );
-	const [ isActive, setIsActive ] = useState( false );
+	const { activeElement, activateElement, getElementControl } = useActiveContext();
 
 	const { item, type } = props;
 
 	const source = 'typography';
 	const { _id, title } = item;
+
+	const elementControl = getElementControl( type, source, _id );
 
 	const ref = useRef( null );
 
@@ -119,15 +120,12 @@ export default function Font( props ) {
 	};
 
 	useEffect( () => {
-		if ( isActiveElement( type, source, _id ) ) {
-			setIsActive( true );
+		if ( elementControl === activeElement ) {
 			ref.current.scrollIntoView( {
 				behavior: 'smooth',
 				block: 'center',
 				inline: 'center',
 			} );
-		} else {
-			setIsActive( false );
 		}
 	}, [ activeElement ] );
 
@@ -135,7 +133,7 @@ export default function Font( props ) {
 		<ElementWrapper
 			columns={ props.columns }
 			ref={ ref }
-			isActive={ isActive }
+			isActive={ elementControl === activeElement }
 			onClick={ onClick }
 		>
 			<Title>{ title }</Title>

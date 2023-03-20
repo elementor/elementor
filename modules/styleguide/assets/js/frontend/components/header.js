@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import InnerWrapper from './global/inner-wrapper';
-import { ActiveContext } from '../contexts/active-context';
+import { useActiveContext } from '../contexts/active-context';
 
 const Button = styled.button`
 	font-size: 16px;
@@ -31,9 +31,10 @@ const Button = styled.button`
 `;
 
 const AreaButton = ( props ) => {
-	const { activateArea } = useContext( ActiveContext );
+	const { activeArea, activateArea } = useActiveContext();
 
 	const { area, children } = props;
+
 	const onClick = () => {
 		activateArea( area );
 	};
@@ -44,6 +45,7 @@ const AreaButton = ( props ) => {
 		<Button variant="transparent"
 			size="s"
 			onClick={ onClick }
+			isActive={ area === activeArea }
 		>
 			{ children }
 		</Button>

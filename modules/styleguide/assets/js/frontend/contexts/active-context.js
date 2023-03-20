@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { commandListener, removeCommandListener } from '../utils/commands';
 import { useSettings } from './settings';
 import useIntersectionObserver from '../hooks/use-intersection-observer';
 
@@ -16,23 +15,23 @@ const ActiveProvider = ( props ) => {
 
 	const { isReady } = useSettings();
 
-	// Const { observe, unobserve, setObservedElements } = useIntersectionObserver( ( intersectingArea ) => {
-	// 	if ( colorsAreaRef.current === intersectingArea.target ) {
-	// 		activateArea( 'colors', { scroll: false } );
-	// 		return;
-	// 	}
-	//
-	// 	if ( fontsAreaRef.current === intersectingArea.target ) {
-	// 		activateArea( 'fonts', { scroll: false } );
-	// 	}
-	// } );
+	const { setObservedElements } = useIntersectionObserver( ( intersectingArea ) => {
+		if ( colorsAreaRef.current === intersectingArea.target ) {
+			activateArea( 'colors', { scroll: false } );
+			return;
+		}
+
+		if ( fontsAreaRef.current === intersectingArea.target ) {
+			activateArea( 'fonts', { scroll: false } );
+		}
+	} );
 
 	const activateElement = ( type, source, id ) => {
 		if ( 'color' === source ) {
 			window.top.$e.route(
 				'panel/global/global-colors',
 				{ activeControl: `${ type }/${ id }/color` },
-				{ history: false }
+				{ history: false },
 			);
 		}
 
@@ -40,25 +39,19 @@ const ActiveProvider = ( props ) => {
 			window.top.$e.route(
 				'panel/global/global-typography',
 				{ activeControl: `${ type }/${ id }/typography_typography` },
-				{ history: false }
+				{ history: false },
 			);
 		}
 	};
 
-	const isActiveElement = ( type, source, id ) => {
+	const getElementControl = ( type, source, id ) => {
 		if ( 'color' === source ) {
-			if ( `${ type }/${ id }/color` === active.element ) {
-				return true;
-			}
+			return `${ type }/${ id }/color`;
 		}
 
 		if ( 'typography' === source ) {
-			if ( `${ type }/${ id }/typography_typography` === active.element ) {
-				return true;
-			}
+			return `${ type }/${ id }/typography_typography`;
 		}
-
-		return false;
 	};
 
 	const activateArea = ( area, { scroll = true } = {} ) => {
@@ -78,23 +71,22 @@ const ActiveProvider = ( props ) => {
 		ref.current.scrollIntoView( { behavior: 'smooth' } );
 	};
 
-	const scrollToElement = async ( element ) => {
-		// Unobserve();
-		await element.scrollIntoView( {
-			behavior: 'smooth',
-			block: 'center',
-			inline: 'center',
-		} );
-		// Observe();
-	};
+	useEffect( () => {
+		if ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
+			scrollToArea( 'colors' );
+		}
+
+		if ( window.top.$e.routes.is( 'panel/global/global-typography' ) ) {
+			scrollToArea( 'fonts' );
+		}
+	}, [] );
 
 	useEffect( () => {
 		if ( ! isReady ) {
 			return;
 		}
 
-		// SetObservedElements( [ colorsAreaRef.current, fontsAreaRef.current ] );
-		// observe();
+		setObservedElements( [ colorsAreaRef.current, fontsAreaRef.current ] );
 
 		window.top.$e.routes.on( 'run:after', ( component, route, args ) => {
 			if ( 'panel/global/global-typography' === route ) {
@@ -112,32 +104,19 @@ const ActiveProvider = ( props ) => {
 			}
 		} );
 
-		// If ( window.top.$e.routes.is( 'panel/global/global-colors' ) ) {
-		// 	scrollToArea( 'colors' );
-		// }
-		//
-		// if ( window.top.$e.routes.is( 'panel/global/global-typography' ) ) {
-		// 	scrollToArea( 'fonts' );
-		// }
-
 		return () => {
-			// Unobserve();
+			// TODO cleanup?
 		};
 	}, [ isReady ] );
-
-	useEffect( () => {
-		console.log( 'active', active );
-	}, [ active ] );
 
 	const value = {
 		activeElement: active.element,
 		activeArea: active.area,
-		scrollToElement,
-		isActiveElement,
 		activateElement,
 		activateArea,
 		colorsAreaRef,
 		fontsAreaRef,
+		getElementControl,
 	};
 
 	return (
@@ -147,6 +126,6 @@ const ActiveProvider = ( props ) => {
 
 export default ActiveProvider;
 
-export function useActive() {
+export function useActiveContext() {
 	return useContext( ActiveContext );
 }
