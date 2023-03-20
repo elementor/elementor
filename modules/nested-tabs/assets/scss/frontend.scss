@@ -162,7 +162,7 @@
 				}
 			}
 
-			&:not( .e-active ):hover {
+			&:not( .e-active ).e-normal:hover {
 
 				&,
 				& a {
@@ -225,6 +225,14 @@
 	.e-n-tabs-content {
 
 		.e-collapse {
+			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
 
 			&:not(:first-child) {
 				margin-top: var( --n-tabs-title-gap );
@@ -245,7 +253,7 @@
 :is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
 	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
 
-	&:hover {
+	&.e-normal:hover {
 		background-color: var( --n-tabs-title-background-color-hover );
 		background-image: initial;
 	}
