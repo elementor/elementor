@@ -17,7 +17,7 @@
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start(var(--e-a-border));
+		@include border-start(var(--e-a-border-bold));
 		@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
 		@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
 	}

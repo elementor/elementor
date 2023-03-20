@@ -31,6 +31,7 @@
 	&-app {
 		background-color: var(--e-a-bg-default);
 		color: var(--e-a-color-default);
+		box-shadow: var(--e-a-popover-shadow);
 
 		&[data-theme=monolith] {
 			padding: 0;

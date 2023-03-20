@@ -332,6 +332,22 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set a border color to a container.
+	 *
+	 * @param {string}  color     - The background color code;
+	 * @param {string}  containerId - The ID of targeted container;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setContainerBorderColor( color, containerId ) {
+		await this.selectElement( containerId );
+		await this.activatePanelTab( 'style' );
+		await this.openSection( 'section_border' );
+		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
+
+	/**
 	 * Remove the focus from the test elements by creating two new elements.
 	 *
 	 * @return {Promise<void>}
@@ -499,5 +515,28 @@ module.exports = class EditorPage extends BasePage {
 			} ),
 			{ elementId, settings },
 		);
+	}
+
+	/**
+	 * Open a section of the active widget.
+	 *
+	 * @param {string} sectionId
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId ) {
+		const sectionSelector = '.elementor-control-' + sectionId,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
 	}
 };

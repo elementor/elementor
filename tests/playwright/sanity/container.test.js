@@ -340,7 +340,7 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test( 'Fallback image is not on top of background video AND border radius with background image', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await page.goto( '/wp-admin/media-new.php' );
 
@@ -385,6 +385,23 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
+
+		await editor.togglePreviewMode();
+
+		await editor.selectElement( containerId );
+		await editor.activatePanelTab( 'style' );
+		await editor.openSection( 'section_border' );
+		await page.selectOption( '.elementor-control-border_border .elementor-control-input-wrapper select', 'solid' );
+		await page.locator( '.elementor-control-border_width .elementor-control-input-wrapper input' ).first().fill( '30' );
+		await page.locator( '.elementor-control-border_radius .elementor-control-input-wrapper input' ).first().fill( '60' );
+		await editor.setContainerBorderColor( '#333333', containerId );
+
+		await editor.togglePreviewMode();
+
+		expect( await container.screenshot( {
+			type: 'jpeg',
+			quality: 100,
+		} ) ).toMatchSnapshot( 'container-background-border-radius.jpeg' );
 
 		// Reset to the Default template.
 		await editor.togglePreviewMode();
