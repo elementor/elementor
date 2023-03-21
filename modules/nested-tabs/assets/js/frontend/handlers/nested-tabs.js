@@ -319,7 +319,7 @@ export default class NestedTabs extends Base {
 				} );
 
 				if ( elementorFrontend.isEditMode() ) {
-					this.forceActiveTabToBeInViewport(tabIndex);
+					this.forceActiveTabToBeInViewport( tabIndex );
 				}
 
 				return;
@@ -335,7 +335,7 @@ export default class NestedTabs extends Base {
 			boundingBox = $activeTabTitle[ 0 ]?.getBoundingClientRect(),
 			isActiveTabTitleInViewport = boundingBox?.top >= 0 && boundingBox?.bottom <= window.innerHeight;
 
-		if( ! isActiveTabTitleInViewport ) {
+		if ( ! isActiveTabTitleInViewport ) {
 			$activeTabTitle[ 0 ]?.scrollIntoView( { block: 'center' } );
 		}
 	}

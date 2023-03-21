@@ -987,20 +987,20 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add first default Nested Tabs widget with no styling.
 		widgetId = await editor.addElement( defaultWidgetInstance );
 		widgetsToTest.defaultWidget.widgetId = widgetId;
-		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		activeContainerId = await getDropdownContainerId( editor, widgetId );
 		await editor.addWidget( 'heading', activeContainerId );
 
 		// Add second Nested Tabs widget with custom styled dropdown container via the widget settings.
 		widgetId = await editor.addElement( styledWidgetInstance );
 		widgetsToTest.styledWidget.widgetId = widgetId;
-		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		activeContainerId = await getDropdownContainerId( editor, widgetId );
 		await editor.addWidget( 'heading', activeContainerId );
 
 		// Add third Nested Tabs widget with custom styled dropdown container via the widget settings, and custom
 		// styled dropdown container via the containers settings too, to make sure the container styling takes preference.
 		widgetId = await editor.addElement( styledWidgetInstance );
 		widgetsToTest.styledWidgetContainer.widgetId = widgetId;
-		activeContainerId = await selectDropdownContainer( editor, widgetId );
+		activeContainerId = await getDropdownContainerId( editor, widgetId );
 		await editor.applyElementSettings( activeContainerId, styledWidgetContainerSettings );
 		await editor.addWidget( 'heading', activeContainerId );
 
@@ -1039,6 +1039,41 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		}
 
 		await cleanup( wpAdmin );
+	} );
+
+	test.only( 'Verify that the active tab titles are visible on the accordion view @latest', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add widgets.
+		const widgetId = await editor.addWidget( 'nested-tabs' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Act.
+		await selectDropdownContainer( editor, widgetId, 0 );
+		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+		await selectDropdownContainer( editor, widgetId, 1 );
+		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+		await selectDropdownContainer( editor, widgetId, 2 );
+		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
+
+		await editor.publishAndViewPage();
+
+		const tabTitle1 = page.locator( '.e-normal >> nth=0' ),
+			tabTitle2 = page.locator( '.e-normal >> nth=1' ),
+			tabTitle3 = page.locator( '.e-normal >> nth=2' );
+
+		await expect( await editor.isElementIsInViewport( tabTitle1 ) ).toBeTruthy();
+		await clickTab( page, '1' );
+		await expect( await editor.isElementIsInViewport( tabTitle2 ) ).toBeTruthy();
+		await clickTab( page, '2' );
+		await expect( await editor.isElementIsInViewport( tabTitle3 ) ).toBeTruthy();
+		await clickTab( page, '1' );
+		await expect( await editor.isElementIsInViewport( tabTitle2 ) ).toBeTruthy();
+		await clickTab( page, '0' );
+		await expect( await editor.isElementIsInViewport( tabTitle1 ) ).toBeTruthy();
 	} );
 } );
 
@@ -1101,9 +1136,22 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
 }
 
-async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
+async function getDropdownContainerId( editor, widgetId, itemNumber = 1 ) {
 	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
 	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector }.elementor-element-editable` );
 	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title.e-normal:nth-child(${ itemNumber })` ).click();
 	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-con.e-active` ).getAttribute( 'data-id' );
+}
+
+async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
+	const isActiveTab = await editor.getPreviewFrame().locator( `.e-normal >> nth=${ itemNumber }` ).evaluate( ( element ) => element.classList.contains( 'e-active ' ) );
+
+	if ( ! isActiveTab ) {
+		await clickTab( editor.getPreviewFrame(), itemNumber );
+	}
+
+	await editor.getPreviewFrame().locator( '.e-con.e-active' ).hover();
+	const elementEditButton = editor.getPreviewFrame().locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await elementEditButton.click();
+	await editor.getPreviewFrame().waitForSelector( '.e-con.e-active.elementor-element-editable' );
 }

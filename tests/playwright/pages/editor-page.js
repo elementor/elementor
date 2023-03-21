@@ -500,4 +500,10 @@ module.exports = class EditorPage extends BasePage {
 			{ elementId, settings },
 		);
 	}
+
+	async isElementIsInViewport( element ) {
+		const boundingBox = element?.evaluate( ( el ) => el.getBoundingClientRect() );
+
+		return boundingBox?.top >= 0 && boundingBox?.bottom <= window.innerHeight;
+	}
 };
