@@ -49,4 +49,31 @@ test.describe( 'Container tests', () => {
 		const container = await frame.locator( '.e-grid .e-con-inner' );
 		await expect( container ).toHaveCSS( 'gap', '20px 10px' );
 	} );
+
+	test( 'Test justify and align content', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Add container.
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Set container type to grid.
+		await editor.setSelectControlValue( 'container_type', 'grid' );
+
+		// Await page.pause();
+
+		// Set justify and align content.
+		await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
+		await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
+
+		// Assert.
+		const frame = editor.getPreviewFrame();
+		const container = await frame.locator( '.e-grid .e-con-inner' );
+		await expect( container ).toHaveCSS( 'justify-content', 'center' );
+		await expect( container ).toHaveCSS( 'align-content', 'center' );
+	} );
 } );
