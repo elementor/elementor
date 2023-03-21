@@ -60,7 +60,7 @@ export default class extends $e.modules.ComponentBase {
 	}
 
 	renderTab( tab, args, oldTab ) {
-		if ( oldTab !== tab ) {
+		if ( oldTab !== tab ) { // Prevent re-rendering the same tab (with just different args).
 			elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
 		}
 
@@ -88,18 +88,5 @@ export default class extends $e.modules.ComponentBase {
 		} );
 
 		return controlView;
-	}
-
-	onCloseRoute( route, newRoute ) {
-		super.onCloseRoute( route );
-
-		// Only reset currentTab if on new route (not just different args). Prevent re-renders.
-		if ( newRoute !== route ) {
-			this.currentTab = this.getTabFromRoute( route );
-		}
-	}
-
-	getTabFromRoute( route ) {
-		return route.substring( route.lastIndexOf( '/' ) + 1 );
 	}
 }
