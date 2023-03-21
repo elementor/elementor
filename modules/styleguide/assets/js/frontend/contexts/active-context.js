@@ -103,10 +103,6 @@ const ActiveProvider = ( props ) => {
 				} ) );
 			}
 		} );
-
-		return () => {
-			// TODO cleanup?
-		};
 	}, [ isReady ] );
 
 	const value = {

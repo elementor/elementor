@@ -22,17 +22,11 @@ body.e-styleguide-shown {
 		overflow: scroll;
 	}
 
-	.dialog-message {
+	.dialog-styleguide-message {
+		min-height: 100vh;
 		padding: 0;
 		text-align: initial;
-	}
-
-	.elementor-widget-wrap {
-		padding: 0;
-	}
-
-	.elementor-global-styleguide-widget {
-		min-height: 100vh;
+		font-family: Roboto, sans-serif;
 	}
 
 	.e-styleguide-loader {

@@ -8,7 +8,6 @@ const AreaTitle = styled.h2`
 	text-transform: capitalize;
 	font-style: normal;
 	text-decoration: none;
-	line-height: 1.5em;
 	letter-spacing: 0;
 	word-spacing: 0;
 	text-align: center;
