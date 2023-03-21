@@ -1060,20 +1060,27 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
 
 		await editor.publishAndViewPage();
+		await page.setViewportSize( viewportSize.mobile );
 
-		const tabTitle1 = page.locator( '.e-normal >> nth=0' ),
-			tabTitle2 = page.locator( '.e-normal >> nth=1' ),
-			tabTitle3 = page.locator( '.e-normal >> nth=2' );
+		const tabTitle1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
+			tabTitle2 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
+			tabTitle3 = await page.locator( '.e-n-tabs-content > div:nth-child( 5 )' ),
+			activeTabTitleSelector = '.e-collapse.e-active';
 
-		await expect( await editor.isElementIsInViewport( tabTitle1 ) ).toBeTruthy();
-		await clickTab( page, '1' );
-		await expect( await editor.isElementIsInViewport( tabTitle2 ) ).toBeTruthy();
-		await clickTab( page, '2' );
-		await expect( await editor.isElementIsInViewport( tabTitle3 ) ).toBeTruthy();
-		await clickTab( page, '1' );
-		await expect( await editor.isElementIsInViewport( tabTitle2 ) ).toBeTruthy();
-		await clickTab( page, '0' );
-		await expect( await editor.isElementIsInViewport( tabTitle1 ) ).toBeTruthy();
+		await expect( tabTitle1 ).toHaveClass( /e-active/ );
+		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+		await clickMobileTab( page, '1' );
+		await expect( tabTitle2 ).toHaveClass( /e-active/ );
+		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+		await clickMobileTab( page, '2' );
+		await expect( tabTitle3 ).toHaveClass( /e-active/ );
+		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+		await clickMobileTab( page, '1' );
+		await expect( tabTitle2 ).toHaveClass( /e-active/ );
+		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+		await clickMobileTab( page, '0' );
+		await expect( tabTitle1 ).toHaveClass( /e-active/ );
+		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	} );
 } );
 
@@ -1094,6 +1101,11 @@ const viewportSize = {
 // Click on tab by position.
 const clickTab = async ( context, tabPosition ) => {
 	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
+};
+
+// Click on tab by position.
+const clickMobileTab = async ( context, tabPosition ) => {
+	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition } ` ).first().click();
 };
 
 async function setup( wpAdmin, customExperiment = '' ) {

@@ -518,9 +518,44 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async isElementIsInViewport( element ) {
-		const boundingBox = element?.evaluate( ( el ) => el.getBoundingClientRect() );
+		const boundingBox = element?.evaluate( ( el ) => el.getBoundingClientRect() ),
+			windowInnerHeight = this.page.evaluate( () => window.innerHeight );
 
-		return boundingBox?.top >= 0 && boundingBox?.bottom <= window.innerHeight;
+		return boundingBox?.top >= 0 && boundingBox?.bottom <= windowInnerHeight;
+	}
+
+	/**
+	 * Check if an item is in the viewport.
+	 *
+	 * @param {string} item
+	 * @return {Promise<void>}
+	 */
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return await this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			console.log( element );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					console.log( vw );
+					console.log( vh );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
 	}
 
 	/**
