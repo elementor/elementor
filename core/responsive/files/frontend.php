@@ -59,7 +59,7 @@ class Frontend extends Base {
 			} elseif ( false === $breakpoint_index ) {
 				// If the breakpoint in the placeholder is not active - use a -1 value for the media query, to make
 				// sure the setting is printed (to avoid a PHP error) but doesn't apply.
-				$value = -1;
+				return -1;
 			} elseif ( 'WIDESCREEN' === $placeholder_data[1] ) {
 				$value = $breakpoints['widescreen']->get_value();
 			} else {

@@ -23,7 +23,7 @@
 		}
 
 		&-container {
-			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+			box-shadow: var(--e-a-popover-shadow);
 			border-radius: var(--e-a-border-radius);
 			background-color: var(--e-a-bg-default);
 			padding-bottom: 5px;
