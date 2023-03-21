@@ -32,7 +32,7 @@ export default class ExperimentsMessages {
 		switch ( experimentNewState ) {
 			case STATE_ACTIVE:
 				if ( this.shouldShowDependenciesDialog( experimentId ) ) {
-					this.getDependencyDialogConfig( experimentId );
+					this.showDependenciesDialog( experimentId );
 				}
 				break;
 
@@ -120,9 +120,10 @@ export default class ExperimentsMessages {
 
 	shouldShowDeactivationDialog( experimentId ) {
 		const initialState = this.getExperimentData( experimentId ).state,
-			isActiveOfDefault = initialState !== STATE_INACTIVE;
+			isActiveOfDefault = initialState !== STATE_INACTIVE,
+			hasMessage = !! this.getMessage( experimentId, 'on_deactivate' );
 
-		return !! this.getMessage( experimentId, 'on_deactivate' ) && isActiveOfDefault;
+		return hasMessage && isActiveOfDefault;
 	}
 
 	showDialog( dialog ) {
@@ -167,7 +168,7 @@ export default class ExperimentsMessages {
 		return clone.join( glue ) + finalGlue + lastItem;
 	}
 
-	getDependencyDialogConfig( experimentId ) {
+	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
 			dialogMessage = this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
