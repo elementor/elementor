@@ -118,7 +118,7 @@ export default class ExperimentsMessages {
 		return ! this.areAllDependenciesActive( dependencies );
 	}
 
-	shouldShowDeactivationDialog(experimentId ) {
+	shouldShowDeactivationDialog( experimentId ) {
 		const initialState = this.getExperimentData( experimentId ).state,
 			isActiveOfDefault = initialState !== STATE_INACTIVE;
 
