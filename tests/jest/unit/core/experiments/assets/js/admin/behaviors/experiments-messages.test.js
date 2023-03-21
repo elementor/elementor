@@ -202,5 +202,39 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'active' );
 		expect( submitMock ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should not show modal when changing value from default to inactive while exp default value is inactive', () => {
+		// Arrange
+		const submitMock = jest.fn();
+
+		// Act.
+		deactivateExperiment( 'depends_on_inactive' );
+
+		// Assert.
+		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
+		expect( submitMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should show modal when changing value from default to inactive while exp default value is active', () => {
+		// Arrange
+		const { confirm } = mockDialog();
+		const submitMock = jest.fn();
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		resetExperiment( 'active_dependency' );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		confirm();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' );
+		expect( submitMock ).toHaveBeenCalled();
+	} );
 } );
 
