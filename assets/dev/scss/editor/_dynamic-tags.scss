@@ -6,7 +6,7 @@
 	overflow: auto;
 	padding-bottom: 5px;
 	background-color: var(--e-a-bg-default);
-	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: var(--e-a-popover-shadow);
 	border: var(--e-a-border);
 	border-radius: 3px;
 	z-index: $super-layer;
@@ -94,7 +94,7 @@
 	width: 260px;
 	background-color: var(--e-a-bg-default);
 	border: var(--e-a-border);
-	box-shadow: 1px 1px 10px rgba(0, 0, 0, .3);
+	box-shadow: var(--e-a-popover-shadow);
 	z-index: 1;
 
 	&:before {
