@@ -64,6 +64,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['gaps'] = [
+			'label' => esc_html__( 'Gaps', 'elementor' ),
+			'type' => Controls_Manager::GAPS,
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
+			'default' => [
+				'unit' => 'px',
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+			],
+			'responsive' => true,
+		];
+
 		return $fields;
 	}
 
