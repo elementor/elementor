@@ -2,6 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
+import { viewportSize } from '../../../assets/elements-utils';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -1092,11 +1093,6 @@ async function editTab( editor, tabIndex ) {
 	await editor.page.waitForTimeout( 100 );
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
 }
-
-const viewportSize = {
-    desktop: { width: 1920, height: 1080 },
-    mobile: { width: 400, height: 480 },
-};
 
 // Click on tab by position.
 const clickTab = async ( context, tabPosition ) => {
