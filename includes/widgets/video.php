@@ -689,14 +689,6 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'169' => '16:9',
-					'219' => '21:9',
-					'43' => '4:3',
-					'32' => '3:2',
-					'11' => '1:1',
-					'916' => '9:16',
-				],
-				'selectors_dictionary' => [
 					'169' => '16 / 9',
 					'219' => '21 / 9',
 					'43' => '4 / 3',
@@ -704,9 +696,17 @@ class Widget_Video extends Widget_Base {
 					'11' => '1 / 1',
 					'916' => '9 / 16',
 				],
+				'selectors_dictionary' => [
+					'169' => '1.77777',
+					'219' => '2.33333',
+					'43' => '1.33333',
+					'32' => '1.5',
+					'11' => '1',
+					'916' => '0.5625',
+				],
 				'default' => '169',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-wrapper' => 'aspect-ratio: {{VALUE}}',
+					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
 				],
 			]
 		);

@@ -9,6 +9,7 @@
 	}
 
 	.elementor-wrapper {
+		aspect-ratio: var( --video-aspect-ratio );
 
 		iframe,
 		video {
@@ -26,7 +27,7 @@
 				position: relative;
 				overflow: hidden;
 				height: 0;
-				padding-bottom: 56.25%; // Equals to `aspect-ratio: 16 / 9;`
+				padding-bottom: calc( 100% / var( --video-aspect-ratio ) );
 
 				iframe,
 				video {
