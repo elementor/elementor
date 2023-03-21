@@ -46,8 +46,8 @@ export default class extends ControlBaseDataView {
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
-			onPickerShow: () => this.routeWithControlActive(),
-			onPickerHide: () => this.routeWithoutControlActive(), // // TODO ignore hide on the canvas color elements - add class to editor-base to ignore
+			onPickerShow: () => this.reRoute( true ),
+			onPickerHide: () => this.reRoute( false ),
 		};
 
 		this.colorPicker = new ColorPicker( options );

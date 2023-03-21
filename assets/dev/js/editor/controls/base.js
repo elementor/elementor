@@ -147,6 +147,14 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.toggleControlVisibility();
 	},
 
+	reRoute( controlActive ) {
+		$e.route(
+			$e.routes.getCurrent( 'panel' ),
+			this.setControlInRouteArgs( controlActive ? this.getControlPath() : '' ),
+			{ history: false }
+		);
+	},
+
 	getControlPath() {
 		let controlPath = this.model.get( 'name' ),
 			parent = this._parent;
@@ -161,23 +169,9 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		return controlPath;
 	},
 
-	routeWithControlActive() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.addControlInRouteArgs(), { history: false } );
-	},
-
-	routeWithoutControlActive() {
-		$e.route( $e.routes.getCurrent( 'panel' ), this.clearControlInRouteArgs(), { history: false } );
-	},
-
-	addControlInRouteArgs() {
+	setControlInRouteArgs( path ) {
 		const currentRouteArgs = JSON.parse( JSON.stringify( $e.routes.getCurrentArgs( 'panel' ) ) );
-		currentRouteArgs.activeControl = this.getControlPath();
-		return currentRouteArgs;
-	},
-
-	clearControlInRouteArgs() { // TODO: can combine this with above?
-		const currentRouteArgs = JSON.parse( JSON.stringify( $e.routes.getCurrentArgs( 'panel' ) ) );
-		currentRouteArgs.activeControl = '';
+		currentRouteArgs.activeControl = path;
 		return currentRouteArgs;
 	},
 } );

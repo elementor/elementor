@@ -59,8 +59,9 @@ export default class extends $e.modules.ComponentBase {
 		return this.importHooks( hooks );
 	}
 
-	renderTab( tab, args, oldTab ) {
-		if ( oldTab !== tab ) { // Prevent re-rendering the same tab (with just different args).
+	renderTab( tab, args ) {
+		if ( tab !== this.currentTab ) { // Prevent re-rendering the same tab (with just different args).
+			this.currentTab = tab;
 			elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
 		}
 
@@ -88,5 +89,17 @@ export default class extends $e.modules.ComponentBase {
 		} );
 
 		return controlView;
+	}
+
+	onCloseRoute( route, newRoute ) {
+		super.onCloseRoute( route );
+
+		if ( newRoute !== route ) {
+			this.currentTab = this.getTabFromRoute( route );
+		}
+	}
+
+	getTabFromRoute( route ) {
+		return route.substring( route.lastIndexOf( '/' ) + 1 );
 	}
 }

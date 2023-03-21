@@ -29,7 +29,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	onPopoverHide() {
-		this.routeWithoutControlActive();
+		this.reRoute( false );
 	}
 
 	onResetInputClick() {
@@ -61,9 +61,9 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		const $popover = this.$el.next( '.elementor-controls-popover' );
 
 		if ( ! $popover.is( ':visible' ) ) {
-			this.routeWithControlActive();
+			this.reRoute( true );
 		} else {
-			$popover.hide(); // TODO ignore hide on the canvas font elements - add class to editor-base to ignore
+			$popover.hide();
 			$popover.trigger( 'hide' );
 		}
 	}
