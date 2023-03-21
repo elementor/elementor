@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useContext, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import DivBase from '../global/div-base';
 import ElementTitle from '../global/element-title';
 import ElementWrapper from '../global/element-wrapper';
-import { ActiveContext } from '../../contexts/active-context';
+import { useActiveContext } from '../../contexts/active-context';
 
 const Content = styled( DivBase )`
 	display: flex;
@@ -33,26 +33,23 @@ const HexString = styled.p`
 `;
 
 export default function Color( props ) {
-	const { activeElement, isActiveElement, activateElement, scrollToElement } = useContext( ActiveContext );
-	const [ isActive, setIsActive ] = useState( false );
+	const { activeElement, activateElement, getElementControl } = useActiveContext();
 
 	const { item, type } = props;
 
 	const source = 'color';
 	const { _id, title, color: hex } = item;
 
+	const elementControl = getElementControl( type, source, _id );
 	const ref = useRef( null );
 
 	useEffect( () => {
-		if ( isActiveElement( type, source, _id ) ) {
-			setIsActive( true );
+		if ( elementControl === activeElement ) {
 			ref.current.scrollIntoView( {
 				behavior: 'smooth',
 				block: 'center',
 				inline: 'center',
 			} );
-		} else {
-			setIsActive( false );
 		}
 	}, [ activeElement ] );
 
@@ -64,7 +61,7 @@ export default function Color( props ) {
 		<ElementWrapper
 			columns={ props.columns }
 			ref={ ref }
-			isActive={ isActive }
+			isActive={ elementControl === activeElement }
 			onClick={ onClick }
 		>
 			<ElementTitle>{ title }</ElementTitle>

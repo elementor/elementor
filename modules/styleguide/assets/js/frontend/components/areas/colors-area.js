@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { ActiveContext } from '../../contexts/active-context';
+import React from 'react';
+import { useActiveContext } from '../../contexts/active-context';
 import Area from './area';
 import Color from '../item/color';
 
 export default function ColorsArea() {
-	const { colorsAreaRef } = useContext( ActiveContext );
+	const { colorsAreaRef } = useActiveContext();
 
 	const areaConfig = {
 		title: __( 'Global Colors', 'elementor' ),

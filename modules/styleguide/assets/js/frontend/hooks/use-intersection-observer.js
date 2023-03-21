@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function useIntersectionObserver( callback ) {
 	let observer;
 	let elements = [];
 
 	useEffect( () => {
-		console.log( 'useIntersectionObserver' );
 		observer = new IntersectionObserver( ( entries ) => {
 			const intersectingArea = entries.find( ( entry ) => entry.isIntersecting );
 
@@ -20,30 +19,32 @@ export default function useIntersectionObserver( callback ) {
 	}, [] );
 
 	const observe = () => {
-		console.log( 'observe' );
-		elements.forEach( ( element ) => {
-			if ( element ) {
-				observer.observe( element );
-			}
-		} );
+		if ( elements.length !== 0 ) {
+			elements.forEach( ( element ) => {
+				if ( element ) {
+					observer.observe( element );
+				}
+			} );
+		}
 	};
 
 	const unobserve = () => {
-		console.log( 'unobserve' );
-		elements.forEach( ( element ) => {
-			if ( element ) {
-				observer.unobserve( element );
-			}
-		} );
+		if ( elements.length !== 0 ) {
+			elements.forEach( ( element ) => {
+				if ( element ) {
+					observer.unobserve( element );
+				}
+			} );
+		}
 	};
 
 	const setObservedElements = ( observedElements ) => {
+		unobserve();
 		elements = observedElements;
+		observe();
 	};
 
 	return {
-		observe,
-		unobserve,
 		setObservedElements,
 	};
 }

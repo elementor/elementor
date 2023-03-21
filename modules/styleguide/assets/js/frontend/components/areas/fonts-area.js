@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { ActiveContext } from '../../contexts/active-context';
+import React from 'react';
+import { useActiveContext } from '../../contexts/active-context';
 import Area from './area';
 import Font from '../item/font';
 
 export default function FontsArea() {
-	const { fontsAreaRef } = useContext( ActiveContext );
+	const { fontsAreaRef } = useActiveContext();
 
 	const areaConfig = {
 		title: __( 'Global Fonts', 'elementor' ),
