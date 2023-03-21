@@ -32,13 +32,13 @@ export default class ExperimentsMessages {
 		switch ( experimentNewState ) {
 			case STATE_ACTIVE:
 				if ( this.shouldShowDependenciesDialog( experimentId ) ) {
-					this.showDialog( this.getDependencyDialogConfig( experimentId ) );
+					this.getDependencyDialogConfig( experimentId );
 				}
 				break;
 
 			case STATE_INACTIVE:
-				if ( this.shouldShowDeactivateModal( experimentId ) ) {
-					this.showDialog( this.getMessageDialogConfig( experimentId ) );
+				if ( this.shouldShowDeactivationDialog( experimentId ) ) {
+					this.showDeactivationDialog( experimentId );
 				} else {
 					this.deactivateDependantExperiments( experimentId );
 				}
@@ -60,12 +60,6 @@ export default class ExperimentsMessages {
 			.map( ( dependencyId ) => (
 				this.getExperimentData( dependencyId )
 			) );
-	}
-
-	getMessage( experimentId, messageId = 'on_deactivate' ) {
-		return this
-			.getExperimentData( experimentId )
-			.messages[ messageId ];
 	}
 
 	getExperimentSelect( experimentId ) {
@@ -124,10 +118,11 @@ export default class ExperimentsMessages {
 		return ! this.areAllDependenciesActive( dependencies );
 	}
 
-	shouldShowDeactivateModal( experimentId ) {
-		const initialState = this.getExperimentData( experimentId ).state;
+	shouldShowDeactivationDialog(experimentId ) {
+		const initialState = this.getExperimentData( experimentId ).state,
+			isActiveOfDefault = initialState !== STATE_INACTIVE;
 
-		return !! this.getMessage( experimentId ) && initialState !== STATE_INACTIVE;
+		return !! this.getMessage( experimentId, 'on_deactivate' ) && isActiveOfDefault;
 	}
 
 	showDialog( dialog ) {
@@ -140,20 +135,16 @@ export default class ExperimentsMessages {
 				at: 'center center',
 			},
 			strings: {
-				confirm: dialog.confirm,
-				cancel: dialog.cancel,
+				confirm: dialog.strings.confirm,
+				cancel: dialog.strings.cancel,
 			},
 			hide: {
 				onOutsideClick: false,
 				onBackgroundClick: false,
 				onEscKeyPress: false,
 			},
-			onConfirm: () => {
-				dialog.onConfirm();
-			},
-			onCancel: () => {
-				dialog.onCancel();
-			},
+			onConfirm: dialog.onConfirm,
+			onCancel: dialog.onCancel,
 		} ).show();
 	}
 
@@ -181,16 +172,18 @@ export default class ExperimentsMessages {
 			experimentName = experiment.title,
 			dialogMessage = this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
 
-		// Translators: %1$s: Experiment title, %2$s: Message content
+		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
 			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
 			.replace( '%2$s', dialogMessage );
 
-		return {
+		this.showDialog( {
 			message,
-			headerMessage: __( 'Activate dialog.', 'elementor' ),
-			confirm: __( 'Activate', 'elementor' ),
-			cancel: __( 'Cancel', 'elementor' ),
+			headerMessage: __( 'First, activate another experiment.', 'elementor' ),
+			strings: {
+				confirm: __( 'Activate', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
+			},
 			onConfirm: () => {
 				this.getExperimentDependencies( experimentId ).forEach( ( dependency ) => {
 					this.setExperimentState( dependency.name, STATE_ACTIVE );
@@ -200,24 +193,19 @@ export default class ExperimentsMessages {
 			onCancel: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );
 			},
-		};
+		} );
 	}
 
-	getMessageDialogConfig( experimentId ) {
-		const experiment = this.getExperimentData( experimentId ),
-			experimentName = experiment.title,
-			dialogMessage = this.getMessage( experimentId );
+	showDeactivationDialog( experimentId ) {
+		const message = this.getMessage( experimentId, 'on_deactivate' );
 
-		// Translators: %1$s: Experiment title, %2$s: Message content
-		const message = __( 'If you deactivate %1$s, %2$s.', 'elementor' )
-			.replace( '%1$s', `<strong>${ experimentName }</strong>` )
-			.replace( '%2$s', dialogMessage );
-
-		return {
+		this.showDialog( {
 			message,
 			headerMessage: __( 'Are you sure?', 'elementor' ),
-			confirm: __( 'Deactivate', 'elementor' ),
-			cancel: __( 'Dismiss', 'elementor' ),
+			strings: {
+				confirm: __( 'Deactivate', 'elementor' ),
+				cancel: __( 'Dismiss', 'elementor' ),
+			},
 			onConfirm: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );
 				this.deactivateDependantExperiments( experimentId );
@@ -226,6 +214,12 @@ export default class ExperimentsMessages {
 			onCancel: () => {
 				this.setExperimentState( experimentId, STATE_ACTIVE );
 			},
-		};
+		} );
+	}
+
+	getMessage( experimentId, messageId ) {
+		return this
+			.getExperimentData( experimentId )
+			?.messages[ messageId ];
 	}
 }

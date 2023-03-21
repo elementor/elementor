@@ -98,7 +98,7 @@ module.exports = class WpAdminPage extends BasePage {
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 
 			// Confirm any experiment dependency modal that displays as a result of the chosen experiments.
-			await this.ConfirmExperimentModalIfOpen();
+			await this.confirmExperimentModalIfOpen();
 		}
 
 		await this.page.click( '#submit' );
@@ -110,7 +110,7 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.locator( '#submit' ).click();
 	}
 
-	async ConfirmExperimentModalIfOpen() {
+	async confirmExperimentModalIfOpen() {
 		const dialogSelector = '#e-experiments-messages-dialog',
 			dialog = await this.page.locator( dialogSelector );
 

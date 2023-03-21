@@ -412,7 +412,7 @@ class Manager extends Base_Object {
 			'default' => self::STATE_INACTIVE,
 			'messages' => [
 				'on_deactivate' => esc_html__(
-					'you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu',
+					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu',
 					'elementor'
 				),
 			],
