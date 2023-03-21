@@ -120,8 +120,9 @@ export default class ExperimentsMessages {
 
 	shouldShowDeactivationDialog( experimentId ) {
 		const initialState = this.getExperimentData( experimentId ).state,
-			isInitiallyActive = initialState !== STATE_INACTIVE,
-			hasMessage = !! this.getMessage( experimentId, 'on_deactivate' );
+			defaultState = this.getExperimentData( experimentId ).default,
+			isInitiallyActive = initialState === STATE_ACTIVE || defaultState === STATE_ACTIVE,
+		hasMessage = !! this.getMessage( experimentId, 'on_deactivate' );
 
 		return hasMessage && isInitiallyActive;
 	}
