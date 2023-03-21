@@ -150,16 +150,23 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	reRoute( controlActive ) {
 		$e.route(
 			$e.routes.getCurrent( 'panel' ),
-			this.setControlInRouteArgs( controlActive ? this.getControlPath() : '' ),
+			this.getControlInRouteArgs( controlActive ? this.getControlPath() : '' ),
 			{ history: false }
 		);
+	},
+
+	getControlInRouteArgs( path ) {
+		return {
+			...$e.routes.getCurrentArgs( 'panel' ),
+			activeControl: path,
+		};
 	},
 
 	getControlPath() {
 		let controlPath = this.model.get( 'name' ),
 			parent = this._parent;
 
-		while ( 'document' !== parent.model.id ) {
+		while ( ! parent.$el.hasClass( 'elementor-controls-stack' ) ) {
 			const parentName = parent.model.get( 'name' ) || parent.model.get( '_id' );
 			controlPath = parentName + '/' + controlPath;
 
@@ -167,12 +174,6 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		}
 
 		return controlPath;
-	},
-
-	setControlInRouteArgs( path ) {
-		const currentRouteArgs = JSON.parse( JSON.stringify( $e.routes.getCurrentArgs( 'panel' ) ) );
-		currentRouteArgs.activeControl = path;
-		return currentRouteArgs;
 	},
 } );
 

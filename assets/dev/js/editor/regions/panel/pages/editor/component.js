@@ -32,22 +32,22 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { model, view } = args,
+		const { model, view, activeControl } = args,
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		elementor.getPanelView().setPage( 'editor', title, {
-			tab,
-			model,
-			controls: elementor.getElementControls( model ),
-			editedElementView: view,
-		} );
-	}
+		if ( tab !== this.activeTabs[ args.model.id ] ) { // Prevent re-rendering the same tab (with just different args).
+			this.activeTabs[ args.model.id ] = tab;
 
-	activateTab( tab, args ) {
-		this.activeTabs[ args.model.id ] = tab;
+			elementor.getPanelView().setPage( 'editor', title, {
+				tab,
+				model,
+				controls: elementor.getElementControls( model ),
+				editedElementView: view,
+			} );
+		}
 
-		super.activateTab( tab, args );
+		this.activateControl( activeControl );
 	}
 
 	setDefaultTab( args ) {
