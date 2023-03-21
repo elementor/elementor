@@ -4,7 +4,9 @@ import { useActiveContext } from '../contexts/active-context';
 import DivBase from './global/div-base';
 import InnerWrapper from './global/inner-wrapper';
 
-const Button = styled.button`
+const Button = styled.button.attrs( ( props ) => ( {
+	'data-e-active': props.isActive ? true : null,
+} ) )`
 	font-size: 16px;
 	height: 100%;
 	font-weight: 500;
@@ -12,7 +14,7 @@ const Button = styled.button`
 	text-decoration: none;
 	line-height: 1.5em;
 	letter-spacing: 0;
-	color: var( --e-a-color-txt );
+	color: var(--e-a-color-txt);
 	border: none;
 	background: none;
 	text-transform: capitalize;
@@ -21,13 +23,16 @@ const Button = styled.button`
 
 	&:hover {
 		background: none;
-		color: var( --e-a-color-txt-hover );
+		color: var(--e-a-color-txt-hover);
 	}
 
 	&:focus {
 		outline: none;
 		background: none;
-		color: #51585e;
+	}
+
+	&[data-e-active='true'] {
+		color: var(--e-a-color-txt-hover);
 	}
 `;
 
@@ -59,6 +64,7 @@ const Wrapper = styled( DivBase )`
 	left: 0;
 	width: 100%;
 	height: 50px;
+	display: flex;
 	background: #ffffff;
 	border-bottom: 1px solid #C2CBD2;
 	z-index: 1;
@@ -72,7 +78,7 @@ const ButtonsWrapper = styled( DivBase )`
 `;
 
 const Title = styled.h2`
-	color: #0C0D0E;
+	color: var(--e-a-color-txt-accent);
 	font-family: Roboto, sans-serif;
 	font-size: 16px;
 	font-weight: 600;
