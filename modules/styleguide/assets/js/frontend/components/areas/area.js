@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSettings } from '../../contexts/settings';
 import Loader from '../global/loader';
+import DivBase from '../global/div-base';
 import AreaTitle from './area-title';
 import Section from '../section';
 
-const Wrapper = styled.div`
+const Wrapper = styled( DivBase )`
 	width: 100%;
 	margin-top: 95px;
 	min-height: 100px;

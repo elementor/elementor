@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import InnerWrapper from './global/inner-wrapper';
 import { ActiveContext } from '../contexts/active-context';
+import DivBase from './global/div-base';
+import InnerWrapper from './global/inner-wrapper';
 
 const Button = styled.button`
 	font-size: 16px;
@@ -11,7 +12,7 @@ const Button = styled.button`
 	text-decoration: none;
 	line-height: 1.5em;
 	letter-spacing: 0;
-	color: #515962;
+	color: var( --e-a-color-txt );
 	border: none;
 	background: none;
 	text-transform: capitalize;
@@ -20,7 +21,7 @@ const Button = styled.button`
 
 	&:hover {
 		background: none;
-		color: #51585e;
+		color: var( --e-a-color-txt-hover );
 	}
 
 	&:focus {
@@ -50,23 +51,18 @@ const AreaButton = ( props ) => {
 	);
 };
 
-const Wrapper = styled.div`
-	display: flex;
-	align-items: center;
-	border-style: solid;
-	border-width: 0 0 1px 0;
-	border-color: #C2CBD2;
-	transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
-	padding: 0 5% 15px 5%;
-	width: 100%;
-	height: 50px;
-	background: #fff;
-	z-index: 1;
+const Wrapper = styled( DivBase )`
 	position: fixed;
 	top: 0;
+	left: 0;
+	width: 100%;
+	height: 50px;
+	background: #ffffff;
+	border-bottom: 1px solid #C2CBD2;
+	z-index: 1;
 `;
 
-const ButtonsWrapper = styled.div`
+const ButtonsWrapper = styled( DivBase )`
 	display: flex;
 	justify-content: flex-end;
 	flex-grow: 1;
@@ -91,10 +87,10 @@ export default function Header() {
 	return (
 		<Wrapper>
 			<InnerWrapper>
-				<Title>Style Guide Preview</Title>
+				<Title>{ __( 'Style Guide Preview', 'elementor' ) }</Title>
 				<ButtonsWrapper>
-					<AreaButton area={ 'colors' }>Colors</AreaButton>
-					<AreaButton area={ 'fonts' }>Fonts</AreaButton>
+					<AreaButton area={ 'colors' }>{ __( 'Colors', 'elementor' ) }</AreaButton>
+					<AreaButton area={ 'fonts' }>{ __( 'Fonts', 'elementor' ) }</AreaButton>
 				</ButtonsWrapper>
 			</InnerWrapper>
 		</Wrapper>

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import DivBase from './div-base';
 
-const innerWrapper = styled.div`
+const innerWrapper = styled( DivBase )`
 	display: flex;
 	align-items: center;
 	width: 100%;

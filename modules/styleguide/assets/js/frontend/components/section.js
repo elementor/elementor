@@ -1,13 +1,14 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import SectionTitle from './section-title';
+import DivBase from './global/div-base';
 import InnerWrapper from './global/inner-wrapper';
 
-const Wrapper = styled.div`
+const Wrapper = styled( DivBase )`
 	margin-top: 55px;
 `;
 
-const Content = styled.div`
+const Content = styled( DivBase )`
 	display: flex;
 	width: 100%;
 

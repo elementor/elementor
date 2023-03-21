@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import styled from 'styled-components';
+import DivBase from '../global/div-base';
 import ElementTitle from '../global/element-title';
 import ElementWrapper from '../global/element-wrapper';
 import { ActiveContext } from '../../contexts/active-context';
 
-const Content = styled.div`
+const Content = styled( DivBase )`
 	display: flex;
 	width: 100%;
 	height: 100px;

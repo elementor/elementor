@@ -1,7 +1,8 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import DivBase from './div-base';
 
-const Wrapper = styled.div`
+const Wrapper = styled( DivBase )`
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
