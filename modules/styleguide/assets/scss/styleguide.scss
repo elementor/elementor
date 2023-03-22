@@ -4,13 +4,6 @@ body.e-styleguide-shown {
 
 #e-styleguide-preview-dialog.dialog-styleguide-widget {
 
-	&.e-hidden {
-		&, & * {
-			visibility: hidden;
-			pointer-events: none;
-		}
-	}
-
 	.dialog-styleguide-widget-content {
 		width: 100%;
 		height: 100%;

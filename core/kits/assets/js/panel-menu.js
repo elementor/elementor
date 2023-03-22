@@ -12,14 +12,14 @@ PanelMenu.createGroupItems = ( groupName ) => {
 	const tabs = $e.components.get( 'panel/global' ).getTabs(),
 		groupTabs = Object.entries( tabs ).filter( ( [ , tabConfig ] ) => groupName === tabConfig.group );
 
-	return groupTabs.map( ( [ tabId, tabConfig ] ) => (
-		{
+	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
+		return {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
 			callback: () => $e.route( 'panel/global/' + tabId ),
-		}
-	) );
+		};
+	} );
 };
 
 PanelMenu.initGroups = () => {
