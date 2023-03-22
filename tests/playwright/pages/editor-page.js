@@ -334,8 +334,8 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Set a border color to a container.
 	 *
-	 * @param {string}  color     - The background color code;
-	 * @param {string}  containerId - The ID of targeted container;
+	 * @param {string} color       - The background color code;
+	 * @param {string} containerId - The ID of targeted container;
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -538,5 +538,17 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a control of the active widget.
+	 *
+	 * @param {string} controlId
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelectControlValue( controlId, value ) {
+		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
 	}
 };
