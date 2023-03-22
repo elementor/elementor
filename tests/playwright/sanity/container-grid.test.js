@@ -25,7 +25,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test grid container gap', async ( { page }, testInfo ) => {
+	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
