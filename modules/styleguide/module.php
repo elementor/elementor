@@ -133,8 +133,10 @@ class Module extends Base_Module {
 			return;
 		}
 
+		$control_name = str_replace( 'global-', '', $args['tab'] ) . '_enable_styleguide_preview';
+
 		$element->add_control(
-			$section_id . '_enable_styleguide_preview',
+			$control_name,
 			[
 				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
 				'type' => Global_Style_Switcher::CONTROL_TYPE,
