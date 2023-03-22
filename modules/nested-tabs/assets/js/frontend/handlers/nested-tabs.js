@@ -312,15 +312,7 @@ export default class NestedTabs extends Base {
 			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
 
 			if ( isMobileVersion ) {
-				// Timeout added to ensure that opening of the active tab starts after closing the other tab.
-				setTimeout( () => {
-					this.activateTab( tabIndex );
-				} );
-
-				if ( elementorFrontend.isEditMode() ) {
-					this.forceActiveTabToBeInViewport( tabIndex );
-				}
-
+				this.activateMobileTab( tabIndex );
 				return;
 			}
 
@@ -328,14 +320,26 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+	activateMobileTab( tabIndex ) {
+		// Timeout added to ensure that opening of the active tab starts after closing the other tab.
+		setTimeout( () => {
+			this.activateTab( tabIndex );
+			this.forceActiveTabToBeInViewport( tabIndex );
+		} );
+	}
+
 	forceActiveTabToBeInViewport( tabIndex ) {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return;
+		}
+
 		const activeClass = this.getActiveClass(),
 			$activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
-			boundingBox = $activeTabTitle[ 0 ]?.getBoundingClientRect(),
-			isActiveTabTitleInViewport = boundingBox?.top >= 0 && boundingBox?.bottom <= window.innerHeight;
+			boundingBox = $activeTabTitle[ 0 ].getBoundingClientRect(),
+			isActiveTabTitleInViewport = boundingBox.top >= 0 && boundingBox.bottom <= window.innerHeight;
 
 		if ( ! isActiveTabTitleInViewport ) {
-			$activeTabTitle[ 0 ]?.scrollIntoView( { block: 'center' } );
+			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
 		}
 	}
 
