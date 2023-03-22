@@ -10,8 +10,8 @@ test.describe( 'Container tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
+			container: true,
 			container_grid: true,
-			// container: true,
 		} );
 	} );
 
@@ -20,8 +20,8 @@ test.describe( 'Container tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
+			container: false,
 			container_grid: false,
-			// container: false,
 		} );
 	} );
 

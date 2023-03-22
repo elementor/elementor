@@ -111,11 +111,13 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async confirmExperimentModalIfOpen() {
-		const dialogButtonSelector = '#e-experiments-dependency-dialog .dialog-confirm-ok',
-			dialogButton = await this.page.evaluate( ( selector ) => document.querySelector( selector ), dialogButtonSelector );
+		const dialogButton = this.page.locator( '#e-experiments-dependency-dialog .dialog-confirm-ok' );
 
-		if ( dialogButton ) {
-			await this.page.locator( dialogButtonSelector ).click();
+		if ( await dialogButton.isVisible() ) {
+			await dialogButton.click();
+
+			// Clicking the confirm button - "Activate" - will immediately save the existing experiments,
+			// so we need to wait for the page to save and reload before we continue on to set any more experiments.
 			await this.page.waitForLoadState( 'load' );
 		}
 	}
