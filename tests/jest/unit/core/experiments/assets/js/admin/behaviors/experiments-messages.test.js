@@ -138,7 +138,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
 	} );
 
-	it( 'Should show a Deactivate dialog when deactivating an experiment that has a message', () => {
+	it( 'Should show the deactivate dialog when deactivating an experiment that has an \'on_deactivate\' message', () => {
 		// Arrange.
 		const { show } = mockDialog();
 
@@ -149,7 +149,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( show ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'Should not show a Deactivate dialog when deactivating an experiment that has a no message', () => {
+	it( 'Should not show the deactivate dialog when deactivating an experiment that has an \'on_deactivate\' message', () => {
 		// Arrange.
 		const { show } = mockDialog();
 
@@ -160,7 +160,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( show ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should deactivate experiment and dependencies when clicking DEACTIVATE button', () => {
+	it( 'Should deactivate the experiment and its dependencies when clicking DEACTIVATE button', () => {
 		// Arrange.
 		const { confirm } = mockDialog();
 		const submitMock = jest.fn();
@@ -181,7 +181,7 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( submitMock ).toHaveBeenCalled();
 	} );
 
-	it( 'should not deactivate experiment and dependencies when clicking DISMISS button', () => {
+	it( 'Should not deactivate the experiment and its dependencies when clicking DISMISS button', () => {
 		// Arrange.
 		const { cancel } = mockDialog();
 		const submitMock = jest.fn();
@@ -203,19 +203,19 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( submitMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not show modal when changing value from default to inactive while exp default value is inactive', () => {
+	it( 'Should not show the deactivate dialog when changing the select value from default to inactive while the experiment default value is inactive', () => {
 		// Arrange
-		const submitMock = jest.fn();
+		const { createWidget } = mockDialog();
 
 		// Act.
 		deactivateExperiment( 'depends_on_inactive' );
 
 		// Assert.
 		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
-		expect( submitMock ).not.toHaveBeenCalled();
+		expect( createWidget ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should show modal when changing value from default to inactive while exp default value is active', () => {
+	it( 'Should show the deactivate dialog when changing the select value from default to inactive while exp default value is active', () => {
 		// Arrange
 		const { confirm } = mockDialog();
 		const submitMock = jest.fn();
@@ -235,6 +235,17 @@ describe( 'ExperimentsMessages Behavior', () => {
 		expect( getExperimentState( 'active_dependency' ) ).toBe( 'inactive' );
 		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' );
 		expect( submitMock ).toHaveBeenCalled();
+	} );
+
+	it( 'Should not show the deactivate dialog when changing the select value from inactive to default while exp default value is active', () => {
+		const { createWidget } = mockDialog();
+
+		// Act.
+		resetExperiment( 'default_active' );
+
+		// Assert.
+		expect( getExperimentState( 'default_active' ) ).toBe( 'default' );
+		expect( createWidget ).not.toHaveBeenCalled();
 	} );
 } );
 
