@@ -106,20 +106,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
-	private function map_packages_to_handles( $packages_data, $deps ) {
-		return array_map( function ( $package_name ) use ( $packages_data ) {
-			if ( ! empty( $packages_data[ $package_name ]['handle'] ) ) {
-				return $packages_data[ $package_name ]['handle'];
-			}
-
-			if ( 0 === strpos( $package_name, '@wordpress/' ) ) {
-				return str_replace( '@wordpress/', 'wp-', $package_name );
-			}
-
-			return $package_name;
-		}, $deps );
-	}
-
 	private function get_packages_data() {
 		if ( ! $this->packages_data ) {
 			// Loading the file that is responsible for registering the packages in the filter.
@@ -139,8 +125,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 					return [
 						$name => [
 							'handle' => $data['handle'],
-							'src' => $data['url'] . $data['entry'] . '{{MIN_SUFFIX}}.js',
-							'deps' => $this->map_packages_to_handles( $packages_data, $data['deps'] ),
+							'src' => $data['src'],
+							'deps' => $data['deps'],
 							'i18n' => $data['i18n'],
 							'type' => $type,
 						],
