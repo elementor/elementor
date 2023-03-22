@@ -10,10 +10,10 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 		handlePrefix,
 		i18n,
 	} = {} ) {
-		if ( ! handlePrefix  ) {
+		if ( ! handlePrefix ) {
 			throw new Error( 'handlePrefix is required in Webpack.config' );
 		}
-		
+
 		this.handlePrefix = handlePrefix;
 		this.i18n = i18n;
 	}
@@ -21,12 +21,12 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 	apply( compiler ) {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
-				const entriesData = [ ...compilation.entrypoints ].reduce( ( data, [ entryName, entrypoint ] ) => {
+				const handlesAssetsMap = [ ...compilation.entrypoints ].reduce( ( map, [ entryName, entrypoint ] ) => {
 					const chunk = entrypoint.chunks.find( ( { name } ) => name === entryName );
 					const chunkJSFile = this.getFileFromChunk( chunk );
 
 					if ( ! chunkJSFile ) {
-						return data;
+						return map;
 					}
 
 					const rootFolderPath = compilation.options.context;
@@ -34,7 +34,7 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 					const packageJsonPath = this.findPackageJsonPath( entryFolderPath, rootFolderPath );
 
 					if ( ! packageJsonPath ) {
-						return data;
+						return map;
 					}
 
 					const packageJsonData = require( packageJsonPath );
@@ -45,13 +45,12 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 						compilation.getPath( '[file]', { filename: chunkJSFile } )
 					);
 
-					const handle = `${ this.handlePrefix }-${ entryName }`;
+					const handle = this.generateHandleName( entryName );
 
-					data[ handle ] = assetFilename;
+					map[ handle ] = assetFilename;
 
 					const content = this.createAssetsFileContent( {
 						deps,
-						handle,
 						entryName,
 						i18n: this.i18n,
 						type: packageJsonData.elementor?.type,
@@ -62,10 +61,10 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 
 					chunk.files.add( assetFilename );
 
-					return data;
+					return map;
 				}, {} );
 
-				const loaderFileContent = this.getLoaderFileContent( entriesData );
+				const loaderFileContent = this.getLoaderFileContent( handlesAssetsMap );
 
 				compilation.emitAsset(
 					'loader.php',
@@ -196,6 +195,6 @@ return [
 	}
 
 	generateHandleName( name ) {
-		return `elementor-packages-${ name }`;
+		return `${ this.handlePrefix }-${ name }`;
 	}
 };
