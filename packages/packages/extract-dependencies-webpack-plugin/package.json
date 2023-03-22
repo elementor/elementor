@@ -4,7 +4,7 @@
 	"module": "dist/index.mjs",
 	"scripts": {
 		"build": "tsup src/index.js --format esm,cjs",
-		"dev": "tsup src/index.js --format esm"
+		"dev": "tsup src/index.js --format esm,cjs"
 	},
 	"peerDependencies": {
 		"webpack": "5.x"

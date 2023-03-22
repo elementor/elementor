@@ -1,5 +1,5 @@
 {
-	"name": "@elementor/extract-i18n-experssions-webpack-plugin",
+	"name": "@elementor/external-wordpress-assets-webpack-plugin",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"scripts": {

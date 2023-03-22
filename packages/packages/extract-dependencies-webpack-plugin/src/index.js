@@ -1,23 +1,12 @@
 // Inspired by "Dependency Extraction Webpack Plugin" by @wordpress team.
 // Link: https://github.com/WordPress/gutenberg/tree/trunk/packages/dependency-extraction-webpack-plugin
-
-// TODO: Please convert me to TypeScript.
-
 import { sources } from 'webpack';
 
 export class ExtractDependenciesWebpackPlugin {
-	generateHandleName;
-	replaceDependencyNames;
-	generateAssetsFileName;
+	options;
 
-	constructor( {
-		generateHandleName,
-		replaceDependencyNames,
-		generateAssetsFileName,
-	} = {} ) {
-		this.generateHandleName = generateHandleName || this.defaultGenerateHandleName;
-		this.replaceDependencyNames = replaceDependencyNames || this.defaultReplaceDependencyNames;
-		this.generateAssetsFileName = generateAssetsFileName || this.defaultGenerateAssetsFileName;
+	constructor( options ) {
+		this.options = options;
 	}
 
 	apply( compiler ) {
@@ -28,7 +17,7 @@ export class ExtractDependenciesWebpackPlugin {
 					const chunkJSFile = this.getFileFromChunk( chunk );
 
 					if ( ! chunkJSFile ) {
-						return;
+
 					}
 
 					const deps = this.getDepsFromChunk( compilation, chunk );
@@ -53,14 +42,11 @@ export class ExtractDependenciesWebpackPlugin {
 	}
 
 	getDepsFromChunk( compilation, chunk ) {
-		const externals = Object.keys( compilation.options.externals );
 		const depsSet = new Set();
 
 		compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
 			[ ...( module.modules || [] ), module ].forEach( ( subModule ) => {
-				const isExternalDep = externals.includes( subModule.userRequest );
-
-				if ( ! isExternalDep ) {
+				if ( ! this.isExternalDep( subModule.userRequest ) ) {
 					return;
 				}
 
@@ -75,7 +61,7 @@ export class ExtractDependenciesWebpackPlugin {
 		const handleName = this.generateHandleName( entryId );
 
 		const depsAsString = [ ...deps ]
-			.map( ( dep ) => this.replaceDependencyNames( dep ) )
+			.map( ( dep ) => this.transformIntoDepName( dep ) )
 			.filter( ( dep ) => dep !== handleName )
 			.sort()
 			.map( ( dep ) => `'${ dep }',` )
@@ -108,13 +94,23 @@ return [
 		return [ ...chunk.files ].find( ( f ) => /\.js$/i.test( f ) );
 	}
 
-	defaultReplaceDependencyNames( name ) {
-		const map = new Map( [
-			[ '@elementor/', 'elementor-packages-' ],
-			[ '@wordpress/', 'wp-' ],
-		] );
+	isExternalDep( request ) {
+		const { startsWith, exact } = this.options.handlesMap;
 
-		for ( const [ key, value ] of map ) {
+		return request && (
+			Object.keys( exact ).includes( request ) ||
+			Object.keys( startsWith ).some( ( dep ) => request.startsWith( dep ) )
+		);
+	}
+
+	transformIntoDepName( name ) {
+		const { startsWith, exact } = this.options.handlesMap;
+
+		if ( Object.keys( exact ).includes( name ) ) {
+			return exact[ name ];
+		}
+
+		for ( const [ key, value ] of Object.entries( startsWith ) ) {
 			if ( name.startsWith( key ) ) {
 				return name.replace( key, value );
 			}
@@ -123,11 +119,15 @@ return [
 		return name;
 	}
 
-	defaultGenerateAssetsFileName( filename ) {
-		return filename.replace( /(\.min)?\.js$/i, '.asset.php' );
+	generateHandleName( name ) {
+		if ( this.options.handlePrefix ) {
+			return `${ this.options.handlePrefix }${ name }`;
+		}
+
+		return name;
 	}
 
-	defaultGenerateHandleName( name ) {
-		return `elementor-packages-${ name }`;
+	generateAssetsFileName( filename ) {
+		return filename.replace( /(\.min)?\.js$/i, '.asset.php' );
 	}
 }

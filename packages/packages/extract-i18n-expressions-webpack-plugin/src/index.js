@@ -1,5 +1,3 @@
-// TODO: Please convert me to TypeScript.
-
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,7 +15,7 @@ const TRANSLATIONS_REGEXPS = Object.freeze( [
 	/\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\)/gm,
 ] );
 
-export default class ExtractI18nExpressionsWebpackPlugin {
+export class ExtractI18nExpressionsWebpackPlugin {
 	apply( compiler ) {
 		// Learn more about Webpack plugin system: https://webpack.js.org/api/plugins/
 

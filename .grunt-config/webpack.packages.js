@@ -1,61 +1,41 @@
-// TODO: THE REQUIRE NOT WORKING - dont know why.
-const ExtractDependenciesWebpackPlugin = require("@elementor/extract-dependencies-webpack-plugin");
-const ExtractI18nExpressionsWebpackPlugin = require("@elementor/extract-i18n-expressions-webpack-plugin");
 const path = require("path");
+const fs = require("fs");
+const { ExtractDependenciesWebpackPlugin } = require("@elementor/extract-dependencies-webpack-plugin");
+const { ExtractI18nExpressionsWebpackPlugin } = require("@elementor/extract-i18n-expressions-webpack-plugin");
+const { ExternalWordPressAssetsWebpackPlugin } = require("@elementor/external-wordpress-assets-webpack-plugin");
+
+const { dependencies } = require("../package.json");
 
 const globalObjectKey = '__UNSTABLE__elementorPackages';
 
-// TODO: Need to make sure it builds the packages before build them here.
+const packages = Object.keys( dependencies )
+	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) )
+	.map( ( packageName ) => {
+		const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
+
+		const { main, module } = JSON.parse( pkgJSON );
+
+		return {
+			mainFile: module || main,
+			packageName,
+		}
+	})
+	.filter( ( { mainFile } ) => !! mainFile )
+	.map( ( { mainFile, packageName } ) => {
+		return {
+			packageName,
+			name: packageName.replace( '@elementor/', ''),
+			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+		}
+	} );
 
 const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
 	/-(\w)/g,
 	( match, w ) => w.toUpperCase()
 );
 
-const { dependencies } = require("../package.json");
-
-const packages = Object.keys( dependencies )
-	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) && packageName !== '@elementor/ui' )
-	.map( ( packageName ) => {
-		return {
-			name: packageName.replace( '@elementor/', ''),
-			packageName,
-			path: path.resolve( __dirname, `../node_modules/${ packageName }/dist/index.mjs` ),
-		}
-	} );
-
-// TODO: Need to find a better way to handle this, maybe the ui package should be the same as all the other packages.
-packages.push( {
-	name: 'ui',
-	packageName: '@elementor/ui',
-	path: path.resolve( __dirname, `../node_modules/@elementor/ui/index.js` ),
-});
-
-
-const externals = [
-	// Elementor packages.
-	...packages.map( ( { packageName, name } ) => ( {
-		packageName,
-		global: `${ globalObjectKey }.${ kebabToCamelCase( name ) }`,
-	} ) ),
-	// Packages that exist in WordPress environment, and we use them as externals.
-	{
-		packageName: '@wordpress/i18n',
-		global: 'wp.i18n',
-	},
-	{
-		packageName: 'react',
-		global: 'React',
-	},
-	{
-		packageName: 'react-dom',
-		global: 'ReactDOM',
-	},
-];
-
-const common = {
-	name: 'packages',
-	entry: packages.reduce((acc, {name, path}) => ({
+const buildEntry = ( packages ) => {
+	return packages.reduce((acc, {name, path}) => ({
 		...acc,
 		[ name ]: {
 			import: path,
@@ -64,59 +44,76 @@ const common = {
 				type: 'window',
 			},
 		},
-	} ), {} ),
-	module: {
-		// TODO: `rules` is no required when "@elementor/ui" will be build as the other packages.
-		rules: [
-			{
-				test: /\.[jt]sx?$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'babel-loader',
-					options: {
-						presets: [ '@babel/preset-react', {
-							runtime: 'classic', // We have to use classic runtime because of WordPress which do not expose the new runtime.
-						} ],
-					},
-				},
-			},
-		],
-	},
-	externals: externals.reduce( ( acc, { packageName, global } ) => ( {
-		...acc,
-		[ packageName ]: global,
-	} ), {} ),
-	resolve: {
-		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
-	},
+	} ), {} );
+}
+
+const common = {
+	name: 'packages',
 	plugins: [
-		new ExtractDependenciesWebpackPlugin(),
+		// GenerateWordPressAssetFileWebpackPlugin,
+		new ExtractDependenciesWebpackPlugin( {
+			handlePrefix: 'elementor-packages-',
+			handlesMap: {
+				exact: {
+					react: 'react',
+					'react-dom': 'react-dom',
+				},
+				startsWith: {
+					'@elementor/': 'elementor-packages-',
+					'@wordpress/': 'wp-',
+				}
+			}
+		} ),
+		// ExternalizeWordPressAssetsWebpackPlugin,
+		new ExternalWordPressAssetsWebpackPlugin( {
+			externalsMap: {
+				exact: {
+					react: 'React',
+					'react-dom': 'ReactDOM',
+				},
+				startsWith: {
+					'@elementor/': '__UNSTABLE__elementorPackages',
+					'@wordpress/': 'wp',
+				}
+			}
+		} ),
 	],
 	output: {
-		clean: true,
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
 }
 
-module.exports = {
-	dev: {
-		...common,
-		mode: 'development',
-		devtool: 'source-map',
-		output: {
-			...(common.output || {}),
-			filename: '[name].js',
-		},
-	},
-	prod: {
-		mode: 'production',
-		optimization: {
-			...(common.optimization || {}),
-			minimize: true,
-		},
-		plugins: [
-			...(common.plugins || []),
-			new ExtractI18nExpressionsWebpackPlugin(),
-		],
+const devConfig = {
+	...common,
+	entry: buildEntry( packages ),
+	mode: 'development',
+	devtool: false, // TODO: Need to check what to do with source maps.
+	output: {
+		...( common.output || {} ),
+		filename: '[name].js',
 	}
 }
+
+const prodConfig = {
+	...common,
+	entry: buildEntry( packages ),
+	mode: 'production',
+	devtool: false, // TODO: Need to check what to do with source maps.
+	optimization: {
+		...( common.optimization || {} ),
+		minimize: true,
+	},
+	plugins: [
+		...( common.plugins || [] ),
+		new ExtractI18nExpressionsWebpackPlugin(),
+	],
+	output: {
+		...( common.output || {} ),
+		filename: '[name].min.js',
+	}
+}
+
+module.exports = {
+	dev: devConfig,
+	prod: prodConfig,
+};

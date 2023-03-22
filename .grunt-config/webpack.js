@@ -265,7 +265,6 @@ const webpackProductionConfig = [
 			},
 		},
 	},
-	packagesConfigs.prod,
 ];
 
 // Adding .min suffix to production entries.
@@ -284,6 +283,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 		config.entry[ entryPoint + '.min' ] = entryValue;
 	}
 } );
+
+// The 'packages' config not needed a .min suffix (it has it's own config).
+webpackProductionConfig.push( packagesConfigs.prod );
 
 const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
