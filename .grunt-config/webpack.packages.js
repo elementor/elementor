@@ -27,30 +27,14 @@ const packages = Object.keys( dependencies )
 		}
 	} );
 
-const kebabToCamelCase = ( kebabCase ) => kebabCase.replace(
-	/-(\w)/g,
-	( match, w ) => w.toUpperCase()
-);
-
-const buildEntry = ( packages ) => {
-	return packages.reduce((acc, {name, path}) => ({
-		...acc,
-		[ name ]: {
-			import: path,
-			library: {
-				name: [ '__UNSTABLE__elementorPackages', kebabToCamelCase( name ) ],
-				type: 'window',
-			},
-		},
-	} ), {} );
-}
-
 const common = {
 	name: 'packages',
+	entry: Object.fromEntries(
+		packages.map( ( { name, path } ) => [ name, path ] )
+	),
 	plugins: [
-		// GenerateWordPressAssetFileWebpackPlugin,
 		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
-		new ExternalizeWordPressAssetsWebpackPlugin(),
+		new ExternalizeWordPressAssetsWebpackPlugin( { referenceKey: '__UNSTABLE__elementorPackages' } ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
@@ -59,7 +43,6 @@ const common = {
 
 const devConfig = {
 	...common,
-	entry: buildEntry( packages ),
 	mode: 'development',
 	devtool: false, // TODO: Need to check what to do with source maps.
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
@@ -71,7 +54,6 @@ const devConfig = {
 
 const prodConfig = {
 	...common,
-	entry: buildEntry( packages ),
 	mode: 'production',
 	devtool: false, // TODO: Need to check what to do with source maps.
 	optimization: {

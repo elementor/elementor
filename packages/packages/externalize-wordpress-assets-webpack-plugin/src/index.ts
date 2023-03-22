@@ -6,10 +6,12 @@ type ExternalsMap = {
 }
 
 type NormalizedOptions = {
+	referenceKey: string,
 	externalsMap: ExternalsMap
 }
 
 type Options = {
+	referenceKey: string,
 	externalsMap?: Partial<ExternalsMap>
 }
 
@@ -29,7 +31,7 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 
 	options: NormalizedOptions;
 
-	constructor( options?: Options ) {
+	constructor( options: Options ) {
 		this.options = this.normalizeOptions( options );
 
 		this.externalPlugin = new ExternalsPlugin(
@@ -48,6 +50,10 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 
 	apply( compiler: Compiler ) {
 		this.externalPlugin.apply( compiler );
+
+		compiler.hooks.environment.tap( this.constructor.name, () => {
+			this.exportAsWindowItem( compiler );
+		} );
 	}
 
 	requestToExternal( request: string | undefined ) {
@@ -68,6 +74,23 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 		}
 	}
 
+	exportAsWindowItem( compiler: Compiler ) {
+		compiler.options.output.enabledLibraryTypes?.push( 'window' );
+
+		compiler.options.entry = Object.fromEntries(
+			Object.entries( compiler.options.entry ).map( ( [ name, entry ] ) => [
+				name,
+				{
+					...entry,
+					library: {
+						name: [ this.options.referenceKey, this.kebabToCamelCase( name ) ],
+						type: 'window',
+					},
+				},
+			] )
+		);
+	}
+
 	kebabToCamelCase( kebabCase: string ) {
 		return kebabCase.replace(
 			/-(\w)/g,
@@ -75,7 +98,7 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 		);
 	}
 
-	normalizeOptions( options?: Options ): NormalizedOptions {
+	normalizeOptions( options: Options ): NormalizedOptions {
 		return {
 			...( options || {} ),
 			externalsMap: {
