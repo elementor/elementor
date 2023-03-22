@@ -556,23 +556,13 @@ test.describe( 'Container tests', () => {
 		await editor.addWidget( widgets.heading, containerId2 );
 
 		// Copy container 1.
-		const container1 = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId1 );
-		await container1.hover();
-		await editor.getPreviewFrame().locator( `.elementor-element-${ containerId1 } > .elementor-element-overlay .elementor-editor-element-edit` ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__item-copy' ) ).toBeVisible();
-		await page.locator( '.elementor-context-menu-list__item-copy' ).click();
+		await editor.copyElement( containerId1 );
 
 		// Open Add Section Inline element.
-		const element = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId2 );
-		await element.hover();
-		const elementAddButton = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId2 + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add' );
-		await elementAddButton.click();
-		await editor.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+		await editor.openAddElementSection( containerId2 );
 
 		// Paste container 1 onto New Container element.
-		await editor.getPreviewFrame().locator( '.elementor-add-section-inline' ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ) ).toBeVisible();
-		await page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ).click();
+		await editor.pasteElement( '.elementor-add-section-inline' );
 
 		// Assert.
 		// Verify that the first container has a `data-id` value of `containerId1`.
@@ -581,7 +571,7 @@ test.describe( 'Container tests', () => {
 		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId1 );
 		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId2 );
 		// Verify that the second container has a button widget.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1 .elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
 		// Verify that the third container has `a `data-id` value of `containerId2`.
 		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
 	} );

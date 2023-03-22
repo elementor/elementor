@@ -34,33 +34,23 @@ test.describe( 'Section tests', () => {
 		await editor.addWidget( widgets.heading, section2ColumnId );
 
 		// Copy section 1.
-		const section1 = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + sectionId1 );
-		await section1.hover();
-		await editor.getPreviewFrame().locator( `.elementor-element-${ sectionId1 } > .elementor-element-overlay .elementor-editor-element-edit` ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__item-copy' ) ).toBeVisible();
-		await page.locator( '.elementor-context-menu-list__item-copy' ).click();
+		await editor.copyElement( sectionId1 );
 
 		// Open Add Section Inline element.
-		const element = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + sectionId2 );
-		await element.hover();
-		const elementAddButton = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + sectionId2 + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add' );
-		await elementAddButton.click();
-		await editor.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+		await editor.openAddElementSection( sectionId2 );
 
 		// Paste section 1 onto New section element.
-		await editor.getPreviewFrame().locator( '.elementor-add-section-inline' ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ) ).toBeVisible();
-		await page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ).click();
+		await editor.pasteElement( '.elementor-add-section-inline' );
 
 		// Assert.
 		// Verify that the first section has a `data-id` value of `sectionId1`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( sectionId1 );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( sectionId1 );
 		// Verify that the second section doesn't have a `data-id` value of `sectionId1` or `sectionId2`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId1 );
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId2 );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId1 );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId2 );
 		// Verify that the second section has a button widget.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1 .elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
 		// Verify that the third section has `a `data-id` value of `sectionId2`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( sectionId2 );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( sectionId2 );
 	} );
 } );
