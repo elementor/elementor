@@ -539,7 +539,7 @@ class Module extends BaseModule {
 				throw new \Error( 'Invalid kit library nonce.' );
 			}
 
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== \Elementor\Utils::strpos( $file_url, 'http' ) ) {
 				throw new \Error( 'Invalid URL.' );
 			}
 

@@ -442,11 +442,11 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 
 			// find the path of the image. Perform 2 checks:
 			// #1 check if the image is in the uploads folder
-			if ( strpos( $url, $upload_url ) !== false ) {
+			if ( \Elementor\Utils::strpos( $url, $upload_url ) !== false ) {
 				$rel_path = str_replace( $upload_url, '', $url );
 				$img_path = $upload_dir . $rel_path;
 				// #2 check if the image is in the current theme folder
-			} else if ( strpos( $url, $theme_url ) !== false ) {
+			} else if ( \Elementor\Utils::strpos( $url, $theme_url ) !== false ) {
 				$rel_path = str_replace( $theme_url, '', $url );
 				$img_path = $theme_dir . $rel_path;
 			}
@@ -693,7 +693,7 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 
 			$nibbles = array();
 			for ( $i = 0; $i < $length; ++$i ) {
-				$nibbles[ $i ] = strpos( $digits, $number[ $i ] );
+				$nibbles[ $i ] = \Elementor\Utils::strpos( $digits, $number[ $i ] );
 			}
 
 			do {

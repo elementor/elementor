@@ -145,7 +145,7 @@ class Module extends BaseModule {
 
 			// If title includes '-' will have lower priority.
 			uasort( $usage, function( $a ) {
-				return strpos( $a['title'], '-' ) ? 1 : 0;
+				return \Elementor\Utils::strpos( $a['title'], '-' ) ? 1 : 0;
 			} );
 		}
 

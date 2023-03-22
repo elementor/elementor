@@ -31,7 +31,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 
 	public function expected_errors_handler( $errno, $errstr ) {
 		foreach ( $this->expected_error_list as $expect ) {
-			if ( strpos( $errstr, $expect ) !== false ) {
+			if ( \Elementor\Utils::strpos( $errstr, $expect ) !== false ) {
 				$this->expected_errors_found = true;
 
 				return true;

@@ -82,13 +82,13 @@ class WXR_Parser_Regex {
 					$wxr_version = $version[1];
 				}
 
-				if ( false !== strpos( $importline, '<wp:base_site_url>' ) ) {
+				if ( false !== \Elementor\Utils::strpos( $importline, '<wp:base_site_url>' ) ) {
 					preg_match( '|<wp:base_site_url>(.*?)</wp:base_site_url>|is', $importline, $url );
 					$this->base_url = $url[1];
 					continue;
 				}
 
-				if ( false !== strpos( $importline, '<wp:base_blog_url>' ) ) {
+				if ( false !== \Elementor\Utils::strpos( $importline, '<wp:base_blog_url>' ) ) {
 					preg_match( '|<wp:base_blog_url>(.*?)</wp:base_blog_url>|is', $importline, $blog_url );
 					$this->base_blog_url = $blog_url[1];
 					continue;
@@ -96,7 +96,7 @@ class WXR_Parser_Regex {
 					$this->base_blog_url = $this->base_url;
 				}
 
-				if ( false !== strpos( $importline, '<wp:author>' ) ) {
+				if ( false !== \Elementor\Utils::strpos( $importline, '<wp:author>' ) ) {
 					preg_match( '|<wp:author>(.*?)</wp:author>|is', $importline, $author );
 					$a = $this->process_author( $author[1] );
 					$this->authors[ $a['author_login'] ] = $a;
@@ -111,7 +111,7 @@ class WXR_Parser_Regex {
 						continue;
 					}
 
-					$pos = strpos( $importline, "<$tag>" );
+					$pos = \Elementor\Utils::strpos( $importline, "<$tag>" );
 
 					if ( false !== $pos ) {
 						// Take note of any content after the opening tag.
@@ -124,7 +124,7 @@ class WXR_Parser_Regex {
 						continue;
 					}
 
-					$pos = strpos( $importline, "</$tag>" );
+					$pos = \Elementor\Utils::strpos( $importline, "</$tag>" );
 
 					if ( false !== $pos ) {
 						$in_multiline = false;
@@ -326,7 +326,7 @@ class WXR_Parser_Regex {
 		preg_match( "|<$tag.*?>(.*?)</$tag>|is", $string, $return );
 		if ( isset( $return[1] ) ) {
 			if ( substr( $return[1], 0, 9 ) == '<![CDATA[' ) {
-				if ( strpos( $return[1], ']]]]><![CDATA[>' ) !== false ) {
+				if ( \Elementor\Utils::strpos( $return[1], ']]]]><![CDATA[>' ) !== false ) {
 					preg_match_all( '|<!\[CDATA\[(.*?)\]\]>|s', $return[1], $matches );
 					$return = '';
 					foreach ( $matches[1] as $match ) {

@@ -78,7 +78,7 @@ class Elementor_Test_LazyLoad extends Elementor_Test_Base {
 
 		$content = ob_get_clean();
 
-		$lazyload_attr = strpos( $content, 'data-e-bg-lazyload' );
+		$lazyload_attr = \Elementor\Utils::strpos( $content, 'data-e-bg-lazyload' );
 
 		$this->assertFalse( $lazyload_attr );
 	}

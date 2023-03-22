@@ -189,7 +189,7 @@ class Manager extends BaseModule {
 				 * Result:
 				 * $formatted = 'example/documents/1618/elements';
 				 */
-				$formatted = substr( $formatted, 0, strpos( $formatted, '/{' ) );
+				$formatted = substr( $formatted, 0, \Elementor\Utils::strpos( $formatted, '/{' ) );
 			}
 
 			$endpoint = $formatted;

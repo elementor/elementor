@@ -307,7 +307,7 @@ class Autoloader {
 	 * @param string $class Class name.
 	 */
 	private static function autoload( $class ) {
-		if ( 0 !== strpos( $class, self::$default_namespace . '\\' ) ) {
+		if ( 0 !== strpos( $class ?? '', self::$default_namespace . '\\' ) ) {
 			return;
 		}
 

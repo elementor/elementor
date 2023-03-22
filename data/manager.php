@@ -164,7 +164,7 @@ class Manager extends BaseModule {
 		$result->command = $command;
 		$result->args = $args;
 
-		if ( false !== strpos( $command, '?' ) ) {
+		if ( false !== \Elementor\Utils::strpos( $command, '?' ) ) {
 			$command_parts = explode( '?', $command );
 			$pure_command = $command_parts[0];
 			$query_string = $command_parts[1];
@@ -209,7 +209,7 @@ class Manager extends BaseModule {
 				 * Result:
 				 * $formatted = 'example/documents/1618/elements';
 				 */
-				$formatted = substr( $formatted, 0, strpos( $formatted, '/{' ) );
+				$formatted = substr( $formatted, 0, \Elementor\Utils::strpos( $formatted, '/{' ) );
 			}
 
 			$endpoint = $formatted;

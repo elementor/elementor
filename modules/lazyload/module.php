@@ -66,7 +66,7 @@ class Module extends BaseModule {
 	private function append_lazyload_selector( $control, $value ) {
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
-				if ( 0 === strpos( $css_property, 'background-image' ) ) {
+				if ( 0 === \Elementor\Utils::strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';

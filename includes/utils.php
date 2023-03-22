@@ -791,7 +791,7 @@ class Utils {
 				return untrailingslashit( wp_normalize_path( $p ) );
 			} )
 			->find(function ( $p ) use ( $path ) {
-				return false !== strpos( $path, $p );
+				return false !== strpos( $path ?? '', $p );
 			} );
 	}
 
@@ -838,5 +838,15 @@ class Utils {
 			$array = $array[ $key ];
 		}
 		return $array;
+	}
+
+	/**
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param int $offset
+	 * @return int|false
+	 */
+	public static function strpos( $haystack, $needle, $offset = 0 ) {
+		return strpos( $haystack ?? '', $needle, $offset );
 	}
 }
