@@ -39,9 +39,6 @@ class Module extends Base_Module {
 			$this->enqueue_app_initiator( $is_preview );
 		} );
 
-//		add_action( 'elementor/bububububub', function ( Global_Colors $document ) {
-//			$this->add_styleguide_enable_controls( $document );
-//		} );
 		add_action( 'elementor/element/after_section_start', [ $this, 'add_styleguide_enable_controls' ], 10, 3 );
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
