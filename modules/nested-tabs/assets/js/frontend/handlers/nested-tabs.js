@@ -309,11 +309,10 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' )
+			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
 
 			if ( isMobileVersion ) {
-
-				// Timeout added to ensure visibility of the tab title elements on Mac devices.
+				// Timeout added to ensure that opening of the active tab starts after closing the other tab.
 				setTimeout( () => {
 					this.activateTab( tabIndex );
 				} );

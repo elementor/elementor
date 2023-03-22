@@ -1042,7 +1042,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test.only( 'Verify that the active tab titles are visible on the accordion view @latest', async ( { page }, testInfo ) => {
+	test( 'Verify that the active tab titles are visible on the accordion view @latest', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
