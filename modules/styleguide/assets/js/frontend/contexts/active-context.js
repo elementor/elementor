@@ -68,7 +68,11 @@ const ActiveProvider = ( props ) => {
 	const scrollToArea = ( area ) => {
 		const ref = 'colors' === area ? colorsAreaRef : fontsAreaRef;
 
-		ref.current.scrollIntoView( { behavior: 'smooth' } );
+		ref.current.scrollIntoView( {
+			behavior: 'smooth',
+				block: 'start',
+				inline: 'start',
+		} );
 	};
 
 	useEffect( () => {

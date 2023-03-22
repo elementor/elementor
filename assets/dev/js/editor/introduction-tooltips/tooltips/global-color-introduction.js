@@ -6,18 +6,31 @@ export default class GlobalColorIntroduction {
 	}
 
 	bindEvent() {
-		// TODO: fix this event to listen to the route change.
-		window.addEventListener( 'elementor/color-picker/show', ( e ) => {
+		$e.routes.on( 'run:after', ( component, route, args ) => {
 			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
-			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
+			if ( ! $e.routes.isPartOf( 'panel/editor' ) ) {
 				return;
 			}
 
-			if ( e?.detail?.el ) {
-				this.tooltip.show( e.detail.el );
-				this.tooltip.setViewed();
+			const controlView = this.getControlView( args.activeControl );
+			if ( 'color' !== controlView?.model?.attributes?.type ) {
+				return;
 			}
+
+			this.tooltip.show( controlView.el );
+			this.tooltip.setViewed();
 		} );
+	}
+
+	getControlView( control ) {
+		if ( ! control ) {
+			return null;
+		}
+
+		const editor = elementor.getPanelView().getCurrentPageView();
+		const currentView = editor.content ? editor.content.currentView : editor;
+
+		return $e.components.get( 'panel' ).getControlView( currentView, control );
 	}
 
 	initTooltip() {

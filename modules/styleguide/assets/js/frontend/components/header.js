@@ -74,7 +74,7 @@ const ButtonsWrapper = styled( DivBase )`
 	display: flex;
 	justify-content: flex-end;
 	flex-grow: 1;
-	gap: 8px;
+	gap: 20px;
 `;
 
 const Title = styled.h2`

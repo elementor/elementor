@@ -6,22 +6,31 @@ export default class GlobalFontIntroduction {
 	}
 
 	bindEvent() {
-		window.addEventListener( 'elementor/popover/show', ( e ) => {
+		$e.routes.on( 'run:after', ( component, route, args ) => {
 			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
-			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
+			if ( ! $e.routes.isPartOf( 'panel/editor' ) ) {
 				return;
 			}
-			let $popoverElement = null;
 
-			if ( e.detail.el.hasClass( 'elementor-control-typography_typography' ) ) {
-				$popoverElement = e.detail.el;
+			const controlView = this.getControlView( args.activeControl );
+			if ( 'popover_toggle' !== controlView?.model?.attributes?.type ) {
+				return;
 			}
 
-			if ( $popoverElement ) {
-				this.tooltip.show( e.detail.el );
-				this.tooltip.setViewed();
-			}
+			this.tooltip.show( controlView.el );
+			this.tooltip.setViewed();
 		} );
+	}
+
+	getControlView( control ) {
+		if ( ! control ) {
+			return null;
+		}
+
+		const editor = elementor.getPanelView().getCurrentPageView();
+		const currentView = editor.content ? editor.content.currentView : editor;
+
+		return $e.components.get( 'panel' ).getControlView( currentView, control );
 	}
 
 	initTooltip() {

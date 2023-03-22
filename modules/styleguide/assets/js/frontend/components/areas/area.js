@@ -8,11 +8,11 @@ import Section from '../section';
 
 const Wrapper = styled( DivBase )`
 	width: 100%;
-	margin-top: 96px;
+  	padding-top: 96px;
 	min-height: 100px;
 
 	@media (max-width: 1024px) {
-		margin-top: 45px;
+      	padding-top: 50px;
 	}
 `;
 

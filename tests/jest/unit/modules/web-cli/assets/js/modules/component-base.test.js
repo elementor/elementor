@@ -1,8 +1,13 @@
-describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
-	let ToggleControlCommand;
+jest.mock( 'elementor/assets/dev/js/modules/imports/module.js', () => {
+	return class Module {
+		constructor( config ) {
+		}
+	}
+} );
 
-	jest.mock( 'elementor-controls/base-data', () => {} );
+import ComponentBase from 'elementor-api/modules/component-base';
 
+describe( 'ComponentBase', () => {
 	window.document.body.innerHTML = `
 		<div class="elementor-control elementor-control-system_colors">
 			<div class="elementor-repeater-row-controls">
@@ -25,31 +30,7 @@ describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
 	const mockCallBack = jest.fn();
 	document.querySelector( 'div.pickr button.pcr-button' ).addEventListener( 'click', mockCallBack );
 
-	beforeEach( async () => {
-		global.$e = {
-			internal: jest.fn(),
-			modules: {
-				CommandBase: class {},
-			},
-		};
-
-		const jqueryMock = class {
-			constructor( element ) {
-				this.element = element;
-			}
-
-			find( selector ) {
-				return new jqueryMock( this.element.querySelector( selector ) );
-			}
-
-			closest( selector ) {
-				return new jqueryMock( this.element.closest( selector ) );
-			}
-
-			trigger( event ) {
-				this.element.dispatchEvent( new Event( event ) );
-			}
-		};
+	beforeAll( async () => {
 
 		global.elementor = {
 			getPanelView: () => ( {
@@ -64,7 +45,7 @@ describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
 								return {
 									getChildControlView: () => ( {
 										getChildControlView: () => ( {
-											toggle: () => {
+											activate: () => {
 												document.querySelector( 'div.pickr button.pcr-button' ).click();
 											},
 										} ),
@@ -77,39 +58,33 @@ describe( `$e.commands.run( 'controls/toggle-control' )`, () => {
 			} ),
 		};
 
-		ToggleControlCommand = ( await import( 'elementor/assets/dev/js/editor/controls/commands/toggle-control' ) ).default;
 	} );
 
-	afterEach( () => {
-		delete global.$e;
+	afterAll( () => {
 		delete global.elementor;
 
 		jest.resetAllMocks();
 	} );
 
-	it( 'should call mock onclick for picker button when command is correct and throw error if not', () => {
-		// Arrange.
-		const command = new ToggleControlCommand();
+	test( 'activateControl - should call mock onclick (activate) for picker button when controlPath is correct and throw error if not', () => {
+		const component = new ComponentBase();
+		let controlPath = 'custom_colors/primary/color';
 
 		// Act & Assert.
 		expect(
-			() => command.apply( {
-				controlPath: 'custom_colors/primary/color', // Document does not have custom colors.
-			} ),
+			() => component.activateControl( controlPath ) // Document does not have custom colors.
 		).toThrow( TypeError );
 
 		// Act.
-		command.apply( {
-			controlPath: 'system_colors/primary/color', // Document has system colors.
-		} );
+		controlPath = 'system_colors/primary/color'; // Document has system colors.
+		component.activateControl( controlPath );
 
 		// Assert.
 		expect( mockCallBack ).toHaveBeenCalledTimes( 1 );
 
 		// Act.
-		command.apply( {
-			controlPath: 'system_colors/secondary/color',
-		} );
+		controlPath = 'system_colors/secondary/color'; // Document has system colors.
+		component.activateControl( controlPath );
 
 		// Assert.
 		expect( mockCallBack ).toHaveBeenCalledTimes( 2 );

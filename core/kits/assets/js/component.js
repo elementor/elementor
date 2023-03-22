@@ -68,29 +68,6 @@ export default class extends $e.modules.ComponentBase {
 		this.activateControl( args.activeControl );
 	}
 
-	activateControl( controlPath ) {
-		if ( ! controlPath ) {
-			return;
-		}
-
-		const editor = elementor.getPanelView().getCurrentPageView();
-		const currentView = editor.content.currentView;
-
-		const controlView = this.getControlView( currentView, controlPath );
-		controlView.activate?.();
-	}
-
-	getControlView( currentView, controlPath ) {
-		const controls = controlPath.split( '/' );
-		let controlView = currentView.getControlViewByName( controls[ 0 ] );
-
-		controls.slice( 1 ).forEach( ( control ) => {
-			controlView = controlView.getChildControlView?.( control );
-		} );
-
-		return controlView;
-	}
-
 	onCloseRoute( route, newRoute ) {
 		super.onCloseRoute( route );
 
