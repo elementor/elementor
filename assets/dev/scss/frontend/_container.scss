@@ -75,10 +75,17 @@
 		display: var( --display );
 	}
 
+	&.e-grid {
+		--grid-justify-content: start;
+		--grid-align-content: start;
+	}
+
 	&.e-grid,
 	&.e-grid > .e-con-inner {
 		grid-template-columns: var( --e-con-grid-template-columns );
 		grid-template-rows: var( --e-con-grid-template-rows );
+		justify-content: var( --grid-justify-content );
+		align-content: var( --grid-align-content );
 	}
 
 	// Set default values to the outer div of the boxed container.
