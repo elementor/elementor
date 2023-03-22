@@ -544,7 +544,7 @@ test.describe( 'Container tests', () => {
 		await expect( resizers ).toHaveCount( 0 );
 	} );
 
-	test.only( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {
+	test( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
