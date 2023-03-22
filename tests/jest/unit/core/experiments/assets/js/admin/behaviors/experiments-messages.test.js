@@ -162,8 +162,8 @@ describe( 'ExperimentsMessages Behavior', () => {
 
 	it( 'Should deactivate the experiment and its dependencies when clicking DEACTIVATE button', () => {
 		// Arrange.
-		const { confirm } = mockDialog();
-		const submitMock = jest.fn();
+		const { confirm } = mockDialog(),
+			submitMock = jest.fn();
 
 		elements.form.addEventListener( 'submit', ( e ) => {
 			submitMock();
@@ -217,8 +217,9 @@ describe( 'ExperimentsMessages Behavior', () => {
 
 	it( 'Should show the deactivate dialog when changing the select value from default to inactive while exp default value is active', () => {
 		// Arrange
-		const { confirm } = mockDialog();
-		const submitMock = jest.fn();
+		const { confirm } = mockDialog(),
+			submitMock = jest.fn();
+
 		elements.form.addEventListener( 'submit', ( e ) => {
 			submitMock();
 

@@ -103,7 +103,7 @@ export default class ExperimentsMessages {
 		Object
 			.entries( elementorAdminConfig.experiments )
 			.forEach( ( [ id, experimentData ] ) => {
-				const isDependant = ( experimentData.dependencies.includes( experimentId ) ),
+				const isDependant = experimentData.dependencies.includes( experimentId ),
 					isActive = this.getExperimentActualState( id ) === STATE_ACTIVE;
 
 				if ( isDependant && isActive ) {
@@ -120,10 +120,10 @@ export default class ExperimentsMessages {
 
 	shouldShowDeactivationDialog( experimentId ) {
 		const getExperimentData = this.getExperimentData( experimentId ),
-			isInitiallyActive = getExperimentData.state === STATE_ACTIVE || ( getExperimentData.state === STATE_DEFAULT && getExperimentData.default === STATE_ACTIVE ),
+			isInitialStateActive = getExperimentData.state === STATE_ACTIVE || ( getExperimentData.state === STATE_DEFAULT && getExperimentData.default === STATE_ACTIVE ),
 			hasMessage = !! this.getMessage( experimentId, 'on_deactivate' );
 
-		return hasMessage && isInitiallyActive;
+		return hasMessage && isInitialStateActive;
 	}
 
 	showDialog( dialog ) {
@@ -149,7 +149,7 @@ export default class ExperimentsMessages {
 		} ).show();
 	}
 
-	joinDepenednciesNames( array, glue, finalGlue = '' ) {
+	joinDependenciesNames( array, glue = '', finalGlue = '' ) {
 		if ( '' === finalGlue ) {
 			return array.join( glue );
 		}
@@ -171,7 +171,7 @@ export default class ExperimentsMessages {
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dialogMessage = this.joinDepenednciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
+			dialogMessage = this.joinDependenciesNames( this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ) );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
@@ -198,10 +198,8 @@ export default class ExperimentsMessages {
 	}
 
 	showDeactivationDialog( experimentId ) {
-		const message = this.getMessage( experimentId, 'on_deactivate' );
-
 		this.showDialog( {
-			message,
+			message: this.getMessage( experimentId, 'on_deactivate' ),
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			strings: {
 				confirm: __( 'Deactivate', 'elementor' ),
