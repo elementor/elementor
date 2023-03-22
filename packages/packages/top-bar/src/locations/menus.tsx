@@ -26,6 +26,7 @@ type MenuItem<
 	name: string,
 	group?: TGroup,
 	priority?: number,
+	visible?: boolean,
 	overwrite?: boolean,
 } & (
 	{ props: ComponentPropsWithoutRef<TComponent>, useProps?: never } |
@@ -83,12 +84,17 @@ function createRegisterMenuItem<
 			return;
 		}
 
-		const useProps = 'props' in args ? () => args.props : args.useProps;
+		// TS can't infer that `args.props` is defined in this case.
+		const useProps = 'props' in args ? () => args.props as NonNullable<typeof args.props> : args.useProps;
 
 		const Component = component as ElementType;
 
 		const Filler = ( props: object ) => {
-			const componentProps = useProps();
+			const { visible = true, ...componentProps } = useProps();
+
+			if ( ! visible ) {
+				return null;
+			}
 
 			return <Component { ...props } { ...componentProps } />;
 		};

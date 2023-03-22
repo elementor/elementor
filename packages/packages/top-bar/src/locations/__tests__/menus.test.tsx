@@ -175,6 +175,28 @@ describe( '@elementor/top-bar - Menus API', () => {
 		expect( icon ).toBeInTheDocument();
 		expect( icon ).toHaveTextContent( 'a' );
 	} );
+
+	it( 'should register a hidden action', () => {
+		// Arrange.
+		const menu = createMenu( {
+			name: 'test',
+		} );
+
+		// Act.
+		menu.registerAction( {
+			name: 'hidden',
+			useProps: () => ( {
+				title: 'hidden-action',
+				icon: () => <div />,
+				visible: false,
+			} ),
+		} );
+
+		// Assert.
+		const { queryByLabelText } = renderMenu( menu );
+
+		expect( queryByLabelText( 'hidden-action' ) ).not.toBeInTheDocument();
+	} );
 } );
 
 function renderMenu<TGroup extends string>( menu: ReturnType<typeof createMenu<TGroup>> ) {
