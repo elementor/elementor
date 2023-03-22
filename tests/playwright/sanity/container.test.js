@@ -543,6 +543,48 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await expect( resizers ).toHaveCount( 0 );
 	} );
+
+	test.only( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
+			containerId2 = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( widgets.button, containerId1 );
+		await editor.addWidget( widgets.heading, containerId2 );
+
+		// Copy container 1.
+		const container1 = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId1 );
+		await container1.hover();
+		await editor.getPreviewFrame().locator( `.elementor-element-${ containerId1 } > .elementor-element-overlay .elementor-editor-element-edit` ).click( { button: 'right' } );
+		await expect( page.locator( '.elementor-context-menu-list__item-copy' ) ).toBeVisible();
+		await page.locator( '.elementor-context-menu-list__item-copy' ).click();
+
+		// Open Add Section Inline element.
+		const element = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId2 );
+		await element.hover();
+		const elementAddButton = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId2 + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add' );
+		await elementAddButton.click();
+		await editor.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+
+		// Paste container 1 onto New Container element.
+		await editor.getPreviewFrame().locator( '.elementor-add-section-inline' ).click( { button: 'right' } );
+		await expect( page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ) ).toBeVisible();
+		await page.locator( '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste' ).click();
+
+		// Assert.
+		// Verify that the first container has a `data-id` value of `containerId1`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( containerId1 );
+		// Verify that the second container doesn't have a `data-id` value of `containerId1` or `containerId2`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId1 );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId2 );
+		// Verify that the second container has a button widget.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1 .elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
+		// Verify that the third container has `a `data-id` value of `containerId2`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {

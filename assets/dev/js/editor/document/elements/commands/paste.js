@@ -74,8 +74,6 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		const result = [];
 
 		containers.forEach( ( targetContainer ) => {
-			const createNewElementAtTheBottomOfThePage = 'undefined' === typeof at;
-
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
@@ -137,6 +135,8 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 						break;
 
 					default: {
+						const createNewElementAtTheBottomOfThePage = 'undefined' === typeof at;
+
 						// The 'default' case is widget.
 						let target;
 
