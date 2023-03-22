@@ -73,13 +73,13 @@
 	outline: none;
 	border: none;
 	background-color: var(--e-a-btn-bg);
-	color: var(--e-a-btn-color);
+	color: var(--e-a-btn-color-invert);
 	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&:hover {
 		background-color: var(--e-a-btn-bg-hover);
-		color: var(--e-a-btn-color);
+		color: var(--e-a-btn-color-invert);
 	}
 
 	i {
@@ -88,9 +88,11 @@
 
 	&.elementor-add-section-button {
 		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
 
 		&:hover {
 			background-color: var(--e-a-btn-bg-primary-hover);
+			color: var(--e-a-btn-color);
 		}
 	}
 }

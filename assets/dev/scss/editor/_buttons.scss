@@ -13,13 +13,13 @@
 	border: none;
 	border-radius: var(--e-a-border-radius);
 	background-color: var(--e-a-btn-bg);
-	color: var(--e-a-btn-color);
+	color: var(--e-a-btn-color-invert);
 	transition: var(--e-a-transition-hover);
 
 	&:hover {
 		border: none; //Remove border on a:hover
 		background-color: var(--e-a-btn-bg-hover);
-		color: var(--e-a-btn-color);
+		color: var(--e-a-btn-color-invert);
 	}
 
 	&:active {
@@ -68,6 +68,7 @@
 
 	&.e-primary {
 		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
 
 		&:hover {
 			background-color: var(--e-a-btn-bg-primary-hover);
@@ -75,7 +76,7 @@
 
 		&.e-btn-txt {
 			background: transparent;
-			color: var(--e-a-color-primary);
+			color: var(--e-a-color-primary-bold);
 
 			&:hover {
 				background:var(--e-a-bg-primary);

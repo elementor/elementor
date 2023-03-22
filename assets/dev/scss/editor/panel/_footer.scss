@@ -123,7 +123,7 @@
 		&publish {
 
 			&:not(.elementor-disabled) {
-				border-inline-end: 1px solid $e-purple-tint;
+				border-inline-end: 1px solid var(--e-a-btn-bg-primary-hover);
 			}
 
 			&.elementor-disabled {

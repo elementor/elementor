@@ -29,9 +29,12 @@ $e-teal-600:	#0A875A;
 $e-teal-900:	#032317;
 
 //Editor Facelift 2023 - Pink
-$e-pink-700:	#C62E96;
-$e-pink-800:	#AB2881;
-$e-pink-900:	#91226D;
+$e-pink-50:		#FAE8FF;
+$e-pink-100:	#F5D0FE;
+$e-pink-200:	#F0ABFC;
+$e-pink-700:	#E315F5;
+$e-pink-800:	#D004D4;
+$e-pink-900:	#C00BB9;
 
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
@@ -44,13 +47,15 @@ $e-purple-tint:	#6661FF;
 $e-purple-shade:#EBEBFF;
 
 //Editor Facelift 2023 - Semantic Colors
-$e-primary:				$e-purple;
+$e-primary:				$e-pink-200;
+$e-primary-bold:		$e-pink-800;
 $e-secondary: 			$e-gray-600;
 $e-success:				$e-teal-600;
 $e-info: 				#2563EB;
 $e-danger:				#DC2626;
 $e-warning: 			#F59E0B;
-$e-brand: 				$e-pink-700;
+$e-brand: 				$e-purple;
+$e-primary-bg:			$e-pink-50;
 $e-success-bg:			#F2FDF5;
 $e-danger-bg:			#FEF1F4;
 $e-info-bg: 			#F0F7FF;
