@@ -15,7 +15,7 @@ test.describe( 'Section tests', () => {
 	test.afterAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		new WpAdminPage( page, testInfo );
 	} );
 
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page }, testInfo ) => {

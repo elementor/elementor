@@ -1,6 +1,5 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
-const {expect} = require("@playwright/test");
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
