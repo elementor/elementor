@@ -74,6 +74,8 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 		const result = [];
 
 		containers.forEach( ( targetContainer ) => {
+			const createNewElementAtTheBottomOfThePage = 'undefined' === typeof at;
+
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
 			data.forEach( ( model ) => {
@@ -150,6 +152,9 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								model: {
 									elType: 'container',
 								},
+								options: {
+									at: createNewElementAtTheBottomOfThePage ? ++index : index,
+								},
 							} );
 
 							target = [ target ];
@@ -162,7 +167,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 								},
 								columns: 1,
 								options: {
-									at: ++index,
+									at: createNewElementAtTheBottomOfThePage ? ++index : index,
 								},
 							} );
 
