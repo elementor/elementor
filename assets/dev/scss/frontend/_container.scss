@@ -34,8 +34,6 @@
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
-	--grid-justify-content: start;
-	--grid-align-content: start;
 
 
 	position: var( --position );
@@ -76,6 +74,11 @@
 	&,
 	& > .e-con-inner {
 		display: var( --display );
+	}
+
+	&.e-grid {
+		--grid-justify-content: start;
+		--grid-align-content: start;
 	}
 
 	&.e-grid,
