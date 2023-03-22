@@ -3,6 +3,7 @@ namespace Elementor\Modules\Styleguide;
 
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Kits\Controls\Switcher as Global_Style_Switcher;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\Modules\Styleguide\Data\Controller;
@@ -37,6 +38,11 @@ class Module extends Base_Module {
 
 			$this->enqueue_app_initiator( $is_preview );
 		} );
+
+//		add_action( 'elementor/bububububub', function ( Global_Colors $document ) {
+//			$this->add_styleguide_enable_controls( $document );
+//		} );
+		add_action( 'elementor/element/after_section_start', [ $this, 'add_styleguide_enable_controls' ], 10, 3 );
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
@@ -119,9 +125,31 @@ class Module extends Base_Module {
 	 *
 	 * @return bool
 	 */
-	public static function is_styleguide_preview_enabled(): bool {
+	private function is_styleguide_preview_enabled(): bool {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
 
 		return $editor_preferences->get_settings( 'enable_styleguide_preview' );
+	}
+
+	public function add_styleguide_enable_controls( $element, $section_id, $args ) {
+		if ( 'kit' !== $element->get_name() || ! in_array( $section_id, [ 'section_global_colors', 'section_text_style' ] ) ) {
+			return;
+		}
+
+		$element->add_control(
+			$section_id . '_enable_styleguide_preview',
+			[
+				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
+				'type' => Global_Style_Switcher::CONTROL_TYPE,
+				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors.', 'elementor' ),
+				'separator' => 'after',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'default' => $this->is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'value' => $this->is_styleguide_preview_enabled() ? 'yes' : 'no',
+				'on_change_command' => 'preview/styleguide/enable',
+			]
+		);
+
 	}
 }
