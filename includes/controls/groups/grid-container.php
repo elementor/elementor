@@ -95,18 +95,18 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-end-h',
 				],
-//				'space-between' => [
-//					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-between-h',
-//				],
-//				'space-around' => [
-//					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-around-h',
-//				],
-//				'space-evenly' => [
-//					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-evenly-h',
-//				],
+				//'space-between' => [
+				//	'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-between-h',
+				//],
+				//'space-around' => [
+				//	'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-around-h',
+				//],
+				//'space-evenly' => [
+				//	'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-evenly-h',
+				//],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-justify-content: {{VALUE}};',
@@ -132,18 +132,18 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
 					'icon' => 'eicon-flex eicon-justify-end-v',
 				],
-//				'space-between' => [
-//					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-between-v',
-//				],
-//				'space-around' => [
-//					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-around-v',
-//				],
-//				'space-evenly' => [
-//					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
-//					'icon' => 'eicon-flex eicon-justify-space-evenly-v',
-//				],
+				//'space-between' => [
+				//	'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-between-v',
+				//],
+				//'space-around' => [
+				//	'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-around-v',
+				//],
+				//'space-evenly' => [
+				//	'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+				//	'icon' => 'eicon-flex eicon-justify-space-evenly-v',
+				//],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-align-content: {{VALUE}};',
