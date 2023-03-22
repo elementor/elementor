@@ -1,12 +1,10 @@
 const path = require("path");
 const fs = require("fs");
-const { ExtractDependenciesWebpackPlugin } = require("@elementor/extract-dependencies-webpack-plugin");
+const { GenerateWordPressAssetFileWebpackPlugin } = require("@elementor/generate-wordpress-asset-file-webpack-plugin");
 const { ExtractI18nExpressionsWebpackPlugin } = require("@elementor/extract-i18n-expressions-webpack-plugin");
-const { ExternalWordPressAssetsWebpackPlugin } = require("@elementor/external-wordpress-assets-webpack-plugin");
+const { ExternalizeWordPressAssetsWebpackPlugin } = require("@elementor/externalize-wordpress-assets-webpack-plugin");
 
 const { dependencies } = require("../package.json");
-
-const globalObjectKey = '__UNSTABLE__elementorPackages';
 
 const packages = Object.keys( dependencies )
 	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) )
@@ -40,7 +38,7 @@ const buildEntry = ( packages ) => {
 		[ name ]: {
 			import: path,
 			library: {
-				name: [ globalObjectKey, kebabToCamelCase( name ) ],
+				name: [ '__UNSTABLE__elementorPackages', kebabToCamelCase( name ) ],
 				type: 'window',
 			},
 		},
@@ -51,32 +49,8 @@ const common = {
 	name: 'packages',
 	plugins: [
 		// GenerateWordPressAssetFileWebpackPlugin,
-		new ExtractDependenciesWebpackPlugin( {
-			handlePrefix: 'elementor-packages-',
-			handlesMap: {
-				exact: {
-					react: 'react',
-					'react-dom': 'react-dom',
-				},
-				startsWith: {
-					'@elementor/': 'elementor-packages-',
-					'@wordpress/': 'wp-',
-				}
-			}
-		} ),
-		// ExternalizeWordPressAssetsWebpackPlugin,
-		new ExternalWordPressAssetsWebpackPlugin( {
-			externalsMap: {
-				exact: {
-					react: 'React',
-					'react-dom': 'ReactDOM',
-				},
-				startsWith: {
-					'@elementor/': '__UNSTABLE__elementorPackages',
-					'@wordpress/': 'wp',
-				}
-			}
-		} ),
+		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
+		new ExternalizeWordPressAssetsWebpackPlugin(),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
@@ -88,6 +62,7 @@ const devConfig = {
 	entry: buildEntry( packages ),
 	mode: 'development',
 	devtool: false, // TODO: Need to check what to do with source maps.
+	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	output: {
 		...( common.output || {} ),
 		filename: '[name].js',

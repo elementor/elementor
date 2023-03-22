@@ -1,23 +1,59 @@
 // Inspired by "Dependency Extraction Webpack Plugin" by @wordpress team.
 // Link: https://github.com/WordPress/gutenberg/tree/trunk/packages/dependency-extraction-webpack-plugin
-import { sources } from 'webpack';
+import { sources, Compilation, Compiler, Chunk } from 'webpack';
 
-export class ExtractDependenciesWebpackPlugin {
-	options;
+type HandlesMap = {
+	exact: Record< string, string >;
+	startsWith: Record< string, string >;
+}
 
-	constructor( options ) {
-		this.options = options;
+type Options = {
+	handlePrefix: string;
+	handlesMap?: Partial<HandlesMap>
+}
+
+type NormalizedOptions = {
+	handlePrefix: string;
+	handlesMap: HandlesMap;
+}
+
+type Module = {
+	userRequest?: string;
+	modules?: Module[];
+}
+
+const baseHandlesMap: HandlesMap = {
+	exact: {
+		react: 'react',
+		'react-dom': 'react-dom',
+	},
+	startsWith: {
+		'@elementor/': 'elementor-packages-',
+		'@wordpress/': 'wp-',
+	},
+};
+
+export class GenerateWordPressAssetFileWebpackPlugin {
+	options: NormalizedOptions;
+
+	constructor( options: Options ) {
+		this.options = this.normalizeOptions( options );
 	}
 
-	apply( compiler ) {
+	apply( compiler: Compiler ) {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
 				[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
 					const chunk = entrypoint.chunks.find( ( { name } ) => name === id );
+
+					if ( ! chunk ) {
+						return;
+					}
+
 					const chunkJSFile = this.getFileFromChunk( chunk );
 
 					if ( ! chunkJSFile ) {
-
+						return;
 					}
 
 					const deps = this.getDepsFromChunk( compilation, chunk );
@@ -29,7 +65,7 @@ export class ExtractDependenciesWebpackPlugin {
 					const content = this.createAssetsFileContent(
 						id,
 						deps,
-						compilation.options.optimization.minimize
+						compilation.options.optimization.minimize || false
 					);
 
 					// Add source and file into compilation for webpack to output.
@@ -41,12 +77,15 @@ export class ExtractDependenciesWebpackPlugin {
 		} );
 	}
 
-	getDepsFromChunk( compilation, chunk ) {
-		const depsSet = new Set();
+	getDepsFromChunk( compilation: Compilation, chunk: Chunk ) {
+		const depsSet = new Set<string>();
 
 		compilation.chunkGraph.getChunkModules( chunk ).forEach( ( module ) => {
-			[ ...( module.modules || [] ), module ].forEach( ( subModule ) => {
-				if ( ! this.isExternalDep( subModule.userRequest ) ) {
+			// There are some issues with types in webpack, so we need to cast it.
+			const theModule = module as Module;
+
+			[ ...( theModule.modules || [] ), theModule ].forEach( ( subModule ) => {
+				if ( ! subModule.userRequest || ! this.isExternalDep( subModule.userRequest ) ) {
 					return;
 				}
 
@@ -57,7 +96,7 @@ export class ExtractDependenciesWebpackPlugin {
 		return depsSet;
 	}
 
-	createAssetsFileContent( entryId, deps, shouldMinify ) {
+	createAssetsFileContent( entryId: string, deps: Set<string>, shouldMinify: boolean ) {
 		const handleName = this.generateHandleName( entryId );
 
 		const depsAsString = [ ...deps ]
@@ -90,11 +129,11 @@ return [
 		return content;
 	}
 
-	getFileFromChunk( chunk ) {
+	getFileFromChunk( chunk: Chunk ) {
 		return [ ...chunk.files ].find( ( f ) => /\.js$/i.test( f ) );
 	}
 
-	isExternalDep( request ) {
+	isExternalDep( request: string ) {
 		const { startsWith, exact } = this.options.handlesMap;
 
 		return request && (
@@ -103,7 +142,7 @@ return [
 		);
 	}
 
-	transformIntoDepName( name ) {
+	transformIntoDepName( name: string ) {
 		const { startsWith, exact } = this.options.handlesMap;
 
 		if ( Object.keys( exact ).includes( name ) ) {
@@ -119,7 +158,7 @@ return [
 		return name;
 	}
 
-	generateHandleName( name ) {
+	generateHandleName( name: string ) {
 		if ( this.options.handlePrefix ) {
 			return `${ this.options.handlePrefix }${ name }`;
 		}
@@ -127,7 +166,23 @@ return [
 		return name;
 	}
 
-	generateAssetsFileName( filename ) {
+	generateAssetsFileName( filename: string ) {
 		return filename.replace( /(\.min)?\.js$/i, '.asset.php' );
+	}
+
+	normalizeOptions( options: Options ): NormalizedOptions {
+		return {
+			...options,
+			handlesMap: {
+				exact: {
+					...baseHandlesMap.exact,
+					...( options?.handlesMap?.exact || {} ),
+				},
+				startsWith: {
+					...baseHandlesMap.startsWith,
+					...( options?.handlesMap?.startsWith || {} ),
+				},
+			},
+		};
 	}
 }

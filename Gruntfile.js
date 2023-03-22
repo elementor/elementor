@@ -130,8 +130,8 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'build', [
-		'default',
 		'shell:packages_build',
+		'default',
 		'usebanner',
 		'clean',
 		'copy',

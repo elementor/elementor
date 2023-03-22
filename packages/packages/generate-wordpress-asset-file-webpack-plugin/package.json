@@ -1,0 +1,12 @@
+{
+	"name": "@elementor/generate-wordpress-asset-file-webpack-plugin",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs --dts",
+		"dev": "tsup src/index.ts --format esm,cjs"
+	},
+	"peerDependencies": {
+		"webpack": "5.x"
+	}
+}
