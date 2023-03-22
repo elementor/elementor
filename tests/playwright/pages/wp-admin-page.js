@@ -85,7 +85,7 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
+			// Try to make the element visible - Since some experiments may be hidden for the user,
 			// but actually exist and need to be tested.
 			await this.page.evaluate( ( el ) => {
 				const element = document.querySelector( el );
@@ -97,8 +97,8 @@ module.exports = class WpAdminPage extends BasePage {
 
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 
-			// Confirm any experiment dependency modal that displays as a result of the chosen experiments.
-			await this.maybeConfirmExperimentDependency();
+			// Click to confirm any experiment that has dependencies.
+			await this.confirmExperimentModalIfOpen();
 		}
 
 		await this.page.click( '#submit' );
@@ -110,12 +110,13 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.locator( '#submit' ).click();
 	}
 
-	async maybeConfirmExperimentDependency() {
-		const dialogSelector = '#e-experiments-dependency-dialog',
-			dialog = await this.page.$( dialogSelector );
+	async confirmExperimentModalIfOpen() {
+		const dialogButtonSelector = '#e-experiments-dependency-dialog .dialog-confirm-ok',
+			dialogButton = await this.page.evaluate( ( selector ) => document.querySelector( selector ), dialogButtonSelector );
 
-		if ( dialog ) {
-			await this.page.locator( dialogSelector + ' .dialog-confirm-ok' ).click();
+		if ( dialogButton ) {
+			await this.page.locator( dialogButtonSelector ).click();
+			await this.page.waitForLoadState( 'load' );
 		}
 	}
 
