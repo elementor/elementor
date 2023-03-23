@@ -182,7 +182,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertSameSets(
 			$expected,
 			wp_list_pluck( $response->get_data(), 'id' ),
-			'Expected to get posts excluding the specified posts',
+			'Expected to get posts excluding the specified posts'
 		);
 	}
 

@@ -24,7 +24,7 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
-		$this->register_endpoint( new Recent($this));
+		$this->register_endpoint( new Recent( $this ) );
 	}
 
 	protected function register_index_endpoint() {
