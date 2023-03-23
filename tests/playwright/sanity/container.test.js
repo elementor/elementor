@@ -543,6 +543,38 @@ test.describe( 'Container tests', () => {
 		await editor.togglePreviewMode();
 		await expect( resizers ).toHaveCount( 0 );
 	} );
+
+	test( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
+			containerId2 = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		await editor.addWidget( widgets.button, containerId1 );
+		await editor.addWidget( widgets.heading, containerId2 );
+
+		// Copy container 1.
+		await editor.copyElement( containerId1 );
+
+		// Open Add Section Inline element.
+		await editor.openAddElementSection( containerId2 );
+
+		// Paste container 1 onto New Container element.
+		await editor.pasteElement( '.elementor-add-section-inline' );
+
+		// Assert.
+		// Verify that the first container has a `data-id` value of `containerId1`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( containerId1 );
+		// Verify that the second container doesn't have a `data-id` value of `containerId1` or `containerId2`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId1 );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId2 );
+		// Verify that the second container has a button widget.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
+		// Verify that the third container has `a `data-id` value of `containerId2`.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
