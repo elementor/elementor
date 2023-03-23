@@ -4,7 +4,7 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
-const { setIconsToTabs, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
+const { setIconsToTabs, editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'General test', async ( { page }, testInfo ) => {
