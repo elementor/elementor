@@ -7,7 +7,7 @@ const { testIconCount } = require( './tests/icons' );
 const { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.only( 'General test', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
