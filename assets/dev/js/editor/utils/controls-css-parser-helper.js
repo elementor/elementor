@@ -1,5 +1,4 @@
 export default class ControlsCSSParserHelper {
-
 	/**
 	 * Parse size units selectors dictionary
 	 *
@@ -16,15 +15,15 @@ export default class ControlsCSSParserHelper {
 		return constrolSelector.replace( /{{(.*?)}}/g, function( match, placeholder ) {
 			const keys = placeholder.toLowerCase().split( '.' );
 			let value = controlValues;
-	
+
 			for ( let i = 0; i < keys.length; i++ ) {
 				value = value[ keys[ i ] ];
-	
+
 				if ( value === undefined ) {
 					return match;
 				}
 			}
-	
+
 			return value;
 		} );
 	}
