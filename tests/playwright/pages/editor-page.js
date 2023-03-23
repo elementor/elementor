@@ -413,48 +413,34 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForLoadState( 'networkidle' );
 	}
 
-	async previewChanges( context ) {
-		const previewPagePromise = context.waitForEvent( 'page' );
-
-		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
-
-		const previewPage = await previewPagePromise;
-		await previewPage.waitForLoadState();
-
-		return previewPage;
-	}
 
 	/**
-	 * Apply Element Settings
+	 * Check if an item is in the viewport.
 	 *
-	 * Apply settings to a widget without having to navigate through its Panels and Sections to set each individual
-	 * control value.
-	 *
-	 * You can get the Element settings by right-clicking an existing widget or element in the Editor, choose "Copy",
-	 * then paste the content into a text editor and filter out just the settings you want to apply to your element.
-	 *
-	 * Example usage:
-	 * ```
-	 * await editor.applyElementSettings( 'cdefd82', {
-	 *     background_background: 'classic',
-	 *     background_color: 'rgb(255, 10, 10)',
-	 * } );
-	 * ```
-	 *
-	 * @param {string} elementId - Id of the element you intend to apply the settings to.
-	 * @param {Object} settings  - Object settings from the Editor > choose element > right-click > "Copy".
-	 *
+	 * @param {string} itemSelector
 	 * @return {Promise<void>}
 	 */
-	async applyElementSettings( elementId, settings ) {
-		await this.page.evaluate(
-			( args ) => $e.run( 'document/elements/settings', {
-				container: elementor.getContainer( args.elementId ),
-				settings: args.settings,
-			} ),
-			{ elementId, settings },
-		);
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
 	}
 
 	/**
@@ -490,34 +476,5 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId, value ) {
 		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
-	}
-
-	/**
-	 * Check if an item is in the viewport.
-	 *
-	 * @param {string} itemSelector
-	 * @return {Promise<void>}
-	 */
-	async isItemInViewport( itemSelector ) {
-		// eslint-disable-next-line no-shadow
-		return this.page.evaluate( ( itemSelector ) => {
-			let isVisible = false;
-
-			const element = document.querySelector( itemSelector );
-
-			if ( element ) {
-				const rect = element.getBoundingClientRect();
-
-				if ( rect.top >= 0 && rect.left >= 0 ) {
-					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
-						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
-
-					if ( rect.right <= vw && rect.bottom <= vh ) {
-						isVisible = true;
-					}
-				}
-			}
-			return isVisible;
-		}, itemSelector );
 	}
 };
