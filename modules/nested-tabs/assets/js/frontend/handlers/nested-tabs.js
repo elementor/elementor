@@ -311,7 +311,12 @@ export default class NestedTabs extends Base {
 		if ( ! isActiveTab ) {
 			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
 
-			isMobileVersion ? this.activateMobileTab( tabIndex ) : this.activateTab( tabIndex );
+			if ( isMobileVersion ) {
+				this.activateMobileTab( tabIndex );
+				return;
+			}
+
+			this.activateTab( tabIndex );
 		}
 	}
 
