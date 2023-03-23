@@ -1,3 +1,21 @@
+// Set icons to tabs, used in setIconsToTabs function.
+async function addIcon( page, selectedIcon ) {
+	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
+	await page.locator( '.dialog-lightbox-insert_icon' ).click();
+}
+
+// Iterate tabs and add an icon and an active Icon to each one.
+async function setIconsToTabs( page, TabIcons ) {
+	for ( const tab of TabIcons ) {
+		const index = tabIcons.indexOf( tab ) + 1;
+		await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
+		await addIcon( page, tab.icon );
+		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
+		await addIcon( page, tab.activeIcon );
+	}
+}
+
 async function editTab( editor, tabIndex ) {
 	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
 	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
@@ -71,6 +89,8 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 }
 
 module.exports = {
+	addIcon,
+	setIconsToTabs,
 	editTab,
 	clickTab,
 	clickMobileTab,
