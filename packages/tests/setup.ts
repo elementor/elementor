@@ -6,11 +6,6 @@ import { deleteStore } from '@elementor/store';
 import '@testing-library/jest-dom';
 import '@wordpress/jest-console';
 
-// Add jQuery
-import $ from 'jquery';
-global.$ = $;
-global.jQuery = $;
-
 let windowOriginalProps: PropertyKey[];
 
 beforeEach( () => {
