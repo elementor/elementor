@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page.js';
-import EditorPage from '../../../pages/editor-page';
+import EditorPage from '../../../pages/editor-page.js';
 import { viewportSize } from '../../../enums/viewport-sizes.js';
 import { testTabIsVisibleInAccordionView } from './tests/accordion.js';
 import { testIconCount } from './tests/icons.js';
