@@ -1,9 +1,9 @@
 import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
 
 // Add jQuery
-import $ from 'jquery';
-global.$ = $;
-global.jQuery = $;
+import jQuery from 'jquery';
+//global.$ = $;
+//global.jQuery = $;
 
 describe( 'ControlsCSSParser', () => {
 	test( 'parseSizeUnitsSelectorsDictionary', () => {
