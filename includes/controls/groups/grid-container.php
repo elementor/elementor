@@ -77,6 +77,56 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['justify_content'] = [
+			'label' => esc_html_x( 'Justify Content', 'Grid Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'label_block' => true,
+			'default' => '',
+			'options' => [
+				'start' => [
+					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-start-h',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-center-h',
+				],
+				'end' => [
+					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-end-h',
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--grid-justify-content: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
+		$fields['align_content'] = [
+			'label' => esc_html_x( 'Align Content', 'Grid Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'label_block' => true,
+			'default' => '',
+			'options' => [
+				'start' => [
+					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-start-v',
+				],
+				'center' => [
+					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-center-v',
+				],
+				'end' => [
+					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-flex eicon-justify-end-v',
+				],
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--grid-align-content: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
 		return $fields;
 	}
 
