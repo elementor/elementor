@@ -82,7 +82,7 @@ class Manager extends Base_Object {
 			'generator_tag' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -410,6 +410,12 @@ class Manager extends Base_Object {
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
+			'messages' => [
+				'on_deactivate' => esc_html__(
+					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu',
+					'elementor'
+				),
+			],
 		] );
 
 		$this->add_feature( [
