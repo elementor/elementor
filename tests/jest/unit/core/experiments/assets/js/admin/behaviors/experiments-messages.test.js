@@ -1,4 +1,4 @@
-import ExperimentsDependency from 'elementor/core/experiments/assets/js/admin/behaviors/experiments-dependency';
+import ExperimentsMessages from 'elementor/core/experiments/assets/js/admin/behaviors/experiments-messages';
 import {
 	mockExperimentsConfig,
 	mockExperimentsForm,
@@ -9,8 +9,8 @@ import {
 	mockDialog,
 } from './utils';
 
-describe( 'ExperimentsDependency Behavior', () => {
-	let experimentsDependency, elements;
+describe( 'ExperimentsMessages Behavior', () => {
+	let experimentsMessages, elements;
 
 	beforeEach( () => {
 		mockExperimentsConfig();
@@ -26,8 +26,8 @@ describe( 'ExperimentsDependency Behavior', () => {
 			submit: form.querySelector( 'input[type="submit"]' ),
 		};
 
-		experimentsDependency = new ExperimentsDependency( elements );
-		experimentsDependency.bindEvents();
+		experimentsMessages = new ExperimentsMessages( elements );
+		experimentsMessages.bindEvents();
 	} );
 
 	it( 'Should show a dependency dialog when activating an experiment that has dependencies', () => {
@@ -136,6 +136,117 @@ describe( 'ExperimentsDependency Behavior', () => {
 		// Assert.
 		expect( getExperimentState( 'inactive_dependency' ) ).toBe( 'default' );
 		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
+	} );
+
+	it( 'Should show the deactivate dialog when deactivating an experiment that has an \'on_deactivate\' message', () => {
+		// Arrange.
+		const { show } = mockDialog();
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+
+		// Assert.
+		expect( show ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Should not show the deactivate dialog when deactivating an experiment that has an \'on_deactivate\' message', () => {
+		// Arrange.
+		const { show } = mockDialog();
+
+		// Act.
+		deactivateExperiment( 'depends_on_active' );
+
+		// Assert.
+		expect( show ).not.toHaveBeenCalled();
+	} );
+
+	it( 'Should deactivate the experiment and its dependencies when clicking DEACTIVATE button', () => {
+		// Arrange.
+		const { confirm } = mockDialog(),
+			submitMock = jest.fn();
+
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		confirm();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' );
+		expect( submitMock ).toHaveBeenCalled();
+	} );
+
+	it( 'Should not deactivate the experiment and its dependencies when clicking DISMISS button', () => {
+		// Arrange.
+		const { cancel } = mockDialog();
+		const submitMock = jest.fn();
+		activateExperiment( 'depends_on_active' );
+
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		cancel();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'active' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'active' );
+		expect( submitMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'Should not show the deactivate dialog when changing the select value from default to inactive while the experiment default value is inactive', () => {
+		// Arrange
+		const { createWidget } = mockDialog();
+
+		// Act.
+		deactivateExperiment( 'depends_on_inactive' );
+
+		// Assert.
+		expect( getExperimentState( 'depends_on_inactive' ) ).toBe( 'inactive' );
+		expect( createWidget ).not.toHaveBeenCalled();
+	} );
+
+	it( 'Should show the deactivate dialog when changing the select value from default to inactive while exp default value is active', () => {
+		// Arrange
+		const { confirm } = mockDialog(),
+			submitMock = jest.fn();
+
+		elements.form.addEventListener( 'submit', ( e ) => {
+			submitMock();
+
+			e.preventDefault();
+		} );
+
+		resetExperiment( 'active_dependency' );
+
+		// Act.
+		deactivateExperiment( 'active_dependency' );
+		confirm();
+
+		// Assert.
+		expect( getExperimentState( 'active_dependency' ) ).toBe( 'inactive' );
+		expect( getExperimentState( 'depends_on_active' ) ).toBe( 'inactive' );
+		expect( submitMock ).toHaveBeenCalled();
+	} );
+
+	it( 'Should not show the deactivate dialog when changing the select value from inactive to default while exp default value is active', () => {
+		const { createWidget } = mockDialog();
+
+		// Act.
+		resetExperiment( 'default_active' );
+
+		// Assert.
+		expect( getExperimentState( 'default_active' ) ).toBe( 'default' );
+		expect( createWidget ).not.toHaveBeenCalled();
 	} );
 } );
 
