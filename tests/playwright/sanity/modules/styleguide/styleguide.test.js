@@ -494,10 +494,10 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	const editor = await wpAdmin.useElementorCleanPost();
 	page.setDefaultTimeout( 10000 );
 
-	await page.evaluate( ( styleguideOpen ) => $e.run( 'document/elements/settings', {
+	await page.evaluate( ( isOpen ) => $e.run( 'document/elements/settings', {
 		container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 		settings: {
-			enable_styleguide_preview: styleguideOpen ? 'yes' : '',
+			enable_styleguide_preview: isOpen ? 'yes' : '',
 		},
 		options: {
 			external: true,
