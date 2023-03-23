@@ -86,15 +86,15 @@
 	}
 
 	&.go-pro,
-	&.e-brand {
-		background-color: var(--e-a-btn-bg-brand);
+	&.e-accent {
+		background-color: var(--e-a-btn-bg-accent);
 
 		&:hover {
-			background-color: var(--e-a-btn-bg-brand-hover);
+			background-color: var(--e-a-btn-bg-accent-hover);
 		}
 
 		&:active {
-			background-color: var(--e-a-btn-bg-brand-active);
+			background-color: var(--e-a-btn-bg-accent-active);
 		}
 	}
 

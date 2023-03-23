@@ -17,7 +17,7 @@
 	--e-a-color-danger: 		#{$e-danger};
 	--e-a-color-info: 			#{$e-info};
 	--e-a-color-warning: 		#{$e-warning};
-	--e-a-color-brand: 			#{$e-brand};
+	--e-a-color-accent: 			#{$e-accent};
 	--e-a-color-global: 		#{$e-teal-400};
 
 	//Backgrounds
@@ -64,9 +64,9 @@
 	--e-a-btn-bg-primary: 		#{$e-primary};
 	--e-a-btn-bg-primary-hover: #{$e-pink-100};
 	--e-a-btn-bg-primary-active:#{$e-pink-300};
-	--e-a-btn-bg-brand: 		#{$e-brand};
-	--e-a-btn-bg-brand-hover:	#{$e-indigo-700};
-	--e-a-btn-bg-brand-active:	#{$e-indigo-800};
+	--e-a-btn-bg-accent: 		#{$e-accent};
+	--e-a-btn-bg-accent-hover:	#{$e-indigo-700};
+	--e-a-btn-bg-accent-active:	#{$e-indigo-800};
 	--e-a-btn-bg-success: 		#{$e-success};
 	--e-a-btn-bg-success-hover:	#{darken($e-success, 10%)};
 	--e-a-btn-bg-success-active:#{darken($e-success, 20%)};
