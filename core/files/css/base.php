@@ -484,15 +484,15 @@ abstract class Base extends Base_File {
 	 * @since 3.13.0
 	 * @access public
 	 *
-	 * @param string $constrolSelector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
+	 * @param string $constrol_selector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
 	 * @param array  $controlValues  The control values eg { unit: 'fr', size: 2 }
 	 *
 	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
 	 */
-	public function parse_size_units_selectors_dictionary( $constrolSelector, $controlValues ) {
-		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $controlValues ) {
+	public function parse_size_units_selectors_dictionary( $constrol_selector, $control_values ) {
+		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $control_values ) {
 			$keys = explode( '.', strtolower( $matches[1] ) );
-			$value = $controlValues;
+			$value = $control_values;
 
 			foreach ( $keys as $key ) {
 				if ( ! isset( $value[ $key ] ) ) {
@@ -502,7 +502,7 @@ abstract class Base extends Base_File {
 			}
 
 			return $value;
-		}, $constrolSelector );
+		}, $constrol_selector );
 	}
 
 	/**
