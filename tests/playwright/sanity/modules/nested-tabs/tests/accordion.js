@@ -2,7 +2,7 @@ const { viewportSize } = require( '../../../../enums/viewport-sizes' );
 const { expect } = require( '@playwright/test' );
 const { selectDropdownContainer, clickMobileTab } = require( '../helper' );
 
-export async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
+async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	// Act.
 	await selectDropdownContainer( editor, widgetId, 0 );
 	await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
@@ -34,3 +34,7 @@ export async function testTabIsVisibleInAccordionView( page, editor, widgetId ) 
 	await expect( tabTitle1 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }
+
+module.exports = {
+	testTabIsVisibleInAccordionView,
+};

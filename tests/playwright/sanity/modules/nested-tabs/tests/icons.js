@@ -1,6 +1,6 @@
 const { expect } = require( '@playwright/test' );
 
-export async function testIconCount( page, editor ) {
+async function testIconCount( page, editor ) {
 	// Act.
 	const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active .elementor-add-new-section i' ).count(),
 		iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
@@ -10,3 +10,7 @@ export async function testIconCount( page, editor ) {
 	expect( iconCountForTabs ).toBe( 1 );
 	expect( iconCountForMainContainer ).toBe( 2 );
 }
+
+module.exports = {
+	testIconCount,
+};
