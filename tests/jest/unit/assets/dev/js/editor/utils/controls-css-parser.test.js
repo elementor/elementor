@@ -1,26 +1,9 @@
-import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
+import ControlsCSSParserHelper from 'elementor-editor-utils/controls-css-parser-helper';
 
-// Add jQuery
-//import $ from 'jquery';
-//global.$ = $;
-//global.jQuery = $;
-
-import * as jQuery from 'jquery';
-window.$ = window.jQuery = jQuery;
-global.$ = global.jQuery = jQuery;
-
-// Add jQuery
-/* const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const { window } = (new JSDOM());
-const globalAny = global;
-const $ = globalAny.$ = require('jquery')(window);
-const jQuery = globalAny.$ = require('jquery')(window); */
-
-describe( 'ControlsCSSParser', () => {
+describe( 'ControlsCSSParserHelper', () => {
 	test( 'parseSizeUnitsSelectorsDictionary', () => {
 		// Arrange.
-		const cssParser = new ControlsCSSParser();
+		const cssParser = new ControlsCSSParserHelper();
 
 		// Act.
 		let values = {

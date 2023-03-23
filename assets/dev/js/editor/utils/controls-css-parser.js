@@ -1,3 +1,5 @@
+import parseSizeUnitsSelectorsDictionary from 'elementor-utils/controls-css-parser';
+
 var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
 
@@ -118,7 +120,9 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						}
 
 						if ( control.unit_selectors_dictionary ) {
-							parsedValue = this.parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
+							console.log( control.unit_selectors_dictionary );
+							//const cssParserHelper = new ControlsCSSParserHelper();
+							parsedValue = parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
 						}
 
 						if ( ! parsedValue && 0 !== parsedValue ) {
@@ -232,23 +236,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		}
 
 		return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
-	},
-
-	parseSizeUnitsSelectorsDictionary( string, obj ) {
-		return string.replace( /{{(.*?)}}/g, function( match, placeholder ) {
-			const keys = placeholder.toLowerCase().split( '.' );
-			let value = obj;
-
-			for ( let i = 0; i < keys.length; i++ ) {
-				value = value[ keys[ i ] ];
-
-				if ( value === undefined ) {
-					return match;
-				}
-			}
-
-			return value;
-		} );
 	},
 
 	getStyleControlValue( control, values ) {
