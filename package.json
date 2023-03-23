@@ -109,7 +109,7 @@
     },
     "dependencies": {
         "@lodder/grunt-postcss": "^3.1.1",
-        "@reach/router": "npm:@gatsbyjs/reach-router@^1.3.9",
+        "@reach/router": "npm:@gatsbyjs/reach-router@1.3.9",
         "@reduxjs/toolkit": "^1.8.3",
         "@testing-library/jest-dom": "^5.16.4",
         "acorn": "^8.7.1",
