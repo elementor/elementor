@@ -413,7 +413,6 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForLoadState( 'networkidle' );
 	}
 
-
 	/**
 	 * Check if an item is in the viewport.
 	 *
