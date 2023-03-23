@@ -70,7 +70,7 @@ export default class extends ControlBaseDataView {
 		const pickerUtils = picker.constructor.utils;
 
 		picker._eventBindings.push(
-			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], ( e ) => {
+			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'mousedown' ], () => {
 				if ( picker.isOpen() ) {
 					picker.hide();
 				}

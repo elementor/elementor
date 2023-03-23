@@ -1,8 +1,5 @@
 jest.mock( 'elementor/assets/dev/js/modules/imports/module.js', () => {
-	return class Module {
-		constructor( config ) {
-		}
-	}
+	return class Module {};
 } );
 
 import ComponentBase from 'elementor-api/modules/component-base';
@@ -31,7 +28,6 @@ describe( 'ComponentBase', () => {
 	document.querySelector( 'div.pickr button.pcr-button' ).addEventListener( 'click', mockCallBack );
 
 	beforeAll( async () => {
-
 		global.elementor = {
 			getPanelView: () => ( {
 				getCurrentPageView: () => ( {
@@ -57,7 +53,6 @@ describe( 'ComponentBase', () => {
 				} ),
 			} ),
 		};
-
 	} );
 
 	afterAll( () => {
@@ -70,10 +65,8 @@ describe( 'ComponentBase', () => {
 		const component = new ComponentBase();
 		let controlPath = 'custom_colors/primary/color';
 
-		// Act & Assert.
-		expect(
-			() => component.activateControl( controlPath ) // Document does not have custom colors.
-		).toThrow( TypeError );
+		// Act & Assert document does not have custom colors.
+		expect( () => component.activateControl( controlPath ) ).toThrow( TypeError );
 
 		// Act.
 		controlPath = 'system_colors/primary/color'; // Document has system colors.
