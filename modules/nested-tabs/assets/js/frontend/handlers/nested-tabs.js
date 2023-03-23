@@ -309,11 +309,11 @@ export default class NestedTabs extends Base {
 	}
 
 	activateMobileTab( tabIndex ) {
-		// Timeout added to ensure that opening of the active tab starts after closing the other tab.
+		// Timeout time added to ensure that opening of the active tab starts after closing the other tab on Apple devices.
 		setTimeout( () => {
 			this.activateTab( tabIndex );
 			this.forceActiveTabToBeInViewport( tabIndex );
-		} );
+		}, 10 );
 	}
 
 	forceActiveTabToBeInViewport( tabIndex ) {
