@@ -36,7 +36,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 			'deps' => array_merge(
 				[ 'elementor-editor' ],
-				$apps_handles,
+				$apps_handles
 			),
 		];
 

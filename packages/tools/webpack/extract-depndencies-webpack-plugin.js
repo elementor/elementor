@@ -2,8 +2,6 @@
 // Link: https://github.com/WordPress/gutenberg/tree/trunk/packages/dependency-extraction-webpack-plugin
 
 const { sources: { RawSource } } = require( 'webpack' );
-const fs = require( 'fs' );
-const path = require( 'path' );
 
 module.exports = class ExtractDependenciesWebpackPlugin {
 	constructor( {
@@ -25,7 +23,7 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 	apply( compiler ) {
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			let handlesAssetsMap;
-			
+
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
 				handlesAssetsMap = [ ...compilation.entrypoints ].reduce( ( map, [ entryName, entrypoint ] ) => {
 					const chunk = entrypoint.chunks.find( ( { name } ) => name === entryName );
@@ -60,9 +58,9 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 				}, {} );
 			} );
 
-			compiler.hooks.emit.tap( { name: this.constructor.name }, ( compilation ) => {
+			compiler.hooks.emit.tap( { name: this.constructor.name }, () => {
 				const loaderFileContent = this.getLoaderFileContent( handlesAssetsMap );
-				
+
 				compilation.emitAsset(
 					'loader.php',
 					new RawSource( loaderFileContent )
