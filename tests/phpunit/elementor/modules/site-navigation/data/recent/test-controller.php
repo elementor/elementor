@@ -10,7 +10,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Controller extends Elementor_Test_Base {
 
-	const ENDPOINT = '/site-navigation/recent';
+	const ENDPOINT = '/site-navigation/recent-posts';
 
 	public function setUp() {
 		parent::setUp();
@@ -71,7 +71,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$older_time = time() - 20;
 
-		// mock ten posts
+		// Mock ten posts.
 		$posts = [];
 		for ( $i = 0; $i < 10; $i ++ ) {
 			$posts[] = $this->factory()->post->create_and_get( [
@@ -83,7 +83,7 @@ class Test_Controller extends Elementor_Test_Base {
 			] );
 		}
 
-		// mock kit post - should be excluded
+		// Mock kit post - should be excluded.
 		$posts[] = $this->factory()->post->create_and_get( [
 			'post_title' => 'Some Kit',
 			'post_type' => Source_Local::CPT,
@@ -93,7 +93,7 @@ class Test_Controller extends Elementor_Test_Base {
 			],
 		] );
 
-		// mock another post with info
+		// Mock another post with info.
 		$posts[] = $this->factory()->post->create_and_get( [
 			'post_title' => 'Another Post',
 			'post_type' => Source_Local::CPT,
@@ -138,7 +138,6 @@ class Test_Controller extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_editor();
 
-		// mock ten posts
 		$posts = [];
 		for ( $i = 0; $i < 5; $i ++ ) {
 			$posts[] = $this->factory()->post->create_and_get( [
@@ -149,7 +148,7 @@ class Test_Controller extends Elementor_Test_Base {
 			] );
 		}
 
-		// mock kit post - should be excluded
+		// Mock kit post - should be excluded.
 		$posts[] = $this->factory()->post->create_and_get( [
 			'post_title' => 'Some Kit',
 			'post_type' => Source_Local::CPT,
@@ -177,8 +176,6 @@ class Test_Controller extends Elementor_Test_Base {
 			$posts[4]->ID,
 		];
 
-
-
 		$this->assertSameSets(
 			$expected,
 			wp_list_pluck( $response->get_data(), 'id' ),
@@ -187,16 +184,16 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	/**
-	 * Utils
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param array $params
+	 *
+	 * @return \WP_REST_Response
 	 */
-	private function send_request( $method, $endpoint, $params = [] ): \WP_REST_Response {
+	private function send_request( string $method, string $endpoint, array $params = [] ): \WP_REST_Response {
 		$request = new \WP_REST_Request( $method, "/elementor/v1{$endpoint}" );
 
 		foreach ( $params as $key => $value ) {
-			if ( is_array( $value ) ) {
-				$value = implode( ',', $value );
-			}
-
 			$request->set_param( $key, $value );
 		}
 
