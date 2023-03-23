@@ -1,10 +1,11 @@
-import parseSizeUnitsSelectorsDictionary from 'elementor-utils/controls-css-parser';
+import ControlsCSSParserHelper from 'elementor-editor-utils/controls-css-parser-helper';
 
 var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
 
 ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
+	cssParserHelper: null,
 
 	getDefaultSettings() {
 		return {
@@ -120,9 +121,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						}
 
 						if ( control.unit_selectors_dictionary ) {
-							console.log( control.unit_selectors_dictionary );
-							//const cssParserHelper = new ControlsCSSParserHelper();
-							parsedValue = parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
+							this.cssParserHelper = new ControlsCSSParserHelper();
+							parsedValue = this.cssParserHelper.parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
 						}
 
 						if ( ! parsedValue && 0 !== parsedValue ) {
