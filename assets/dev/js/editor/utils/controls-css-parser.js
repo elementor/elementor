@@ -117,6 +117,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 							parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, placeholder, controlName );
 						}
 
+						if ( control.unit_selectors_dictionary ) {
+							parsedValue = this.parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
+						}
+
 						if ( ! parsedValue && 0 !== parsedValue ) {
 							if ( fallbackValue ) {
 								parsedValue = fallbackValue;
@@ -230,6 +234,23 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		return elementor.getControlView( control.type ).getStyleValue( placeholder, value, control );
 	},
 
+	parseSizeUnitsSelectorsDictionary( string, obj ) {
+		return string.replace( /{{(.*?)}}/g, function( match, placeholder ) {
+			const keys = placeholder.toLowerCase().split( '.' );
+			let value = obj;
+
+			for ( let i = 0; i < keys.length; i++ ) {
+				value = value[ keys[ i ] ];
+
+				if ( value === undefined ) {
+					return match;
+				}
+			}
+
+			return value;
+		} );
+	},
+
 	getStyleControlValue( control, values ) {
 		const container = this.getSettings()?.context?.container,
 			isGlobalApplied = container?.isGlobalApplied( control.name ),
@@ -245,6 +266,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		if ( control.selectors_dictionary ) {
 			value = control.selectors_dictionary[ value ] || value;
+		}
+
+		if ( control.unit_selectors_dictionary && value.unit ) {
+			value = control.unit_selectors_dictionary[ value.unit ] || value;
 		}
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {

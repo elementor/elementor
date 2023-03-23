@@ -351,6 +351,10 @@ abstract class Base extends Base_File {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
 						}
 
+						if ( isset( $control['unit_selectors_dictionary'] ) ) {
+							$parsed_value = $this->parse_size_units_selectors_dictionary( $value, $controls_stack[ $control['name'] ]);
+						}
+
 						if ( '' === $parsed_value ) {
 							if ( isset( $matches[4] ) ) {
 								$parsed_value = $matches[4];
@@ -469,6 +473,22 @@ abstract class Base extends Base_File {
 		$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 		return (string) $control_obj->get_style_value( $placeholder, $value, $control );
+	}
+
+	public function parse_size_units_selectors_dictionary( $string, $obj ) {
+		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $obj ) {
+			$keys = explode( '.', strtolower( $matches[1] ) );
+			$value = $obj;
+	
+			foreach ( $keys as $key ) {
+				if ( ! isset( $value[ $key ] ) ) {
+					return $matches[0];
+				}
+				$value = $value[$key];
+			}
+	
+			return $value;
+		}, $string );
 	}
 
 	/**
@@ -753,6 +773,10 @@ abstract class Base extends Base_File {
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
+		}
+
+		if ( isset( $control['unit_selectors_dictionary'] ) && isset( $value['unit'] ) ) {
+			$value = $this->parse_size_units_selectors_dictionary( $control['unit_selectors_dictionary'][ $value['unit'] ], $value );
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
