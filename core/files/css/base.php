@@ -352,7 +352,7 @@ abstract class Base extends Base_File {
 						}
 
 						if ( isset( $control['unit_selectors_dictionary'] ) ) {
-							$parsed_value = $this->parse_size_units_selectors_dictionary( $value, $controls_stack[ $control['name'] ]);
+							$parsed_value = $this->parse_size_units_selectors_dictionary( $value, $controls_stack[ $control['name'] ] );
 						}
 
 						if ( '' === $parsed_value ) {
@@ -479,14 +479,14 @@ abstract class Base extends Base_File {
 		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $obj ) {
 			$keys = explode( '.', strtolower( $matches[1] ) );
 			$value = $obj;
-	
+
 			foreach ( $keys as $key ) {
 				if ( ! isset( $value[ $key ] ) ) {
 					return $matches[0];
 				}
-				$value = $value[$key];
+				$value = $value[ $key ];
 			}
-	
+
 			return $value;
 		}, $string );
 	}
