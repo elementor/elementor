@@ -399,11 +399,11 @@ export default class ComponentBase extends Module {
 		const editor = elementor.getPanelView().getCurrentPageView();
 		const currentView = editor.content ? editor.content.currentView : editor;
 
-		const controlView = this.getControlView( currentView, controlPath );
+		const controlView = this.getControlViewByPath( currentView, controlPath );
 		controlView.activate?.();
 	}
 
-	getControlView( currentView, controlPath ) {
+	getControlViewByPath( currentView, controlPath ) {
 		const controls = controlPath.split( '/' );
 		let controlView = currentView.getControlViewByName( controls[ 0 ] );
 

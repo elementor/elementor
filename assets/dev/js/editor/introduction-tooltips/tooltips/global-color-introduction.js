@@ -30,7 +30,7 @@ export default class GlobalColorIntroduction {
 		const editor = elementor.getPanelView().getCurrentPageView();
 		const currentView = editor.content ? editor.content.currentView : editor;
 
-		return $e.components.get( 'panel' ).getControlView( currentView, control );
+		return $e.components.get( 'panel' ).getControlViewByPath( currentView, control );
 	}
 
 	initTooltip() {
