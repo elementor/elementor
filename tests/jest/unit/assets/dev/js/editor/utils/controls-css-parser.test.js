@@ -1,7 +1,10 @@
 import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
-import $ from 'jquery';
-global.$ = $;
-global.jQuery = $;
+
+const jQuery = jest.fn(() => ({
+	addClass: jest.fn(),
+	removeClass: jest.fn(),
+	hasClass: jest.fn()
+}));
 
 describe( 'ControlsCSSParser', () => {
 	test( 'parseSizeUnitsSelectorsDictionary', () => {
