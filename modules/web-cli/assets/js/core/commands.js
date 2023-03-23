@@ -234,6 +234,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		return this.currentArgs;
 	}
+
 	/**
 	 * Function getCurrentFirst().
 	 *
