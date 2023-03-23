@@ -29,7 +29,7 @@
 	--e-a-bg-active-bold: 		#{$e-gray-700};
 	--e-a-bg-loading: 			#{$e-gray-25};
 	--e-a-bg-logo: 				#{$white};
-	--e-a-bg-primary: 			#{$e-primary-bg};
+	--e-a-bg-primary: 			#{$e-primary-dark-bg};
 	--e-a-bg-secondary: 		#{$e-gray-600};
 	--e-a-bg-success: 			#{$e-success-dark-bg};
 	--e-a-bg-info: 				#{$e-info-dark-bg};
@@ -63,7 +63,7 @@
 	--e-a-btn-bg-active: 		#{darken($e-gray-600, 20%)};
 	--e-a-btn-bg-disabled:		#{$e-gray-100};
 	--e-a-btn-bg-primary: 		#{$e-primary};
-	--e-a-btn-bg-primary-hover: #{$e-pink-200};
+	--e-a-btn-bg-primary-hover: #{$e-pink-400};
 	--e-a-btn-bg-primary-active:#{$e-pink-300};
 	--e-a-btn-bg-brand: 		#{$e-brand};
 	--e-a-btn-bg-brand-hover:	#{$e-indigo-700};

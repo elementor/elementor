@@ -10,11 +10,11 @@
 
 		&:after {
 			position: absolute;
-			left: 2px;
-			right: 2px;
-			top: 2px;
-			bottom: 2px;
-			outline: 2px solid var(--e-p-border-con);
+			left: 1px;
+			right: 1px;
+			top: 1px;
+			bottom: 1px;
+			outline: 1px solid var(--e-p-border-con);
 			animation: section-outline .75s;
 		}
 	}
