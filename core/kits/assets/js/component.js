@@ -27,6 +27,7 @@ export default class extends $e.modules.ComponentBase {
 		return {
 			menu: () => {
 				elementor.getPanelView().setPage( 'kit_menu' );
+				this.currentTab = 'menu';
 			},
 		};
 	}
@@ -64,17 +65,5 @@ export default class extends $e.modules.ComponentBase {
 		}
 
 		this.activateControl( args.activeControl );
-	}
-
-	onCloseRoute( route, newRoute ) {
-		super.onCloseRoute( route );
-
-		if ( newRoute !== route ) {
-			this.currentTab = this.getTabFromRoute( route );
-		}
-	}
-
-	getTabFromRoute( route ) {
-		return route.substring( route.lastIndexOf( '/' ) + 1 );
 	}
 }

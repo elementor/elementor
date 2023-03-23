@@ -93,7 +93,7 @@ export default class Routes extends Commands {
 			oldRoute = this.current[ container ];
 
 		if ( oldRoute ) {
-			this.getComponent( oldRoute ).onCloseRoute( oldRoute, route );
+			this.getComponent( oldRoute ).onCloseRoute( oldRoute );
 		}
 
 		Commands.trace.push( route );

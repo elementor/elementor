@@ -59,7 +59,7 @@ export default class GlobalFontIntroduction {
 		this.tooltip.getDialog().addButton( {
 			name: 'action',
 			text: __( 'Got it!', 'elementor' ),
-			classes: 'elementor-button e-brand',
+			classes: 'elementor-button e-primary',
 			callback: () => this.tooltip.getDialog().hide(),
 		} );
 	}
