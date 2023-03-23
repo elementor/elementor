@@ -176,17 +176,30 @@ describe( '@elementor/top-bar - Menus API', () => {
 		expect( icon ).toHaveTextContent( 'a' );
 	} );
 
-	it( 'should register a hidden action', () => {
+	it.each( [
+		{
+			type: 'action',
+			action: 'registerAction',
+		},
+		{
+			type: 'toggle action',
+			action: 'registerToggleAction',
+		},
+		{
+			type: 'link',
+			action: 'registerLink',
+		},
+	] as const )( 'should register a hidden $type', ( { type, action } ) => {
 		// Arrange.
 		const menu = createMenu( {
 			name: 'test',
 		} );
 
 		// Act.
-		menu.registerAction( {
+		menu[ action ]( {
 			name: 'hidden',
 			useProps: () => ( {
-				title: 'hidden-action',
+				title: `hidden-${ type }`,
 				icon: () => <div />,
 				visible: false,
 			} ),
@@ -195,7 +208,7 @@ describe( '@elementor/top-bar - Menus API', () => {
 		// Assert.
 		const { queryByLabelText } = renderMenu( menu );
 
-		expect( queryByLabelText( 'hidden-action' ) ).not.toBeInTheDocument();
+		expect( queryByLabelText( `hidden-${ type }` ) ).not.toBeInTheDocument();
 	} );
 } );
 

@@ -84,17 +84,12 @@ function createRegisterMenuItem<
 			return;
 		}
 
-		// TS can't infer that `args.props` is defined in this case.
-		const useProps = 'props' in args ? () => args.props as NonNullable<typeof args.props> : args.useProps;
+		const useProps = 'props' in args ? () => args.props : args.useProps;
 
 		const Component = component as ElementType;
 
 		const Filler = ( props: object ) => {
-			const { visible = true, ...componentProps } = useProps();
-
-			if ( ! visible ) {
-				return null;
-			}
+			const componentProps = useProps();
 
 			return <Component { ...props } { ...componentProps } />;
 		};
