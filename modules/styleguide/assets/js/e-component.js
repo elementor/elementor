@@ -1,5 +1,6 @@
 import * as commands from './commands/ui';
 import * as commandsData from './commands/data';
+import Switcher from './controls/switcher';
 
 require( './lib/dialog' );
 
@@ -7,11 +8,7 @@ export default class extends $e.modules.ComponentBase {
 	constructor( args ) {
 		super( args );
 
-		const config = window.elementorStyleguideConfig;
-
-		if ( ! config ) {
-			return;
-		}
+		elementor.addControlView( 'global-style-switcher', Switcher );
 
 		elementor.on( 'preview:loaded', () => {
 			this.initModal();

@@ -1,4 +1,4 @@
-import Switcher from '../../../../assets/dev/js/editor/controls/switcher';
+import Switcher from 'elementor-assets-js/editor/controls/switcher';
 import ControlBaseDataView from 'elementor-controls/base-data';
 
 export default class extends Switcher {
@@ -6,6 +6,16 @@ export default class extends Switcher {
 		ControlBaseDataView.prototype.initialize.apply( this, arguments );
 
 		this.$el.addClass( 'elementor-control-type-switcher' );
+	}
+
+	onBeforeRender( ...args ) {
+		super.onBeforeRender( ...args );
+
+		const actualValue = elementor.getPreferences( 'enable_styleguide_preview' );
+
+		if ( actualValue !== this.getCurrentValue() ) {
+			this.setValue( actualValue );
+		}
 	}
 
 	onBaseInputChange( event ) {

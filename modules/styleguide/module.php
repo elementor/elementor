@@ -3,10 +3,9 @@ namespace Elementor\Modules\Styleguide;
 
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Kits\Controls\Switcher as Global_Style_Switcher;
-use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\Modules\Styleguide\Data\Controller;
+use Elementor\Modules\Styleguide\Controls\Switcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -39,6 +38,7 @@ class Module extends Base_Module {
 			$this->enqueue_app_initiator( $is_preview );
 		} );
 
+		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/element/after_section_start', [ $this, 'add_styleguide_enable_controls' ], 10, 3 );
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
@@ -117,15 +117,9 @@ class Module extends Base_Module {
 		);
 	}
 
-	/**
-	 * Check whether the user has Styleguide Preview enabled.
-	 *
-	 * @return bool
-	 */
-	private function is_styleguide_preview_enabled(): bool {
-		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model();
-
-		return $editor_preferences->get_settings( 'enable_styleguide_preview' );
+	public function register_controls() {
+		$controls_manager = Plugin::$instance->controls_manager;
+		$controls_manager->register( new Switcher() );
 	}
 
 	/**
@@ -146,16 +140,13 @@ class Module extends Base_Module {
 			$control_name,
 			[
 				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
-				'type' => Global_Style_Switcher::CONTROL_TYPE,
+				'type' => Switcher::CONTROL_TYPE,
 				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors.', 'elementor' ),
 				'separator' => 'after',
 				'label_off' => esc_html__( 'Off', 'elementor' ),
 				'label_on' => esc_html__( 'On', 'elementor' ),
-				'default' => $this->is_styleguide_preview_enabled() ? 'yes' : 'no',
-				'value' => $this->is_styleguide_preview_enabled() ? 'yes' : 'no',
 				'on_change_command' => 'preview/styleguide/enable',
 			]
 		);
-
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Kits\Controls;
+namespace Elementor\Modules\Styleguide\Controls;
 
 use Elementor\Control_Switcher;
 
