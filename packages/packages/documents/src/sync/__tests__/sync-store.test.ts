@@ -30,7 +30,7 @@ describe( '@elementor/documents - Sync Store', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
 			makeMockV1Document( { id: 1 } ),
-			makeMockV1Document( { id: 2 } ),
+			makeMockV1Document( { id: 2, locationKey: 'popup' } ),
 		] );
 
 		// Act.
@@ -54,6 +54,7 @@ describe( '@elementor/documents - Sync Store', () => {
 				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
+				locationKey: null,
 				userCan: {
 					publish: true,
 				},
@@ -72,6 +73,7 @@ describe( '@elementor/documents - Sync Store', () => {
 				isDirty: false,
 				isSaving: false,
 				isSavingDraft: false,
+				locationKey: 'popup',
 				userCan: {
 					publish: true,
 				},
@@ -115,6 +117,7 @@ describe( '@elementor/documents - Sync Store', () => {
 			isDirty: false,
 			isSaving: false,
 			isSavingDraft: false,
+			locationKey: null,
 			userCan: {
 				publish: true,
 			},

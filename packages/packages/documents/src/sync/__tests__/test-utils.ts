@@ -52,11 +52,13 @@ export function makeMockV1Document( {
 	title = 'Document ' + id,
 	status = 'publish',
 	type = 'wp-page',
+	locationKey = '',
 }: {
 	id?: number,
 	status?: string,
 	title?: string,
 	type?: string,
+	locationKey?: string,
 } = {} ): V1Document {
 	return {
 		id,
@@ -74,6 +76,11 @@ export function makeMockV1Document( {
 			status: {
 				label: status.toUpperCase(),
 				value: status,
+			},
+			theme_builder: {
+				settings: {
+					location: locationKey,
+				},
 			},
 		},
 		editor: {

@@ -28,6 +28,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		isDirty: documentData.editor.isChanged || isUnpublishedRevision,
 		isSaving: documentData.editor.isSaving,
 		isSavingDraft: false,
+		locationKey: documentData.config.theme_builder?.settings?.location || null,
 		userCan: {
 			publish: documentData.config.user.can_publish,
 		},
