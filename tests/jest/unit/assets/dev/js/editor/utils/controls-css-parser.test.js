@@ -1,7 +1,7 @@
 import ControlsCSSParserHelper from 'elementor-editor-utils/controls-css-parser-helper';
 
-describe( 'ControlsCSSParserHelper', () => {
-	test( 'parseSizeUnitsSelectorsDictionary', () => {
+describe( 'Controls CSS Parser Helper', () => {
+	test( 'Fraction unit', () => {
 		// Arrange.
 		const cssParser = new ControlsCSSParserHelper();
 
@@ -12,17 +12,32 @@ describe( 'ControlsCSSParserHelper', () => {
 			sizes: [],
 		};
 
+		let string = '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)';
+		string = cssParser.parseSizeUnitsSelectorsDictionary( string, values );
+
+		const comparisonResult = '--e-con-grid-template-columns: repeat(2, 1fr)' === string;
+
+		// Assert.
+		expect( comparisonResult ).toBe( true );
+	} );
+
+	test( 'Custom unit', () => {
+		// Arrange.
+		const cssParser = new ControlsCSSParserHelper();
+
+		// Act.
+		let values = {
+			unit: 'custom',
+			size: '3fr 200px 1fr',
+			sizes: [],
+		};
+
 		let string = '--e-con-grid-template-columns: {{SIZE}}';
 		string = cssParser.parseSizeUnitsSelectorsDictionary( string, values );
 
-		let stringTwo = '--e-con-grid-template-columns: {{SIZE}}{{UNIT}}';
-		stringTwo = cssParser.parseSizeUnitsSelectorsDictionary( stringTwo, values );
-
-		const firstComparisonResult = '--e-con-grid-template-columns: 2' === string;
-		const secondComparisonResult = '--e-con-grid-template-columns: 2fr' === stringTwo;
+		const comparisonResult = '--e-con-grid-template-columns: 3fr 200px 1fr' === stringTwo;
 
 		// Assert.
-		expect( firstComparisonResult ).toBe( true );
-		expect( secondComparisonResult ).toBe( true );
+		expect( comparisonResult ).toBe( true );
 	} );
 } );
