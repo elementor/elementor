@@ -7,7 +7,7 @@ export default class GlobalColorIntroduction {
 
 	bindEvent() {
 		$e.routes.on( 'run:after', ( component, route, args ) => {
-			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
+			// Prevent the Tooltip from appearing when the event is triggered from site-settings.
 			if ( ! $e.routes.isPartOf( 'panel/editor' ) ) {
 				return;
 			}
