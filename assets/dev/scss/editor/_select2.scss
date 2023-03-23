@@ -124,9 +124,9 @@
 	border-color: var(--e-a-border-color);
 	background-color: var(--e-a-bg-default);
 	color: var(--e-a-color-txt);
+	box-shadow: var(--e-a-dropdown-shadow);
 
 	.select2-search__field {
 		outline: none;
 	}
 }
-
