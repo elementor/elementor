@@ -475,10 +475,24 @@ abstract class Base extends Base_File {
 		return (string) $control_obj->get_style_value( $placeholder, $value, $control );
 	}
 
-	public function parse_size_units_selectors_dictionary( $string, $obj ) {
-		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $obj ) {
+	/**
+	 * Parse size units selectors dictionary.
+	 *
+	 * Check for placeholders in the controlSelector eg {{SIZE}} or {{UNIT}}
+	 * and replace it with the corresponding key's value from the control values.
+	 *
+	 * @since 3.13.0
+	 * @access public
+	 *
+	 * @param string $constrolSelector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
+	 * @param array  $controlValues  The control values eg { unit: 'fr', size: 2 }
+	 *
+	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
+	 */
+	public function parse_size_units_selectors_dictionary( $constrolSelector, $controlValues ) {
+		return preg_replace_callback( '/{{(.*?)}}/', function( $matches ) use ( $controlValues ) {
 			$keys = explode( '.', strtolower( $matches[1] ) );
-			$value = $obj;
+			$value = $controlValues;
 
 			foreach ( $keys as $key ) {
 				if ( ! isset( $value[ $key ] ) ) {
@@ -488,7 +502,7 @@ abstract class Base extends Base_File {
 			}
 
 			return $value;
-		}, $string );
+		}, $constrolSelector );
 	}
 
 	/**
