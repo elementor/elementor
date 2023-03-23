@@ -87,10 +87,16 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:elements-regression
+          npm run test:elements-regression -- -u
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results
           path: test-results/
           retention-days: 3
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-test-results-snapshots
+          path: tests/elements-regression/tests/elements-regression.test.js-snapshots/
+          retention-days: 2
