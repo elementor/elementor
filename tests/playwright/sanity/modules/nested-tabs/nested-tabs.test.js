@@ -1,16 +1,13 @@
-import { test, expect } from '@playwright/test';
-import WpAdminPage from '../../../pages/wp-admin-page.js';
-import EditorPage from '../../../pages/editor-page.js';
-import { viewportSize } from '../../../enums/viewport-sizes.js';
-import testAccordion from './tests/accordion.js';
-const { testTabIsVisibleInAccordionView } = testAccordion;
-import testIcon from './tests/icons.js';
-const { testIconCount } = testIcon;
-import helperFunctions from './helper.js';
-const { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } = helperFunctions;
+const { test, expect } = require( '@playwright/test' );
+const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const EditorPage = require( '../../../pages/editor-page' );
+const { viewportSize } = require( '../../../enums/viewport-sizes' );
+const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
+const { testIconCount } = require( './tests/icons' );
+const { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test( 'General test', async ( { page }, testInfo ) => {
+	test.only( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
