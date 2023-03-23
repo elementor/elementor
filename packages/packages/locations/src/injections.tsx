@@ -52,9 +52,9 @@ export function flushInjections() {
 }
 
 function wrapFiller( FillerComponent: Filler ) {
-	return () => (
+	return ( props: object ) => (
 		<FillerWrapper>
-			<FillerComponent />
+			<FillerComponent { ...props } />
 		</FillerWrapper>
 	);
 }
