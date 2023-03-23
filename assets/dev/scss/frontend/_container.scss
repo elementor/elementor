@@ -78,6 +78,7 @@
 	&.e-grid {
 		--grid-justify-content: start;
 		--grid-align-content: start;
+		--grid-auto-flow: row;
 	}
 
 	&.e-grid,
@@ -86,6 +87,7 @@
 		grid-template-rows: var( --e-con-grid-template-rows );
 		justify-content: var( --grid-justify-content );
 		align-content: var( --grid-align-content );
+		grid-auto-flow: var( --grid-auto-flow );
 	}
 
 	// Set default values to the outer div of the boxed container.

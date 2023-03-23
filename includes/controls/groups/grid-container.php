@@ -77,6 +77,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['auto_flow'] = [
+			'label' => esc_html__( 'Grid Auto Flow', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => [
+				'row' => esc_html__( 'Row', 'elementor' ),
+				'column' => esc_html__( 'Column', 'elementor' ),
+			],
+			'default' => 'row',
+			'selectors' => [
+				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
+			],
+		];
+
 		$fields['justify_content'] = [
 			'label' => esc_html_x( 'Justify Content', 'Grid Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
