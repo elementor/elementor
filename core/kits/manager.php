@@ -345,6 +345,7 @@ class Manager {
 
 	public function register_controls() {
 		$controls_manager = Plugin::$instance->controls_manager;
+
 		$controls_manager->register( new Repeater() );
 	}
 

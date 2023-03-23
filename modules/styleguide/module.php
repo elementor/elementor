@@ -119,6 +119,7 @@ class Module extends Base_Module {
 
 	public function register_controls() {
 		$controls_manager = Plugin::$instance->controls_manager;
+
 		$controls_manager->register( new Switcher() );
 	}
 
