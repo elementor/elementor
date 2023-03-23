@@ -85,7 +85,7 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
+			// Try to make the element visible - Since some experiments may be hidden for the user,
 			// but actually exist and need to be tested.
 			await this.page.evaluate( ( el ) => {
 				const element = document.querySelector( el );
@@ -97,7 +97,7 @@ module.exports = class WpAdminPage extends BasePage {
 
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 
-			// Confirm any experiment dependency modal that displays as a result of the chosen experiments.
+			// Click to confirm any experiment that has dependencies.
 			await this.confirmExperimentModalIfOpen();
 		}
 
@@ -111,11 +111,14 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async confirmExperimentModalIfOpen() {
-		const dialogSelector = '#e-experiments-messages-dialog',
-			dialog = await this.page.locator( dialogSelector );
+		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
 
-		if ( await dialog.isVisible() ) {
-			await this.page.locator( dialogSelector + ' .dialog-confirm-ok' ).click();
+		if ( await dialogButton.isVisible() ) {
+			await dialogButton.click();
+
+			// Clicking the confirm button - "Activate" or "Deactivate" - will immediately save the existing experiments,
+			// so we need to wait for the page to save and reload before we continue on to set any more experiments.
+			await this.page.waitForLoadState( 'load' );
 		}
 	}
 
