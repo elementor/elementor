@@ -289,6 +289,7 @@ class Test_Manager extends Data_Test_Base {
 			'favorites/index' => 'favorites/{id}',
 			'send-event/index' => 'send-event/{id}',
 			'kit-elements-defaults/index' => 'kit-elements-defaults/{id}',
+			'site-navigation/recent' => 'site-navigation/recent',
 		], $this->manager->command_formats );
 	}
 }
