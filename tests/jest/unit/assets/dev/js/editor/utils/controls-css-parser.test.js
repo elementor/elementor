@@ -35,7 +35,7 @@ describe( 'Controls CSS Parser Helper', () => {
 		let string = '--e-con-grid-template-columns: {{SIZE}}';
 		string = cssParser.parseSizeUnitsSelectorsDictionary( string, values );
 
-		const comparisonResult = '--e-con-grid-template-columns: 3fr 200px 1fr' === stringTwo;
+		const comparisonResult = '--e-con-grid-template-columns: 3fr 200px 1fr' === string;
 
 		// Assert.
 		expect( comparisonResult ).toBe( true );
