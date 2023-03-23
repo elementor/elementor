@@ -1,9 +1,13 @@
 import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
 
 // Add jQuery
-import $ from 'jquery';
-global.$ = $;
-global.jQuery = $;
+//import $ from 'jquery';
+//global.$ = $;
+//global.jQuery = $;
+
+import * as jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
+global.$ = global.jQuery = jQuery;
 
 // Add jQuery
 /* const jsdom = require("jsdom");
