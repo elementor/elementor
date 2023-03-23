@@ -1,10 +1,10 @@
-const { test, expect } = require( '@playwright/test' );
-const WpAdminPage = require( '../../../pages/wp-admin-page' );
-const EditorPage = require( '../../../pages/editor-page' );
-import { viewportSize } from '../../../enums/viewport-sizes';
-import { testTabIsVisibleInAccordionView } from './tests/accordion';
-import { testIconCount } from './tests/icons';
-import { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } from './helper';
+import { test, expect } from '@playwright/test';
+import WpAdminPage from '../../../pages/wp-admin-page.js';
+import EditorPage from '../../../pages/editor-page';
+import { viewportSize } from '../../../enums/viewport-sizes.js';
+import { testTabIsVisibleInAccordionView } from './tests/accordion.js';
+import { testIconCount } from './tests/icons.js';
+import { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } from './helper.js';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'General test', async ( { page }, testInfo ) => {

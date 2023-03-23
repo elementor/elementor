@@ -1,6 +1,6 @@
-const { test } = require( '@playwright/test' );
-const Breakpoints = require( '../../../../../assets/breakpoints' );
-const ReverseColumns = require( './reverse-columns' );
+import { test } from '@playwright/test';
+import Breakpoints from '../../../../../assets/breakpoints.js';
+import ReverseColumns from './reverse-columns.js';
 
 test.describe( 'Reverse Columns tests @reverse-columns', () => {
 	/**
