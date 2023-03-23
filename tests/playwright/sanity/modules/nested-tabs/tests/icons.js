@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+const { expect } = require( '@playwright/test' );
 
 export async function testIconCount( page, editor ) {
 	// Act.
