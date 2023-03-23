@@ -26,7 +26,6 @@ type MenuItem<
 	name: string,
 	group?: TGroup,
 	priority?: number,
-	visible?: boolean,
 	overwrite?: boolean,
 } & (
 	{ props: ComponentPropsWithoutRef<TComponent>, useProps?: never } |
