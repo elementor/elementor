@@ -1,3 +1,18 @@
+const tabIcons = [
+	{
+		icon: 'fa-arrow-alt-circle-right',
+		activeIcon: 'fa-bookmark',
+	},
+	{
+		icon: 'fa-clipboard',
+		activeIcon: 'fa-clock',
+	},
+	{
+		icon: 'fa-clipboard',
+		activeIcon: 'fa-address-card',
+	},
+];
+
 // Set icons to tabs, used in setIconsToTabs function.
 async function addIcon( page, selectedIcon ) {
 	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
@@ -89,6 +104,7 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 }
 
 module.exports = {
+	tabIcons,
 	addIcon,
 	setIconsToTabs,
 	editTab,
