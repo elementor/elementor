@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page.js';
 import EditorPage from '../../../pages/editor-page.js';
 import { viewportSize } from '../../../enums/viewport-sizes.js';
-import { testTabIsVisibleInAccordionView } from './tests/accordion.js';
-import { testIconCount } from './tests/icons.js';
-import { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } from './helper.js';
+import testAccordion from './tests/accordion.js';
+const { testTabIsVisibleInAccordionView } = testAccordion;
+import testIcon from './tests/icons.js';
+const { testIconCount } = testIcon;
+import helperFunctions from './helper.js';
+const { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } = helperFunctions;
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'General test', async ( { page }, testInfo ) => {
