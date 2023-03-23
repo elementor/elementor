@@ -93,6 +93,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		remove_filter( 'wp_doing_ajax', '__return_true' );
 
 		$this->http_stub
+			// Make sure that only one request was sent, and it doesn't try to re authorize
 			->expects( $this->once() )
 			->method( 'request' )
 			->willReturn( [

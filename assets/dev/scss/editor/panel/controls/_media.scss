@@ -38,6 +38,9 @@
 		height: 100%;
 		background-size: cover;
 		background-position: center;
+		// BC: Fix for Safari 13 and older browsers that don't support "aspect-ratio: 21 / 9;"
+		// TODO: Remove this line when we stop supporting Safari 13
+		padding-bottom: 42.8571%;
 	}
 
 	&-area {
