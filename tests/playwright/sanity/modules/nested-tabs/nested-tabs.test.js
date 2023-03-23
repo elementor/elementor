@@ -4,22 +4,22 @@ const EditorPage = require( '../../../pages/editor-page' );
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testTabIsVisibleInAccordionView } from './tests/accordion';
 import { testIconCount } from './tests/icons';
-import { setup, editTab, clickTab, cleanup, getDropdownContainerId, setTabItemColor, setTabBorderColor } from './helper';
+import { setup, editTab, clickTab, cleanup, setTabItemColor, setTabBorderColor } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test( 'General test', async ( { page }, testInfo ) => {
+	test.only( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage(page, testInfo);
-		await setup(wpAdmin);
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement({elType: 'container'}, 'document');
+			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		const widgetId = await editor.addWidget('nested-tabs', container);
-		await editor.getPreviewFrame().waitForSelector('.e-n-tabs-content .e-con.e-active');
+		const widgetId = await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
-		await testIconCount(page, editor);
-		await testTabIsVisibleInAccordionView(page, editor, widgetId);
+		await testIconCount( page, editor );
+		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
 	test( 'Title alignment setting', async ( { page }, testInfo ) => {
