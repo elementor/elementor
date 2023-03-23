@@ -240,8 +240,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Set currently running command args.
 	 *
-	 * @param {string}  container
-	 * @param {{}}      args
+	 * @param {string} container
+	 * @param {{}}     args
 	 */
 	setCurrentArgs( container, args ) {
 		if ( container ) {

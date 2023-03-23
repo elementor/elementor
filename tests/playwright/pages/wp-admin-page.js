@@ -129,8 +129,6 @@ module.exports = class WpAdminPage extends BasePage {
 
 	async openSiteSettings() {
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		// await this.page.waitForLoadState( 'networkidle' );
 		await this.page.click( 'text=Site Settings' );
-		// await this.page.waitForLoadState( 'networkidle' );
 	}
 };

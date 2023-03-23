@@ -74,7 +74,7 @@ export default class extends ControlBaseDataView {
 				if ( picker.isOpen() ) {
 					picker.hide();
 				}
-			} )
+			} ),
 		);
 	}
 

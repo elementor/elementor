@@ -151,7 +151,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		$e.route(
 			$e.routes.getCurrent( 'panel' ),
 			this.getControlInRouteArgs( controlActive ? this.getControlPath() : '' ),
-			{ history: false }
+			{ history: false },
 		);
 	},
 
