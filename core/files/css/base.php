@@ -352,7 +352,7 @@ abstract class Base extends Base_File {
 						}
 
 						if ( isset( $control['unit_selectors_dictionary'] ) ) {
-							$parsed_value = $this->parse_size_units_selectors_dictionary( $value, $controls_stack[ $control['name'] ] );
+							$parsed_value = $value;
 						}
 
 						if ( '' === $parsed_value ) {
