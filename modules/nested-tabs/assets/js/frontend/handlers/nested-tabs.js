@@ -311,12 +311,7 @@ export default class NestedTabs extends Base {
 		if ( ! isActiveTab ) {
 			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
 
-			if ( isMobileVersion ) {
-				this.activateMobileTab( tabIndex );
-				return;
-			}
-
-			this.activateTab( tabIndex );
+			isMobileVersion ? this.activateMobileTab( tabIndex ) : this.activateTab( tabIndex );
 		}
 	}
 
@@ -333,12 +328,9 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
-		const activeClass = this.getActiveClass(),
-			$activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
-			boundingBox = $activeTabTitle[ 0 ].getBoundingClientRect(),
-			isActiveTabTitleInViewport = boundingBox.top >= 0 && boundingBox.bottom <= window.innerHeight;
+		const $activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
 
-		if ( ! isActiveTabTitleInViewport ) {
+		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
 			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
 		}
 	}

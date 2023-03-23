@@ -2,7 +2,10 @@ const { test, expect } = require( '@playwright/test' );
 const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
-import { viewportSize } from '../../../assets/elements-utils';
+import { viewportSize } from '../../../enums/viewport-sizes';
+import { testTabIsVisibleInAccordionView } from './tests/tabIsVisibileInAccordionView';
+import { testIconCount } from './tests/iconCount';
+import { setup, editTab, clickTab, cleanup, getDropdownContainerId, setTabItemColor, setTabBorderColor } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -15,7 +18,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await deletePage( pageId );
 	} );
 
-	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -23,17 +26,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		const widgetId = await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
-		// Act.
-		const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active .elementor-add-new-section i' ).count(),
-			iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
-
-		// Assert.
-		// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
-		expect( iconCountForTabs ).toBe( 1 );
-		expect( iconCountForMainContainer ).toBe( 2 );
+		await testIconCount( page, editor );
+		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 
 		await cleanup( wpAdmin );
 	} );
@@ -1041,125 +1038,4 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
-
-	test( 'Verify that the active tab titles are visible on the accordion view @latest', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost();
-
-		// Add widgets.
-		const widgetId = await editor.addWidget( 'nested-tabs' );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Act.
-		await selectDropdownContainer( editor, widgetId, 0 );
-		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
-		await selectDropdownContainer( editor, widgetId, 1 );
-		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
-		await selectDropdownContainer( editor, widgetId, 2 );
-		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
-
-		await editor.publishAndViewPage();
-		await page.setViewportSize( viewportSize.mobile );
-
-		const tabTitle1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
-			tabTitle2 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
-			tabTitle3 = await page.locator( '.e-n-tabs-content > div:nth-child( 5 )' ),
-			activeTabTitleSelector = '.e-collapse.e-active';
-
-		await expect( tabTitle1 ).toHaveClass( /e-active/ );
-		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-		await clickMobileTab( page, '1' );
-		await expect( tabTitle2 ).toHaveClass( /e-active/ );
-		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-		await clickMobileTab( page, '2' );
-		await expect( tabTitle3 ).toHaveClass( /e-active/ );
-		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-		await clickMobileTab( page, '1' );
-		await expect( tabTitle2 ).toHaveClass( /e-active/ );
-		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-		await clickMobileTab( page, '0' );
-		await expect( tabTitle1 ).toHaveClass( /e-active/ );
-		await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	} );
 } );
-
-async function editTab( editor, tabIndex ) {
-	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
-	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
-	await tabTitle.click();
-	await editor.page.waitForTimeout( 100 );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
-}
-
-// Click on tab by position.
-const clickTab = async ( context, tabPosition ) => {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
-};
-
-// Click on tab by position.
-const clickMobileTab = async ( context, tabPosition ) => {
-	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition } ` ).first().click();
-};
-
-async function setup( wpAdmin, customExperiment = '' ) {
-    let experiments = {
-        container: 'active',
-        'nested-elements': 'active',
-    };
-
-    experiments = { ...experiments, ...customExperiment };
-    await wpAdmin.setExperiments( experiments );
-}
-
-async function cleanup( wpAdmin, customExperiment = '' ) {
-    let experiments = {
-        container: 'inactive',
-        'nested-elements': 'inactive',
-    };
-
-    experiments = { ...experiments, ...customExperiment };
-    await wpAdmin.setExperiments( experiments );
-}
-
-async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
-	await editor.activatePanelTab( 'style' );
-	if ( 'tabs' !== panelClass ) {
-		await page.locator( `.elementor-control-${ panelClass }` ).click();
-	}
-	await page.locator( `.elementor-control-${ tabState }` ).click();
-	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
-}
-
-async function setTabBorderColor( page, editor, state, stateExtended, color, borderWidth, borderStyle = 'solid' ) {
-	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-section_tabs_style` ).click();
-	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
-	await page.selectOption( `.elementor-control-tabs_title_border${ stateExtended }_border >> select`, borderStyle );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` ).first().fill( borderWidth );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
-}
-
-async function getDropdownContainerId( editor, widgetId, itemNumber = 1 ) {
-	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
-	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector }.elementor-element-editable` );
-	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title.e-normal:nth-child(${ itemNumber })` ).click();
-	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-con.e-active` ).getAttribute( 'data-id' );
-}
-
-async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
-	const isActiveTab = await editor.getPreviewFrame().locator( `.e-normal >> nth=${ itemNumber }` ).evaluate( ( element ) => element.classList.contains( 'e-active ' ) );
-
-	if ( ! isActiveTab ) {
-		await clickTab( editor.getPreviewFrame(), itemNumber );
-	}
-
-	await editor.getPreviewFrame().locator( '.e-con.e-active' ).hover();
-	const elementEditButton = editor.getPreviewFrame().locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-con.e-active.elementor-element-editable' );
-}
