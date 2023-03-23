@@ -168,7 +168,7 @@ class Manager extends CSS_Manager {
 			<# _.each( tabs, function( tabTitle, tabSlug ) {
 			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#" tabindex="-1">{{{ tabTitle }}}</a>
+				<span>{{{ tabTitle }}}</span>
 			</button>
 			<# } ); #>
 		</div>
