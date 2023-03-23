@@ -1,5 +1,4 @@
 import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
-import jQuery from 'jquery';
 
 describe( 'ControlsCSSParser', () => {
 	test( 'parseSizeUnitsSelectorsDictionary', () => {
