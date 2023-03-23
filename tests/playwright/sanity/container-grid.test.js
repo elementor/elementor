@@ -1,8 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
-const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
-const widgets = require( '../enums/widgets.js' );
-const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -65,6 +62,13 @@ test.describe( 'Container tests', () => {
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
+		} );
+
+		await test.step( 'Assert grid auto flow', async () => {
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
 	} );
 } );
