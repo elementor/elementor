@@ -5,6 +5,6 @@ module.exports = merge( common, {
 	mode: 'development',
 	devtool: 'source-map',
 	output: {
-		filename: '[name].js',
+		filename: '[name]/[name].js',
 	},
 } );

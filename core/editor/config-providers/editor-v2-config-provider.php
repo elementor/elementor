@@ -111,16 +111,11 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			// Loading the file that is responsible for registering the packages in the filter.
 			require_once ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
 
-			$packages_data = apply_filters( 'elementor/packages/config', [] );
-
-			// Packages that there is no access to the package.json file.
-			$type_exceptions = [
-				'@elementor/ui' => static::PACKAGE_TYPE_UTIL,
-			];
+			$packages_data = apply_filters( 'elementor/editor-v2/packages/config', [] );
 
 			$this->packages_data = Collection::make( $packages_data )
-				->map_with_keys( function ( $data, $name ) use ( $packages_data, $type_exceptions ) {
-					$type = $type_exceptions[ $name ] ?? $data['type'] ?? static::PACKAGE_TYPE_EXTENSION;
+				->map_with_keys( function ( $data, $name ) {
+					$type = $type_exceptions[ $name ] ?? $data['type'] ?? static::PACKAGE_TYPE_UTIL;
 
 					return [
 						$name => [

@@ -1,13 +1,16 @@
 {
 	"name": "@elementor/top-bar",
 	"dependencies": {
-		"@elementor/icons": "*",
 		"@elementor/editor": "*",
+		"@elementor/icons": "*",
 		"@elementor/locations": "*",
 		"@elementor/ui": "*",
 		"@wordpress/i18n": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"
+	},
+	"elementor": {
+		"type": "extension"
 	}
 }
