@@ -1,5 +1,7 @@
 import ControlsCSSParser from 'elementor-editor-utils/controls-css-parser';
 
+jest.dontMock('jquery');
+
 describe( 'ControlsCSSParser', () => {
 	test( 'parseSizeUnitsSelectorsDictionary', () => {
 		// Arrange.
