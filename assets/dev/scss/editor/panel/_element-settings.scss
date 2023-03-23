@@ -8,15 +8,22 @@
 	border-bottom: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
+		all: unset;
 		flex: auto;
 		transition: var(--e-a-transition-hover);
+		border-bottom: 3px solid transparent;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-bg-hover);
 		}
 
+		&:focus {
+			outline: 0;
+		}
+
 		&.elementor-active {
-			border-bottom: 3px solid var(--e-a-border-color-accent);
+			border-color: var(--e-a-border-color-accent);
 			color: var(--e-a-color-txt-accent);
 
 			a {
@@ -93,11 +100,14 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 85%;
+		line-height: 2;
+		padding-inline-start: 5px;
 		color: inherit;
 		font-weight: 500;
 		transition: var(--e-a-transition-hover);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-color-info);
 		}
 
