@@ -189,7 +189,7 @@ class Test_Base extends Elementor_Test_Base {
 
 	public function test_parse_size_units_selectors_dictionary__value_fraction() {
 		$parsed_value = $this->css_generator_class->parse_size_units_selectors_dictionary(
-			'--e-con-grid-template-columns: {{SIZE}}',
+			'--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 			[ 'unit' => 'fr', 'size' => '2', 'sizes' => [] ]
 		);
 
@@ -198,7 +198,7 @@ class Test_Base extends Elementor_Test_Base {
 
 	public function test_parse_size_units_selectors_dictionary__value_custom() {
 		$parsed_value = $this->css_generator_class->parse_size_units_selectors_dictionary(
-			'--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
+			'--e-con-grid-template-columns: {{SIZE}}',
 			[ 'unit' => 'custom', 'size' => '3fr 200px 1fr', 'sizes' => [] ]
 		);
 
