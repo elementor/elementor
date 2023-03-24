@@ -22,7 +22,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test grid container', async ( { page }, testInfo ) => {
+	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
