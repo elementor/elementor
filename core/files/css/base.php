@@ -485,7 +485,7 @@ abstract class Base extends Base_File {
 	 * @access public
 	 *
 	 * @param string $unit_selector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
-	 * @param array  $controlValues  The control values eg { unit: 'fr', size: 2 }
+	 * @param array  $control_values  The control values eg { unit: 'fr', size: 2 }
 	 *
 	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
 	 */
