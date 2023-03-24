@@ -53,11 +53,11 @@ $grid_icons = [
 			<div class="elementor-select-type-title"><?php echo esc_html__( 'Choose your structure', 'elementor' ); ?></div>
 			<div class="elementor-select-type-icons">
 				<div class="icon to-flex">
-					<img src="<?php echo esc_html__($container_icons['flex'], 'elementor'); ?>" alt="Flex layout">
+					<img src="<?php echo esc_url( $container_icons['flex'] ); ?>" alt="Flex layout">
 					<div class="subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
 				</div>
 				<div class="icon to-grid">
-					<img src="<?php echo esc_html__($container_icons['grid'], 'elementor'); ?>" alt="Grid layout">
+					<img src="<?php echo esc_url( $container_icons['grid'] ); ?>" alt="Grid layout">
 					<div class="subtitle"><?php echo esc_html__( 'Grid', 'elementor' ); ?></div>
 				</div>
 			</div>
@@ -95,7 +95,7 @@ $grid_icons = [
 			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Choose a grid to start with', 'elementor' ); ?></div>
 			<div class="e-con-select-preset-grid-list">
 				<?php foreach ( $grid_icons as $key => $icon ) { ?>
-					<img src="<?php echo esc_html__($icon, 'elementor'); ?>" alt="<?php echo esc_html__($key, 'elementor'); ?>">
+					<img src="<?php echo esc_url( $icon ); ?>" alt="<?php echo esc_html__( $key, 'elementor' ); ?>">
 				<?php } ?>
 			</div>
 		</div>
