@@ -22,7 +22,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test grid container', async ( { page }, testInfo ) => {
+	test.only( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
@@ -40,7 +40,8 @@ test.describe( 'Container tests', () => {
 			await page.locator( '.elementor-control-gaps .elementor-link-gaps' ).first().click();
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
-			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+			await expect( container ).toHaveCSS( 'column-gap', '10px' );
+			await expect( container ).toHaveCSS( 'row-gap', '20px' );
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
@@ -69,6 +70,14 @@ test.describe( 'Container tests', () => {
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
 			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+		} );
+
+		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
+				return 200 < element.offsetWidth;
+			} );
+			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
 	} );
 } );
