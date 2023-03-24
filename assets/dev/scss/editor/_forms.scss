@@ -68,7 +68,7 @@ input[type="checkbox"] {
 	justify-content: center;
 
 	&:checked  {
-		background: var(--e-a-color-primary);
+		background: var(--e-a-color-primary-bold);
 		border: none;
 
 		&:before  {

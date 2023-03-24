@@ -14,8 +14,8 @@
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
 			font-weight: 600;
-			background-color: var(--e-a-btn-bg-brand);
-			color: var(--e-a-btn-color);
+			background-color: var(--e-a-btn-bg-accent);
+			color: var(--e-a-btn-color-invert);
 			margin: 3px 10px 0;
 			display: block;
 			text-align: center;
@@ -23,7 +23,7 @@
 			transition: var(--e-a-transition);
 
 			&:hover {
-				background-color: var(--e-a-btn-bg-brand-hover);
+				background-color: var(--e-a-btn-bg-accent-hover);
 				box-shadow: none;
 			}
 		}
