@@ -72,7 +72,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'unit' => 'px',
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				'{{SELECTOR}}' => '--column-gap: {{COLUMN}}{{UNIT}}; --row-gap: {{ROW}}{{UNIT}};',
 			],
 			'responsive' => true,
 		];
