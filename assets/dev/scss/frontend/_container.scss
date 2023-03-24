@@ -110,7 +110,8 @@
 
 	&-boxed {
 		text-align: initial;
-		gap: initial;
+		column-gap: initial;
+		row-gap: initial;
 	}
 
 	&.e-flex > .e-con-inner {
