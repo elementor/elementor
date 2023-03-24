@@ -95,7 +95,7 @@ $grid_icons = [
 			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Choose a grid to start with', 'elementor' ); ?></div>
 			<div class="e-con-select-preset-grid-list">
 				<?php foreach ( $grid_icons as $key => $icon ) { ?>
-					<img src="<?php echo esc_url( $icon ); ?>" alt="<?php echo esc_html__( $key, 'elementor' ); ?>">
+					<img src="<?php echo esc_url( $icon ); ?>" alt="<?php echo esc_attr( $key ); ?>">
 				<?php } ?>
 			</div>
 		</div>
