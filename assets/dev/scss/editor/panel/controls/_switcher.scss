@@ -50,13 +50,13 @@
 		&:after {
 			content: attr(data-on);
 			left: 3px;
-			color: var(--e-a-color-txt-invert);
+			color: var(--e-a-btn-color);
 			opacity: 0;
 		}
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-label {
-		background: var(--e-a-color-primary);
+		background: var(--e-a-btn-bg-primary);
 
 		&:before {
 			opacity: 0;
