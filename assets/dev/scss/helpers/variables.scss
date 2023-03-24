@@ -29,32 +29,38 @@ $e-teal-600:	#0A875A;
 $e-teal-900:	#032317;
 
 //Editor Facelift 2023 - Pink
-$e-pink-700:	#C62E96;
-$e-pink-800:	#AB2881;
-$e-pink-900:	#91226D;
+$e-pink-50:		#FAE8FF;
+$e-pink-100:	#F5D0FE;
+$e-pink-200:	#F3BAFD;
+$e-pink-300:	#F0ABFC;
+$e-pink-400:	#EB8EFB;
+$e-pink-600:	#E73CF6;
+$e-pink-700:	#E315F5;
+$e-pink-800:	#D004D4;
+$e-pink-900:	#C00BB9;
+$e-pink-a100:	#310132;
 
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
 $e-indigo-700:	#4C43E5;
 $e-indigo-800:	#4338CA;
-
-//Editor Facelift 2023 - Temp Aliases
 $e-purple:		$e-indigo-600;
-$e-purple-tint:	#6661FF;
-$e-purple-shade:#EBEBFF;
 
 //Editor Facelift 2023 - Semantic Colors
-$e-primary:				$e-purple;
+$e-primary:				$e-pink-200;
+$e-primary-bold:		$e-pink-800;
 $e-secondary: 			$e-gray-600;
 $e-success:				$e-teal-600;
 $e-info: 				#2563EB;
 $e-danger:				#DC2626;
 $e-warning: 			#F59E0B;
-$e-brand: 				$e-pink-700;
+$e-accent: 				$e-purple;
+$e-primary-bg:			$e-pink-50;
 $e-success-bg:			#F2FDF5;
 $e-danger-bg:			#FEF1F4;
 $e-info-bg: 			#F0F7FF;
 $e-warning-bg: 			#FFFBEB;
+$e-primary-dark-bg:		$e-pink-a100;
 $e-success-dark-bg:		$e-teal-900;
 $e-info-dark-bg: 		#0A1A3D;
 $e-danger-dark-bg:		#390A0A;
@@ -102,7 +108,6 @@ $admin-font-family: Roboto, Arial, Helvetica, sans-serif; // Default fonts for a
 $brand-color-dark-pink: $e-purple;
 $brand-color-royal-blue: #010150;
 $brand-color-dark: #434363;
-$brand-color-light: $brand-color-dark-pink; //fallback (deprecated v3.0)
 
 // Editor colors
 $editor-darkest:$e-gray-900;
@@ -113,7 +118,7 @@ $editor-light: $e-gray-300;
 $editor-lighter: $e-gray-200;
 $editor-lightest: $e-gray-100;
 
-$editor-accent: $brand-color-dark-pink;
+$editor-accent: $e-accent;
 $editor-background: $white;
 $editor-background-light: $e-gray-50;
 $editor-background-lighter: $e-gray-100;
@@ -133,12 +138,10 @@ $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 
 $slides_gui: rgba(238, 238, 238, .9);
 
-// Panel Transition
 $transition-hover: all .3s;
-
-// Container element primary color.
-// TODO: Need a final color from the Design.
-$editor-kit-accent: #4ab7f4;
+$control-unit: 27px;
+$panel-width: 280px;
+$panel-xl-width: 300px;
 
 // Platform
 $platform-primary: #040080;
@@ -157,6 +160,10 @@ $platform-danger-bg: #FDE8EC;
 $platform-danger-text: #B92136;
 $platform-success-bg: #ECF9F2;
 $platform-success-text: #117740;
+
+//
+// ========================= FRONT-END =========================
+//
 
 // Layers (Z-indexes)
 $under-layer: -1;
@@ -286,12 +293,6 @@ $column-sizes: (
 		90: 90%,
 		100: 100%
 );
-
-$control-unit: 27px;
-
-// Panel
-$panel-width: 280px;
-$panel-xl-width: 300px;
 
 // Grid Breakpoints
 $breakpoints: (
