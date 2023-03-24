@@ -4,6 +4,20 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+$container_icons = [
+	'flex' => ELEMENTOR_ASSETS_URL . 'images/app/container/flex.svg',
+	'grid' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid.svg',
+];
+
+$grid_icons = [
+	'grid-2x0' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-2x0.svg',
+	'grid-0x2' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-0x2.svg',
+	'grid-3x0' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-3x0.svg',
+	'grid-0x3' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-0x3.svg',
+	'grid-2x2' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-2x2.svg',
+	'grid-3x3' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-3x3.svg',
+]
 ?>
 <script type="text/template" id="tmpl-elementor-empty-preview">
 	<div class="elementor-first-add">
@@ -36,9 +50,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
 		<div class="e-view elementor-select-type">
-			<div class="to-flex">Flex</div>
-			<hr />
-			<div class="to-grid">Grid</div>
+			<div class="elementor-select-type-title"><?php echo esc_html__( 'Choose your structure', 'elementor' ); ?></div>
+			<div class="elementor-select-type-icons">
+				<div class="icon to-flex">
+					<img src="<?php echo $container_icons['flex'] ?>" alt="Flex layout">
+					<div class="subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
+				</div>
+				<div class="icon to-grid">
+					<img src="<?php echo $container_icons['grid'] ?>" alt="Grid layout">
+					<div class="subtitle"><?php echo esc_html__( 'Grid', 'elementor' ); ?></div>
+				</div>
+			</div>
 		</div>
 		<div class="e-view elementor-select-preset">
 			<div class="elementor-select-preset-title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
@@ -70,12 +92,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="e-view e-con-select-preset-grid">
-			<div class="grid-preset">2x0</div>
-			<div>0x2</div>
-			<div>3x0</div>
-			<div>0x3</div>
-			<div>2x2</div>
-			<div>3x3</div>
+			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Choose a grid to start with', 'elementor' ); ?></div>
+			<div class="e-con-select-preset-grid-list">
+				<?php foreach ($grid_icons as $key => $icon ) { ?>
+					<img src="<?php echo $icon; ?>" alt="<?php echo $key; ?>">
+				<?php } ?>
+			</div>
 		</div>
 	</div>
 </script>

@@ -1,6 +1,5 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import environment from 'elementor-common/utils/environment';
-import { ContainerGridHelper } from '../../utils/container-grid-helper';
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -35,7 +34,6 @@ import { ContainerGridHelper } from '../../utils/container-grid-helper';
 			containerPresets: '.e-con-preset',
 			toFlex: '.to-flex',
 			toGrid: '.to-grid',
-			gridPresets: '.grid-preset',
 		};
 	}
 
@@ -48,18 +46,7 @@ import { ContainerGridHelper } from '../../utils/container-grid-helper';
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.toFlex': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX ),
 			'click @ui.toGrid': () => this.setView( AddSectionBase.VIEW_CONTAINER_GRID ),
-			'click @ui.gridPresets': 'onGridPresetSelected',
 		};
-	}
-
-	onGridPresetSelected( e ) {
-		this.closeSelectPresets();
-
-		return ContainerGridHelper.createContainerFromPreset(
-			e.currentTarget.dataset.preset,
-			elementor.getPreviewContainer(),
-			this.options,
-		);
 	}
 
 	behaviors() {
