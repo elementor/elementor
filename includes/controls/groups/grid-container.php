@@ -81,7 +81,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'label' => esc_html_x( 'Justify Content', 'Grid Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'label_block' => true,
-			'label_block' => true,
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
