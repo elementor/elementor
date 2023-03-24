@@ -490,8 +490,8 @@ abstract class Base extends Base_File {
 	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
 	 */
 	public function parse_size_units_selectors_dictionary( $unit_selector, $control_values ) {
-		$mustacheVariableRegex = '/{{(.*?)}}/';
-		return preg_replace_callback( $mustacheVariableRegex, function( $matches ) use ( $control_values ) {
+		$mustache_variable_regex = '/{{(.*?)}}/';
+		return preg_replace_callback( $mustache_variable_regex, function( $matches ) use ( $control_values ) {
 			$keys = explode( '.', strtolower( $matches[1] ) );
 			$value = $control_values;
 
