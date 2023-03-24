@@ -35,6 +35,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<# } #>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
+		<div class="e-view elementor-select-type">
+			<div class="to-flex">Flex</div>
+			<hr />
+			<div class="to-grid">Grid</div>
+		</div>
 		<div class="e-view elementor-select-preset">
 			<div class="elementor-select-preset-title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
@@ -63,6 +68,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				} );
 				#>
 			</div>
+		</div>
+		<div class="e-view e-con-select-preset-grid">
+			<div class="grid-preset">2x0</div>
+			<div>0x2</div>
+			<div>3x0</div>
+			<div>0x3</div>
+			<div>2x2</div>
+			<div>3x3</div>
 		</div>
 	</div>
 </script>
