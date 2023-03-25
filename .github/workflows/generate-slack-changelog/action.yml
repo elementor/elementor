@@ -8,7 +8,7 @@ runs:
       run: |
             CHANGELOG_CONTENT=$(cat ${{ env.CHANGELOG_FILE }} )
 
-            # reaplcce * with •
+            # replace * with •
             CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\*/•/g')
 
             # Replace ED-xxxx with a link to the corresponding Jira issue

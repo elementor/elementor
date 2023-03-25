@@ -113,6 +113,6 @@ ksort( $types );
 			</div>
 		</div>
 		<button id="elementor-new-template__form__submit" class="elementor-button e-primary"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
-		<a id="elementor-new-template__form__lock_button" class="elementor-button e-brand e-hidden" target="_blank"><?php // Will be filled from js. ?></a>
+		<a id="elementor-new-template__form__lock_button" class="elementor-button e-accent e-hidden" target="_blank"><?php // Will be filled from js. ?></a>
 	</form>
 </script>

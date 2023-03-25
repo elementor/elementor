@@ -67,7 +67,7 @@
     @import "categories";
 
     // Schemes
-    @import "schemes";
+    //@import "schemes"; //TODO: deprecated v3.0.0
 
 	// Menu
 	@import "menu";
@@ -80,9 +80,6 @@
 
     //Footer
     @import "footer";
-
-	//Compatibility
-    @import "compatibility";
 }
 
 // Panel Elements
@@ -119,3 +116,6 @@
 		margin-top: 20px;
 	}
 }
+
+//Compatibility
+@import "compatibility";
