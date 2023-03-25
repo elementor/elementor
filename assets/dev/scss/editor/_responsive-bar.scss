@@ -45,17 +45,21 @@
 		font-size: 16px;
 		transition: var(--e-a-transition-hover);
 
-		&:hover,
+		&:hover {
+			color: var(--e-a-color-primary-bold);
+			background-color: $e-primary-dark-bg;
+		}
+
 		&[aria-selected="true"] {
-			color: var(--e-a-color-txt-invert);
-			background-color: var(--e-a-color-primary);
+			background-color: $e-gray-700;
+			color: $e-gray-25;
 		}
 
 		input {
 			display: none;
 
-			&:checked + i {
-				color: $e-gray-50;
+			&:checked {
+
 			}
 		}
 
