@@ -689,12 +689,12 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Aspect Ratio', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'169' => '16 / 9',
-					'219' => '21 / 9',
-					'43' => '4 / 3',
-					'32' => '3 / 2',
-					'11' => '1 / 1',
-					'916' => '9 / 16',
+					'169' => '16:9',
+					'219' => '21:9',
+					'43' => '4:3',
+					'32' => '3:2',
+					'11' => '1:1',
+					'916' => '9:16',
 				],
 				'selectors_dictionary' => [
 					'169' => '1.77777',
