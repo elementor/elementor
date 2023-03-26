@@ -9,26 +9,28 @@
 
 :root {
 	//Dragble colors
-	--e-p-draggable-color: 			#{$e-indigo-600};
+	--e-p-draggable-color: 			#{$e-pink-300};
 
 	//Handle colors
-	--e-p-border-column:			#{$e-gray-600};
-	--e-p-border-column-hover: 		#{$e-gray-700};
-	--e-p-border-column-invert: 	#{$white};
+	--e-p-border-column:			#{$e-pink-300};
+	--e-p-border-column-hover: 		#{$e-pink-200};
+	--e-p-border-column-invert: 	#{$e-gray-900};
 
-	--e-p-border-section: 			#{$e-indigo-600};
-	--e-p-border-section-hover: 	#{$e-indigo-700};
-	--e-p-border-section-invert: 	#{$white};
+	--e-p-border-section: 			#{$e-pink-300};
+	--e-p-border-section-hover: 	#{$e-pink-200};
+	--e-p-border-section-invert: 	#{$e-gray-900};
 
-	--e-p-border-con: 				#{$e-indigo-600};
-	--e-p-border-con-hover: 		#{$e-indigo-700};
-	--e-p-border-con-invert: 		#{$white};
+	--e-p-border-con: 				#{$e-pink-300};
+	--e-p-border-con-hover: 		#{$e-pink-200};
+	--e-p-border-con-active: 		#{$e-pink-600};
+	--e-p-border-con-invert: 		#{$e-gray-900};
 
-	--e-p-border-widget: 			#{$e-indigo-600};
-	--e-p-border-widget-hover: 		#{$e-indigo-700};
-	--e-p-border-widget-invert: 	#{$white};
+	--e-p-border-widget: 			#{$e-pink-300};
+	--e-p-border-widget-hover: 		#{$e-pink-200};
+	--e-p-border-widget-active: 	#{$e-pink-600};
+	--e-p-border-widget-invert: 	#{$e-gray-900};
 
 	--e-p-border-global: 			#{$e-teal-300};
 	--e-p-border-global-hover: 		#{$e-teal-400};
-	--e-p-border-global-invert: 	#{$black};
+	--e-p-border-global-invert: 	#{$e-gray-900};
 }
