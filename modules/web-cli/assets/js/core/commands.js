@@ -513,7 +513,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string}  command
 	 * @param {{}}      args
-     * @param {{}}      meta
+	 * @param {{}}      meta
 	 * @param {*}       results
 	 * @param {boolean} [removeTrace=true]
 	 */
