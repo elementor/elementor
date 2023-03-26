@@ -1,5 +1,6 @@
 {
 	"name": "@elementor/editor",
+	"version": "0.0.0",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
@@ -9,8 +10,8 @@
 	},
 	"dependencies": {
 		"@elementor/locations": "*",
-		"@elementor/ui": "*",
 		"@elementor/store": "*",
+		"@elementor/ui": "*",
 		"@elementor/v1-adapters": "*",
 		"@wordpress/i18n": "*"
 	},
