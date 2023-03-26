@@ -1,4 +1,4 @@
-import { Sources } from 'elementor-editor/editor-constants';
+import { userEventMeta } from '@elementor/events';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-template-library-header-actions',
@@ -17,10 +17,11 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.save': 'onSaveClick',
 	},
 
-	onImportClick: function() {
-		$e.route( 'library/import', {}, {
-			source: Sources.TEMPLATE_LIBRARY,
-		} );
+	onImportClick() {
+		$e.route( 'library/import', {}, userEventMeta( {
+			source: 'import-button',
+			interaction: 'click',
+		} ) );
 	},
 
 	onSyncClick() {
@@ -39,9 +40,10 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onSaveClick: function() {
-		$e.route( 'library/save-template', {}, {
-			source: Sources.TEMPLATE_LIBRARY,
-		} );
+	onSaveClick() {
+		$e.route( 'library/save-template', {}, userEventMeta( {
+			source: 'save-button',
+			interaction: 'click',
+		} ) );
 	},
 } );

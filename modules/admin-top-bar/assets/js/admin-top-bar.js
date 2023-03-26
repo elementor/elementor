@@ -3,8 +3,8 @@ import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
-import { Sources } from 'elementor-editor/editor-constants';
 import environment from 'elementor-common/utils/environment';
+import { userEventMeta } from '@elementor/events';
 
 export default function AdminTopBar() {
 	const actionButtonsRef = useRef();
@@ -27,7 +27,10 @@ export default function AdminTopBar() {
 	}, [] );
 
 	const finderAction = () => {
-		$e.route( 'finder', {}, { source: Sources.ADMIN_TOP_BAR } );
+		$e.route( 'finder', {}, userEventMeta( {
+			source: 'admin-top-bar',
+			interaction: 'click',
+		} ) );
 	};
 
 	const controlSign = environment.mac ? '&#8984;' : '^';

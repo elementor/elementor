@@ -1,4 +1,4 @@
-import { Sources } from 'elementor-editor/editor-constants';
+import { userEventMeta } from '@elementor/events';
 
 var InsertTemplateHandler;
 
@@ -15,9 +15,10 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		const args = {
 				model: this.view.model,
 			},
-			meta = {
-				source: Sources.TEMPLATE_LIBRARY,
-			};
+			meta = userEventMeta( {
+				source: 'insert-button',
+				interaction: 'click',
+			} );
 
 		this.ui.insertButton.addClass( 'elementor-disabled' );
 

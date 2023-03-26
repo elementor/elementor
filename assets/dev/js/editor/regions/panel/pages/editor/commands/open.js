@@ -1,4 +1,4 @@
-import { Sources } from 'elementor-editor/editor-constants';
+import { systemEventMeta } from '@elementor/events';
 
 export class Open extends $e.modules.CommandBase {
 	apply( args ) {
@@ -7,9 +7,14 @@ export class Open extends $e.modules.CommandBase {
 
 			args.model.trigger( 'request:edit' );
 		} else {
-			$e.route( this.component.getDefaultRoute(), args, {
-				source: Sources.PANEL, // TODO should it be `SOURCES.COMMAND`?
-			} );
+			$e.route(
+				this.component.getDefaultRoute(),
+				args,
+				systemEventMeta( {
+					source: 'default-route',
+					trigger: 'open',
+				} ),
+			);
 		}
 
 		// BC: Run hooks after the route render's the view

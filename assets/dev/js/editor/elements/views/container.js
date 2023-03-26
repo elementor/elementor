@@ -3,6 +3,7 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
+import { userEventMeta } from '@elementor/events';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -206,9 +207,10 @@ const ContainerView = BaseElementView.extend( {
 	saveAsTemplate() {
 		$e.route( 'library/save-template', {
 			model: this.model,
-		}, {
-			source: Sources.CONTEXT_MENU,
-		} );
+		}, userEventMeta( {
+			source: 'preview',
+			interaction: 'context-menu',
+		} ) );
 	},
 
 	/**

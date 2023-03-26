@@ -1,4 +1,4 @@
-import { Sources } from 'elementor-editor/editor-constants';
+import { userEventMeta } from '@elementor/events';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-footer-content',
@@ -90,7 +90,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	showSettingsPage() {
-		$e.route( 'panel/page-settings/settings' );
+		$e.route( 'panel/page-settings/settings', {}, userEventMeta( {
+			source: 'footer',
+			interaction: 'click',
+		} ) );
 	},
 
 	onMenuButtonsClick( event ) {
@@ -111,7 +114,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSettingsClick() {
-		$e.route( 'panel/page-settings/settings' );
+		$e.route( 'panel/page-settings/settings', {}, userEventMeta( {
+			source: 'footer',
+			interaction: 'click',
+		} ) );
 	},
 
 	onDeviceModeIconClick() {
@@ -132,14 +138,23 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onSaveTemplateClick() {
-		$e.route( 'library/save-template' );
+		$e.route( 'library/save-template', {}, userEventMeta( {
+			source: 'footer',
+			interaction: 'click',
+		} ) );
 	},
 
 	onHistoryClick() {
-		$e.route( 'panel/history/actions' );
+		$e.route( 'panel/history/actions', {}, userEventMeta( {
+			source: 'footer',
+			interaction: 'click',
+		} ) );
 	},
 
 	onNavigatorClick() {
-		$e.run( 'navigator/toggle' );
+		$e.run( 'navigator/toggle', {}, userEventMeta( {
+			source: 'footer',
+			interaction: 'click',
+		} ) );
 	},
 } );

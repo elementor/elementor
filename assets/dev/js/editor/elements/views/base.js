@@ -1,6 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
-import { Sources } from 'elementor-editor/editor-constants';
+import { userEventMeta } from '@elementor/events';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -801,9 +801,10 @@ BaseElementView = BaseContainer.extend( {
 		// The method should be deprecated.
 		$e.route( 'library/save-template', {
 			model: this.model,
-		}, {
-			source: Sources.PREVIEW,
-		} );
+		}, userEventMeta( {
+			source: 'preview',
+			interaction: 'context-menu',
+		} ) );
 	},
 
 	onBeforeRender() {

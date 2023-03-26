@@ -1,4 +1,4 @@
-import { Sources } from 'elementor-editor/editor-constants';
+import { userEventMeta } from '@elementor/events';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
@@ -29,7 +29,10 @@ module.exports = Marionette.ItemView.extend( {
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this._parent.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this._parent.getContainer(),
-						} ),
+						}, userEventMeta( {
+							source: 'empty-column',
+							interaction: 'context-menu',
+						} ) ),
 					},
 				],
 			},
@@ -37,6 +40,9 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onClickAdd() {
-		$e.route( 'panel/elements/categories' );
+		$e.route( 'panel/elements/categories', {}, userEventMeta( {
+			source: 'empty-column',
+			interaction: 'click',
+		} ) );
 	},
 } );
