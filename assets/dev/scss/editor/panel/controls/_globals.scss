@@ -9,7 +9,7 @@
 		@include padding-start(10px);
 
 		&-toggle {
-			border: var(--e-a-border);
+			border: var(--e-a-border-bold);
 			@include border-end(0);
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 			display: flex;
@@ -17,8 +17,9 @@
 			justify-content: center;
 			cursor: pointer;
 
-			&--active i {
-				color: var(--e-a-color-primary);
+			&--active {
+				color: var(--e-a-color-txt-active);
+				background-color: var(--e-a-bg-active);
 			}
 		}
 
@@ -52,7 +53,7 @@
 				width: 270px;
 				z-index: 1;
 				background-color: rgba(0,0,0,0.9);
-				color: #fff;
+				color: var(--e-a-color-white);
 				padding: 20px;
 				border-radius: 3px;
 

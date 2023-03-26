@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-elements">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
 		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></div>
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Global', 'elementor' ); ?></div>
+		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></div>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-categories"></div>
 
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
-		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" />
 		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'Get more with Elementor Pro', 'elementor' ); ?></div>
 		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-widgets/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 	</div>
@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-nerd-box">
-		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" />
 		<div class="elementor-nerd-box-title"><?php echo esc_html__( 'Meet Our Global Widget', 'elementor' ); ?></div>
 		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
 		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
