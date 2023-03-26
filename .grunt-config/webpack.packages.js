@@ -1,10 +1,10 @@
-const path = require("path");
-const fs = require("fs");
-const { GenerateWordPressAssetFileWebpackPlugin } = require("@elementor/generate-wordpress-asset-file-webpack-plugin");
-const { ExtractI18nExpressionsWebpackPlugin } = require("@elementor/extract-i18n-expressions-webpack-plugin");
-const { ExternalizeWordPressAssetsWebpackPlugin } = require("@elementor/externalize-wordpress-assets-webpack-plugin");
+const path = require( 'path' );
+const fs = require( 'fs' );
+const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
+const { ExtractI18nExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-expressions-webpack-plugin' );
+const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const { dependencies } = require("../package.json");
+const { dependencies } = require( '../package.json' );
 
 const packages = Object.keys( dependencies )
 	.filter( ( packageName ) => !! packageName.startsWith( '@elementor/' ) )
@@ -17,12 +17,12 @@ const packages = Object.keys( dependencies )
 			mainFile: module || main,
 			packageName,
 		}
-	})
+	} )
 	.filter( ( { mainFile } ) => !! mainFile )
 	.map( ( { mainFile, packageName } ) => {
 		return {
 			packageName,
-			name: packageName.replace( '@elementor/', ''),
+			name: packageName.replace( '@elementor/', '' ),
 			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
 		}
 	} );
@@ -34,7 +34,7 @@ const common = {
 	),
 	plugins: [
 		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
-		new ExternalizeWordPressAssetsWebpackPlugin( { referenceKey: '__UNSTABLE__elementorPackages' } ),
+		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
