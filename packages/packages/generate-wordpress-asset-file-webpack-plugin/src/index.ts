@@ -3,8 +3,8 @@
 import { sources, Compilation, Compiler, Chunk } from 'webpack';
 
 type HandlesMap = {
-	exact: Record< string, string >;
-	startsWith: Record< string, string >;
+	exact: Record<string, string>;
+	startsWith: Record<string, string>;
 }
 
 type Options = {
@@ -100,7 +100,7 @@ export class GenerateWordPressAssetFileWebpackPlugin {
 		const handleName = this.generateHandleName( entryId );
 
 		const depsAsString = [ ...deps ]
-			.map( ( dep ) => this.transformIntoDepName( dep ) )
+			.map( ( dep ) => this.getHandleFromDep( dep ) )
 			.filter( ( dep ) => dep !== handleName )
 			.sort()
 			.map( ( dep ) => `'${ dep }',` )
@@ -142,20 +142,20 @@ return [
 		);
 	}
 
-	transformIntoDepName( name: string ) {
+	getHandleFromDep( dep: string ) {
 		const { startsWith, exact } = this.options.handlesMap;
 
-		if ( Object.keys( exact ).includes( name ) ) {
-			return exact[ name ];
+		if ( Object.keys( exact ).includes( dep ) ) {
+			return exact[ dep ];
 		}
 
 		for ( const [ key, value ] of Object.entries( startsWith ) ) {
-			if ( name.startsWith( key ) ) {
-				return name.replace( key, value );
+			if ( dep.startsWith( key ) ) {
+				return dep.replace( key, value );
 			}
 		}
 
-		return name;
+		return dep;
 	}
 
 	generateHandleName( name: string ) {

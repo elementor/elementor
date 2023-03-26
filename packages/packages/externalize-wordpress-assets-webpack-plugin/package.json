@@ -2,6 +2,7 @@
 	"name": "@elementor/externalize-wordpress-assets-webpack-plugin",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsup src/index.ts --format esm,cjs --dts",
 		"dev": "tsup src/index.ts --format esm,cjs"

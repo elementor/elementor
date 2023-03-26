@@ -1,17 +1,17 @@
 import { ExternalsPlugin, Compiler } from 'webpack';
 
 type ExternalsMap = {
-	exact: Record< string, string >;
-	startsWith: Record< string, string >;
+	exact: Record<string, string>;
+	startsWith: Record<string, string>;
 }
 
 type NormalizedOptions = {
-	referenceKey: string,
+	globalKey: string,
 	externalsMap: ExternalsMap
 }
 
 type Options = {
-	referenceKey: string,
+	globalKey: string,
 	externalsMap?: Partial<ExternalsMap>
 }
 
@@ -67,9 +67,9 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 			return exact[ request ];
 		}
 
-		for ( const [ prefix, namespace ] of Object.entries( startsWith ) ) {
+		for ( const [ prefix, globalKey ] of Object.entries( startsWith ) ) {
 			if ( request.startsWith( prefix ) ) {
-				return [ namespace, this.kebabToCamelCase( request.replace( prefix, '' ) ) ];
+				return [ globalKey, this.kebabToCamelCase( request.replace( prefix, '' ) ) ];
 			}
 		}
 	}
@@ -83,7 +83,7 @@ export class ExternalizeWordPressAssetsWebpackPlugin {
 				{
 					...entry,
 					library: {
-						name: [ this.options.referenceKey, this.kebabToCamelCase( name ) ],
+						name: [ this.options.globalKey, this.kebabToCamelCase( name ) ],
 						type: 'window',
 					},
 				},
