@@ -299,7 +299,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			detail: {
 				command,
 				args,
-                meta
+				meta
 			},
 		} ) );
 	}
