@@ -1,4 +1,5 @@
 import Component from './loader/component';
+import { userEventMeta, systemEventMeta } from '@elementor/events';
 
 class AppLoader {
 	selector = 'a.elementor-app-link, .elementor-app-link .ab-item';
@@ -19,15 +20,29 @@ class AppLoader {
 		links.forEach( ( link ) => {
 			link.addEventListener( 'click', ( event ) => {
 				event.preventDefault();
-				$e.run( 'app/open', {
-					url: link.href,
-				} );
+				$e.run(
+					'app/open',
+					{
+						url: link.href,
+					},
+					userEventMeta( {
+						source: 'wp-admin-bar',
+						interaction: 'click',
+					} ),
+				);
 			} );
 
 			link.addEventListener( 'mouseenter', () => {
-				$e.run( 'app/load', {
-					url: link.href,
-				} );
+				$e.run(
+					'app/load',
+					{
+						url: link.href,
+					},
+					systemEventMeta( {
+						source: 'wp-admin-bar',
+						trigger: 'mouse-hover',
+					} ),
+				);
 			} );
 		} );
 	}

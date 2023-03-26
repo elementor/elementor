@@ -1,5 +1,5 @@
 import Component from './component';
-import { Sources } from 'elementor-editor/editor-constants';
+import { systemEventMeta } from '@elementor/events';
 
 	var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryManager;
@@ -35,9 +35,10 @@ TemplateLibraryManager = function() {
 								}
 							}
 						},
-					}, {
-						source: Sources.TEMPLATE_LIBRARY,
-					} );
+					}, systemEventMeta( {
+						source: 'library',
+						trigger: 'save-template',
+					} ) );
 				},
 				error( errorData ) {
 					self.showErrorDialog( errorData );

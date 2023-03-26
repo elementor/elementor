@@ -1,4 +1,5 @@
 import After from 'elementor-api/modules/hooks/data/after';
+import { userEventMeta } from '@elementor/events';
 
 export class KitAfterSave extends After {
 	getCommand() {
@@ -28,7 +29,10 @@ export class KitAfterSave extends After {
 						name: 'back_to_editor',
 						text: __( 'Back to Editor', 'elementor' ),
 						callback() {
-							$e.run( 'panel/global/close' );
+							$e.run( 'panel/global/close', {}, userEventMeta( {
+								source: 'kit-save-toast',
+								interaction: 'click',
+							} ) );
 						},
 					},
 				],
