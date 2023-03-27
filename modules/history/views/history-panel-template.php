@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-panel-history-page">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="actions"><?php echo esc_html__( 'Actions', 'elementor' ); ?></div>
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="revisions"><?php echo esc_html__( 'Revisions', 'elementor' ); ?></div>
+		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="actions"><?php echo esc_html__( 'Actions', 'elementor' ); ?></button>
+		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="revisions"><?php echo esc_html__( 'Revisions', 'elementor' ); ?></button>
 	</div>
 	<div id="elementor-panel-history-content"></div>
 </script>
