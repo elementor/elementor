@@ -163,9 +163,9 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 			}
 			$e.bc.ensureTab( 'panel/editor', tabSlug );
 			#>
-			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#">{{{ tabTitle }}}</a>
-			</div>
+			<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<span>{{{ tabTitle }}}</span>
+			</button>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
