@@ -49,9 +49,9 @@ $grid_icons = [
 			<# } #>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
-		<div class="e-view elementor-select-type">
-			<div class="elementor-select-type-title"><?php echo esc_html__( 'Choose your structure', 'elementor' ); ?></div>
-			<div class="elementor-select-type-icons">
+		<div class="e-view e-con-flex-container e-con-select-type">
+			<div class="e-con-select-type__title"><?php echo esc_html__( 'Which layout would you like to use?', 'elementor' ); ?></div>
+			<div class="e-con-select-type__icons">
 				<div class="icon to-flex">
 					<img src="<?php echo esc_url( $container_icons['flex'] ); ?>" alt="Flex layout">
 					<div class="subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
@@ -78,7 +78,7 @@ $grid_icons = [
 			</ul>
 		</div>
 		<div class="e-view e-con-select-preset">
-			<div class="e-con-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
+			<div class="e-con-select-preset__title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
 			<div class="e-con-select-preset__list">
 				<#
 					elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
@@ -91,8 +91,8 @@ $grid_icons = [
 				#>
 			</div>
 		</div>
-		<div class="e-view e-con-select-preset-grid">
-			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Choose a grid to start with', 'elementor' ); ?></div>
+		<div class="e-view e-con-flex-container e-con-select-preset-grid">
+			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
 			<div class="e-con-select-preset-grid-list">
 				<?php foreach ( $grid_icons as $key => $icon ) { ?>
 					<img src="<?php echo esc_url( $icon ); ?>" alt="<?php echo esc_attr( $key ); ?>">

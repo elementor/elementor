@@ -36,13 +36,13 @@ const config = {
 		navigationTimeout: 10_000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://elementor.local',
 		viewport: { width: 1920, height: 1080 },
 		video: 'on',
 		trace: 'retain-on-failure',
 		user: {
 			username: process.env.USERNAME || 'admin',
-			password: process.env.PASSWORD || 'password',
+			password: process.env.PASSWORD || 'admin',
 		},
 		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
