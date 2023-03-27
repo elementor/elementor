@@ -36,7 +36,7 @@
 
 			.select2-selection__choice {
 				background-color: var(--e-a-btn-bg);
-				color: var(--e-a-btn-color);
+				color: var(--e-a-btn-color-invert);
 				line-height: 1.2;
 				font-size: 10px;
 				border: none;
@@ -52,7 +52,7 @@
 					&:after {
 						content: '\e815';
 						font-family: "eicons";
-						color: var(--e-a-btn-color);
+						color: var(--e-a-btn-color-invert);
 						text-indent: 0;
 						position: absolute;
 						left: 0;
@@ -72,7 +72,7 @@
 			}
 
 			.select2-selection__choice__remove{
-				color: var(--e-a-btn-color);
+				color: var(--e-a-btn-color-invert);
 				@include margin-end(3px);
 			}
 		}

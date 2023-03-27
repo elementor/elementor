@@ -11,6 +11,7 @@ test.describe( 'Container tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
+			container_grid: true,
 		} );
 	} );
 
@@ -19,6 +20,7 @@ test.describe( 'Container tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
+			container_grid: false,
 			container: false,
 		} );
 	} );
@@ -542,6 +544,51 @@ test.describe( 'Container tests', () => {
 
 		await editor.togglePreviewMode();
 		await expect( resizers ).toHaveCount( 0 );
+	} );
+
+	test( 'Test grid container controls', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			containers = [
+				{ setting: 'start' },
+				{ setting: 'center' },
+				{ setting: 'end' },
+				{ setting: 'stretch' },
+			];
+
+		// Close Navigator
+		await editor.closeNavigatorIfOpen();
+
+		// Add containers and set various controls.
+		for ( const [ index, container ] of Object.entries( containers ) ) {
+			// Add container.
+			containers[ index ].id = await editor.addElement( { elType: 'container' }, 'document' );
+
+			// Set various controls
+			await page.locator( '.elementor-control-container_type select' ).selectOption( 'grid' );
+			const clickOptions = { position: { x: 0, y: 0 } }; // This is to avoid the "tipsy" alt info that can block the click of the next item.
+			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
+			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
+		}
+
+		// Assert.
+		// Check container settings are set as expected in the editor.
+		for ( const container of containers ) {
+			const element = await editor.getPreviewFrame().locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
+			await expect( element ).toHaveCSS( 'justify-items', container.setting );
+			await expect( element ).toHaveCSS( 'align-items', container.setting );
+		}
+
+		await editor.publishAndViewPage();
+
+		// Assert.
+		// Check container settings are set as expected on frontend.
+		for ( const container of containers ) {
+			const element = await page.locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
+			await expect( element ).toHaveCSS( 'justify-items', container.setting );
+			await expect( element ).toHaveCSS( 'align-items', container.setting );
+		}
 	} );
 
 	test( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {

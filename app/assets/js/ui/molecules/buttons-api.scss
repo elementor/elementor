@@ -15,9 +15,9 @@ $button-lg-font-size: type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
 $button-primary-background-color: theme-colors(accent);
-$button-primary-hover-background-color: darken($button-primary-background-color, $button-hover-constant);
-$button-primary-active-background-color: darken($button-primary-background-color, $button-active-constant);
-$button-primary-color: theme-colors(light);
+$button-primary-hover-background-color: $e-pink-200;
+$button-primary-active-background-color: theme-colors(accent);
+$button-primary-color: $eps-btn-color;
 $button-secondary-background-color: tints(500);
 $button-secondary-hover-background-color: darken($button-secondary-background-color, $button-hover-constant);
 $button-secondary-active-background-color: darken($button-secondary-background-color, $button-active-constant);
@@ -43,10 +43,10 @@ $button-disabled-hover-background-color: darken($button-disabled-background-colo
 $button-disabled-active-background-color: darken($button-disabled-background-color, $button-active-constant);
 $button-disabled-color: theme-colors(light);
 // -- dark
-$button-dark-primary-background-color: dark-theme-colors(accent);
-$button-dark-primary-color: dark-theme-colors(light);
-$button-dark-primary-hover-background-color: darken($button-dark-primary-background-color, $button-hover-constant);
-$button-dark-primary-active-background-color: darken($button-dark-primary-background-color, $button-active-constant);
+$button-dark-primary-background-color: theme-colors(accent);
+$button-dark-primary-color: $eps-btn-color;
+$button-dark-primary-hover-background-color: $e-pink-200;
+$button-dark-primary-active-background-color: theme-colors(accent);
 $button-dark-secondary-background-color: dark-tints(200);
 $button-dark-secondary-hover-background-color: darken($button-dark-secondary-background-color, $button-hover-constant);
 $button-dark-secondary-active-background-color: darken($button-dark-secondary-background-color, $button-active-constant);
