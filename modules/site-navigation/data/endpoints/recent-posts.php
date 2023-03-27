@@ -58,7 +58,6 @@ class Recent_Posts extends Endpoint {
 			'posts_per_page' => $request->get_param( 'posts_per_page' ),
 			'post_type' => $request->get_param( 'post_type' ),
 			'fields' => 'ids',
-			// Exclude kits.
 			'meta_query' => [
 				[
 					'key' => Document::TYPE_META_KEY,
