@@ -1,42 +1,25 @@
 import * as React from 'react';
-import { useInjectionsOf } from '@elementor/locations';
-import { __ } from '@wordpress/i18n';
-import { usePopupState, bindTrigger, bindMenu } from '@elementor/ui';
-import { LOCATION_TOOLS_MENU_DEFAULT } from '../../locations';
+import { toolsMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
-import ToolbarMenuItem from '../ui/toolbar-menu-item';
-import PopoverMenu from '../ui/popover-menu';
-import { DotsVerticalIcon } from '@elementor/icons';
+import ToolbarMenuMore from '../ui/toolbar-menu-more';
 
 const MAX_TOOLBAR_ACTIONS = 5;
 
+const { useMenuItems } = toolsMenu;
+
 export default function ToolsMenuLocation() {
-	const injections = useInjectionsOf( LOCATION_TOOLS_MENU_DEFAULT );
+	const menuItems = useMenuItems();
 
-	const popupState = usePopupState( {
-		variant: 'popover',
-		popupId: 'elementor-editor-top-bar-tools-more',
-	} );
-
-	const toolbarInjections = injections.slice( 0, MAX_TOOLBAR_ACTIONS );
-	const popoverInjections = injections.slice( MAX_TOOLBAR_ACTIONS );
+	const toolbarMenuItems = menuItems.default.slice( 0, MAX_TOOLBAR_ACTIONS );
+	const popoverMenuItems = menuItems.default.slice( MAX_TOOLBAR_ACTIONS );
 
 	return (
 		<ToolbarMenu>
-			{ toolbarInjections.map(
-				( { filler: Filler, id } ) => <Filler key={ id } />
-			) }
-			{ popoverInjections.length > 0 && (
-				<>
-					<ToolbarMenuItem { ...bindTrigger( popupState ) } title={ __( 'More', 'elementor' ) }>
-						<DotsVerticalIcon />
-					</ToolbarMenuItem>
-					<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) }>
-						{ popoverInjections.map(
-							( { filler: Filler, id } ) => <Filler key={ id } />
-						) }
-					</PopoverMenu>
-				</>
+			{ toolbarMenuItems.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> ) }
+			{ popoverMenuItems.length > 0 && (
+				<ToolbarMenuMore id="elementor-editor-top-bar-tools-more">
+					{ popoverMenuItems.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> ) }
+				</ToolbarMenuMore>
 			) }
 		</ToolbarMenu>
 	);

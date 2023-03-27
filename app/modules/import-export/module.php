@@ -197,7 +197,7 @@ class Module extends BaseModule {
 					<div class="tab-import-export-kit__container">
 						<div class="tab-import-export-kit__box">
 							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
 								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 							</a>
 						</div>
@@ -279,6 +279,7 @@ class Module extends BaseModule {
 				<img
 					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
 					alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
+					loading="lazy"
 				>
 			</article>
 		</div>

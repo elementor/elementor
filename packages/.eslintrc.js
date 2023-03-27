@@ -36,6 +36,9 @@ module.exports = {
 			},
 		],
 
+		// Prevent circular dependencies (if the lint is slow, consider removing it).
+		'import/no-cycle': [ 'error' ],
+
 		// Strict mode.
 		'@typescript-eslint/no-non-null-assertion': [ 'error' ],
 		'@typescript-eslint/no-explicit-any': [ 'error' ],

@@ -1,0 +1,52 @@
+//
+// Dialog Common
+//
+
+#elementor-change-exit-preference-dialog {
+
+	.dialog-message {
+
+		a {
+			cursor: pointer;
+		}
+
+		& > div {
+			margin-bottom: 10px;
+		}
+	}
+}
+
+#e-experiments-messages-dialog {
+
+	.dialog-confirm-header {
+		font-weight: 600;
+	}
+}
+
+#e-kit-elements-defaults-create-dialog {
+
+	label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin-top: 20px;
+	}
+}
+
+@media (min-width: $editor-screen-md-max) {
+	body.admin-bar {
+		.dialog-lightbox-widget {
+			height: calc(100vh - 32px);
+		}
+	}
+}
+
+@media (max-width: $editor-screen-md-max) {
+	body.admin-bar {
+		.dialog-type-lightbox {
+			position: sticky;
+			height: 100vh;
+		}
+	}
+}

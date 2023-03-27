@@ -6,7 +6,7 @@ export default function useActionProps() {
 	const { isActive, isBlocked } = useRouteStatus( 'panel/elements' );
 
 	return {
-		title: __( 'Add element', 'elementor' ),
+		title: __( 'Add Element', 'elementor' ),
 		icon: PlusIcon,
 		onClick: () => openRoute( 'panel/elements/categories' ),
 		selected: isActive,

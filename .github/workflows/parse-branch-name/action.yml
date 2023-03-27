@@ -1,0 +1,28 @@
+name: Parse Branch Name
+description: Parse the branch name, and set parts as environment variables (PACKAGE_VERSION, CHANNEL, CLEAN_PACKAGE_NAME).
+
+inputs:
+  BRANCH_NAME:
+    description: The branch name to parse (e.g. refs/tags/v3.11.2-cloud-rc) 
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash 
+      run: |
+            CLEAN_PACKAGE_NAME=${{ inputs.BRANCH_NAME }}
+            CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
+            CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
+
+            PACKAGE_VERSION=$(echo $CLEAN_PACKAGE_NAME | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
+            CHANNEL=$(echo $CLEAN_PACKAGE_NAME | cut -d "-" -f2)
+
+            # e.g. 3.11.1
+            echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+            # e.g. beta, cloud, ga
+            echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
+
+            # e.g. 3.11.1-cloud-rc
+            echo "CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME}" >> $GITHUB_ENV

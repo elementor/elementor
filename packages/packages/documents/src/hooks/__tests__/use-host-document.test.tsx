@@ -1,5 +1,4 @@
-import { Slice } from '../../types';
-import { createSlice } from '../../store';
+import { Slice, createSlice } from '../../store';
 import { createStore, dispatch, SliceState, Store } from '@elementor/store';
 import useHostDocument from '../use-host-document';
 import { renderHookWithStore } from './test-utils';

@@ -1,3 +1,5 @@
+//TODO: Remove after container is merged for good
+
 .elementor-control-type-structure {
 
 	.elementor-control-field {
@@ -6,7 +8,7 @@
 
 	.elementor-control-structure-preset {
 		padding: 3px;
-		border-radius: 3px;
+		border-radius: var(--e-border-radius);
 		display: inline-block;
 		cursor: pointer;
 		height: 50px;
@@ -16,7 +18,7 @@
 		}
 
 		path {
-			fill: $editor-background;
+			fill: var(--e-a-border-color-bold);
 		}
 	}
 
@@ -24,9 +26,13 @@
 		padding: 15px 20px 0;
 		font-size: 11px;
 		cursor: pointer;
-		color: $editor-light;
-		border-top: 1px solid $editor-background;
+		color: var(--e-a-color-txt-muted);
+		border-top: var(--e-a-border);
 		margin: 0 -20px;
+
+		&:hover {
+			color: var(--e-a-color-txt);
+		}
 	}
 
 	.elementor-control-structure-title {
@@ -49,7 +55,7 @@
 			&:checked + .elementor-control-structure-preset {
 
 				path {
-					fill: $editor-light;
+					fill: var(--e-a-border-color-focus);
 				}
 			}
 		}

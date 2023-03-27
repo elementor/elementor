@@ -4,23 +4,16 @@
 		&__wrapper {
 			display: flex;
 			align-items: center;
-			border: 1px solid $editor-lightest;
+			border: var(--e-a-border);
+			border-radius: var(--e-a-border-radius);
 			padding: 10px 15px;
 			margin-bottom: 10px;
 			font-size: 11px;
-			transition: $transition-hover;
+			transition: var(--e-a-transition-hover);
 
-			&.current {
-				font-weight: bold;
+			&:hover {
+				background-color: var(--e-a-bg-hover);
 			}
-
-			.elementor-revision-item__tools-current {
-				color: $editor-info
-			}
-		}
-
-		&:hover:not(.elementor-revision-current-preview) {
-			background-color: fade_out($editor-background, 0.7) ;
 		}
 
 		&-loading {
@@ -60,12 +53,12 @@
 	}
 
 	&current-preview {
-		background-color: $editor-background;
-	}
-}
 
-#elementor-restore-autosave-dialog.dialog-widget {
-	background-color: rgba(0, 0, 0, 0.3);
+		.elementor-revision-item__wrapper {
+			border-color: var(--e-a-border-color-accent);
+			background-color: var(--e-a-bg-active);
+		}
+	}
 }
 
 #elementor-panel-revisions-loading {
@@ -73,6 +66,5 @@
 
 	.eicon-loading {
 		font-size: 50px;
-		color: $editor-light;
 	}
 }

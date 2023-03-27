@@ -1,0 +1,17 @@
+name: Copy File
+description: Copy a file from one path to another.
+
+inputs:
+  SOURCE_PATH:
+    description: 'The path to the source file.'
+    required: true
+  DESTINATION_PATH:
+    description: 'The path to the destination file.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        cp ${{ inputs.SOURCE_PATH }} ${{ inputs.DESTINATION_PATH }}
