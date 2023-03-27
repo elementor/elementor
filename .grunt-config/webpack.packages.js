@@ -11,17 +11,19 @@ const packages = Object.keys( dependencies )
 	.map( ( packageName ) => {
 		const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
 
-		const { main, module } = JSON.parse( pkgJSON );
+		const { main, module, elementor } = JSON.parse( pkgJSON );
 
 		return {
 			mainFile: module || main,
 			packageName,
+			type: elementor?.type || 'util',
 		}
 	} )
 	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, packageName } ) => {
+	.map( ( { mainFile, packageName, type } ) => {
 		return {
 			packageName,
+			type,
 			name: packageName.replace( '@elementor/', '' ),
 			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
 		}
@@ -33,7 +35,15 @@ const common = {
 		packages.map( ( { name, path } ) => [ name, path ] )
 	),
 	plugins: [
-		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
+		new GenerateWordPressAssetFileWebpackPlugin( {
+			handlePrefix: 'elementor-packages-',
+			apps: packages.filter( ( entry ) => 'app' === entry.type ).map( ( entry ) => entry.name ),
+			extensions: packages.filter( ( entry ) => 'extension' === entry.type ).map( ( entry ) => entry.name ),
+			i18n: {
+				domain: 'elementor',
+
+			},
+		} ),
 		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
 	],
 	output: {
