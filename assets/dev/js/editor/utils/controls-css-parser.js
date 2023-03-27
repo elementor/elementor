@@ -111,6 +111,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				}
 			} else {
 				try {
+					if ( control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ values[ control.name ].unit ] ) {
+						this.cssParserHelper = new ControlsCSSParserHelper();
+						cssProperty = control.unit_selectors_dictionary[ values[ control.name ].unit ];
+						cssProperty = this.cssParserHelper.parseSizeUnitsSelectorsDictionary( cssProperty, value );
+					}
+
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
 						const externalControlMissing = controlName && ! controls[ controlName ];
 
@@ -118,11 +124,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 						if ( ! externalControlMissing ) {
 							parsedValue = this.parsePropertyPlaceholder( control, value, controls, values, placeholder, controlName );
-						}
-
-						if ( control.unit_selectors_dictionary ) {
-							this.cssParserHelper = new ControlsCSSParserHelper();
-							parsedValue = this.cssParserHelper.parseSizeUnitsSelectorsDictionary( value, values[ control.name ] );
 						}
 
 						if ( ! parsedValue && 0 !== parsedValue ) {
@@ -253,10 +254,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		if ( control.selectors_dictionary ) {
 			value = control.selectors_dictionary[ value ] || value;
-		}
-
-		if ( control.unit_selectors_dictionary && value.unit ) {
-			value = control.unit_selectors_dictionary[ value.unit ] || value;
 		}
 
 		if ( ! _.isNumber( value ) && _.isEmpty( value ) ) {

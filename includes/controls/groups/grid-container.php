@@ -34,7 +34,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'size_units' => [ 'fr', 'custom' ],
 			'unit_selectors_dictionary' => [
-				'fr' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 				'custom' => '--e-con-grid-template-columns: {{SIZE}}',
 			],
 			'default' => [
@@ -42,7 +41,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'size' => 3,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '{{VALUE}}',
+				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
 		];
@@ -59,7 +58,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'size_units' => [ 'fr', 'custom' ],
 			'unit_selectors_dictionary' => [
-				'fr' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
 				'custom' => '--e-con-grid-template-rows: {{SIZE}}',
 			],
 			'default' => [
@@ -67,7 +65,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'size' => 2,
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => '{{VALUE}}',
+				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
 		];
