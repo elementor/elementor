@@ -49,6 +49,17 @@
 
 	&-interaction {
 		padding-bottom: 20px;
+
+		.pcr-type {
+			all: unset;
+			font-size: 10px;
+			padding-inline-start: 5px;
+			cursor: pointer;
+
+			&.active {
+				color: var(--e-a-color-txt-accent);
+			}
+		}
 	}
 
 	.elementor-control-dynamic-switcher {
