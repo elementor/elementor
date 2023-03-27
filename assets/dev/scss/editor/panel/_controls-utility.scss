@@ -35,7 +35,7 @@ $title-size: 12px;
 			opacity: 1;
 
 			&:hover {
-				color: var(--e-a-color-primary);
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 
@@ -65,7 +65,7 @@ $title-size: 12px;
 a.elementor-responsive-switcher {
 
 	&:hover {
-		color: var(--e-a-color-primary);
+		color: var(--e-a-color-primary-bold);
 	}
 }
 
@@ -78,7 +78,7 @@ a.elementor-responsive-switcher {
 		}
 		.elementor-responsive-switchers-open:not(:hover) {
 			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
-				color: var(--e-a-color-primary);
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ a.elementor-responsive-switcher {
 		transition: all ease-in-out .15s;
 
 		&:hover {
-			color: var(--e-a-color-primary);
+			color: var(--e-a-color-primary-bold);
 			background-color: var(--e-a-bg-hover);
 			border-radius: var(--e-a-border-radius);
 		}
@@ -130,7 +130,7 @@ a.elementor-responsive-switcher {
 		display: none;
 
 		&:checked + label {
-			color: var(--e-a-color-primary);
+			color: var(--e-a-color-primary-bold);
 		}
 	}
 
@@ -166,7 +166,7 @@ a.elementor-responsive-switcher {
 			transition: 0.15s;
 
 			&:hover {
-				color: var(--e-a-color-primary);
+				color: var(--e-a-color-primary-bold);
 			}
 
 			&:not([data-choose="custom"]) {
