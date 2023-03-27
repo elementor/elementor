@@ -5,11 +5,6 @@ $remote-templates-items-space: 30px;
 	a.elementor-template-library-blank-footer-link {
 		font-style: normal;
 		text-decoration: underline;
-		color: $editor-success;
-
-		&:hover {
-			color: darken($editor-success, 10%);
-		}
 	}
 
 	.dialog-buttons-wrapper {
@@ -19,23 +14,30 @@ $remote-templates-items-space: 30px;
 	.select2-container {
 		z-index: 0;
 	}
+
+	.dialog-message {
+		overflow-y: scroll;
+	}
 }
 
 #elementor-template-library-header-menu {
 	text-align: center;
-	color: $editor-dark;
-	font-size: 13px;
 }
 
 .elementor-template-library-menu-item {
 	display: inline-block;
-	padding: 17px 0;
-	width: 115px;
+	padding: 17px 20px;
+	border-bottom: 3px solid transparent;
 	cursor: pointer;
 
+	&:hover {
+		background-color: var(--e-a-bg-hover);
+		border-color: var(--e-a-bg-hover);
+	}
+
 	&.elementor-active {
-		background-image: linear-gradient(to bottom, $editor-background-light, #fff);
-		border-bottom: 3px solid $editor-accent;
+		border-color: var(--e-a-border-color-accent);
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
@@ -50,39 +52,16 @@ $remote-templates-items-space: 30px;
 #elementor-template-library-header-preview-insert-wrapper {
 	cursor: default;
 	padding: 0 10px;
-
-	.elementor-button {
-		padding: 8px 14px;
-		font-size: 11px;
-	}
-
-	.elementor-template-library-template-insert {
-		color: #fff;
-		background-color: $editor-success;
-
-		&.elementor-disabled {
-			cursor: default;
-			pointer-events: none;
-			color: $editor-light;
-			background-color: $editor-darker;
-			transition: 0.3s;
-		}
-	}
-
-	.elementor-go-pro {
-		background-color: $editor-accent;
-		color: #fff;
-	}
 }
 
 #elementor-template-library-header-preview-back {
 	@include padding(16.5px, 16.5px, 15px, 0);
-	@include border-end(1px solid $editor-background);
+	@include border-end(var(--e-a-border));
 	cursor: pointer;
 	transition: color .5s;
 
-	&:not(:hover) {
-		color: $editor-light;
+	&:hover {
+		color: var(--e-a-color-txt-hover);
 	}
 
 	i {
@@ -96,14 +75,13 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-templates {
-	padding: 0 15px;
 
 	&[data-template-source="local"] {
 
 		#elementor-template-library-templates-container {
-			box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, .03);
 			margin-top: 10px;
 			margin-bottom: 45px;
+			border-top: var(--e-a-border);
 		}
 
 		.elementor-template-library-order-input {
@@ -111,7 +89,7 @@ $remote-templates-items-space: 30px;
 			&:checked {
 
 				+ .elementor-template-library-order-label {
-					color: $editor-dark;
+					color: var(--e-a-color-txt-active);
 				}
 			}
 		}
@@ -128,7 +106,7 @@ $remote-templates-items-space: 30px;
 			&:checked {
 
 				+ .elementor-template-library-order-label {
-					color: $editor-darkest;
+					color: var(--e-a-color-txt-active);
 				}
 			}
 		}
@@ -136,7 +114,8 @@ $remote-templates-items-space: 30px;
 
 	&[data-template-source="empty"] {
 
-		#elementor-template-library-order-toolbar-local, #elementor-template-library-footer-banner {
+		#elementor-template-library-order-toolbar-local,
+		#elementor-template-library-footer-banner {
 			display: none;
 		}
 	}
@@ -180,15 +159,6 @@ $remote-templates-items-space: 30px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start; // For blocks layout
-
-	// These rules are here because of selectors priority
-	.elementor-template-library-template-local {
-
-		.elementor-template-library-template-insert {
-			text-transform: none;
-			font-size: 12px;
-		}
-	}
 }
 
 #elementor-template-library-toolbar {
@@ -208,7 +178,7 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-order {
 	display: flex;
-	@include border-end(1px solid $editor-lightest);
+	@include border-end(var(--e-a-border));
 }
 
 .elementor-template-library-order-label {
@@ -221,7 +191,7 @@ label.elementor-template-library-order-label {
 	cursor: pointer;
 
 	&:hover {
-		color: $editor-darker;
+		color: var(--e-a-color-txt-hover);
 	}
 }
 
@@ -258,12 +228,12 @@ label.elementor-template-library-order-label {
 	&:checked {
 
 		+ #elementor-template-library-filter-my-favorites-label {
-			color: $editor-darkest;
+			color: var(--e-a-color-txt-active);
 
 			i {
 
 				&:after {
-					color: $editor-accent;
+					color: var(--e-a-color-primary-bold);
 					content: '\e93f';
 				}
 			}
@@ -276,12 +246,12 @@ label.elementor-template-library-order-label {
 	text-transform: uppercase;
 
 	&:hover {
-		color: $editor-darker;
+		color: var(--e-a-color-txt-hover);
 
 		i {
 
 			&:after {
-				color: $editor-accent;
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 	}
@@ -290,7 +260,6 @@ label.elementor-template-library-order-label {
 		@include padding-end(5px);
 
 		&:after {
-			color: $editor-light;
 			content: '\e923';
 		}
 	}
@@ -310,34 +279,30 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-filter-text {
 	border: none;
-	border-bottom: 1px solid $editor-lightest;
+	border-bottom: var(--e-a-border-bold);
 	border-radius: 0;
 	font-size: 11px;
 	padding: 8px 15px 8px 0;
 	transition: border 0.5s;
 
 	&:focus {
-		border-color: $editor-lighter;
+		border-color: var(--e-a-border-color-focus);
 	}
 
 	&::placeholder {
 		font-weight: 300;
 		text-transform: uppercase;
 	}
-
-	&:focus {
-		border-color: $editor-lighter;
-	}
 }
 
 .elementor-template-library-template-remote {
 	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
-	background-color: #fff;
-	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, .07);
+	border: var(--e-a-border);
 	border-radius: 3px;
 
 	&:hover {
+		background-color: var(--e-a-bg-hover);
 
 		.elementor-template-library-template-name {
 			display: none;
@@ -357,16 +322,18 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
+
 		.elementor-template-library-template-body:before {
 			content: var( --elementor-template-library-subscription-plan-label );
-			background-color: var( --elementor-template-library-subscription-plan-color );
-			color: $editor-lightest;
+			background-color: var(--e-a-color-accent);
+			color: var(--e-a-color-white);
 			position: absolute;
 			text-transform: uppercase;
+			line-height: 1;
 			top: 5px;
 			@include end(5px);
-			padding: 2px 4px 0;
-			font-size: 9px;
+			padding: 3px 5px;
+			font-size: 8px;
 			border-radius: 2px;
 		}
 	}
@@ -388,7 +355,7 @@ label.elementor-template-library-order-label {
 			bottom: 0;
 			@include start(0);
 			padding: 10px;
-			background-color: #fff;
+			background-color: var(--e-a-bg-default);
 			transition: transform .5s;
 		}
 
@@ -434,30 +401,21 @@ label.elementor-template-library-order-label {
 
 		i {
 			font-size: 20px;
-			color: $editor-lightest;
 			@include absolute-center;
 		}
-	}
-
-	.elementor-template-library-template-insert {
-		color: $editor-success;
-	}
-
-	.elementor-go-pro {
-		color: $editor-accent;
 	}
 
 	.elementor-template-library-template-footer {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 10px;
 		font-size: 11px;
 		line-height: 1;
+		height: 40px;
+		align-items: center;
 	}
 
 	.elementor-template-library-template-name {
 		text-align: $start;
-		color: $editor-dark;
 		flex-grow: 1;
 		@include ellipsis;
 		@include padding-end(5px);
@@ -474,7 +432,7 @@ label.elementor-template-library-order-label {
 
 					&:before {
 						content: '\e93f';
-						color: $editor-accent;
+						color: var(--e-a-color-primary-bold);
 					}
 				}
 			}
@@ -482,12 +440,13 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-favorite-label {
+		font-size: 15px;
 		cursor: pointer;
 
 		&:hover {
 
 			i {
-				color: $editor-accent;
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 	}
@@ -528,10 +487,6 @@ label.elementor-template-library-order-label {
 		line-height: 1;
 		font-size: 10px;
 		font-weight: 500;
-
-		&:not(:hover) {
-			color: $editor-light;
-		}
 	}
 }
 
@@ -539,19 +494,10 @@ label.elementor-template-library-order-label {
 	height: 50px;
 	width: 100%;
 	margin-top: 1px;
-	background-color: #fff;
 	transition: background-color .3s linear;
 
 	&:hover {
-		background-color: lighten($editor-background-light, 3%);
-	}
-
-	&:not(:hover) {
-
-		.elementor-template-library-template-insert {
-			background: none;
-			color: $editor-light;
-		}
+		background-color: var(--e-a-bg-hover);
 	}
 
 	&:first-child {
@@ -571,10 +517,6 @@ label.elementor-template-library-order-label {
 		@include padding-end(20px);
 	}
 
-	.elementor-template-library-template-meta {
-		color: $editor-light;
-	}
-
 	.elementor-template-library-template-name,
 	.elementor-template-library-template-meta,
 	.elementor-template-library-template-preview,
@@ -586,11 +528,6 @@ label.elementor-template-library-order-label {
 		position: relative;
 		display: flex;
 		align-items: center;
-
-		&,
-		& a {
-			color: $editor-light;
-		}
 
 		> div {
 			cursor: pointer;
@@ -611,30 +548,20 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-more {
 
-		&:hover,
-		a:hover {
-			color: $editor-darker;
-		}
-
 		.elementor-template-library-template-delete {
 
 			&:hover {
-				color: $editor-danger;
+				color: var(--e-a-color-danger);
 			}
 		}
-	}
-
-	.elementor-template-library-template-action {
-		padding: 8px 18px;
-		margin: 0 5%;
 	}
 
 	.elementor-template-library-template-more {
 		display: none;
 		position: absolute;
-		background-color: #fff;
+		background-color: var(--e-a-bg-default);
 		padding: 3px 20px;
-		border-radius: 3px;
+		border-radius:  var(--e-a-border-radius);
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
 		top: 100%;
 		@include end(0);
@@ -646,13 +573,17 @@ label.elementor-template-library-order-label {
 			position: absolute;
 			border: solid transparent;
 			border-width: 8px 4px;
-			border-bottom-color: #fff;
+			border-bottom-color: var(--e-a-color-white);
 			transform: translateY(-100%);
 		}
 
 		> div {
 			margin: 10px 0;
 			font-size: 11px;
+		}
+
+		a {
+			color: var(--e-a-color-txt);
 		}
 	}
 
@@ -679,15 +610,14 @@ label.elementor-template-library-order-label {
 		}
 
 		@media (min-width: $library_screen_breakpoint + 1) {
-			width: 1710px;
+			width: 1730px;
 		}
 	}
 }
 
 .elementor-template-library-blank-icon {
-	font-size: 65px;
+	font-size: 64px;
 	margin-top: 45px;
-	color: $editor-lighter;
 	line-height: 1;
 
 	img {
@@ -701,7 +631,7 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-title {
 	font-size: 30px;
-	margin-top: 40px;
+	margin-top: 20px;
 
 	@media (max-width: $editor-screen-lg-max) {
 		font-size: 25px;
@@ -710,7 +640,6 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
-	color: $editor-light;
 	margin-top: 15px;
 	font-weight: 300;
 
@@ -734,36 +663,23 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-save-template-name {
 	width: 500px;
-	background-color: #fff;
-	font-weight: 300;
-	color: $editor-light;
 	@include padding-start(25px);
 	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-	border: none;
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
 	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-
-	&:hover {
-		box-shadow: none;
-	}
 }
 
 #elementor-template-library-import {
 
 	&-form {
 		width: 95%;
-		background-color: rgba(255, 255, 255, 0.5);
 		padding: 60px;
-		border: 2px dashed $editor-lightest;
+		border: 2px dashed var(--e-a-border-color-bold);
 		margin: 35px auto;
-		transition: background-color 0.5s;
-
-		&:hover {
-			background-color: rgba(255, 255, 255, 0.9);
-		}
+		transition: var(--e-a-transition-hover);
 
 		&-or {
 			margin-top: 15px;
@@ -781,7 +697,7 @@ label.elementor-template-library-order-label {
 		}
 
 		&.elementor-drag-over {
-			border: 3px dashed $editor-info;
+			border-color: var(--e-a-color-primary);
 		}
 	}
 
@@ -854,8 +770,8 @@ label.elementor-template-library-order-label {
 	bottom: 70px;
 	left: 50%;
 	transform: translateX(-50%);
-	color: $editor-light;
 	font-style: italic;
+	color: var(--e-a-color-txt-muted);
 
 	@media (max-height: 700px) {
 		display: none;
@@ -866,20 +782,12 @@ label.elementor-template-library-order-label {
 	padding-bottom: 45px;
 
 	i {
-		color: $editor-lighter;
 		font-size: 56px;
 		margin-top: 40px;
 	}
 
 	.elementor-nerd-box-icon {
 		margin-top: 70px;
-	}
-
-	.elementor-excerpt {
-		color: $editor-light;
-		font-size: 15px;
-		font-weight: 500;
-		margin-top: 20px;
 	}
 }
 

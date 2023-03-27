@@ -102,9 +102,13 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {string}  widgetType
 	 * @param {string}  container           - Optional Container to create the element in.
 	 * @param {boolean} isContainerASection - Optional. Is the container a section.
+	 * @return {Promise<string>}			- widget ID
 	 */
 	async addWidget( widgetType, container = null, isContainerASection = false ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+
+		return widgetId;
 	}
 
 	/**
@@ -194,6 +198,21 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( copyListItemSelector ).click();
 	}
 
+	async pasteElement( selector ) {
+		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
+
+		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
+		await this.page.locator( pasteSelector ).click();
+	}
+
+	async openAddElementSection( elementId ) {
+		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
+		await element.hover();
+		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
+		await elementAddButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+	}
+
 	async pasteStyleElement( elementId ) {
 		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.click( { button: 'right' } );
@@ -211,14 +230,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -324,6 +343,22 @@ module.exports = class EditorPage extends BasePage {
 
 		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
 		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
+
+	/**
+	 * Set a border color to a container.
+	 *
+	 * @param {string} color       - The background color code;
+	 * @param {string} containerId - The ID of targeted container;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setContainerBorderColor( color, containerId ) {
+		await this.selectElement( containerId );
+		await this.activatePanelTab( 'style' );
+		await this.openSection( 'section_border' );
+		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 	}
 
@@ -446,7 +481,7 @@ module.exports = class EditorPage extends BasePage {
 			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
 			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
 			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
+			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
 		] );
 
 		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
@@ -495,5 +530,69 @@ module.exports = class EditorPage extends BasePage {
 			} ),
 			{ elementId, settings },
 		);
+	}
+
+	/**
+	 * Check if an item is in the viewport.
+	 *
+	 * @param {string} itemSelector
+	 * @return {Promise<void>}
+	 */
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
+	}
+
+	/**
+	 * Open a section of the active widget.
+	 *
+	 * @param {string} sectionId
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId ) {
+		const sectionSelector = '.elementor-control-' + sectionId,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a control of the active widget.
+	 *
+	 * @param {string} controlId
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelectControlValue( controlId, value ) {
+		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
 	}
 };

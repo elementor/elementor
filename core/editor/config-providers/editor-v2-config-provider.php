@@ -22,6 +22,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		'structure',
 		'theme-builder',
 		'top-bar',
+		'user-preferences',
 	];
 
 	const UTIL_PACKAGES = [
@@ -93,7 +94,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'settings' => [
 				'urls' => [
 					'admin' => admin_url(),
-					'help' => 'https://elementor.com/help',
 				],
 			],
 		];

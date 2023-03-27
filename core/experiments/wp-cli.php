@@ -106,6 +106,27 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Experiment Status
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 1. wp elementor experiments status container
+	 *      - This will return the status of Container experiment. (active/inactive)
+	 *
+	 * @param array $args
+	 */
+	public function status( $args ) {
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please specify an experiment.' );
+		}
+
+		$experiments_manager = Plugin::$instance->experiments;
+		$experiments_status = $experiments_manager->is_feature_active( $args[0] ) ? 'active' : 'inactive';
+
+		\WP_CLI::line( $experiments_status );
+	}
+
+	/**
 	 * Determine if the current website is a multisite.
 	 *
 	 * @param array|null $assoc_args - Arguments from WP CLI command.

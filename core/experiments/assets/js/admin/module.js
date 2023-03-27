@@ -1,4 +1,4 @@
-import ExperimentsDependency from './behaviors/experiments-dependency';
+import ExperimentsMessages from './behaviors/experiments-messages';
 
 export default class ExperimentsModule extends elementorModules.ViewModule {
 	getDefaultSettings() {
@@ -51,7 +51,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 	onInit() {
 		super.onInit();
 
-		this.experimentsDependency = new ExperimentsDependency( {
+		this.experimentsDependency = new ExperimentsMessages( {
 			selects: this.elements.$experimentSelects.toArray(),
 			submit: this.elements.$experimentForm.find( '#submit' ).get( 0 ),
 		} );

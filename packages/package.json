@@ -21,9 +21,6 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/jest": "^29.2.4",
-    "@types/react": "17.0.53",
-    "@types/react-dom": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "@wordpress/eslint-plugin": "^13.7.0",
@@ -44,7 +41,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@elementor/ui": "^1.4.1",
+    "@elementor/ui": "^1.4.42",
     "@wordpress/i18n": "^4.24.0"
   }
 }

@@ -1338,7 +1338,7 @@ class Source_Local extends Source_Base {
 					?>
 				</h3>
 				<p><?php echo wp_kses_post( $description ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
+				<a id="elementor-template-library-add-new" class="elementor-button e-primary" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
@@ -1420,9 +1420,6 @@ class Source_Local extends Source_Base {
 			'type' => $data['type'],
 			'page_settings' => $page_settings,
 		] );
-
-		// Remove the temporary file, now that we're done with it.
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $file_path );
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;

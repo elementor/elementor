@@ -8,7 +8,7 @@ import PrimaryActionLocation from './locations/primary-action-location';
 
 export default function TopBar() {
 	return (
-		<ThemeProvider dark>
+		<ThemeProvider colorScheme="dark">
 			<AppBar position="sticky">
 				<Box display="grid" gridTemplateColumns="repeat(3, 1fr)">
 					<Grid container>
@@ -18,7 +18,7 @@ export default function TopBar() {
 					<Grid container justifyContent="center">
 						<CanvasDisplayLocation />
 					</Grid>
-					<Grid container justifyContent="end">
+					<Grid container justifyContent="flex-end">
 						<UtilitiesMenuLocation />
 						<PrimaryActionLocation />
 					</Grid>
