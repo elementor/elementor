@@ -26,8 +26,4 @@ class Controller extends Base_Controller {
 	public function register_endpoints() {
 		$this->register_endpoint( new Recent_Posts( $this ) );
 	}
-
-	protected function register_index_endpoint() {
-		// Bypass, currently does not required.
-	}
 }
