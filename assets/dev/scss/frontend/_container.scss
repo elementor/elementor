@@ -30,8 +30,7 @@
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
-	--column-gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
-	--row-gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
+	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
@@ -64,8 +63,6 @@
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
 		padding-bottom: var( --padding-bottom );
-		column-gap: var( --column-gap );
-		row-gap: var( --row-gap );
 	}
 
 	&-full.e-flex,
@@ -110,8 +107,7 @@
 
 	&-boxed {
 		text-align: initial;
-		column-gap: initial;
-		row-gap: initial;
+		gap: initial;
 	}
 
 	&.e-flex > .e-con-inner {
@@ -133,6 +129,7 @@
 	}
 
 	& > .e-con-inner {
+		gap: var( --gap );
 		width: 100%;
 		max-width: var( --content-width );
 		margin: 0 auto;
