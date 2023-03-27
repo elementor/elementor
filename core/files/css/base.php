@@ -488,15 +488,15 @@ abstract class Base extends Base_File {
 	 * @access public
 	 *
 	 * @param string $unit_selector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
-	 * @param array  $control_values  The control values eg { unit: 'fr', size: 2 }
+	 * @param array  $control_value  The control values eg { unit: 'fr', size: 2 }
 	 *
 	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
 	 */
-	public function parse_size_units_selectors_dictionary( $unit_selector, $control_values ) {
+	public function parse_size_units_selectors_dictionary( $unit_selector, $control_value ) {
 		$mustache_variable_regex = '/{{(.*?)}}/';
-		return preg_replace_callback( $mustache_variable_regex, function( $matches ) use ( $control_values ) {
+		return preg_replace_callback( $mustache_variable_regex, function( $matches ) use ( $control_value ) {
 			$keys = explode( '.', strtolower( $matches[1] ) );
-			$value = $control_values;
+			$value = $control_value;
 
 			foreach ( $keys as $key ) {
 				if ( ! isset( $value[ $key ] ) ) {
