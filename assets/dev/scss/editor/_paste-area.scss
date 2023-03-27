@@ -1,4 +1,5 @@
 #elementor-paste-area-dialog {
+	text-align: center;
 
 	.dialog-header {
 		padding-top: 60px;
@@ -30,6 +31,7 @@
 	}
 
 	.dialog-widget-content {
+		width: 400px;
 
 		.eicon-loading {
 			display: none;
@@ -45,7 +47,7 @@
 	}
 
 	#elementor-paste-area-dialog__error {
-		color: var(--e-global-color-danger);
+		color: var(--e-a-color-danger);
 		font-size: 12px;
 
 		&:before {
