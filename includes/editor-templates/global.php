@@ -4,20 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-$container_icons = [
-	'flex' => ELEMENTOR_ASSETS_URL . 'images/app/container/flex.svg',
-	'grid' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid.svg',
-];
-
-$grid_icons = [
-	'grid-2x0' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-2x0.svg',
-	'grid-0x2' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-0x2.svg',
-	'grid-3x0' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-3x0.svg',
-	'grid-0x3' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-0x3.svg',
-	'grid-2x2' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-2x2.svg',
-	'grid-3x3' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-3x3.svg',
-]
 ?>
 <script type="text/template" id="tmpl-elementor-empty-preview">
 	<div class="elementor-first-add">
@@ -52,13 +38,21 @@ $grid_icons = [
 		<div class="e-view e-con-flex-container e-con-select-type">
 			<div class="e-con-select-type__title"><?php echo esc_html__( 'Which layout would you like to use?', 'elementor' ); ?></div>
 			<div class="e-con-select-type__icons">
-				<div class="icon to-flex">
-					<img src="<?php echo esc_url( $container_icons['flex'] ); ?>" alt="Flex layout">
-					<div class="subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
+				<div class="e-con-select-type__icons__icon flex-preset-button">
+					<svg width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect width="41.698" height="84.9997" fill="#D5DADE"/>
+						<rect x="43.3018" width="41.698" height="41.6498" fill="#D5DADE"/>
+						<rect x="43.3018" y="43.3506" width="41.698" height="41.6498" fill="#D5DADE"/>
+					</svg>
+					<div class="e-con-select-type__icons__icon__subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
 				</div>
-				<div class="icon to-grid">
-					<img src="<?php echo esc_url( $container_icons['grid'] ); ?>" alt="Grid layout">
-					<div class="subtitle"><?php echo esc_html__( 'Grid', 'elementor' ); ?></div>
+				<div class="e-con-select-type__icons__icon grid-preset-button">
+					<svg width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect x="0.5" y="0.5" width="83.9997" height="84" stroke="#9DA5AE" stroke-dasharray="2 2"/>
+						<path d="M42.501 0.484375V84.6259" stroke="#9DA5AE" stroke-dasharray="1 1"/>
+						<path d="M84.623 42.501L-0.00038953 42.501" stroke="#9DA5AE" stroke-dasharray="1 1"/>
+					</svg>
+					<div class="e-con-select-type__icons__icon__subtitle"><?php echo esc_html__( 'Grid', 'elementor' ); ?></div>
 				</div>
 			</div>
 		</div>
@@ -92,11 +86,15 @@ $grid_icons = [
 			</div>
 		</div>
 		<div class="e-view e-con-flex-container e-con-select-preset-grid">
-			<div class="e-con-select-preset-grid-title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
-			<div class="e-con-select-preset-grid-list">
-				<?php foreach ( $grid_icons as $key => $icon ) { ?>
-					<img src="<?php echo esc_url( $icon ); ?>" alt="<?php echo esc_attr( $key ); ?>">
-				<?php } ?>
+			<div class="e-con-select-preset-grid__title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
+			<div class="e-con-select-preset-grid__list">
+				<#
+					elementor.presetsFactory.getContainerGridPresets().forEach( ( preset ) => {
+					#>
+						{{{ elementor.presetsFactory.generateContainerGridPreset( preset ) }}}
+					<#
+				} );
+				#>
 			</div>
 		</div>
 	</div>

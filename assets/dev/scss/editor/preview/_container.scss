@@ -112,22 +112,38 @@
 	}
 
 	&-select-type {
+
 		&__title {
 			font-size: 15px;
 			font-weight: 400;
 		}
+
 		&__icons {
 			display: flex;
 			justify-content: center;
 			flex-wrap: wrap;
 			gap: 40px;
-			.icon {
+
+			&__icon {
 				cursor: pointer;
-				img {
+
+				svg {
 					margin-bottom: 10px;
 					width: 85px;
+
+					&:hover {
+
+						rect {
+							fill: var(--e-a-color-txt);
+						}
+
+						path {
+							stroke: var(--e-a-color-white);
+						}
+					}
 				}
-				.subtitle {
+
+				&__subtitle {
 					font-size: 14px;
 					font-weight: 500;
 				}
@@ -136,17 +152,31 @@
 	}
 
 	&-select-preset-grid {
-		&-title {
+
+		&__title {
 			font-size: 15px;
 			font-weight: 400;
 		}
-		&-list {
+
+		&__list {
 			display: flex;
 			justify-content: center;
 			flex-wrap: wrap;
 			gap: 20px;
-			img {
+
+			svg {
 				cursor: pointer;
+
+				&:hover {
+
+					rect {
+						fill: var(--e-a-color-txt);
+					}
+
+					path {
+						stroke: var(--e-a-color-white);
+					}
+				}
 			}
 		}
 	}
