@@ -340,6 +340,13 @@ abstract class Base extends Base_File {
 				}
 			} else {
 				try {
+					if ( isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ] ) ) {
+						$css_property = $this->parse_size_units_selectors_dictionary(
+							$control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ],
+							$values[ $control['name'] ]
+						);
+					}
+
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
@@ -349,10 +356,6 @@ abstract class Base extends Base_File {
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-						}
-
-						if ( isset( $control['unit_selectors_dictionary'] ) ) {
-							$parsed_value = $value;
 						}
 
 						if ( '' === $parsed_value ) {
@@ -788,10 +791,6 @@ abstract class Base extends Base_File {
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
-		}
-
-		if ( isset( $control['unit_selectors_dictionary'] ) && isset( $value['unit'] ) ) {
-			$value = $this->parse_size_units_selectors_dictionary( $control['unit_selectors_dictionary'][ $value['unit'] ], $value );
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
