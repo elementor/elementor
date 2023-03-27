@@ -34,7 +34,7 @@
 	#>
 	<# if ( itemActions.sort ) { #>
 	<div class="elementor-repeater-row-tool elementor-repeater-row-tools elementor-repeater-tool-sort">
-		<i class="eicon-cursor-move"></i>
+		<i class="eicon-cursor-move" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Reorder', 'elementor' ); ?></span>
 	</div>
 	<# } #>
