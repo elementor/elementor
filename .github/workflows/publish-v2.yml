@@ -96,6 +96,7 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Generate Changelog Content For Slack
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses: ./.github/workflows/generate-slack-changelog

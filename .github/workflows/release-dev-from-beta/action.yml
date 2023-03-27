@@ -17,6 +17,9 @@ inputs:
   SVN_USERNAME:
     description: 'The username for the SVN.'
     required: true
+  TOKEN:
+    description: 'The token for the repository.'
+    required: true
 
 runs:
   using: "composite"
@@ -63,4 +66,9 @@ runs:
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
               bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
             fi
+    - name: Trigger developer-edition release
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ inputs.TOKEN }}
+        event-type: new-release
 
