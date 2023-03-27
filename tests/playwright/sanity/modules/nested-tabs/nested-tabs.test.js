@@ -2,6 +2,10 @@ const { test, expect } = require( '@playwright/test' );
 const { createPage, deletePage } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const EditorPage = require( '../../../pages/editor-page' );
+const { viewportSize } = require( '../../../enums/viewport-sizes' );
+const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
+const { testIconCount } = require( './tests/icons' );
+const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -14,7 +18,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await deletePage( pageId );
 	} );
 
-	test( 'Count the number of icons inside the Add Section element', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -22,19 +26,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		const widgetId = await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
-		// Act.
-		const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active .elementor-add-new-section i' ).count(),
-			iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
-
-		// Assert.
-		// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
-		expect( iconCountForTabs ).toBe( 1 );
-		expect( iconCountForMainContainer ).toBe( 2 );
-
-		await cleanup( wpAdmin );
+		await testIconCount( page, editor );
+		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
 	test( 'Title alignment setting', async ( { page }, testInfo ) => {
@@ -1041,65 +1037,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 } );
-
-async function editTab( editor, tabIndex ) {
-	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
-	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
-	await tabTitle.click();
-	await editor.page.waitForTimeout( 100 );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
-}
-
-const viewportSize = {
-    desktop: { width: 1920, height: 1080 },
-    mobile: { width: 400, height: 480 },
-};
-
-// Click on tab by position.
-const clickTab = async ( context, tabPosition ) => {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
-};
-
-async function setup( wpAdmin, customExperiment = '' ) {
-    let experiments = {
-        container: 'active',
-        'nested-elements': 'active',
-    };
-
-    experiments = { ...experiments, ...customExperiment };
-    await wpAdmin.setExperiments( experiments );
-}
-
-async function cleanup( wpAdmin, customExperiment = '' ) {
-    let experiments = {
-        container: 'inactive',
-        'nested-elements': 'inactive',
-    };
-
-    experiments = { ...experiments, ...customExperiment };
-    await wpAdmin.setExperiments( experiments );
-}
-
-async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {
-	await editor.activatePanelTab( 'style' );
-	if ( 'tabs' !== panelClass ) {
-		await page.locator( `.elementor-control-${ panelClass }` ).click();
-	}
-	await page.locator( `.elementor-control-${ tabState }` ).click();
-	await page.locator( `.elementor-control-${ colorPickerClass } .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
-}
-
-async function setTabBorderColor( page, editor, state, stateExtended, color, borderWidth, borderStyle = 'solid' ) {
-	await editor.activatePanelTab( 'style' );
-	await page.locator( `.elementor-control-section_tabs_style` ).click();
-	await page.locator( `.elementor-control-tabs_title_${ state }` ).click();
-	await page.selectOption( `.elementor-control-tabs_title_border${ stateExtended }_border >> select`, borderStyle );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_width .elementor-control-input-wrapper input` ).first().fill( borderWidth );
-	await page.locator( `.elementor-control-tabs_title_border${ stateExtended }_color .pcr-button` ).click();
-	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
-}
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
 	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
