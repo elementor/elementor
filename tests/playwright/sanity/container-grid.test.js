@@ -40,8 +40,7 @@ test.describe( 'Container tests', () => {
 			await page.locator( '.elementor-control-gaps .elementor-link-gaps' ).first().click();
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
-			await expect( container ).toHaveCSS( 'column-gap', '10px' );
-			await expect( container ).toHaveCSS( 'row-gap', '20px' );
+			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
