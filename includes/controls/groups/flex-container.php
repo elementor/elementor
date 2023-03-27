@@ -175,7 +175,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
-				'{{SELECTOR}}' => '--column-gap: {{SIZE}}{{UNIT}}; --row-gap: {{SIZE}}{{UNIT}};',
+				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}}',
 			],
 			'responsive' => true,
 		];
