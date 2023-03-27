@@ -115,7 +115,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 			$this->packages_data = Collection::make( $packages_data )
 				->map_with_keys( function ( $data, $name ) {
-					$type = $type_exceptions[ $name ] ?? $data['type'] ?? static::PACKAGE_TYPE_UTIL;
+					$type = $data['type'] ?? static::PACKAGE_TYPE_UTIL;
 
 					return [
 						$name => [

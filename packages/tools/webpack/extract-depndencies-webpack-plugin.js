@@ -153,7 +153,7 @@ return [
 	'handle' => '${ handleName }',
 	'src' => plugins_url( '/', __FILE__ ) . '${ entryName }{{MIN_SUFFIX}}.js',
 	'i18n' => ${ i18nContent },
-	'type' => ${ type ? `'${ type }'` : 'null' },
+	'type' => '${ type }',
 	'deps' => [
 		${ depsAsString }
 	],
