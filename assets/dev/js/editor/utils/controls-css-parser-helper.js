@@ -9,13 +9,21 @@ export default class ControlsCSSParserHelper {
 	 *
 	 * @param {string}  unitSelector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
 	 * @param {Object}  controlValue The control values eg { unit: 'fr', size: 2 }
+	 * @param {Object}  control This control
+	 * @param {Object}  controls All controls
+	 * @param {Object}  values All Values
 	 * @return {string} The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
 	 */
-	parseSizeUnitsSelectorsDictionary( unitSelector, controlValue ) {
+	parseSizeUnitsSelectorsDictionary( unitSelector, controlValue, control, controls, values ) {
 		const mustacheVariableRegex = /{{(.*?)}}/g;
-		return unitSelector.replace( mustacheVariableRegex, function( match, placeholder ) {
+		return unitSelector.replace( mustacheVariableRegex, ( match, placeholder ) => {
 			const keys = placeholder.toLowerCase().split( '.' );
 			let value = controlValue;
+
+			if ( keys.length > 1 ) {
+				let otherControl = this.findControlByName( control, controls, keys[ 0 ] );
+				value = values[ otherControl.name ];
+			}
 
 			for ( let i = 0; i < keys.length; i++ ) {
 				value = value[ keys[ i ] ];
@@ -27,5 +35,18 @@ export default class ControlsCSSParserHelper {
 
 			return value;
 		} );
+	}
+
+	findControlByName( control, controls, parserControlName ) {
+		if ( control.responsive && controls[ parserControlName ] ) {
+			const deviceSuffix = elementor.conditions.getResponsiveControlDeviceSuffix( control.responsive );
+
+			control = _.findWhere( controls, { name: parserControlName + deviceSuffix } ) ??
+				_.findWhere( controls, { name: parserControlName } );
+		} else {
+			control = _.findWhere( controls, { name: parserControlName } );
+		}
+
+		return control;
 	}
 }

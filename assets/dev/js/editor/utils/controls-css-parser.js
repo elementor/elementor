@@ -112,9 +112,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			} else {
 				try {
 					if ( control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ values[ control.name ].unit ] ) {
-						this.cssParserHelper = new ControlsCSSParserHelper();
 						cssProperty = control.unit_selectors_dictionary[ values[ control.name ].unit ];
-						cssProperty = this.cssParserHelper.parseSizeUnitsSelectorsDictionary( cssProperty, value );
+						cssProperty = this.cssParserHelper.parseSizeUnitsSelectorsDictionary( cssProperty, value, control, controls, values );
 					}
 
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
@@ -224,15 +223,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {
 		if ( parserControlName ) {
-			if ( control.responsive && controls[ parserControlName ] ) {
-				const deviceSuffix = elementor.conditions.getResponsiveControlDeviceSuffix( control.responsive );
-
-				control = _.findWhere( controls, { name: parserControlName + deviceSuffix } ) ??
-					_.findWhere( controls, { name: parserControlName } );
-			} else {
-				control = _.findWhere( controls, { name: parserControlName } );
-			}
-
+			control = this.cssParserHelper.findControlByName( control, controls, parserControlName );
 			value = this.getStyleControlValue( control, values );
 		}
 
@@ -366,6 +357,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
 
 		this.initStylesheet();
+		this.cssParserHelper = new ControlsCSSParserHelper();
 	},
 } );
 
