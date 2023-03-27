@@ -495,17 +495,14 @@ abstract class Base extends Base_File {
 	public function parse_size_units_selectors_dictionary( $unit_selector, $control_value ) {
 		$mustache_variable_regex = '/{{(.*?)}}/';
 		return preg_replace_callback( $mustache_variable_regex, function( $matches ) use ( $control_value ) {
-			$keys = explode( '.', strtolower( $matches[1] ) );
+			$key = strtolower( $matches[1] );
 			$value = $control_value;
 
-			foreach ( $keys as $key ) {
-				if ( ! isset( $value[ $key ] ) ) {
-					return $matches[0];
-				}
-				$value = $value[ $key ];
+			if ( ! isset( $value[ $key ] ) ) {
+				return $matches[0];
 			}
 
-			return $value;
+			return $value[ $key ];
 		}, $unit_selector );
 	}
 
