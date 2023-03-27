@@ -61,7 +61,7 @@ class Recent_Posts extends Endpoint {
 			'meta_query' => [
 				[
 					'key' => Document::TYPE_META_KEY,
-					'value' => Kit::get_type(),
+					'value' => Kit::get_type(), // Exclude kits.
 					'compare' => '!=',
 				],
 			],
