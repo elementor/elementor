@@ -233,7 +233,7 @@ label.elementor-template-library-order-label {
 			i {
 
 				&:after {
-					color: var(--e-a-color-primary);
+					color: var(--e-a-color-primary-bold);
 					content: '\e93f';
 				}
 			}
@@ -251,7 +251,7 @@ label.elementor-template-library-order-label {
 		i {
 
 			&:after {
-				color: var(--e-a-color-primary);
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 	}
@@ -325,7 +325,7 @@ label.elementor-template-library-order-label {
 
 		.elementor-template-library-template-body:before {
 			content: var( --elementor-template-library-subscription-plan-label );
-			background-color: var(--e-a-color-brand);
+			background-color: var(--e-a-color-accent);
 			color: var(--e-a-color-white);
 			position: absolute;
 			text-transform: uppercase;
@@ -432,7 +432,7 @@ label.elementor-template-library-order-label {
 
 					&:before {
 						content: '\e93f';
-						color: var(--e-a-color-primary);
+						color: var(--e-a-color-primary-bold);
 					}
 				}
 			}
@@ -446,7 +446,7 @@ label.elementor-template-library-order-label {
 		&:hover {
 
 			i {
-				color: var(--e-a-color-primary);
+				color: var(--e-a-color-primary-bold);
 			}
 		}
 	}
