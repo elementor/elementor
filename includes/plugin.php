@@ -14,7 +14,6 @@ use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Core\Files\Assets\Manager as Assets_Manager;
 use Elementor\Core\Modules_Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
@@ -93,18 +92,6 @@ class Plugin {
 	 * @var Documents_Manager
 	 */
 	public $documents;
-
-	/**
-	 * Schemes manager.
-	 *
-	 * Holds the plugin schemes manager.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @var Schemes_Manager
-	 */
-	public $schemes_manager;
 
 	/**
 	 * Elements manager.
@@ -713,7 +700,6 @@ class Plugin {
 		$this->controls_manager = new Controls_Manager();
 		$this->documents = new Documents_Manager();
 		$this->kits_manager = new Kits_Manager();
-		$this->schemes_manager = new Schemes_Manager();
 		$this->elements_manager = new Elements_Manager();
 		$this->widgets_manager = new Widgets_Manager();
 		$this->skins_manager = new Skins_Manager();
