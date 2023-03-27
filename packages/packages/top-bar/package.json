@@ -5,6 +5,7 @@
 		"@elementor/icons": "*",
 		"@elementor/locations": "*",
 		"@elementor/ui": "*",
+		"@elementor/v1-adapters": "*",
 		"@wordpress/i18n": "*"
 	},
 	"peerDependencies": {
