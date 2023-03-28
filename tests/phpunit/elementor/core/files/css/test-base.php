@@ -184,10 +184,10 @@ class Test_Base extends Elementor_Test_Base {
 		];
 
 		// Act
-		$control_value = $this->get_parsed_unit_value( $value );
+		$control_value = $this->get_parsed_unit_value( $value, $this->control_with_units_selectors_dictionary['unit_selectors_dictionary']['custom'] );
 
 		// Assert.
-		$this->assertEquals( $value['size'], $control_value );
+		$this->assertEquals( '--e-con-grid-template-columns: 1fr 2fr 1fr 100px', $control_value );
 	}
 
 	public function test_parse_property_placeholder__default_size_unit() {
@@ -199,10 +199,10 @@ class Test_Base extends Elementor_Test_Base {
 		];
 
 		// Act
-		$control_value = $this->get_parsed_unit_value( $value );
+		$control_value = $this->get_parsed_unit_value( $value, $this->control_with_units_selectors_dictionary['selectors']['{{SELECTOR}}'] );
 
 		// Assert.
-		$this->assertEquals( $value['size'], $control_value );
+		$this->assertEquals( '--e-con-grid-template-columns: repeat(2, 1fr)', $control_value );
 	}
 
 	/**
@@ -279,13 +279,14 @@ class Test_Base extends Elementor_Test_Base {
 		);
 	}
 
-	private function get_parsed_unit_value( $value ) {
-		return $this->css_generator_class->parse_property_placeholder(
+	private function get_parsed_unit_value( $value, $css_property ) {
+		return $this->css_generator_class->get_output_css_property(
+			false,
 			$this->control_with_units_selectors_dictionary,
+			$css_property,
 			$value,
-			$this->control_with_units_selectors_dictionary_array,
 			function() {},
-			'SIZE'
+			$this->control_with_units_selectors_dictionary_array
 		);
 	}
 }
