@@ -476,34 +476,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * Parse size units selectors dictionary.
-	 *
-	 * Check for placeholders in the controlSelector eg {{SIZE}} or {{UNIT}}
-	 * and replace it with the corresponding key's value from the control values.
-	 *
-	 * @since 3.13.0
-	 * @access public
-	 *
-	 * @param string $unit_selector The selector to parse eg --e-con-grid-template-columns: {{SIZE}}{{UNIT}}
-	 * @param array  $control_value  The control values eg { unit: 'fr', size: 2 }
-	 *
-	 * @return string The parsed value for the CSS eg --e-con-grid-template-columns: 2fr
-	 */
-	public function parse_size_units_selectors_dictionary( $unit_selector, $control_value ) {
-		$mustache_variable_regex = '/{{(.*?)}}/';
-		return preg_replace_callback( $mustache_variable_regex, function( $matches ) use ( $control_value ) {
-			$key = strtolower( $matches[1] );
-			$value = $control_value;
-
-			if ( ! isset( $value[ $key ] ) ) {
-				return $matches[0];
-			}
-
-			return $value[ $key ];
-		}, $unit_selector );
-	}
-
-	/**
 	 * Get the fonts.
 	 *
 	 * Retrieve the list of fonts.
