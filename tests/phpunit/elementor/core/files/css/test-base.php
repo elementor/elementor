@@ -128,7 +128,7 @@ class Test_Base extends Elementor_Test_Base {
 
 		$this->control_with_units_selectors_dictionary_array = [
 			'columns_grid' => $this->control_with_units_selectors_dictionary,
-		]
+		];
 	}
 
 	public function test_parse_property_placeholder__value_0_integer() {
