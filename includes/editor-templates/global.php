@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-function get_select_your_structure_title() {
+function echo_select_your_structure_title() {
 	echo esc_html__( 'Select your structure', 'elementor' );
 }
 ?>
@@ -61,7 +61,7 @@ function get_select_your_structure_title() {
 			</div>
 		</div>
 		<div class="e-view elementor-select-preset">
-			<div class="elementor-select-preset-title"><?php  ?></div>
+			<div class="elementor-select-preset-title"><?php echo_select_your_structure_title(); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
 					const structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34, 60 ];
@@ -76,7 +76,7 @@ function get_select_your_structure_title() {
 			</ul>
 		</div>
 		<div class="e-view e-con-select-preset">
-			<div class="e-con-select-preset__title"><?php get_select_your_structure_title(); ?></div>
+			<div class="e-con-select-preset__title"><?php echo_select_your_structure_title(); ?></div>
 			<div class="e-con-select-preset__list">
 				<#
 					elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
@@ -90,7 +90,7 @@ function get_select_your_structure_title() {
 			</div>
 		</div>
 		<div class="e-view e-con-shared-styles e-con-select-preset-grid">
-			<div class="e-con-select-preset-grid__title"><?php get_select_your_structure_title(); ?></div>
+			<div class="e-con-select-preset-grid__title"><?php echo_select_your_structure_title(); ?></div>
 			<div class="e-con-select-preset-grid__list">
 				<#
 					elementor.presetsFactory.getContainerGridPresets().forEach( ( preset ) => {
