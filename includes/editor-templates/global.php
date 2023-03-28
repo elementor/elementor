@@ -19,9 +19,30 @@ $grid_icons = [
 	'grid-3x3' => ELEMENTOR_ASSETS_URL . 'images/app/container/grid-3x3.svg',
 ];
 
-function getSVGFromImage( $image ) {
-	return file_get_contents( $image );
+function my_kses_allowed_svg_tags() {
+	return [
+		'svg' => [
+			'class' => true,
+			'aria-hidden' => true,
+			'aria-labelledby' => true,
+			'role' => true,
+			'xmlns' => true,
+			'width' => true,
+			'height' => true,
+			'viewbox' => true,
+		],
+		'g' => [ 'fill' => true ],
+		'title' => [ 'title' => true ],
+		'path' => [ 'd' => true, 'fill' => true ],
+	];
 }
+
+
+function get_SVG_from_image( $image ) {
+	$raw_svg = file_get_contents( $image );
+	return wp_kses( $raw_svg, my_kses_allowed_svg_tags() );
+}
+
 ?>
 <script type="text/template" id="tmpl-elementor-empty-preview">
 	<div class="elementor-first-add">
@@ -53,15 +74,15 @@ function getSVGFromImage( $image ) {
 			<# } #>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
-		<div class="e-view e-con-flex-container e-con-select-type">
+		<div class="e-view e-con-shared-styles e-con-select-type">
 			<div class="e-con-select-type__title"><?php echo esc_html__( 'Which layout would you like to use?', 'elementor' ); ?></div>
 			<div class="e-con-select-type__icons">
 				<div class="e-con-select-type__icons__icon flex-preset-button">
-					<?php echo getSVGFromImage($container_icons['flex']) ?>
+					<?php echo get_SVG_from_image( $container_icons['flex'] ); ?>
 					<div class="e-con-select-type__icons__icon__subtitle"><?php echo esc_html__( 'Flexbox', 'elementor' ); ?></div>
 				</div>
 				<div class="e-con-select-type__icons__icon grid-preset-button">
-					<?php echo getSVGFromImage($container_icons['grid']) ?>
+					<?php echo get_SVG_from_image( $container_icons['grid'] ); ?>
 					<div class="e-con-select-type__icons__icon__subtitle"><?php echo esc_html__( 'Grid', 'elementor' ); ?></div>
 				</div>
 			</div>
@@ -95,11 +116,11 @@ function getSVGFromImage( $image ) {
 				#>
 			</div>
 		</div>
-		<div class="e-view e-con-flex-container e-con-select-preset-grid">
+		<div class="e-view e-con-shared-styles e-con-select-preset-grid">
 			<div class="e-con-select-preset-grid__title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
 			<div class="e-con-select-preset-grid__list">
 				<?php foreach ($grid_icons as $icon) { ?>
-					<?php echo getSVGFromImage($icon) ?>
+					<?php echo get_SVG_from_image( $icon ); ?>
 				<?php } ?>
 			</div>
 		</div>
