@@ -84,7 +84,7 @@ class Recent_Posts extends Endpoint {
 				'id' => $id,
 				'title' => get_the_title( $id ),
 				'edit_url' => $document->get_edit_url(),
-				'date_modified' => get_post_timestamp( $id ),
+				'date_modified' => get_post_timestamp( $id, 'modified' ),
 				'type' => [
 					'post_type' => get_post_type( $id ),
 					'doc_type' => $document->get_name(),
