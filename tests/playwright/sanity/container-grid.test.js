@@ -70,5 +70,13 @@ test.describe( 'Container tests', () => {
 			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
+
+		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
+				return 200 < element.offsetWidth;
+			} );
+			await expect( dragAreaIsVisible ).toBeTruthy();
+		} );
 	} );
 } );
