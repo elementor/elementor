@@ -377,7 +377,6 @@ abstract class Base extends Base_File {
 	}
 
 	public function get_output_css_property( $global_key, $control, $css_property, $value, $value_callback, $controls_stack ) {
-		echo $css_property.'<br>';
 		$output_css_property = '';
 
 		if ( $global_key ) {
