@@ -9,6 +9,7 @@
 	font-size: var(--button-font-size, inherit);
 	font-weight: $button-font-weight;
 	line-height: var(--button-line-height);
+	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&:active {
