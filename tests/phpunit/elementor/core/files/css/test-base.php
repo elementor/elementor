@@ -82,7 +82,7 @@ class Test_Base extends Elementor_Test_Base {
 	private $control_with_units_selectors_dictionary;
 
 	/**
-	 * @var array
+	 * @var array[]
 	 */
 	private $control_with_units_selectors_dictionary_array;
 
