@@ -76,7 +76,7 @@
 	}
 
 	&.e-grid {
-		--grid-justify-content: start;
+		--grid-justify-content: center;
 		--grid-align-content: start;
 		--grid-auto-flow: row;
 	}
@@ -101,8 +101,8 @@
 
 	&-boxed.e-grid {
 		justify-items: initial;
-		grid-template-columns: initial;
-		grid-template-rows: initial;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
 	}
 
 	&-boxed {
