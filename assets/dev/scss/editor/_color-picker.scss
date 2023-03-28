@@ -30,8 +30,9 @@
 
 	&-app {
 		background-color: var(--e-a-bg-default);
-		color: var(--e-a-color-default);
+		color: var(--e-a-color-txt);
 		box-shadow: var(--e-a-popover-shadow);
+		font-family: var(--e-a-font-family);
 
 		&[data-theme=monolith] {
 			padding: 0;
@@ -39,8 +40,9 @@
 	}
 
 	&-result {
+		color: var(--e-a-color-txt);
 		border-right-width: 1px;
-		border-radius: 3px;
+		border-radius: var(--e-a-border-radius);
 	}
 
 	&-selection, &-interaction {
@@ -49,6 +51,17 @@
 
 	&-interaction {
 		padding-bottom: 20px;
+
+		.pcr-type {
+			all: unset;
+			font-size: 10px;
+			padding-inline-start: 5px;
+			cursor: pointer;
+
+			&.active {
+				color: var(--e-a-color-txt-accent);
+			}
+		}
 	}
 
 	.elementor-control-dynamic-switcher {

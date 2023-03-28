@@ -35,7 +35,7 @@
 		}
 
 		&--active {
-			color: $platform-primary;
+			color: $e-primary-bold;
 		}
 
 		&--active,
@@ -43,8 +43,8 @@
 
 			.e-onboarding__progress-bar-item-icon {
 				color: $white;
-				border-color: $platform-primary;
-				background-color: $platform-primary;
+				border-color: $e-primary-bold;
+				background-color: $e-primary-bold;
 			}
 		}
 
