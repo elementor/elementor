@@ -9,7 +9,6 @@ export default function createMockDocument( {
 	isSaving,
 	isSavingDraft,
 	userCan,
-	locationKey,
 }: Partial<Document> = {} ): Document {
 	return {
 		id: id ?? 1,
@@ -25,7 +24,6 @@ export default function createMockDocument( {
 		isDirty: isDirty ?? false,
 		isSaving: isSaving ?? false,
 		isSavingDraft: isSavingDraft ?? false,
-		locationKey: locationKey ?? null,
 		userCan: userCan ?? {
 			publish: true,
 		},

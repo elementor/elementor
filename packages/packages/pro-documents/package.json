@@ -1,0 +1,11 @@
+{
+	"name": "@elementor/pro-documents",
+	"dependencies": {
+		"@elementor/documents": "*",
+		"@elementor/store": "*",
+		"@elementor/v1-adapters": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}
