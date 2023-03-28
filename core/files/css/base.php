@@ -451,12 +451,6 @@ abstract class Base extends Base_File {
 	 * @return string
 	 */
 	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
-		if ( ! empty( $control['unit_selectors_dictionary'] ) ) {
-			//var_dump($controls_stack);
-			// var_dump($value);
-			// var_dump($placeholder);
-			// var_dump($parser_control_name);
-		}
 		if ( $parser_control_name ) {
 			// If both the processed control and the control name found in the placeholder are responsive
 			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
@@ -482,13 +476,6 @@ abstract class Base extends Base_File {
 		/** @var Base_Data_Control $control_obj */
 		$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
-		if ( ! empty( $control['unit_selectors_dictionary'] ) ) {
-			//var_dump($controls_stack);
-			// var_dump($value);
-			// var_dump($placeholder);
-			// var_dump($parser_control_name);
-			var_dump( (string) $control_obj->get_style_value( $placeholder, $value, $control ) );
-		}
 		return (string) $control_obj->get_style_value( $placeholder, $value, $control );
 	}
 
