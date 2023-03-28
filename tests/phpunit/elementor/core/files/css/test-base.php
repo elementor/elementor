@@ -184,13 +184,7 @@ class Test_Base extends Elementor_Test_Base {
 		];
 
 		// Act
-		$control_value = $this->css_generator_class->parse_property_placeholder(
-			$this->$control_with_units_selectors_dictionary,
-			$value,
-			$this->$control_with_units_selectors_dictionary_array,
-			function() {},
-			'SIZE'
-		);
+		$control_value = $this->get_parsed_unit_value( $value );
 
 		// Assert.
 		$this->assertEquals( $value['size'], $control_value );
@@ -205,13 +199,7 @@ class Test_Base extends Elementor_Test_Base {
 		];
 
 		// Act
-		$control_value = $this->css_generator_class->parse_property_placeholder(
-			$this->$control_with_units_selectors_dictionary,
-			$value,
-			$this->$control_with_units_selectors_dictionary_array,
-			function() {},
-			'SIZE'
-		);
+		$control_value = $this->get_parsed_unit_value( $value );
 
 		// Assert.
 		$this->assertEquals( 'repeat(2, 1fr)', $control_value );
@@ -288,6 +276,16 @@ class Test_Base extends Elementor_Test_Base {
 			$this->mock_controls_array,
 			function() {},
 			''
+		);
+	}
+
+	private function get_parsed_unit_value( $value ) {
+		return $this->css_generator_class->parse_property_placeholder(
+			$this->control_with_responsive_selector_desktop_value,
+			$value,
+			$this->control_with_responsive_selector_desktop_value_array,
+			function() {},
+			'SIZE'
 		);
 	}
 }
