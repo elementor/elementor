@@ -137,6 +137,52 @@ class Test_Base extends Elementor_Test_Base {
 		$this->assertEquals( $value, $control_value );
 	}
 
+	public function test_parse_property_placeholder__custom_size_unit() {
+		// Arrange.
+		$mock_control = [
+			'label' => 'Columns',
+			'type' => 'slider',
+			'range' => [
+				'fr' => [
+					'min' => 1,
+					'max' => 12,
+					'step' => 1,
+				],
+			],
+			'size_units' => [ 'fr', 'custom' ],
+			'unit_selectors_dictionary' => [
+				'custom' => '--e-con-grid-template-columns: {{SIZE}}',
+			],
+			'default' => [
+				'unit' => 'fr',
+				'size' => 3,
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
+			],
+			'responsive' => true,
+		];
+		$value = [
+			'unit' => 'custom',
+			'size' => '1fr 2fr 1fr 100px',
+			'sizes' => [],
+		];
+		$mock_control_array = [];
+		$mock_control_array['columns_grid'] = $mock_control;
+
+		// Act
+		$control_value = $this->css_generator_class->parse_property_placeholder(
+			$mock_control,
+			$value,
+			$mock_control_array,
+			function() {},
+			'SIZE'
+		);
+
+		// Assert.
+		$this->assertEquals( $value['size'], $control_value );
+	}
+
 	/**
 	 * Test parsing and adding rules to a stylesheet for a control with a responsive selector.
 	 */

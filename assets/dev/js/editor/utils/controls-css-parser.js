@@ -108,8 +108,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				}
 			} else {
 				try {
-					if ( control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ values[ control.name ].unit ] ) {
-						cssProperty = control.unit_selectors_dictionary[ values[ control.name ].unit ];
+					if ( this.unitHasCustomSelector( control, value ) ) {
+						cssProperty = control.unit_selectors_dictionary[ value.unit ];
 					}
 
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
@@ -215,6 +215,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 			this.stylesheet.addRules( selector, outputCssProperty, query );
 		} );
+	},
+
+	unitHasCustomSelector( control, value ) {
+		return control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ value.unit ];
 	},
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {

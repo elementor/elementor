@@ -340,8 +340,8 @@ abstract class Base extends Base_File {
 				}
 			} else {
 				try {
-					if ( isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ] ) ) {
-						$css_property = $control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ];
+					if ( $this->unit_has_custom_selector( $control, $value ) ) {
+						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
 					}
 
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
@@ -436,6 +436,10 @@ abstract class Base extends Base_File {
 		}
 	}
 
+	protected function unit_has_custom_selector( $control, $value ) {
+		return isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $value['unit'] ] );
+	}
+
 	/**
 	 * @param array    $control
 	 * @param mixed    $value
@@ -447,6 +451,12 @@ abstract class Base extends Base_File {
 	 * @return string
 	 */
 	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
+		if ( ! empty( $control['unit_selectors_dictionary'] ) ) {
+			//var_dump($controls_stack);
+			// var_dump($value);
+			// var_dump($placeholder);
+			// var_dump($parser_control_name);
+		}
 		if ( $parser_control_name ) {
 			// If both the processed control and the control name found in the placeholder are responsive
 			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
@@ -472,6 +482,13 @@ abstract class Base extends Base_File {
 		/** @var Base_Data_Control $control_obj */
 		$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
+		if ( ! empty( $control['unit_selectors_dictionary'] ) ) {
+			//var_dump($controls_stack);
+			// var_dump($value);
+			// var_dump($placeholder);
+			// var_dump($parser_control_name);
+			var_dump( (string) $control_obj->get_style_value( $placeholder, $value, $control ) );
+		}
 		return (string) $control_obj->get_style_value( $placeholder, $value, $control );
 	}
 
