@@ -88,7 +88,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="e-view e-con-shared-styles e-con-select-preset-grid">
 			<div class="e-con-select-preset-grid__title"><?php echo esc_html__( 'Select your structure', 'elementor' ); ?></div>
 			<div class="e-con-select-preset-grid__list">
-
 				<#
 					elementor.presetsFactory.getContainerGridPresets().forEach( ( preset ) => {
 				#>
