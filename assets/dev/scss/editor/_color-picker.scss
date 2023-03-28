@@ -11,6 +11,7 @@
 }
 
 .e-color-picker {
+
 	&__tools {
 		display: flex;
 	}
@@ -26,6 +27,20 @@
 	}
 }
 
+.pickr {
+	border: var(--e-a-border);
+	padding: 2px;
+
+	.pcr-button {
+		height: 21px;
+		width: 21px;
+
+		&:after {
+			border-radius: none;
+		}
+	}
+}
+
 .pcr {
 
 	&-app {
@@ -36,32 +51,59 @@
 
 		&[data-theme=monolith] {
 			padding: 0;
+			width: 270px;
+
+			.pcr-selection {
+
+				.pcr-color-opacity,
+				.pcr-color-chooser {
+					height: 8px;
+				}
+
+				.pcr-color-palette {
+					height: 150px;
+				}
+			}
+		}
+
+		.pcr-interaction {
+			padding-bottom: 20px;
+
+			input.pcr-result {
+				border: var(--e-a-border);
+				color: var(--e-a-color-txt);
+				border-radius: var(--e-a-border-radius);
+				margin: 0;
+				background-color: transparent;
+
+				&:focus {
+					box-shadow: none;
+					border-color: var(--e-a-border-color-bold);
+				}
+			}
+
+			input.pcr-type {
+				all: unset;
+				font-size: 10px;
+				color: var(--e-a-color-txt-muted);
+				padding-inline-start: 5px;
+				cursor: pointer;
+
+				&.active {
+					background-color: transparent;
+					color: var(--e-a-color-txt-accent);
+				}
+			}
 		}
 	}
 
-	&-result {
-		color: var(--e-a-color-txt);
-		border-right-width: 1px;
-		border-radius: var(--e-a-border-radius);
-	}
-
-	&-selection, &-interaction {
+	&-selection,
+	&-interaction {
 		padding: 0 20px;
 	}
 
-	&-interaction {
-		padding-bottom: 20px;
-
-		.pcr-type {
-			all: unset;
-			font-size: 10px;
-			padding-inline-start: 5px;
-			cursor: pointer;
-
-			&.active {
-				color: var(--e-a-color-txt-accent);
-			}
-		}
+	&-selection {
+		padding-top: 20px;
 	}
 
 	.elementor-control-dynamic-switcher {
