@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Elementor_Content;
@@ -52,11 +53,11 @@ class Import {
 	private $adapters;
 
 	/**
-	 * Document's elements that imported during the process.
+	 * Document's content (elements and settings) that imported during the process.
 	 *
-	 * @var array
+	 * @var array { [document_id] => { "elements": array , "settings": array } }
 	 */
-	private $documents_elements = [];
+	private $documents_content = [];
 
 	/**
 	 * Path to the extracted kit files.
@@ -203,7 +204,7 @@ class Import {
 		$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
 		$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
 
-		$this->documents_elements = $instance_data['documents_elements'];
+		$this->documents_content = $instance_data['documents_content'];
 		$this->imported_data = $instance_data['imported_data'];
 		$this->runners_import_metadata = $instance_data['runners_import_metadata'];
 	}
@@ -418,7 +419,7 @@ class Import {
 				'settings_selected_custom_post_types' => $this->settings_selected_custom_post_types,
 				'settings_selected_plugins' => $this->settings_selected_plugins,
 
-				'documents_elements' => $this->documents_elements,
+				'documents_content' => $this->documents_content,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
 			];
@@ -570,9 +571,15 @@ class Import {
 	 */
 	public function prevent_saving_elements_on_post_creation( array $data, Document $document ) {
 		if ( isset( $data['elements'] ) ) {
-			$this->documents_elements[ $document->get_main_id() ] = $data['elements'];
+			$this->documents_content[ $document->get_main_id() ] = [ 'elements' => $data['elements'] ];
 
 			$data['elements'] = [];
+		}
+
+		if ( isset( $data['settings'] ) ) {
+			$this->documents_content[ $document->get_main_id() ]['settings'] = $data['settings'];
+
+			$data['settings'] = [];
 		}
 
 		return $data;
@@ -724,17 +731,36 @@ class Import {
 	 * Handle the replacement of all the dynamic content of the elements that probably have been changed during the import.
 	 */
 	private function save_elements_of_imported_posts() {
-		foreach ( $this->documents_elements as $new_id => $document_elements ) {
+		$imported_data_replacements = $this->get_imported_data_replacements();
+
+		foreach ( $this->documents_content as $new_id => $content ) {
 			$document = Plugin::$instance->documents->get( $new_id );
-			$updated_elements = $document->on_import_update_dynamic_content( $document_elements, $this->get_imported_data_replacements() );
-			$document->save( [ 'elements' => $updated_elements ] );
+
+			$update = [];
+
+			if ( isset( $content['elements'] ) ) {
+				$updated_elements = $document->on_import_update_dynamic_content( $content['elements'], $imported_data_replacements );
+				$update['elements'] = $updated_elements;
+			}
+			if ( isset( $content['settings'] ) ) {
+
+				if ( $document instanceof Kit ) {
+					// Without post_status certain tabs in the Kit will not save properly.
+					$content['settings']['post_status'] = get_post_status( $new_id );
+				}
+
+				$updated_settings = $document->on_import_update_dynamic_settings( $content['settings'], $imported_data_replacements );
+				$update['settings'] = $updated_settings;
+			}
+
+			$document->save( $update );
 		}
 	}
 
 	private function update_instance_data_in_import_session_option() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		$import_sessions[ $this->session_id ]['instance_data']['documents_elements'] = $this->documents_elements;
+		$import_sessions[ $this->session_id ]['instance_data']['documents_content'] = $this->documents_content;
 		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
 		$import_sessions[ $this->session_id ]['instance_data']['runners_import_metadata'] = $this->runners_import_metadata;
 
