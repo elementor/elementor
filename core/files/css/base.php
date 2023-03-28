@@ -330,7 +330,67 @@ abstract class Base extends Base_File {
 		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [], $this );
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
-			$output_css_property = $this->get_output_css_property( $global_key, $control, $css_property, $value, $value_callback, $controls_stack );
+			$output_css_property = '';
+
+			if ( $global_key ) {
+				$selector_global_value = $this->get_selector_global_value( $control, $global_key );
+
+				if ( $selector_global_value ) {
+					$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
+				}
+			} else {
+				try {
+					if ( $this->unit_has_custom_selector( $control, $value ) ) {
+						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
+					}
+
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
+
+						$parsed_value = '';
+
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
+
+						if ( ! $external_control_missing ) {
+							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
+						}
+
+						if ( '' === $parsed_value ) {
+							if ( isset( $matches[4] ) ) {
+								$parsed_value = $matches[4];
+
+								$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
+
+								if ( $is_string_value ) {
+									$parsed_value = $string_matches[2];
+								} elseif ( ! is_numeric( $parsed_value ) ) {
+									if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
+										return '';
+									}
+
+									$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
+								}
+							}
+
+							if ( '' === $parsed_value ) {
+								if ( $external_control_missing ) {
+									return '';
+								}
+
+								throw new \Exception();
+							}
+						}
+
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
+						}
+
+						return $parsed_value;
+					}, $css_property );
+				} catch ( \Exception $e ) {
+					return;
+				}
+			}
 
 			if ( ! $output_css_property ) {
 				continue;
@@ -374,72 +434,6 @@ abstract class Base extends Base_File {
 
 			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
-	}
-
-	public function get_output_css_property( $global_key, $control, $css_property, $value, $value_callback, $controls_stack ) {
-		$output_css_property = '';
-
-		if ( $global_key ) {
-			$selector_global_value = $this->get_selector_global_value( $control, $global_key );
-
-			if ( $selector_global_value ) {
-				$output_css_property = preg_replace( '/(:)[^;]+(;?)/', '$1' . $selector_global_value . '$2', $css_property );
-			}
-		} else {
-			try {
-				if ( $this->unit_has_custom_selector( $control, $value ) ) {
-					$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
-				}
-
-				$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
-					$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
-
-					$parsed_value = '';
-
-					$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
-
-					if ( ! $external_control_missing ) {
-						$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
-					}
-
-					if ( '' === $parsed_value ) {
-						if ( isset( $matches[4] ) ) {
-							$parsed_value = $matches[4];
-
-							$is_string_value = preg_match( '/^([\'"])(.*)\1$/', $parsed_value, $string_matches );
-
-							if ( $is_string_value ) {
-								$parsed_value = $string_matches[2];
-							} elseif ( ! is_numeric( $parsed_value ) ) {
-								if ( $matches[3] && ! isset( $controls_stack[ $matches[3] ] ) ) {
-									return '';
-								}
-
-								$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[4], $matches[3] );
-							}
-						}
-
-						if ( '' === $parsed_value ) {
-							if ( $external_control_missing ) {
-								return '';
-							}
-
-							throw new \Exception();
-						}
-					}
-
-					if ( '__EMPTY__' === $parsed_value ) {
-						$parsed_value = '';
-					}
-
-					return $parsed_value;
-				}, $css_property );
-			} catch ( \Exception $e ) {
-				return;
-			}
-		}
-
-		return $output_css_property;
 	}
 
 	protected function unit_has_custom_selector( $control, $value ) {
