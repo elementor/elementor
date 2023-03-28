@@ -76,6 +76,16 @@ class Test_Base extends Elementor_Test_Base {
 	 */
 	private $mock_controls_array;
 
+	/**
+	 * @var array
+	 */
+	private $control_with_units_selectors_dictionary;
+
+	/**
+	 * @var array
+	 */
+	private $control_with_units_selectors_dictionary_array;
+
 	public function setUp() {
 		parent::setUp();
 
@@ -91,6 +101,34 @@ class Test_Base extends Elementor_Test_Base {
 		$this->mock_controls_array = [
 			'number' => $this->mock_control,
 		];
+
+		$this->control_with_units_selectors_dictionary = [
+			'label' => 'Columns',
+			'type' => 'slider',
+			'range' => [
+				'fr' => [
+					'min' => 1,
+					'max' => 12,
+					'step' => 1,
+				],
+			],
+			'size_units' => [ 'fr', 'custom' ],
+			'unit_selectors_dictionary' => [
+				'custom' => '--e-con-grid-template-columns: {{SIZE}}',
+			],
+			'default' => [
+				'unit' => 'fr',
+				'size' => 3,
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
+			],
+			'responsive' => true,
+		];
+
+		$this->control_with_units_selectors_dictionary_array = [
+			'columns_grid' => $this->control_with_units_selectors_dictionary,
+		]
 	}
 
 	public function test_parse_property_placeholder__value_0_integer() {
@@ -139,48 +177,44 @@ class Test_Base extends Elementor_Test_Base {
 
 	public function test_parse_property_placeholder__custom_size_unit() {
 		// Arrange.
-		$mock_control = [
-			'label' => 'Columns',
-			'type' => 'slider',
-			'range' => [
-				'fr' => [
-					'min' => 1,
-					'max' => 12,
-					'step' => 1,
-				],
-			],
-			'size_units' => [ 'fr', 'custom' ],
-			'unit_selectors_dictionary' => [
-				'custom' => '--e-con-grid-template-columns: {{SIZE}}',
-			],
-			'default' => [
-				'unit' => 'fr',
-				'size' => 3,
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
-			],
-			'responsive' => true,
-		];
 		$value = [
 			'unit' => 'custom',
 			'size' => '1fr 2fr 1fr 100px',
 			'sizes' => [],
 		];
-		$mock_control_array = [];
-		$mock_control_array['columns_grid'] = $mock_control;
 
 		// Act
 		$control_value = $this->css_generator_class->parse_property_placeholder(
-			$mock_control,
+			$this->$control_with_units_selectors_dictionary,
 			$value,
-			$mock_control_array,
+			$this->$control_with_units_selectors_dictionary_array,
 			function() {},
 			'SIZE'
 		);
 
 		// Assert.
 		$this->assertEquals( $value['size'], $control_value );
+	}
+
+	public function test_parse_property_placeholder__default_size_unit() {
+		// Arrange.
+		$value = [
+			'unit' => 'fr',
+			'size' => '2',
+			'sizes' => [],
+		];
+
+		// Act
+		$control_value = $this->css_generator_class->parse_property_placeholder(
+			$this->$control_with_units_selectors_dictionary,
+			$value,
+			$this->$control_with_units_selectors_dictionary_array,
+			function() {},
+			'SIZE'
+		);
+
+		// Assert.
+		$this->assertEquals( 'repeat(2, 1fr)', $control_value );
 	}
 
 	/**
