@@ -120,7 +120,7 @@ class Svg extends Base {
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = \Elementor\Utils::strpos( $content, '<svg' );
-		$end = strrpos( $content, '</svg>' );
+		$end = strrpos( $content ?? '', '</svg>' );
 		if ( false === $start || false === $end ) {
 			return false;
 		}
@@ -320,7 +320,7 @@ class Svg extends Base {
 	private function is_encoded( $contents ) {
 		$needle = "\x1f\x8b\x08";
 		if ( function_exists( 'mb_strpos' ) ) {
-			return 0 === mb_\Elementor\Utils::strpos( $contents, $needle );
+			return 0 === mb_strpos( $contents, $needle );
 		} else {
 			return 0 === \Elementor\Utils::strpos( $contents, $needle );
 		}
