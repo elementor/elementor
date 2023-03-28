@@ -23,6 +23,40 @@
 
 @import "../flex-icons.scss";
 
+// mixins
+@mixin e-grid-overlay-base {
+	padding-top: var( --padding-top );
+	padding-bottom: var( --padding-bottom );
+	display: grid;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	grid-template-columns: var(--e-con-grid-template-columns);
+	grid-template-rows: var(--e-con-grid-template-rows);
+	grid-gap: var( --gap);
+	justify-items: var(--justify-items);
+	grid-auto-flow: var(--grid-auto-flow);
+}
+
+@mixin e-grid-overlay-boxed {
+	@include e-grid-overlay-base;
+	//max-width: calc( var(--content-width ) - ( (var( --padding-right ) + var( --padding-left ) ) / 2 ) * 1.6 );
+	//max-width: var(--content-width);
+	width: var( --width );
+	align-items: var(--align-items);
+	justify-content: var(--grid-justify-content);
+	margin: 0 auto;
+}
+
+@mixin e-grid-overlay-full-width {
+	@include e-grid-overlay-base;
+	padding-right: var( --padding-right );
+	padding-left: var( --padding-left );
+	width: 100%;
+	left: 0;
+}
+
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
@@ -56,6 +90,34 @@ html.elementor-html {
 		&.elementor-dragging-on-child,
 		&.e-con-boxed.elementor-html5dnd-current-element {
 			outline: 1px solid var( --outline-color );
+		}
+	}
+
+	.e-grid-overlay {
+		display: none;
+	}
+
+	.elementor-element-editable.e-grid {
+		&.e-con-full {
+			> .e-grid-overlay {
+				@include e-grid-overlay-full-width;
+			}
+		}
+
+		&.e-con-boxed {
+			> .e-con-inner{
+
+				position: relative;
+				> .e-grid-overlay {
+					@include e-grid-overlay-boxed;
+				}
+			}
+		}
+
+		.e-grid-overlay-item {
+			border: 1px dashed #{$e-gray-300};
+			pointer-events: none;
+			min-width: 1fr;
 		}
 	}
 
