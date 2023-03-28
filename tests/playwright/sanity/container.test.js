@@ -649,7 +649,7 @@ test.describe( 'Container tests', () => {
 		await test.step( 'Test wizard grid container', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.grid-preset-button' ).click();
-			const gridList = frame.locator( '.e-con-select-preset-grid-list' );
+			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
 			await expect( gridList ).toBeVisible();
 		} );
 	} );
