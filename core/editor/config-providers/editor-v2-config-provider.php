@@ -13,6 +13,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	const EXTENSION_PACKAGES = [
 		'documents',
 		'documents-ui',
+		'pro-documents',
 		'elements-panel',
 		'finder',
 		'help',
