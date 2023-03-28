@@ -15,6 +15,9 @@ export default class ColorPicker extends elementorModules.Module {
 					hue: true,
 					interaction: {
 						input: true,
+						hex: true,
+						rgba: true,
+						hsla: true,
 					},
 				},
 			},

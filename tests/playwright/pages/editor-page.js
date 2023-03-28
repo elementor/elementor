@@ -230,14 +230,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -295,7 +295,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
