@@ -1362,6 +1362,9 @@
 .eicon-mega-menu:before {
   content: '\eb78'; }
 
+.eicon-nested-carousel:before {
+  content: '\e9bd'; }
+
 .eicon-eye:before {
   content: '\e8ac'; }
 
