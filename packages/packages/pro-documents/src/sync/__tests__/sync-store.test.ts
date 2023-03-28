@@ -39,11 +39,10 @@ describe( '@elementor/pro-documents - Sync Store', () => {
 		} );
 	} );
 
-	it( 'should sync documents on V1 load', () => {
+	it( 'should sync documents on document open', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
-			makeMockV1Document( { id: 1 } ),
-			makeMockV1Document( { id: 2, locationKey: 'popup' } ),
+			makeMockV1Document( { id: 1, locationKey: 'popup' } ),
 		] );
 
 		// Act.
@@ -57,7 +56,7 @@ describe( '@elementor/pro-documents - Sync Store', () => {
 		expect( storeState[ 'pro-documents' ].entities ).toEqual( {
 			1: {
 				id: 1,
-				locationKey: null,
+				locationKey: 'popup',
 			},
 		} );
 	} );
@@ -90,10 +89,7 @@ function makeDocumentsManager( documentsArray: ProV1Document[], current = 1, ini
 	};
 }
 
-function makeMockV1Document( {
-	id = 1,
-	locationKey = '',
-}: {
+function makeMockV1Document( { id = 1, locationKey = '' }: {
 	id?: number,
 	locationKey?: string,
 } = {} ): ProV1Document {
