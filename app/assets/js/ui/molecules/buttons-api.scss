@@ -15,7 +15,7 @@ $button-lg-font-size: type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
 $button-primary-background-color: theme-colors(accent);
-$button-primary-hover-background-color: $e-pink-200;
+$button-primary-hover-background-color: $e-pink-100;
 $button-primary-active-background-color: theme-colors(accent);
 $button-primary-color: $eps-btn-color;
 $button-secondary-background-color: tints(500);
@@ -45,7 +45,7 @@ $button-disabled-color: theme-colors(light);
 // -- dark
 $button-dark-primary-background-color: theme-colors(accent);
 $button-dark-primary-color: $eps-btn-color;
-$button-dark-primary-hover-background-color: $e-pink-200;
+$button-dark-primary-hover-background-color: $e-pink-400;
 $button-dark-primary-active-background-color: theme-colors(accent);
 $button-dark-secondary-background-color: dark-tints(200);
 $button-dark-secondary-hover-background-color: darken($button-dark-secondary-background-color, $button-hover-constant);
