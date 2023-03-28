@@ -446,7 +446,7 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
-		await editor.getPreviewFrame().locator( '.to-flex' ).click();
+		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
@@ -631,8 +631,8 @@ test.describe( 'Container tests', () => {
 
 		await test.step( 'Test container type selector', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
-			const toFlex = await frame.locator( '.to-flex' );
-			const toGrid = await frame.locator( '.to-grid' );
+			const toFlex = await frame.locator( '.flex-preset-button' );
+			const toGrid = await frame.locator( '.grid-preset-button' );
 			await expect( toFlex ).toBeVisible();
 			await expect( toGrid ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
