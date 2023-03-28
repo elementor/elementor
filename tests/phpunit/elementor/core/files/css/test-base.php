@@ -187,24 +187,6 @@ class Test_Base extends Elementor_Test_Base {
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_duplication_mode );
 	}
 
-	public function test_parse_size_units_selectors_dictionary__value_fraction() {
-		$parsed_value = $this->css_generator_class->parse_size_units_selectors_dictionary(
-			'--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
-			[ 'unit' => 'fr', 'size' => '2', 'sizes' => [] ]
-		);
-
-		$this->assertEquals( '--e-con-grid-template-columns: repeat(2, 1fr)', $parsed_value );
-	}
-
-	public function test_parse_size_units_selectors_dictionary__value_custom() {
-		$parsed_value = $this->css_generator_class->parse_size_units_selectors_dictionary(
-			'--e-con-grid-template-columns: {{SIZE}}',
-			[ 'unit' => 'custom', 'size' => '3fr 200px 1fr', 'sizes' => [] ]
-		);
-
-		$this->assertEquals( '--e-con-grid-template-columns: 3fr 200px 1fr', $parsed_value );
-	}
-
 	private function add_and_return_rules( $element_instance, $selector ) {
 		$this->css_generator_class->add_controls_stack_style_rules(
 			$element_instance,

@@ -341,10 +341,7 @@ abstract class Base extends Base_File {
 			} else {
 				try {
 					if ( isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ] ) ) {
-						$css_property = $this->parse_size_units_selectors_dictionary(
-							$control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ],
-							$values[ $control['name'] ]
-						);
+						$css_property = $control['unit_selectors_dictionary'][ $values[ $control['name'] ]['unit'] ];
 					}
 
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
