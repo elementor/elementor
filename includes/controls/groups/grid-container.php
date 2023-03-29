@@ -32,7 +32,10 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'step' => 1,
 				],
 			],
-			'size_units' => [ 'fr' ],
+			'size_units' => [ 'fr', 'custom' ],
+			'unit_selectors_dictionary' => [
+				'custom' => '--e-con-grid-template-columns: {{SIZE}}',
+			],
 			'default' => [
 				'unit' => 'fr',
 				'size' => 3,
@@ -53,7 +56,10 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 					'step' => 1,
 				],
 			],
-			'size_units' => [ 'fr' ],
+			'size_units' => [ 'fr', 'custom' ],
+			'unit_selectors_dictionary' => [
+				'custom' => '--e-con-grid-template-rows: {{SIZE}}',
+			],
 			'default' => [
 				'unit' => 'fr',
 				'size' => 2,
@@ -153,15 +159,27 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-start-h',
+					'icon' => 'eicon-justify-start-h',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-center-h',
+					'icon' => 'eicon-justify-center-h',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-end-h',
+					'icon' => 'eicon-justify-end-h',
+				],
+				'space-between' => [
+					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-between-h',
+				],
+				'space-around' => [
+					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-around-h',
+				],
+				'space-evenly' => [
+					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-evenly-h',
 				],
 			],
 			'selectors' => [
@@ -178,15 +196,27 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-start-v',
+					'icon' => 'eicon-justify-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Middle', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-center-v',
+					'icon' => 'eicon-justify-center-v',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-justify-end-v',
+					'icon' => 'eicon-justify-end-v',
+				],
+				'space-between' => [
+					'title' => esc_html_x( 'Space Between', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-between-v',
+				],
+				'space-around' => [
+					'title' => esc_html_x( 'Space Around', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-around-v',
+				],
+				'space-evenly' => [
+					'title' => esc_html_x( 'Space Evenly', 'Grid Container Control', 'elementor' ),
+					'icon' => 'eicon-justify-space-evenly-v',
 				],
 			],
 			'selectors' => [
