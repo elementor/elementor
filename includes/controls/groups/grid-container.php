@@ -18,7 +18,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 
 		$fields['items_grid'] = [
 			'type' => Controls_Manager::HEADING,
-			'label' => esc_html__( 'Grid Items', 'elementor' ),
+			'label' => esc_html__( 'Items', 'elementor' ),
 			'separator' => 'before',
 		];
 
@@ -86,7 +86,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		$fields['auto_flow'] = [
-			'label' => esc_html__( 'Grid Auto Flow', 'elementor' ),
+			'label' => esc_html__( 'Auto Flow', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
 				'row' => esc_html__( 'Row', 'elementor' ),
