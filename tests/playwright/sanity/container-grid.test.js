@@ -88,9 +88,9 @@ test.describe( 'Container tests', () => {
 			const gridTemplateColumnsCssValue = await container.evaluate( ( element ) => {
 				return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
 			} );
-		
+
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
-		
+
 			expect( isOneColumn ).toBeTruthy();
 		} );
 	} );
