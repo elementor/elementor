@@ -1,4 +1,3 @@
-import CanvasDisplay from './components/top-bar/canvas-display';
 import PrimaryAction from './components/top-bar/primary-action';
 import useDocumentPreviewProps from './hooks/use-document-preview-props';
 import useDocumentSaveDraftProps from './hooks/use-document-save-draft-props';
