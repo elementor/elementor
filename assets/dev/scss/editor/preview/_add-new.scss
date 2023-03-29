@@ -45,6 +45,20 @@
 			display: none;
 		}
 	}
+
+	&[data-view="select-type"] {
+
+		.e-view:not( .e-con-select-type ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-container-preset-grid"] {
+
+		.e-view:not( .e-con-select-preset-grid ) {
+			display: none;
+		}
+	}
 }
 
 .elementor-add-section-inner {

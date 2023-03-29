@@ -9,7 +9,9 @@ import environment from 'elementor-common/utils/environment';
 
 	// Views.
 	static VIEW_CHOOSE_ACTION = 'choose-action';
-	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? 'select-container-preset' : 'select-preset';
+	static VIEW_CONTAINER_FLEX_PRESET = 'select-container-preset';
+	static VIEW_CONTAINER_GRID_PRESET = 'select-container-preset-grid';
+	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? 'select-type' : 'select-preset';
 
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
@@ -30,6 +32,8 @@ import environment from 'elementor-common/utils/environment';
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
 			containerPresets: '.e-con-preset',
+			flexPresetButton: '.flex-preset-button',
+			gridPresetButton: '.grid-preset-button',
 		};
 	}
 
@@ -40,8 +44,11 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
+			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),
+			'click @ui.gridPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_GRID_PRESET ),
 		};
 	}
+
 	behaviors() {
 		return {
 			contextMenu: {
