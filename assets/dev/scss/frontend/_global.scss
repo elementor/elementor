@@ -171,8 +171,6 @@
 	--align-items: initial;
 	--align-content: initial;
 	--gap: initial;
-	--grid-row-gap: initial;
-	--grid-column-gap: initial;
 	--flex-basis: initial;
 	--flex-grow: initial;
 	--flex-shrink: initial;
@@ -187,8 +185,6 @@
 		align-items: var( --align-items );
 		align-content: var( --align-content );
 		gap: var( --gap );
-		column-gap: var( --grid-column-gap, var( --gap ) );
-		row-gap: var( --grid-row-gap, var( --gap ) );
 	}
 
 	// Flex item.

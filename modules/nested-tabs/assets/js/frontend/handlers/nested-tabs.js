@@ -37,6 +37,7 @@ export default class NestedTabs extends Base {
 				tabContent: '.e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
+				mobileTabTitle: '.e-collapse',
 			},
 			classes: {
 				active: 'e-active',
@@ -61,6 +62,8 @@ export default class NestedTabs extends Base {
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
+			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
+			$headingContainer: this.findElement( selectors.headingContainer ),
 		};
 	}
 
@@ -140,14 +143,18 @@ export default class NestedTabs extends Base {
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
 		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
-		} );
+		$activeTitle.attr( this.getTitleDeactivationAttributes() );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
 		$activeContent.attr( 'hidden', 'hidden' );
+	}
+
+	getTitleDeactivationAttributes() {
+		return {
+			tabindex: '-1',
+			'aria-selected': 'false',
+			'aria-expanded': 'false',
+		};
 	}
 
 	onHideTabContent( $activeContent ) {}
@@ -305,7 +312,34 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
+			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
+
+			if ( isMobileVersion ) {
+				this.activateMobileTab( tabIndex );
+				return;
+			}
+
 			this.activateTab( tabIndex );
+		}
+	}
+
+	activateMobileTab( tabIndex ) {
+		// Timeout time added to ensure that opening of the active tab starts after closing the other tab on Apple devices.
+		setTimeout( () => {
+			this.activateTab( tabIndex );
+			this.forceActiveTabToBeInViewport( tabIndex );
+		}, 10 );
+	}
+
+	forceActiveTabToBeInViewport( tabIndex ) {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return;
+		}
+
+		const $activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
+
+		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
+			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
 		}
 	}
 

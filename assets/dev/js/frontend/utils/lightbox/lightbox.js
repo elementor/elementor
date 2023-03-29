@@ -698,8 +698,8 @@ module.exports = elementorModules.ViewModule.extend( {
 				$prevButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.previous ),
 				$nextButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.next );
 
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).html( $prevButtonIcon + $prevButtonLabel );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).html( $nextButtonIcon + $nextButtonLabel );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).append( $prevButtonIcon, $prevButtonLabel );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).append( $nextButtonIcon, $nextButtonLabel );
 
 			$container.append(
 				$nextButton,
