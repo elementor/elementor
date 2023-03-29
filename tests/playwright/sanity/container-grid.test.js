@@ -79,4 +79,28 @@ test.describe( 'Container tests', () => {
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
 	} );
+
+	test.only( 'Test grid outline', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		// Arrange.
+		await test.step( 'Arrange', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.closeNavigatorIfOpen();
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+		} );
+
+		const frame = editor.getPreviewFrame();
+		const container = await frame.locator( '.e-grid .e-con-inner' );
+
+		await test.step( 'Assert default outline', async () => {
+			await page.pause();
+
+			await page.locator( '.e-grid-outline' ).first().click();
+			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
+			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
+			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+		} );
+	} );
 } );

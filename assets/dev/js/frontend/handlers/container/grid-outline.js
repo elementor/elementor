@@ -1,6 +1,4 @@
-const BOXED = 'boxed';
-
-export default class GridOverlay extends elementorModules.frontend.handlers.Base {
+export default class GridOutline extends elementorModules.frontend.handlers.Base {
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -9,12 +7,12 @@ export default class GridOverlay extends elementorModules.frontend.handlers.Base
 		return {
 			selectors: {
 				container: '.elementor-element-editable',
-				gridOverlay: '.e-grid-overlay',
-				directChildGridOverlay: ':scope > .e-grid-overlay',
+				gridOverlay: '.e-grid-outline',
+				directChildGridOverlay: ':scope > .e-grid-outline',
 			},
 			classes: {
-				overlay: 'e-grid-overlay',
-				overlayItem: 'e-grid-overlay-item',
+				overlay: 'e-grid-outline',
+				overlayItem: 'e-grid-outline-item',
 				container: 'elementor-element-editable',
 			},
 		};
@@ -67,32 +65,33 @@ export default class GridOverlay extends elementorModules.frontend.handlers.Base
 	}
 
 	removeExistingOverlay( container ) {
-		if ( container.querySelector( ':scope > .e-grid-overlay' ) ) {
-			container.querySelector( ':scope > .e-grid-overlay' ).remove();
+		if ( container.querySelector( ':scope > .e-grid-outline' ) ) {
+			container.querySelector( ':scope > .e-grid-outline' ).remove();
 		}
 	}
 
 	createOverlayParentContainer( container ) {
 		const gridOverlayContainer = document.createElement( 'div' );
 
-		// gridOverlayContainer.style.gridTemplateColumns = this.getComputedStyle( container, 'grid-template-columns' );
-		gridOverlayContainer.classList.add( 'e-grid-overlay' );
+		gridOverlayContainer.classList.add( 'e-grid-outline' );
 		container.appendChild( gridOverlayContainer );
 
 		this.createOverlayChildCells( gridOverlayContainer, container );
 	}
 
 	createOverlayChildCells( gridOverlayContainer, container ) {
-		const numberOfElementsInCurrentContainer = container.querySelectorAll( ':scope >.elementor-element' ).length,
+		const containerChildren = container.querySelectorAll( ':scope >.elementor-element' ),
+			numberOfChildrenInContainer = containerChildren.length,
 			calculatedCellsInGrid = this.calculateNumberOfItemsInGrid(),
-			numberOfCells = calculatedCellsInGrid >= numberOfElementsInCurrentContainer
+			numberOfCells = calculatedCellsInGrid >= numberOfChildrenInContainer
 				? calculatedCellsInGrid
-				: this.calculateNumberOfItemsInGridByInnerElements( gridOverlayContainer, numberOfElementsInCurrentContainer );
+				: this.calculateNumberOfItemsInGridByInnerElements( gridOverlayContainer, numberOfChildrenInContainer );
 
 		for ( let i = 0; i < numberOfCells; i++ ) {
 			const cell = document.createElement( 'div' );
 
-			cell.classList.add( 'e-grid-overlay-item' );
+			cell.classList.add( 'e-grid-outline-item' );
+			// cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
 			gridOverlayContainer.append( cell );
 		}
 	}
@@ -117,45 +116,39 @@ export default class GridOverlay extends elementorModules.frontend.handlers.Base
 		return numberOfCells;
 	}
 
-	getCorrectContainer( elementSettings ) {
-		let correctContainer;
+	getCorrectContainer() {
+		const { container } = this.elements;
 
-		if ( BOXED === elementSettings.content_width ) {
-			correctContainer = this.elements.container.querySelector( ':scope > .e-con-inner' );
-		} else {
-			correctContainer = this.elements.container;
-		}
-
-		return correctContainer;
+		return container.querySelector( ':scope > .e-con-inner' ) || container;
 	}
 
 	onElementChange( propertyName ) {
-		// Maybe it better to separate responsive control from the rest of the controls
-		const propsThatTriggerGridLayoutCalculation = [
+		let propsThatTriggerGridLayoutRender = [
 			'grid_rows_grid',
 			'grid_columns_grid',
 			'container_type',
 		];
 
-		const allPropsThatTriggerGridLayoutCalculation = this.getResponsiveControlNames( propsThatTriggerGridLayoutCalculation );
+		// Add responsive props.
+		propsThatTriggerGridLayoutRender = this.getResponsiveControlNames( propsThatTriggerGridLayoutRender );
 
-		if ( allPropsThatTriggerGridLayoutCalculation.includes( propertyName ) ) {
+		if ( propsThatTriggerGridLayoutRender.includes( propertyName ) ) {
 			this.addLayoutOverlay();
 		}
 	}
 
-	getResponsiveControlNames( propsThatTriggerGridLayoutCalculation ) {
-		propsThatTriggerGridLayoutCalculation.forEach( ( prop ) => {
+	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
+		propsThatTriggerGridLayoutRender.forEach( ( prop ) => {
 			this.getActiveBreakpointsList().forEach( ( breakpoint ) => {
-				propsThatTriggerGridLayoutCalculation.push( prop + '_' + breakpoint );
+				propsThatTriggerGridLayoutRender.push( prop + '_' + breakpoint );
 			} );
 		} );
 
-		return propsThatTriggerGridLayoutCalculation;
+		return propsThatTriggerGridLayoutRender;
 	}
 
 	getGridDimensions() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		const currentDevice = elementor.channels.deviceMode.request( 'currentMode' );
 
 		return {
 			currentDeviceGridColumns: elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_columns_grid', 'size', currentDevice ) || 0,
@@ -168,11 +161,11 @@ export default class GridOverlay extends elementorModules.frontend.handlers.Base
 	}
 
 	onDeviceModeChange() {
-		this.addLayoutOverlay();
-	}
+		// document.querySelectorAll( '.e-grid-outline' ).forEach( ( gridOutline ) => {
+		// 	gridOutline.remove();
+		// } );
 
-	getCurrentDevice() {
-		return elementorFrontend.getCurrentDeviceMode();
+		this.addLayoutOverlay();
 	}
 
 	/**

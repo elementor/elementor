@@ -27,6 +27,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'type' => Controls_Manager::SWITCHER,
 			'label_on' => esc_html__( 'SHOW', 'elementor' ),
 			'label_off' => esc_html__( 'HIDE', 'elementor' ),
+			'default' => 'yes',
 			'frontend_available' => true,
 		];
 
