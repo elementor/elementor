@@ -446,6 +446,7 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
+		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
@@ -621,6 +622,36 @@ test.describe( 'Container tests', () => {
 		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
 		// Verify that the third container has `a `data-id` value of `containerId2`.
 		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
+	} );
+
+	test( 'Test container wizard', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const frame = await editor.getPreviewFrame();
+
+		await test.step( 'Test container type selector', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			const toFlex = await frame.locator( '.flex-preset-button' );
+			const toGrid = await frame.locator( '.grid-preset-button' );
+			await expect( toFlex ).toBeVisible();
+			await expect( toGrid ).toBeVisible();
+			await frame.locator( '.elementor-add-section-close' ).click();
+		} );
+
+		await test.step( 'Test wizard flex container', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.flex-preset-button' ).click();
+			const flexList = frame.locator( '.e-con-select-preset__list' );
+			await expect( flexList ).toBeVisible();
+			await frame.locator( '.elementor-add-section-close' ).click();
+		} );
+
+		await test.step( 'Test wizard grid container', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
+			await expect( gridList ).toBeVisible();
+		} );
 	} );
 } );
 
