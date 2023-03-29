@@ -1,0 +1,28 @@
+name: Create Branch
+description: Create a new branch from the specified branch.
+
+inputs:
+  BRANCH_NAME:
+    description: 'The branch name to create (e.g. release/3.11.2)'
+    required: true
+  SOURCE_BRANCH:
+    description: 'The source branch to create the new branch from (e.g. release/3.11.2)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        # Remove the "refs/heads/" prefix from the source branch name
+        SOURCE_BRANCH=${{ inputs.SOURCE_BRANCH }}
+        SOURCE_BRANCH=${SOURCE_BRANCH#refs/heads/}
+
+        # Create a new branch named "master-backup" based on the current branch (master)
+        git branch ${{ inputs.BRANCH_NAME }} $SOURCE_BRANCH
+
+        # Switch to the new branch
+        git checkout ${{ inputs.BRANCH_NAME }}
+
+        # Push the new branch to the remote repository and set the upstream branch to track it
+        git push -u origin ${{ inputs.BRANCH_NAME }}
