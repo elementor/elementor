@@ -80,7 +80,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test.only( 'Test grid outline', async ( { page }, testInfo ) => {
+	test( 'Test grid outline', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 

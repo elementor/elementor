@@ -36,7 +36,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	bindEvents() {
-		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		elementor.listenTo( elementor.channels.deviceMode, 'change', () => elementorFrontend.debounce( this.onDeviceModeChange(), 200 ) );
 
 		this.addChildLifeCycleEventListeners();
 	}
@@ -72,6 +72,9 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 	createOverlayParentContainer( container ) {
 		const gridOverlayContainer = document.createElement( 'div' );
+			// parentColumns = this.getComputedStyle( this.elements.container, 'grid-template-columns' );
+
+		// gridOverlayContainer.style.gridTemplateColumns = parentColumns;
 
 		gridOverlayContainer.classList.add( 'e-grid-outline' );
 		container.appendChild( gridOverlayContainer );
@@ -91,7 +94,8 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			const cell = document.createElement( 'div' );
 
 			cell.classList.add( 'e-grid-outline-item' );
-			// cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
+			cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
+			cell.style.width = this.getComputedStyle( containerChildren[ i ], 'width' );
 			gridOverlayContainer.append( cell );
 		}
 	}
