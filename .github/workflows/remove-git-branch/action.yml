@@ -11,4 +11,5 @@ runs:
   steps:
     - shell: bash
       run: |
-        git push origin :heads/${{ inputs.BRANCH_NAME }}
+        # Delete the branch from the remote repository
+        git push origin --delete ${{ inputs.BRANCH_NAME }}
