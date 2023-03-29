@@ -3,7 +3,7 @@ import PrimaryAction from './components/top-bar/primary-action';
 import useDocumentPreviewProps from './hooks/use-document-preview-props';
 import useDocumentSaveDraftProps from './hooks/use-document-save-draft-props';
 import useDocumentSaveTemplateProps from './hooks/use-document-save-template-props';
-import { injectIntoCanvasDisplay, injectIntoPrimaryAction, utilitiesMenu } from '@elementor/top-bar';
+import { injectIntoPrimaryAction, utilitiesMenu } from '@elementor/top-bar';
 import { documentOptionsMenu } from './menus';
 
 export default function init() {
@@ -11,11 +11,6 @@ export default function init() {
 }
 
 function registerTopBarMenuItems() {
-	injectIntoCanvasDisplay( {
-		name: 'document-canvas-display',
-		filler: CanvasDisplay,
-	} );
-
 	injectIntoPrimaryAction( {
 		name: 'document-primary-action',
 		filler: PrimaryAction,

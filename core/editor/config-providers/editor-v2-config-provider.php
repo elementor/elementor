@@ -18,6 +18,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		'help',
 		'history',
 		'responsive',
+		'recently-edited',
 		'site-settings',
 		'structure',
 		'theme-builder',

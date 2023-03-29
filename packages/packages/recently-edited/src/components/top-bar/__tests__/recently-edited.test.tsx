@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
-import CanvasDisplay from '../canvas-display';
+import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
 
 jest.mock( '@elementor/documents', () => ( {
@@ -8,7 +8,7 @@ jest.mock( '@elementor/documents', () => ( {
 	useHostDocument: jest.fn(),
 } ) );
 
-describe( '@elementor/documents-ui - Top bar Canvas display', () => {
+describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( { id: 1, title: 'Active Document' } )
@@ -21,7 +21,7 @@ describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 
 	it( 'should show the title of the active document without its status when the document is published', () => {
 		// Act.
-		const { queryByText } = render( <CanvasDisplay /> );
+		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
 		expect( queryByText( 'Active Document' ) ).toBeTruthy();
@@ -42,7 +42,7 @@ describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 		);
 
 		// Act.
-		const { queryByText } = render( <CanvasDisplay /> );
+		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
 		expect( queryByText( 'Active Document' ) ).toBeTruthy();
@@ -54,7 +54,7 @@ describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 
 		// Act.
-		const { queryByText } = render( <CanvasDisplay /> );
+		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
 		expect( queryByText( 'Host Document' ) ).toBeTruthy();
@@ -75,7 +75,7 @@ describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 		);
 
 		// Act.
-		const { queryByText } = render( <CanvasDisplay /> );
+		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
 		expect( queryByText( 'Host Document' ) ).toBeTruthy();
@@ -87,10 +87,23 @@ describe( '@elementor/documents-ui - Top bar Canvas display', () => {
 		jest.mocked( useHostDocument ).mockImplementation( () => null );
 
 		// Act.
-		const { queryByText } = render( <CanvasDisplay /> );
+		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
 		expect( queryByText( 'Host Document' ) ).not.toBeTruthy();
 		expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
+	} );
+
+	it( 'should open the recently edited menu on click', () => {
+		// Arrange.
+		const { getByRole, getAllByRole } = render( <RecentlyEdited /> );
+
+		// Act.
+		getByRole( 'button' ).click(); // Opens the recently edited menu
+
+		// Assert.
+		const menuItems = getAllByRole( 'menuitem' );
+
+		expect( menuItems ).toHaveLength( 3 );
 	} );
 } );
