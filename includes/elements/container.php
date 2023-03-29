@@ -333,7 +333,7 @@ class Container extends Element_Base {
 	protected function get_container_type_control_options( $is_container_grid_active ) {
 		if ( $is_container_grid_active ) {
 			return [
-				'label' => esc_html__( 'Container Type', 'elementor' ),
+				'label' => esc_html__( 'Container Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'flex',
 				'options' => [
@@ -349,7 +349,7 @@ class Container extends Element_Base {
 
 		// TODO: This can be removed when the 'Container Grid Experiment' is merged.
 		return [
-			'label' => esc_html__( 'Container Type', 'elementor' ),
+			'label' => esc_html__( 'Container Layout', 'elementor' ),
 			'type' => Controls_Manager::HIDDEN,
 			'render_type' => 'none',
 			'prefix_class' => 'e-',

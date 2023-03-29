@@ -28,7 +28,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<div id="elementor-panel__editor__help">
 		<a id="elementor-panel__editor__help__link" href="{{{ elementor.config.document.panel.needHelpUrl }}}" target="_blank">
 			<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
-			<i class="eicon-help-o"></i>
+			<i class="eicon-help-o" aria-hidden="true"></i>
 		</a>
 	</div>
 	<# } #>
@@ -181,7 +181,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<div id="elementor-panel__editor__help">
 			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank">
 				<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
-				<i class="eicon-help-o"></i>
+				<i class="eicon-help-o" aria-hidden="true"></i>
 			</a>
 		</div>
 	<# } #>
@@ -277,13 +277,15 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?>">
-		<i class="eicon-database"></i>
+	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
+		<i class="eicon-database" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?></span>
 	</div>
 </script>
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
 	<div class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
-		<i class="eicon-eyedropper"></i>
+		<i class="eicon-eyedropper" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php echo esc_html__( 'Color Sampler', 'elementor' ); ?></span>
 	</div>
 </script>
 
