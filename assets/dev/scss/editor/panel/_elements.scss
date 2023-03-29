@@ -35,15 +35,15 @@
 
 	.eicon-loading {
 		font-size: 25px;
-		color: $editor-info;
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
 #elementor-panel-elements-search-area {
+	background-color: var(--e-a-bg-default);
 	position: sticky;
 	top: 0;
-	padding: 10px;
-	background-color: $editor-background;
+	padding: 15px;
 	z-index: $first-layer;
 }
 
@@ -52,26 +52,24 @@
 }
 
 #elementor-panel-elements-search-input {
-	background-color: rgba(255,255,255,.7);
 	font-size: 11px;
 	@include padding(10px, 10px, 10px, 29px);
 	font-style: italic;
-	color: $editor-light;
-	border: none;
+	border: var(--e-a-border);
+	border-radius: 0;
 	transition: all 1s;
-	border-radius: 3px;
 	appearance: none;
 
 	+ i {
 		position: absolute;
 		@include start(10px);
 		top: 50%;
-		color: $editor-light;
+		color: var(--e-a-color-txt-disabled);
 		transform: translateY(-50%);
 	}
 
 	&:focus {
-		background-color: rgba(255,255,255,1);
+		border-color: var(--e-a-border-color-focus);
 		@include padding-end(15px);
 	}
 }
@@ -79,15 +77,12 @@
 .elementor-panel {
 
 	.elementor-element {
+		text-align: center;
+		border: var(--e-a-border);
 		border-radius: 3px;
-		background-color: #fff;
 		cursor: move;
 		position: relative;
-
-		&-wrapper {
-			text-align: center;
-			box-sizing: border-box;
-		}
+		transition: var(--e-a-transition-hover);
 
 		&--promotion {
 
@@ -97,17 +92,12 @@
 			}
 		}
 
-		.icon,
-		.title {
-			color: $editor-darker;
-			transition: $transition-hover;
-		}
-
 		&:hover {
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-bold);
 
-			.icon, .title {
-				color: $editor-accent;
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
 			}
 		}
 
@@ -116,23 +106,28 @@
 			padding-top: 15px;
 		}
 
-		.elementor-element-title-wrapper {
-			display: table;
-			width: 100%;
+		.title-wrapper {
+			display: flex;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
 		}
 
 		.title {
 			font-size: 11px;
-			display: table-cell;
-			vertical-align: middle;
-			height: 40px;
 		}
 
 		> .eicon-lock {
 			position: absolute;
 			top: 5px;
 			@include end(5px);
-			color: $editor-background;
+			color: var(--e-a-color-txt-disabled);
+		}
+
+		&:active {
+			background-color: var(--e-a-bg-hover);
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
 		}
 	}
 }
@@ -141,9 +136,9 @@
 	position: absolute;
 	width: 300px;
 	z-index: 1;
-	background-color: #fff;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	background-color: var(--e-a-bg-default);
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 
 	&:after {
 		content: '';
@@ -152,7 +147,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, #fff);
+		@include border-end-property(color, var(--e-a-bg-default));
 	}
 
 	&__title {
@@ -164,20 +159,23 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			color: $editor-darkest;
-			border-bottom: 1px solid $editor-background;
+			border-bottom: var(--e-a-border);
 			font-weight: 500;
 
 			.eicon-pro-icon {
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
-				color: $editor-accent;
+				color: var(--e-a-color-accent);
 			}
 
 			.eicon-close {
 				cursor: pointer;
-				color: $editor-light;
+				color: var(--e-a-color-txt-disabled);
+
+				&:hover {
+					color: var(--e-a-color-txt-muted);
+				}
 			}
 		}
 
@@ -186,16 +184,12 @@
 		}
 
 		&-buttons-wrapper {
-			padding: 0 20px 20px 20px;
+			padding: 0 20px 20px;
 		}
 
 		&-button {
 			padding: 7px 25px;
 			font-size: 12px;
-
-			&::-moz-focus-inner {
-				border: 0;
-			}
 		}
 	}
 }

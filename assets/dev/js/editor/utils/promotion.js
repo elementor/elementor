@@ -10,7 +10,7 @@ export default class extends elementorModules.Module {
 		actionButton: {
 			url: null,
 			text: null,
-			classes: [ 'elementor-button', 'elementor-button-success' ],
+			classes: [ 'elementor-button', 'e-accent' ],
 		},
 	};
 

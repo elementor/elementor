@@ -48,6 +48,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'mutable' => true,
 			'hidden' => false,
 			'generator_tag' => false,
+			'tags' => [],
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -56,6 +57,195 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->assertEquals( $test_set, $new_feature );
 		$this->assertEquals( null, $re_added_feature );
+	}
+
+	/**
+	 * @dataProvider get_tags_data_provider
+	 */
+	public function test_add_feature__with_tags( $name, $data, $expected ) {
+		// Act.
+		$new_feature = $this->add_test_feature( [
+			'name' => $name,
+			'tag' => $data['tag'] ?? '',
+			'tags' => $data['tags'] ?? [],
+		] );
+
+		// Assert.
+		$this->assertEquals( $expected['tag'], $new_feature['tag'] );
+		$this->assertEquals( $expected['tags'], $new_feature['tags'] );
+	}
+
+	public function get_tags_data_provider() {
+		return [
+			'New feature passing one tag to "tag" as a string' => [
+				'name' => 'test_feature_with_tags1',
+				'data' => [
+					'tag' => 'First tag',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						]
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						]
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as a comma separated string' => [
+				'name' => 'test_feature_with_tags2',
+				'data' => [
+					'tag' => 'First tag, Second tag',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as a comma separated string with a trailing comma' => [
+				'name' => 'test_feature_with_tags3',
+				'data' => [
+					'tag' => 'First tag, Second tag,',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as an incorrectly structured array' => [
+				'name' => 'test_feature_with_tags4',
+				'data' => [
+					'tag' => [
+						'First tag',
+						'Second tag',
+					],
+				],
+				'expected' => [
+					'tag' => [],
+					'tags' => [],
+				]
+			],
+			'New feature passing two tags to "tags" as an incorrectly structured array' => [
+				'name' => 'test_feature_with_tags5',
+				'data' => [
+					'tags' => [
+						'First tag',
+						'Second tag',
+					],
+				],
+				'expected' => [
+					'tag' => '',
+					'tags' => [],
+				]
+			],
+			'New feature passing two tags to "tags" as a correctly structured array' => [
+				'name' => 'test_feature_with_tags6',
+				'data' => [
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Second tag',
+						],
+					],
+				],
+				'expected' => [
+					'tag' => '',
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing tags to both "tag" and "tags"' => [
+				'name' => 'test_feature_with_tags7',
+				'data' => [
+					'tag' => 'First tag',
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Third tag',
+						],
+					],
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Third tag',
+						],
+					],
+				]
+			],
+		];
 	}
 
 	public function test_add_feature__ensure_wrap_core_dependency() {

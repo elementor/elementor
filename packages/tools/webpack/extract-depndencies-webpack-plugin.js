@@ -70,9 +70,13 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 	}
 
 	createAssetsFileContent( entryId, deps, shouldMinify ) {
+		const handleName = this.generateHandleName( entryId );
+
 		const depsAsString = [ ...deps ]
+			.map( ( dep ) => this.replaceDependencyNames( dep ) )
+			.filter( ( dep ) => dep !== handleName )
 			.sort()
-			.map( ( dep ) => `'${ this.replaceDependencyNames( dep ) }',` )
+			.map( ( dep ) => `'${ dep }',` )
 			.join( '\n\t\t' );
 
 		let content =
@@ -82,7 +86,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return [
-	'handle' => '${ this.generateHandleName( entryId ) }',
+	'handle' => '${ handleName }',
 	'deps' => [
 		${ depsAsString }
 	],

@@ -577,7 +577,7 @@ class Admin_Notices extends Module {
 		}
 
 		if ( $options['dismissible'] ) {
-			$label = esc_html__( 'Dismiss', 'elementor' );
+			$label = esc_html__( 'Dismiss this notice.', 'elementor' );
 			$notice_classes[] = 'e-notice--dismissible';
 			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="' . $label . '" tabindex="0"></i>';
 		}

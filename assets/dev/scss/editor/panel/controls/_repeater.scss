@@ -22,7 +22,7 @@
 	}
 
 	.elementor-repeater-row-controls {
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border-bold);
 		border-top-width: 0;
 		padding-top: 15px;
 
@@ -35,14 +35,13 @@
 		display: table;
 		table-layout: fixed;
 		width: 100%;
-		color: $editor-darker;
-		background-color: $editor-lightest;
+		background-color: var(--e-a-border-color-bold);
 		height: 40px;
 		border-spacing: 1px;
 		transition: all .5s;
 
 		&:hover {
-			background-color: $editor-light;
+			background-color: var(--e-a-border-color-focus);
 		}
 
 		> div {
@@ -52,18 +51,18 @@
 			cursor: pointer;
 
 			&:not(.elementor-repeater-row-handle-sortable) {
-				background-color: #fff;
+				background-color: var(--e-a-bg-default);
 			}
 
 			&:hover {
-				opacity: .95;
+				background-color: var(--e-a-bg-hover);
 			}
 		}
 
 		.elementor-repeater-row-item-title {
 			text-align: $start;
 			padding: 0 10px;
-			font-size: 12px;
+			font-size: var(--control-title-size);
 			@include ellipsis;
 
 			.eicon,

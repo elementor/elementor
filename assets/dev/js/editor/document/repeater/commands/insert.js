@@ -52,7 +52,7 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	}
 
 	apply( args ) {
-		const { model, name, options = { at: null }, containers = [ args.container ] } = args,
+		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true } = args,
 			result = [];
 
 		containers.forEach( ( container ) => {
@@ -68,8 +68,10 @@ export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 
 			result.push( collection.push( rowSettingsModel, options ) );
 
-			// Trigger render on widget but with the settings of the control.
-			repeaterContainer.render();
+			if ( renderAfterInsert ) {
+				// Trigger render on widget but with the settings of the control.
+				repeaterContainer.render();
+			}
 		} );
 
 		if ( 1 === result.length ) {

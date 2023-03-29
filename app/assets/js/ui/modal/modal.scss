@@ -14,24 +14,29 @@ $eps-modal-body-padding: spacing(30);
 $eps-modal-close-button-spacing: spacing(16);
 $eps-modal-close-button-border: solid 1px theme-colors(light);
 $eps-modal-animation: $eps-pop-animation;
+$eps-tip-padding: spacing(8);
 $eps-tip-padding-start: spacing(12);
 $eps-tip-border-start: 3px solid theme-colors(info);
+$eps-tip-background-color: theme-colors(info-bg);
 $eps-tip-margin-bottom: spacing(30);
 $eps-tip-margin-top: spacing(30);
 
 :root {
 	--eps-modal-background-color: #{$eps-modal-background-color};
 	--eps-modal-header-background-color: #{$eps-modal-header-background-color};
+	--eps-tip-background-color: #{$eps-tip-background-color};
 }
 
 // Dark
 
-$eps-dark-modal-background-color: dark-tints(700);
+$eps-dark-modal-background-color: dark-tints(900);
 $eps-dark-modal-header-background-color: dark-theme-colors(info);
+$eps-dark-tip-background-color: dark-theme-colors(info-bg);
 
 .eps-theme-dark {
 	--eps-modal-background-color: #{$eps-dark-modal-background-color};
 	--eps-modal-header-background-color: #{$eps-dark-modal-header-background-color};
+	--eps-tip-background-color: #{$eps-dark-tip-background-color};
 }
 
 /** ----------------------------------------------------------------
@@ -79,8 +84,10 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	}
 
 	&__tip, .#{$eps-prefix}tip {
+		padding: $eps-tip-padding;
 		padding-inline-start: $eps-tip-padding-start;
 		border-inline-start: $eps-tip-border-start;
+		background-color: var(--eps-tip-background-color);
 		&:not(:last-child) {
 			margin-bottom: $eps-tip-margin-bottom;
 		}

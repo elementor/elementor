@@ -3,6 +3,7 @@ namespace Elementor\Core\Editor;
 
 use Elementor\Core\Editor\Config_Providers\Config_Provider_Interface;
 use Elementor\Core\Utils\Collection;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,6 +49,27 @@ class Editor_Loader {
 				$script_config['deps'],
 				$script_config['version'],
 				$script_config['in_footer']
+			);
+		}
+	}
+
+	public function print_client_settings() {
+		$client_settings = $this->config_provider->get_client_settings();
+
+		$client_settings = Collection::make( $client_settings )
+			->filter( function ( $config ) {
+				return (
+					! empty( $config['handle'] ) &&
+					! empty( $config['name'] ) &&
+					! empty( $config['settings'] )
+				);
+			} );
+
+		foreach ( $client_settings as $client_setting ) {
+			Utils::print_js_config(
+				$client_setting['handle'],
+				$client_setting['name'],
+				$client_setting['settings']
 			);
 		}
 	}
@@ -111,6 +133,14 @@ class Editor_Loader {
 		$body_file_path = $this->config_provider->get_template_body_file_path();
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	public function register_additional_templates() {
+		$templates = $this->config_provider->get_additional_template_paths();
+
+		foreach ( $templates as $template_path ) {
+			Plugin::$instance->common->add_template( $template_path );
+		}
 	}
 
 	/**

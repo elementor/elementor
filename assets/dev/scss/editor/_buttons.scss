@@ -2,22 +2,37 @@
 // Buttons
 //
 
-.elementor-button {
-	font-family: $admin-font-family;
+.elementor-button,
+.e-btn {
+	font-size: 12px;
 	font-weight: 500;
+	line-height: 1.2;
 	text-transform: uppercase;
+	padding: 8px 16px;
 	outline: none;
 	border: none;
-	border-radius: 3px;
-	transition-property: background, color, box-shadow, opacity;
-	transition-duration: .3s;
+	border-radius: var(--e-a-border-radius);
+	background-color: var(--e-a-btn-bg);
+	color: var(--e-a-btn-color-invert);
+	transition: var(--e-a-transition-hover);
 
 	&:hover {
-		border: none;
+		border: none; //Remove border on a:hover
+		background-color: var(--e-a-btn-bg-hover);
+		color: var(--e-a-btn-color-invert);
+	}
+
+	&:active {
+		background-color: var(--e-a-btn-bg-active);
 	}
 
 	&:not([disabled]) {
 		cursor: pointer;
+	}
+
+	&:disabled {
+		background-color: var(--e-a-btn-bg-disabled);
+		color: var(--e-a-btn-color-disabled);
 	}
 
 	&:not(.elementor-button-state) {
@@ -27,122 +42,81 @@
 		}
 	}
 
-	&.elementor-button-success {
-		color: #fff;
-
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-			background-color: $editor-success;
-
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-			}
-		}
-	}
-
-	&.elementor-button-brand {
-		color: $white;
-
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-			background-color: $editor-accent;
-
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-			}
-		}
-	}
-
-	&.elementor-button-warning {
-		background-color: $editor-light;
-		color: #fff;
-
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-
-			&:hover {
-				background-color: $editor-warning;
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-			}
-		}
-	}
-
-	&.elementor-button-danger {
-		background-color: $editor-danger;
-		color: #fff;
-
-		&[disabled] {
-			background-color: $editor-lighter;
-		}
-
-		&:not([disabled]) {
-
-			&:hover {
-				opacity: 0.85;
-				box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
-			}
-
-			&:active {
-				box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-			}
-		}
-	}
-
-	&.elementor-edit-template {
-		display: inline-block;
-		margin-top: 15px;
-		color: #fff;
-	}
-
-	&.elementor-button-default {
-		background-color: $editor-light;
-		color: #fff;
-		font-size: 11px;
-		padding: 7px 21px;
+	&.e-btn-txt {
+		background: transparent;
+		color: var(--e-a-color-txt);
 
 		&:hover {
-			background-color: $editor-dark;
-			box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+			background: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
+		}
+
+		&:disabled {
+			background: transparent;
+			color: var(--e-a-color-txt-disabled);
+		}
+	}
+
+	&.elementor-button-success,
+	&.e-success {
+		background-color: var(--e-a-btn-bg-success);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-success-hover);
+		}
+	}
+
+	&.e-primary {
+		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-primary-hover);
+			color: var(--e-a-btn-color);
+		}
+
+		&.e-btn-txt {
+			background: transparent;
+			color: var(--e-a-color-primary-bold);
+
+			&:hover {
+				background:var(--e-a-bg-primary);
+			}
+		}
+	}
+
+	&.go-pro,
+	&.e-accent {
+		background-color: var(--e-a-btn-bg-accent);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-accent-hover);
 		}
 
 		&:active {
-			box-shadow: 0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.1);
-		}
-
-		&:visited {
-			color: #fff;
+			background-color: var(--e-a-btn-bg-accent-active);
 		}
 	}
 
-	&.elementor-button-go-pro {
-		background-color: $editor-accent;
+	&.elementor-button-warning,
+	&.e-warning {
+		background-color: var(--e-a-btn-bg-warning);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-warning-hover);
+		}
+	}
+
+	&.elementor-button-danger,
+	&.e-danger {
+		background-color: var(--e-a-btn-bg-danger);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-danger-hover);
+		}
 	}
 
 	i {
-		@include margin-end(10px);
+		@include margin-end(5px);
 	}
 }
