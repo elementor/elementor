@@ -94,8 +94,11 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			const cell = document.createElement( 'div' );
 
 			cell.classList.add( 'e-grid-outline-item' );
-			cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
-			cell.style.width = this.getComputedStyle( containerChildren[ i ], 'width' );
+
+			if ( containerChildren[ i ] ) {
+				cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
+				cell.style.width = this.getComputedStyle( containerChildren[ i ], 'width' );
+			}
 			gridOverlayContainer.append( cell );
 		}
 	}
@@ -155,8 +158,10 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		const currentDevice = elementor.channels.deviceMode.request( 'currentMode' );
 
 		return {
-			currentDeviceGridColumns: elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_columns_grid', 'size', currentDevice ) || 0,
-			currentDeviceGridRows: elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_rows_grid', 'size', currentDevice ) || 0,
+			currentDeviceGridRows: this.getControlValue( 'grid_rows_grid', currentDevice ) || 1,
+			currentDeviceGridColumns: this.getControlValue( 'grid_columns_grid', currentDevice ) || 1,
+			// currentDeviceGridRows: parseInt( elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_rows_grid', 'size', currentDevice ) ) || 1,
+			// currentDeviceGridColumns: parseInt( elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_COLUMNS_grid', 'size', currentDevice ) ) || 1,
 		};
 	}
 
@@ -164,11 +169,20 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		return elementorFrontend.breakpoints.getActiveBreakpointsList();
 	}
 
-	onDeviceModeChange() {
-		// document.querySelectorAll( '.e-grid-outline' ).forEach( ( gridOutline ) => {
-		// 	gridOutline.remove();
-		// } );
+	getControlValue( control, currentDevice ) {
+		debugger;
+		const elementSettings = this.getElementSettings(),
+			controlData = elementSettings[ control ],
+			controlValueForCurrentDevice = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, control, 'size', currentDevice )
 
+		if ( 'custom' === controlData.unit && 'string' === typeof controlValueForCurrentDevice ) {
+			return +controlValueForCurrentDevice.split( ' ' ).length;
+		}
+
+		return controlValueForCurrentDevice;
+	}
+
+	onDeviceModeChange() {
 		this.addLayoutOverlay();
 	}
 

@@ -1,11 +1,27 @@
-import GridOutline from '../../../../../../../../../assets/dev/js/frontend/handlers/container/grid-outline';
-
-const gridOutline = new GridOutline();
-gridOutline.getGridDimensions = jest.fn().mockReturnValue( 12 );
-
 describe( 'GridOutline', () => {
-	it( 'should return the grid dimensions', () => {
+	let GridOutline;
+	const getElementSettings = jest.fn();
+	beforeEach( async () => {
+		jest.resetModules();
 
-		expect( gridOutline.getGridDimensions() ).toBe( 12 );
+		global.elementorModules = {
+			frontend: {
+				handlers: {
+					Base: class {
+						getElementSettings() {
+							return getElementSettings();
+						}
+					},
+				},
+			},
+		};
+
+		GridOutline = await import( 'elementor/assets/dev/js/frontend/handlers/container/grid-outline' );
+
+		it( 'should return the grid dimensions', () => {
+			const gridOutline = new GridOutline();
+			getElementSettings.mockReturnValue( 12 );
+			expect( gridOutline.getGridDimensions() ).toBe( 12 );
+		} );
 	} );
 } );
