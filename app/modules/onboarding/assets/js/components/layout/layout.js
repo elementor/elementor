@@ -56,7 +56,7 @@ export default function Layout( props ) {
 			text: __( 'My Elementor', 'elementor-pro' ),
 			hideText: false,
 			icon: 'eicon-user-circle-o',
-			url: 'https://my.elementor.com/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+			url: 'https://my.elementor.com/websites/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
