@@ -40,7 +40,7 @@ jobs:
       - name: Push a backup branch
         uses: ./.github/workflows/create-branch
         with:
-          BRANCH_NAME: ${{ github.ref.split('/')[2] }}-backup
+          BRANCH_NAME: ${{ github.ref }}-backup
           SOURCE_BRANCH: ${{ github.ref }}
       - name: Checkout branch
         uses: actions/checkout@v3

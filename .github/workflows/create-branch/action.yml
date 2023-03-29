@@ -14,12 +14,16 @@ runs:
   steps:
     - shell: bash
       run: |
-        
+        #remove /refs/heads/ from the branch name if it exists
+        BRANCH_NAME=${{ inputs.BRANCH_NAME }}
+        BRANCH_NAME=${BRANCH_NAME#refs/heads/}
+
         # Create a new branch from the specified branch, and push it to the remote repository
-        git branch ${{ inputs.BRANCH_NAME }} ${{ inputs.SOURCE_BRANCH }}
+        git branch $BRANCH_NAME ${{ inputs.SOURCE_BRANCH }}
 
         # Switch to the new branch
-        git checkout ${{ inputs.BRANCH_NAME }}
-
+        git checkout $BRANCH_NAME
         # Push the new branch to the remote repository and set the upstream branch to track it
-        git push -u origin ${{ inputs.BRANCH_NAME }}
+        git push -u origin $BRANCH_NAME
+
+
