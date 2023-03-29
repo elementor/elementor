@@ -3,25 +3,12 @@ description: Remove a Git branch from the remote repository.
 
 inputs:
   BRANCH_NAME:
-    description: 'The branch name to remove (e.g. release/3.11.2) if not exists, it will try from env.BACKUP_BRANCH_NAME'
-    required: false
+    description: 'The branch name to remove (e.g. 3.13.0-cloud-backup)'
+    required: true
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        if [ -z "${{ inputs.BRANCH_NAME }}" ]; then
-          # remove /refs/heads/ from the branch name if it exists
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        else
-          # get the branch name from env variable name BACKUP_BRANCH_NAME
-          BRANCH_NAME=${{ env.BACKUP_BRANCH_NAME }}
-        fi
-
-        if [ -z "${BRANCH_NAME}" ]; then
-          echo "No branch name to remove"
-          exit 0
-        fi
-
-        git push origin :heads/$BRANCH_NAME
+        git push origin :heads/${{ inputs.BRANCH_NAME }}

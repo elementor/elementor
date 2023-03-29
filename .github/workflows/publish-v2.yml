@@ -162,3 +162,7 @@ jobs:
           tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Remove Git RC Origin Backup Branch
+        uses: ./.github/workflows/remove-git-branch
+        with:
+          branch_name: ${{ env.PACKAGE_VERSION }}-${{ CHANNEL }}-backup
