@@ -14,12 +14,9 @@ runs:
   steps:
     - shell: bash
       run: |
-        # Remove the "refs/heads/" prefix from the source branch name
-        SOURCE_BRANCH=${{ inputs.SOURCE_BRANCH }}
-        SOURCE_BRANCH=${SOURCE_BRANCH#refs/heads/}
-
-        # Create a new branch named "master-backup" based on the current branch (master)
-        git branch ${{ inputs.BRANCH_NAME }} $SOURCE_BRANCH
+        
+        # Create a new branch from the specified branch, and push it to the remote repository
+        git branch ${{ inputs.BRANCH_NAME }} ${{ inputs.SOURCE_BRANCH }}
 
         # Switch to the new branch
         git checkout ${{ inputs.BRANCH_NAME }}
