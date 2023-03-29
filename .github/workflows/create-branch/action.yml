@@ -14,9 +14,9 @@ runs:
   steps:
     - shell: bash
       run: |
-        #remove /refs/heads/ from the branch name if it exists
+        #remove split on / and get the last part
         BRANCH_NAME=${{ inputs.BRANCH_NAME }}
-        BRANCH_NAME=${BRANCH_NAME#refs/heads/}
+        BRANCH_NAME=${BRANCH_NAME##*/}
 
         # Create a new branch from the specified branch, and push it to the remote repository
         git branch $BRANCH_NAME ${{ inputs.SOURCE_BRANCH }}
