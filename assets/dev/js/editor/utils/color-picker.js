@@ -9,7 +9,7 @@ export default class ColorPicker extends elementorModules.Module {
 		return {
 			picker: {
 				theme: 'monolith',
-				position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+				position: 'bottom-middle',
 				components: {
 					opacity: true,
 					hue: true,
