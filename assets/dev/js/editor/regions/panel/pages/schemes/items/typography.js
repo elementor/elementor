@@ -43,7 +43,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend( {
 	},
 
 	toggleVisibility() {
-		this.$el.toggleClass( 'elementor-open' );
+		this.$el.toggleClass( 'e-open' );
 	},
 
 	changeUIValue( newValue ) {

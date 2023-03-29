@@ -1,3 +1,8 @@
+// ***********************************************************************************************
+// This file is deprecated and is kept here for BC with 3rd party plugins that utilize it.
+// Replaced by new facelift 2023 under /assets/dev/scss/helpers/variables.scss
+// ***********************************************************************************************
+
 // COLORS: colors registration, semantics and maps
 // Flow:
 // - register hex value as unique names (aliases)
@@ -13,7 +18,8 @@
 // stacks: registered hex with unique names
 $color-white: #fff; // RGB (255,255,255), HSL(0, 0%, 100%)
 $color-black: #000; // RGB (0, 0, 0), HSL(0, 0%, 0%)
-$color-cyan-ionized-air-glow: #58d0f5; // RGB(88,208,245), HSL(0.54, 0.89, 0.65)
+$color-science-blue: #0077CC; // RGB(0,119,204), HSL(0.57, 1.00, 0.40)
+$color-neon-blue: #524CFF; // RGB(82, 76, 255), HSL(0.67, 1.00, 0.65)
 $color-red-rose-garnet: #93003F; // RGB(211,12,92), HSL(0.93, 0.89, 0.44)
 $color-red-carnelian: #b01b1b; // RGB(176,27,27), HSL(0, 0.73, 0.40)
 $color-red-tomato-frog: #F84343; // RGB(248, 67, 67), HSL(0.00, 0.93, 0.62)

@@ -384,6 +384,8 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				// The `%' and `em` units are not supported as the widget implements icons differently then other icons.
+				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 6,
@@ -470,7 +472,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

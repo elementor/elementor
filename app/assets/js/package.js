@@ -17,6 +17,7 @@ import DragDrop from './ui/atoms/drag-drop';
 import DropZone from './organisms/drop-zone';
 import ErrorBoundary from './organisms/error-boundary';
 import Heading from './ui/atoms/heading';
+import GoProButton from './molecules/go-pro-button';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
 import List from './ui/molecules/list';
@@ -60,6 +61,7 @@ export const appUi = {
 	DropZone,
 	ErrorBoundary,
 	Heading,
+	GoProButton,
 	Grid,
 	Icon,
 	List,

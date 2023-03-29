@@ -173,7 +173,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'max' => 50,
 				],
 			],
-			'size_units' => [ 'px', '%', 'vw', 'em', 'rem', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],

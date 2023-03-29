@@ -276,9 +276,8 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'unit' => 'px',
 					'size' => 1,
 				],
 				'range' => [

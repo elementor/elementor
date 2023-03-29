@@ -1,4 +1,4 @@
-
+@import "../editor/dialog-confirm";
 //Elementor Feedback
 
 @keyframes elementor-rotation {
@@ -15,6 +15,7 @@
 }
 
 #elementor-deactivate-feedback-modal {
+	color: var(--e-a-color-txt);
 
 	.dialog-widget-content {
 		width: 550px;
@@ -47,34 +48,26 @@
 	.elementor-deactivate-feedback-dialog-label {
 		display: block;
 		font-size: 13px;
-		color: $editor-dark;
 	}
 
 	.elementor-feedback-text {
+		background-color: transparent;
+		color: var(--e-a-color-txt);
 		@include margin(10px, 0, 0, 30px);
 		padding: 5px;
-		font-size: 13px;
 		box-shadow: none;
-		background-color: #fff;
 		width: 92%;
 	}
 
 	.dialog-buttons-wrapper {
-		border-top: none;
-		text-align: $start;
+		display: flex;
+		justify-content: space-between;
 		padding: 20px 30px 30px;
-		overflow: hidden;
 	}
 
 	.dialog-submit {
-		background-color: $editor-accent;
-		border-radius: 3px;
-		color: #fff;
-		line-height: 1;
-		padding: 12px 20px;
-		font-size: 13px;
-		width: 180px;
-		height: 38px;
+		@extend .e-btn;
+		@extend .e-primary;
 
 		&.elementor-loading {
 
@@ -88,11 +81,8 @@
 	}
 
 	.dialog-skip {
-		font-size: 12px;
-		color: $editor-light;
-		background: none;
-		float: $end;
-		width: auto;
+		@extend .e-btn;
+		@extend .e-btn-txt;
 	}
 
 	&[data-feedback-selected="elementor_pro"] {
@@ -113,7 +103,6 @@
 	&-header {
 
 		i {
-			color: $editor-accent;
 			font-size: 19px;
 		}
 	}
@@ -128,7 +117,6 @@
 	&-form-caption {
 		font-weight: bold;
 		font-size: 15px;
-		color: $editor-darkest;
 		line-height: 1.4;
 	}
 

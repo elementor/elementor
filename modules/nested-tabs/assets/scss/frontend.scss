@@ -222,10 +222,7 @@
 		}
 	}
 
-	.e-con,
 	.e-n-tabs-content {
-		border: 1px none var( --n-tabs-border-color );
-		border-width: var( --n-tabs-border-width );
 
 		.e-collapse {
 			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
@@ -238,17 +235,17 @@
 			user-select: none;
 
 			&:not(:first-child) {
-				  margin-top: var( --n-tabs-title-gap );
+				margin-top: var( --n-tabs-title-gap );
 			}
 
 			&.e-active {
-				  margin-bottom: var( --n-tabs-gap );
+				margin-bottom: var( --n-tabs-gap );
 			}
 		}
-	}
 
-	.e-n-tabs-content > .e-con:not(.e-active) {
-		display: none;
+		> .e-con:not(.e-active) {
+			display: none;
+		}
 	}
 }
 

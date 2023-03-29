@@ -22,19 +22,27 @@
 		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
 		background-size: cover;
 		background-color: transparent;
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border);
 	}
 }
 
 .pcr {
 
-	&-app[data-theme=monolith] {
-		padding: 0;
+	&-app {
+		background-color: var(--e-a-bg-default);
+		color: var(--e-a-color-txt);
+		box-shadow: var(--e-a-popover-shadow);
+		font-family: var(--e-a-font-family);
+
+		&[data-theme=monolith] {
+			padding: 0;
+		}
 	}
 
 	&-result {
+		color: var(--e-a-color-txt);
 		border-right-width: 1px;
-		border-radius: 3px;
+		border-radius: var(--e-a-border-radius);
 	}
 
 	&-selection, &-interaction {

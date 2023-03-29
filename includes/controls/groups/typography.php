@@ -204,14 +204,14 @@ class Group_Control_Typography extends Group_Control_Base {
 				],
 			],
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', 'custom' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
 		];
 
 		$fields['letter_spacing'] = [
 			'label' => esc_html_x( 'Letter Spacing', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'custom' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
 					'min' => -5,
@@ -238,7 +238,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'mobile_default' => [
 				'unit' => 'em',
 			],
-			'size_units' => [ 'px', 'em', 'custom' ],
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
 				'px' => [
 					'step' => 1,
