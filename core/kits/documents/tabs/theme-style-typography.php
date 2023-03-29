@@ -92,7 +92,7 @@ class Theme_Style_Typography extends Tab_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'em', 'vh' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 			]
 		);
 

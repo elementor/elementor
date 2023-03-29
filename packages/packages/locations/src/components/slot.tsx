@@ -1,20 +1,18 @@
-import { Suspense } from 'react';
-import useFills from '../hooks/use-fills';
+import * as React from 'react';
+import useInjectionsOf from '../hooks/use-injections-of';
+import { Location } from '../types';
 
-type SlotProps = {
-	location: string;
+type Props = {
+	location: Location
 }
 
-// TODO: <ErrorBoundary />
-export default function Slot( { location }: SlotProps ) {
-	const fillers = useFills( location );
+export default function Slot( { location }: Props ) {
+	const injections = useInjectionsOf( location );
 
 	return (
 		<>
-			{ fillers.map( ( { component: Component }, index ) => (
-				<Suspense fallback={ null } key={ index }>
-					<Component />
-				</Suspense>
+			{ injections.map( ( { id, filler: Filler } ) => (
+				<Filler key={ id } />
 			) ) }
 		</>
 	);

@@ -48,7 +48,6 @@
 		}
 
 		p {
-			color: #A4AFB7;
 			font-size: 16px;
 			margin: 20px 0 25px;
 		}
@@ -60,7 +59,7 @@
 
 	&__container a:not(.elementor-button),
 	&__info a {
-		color: #58d0f5;
+		color: var(--e-a-color-info);
 		text-decoration: underline;
 	}
 
@@ -70,7 +69,6 @@
 		align-items: flex-start;
 
 		h2 {
-			color: #6D7882;
 			font-size: 28px;
 			font-weight: normal;
 			line-height: 1;
@@ -82,5 +80,37 @@
 			padding: 8px 16px;
 			text-transform: initial;
 		}
+	}
+}
+
+.tab-import-export-kit__revert {
+	.tab-import-export-kit__kit-item {
+		background-color: rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		border-radius: 0.1875rem;
+		margin-bottom: 15px;
+		display: inline-block;
+
+		header {
+			border-bottom: 1px solid $editor-background-light;
+			padding: 0.625rem;
+		}
+
+		h3 {
+			font-size: 0.875rem;
+			margin: 0;
+		}
+
+		img {
+			width: 330px;
+			height: 315px;
+			padding: 0.625rem;
+		}
+	}
+
+	.button, .button:hover {
+		color: $danger-text;
+		border-color: $danger-text;
+		display: inline-block;
 	}
 }

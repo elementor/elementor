@@ -89,6 +89,8 @@ class Module extends BaseModule {
 		}
 
 		( new Usage() )->register();
+
+		$this->revert = new Revert();
 	}
 
 	public function get_init_settings() {
@@ -157,7 +159,6 @@ class Module extends BaseModule {
 			],
 		];
 
-		$this->revert = new Revert();
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
 
@@ -171,16 +172,16 @@ class Module extends BaseModule {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
-					! empty( $penultimate_imported_kit['kit_name'] ) ? $penultimate_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $penultimate_imported_kit['kit_title'] ) ? $penultimate_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);
@@ -196,7 +197,7 @@ class Module extends BaseModule {
 					<div class="tab-import-export-kit__container">
 						<div class="tab-import-export-kit__box">
 							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
 								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 							</a>
 						</div>
@@ -208,8 +209,9 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $should_show_revert_section ) {
+
 				$link_attributes = [
-					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
+					'href' => $this->get_revert_href(),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];
@@ -221,11 +223,64 @@ class Module extends BaseModule {
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
+					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
 						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
 					</a>
 				</div>
 			<?php } ?>
+		</div>
+		<?php
+	}
+
+	private function get_revert_href(): string {
+		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
+		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
+		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
+	}
+
+	/**
+	 * Checks if referred by a kit and adds the referrer ID to the href
+	 *
+	 * @param string $href
+	 *
+	 * @return string
+	 */
+	private function maybe_add_referrer_param( string $href ): string {
+		$param_name = 'referrer_kit';
+
+		if ( empty( $_GET[ $param_name ] ) ) {
+			return $href;
+		}
+
+		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
+	}
+
+	/**
+	 * Render the last kit thumbnail if exists
+	 *
+	 * @param $last_imported_kit
+	 *
+	 * @return void
+	 */
+	private function render_last_kit_thumbnail( $last_imported_kit ) {
+		if ( empty( $last_imported_kit['kit_thumbnail'] ) ) {
+			return;
+		}
+
+		?>
+		<div class="tab-import-export-kit__kit-item-row">
+			<article class="tab-import-export-kit__kit-item">
+				<header>
+					<h3>
+						<?php echo esc_html( $last_imported_kit['kit_title'] ); ?>
+					</h3>
+				</header>
+				<img
+					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
+					alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
+				>
+			</article>
 		</div>
 		<?php
 	}
@@ -425,6 +480,15 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_localize_script(
+			'elementor-import-export-admin',
+			'elementorImportExport',
+			[
+				'lastImportedSession' => $this->revert->get_last_import_session(),
+				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			]
+		);
 	}
 
 	/**
@@ -598,7 +662,9 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
+			'lastImportedSession' => $this->revert->get_last_import_session(),
 		];
 	}
 

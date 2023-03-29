@@ -1,9 +1,13 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
+$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-hotkeys">
 	<# var ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl'; #>
@@ -123,7 +127,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<div class="elementor-hotkeys__item">
-					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></div>
+					<div class="elementor-hotkeys__item--label"><?php
+						echo $is_editor_v2_active
+							? esc_html__( 'Structure', 'elementor' )
+							: esc_html__( 'Navigator', 'elementor' );
+					?></div>
 					<div class="elementor-hotkeys__item--shortcut">
 						<span>{{{ ctrlLabel }}}</span>
 						<span>I</span>
