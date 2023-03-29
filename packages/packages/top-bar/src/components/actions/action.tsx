@@ -7,11 +7,16 @@ export type Props = {
 	title: string;
 	icon: ElementType;
 	disabled?: boolean;
+	visible?: boolean;
 	onClick?: () => void;
 };
 
-export default function Action( { icon: Icon, title, ...props }: Props ) {
+export default function Action( { icon: Icon, title, visible = true, ...props }: Props ) {
 	const { type } = useMenuContext();
+
+	if ( ! visible ) {
+		return null;
+	}
 
 	return type === 'toolbar' ? (
 		<ToolbarMenuItem title={ title } { ...props }>
