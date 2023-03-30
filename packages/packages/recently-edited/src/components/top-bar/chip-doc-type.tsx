@@ -11,7 +11,7 @@ import {
 	LandingPageTemplateIcon,
 	PageTemplateIcon,
 	SectionTemplateIcon,
-	ContainerTemplateIcon
+	ContainerTemplateIcon,
 } from '@elementor/icons';
 import { Chip } from '@elementor/ui';
 
