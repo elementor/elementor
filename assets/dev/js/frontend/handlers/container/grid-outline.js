@@ -25,7 +25,8 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		return {
 			container,
 			gridOverlay: container.querySelector( selectors.gridOverlay ),
-			directChildGridOverlay: container.querySelector( selectors.directChildGridOverlay ),
+			// directChildGridOverlay: container.querySelectorAll( selectors.directChildGridOverlay ),
+			directChildGridOverlay: this.findElement( selectors.directChildGridOverlay ),
 		};
 	}
 
@@ -65,9 +66,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	removeExistingOverlay( container ) {
-		if ( container.querySelector( ':scope > .e-grid-outline' ) ) {
-			container.querySelector( ':scope > .e-grid-outline' ).remove();
-		}
+		return this.elements.directChildGridOverlay?.remove();
 	}
 
 	createOverlayParentContainer( container ) {
@@ -104,20 +103,20 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	calculateNumberOfItemsInGrid() {
-		const gridDimensions = this.getGridDimensions();
+		const { currentDeviceGridColumns, currentDeviceGridRows } = this.getGridDimensions();
 
-		return gridDimensions.currentDeviceGridColumns * gridDimensions.currentDeviceGridRows;
+		return currentDeviceGridColumns * currentDeviceGridRows;
 	}
 
-	calculateNumberOfItemsInGridByInnerElements( gridOverlayContainer, numberOfElements ) {
-		const gridDimensions = this.getGridDimensions();
-		let numberOfCells = numberOfElements;
+	calculateNumberOfItemsInGridByInnerElements( gridOverlayContainer, numberOfCells ) {
+		const { currentDeviceGridColumns } = this.getGridDimensions(),
+			numberOfRows = numberOfCells / currentDeviceGridColumns;
 
-		while ( numberOfCells % gridDimensions.currentDeviceGridColumns !== 0 ) {
+		while ( numberOfCells % currentDeviceGridColumns !== 0 ) {
 			numberOfCells++;
 		}
 
-		const numberOfRows = numberOfCells / gridDimensions.currentDeviceGridColumns;
+		// Set a new number of rows in the outline grid.
 		gridOverlayContainer.style.gridTemplateRows = `repeat( ${ numberOfRows } , 1fr)`;
 
 		return numberOfCells;
@@ -144,6 +143,14 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		}
 	}
 
+	/**
+	 * Function renderDataBindings().
+	 *
+	 * Create an array that contains a list of the responsive controls that should re render the handler.
+	 *
+	 * @param propsThatTriggerGridLayoutRender {array} - array of props.
+	 * @return {boolean} - array.
+	 */
 	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
 		propsThatTriggerGridLayoutRender.forEach( ( prop ) => {
 			this.getActiveBreakpointsList().forEach( ( breakpoint ) => {
@@ -160,8 +167,6 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		return {
 			currentDeviceGridRows: this.getControlValue( 'grid_rows_grid', currentDevice ) || 1,
 			currentDeviceGridColumns: this.getControlValue( 'grid_columns_grid', currentDevice ) || 1,
-			// currentDeviceGridRows: parseInt( elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_rows_grid', 'size', currentDevice ) ) || 1,
-			// currentDeviceGridColumns: parseInt( elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'grid_COLUMNS_grid', 'size', currentDevice ) ) || 1,
 		};
 	}
 
@@ -170,7 +175,6 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	getControlValue( control, currentDevice ) {
-		debugger;
 		const elementSettings = this.getElementSettings(),
 			controlData = elementSettings[ control ],
 			controlValueForCurrentDevice = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, control, 'size', currentDevice )
