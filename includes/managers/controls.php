@@ -436,7 +436,15 @@ class Controls_Manager {
 	private function register_controls() {
 		$this->controls = [];
 
-		foreach ( self::get_controls_names() as $control_id ) {
+		$controls_names = self::get_controls_names();
+
+		if ( ! Plugin::instance()->experiments->is_feature_active( 'container_grid' ) ) {
+			if ( ( $gaps_index_in_array = array_search( self::GAPS, $controls_names ) ) !== false ) {
+				unset( $controls_names[ $gaps_index_in_array ] );
+			}
+		} 
+
+		foreach ( $controls_names as $control_id ) {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
 			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
