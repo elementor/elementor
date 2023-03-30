@@ -4,7 +4,6 @@ import environment from 'elementor-common/utils/environment';
 /**
  * @typedef {import('../../container/container')} Container
  */
-console.log( 'ContainerHelper', elementorCommon.config.experimentalFeatures );
  class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
 	static IS_GRID_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container_grid;
