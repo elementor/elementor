@@ -442,7 +442,7 @@ class Controls_Manager {
 			if ( ( $gaps_index_in_array = array_search( self::GAPS, $controls_names ) ) !== false ) {
 				unset( $controls_names[ $gaps_index_in_array ] );
 			}
-		} 
+		}
 
 		foreach ( $controls_names as $control_id ) {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
