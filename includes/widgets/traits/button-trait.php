@@ -483,7 +483,7 @@ trait Button_Trait {
 		<div class="elementor-button-wrapper">
 			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
 				<span class="elementor-button-content-wrapper">
-					<# if ( settings.icon || iconHTML.rendered ) { #>
+					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
 							{{{ iconHTML.value }}}
@@ -542,7 +542,8 @@ trait Button_Trait {
 			],
 		] );
 
-		$instance->add_inline_editing_attributes( 'text', 'none' );
+		// TODO: replace the protected with public
+		//$instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
