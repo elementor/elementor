@@ -439,7 +439,7 @@ class Controls_Manager {
 		$controls_names = self::get_controls_names();
 
 		if ( ! Plugin::instance()->experiments->is_feature_active( 'container_grid' ) ) {
-			if ( ( $gaps_index_in_array = array_search( self::GAPS, $controls_names ) ) !== false ) {
+			if ( false !== ( $gaps_index_in_array = array_search( self::GAPS, $controls_names ) ) ) {
 				unset( $controls_names[ $gaps_index_in_array ] );
 			}
 		}
