@@ -66,5 +66,10 @@ export function useColorScheme() {
 }
 
 function getV1ColorScheme() {
-	return ( window as unknown as ExtendedWindow ).elementor?.settings?.editorPreferences?.model?.get?.( 'ui_theme' ) || 'auto';
+	return ( window as unknown as ExtendedWindow )
+		.elementor
+		?.settings
+		?.editorPreferences
+		?.model
+		?.get?.( 'ui_theme' ) || 'auto';
 }
