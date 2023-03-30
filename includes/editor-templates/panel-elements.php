@@ -25,12 +25,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="elementor-panel-heading elementor-panel-category-title">
-		<div class="elementor-panel-heading-toggle">
+	<button class="elementor-panel-heading elementor-panel-category-title">
+		<span class="elementor-panel-heading-toggle">
 			<i class="eicon" aria-hidden="true"></i>
-		</div>
-		<div class="elementor-panel-heading-title">{{{ title }}}</div>
-	</div>
+		</span>
+		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+	</button>
 	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
 </script>
 
