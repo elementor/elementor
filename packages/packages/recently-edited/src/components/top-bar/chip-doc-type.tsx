@@ -8,6 +8,10 @@ import {
 	SearchResultsTemplateIcon,
 	Error404TemplateIcon,
 	LoopItemTemplateIcon,
+	LandingPageTemplateIcon,
+	PageTemplateIcon,
+	SectionTemplateIcon,
+	ContainerTemplateIcon
 } from '@elementor/icons';
 import { Chip } from '@elementor/ui';
 
@@ -21,6 +25,10 @@ const iconsDocType = {
 	search_results: SearchResultsTemplateIcon,
 	loop_item: LoopItemTemplateIcon,
 	error_404: Error404TemplateIcon,
+	landing_page: LandingPageTemplateIcon,
+	page: PageTemplateIcon,
+	section: SectionTemplateIcon,
+	container: ContainerTemplateIcon,
 	wp_page: PageTypeIcon,
 	wp_post: PostTypeIcon,
 } as const;
@@ -36,7 +44,7 @@ export default function ChipByDocType( { postType, docType, label }: Props ) {
 	const color = 'elementor_library' === postType ? 'global' : 'primary';
 	// key cant contain '-'
 	const docTypeReplaced = docType.replace( '-', '_' ) as DocType;
-	const Icon = iconsDocType[ docTypeReplaced ];
+	const Icon = iconsDocType?.[ docTypeReplaced ] ?? PostTypeIcon;
 
 	return (
 		<Chip
