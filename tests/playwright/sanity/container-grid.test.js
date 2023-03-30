@@ -78,5 +78,24 @@ test.describe( 'Container tests', () => {
 			} );
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
+
+		await test.step( 'Assert mobile is in one column', async () => {
+			// Open responsive bar and select mobile view
+			await page.locator( '#elementor-panel-footer-responsive i' ).click();
+			await page.waitForSelector( '#e-responsive-bar' );
+			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+
+			const gridTemplateColumnsCssValue = await container.evaluate( ( element ) => {
+				return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
+			} );
+
+			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
+
+			expect( isOneColumn ).toBeTruthy();
+		} );
 	} );
 } );
+
+function hasWhiteSpace( s ) {
+	return /\s/g.test( s );
+}

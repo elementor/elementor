@@ -40,6 +40,10 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'unit' => 'fr',
 				'size' => 3,
 			],
+			'mobile_default' => [
+				'unit' => 'fr',
+				'size' => 1,
+			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 			],
