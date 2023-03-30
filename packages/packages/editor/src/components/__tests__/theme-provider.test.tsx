@@ -27,12 +27,17 @@ describe( '@elementor/editor - Theme provider', () => {
 
 	it( 'should sync color scheme on V1 change', () => {
 		// Arrange.
-		mockV1ColorScheme( 'dark' );
+		mockV1ColorScheme( 'auto' );
 
-		// Act.
 		const { result } = renderHook( () => useColorScheme() );
 
+		// Assert - Before change.
+		expect( result.current ).toBe( 'auto' );
+
+		// Act - Change.
 		act( () => {
+			mockV1ColorScheme( 'dark' );
+
 			dispatchEvent( new CustomEvent( 'elementor/commands/run/after', {
 				detail: {
 					command: 'document/elements/settings',
