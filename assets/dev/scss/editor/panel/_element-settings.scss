@@ -12,6 +12,7 @@
 		flex: auto;
 		transition: var(--e-a-transition-hover);
 		border-bottom: 3px solid transparent;
+		cursor: pointer;
 
 		&:hover,
 		&:focus {
