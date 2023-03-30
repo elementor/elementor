@@ -1,13 +1,21 @@
+import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
-import * as React from 'react';
+import getRecentlyEditedPosts, { Post } from '../../../utils/fetch-posts';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
 	useHostDocument: jest.fn(),
 } ) );
+
+jest.mock( '../../../utils/fetch-posts', () => (
+	{
+		default: jest.fn().mockReturnValue( Promise.resolve( [] ) ),
+		__esModule: true,
+	}
+) );
 
 describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 	beforeEach( () => {
@@ -117,6 +125,19 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 				},
 			} )
 		);
+		const fetchReturnData = [ {
+			id: 1,
+			title: 'Test post',
+			edit_url: 'some_url',
+			type: {
+				post_type: 'post',
+				doc_type: 'wp-post',
+				label: 'Post',
+			},
+			date_modified: 123,
+		} ] as Post[];
+
+		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( Promise.resolve( fetchReturnData ) );
 
 		const { getByText, getByRole, getAllByRole } = render( <RecentlyEdited /> );
 
@@ -132,5 +153,9 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 
 		const label = getByText( 'Recent' );
 		expect( label ).toBeInTheDocument();
+
+		const menuItems = getAllByRole( 'menuitem' );
+		expect( menuItems ).toHaveLength( 1 );
+		expect( getByText( 'Test post' ) ).toBeInTheDocument();
 	} );
 } );
