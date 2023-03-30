@@ -1,7 +1,8 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
+import * as React from 'react';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
@@ -19,16 +20,18 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		);
 	} );
 
-	it( 'should show the title of the active document without its status when the document is published', () => {
+	it( 'should show the title of the active document without its status when the document is published', async () => {
 		// Act.
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		expect( queryByText( 'Active Document' ) ).toBeTruthy();
-		expect( queryByText( '(publish)' ) ).not.toBeTruthy();
+		await waitFor( () => {
+			expect( queryByText( 'Active Document' ) ).toBeTruthy();
+			expect( queryByText( '(publish)' ) ).not.toBeTruthy();
+		} );
 	} );
 
-	it( 'should show the title of the active document with its status when the document is not published', () => {
+	it( 'should show the title of the active document with its status when the document is not published', async () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( {
@@ -45,11 +48,13 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		expect( queryByText( 'Active Document' ) ).toBeTruthy();
-		expect( queryByText( '(Draft)' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( queryByText( 'Active Document' ) ).toBeTruthy();
+			expect( queryByText( '(Draft)' ) ).toBeTruthy();
+		} );
 	} );
 
-	it( 'should show the title of the host document when there is no active document', () => {
+	it( 'should show the title of the host document when there is no active document', async () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 
@@ -57,10 +62,12 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		expect( queryByText( 'Host Document' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( queryByText( 'Host Document' ) ).toBeTruthy();
+		} );
 	} );
 
-	it( 'should show the title of the host document when the active document is kit', () => {
+	it( 'should show the title of the host document when the active document is kit', async () => {
 		// Arrange.
 
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
@@ -78,10 +85,12 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		expect( queryByText( 'Host Document' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( queryByText( 'Host Document' ) ).toBeTruthy();
+		} );
 	} );
 
-	it( 'should show nothing if there are no documents', () => {
+	it( 'should show nothing if there are no documents', async () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 		jest.mocked( useHostDocument ).mockImplementation( () => null );
@@ -90,20 +99,38 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		expect( queryByText( 'Host Document' ) ).not.toBeTruthy();
-		expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
+		await waitFor( () => {
+			expect( queryByText( 'Host Document' ) ).not.toBeTruthy();
+			expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
+		} );
 	} );
 
-	it( 'should open the recently edited menu on click', () => {
+	it( 'should open the recently edited menu on click', async () => {
 		// Arrange.
-		const { getByRole, getAllByRole } = render( <RecentlyEdited /> );
+		jest.mocked( useActiveDocument ).mockImplementation( () =>
+			createMockDocument( {
+				id: 1,
+				title: 'Header',
+				type: {
+					value: 'header',
+					label: 'Header',
+				},
+			} )
+		);
+
+		const { getByText, getByRole, getAllByRole } = render( <RecentlyEdited /> );
 
 		// Act.
-		getByRole( 'button' ).click(); // Opens the recently edited menu
+		await waitFor( () => {
+			const buttons = getAllByRole( 'button' );
+			buttons[ 0 ].click(); // Opens the recently edited menu
+		} );
 
 		// Assert.
-		const menuItems = getAllByRole( 'menuitem' );
+		const menu = getByRole( 'menu' );
+		expect( menu ).toBeInTheDocument();
 
-		expect( menuItems ).toHaveLength( 3 );
+		const label = getByText( 'Recent' );
+		expect( label ).toBeInTheDocument();
 	} );
 } );
