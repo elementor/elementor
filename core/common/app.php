@@ -182,6 +182,15 @@ class App extends BaseApp {
 			],
 			ELEMENTOR_VERSION
 		);
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			ELEMENTOR_ASSETS_URL . 'css/theme-light' . $suffix . '.css',
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**

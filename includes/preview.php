@@ -252,6 +252,13 @@ class Preview extends App {
 			ELEMENTOR_VERSION
 		);
 
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			ELEMENTOR_ASSETS_URL . 'css/theme-light' . $suffix . '.css',
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		wp_enqueue_style( 'editor-preview' );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
