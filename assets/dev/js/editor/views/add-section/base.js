@@ -4,14 +4,18 @@ import environment from 'elementor-common/utils/environment';
 /**
  * @typedef {import('../../container/container')} Container
  */
+console.log( 'ContainerHelper', elementorCommon.config.experimentalFeatures );
  class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
+	static IS_GRID_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container_grid;
 
 	// Views.
 	static VIEW_CHOOSE_ACTION = 'choose-action';
 	static VIEW_CONTAINER_FLEX_PRESET = 'select-container-preset';
 	static VIEW_CONTAINER_GRID_PRESET = 'select-container-preset-grid';
-	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? 'select-type' : 'select-preset';
+
+	static VIEW_SELECT_TYPE_OR_PRESET = ( AddSectionBase.IS_GRID_ACTIVE ) ? 'select-type' : 'select-container-preset';
+	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? AddSectionBase.VIEW_SELECT_TYPE_OR_PRESET : 'select-preset';
 
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
