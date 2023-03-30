@@ -1,11 +1,11 @@
 import { Box, IconButton, IconButtonProps, Tooltip } from '@elementor/ui';
 
-type Props = IconButtonProps & {
+export type ToolbarMenuItemProps = IconButtonProps & {
 	title?: string;
 	selected?: boolean;
 }
 
-export default function ToolbarMenuItem( { title, ...props }: Props ) {
+export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemProps ) {
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }

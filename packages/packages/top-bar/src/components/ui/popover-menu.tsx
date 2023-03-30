@@ -1,7 +1,9 @@
 import { Menu, MenuProps } from '@elementor/ui';
 import { MenuContextProvider } from '../../contexts/menu-context';
 
-export default function PopoverMenu( { children, ...props }: MenuProps ) {
+export type PopoverMenuProps = MenuProps;
+
+export default function PopoverMenu( { children, ...props }: PopoverMenuProps ) {
 	return (
 		<MenuContextProvider type={ 'popover' }>
 			<Menu
@@ -9,6 +11,9 @@ export default function PopoverMenu( { children, ...props }: MenuProps ) {
 					sx: { mt: 4 },
 				} }
 				{ ...props }
+				MenuListProps={ {
+					component: 'div',
+				} }
 			>
 				{ children }
 			</Menu>

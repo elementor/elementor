@@ -86,6 +86,17 @@
 		background-color: var(--e-a-bg-default);
 	}
 
+	.mce-toolbar {
+
+		.mce-btn-group .mce-btn.mce-listbox {
+			background-color: var(--e-a-bg-default);
+
+			button {
+				color: var(--e-a-color-txt);
+			}
+		}
+	}
+
 	.mce-toolbar-grp {
 
 		> div {
