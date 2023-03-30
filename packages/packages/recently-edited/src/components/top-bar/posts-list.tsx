@@ -19,7 +19,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 
 			{ recentPosts.map( ( { title, edit_url: editUrl, type, id }, index ) => (
 				<MenuItem
-					key={ id + '-' + index }
+					key={ id }
 					component="a"
 					href={ editUrl }
 				>
