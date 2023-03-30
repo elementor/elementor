@@ -438,19 +438,13 @@ class Controls_Manager {
 
 		$controls_names = self::get_controls_names();
 
-		if ( ! Plugin::instance()->experiments->is_feature_active( 'container_grid' ) ) {
-			$gaps_index_in_array = array_search( self::GAPS, $controls_names );
-
-			if ( false !== $gaps_index_in_array ) {
-				unset( $controls_names[ $gaps_index_in_array ] );
-			}
-		}
-
 		foreach ( $controls_names as $control_id ) {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
 			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
-			$this->register( new $class_name() );
+			if ( class_exists( $class_name ) ) {
+				$this->register( new $class_name() );
+			}
 		}
 
 		// Group Controls
