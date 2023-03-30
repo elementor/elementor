@@ -12,7 +12,7 @@ jest.mock( '@elementor/documents', () => ( {
 
 jest.mock( '../../../utils/fetch-posts', () => (
 	{
-		default: jest.fn().mockReturnValue( Promise.resolve( [] ) ),
+		default: jest.fn( () => Promise.resolve( [] ) ),
 		__esModule: true,
 	}
 ) );
@@ -125,7 +125,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 				},
 			} )
 		);
-		const fetchReturnData = [ {
+		const fetchReturnData: Post[] = [ {
 			id: 1,
 			title: 'Test post',
 			edit_url: 'some_url',
@@ -135,7 +135,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 				label: 'Post',
 			},
 			date_modified: 123,
-		} ] as Post[];
+		} ];
 
 		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( Promise.resolve( fetchReturnData ) );
 

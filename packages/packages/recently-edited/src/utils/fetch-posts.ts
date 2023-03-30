@@ -28,8 +28,14 @@ type ExtendedWindow = Window & {
 
 export default async function getRecentlyEditedPosts() {
 	let url: URL;
+	try {
+		const baseUrl = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.urls?.rest;
+		url = new URL( baseUrl + 'elementor/v1/site-navigation/recent-posts' );
+	} catch ( e ) {
+		return [];
+	}
+
 	const currentDocId = ( window as unknown as ExtendedWindow ).elementor?.config?.initial_document?.id;
-	const nonce = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.nonce;
 
 	if ( ! currentDocId ) {
 		return [];
@@ -38,27 +44,16 @@ export default async function getRecentlyEditedPosts() {
 		posts_per_page: 5,
 		post__not_in: currentDocId,
 	};
+	Object.entries( fetchArgs ).forEach( ( [ key, value ] ) => url.searchParams.set( key, String( value ) ) );
 
-	try {
-		const baseUrl = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.urls?.rest;
-		url = new URL( baseUrl + 'elementor/v1/site-navigation/recent-posts' );
-	} catch ( e ) {
-		return [];
-	}
-
-	Object.entries( fetchArgs ).map( ( [ key, value ] ) => url.searchParams.set( key, String( value ) ) );
-
-	try {
-		const posts = await fetch( url.toString(), {
-			credentials: 'same-origin',
-			headers: {
-				'X-WP-Nonce': nonce,
-			},
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( response ) => response as Post[] );
-		return posts;
-	} catch ( e ) {
-		return [];
-	}
+	const nonce = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.nonce;
+	return await fetch( url.toString(), {
+		credentials: 'same-origin',
+		headers: {
+			'X-WP-Nonce': nonce,
+		},
+	} )
+		.then( ( response ) => response.json() )
+		.then( ( response ) => response as Post[] )
+		.catch( ( ) => [] );
 }

@@ -40,11 +40,11 @@ export type Props = {
 	docType: DocType;
 	label: string;
 };
-export default function ChipByDocType( { postType, docType, label }: Props ) {
+export default function DocTypeChip( { postType, docType, label }: Props ) {
 	const color = 'elementor_library' === postType ? 'global' : 'primary';
 	// key cant contain '-'
 	const docTypeReplaced = docType.replace( '-', '_' ) as DocType;
-	const Icon = iconsDocType?.[ docTypeReplaced ] ?? PostTypeIcon;
+	const Icon = iconsDocType?.[ docTypeReplaced ] || PostTypeIcon;
 
 	return (
 		<Chip
