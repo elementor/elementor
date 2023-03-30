@@ -436,9 +436,7 @@ class Controls_Manager {
 	private function register_controls() {
 		$this->controls = [];
 
-		$controls_names = self::get_controls_names();
-
-		foreach ( $controls_names as $control_id ) {
+		foreach ( self::get_controls_names() as $control_id ) {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
 			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
