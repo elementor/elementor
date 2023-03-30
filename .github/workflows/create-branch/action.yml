@@ -14,7 +14,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        #remove split on / and get the last part
+        # Remove split on / and get the last part
         BRANCH_NAME=${{ inputs.BRANCH_NAME }}
         BRANCH_NAME=${BRANCH_NAME##*/}
 
@@ -25,5 +25,3 @@ runs:
         git checkout $BRANCH_NAME
         # Push the new branch to the remote repository and set the upstream branch to track it
         git push -u origin $BRANCH_NAME
-
-
