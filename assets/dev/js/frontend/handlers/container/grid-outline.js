@@ -6,7 +6,6 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	getDefaultSettings() {
 		return {
 			selectors: {
-				container: '.elementor-element-editable',
 				gridOverlay: '.e-grid-outline',
 				directChildGridOverlay: ':scope > .e-grid-outline',
 			},
@@ -25,8 +24,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		return {
 			container,
 			gridOverlay: container.querySelector( selectors.gridOverlay ),
-			// directChildGridOverlay: container.querySelectorAll( selectors.directChildGridOverlay ),
-			directChildGridOverlay: this.findElement( selectors.directChildGridOverlay ),
+			directChildGridOverlay: container.querySelectorAll( selectors.directChildGridOverlay ),
 		};
 	}
 
@@ -37,13 +35,14 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	bindEvents() {
-		elementor.listenTo( elementor.channels.deviceMode, 'change', () => elementorFrontend.debounce( this.onDeviceModeChange(), 200 ) );
+		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
 
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
+		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
 	}
 
 	addLayoutOverlay() {
@@ -66,19 +65,48 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	removeExistingOverlay( container ) {
-		return this.elements.directChildGridOverlay?.remove();
+		const existingOverlay = container.querySelector( ':scope > .e-grid-outline' );
+		existingOverlay?.remove();
 	}
 
 	createOverlayParentContainer( container ) {
-		const gridOverlayContainer = document.createElement( 'div' );
-			// parentColumns = this.getComputedStyle( this.elements.container, 'grid-template-columns' );
+		if ( container.querySelector( ':scope > .e-grid-outline' ) ) {
+			return;
+		}
 
-		// gridOverlayContainer.style.gridTemplateColumns = parentColumns;
+		const gridOverlayContainer = document.createElement( 'div' );
 
 		gridOverlayContainer.classList.add( 'e-grid-outline' );
 		container.appendChild( gridOverlayContainer );
 
 		this.createOverlayChildCells( gridOverlayContainer, container );
+		// this.createOverlayChildCellsByComputedStyle( gridOverlayContainer, container );
+	}
+
+	/**
+	 * This function will replace `createOverlayChildCells` and all the calculations I am doing at the moment.
+	 */
+	createOverlayChildCellsByComputedStyle( gridOverlayContainer, container ) {
+		const rows = this.getComputedStyle( container, 'grid-template-rows' ),
+			columns = this.getComputedStyle( container, 'grid-template-Columns' );
+		gridOverlayContainer.style.gridTemplateRows = rows;
+		gridOverlayContainer.style.gridTemplateColumns = columns;
+
+		const rowsArray = rows.split( ' ' ).length,
+			columnsArray = columns.split( ' ' ).length,
+			numberOfCells = rowsArray * columnsArray;
+
+		for ( let i = 0; i < numberOfCells; i++ ) {
+			const cell = document.createElement( 'div' );
+
+			cell.classList.add( 'e-grid-outline-item' );
+
+			if ( containerChildren[ i ] ) {
+				cell.style.height = this.getComputedStyle( containerChildren[ i ], 'height' );
+				cell.style.width = this.getComputedStyle( containerChildren[ i ], 'width' );
+			}
+			gridOverlayContainer.append( cell );
+		}
 	}
 
 	createOverlayChildCells( gridOverlayContainer, container ) {
@@ -132,6 +160,10 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		let propsThatTriggerGridLayoutRender = [
 			'grid_rows_grid',
 			'grid_columns_grid',
+			'container_type',
+			'boxed_width',
+			'content_width',
+			'height',
 			'container_type',
 		];
 

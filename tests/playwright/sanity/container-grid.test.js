@@ -80,7 +80,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 
-	test( 'Test grid outline', async ( { page }, testInfo ) => {
+	test.only( 'Test grid outline', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
@@ -92,15 +92,31 @@ test.describe( 'Container tests', () => {
 		} );
 
 		const frame = editor.getPreviewFrame();
-		const container = await frame.locator( '.e-grid .e-con-inner' );
+		const gridOutline = await frame.locator( '.e-grid-outline' ),
+			gridOutlineChildren = await frame.locator( '.e-grid-outline-item' ),
+			gridOutlineChildrenInitialValue = 6;
 
 		await test.step( 'Assert default outline', async () => {
-			await page.pause();
-
-			await page.locator( '.e-grid-outline' ).first().click();
-			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
-			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
-			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+			await expect( gridOutline ).toBeVisible();
+			await expect( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 		} );
+
+		await test.step( 'Assert outline shut down', async () => {
+			await editor.setSwitcherControlValue( 'grid_outline', false );
+			await expect( gridOutline ).not.toBeVisible();
+		} );
+
+		await test.step( 'Assert outline turn on', async () => {
+			await page.pause();
+			await editor.setSwitcherControlValue( 'grid_outline', true );
+			await expect( gridOutline ).toBeVisible();
+		} );
+
+		await test.step( 'not visible when container is not in focus', async () => {
+			await page.locator( 'h1' ).first().click();
+			await expect( gridOutline ).not.toBeVisible();
+		} );
+
+		await page.pause();
 	} );
 } );
