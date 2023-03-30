@@ -150,7 +150,7 @@ abstract class Base_Control extends Base_Object {
 	 *
 	 * @return mixed
 	 */
-	public function on_import_update_dynamic_content( $value, array $control_args, array $config ) {
+	public function on_import_update_dynamic_settings( $value, array $control_args, array $config ) {
 		return $value;
 	}
 }

@@ -1225,7 +1225,7 @@ abstract class Document extends Controls_Stack {
 				$control_instance = $controls_manager->get_control( $control['type'] );
 
 				if ( $control_instance ) {
-					$settings[ $key ] = $control_instance->on_import_update_dynamic_content( $value, $control, $config );
+					$settings[ $key ] = $control_instance->on_import_update_dynamic_settings( $value, $control, $config );
 				}
 			}
 		}
