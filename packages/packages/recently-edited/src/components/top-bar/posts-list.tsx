@@ -17,7 +17,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 				Recent
 			</ListSubheader>
 
-			{ recentPosts.map( ( { title, edit_url: editUrl, type, id }, index ) => (
+			{ recentPosts.map( ( { title, edit_url: editUrl, type, id } ) => (
 				<MenuItem
 					key={ id }
 					component="a"
