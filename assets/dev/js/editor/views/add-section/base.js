@@ -12,8 +12,18 @@ import environment from 'elementor-common/utils/environment';
 	static VIEW_CHOOSE_ACTION = 'choose-action';
 	static VIEW_CONTAINER_FLEX_PRESET = 'select-container-preset';
 	static VIEW_CONTAINER_GRID_PRESET = 'select-container-preset-grid';
-	static VIEW_SELECT_TYPE_OR_PRESET = ( AddSectionBase.IS_CONTAINER_GRID_ACTIVE ) ? 'select-type' : 'select-container-preset';
-	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? AddSectionBase.VIEW_SELECT_TYPE_OR_PRESET : 'select-preset';
+
+	static getSelectType() {
+		return AddSectionBase.IS_CONTAINER_ACTIVE
+			? AddSectionBase.getSelectTypePreset()
+			: 'select-preset';
+	}
+
+	static getSelectTypePreset() {
+		return AddSectionBase.IS_CONTAINER_GRID_ACTIVE
+			? 'select-type'
+			: 'select-container-preset';
+	}
 
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
@@ -70,7 +80,7 @@ import environment from 'elementor-common/utils/environment';
 	}
 
 	showSelectPresets() {
-		this.setView( AddSectionBase.VIEW_SELECT_PRESET );
+		this.setView( AddSectionBase.getSelectType() );
 	}
 
 	closeSelectPresets() {
