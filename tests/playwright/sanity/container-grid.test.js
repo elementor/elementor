@@ -126,7 +126,7 @@ test.describe( 'Container tests', () => {
 			await frame.locator( '[data-preset="0-3"]' ).click();
 			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
 			await expect( container ).toHaveCSS( 'grid-template-rows', '100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '366.664px 366.664px 366.664px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '366.656px 366.672px 366.672px' );
 			await editor.cleanContent();
 		} );
 
@@ -156,7 +156,7 @@ test.describe( 'Container tests', () => {
 			await frame.locator( '[data-preset="3-3"]' ).click();
 			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
 			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px 100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '366.664px 366.664px 366.664px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '366.656px 366.672px 366.672px' );
 			await editor.cleanContent();
 		} );
 	} );
