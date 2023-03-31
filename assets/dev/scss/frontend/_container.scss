@@ -18,10 +18,10 @@
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
-	--margin-top: 0;
-	--margin-right: 0;
-	--margin-bottom: 0;
-	--margin-left: 0;
+	--margin-top: 0px;
+	--margin-right: 0px;
+	--margin-bottom: 0px;
+	--margin-left: 0px;
 	--padding-top: var( --container-default-padding-top, 10px );
 	--padding-right: var( --container-default-padding-right, 10px );
 	--padding-bottom: var( --container-default-padding-bottom, 10px );
@@ -39,7 +39,7 @@
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
-	min-width: 0;
+	min-width: 0px;
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
@@ -83,7 +83,7 @@
 		width: 100%;
 		max-width: var( --content-width );
 		margin: 0 auto;
-		padding-inline: 0;
+		padding-inline: 0px;
 		height: 100%;
 
 		// Set default values to the inner div of the boxed container.
@@ -108,7 +108,7 @@
 	// Hack to increase specificity and avoid using `!important`.
 	.elementor-widget.elementor-widget {
 		// Override the default margin-bottom of widgets.
-		margin-bottom: 0;
+		margin-bottom: 0px;
 	}
 
 	// Background overlay.
@@ -125,8 +125,8 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		left: 0;
-		top: 0;
+		left: 0px;
+		top: 0px;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition, 0.3s );
@@ -150,7 +150,7 @@
 	.elementor-widget {
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
-		min-width: 0;
+		min-width: 0px;
 
 		// Fix iframe-based widgets (ED-5338) & widget with empty placeholder.
 		&-video,
