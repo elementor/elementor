@@ -254,7 +254,7 @@ class Preview extends App {
 
 		wp_enqueue_style(
 			'e-theme-ui-light',
-			ELEMENTOR_ASSETS_URL . 'css/theme-light' . $suffix . '.css',
+			$this->get_css_assets_url( 'theme-light' ),
 			[],
 			ELEMENTOR_VERSION
 		);
