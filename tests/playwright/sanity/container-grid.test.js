@@ -94,6 +94,72 @@ test.describe( 'Container tests', () => {
 			expect( isOneColumn ).toBeTruthy();
 		} );
 	} );
+
+	test( 'Grid container presets', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const frame = await editor.getPreviewFrame();
+
+		await test.step( 'Assert preset: rows-0 columns-2', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="0-2"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '560px 560px' );
+			await editor.cleanContent();
+		} );
+
+		await test.step( 'Assert preset: rows-2 columns-0', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="2-0"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '0px' );
+			await editor.cleanContent();
+		} );
+
+		await test.step( 'Assert preset: rows-0 columns-3', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="0-3"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '366.664px 366.664px 366.664px' );
+			await editor.cleanContent();
+		} );
+
+		await test.step( 'Assert preset: rows-3 columns-0', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="3-0"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px 100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '0px' );
+			await editor.cleanContent();
+		} );
+
+		await test.step( 'Assert preset: rows-2 columns-2', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="2-2"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '560px 560px' );
+			await editor.cleanContent();
+		} );
+
+		await test.step( 'Assert preset: rows-3 columns-3', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-preset="3-3"]' ).click();
+			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px 100px' );
+			await expect( container ).toHaveCSS( 'grid-template-columns', '366.664px 366.664px 366.664px' );
+			await editor.cleanContent();
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {

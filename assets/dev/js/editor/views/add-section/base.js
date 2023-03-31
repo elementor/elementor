@@ -34,6 +34,7 @@ import environment from 'elementor-common/utils/environment';
 			containerPresets: '.e-con-preset',
 			flexPresetButton: '.flex-preset-button',
 			gridPresetButton: '.grid-preset-button',
+			chooseGridPreset: '.e-con-choose-grid-preset',
 		};
 	}
 
@@ -46,6 +47,7 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),
 			'click @ui.gridPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_GRID_PRESET ),
+			'click @ui.chooseGridPreset': 'onGridPresetSelected',
 		};
 	}
 
@@ -171,6 +173,34 @@ import environment from 'elementor-common/utils/environment';
 				);
 			},
 		};
+	}
+
+	onGridPresetSelected( event ) {
+		this.closeSelectPresets();
+
+		const selectedStructure = event.currentTarget.dataset.preset;
+		const chunks = selectedStructure.split( '-' );
+		const rows = chunks[ 0 ];
+		const columns = chunks[ 1 ];
+
+		return ContainerHelper.createGridContainer(
+			{
+				grid_columns_grid: {
+					unit: 'fr',
+					size: columns,
+				},
+				grid_rows_grid: {
+					unit: 'fr',
+					size: rows,
+				},
+				grid_rows_grid_mobile: {
+					unit: 'fr',
+					size: rows,
+					sizes: [],
+				},
+			},
+			elementor.getPreviewContainer(),
+		);
 	}
 
 	onPresetSelected( event ) {
