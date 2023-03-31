@@ -89,27 +89,17 @@ class Module extends BaseModule {
 		return Utils::get_array_value_by_keys( $performance_lab_settings, [ 'images/dominant-color', 'enabled' ] );
 	}
 
-	private function image_extension_validation( $value ) {
-		// Disable 'Dominant Color' on PNG and GIF images
-		$url = $value['url'];
-		$ignored_extensions = [ 'png', 'gif' ];
-		if ( in_array( pathinfo( $url, PATHINFO_EXTENSION ), $ignored_extensions, true ) ) {
-			return false;
-		}
-		return true;
-	}
-
 	private function apply_dominant_color_background( $control, $value, $selector ) {
-
-		if ( ! $this->image_extension_validation( $value ) ) {
-			return $control;
-		}
-
 		$metadata = wp_get_attachment_metadata( $value['id'] );
-		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
-		if ( $dominant_color ) {
+
+		// Performance Lab adds these metadata
+		$has_transparency = $metadata['has_transparency'] ?? null;
+		$dominant_color = $metadata['dominant_color'] ?? null;
+
+		if ( $has_transparency && $dominant_color ) {
 			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
 		}
+
 		return $control;
 	}
 
