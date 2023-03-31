@@ -93,8 +93,8 @@ class Module extends BaseModule {
 		$metadata = wp_get_attachment_metadata( $value['id'] );
 
 		// Performance Lab adds these metadata
-		$has_transparency = $metadata['has_transparency'] ?? null;
-		$dominant_color = $metadata['dominant_color'] ?? null;
+		$has_transparency = $metadata['has_transparency'] ?? false;
+		$dominant_color = $metadata['dominant_color'] ?? false;
 
 		if ( $dominant_color && ! $has_transparency ) {
 			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
