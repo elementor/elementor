@@ -11,6 +11,7 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Flex_Container;
 use Elementor\Group_Control_Flex_Item;
+use Elementor\Group_Control_Grid_Container;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
@@ -443,6 +444,23 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'container_type',
+				[
+					'label' => esc_html__( 'Container Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'default' => 'flex',
+					'options' => [
+						'flex' => esc_html__( 'Flexbox', 'elementor' ),
+						'grid' => esc_html__( 'Grid', 'elementor' ),
+						'inline-grid' => esc_html__( 'Inline Grid', 'elementor' ),
+					],
+					'selectors' => [
+						'{{WRAPPER}}' => '--display: {{VALUE}}',
+					],
+				]
+		);
+
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			[
@@ -458,6 +476,20 @@ class Container extends Element_Base {
 							],
 						],
 					],
+				],
+				'condition' => [
+					'container_type' => 'flex',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Grid_Container::get_type(),
+			[
+				'name' => 'flex',
+				'selector' => '{{WRAPPER}}',
+				'condition' => [
+					'container_type' => [ 'grid', 'inline-grid' ],
 				],
 			]
 		);
