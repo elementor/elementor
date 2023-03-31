@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_lazyload';
-	const PERFORMANCE_LAB_OPTION_NAME = 'perflab_modules_settings';
 
 	public function get_name() {
 		return 'lazyload';
@@ -85,8 +84,12 @@ class Module extends BaseModule {
 	}
 
 	private function is_dominant_color_enabled() {
-		$performance_lab_settings = (array) get_option( self::PERFORMANCE_LAB_OPTION_NAME, [] );
-		return Utils::get_array_value_by_keys( $performance_lab_settings, [ 'images/dominant-color', 'enabled' ] );
+		if ( function_exists( 'perflab_get_active_modules' ) && function_exists( 'perflab_is_valid_module' ) ) {
+			$active_and_valid_modules = array_filter( perflab_get_active_modules(), 'perflab_is_valid_module' );
+			$has_dominant_color_module = in_array( 'images/dominant-color', $active_and_valid_modules );
+			return $has_dominant_color_module;
+		}
+		return false;
 	}
 
 	private function apply_dominant_color_background( $control, $value, $selector ) {
