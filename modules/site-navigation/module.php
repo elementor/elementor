@@ -37,6 +37,10 @@ class Module extends Module_Base {
 	 * @return bool
 	 */
 	public static function is_active() {
+		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+			return true;
+		}
+
 		return Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
 	}
 }
