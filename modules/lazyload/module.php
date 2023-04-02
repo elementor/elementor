@@ -84,12 +84,12 @@ class Module extends BaseModule {
 	}
 
 	private function is_dominant_color_enabled() {
-		if ( function_exists( 'perflab_get_active_modules' ) && function_exists( 'perflab_is_valid_module' ) ) {
-			$active_and_valid_modules = array_filter( perflab_get_active_modules(), 'perflab_is_valid_module' );
-			$has_dominant_color_module = in_array( 'images/dominant-color', $active_and_valid_modules );
-			return $has_dominant_color_module;
+		if ( ! function_exists( 'perflab_get_active_modules' ) ) {
+			return false;
 		}
-		return false;
+
+		$active_modules = perflab_get_active_modules();
+		return in_array( 'images/dominant-color', $active_modules, true );
 	}
 
 	private function apply_dominant_color_background( $control, $value, $selector ) {
@@ -97,10 +97,10 @@ class Module extends BaseModule {
 
 		// Performance Lab adds these metadata
 		$has_transparency = $metadata['has_transparency'] ?? false;
-		$dominant_color = $metadata['dominant_color'] ?? false;
+		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
 
 		if ( $dominant_color && ! $has_transparency ) {
-			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
+			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
 		}
 
 		return $control;
