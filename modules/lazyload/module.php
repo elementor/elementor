@@ -101,7 +101,7 @@ class Module extends BaseModule {
 		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
 
 		if ( $dominant_color && ! $has_transparency ) {
-			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
+			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
 		}
 
 		return $control;
