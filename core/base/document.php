@@ -1215,20 +1215,25 @@ abstract class Document extends Controls_Stack {
    *
    * @return array
    */
-	public function on_import_update_dynamic_settings( array $settings, array $config ): array {
+	public function on_import_update_settings( array $settings, array $config ): array {
 		$controls = $this->get_controls();
 		$controls_manager = Plugin::$instance->controls_manager;
 
-		foreach ( $settings as $key => $value ) {
-			if ( isset( $controls[ $key ] ) ) {
-				$control = $controls[ $key ];
-				$control_instance = $controls_manager->get_control( $control['type'] );
+	  foreach ( $settings as $key => $value ) {
 
-				if ( $control_instance ) {
-					$settings[ $key ] = $control_instance->on_import_update_dynamic_settings( $value, $control, $config );
-				}
-			}
-		}
+		  if ( ! isset( $controls[ $key ] ) ) {
+			  continue;
+		  }
+
+		  $control = $controls[ $key ];
+		  $control_instance = $controls_manager->get_control( $control['type'] );
+
+		  if ( ! $control_instance ) {
+			  continue;
+		  }
+
+		  $settings[ $key ] = $control_instance->on_import_update_settings( $value, $control, $config );
+	  }
 
 		return $settings;
 	}

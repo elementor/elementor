@@ -57,7 +57,7 @@ class Import {
 	 *
 	 * @var array { [document_id] => { "elements": array , "settings": array } }
 	 */
-	private $documents_content = [];
+	private $documents_data = [];
 
 	/**
 	 * Path to the extracted kit files.
@@ -204,7 +204,7 @@ class Import {
 		$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
 		$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
 
-		$this->documents_content = $instance_data['documents_content'];
+		$this->documents_data = $instance_data['documents_data'];
 		$this->imported_data = $instance_data['imported_data'];
 		$this->runners_import_metadata = $instance_data['runners_import_metadata'];
 	}
@@ -419,7 +419,7 @@ class Import {
 				'settings_selected_custom_post_types' => $this->settings_selected_custom_post_types,
 				'settings_selected_plugins' => $this->settings_selected_plugins,
 
-				'documents_content' => $this->documents_content,
+				'documents_data' => $this->documents_data,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
 			];
@@ -571,15 +571,14 @@ class Import {
 	 */
 	public function prevent_saving_elements_on_post_creation( array $data, Document $document ) {
 		if ( isset( $data['elements'] ) ) {
-			$this->documents_content[ $document->get_main_id() ] = [ 'elements' => $data['elements'] ];
+			$this->documents_data[ $document->get_main_id() ] = [ 'elements' => $data['elements'] ];
 
 			$data['elements'] = [];
 		}
 
 		if ( isset( $data['settings'] ) ) {
-			$this->documents_content[ $document->get_main_id() ]['settings'] = $data['settings'];
+			$this->documents_data[ $document->get_main_id() ]['settings'] = $data['settings'];
 
-			$data['settings'] = [];
 		}
 
 		return $data;
@@ -733,34 +732,31 @@ class Import {
 	private function save_elements_of_imported_posts() {
 		$imported_data_replacements = $this->get_imported_data_replacements();
 
-		foreach ( $this->documents_content as $new_id => $content ) {
+		foreach ( $this->documents_data as $new_id => $data ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 
-			$update = [];
-
-			if ( isset( $content['elements'] ) ) {
-				$updated_elements = $document->on_import_update_dynamic_content( $content['elements'], $imported_data_replacements );
-				$update['elements'] = $updated_elements;
+			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
-			if ( isset( $content['settings'] ) ) {
+
+			if ( isset( $data['settings'] ) ) {
 
 				if ( $document instanceof Kit ) {
 					// Without post_status certain tabs in the Kit will not save properly.
-					$content['settings']['post_status'] = get_post_status( $new_id );
+					$data['settings']['post_status'] = get_post_status( $new_id );
 				}
 
-				$updated_settings = $document->on_import_update_dynamic_settings( $content['settings'], $imported_data_replacements );
-				$update['settings'] = $updated_settings;
+				$data['settings'] = $document->on_import_update_settings( $data['settings'], $imported_data_replacements );
 			}
 
-			$document->save( $update );
+			$document->save( $data );
 		}
 	}
 
 	private function update_instance_data_in_import_session_option() {
 		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		$import_sessions[ $this->session_id ]['instance_data']['documents_content'] = $this->documents_content;
+		$import_sessions[ $this->session_id ]['instance_data']['documents_data'] = $this->documents_data;
 		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
 		$import_sessions[ $this->session_id ]['instance_data']['runners_import_metadata'] = $this->runners_import_metadata;
 
