@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.12.0
+Stable tag: 3.12.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.12.1 - 2023-04-02 =
+
+* Fix: Elementor's dark mode color scheme affects the front in various scenarios ([#21809](https://github.com/elementor/elementor/issues/21809), [#21832](https://github.com/elementor/elementor/issues/21832))
+* Fix: Reverted inline editing fix that caused DOM change in Button widget
 
 = 3.12.0 - 2023-03-29 =
 
