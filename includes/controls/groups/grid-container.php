@@ -22,6 +22,15 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'separator' => 'before',
 		];
 
+		$fields['outline'] = [
+			'label' => esc_html__( 'Outline', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'label_on' => esc_html__( 'SHOW', 'elementor' ),
+			'label_off' => esc_html__( 'HIDE', 'elementor' ),
+			'default' => 'yes',
+			'frontend_available' => true,
+		];
+
 		$fields['columns_grid'] = [
 			'label' => esc_html__( 'Columns', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
