@@ -210,8 +210,7 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost(),
 			parentContainer = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
-			gridOutline = await frame.locator( '.e-grid-outline' ),
-			gridOutlineChildren = await frame.locator( '.e-grid-outline-item' );
+			gridOutline = await frame.locator( '.e-grid-outline' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -238,6 +237,7 @@ test.describe( 'Container tests', () => {
 		} );
 	} );
 } );
+
 function hasWhiteSpace( s ) {
 	return /\s/g.test( s );
 }

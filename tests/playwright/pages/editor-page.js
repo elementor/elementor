@@ -621,19 +621,4 @@ module.exports = class EditorPage extends BasePage {
 			await controlLabel.click();
 		}
 	}
-
-	/**
-	 * Remove element.
-	 *
-	 * @param {string} elementId
-	 *
-	 * @return {Promise<void>}
-	 */
-	async removeElement( elementId ) {
-		await this.page.evaluate( ( { id } ) => {
-			$e.run( 'document/elements/delete', {
-				container: elementor.getContainer( id ),
-			} );
-		}, { id: elementId } );
-	}
 };
