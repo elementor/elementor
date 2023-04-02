@@ -30,4 +30,13 @@ class Module extends Module_Base {
 	public function get_name() {
 		return 'site-navigation';
 	}
+
+	/**
+	 * Determine whether the module is active.
+	 *
+	 * @return bool
+	 */
+	public static function is_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
+	}
 }
