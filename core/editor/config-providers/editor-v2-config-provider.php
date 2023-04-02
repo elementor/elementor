@@ -109,7 +109,11 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	private function get_packages_data() {
 		if ( ! $this->packages_data ) {
 			// Loading the file that is responsible for registering the packages in the filter.
-			require_once ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
+			$loader = ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
+
+			if ( file_exists( $loader ) ) {
+				require_once $loader;
+			}
 
 			$packages_data = apply_filters( 'elementor/editor-v2/packages/config', [] );
 
