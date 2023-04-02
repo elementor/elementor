@@ -676,7 +676,7 @@ class Test_Import extends Elementor_Test_Base {
 	 *
 	 * @return array
 	 */
-	private function normalize_array(  array $array,  array $array_with_extra_keys ): array {
+	private function normalize_array( array $array, array $array_with_extra_keys ): array {
 		foreach ( $array_with_extra_keys as $key => $value ) {
 			if ( ! isset( $array[ $key ] ) ) {
 				unset( $array_with_extra_keys[ $key ] );
