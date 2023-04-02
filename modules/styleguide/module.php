@@ -4,7 +4,6 @@ namespace Elementor\Modules\Styleguide;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
-use Elementor\Modules\Styleguide\Data\Controller;
 use Elementor\Modules\Styleguide\Controls\Switcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,8 +39,6 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 		add_action( 'elementor/element/after_section_start', [ $this, 'add_styleguide_enable_controls' ], 10, 3 );
-
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 
 	/**
@@ -146,7 +143,7 @@ class Module extends Base_Module {
 				'separator' => 'after',
 				'label_off' => esc_html__( 'Off', 'elementor' ),
 				'label_on' => esc_html__( 'On', 'elementor' ),
-				'on_change_command' => 'preview/styleguide/enable',
+				'on_change_command' => true,
 			]
 		);
 	}

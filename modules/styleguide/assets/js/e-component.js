@@ -1,5 +1,4 @@
-import * as commands from './commands/ui';
-import * as commandsData from './commands/data';
+import * as commands from './commands';
 import Switcher from './controls/switcher';
 
 require( './lib/dialog' );
@@ -21,10 +20,6 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
-	}
-
-	defaultData() {
-		return this.importCommands( commandsData );
 	}
 
 	initModal() {

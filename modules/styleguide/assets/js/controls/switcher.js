@@ -30,6 +30,6 @@ export default class extends Switcher {
 	}
 
 	runCommand( value ) {
-		$e.run( this.model.get( 'on_change_command' ), { value } );
+		$e.run( 'preview/styleguide/switcher-change', { name: this.model.get( 'name' ), value } );
 	}
 }
