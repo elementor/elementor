@@ -27,9 +27,11 @@ $eps-theme-disabled: $eps-gray-100;
 $eps-theme-light: $white;
 $eps-theme-dark: $black;
 //
+$eps-theme-primary: $e-primary;
+$eps-theme-primary-bg: $e-primary-bg;
 $eps-theme-accent: $e-primary;
-$eps-theme-cta: $e-brand;
-$eps-theme-brand: $e-brand;
+$eps-theme-cta: $e-accent;
+$eps-theme-brand: $e-accent;
 $eps-theme-danger: $e-danger;
 $eps-theme-danger-bg: $e-danger-bg;
 $eps-theme-info: $e-info;
@@ -41,6 +43,7 @@ $eps-theme-success-bg: $e-success-bg;
 
 // -use context
 $eps-body-color: $eps-gray-600;
+$eps-btn-color: $eps-gray-900;
 $eps-body-bg: $white;
 $eps-link-color: $eps-gray-600;
 $eps-link-hover-color: darken($eps-link-color, 15%);

@@ -1,6 +1,7 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
 @import "../../helpers/direction";
+@import "../../global/global";
 @import "../../direction/theme-light";
 
 @import "../container";
@@ -42,12 +43,12 @@ html.elementor-html {
 
 	--primary-color: var(--e-p-border-con);
 	--secondary-color: var(--e-p-border-con-hover);
-	--outline-color: var( --primary-color );
+	--outline-color: var(--e-p-border-con-active);
 
 	.e-con {
 		--primary-color: var(--e-p-border-con);
 		--secondary-color: var(--e-p-border-con-hover);
-		--outline-color: var( --primary-color );
+		--outline-color: var( --outline-color );
 
 		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
 		// between Containers.
@@ -87,9 +88,12 @@ html.elementor-html {
 			opacity: .3;
 		}
 
-		&.elementor-element-editable,
 		&.elementor-element-edit-mode:hover {
 			box-shadow: 0 0 0 1px var(--e-p-border-widget);
+		}
+
+		&.elementor-element-editable {
+			box-shadow: 0 0 0 1px var(--e-p-border-widget-active);
 		}
 
 		&:not(:hover) {
