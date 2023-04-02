@@ -5,16 +5,16 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		// Const page = await browser.newPage();
-		// const wpAdmin = new WpAdminPage( page, testInfo );
-		// await wpAdmin.setExperiments( { e_global_styleguide: true } );
-		// await page.close();
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( { e_global_styleguide: true } );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		// Const page = await browser.newPage();
-		// const wpAdmin = new WpAdminPage( page, testInfo );
-		// await wpAdmin.setExperiments( { e_global_styleguide: false } );
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( { e_global_styleguide: false } );
 	} );
 
 	test( 'Enabling Styleguide Preview user preference enabled Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
@@ -95,6 +95,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 	test( 'Disabling Styleguide Preview user preference disables Styleguide Preview at Global Colors and Global Typography', async ( { page }, testInfo ) => {
 		// Arrange.
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 		page.setDefaultTimeout( 20000 );
@@ -102,7 +103,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.evaluate( () => $e.run( 'document/elements/settings', {
 			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 			settings: {
-				enable_styleguide_preview: 0,
+				enable_styleguide_preview: '',
 			},
 			options: {
 				external: true,
@@ -212,13 +213,13 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
+		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = await editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		// Assert switcher is off and Styleguide Modal is hidden.
-		// await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
+		await expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
 		await expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
 
@@ -444,11 +445,9 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		// Add colors to make sure we dont see Global Fonts area
-		const addButton = await page.getByRole( 'button', { name: 'Add Color' } );
-		await addButton.click();
-
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
+		await page.waitForTimeout( 1000 );
+
 		// Act.
 		await page.click( 'text=Global Fonts' );
 
@@ -457,6 +456,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
+		await page.waitForTimeout( 1000 );
+
 		await page.click( 'text=Global Colors' );
 
 		// Assert 2
@@ -469,10 +470,6 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		const fontsButton = await editor.getPreviewFrame().getByRole( 'button', { name: 'Fonts' } );
 		const colorButton = await editor.getPreviewFrame().getByRole( 'button', { name: 'Colors' } );
-
-		// Add colors to make sure we dont see Global Fonts area
-		const addButton = await page.getByRole( 'button', { name: 'Add Color' } );
-		await addButton.click();
 
 		// Act.
 		await fontsButton.click();
@@ -497,10 +494,10 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	const editor = await wpAdmin.useElementorCleanPost();
 	page.setDefaultTimeout( 10000 );
 
-	await page.evaluate( ( styleguideOpen ) => $e.run( 'document/elements/settings', {
+	await page.evaluate( ( isOpen ) => $e.run( 'document/elements/settings', {
 		container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 		settings: {
-			enable_styleguide_preview: styleguideOpen ? 1 : 0,
+			enable_styleguide_preview: isOpen ? 'yes' : '',
 		},
 		options: {
 			external: true,

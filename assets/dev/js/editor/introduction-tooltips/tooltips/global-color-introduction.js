@@ -30,7 +30,7 @@ export default class GlobalColorIntroduction {
 		const editor = elementor.getPanelView().getCurrentPageView();
 		const currentView = editor.content ? editor.content.currentView : editor;
 
-		return $e.components.get( 'panel' ).getControlView( currentView, control );
+		return $e.components.get( 'panel' ).getControlViewByPath( currentView, control );
 	}
 
 	initTooltip() {
@@ -59,7 +59,7 @@ export default class GlobalColorIntroduction {
 		this.tooltip.getDialog().addButton( {
 			name: 'action',
 			text: __( 'Got it!', 'elementor' ),
-			classes: 'elementor-button e-brand',
+			classes: 'elementor-button e-primary',
 			callback: () => this.tooltip.getDialog().hide(),
 		} );
 	}
