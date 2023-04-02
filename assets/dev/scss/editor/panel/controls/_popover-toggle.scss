@@ -17,8 +17,8 @@
 		&:checked {
 
 			+ .elementor-control-popover-toggle-toggle-label {
-				color: var(--e-a-color-primary);
-				border-color: var(--e-a-border-color-focus);
+				color: var(--e-a-color-txt-active);
+				background-color: var(--e-a-bg-active);
 			}
 		}
 

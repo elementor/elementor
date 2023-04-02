@@ -96,6 +96,14 @@ module.exports = class EditorPage extends BasePage {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
+	}
+
 	/**
 	 * Add a widget by `widgetType`.
 	 *
@@ -198,6 +206,21 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( copyListItemSelector ).click();
 	}
 
+	async pasteElement( selector ) {
+		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
+
+		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
+		await this.page.locator( pasteSelector ).click();
+	}
+
+	async openAddElementSection( elementId ) {
+		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
+		await element.hover();
+		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
+		await elementAddButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+	}
+
 	async pasteStyleElement( elementId ) {
 		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.click( { button: 'right' } );
@@ -215,14 +238,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -280,7 +303,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
@@ -515,6 +538,35 @@ module.exports = class EditorPage extends BasePage {
 			} ),
 			{ elementId, settings },
 		);
+	}
+
+	/**
+	 * Check if an item is in the viewport.
+	 *
+	 * @param {string} itemSelector
+	 * @return {Promise<void>}
+	 */
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
 	}
 
 	/**

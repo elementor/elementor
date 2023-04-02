@@ -34,6 +34,8 @@
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
+	--e-con-grid-template-columns: repeat(3, 1fr);
+	--e-con-grid-template-rows: repeat(2, 1fr);
 
 	position: var( --position );
 	width: var( --width );
@@ -78,6 +80,7 @@
 	&.e-grid {
 		--grid-justify-content: start;
 		--grid-align-content: start;
+		--grid-auto-flow: row;
 	}
 
 	&.e-grid,
@@ -86,6 +89,7 @@
 		grid-template-rows: var( --e-con-grid-template-rows );
 		justify-content: var( --grid-justify-content );
 		align-content: var( --grid-align-content );
+		grid-auto-flow: var( --grid-auto-flow );
 	}
 
 	// Set default values to the outer div of the boxed container.
@@ -99,8 +103,8 @@
 
 	&-boxed.e-grid {
 		justify-items: initial;
-		grid-template-columns: initial;
-		grid-template-rows: initial;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
 	}
 
 	&-boxed {
@@ -123,6 +127,7 @@
 
 	&.e-grid > .e-con-inner {
 		justify-items: var( --justify-items );
+		align-items: var( --align-items );
 	}
 
 	& > .e-con-inner {

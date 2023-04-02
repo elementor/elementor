@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements">
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></div>
-		<div class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></div>
+		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></button>
+		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></button>
 	</div>
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
@@ -25,12 +25,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="elementor-panel-heading elementor-panel-category-title">
-		<div class="elementor-panel-heading-toggle">
+	<button class="elementor-panel-heading elementor-panel-category-title">
+		<span class="elementor-panel-heading-toggle">
 			<i class="eicon" aria-hidden="true"></i>
-		</div>
-		<div class="elementor-panel-heading-title">{{{ title }}}</div>
-	</div>
+		</span>
+		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+	</button>
 	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
 </script>
 

@@ -27,26 +27,24 @@ export const SettingsProvider = ( props ) => {
 	const getInitialSettings = () => {
 		setStatus( 'loading' );
 
-		window.top.$e.data.get( 'preview/styleguide/settings', {}, { refresh: true } )
-			.then( ( newSettings ) => {
-				const map = new Map();
+		const kitSettings = elementor.config.document.settings.settings;
 
-				if ( 'object' !== typeof newSettings.data ) {
-					return;
-				}
+		var map = new Map( [
+			[ 'colors', new Map( [
+				[ 'system_colors', kitSettings.system_colors ],
+				[ 'custom_colors', kitSettings.custom_colors ],
+			] ) ],
+			[ 'fonts', new Map( [
+				[ 'system_typography', kitSettings.system_typography ],
+				[ 'custom_typography', kitSettings.custom_typography ],
+				[ 'fallback_font', kitSettings.default_generic_fonts ],
+			] ) ],
+			[ 'config', new Map( [
+				[ 'is_debug', elementorCommon.config.isElementorDebug ],
+			] ) ],
+		] );
 
-				Object.keys( newSettings.data ).forEach( ( group ) => {
-					const groupSettings = new Map();
-
-					Object.keys( newSettings.data[ group ] ).forEach( ( key ) => {
-						groupSettings.set( key, newSettings.data[ group ][ key ] );
-					} );
-
-					map.set( group, groupSettings );
-				} );
-
-				setSettings( map );
-			} );
+		setSettings( map );
 	};
 
 	const onCommandEvent = ( event ) => {
