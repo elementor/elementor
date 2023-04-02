@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.12.1 - 2023-04-02 =
+
+* Fix: Elementor's dark mode color scheme affects the front in various scenarios ([#21809](https://github.com/elementor/elementor/issues/21809), [#21832](https://github.com/elementor/elementor/issues/21832))
+* Fix: Reverted inline editing fix that caused DOM change in Button widget
+
 = 3.12.0 - 2023-03-29 =
 
 * New: A new color scheme for Elementor - the Editor and other Elementor screens have been recolored, simplified, and optimized for accessibility
