@@ -96,6 +96,14 @@ module.exports = class EditorPage extends BasePage {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
+	}
+
 	/**
 	 * Add a widget by `widgetType`.
 	 *
