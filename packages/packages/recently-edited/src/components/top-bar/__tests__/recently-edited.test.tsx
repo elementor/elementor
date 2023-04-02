@@ -58,7 +58,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		expect( queryByText( '(Draft)' ) ).toBeTruthy();
 	} );
 
-	it( 'should show the title of the host document when there is no active document', async () => {
+	it( 'should show the title of the host document when there is no active document', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 
@@ -69,7 +69,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		expect( queryByText( 'Host Document' ) ).toBeTruthy();
 	} );
 
-	it( 'should show the title of the host document when the active document is kit', async () => {
+	it( 'should show the title of the host document when the active document is kit', () => {
 		// Arrange.
 
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
@@ -90,7 +90,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		expect( queryByText( 'Host Document' ) ).toBeTruthy();
 	} );
 
-	it( 'should show nothing if there are no documents', async () => {
+	it( 'should show nothing if there are no documents', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () => null );
 		jest.mocked( useHostDocument ).mockImplementation( () => null );
@@ -103,7 +103,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
 	} );
 
-	it( 'should open the recently edited menu on click', async () => {
+	it( 'should show empty state', () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( {
@@ -115,6 +115,34 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 				},
 			} )
 		);
+		const fetchReturnData: Post[] = [];
+
+		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( fetchReturnData );
+
+		const { getByText, getAllByRole } = render( <RecentlyEdited /> );
+
+		// Act.
+		const buttons = getAllByRole( 'button' );
+		buttons[ 0 ].click(); // Opens the recently edited menu
+
+		// Assert.
+		const label = getByText( 'There are no other pages or templates on this site yet', { exact: false } );
+		expect( label ).toBeInTheDocument();
+	} );
+
+	it( 'should open the recently edited menu on click', () => {
+		// Arrange.
+		jest.mocked( useActiveDocument ).mockImplementation( () =>
+			createMockDocument( {
+				id: 1,
+				title: 'Header',
+				type: {
+					value: 'header',
+					label: 'Header',
+				},
+			} )
+		);
+
 		const fetchReturnData: Post[] = [ {
 			id: 1,
 			title: 'Test post',
