@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
-import getRecentlyEditedPosts, { Post } from '../../../utils/fetch-posts';
+import getRecentlyEditedPosts, { Post } from '../../../hooks/use-recent-posts';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
 	useHostDocument: jest.fn(),
 } ) );
 
-jest.mock( '../../../utils/fetch-posts', () => (
+jest.mock( '../../../hooks/use-recent-posts', () => (
 	{
-		default: jest.fn( () => Promise.resolve( [] ) ),
+		default: jest.fn(),
 		__esModule: true,
 	}
 ) );
@@ -33,10 +33,8 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		await waitFor( () => {
-			expect( queryByText( 'Active Document' ) ).toBeTruthy();
-			expect( queryByText( '(publish)' ) ).not.toBeTruthy();
-		} );
+		expect( queryByText( 'Active Document' ) ).toBeTruthy();
+		expect( queryByText( '(publish)' ) ).not.toBeTruthy();
 	} );
 
 	it( 'should show the title of the active document with its status when the document is not published', async () => {
@@ -56,10 +54,8 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		await waitFor( () => {
-			expect( queryByText( 'Active Document' ) ).toBeTruthy();
-			expect( queryByText( '(Draft)' ) ).toBeTruthy();
-		} );
+		expect( queryByText( 'Active Document' ) ).toBeTruthy();
+		expect( queryByText( '(Draft)' ) ).toBeTruthy();
 	} );
 
 	it( 'should show the title of the host document when there is no active document', async () => {
@@ -70,9 +66,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		await waitFor( () => {
-			expect( queryByText( 'Host Document' ) ).toBeTruthy();
-		} );
+		expect( queryByText( 'Host Document' ) ).toBeTruthy();
 	} );
 
 	it( 'should show the title of the host document when the active document is kit', async () => {
@@ -93,9 +87,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		await waitFor( () => {
-			expect( queryByText( 'Host Document' ) ).toBeTruthy();
-		} );
+		expect( queryByText( 'Host Document' ) ).toBeTruthy();
 	} );
 
 	it( 'should show nothing if there are no documents', async () => {
@@ -107,10 +99,8 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const { queryByText } = render( <RecentlyEdited /> );
 
 		// Assert.
-		await waitFor( () => {
-			expect( queryByText( 'Host Document' ) ).not.toBeTruthy();
-			expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
-		} );
+		expect( queryByText( 'Host Document' ) ).not.toBeTruthy();
+		expect( queryByText( 'Active Document' ) ).not.toBeTruthy();
 	} );
 
 	it( 'should open the recently edited menu on click', async () => {
@@ -137,15 +127,13 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 			date_modified: 123,
 		} ];
 
-		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( Promise.resolve( fetchReturnData ) );
+		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( fetchReturnData );
 
 		const { getByText, getByRole, getAllByRole } = render( <RecentlyEdited /> );
 
 		// Act.
-		await waitFor( () => {
-			const buttons = getAllByRole( 'button' );
-			buttons[ 0 ].click(); // Opens the recently edited menu
-		} );
+		const buttons = getAllByRole( 'button' );
+		buttons[ 0 ].click(); // Opens the recently edited menu
 
 		// Assert.
 		const menu = getByRole( 'menu' );

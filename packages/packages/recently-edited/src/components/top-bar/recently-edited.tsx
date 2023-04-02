@@ -11,23 +11,17 @@ import { useActiveDocument, useHostDocument } from '@elementor/documents';
 import SettingsButton from './settings-button';
 import Indicator from './indicator';
 import PostsList from './posts-list';
-import { useEffect, useState } from 'react';
-import getRecentlyEditedPosts, { Post } from '../../utils/fetch-posts';
+import useRecentPosts from '../../hooks/use-recent-posts';
 
 export default function RecentlyEdited() {
 	const activeDocument = useActiveDocument();
 	const hostDocument = useHostDocument();
+	const recentPosts = useRecentPosts();
 
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'elementor-v2-top-bar-recently-edited',
 	} );
-
-	const [ recentPosts, setRecentPosts ] = useState<Post[]>( [] );
-
-	useEffect( () => {
-		getRecentlyEditedPosts().then( ( posts ) => setRecentPosts( posts ) );
-	}, [] );
 
 	const document = activeDocument && activeDocument.type.value !== 'kit'
 		? activeDocument

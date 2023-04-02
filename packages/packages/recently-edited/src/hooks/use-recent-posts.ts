@@ -1,10 +1,13 @@
+import { useEffect, useState } from 'react';
+import { DocType } from '../types';
+
 export interface Post {
     id: number,
     title: string,
     edit_url: string,
     type: {
         post_type: string,
-        doc_type: string,
+        doc_type: DocType,
         label: string,
     },
     date_modified: number,
@@ -26,7 +29,17 @@ type ExtendedWindow = Window & {
 	}
 }
 
-export default async function getRecentlyEditedPosts() {
+export default function useRecentPosts() {
+	const [ fetchedPosts, setFetchedPosts ] = useState<Post[]>( [] );
+
+	useEffect( () => {
+		fetchRecentlyEditedPosts().then( ( posts ) => setFetchedPosts( posts ) );
+	}, [] );
+
+	return fetchedPosts;
+}
+
+async function fetchRecentlyEditedPosts() {
 	let url: URL;
 	try {
 		const baseUrl = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.urls?.rest;

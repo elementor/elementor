@@ -5,7 +5,7 @@ import {
 
 import { __ } from '@wordpress/i18n';
 import DocTypeChip, { Props } from '../top-bar/chip-doc-type';
-import { Post } from '../../utils/fetch-posts';
+import { Post } from '../../hooks/use-recent-posts';
 
 export type RecentPostsProps = {
 	recentPosts: Post[];

@@ -14,26 +14,30 @@ import {
 	ContainerTemplateIcon,
 } from '@elementor/icons';
 import { Chip } from '@elementor/ui';
+import { DocType } from '../../types';
+import * as React from 'react';
 
-const iconsDocType = {
+type DocTypes = {
+	[key in DocType]: React.ElementType;
+};
+
+const iconsDocType: DocTypes = {
 	header: HeaderTemplateIcon,
 	footer: FooterTemplateIcon,
-	single_post: PostTypeIcon,
-	single_page: PageTypeIcon,
+	'single-post': PostTypeIcon,
+	'single-page': PageTypeIcon,
 	popup: PopupTemplateIcon,
 	archive: ArchiveTemplateIcon,
-	search_results: SearchResultsTemplateIcon,
-	loop_item: LoopItemTemplateIcon,
-	error_404: Error404TemplateIcon,
-	landing_page: LandingPageTemplateIcon,
+	'search-results': SearchResultsTemplateIcon,
+	'loop-item': LoopItemTemplateIcon,
+	'error-404': Error404TemplateIcon,
+	'landing-page': LandingPageTemplateIcon,
 	page: PageTemplateIcon,
 	section: SectionTemplateIcon,
 	container: ContainerTemplateIcon,
-	wp_page: PageTypeIcon,
-	wp_post: PostTypeIcon,
-} as const;
-
-type DocType = keyof typeof iconsDocType;
+	'wp-page': PageTypeIcon,
+	'wp-post': PostTypeIcon,
+};
 
 export type Props = {
 	postType: string;
@@ -42,9 +46,7 @@ export type Props = {
 };
 export default function DocTypeChip( { postType, docType, label }: Props ) {
 	const color = 'elementor_library' === postType ? 'global' : 'primary';
-	// key cant contain '-'
-	const docTypeReplaced = docType.replace( '-', '_' ) as DocType;
-	const Icon = iconsDocType?.[ docTypeReplaced ] || PostTypeIcon;
+	const Icon = iconsDocType?.[ docType ] || PostTypeIcon;
 
 	return (
 		<Chip
