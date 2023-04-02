@@ -78,5 +78,49 @@ test.describe( 'Container tests', () => {
 			} );
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
+
+		await test.step( 'Assert boxed width content alignment', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			await page.locator( '.elementor-control-grid_columns_grid .elementor-slider-input input' ).fill( '' );
+
+			// Add flex container.
+			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+			// Assert.
+			const gridDragAreaOffsetLeft = await editor.getPreviewFrame().locator( '.e-grid .elementor-empty-view' ).evaluate( ( gridContent ) => gridContent.offsetLeft ),
+				flexDragAreaOffsetLeft = await editor.getPreviewFrame().locator( '.e-flex .elementor-empty-view' ).evaluate( ( flexContent ) => flexContent.offsetLeft );
+
+			await expect( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
+
+			// Add heading.
+			await editor.addWidget( 'heading', flexContainerId );
+			await editor.getPreviewFrame().waitForSelector( '.elementor-widget-heading' );
+
+			// Assert.
+			const headingOffsetLeft = await editor.getPreviewFrame().locator( '.elementor-widget-heading' ).evaluate( ( heading ) => heading.offsetLeft );
+			await expect( gridDragAreaOffsetLeft ).toEqual( headingOffsetLeft );
+
+			// Remove flex container.
+			await editor.removeElement( flexContainerId );
+		} );
+
+		await test.step( 'Assert mobile is in one column', async () => {
+			// Open responsive bar and select mobile view
+			await page.locator( '#elementor-panel-footer-responsive i' ).click();
+			await page.waitForSelector( '#e-responsive-bar' );
+			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+
+			const gridTemplateColumnsCssValue = await container.evaluate( ( element ) => {
+				return window.getComputedStyle( element ).getPropertyValue( 'grid-template-columns' );
+			} );
+
+			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
+
+			expect( isOneColumn ).toBeTruthy();
+		} );
 	} );
 } );
+
+function hasWhiteSpace( s ) {
+	return /\s/g.test( s );
+}
