@@ -4,6 +4,7 @@
 		"@elementor/documents": "*",
 		"@elementor/icons": "*",
 		"@elementor/top-bar": "*",
+		"@elementor/v1-adapters": "*",
 		"@elementor/ui": "*",
 		"@wordpress/i18n": "*"
 	},
