@@ -53,7 +53,7 @@ class Import {
 	private $adapters;
 
 	/**
-	 * Document's data (elements and settings) that imported during the process.
+	 * Document's data (elements and settings) that was imported during the process.
 	 *
 	 * @var array { [document_id] => { "elements": array , "settings": array } }
 	 */
