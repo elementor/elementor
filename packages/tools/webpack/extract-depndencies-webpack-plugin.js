@@ -58,13 +58,10 @@ module.exports = class ExtractDependenciesWebpackPlugin {
 				}, {} );
 			} );
 
-			compiler.hooks.emit.tap( { name: this.constructor.name }, () => {
+			compilation.hooks.afterProcessAssets.tap( { name: this.constructor.name }, () => {
 				const loaderFileContent = this.getLoaderFileContent( handlesAssetsMap );
 
-				compilation.emitAsset(
-					'loader.php',
-					new RawSource( loaderFileContent )
-				);
+				compilation.assets[ 'loader.php' ] = new RawSource( loaderFileContent );
 			} );
 		} );
 	}
