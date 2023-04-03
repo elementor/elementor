@@ -48,6 +48,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			return;
 		}
 
+		this.getCorrectContainer();
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
@@ -56,11 +57,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	shouldDrawOutline() {
 		const { grid_outline: gridOutline } = this.getElementSettings();
 
-		if ( gridOutline ) {
-			this.getCorrectContainer();
-		}
-
-		return this.elements.outlineParentContainer;
+		return gridOutline;
 	}
 
 	getCorrectContainer() {
@@ -191,14 +188,17 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	 */
 	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
 		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList();
+		let responsiveControlNames = [];
 
-		propsThatTriggerGridLayoutRender.forEach( ( prop ) => {
-			activeBreakpoints.forEach( ( breakpoint ) => {
-				propsThatTriggerGridLayoutRender.push( prop + '_' + breakpoint );
-			} );
-		} );
+		for ( const prop of propsThatTriggerGridLayoutRender ) {
+			for ( const breakpoint of activeBreakpoints ) {
+				responsiveControlNames.push( `${ prop }_${ breakpoint }` );
+			}
+		}
 
-		return propsThatTriggerGridLayoutRender;
+		responsiveControlNames.push( ...propsThatTriggerGridLayoutRender );
+
+		return responsiveControlNames;
 	}
 
 	onDeviceModeChange() {

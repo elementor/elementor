@@ -101,6 +101,7 @@ html.elementor-html {
 		&.e-con-full {
 
 			> .e-grid-outline {
+
 				@include e-grid-outline-full-width;
 			}
 		}
@@ -108,9 +109,11 @@ html.elementor-html {
 		&.e-con-boxed {
 
 			> .e-con-inner{
+
 				position: relative;
 
 				> .e-grid-outline {
+
 					@include e-grid-outline-boxed;
 				}
 			}
