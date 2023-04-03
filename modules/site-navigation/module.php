@@ -5,6 +5,7 @@ namespace Elementor\Modules\SiteNavigation;
 use Elementor\Core\Base\Module as Module_Base;
 use Elementor\Modules\SiteNavigation\Data\Controller;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -37,7 +38,7 @@ class Module extends Module_Base {
 	 * @return bool
 	 */
 	public static function is_active() {
-		if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
+		if ( Utils::is_elementor_tests() ) {
 			return true;
 		}
 
