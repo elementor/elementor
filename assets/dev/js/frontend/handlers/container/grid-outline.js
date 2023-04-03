@@ -48,6 +48,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			return;
 		}
 
+		this.getCorrectContainer();
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
@@ -56,11 +57,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	shouldDrawOutline() {
 		const { grid_outline: gridOutline } = this.getElementSettings();
 
-		if ( gridOutline ) {
-			this.getCorrectContainer();
-		}
-
-		return this.elements.outlineParentContainer;
+		return gridOutline;
 	}
 
 	getCorrectContainer() {
