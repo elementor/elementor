@@ -190,7 +190,7 @@ import environment from 'elementor-common/utils/environment';
 	onGridPresetSelected( event ) {
 		this.closeSelectPresets();
 
-		const selectedStructure = event.currentTarget.dataset.structure,
+		const selectedStructure = event.currentTarget.dataset.preset,
 			rowsAndCols = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
 
 		return ContainerHelper.createContainer(
