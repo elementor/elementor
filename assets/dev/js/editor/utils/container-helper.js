@@ -54,25 +54,6 @@ export class ContainerHelper {
 		} );
 	}
 
-	static createGridContainer( settings = {}, target, options = {} ) {
-		return $e.run( 'document/elements/create', {
-			container: target,
-			model: {
-				elType: 'container',
-				settings: {
-					container_type: ContainerHelper.CONTAINER_TYPE_GRID,
-					grid_columns_grid_mobile: {
-						unit: 'fr',
-						size: 1,
-						sizes: [],
-					},
-					...settings,
-				},
-			},
-			options,
-		} );
-	}
-
 	/**
 	 * Change Container settings.
 	 *

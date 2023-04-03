@@ -190,25 +190,23 @@ import environment from 'elementor-common/utils/environment';
 	onGridPresetSelected( event ) {
 		this.closeSelectPresets();
 
-		const selectedStructure = event.currentTarget.dataset.preset;
-		const chunks = selectedStructure.split( '-' );
-		const rows = chunks[ 0 ];
-		const columns = chunks[ 1 ];
+		const selectedStructure = event.currentTarget.dataset.structure,
+			rowsAndCols = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
 
-		return ContainerHelper.createGridContainer(
+		return ContainerHelper.createContainer(
 			{
+				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
 				grid_columns_grid: {
 					unit: 'fr',
-					size: columns,
+					size: rowsAndCols[ 1 ],
 				},
 				grid_rows_grid: {
 					unit: 'fr',
-					size: rows,
+					size: rowsAndCols[ 0 ],
 				},
 				grid_rows_grid_mobile: {
 					unit: 'fr',
-					size: rows,
-					sizes: [],
+					size: rowsAndCols[ 0 ],
 				},
 			},
 			elementor.getPreviewContainer(),

@@ -47,6 +47,11 @@ presetsFactory = {
 		return this.getPresets( parsedStructure.columnsCount, parsedStructure.presetIndex );
 	},
 
+	// Grid preset looks like 1-2 ( 1 rows, 2 columns )
+	getParsedGridStructure( selectedStructure ) {
+		return selectedStructure.split( '-' );
+	},
+
 	getParsedStructure( structure ) {
 		structure += ''; // Make sure this is a string
 
