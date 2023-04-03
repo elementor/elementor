@@ -20,6 +20,9 @@
 
 .elementor-header-button {
 	width: 40px;
+	border: 0;
+	color: currentColor;
+	background-color: transparent;
 
 	.elementor-icon {
 		cursor: pointer;
@@ -33,7 +36,8 @@
 			font-size: 18px;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-dark-color-txt-hover);
 		}
 	}
