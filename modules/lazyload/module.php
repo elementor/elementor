@@ -92,6 +92,7 @@ class Module extends BaseModule {
 		}
 
 		$active_modules = perflab_get_active_modules();
+
 		return in_array( 'images/dominant-color', $active_modules, true );
 	}
 
