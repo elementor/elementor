@@ -134,6 +134,7 @@ const externals = {
 	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
+	'@elementor/ui': '__UNSTABLE__elementorPackages.ui',
 };
 
 const plugins = [
