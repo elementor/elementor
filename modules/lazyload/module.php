@@ -74,7 +74,10 @@ class Module extends BaseModule {
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
 
 						if ( $is_dominant_color_enabled ) {
-							$control = $this->apply_dominant_color_background( $control, $value, $selector );
+							$dominant_color = $this->get_dominant_color( $value['id'] );
+							if ( $dominant_color ) {
+								$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
+							}
 						}
 					}
 				}
@@ -92,18 +95,18 @@ class Module extends BaseModule {
 		return in_array( 'images/dominant-color', $active_modules, true );
 	}
 
-	private function apply_dominant_color_background( $control, $value, $selector ) {
-		$metadata = wp_get_attachment_metadata( $value['id'] );
+	private function get_dominant_color( $attachment_id ) {
+		$metadata = wp_get_attachment_metadata( $attachment_id );
 
 		// Performance Lab adds these metadata
 		$has_transparency = $metadata['has_transparency'] ?? false;
 		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
 
 		if ( $dominant_color && ! $has_transparency ) {
-			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
+			return $dominant_color;
 		}
 
-		return $control;
+		return false;
 	}
 
 	private function is_document_support_lazyload( $post_id ) {
