@@ -158,7 +158,7 @@ function hasWhiteSpace( s ) {
 async function testPreset( frame, editor, rows, cols ) {
 	await frame.locator( '.elementor-add-section-button' ).click();
 	await frame.locator( '.grid-preset-button' ).click();
-	await frame.locator( `[data-preset="${ rows }-${ cols }"]` ).click();
+	await frame.locator( `[data-structure="${ rows }-${ cols }"]` ).click();
 
 	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
 
