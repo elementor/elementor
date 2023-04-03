@@ -309,12 +309,10 @@ class Manager extends CSS_Manager {
 			'id',
 			'post_title',
 			'post_status',
-			'post_password',
 			'template',
 			'post_excerpt',
 			'post_featured_image',
 			'menu_order',
-			'comment_status',
 		];
 	}
 
