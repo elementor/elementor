@@ -9,7 +9,7 @@ export default class extends $e.modules.ComponentBase {
 
 		elementor.addControlView( 'global-style-switcher', Switcher );
 
-		elementor.on( 'preview:loaded', () => {
+		elementor.once( 'preview:loaded', () => {
 			this.initModal();
 		} );
 	}
