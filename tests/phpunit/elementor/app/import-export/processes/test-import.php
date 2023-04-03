@@ -72,9 +72,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertTrue( $result['site-settings'] );
 
 		// Assert that site settings imported without changes.
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id, false );
-		$site_settings = $kit->get_settings();
+		$site_settings = $this->get_site_settings();
 		$expected_settings = $this->get_mock_site_settings();
 		$this->assert_array_included_in_array( $expected_settings, $site_settings );
 
@@ -767,5 +765,27 @@ class Test_Import extends Elementor_Test_Base {
 			"viewport_md" => 768,
 			"viewport_lg" => 1025,
 		];
+	}
+
+	/**
+	 * Get site settings from active kit.
+	 *
+	 * @return array
+	 */
+	private function get_site_settings(): array {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		if ( ! $kit ) {
+			return [];
+		}
+
+		$site_settings = $kit->get_settings();
+
+		if (! $site_settings) {
+			return [];
+		}
+
+		return $site_settings;
 	}
 }
