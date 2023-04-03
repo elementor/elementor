@@ -18,11 +18,9 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	getDefaultElements() {
-		const selectors = this.getSettings( 'selectors' ),
-			container = this.$element[ 0 ];
+		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			container,
 			outlineParentContainer: null,
 			gridOutline: this.findElement( selectors.gridOutline ),
 			directChildGridOverlay: this.findElement( selectors.directGridOverlay ),
@@ -60,13 +58,15 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	getContainer() {
 		const { grid_outline: gridOutline } = this.getElementSettings();
 
+		this.elements.outlineParentContainer = null;
+
 		if ( gridOutline && '' !== gridOutline ) {
 			return this.getCorrectContainer();
 		}
 	}
 
 	getCorrectContainer() {
-		const { container } = this.elements,
+		const container = this.$element[ 0 ],
 			getDefaultSettings = this.getDefaultSettings(),
 			{ selectors: { boxedContainer } } = getDefaultSettings;
 
@@ -164,7 +164,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	getComputedStyle( container, property ) {
-		return window.getComputedStyle( container, null ).getPropertyValue( property );
+		return window?.getComputedStyle( container, null ).getPropertyValue( property );
 	}
 
 	onElementChange( propertyName ) {
