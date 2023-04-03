@@ -125,68 +125,59 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 		const frame = await editor.getPreviewFrame();
 
-		await test.step( 'Assert preset: rows-0 columns-2', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="0-2"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '560px 560px' );
-			await editor.cleanContent();
+		await test.step( 'Assert preset: rows-1 columns-2', async () => {
+			await testPreset( frame, editor, 1, 2 );
 		} );
 
-		await test.step( 'Assert preset: rows-2 columns-0', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="2-0"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '0px' );
-			await editor.cleanContent();
+		await test.step( 'Assert preset: rows-2 columns-1', async () => {
+			await testPreset( frame, editor, 2, 1 );
 		} );
 
-		await test.step( 'Assert preset: rows-0 columns-3', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="0-3"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '366.656px 366.672px 366.672px' );
-			await editor.cleanContent();
+		await test.step( 'Assert preset: rows-1 columns-3', async () => {
+			await testPreset( frame, editor, 1, 3 );
 		} );
 
-		await test.step( 'Assert preset: rows-3 columns-0', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="3-0"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px 100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '0px' );
-			await editor.cleanContent();
+		await test.step( 'Assert preset: rows-3 columns-1', async () => {
+			await testPreset( frame, editor, 3, 1 );
 		} );
 
 		await test.step( 'Assert preset: rows-2 columns-2', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="2-2"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '560px 560px' );
-			await editor.cleanContent();
+			await testPreset( frame, editor, 2, 2 );
 		} );
 
 		await test.step( 'Assert preset: rows-3 columns-3', async () => {
-			await frame.locator( '.elementor-add-section-button' ).click();
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-preset="3-3"]' ).click();
-			const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
-			await expect( container ).toHaveCSS( 'grid-template-rows', '100px 100px 100px' );
-			await expect( container ).toHaveCSS( 'grid-template-columns', '366.656px 366.672px 366.672px' );
-			await editor.cleanContent();
+			await testPreset( frame, editor, 3, 3 );
 		} );
 	} );
 } );
 
 function hasWhiteSpace( s ) {
 	return /\s/g.test( s );
+}
+
+async function testPreset( frame, editor, rows, cols ) {
+	await frame.locator( '.elementor-add-section-button' ).click();
+	await frame.locator( '.grid-preset-button' ).click();
+	await frame.locator( `[data-preset="${ rows }-${ cols }"]` ).click();
+
+	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+
+	// Because the browser will parse repeat(x, xfr) as pixels.
+	// We need to get the initial value in pixels and compare it with the new value one in repeat()
+	const oldRowsAndCols = await container.evaluate( ( el ) => {
+		const computedStyle = window.getComputedStyle( el );
+		return [
+			computedStyle.getPropertyValue( 'grid-template-rows' ),
+			computedStyle.getPropertyValue( 'grid-template-columns' ),
+		];
+	} );
+
+	await container.evaluate( ( el, rowsCount, colsCount ) => {
+		el.style.setProperty( 'grid-template-rows', `repeat(${ rowsCount }, 1fr)` );
+		el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
+	}, rows, cols );
+
+	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
+	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
+	await editor.cleanContent();
 }

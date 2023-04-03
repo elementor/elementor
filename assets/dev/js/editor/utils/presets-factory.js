@@ -252,7 +252,7 @@ presetsFactory = {
 
 	generateContainerGridPreset( preset ) {
 		const presets = {
-			'0-2': `
+			'1-2': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<g opacity="0.8">
 						<rect x="0.941406" y="1" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
@@ -260,13 +260,13 @@ presetsFactory = {
 					</g>
 				</svg>
 			`,
-			'2-0': `
+			'2-1': `
 				<svg width="92" height="47" viewBox="0 0 92 47" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect x="91.2227" y="1.35059" width="44.5" height="90" transform="rotate(90 91.2227 1.35059)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
 					<path d="M91.0957 23.6006L1.34961 23.6006" stroke="#515962" stroke-dasharray="3 3"/>
 				</svg>
 			`,
-			'0-3': `
+			'1-3': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<g opacity="0.8">
 						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
@@ -275,7 +275,7 @@ presetsFactory = {
 					</g>
 				</svg>
 			`,
-			'3-0': `
+			'3-1': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<g opacity="0.8">
 						<rect x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
@@ -308,10 +308,10 @@ presetsFactory = {
 
 	getContainerGridPresets() {
 		return [
-			'0-2',
-			'2-0',
-			'0-3',
-			'3-0',
+			'1-2',
+			'2-1',
+			'1-3',
+			'3-1',
 			'2-2',
 			'3-3',
 		];
