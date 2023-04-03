@@ -34,6 +34,8 @@
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
+	--e-con-grid-template-columns: repeat(3, 1fr);
+	--e-con-grid-template-rows: repeat(2, 1fr);
 
 	position: var( --position );
 	width: var( --width );
@@ -76,7 +78,7 @@
 	}
 
 	&.e-grid {
-		--grid-justify-content: center;
+		--grid-justify-content: start;
 		--grid-align-content: start;
 		--grid-auto-flow: row;
 	}
