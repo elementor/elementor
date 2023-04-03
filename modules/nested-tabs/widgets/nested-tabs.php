@@ -524,16 +524,17 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_control(
 			'tabs_title_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-title-transition: {{SIZE}}s',
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'units_dictionary' => [
+					'px' => 's',
 				],
-				'range' => [
-					'px' => [
-						'max' => 3,
-						'step' => 0.1,
-					],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-tabs-title-transition: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

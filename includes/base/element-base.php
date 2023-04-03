@@ -1166,17 +1166,18 @@ abstract class Element_Base extends Controls_Stack {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
+						'label' => esc_html__( 'Transition Duration', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
-						'device_args' => $default_unit_values_ms,
-						'range' => [
-							'px' => [
-								'min' => 100,
-								'max' => 10000,
-							],
+						'size_units' => [ 's', 'ms', 'custom' ],
+						'units_dictionary' => [
+							'px' => 'ms',
 						],
+						'default' => [
+							'unit' => 'ms',
+						],
+						'device_args' => $default_unit_values_ms,
 						'selectors' => [
-							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}{{UNIT}}',
 						],
 					]
 				);
