@@ -23,7 +23,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		$fields['outline'] = [
-			'label' => esc_html__( 'Outline', 'elementor' ),
+			'label' => esc_html__( 'Grid Outline', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'label_on' => esc_html__( 'SHOW', 'elementor' ),
 			'label_off' => esc_html__( 'HIDE', 'elementor' ),

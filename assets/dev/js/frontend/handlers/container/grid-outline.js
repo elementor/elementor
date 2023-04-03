@@ -44,9 +44,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	initLayoutOverlay() {
-		this.getContainer();
-
-		if ( ! this.elements.outlineParentContainer ) {
+		if ( ! this.shouldDrawOutline() ) {
 			return;
 		}
 
@@ -55,14 +53,14 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		this.createOverlayItems();
 	}
 
-	getContainer() {
+	shouldDrawOutline() {
 		const { grid_outline: gridOutline } = this.getElementSettings();
 
-		this.elements.outlineParentContainer = null;
-
-		if ( gridOutline && '' !== gridOutline ) {
-			return this.getCorrectContainer();
+		if ( gridOutline ) {
+			this.getCorrectContainer();
 		}
+
+		return this.elements.outlineParentContainer;
 	}
 
 	getCorrectContainer() {
@@ -74,9 +72,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	removeExistingOverlay() {
-		const { gridOutline } = this.elements;
-
-		gridOutline?.remove();
+		this.elements.gridOutline?.remove();
 	}
 
 	createOverlayContainer() {
@@ -89,14 +85,13 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 		this.elements.gridOutline = gridOutline;
 
-		this.getGridDimensions();
 		this.setGridOutlineDimensions();
 	}
 
 	createOverlayItems() {
 		const { gridOutline } = this.elements,
 			{ classes: { outlineItem } } = this.getDefaultSettings(),
-			{ rows, columns } = this.getGridDimensions(),
+			{ rows, columns } = this.getDeviceGridDimensions(),
 			numberOfItems = rows.length * columns.length;
 
 		for ( let i = 0; i < numberOfItems; i++ ) {
@@ -112,7 +107,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	 *
 	 * @return { { columns: { value, length }, rows: { value, length } } }
 	 */
-	getGridDimensions() {
+	getDeviceGridDimensions() {
 		const currentDevice = elementor.channels.deviceMode.request( 'currentMode' );
 
 		return {
@@ -123,7 +118,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 	setGridOutlineDimensions() {
 		const { gridOutline } = this.elements,
-			{ rows, columns } = this.getGridDimensions();
+			{ rows, columns } = this.getDeviceGridDimensions();
 
 		gridOutline.style.gridTemplateColumns = columns.value;
 		gridOutline.style.gridTemplateRows = rows.value;
