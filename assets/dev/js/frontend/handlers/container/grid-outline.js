@@ -89,10 +89,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 		this.elements.gridOutline = gridOutline;
 
-		setTimeout( () => {
-			this.getGridDimensions();
-		}, 1000 );
-
+		this.getGridDimensions();
 		this.setGridOutlineDimensions();
 	}
 
@@ -144,7 +141,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	 */
 	getControlValues( control, device, property ) {
 		const elementSettings = this.getElementSettings(),
-			{ unit } = elementSettings[ control ],
+			{ unit, size } = elementSettings[ control ],
 			{ outlineParentContainer } = this.elements,
 			controlValueForCurrentDevice = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, control, 'size', device ),
 			controlValue = this.getComputedStyle( outlineParentContainer, property ),
@@ -152,7 +149,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 		let controlData;
 
-		if ( 'custom' === unit && 'string' === typeof controlValueForCurrentDevice ) {
+		if ( ( 'custom' === unit && 'string' === typeof controlValueForCurrentDevice ) || size < computedStyleLength ) {
 			controlData = { value: controlValue };
 		} else {
 			// In this case the data taken from the getComputedStyle and not from the control, in order to handle cases that the user have more elements than grid cells.
