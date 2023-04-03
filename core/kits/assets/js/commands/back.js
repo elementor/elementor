@@ -1,12 +1,24 @@
 export class Back extends $e.modules.CommandBase {
+	document = null;
 	confirmDialog = null;
+	unsavedChangesDialog = [];
 
 	apply() {
 		const panelHistory = $e.routes.getHistory( 'panel' );
 
-		// Don't go back if no where.
+		// When there's no more previous pages to navigate back to,
+		// prompt the user with a confirmation dialog asking if they would like to exit.
 		if ( 1 === panelHistory.length ) {
 			this.getCloseConfirmDialog( event ).show();
+			return;
+		}
+
+		// If the user is on the global colors/typography page, and there are unsaved changes,
+		// prompt the user with a confirmation dialog asking if they would like to save the changes.
+		if ( this.isGlobalRoute() ) {
+			this.isDocumentChanged().then( () => {
+				return $e.routes.back( 'panel' );
+			} );
 			return;
 		}
 
@@ -40,6 +52,72 @@ export class Back extends $e.modules.CommandBase {
 		} );
 
 		return this.confirmDialog;
+	}
+
+	isGlobalRoute() {
+		const panelHistory = $e.routes.getHistory( 'panel' ),
+			isGlobal = /global\/\bglobal-colors|global-typography\b/.test( panelHistory[ panelHistory.length - 1 ].route );
+
+		if ( isGlobal ) {
+			const kit = elementor.config.kit_id;
+			this.document = elementor.documents.get( kit );
+		}
+
+		return isGlobal;
+	}
+
+	isDocumentChanged() {
+		return new Promise( ( resolve ) => {
+			if ( ! this.document || ! this.document.editor.isChanged ) {
+				resolve();
+				return;
+			}
+
+			this.getUnsavedChangesDialog( resolve ).show();
+		} );
+	}
+
+	getUnsavedChangesDialog( resolve ) {
+		if ( ! this.document ) {
+			resolve();
+			return;
+		}
+
+		const document = this.document;
+
+		if ( ! this.unsavedChangesDialog[ document ] ) {
+			const modalOptions = {
+				id: `elementor-${ document }-save-changes`,
+				headerMessage: __( 'Save Changes', 'elementor' ),
+				message: __( 'Would you like to save the changes you\'ve made?', 'elementor' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: __( 'Save', 'elementor' ),
+					cancel: __( 'Discard', 'elementor' ),
+				},
+				onConfirm: () => {
+					$e.run( 'document/save/update' ).then( () => {
+						resolve();
+					} );
+				},
+				onCancel: () => {
+					$e.run( 'document/save/discard', { document } ).then( () => {
+						resolve();
+					} );
+				},
+			};
+
+			this.unsavedChangesDialog[ document ] = elementorCommon.dialogsManager.createWidget( 'confirm', modalOptions );
+		}
+
+		this.unsavedChangesDialog[ document ].setSettings( 'hide', {
+			onEscKeyPress: ! event,
+		} );
+
+		return this.unsavedChangesDialog[ document ];
 	}
 }
 
