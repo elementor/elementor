@@ -39,7 +39,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
 			if ( ! document ) {
-				return reject();
+				return reject( `Can't attach preview, there is no open document.` );
 			}
 
 			if ( ! document.config.elements ) {
@@ -54,7 +54,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 					elementor.onPreviewElNotFound();
 				}
 
-				return reject();
+				return reject( `Can't attach preview to document '${ document.id }', element '${ selector }' was not found.` );
 			}
 
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
