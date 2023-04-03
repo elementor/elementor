@@ -163,7 +163,7 @@ async function testPreset( frame, editor, rows, cols ) {
 	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
 
 	// Because the browser will parse repeat(x, xfr) as pixels.
-	// We need to get the initial value in pixels and compare it with the new value one in repeat()
+	// We need to get the initial value in pixels and compare it with the new value in repeat()
 	const oldRowsAndCols = await container.evaluate( ( el ) => {
 		const computedStyle = window.getComputedStyle( el );
 		return [
