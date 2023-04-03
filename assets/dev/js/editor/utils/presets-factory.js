@@ -49,7 +49,14 @@ presetsFactory = {
 
 	// Grid preset looks like 1-2 ( 1 rows, 2 columns )
 	getParsedGridStructure( selectedStructure ) {
-		return selectedStructure.split( '-' );
+		selectedStructure += ''; // Make sure this is a string
+
+		const chunks = selectedStructure.split( '-' );
+
+		return {
+			rows: chunks[ 0 ],
+			columns: chunks[ 1 ],
+		};
 	},
 
 	getParsedStructure( structure ) {

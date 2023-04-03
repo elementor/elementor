@@ -191,22 +191,22 @@ import environment from 'elementor-common/utils/environment';
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.preset,
-			rowsAndCols = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
+			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
 
 		return ContainerHelper.createContainer(
 			{
 				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
 				grid_columns_grid: {
 					unit: 'fr',
-					size: rowsAndCols[ 1 ],
+					size: parsedStructure.columns,
 				},
 				grid_rows_grid: {
 					unit: 'fr',
-					size: rowsAndCols[ 0 ],
+					size: parsedStructure.rows,
 				},
 				grid_rows_grid_mobile: {
 					unit: 'fr',
-					size: rowsAndCols[ 0 ],
+					size: parsedStructure.rows,
 				},
 			},
 			elementor.getPreviewContainer(),
