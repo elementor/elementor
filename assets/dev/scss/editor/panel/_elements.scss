@@ -34,7 +34,7 @@
 
 	.eicon-loading {
 		font-size: 25px;
-		color: var(--e-a-color-txt-muted);
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
@@ -94,6 +94,10 @@
 		&:hover {
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
+
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
+			}
 		}
 
 		.icon {

@@ -10,10 +10,14 @@
 	.elementor-panel-heading {
 		padding: 0 15px;
 		border: none;
+		background-color: transparent;
+
+		&:focus {
+			// background-color: var(--e-a-bg-hover);
+		}
 	}
 
 	&.elementor-active {
-		padding-bottom: 20px;
 
 		.elementor-panel-heading {
 			border: none;
@@ -21,6 +25,7 @@
 	}
 
 	&-items {
+		padding-bottom: 20px;
 
 		&-empty {
 			grid-column-start: 1;
