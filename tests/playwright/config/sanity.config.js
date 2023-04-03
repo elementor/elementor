@@ -36,7 +36,7 @@ const config = {
 		navigationTimeout: 10_000, // 10 seconds
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://elementor1.local/',
 		viewport: { width: 1920, height: 1080 },
 		video: 'on',
 		trace: 'retain-on-failure',
