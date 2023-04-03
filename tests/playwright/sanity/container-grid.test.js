@@ -201,19 +201,18 @@ test.describe( 'Container tests', () => {
 
 			// Assert.
 			await expect( gridOutlineChildren ).toHaveCount( expectedNumberOfChildren );
-
 		} );
 	} );
 
 	test( 'Test grid outline multiple controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
-			parentContainer = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
 			gridOutline = await frame.locator( '.e-grid-outline' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );

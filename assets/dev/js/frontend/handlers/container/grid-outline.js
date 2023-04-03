@@ -110,9 +110,13 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		}
 	}
 
+	/**
+	 * Get the grid dimensions for the current device.
+	 *
+	 * @return { { columns: { value, length }, rows: { value, length } } }
+	 */
 	getGridDimensions() {
-		const { outlineParentContainer } = this.elements,
-			currentDevice = elementor.channels.deviceMode.request( 'currentMode' );
+		const currentDevice = elementor.channels.deviceMode.request( 'currentMode' );
 
 		return {
 			rows: this.getControlValues( 'grid_rows_grid', currentDevice, 'grid-template-rows' ) || 1,
@@ -129,7 +133,6 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	/**
-	 * getControlValues
 	 * Set the control value for the current device.
 	 * Distinguished between grid custom values and slider controls.
 	 *

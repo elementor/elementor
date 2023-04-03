@@ -607,8 +607,8 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Change switcher control value.
 	 *
-	 * @param {string} controlId
-	 * @param {boolean} setState [true|false]
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
 	 *
 	 * @return {Promise<void>}
 	 */
