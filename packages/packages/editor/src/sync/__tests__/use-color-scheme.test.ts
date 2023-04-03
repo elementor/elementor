@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { ColorScheme, ExtendedWindow, useColorScheme } from '../theme-provider';
+import { ColorScheme, ExtendedWindow, useColorScheme } from '../use-color-scheme';
 
-describe( '@elementor/editor - Theme provider', () => {
+describe( '@elementor/editor - useColorScheme', () => {
 	it( 'should use the "auto" color scheme by default', () => {
 		// Act.
 		const { result } = renderHook( () => useColorScheme() );
@@ -81,12 +81,6 @@ describe( '@elementor/editor - Theme provider', () => {
 
 function mockV1ColorScheme( colorScheme: ColorScheme ) {
 	( window as unknown as ExtendedWindow ).elementor = {
-		settings: {
-			editorPreferences: {
-				model: {
-					get: () => colorScheme,
-				},
-			},
-		},
+		getPreferences: () => colorScheme,
 	};
 }
