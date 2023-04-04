@@ -17,7 +17,7 @@ export interface Post {
 
 export default function useRecentPosts( documentId?: number ) {
 	const [ recentPosts, setRecentPosts ] = useState<Post[]>( [] );
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isLoading ] = useState( false );
 
 	useEffect( () => {
 		if ( documentId ) {
