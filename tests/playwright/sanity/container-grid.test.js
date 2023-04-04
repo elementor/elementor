@@ -142,7 +142,7 @@ test.describe( 'Container tests', () => {
 			await expect( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 		} );
 
-		await test.step( 'Assert outline shut down', async () => {
+		await test.step( 'Assert turn off the grid outline control', async () => {
 			await editor.setSwitcherControlValue( 'grid_outline', false );
 			await expect( gridOutline ).not.toBeVisible();
 		} );
@@ -152,7 +152,7 @@ test.describe( 'Container tests', () => {
 			await expect( gridOutline ).toBeVisible();
 		} );
 
-		await test.step( 'Assert number of child elements when there are less Items than grid cells', async () => {
+		await test.step( 'Assert number of child elements when there are less items than grid cells', async () => {
 			// Arrange.
 			gridOutlineChildrenInitialValue = 12;
 
@@ -164,7 +164,7 @@ test.describe( 'Container tests', () => {
 			await expect( gridOutlineChildren ).toHaveCount( gridOutlineChildrenInitialValue );
 		} );
 
-		await test.step( 'Assert outline match responsive grid', async () => {
+		await test.step( 'Assert outline matches responsive grid', async () => {
 			gridOutlineChildrenInitialValue = 4;
 
 			// Open responsive bar and select mobile view
@@ -183,7 +183,7 @@ test.describe( 'Container tests', () => {
 			await editor.changeResponsiveView( 'desktop' );
 		} );
 
-		await test.step( 'Assert number of child elements when there are more Items than grid cells', async () => {
+		await test.step( 'Assert number of child elements when there are more items than grid cells', async () => {
 			// Arrange
 			const newParentContainer = await editor.addElement( { elType: 'container' }, 'document' ),
 				numberOfWidgets = 5,
@@ -217,7 +217,7 @@ test.describe( 'Container tests', () => {
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
 
-		await test.step( 'Check that Gaps control effects the grid outline ', async () => {
+		await test.step( 'Check that gap control effects the grid outline ', async () => {
 			const desiredGapValue = '30px 30px';
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap >> nth=0' ).locator( 'input' ).fill( '30' );
 
@@ -225,14 +225,14 @@ test.describe( 'Container tests', () => {
 		} );
 
 		await test.step( 'Check that Custom control is set to grid outline', async () => {
-			const desiresCustomValue = '50px 150px 100px 100px',
+			const desiredCustomValue = '50px 150px 100px 100px',
 				gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' );
 
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 			await gridColumnsControl.locator( '.elementor-slider-input input' ).fill( '50px 150px repeat(2, 100px)' );
 
-			await expect( gridOutline ).toHaveCSS( 'grid-template-columns', desiresCustomValue );
+			await expect( gridOutline ).toHaveCSS( 'grid-template-columns', desiredCustomValue );
 		} );
 	} );
 } );

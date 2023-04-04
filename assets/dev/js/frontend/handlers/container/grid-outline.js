@@ -123,7 +123,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 	/**
 	 * Set the control value for the current device.
-	 * Distinguished between grid custom values and slider controls.
+	 * Distinguish between grid custom values and slider controls.
 	 *
 	 * @param {string} control - The control name.
 	 * @param {string} device - The device mode.
@@ -144,7 +144,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 		if ( ( 'custom' === unit && 'string' === typeof controlValueForCurrentDevice ) || size < computedStyleLength ) {
 			controlData = { value: controlValue };
 		} else {
-			// In this case the data taken from the getComputedStyle and not from the control, in order to handle cases that the user have more elements than grid cells.
+			// In this case the data is taken from the getComputedStyle and not from the control, in order to handle cases when the user has more elements than grid cells.
 			controlData = { value: `repeat(${ computedStyleLength }, 1fr)` };
 		}
 		controlData = { ...controlData, length: computedStyleLength };
@@ -170,7 +170,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			'padding',
 		];
 
-		// Add responsive control names to the list of controls that trigger re rendering.
+		// Add responsive control names to the list of controls that trigger re-rendering.
 		propsThatTriggerGridLayoutRender = this.getResponsiveControlNames( propsThatTriggerGridLayoutRender );
 
 		if ( propsThatTriggerGridLayoutRender.includes( propertyName ) ) {
@@ -180,7 +180,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 
 	/**
 	 * GetResponsiveControlNames
-	 * Add responsive control names to the list of controls that trigger re rendering.
+	 * Add responsive control names to the list of controls that trigger re-rendering.
 	 *
 	 * @param {Array} propsThatTriggerGridLayoutRender - array of control names.
 	 *
