@@ -16,15 +16,19 @@ export interface Post {
 }
 
 export default function useRecentPosts( documentId?: number ) {
-	const [ fetchedPosts, setFetchedPosts ] = useState<Post[]>( [] );
+	const [ recentPosts, setRecentPosts ] = useState<Post[]>( [] );
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	useEffect( () => {
 		if ( documentId ) {
-			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => setFetchedPosts( posts ) );
+			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => setRecentPosts( posts ) );
 		}
 	}, [ documentId ] );
 
-	return fetchedPosts;
+	return {
+		isLoading,
+		recentPosts,
+	};
 }
 
 async function fetchRecentlyEditedPosts( documentId: number ) {
@@ -36,5 +40,5 @@ async function fetchRecentlyEditedPosts( documentId: number ) {
 	return await apiFetch( {
 		path: addQueryArgs( '/elementor/v1/site-navigation/recent-posts', queryParams ),
 	} ).then( ( response ) => response as Post[] )
-		.catch( ( ) => [] );
+		.catch( () => [] );
 }
