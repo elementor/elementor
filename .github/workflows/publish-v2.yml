@@ -99,6 +99,24 @@ jobs:
       - name: Generate Changelog Content For Slack
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses: ./.github/workflows/generate-slack-changelog
+      - name: Merge to master
+        if: env.CHANNEL == 'ga' # Only for GA releases
+        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
+        with:
+          type: now
+          from_branch: ${{ github.ref }}
+          target_branch: master
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Remove git tag
+        uses: dev-drprasad/delete-tag-and-release@085c6969f18bad0de1b9f3fe6692a3cd01f64fe5 # v0.2.0
+        with:
+          tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Remove Git RC Origin Backup Branch
+        uses: ./.github/workflows/remove-git-branch
+        with:
+          BRANCH_NAME: ${{ env.PACKAGE_VERSION }}-${{ env.CHANNEL }}-rc-backup
       - name: Post To Slack Created Release
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
@@ -148,17 +166,3 @@ jobs:
                       }
                     ]
                   }
-      - name: Merge to master
-        if: env.CHANNEL == 'ga' # Only for GA releases
-        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
-        with:
-          type: now
-          from_branch: ${{ github.ref }}
-          target_branch: master
-          github_token: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Remove git tag
-        uses: dev-drprasad/delete-tag-and-release@085c6969f18bad0de1b9f3fe6692a3cd01f64fe5 # v0.2.0
-        with:
-          tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
