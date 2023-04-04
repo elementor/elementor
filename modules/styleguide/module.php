@@ -72,8 +72,8 @@ class Module extends Base_Module {
 	 */
 	public function enqueue_main_scripts() {
 		wp_enqueue_script(
-			$this::ASSETS_HANDLE,
-			$this->get_js_assets_url( $this::ASSETS_SRC ),
+			static::ASSETS_HANDLE,
+			$this->get_js_assets_url( static::ASSETS_SRC ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -81,7 +81,7 @@ class Module extends Base_Module {
 
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-		wp_localize_script( $this::ASSETS_HANDLE, 'elementorStyleguideConfig', [
+		wp_localize_script( static::ASSETS_HANDLE, 'elementorStyleguideConfig', [
 			'activeKitId' => $kit_id,
 		] );
 	}
@@ -93,12 +93,12 @@ class Module extends Base_Module {
 		];
 
 		if ( ! $is_preview ) {
-			$dependencies[] = $this::ASSETS_HANDLE;
+			$dependencies[] = static::ASSETS_HANDLE;
 		}
 
 		wp_enqueue_script(
-			$this::ASSETS_HANDLE . '-app-initiator',
-			$this->get_js_assets_url( $this::ASSETS_SRC . '-app-initiator' ),
+			static::ASSETS_HANDLE . '-app-initiator',
+			$this->get_js_assets_url( static::ASSETS_SRC . '-app-initiator' ),
 			$dependencies,
 			ELEMENTOR_VERSION,
 			true
@@ -107,8 +107,8 @@ class Module extends Base_Module {
 
 	public function enqueue_styles() {
 		wp_enqueue_style(
-			$this::ASSETS_HANDLE,
-			$this->get_css_assets_url( 'modules/' . $this::ASSETS_SRC . '/' . $this::ASSETS_SRC ),
+			static::ASSETS_HANDLE,
+			$this->get_css_assets_url( 'modules/' . static::ASSETS_SRC . '/' . static::ASSETS_SRC ),
 			[],
 			ELEMENTOR_VERSION
 		);
