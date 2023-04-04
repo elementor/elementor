@@ -1,72 +1,41 @@
 import { useEffect, useState } from 'react';
 import { DocType } from '../types';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
+import { Document } from '@elementor/documents';
 
 export interface Post {
-    id: number,
-    title: string,
-    edit_url: string,
-    type: {
-        post_type: string,
-        doc_type: DocType,
-        label: string,
-    },
-    date_modified: number,
-}
-
-type ExtendedWindow = Window & {
-	elementorWebCliConfig: {
-		nonce: string,
-		urls: {
-			rest: string,
-		}
+	id: number,
+	title: string,
+	edit_url: string,
+	type: {
+		post_type: string,
+		doc_type: DocType,
+		label: string,
 	},
-	elementor: {
-		config: {
-			initial_document: {
-				id: number
-			}
-		}
-	}
+	date_modified: number,
 }
 
-export default function useRecentPosts() {
+export default function useRecentPosts( document: unknown ) {
 	const [ fetchedPosts, setFetchedPosts ] = useState<Post[]>( [] );
 
 	useEffect( () => {
-		fetchRecentlyEditedPosts().then( ( posts ) => setFetchedPosts( posts ) );
-	}, [] );
+		if ( document ) {
+			fetchRecentlyEditedPosts( document as Document ).then( ( posts ) => setFetchedPosts( posts ) );
+		}
+	}, [ document ] );
 
 	return fetchedPosts;
 }
 
-async function fetchRecentlyEditedPosts() {
-	let url: URL;
-	try {
-		const baseUrl = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.urls?.rest;
-		url = new URL( baseUrl + 'elementor/v1/site-navigation/recent-posts' );
-	} catch ( e ) {
-		return [];
-	}
-
-	const currentDocId = ( window as unknown as ExtendedWindow ).elementor?.config?.initial_document?.id;
-
-	if ( ! currentDocId ) {
-		return [];
-	}
-	const fetchArgs = {
+async function fetchRecentlyEditedPosts( document: Document ) {
+	const queryParams = {
 		posts_per_page: 5,
-		post__not_in: currentDocId,
+		post__not_in: document.id,
 	};
-	Object.entries( fetchArgs ).forEach( ( [ key, value ] ) => url.searchParams.set( key, String( value ) ) );
 
-	const nonce = ( window as unknown as ExtendedWindow ).elementorWebCliConfig?.nonce;
-	return await fetch( url.toString(), {
-		credentials: 'same-origin',
-		headers: {
-			'X-WP-Nonce': nonce,
-		},
-	} )
-		.then( ( response ) => response.json() )
-		.then( ( response ) => response as Post[] )
+	return await apiFetch( {
+		path: addQueryArgs( '/elementor/v1/site-navigation/recent-posts', queryParams ),
+	} ).then( ( response ) => response as Post[] )
 		.catch( ( ) => [] );
 }

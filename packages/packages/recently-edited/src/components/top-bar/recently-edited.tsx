@@ -16,16 +16,16 @@ import useRecentPosts from '../../hooks/use-recent-posts';
 export default function RecentlyEdited() {
 	const activeDocument = useActiveDocument();
 	const hostDocument = useHostDocument();
-	const recentPosts = useRecentPosts();
+	const document = activeDocument && activeDocument.type.value !== 'kit'
+		? activeDocument
+		: hostDocument;
+
+	const recentPosts = useRecentPosts( document );
 
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'elementor-v2-top-bar-recently-edited',
 	} );
-
-	const document = activeDocument && activeDocument.type.value !== 'kit'
-		? activeDocument
-		: hostDocument;
 
 	if ( ! document ) {
 		return null;
