@@ -333,7 +333,7 @@ class Container extends Element_Base {
 	protected function get_container_type_control_options( $is_container_grid_active ) {
 		if ( $is_container_grid_active ) {
 			return [
-				'label' => esc_html__( 'Container Type', 'elementor' ),
+				'label' => esc_html__( 'Container Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'flex',
 				'options' => [
@@ -349,7 +349,7 @@ class Container extends Element_Base {
 
 		// TODO: This can be removed when the 'Container Grid Experiment' is merged.
 		return [
-			'label' => esc_html__( 'Container Type', 'elementor' ),
+			'label' => esc_html__( 'Container Layout', 'elementor' ),
 			'type' => Controls_Manager::HIDDEN,
 			'render_type' => 'none',
 			'prefix_class' => 'e-',
@@ -974,6 +974,24 @@ class Container extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
+				'selector' => '{{WRAPPER}}',
+				'fields_options' => [
+					'width' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+						],
+					],
+					'color' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-color: {{VALUE}}; --border-color: {{VALUE}};',
+						],
+					],
+					'border' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-style: {{VALUE}}; --border-style: {{VALUE}};',
+						],
+					],
+				],
 			]
 		);
 
@@ -984,7 +1002,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1013,6 +1031,18 @@ class Container extends Element_Base {
 			[
 				'name' => 'border_hover',
 				'selector' => '{{WRAPPER}}:hover',
+				'fields_options' => [
+					'width' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+						],
+					],
+					'color' => [
+						'selectors' => [
+							'{{SELECTOR}}' => 'border-color: {{VALUE}}; --border-color: {{VALUE}};',
+						],
+					],
+				],
 			]
 		);
 
@@ -1023,7 +1053,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

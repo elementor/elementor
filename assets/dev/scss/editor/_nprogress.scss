@@ -8,7 +8,7 @@
 }
 
 #nprogress .bar {
-	background: $editor-success;
+	background: $e-primary-bold;
 	position: fixed;
 	z-index: 1031;
 	top: 0;
@@ -24,7 +24,7 @@
 	right: 0;
 	width: 100px;
 	height: 100%;
-	box-shadow: 0 0 10px $editor-success, 0 0 5px $editor-success;
+	box-shadow: 0 0 10px $e-primary-bold, 0 0 5px$e-primary-bold;
 	opacity: 1.0;
 	transform: rotate(3deg) translate(0px, -4px);
 }
@@ -43,8 +43,8 @@
 	height: 18px;
 	box-sizing: border-box;
 	border: solid 2px transparent;
-	border-top-color: $editor-success;
-	border-left-color: $editor-success;
+	border-top-color: $e-primary-bold;
+	border-left-color: $e-primary-bold;
 	border-radius: 50%;
 	animation: nprogress-spinner 400ms linear infinite;
 }

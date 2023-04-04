@@ -2,12 +2,15 @@ $e-app-export-kit-content-title-color: tints(700);
 $e-app-export-kit-content-title-dark-color: dark-tints(100);
 $e-app-export-kit-content-description-color: tints(600);
 $e-app-export-kit-content-description-dark-color: dark-tints(200);
+$e-app-export-kit-content-sm-notice-color: theme-colors(text-muted);
+$e-app-export-kit-content-sm-notice-dark-color: dark-theme-colors(text-muted);
 
 $root: e-app-export-kit-content;
 
 .#{$root} {
 	--e-app-export-kit-content-title-color: #{$e-app-export-kit-content-title-color};
 	--e-app-export-kit-content-description-color: #{$e-app-export-kit-content-description-color};
+	--e-app-export-kit-content-sm-notice-color: #{$e-app-export-kit-content-sm-notice-color};
 
 	&__checkbox {
 		flex-shrink: 0;
@@ -29,7 +32,7 @@ $root: e-app-export-kit-content;
 
   	&__small-notice {
 	  font-style: italic;
-	  color: var(--e-app-export-kit-content-description-color);
+	  color: var(--e-app-export-kit-content-sm-notice-color);
 	}
 }
 
@@ -37,5 +40,6 @@ $root: e-app-export-kit-content;
 	.#{$root} {
 		--e-app-export-kit-content-title-color: #{$e-app-export-kit-content-title-dark-color};
 		--e-app-export-kit-content-description-color: #{$e-app-export-kit-content-description-dark-color};
+		--e-app-export-kit-content-sm-notice-color: #{$e-app-export-kit-content-sm-notice-dark-color};
 	}
 }

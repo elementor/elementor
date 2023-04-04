@@ -52,13 +52,12 @@
 		font-size: 15px;
 
 		i {
-			color: var(--e-a-color-brand);
+			color: var(--e-a-color-accent);
 			font-size: 30px;
 		}
 
 		a {
 			@include padding-start(10px);
-			text-decoration: none;
 			font-weight: 500;
 		}
 	}
@@ -151,7 +150,6 @@
 			margin-top: 24px;
 			box-sizing: border-box;
 			text-align: center;
-			text-transform: none;
 		}
 	}
 }

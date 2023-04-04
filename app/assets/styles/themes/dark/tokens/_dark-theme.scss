@@ -25,13 +25,18 @@ $eps-dark-theme-text-muted: $eps-dark-gray-400;
 $eps-dark-theme-disabled: $eps-dark-gray-500;
 $eps-dark-theme-light: $color-white;
 $eps-dark-theme-dark: $color-black;
-$eps-dark-theme-info: $color-science-blue;
 $eps-dark-theme-accent: $color-neon-blue;
-$eps-dark-theme-danger: $color-red-tomato-frog;
-$eps-dark-theme-cta: $e-brand;
-$eps-dark-theme-brand: $e-brand;
-$eps-dark-theme-warning: $color-yellow-hot-sun;
+$eps-dark-theme-cta: $e-accent;
+$eps-dark-theme-brand: $e-accent;
 $eps-dark-theme-success: $color-green-spandex;
+$eps-dark-theme-success-bg: $e-success-dark-bg;
+$eps-dark-theme-info: $color-science-blue;
+$eps-dark-theme-info-bg: $e-info-dark-bg;
+$eps-dark-theme-warning: $color-yellow-hot-sun;
+$eps-dark-theme-warning-bg: $e-warning-dark-bg;
+$eps-dark-theme-danger: $color-red-tomato-frog;
+$eps-dark-theme-danger-bg: $e-danger-dark-bg;
+
 // - use context
 $eps-dark-theme-body-color: $eps-dark-gray-200;
 $eps-dark-theme-body-bg: $eps-dark-gray-800;

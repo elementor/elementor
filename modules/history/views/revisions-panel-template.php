@@ -6,18 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <script type="text/template" id="tmpl-elementor-panel-revisions">
 	<div class="elementor-panel-box">
-	<div class="elementor-panel-scheme-buttons">
-			<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
-				<button class="elementor-button e-btn-txt" disabled>
-					<i class="eicon-close" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Discard', 'elementor' ); ?>
-				</button>
-			</div>
-			<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-				<button class="elementor-button" disabled>
-					<?php echo esc_html__( 'Apply', 'elementor' ); ?>
-				</button>
-			</div>
+		<div class="elementor-panel-revisions-buttons">
+			<button class="elementor-button e-btn-txt e-revision-discard" disabled>
+				<?php echo esc_html__( 'Discard', 'elementor' ); ?>
+			</button>
+			<button class="elementor-button e-revision-save" disabled>
+				<?php echo esc_html__( 'Apply', 'elementor' ); ?>
+			</button>
 		</div>
 	</div>
 
@@ -40,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	#>
 	<img class="elementor-nerd-box-icon" src="<?php
 	// PHPCS - Safe Elementor SVG
-	echo ELEMENTOR_ASSETS_URL . 'images/information.svg' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
+	echo ELEMENTOR_ASSETS_URL . 'images/information.svg' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" />
 	<div class="elementor-nerd-box-title"><?php echo esc_html__( 'No Revisions Saved Yet', 'elementor' ); ?></div>
 	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_1 : revisions_disabled_1 }}}</div>
 	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_2 : revisions_disabled_2 }}}</div>

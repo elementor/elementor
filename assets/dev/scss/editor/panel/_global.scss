@@ -61,8 +61,8 @@
 .elementor-controls-popover {
 	display: none;
 	position: absolute;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 	left: 0;
 	right: 0;
 	margin: -4px auto 5px;

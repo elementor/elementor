@@ -9,12 +9,15 @@ export default class ColorPicker extends elementorModules.Module {
 		return {
 			picker: {
 				theme: 'monolith',
-				position: 'bottom-' + ( elementorCommon.config.isRTL ? 'end' : 'start' ),
+				position: 'bottom-middle',
 				components: {
 					opacity: true,
 					hue: true,
 					interaction: {
 						input: true,
+						hex: true,
+						rgba: true,
+						hsla: true,
 					},
 				},
 			},
@@ -178,6 +181,12 @@ export default class ColorPicker extends elementorModules.Module {
 
 			this.picker._recalc = true;
 		}, 100 );
+
+		const onShow = this.getSettings( 'onShow' );
+
+		if ( onShow ) {
+			onShow();
+		}
 	}
 
 	onAddButtonClick() {

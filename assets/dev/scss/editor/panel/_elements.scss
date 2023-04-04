@@ -8,7 +8,6 @@
 		text-align: center;
 		padding: 10px 0;
 		font-size: 11px;
-		text-transform: uppercase;
 		cursor: pointer;
 	}
 }
@@ -35,7 +34,7 @@
 
 	.eicon-loading {
 		font-size: 25px;
-		color: var(--e-a-color-txt-muted);
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
@@ -95,6 +94,10 @@
 		&:hover {
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
+
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
+			}
 		}
 
 		.icon {
@@ -133,8 +136,8 @@
 	width: 300px;
 	z-index: 1;
 	background-color: var(--e-a-bg-default);
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 
 	&:after {
 		content: '';
@@ -143,7 +146,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-a-color-white));
+		@include border-end-property(color, var(--e-a-bg-default));
 	}
 
 	&__title {
@@ -162,7 +165,7 @@
 				flex-grow: 1;
 				@include margin-start(10px);
 				font-size: 14px;
-				color: var(--e-a-color-brand);
+				color: var(--e-a-color-accent);
 			}
 
 			.eicon-close {
@@ -186,6 +189,70 @@
 		&-button {
 			padding: 7px 25px;
 			font-size: 12px;
+		}
+	}
+}
+
+.dialog-tooltip-widget {
+	position: absolute;
+	width: 300px;
+	z-index: 1;
+	background-color: $editor-background;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 15px;
+		@include end(100%);
+		transform: scaleY(0.7);
+		border: 10px solid transparent;
+		@include border-end-property(color, $editor-background);
+	}
+
+	&__title {
+		font-size: 14px;
+	}
+
+	.dialog-tooltip {
+		&-header {
+			display: flex;
+			padding: 20px 20px 0;
+			color: $editor-darkest;
+			border-bottom: 1px solid $editor-background;
+			font-weight: 500;
+
+			.eicon-pro-icon {
+				flex-grow: 1;
+				@include margin-start(10px);
+				font-size: 14px;
+				color: $editor-accent;
+			}
+
+			.eicon-close {
+				cursor: pointer;
+				margin-inline-start: auto;
+				color: $editor-light;
+			}
+		}
+
+		&-message {
+			padding: 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 20px 20px;
+			text-align: end;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 12px;
+
+			&::-moz-focus-inner {
+			border: 0;
+			}
 		}
 	}
 }
