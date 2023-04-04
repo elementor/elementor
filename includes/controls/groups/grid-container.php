@@ -22,6 +22,15 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'separator' => 'before',
 		];
 
+		$fields['outline'] = [
+			'label' => esc_html__( 'Grid Outline', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'label_on' => esc_html__( 'SHOW', 'elementor' ),
+			'label_off' => esc_html__( 'HIDE', 'elementor' ),
+			'default' => 'yes',
+			'frontend_available' => true,
+		];
+
 		$fields['columns_grid'] = [
 			'label' => esc_html__( 'Columns', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
@@ -48,6 +57,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--e-con-grid-template-columns: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
+			'frontend_available' => true,
 		];
 
 		$fields['rows_grid'] = [
@@ -68,11 +78,11 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'unit' => 'fr',
 				'size' => 2,
 			],
-			'separator' => 'after',
 			'selectors' => [
 				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
 			],
 			'responsive' => true,
+			'frontend_available' => true,
 		];
 
 		$fields['gaps'] = [
@@ -82,7 +92,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'separator' => 'after',
+			'separator' => 'before',
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
@@ -97,7 +107,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'column' => esc_html__( 'Column', 'elementor' ),
 			],
 			'default' => 'row',
-			'separator' => 'after',
+			'separator' => 'before',
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
