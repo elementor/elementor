@@ -15,6 +15,7 @@ export const SettingsProvider = ( props ) => {
 	const [ settings, _setSettings ] = useState( new Map() );
 	const settingsRef = useRef( settings );
 
+	// TODO: Use `useDebouncedCallback` instead of `useCallback`.
 	const setSettings = ( newSettings ) => {
 		settingsRef.current = newSettings;
 		_setSettings( newSettings );
