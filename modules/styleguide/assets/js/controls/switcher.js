@@ -27,6 +27,8 @@ export default class extends Switcher {
 		if ( this.model.get( 'on_change_command' ) ) {
 			this.runCommand( value );
 		}
+
+		this.model.set( 'return_value', null );
 	}
 
 	runCommand( value ) {
