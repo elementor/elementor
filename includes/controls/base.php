@@ -140,4 +140,17 @@ abstract class Base_Control extends Base_Object {
 	public static function get_assets( $setting ) {
 		return [];
 	}
+
+	/**
+	 * Update value of control that needs to be updated after import.
+	 *
+	 * @param mixed $value
+	 * @param array $control_args
+	 * @param array $config
+	 *
+	 * @return mixed
+	 */
+	public function on_import_update_settings( $value, array $control_args, array $config ) {
+		return $value;
+	}
 }
