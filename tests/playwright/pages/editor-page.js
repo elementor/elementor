@@ -603,4 +603,22 @@ module.exports = class EditorPage extends BasePage {
 	async setSelectControlValue( controlId, value ) {
 		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
 	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
+	}
 };
