@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { DocType } from '../types';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import { Document } from '@elementor/documents';
 
 export interface Post {
 	id: number,
