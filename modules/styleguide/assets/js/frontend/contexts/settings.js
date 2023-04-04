@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, useRef } from 'react';
 import useDebouncedCallback from '../hooks/use-debounced-callback';
 
 const SettingsContext = createContext( null );
@@ -47,7 +47,7 @@ export const SettingsProvider = ( props ) => {
 		setSettings( map );
 	};
 
-	const onCommandEvent = ( event ) => {
+	const onCommandEvent = useCallback( ( event ) => {
 		switch ( event.detail.command ) {
 			case 'document/elements/settings':
 				onSettingsChange( event.detail.args );
@@ -61,7 +61,7 @@ export const SettingsProvider = ( props ) => {
 			default:
 				break;
 		}
-	};
+	}, [] );
 
 	/**
 	 * Triggered when a color or font is changed.
