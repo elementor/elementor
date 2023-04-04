@@ -1,13 +1,13 @@
 import * as commands from './commands';
 import Switcher from './controls/switcher';
 
-require( './lib/dialog' );
-
 export default class extends $e.modules.ComponentBase {
 	constructor( args ) {
 		super( args );
 
 		elementor.addControlView( 'global-style-switcher', Switcher );
+
+		this.registerStyleguideDialogType();
 
 		elementor.once( 'preview:loaded', () => {
 			this.initModal();
@@ -20,6 +20,21 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	registerStyleguideDialogType() {
+		DialogsManager.addWidgetType( 'styleguide', DialogsManager.getWidgetType( 'lightbox' ).extend( 'alert', {
+			buildWidget() {
+				DialogsManager.getWidgetType( 'lightbox' ).prototype.buildWidget.apply( this, arguments );
+
+				var $widgetContent = this.addElement( 'widgetContent' ),
+					elements = this.getElements();
+
+				$widgetContent.append( elements.message );
+
+				elements.widget.html( $widgetContent );
+			},
+		} ) );
 	}
 
 	initModal() {
