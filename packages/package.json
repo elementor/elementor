@@ -42,8 +42,6 @@
   },
   "dependencies": {
     "@elementor/ui": "^1.4.47",
-    "@wordpress/api-fetch": "^6.27.0",
-    "@wordpress/i18n": "^4.24.0",
-    "@wordpress/url": "^3.31.0"
+    "@wordpress/i18n": "^4.24.0"
   }
 }

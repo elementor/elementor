@@ -6,7 +6,9 @@
 		"@elementor/top-bar": "*",
 		"@elementor/v1-adapters": "*",
 		"@elementor/ui": "*",
-		"@wordpress/i18n": "*"
+		"@wordpress/i18n": "*",
+		"@wordpress/api-fetch": "*",
+		"@wordpress/url": "*"
 	},
 	"peerDependencies": {
 		"react": "17.x"
