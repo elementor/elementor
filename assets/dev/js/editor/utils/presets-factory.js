@@ -47,6 +47,18 @@ presetsFactory = {
 		return this.getPresets( parsedStructure.columnsCount, parsedStructure.presetIndex );
 	},
 
+	// Grid preset looks like 1-2 ( 1 rows, 2 columns )
+	getParsedGridStructure( selectedStructure ) {
+		selectedStructure += ''; // Make sure this is a string
+
+		const chunks = selectedStructure.split( '-' );
+
+		return {
+			rows: chunks[ 0 ],
+			columns: chunks[ 1 ],
+		};
+	},
+
 	getParsedStructure( structure ) {
 		structure += ''; // Make sure this is a string
 
@@ -252,22 +264,7 @@ presetsFactory = {
 
 	generateContainerGridPreset( preset ) {
 		const presets = {
-			'r2-c0': `
-				<svg width="92" height="47" viewBox="0 0 92 47" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="91.2227" y="1.35059" width="44.5" height="90" transform="rotate(90 91.2227 1.35059)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
-					<path d="M91.0957 23.6006L1.34961 23.6006" stroke="#515962" stroke-dasharray="3 3"/>
-				</svg>
-			`,
-			'r0-c2': `
-				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<g opacity="0.8">
-						<rect x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
-						<path d="M90.6155 15.5654L1.26713 15.5654" stroke="#515962" stroke-dasharray="3 3"/>
-						<path d="M90.6155 30.1875L1.26713 30.1875" stroke="#515962" stroke-dasharray="3 3"/>
-					</g>
-				</svg>
-			`,
-			'r3-c0': `
+			'1-2': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<g opacity="0.8">
 						<rect x="0.941406" y="1" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
@@ -275,16 +272,13 @@ presetsFactory = {
 					</g>
 				</svg>
 			`,
-			'r0-c3': `
-				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<g opacity="0.8">
-						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
-						<path d="M45.9419 1.19727V45.4443" stroke="#515962" stroke-dasharray="3 3"/>
-						<path d="M90.9419 23.3213L0.941896 23.3213" stroke="#515962" stroke-dasharray="3 3"/>
-					</g>
+			'2-1': `
+				<svg width="92" height="47" viewBox="0 0 92 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="91.2227" y="1.35059" width="44.5" height="90" transform="rotate(90 91.2227 1.35059)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+					<path d="M91.0957 23.6006L1.34961 23.6006" stroke="#515962" stroke-dasharray="3 3"/>
 				</svg>
 			`,
-			'r2-c2': `
+			'1-3': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<g opacity="0.8">
 						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
@@ -293,7 +287,25 @@ presetsFactory = {
 					</g>
 				</svg>
 			`,
-			'r3-c3': `
+			'3-1': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.6155 15.5654L1.26713 15.5654" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.6155 30.1875L1.26713 30.1875" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'2-2': `
+				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g opacity="0.8">
+						<rect x="0.941895" y="0.944336" width="90" height="44.5" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M45.9419 1.19727V45.4443" stroke="#515962" stroke-dasharray="3 3"/>
+						<path d="M90.9419 23.3213L0.941896 23.3213" stroke="#515962" stroke-dasharray="3 3"/>
+					</g>
+				</svg>
+			`,
+			'3-3': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect opacity="0.8" x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
 					<path d="M0.941895 22.3711L90.9419 22.3711" stroke="#515962" stroke-dasharray="3 3"/>
@@ -308,12 +320,12 @@ presetsFactory = {
 
 	getContainerGridPresets() {
 		return [
-			'r2-c0',
-			'r0-c2',
-			'r3-c0',
-			'r0-c3',
-			'r2-c2',
-			'r3-c3',
+			'1-2',
+			'2-1',
+			'1-3',
+			'3-1',
+			'2-2',
+			'3-3',
 		];
 	},
 };
