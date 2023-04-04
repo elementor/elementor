@@ -19,7 +19,7 @@
         "test:playwright:default": "npx cross-env TEST_SUITE=@default playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:reverse-columns": "npx cross-env TEST_SUITE=@reverse-columns playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:nested-tabs": "npx cross-env TEST_SUITE=@nested-tabs playwright test \"--config=tests/playwright/config/sanity.config.js\"",
-        "test:playwright:containerGrid": "npx cross-env TEST_SUITE=@ncontainerGrid playwright test \"--config=tests/playwright/config/sanity.config.js\"",
+        "test:playwright:container-grid": "npx cross-env TEST_SUITE=@container-grid playwright test \"--config=tests/playwright/config/sanity.config.js\"",
         "test:playwright:local": "playwright test \"--config=tests/playwright/config/local.config.js\"",
         "test:playwright:debug": "npm run test:playwright -- --debug",
         "test:playwright:elements-regression": "playwright test \"--config=tests/elements-regression/playwright.config.js\"",
