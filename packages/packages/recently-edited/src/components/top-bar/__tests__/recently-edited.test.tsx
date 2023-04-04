@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
-import getRecentlyEditedPosts, { Post } from '../../../hooks/use-recent-posts';
+import useRecentPosts, { Post } from '../../../hooks/use-recent-posts';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
@@ -12,7 +12,7 @@ jest.mock( '@elementor/documents', () => ( {
 
 jest.mock( '../../../hooks/use-recent-posts', () => (
 	{
-		default: jest.fn(),
+		default: jest.fn( () => ( { isLoading: false, recentPosts: [] } ) ),
 		__esModule: true,
 	}
 ) );
@@ -115,9 +115,11 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 				},
 			} )
 		);
-		const fetchReturnData: Post[] = [];
 
-		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( fetchReturnData );
+		const isLoading = false;
+		const recentPosts: Post[] = [];
+
+		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, recentPosts } );
 
 		const { getByText, getAllByRole } = render( <RecentlyEdited /> );
 
@@ -143,7 +145,8 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 			} )
 		);
 
-		const fetchReturnData: Post[] = [ {
+		const isLoading = false;
+		const recentPosts: Post[] = [ {
 			id: 1,
 			title: 'Test post',
 			edit_url: 'some_url',
@@ -155,7 +158,7 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 			date_modified: 123,
 		} ];
 
-		jest.mocked( getRecentlyEditedPosts ).mockReturnValue( fetchReturnData );
+		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, recentPosts } );
 
 		const { getByText, getByRole, getAllByRole } = render( <RecentlyEdited /> );
 
