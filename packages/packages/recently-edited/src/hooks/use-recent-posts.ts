@@ -16,22 +16,22 @@ export interface Post {
 	date_modified: number,
 }
 
-export default function useRecentPosts( document: unknown ) {
+export default function useRecentPosts( documentId?: number ) {
 	const [ fetchedPosts, setFetchedPosts ] = useState<Post[]>( [] );
 
 	useEffect( () => {
-		if ( document ) {
-			fetchRecentlyEditedPosts( document as Document ).then( ( posts ) => setFetchedPosts( posts ) );
+		if ( documentId ) {
+			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => setFetchedPosts( posts ) );
 		}
-	}, [ document ] );
+	}, [ documentId ] );
 
 	return fetchedPosts;
 }
 
-async function fetchRecentlyEditedPosts( document: Document ) {
+async function fetchRecentlyEditedPosts( documentId: number ) {
 	const queryParams = {
 		posts_per_page: 5,
-		post__not_in: document.id,
+		post__not_in: documentId,
 	};
 
 	return await apiFetch( {

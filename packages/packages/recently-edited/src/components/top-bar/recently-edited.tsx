@@ -20,7 +20,7 @@ export default function RecentlyEdited() {
 		? activeDocument
 		: hostDocument;
 
-	const recentPosts = useRecentPosts( document );
+	const recentPosts = useRecentPosts( document?.id );
 
 	const popupState = usePopupState( {
 		variant: 'popover',
