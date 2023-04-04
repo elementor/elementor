@@ -96,6 +96,14 @@ module.exports = class EditorPage extends BasePage {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
+	}
+
 	/**
 	 * Add a widget by `widgetType`.
 	 *
@@ -295,7 +303,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
@@ -594,5 +602,23 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId, value ) {
 		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
 	}
 };
