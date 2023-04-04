@@ -69,6 +69,7 @@ export default class extends ControlBaseDataView {
 		const picker = this.colorPicker.picker;
 		const pickerUtils = picker.constructor.utils;
 
+		// Adding to the eventBindings to unbind in the picker's destroy
 		picker._eventBindings.push(
 			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'pointerdown' ], () => {
 				if ( picker.isOpen() ) {
