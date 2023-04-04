@@ -30,7 +30,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 						<DocTypeChip postType={ type.post_type } docType={ type.doc_type as Props['docType'] } label={ type.label } />
 					</MenuItem>
 				) ) ) : (
-					<Typography variant="caption" sx={ { color: 'grey.500', fontStyle: 'italic', p: 4, pr: 7 } } component="div" aria-label={ undefined }>
+					<Typography variant="caption" sx={ { color: 'grey.500', fontStyle: 'italic', p: 4 } } component="div" aria-label={ undefined }>
 						{ __( 'There are no other pages or templates on this site yet.', 'elementor' ) }
 					</Typography>
 				)

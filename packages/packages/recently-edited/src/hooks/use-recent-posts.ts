@@ -21,6 +21,8 @@ export default function useRecentPosts( documentId?: number ) {
 
 	useEffect( () => {
 		if ( documentId ) {
+			setIsLoading( true );
+
 			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => {
 				setRecentPosts( posts );
 				setIsLoading( false );
