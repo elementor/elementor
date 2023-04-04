@@ -17,11 +17,14 @@ export interface Post {
 
 export default function useRecentPosts( documentId?: number ) {
 	const [ recentPosts, setRecentPosts ] = useState<Post[]>( [] );
-	const [ isLoading ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	useEffect( () => {
 		if ( documentId ) {
-			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => setRecentPosts( posts ) );
+			fetchRecentlyEditedPosts( documentId ).then( ( posts ) => {
+				setRecentPosts( posts );
+				setIsLoading( false );
+			} );
 		}
 	}, [ documentId ] );
 
