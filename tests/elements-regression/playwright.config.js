@@ -21,7 +21,7 @@ export default {
 
 	reporter: process.env.CI ? 'github' : 'list',
 	use: {
-		headless: false,
+		headless: true,
 		actionTimeout: 8000,
 		navigationTimeout: 8000,
 		trace: 'on-first-retry',
