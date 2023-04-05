@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Select extends ControlBase {
+export default class Select extends ControlBase {
 	getSelector() {
 		return `select[data-setting="${ this.config.name }"]`;
 	}
@@ -27,7 +27,3 @@ class Select extends ControlBase {
 			.filter( ( value ) => value !== initialValue );
 	}
 }
-
-module.exports = {
-	Select,
-};

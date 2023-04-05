@@ -1,14 +1,15 @@
-const { expect } = require( '@playwright/test' );
-const test = require( '../src/test' );
-const elementsConfig = require( '../elements-config.json' );
-const testConfig = require( '../test.config' );
-const ConfigProvider = require( '../src/config-provider' );
-const controlHandlers = require( '../src/controls' );
-const { summary } = require( '../src/utils' );
+import { expect, test } from '@playwright/test';
+import elementsConfig from '../elements-config.json';
+import testConfig from '../test.config';
+import configProvider from '../src/config-provider';
+import controlHandlers from '../src/controls';
+import { summary } from '../src/utils';
+import WpAdminPage from '../src/pages/wp-admin-page';
+import EditorPage from '../src/pages/editor-page';
 
-const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
+const configMediator = configProvider.make( { elementsConfig, testConfig } );
 
-test.describe( 'Elements regression', () => {
+test.describe( 'Elements regression', ( ) => {
 	const testedElements = {};
 
 	test.afterAll( async ( {}, testInfo ) => {
@@ -24,8 +25,12 @@ test.describe( 'Elements regression', () => {
 
 	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
 		// Dynamic widget test creation.
-		test( widgetType, async ( { editorPage } ) => {
+		test( widgetType, async ( { page } ) => {
+			const wpAdminPage = new WpAdminPage( page );
+			const editorPage = new EditorPage( page );
 			testedElements[ widgetType ] = {};
+
+			await editorPage.setupElementorPage( wpAdminPage );
 
 			const elementId = await editorPage.addWidget( widgetType );
 

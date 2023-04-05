@@ -22,45 +22,44 @@ function updateStore( data ) {
 	process.env[ key ] = JSON.stringify( data );
 }
 
-module.exports = {
-	/**
-	 * Get media element ID from a given name.
-	 *
-	 * @param {string} imageName
-	 * @return {string|number|null}
-	 */
-	getIdFromName( imageName ) {
-		const store = getStore();
+/**
+ * Get media element ID from a given name.
+ *
+ * @param {string} imageName
+ * @return {string|number|null}
+ */
+export const getIdFromName = ( imageName ) => {
+	const store = getStore();
 
-		return store[ imageName ] || null;
-	},
-
-	/**
-	 * Get media name from a given ID.
-	 *
-	 * @param {string|number} id
-	 * @return {string|null}
-	 */
-	getNameFromId( id ) {
-		const store = getStore();
-
-		const name = Object.keys( store )
-			.find( ( imageName ) => store[ imageName ] === id );
-
-		return name || null;
-	},
-
-	/**
-	 * Add media element to the store.
-	 *
-	 * @param {string}        name
-	 * @param {string|number} id
-	 */
-	set( name, id ) {
-		const mediaIds = getStore();
-
-		mediaIds[ name ] = id;
-
-		updateStore( mediaIds );
-	},
+	return store[ imageName ] || null;
 };
+
+/**
+ * Get media name from a given ID.
+ *
+ * @param {string|number} id
+ * @return {string|null}
+ */
+export const getNameFromId = ( id ) => {
+	const store = getStore();
+
+	const name = Object.keys( store )
+		.find( ( imageName ) => store[ imageName ] === id );
+
+	return name || null;
+};
+
+/**
+ * Add media element to the store.
+ *
+ * @param {string}        name
+ * @param {string|number} id
+ */
+export const set = ( name, id ) => {
+	const mediaIds = getStore();
+
+	mediaIds[ name ] = id;
+
+	updateStore( mediaIds );
+};
+

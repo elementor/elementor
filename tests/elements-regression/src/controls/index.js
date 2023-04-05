@@ -1,12 +1,12 @@
-const { Choose } = require( './choose' );
-const { Color } = require( './color' );
-const { Media } = require( './media' );
-const { Select } = require( './select' );
-const { Slider } = require( './slider' );
-const { Text } = require( './text' );
-const { Textarea } = require( './textarea' );
+import Choose from './choose';
+import Color from './color';
+import Media from './media';
+import Select from './select';
+import Slider from './slider';
+import Text from './text';
+import Textarea from './textarea';
 
-module.exports = {
+export default {
 	choose: Choose,
 	color: Color,
 	media: Media,

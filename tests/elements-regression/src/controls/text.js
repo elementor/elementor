@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Text extends ControlBase {
+export default class Text extends ControlBase {
 	getSelector() {
 		return `input[data-setting="${ this.config.name }"]`;
 	}
@@ -18,6 +18,3 @@ class Text extends ControlBase {
 	}
 }
 
-module.exports = {
-	Text,
-};

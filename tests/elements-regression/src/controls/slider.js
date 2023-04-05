@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Slider extends ControlBase {
+export default class Slider extends ControlBase {
 	static NO_UNIT = 'default';
 
 	/**
@@ -97,7 +97,3 @@ class Slider extends ControlBase {
 		return `${ unit }-${ value }`;
 	}
 }
-
-module.exports = {
-	Slider,
-};

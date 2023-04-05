@@ -1,6 +1,10 @@
-const BasePage = require( './base-page.js' );
+export default class WpAdminPage {
+	page;
 
-module.exports = class WpAdminPage extends BasePage {
+	constructor( page ) {
+		this.page = page;
+	}
+
 	async login( { username, password } ) {
 		await this.page.goto( `/wp-admin` );
 
@@ -72,4 +76,4 @@ module.exports = class WpAdminPage extends BasePage {
 			{ state: 'detached' },
 		);
 	}
-};
+}

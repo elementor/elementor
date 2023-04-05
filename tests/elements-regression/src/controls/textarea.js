@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Textarea extends ControlBase {
+export default class Textarea extends ControlBase {
 	getSelector() {
 		return `textarea[data-setting="${ this.config.name }"]`;
 	}
@@ -17,7 +17,3 @@ class Textarea extends ControlBase {
 		return [ 'Test value' ];
 	}
 }
-
-module.exports = {
-	Textarea,
-};

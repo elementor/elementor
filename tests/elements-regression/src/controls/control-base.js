@@ -1,6 +1,6 @@
-const { isObject } = require( '../utils' );
+import { isObject } from '../utils';
 
-class ControlBase {
+export default class ControlBase {
 	/**
 	 * @protected
 	 * @type {import('@playwright/test').Page}
@@ -228,7 +228,3 @@ class ControlBase {
 			! isAdvancedControl;
 	}
 }
-
-module.exports = {
-	ControlBase,
-};

@@ -1,7 +1,7 @@
-const { ControlBase } = require( './control-base' );
-const mediaStore = require( '../media-store' );
+import ControlBase from './control-base';
+import { getNameFromId, getIdFromName } from '../media-store';
 
-class Media extends ControlBase {
+export default class Media extends ControlBase {
 	getSelector() {
 		return `.elementor-control-${ this.config.name }.elementor-control-type-media`;
 	}
@@ -11,7 +11,7 @@ class Media extends ControlBase {
 
 		const selectedMediaId = await this.getSelectedMediaId();
 
-		const value = mediaStore.getNameFromId( selectedMediaId );
+		const value = getNameFromId( selectedMediaId );
 
 		await this.closeMediaLibrary();
 
@@ -19,7 +19,7 @@ class Media extends ControlBase {
 	}
 
 	async setValue( newValue ) {
-		const id = mediaStore.getIdFromName( newValue );
+		const id = getIdFromName( newValue );
 
 		if ( ! id ) {
 			throw new Error( `Media file with name '${ newValue }' was not found.` );
@@ -57,7 +57,3 @@ class Media extends ControlBase {
 		return await element?.getAttribute( 'data-id' );
 	}
 }
-
-module.exports = {
-	Media,
-};

@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Choose extends ControlBase {
+export default class Choose extends ControlBase {
 	getSelector() {
 		return `.elementor-control-${ this.config.name } .elementor-choices`;
 	}
@@ -39,6 +39,3 @@ class Choose extends ControlBase {
 	}
 }
 
-module.exports = {
-	Choose,
-};

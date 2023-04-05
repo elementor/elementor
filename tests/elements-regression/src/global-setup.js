@@ -1,10 +1,10 @@
-const { chromium, request } = require( '@playwright/test' );
-const fs = require( 'fs' );
-const path = require( 'path' );
-const WpAdminPage = require( './pages/wp-admin-page.js' );
-const mediaStore = require( './media-store' );
+import { chromium, request } from '@playwright/test';
+import { createReadStream } from 'fs';
+import { resolve } from 'path';
+import WpAdminPage from './pages/wp-admin-page.js';
+import { set } from './media-store';
 
-module.exports = async ( { projects: [ { use: config } ] } ) => {
+export default async ( { projects: [ { use: config } ] } ) => {
 	const { page, browser } = await createPage( {
 		headless: config.headless,
 		baseURL: config.baseURL,
@@ -94,7 +94,7 @@ async function createDefaultMedia( apiContext ) {
 	const response = await apiContext.post( '/index.php', {
 		params: { rest_route: '/wp/v2/media' },
 		multipart: {
-			file: fs.createReadStream( path.resolve( __dirname, `../assets/images/${ imageName }` ) ),
+			file: createReadStream( resolve( __dirname, `../assets/images/${ imageName }` ) ),
 			title: 'Elementor image',
 			status: 'publish',
 			description: 'Elementor image description',
@@ -113,7 +113,7 @@ async function createDefaultMedia( apiContext ) {
 	const { id } = await response.json();
 
 	// Pass the id that was uploaded to the tests.
-	mediaStore.set( imageName, id );
+	set( imageName, id );
 
 	return async () => {
 		await apiContext.delete( `/index.php`, {

@@ -1,6 +1,6 @@
-const { ControlBase } = require( './control-base' );
+import ControlBase from './control-base';
 
-class Color extends ControlBase {
+export default class Color extends ControlBase {
 	static TYPE_GLOBAL_COLOR = 'global';
 	static TYPE_LOCAL_COLOR = 'local';
 
@@ -110,7 +110,3 @@ class Color extends ControlBase {
 		return this.page.locator( '.dialog-widget.e-global__popover:visible' );
 	}
 }
-
-module.exports = {
-	Color,
-};

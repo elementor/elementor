@@ -1,4 +1,4 @@
-module.exports = class ConfigProvider {
+export default class ConfigProvider {
 	/**
 	 * @type {Object}
 	 */
@@ -180,4 +180,4 @@ module.exports = class ConfigProvider {
 			},
 		};
 	}
-};
+}

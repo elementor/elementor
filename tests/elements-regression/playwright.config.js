@@ -1,46 +1,35 @@
-// @ts-check
-const dotenv = require( 'dotenv' );
-const path = require( 'path' );
+import { config as _config } from 'dotenv';
+import { resolve } from 'path';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-dotenv.config( {
-	path: path.resolve( __dirname, './.env' ),
+_config( {
+	path: resolve( __dirname, './.env' ),
 } );
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
-const config = {
+export default {
 	testDir: './tests/',
-	/* Maximum time one test can run for. */
-	timeout: 2 * 60 * 1000, // 2 minutes
-	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
+
+	timeout: 2 * 60 * 1000,
+	globalSetup: resolve( __dirname, './src/global-setup.js' ),
 	expect: {
-		/**
-		 * Maximum time expect() should wait for the condition to be met.
-		 * For example in `await expect(locator).toHaveText();`
-		 */
-		timeout: 5 * 1000, // 5 seconds
+		timeout: 5000,
 	},
-	/* Fail the build on CI if you accidentally left test.only in the source code. */
+
 	forbidOnly: !! process.env.CI,
-	/* Retry on CI only */
 	retries: process.env.CI ? 1 : 0,
-	/* Retry on CI only */
-	workers: process.env.CI ? 1 : undefined,
-	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
+	workers: process.env.CI ? 1 : 1,
+
 	reporter: process.env.CI ? 'github' : 'list',
-	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
-		actionTimeout: 10 * 1000, // 4 seconds
-		navigationTimeout: 10 * 1000, // 10 seconds
-		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+		headless: false,
+		actionTimeout: 8000,
+		navigationTimeout: 8000,
 		trace: 'on-first-retry',
-		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
+		video: process.env.CI ? 'retain-on-failure' : 'off',
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
-		storageState: path.resolve( __dirname, 'storage-state.json' ),
+		storageState: resolve( __dirname, 'storage-state.json' ),
+		// @ts-ignore
 		validateAllPreviousCasesChecked: process.env.ELEMENTS_REGRESSION_VALIDATE_ALL_PREVIOUS_TEST_CASES || ( process.env.CI ? 'on' : 'off' ),
 		user: {
 			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
@@ -48,5 +37,3 @@ const config = {
 		},
 	},
 };
-
-module.exports = config;

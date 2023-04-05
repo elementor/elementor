@@ -1,6 +1,12 @@
-const BasePage = require( './base-page.js' );
+export default class EditorPage {
+	page;
+	container;
 
-module.exports = class EditorPage extends BasePage {
+	constructor( page ) {
+		this.page = page;
+		this.container = this.page.locator( '[data-element_type="container"]' );
+	}
+
 	/**
 	 * @return {Promise<void>}
 	 */
@@ -132,4 +138,55 @@ module.exports = class EditorPage extends BasePage {
 			await this.page.waitForTimeout( 400 );
 		}
 	}
-};
+
+	async publishAndViewPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await Promise.all( [
+			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
+			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
+		] );
+
+		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+		await this.page.waitForLoadState();
+	}
+
+	async setupElementorPage( wpAdminPage ) {
+		await this.ensureLoaded();
+		await this.ensureNavigatorClosed();
+		await this.ensureNoticeBarClosed();
+		await wpAdminPage.createElementorPage();
+		await this.ensureLoaded();
+		await this.ensureNavigatorClosed();
+		await this.ensureNoticeBarClosed();
+	}
+
+	async loadTemplate( filePath ) {
+		const templateData = require( filePath );
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async setElementorEditorPanel( state ) {
+		await this.page.getByTitle( state ).click();
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( '[data-element_type="widget"]' ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( '[data-element_type="widget"]' );
+	}
+}

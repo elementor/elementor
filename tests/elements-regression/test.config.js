@@ -3,7 +3,7 @@
  * Object.fromEntries( Object.entries( elementor.widgetsCache ).map(([key, value]) => [key, {controls: value.controls}] ) )
  */
 
-module.exports = {
+export default {
 	elements: {
 		include: [ 'heading', 'text-editor', 'divider', 'button', 'image' ],
 	},
@@ -37,7 +37,7 @@ module.exports = {
 		},
 		button: {
 			exclude: [
-				'button_css_id', // Nothing changed
+				'button_css_id',
 				'button_type', // Bug in the editor nothing changed.
 			],
 		},
@@ -48,11 +48,10 @@ module.exports = {
 				},
 			},
 			exclude: [
-				'image', // Image is affected in each control.
-				'link_to', // Affect the link, nothing visual.
-				'height', // Some bug in the CI, seems like this is a bug in the editor.
+				'image',
+				'link_to',
+				'height',
 				'image_size', // Nothing visual.
 			],
 		},
-	},
-};
+	} };
