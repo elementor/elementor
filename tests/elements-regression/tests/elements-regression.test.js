@@ -79,7 +79,7 @@ test.describe( 'Elements regression', ( ) => {
 
 							await control.setValue( value );
 							if ( await page.$( 'button.dialog-tooltip-action' ) ) {
-								await page.$( 'button.dialog-tooltip-action' ).click();
+								await page.locator( 'button.dialog-tooltip-action' ).click();
 							}
 
 							await editorPage.waitForElementRender( elementId );
