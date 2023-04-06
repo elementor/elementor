@@ -193,7 +193,7 @@ import environment from 'elementor-common/utils/environment';
 		const selectedStructure = event.currentTarget.dataset.structure,
 			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
 
-		return ContainerHelper.createContainer(
+		const newContainer = ContainerHelper.createContainer(
 			{
 				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
 				grid_columns_grid: {
@@ -210,7 +210,12 @@ import environment from 'elementor-common/utils/environment';
 				},
 			},
 			elementor.getPreviewContainer(),
+			this.options,
 		);
+
+		this.destroy();
+
+		return newContainer;
 	}
 
 	onPresetSelected( event ) {
