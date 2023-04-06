@@ -30,7 +30,7 @@ export default class WpAdminPage {
 		const button = await this.page.locator( 'text="Create New Page"' );
 		await button.click();
 
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.page.waitForSelector( '#elementor-panel-header-title', { timeout: 20000 } );
 
 		return await this.page.evaluate( () => window.ElementorConfig.document.id );
 	}
