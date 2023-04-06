@@ -78,6 +78,9 @@ test.describe( 'Elements regression', ( ) => {
 							testedValues.push( valueLabel );
 
 							await control.setValue( value );
+							if ( await page.$( '.elementor-button .e-brand' ) ) {
+								await page.$( '.elementor-button .e-brand' ).click();
+							}
 
 							await editorPage.waitForElementRender( elementId );
 							await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, controlId, `${ valueLabel }.png` ], { maxDiffPixels: 50 } );
