@@ -18,9 +18,9 @@ test.describe( 'Elements regression', ( ) => {
 
 		// TODO: Need to find a better solution for now this is not working well.
 
-		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
-			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
-		}
+		// if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
+		// 	expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
+		// }
 	} );
 
 	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {

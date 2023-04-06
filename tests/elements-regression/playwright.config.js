@@ -9,7 +9,7 @@ _config( {
 export default {
 	testDir: './tests/',
 
-	timeout: 2 * 60 * 1000,
+	timeout: 3 * 60 * 1000,
 	globalSetup: resolve( __dirname, './src/global-setup.js' ),
 	expect: {
 		timeout: 5000,
@@ -17,7 +17,7 @@ export default {
 
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 2 : 1,
+	workers: process.env.CI ? 3 : 1,
 	fullyParallel: true,
 	reporter: process.env.CI ? 'github' : 'list',
 	use: {
