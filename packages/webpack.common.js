@@ -50,6 +50,14 @@ const externals = [
 		name: 'react-dom',
 		global: 'ReactDOM',
 	},
+	{
+		name: '@wordpress/api-fetch',
+		global: 'wp.apiFetch',
+	},
+	{
+		name: '@wordpress/url',
+		global: 'wp.url',
+	},
 ];
 
 module.exports = {
