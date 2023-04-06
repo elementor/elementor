@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
-test.describe( 'Container tests', () => {
+test.describe( 'Container Grid tests @container-grid', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -117,6 +117,36 @@ test.describe( 'Container tests', () => {
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
 
 			expect( isOneColumn ).toBeTruthy();
+		} );
+	} );
+
+	test( 'Grid container presets', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const frame = await editor.getPreviewFrame();
+
+		await test.step( 'Assert preset: rows-1 columns-2', async () => {
+			await testPreset( frame, editor, 1, 2 );
+		} );
+
+		await test.step( 'Assert preset: rows-2 columns-1', async () => {
+			await testPreset( frame, editor, 2, 1 );
+		} );
+
+		await test.step( 'Assert preset: rows-1 columns-3', async () => {
+			await testPreset( frame, editor, 1, 3 );
+		} );
+
+		await test.step( 'Assert preset: rows-3 columns-1', async () => {
+			await testPreset( frame, editor, 3, 1 );
+		} );
+
+		await test.step( 'Assert preset: rows-2 columns-2', async () => {
+			await testPreset( frame, editor, 2, 2 );
+		} );
+
+		await test.step( 'Assert preset: rows-3 columns-3', async () => {
+			await testPreset( frame, editor, 3, 3 );
 		} );
 	} );
 
@@ -239,4 +269,31 @@ test.describe( 'Container tests', () => {
 
 function hasWhiteSpace( s ) {
 	return /\s/g.test( s );
+}
+
+async function testPreset( frame, editor, rows, cols ) {
+	await frame.locator( '.elementor-add-section-button' ).click();
+	await frame.locator( '.grid-preset-button' ).click();
+	await frame.locator( `[data-structure="${ rows }-${ cols }"]` ).click();
+
+	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+
+	// Because the browser will parse repeat(x, xfr) as pixels.
+	// We need to get the initial value in pixels and compare it with the new value in repeat()
+	const oldRowsAndCols = await container.evaluate( ( el ) => {
+		const computedStyle = window.getComputedStyle( el );
+		return [
+			computedStyle.getPropertyValue( 'grid-template-rows' ),
+			computedStyle.getPropertyValue( 'grid-template-columns' ),
+		];
+	} );
+
+	await container.evaluate( ( el, rowsCount, colsCount ) => {
+		el.style.setProperty( 'grid-template-rows', `repeat(${ rowsCount }, 1fr)` );
+		el.style.setProperty( 'grid-template-columns', `repeat(${ colsCount }, 1fr)` );
+	}, rows, cols );
+
+	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
+	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
+	await editor.cleanContent();
 }

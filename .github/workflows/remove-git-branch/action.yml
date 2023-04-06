@@ -1,0 +1,15 @@
+name: Remove Git Branch
+description: Remove a Git branch from the remote repository.
+
+inputs:
+  BRANCH_NAME:
+    description: 'The branch name to remove (e.g. 3.13.0-cloud-backup)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        # Delete the branch from the remote repository
+        git push origin --delete ${{ inputs.BRANCH_NAME }}

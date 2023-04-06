@@ -95,7 +95,9 @@ function echo_select_your_structure_title() {
 				<#
 					elementor.presetsFactory.getContainerGridPresets().forEach( ( preset ) => {
 				#>
-					{{{ elementor.presetsFactory.generateContainerGridPreset( preset ) }}}
+					<div class="e-con-choose-grid-preset" data-structure="{{ preset }}">
+						{{{ elementor.presetsFactory.generateContainerGridPreset( preset ) }}}
+					</div>
 				<#
 					} );
 				#>
