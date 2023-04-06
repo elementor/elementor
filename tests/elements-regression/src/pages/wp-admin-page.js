@@ -15,6 +15,40 @@ export default class WpAdminPage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
+	async openElementorSettings( tab ) {
+		await this.page.goto( `/wp-admin/admin.php?page=elementor#${ tab }` );
+		await this.page.locator( '#elementor-settings-tab-general' ).waitFor();
+	}
+
+	async setExperiments( experiments = {} ) {
+		await this.openElementorSettings( 'tab-experiments' );
+
+		const prefix = 'e-experiment';
+
+		for ( const [ id, state ] of Object.entries( experiments ) ) {
+			const selector = `#${ prefix }-${ id }`;
+
+			await this.page.selectOption( selector, String( state ) );
+
+			// Confirm any experiment dependency modal that displays as a result of the chosen experiments.
+			await this.confirmExperimentModalIfOpen();
+		}
+
+		await this.page.click( '#submit' );
+	}
+
+	async confirmExperimentModalIfOpen() {
+		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
+
+		if ( await dialogButton.isVisible() ) {
+			await dialogButton.click();
+
+			// Clicking the confirm button - "Activate" or "Deactivate" - will immediately save the existing experiments,
+			// so we need to wait for the page to save and reload before we continue on to set any more experiments.
+			await this.page.waitForLoadState( 'load' );
+		}
+	}
+
 	async getWpRESTNonce() {
 		await this.page.goto( '/wp-admin' );
 

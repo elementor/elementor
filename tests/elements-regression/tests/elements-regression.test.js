@@ -78,8 +78,8 @@ test.describe( 'Elements regression', ( ) => {
 							testedValues.push( valueLabel );
 
 							await control.setValue( value );
-							if ( await page.$( '.elementor-button .e-brand' ) ) {
-								await page.$( '.elementor-button .e-brand' ).click();
+							if ( await page.$( 'button.dialog-tooltip-action' ) ) {
+								await page.$( 'button.dialog-tooltip-action' ).click();
 							}
 
 							await editorPage.waitForElementRender( elementId );

@@ -4,7 +4,16 @@ import WpAdminPage from '../src/pages/wp-admin-page';
 import EditorPage from '../src/pages/editor-page';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
-	const testData = [ 'divider' ];
+	test.beforeAll( async ( { browser } ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page );
+		await wpAdmin.setExperiments( {
+			container: 'active',
+		} );
+	} );
+
+	const testData = [ 'divider', 'heading', 'text_editor' ];
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page } ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -20,6 +29,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			}
 			await editorPage.setElementorEditorPanel( 'Back to Editor' );
 			await editorPage.publishAndViewPage();
+			await page.waitForTimeout( 500 );
 			await expect( editorPage.container ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
 	}
