@@ -191,7 +191,8 @@ import environment from 'elementor-common/utils/environment';
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
+			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
+			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
 
 		const newContainer = ContainerHelper.createContainer(
 			{
@@ -213,7 +214,9 @@ import environment from 'elementor-common/utils/environment';
 			this.options,
 		);
 
-		this.destroy();
+		if ( isAddedAboveAnotherContainer ) {
+			this.destroy();
+		}
 
 		return newContainer;
 	}
