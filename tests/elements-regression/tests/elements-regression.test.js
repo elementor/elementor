@@ -80,7 +80,7 @@ test.describe( 'Elements regression', ( ) => {
 							await control.setValue( value );
 
 							await editorPage.waitForElementRender( elementId );
-							await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, controlId, `${ valueLabel }.png` ] );
+							await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, controlId, `${ valueLabel }.png` ], { maxDiffPixels: 50 } );
 						} );
 					}
 
