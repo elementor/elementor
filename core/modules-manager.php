@@ -107,6 +107,7 @@ class Modules_Manager {
 			'kit-elements-defaults',
 			'announcements',
 			'site-navigation',
+			'new-elementor-page',
 		];
 	}
 
