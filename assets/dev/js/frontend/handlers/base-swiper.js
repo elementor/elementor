@@ -204,13 +204,6 @@ export default class SwiperHandlerBase extends BaseHandler {
 		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
 	}
 
-
-
-
-
-
-
-
 	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'image_spacing_custom' ) ) {
 			this.updateSpaceBetween( propertyName );
