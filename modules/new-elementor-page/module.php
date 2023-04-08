@@ -27,7 +27,7 @@ class Module extends BaseModule {
 			?>
 			<script>
 				jQuery(document).ready(function($) {
-					var $button = $('<a href="#" class="page-title-action"><?php esc_attr_e( 'New Elementor Page', 'elementor' ); ?></a>');
+					var $button = $('<a id="e-new-page" href="#" class="page-title-action"><?php esc_attr_e( 'New Elementor Page', 'elementor' ); ?></a>');
 					$('.wrap > h1').after($button);
 					$button.on('click', function(e) {
 						e.preventDefault();
