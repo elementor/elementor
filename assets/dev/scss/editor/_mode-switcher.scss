@@ -14,7 +14,11 @@
 	@include direction-box-shadow(3px, 1px 3px rgba(0, 0, 0, 0.05));
 	cursor: pointer;
 
-	&:hover {
+	&:hover{
+		background-color: var(--e-a-bg-hover);
+	}
+
+	&:focus-within {
 		background-color: var(--e-a-bg-hover);
 	}
 }

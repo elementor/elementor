@@ -1,3 +1,5 @@
+import environment from 'elementor-common/utils/environment';
+
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -50,10 +52,13 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChanged( activeMode ) {
-		const title = 'preview' === activeMode ? __( 'Back to Editor', 'elementor' ) : __( 'Preview', 'elementor' );
+		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
 
-		this.ui.previewLabel.attr( 'title', title );
-		this.ui.previewLabelA11y.text( title );
+		let text = 'preview' === activeMode ? __( 'Show Panel', 'elementor' ) : __( 'Hide Panel', 'elementor' );
+		text += ` (${ctrlLabel} + P)`;
+
+		this.ui.previewLabel.attr( 'title', text );
+		this.ui.previewLabelA11y.text( text );
 	},
 } );
 
