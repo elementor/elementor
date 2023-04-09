@@ -23,9 +23,11 @@ test.describe( 'Container Grid tests @container-grid', () => {
 	} );
 
 	test( 'Test grid container', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -41,6 +43,37 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
 			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+		} );
+
+		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
+			// Arrange
+			const alignContentControl = await page.locator( '.elementor-control-grid_align_content' );
+
+			// Assert - Check the controls initial state
+			await expect( alignContentControl ).not.toBeVisible();
+
+			// Act - Set Grid Rows to custom unit
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+
+			// Assert - Align content control is visible
+			await expect( alignContentControl ).toBeVisible();
+		} );
+
+		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
+			await page.pause();
+			// Arrange
+			const justifyContentControl = await page.locator( '.elementor-control-grid_justify_content' );
+
+			// Assert - Check the controls initial state
+			await expect( justifyContentControl ).not.toBeVisible();
+
+			// Act - Set Grid Columns to custom unit
+			await gridColumnsControl.locator( '.e-units-switcher' ).click();
+			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
+
+			// Assert - Justify content control should be visible
+			await expect( justifyContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
@@ -135,6 +168,10 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
 
 			expect( isOneColumn ).toBeTruthy();
+
+			// Reset desktop view
+			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
+			await page.locator( '#e-responsive-bar__close-button' ).click();
 		} );
 	} );
 
