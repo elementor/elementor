@@ -56,7 +56,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
 			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
 
-			// Assert - Justify content control is visible
+			// Assert - Align content control is visible
 			await expect( alignContentControl ).toBeVisible();
 		} );
 
