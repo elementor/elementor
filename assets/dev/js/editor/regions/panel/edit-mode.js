@@ -10,11 +10,13 @@ EditModeItemView = Marionette.ItemView.extend( {
 	ui: {
 		previewButton: '#elementor-mode-switcher-preview-input',
 		previewLabel: '#elementor-mode-switcher-preview',
-		previewLabelA11y: '#elementor-mode-switcher-preview .elementor-screen-only',
+		previewLabelIcon: '#elementor-mode-switcher-preview i',
+		previewLabelA11yText: '#elementor-mode-switcher-preview .elementor-screen-only',
 	},
 
 	events: {
 		'change @ui.previewButton': 'onPreviewButtonChange',
+		'keyup @ui.previewLabelIcon': 'onPreviewButtonKeyUp',
 	},
 
 	initialize() {
@@ -39,6 +41,15 @@ EditModeItemView = Marionette.ItemView.extend( {
 		this.onEditModeChanged();
 	},
 
+	onPreviewButtonKeyUp( event ) {
+		const ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.keyCode ) {
+			this.toggleMode();
+			this.onPreviewButtonChange();
+		}
+	},
+
 	onPreviewButtonChange() {
 		const mode = this.getCurrentMode();
 
@@ -58,7 +69,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 		text += ` (${ctrlLabel} + P)`;
 
 		this.ui.previewLabel.attr( 'title', text );
-		this.ui.previewLabelA11y.text( text );
+		this.ui.previewLabelA11yText.text( text );
 	},
 } );
 
