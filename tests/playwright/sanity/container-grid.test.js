@@ -26,11 +26,11 @@ test.describe( 'Container Grid tests @container-grid', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
-			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
-      const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
