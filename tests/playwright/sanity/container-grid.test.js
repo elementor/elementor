@@ -52,7 +52,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			// Assert - Check the controls initial state
 			await expect( alignContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Rows to custom
+			// Act - Set Grid Rows to custom unit
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
 			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
 
@@ -68,7 +68,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			// Assert - Check the controls initial state
 			await expect( justifyContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Columns to custom
+			// Act - Set Grid Columns to custom unit
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 
