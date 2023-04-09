@@ -113,10 +113,6 @@ jobs:
           tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Remove Git RC Origin Backup Branch
-        uses: ./.github/workflows/remove-git-branch
-        with:
-          BRANCH_NAME: ${{ env.PACKAGE_VERSION }}-${{ env.CHANNEL }}-rc-backup
       - name: Post To Slack Created Release
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
