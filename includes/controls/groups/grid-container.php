@@ -165,7 +165,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
-			'separator' => 'after',
 			'responsive' => true,
 		];
 
@@ -203,6 +202,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-justify-content: {{VALUE}};',
 			],
+			'condition' => [
+				'columns_grid[unit]' => 'custom',
+			],
 			'responsive' => true,
 		];
 
@@ -239,6 +241,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-align-content: {{VALUE}};',
+			],
+			'condition' => [
+				'rows_grid[unit]' => 'custom',
 			],
 			'responsive' => true,
 		];
