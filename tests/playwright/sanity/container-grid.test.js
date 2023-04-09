@@ -25,10 +25,10 @@ test.describe( 'Container Grid tests @container-grid', () => {
 	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
-			await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
@@ -102,6 +102,24 @@ test.describe( 'Container Grid tests @container-grid', () => {
 
 			// Remove flex container.
 			await editor.removeElement( flexContainerId );
+		} );
+
+		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
+			// Assert that the first container has data-id = containerId.
+			await expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+
+			await editor.openAddElementSection( containerId );
+			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
+			await frame.locator( '.elementor-add-section-inline .grid-preset-button' ).click();
+			await frame.locator( `.elementor-add-section-inline [data-structure="2-1"]` ).click();
+
+			// First container should be the new container.
+			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
+			await expect( newContainerId ).not.toEqual( containerId );
+			// The second container should be the existing container.
+			await expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+
+			await editor.removeElement( newContainerId );
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
