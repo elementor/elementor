@@ -80,10 +80,10 @@ class Control_Gallery extends Base_Data_Control {
 				<div class="elementor-control-media__content elementor-control-tag-area">
 					<div class="elementor-control-gallery-status elementor-control-dynamic-switcher-wrapper">
 						<span class="elementor-control-gallery-status-title"></span>
-						<span class="elementor-control-gallery-clear elementor-control-unit-1">
+						<button class="elementor-control-gallery-clear elementor-control-unit-1">
 							<i class="eicon-trash-o" aria-hidden="true"></i>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove gallery', 'elementor' ); ?></span>
-						</span>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Clear gallery', 'elementor' ); ?></span>
+						</button>
 					</div>
 					<div class="elementor-control-gallery-content">
 						<div class="elementor-control-gallery-thumbnails"></div>

@@ -127,10 +127,14 @@
 	}
 
 	.elementor-control-gallery-clear {
+		color: currentColor;
+		background-color: transparent;
+		border: none;
 		cursor: pointer;
 		justify-content: center;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-color-danger);
 		}
 	}
