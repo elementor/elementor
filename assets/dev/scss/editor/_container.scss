@@ -1,3 +1,19 @@
+// mixins
+/*
+ --min-height - The Container's `min-height` property.
+ --custom-rows - The Container's `--e-con-grid-template-rows` property.
+ --initial height - 100px
+
+we should check if the --custom-rows has a custom value
+ */
+@mixin grid-empty-view-height( $rows ) {
+	@if ( $rows ) {
+		min-height: auto;
+	} @else {
+		min-height: var( --min-height, 100px );
+	}
+}
+
 .e-con {
 
 	.elementor-empty-view {
@@ -166,6 +182,14 @@
 					padding: 2px;
 				}
 			}
+		}
+	}
+
+	&.e-grid {
+
+		.elementor-empty-view {
+			//min-height: 10px;
+			//height: auto;
 		}
 	}
 }
