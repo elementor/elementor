@@ -1,6 +1,5 @@
 
 const PanelElementsNoticeView = Marionette.ItemView.extend( {
-
 	template: '#tmpl-elementor-panel-elements-notice',
 	id: 'elementor-favorites-empty-notice-wrapper',
 	ui: {
