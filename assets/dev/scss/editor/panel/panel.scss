@@ -117,5 +117,18 @@
 	}
 }
 
+#elementor-favorites-empty-notice-wrapper .elementor-panel-notice {
+	width: 90%;
+    margin: 0 auto;
+	font-size: 13px;
+    font-style: unset;
+
+	a {
+		font-weight: bold;
+		font-style: italic;
+		border-bottom: 2px dotted var(--e-a-color-info);
+	}
+}
+
 //Compatibility
 @import "compatibility";

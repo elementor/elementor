@@ -17,6 +17,27 @@ import Widgets from './types/widgets/widgets';
 		types.forEach( ( classRef ) => this.register( classRef ) );
 	}
 
+	onElementorInit() {
+		elementor.on( 'panel:init', () => {
+			if ( ! elementorCommon.storage.get( 'panelElementsNotice' ) ) {
+				elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
+					regionViews.favoritesNotice = {
+						region: notice,
+						view: require( './views/notice' ),
+					};
+
+					return regionViews;
+				} );
+
+				$e.routes.on( 'run:after', ( component, route ) => {
+					if ( 'panel/elements/categories' === route ) {
+						elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
+					}
+				} );
+			}
+		} );
+	}
+
 	onElementorLoaded() {
 		this.component = $e.components.register(
 			new Component( { manager: this } ),
