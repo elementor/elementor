@@ -436,23 +436,28 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tab hover color.
 		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+		// Set tab active color.
+		await setTabItemColor( page, editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
 
 		await editor.publishAndViewPage();
 
 		// Hover background style.
 		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
+			activeTabBackgroundColor = 'rgb(0, 255, 255)',
 			activeTab = page.locator( '.e-normal.e-active' ),
 			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
 		// Check that by default the hover color isn't applied.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		await expect( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		// Hover over tab.
 		await activeTab.hover();
 		// Check that active tab doesn't change background color on hover.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		// Check that non-active tab receives the hover background color.
 		await nonActiveTab.hover();
 		await expect( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
