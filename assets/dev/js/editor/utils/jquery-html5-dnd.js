@@ -215,7 +215,7 @@
 			// Make sure that the previous placeholder is removed before inserting a new one.
 			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
 
-			// Fix placeholder placement for Container with `flex-direction: row` and Grid Container with grid auto flow - row.
+			// Fix placeholder placement for Flex Container with `flex-direction: row` or Grid Container with `grid-auto-flow: row`.
 			if ( ( isRowContainer || isGridAutoFlowRowContainer ) && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
 					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
