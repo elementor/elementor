@@ -33,7 +33,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	onInit() {
 		super.onInit();
-
+		this.updateEmptyViewHeight();
 		this.initLayoutOverlay();
 	}
 
