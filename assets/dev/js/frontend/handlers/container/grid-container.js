@@ -44,8 +44,9 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const { scssProperties: { gridTemplateRows } } = this.getDefaultSettings(),
 			regexDefaultPattern = /^repeat\(\d+, 1fr\)$/,
 			regexEmptyPattern = /^$/,
-			gridTemplateRowsValue = window.getComputedStyle( this.elements.gridContainer ).getPropertyValue( gridTemplateRows );
+			regexDigitsPattern = /^\d+$/,
+			gridTemplateRowsValue = window.getComputedStyle( this.elements.gridContainer ).getPropertyValue( gridTemplateRows ).trim();
 
-		return regexDefaultPattern.test( gridTemplateRowsValue ) || regexEmptyPattern.test( gridTemplateRowsValue );
+		return regexDefaultPattern.test( gridTemplateRowsValue ) || regexEmptyPattern.test( gridTemplateRowsValue ) || regexDigitsPattern.test( gridTemplateRowsValue );
 	}
 }
