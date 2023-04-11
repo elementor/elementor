@@ -23,12 +23,14 @@ test.describe( 'Container Grid tests @container-grid', () => {
 	} );
 
 	test( 'Test grid container', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
-			await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
@@ -41,6 +43,51 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
 			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
 			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
+		} );
+
+		await test.step( 'Mobile rows unit are on FR', async () => {
+			// Open responsive bar and select mobile view
+			await page.locator( '#elementor-panel-footer-responsive i' ).click();
+			await page.waitForSelector( '#e-responsive-bar' );
+			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+
+			const rowsMobileUnitLabel = await page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
+			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+
+			// Reset desktop view
+			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
+			await page.locator( '#e-responsive-bar__close-button' ).click();
+		} );
+
+		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
+			// Arrange
+			const alignContentControl = await page.locator( '.elementor-control-grid_align_content' );
+
+			// Assert - Check the controls initial state
+			await expect( alignContentControl ).not.toBeVisible();
+
+			// Act - Set Grid Rows to custom unit
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+
+			// Assert - Align content control is visible
+			await expect( alignContentControl ).toBeVisible();
+		} );
+
+		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
+			await page.pause();
+			// Arrange
+			const justifyContentControl = await page.locator( '.elementor-control-grid_justify_content' );
+
+			// Assert - Check the controls initial state
+			await expect( justifyContentControl ).not.toBeVisible();
+
+			// Act - Set Grid Columns to custom unit
+			await gridColumnsControl.locator( '.e-units-switcher' ).click();
+			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
+
+			// Assert - Justify content control should be visible
+			await expect( justifyContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert justify and align start', async () => {
@@ -104,6 +151,24 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await editor.removeElement( flexContainerId );
 		} );
 
+		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
+			// Assert that the first container has data-id = containerId.
+			await expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+
+			await editor.openAddElementSection( containerId );
+			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
+			await frame.locator( '.elementor-add-section-inline .grid-preset-button' ).click();
+			await frame.locator( `.elementor-add-section-inline [data-structure="2-1"]` ).click();
+
+			// First container should be the new container.
+			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
+			await expect( newContainerId ).not.toEqual( containerId );
+			// The second container should be the existing container.
+			await expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+
+			await editor.removeElement( newContainerId );
+		} );
+
 		await test.step( 'Assert mobile is in one column', async () => {
 			// Open responsive bar and select mobile view
 			await page.locator( '#elementor-panel-footer-responsive i' ).click();
@@ -117,6 +182,10 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
 
 			expect( isOneColumn ).toBeTruthy();
+
+			// Reset desktop view
+			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
+			await page.locator( '#e-responsive-bar__close-button' ).click();
 		} );
 	} );
 
@@ -263,6 +332,50 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await gridColumnsControl.locator( '.elementor-slider-input input' ).fill( '50px 150px repeat(2, 100px)' );
 
 			await expect( gridOutline ).toHaveCSS( 'grid-template-columns', desiredCustomValue );
+		} );
+	} );
+
+	test( 'Check empty view min height', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		// Arrange.
+		await test.step( 'Arrange', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.closeNavigatorIfOpen();
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+		} );
+
+		const frame = editor.getPreviewFrame(),
+			emptyView = await frame.locator( '.elementor-empty-view' ),
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
+
+		await test.step( 'Empty view min-height should be auto when grid-rows unit is set to custom', async () => {
+			// Arrange.
+			const desiredCustomValue = '50px 150px 100px 100px',
+				desiredMinHeight = 'auto';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
+		await test.step( 'Empty view min-height should be 100px when grid-rows unit is set to fr ', async () => {
+			// Arrange.
+			const desiredMinHeight = '100px',
+				desiredNumberOfRows = '2';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="fr"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredNumberOfRows );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 	} );
 } );
