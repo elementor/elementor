@@ -10,7 +10,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 				directGridOverlay: ':scope > .e-grid-outline',
 				boxedContainer: ':scope > .e-con-inner',
 				emptyView: '.elementor-empty-view',
-				gridContainer: '.e-con',
 			},
 			classes: {
 				outline: 'e-grid-outline',
@@ -27,24 +26,25 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			gridOutline: this.findElement( selectors.gridOutline ),
 			directChildGridOverlay: this.findElement( selectors.directGridOverlay ),
 			emptyView: this.findElement( selectors.emptyView )[ 0 ],
-			container: this.$element[ 0 ],
 		};
 	}
 
 	onInit() {
 		super.onInit();
-		this.updateEmptyViewHeight();
 		this.initLayoutOverlay();
+		this.updateEmptyViewHeight();
 	}
 
 	bindEvents() {
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
 	}
 
 	initLayoutOverlay() {
@@ -231,13 +231,21 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	updateEmptyViewHeight() {
-		const { emptyView } = this.elements,
-			{ grid_rows_grid: gridRows } = this.getElementSettings();
+		if ( this.shouldUpdateEmptyViewHeight() ) {
+			const { emptyView } = this.elements,
+				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
+				elementSettings = this.getElementSettings(),
+				gridRows = 'desktop' === currentDevice ? elementSettings.grid_rows_grid : elementSettings.grid_rows_grid + '_' + currentDevice;
 
-		emptyView.style?.removeProperty( 'min-height' );
+			emptyView?.style.removeProperty( 'min-height' );
 
-		if ( 'custom' === gridRows.unit ) {
-			emptyView.style.minHeight = 'auto';
+			if ( 'custom' === gridRows?.unit ) {
+				emptyView.style.minHeight = 'auto';
+			}
 		}
+	}
+
+	shouldUpdateEmptyViewHeight() {
+		return !! this.$element[ 0 ].querySelector( '.elementor-empty-view' );
 	}
 }
