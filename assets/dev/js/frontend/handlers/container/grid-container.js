@@ -26,6 +26,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			gridOutline: this.findElement( selectors.gridOutline ),
 			directChildGridOverlay: this.findElement( selectors.directGridOverlay ),
 			emptyView: this.findElement( selectors.emptyView )[ 0 ],
+			container: this.$element[ 0 ],
 		};
 	}
 
@@ -65,7 +66,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	getCorrectContainer() {
-		const container = this.$element[ 0 ],
+		const container = this.elements.container,
 			getDefaultSettings = this.getDefaultSettings(),
 			{ selectors: { boxedContainer } } = getDefaultSettings;
 
@@ -246,6 +247,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	shouldUpdateEmptyViewHeight() {
-		return !! this.$element[ 0 ].querySelector( '.elementor-empty-view' );
+		return !! this.elements.container.querySelector( '.elementor-empty-view' );
 	}
 }
