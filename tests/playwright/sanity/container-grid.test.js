@@ -321,8 +321,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 		} );
 	} );
 
-	test.only( 'Check empty view min height', async ( { page }, testInfo ) => {
-		await page.pause();
+	test( 'Check empty view min height', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
 
