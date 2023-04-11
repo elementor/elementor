@@ -1,5 +1,4 @@
 export default class GridContainer extends elementorModules.frontend.handlers.Base {
-
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -16,9 +15,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
-			},
-			scssProperties: {
-				gridTemplateRows: '--e-con-grid-template-rows',
 			},
 		};
 	}
@@ -235,37 +231,13 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	updateEmptyViewHeight() {
-		const { emptyView } = this.elements;
+		const { emptyView } = this.elements,
+			{ grid_rows_grid: gridRows } = this.getElementSettings();
 
 		emptyView.style?.removeProperty( 'min-height' );
 
-		if ( ! this.controlHasSliderValue() ) {
+		if ( 'custom' === gridRows.unit ) {
 			emptyView.style.minHeight = 'auto';
 		}
-	}
-
-	/**
-	 * This function checks the --e-con-grid-template-rows SCSS variable value and according to its value assign the empty view min-height value.
-	 * 
-	 * I have covered 3 cases:
-	 * 1. The value of the variable if it comes from the slider control E,g. 'repeat(2, 1fr)'.
-	 * 2. The value of the variable is empty, relevant for the custom control.
-	 * 3. The value of the variable is a number, relevant for the custom control .
-	 *
-	 * In the cases above the empty view min-height value will not change.
-	 *
-	 * In the other cases the empty view min-height value will be set to 'auto'
-	 * in order to allow the empty view to adjust itself to the first row height.
-	 *
-	 * @return {boolean}
-	 */
-	controlHasSliderValue() {
-		const { scssProperties: { gridTemplateRows } } = this.getDefaultSettings(),
-			regexDefaultPattern = /^repeat\(\d+, 1fr\)$/,
-			regexEmptyPattern = /^$/,
-			regexDigitsPattern = /^\d+$/,
-			gridTemplateRowsValue = window.getComputedStyle( this.elements.container ).getPropertyValue( gridTemplateRows ).trim();
-
-		return regexDefaultPattern.test( gridTemplateRowsValue ) || regexEmptyPattern.test( gridTemplateRowsValue ) || regexDigitsPattern.test( gridTemplateRowsValue );
 	}
 }
