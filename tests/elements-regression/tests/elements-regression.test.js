@@ -32,6 +32,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
+			await page.waitForTimeout( 2000 );
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
@@ -39,7 +40,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				const widget = editorPage.getWidget().nth( i );
 				const id = await widget.getAttribute( 'data-id' );
 				widgetIds.push( id );
-				await page.waitForTimeout( 500 );
 				await editorPage.waitForElementRender( id );
 				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png` );
 			}
