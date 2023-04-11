@@ -25,6 +25,25 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
+	&.e-grid--row {
+
+		&,
+		& > .e-con-inner {
+
+			> .elementor-widget-placeholder {
+				position: relative;
+				z-index: $editor-layer; // To put it above the element overlay.
+				width: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-inline-start: var( --margin-start );
+				height: auto;
+				min-height: 100%;
+				animation-name: dnd-placeholder-widget-vertical;
+				animation-fill-mode: both;
+			}
+		}
+	}
+
 	&.e-con--row {
 
 		&,
