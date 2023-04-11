@@ -327,7 +327,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
-			await editor.addElement( { elType: 'container' }, 'document' )
+			await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
