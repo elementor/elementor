@@ -9,6 +9,7 @@ const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } 
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
+	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
 	test.beforeEach( async () => {
 		pageId = await createPage();
@@ -97,7 +98,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -122,7 +123,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -228,7 +229,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -299,7 +300,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -326,7 +327,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -396,7 +397,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
@@ -466,7 +467,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -487,7 +488,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -553,7 +554,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		await editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ).click();
 
@@ -644,7 +645,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		const activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ),
 			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
@@ -902,7 +903,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
 		 * receives the correct index.
 		 */
-			// Arrange.
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost();

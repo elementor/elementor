@@ -10,7 +10,7 @@ export default {
 	testDir: './tests/',
 
 	timeout: 3 * 60 * 1000,
-	globalSetup: resolve( __dirname, './src/global-setup.js' ),
+	globalSetup: resolve( __dirname, '../playwright/config/global-setup.js' ),
 	expect: {
 		timeout: 5000,
 	},
@@ -28,9 +28,7 @@ export default {
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		viewport: { width: 1920, height: 1080 },
 		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
-		storageState: resolve( __dirname, 'storage-state.json' ),
-		// @ts-ignore
-		validateAllPreviousCasesChecked: process.env.ELEMENTS_REGRESSION_VALIDATE_ALL_PREVIOUS_TEST_CASES || ( process.env.CI ? 'on' : 'off' ),
+		storageState: resolve( __dirname, 'storageState.json' ),
 		user: {
 			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
 			password: process.env.ELEMENTS_REGRESSION_WP_PASSWORD || 'password',
