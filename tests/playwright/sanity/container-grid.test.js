@@ -168,6 +168,12 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			const isOneColumn = ! hasWhiteSpace( gridTemplateColumnsCssValue );
 
 			expect( isOneColumn ).toBeTruthy();
+		} );
+
+		await test.step( 'Mobile rows unit are on FR', async () => {
+			const rowsMobileUnitLabel = page.locator( 'elementor-group-control-rows_grid .e-units-switcher' );
+			const labelValue = await rowsMobileUnitLabel.getAttribute( 'data-selected' );
+			expect( labelValue ).toBe( 'fr' );
 
 			// Reset desktop view
 			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
