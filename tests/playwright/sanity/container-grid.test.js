@@ -309,7 +309,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( gridOutline ).toHaveCSS( 'grid-gap', desiredGapValue );
 		} );
 
-		await test.step( 'Check that Custom control is set to grid outline', async () => {
+		await test.step( 'Check that grid outline looks like Custom control', async () => {
 			const desiredCustomValue = '50px 150px 100px 100px',
 				gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' );
 
@@ -318,6 +318,51 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await gridColumnsControl.locator( '.elementor-slider-input input' ).fill( '50px 150px repeat(2, 100px)' );
 
 			await expect( gridOutline ).toHaveCSS( 'grid-template-columns', desiredCustomValue );
+		} );
+	} );
+
+	test.only( 'Check empty view min height', async ( { page }, testInfo ) => {
+		await page.pause();
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		// Arrange.
+		await test.step( 'Arrange', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' )
+			await editor.closeNavigatorIfOpen();
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+		} );
+
+		const frame = editor.getPreviewFrame(),
+			emptyView = await frame.locator( '.elementor-empty-view' ),
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
+
+		await test.step( 'Empty view min-height should be auto when grid-rows unit is set to custom', async () => {
+			// Arrange.
+			const desiredCustomValue = '50px 150px 100px 100px',
+				desiredMinHeight = 'auto';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
+		await test.step( 'Empty view min-height should be 100px when grid-rows unit is set to fr ', async () => {
+			// Arrange.
+			const desiredMinHeight = '100px',
+				desiredNumberOfRows = '2';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="fr"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredNumberOfRows );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 	} );
 } );
