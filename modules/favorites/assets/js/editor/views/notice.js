@@ -17,9 +17,6 @@ const PanelElementsNoticeView = Marionette.ItemView.extend( {
 		this.destroy();
 	},
 	onRender() {
-		if ( elementorCommon.storage.get( 'panelElementsNotice' ) ) {
-			return;
-		}
 		this.ui.notice.html( this.notice.message );
 		this.ui.notice.append( ' <a href="#">' + this.notice.hrefText + '</a>' );
 	},
