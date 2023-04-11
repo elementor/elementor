@@ -244,6 +244,21 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 	}
 
+	/**
+	 * This function checks the --e-con-grid-template-rows SCSS variable value and according to its value assign the empty view min-height value.
+	 * 
+	 * I have covered 3 cases:
+	 * 1. The value of the variable if it comes from the slider control E,g. 'repeat(2, 1fr)'.
+	 * 2. The value of the variable is empty, relevant for the custom control.
+	 * 3. The value of the variable is a number, relevant for the custom control .
+	 *
+	 * In the cases above the empty view min-height value will not change.
+	 *
+	 * In the other cases the empty view min-height value will be set to 'auto'
+	 * in order to allow the empty view to adjust itself to the first row height.
+	 *
+	 * @return {boolean}
+	 */
 	controlHasSliderValue() {
 		const { scssProperties: { gridTemplateRows } } = this.getDefaultSettings(),
 			regexDefaultPattern = /^repeat\(\d+, 1fr\)$/,
