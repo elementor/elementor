@@ -45,6 +45,20 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
 		} );
 
+		await test.step( 'Mobile rows unit are on FR', async () => {
+			// Open responsive bar and select mobile view
+			await page.locator( '#elementor-panel-footer-responsive i' ).click();
+			await page.waitForSelector( '#e-responsive-bar' );
+			await page.locator( '#e-responsive-bar-switcher__option-mobile' ).click();
+
+			const rowsMobileUnitLabel = await page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
+			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+
+			// Reset desktop view
+			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
+			await page.locator( '#e-responsive-bar__close-button' ).click();
+		} );
+
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
 			// Arrange
 			const alignContentControl = await page.locator( '.elementor-control-grid_align_content' );
