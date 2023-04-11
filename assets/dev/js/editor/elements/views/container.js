@@ -378,7 +378,7 @@ const ContainerView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		if ( settings.changed.flex_direction || settings.changed.content_width ) {
+		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
