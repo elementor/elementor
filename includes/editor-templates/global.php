@@ -17,13 +17,20 @@ function echo_select_your_structure_title() {
 
 <script type="text/template" id="tmpl-elementor-add-section">
 	<div class="elementor-add-section-inner">
-		<div class="elementor-add-section-close">
+		<div class="elementor-add-section-close elementor-wizard-icon">
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		</div>
+		<?php
+		$experiments_manager = Plugin::$instance->experiments;
+		if ( $experiments_manager->is_feature_active( 'container_grid' ) ) { ?>
+			<div class="elementor-add-section-back elementor-wizard-icon">
+				<i class="eicon-chevron-left" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Back', 'elementor' ); ?></span>
+			</div>
+		<?php } ?>
 		<div class="e-view elementor-add-new-section">
 			<?php
-				$experiments_manager = Plugin::$instance->experiments;
 				$add_container_title = esc_html__( 'Add New Container', 'elementor' );
 				$add_section_title = esc_html__( 'Add New Section', 'elementor' );
 
