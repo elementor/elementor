@@ -36,7 +36,7 @@ module.exports = class WpAdminPage extends BasePage {
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20000 } );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		return new EditorPage( this.page, this.testInfo );
