@@ -39,6 +39,7 @@ import environment from 'elementor-common/utils/environment';
 		return {
 			addNewSection: '.elementor-add-new-section',
 			closeButton: '.elementor-add-section-close',
+			backButton: '.elementor-add-section-back',
 			addSectionButton: '.elementor-add-section-button',
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
@@ -55,6 +56,7 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.addSectionButton': 'onAddSectionButtonClick',
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
+			'click @ui.backButton': () => this.setView( AddSectionBase.getSelectType() ),
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),

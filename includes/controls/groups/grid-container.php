@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -31,6 +33,8 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		$responsive_unit_defaults = $this->get_responsive_unit_defaults();
+
 		$fields['columns_grid'] = [
 			'label' => esc_html__( 'Columns', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
@@ -58,7 +62,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'frontend_available' => true,
-		];
+		] + $responsive_unit_defaults;
 
 		$fields['rows_grid'] = [
 			'label' => esc_html__( 'Rows', 'elementor' ),
@@ -83,7 +87,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'frontend_available' => true,
-		];
+		] + $responsive_unit_defaults;
 
 		$fields['gaps'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
@@ -249,6 +253,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		return $fields;
+	}
+
+	protected function get_responsive_unit_defaults() {
+		$responsive_unit_defaults = [];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$responsive_unit_defaults[ $breakpoint_name . '_default' ] = [
+				'unit' => 'fr',
+			];
+		}
+
+		return $responsive_unit_defaults;
 	}
 
 	protected function get_default_options() {
