@@ -1,4 +1,4 @@
-export default class GridOutline extends elementorModules.frontend.handlers.Base {
+export default class GridContainer extends elementorModules.frontend.handlers.Base {
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -9,6 +9,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 				gridOutline: '.e-grid-outline',
 				directGridOverlay: ':scope > .e-grid-outline',
 				boxedContainer: ':scope > .e-con-inner',
+				emptyView: '.elementor-empty-view',
 			},
 			classes: {
 				outline: 'e-grid-outline',
@@ -24,23 +25,27 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 			outlineParentContainer: null,
 			gridOutline: this.findElement( selectors.gridOutline ),
 			directChildGridOverlay: this.findElement( selectors.directGridOverlay ),
+			emptyView: this.findElement( selectors.emptyView )[ 0 ],
+			container: this.$element[ 0 ],
 		};
 	}
 
 	onInit() {
 		super.onInit();
-
 		this.initLayoutOverlay();
+		this.updateEmptyViewHeight();
 	}
 
 	bindEvents() {
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
 	}
 
 	initLayoutOverlay() {
@@ -61,7 +66,7 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	getCorrectContainer() {
-		const container = this.$element[ 0 ],
+		const container = this.elements.container,
 			getDefaultSettings = this.getDefaultSettings(),
 			{ selectors: { boxedContainer } } = getDefaultSettings;
 
@@ -157,6 +162,10 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	}
 
 	onElementChange( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) ) {
+			this.updateEmptyViewHeight();
+		}
+
 		let propsThatTriggerGridLayoutRender = [
 			'grid_rows_grid',
 			'grid_columns_grid',
@@ -220,5 +229,24 @@ export default class GridOutline extends elementorModules.frontend.handlers.Base
 	removeChildLifeCycleEventListeners() {
 		window.removeEventListener( 'elementor/editor/element-rendered', this.lifecycleChangeListener );
 		window.removeEventListener( 'elementor/editor/element-destroyed', this.lifecycleChangeListener );
+	}
+
+	updateEmptyViewHeight() {
+		if ( this.shouldUpdateEmptyViewHeight() ) {
+			const { emptyView } = this.elements,
+				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
+				elementSettings = this.getElementSettings(),
+				gridRows = 'desktop' === currentDevice ? elementSettings.grid_rows_grid : elementSettings.grid_rows_grid + '_' + currentDevice;
+
+			emptyView?.style.removeProperty( 'min-height' );
+
+			if ( 'custom' === gridRows?.unit ) {
+				emptyView.style.minHeight = 'auto';
+			}
+		}
+	}
+
+	shouldUpdateEmptyViewHeight() {
+		return !! this.elements.container.querySelector( '.elementor-empty-view' );
 	}
 }
