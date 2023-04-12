@@ -378,6 +378,31 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 	} );
+
+	test( 'Test grid back arrow', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const frame = await editor.getPreviewFrame();
+		await frame.locator( '.elementor-add-section-button' ).click();
+
+		await test.step( 'Assert back arrow in flex presets', async () => {
+			await frame.locator( '.flex-preset-button' ).click();
+			const backArrow = await frame.locator( '.elementor-add-section-back' );
+			await expect( backArrow ).toBeVisible();
+			await backArrow.click();
+			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
+			await expect( selectTypeView ).toBeVisible();
+		} );
+
+		await test.step( 'Assert back arrow in grid presets', async () => {
+			await frame.locator( '.grid-preset-button' ).click();
+			const backArrow = await frame.locator( '.elementor-add-section-back' );
+			await expect( backArrow ).toBeVisible();
+			await backArrow.click();
+			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
+			await expect( selectTypeView ).toBeVisible();
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {
