@@ -493,6 +493,7 @@ module.exports = class EditorPage extends BasePage {
 		await this.publishPage();
 		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
 		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
 	}
 
 	async previewChanges( context ) {
