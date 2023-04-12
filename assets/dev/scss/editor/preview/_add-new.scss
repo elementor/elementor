@@ -132,8 +132,15 @@
 }
 
 .elementor-add-section-close {
-	position: absolute;
 	right: 40px;
+}
+
+.elementor-add-section-back {
+	left: 40px;
+}
+
+.elementor-wizard-icon {
+	position: absolute;
 	top: 40px;
 	font-size: 20px;
 	cursor: pointer;
@@ -210,6 +217,24 @@
 	&[data-view="choose-action"] {
 
 		.elementor-add-section-close {
+			display: none;
+		}
+
+		.elementor-add-section-back {
+			display: none;
+		}
+	}
+
+	&[data-view="select-preset"] {
+
+		.elementor-add-section-back {
+			display: none;
+		}
+	}
+
+	&[data-view="select-type"] {
+
+		.elementor-add-section-back {
 			display: none;
 		}
 	}
