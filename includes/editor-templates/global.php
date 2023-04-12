@@ -21,14 +21,15 @@ function echo_select_your_structure_title() {
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		</div>
-		<?php
-			$experiments_manager = Plugin::$instance->experiments;
-			if ( $experiments_manager->is_feature_active( 'container_grid' ) ) { ?>
-			<div class="elementor-add-section-back elementor-wizard-icon">
-				<i class="eicon-chevron-left" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Back', 'elementor' ); ?></span>
-			</div>
-		<?php } ?>
+	<?php
+		$experiments_manager = Plugin::$instance->experiments;
+		if ( $experiments_manager->is_feature_active( 'container_grid' ) ) {
+	?>
+		<div class="elementor-add-section-back elementor-wizard-icon">
+			<i class="eicon-chevron-left" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'Back', 'elementor' ); ?></span>
+		</div>
+	<?php } ?>
 		<div class="e-view elementor-add-new-section">
 			<?php
 				$add_container_title = esc_html__( 'Add New Container', 'elementor' );
