@@ -253,7 +253,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		];
 
 		// Only use the auto flow prefix class inside the editor.
-		$auto_flow_prefix_class = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-grid--' ] : [];
+		$auto_flow_prefix_class = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-con--' ] : [];
 
 		$fields['_is_row'] = array_merge( $auto_flow_prefix_class, [
 			'type' => Controls_Manager::HIDDEN,

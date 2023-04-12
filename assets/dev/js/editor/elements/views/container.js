@@ -42,11 +42,20 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( 'flex_direction' );
+		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	getDirectionSettingKey() {
+		const containerType = this.container.settings.get( 'container_type' ),
+			directionSettingKey = 'flex' === containerType
+				? 'flex_direction'
+				: 'grid_auto_flow';
+
+		return directionSettingKey;
 	},
 
 	behaviors() {
@@ -108,7 +117,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableAxis() {
 		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
-			currentDirection = this.getContainer().settings.get( 'flex_direction' );
+			currentDirection = this.getContainer().settings.get( this.getDirectionSettingKey() );
 
 		const axisMap = {
 			[ ContainerHelper.DIRECTION_COLUMN ]: 'vertical',
