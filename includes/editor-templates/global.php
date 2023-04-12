@@ -22,7 +22,7 @@ function echo_select_your_structure_title() {
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		</div>
 		<?php
-			$experiments_manager = Plugin::$instance->experiments;
+		$experiments_manager = Plugin::$instance->experiments;
 		if ( $experiments_manager->is_feature_active( 'container_grid' ) ) { ?>
 			<div class="elementor-add-section-back elementor-wizard-icon">
 				<i class="eicon-chevron-left" aria-hidden="true"></i>
