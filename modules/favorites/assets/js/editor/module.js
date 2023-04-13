@@ -18,8 +18,11 @@ import Widgets from './types/widgets/widgets';
 	}
 
 	onElementorInit() {
+		const hasSeenNotice = elementor.config.user.introduction[ 'favorites-notice' ];
+		if ( hasSeenNotice ) {
+			return;
+		}
 		elementor.on( 'panel:init', () => {
-			if ( ! elementorCommon.storage.get( 'panelElementsNotice' ) ) {
 				elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
 					regionViews.favoritesNotice = {
 						region: notice,
@@ -34,7 +37,6 @@ import Widgets from './types/widgets/widgets';
 						elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
 					}
 				} );
-			}
 		} );
 	}
 

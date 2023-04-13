@@ -13,8 +13,12 @@ const PanelElementsNoticeView = Marionette.ItemView.extend( {
 		'click @ui.notice a': 'onNoticeClick',
 	},
 	onNoticeClick() {
-		elementorCommon.storage.set( 'panelElementsNotice', true );
 		this.destroy();
+		elementorCommon.ajax.addRequest( 'introduction_viewed', {
+			data: {
+				introductionKey: 'favorites-notice',
+			},
+		} );
 	},
 	onRender() {
 		this.ui.notice.html( this.notice.message );
