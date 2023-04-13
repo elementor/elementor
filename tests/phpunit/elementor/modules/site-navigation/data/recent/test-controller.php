@@ -11,7 +11,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Controller extends Elementor_Test_Base {
 
 	const RECENTLY_EDITED_ENDPOINT = '/site-navigation/recent-posts';
-	const ADD_NEW_PAGE_ENDPOINT = '/site-navigation/add-new-page';
+	const ADD_NEW_POST_ENDPOINT = '/site-navigation/add-new-post';
 
 	public function setUp() {
 		parent::setUp();
@@ -195,7 +195,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_subscriber();
 
 		// Act.
-		$response = $this->send_request( 'POST', self::ADD_NEW_PAGE_ENDPOINT );
+		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
 
 		// Assert.
 		$this->assertEquals( 403, $response->get_status() );
@@ -205,7 +205,7 @@ class Test_Controller extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_editor();
 
-		$response = $this->send_request( 'POST', self::ADD_NEW_PAGE_ENDPOINT );
+		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
