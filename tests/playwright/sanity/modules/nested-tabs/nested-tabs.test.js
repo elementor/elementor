@@ -436,23 +436,28 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tab hover color.
 		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+		// Set tab active color.
+		await setTabItemColor( page, editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
 
 		await editor.publishAndViewPage();
 
 		// Hover background style.
 		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
+			activeTabBackgroundColor = 'rgb(0, 255, 255)',
 			activeTab = page.locator( '.e-normal.e-active' ),
 			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
 		// Check that by default the hover color isn't applied.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		await expect( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		// Hover over tab.
 		await activeTab.hover();
 		// Check that active tab doesn't change background color on hover.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		// Check that non-active tab receives the hover background color.
 		await nonActiveTab.hover();
 		await expect( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
@@ -789,7 +794,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab activation works correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab activation works correctly', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -827,7 +832,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test the nested tabs behaviour when using container flex row @latest', async ( { page }, testInfo ) => {
+	test( 'Test the nested tabs behaviour when using container flex row', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -897,7 +902,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Tabs and containers are duplicated correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Tabs and containers are duplicated correctly', async ( { page }, testInfo ) => {
 		/**
 		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
 		 * receives the correct index.

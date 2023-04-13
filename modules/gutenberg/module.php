@@ -104,11 +104,12 @@ class Module extends BaseModule {
 		</script>
 
 		<script id="elementor-gutenberg-panel" type="text/html">
-			<div id="elementor-editor"><a id="elementor-go-to-edit-page-link" href="#">
-					<div id="elementor-editor-button" class="button button-primary button-hero">
+			<div id="elementor-editor">
+				<div id="elementor-go-to-edit-page-link">
+					<button id="elementor-editor-button" class="button button-primary button-hero">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
 						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
-					</div>
+					</button>
 					<div class="elementor-loader-wrapper">
 						<div class="elementor-loader">
 							<div class="elementor-loader-boxes">
@@ -120,7 +121,8 @@ class Module extends BaseModule {
 						</div>
 						<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
 					</div>
-				</a></div>
+				</div>
+			</div>
 		</script>
 		<?php
 	}
