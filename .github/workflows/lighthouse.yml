@@ -83,7 +83,7 @@ jobs:
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           npm ci
-          npm install --no-package-lock --no-save @lhci/cli@0.8.0
+          npm install --no-package-lock --no-save @lhci/cli@0.11.1
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
