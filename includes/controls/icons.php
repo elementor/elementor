@@ -77,10 +77,12 @@ class Control_Icons extends Control_Base_Multiple {
 				<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
 					<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
 						<i class="eicon-plus-circle" aria-hidden="true"></i>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Add', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-control-media-area">
-						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
-							<i class="eicon-trash-o"></i>
+						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash-o" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
 						<div class="elementor-control-media__preview"></div>
 					</div>

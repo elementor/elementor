@@ -697,16 +697,16 @@ class Widget_Video extends Widget_Base {
 					'916' => '9:16',
 				],
 				'selectors_dictionary' => [
-					'169' => '16 / 9',
-					'219' => '21 / 9',
-					'43' => '4 / 3',
-					'32' => '3 / 2',
-					'11' => '1 / 1',
-					'916' => '9 / 16',
+					'169' => '1.77777', // 16 / 9
+					'219' => '2.33333', // 21 / 9
+					'43' => '1.33333', // 4 / 3
+					'32' => '1.5', // 3 / 2
+					'11' => '1', // 1 / 1
+					'916' => '0.5625', // 9 / 16
 				],
 				'default' => '169',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-wrapper' => 'aspect-ratio: {{VALUE}}',
+					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
 				],
 			]
 		);
