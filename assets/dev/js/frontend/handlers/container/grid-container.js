@@ -237,11 +237,13 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
 				elementSettings = this.getElementSettings(),
 				gridRows = 'desktop' === currentDevice ? elementSettings.grid_rows_grid : elementSettings.grid_rows_grid + '_' + currentDevice,
-				numberPattern = /^\d+$/;
+				numberPattern = /^\d+$/,
+				hasCustomUnit = 'custom' === gridRows?.unit,
+				isNotOnlyANumber = ! numberPattern.test( gridRows?.size );
 
 			emptyView?.style.removeProperty( 'min-height' );
 
-			if ( 'custom' === gridRows?.unit && ! numberPattern.test( gridRows?.size ) && '' !== gridRows?.size.trim() ) {
+			if ( hasCustomUnit && isNotOnlyANumber && this.sizeNotEmpty( gridRows ) ) {
 				emptyView.style.minHeight = 'auto';
 			}
 		}
@@ -249,5 +251,9 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	shouldUpdateEmptyViewHeight() {
 		return !! this.elements.container.querySelector( '.elementor-empty-view' );
+	}
+
+	sizeNotEmpty( gridRows ) {
+		return '' !== gridRows?.size?.trim();
 	}
 }
