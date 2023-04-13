@@ -236,11 +236,12 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			const { emptyView } = this.elements,
 				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
 				elementSettings = this.getElementSettings(),
-				gridRows = 'desktop' === currentDevice ? elementSettings.grid_rows_grid : elementSettings.grid_rows_grid + '_' + currentDevice;
+				gridRows = 'desktop' === currentDevice ? elementSettings.grid_rows_grid : elementSettings.grid_rows_grid + '_' + currentDevice,
+				numberPattern = /^\d+$/;
 
 			emptyView?.style.removeProperty( 'min-height' );
 
-			if ( 'custom' === gridRows?.unit ) {
+			if ( 'custom' === gridRows?.unit && ! numberPattern.test( gridRows?.size ) && '' !== gridRows?.size.trim() ) {
 				emptyView.style.minHeight = 'auto';
 			}
 		}
