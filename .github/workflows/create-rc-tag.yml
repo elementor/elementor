@@ -45,15 +45,6 @@ jobs:
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
-      - name: Push a backup branch
-        uses: ./.github/workflows/create-branch
-        with:
-          BRANCH_NAME: ${{ env.CLEAN_PACKAGE_VERSION }}-${{ github.event.inputs.channel }}-rc-backup
-          SOURCE_BRANCH: ${{ github.ref }}
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
