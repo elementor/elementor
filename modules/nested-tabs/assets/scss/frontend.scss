@@ -162,7 +162,7 @@
 				}
 			}
 
-			&:not( .e-active ).e-normal:hover {
+			&:not( .e-active ).e-n-tab-title:hover {
 
 				&,
 				& a {
@@ -224,7 +224,7 @@
 
 	.e-n-tabs-content {
 
-		.e-collapse {
+		.e-n-tab-title {
 			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
 			-webkit-tap-highlight-color: transparent;
 			-webkit-touch-callout: none;
@@ -249,14 +249,14 @@
 	}
 }
 
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-normal:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title:hover {
 	background-color: var( --n-tabs-title-background-color-hover );
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title,
+	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title ) {
 
 	&.e-active {
 		background-color: var( --n-tabs-title-background-color-active );
@@ -266,21 +266,10 @@
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
-	.e-n-tabs-#{$device} {
-
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
-			display: none;
-		}
-	}
 }
 
 @mixin hide-collapse-tabs-($device) {
-	.e-n-tabs-#{$device} {
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-			display: none;
-		}
-	}
 }
 
 // Mobile.
