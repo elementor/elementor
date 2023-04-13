@@ -346,9 +346,9 @@ class Widget_Progress extends Widget_Base {
 
 		if ( ! empty( $settings['inner_text'] ) ) {
 			$this->add_render_attribute(
-					'wrapper',
-					'aria-valuetext',
-					sprintf('%s (%s)', $progress_percentage . '%', $settings['inner_text'] )
+				'wrapper',
+				'aria-valuetext',
+				sprintf( '%s (%s)', $progress_percentage . '%', $settings['inner_text'] )
 			);
 		}
 
