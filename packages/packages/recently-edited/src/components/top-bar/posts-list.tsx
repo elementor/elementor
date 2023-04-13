@@ -7,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import DocTypeChip, { Props } from '../top-bar/chip-doc-type';
 import { Post } from '../../hooks/use-recent-posts';
+import AddNewPage from './add-new-page';
 
 export type RecentPostsProps = {
 	recentPosts: Post[];
@@ -35,6 +36,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 					</Typography>
 				)
 			}
+			<AddNewPage />
 		</>
 	);
 }
