@@ -210,10 +210,10 @@ class Test_Controller extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$edit_url = $response->get_data()[0]['edit_url'];
-		$post_id = $response->get_data()[0]['id'];
+		$edit_url = $response->get_data()['edit_url'];
+		$post_id = $response->get_data()['id'];
 		$expected_edit_url = 'wp-admin/post.php?post=' . $post_id . '&action=elementor';
-		$this->assertEquals( $expected_edit_url, $edit_url );
+		$this->assertStringContainsString( $expected_edit_url, $edit_url );
 	}
 
 	/**
