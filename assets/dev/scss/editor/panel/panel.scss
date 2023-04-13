@@ -122,10 +122,12 @@
 	margin: 0 auto;
 	font-size: 14px;
 	font-style: unset;
+	margin-bottom: 15px;
 	a {
 		font-weight: bold;
 		font-style: italic;
 		border-bottom: 2px dotted var(--e-a-color-info);
+		display: inline-block;
 	}
 }
 
