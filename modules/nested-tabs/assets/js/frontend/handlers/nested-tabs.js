@@ -439,7 +439,7 @@ export default class NestedTabs extends Base {
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
-			$firstFocusableItem.focus();
+			$firstFocusableItem.trigger( 'focus' );
 		}
 	}
 

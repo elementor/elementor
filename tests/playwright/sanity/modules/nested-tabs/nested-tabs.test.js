@@ -5,7 +5,7 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
-// const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
+const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -20,7 +20,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await deletePage( pageId );
 	} );
 
-	test( 'General test', async ( { page }, testInfo ) => {
+	test.only( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -33,30 +33,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Tests.
 		await testIconCount( page, editor );
-
-		await clickTab( editor.getPreviewFrame(), 0 );
-		const activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
-			contentContainerId = await activeContentContainer.getAttribute( 'data-id' );
-
-		console.log( 'data-id ' + contentContainerId );
-		const slidesId = await editor.addWidget( 'slides', contentContainerId );
-		// Set direction right.
-		await clickTab( editor.getPreviewFrame(), 0 );
-		await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
-		await editor.togglePreviewMode();
-
-		// Assert
-		expect( await activeContentContainer.screenshot( {
-			type: 'jpeg',
-			quality: 100,
-		} ) ).toMatchSnapshot( 'tabs-direction-right-carousel-visible.jpeg' );
-
-		// Restore original view.
-		await editor.togglePreviewMode();
-		await editor.removeElement( slidesId );
-		await clickTab( editor.getPreviewFrame(), 0 );
-		await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
-
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 

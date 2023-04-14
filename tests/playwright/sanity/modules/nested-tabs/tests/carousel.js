@@ -1,12 +1,14 @@
 const { expect } = require( '@playwright/test' );
-const { clickTab } = require( '../helper' );
+const { selectDropdownContainer, clickTab } = require( '../helper' );
 
-async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor ) {
+async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId ) {
 	// Act.
-	await clickTab( editor.getPreviewFrame(), 0 );
-	const activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
-		contentContainerId = await activeContentContainer.getAttribute( 'data-id' ),
-		slidesId = await editor.addWidget( 'slides', contentContainerId );
+	await page.pause();
+	const contentContainerId = await selectDropdownContainer( editor, widgetId, 0 ),
+		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
+		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
+	// Add images.
+	await editor.populateImageCarousel();
 	// Set direction right.
 	await clickTab( editor.getPreviewFrame(), 0 );
 	await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
@@ -20,7 +22,7 @@ async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor 
 
 	// Restore original view.
 	await editor.togglePreviewMode();
-	await editor.removeElement( slidesId );
+	await editor.removeElement( carouselId );
 	await clickTab( editor.getPreviewFrame(), 0 );
 	await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
 }
