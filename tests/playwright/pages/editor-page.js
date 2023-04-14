@@ -1,5 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +17,8 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( template ) {
-		const templateData = require( `../templates/${ template }.json` );
+	async loadTemplate( filePath ) {
+		const templateData = require( filePath );
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -482,18 +483,17 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
 	}
 
 	async previewChanges( context ) {
@@ -619,6 +619,39 @@ module.exports = class EditorPage extends BasePage {
 
 		if ( currentState !== Boolean( setState ) ) {
 			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
 		}
 	}
 };
