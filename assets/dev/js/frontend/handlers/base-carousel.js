@@ -4,7 +4,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				carousel: elementorFrontendConfig.experimentalFeatures.e_swiper_latest ? '.swiper' : '.swiper-container',
+				carousel: `.${ elementorFrontend.config.swiperClass }`,
 				slideContent: '.swiper-slide',
 			},
 		};
