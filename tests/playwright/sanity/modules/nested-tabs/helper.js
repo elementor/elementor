@@ -101,6 +101,7 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	const elementEditButton = editor.getPreviewFrame().locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
 	await editor.getPreviewFrame().waitForSelector( '.e-con.e-active.elementor-element-editable' );
+	return await editor.getPreviewFrame().locator( '.e-con.e-active.elementor-element-editable' ).getAttribute( 'data-id' );
 }
 
 module.exports = {
