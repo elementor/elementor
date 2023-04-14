@@ -11,13 +11,23 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
-		<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
+		<button id="elementor-navigator__toggle-all" data-elementor-action="expand">
+			<i class="eicon-expand" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php esc_html__( 'Expand all elements', 'elementor' ); ?></span>
+		</button>
 		<div id="elementor-navigator__header__title"><?php
 			echo $is_editor_v2_active
 				? esc_html__( 'Structure', 'elementor' )
 				: esc_html__( 'Navigator', 'elementor' );
 		?></div>
-		<i id="elementor-navigator__close" class="eicon-close"></i>
+		<button id="elementor-navigator__close">
+			<i class="eicon-close" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php
+				echo $is_editor_v2_active
+					? esc_html__( 'Close structure', 'elementor' )
+					: esc_html__( 'Close navigator', 'elementor' );
+			?></span>
+		</button>
 	</div>
 	<div id="elementor-navigator__elements"></div>
 	<div id="elementor-navigator__footer">
