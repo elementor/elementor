@@ -6,11 +6,13 @@ export default class PanelCategoryBehavior extends Marionette.Behavior {
 	}
 
 	onRender() {
-		const hasFavorites = this.view.collection.length;
-		if ( ! hasFavorites ) {
-			this.$el.hide();
-		}
 		if ( this.isFavoritesCategory() ) {
+			const hasFavorites = this.view.collection.length;
+			if ( ! hasFavorites ) {
+				this.$el.hide();
+				return;
+			}
+
 			this.view.toggle( ! this.view.isEmpty(), false );
 		}
 	}

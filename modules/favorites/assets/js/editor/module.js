@@ -23,20 +23,20 @@ import Widgets from './types/widgets/widgets';
 			return;
 		}
 		elementor.on( 'panel:init', () => {
-				elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
-					regionViews.favoritesNotice = {
-						region: notice,
-						view: require( './views/notice' ),
-					};
+			elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
+				regionViews.favoritesNotice = {
+					region: notice,
+					view: require( './views/notice' ),
+				};
 
-					return regionViews;
-				} );
+				return regionViews;
+			} );
 
-				$e.routes.on( 'run:after', ( component, route ) => {
-					if ( 'panel/elements/categories' === route ) {
-						elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
-					}
-				} );
+			$e.routes.on( 'run:after', ( component, route ) => {
+				if ( 'panel/elements/categories' === route ) {
+					elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
+				}
+			} );
 		} );
 	}
 

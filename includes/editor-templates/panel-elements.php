@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-notice">
-	<div class="elementor-panel-notice elementor-panel-alert elementor-panel-alert-info">	
+	<div class="elementor-panel-notice">	
 	</div>
 </script>
 
