@@ -5,14 +5,14 @@ async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor,
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, widgetId, 0 ),
 		slidesId = await editor.addWidget( 'slides', contentContainerId ),
-		activeTab = await editor.getPreviewFrame().locator( '.e-normal.e-active' );
+		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' );
 	// Set direction right.
 	await clickTab( editor.getPreviewFrame(), 0 );
 	await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
 	await editor.togglePreviewMode();
 
 	// Assert
-	expect( await activeTab.screenshot( {
+	expect( await activeContentContainer.screenshot( {
 		type: 'jpeg',
 		quality: 100,
 	} ) ).toMatchSnapshot( 'tabs-direction-right-carousel-visible.jpeg' );
