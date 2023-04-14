@@ -364,6 +364,34 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 
+		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has no value', async () => {
+			// Arrange.
+			const desiredCustomValue = '',
+				desiredMinHeight = '100px';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
+		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has number value', async () => {
+			// Arrange.
+			const desiredCustomValue = '2',
+				desiredMinHeight = '100px';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
 		await test.step( 'Empty view min-height should be 100px when grid-rows unit is set to fr ', async () => {
 			// Arrange.
 			const desiredMinHeight = '100px',
