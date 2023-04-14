@@ -192,15 +192,18 @@ class Utils {
 		}
 
 		global $wpdb;
+		$escaped_from = str_replace( '/', '\\/', $from );
+		$escaped_to = str_replace( '/', '\\/', $to );
+		$meta_value_like = '[%'; // meta_value LIKE '[%' are json formatted
 
 		$rows_affected = $wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} " .
 				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
 				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s ;",
-				str_replace( '/', '\\/', $from ),
-				str_replace( '/', '\\/', $to ),
-				'[%' // meta_value LIKE '[%' are json formatted
+				$escaped_from,
+				$escaped_to,
+				$meta_value_like
 			)
 		);
 
