@@ -658,7 +658,6 @@ test.describe( 'Container tests', () => {
 
 async function createCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
-	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.useCanvasTemplate();
 	return editor;
 }
