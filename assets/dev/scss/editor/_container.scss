@@ -64,6 +64,35 @@
 		}
 	}
 
+	// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
+	&.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e-dragging-right,
+				&.e-dragging-left {
+					--margin-start: 0;
+					position: absolute;
+					width: var( --size );
+					height: 100%;
+					top: 0;
+					animation: grow-in-width 0.15s forwards;
+				}
+
+				&.e-dragging-right {
+					right: 0;
+				}
+
+				&.e-dragging-left {
+					left: 0;
+				}
+			}
+		}
+	}
+
 	&.e-con--column {
 
 		&,
@@ -195,5 +224,19 @@
 		transform-origin: 50% 0;
 		transform: scaleY( 1 );
 		opacity: .9;
+	}
+}
+
+@keyframes grow-in-width {
+	from {
+		width: 0;
+	}
+
+	50% {
+		width: 5px;
+	}
+
+	to {
+		width: 10px;
 	}
 }
