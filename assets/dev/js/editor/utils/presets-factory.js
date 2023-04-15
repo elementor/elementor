@@ -305,7 +305,7 @@ presetsFactory = {
 					</g>
 				</svg>
 			`,
-			'3-3': `
+			'2-3': `
 				<svg width="92" height="46" viewBox="0 0 92 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect opacity="0.8" x="90.9419" y="0.944336" width="44.5" height="90" transform="rotate(90 90.9419 0.944336)" fill="white" stroke="#515962" stroke-dasharray="3 3"/>
 					<path d="M0.941895 22.3711L90.9419 22.3711" stroke="#515962" stroke-dasharray="3 3"/>
@@ -325,7 +325,7 @@ presetsFactory = {
 			'1-3',
 			'3-1',
 			'2-2',
-			'3-3',
+			'2-3',
 		];
 	},
 };
