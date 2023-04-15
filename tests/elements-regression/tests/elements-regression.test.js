@@ -11,18 +11,24 @@ const image2 = {
 	extension: 'jpg',
 };
 
+const image1 = {
+	title: 'image2',
+	extension: 'jpg',
+};
+
 test.describe( 'Elementor regression tests with templates for CORE', () => {
 	test.beforeAll( async ( { browser, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		imageIds.push( await createDefaultMedia( request, image1 ) );
 		imageIds.push( await createDefaultMedia( request, image2 ) );
 		await wpAdmin.setExperiments( {
 			container: 'active',
 		} );
 	} );
 
-	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image' ];
+	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel' ];
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
