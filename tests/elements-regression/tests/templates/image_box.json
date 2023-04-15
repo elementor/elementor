@@ -1,18 +1,18 @@
 {
     "content": [
         {
-            "id": "13a81f08",
+            "id": "42631c6c",
             "settings": [],
             "elements": [
                 {
-                    "id": "1b2c2b01",
+                    "id": "291fea32",
                     "settings": {
                         "image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg",
-                            "id": 292,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
                         "thumbnail_size": "thumbnail",
                         "title_text": "This is the heading number 1",
@@ -59,16 +59,16 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "31fccbb2",
+                    "id": "583bbb1d",
                     "settings": {
                         "image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg",
-                            "id": 292,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
-                        "thumbnail_size": "medium_large",
+                        "thumbnail_size": "medium",
                         "title_text": "This is the heading number 3",
                         "description_text": "Medium large, H4",
                         "position": "right",
@@ -150,14 +150,14 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "132db2f2",
+                    "id": "9498215",
                     "settings": {
                         "image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg",
-                            "id": 292,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
                         "thumbnail_size": "medium",
                         "title_text": "This is the heading number 2",
@@ -240,14 +240,14 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "61927c33",
+                    "id": "47c0c015",
                     "settings": {
                         "image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg",
-                            "id": 292,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
                         "thumbnail_custom_dimension": {
                             "width": "300",
@@ -287,14 +287,14 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "214c7fd1",
+                    "id": "357d0fe8",
                     "settings": {
                         "image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg",
-                            "id": 292,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
                         "title_text": "This is the heading",
                         "description_text": "border type groove",

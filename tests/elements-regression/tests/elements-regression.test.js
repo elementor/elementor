@@ -12,7 +12,7 @@ const image2 = {
 };
 
 const image1 = {
-	title: 'image2',
+	title: 'image1',
 	extension: 'jpg',
 };
 
