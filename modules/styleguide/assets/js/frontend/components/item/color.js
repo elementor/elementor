@@ -11,7 +11,7 @@ const Content = styled( DivBase )`
 	height: 100px;
 	background-color: ${ ( props ) => props.hex };
 	border-style: solid;
-	border-width: 1px 1px 1px 1px;
+	border-width: 1px;
 	border-color: #D5DADF;
 	border-radius: 3px;
 	align-items: end;
