@@ -16,7 +16,7 @@ runs:
       run: |
             CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
             NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
-            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ github.event.repository.name }}-${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
 
             if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
               ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
@@ -24,7 +24,7 @@ runs:
 
             sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
             sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION}'/g" elementor.php
-            
+
             echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
 
