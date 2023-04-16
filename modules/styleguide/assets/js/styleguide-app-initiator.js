@@ -8,7 +8,6 @@
 	async function mount() {
 		const { default: App } = await import( './frontend/app' );
 
-		window.top.elementor.changeEditMode( 'picker' );
 		document.body.classList.add( styleguideBodyClass );
 
 		ReactDOM.render( <App />, styleguideWidget );
@@ -20,7 +19,6 @@
 	function unmount() {
 		ReactDOM.unmountComponentAtNode( styleguideWidget );
 
-		window.top.elementor.changeEditMode( 'edit' );
 		document.body.classList.remove( styleguideBodyClass );
 	}
 

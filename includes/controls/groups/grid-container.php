@@ -78,7 +78,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'unit' => 'fr',
 				'size' => 2,
 			],
-			'separator' => 'after',
 			'selectors' => [
 				'{{SELECTOR}}' => '--e-con-grid-template-rows: repeat({{SIZE}}, 1fr)',
 			],
@@ -93,7 +92,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'default' => [
 				'unit' => 'px',
 			],
-			'separator' => 'after',
+			'separator' => 'before',
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
@@ -108,7 +107,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'column' => esc_html__( 'Column', 'elementor' ),
 			],
 			'default' => 'row',
-			'separator' => 'after',
+			'separator' => 'before',
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
@@ -166,7 +165,6 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
-			'separator' => 'after',
 			'responsive' => true,
 		];
 
@@ -204,6 +202,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-justify-content: {{VALUE}};',
 			],
+			'condition' => [
+				'columns_grid[unit]' => 'custom',
+			],
 			'responsive' => true,
 		];
 
@@ -240,6 +241,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-align-content: {{VALUE}};',
+			],
+			'condition' => [
+				'rows_grid[unit]' => 'custom',
 			],
 			'responsive' => true,
 		];

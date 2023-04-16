@@ -1,0 +1,27 @@
+name: Create Branch
+description: Create a new branch from the specified branch.
+
+inputs:
+  BRANCH_NAME:
+    description: 'The branch name to create (e.g. release/3.11.2)'
+    required: true
+  SOURCE_BRANCH:
+    description: 'The source branch to create the new branch from (e.g. release/3.11.2)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        # Remove split on / and get the last part
+        BRANCH_NAME=${{ inputs.BRANCH_NAME }}
+        BRANCH_NAME=${BRANCH_NAME##*/}
+
+        # Create a new branch from the specified branch, and push it to the remote repository
+        git branch $BRANCH_NAME ${{ inputs.SOURCE_BRANCH }}
+
+        # Switch to the new branch
+        git checkout $BRANCH_NAME
+        # Push the new branch to the remote repository and set the upstream branch to track it
+        git push -u origin $BRANCH_NAME

@@ -18,6 +18,7 @@ body.e-styleguide-shown {
 	.dialog-styleguide-message {
 		min-height: 100vh;
 		padding: 0;
+		overflow-x: hidden;
 		text-align: initial;
 		font-family: Roboto, sans-serif;
 	}
