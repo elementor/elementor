@@ -21,7 +21,7 @@ export default class extends Switcher {
 	onBaseInputChange( event ) {
 		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
 
-		var input = event.currentTarget,
+		const input = event.currentTarget,
 			value = this.getInputValue( input );
 
 		if ( this.model.get( 'on_change_command' ) ) {
