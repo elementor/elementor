@@ -22,9 +22,9 @@ runs:
               ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
             fi
 
-            sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
-            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION}'/g" elementor.php
-            
+            sed -i -E "s/Version: .*/Version: ${CLEAN_PACKAGE_VERSION}/g" elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${CLEAN_PACKAGE_VERSION}'/g" elementor.php
+
             echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
 
