@@ -45,6 +45,7 @@ jobs:
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
+          REF: ${{ github.ref }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -70,6 +71,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
