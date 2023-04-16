@@ -35,7 +35,7 @@ export default class extends ControlBaseDataView {
 		const options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],
-				default: this.getCurrentValue(),
+				default: this.getCurrentValue() || '#42445a',
 				components: {
 					opacity: this.model.get( 'alpha' ),
 				},
