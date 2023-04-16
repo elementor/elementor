@@ -201,12 +201,17 @@ class Deprecation {
 
 		$print_deprecated = false;
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
+		if ( $diff <= self::SOFT_VERSIONS_COUNT ) {
+			$source = $this->find_source();
+			// list from source
+			list( $type, $name, $file, $line ) = $source;
+
 			// Soft deprecated.
 			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
 				$this->soft_deprecated_notices[ $entity ] = [
 					$version,
 					$replacement,
+					sprintf( 'Source: %s %s on file %s:%d', $type, $name, $file, $line),
 				];
 			}
 
@@ -365,5 +370,40 @@ class Deprecation {
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
 
 		return apply_filters_ref_array( $hook, $args );
+	}
+
+	/**
+	 * Find the source of deprecated method.
+	 *
+	 * @return array {
+	 * @type string $type plugin|mu-plugin|theme|unknown
+	 * @type string $name The plugin/theme name.
+	 * @type string $file The full file path.
+	 * @type string $line The line number.
+	 * }
+	 */
+	private function find_source() {
+		$sources = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 4 );
+
+		// Get the last item from the array as it's the source of the deprecated method.
+		$source = $sources[3];
+
+		$file = str_replace( WP_CONTENT_DIR, '', $source['file'], $is_in_content );
+
+		if ( 1 === $is_in_content ) {
+			$root_folder = explode( '/', $file );
+			$type = $root_folder[1];
+			$name = $root_folder[2];
+		} else {
+			$type = 'unknown';
+			$name = '';
+		}
+
+		return [
+			'type' => rtrim( $type, 's' ), // remove plural
+			'name' => $name,
+			'file' => $source['file'],
+			'line' => $source['line'],
+		];
 	}
 }
