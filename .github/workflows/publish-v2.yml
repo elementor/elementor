@@ -49,7 +49,7 @@ jobs:
         uses : ./.github/workflows/copy-file
         with:
           SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          DESTINATION_PATH: /tmp/${{ env.RELEASE_FILENAME }}.zip
+          DESTINATION_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
