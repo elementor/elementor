@@ -13,7 +13,7 @@ const Content = styled( DivBase )`
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #D5DADF;
-	border-radius: 3px 3px 3px 3px;
+	border-radius: 3px;
 	align-items: end;
 `;
 
