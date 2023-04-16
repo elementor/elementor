@@ -11,8 +11,8 @@ const innerWrapper = styled( DivBase )`
 	flex-direction: ${ ( props ) => props.flexDirection ?? 'row' };
 
 	@media (max-width: 1140px) {
-		padding-left: 15px;
-		padding-right: 15px;
+		padding: 0 15px;
+
 	}
 
 	@media (max-width: 767px) {
