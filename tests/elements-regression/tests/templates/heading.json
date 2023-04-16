@@ -1,0 +1,242 @@
+{
+    "content": [
+        {
+            "id": "3c7057fc",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "1eaa431f",
+                    "settings": {
+                        "title": "Test title"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "672f058f",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "size": "small"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7278fcd2",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "header_size": "h5"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "47fc5495",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "align": "center"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "485430dd",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "__globals__": {
+                            "title_color": "globals\/colors?id=secondary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7dc87afd",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Rock Salt",
+                        "typography_font_weight": "600"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "28f829ae",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_size": {
+                            "unit": "px",
+                            "size": 60,
+                            "sizes": []
+                        },
+                        "typography_font_weight": "600"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "5c8daf79",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "200"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "65009399",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "600",
+                        "typography_text_transform": "lowercase"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "57faf115",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "600",
+                        "typography_text_decoration": "line-through"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "3c3f14ae",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "600",
+                        "typography_line_height": {
+                            "unit": "px",
+                            "size": 58,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2da9ef6a",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "600",
+                        "typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 6,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "72e6e35d",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "typography_typography": "custom",
+                        "typography_font_family": "Roboto",
+                        "typography_font_weight": "600",
+                        "typography_word_spacing": {
+                            "unit": "px",
+                            "size": 32,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "72b9e78",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "7f285bd0",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "text_shadow_text_shadow_type": "yes",
+                        "text_shadow_text_shadow": {
+                            "horizontal": 37,
+                            "vertical": -17,
+                            "blur": 11,
+                            "color": "rgba(0,0,0,0.3)"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "77e9b55",
+                    "settings": {
+                        "title": "Add Your Heading Text Here",
+                        "blend_mode": "exclusion"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "heading",
+    "type": "page"
+}
