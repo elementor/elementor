@@ -1,8 +1,9 @@
 import * as hooks from './hooks';
 import * as commands from './commands/';
 import Repeater from './repeater';
+import ComponentBase from 'elementor-editor/component-base';
 
-export default class extends $e.modules.ComponentBase {
+export default class extends ComponentBase {
 	pages = {};
 
 	__construct( args ) {

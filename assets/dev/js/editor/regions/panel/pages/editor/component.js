@@ -1,4 +1,4 @@
-import ComponentBase from 'elementor-api/modules/component-base';
+import ComponentBase from 'elementor-editor/component-base';
 import * as commands from './commands/';
 import { SetDirectionMode } from 'elementor-document/hooks';
 
