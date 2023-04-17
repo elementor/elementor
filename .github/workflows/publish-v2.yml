@@ -20,6 +20,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
+      - name: Temp
+        run: |
+          echo 'pre_release: ${{ github.event.inputs.pre_release }}'
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
