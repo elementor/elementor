@@ -32,11 +32,10 @@ export default class extends ControlBaseDataView {
 	}
 
 	initPicker() {
-		const defaultColor = '#42445a';
 		const options = {
 			picker: {
 				el: this.ui.pickerContainer[ 0 ],
-				default: this.getCurrentValue() || defaultColor,
+				default: this.getCurrentValue(),
 				components: {
 					opacity: this.model.get( 'alpha' ),
 				},
