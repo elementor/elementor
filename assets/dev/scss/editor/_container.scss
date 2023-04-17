@@ -86,31 +86,13 @@
 						}
 					
 						&-right {
-
-							&.e-drag-lang {
-
-								&-rtl {
-									left: 0;
-								}
-
-								&-ltr {
-									right: 0;
-								}
-							}
+							right: 0;
+							left: auto;
 						}
 	
 						&-left {
-
-							&.e-drag-lang {
-
-								&-rtl {
-									right: 0;
-								}
-
-								&-ltr {
-									left: 0;
-								}
-							}
+							left: 0;
+							right: auto;
 						}
 					}
 				}
@@ -218,6 +200,35 @@
 					font-size: 20px;
 					display: block;
 					padding: 2px;
+				}
+			}
+		}
+	}
+}
+
+body.rtl {
+
+	.e-con.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e {
+
+					&-dragging {
+					
+						&-right {
+							left: 0;
+							right: auto;
+						}
+	
+						&-left {
+							right: 0;
+							left: auto;
+						}
+					}
 				}
 			}
 		}
