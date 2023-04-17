@@ -26,4 +26,10 @@ const WizardDialog = ( props ) => {
 	);
 };
 
+WizardDialog.propTypes = {
+	headerAction: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
+	children: PropTypes.node.isRequired,
+};
+
 export default WizardDialog;

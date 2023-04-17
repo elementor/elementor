@@ -17,4 +17,14 @@ const App = ( props ) => {
 	);
 };
 
+App.propTypes = {
+	theme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
+	type: PropTypes.string,
+	controlType: PropTypes.string,
+	onClose: PropTypes.func,
+	getControlValue: PropTypes.func,
+	setControlValue: PropTypes.func,
+	additionalOptions: PropTypes.object,
+};
+
 export default App;

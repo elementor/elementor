@@ -39,4 +39,12 @@ const PromptActionSelection = ( props ) => {
 	);
 };
 
+PromptActionSelection.propTypes = {
+	label: PropTypes.string.isRequired,
+	options: PropTypes.arrayOf( PropTypes.shape( {
+		label: PropTypes.string.isRequired,
+	} ) ).isRequired,
+	onChange: PropTypes.func.isRequired,
+};
+
 export default PromptActionSelection;

@@ -1,5 +1,5 @@
 export default class AiPromotionBehavior extends Marionette.Behavior {
-	initialize( options ) {
+	initialize() {
 		this.promotionLabel = __( 'Coming soon', 'elementor' );
 	}
 

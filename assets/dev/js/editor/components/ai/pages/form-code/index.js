@@ -1,4 +1,4 @@
-import { Box, Button, Alert, Stack, Typography, styled } from '@elementor/ui';
+import { Box, Button, Stack, styled } from '@elementor/ui';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
 import Loader from '../../components/loader';
@@ -110,6 +110,19 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			) }
 		</>
 	);
+};
+
+FormCode.propTypes = {
+	onClose: PropTypes.func.isRequired,
+	getControlValue: PropTypes.func.isRequired,
+	setControlValue: PropTypes.func.isRequired,
+	additionalOptions: PropTypes.shape( {
+		codeLanguage: PropTypes.string,
+		htmlMarkup: PropTypes.string,
+		elementId: PropTypes.string,
+		initialCredits: PropTypes.number,
+	} ),
+	credits: PropTypes.number,
 };
 
 export default FormCode;

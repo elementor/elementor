@@ -17,4 +17,10 @@ const TextArea = forwardRef( ( props, ref ) => {
 	);
 } );
 
+TextArea.propTypes = {
+	value: PropTypes.string,
+	onChange: PropTypes.func,
+	helperText: PropTypes.string,
+};
+
 export default TextArea;

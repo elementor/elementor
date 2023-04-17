@@ -31,4 +31,12 @@ const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props }
 	);
 };
 
+CodeBlock.propTypes = {
+	node: PropTypes.object,
+	inline: PropTypes.bool,
+	children: PropTypes.arrayOf( PropTypes.node ).isRequired,
+	defaultValue: PropTypes.string,
+	onInsert: PropTypes.func.isRequired,
+};
+
 export default CodeBlock;

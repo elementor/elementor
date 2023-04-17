@@ -7,7 +7,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 
 	useEffect( () => {
 		jQuery( approveButtonRef.current ).elementorConnect( {
-			success: ( e, data ) => {
+			success: ( _, data ) => {
 				elementorCommon.config.library_connect.is_connected = true;
 				elementorCommon.config.library_connect.current_access_level = data.accessLevel;
 
@@ -49,6 +49,11 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 			</Button>
 		</Stack>
 	);
+};
+
+Connect.propTypes = {
+	connectUrl: PropTypes.string.isRequired,
+	onSuccess: PropTypes.func.isRequired,
 };
 
 export default Connect;
