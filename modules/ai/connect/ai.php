@@ -25,7 +25,8 @@ class Ai extends Library {
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -34,7 +35,8 @@ class Ai extends Library {
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -44,7 +46,8 @@ class Ai extends Library {
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -55,7 +58,8 @@ class Ai extends Library {
 				'prompt' => $prompt,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -67,7 +71,8 @@ class Ai extends Library {
 				'instruction' => $instruction,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -79,7 +84,8 @@ class Ai extends Library {
 				'language' => $language,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -92,7 +98,8 @@ class Ai extends Library {
 				'element_id' => $element_id,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 
@@ -103,7 +110,8 @@ class Ai extends Library {
 				'prompt' => $prompt,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			true
 		);
 	}
 

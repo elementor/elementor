@@ -99,9 +99,9 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'text' => $result->text,
-			'response_id' => $result->responseId,
-			'usage' => $result->usage,
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
 		];
 	}
 
@@ -130,9 +130,9 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'text' => $result->text,
-			'response_id' => $result->responseId,
-			'usage' => $result->usage,
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
 		];
 	}
 
@@ -157,9 +157,9 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'text' => $result->text,
-			'response_id' => $result->responseId,
-			'usage' => $result->usage,
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
 		];
 	}
 
@@ -188,9 +188,9 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'text' => $result->text,
-			'response_id' => $result->responseId,
-			'usage' => $result->usage,
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
 		];
 	}
 
@@ -231,7 +231,7 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'result' => $result->data,
+			'result' => $result['data'],
 		];
 	}
 
