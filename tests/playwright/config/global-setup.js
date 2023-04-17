@@ -13,6 +13,7 @@ module.exports = async ( config ) => {
 	await page.fill( 'input[name="pwd"]', config.user.password );
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
+	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
 
 	// Save signed-in state to 'storageState.json'.
 	const storageState = await page.context().storageState( { path: config.storageState } );
