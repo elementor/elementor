@@ -87,13 +87,18 @@ jobs:
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
       - name: Publish to WordPress.org SVN
-        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        #if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
           PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE/elementor
+          cd $GITHUB_WORKSPACE/elementor
+          echo "Current directory: $(pwd)"
+          echo ls -la
+          exit 1
+          #bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
