@@ -206,6 +206,7 @@
 	}
 }
 
+// Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
 body.rtl {
 
 	.e-con.e-grid.e-con--row {
