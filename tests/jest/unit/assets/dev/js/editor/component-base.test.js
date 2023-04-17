@@ -10,7 +10,6 @@ jest.mock( 'elementor-controls/base-data', () => {
 	return class Module {};
 } );
 
-
 import ComponentBase from 'elementor-editor/component-base';
 
 describe( 'ComponentBase', () => {
