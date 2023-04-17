@@ -10,7 +10,7 @@ const EditorPage = require( './editor-page.js' );
 const CLEAN_POST_ID = 1;
 
 module.exports = class WpAdminPage extends BasePage {
-    async gotoDashboard() {
+	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
@@ -36,7 +36,7 @@ module.exports = class WpAdminPage extends BasePage {
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		return new EditorPage( this.page, this.testInfo );
@@ -128,5 +128,10 @@ module.exports = class WpAdminPage extends BasePage {
 
 	activateTheme( theme ) {
 		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
+	}
+
+	async openSiteSettings() {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( 'text=Site Settings' );
 	}
 };

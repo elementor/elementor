@@ -78,10 +78,10 @@ class Container extends Element_Base {
 	}
 
 	public function get_keywords() {
-		$keywords = [ 'Container', 'Flexbox', 'Flexbox Container', 'Layout' ];
+		$keywords = [ 'Container', 'Flex', 'Flexbox', 'Flexbox Container', 'Layout' ];
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			array_push( $keywords, 'Grid', 'Grid Container' );
+			array_push( $keywords, 'Grid', 'Grid Container', 'CSS Grid' );
 		}
 
 		return $keywords;
@@ -1710,7 +1710,12 @@ class Container extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
