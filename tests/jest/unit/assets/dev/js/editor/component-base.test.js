@@ -2,7 +2,16 @@ jest.mock( 'elementor/assets/dev/js/modules/imports/module.js', () => {
 	return class Module {};
 } );
 
-import ComponentBase from 'elementor-api/modules/component-base';
+jest.mock( 'elementor-panel/pages/editor', () => {
+	return class Module {};
+} );
+
+jest.mock( 'elementor-controls/base-data', () => {
+	return class Module {};
+} );
+
+
+import ComponentBase from 'elementor-editor/component-base';
 
 describe( 'ComponentBase', () => {
 	window.document.body.innerHTML = `
