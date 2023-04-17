@@ -93,10 +93,10 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         run: |
-          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE/elementor
+          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
           cd $GITHUB_WORKSPACE/elementor
           echo "Current directory: $(pwd)"
-          echo ls -la
+          echo "Current files: $(ls -la)"
           exit 1
           #bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
