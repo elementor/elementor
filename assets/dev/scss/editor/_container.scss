@@ -72,28 +72,25 @@
 
 			.elementor-widget-placeholder {
 
-				&.e {
+				&.e-dragging {
 
-					&-dragging {
+					&-right,
+					&-left {
+						position: absolute;
+						width: var( --size );
+						height: 100%;
+						top: 0;
+						animation: grow-in-width 0.15s forwards;
+					}
+				
+					&-right {
+						right: 0;
+						left: auto;
+					}
 
-						&-right,
-						&-left {
-							position: absolute;
-							width: var( --size );
-							height: 100%;
-							top: 0;
-							animation: grow-in-width 0.15s forwards;
-						}
-					
-						&-right {
-							right: 0;
-							left: auto;
-						}
-	
-						&-left {
-							left: 0;
-							right: auto;
-						}
+					&-left {
+						left: 0;
+						right: auto;
 					}
 				}
 			}
@@ -216,19 +213,16 @@ body.rtl {
 
 			.elementor-widget-placeholder {
 
-				&.e {
-
-					&-dragging {
+				&.e-dragging {
 					
-						&-right {
-							left: 0;
-							right: auto;
-						}
-	
-						&-left {
-							right: 0;
-							left: auto;
-						}
+					&-right {
+						left: 0;
+						right: auto;
+					}
+
+					&-left {
+						right: 0;
+						left: auto;
 					}
 				}
 			}
