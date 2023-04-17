@@ -51,9 +51,9 @@ const ContainerView = BaseElementView.extend( {
 
 	getDirectionSettingKey() {
 		const containerType = this.container.settings.get( 'container_type' ),
-			directionSettingKey = 'flex' === containerType
-				? 'flex_direction'
-				: 'grid_auto_flow';
+			directionSettingKey = 'grid' === containerType
+				? 'grid_auto_flow'
+				: 'flex_direction';
 
 		return directionSettingKey;
 	},
