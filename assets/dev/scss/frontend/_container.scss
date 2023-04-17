@@ -102,7 +102,7 @@
 		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
 		// Capital `M` in order to use the CSS function and not the SCSS one.
-		max-width: Min( 100%, var( --width ) );
+		max-width: calc(Min( 100%, var( --width ) ) - 20px); // 20px for resizable handles. Each are 10px in width
 	}
 
 	// Hack to increase specificity and avoid using `!important`.

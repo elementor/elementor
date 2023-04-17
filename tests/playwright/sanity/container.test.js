@@ -521,6 +521,31 @@ test.describe( 'Container tests', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 	} );
+
+	test.only( 'Container no horizontal scroll', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		// Arrange.
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerSelector = '.elementor-element-edit-mode',
+			frame = await editor.getPreviewFrame();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		// Evaluate scroll widths in the browser context.
+		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
+			const container = document.querySelector( selector );
+			console.log( 'container', container.scrollWidth <= container.clientWidth );
+			return container.scrollWidth <= container.clientWidth;
+		}, containerSelector );
+		await page.pause();
+
+		// Check for no horizontal scroll.
+		expect( hasNoHorizontalScroll ).toBe( true );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
