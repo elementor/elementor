@@ -1,4 +1,4 @@
-import { Box, Button, Alert, Grid, Stack } from '@elementor/ui';
+import { Box, Button, Grid, Stack } from '@elementor/ui';
 import { AIIcon, MessageIcon, ShrinkIcon, ExpandIcon } from '@elementor/icons';
 import { useRef } from 'react';
 import Loader from '../../components/loader';
@@ -28,7 +28,6 @@ const promptInstructions = [
 const FormText = (
 	{
 		type,
-		controlType,
 		onClose,
 		getControlValue,
 		setControlValue,
@@ -163,6 +162,16 @@ const FormText = (
 			) }
 		</>
 	);
+};
+
+FormText.propTypes = {
+	type: PropTypes.string.isRequired,
+	controlType: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
+	getControlValue: PropTypes.func.isRequired,
+	setControlValue: PropTypes.func.isRequired,
+	additionalOptions: PropTypes.object,
+	credits: PropTypes.number,
 };
 
 export default FormText;

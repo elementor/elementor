@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Chip as ChipBase, styled } from '@elementor/ui';
+import { Box, Typography, Stack } from '@elementor/ui';
 import StyledChip from './ui/styled-chip';
 
 const PromptSuggestions = ( props ) => {
@@ -22,6 +22,12 @@ const PromptSuggestions = ( props ) => {
 			</Stack>
 		</Box>
 	);
+};
+
+PromptSuggestions.propTypes = {
+	suggestions: PropTypes.arrayOf( PropTypes.string ),
+	onSelect: PropTypes.func.isRequired,
+	suggestionFilter: PropTypes.func,
 };
 
 export default PromptSuggestions;

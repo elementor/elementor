@@ -49,4 +49,8 @@ const GetStarted = ( { onSuccess } ) => {
 	);
 };
 
+GetStarted.propTypes = {
+	onSuccess: PropTypes.func.isRequired,
+};
+
 export default GetStarted;

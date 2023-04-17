@@ -1,7 +1,7 @@
 import App from './app';
 
 export default class AiBehavior extends Marionette.Behavior {
-	initialize( options ) {
+	initialize() {
 		this.type = 'text';
 		this.controlType = 'text';
 		this.buttonLabel = __( 'Write with AI', 'elementor' );
@@ -9,6 +9,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.additionalOptions = {};
 
 		this.getControlValue = () => 'Control Value';
+		// eslint-disable-next-line no-console
 		this.setControlValue = ( value ) => console.log( value );
 
 		this.config = ElementorAiConfig;

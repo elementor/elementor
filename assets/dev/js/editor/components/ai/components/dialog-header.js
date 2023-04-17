@@ -44,4 +44,12 @@ const DialogHeader = ( props ) => {
 	);
 };
 
+DialogHeader.propTypes = {
+	onClose: PropTypes.func.isRequired,
+	children: PropTypes.oneOfType( [
+		PropTypes.arrayOf( PropTypes.node ),
+		PropTypes.node,
+	] ),
+};
+
 export default DialogHeader;

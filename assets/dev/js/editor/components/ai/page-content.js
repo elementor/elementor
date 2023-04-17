@@ -77,4 +77,13 @@ const PageContent = (
 	);
 };
 
+PageContent.propTypes = {
+	type: PropTypes.string,
+	controlType: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
+	getControlValue: PropTypes.func.isRequired,
+	setControlValue: PropTypes.func.isRequired,
+	additionalOptions: PropTypes.object,
+};
+
 export default PageContent;

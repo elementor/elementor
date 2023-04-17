@@ -20,6 +20,7 @@ const StyledTextField = styled( TextField )( ( { theme } ) => ( {
 const SearchField = forwardRef( ( props, ref ) => {
 	return (
 		<StyledTextField
+			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus
 			fullWidth
 			required
@@ -41,5 +42,12 @@ const SearchField = forwardRef( ( props, ref ) => {
 		/>
 	);
 } );
+
+SearchField.propTypes = {
+	placeholder: PropTypes.string,
+	name: PropTypes.string,
+	value: PropTypes.string,
+	onChange: PropTypes.func,
+};
 
 export default SearchField;

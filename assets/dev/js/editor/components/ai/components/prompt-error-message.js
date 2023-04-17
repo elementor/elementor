@@ -18,4 +18,9 @@ const PromptErrorMessage = ( { error, onClose, ...props } ) => {
 	);
 };
 
+PromptErrorMessage.propTypes = {
+	error: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
+};
+
 export default PromptErrorMessage;

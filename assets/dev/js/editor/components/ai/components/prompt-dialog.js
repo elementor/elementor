@@ -35,4 +35,10 @@ const PromptDialog = ( props ) => {
 	);
 };
 
+PromptDialog.propTypes = {
+	headerAction: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
+	children: PropTypes.node.isRequired,
+};
+
 export default PromptDialog;
