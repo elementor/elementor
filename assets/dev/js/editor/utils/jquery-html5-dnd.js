@@ -201,7 +201,6 @@
 		};
 
 		var insertPlaceholder = function() {
-			console.log( 'currentSide', currentSide );
 			if ( ! settings.placeholder ) {
 				return;
 			}
