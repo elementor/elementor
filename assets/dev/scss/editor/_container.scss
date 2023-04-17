@@ -74,7 +74,6 @@
 
 				&.e-dragging-right,
 				&.e-dragging-left {
-					--margin-start: 0;
 					position: absolute;
 					width: var( --size );
 					height: 100%;
@@ -82,12 +81,15 @@
 					animation: grow-in-width 0.15s forwards;
 				}
 
-				&.e-dragging-right {
-					right: 0;
-				}
+				&.e-dragging {
+					
+					&-right {
+						right: 0;
+					}
 
-				&.e-dragging-left {
-					left: 0;
+					&-left {
+						left: 0;
+					}
 				}
 			}
 		}
@@ -233,10 +235,10 @@
 	}
 
 	50% {
-		width: 5px;
+		width: calc( var( --size ) / 2 );
 	}
 
 	to {
-		width: 10px;
+		width: var( --size );
 	}
 }
