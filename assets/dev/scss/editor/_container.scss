@@ -72,23 +72,26 @@
 
 			.elementor-widget-placeholder {
 
-				&.e-dragging-right,
-				&.e-dragging-left {
-					position: absolute;
-					width: var( --size );
-					height: 100%;
-					top: 0;
-					animation: grow-in-width 0.15s forwards;
-				}
+				&.e {
 
-				&.e-dragging {
-					
-					&-right {
-						right: 0;
+					&-dragging-right,
+					&-dragging-left {
+						position: absolute;
+						width: var( --size );
+						height: 100%;
+						top: 0;
+						animation: grow-in-width 0.15s forwards;
 					}
 
-					&-left {
-						left: 0;
+					&-dragging {
+					
+						&-right {
+							right: 0;
+						}
+	
+						&-left {
+							left: 0;
+						}
 					}
 				}
 			}
