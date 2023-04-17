@@ -75,6 +75,38 @@ class Admin extends App {
 		exit;
 	}
 
+	private function get_ui_package_config() {
+		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/ui.asset.php';
+
+		if ( ! file_exists( $asset_file ) ) {
+			return [];
+		}
+
+		$data = require $asset_file;
+
+		return [
+			'handle' => $data['handle'],
+			'src' => $data['src'],
+			'deps' => $data['deps'],
+		];
+	}
+
+	private function get_icons_package_config() {
+		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/icons.asset.php';
+
+		if ( ! file_exists( $asset_file ) ) {
+			return [];
+		}
+
+		$data = require $asset_file;
+
+		return [
+			'handle' => $data['handle'],
+			'src' => $data['src'],
+			'deps' => $data['deps'],
+		];
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -90,6 +122,30 @@ class Admin extends App {
 			'elementor-admin-modules',
 			$this->get_js_assets_url( 'admin-modules' ),
 			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$ui_package = $this->get_ui_package_config();
+		$icons_package = $this->get_icons_package_config();
+
+		$suffix = Utils::is_script_debug() ? '' : '.min';
+
+		$ui_src = str_replace( '{{MIN_SUFFIX}}', $suffix, $ui_package['src'] );
+		$icons_src = str_replace( '{{MIN_SUFFIX}}', $suffix, $icons_package['src'] );
+
+		wp_register_script(
+			$ui_package['handle'],
+			$ui_src,
+			$ui_package['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			$icons_package['handle'],
+			$icons_src,
+			$icons_package['deps'],
 			ELEMENTOR_VERSION,
 			true
 		);

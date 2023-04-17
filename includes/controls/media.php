@@ -329,6 +329,10 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'has_sizes' => false,
+			'ai' => [
+				'active' => true,
+				'type' => 'media',
+			],
 			'media_types' => [
 				'image',
 			],
