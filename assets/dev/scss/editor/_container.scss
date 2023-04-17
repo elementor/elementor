@@ -74,23 +74,38 @@
 
 				&.e {
 
-					&-dragging-right,
-					&-dragging-left {
-						position: absolute;
-						width: var( --size );
-						height: 100%;
-						top: 0;
-						animation: grow-in-width 0.15s forwards;
-					}
-
 					&-dragging {
+
+						&-right,
+						&-left {
+							position: absolute;
+							width: var( --size );
+							height: 100%;
+							top: 0;
+							animation: grow-in-width 0.15s forwards;
+						}
 					
 						&-right {
-							right: 0;
+
+							&.e-drag-lang-rtl {
+								left: 0;
+							}
+
+							&.e-drag-lang-ltr {
+								right: 0;
+							}
 						}
 	
 						&-left {
 							left: 0;
+
+							&.e-drag-lang-rtl {
+								right: 0;
+							}
+
+							&.e-drag-lang-ltr {
+								left: 0;
+							}
 						}
 					}
 				}

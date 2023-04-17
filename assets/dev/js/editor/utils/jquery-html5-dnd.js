@@ -215,8 +215,9 @@
 
 			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
 			if ( isGridRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
-					gridPlaceHolder = elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' ).addClass( 'e-dragging-' + currentSide );
+				const dir = elementorFrontend.config.is_rtl ? 'rtl' : 'ltr',
+					insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
+					gridPlaceHolder = elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right e-drag-lang-' + dir ).addClass( 'e-dragging-' + currentSide + ' e-drag-lang-' + dir );
 				gridPlaceHolder[ insertMethod ]( currentElement );
 
 				return;
