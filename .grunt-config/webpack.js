@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const packagesConfigs = require( './webpack.packages.js' );
+
 // Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
@@ -198,6 +200,7 @@ const webpackConfig = [
 		},
 		entry: frontendEntries,
 	},
+	packagesConfigs.dev,
 ];
 
 const prodSharedOptimization = {
@@ -281,6 +284,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 		config.entry[ entryPoint + '.min' ] = entryValue;
 	}
 } );
+
+// The 'packages' config doesn't need a `.min` suffix (it has its own config).
+webpackProductionConfig.push( packagesConfigs.prod );
 
 const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
