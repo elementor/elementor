@@ -1,6 +1,4 @@
-import SwiperHandlerBase from './base-swiper';
-
-export default class CarouselHandlerBase extends SwiperHandlerBase {
+export default class CarouselHandlerBase extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {

@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../assets/breakpoints' );
 
-test( 'Image Carousel', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -51,7 +51,7 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 	await editor.useDefaultTemplate();
 } );
 
-test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+test.only( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.setExperiments( {
@@ -106,7 +106,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
 	await editor.togglePreviewMode();
 	await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
-
+	await expect( await editor.getPreviewFrame() ).toHaveCSS( 'background-color', 'orange' );
 	await wpAdmin.setExperiments( {
 		additional_custom_breakpoints: 'inactive',
 	} );
