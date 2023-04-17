@@ -170,7 +170,7 @@ class Utils {
 	 * @return string
 	 * @throws \Exception
 	 */
-	public static function replace_urls( $from, $to ) {
+	public static function replace_urls( $from, $to, $get_query = false ) {
 		$from = trim( $from );
 		$to = trim( $to );
 
@@ -200,12 +200,16 @@ class Utils {
 			$wpdb->prepare(
 				"UPDATE {$wpdb->postmeta} " .
 				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
-				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s ;",
+				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s;",
 				$escaped_from,
 				$escaped_to,
 				$meta_value_like
 			)
 		);
+
+		if ( $get_query ) {
+			return $wpdb->last_query;
+		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( 'An error occurred while replacing URL\'s.' );

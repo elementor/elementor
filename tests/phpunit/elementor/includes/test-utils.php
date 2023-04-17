@@ -86,66 +86,20 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_replace_urls() {
 		$this->act_as_admin();
-	
+		global $wpdb;
+
+		//Arrange
 		$old_home_url = 'http://example.org';
 		$new_home_url = 'http://example2.org';
+		$expected_query = "UPDATE wptests_postmeta SET `meta_value` = REPLACE(`meta_value`, 'http:\\\/\\\/example.org', 'http:\\\/\\\/example2.org') WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%';";
+		$get_query = true;
 
-		$document = $this->factory()->documents->publish_and_get( [
-			'meta_input' => [
-				'_elementor_data' => [
-					[
-						'id' => 'mock-section',
-						'elType' => 'section',
-						'isInner' => false,
-						'settings' => [
-							'post_status' => 'new',
-						],
-						'elements' => [
-							[
-								'id' => 'mock-column',
-								'elType' => 'column',
-								'isInner' => false,
-								'settings' => [ '_column_size' => 100 ],
-								'elements' => [
-									[
-										'id' => 'mock-widget',
-										'elType' => 'widget',
-										'widgetType' => 'image',
-										'settings' => [
-											'image' => [
-												'url' => $old_home_url . '/wp-content/elementor-logo.png',
-											],
-										],
-									
-									],
-								],
-							],
-						],
-					],
-				],
-			]
-		] );
+		//Act
+		$last_query = Utils::replace_urls( $old_home_url, $new_home_url, $get_query );
 
-
-		$document_data = $document->get_elements_raw_data( null, true );
-		//save the document data to the database
-		$document->save( $document_data );
-		global $wpdb;
-		// from $wpdb->postmeta table get the postmeta_id of the _elementor_data
-		$result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE post_id = %d AND meta_key = '_elementor_data'", $document->get_main_id() ) );
-
-
-		// var_dump($result);
-		// die();
-
-		$test = Utils::replace_urls( $old_home_url, $new_home_url );
-		var_dump($test);
-		die();
-
-		//$this->assertSame( '1 database rows affected.', Utils::replace_urls( 'http://' . home_url() , $new_home_url ) );
+		//Assert
+		$this->assertSame( $expected_query, $last_query );
 	}
-	
-
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
