@@ -208,7 +208,6 @@
 			const $currentElement = $( currentElement ),
 				isGridRowContainer = $currentElement.parents( '.e-grid.e-con--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
-				isInnerContainer = $currentElement.hasClass( 'e-con-inner' ),
 				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
 
 			// Make sure that the previous placeholder is removed before inserting a new one.
@@ -224,7 +223,8 @@
 			}
 
 			// Fix placeholder placement for Flex Container with `flex-direction: row`.
-			const isRowContainer = $currentElement.parents( '.e-con--row' ).length;
+			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
+				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
 			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
 					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
