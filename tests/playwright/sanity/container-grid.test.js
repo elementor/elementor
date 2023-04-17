@@ -214,8 +214,8 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await testPreset( frame, editor, 2, 2 );
 		} );
 
-		await test.step( 'Assert preset: rows-3 columns-3', async () => {
-			await testPreset( frame, editor, 3, 3 );
+		await test.step( 'Assert preset: rows-2 columns-3', async () => {
+			await testPreset( frame, editor, 2, 3 );
 		} );
 	} );
 
