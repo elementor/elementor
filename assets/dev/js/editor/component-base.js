@@ -3,7 +3,6 @@ import EditorView from 'elementor-panel/pages/editor';
 import ControlBaseDataView from 'elementor-controls/base-data';
 
 export default class ComponentBase extends ApiComponentBase {
-
 	/**
 	 * Call the activate of the control's view
 	 *
