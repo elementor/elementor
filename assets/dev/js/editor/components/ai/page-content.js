@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
-import FormMedia from './form-media';
 import FormCode from './pages/form-code';
 import GetStarted from './pages/get-started';
 import Loader from './components/loader';
@@ -46,14 +45,6 @@ const PageContent = (
 			<WizardDialog onClose={ onClose }>
 				<GetStarted onSuccess={ fetchData } />
 			</WizardDialog>
-		);
-	}
-
-	if ( 'media' === type ) {
-		return (
-			<PromptDialog onClose={ onClose } headerAction={ ! hasSubscription && <UpgradeChip /> }>
-				<FormMedia onClose={ onClose } setControlValue={ setControlValue } />
-			</PromptDialog>
 		);
 	}
 
