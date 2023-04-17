@@ -54,7 +54,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
-          files: /tmp/${{ env.RELEASE_FILENAME }}.zip
+          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
       - name: Read changelog and set current date
