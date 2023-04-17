@@ -7,4 +7,4 @@ export default class ImageCarousel extends CarouselBase {
 
 		return settings;
 	}
-}
+} // test
