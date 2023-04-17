@@ -4,7 +4,6 @@ namespace Elementor\Testing\Includes;
 use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
-use ElementorEditorTesting\Factories\Documents;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
