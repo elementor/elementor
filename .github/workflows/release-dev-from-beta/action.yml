@@ -56,8 +56,9 @@ runs:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
+        prerelease: ${{ inputs.PRE_RELEASE }}
     - name: Publish to WordPress.org SVN
-      if: ${{ inputs.PRE_RELEASE == 'false' }}
+      if: ${{ inputs.PRE_RELEASE }} == 'false'
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
