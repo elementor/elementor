@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const ElementTitle = styled.p`
-	color: #515962;
+	color: var(--e-a-color-txt);
 	font-family: Roboto, sans-serif;
 	font-size: 12px;
 	font-weight: 500;

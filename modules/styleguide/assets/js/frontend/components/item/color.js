@@ -10,15 +10,13 @@ const Content = styled( DivBase )`
 	width: 100%;
 	height: 100px;
 	background-color: ${ ( props ) => props.hex };
-	border-style: solid;
-	border-width: 1px;
-	border-color: #D5DADF;
+	border: 1px solid var(--e-a-border-color-focus);
 	border-radius: 3px;
 	align-items: end;
 `;
 
 const HexString = styled.p`
-	color: #FFFFFF;
+	color: var(--e-a-color-txt-invert);
 	font-family: Roboto, sans-serif;
 	height: 12px;
 	font-size: 12px;

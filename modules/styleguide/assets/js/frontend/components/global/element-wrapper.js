@@ -8,7 +8,9 @@ const Wrapper = styled( DivBase )`
 	gap: 12px;
 	align-items: flex-start;
 	border: 1px solid transparent;
+	border-radius: 3px;
 	padding: 12px;
+	cursor: pointer;
 	${ ( { columns } ) => {
 		const columnWidth = 100 / ( columns.desktop ?? 1 );
 
@@ -17,18 +19,14 @@ const Wrapper = styled( DivBase )`
 		`;
 	} }
 
-	&.active {
-		cursor: pointer;
-		border-color: #424344;
-		border-radius: 3px;
-		background-color: #F1F2F3;
+	&:hover:not(.active) {
+		background-color: var(--e-a-bg-hover);
+		border-color: var(--e-a-border-color-bold);
 	}
 
-	&:hover:not(.active) {
-		cursor: pointer;
-		border-color: #D5DADF;
-		border-radius: 3px;
-		background-color: #F9FAFA;
+	&.active {
+		background-color: var(--e-a-bg-active);
+		border-color: var(--e-a-border-color-accent);
 	}
 
 	@media (max-width: 767px) {

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const AreaTitle = styled.h2`
-	color: #515962;
+	color: var(--e-a-color-txt);
 	font-family: Roboto, sans-serif;
 	font-size: 30px;
 	font-weight: 400;

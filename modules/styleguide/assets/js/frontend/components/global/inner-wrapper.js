@@ -12,12 +12,10 @@ const innerWrapper = styled( DivBase )`
 
 	@media (max-width: 1140px) {
 		padding: 0 15px;
-
 	}
 
 	@media (max-width: 767px) {
-		padding-left: 13px;
-		padding-right: 13px;
+		padding: 0 13px;
 	}
 `;
 

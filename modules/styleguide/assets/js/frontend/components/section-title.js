@@ -4,8 +4,8 @@ const SectionTitle = styled.h3`
 	padding: 16px 12px;
 	border-style: solid;
 	border-width: 0 0 1px 0;
-	border-color: #C2CBD2;
-	color: #515962;
+	border-color: var(--e-a-border-color-bold);
+	color: var(--e-a-color-txt);
 	font-family: Roboto, sans-serif;
 	font-size: 16px;
 	font-weight: 500;

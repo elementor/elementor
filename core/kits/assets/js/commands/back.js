@@ -16,10 +16,16 @@ export class Back extends $e.modules.CommandBase {
 		// If the user is on the global colors/typography page, and there are unsaved changes,
 		// prompt the user with a confirmation dialog asking if they would like to save the changes.
 		if ( this.isGlobalRoute() ) {
-			this.isDocumentChanged().then( () => {
-				return $e.routes.back( 'panel' );
-			} );
-			return;
+			const kit = elementor.config.kit_id;
+			this.document = elementor.documents.get( kit );
+
+			if ( this.isDocumentChanged() ) {
+				this.resolveChanges().then( () => {
+					return $e.routes.back( 'panel' );
+				} );
+
+				return;
+			}
 		}
 
 		return $e.routes.back( 'panel' );
@@ -55,24 +61,17 @@ export class Back extends $e.modules.CommandBase {
 	}
 
 	isGlobalRoute() {
-		const panelHistory = $e.routes.getHistory( 'panel' ),
-			isGlobal = /global\/\bglobal-colors|global-typography\b/.test( panelHistory[ panelHistory.length - 1 ].route );
+		const panelHistory = $e.routes.getHistory( 'panel' );
 
-		if ( isGlobal ) {
-			const kit = elementor.config.kit_id;
-			this.document = elementor.documents.get( kit );
-		}
-
-		return isGlobal;
+		return /global\/\bglobal-colors|global-typography\b/.test( panelHistory[ panelHistory.length - 1 ].route );
 	}
 
 	isDocumentChanged() {
-		return new Promise( ( resolve ) => {
-			if ( ! this.document || ! this.document.editor.isChanged ) {
-				resolve();
-				return;
-			}
+		return this.document && this.document.editor.isChanged;
+	}
 
+	resolveChanges() {
+		return new Promise( ( resolve ) => {
 			this.getUnsavedChangesDialog( resolve ).show();
 		} );
 	}

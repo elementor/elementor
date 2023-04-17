@@ -21,18 +21,10 @@ const Button = styled.button.attrs( ( props ) => ( {
 	font-family: Roboto, sans-serif;
 	padding: 0;
 
-	&:hover {
-		background: none;
-		color: var(--e-a-color-txt-hover);
-	}
-
-	&:focus {
+	&:hover, &[data-e-active='true'], &:focus {
 		outline: none;
 		background: none;
-	}
-
-	&[data-e-active='true'] {
-		color: var(--e-a-color-txt-hover);
+		color: var(--e-a-color-txt-accent);
 	}
 `;
 
@@ -65,8 +57,8 @@ const Wrapper = styled( DivBase )`
 	width: 100%;
 	height: 50px;
 	display: flex;
-	background: #ffffff;
-	border-bottom: 1px solid #C2CBD2;
+	background: var(--e-a-bg-default);
+	border-bottom: 1px solid var(--e-a-border-color-bold);
 	z-index: 1;
 `;
 
