@@ -16,7 +16,6 @@ const PanelElementsNoticeView = Marionette.ItemView.extend( {
 	onNoticeClick() {
 		this.destroy();
 		const introductionKey = 'favorites-notice';
-		elementor.config.user.introductions[ introductionKey ] = true;
 		elementorCommon.ajax.addRequest( 'introduction_viewed', {
 			data: {
 				introductionKey,
