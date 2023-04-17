@@ -20,9 +20,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
-      - name: Temp
-        run: |
-          echo 'pre_release: ${{ github.event.inputs.pre_release }}'
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -60,6 +57,9 @@ jobs:
           files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
+      - name: Exit if pre-release
+        if: github.event.inputs.pre_release
+        run: exit 0
       - name: Read changelog and set current date
         if: env.CHANNEL == 'ga' # Only for GA releases
         uses : ./.github/workflows/get-changelog-datetime
