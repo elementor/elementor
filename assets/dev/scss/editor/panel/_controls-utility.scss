@@ -90,7 +90,7 @@ $title-size: 12px;
 	.e-units-switcher {
 		cursor: pointer;
 		text-transform: uppercase;
-		font-size: 9px;
+		font-size: 10px;
 		padding: .5em;
 		margin: -.5em 0;
 		transition: all ease-in-out .15s;
@@ -283,7 +283,7 @@ $font-family-monospace: monospace;
 		}
 
 		.elementor-control-#{$control-name}-label {
-			color: var(--e-a-color-txt-disabled);
+			color: var(--e-a-color-txt-muted);
 			display: block;
 			text-align: center;
 			font-size: 9px;

@@ -39,6 +39,7 @@ import environment from 'elementor-common/utils/environment';
 		return {
 			addNewSection: '.elementor-add-new-section',
 			closeButton: '.elementor-add-section-close',
+			backButton: '.elementor-add-section-back',
 			addSectionButton: '.elementor-add-section-button',
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
@@ -55,6 +56,7 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.addSectionButton': 'onAddSectionButtonClick',
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
+			'click @ui.backButton': () => this.setView( AddSectionBase.getSelectType() ),
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),
@@ -191,9 +193,10 @@ import environment from 'elementor-common/utils/environment';
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure );
+			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
+			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
 
-		return ContainerHelper.createContainer(
+		const newContainer = ContainerHelper.createContainer(
 			{
 				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
 				grid_columns_grid: {
@@ -210,7 +213,14 @@ import environment from 'elementor-common/utils/environment';
 				},
 			},
 			elementor.getPreviewContainer(),
+			this.options,
 		);
+
+		if ( isAddedAboveAnotherContainer ) {
+			this.destroy();
+		}
+
+		return newContainer;
 	}
 
 	onPresetSelected( event ) {

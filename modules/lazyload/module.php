@@ -64,13 +64,21 @@ class Module extends BaseModule {
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
+		$is_dominant_color_enabled = $this->is_dominant_color_enabled();
+
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
-						$control = $this->apply_dominant_color_background( $control, $value, $selector );
+
+						if ( $is_dominant_color_enabled ) {
+							$dominant_color = $this->get_dominant_color( $value['id'] );
+							if ( $dominant_color ) {
+								$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
+							}
+						}
 					}
 				}
 			}
@@ -78,13 +86,28 @@ class Module extends BaseModule {
 		return $control;
 	}
 
-	private function apply_dominant_color_background( $control, $value, $selector ) {
-		$metadata = wp_get_attachment_metadata( $value['id'] );
-		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
-		if ( $dominant_color ) {
-			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
+	private function is_dominant_color_enabled() {
+		if ( ! function_exists( 'perflab_get_active_modules' ) ) {
+			return false;
 		}
-		return $control;
+
+		$active_modules = perflab_get_active_modules();
+
+		return in_array( 'images/dominant-color', $active_modules, true );
+	}
+
+	private function get_dominant_color( $attachment_id ) {
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+
+		// Performance Lab adds these metadata
+		$has_transparency = $metadata['has_transparency'] ?? false;
+		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
+
+		if ( $dominant_color && ! $has_transparency ) {
+			return $dominant_color;
+		}
+
+		return false;
 	}
 
 	private function is_document_support_lazyload( $post_id ) {
