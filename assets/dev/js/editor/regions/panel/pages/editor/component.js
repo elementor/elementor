@@ -8,6 +8,7 @@ export default class Component extends ComponentBase {
 
 		// Remember last used tab.
 		this.activeTabs = {};
+		this.activeModelId = null;
 	}
 
 	getNamespace() {
@@ -36,7 +37,8 @@ export default class Component extends ComponentBase {
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( tab !== this.activeTabs[ args.model.id ] ) { // Prevent re-rendering the same tab (with just different args).
+		if ( this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) { // Prevent re-rendering the same tab with a different activeControl
+			this.activeModelId = args.model.id;
 			this.activeTabs[ args.model.id ] = tab;
 
 			elementor.getPanelView().setPage( 'editor', title, {
