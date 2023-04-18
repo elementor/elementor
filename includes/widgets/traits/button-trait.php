@@ -216,6 +216,9 @@ trait Button_Trait {
 				'dynamic' => [
 					'active' => true,
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'description' => sprintf(

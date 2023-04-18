@@ -126,7 +126,6 @@ class Kit extends PageBase {
 
 		foreach ( $this->tabs as $id => $tab ) {
 			$config['tabs'][ $id ] = [
-				'id' => $id,
 				'title' => $tab->get_title(),
 				'icon' => $tab->get_icon(),
 				'group' => $tab->get_group(),
