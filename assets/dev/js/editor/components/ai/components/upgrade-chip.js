@@ -112,7 +112,7 @@ const UpgradeChip = () => {
 						variant="contained"
 						color="accent"
 						size="small"
-						href="https://go.elementor.com/ai-go-pro/"
+						href="https://go.elementor.com/ai-popup-purchase-dropdown/"
 						target="_blank"
 						startIcon={ <UpgradeIcon /> }
 						sx={ {
