@@ -1,8 +1,9 @@
 import * as hooks from './hooks';
 import * as commands from './commands/';
 import Repeater from './repeater';
+import ComponentBase from 'elementor-editor/component-base';
 
-export default class extends $e.modules.ComponentBase {
+export default class extends ComponentBase {
 	pages = {};
 
 	__construct( args ) {
@@ -27,6 +28,7 @@ export default class extends $e.modules.ComponentBase {
 		return {
 			menu: () => {
 				elementor.getPanelView().setPage( 'kit_menu' );
+				this.currentTab = 'menu';
 			},
 		};
 	}
@@ -57,7 +59,12 @@ export default class extends $e.modules.ComponentBase {
 		return this.importHooks( hooks );
 	}
 
-	renderTab( tab ) {
-		elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
+	renderTab( tab, args ) {
+		if ( tab !== this.currentTab ) { // Prevent re-rendering the same tab (with just different args).
+			this.currentTab = tab;
+			elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
+		}
+
+		this.activateControl( args.activeControl );
 	}
 }
