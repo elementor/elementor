@@ -72,26 +72,3 @@ export const setStatusFeedback = async ( responseId ) => {
 		},
 	) );
 };
-
-export const createImage = async ( prompt ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_create_images', {
-			data: {
-				prompt,
-			},
-			success: resolve,
-			error: reject,
-		},
-	) );
-};
-
-export const uploadImage = async ( imageUrl, imagePrompt ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_upload_image', {
-			data: {
-				image_url: imageUrl,
-				image_prompt: imagePrompt,
-			},
-			success: resolve,
-			error: reject,
-		},
-	) );
-};

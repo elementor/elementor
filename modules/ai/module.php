@@ -31,8 +31,6 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_custom_css', [ $this, 'ajax_ai_get_custom_css' ] );
 			$ajax->register_ajax_action( 'ai_set_get_started', [ $this, 'ajax_ai_set_get_started' ] );
 			$ajax->register_ajax_action( 'ai_set_status_feedback', [ $this, 'ajax_ai_set_status_feedback' ] );
-			$ajax->register_ajax_action( 'ai_create_images', [ $this, 'ajax_ai_create_images' ] );
-			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
@@ -61,6 +59,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_user_information( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
@@ -82,7 +82,21 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function verify_permissions( $editor_post_id ) {
+		$document = Plugin::$instance->documents->get( $editor_post_id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Document not found' );
+		}
+
+		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied' );
+		}
+	}
+
 	public function ajax_ai_get_completion_text( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['prompt'] ) ) {
@@ -110,6 +124,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_edit_text( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['input'] ) ) {
@@ -137,6 +153,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_custom_code( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['prompt'] ) ) {
@@ -164,6 +182,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_custom_css( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['prompt'] ) ) {
@@ -195,6 +215,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_get_started( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		$app = $this->get_ai_app();
 
 		User::set_introduction_viewed( [
@@ -205,6 +227,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_status_feedback( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
 		if ( empty( $data['response_id'] ) ) {
 			throw new \Exception( 'Missing response_id' );
 		}
@@ -212,103 +236,5 @@ class Module extends BaseModule {
 		$this->get_ai_app()->set_status_feedback( $data['response_id'] );
 
 		return [];
-	}
-
-	public function ajax_ai_create_images( $data ) {
-		$app = $this->get_ai_app();
-
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
-		}
-
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
-		$result = $app->create_images( $data['prompt'] );
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
-
-		return [
-			'result' => $result['data'],
-		];
-	}
-
-	public function ajax_ai_upload_image( $data ) {
-		if ( empty( $data['image_url'] ) ) {
-			throw new \Exception( 'Missing image_url' );
-		}
-
-		if ( empty( $data['image_prompt'] ) ) {
-			throw new \Exception( 'Missing image_prompt' );
-		}
-
-		$image_data = $this->upload_image( $data['image_url'], $data['image_prompt'], $data['editor_post_id'] );
-
-		if ( is_wp_error( $image_data ) ) {
-			throw new \Exception( $image_data->get_error_message() );
-		}
-
-		return [
-			'image' => $image_data,
-		];
-	}
-
-	private function upload_image( $image_url, $image_title, $parent_post_id = 0 ) {
-		$temp_file = download_url( $image_url );
-
-		if ( is_wp_error( $temp_file ) ) {
-			return $temp_file;
-		}
-
-		$file = [
-			'name' => basename( $image_url ) . '.png',
-			'type' => mime_content_type( $temp_file ),
-			'tmp_name' => $temp_file,
-			'size' => filesize( $temp_file ),
-		];
-
-		$sideload = wp_handle_sideload(
-			$file, [
-				'test_form' => false,
-			]
-		);
-
-		if ( ! empty( $sideload['error'] ) ) {
-			return new \WP_Error( 'upload_error', $sideload['error'] );
-		}
-
-		$attachment_id = wp_insert_attachment(
-			[
-				'guid' => $sideload['url'],
-				'post_mime_type' => $sideload['type'],
-				'post_title' => $image_title,
-				'post_content' => '',
-				'post_status' => 'inherit',
-			],
-			$sideload['file'],
-			$parent_post_id
-		);
-
-		if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
-			return $attachment_id;
-		}
-
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-
-		wp_update_attachment_metadata(
-			$attachment_id,
-			wp_generate_attachment_metadata( $attachment_id, $sideload['file'] )
-		);
-
-		unlink( $temp_file );
-
-		return [
-			'id' => $attachment_id,
-			'url' => wp_get_attachment_image_url( $attachment_id, 'full' ),
-			'alt' => $image_title,
-			'source' => 'library',
-		];
 	}
 }
