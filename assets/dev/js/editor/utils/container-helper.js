@@ -12,6 +12,7 @@ export class ContainerHelper {
 	static DIRECTION_ROW_REVERSED = 'row-reverse';
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
+	static CONTAINER_TYPE_GRID = 'grid';
 
 	/**
 	 * Create multiple container elements.

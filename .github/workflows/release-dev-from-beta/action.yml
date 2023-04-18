@@ -17,6 +17,9 @@ inputs:
   SVN_USERNAME:
     description: 'The username for the SVN.'
     required: true
+  PRE_RELEASE:
+    description: 'flag to indicate if the release is pre-release.'
+    required: true
 
 runs:
   using: "composite"
@@ -53,7 +56,9 @@ runs:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
+        prerelease: ${{ inputs.PRE_RELEASE }}
     - name: Publish to WordPress.org SVN
+      if: ${{ inputs.PRE_RELEASE }} == 'false'
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}

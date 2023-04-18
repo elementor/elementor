@@ -75,6 +75,44 @@ class Admin extends App {
 		exit;
 	}
 
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
+
+		if ( ! file_exists( $asset_file ) ) {
+			return [];
+		}
+
+		$data = require $asset_file;
+
+		return [
+			'handle' => $data['handle'],
+			'src' => $data['src'],
+			'deps' => $data['deps'],
+		];
+	}
+
+	private function register_packages() {
+		Collection::make( [ 'ui', 'icons' ] )
+			->map( function( $package_name ) {
+				return $this->get_package_config( $package_name );
+			} )
+			->filter( function( $package_config ) {
+				return ! empty( $package_config );
+			} )
+			->each( function( $package_config ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$src = str_replace( '{{MIN_SUFFIX}}', $suffix, $package_config['src'] );
+
+				wp_register_script(
+					$package_config['handle'],
+					$src,
+					$package_config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -93,6 +131,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$this->register_packages();
 
 		wp_register_script(
 			'elementor-admin',
@@ -883,6 +923,7 @@ class Admin extends App {
 					'state' => $experiment_data['state'],
 					'default' => $experiment_data['default'],
 					'dependencies' => $dependencies,
+					'messages' => $experiment_data['messages'] ?? [],
 				];
 			} )->all();
 	}

@@ -10,8 +10,7 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import './overview-sidebar.scss';
 
 export default function OverviewSidebar( props ) {
-	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
-	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
+	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( true );
 	const eventTracking = ( command, section = null, kitName = null, tag = null, isCollapsed = null, eventType = 'click' ) => {
 		const action = isCollapsed && isCollapsed ? 'collapse' : 'expand';
 		if ( 'boolean' === typeof isCollapsed ) {
@@ -50,29 +49,6 @@ export default function OverviewSidebar( props ) {
 				src={ props.model.thumbnailUrl || '' }
 			/>
 			<Text className="e-kit-library__item-sidebar-description">{ props.model.description || '' }</Text>
-			{
-				props.model.taxonomies.length > 0 &&
-				<Collapse
-					isOpen={ isTagsCollapseOpen }
-					onChange={ setIsTagsCollapseOpen }
-					title={ __( 'TAGS', 'elementor' ) }
-					className="e-kit-library__item-sidebar-collapse-tags"
-					onClick={ ( collapseState, title ) => {
-						eventTracking( null, title, null, null, collapseState );
-					} }
-				>
-					<Grid container className="e-kit-library__item-sidebar-tags-container">
-						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<OverviewTaxonomyBadge
-								key={ taxonomy }
-								onClick={ ( taxonomyText ) => {
-									eventTracking( 'kit-library/filter', null, props.model.title, taxonomyText );
-								} }
-							>{ taxonomy }</OverviewTaxonomyBadge>
-						) ) }
-					</Grid>
-				</Collapse>
-			}
 			{
 				props.groupedKitContent?.length > 0 && props.model.documents.length > 0 &&
 				<Collapse
