@@ -28,7 +28,7 @@ export default function usePlugins() {
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8',
 					'X-WP-Nonce': wpApiSettings.nonce,
-					'X-Elementor-Import': '1',
+					'X-Elementor-Import': 'doing_import',
 				},
 			};
 
