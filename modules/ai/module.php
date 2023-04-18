@@ -233,7 +233,13 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing response_id' );
 		}
 
-		$this->get_ai_app()->set_status_feedback( $data['response_id'] );
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$app->set_status_feedback( $data['response_id'] );
 
 		return [];
 	}
