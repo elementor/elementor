@@ -5,6 +5,9 @@ inputs:
   CHANNEL:
     required: true
     description: 'The channel to get the version to (ga, cloud, beta).'
+  REF:
+    required: true
+    description: 'The ref to get the version from.'
 
 runs:
   using: "composite"
@@ -28,6 +31,12 @@ runs:
 
             # Set the build zip file name and path
             PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}.zip"
+
+            CLEAN_REF=${{ inputs.REF }}
+            # e.g. refs/heads/main -> main
+            CLEAN_REF=${CLEAN_REF#refs/heads/}
+            
+            echo "CLEAN_REF=${CLEAN_REF}" >> $GITHUB_ENV
             
             echo "PLUGIN_ZIP_PATH=./elementor/**/*"
             echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}"

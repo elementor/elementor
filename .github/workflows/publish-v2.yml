@@ -49,12 +49,12 @@ jobs:
         uses : ./.github/workflows/copy-file
         with:
           SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
-          DESTINATION_PATH: /tmp/${{ env.RELEASE_FILENAME }}.zip
+          DESTINATION_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
-          files: /tmp/${{ env.RELEASE_FILENAME }}.zip
+          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
       - name: Read changelog and set current date
