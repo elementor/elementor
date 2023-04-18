@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "packages": [
+    "../elementor-packages/packages/*"
+  ]
+}
