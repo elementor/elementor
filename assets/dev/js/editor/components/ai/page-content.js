@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
