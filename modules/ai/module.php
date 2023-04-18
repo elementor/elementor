@@ -153,8 +153,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_custom_code( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['prompt'] ) ) {
