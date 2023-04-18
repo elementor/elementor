@@ -17,8 +17,30 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( filePath ) {
+	updateImageDates( templateData ) {
+		const date = new Date();
+		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const regex = /[0-9]{4}\/[0-9]{2}/g;
+
+		templateData.content[ 0 ].elements.forEach( ( el ) => {
+			if ( 'image' in el.settings ) {
+				const newUrl = el.settings.image.url.replace( regex, `${ date.getFullYear() }/${ month }` );
+				el.settings.image.url = newUrl;
+			}
+			if ( 'carousel' in el.settings ) {
+				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
+					const newUrl = el.settings.carousel[ i ].url.replace( regex, `${ date.getFullYear() }/${ month }` );
+					el.settings.carousel[ i ].url = newUrl;
+				}
+			}
+		} );
+	}
+
+	async loadTemplate( filePath, updateDatesForImages = false ) {
 		const templateData = require( filePath );
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
