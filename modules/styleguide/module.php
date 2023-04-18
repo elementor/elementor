@@ -88,6 +88,7 @@ class Module extends Base_Module {
 
 	public function enqueue_app_initiator( $is_preview = false ) {
 		$dependencies = [
+			'wp-i18n',
 			'react',
 			'react-dom',
 		];
