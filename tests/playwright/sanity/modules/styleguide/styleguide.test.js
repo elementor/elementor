@@ -76,15 +76,14 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForSelector( '#elementor-panel-page-menu' );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Act 2.
 		await page.click( 'text=Global Fonts' );
-		await page.waitForTimeout( 3000 );
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForSelector( '#elementor-panel-page-menu' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
@@ -446,7 +445,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForTimeout( 1000 );
+		await page.waitForSelector( '#elementor-panel-page-menu' );
 
 		// Act.
 		await page.click( 'text=Global Fonts' );
@@ -456,7 +455,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForTimeout( 1000 );
+		await page.waitForSelector( '#elementor-panel-page-menu' );
 
 		await page.click( 'text=Global Colors' );
 
