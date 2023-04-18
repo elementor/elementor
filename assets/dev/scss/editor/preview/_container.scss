@@ -181,18 +181,15 @@
 		}
 	}
 
-	// To avoid horizontal scroll in `flex-direction: column`
-	&.e-con--column {
+	// To avoid horizontal scroll
+	.ui-resizable {
 
-		.ui-resizable {
+		&-e {
+			right: 0;
+		}
 
-			&-e {
-				right: 0;
-			}
-
-			&-w {
-				left: 0;
-			}
+		&-w {
+			left: 0;
 		}
 	}
 }
