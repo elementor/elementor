@@ -182,17 +182,14 @@
 	}
 
 	// To avoid horizontal scroll
-	&.e-con {
+	.ui-resizable {
 
-		.ui-resizable {
+		&-e {
+			right: 0;
+		}
 
-			&-e {
-				right: 0;
-			}
-
-			&-w {
-				left: 0;
-			}
+		&-w {
+			left: 0;
 		}
 	}
 }
