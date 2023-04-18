@@ -12,7 +12,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		// eslint-disable-next-line no-console
 		this.setControlValue = ( value ) => console.log( value );
 
-		this.config = ElementorAiConfig;
+		this.config = window.ElementorAiConfig;
 	}
 
 	ui() {
@@ -30,7 +30,9 @@ export default class AiBehavior extends Marionette.Behavior {
 	onAiButtonClick( event ) {
 		event.stopPropagation();
 
-		const theme = elementor?.settings?.editorPreferences?.model.get( 'ui_theme' ) || 'auto';
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
+
+		const isRTL = elementorCommon.config.isRTL;
 
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
@@ -44,9 +46,10 @@ export default class AiBehavior extends Marionette.Behavior {
 			additionalOptions={ this.getOption( 'additionalOptions' ) }
 			onClose={ () => {
 				ReactDOM.unmountComponentAtNode( rootElement );
-				rootElement.parentNode.removeChild( rootElement );
+				rootElement.remove();
 			} }
-			theme={ theme }
+			colorScheme={ colorScheme }
+			isRTL={ isRTL }
 		/>, rootElement );
 	}
 
@@ -65,7 +68,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		$button.html( '<i class="eicon-ai"></i>' );
 
 		if ( this.getOption( 'isLabelBlock' ) && isPromotion ) {
-			$button.html( $button.html() + ' ' + buttonLabel );
+			$button.append( ' ' + buttonLabel );
 		} else {
 			$button.tipsy( {
 				gravity: 's',

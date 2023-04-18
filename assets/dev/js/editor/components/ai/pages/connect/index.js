@@ -14,13 +14,15 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 				onSuccess();
 			},
 			// eslint-disable-next-line no-console
-			error: () => console.error( 'Error connect' ),
+			error: () => {
+				throw new Error( 'Elementor AI: Failed to connect.' );
+			},
 		} );
 	}, [] );
 
 	return (
 		<Stack alignItems="center" gap={ 5 }>
-			<AIIcon sx={ { color: 'white', fontSize: '60px', mb: 3 } } />
+			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
 
 			<Typography variant="h4">{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 

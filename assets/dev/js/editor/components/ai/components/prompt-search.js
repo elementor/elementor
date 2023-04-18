@@ -5,7 +5,7 @@ const PromptSearch = forwardRef( ( props, ref ) => {
 	return (
 		<SearchField
 			name="prompt"
-			placeholder={ __( 'Describe the text and tone you want to use...', 'elementor' ) }
+			placeholder={ __( 'Describe the text and tone you want to use', 'elementor' ) + '...' }
 			{ ...props }
 			ref={ ref }
 		/>

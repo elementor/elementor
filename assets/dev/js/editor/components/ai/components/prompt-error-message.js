@@ -13,7 +13,7 @@ const messages = {
 const PromptErrorMessage = ( { error, onClose, ...props } ) => {
 	return (
 		<Alert severity="error" onClose={ onClose } { ...props }>
-			{ messages[ error || 'default' ] }
+			{ messages[ error ] || messages.default }
 		</Alert>
 	);
 };

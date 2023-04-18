@@ -7,7 +7,7 @@ const GenerateButton = ( props ) => {
 			variant="contained"
 			endIcon={ <AIIcon /> }
 			disabled={ ! prompt }
-			aria-label="search"
+			aria-label={ __( 'search', 'elementor' ) }
 			type="submit"
 			size="small"
 			sx={ {

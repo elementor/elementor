@@ -67,7 +67,7 @@ class Module extends BaseModule {
 			return [
 				'is_connected' => false,
 				'connect_url' => $app->get_admin_url( 'authorize', [
-					'utm_source' => 'editor-popup-ai',
+					'utm_source' => 'ai-popup',
 					'utm_campaign' => 'connect-account',
 					'utm_medium' => 'wp-dash',
 					'source' => 'generic',

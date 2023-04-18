@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
 	Chip as ChipBase,
 	Box,
@@ -13,7 +13,7 @@ import {
 } from '@elementor/ui';
 import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
 
-const popoverId = 'upgrade-popover';
+const popoverId = 'e-ai-upgrade-popover';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
@@ -63,31 +63,27 @@ const Chip = styled( ChipBase )( () => ( {
 } ) );
 
 const UpgradeChip = () => {
-	const [ anchorEl, setAnchorEl ] = useState( null );
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const anchorEl = useRef( null );
 
-	const handleShowPopover = ( event ) => {
-		setAnchorEl( event.currentTarget );
-	};
+	const showPopover = () => setIsPopoverOpen( true );
 
-	const handleHidePopover = () => {
-		setAnchorEl( null );
-	};
-
-	const showPopover = Boolean( anchorEl );
+	const hidePopover = () => setIsPopoverOpen( false );
 
 	return (
 		<Box
 			component="span"
-			aria-owns={ showPopover ? popoverId : undefined }
+			aria-owns={ isPopoverOpen ? popoverId : undefined }
 			aria-haspopup="true"
-			onMouseEnter={ handleShowPopover }
-			onMouseLeave={ handleHidePopover }
+			onMouseEnter={ showPopover }
+			onMouseLeave={ hidePopover }
+			ref={ anchorEl }
 		>
 			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } />
 
 			<Popper
-				open={ showPopover }
-				anchorEl={ anchorEl }
+				open={ isPopoverOpen }
+				anchorEl={ anchorEl.current }
 				sx={ { zIndex: '9999', maxWidth: 300 } }
 			>
 				<StyledContent>

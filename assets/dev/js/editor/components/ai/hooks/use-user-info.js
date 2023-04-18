@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getUserInformation } from '../api';
 
 const useUserInfo = () => {
@@ -14,7 +14,7 @@ const useUserInfo = () => {
 		},
 	} );
 
-	const creadits = userInfo.usage.quota - userInfo.usage.usedQuota;
+	const credits = userInfo.usage.quota - userInfo.usage.usedQuota;
 
 	const fetchData = async () => {
 		setIsLoading( true );
@@ -26,13 +26,17 @@ const useUserInfo = () => {
 		setIsLoading( false );
 	};
 
+	useEffect( () => {
+		fetchData();
+	}, [] );
+
 	return {
 		isLoading,
 		isConnected: userInfo.is_connected,
 		isGetStarted: userInfo.is_get_started,
 		connectUrl: userInfo.connect_url,
 		hasSubscription: userInfo.usage.hasAiSubscription,
-		credits: creadits < 0 ? 0 : creadits,
+		credits: credits < 0 ? 0 : credits,
 		fetchData,
 	};
 };

@@ -29,13 +29,8 @@ const usePrompt = ( fetchData, config = {} ) => {
 	};
 
 	const sendFeedback = () => {
-		try {
-			if ( responseId ) {
-				setStatusFeedback( responseId );
-			}
-		} catch ( err ) {
-			// eslint-disable-next-line no-console
-			console.error( err );
+		if ( responseId ) {
+			setStatusFeedback( responseId );
 		}
 	};
 
