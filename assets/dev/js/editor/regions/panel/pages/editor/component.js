@@ -1,4 +1,4 @@
-import ComponentBase from 'elementor-editor/component-base';
+import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import { SetDirectionMode } from 'elementor-document/hooks';
 
@@ -32,22 +32,22 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { model, view, activeControl } = args,
+		const { model, view } = args,
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( tab !== this.activeTabs[ args.model.id ] ) { // Prevent re-rendering the same tab (with just different args).
-			this.activeTabs[ args.model.id ] = tab;
+		elementor.getPanelView().setPage( 'editor', title, {
+			tab,
+			model,
+			controls: elementor.getElementControls( model ),
+			editedElementView: view,
+		} );
+	}
 
-			elementor.getPanelView().setPage( 'editor', title, {
-				tab,
-				model,
-				controls: elementor.getElementControls( model ),
-				editedElementView: view,
-			} );
-		}
+	activateTab( tab, args ) {
+		this.activeTabs[ args.model.id ] = tab;
 
-		this.activateControl( activeControl );
+		super.activateTab( tab, args );
 	}
 
 	setDefaultTab( args ) {

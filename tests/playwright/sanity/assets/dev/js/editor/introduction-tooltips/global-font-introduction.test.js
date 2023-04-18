@@ -18,7 +18,7 @@ test.describe( 'Global font introduction tests', () => {
 		await editor.addWidget( 'heading' );
 		await editor.activatePanelTab( 'style' );
 		await page.click( '.elementor-control-typography_typography .elementor-control-popover-toggle-toggle-label' );
-		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
+		let tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 
 		// Assert.
 		expect( tooltipDialogCounter ).toBe( 1 );
@@ -40,7 +40,7 @@ test.describe( 'Global font introduction tests', () => {
 		await editor.addWidget( 'heading' );
 		await editor.activatePanelTab( 'style' );
 		await page.click( '.elementor-control-typography_typography .elementor-control-popover-toggle-toggle-label' );
-		const tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
+		let tooltipDialogCounter = await page.getByText( 'Check out Global Fonts' ).count();
 
 		// Assert.
 		expect( tooltipDialogCounter ).toBe( 0 );
