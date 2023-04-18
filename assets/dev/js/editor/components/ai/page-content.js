@@ -20,10 +20,6 @@ const PageContent = (
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits } = useUserInfo();
 
-	useEffect( () => {
-		fetchData();
-	}, [] );
-
 	if ( isLoading ) {
 		return (
 			<PromptDialog onClose={ onClose }>

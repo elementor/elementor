@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_script_configs() {
-		$ui_package = $this->get_ui_package_config();
-		$icons_package = $this->get_icons_package_config();
+		$ui_package = $this->get_package_config( 'ui' );
+		$icons_package = $this->get_package_config( 'icons' );
 
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
@@ -76,24 +76,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		);
 	}
 
-	private function get_ui_package_config() {
-		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/ui.asset.php';
-
-		if ( ! file_exists( $asset_file ) ) {
-			return [];
-		}
-
-		$data = require $asset_file;
-
-		return [
-			'handle' => $data['handle'],
-			'src' => $data['src'],
-			'deps' => $data['deps'],
-		];
-	}
-
-	private function get_icons_package_config() {
-		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/icons.asset.php';
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
 
 		if ( ! file_exists( $asset_file ) ) {
 			return [];

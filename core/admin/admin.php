@@ -75,8 +75,8 @@ class Admin extends App {
 		exit;
 	}
 
-	private function get_ui_package_config() {
-		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/ui.asset.php';
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
 
 		if ( ! file_exists( $asset_file ) ) {
 			return [];
@@ -91,20 +91,26 @@ class Admin extends App {
 		];
 	}
 
-	private function get_icons_package_config() {
-		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/icons.asset.php';
+	private function register_packages() {
+		Collection::make( [ 'ui', 'icons' ] )
+			->map( function( $package_name ) {
+				return $this->get_package_config( $package_name );
+			} )
+			->filter( function( $package_config ) {
+				return ! empty( $package_config );
+			} )
+			->each( function( $package_config ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$src = str_replace( '{{MIN_SUFFIX}}', $suffix, $package_config['src'] );
 
-		if ( ! file_exists( $asset_file ) ) {
-			return [];
-		}
-
-		$data = require $asset_file;
-
-		return [
-			'handle' => $data['handle'],
-			'src' => $data['src'],
-			'deps' => $data['deps'],
-		];
+				wp_register_script(
+					$package_config['handle'],
+					$src,
+					$package_config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
 	}
 
 	/**
@@ -126,29 +132,7 @@ class Admin extends App {
 			true
 		);
 
-		$ui_package = $this->get_ui_package_config();
-		$icons_package = $this->get_icons_package_config();
-
-		$suffix = Utils::is_script_debug() ? '' : '.min';
-
-		$ui_src = str_replace( '{{MIN_SUFFIX}}', $suffix, $ui_package['src'] );
-		$icons_src = str_replace( '{{MIN_SUFFIX}}', $suffix, $icons_package['src'] );
-
-		wp_register_script(
-			$ui_package['handle'],
-			$ui_src,
-			$ui_package['deps'],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			$icons_package['handle'],
-			$icons_src,
-			$icons_package['deps'],
-			ELEMENTOR_VERSION,
-			true
-		);
+		$this->register_packages();
 
 		wp_register_script(
 			'elementor-admin',

@@ -1,30 +1,33 @@
-import { ThemeProvider } from '@elementor/ui';
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 
 import PageContent from './page-content';
 
 const App = ( props ) => {
 	return (
-		<ThemeProvider colorScheme={ props.theme }>
-			<PageContent
-				type={ props.type }
-				controlType={ props.controlType }
-				onClose={ props.onClose }
-				getControlValue={ props.getControlValue }
-				setControlValue={ props.setControlValue }
-				additionalOptions={ props.additionalOptions }
-			/>
-		</ThemeProvider>
+		<DirectionProvider rtl={ props.isRTL }>
+			<ThemeProvider colorScheme={ props.colorScheme }>
+				<PageContent
+					type={ props.type }
+					controlType={ props.controlType }
+					onClose={ props.onClose }
+					getControlValue={ props.getControlValue }
+					setControlValue={ props.setControlValue }
+					additionalOptions={ props.additionalOptions }
+				/>
+			</ThemeProvider>
+		</DirectionProvider>
 	);
 };
 
 App.propTypes = {
-	theme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
+	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	type: PropTypes.string,
 	controlType: PropTypes.string,
 	onClose: PropTypes.func,
 	getControlValue: PropTypes.func,
 	setControlValue: PropTypes.func,
 	additionalOptions: PropTypes.object,
+	isRTL: PropTypes.bool,
 };
 
 export default App;

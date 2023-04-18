@@ -1,6 +1,6 @@
 import { MenuItem, Select, FormControl, InputLabel } from '@elementor/ui';
 
-const labelToDashCash = ( str ) => str.toLowerCase().replace( /\s/g, '-' );
+const labelToDashCash = ( str ) => str.toLowerCase().replace( / /g, '-' );
 
 const PromptActionSelection = ( props ) => {
 	const actionId = labelToDashCash( props.label );
