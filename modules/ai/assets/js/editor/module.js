@@ -1,6 +1,5 @@
-import AiBehavior from '../../../../../assets/dev/js/editor/components/ai/ai-behavior';
-import AiPromotionBehavior
-	from '../../../../../assets/dev/js/editor/components/ai/ai-promotion-behavior';
+import AiBehavior from './ai-behavior';
+import AiPromotionBehavior from './ai-promotion-behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
