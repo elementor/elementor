@@ -20,28 +20,11 @@ class FavoritesModule extends elementorModules.editor.utils.Module {
 
 	onElementorInit() {
 		const hasSeenNotice = elementor.config.user.introduction[ 'favorites-notice' ];
-
 		if ( hasSeenNotice ) {
 			return;
 		}
 
 		registerHooks();
-		// Elementor.on( 'panel:init', () => {
-		elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
-			regionViews.favoritesNotice = {
-				region: notice,
-				view: require( './views/notice' ),
-			};
-
-			return regionViews;
-		} );
-
-		$e.routes.on( 'run:after', ( component, route ) => {
-			if ( 'panel/elements/categories' === route ) {
-				elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
-			}
-		} );
-		// } );
 	}
 
 	onElementorLoaded() {

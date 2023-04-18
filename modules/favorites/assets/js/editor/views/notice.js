@@ -17,10 +17,6 @@ const PanelElementsNoticeView = Marionette.ItemView.extend( {
 	onNoticeClick() {
 		this.destroy();
 		const introductionKey = 'favorites-notice';
-		elementor.config.user.introduction[ introductionKey ] = true;
-
-		$e.routes.off( 'run:after' );
-		elementor.hooks.removeFilter( 'panel/elements/regionViews', method );
 
 		unregisterHooks();
 
