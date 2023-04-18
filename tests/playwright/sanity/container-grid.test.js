@@ -430,6 +430,14 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
 		} );
+
+		await test.step( 'Assert back arrow in not visible when clicked on plus button', async () => {
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-structure="2-2"]' ).click();
+			await frame.locator( '.elementor-editor-element-add' ).click();
+			const backArrow = await frame.locator( '.elementor-add-section-back' ).first();
+			await expect( backArrow ).not.toBeVisible();
+		} );
 	} );
 } );
 
