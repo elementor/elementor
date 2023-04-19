@@ -28,7 +28,7 @@ runs:
       shell: bash
       run: |
             PLUGIN_RELATIVE_PATH=${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
-            unzip -q ${{ inputs.BUILD_ZIP_FILE_PATH }} -d $GITHUB_WORKSPACE/elementor
+            unzip -q ${{ inputs.BUILD_ZIP_FILE_PATH }} -d $GITHUB_WORKSPACE
             PLUGIN_FILE_PATH=./$PLUGIN_RELATIVE_PATH
 
             # Replace beta with dev
@@ -58,7 +58,7 @@ runs:
         body_path: ${{ env.CHANGELOG_FILE }}
         prerelease: ${{ inputs.PRE_RELEASE }}
     - name: Publish to WordPress.org SVN
-      if: ${{ inputs.PRE_RELEASE }} == 'false'
+      if: ${{ inputs.PRE_RELEASE == 'false' }}
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
