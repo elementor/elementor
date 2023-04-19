@@ -1,3 +1,4 @@
+const { unregisterHooks } = require( '../notice' );
 
 const PanelElementsNoticeView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-elements-notice',
@@ -16,7 +17,9 @@ const PanelElementsNoticeView = Marionette.ItemView.extend( {
 	onNoticeClick() {
 		this.destroy();
 		const introductionKey = 'favorites-notice';
-		elementor.config.user.introductions[ introductionKey ] = true;
+
+		unregisterHooks();
+
 		elementorCommon.ajax.addRequest( 'introduction_viewed', {
 			data: {
 				introductionKey,
