@@ -77,7 +77,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+		const changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
+		if ( await changesDialog.isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
@@ -449,7 +450,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+		let changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
+		if ( await changesDialog.isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
@@ -462,7 +464,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+		changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
+		if ( await changesDialog.isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
