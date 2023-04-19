@@ -8,6 +8,7 @@ import PromptSuggestions from '../../components/prompt-suggestions';
 import PromptActionSelection from '../../components/prompt-action-selection';
 import GenerateButton from '../../components/generate-button';
 import PromptAction from '../../components/prompt-action';
+import PromptCredits from '../../components/prompt-credits';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
@@ -121,7 +122,9 @@ const FormText = (
 						/>
 					) }
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { py: 4, mt: 8 } }>
+					<Stack direction="row" alignItems="center" justifyContent="space-between" sx={ { py: 4, mt: 8 } }>
+						<PromptCredits credits={ credits } />
+
 						<GenerateButton>
 							{ __( 'Generate text', 'elementor' ) }
 						</GenerateButton>
@@ -161,7 +164,9 @@ const FormText = (
 						}
 					</Grid>
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { my: 8 } }>
+					<Stack direction="row" alignItems="center" justifyContent="space-between" sx={ { my: 8 } }>
+						<PromptCredits credits={ credits } />
+
 						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
 							<Button size="small" color="secondary" variant="text" onClick={ () => setResult( '' ) }>
 								{ __( 'New prompt', 'elementor' ) }
