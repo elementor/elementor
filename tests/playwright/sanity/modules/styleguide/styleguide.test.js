@@ -445,9 +445,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
-		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
+		await Promise.all( [
+			page.locator( '#elementor-panel-header-kit-back' ).click(),
+			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
+			page.locator( '.dialog-cancel:has-text("Save")' ).click(),
+		] );
 
 		// Act.
 		await page.click( 'text=Global Fonts' );
@@ -456,9 +458,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible();
 
 		// Act 2.
-		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
-		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
+		await Promise.all( [
+			page.locator( '#elementor-panel-header-kit-back' ).click(),
+			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
+			page.locator( '.dialog-cancel:has-text("Save")' ).click(),
+		] );
 
 		await page.click( 'text=Global Colors' );
 
