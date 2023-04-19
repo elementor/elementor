@@ -1,10 +1,11 @@
 import Component from './component';
 import Widgets from './types/widgets/widgets';
+import { registerHooks } from './notice';
 
 /**
  * @typedef {import('./favorite-type')} FavoriteType
  */
- class FavoritesModule extends elementorModules.editor.utils.Module {
+class FavoritesModule extends elementorModules.editor.utils.Module {
 	types = {};
 
 	constructor() {
@@ -22,22 +23,8 @@ import Widgets from './types/widgets/widgets';
 		if ( hasSeenNotice ) {
 			return;
 		}
-		elementor.on( 'panel:init', () => {
-			elementor.hooks.addFilter( 'panel/elements/regionViews', ( regionViews, { notice } ) => {
-				regionViews.favoritesNotice = {
-					region: notice,
-					view: require( './views/notice' ),
-				};
 
-				return regionViews;
-			} );
-
-			$e.routes.on( 'run:after', ( component, route ) => {
-				if ( 'panel/elements/categories' === route ) {
-					elementor.getPanelView().getCurrentPageView().showView( 'favoritesNotice' );
-				}
-			} );
-		} );
+		registerHooks();
 	}
 
 	onElementorLoaded() {
