@@ -77,14 +77,14 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
-		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
+		await page.locator( '.dialog-button:has-text("Save")' ).click();
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Act 2.
 		await page.click( 'text=Global Fonts' );
-		await page.waitForSelector( '#elementor-panel-page-menu' );
+		await page.waitForSelector( '.elementor-control-section_text_style' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
@@ -448,7 +448,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await Promise.all( [
 			page.locator( '#elementor-panel-header-kit-back' ).click(),
 			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
-			page.locator( '.dialog-cancel:has-text("Save")' ).click(),
+			page.locator( '.dialog-button:has-text("Save")' ).click(),
 		] );
 
 		// Act.
@@ -461,7 +461,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await Promise.all( [
 			page.locator( '#elementor-panel-header-kit-back' ).click(),
 			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
-			page.locator( '.dialog-cancel:has-text("Save")' ).click(),
+			page.locator( '.dialog-button:has-text("Save")' ).click(),
 		] );
 
 		await page.click( 'text=Global Colors' );
