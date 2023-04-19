@@ -1,4 +1,5 @@
 import MenuPageView from 'elementor-panel/pages/menu/base';
+import { Sources } from 'elementor-editor/editor-constants';
 
 export default class PanelMenu extends MenuPageView {
 	initialize() {
@@ -17,7 +18,9 @@ PanelMenu.createGroupItems = ( groupName ) => {
 			name: tabId,
 			icon: tabConfig.icon,
 			title: tabConfig.title,
-			callback: () => $e.route( 'panel/global/' + tabId ),
+			callback: () => $e.route( 'panel/global/' + tabId, {
+				source: Sources.PANEL,
+			} ),
 		};
 	} );
 };

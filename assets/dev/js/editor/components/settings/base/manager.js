@@ -1,4 +1,5 @@
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' );
+import { Sources } from 'elementor-editor/editor-constants';
 
 module.exports = elementorModules.ViewModule.extend( {
 	model: null,
@@ -196,7 +197,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			title: this.getSettings( 'panelPage.title' ),
 			type: 'page',
 			pageName: this.getSettings( 'name' ) + '_settings',
-			callback: () => $e.route( `${ namespace }/settings` ),
+			callback: () => $e.route( `${ namespace }/settings`, {}, {
+				source: Sources.PANEL,
+			} ),
 		};
 
 		$e.bc.ensureTab( namespace, 'settings', menuItemOptions.pageName );

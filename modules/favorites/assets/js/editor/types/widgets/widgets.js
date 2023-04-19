@@ -1,6 +1,8 @@
 import FavoriteType from '../../favorite-type';
 import PanelCategoryBehavior from './behaviors/panel-category-behavior';
 
+import { Sources } from 'elementor-editor/editor-constants';
+
 export default class Widgets extends FavoriteType {
 	constructor() {
 		super();
@@ -163,6 +165,8 @@ export default class Widgets extends FavoriteType {
 			onAfter: () => {
 				psElement.scrollTop = psScrollTop + ( psElement.scrollHeight - psHeight );
 			},
+		}, {
+			source: Sources.PANEL,
 		} );
 	}
 

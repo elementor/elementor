@@ -4,6 +4,8 @@ const BaseRegion = require( 'elementor-regions/base' );
 
 import NavigatorLayout from './layout';
 
+import { Sources } from 'elementor-editor/editor-constants';
+
 export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
@@ -289,7 +291,9 @@ export default class extends BaseRegion {
 			this.initLayout();
 
 			if ( false !== this.storage.visible ) {
-				$e.route( 'navigator' );
+				$e.route( 'navigator', {}, {
+					source: Sources.NAVIGATOR,
+				} );
 			}
 		}
 	}

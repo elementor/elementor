@@ -278,9 +278,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string}  command
 	 * @param {{}}      args
+	 * @param {{}}      meta
 	 * @param {boolean} [addTrace=true]
 	 */
-	beforeRun( command, args = {}, addTrace = true ) {
+	beforeRun( command, args, meta, addTrace = true ) {
 		const component = this.getComponent( command ),
 			container = component.getServiceName();
 
@@ -292,12 +293,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.trigger( 'run:before', component, command, args );
+		this.trigger( 'run:before', component, command, args, meta );
 
 		window.dispatchEvent( new CustomEvent( 'elementor/commands/run/before', {
 			detail: {
 				command,
 				args,
+				meta
 			},
 		} ) );
 	}
@@ -328,15 +330,16 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string} command
 	 * @param {{}}     args
+	 * @param {{}}     meta
 	 *
 	 * @return {boolean|*} results
 	 */
-	run( command, args = {} ) {
+	run( command, args = {}, meta = {} ) {
 		if ( ! this.validateRun( command, args ) ) {
 			return false;
 		}
 
-		this.beforeRun( command, args );
+		this.beforeRun( command, args, meta );
 
 		// Get command class or callback.
 		let context = this.commands[ command ];
@@ -352,7 +355,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		if ( ! ( context instanceof CommandBase ) ) {
 			const results = context.apply( currentComponent, [ args ] );
 
-			this.afterRun( command, args, results );
+			this.afterRun( command, args, meta, results );
 
 			return results;
 		}
@@ -361,17 +364,18 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return this.removeCurrentTrace( currentComponent );
 		}
 
-		return this.runInstance( context );
+		return this.runInstance( context, meta );
 	}
 
 	/**
 	 * Function runInstance().
 	 *
 	 * @param {CommandBase} instance
+	 * @param {{}} meta
 	 *
 	 * @return {boolean|Promise<*>}
 	 */
-	runInstance( instance ) {
+	runInstance( instance, meta ) {
 		let results = null;
 
 		// For UI Hooks.
@@ -391,7 +395,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			}
 		}
 
-		return this.applyRunAfter( instance, results );
+		return this.applyRunAfter( instance, results, meta );
 	}
 
 	/**
@@ -402,19 +406,20 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*}           result
+	 * @param {*}           meta
 	 *
 	 * @return {Promise<*>|*}
 	 */
-	applyRunAfter( instance, result ) {
+	applyRunAfter( instance, result, meta ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			const handleJQueryDeferred = ( _result ) => {
 				_result.fail( ( e ) => {
 					this.catchApply( e, instance );
-					this.afterRun( instance.command, instance.args, e );
+					this.afterRun( instance.command, instance.args, e, meta );
 				} );
 				_result.done( ( __result ) => {
-					this.applyRunAfterSync( instance, __result );
+					this.applyRunAfterSync( instance, __result, meta );
 				} );
 
 				return _result;
@@ -422,10 +427,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 			return handleJQueryDeferred( result );
 		} else if ( result instanceof Promise ) {
-			return this.applyRunAfterAsync( instance, result );
+			return this.applyRunAfterAsync( instance, result, meta );
 		}
 
-		this.applyRunAfterSync( instance, result );
+		this.applyRunAfterSync( instance, result, meta );
 
 		return result;
 	}
@@ -438,15 +443,16 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*}           result
+	 * @param {*}           meta
 	 */
-	applyRunAfterSync( instance, result ) {
+	applyRunAfterSync( instance, result, meta ) {
 		// Run Data hooks.
 		instance.onAfterApply( instance.args, result );
 
 		// For UI hooks.
 		instance.onAfterRun( instance.args, result );
 
-		this.afterRun( instance.command, instance.args, result );
+		this.afterRun( instance.command, instance.args, result, meta );
 	}
 
 	/**
@@ -457,15 +463,16 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*}           result
+	 * @param {*}           meta
 	 */
-	applyRunAfterAsync( instance, result ) {
+	applyRunAfterAsync( instance, result, meta ) {
 		// Override initial result ( promise ) to await onAfter promises, first!.
 		return ( async () => {
 			await result.catch( ( e ) => {
 				this.catchApply( e, instance );
 				this.afterRun( instance.command, instance.args, e );
 			} );
-			await result.then( ( _result ) => this.applyRunAfterAsyncResult( instance, _result ) );
+			await result.then( ( _result ) => this.applyRunAfterAsyncResult( instance, _result, meta ) );
 
 			return result;
 		} )();
@@ -480,8 +487,9 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*}           result
+	 * @param {*}           meta
 	 */
-	async applyRunAfterAsyncResult( instance, result ) {
+	async applyRunAfterAsyncResult( instance, result, meta ) {
 		// Run Data hooks.
 		const results = instance.onAfterApply( instance.args, result ),
 			promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
@@ -494,7 +502,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		// For UI hooks.
 		instance.onAfterRun( instance.args, result );
 
-		this.afterRun( instance.command, instance.args, result );
+		this.afterRun( instance.command, instance.args, result, meta );
 	}
 
 	/**
@@ -505,17 +513,18 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @param {string}  command
 	 * @param {{}}      args
+	 * @param {{}}      meta
 	 * @param {*}       results
 	 * @param {boolean} [removeTrace=true]
 	 */
-	afterRun( command, args, results = undefined, removeTrace = true ) {
+	afterRun( command, args, results = undefined, meta = {}, removeTrace = true ) {
 		const component = this.getComponent( command );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args, results ] );
 		}
 
-		this.trigger( 'run:after', component, command, args, results );
+		this.trigger( 'run:after', component, command, args, results, meta );
 
 		window.dispatchEvent( new CustomEvent( 'elementor/commands/run/after', {
 			detail: {
@@ -552,7 +561,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @return {boolean|*} result
 	 */
 	runShortcut( command, event ) {
-		return this.run( command, event );
+		return this.run( command, event ); // TODO: @matipjo, source is shortcut..
 	}
 
 	validateInstanceScope( instance, currentComponent, command ) {

@@ -52,6 +52,8 @@ module.exports = Marionette.Behavior.extend( {
 						callback: () => $e.route( 'navigator', {
 							reOpen: true,
 							model: this.view.model,
+						}, {
+							source: Sources.CONTEXT_MENU,
 						} ),
 					},
 				],

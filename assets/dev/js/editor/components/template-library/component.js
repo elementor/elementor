@@ -1,6 +1,7 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
+import { systemEventMeta, userEventMeta } from '@elementor/events';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -134,7 +135,10 @@ export default class Component extends ComponentModalBase {
 		this.manager.modalConfig = args;
 
 		if ( args.toDefault || ! $e.routes.restoreState( 'library' ) ) {
-			$e.route( this.getDefaultRoute() );
+			$e.route( this.getDefaultRoute(), {}, systemEventMeta( {
+				source: 'library',
+				trigger: 'show-default',
+			} ) );
 		}
 	}
 
@@ -178,7 +182,10 @@ export default class Component extends ComponentModalBase {
 					model,
 					data,
 					options: importOptions,
-				} );
+				}, systemEventMeta( {
+					source: 'library',
+					trigger: 'library/insert-template',
+				} ) );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );
@@ -197,18 +204,24 @@ export default class Component extends ComponentModalBase {
 			showImportDialog( model ) {
 				const dialog = InsertTemplateHandler.getDialog( model );
 
-				dialog.onConfirm = function() {
+				dialog.onConfirm = function( e ) {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: true,
-					} );
+					}, userEventMeta( {
+						source: 'withPageSettings',
+						interaction: 'click',
+					} ) );
 				};
 
 				dialog.onCancel = function() {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: false,
-					} );
+					}, userEventMeta( {
+						source: 'withoutPageSettings',
+						interaction: 'click',
+					} ) );
 				};
 
 				dialog.show();
@@ -250,7 +263,10 @@ export default class Component extends ComponentModalBase {
 
 	maybeOpenLibrary() {
 		if ( '#library' === location.hash ) {
-			$e.run( 'library/open' );
+			$e.run( 'library/open', systemEventMeta( {
+				source: 'library',
+				trigger: 'url-hash',
+			} ) );
 
 			location.hash = '';
 		}

@@ -87,7 +87,7 @@ export default class Routes extends Commands {
 	/**
 	 * @override
 	 */
-	beforeRun( route, args ) {
+	beforeRun( route, args, meta = {} ) {
 		const component = this.getComponent( route ),
 			container = component.getServiceName(),
 			oldRoute = this.current[ container ];
@@ -98,7 +98,7 @@ export default class Routes extends Commands {
 
 		Commands.trace.push( route );
 
-		super.beforeRun( route, args, false );
+		super.beforeRun( route, args, meta, false );
 
 		this.attachCurrent( container, route, args );
 
@@ -109,8 +109,8 @@ export default class Routes extends Commands {
 		}
 	}
 
-	to( route, args ) {
-		this.run( route, args );
+	to( route, args, meta = {} ) {
+		this.run( route, args, meta );
 
 		const namespaceRoot = this.getComponent( route ).getServiceName();
 
@@ -145,14 +145,14 @@ export default class Routes extends Commands {
 	}
 
 	// Don't clear current route.
-	afterRun( route, args, results = undefined ) {
+	afterRun( route, args, results = undefined, meta ) {
 		const component = this.getComponent( route );
 
 		component.onRoute( route, args );
 
 		this.dispatchOnOpen( route );
 
-		super.afterRun( route, args, results, false );
+		super.afterRun( route, args, results, meta, false );
 
 		Commands.trace.pop();
 	}

@@ -1,3 +1,4 @@
+import { Sources } from 'elementor-editor/editor-constants';
 import After from 'elementor-api/modules/hooks/ui/after';
 
 export class ReloadPreview extends After {
@@ -24,7 +25,7 @@ export class ReloadPreview extends After {
 
 				// TODO: Fix the route change.
 				elementor.once( 'preview:loaded', () => {
-					$e.route( 'panel/page-settings/settings' );
+					$e.route( 'panel/page-settings/settings', {}, { source: Sources.HOOK } );
 				} );
 			} );
 	}

@@ -5,6 +5,8 @@ import PanelComponent from './component';
 import ElementsComponent from './pages/elements/component';
 import EditorComponent from './pages/editor/component';
 
+import { Sources } from 'elementor-editor/editor-constants';
+
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
 
@@ -26,6 +28,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		'editor:destroy'() {
 			$e.route( 'panel/elements/categories', {
 				autoFocusSearch: false,
+			}, {
+				source: Sources.PANEL,
 			} );
 		},
 	},

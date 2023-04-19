@@ -1,3 +1,5 @@
+import { Sources } from 'elementor-editor/editor-constants';
+
 var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' ),
 	TemplateLibraryTemplateRemoteView;
 

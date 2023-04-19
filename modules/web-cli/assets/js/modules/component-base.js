@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import Module from 'elementor/assets/dev/js/modules/imports/module.js';
 import ForceMethodImplementation from '../utils/force-method-implementation';
 import Deprecation from 'elementor-api/utils/deprecation';
+import { userEventMeta } from '@elementor/events';
 
 /**
  * @typedef {import('./command-infra')} CommandInfra
@@ -382,10 +383,14 @@ export default class ComponentBase extends Module {
 		this.currentTab = tab;
 		this.renderTab( tab, args );
 
+		// This logic should not be here.
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
 			.on( 'click', ( event ) => {
-				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args );
+				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args, userEventMeta( {
+					source: tab + '-tab',
+					interaction: 'click',
+				} ) );
 			} )
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )

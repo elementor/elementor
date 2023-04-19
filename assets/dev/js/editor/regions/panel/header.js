@@ -1,3 +1,5 @@
+import { Sources } from 'elementor-editor/editor-constants';
+
 var PanelHeaderItemView;
 
 PanelHeaderItemView = Marionette.ItemView.extend( {
@@ -31,9 +33,9 @@ PanelHeaderItemView = Marionette.ItemView.extend( {
 
 	onClickMenu() {
 		if ( $e.routes.is( 'panel/menu' ) ) {
-			$e.route( 'panel/elements/categories' );
+			$e.route( 'panel/elements/categories', {}, { source: Sources.PANEL } );
 		} else {
-			$e.route( 'panel/menu' );
+			$e.route( 'panel/menu', {}, { source: Sources.PANEL } );
 		}
 	},
 } );
