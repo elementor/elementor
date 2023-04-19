@@ -66,6 +66,7 @@
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
+			min-width: 0;
 		}
 	}
 
