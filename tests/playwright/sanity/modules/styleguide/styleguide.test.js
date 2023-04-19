@@ -76,7 +76,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '#elementor-panel-page-menu' );
+		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
+		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -445,7 +446,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '#elementor-panel-page-menu' );
+		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
+		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
 
 		// Act.
 		await page.click( 'text=Global Fonts' );
@@ -455,7 +457,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '#elementor-panel-page-menu' );
+		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
+		await page.locator( '.dialog-cancel:has-text("Discard")' ).click();
 
 		await page.click( 'text=Global Colors' );
 
