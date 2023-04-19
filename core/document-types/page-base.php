@@ -86,7 +86,12 @@ abstract class PageBase extends Document {
 			[
 				'label' => esc_html__( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'Not working? You can set a different selector for the title in Site Settings > Layout', 'elementor' ),
+				'description' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Set a different selector for the title in the %1$sLayout panel%2$s.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-layout\' ) )">',
+					'</a>'
+				),
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],

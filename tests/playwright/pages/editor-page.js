@@ -1,5 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +17,8 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( template ) {
-		const templateData = require( `../templates/${ template }.json` );
+	async loadTemplate( filePath ) {
+		const templateData = require( filePath );
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -94,6 +95,14 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async addElement( model, container = null, isContainerASection = false ) {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
+	}
+
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 	}
 
 	/**
@@ -295,7 +304,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
@@ -474,18 +483,17 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
 	}
 
 	async previewChanges( context ) {
@@ -594,5 +602,56 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId, value ) {
 		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
+		}
 	}
 };
