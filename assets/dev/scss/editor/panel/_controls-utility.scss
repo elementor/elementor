@@ -89,7 +89,6 @@ $title-size: 12px;
 
 	.e-units-switcher {
 		cursor: pointer;
-		text-transform: uppercase;
 		font-size: 10px;
 		padding: .5em;
 		margin: -.5em 0;
@@ -158,8 +157,7 @@ $title-size: 12px;
 			align-items: center;
 			height: 3em;
 			justify-content: center;
-			text-transform: uppercase;
-			font-size: 9px;
+			font-size: $font-size-xs;
 			transition: 0.15s;
 
 			&:hover {
