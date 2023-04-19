@@ -18,19 +18,19 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	updateImageDates( templateData ) {
-		const date = new Date();
-		const month = date.toLocaleString( 'default', { month: '2-digit' } );
-		const regex = /[0-9]{4}\/[0-9]{2}/g;
-
+		const replaceUrl = ( url ) => {
+			const date = new Date();
+			const month = date.toLocaleString( 'default', { month: '2-digit' } );
+			const regex = /[0-9]{4}\/[0-9]{2}/g;
+			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
+		};
 		templateData.content[ 0 ].elements.forEach( ( el ) => {
 			if ( 'image' in el.settings ) {
-				const newUrl = el.settings.image.url.replace( regex, `${ date.getFullYear() }/${ month }` );
-				el.settings.image.url = newUrl;
+				el.settings.image.url = replaceUrl( el.settings.image.url );
 			}
 			if ( 'carousel' in el.settings ) {
 				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
-					const newUrl = el.settings.carousel[ i ].url.replace( regex, `${ date.getFullYear() }/${ month }` );
-					el.settings.carousel[ i ].url = newUrl;
+					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
 				}
 			}
 		} );
@@ -38,6 +38,10 @@ module.exports = class EditorPage extends BasePage {
 
 	async loadTemplate( filePath, updateDatesForImages = false ) {
 		const templateData = require( filePath );
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
 		if ( updateDatesForImages ) {
 			this.updateImageDates( templateData );
 		}

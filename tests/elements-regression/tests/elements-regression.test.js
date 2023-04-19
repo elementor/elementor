@@ -6,13 +6,14 @@ import EditorSelectors from '../../playwright/selectors/editor-selectors';
 import { createDefaultMedia, deleteDefaultMedia } from '../../playwright/assets/api-requests';
 
 const imageIds = [];
-const image2 = {
-	title: 'image2',
-	extension: 'jpg',
-};
 
 const image1 = {
 	title: 'image1',
+	extension: 'jpg',
+};
+
+const image2 = {
+	title: 'image2',
 	extension: 'jpg',
 };
 
