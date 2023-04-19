@@ -70,7 +70,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
 	</button>
-	<div id="elementor-panel-header-title"></div>
+	<h2 id="elementor-panel-header-title"></h2>
 	<button id="elementor-panel-header-add-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
