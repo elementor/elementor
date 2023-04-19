@@ -96,7 +96,7 @@ jobs:
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
-        if: env.CHANNEL == 'beta' && github.event.inputs.pre_release == 'false' # Only for beta releases
+        if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
         with:
           BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
