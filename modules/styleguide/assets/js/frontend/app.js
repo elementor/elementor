@@ -8,7 +8,7 @@ import FontsArea from './components/areas/fonts-area';
 import AppWrapper from './components/app-wrapper';
 
 const Content = styled.div`
-	padding-top: 50px;
+	padding: 48px 0;
 `;
 
 export default function App() {

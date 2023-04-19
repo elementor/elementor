@@ -55,7 +55,7 @@ const Wrapper = styled( DivBase )`
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 50px;
+	height: 48px;
 	display: flex;
 	background: var(--e-a-bg-default);
 	border-bottom: 1px solid var(--e-a-border-color-bold);
