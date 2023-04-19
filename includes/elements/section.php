@@ -1244,6 +1244,9 @@ class Element_Section extends Element_Base {
 				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1259,6 +1262,9 @@ class Element_Section extends Element_Base {
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
