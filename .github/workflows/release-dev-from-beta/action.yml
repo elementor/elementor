@@ -68,4 +68,9 @@ runs:
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
               bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
             fi
+      - uses: actions/upload-artifact@v3
+        if: ${{ inputs.PRE_RELEASE != 'false' }}
+        with:
+          name: dev-svn-preview
+          path: elementor
 
