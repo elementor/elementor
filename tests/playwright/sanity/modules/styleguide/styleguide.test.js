@@ -26,7 +26,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.evaluate( () => $e.run( 'document/elements/settings', {
 			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 			settings: {
-				enable_styleguide_preview: 0,
+				enable_styleguide_preview: '',
 			},
 			options: {
 				external: true,
@@ -47,6 +47,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
 			page.click( 'text=Style Guide Preview' ),
+			page.waitForTimeout( 3000 ),
 		] );
 
 		const userPreferencesStyleguideSwitcherAfterClick = await page.isChecked( userPreferencesStyleguideSwitcherSelector );
@@ -63,8 +64,6 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Colors.
 		// Act.
 		await page.click( 'text=Global Colors' );
-		await page.waitForTimeout( 3000 );
-		await page.waitForLoadState( 'networkidle' );
 
 		const siteSettingsColorsStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -77,8 +76,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		const changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
-		if ( await changesDialog.isVisible( 1000 ) ) {
+		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
@@ -134,8 +132,6 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Colors.
 		// Act.
 		await page.click( 'text=Global Colors' );
-		await page.waitForTimeout( 3000 );
-		await page.waitForLoadState( 'networkidle' );
 
 		const siteSettingsColorsStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -147,15 +143,16 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForLoadState( 'networkidle' );
+
+		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
+			await page.locator( '.dialog-button:has-text("Save")' ).click();
+		}
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Act 2.
 		await page.click( 'text=Global Fonts' );
-		await page.waitForTimeout( 3000 );
-		await page.waitForLoadState( 'networkidle' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
@@ -450,8 +447,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		let changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
-		if ( await changesDialog.isVisible( 1000 ) ) {
+		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
@@ -464,8 +460,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
-		changesDialog = await page.locator( '.dialog-header:has-text("Save Changes")' );
-		if ( await changesDialog.isVisible( 1000 ) ) {
+		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
 
@@ -514,6 +509,8 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 			external: true,
 		},
 	} ), styleguideOpen );
+
+	await page.waitForTimeout( 3000 );
 
 	await Promise.all( [
 		page.waitForResponse( '/wp-admin/admin-ajax.php' ),
