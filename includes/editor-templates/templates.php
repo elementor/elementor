@@ -83,6 +83,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</select>
 						</div>
 					<# }
+
+				if ( config.sets ) { #>
+				<div id="elementor-template-library-filter-sets">
+					<select id="elementor-template-library-filter-sets-select" class="elementor-template-library-filter-select" data-elementor-filter="sets">
+						<option></option>
+						<# config.sets.forEach( function( set ) {
+						var selected = set === elementor.templates.getFilter( 'sets' ) ? ' selected' : '';
+						#>
+						<option value="{{ set }}"{{{ selected }}}>{{{ set }}}</option>
+						<# } ); #>
+					</select>
+				</div>
+				<# }
 				} #>
 				<div id="elementor-template-library-my-favorites">
 					<# var checked = elementor.templates.getFilter( 'favorite' ) ? ' checked' : ''; #>
