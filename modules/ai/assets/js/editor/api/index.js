@@ -1,74 +1,23 @@
-export const getUserInformation = async () => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_get_user_information', {
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
-
-export const getCompletionText = async ( prompt ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_get_completion_text', {
-		data: {
-			prompt,
+const request = ( endpoint, data = {} ) => {
+	return new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest(
+		endpoint, {
+			success: resolve,
+			error: reject,
+			data,
 		},
-		success: resolve,
-		error: reject,
-	},
 	) );
 };
 
-export const getEditText = async ( input, instruction ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_get_edit_text', {
-		data: {
-			input,
-			instruction,
-		},
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
+export const getUserInformation = () => request( 'ai_get_user_information' );
 
-export const getCustomCode = async ( prompt, language ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_get_custom_code', {
-		data: {
-			prompt,
-			language,
-		},
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
+export const getCompletionText = ( prompt ) => request( 'ai_get_completion_text', { prompt } );
 
-export const getCustomCSS = async ( prompt, htmlMarkup, elementId ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_get_custom_css', {
-		data: {
-			prompt,
-			html_markup: htmlMarkup,
-			element_id: elementId,
-		},
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
+export const getEditText = ( input, instruction ) => request( 'ai_get_edit_text', { input, instruction } );
 
-export const setGetStarted = async () => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_set_get_started', {
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
+export const getCustomCode = ( prompt, language ) => request( 'ai_get_custom_code', { prompt, language } );
 
-export const setStatusFeedback = async ( responseId ) => {
-	return await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'ai_set_status_feedback', {
-		data: {
-			response_id: responseId,
-		},
-		success: resolve,
-		error: reject,
-	},
-	) );
-};
+export const getCustomCSS = ( prompt, htmlMarkup, elementId ) => request( 'ai_get_custom_css', { prompt, html_markup: htmlMarkup, element_id: elementId } );
+
+export const setGetStarted = () => request( 'ai_set_get_started' );
+
+export const setStatusFeedback = async ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );

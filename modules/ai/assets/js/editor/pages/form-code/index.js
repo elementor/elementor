@@ -5,7 +5,6 @@ import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
 import PromptSuggestions from '../../components/prompt-suggestions';
 import GenerateButton from '../../components/generate-button';
-import PromptCredits from '../../components/prompt-credits';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
@@ -79,9 +78,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } /> }
 
-					<Stack direction="row" alignItems="center" justifyContent="space-between" sx={ { py: 4, mt: 8 } }>
-						<PromptCredits credits={ credits } />
-
+					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { py: 4, mt: 8 } }>
 						<GenerateButton>
 							{ __( 'Generate code', 'elementor' ) }
 						</GenerateButton>
@@ -97,9 +94,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						{ result }
 					</ReactMarkdown>
 
-					<Stack direction="row" alignItems="center" justifyContent="space-between" sx={ { mt: 8 } }>
-						<PromptCredits credits={ credits } />
-
+					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { mt: 8 } }>
 						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
 							<Button size="small" color="secondary" variant="text" onClick={ () => setResult( '' ) }>
 								{ __( 'New prompt', 'elementor' ) }
