@@ -97,10 +97,11 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( '.e-con.e-active' ).hover();
+	await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).hover();
 	const elementEditButton = editor.getPreviewFrame().locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-con.e-active.elementor-element-editable' );
+	await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content > .e-con.e-active' );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
 module.exports = {
