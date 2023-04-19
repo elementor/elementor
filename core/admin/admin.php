@@ -134,6 +134,19 @@ class Admin extends App {
 
 		$this->register_packages();
 
+		// Temporary solution for the admin.
+		wp_register_script(
+			'elementor-ai-admin',
+			$this->get_js_assets_url( 'ai-admin' ),
+			[
+				'elementor-common',
+				'elementor-packages-ui',
+				'elementor-packages-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),

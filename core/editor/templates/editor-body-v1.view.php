@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
 ?>
 
+<h1 class="elementor-screen-only"><?php echo sprintf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></h1>
+
 <div id="elementor-editor-wrapper">
 	<aside id="elementor-panel" class="elementor-panel" aria-labelledby="elementor-panel-header-title"></aside>
 	<main id="elementor-preview" aria-label="<?php echo esc_attr__( 'Preview', 'elementor' ); ?>">
