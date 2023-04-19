@@ -170,7 +170,7 @@ class Utils {
 	 * @return string
 	 * @throws \Exception
 	 */
-	public static function replace_urls( $from, $to, $get_query = false ) {
+	public static function replace_urls( $from, $to ) {
 		$from = trim( $from );
 		$to = trim( $to );
 
@@ -206,10 +206,6 @@ class Utils {
 				$meta_value_like
 			)
 		);
-
-		if ( $get_query ) {
-			return $wpdb->last_query;
-		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( 'An error occurred while replacing URL\'s.' );
