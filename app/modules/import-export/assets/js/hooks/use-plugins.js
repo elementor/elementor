@@ -28,7 +28,8 @@ export default function usePlugins() {
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8',
 					'X-WP-Nonce': wpApiSettings.nonce,
-					'X-Elementor-Import': 'doing_import',
+					// TODO 18/04/2023 : This needs to be removed after https://elementor.atlassian.net/browse/HTS-434 is done.
+					'X-Elementor-Action': 'import-plugins',
 				},
 			};
 
