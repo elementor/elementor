@@ -444,12 +444,15 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 	test( 'Switching between tabs makes relevant area visible', async ( { page }, testInfo ) => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
+		await page.waitForTimeout( 2000 );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 
 		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
+
+		await page.waitForTimeout( 2000 );
 
 		// Act.
 		await page.click( 'text=Global Fonts' );
@@ -463,6 +466,8 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
 			await page.locator( '.dialog-button:has-text("Save")' ).click();
 		}
+
+		await page.waitForTimeout( 2000 );
 
 		await page.click( 'text=Global Colors' );
 
