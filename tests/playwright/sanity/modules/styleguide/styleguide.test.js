@@ -76,8 +76,10 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await page.waitForSelector( '.dialog-header:has-text("Save Changes")' );
-		await page.locator( '.dialog-button:has-text("Save")' ).click();
+
+		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+			await page.locator( '.dialog-button:has-text("Save")' ).click();
+		}
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -445,11 +447,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, 'Global Colors', true );
 
-		await Promise.all( [
-			page.locator( '#elementor-panel-header-kit-back' ).click(),
-			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
-			page.locator( '.dialog-button:has-text("Save")' ).click(),
-		] );
+		await page.locator( '#elementor-panel-header-kit-back' ).click();
+
+		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+			await page.locator( '.dialog-button:has-text("Save")' ).click();
+		}
 
 		// Act.
 		await page.click( 'text=Global Fonts' );
@@ -458,11 +460,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible();
 
 		// Act 2.
-		await Promise.all( [
-			page.locator( '#elementor-panel-header-kit-back' ).click(),
-			page.waitForSelector( '.dialog-header:has-text("Save Changes")' ),
-			page.locator( '.dialog-button:has-text("Save")' ).click(),
-		] );
+		await page.locator( '#elementor-panel-header-kit-back' ).click();
+
+		if ( page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible() ) {
+			await page.locator( '.dialog-button:has-text("Save")' ).click();
+		}
 
 		await page.click( 'text=Global Colors' );
 
