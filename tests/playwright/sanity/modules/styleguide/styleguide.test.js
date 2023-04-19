@@ -46,7 +46,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.click( 'text=Style Guide Preview' ),
+			page.click( '.elementor-control-title:has-text("Style Guide Preview")' ),
 			page.waitForTimeout( 3000 ),
 		] );
 
@@ -175,7 +175,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( 'text=Style Guide Preview' ).click(),
+			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
@@ -200,7 +200,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( 'text=Style Guide Preview' ).click(),
+			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
@@ -225,7 +225,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( 'text=Style Guide Preview' ).click(),
+			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
