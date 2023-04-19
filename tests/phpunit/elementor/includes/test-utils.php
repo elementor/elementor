@@ -83,6 +83,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 
+
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$this->assertNull( Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url() );
