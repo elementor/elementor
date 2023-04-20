@@ -34,7 +34,7 @@ runs:
       shell: bash
       run: |
             PLUGIN_RELATIVE_PATH=${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
-            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} -d $PLUGIN_RELATIVE_PATH
+            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_RELATIVE_PATH
 
             PLUGIN_FILE_PATH=./$PLUGIN_RELATIVE_PATH
 
