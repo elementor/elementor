@@ -55,10 +55,16 @@ runs:
             # Rename the zip file
             mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
 
-            bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
-
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
             echo "DEV_RELEASE_NAME=${DEV_RELEASE_NAME}" >> $GITHUB_ENV
+    - name: Test SVN Trunk With Dev Build
+      shell: bash
+      env:
+        PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
+        CHANNEL: ${{ inputs.CHANNEL }}
+        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
+      run: |
+            bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
     - name: Upload Dev Build To GitHub Artifacts
       uses: actions/upload-artifact@v3
       with:

@@ -97,7 +97,7 @@ jobs:
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
           bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
-      - name: Upload Dev Build To GitHub Artifacts
+      - name: Upload Debug Build To GitHub Artifacts
         if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true'
         uses: actions/upload-artifact@v3
         with:
