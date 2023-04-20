@@ -7,7 +7,6 @@
 	--n-tabs-default-padding-block: 15px;
 	--n-tabs-default-padding-inline: 35px;
 	--n-tabs-background-color: transparent;
-	--n-tabs-display: flex;
 	--n-tabs-direction: column;
 	--n-tabs-gap: 10px;
 	--n-tabs-heading-display: flex;
@@ -48,7 +47,7 @@
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
 	.e-n-tabs {
-		display: var( --n-tabs-display );
+		display: flex;
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
 		text-align: $start;
@@ -73,9 +72,12 @@
 	.e-n-tab {
 
 		&-title {
+			width: max-content;
+			order: -1;
+
 			display: flex;
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
-			flex-direction: var( --n-tabs-title-direction );
+			//flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
 			border-width: var( --n-tabs-border-width );
@@ -88,7 +90,7 @@
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
-			width: var( --n-tabs-title-width );
+			//width: var( --n-tabs-title-width );
 			transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
 					border var( --n-tabs-title-transition ),
@@ -266,54 +268,59 @@
 }
 
 // Responsive mode
-@mixin hide-normal-tabs-($device) {
+@mixin display-type-accordion-($device) {
 }
 
-@mixin hide-collapse-tabs-($device) {
-
+@mixin display-type-desktop-($device) {
+	.e-n-tabs {
+		flex-direction: var(--n-tabs-direction);
+		height: 400px;
+		flex-wrap: var(--n-tabs-direction-wrap);
+		justify-content: center;
+	}
 }
 
 // Mobile.
 @media (min-width: $screen-mobile-next) {
-	@include hide-collapse-tabs-(mobile);
+	@include display-type-desktop-(mobile);
 }
 
 @media (max-width: $screen-mobile-max) {
-	@include hide-normal-tabs-(mobile);
+	@include display-type-accordion-(mobile);
 }
 
 // Mobile Extra.
 @media (min-width: $screen-mobile-extra-next) {
-	@include hide-collapse-tabs-(mobile_extra);
+	@include display-type-desktop-(mobile_extra);
 }
 
 @media (max-width: $screen-mobile-extra-max) {
-	@include hide-normal-tabs-(mobile_extra);
+	@include display-type-accordion-(mobile_extra);
 }
 
 // Tablet.
 @media (min-width: $screen-tablet-next) {
-	@include hide-collapse-tabs-(tablet);
+	@include display-type-desktop-(tablet);
 }
 
 @media (max-width: $screen-tablet-max) {
-	@include hide-normal-tabs-(tablet);
+	@include display-type-accordion-(tablet);
 }
 
 // Tablet Extra.
 @media (min-width: $screen-tablet-extra-next) {
-	@include hide-collapse-tabs-(tablet_extra);
+	@include display-type-desktop-(tablet_extra);
 }
 
 @media (max-width: $screen-tablet-extra-max) {
-	@include hide-normal-tabs-(tablet_extra);
+	@include display-type-accordion-(tablet_extra);
 }
 
 // Laptop.
 @media (min-width: $screen-desktop-min) {
-	@include hide-collapse-tabs-(laptop);
+	@include display-type-desktop-(laptop);
 }
 
 @media (max-width: $screen-laptop-max) {
-	@include hide-normal-tabs-(laptop);
+	@include display-type-accordion-(laptop);
 }

@@ -68,7 +68,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_default_children_placeholder_selector() {
-		return '.e-n-tabs-content';
+		return '.e-n-tabs';
 	}
 
 	protected function get_html_wrapper_class() {
@@ -185,10 +185,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial;',
-				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial;',
-				'end' => '--n-tabs-direction: row-reverse; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px;',
-				'start' => '--n-tabs-direction: row; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px;',
+				'top' => '--n-tabs-direction: column;  --n-tabs-direction-wrap: initial;',
+				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-direction-wrap: initial;',
+				'end' => '--n-tabs-direction: column; --n-tabs-direction-wrap: wrap;',
+				'start' => '--n-tabs-direction: column; --n-tabs-direction-wrap: wrap;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -1086,7 +1086,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
 			<# if ( settings['tabs'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-			<div class="e-n-tabs-heading" role="tablist">
+
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
@@ -1138,9 +1138,6 @@ class NestedTabs extends Widget_Nested_Base {
 					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
 				</div>
 				<# } ); #>
-			</div>
-			<div class="e-n-tabs-content">
-			</div>
 			<# } #>
 		</div>
 		<?php
