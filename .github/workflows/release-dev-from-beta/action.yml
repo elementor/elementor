@@ -68,7 +68,7 @@ runs:
       if: inputs.PRE_RELEASE == 'false'
       shell: bash
       env:
-        PLUGIN_VERSION: ${{ env.RELEASE_FILENAME }}
+        PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |

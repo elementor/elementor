@@ -53,7 +53,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.RELEASE_FILENAME }}
           files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
