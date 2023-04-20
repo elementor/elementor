@@ -40,7 +40,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			if ( 'video' === widgetType ) {
-				await page.waitForTimeout( 3000 );
+				await editorPage.waitForVideoLoaded();
 			}
 
 			const widgetCount = await editorPage.getWidgetCount();
@@ -55,7 +55,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
 			if ( 'video' === widgetType ) {
-				await page.waitForTimeout( 3000 );
+				await editorPage.waitForVideoLoaded( true );
 			}
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
