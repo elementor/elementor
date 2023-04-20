@@ -28,11 +28,12 @@ runs:
       shell: bash
       run: |
             PLUGIN_RELATIVE_PATH=${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
-            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_RELATIVE_PATH
+            unzip -q ${{ inputs.BUILD_ZIP_FILE_PATH }} -d $GITHUB_WORKSPACE
+
             PLUGIN_FILE_PATH=./$PLUGIN_RELATIVE_PATH
 
             # Replace beta with dev
-            DEV_RELEASE_NAME=${{ env.RELEASE_NAME }}
+            DEV_RELEASE_NAME=${{ env.RELEASE_FILENAME }}
             DEV_RELEASE_NAME=$(echo "$DEV_RELEASE_NAME" | sed 's/beta/dev/')
 
             # Remove rc
@@ -50,7 +51,13 @@ runs:
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
             echo "DEV_RELEASE_NAME=${DEV_RELEASE_NAME}" >> $GITHUB_ENV
-    - name: Create Dev GitHub release
+    - name: Upload Dev Build To GitHub Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dev-svn-preview
+        path: elementor
+        retention-days: 7
+    - name: Create Dev GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
@@ -61,11 +68,11 @@ runs:
       if: inputs.PRE_RELEASE == 'false'
       shell: bash
       env:
-        PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
+        PLUGIN_VERSION: ${{ env.RELEASE_FILENAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
-            echo "Publishing to WordPress.org SVN"
+            echo "Publishing to WordPress.org SVN Tag : ${{ env.RELEASE_FILENAME }}"
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
               bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
             fi
