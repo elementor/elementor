@@ -1,19 +1,32 @@
 import {
+	Divider,
 	MenuItem,
+	ListItemIcon,
 	ListSubheader,
 	Typography,
+	CircularProgress,
 } from '@elementor/ui';
 
 import { __ } from '@wordpress/i18n';
 import DocTypeChip, { Props } from '../top-bar/chip-doc-type';
 import { Post } from '../../hooks/use-recent-posts';
-import AddNewPage from './add-new-page';
+import usePage from '../../hooks/use-page';
+import { PlusIcon } from '@elementor/icons';
+import { useEffect } from 'react';
 
 export type RecentPostsProps = {
 	recentPosts: Post[];
 };
 
 export default function PostsList( { recentPosts }: RecentPostsProps ) {
+	const { createPage, pageData, isLoading } = usePage();
+
+	useEffect( () => {
+		if ( pageData ) {
+			window.location.href = pageData.edit_url;
+		}
+	}, [ pageData ] );
+
 	return (
 		<>
 			<ListSubheader sx={ { fontSize: 12, fontStyle: 'italic', pl: 4 } } component="div" id="nested-list-subheader">
@@ -23,6 +36,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 			{ recentPosts.length
 				? ( recentPosts.map( ( { title, edit_url: editUrl, type, id } ) => (
 					<MenuItem
+						dense
 						key={ id }
 						component="a"
 						href={ editUrl }
@@ -36,7 +50,21 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 					</Typography>
 				)
 			}
-			<AddNewPage />
+			<Divider />
+			<MenuItem
+				dense
+				size="small"
+				color="inherit"
+				component="div"
+				sx={ { pl: 5, fontSize: '12px', display: 'flex', justifyContent: 'flex-start' } }
+				onClick={ createPage }
+			>
+				<ListItemIcon>
+					{ isLoading ? <CircularProgress /> : <PlusIcon /> }
+				</ListItemIcon>
+
+				{ __( 'Add new page', 'elementor' ) }
+			</MenuItem>
 		</>
 	);
 }

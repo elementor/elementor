@@ -4,7 +4,7 @@ namespace Elementor\Modules\SiteNavigation\Data\Endpoints;
 
 use Elementor\Data\V2\Base\Endpoint;
 use Elementor\Plugin;
-use WP_REST_Server;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Add_New_Post extends Endpoint {
 
-	public function register_items_route( $methods = WP_REST_Server::CREATABLE, $args = [] ) {
+	protected function register() {
 		$args = [
 			'post_type' => [
 				'description' => 'Post type to create',
@@ -20,13 +20,13 @@ class Add_New_Post extends Endpoint {
 				'required' => false,
 				'default' => 'post',
 				'sanitize_callback' => function ( $value ) {
-					return wp_strip_all_tags( $value, true );
+					return sanitize_text_field( $value );
 				},
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 
-		parent::register_items_route( $methods, $args );
+		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
 
 	public function get_name() {
@@ -38,17 +38,32 @@ class Add_New_Post extends Endpoint {
 	}
 
 	public function create_items( $request ) {
-		$document = Plugin::$instance->documents->create( $request->get_param( 'post_type' ) );
-		if ( is_wp_error( $document ) ) {
+		$post_type = $request->get_param( 'post_type' );
+
+		if ( ! $this->validate_post_type( $post_type ) ) {
+			return new \WP_Error( 500, sprintf( 'Post type %s does not exist.', $post_type ) );
+		}
+
+		if ( User::is_current_user_can_edit_post_type( $post_type ) ) {
+			$document = Plugin::$instance->documents->create( $post_type );
+			if ( is_wp_error( $document ) ) {
+				return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
+			}
+
 			return [
-				'id' => 0,
-				'edit_url' => '',
+				'id' => $document->get_main_id(),
+				'edit_url' => $document->get_edit_url(),
 			];
 		}
 
-		return [
-			'id' => $document->get_main_id(),
-			'edit_url' => $document->get_edit_url(),
-		];
+		return new \WP_Error( 500, sprintf( 'User dont have capability to create page of type - %s.', $post_type ) );
+	}
+
+	private function validate_post_type( $post_type ): bool {
+		$post_types = get_post_types(
+			[ 'public' => true ]
+		);
+
+		return in_array( $post_type, $post_types );
 	}
 }

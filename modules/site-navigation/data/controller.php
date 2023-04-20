@@ -3,10 +3,8 @@
 namespace Elementor\Modules\SiteNavigation\Data;
 
 use Elementor\Data\V2\Base\Controller as Base_Controller;
-use Elementor\Modules\SiteNavigation\Data\Endpoints\{
-	Add_New_Post,
-	Recent_Posts
-};
+use Elementor\Modules\SiteNavigation\Data\Endpoints\Add_New_Post;
+use Elementor\Modules\SiteNavigation\Data\Endpoints\Recent_Posts;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

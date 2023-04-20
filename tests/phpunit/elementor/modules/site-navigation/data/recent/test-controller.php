@@ -201,6 +201,24 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
+
+	/**
+	 * Test invalid post type
+	 */
+	public function test_create_items__invalid_post_type() {
+		// Arrange.
+		$this->act_as_editor();
+
+		// Act.
+		$params = [
+			'post_type' => 'test',
+		];
+		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT, $params );
+
+		// Assert.
+		$this->assertEquals( 500, $response->get_status() );
+	}
+
 	public function test_create_items() {
 		// Arrange.
 		$this->act_as_editor();
