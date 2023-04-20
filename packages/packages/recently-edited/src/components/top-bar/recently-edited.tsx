@@ -32,10 +32,11 @@ export default function RecentlyEdited() {
 	}
 
 	return (
-		<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { paddingInlineStart: 1, cursor: 'default' } }>
+		<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { alignSelf: 'stretch', paddingInlineStart: 1, cursor: 'default' } }>
 			<Button
 				color="inherit"
 				endIcon={ <ChevronDownIcon /> }
+				sx={ { height: '100%' } }
 				{ ...bindTrigger( popupState ) }
 			>
 				<Indicator
@@ -45,7 +46,7 @@ export default function RecentlyEdited() {
 			</Button>
 
 			<Menu
-				PaperProps={ { sx: { minWidth: 314 } } }
+				PaperProps={ { sx: { mt: 2, ml: -4, minWidth: 314 } } }
 				{ ...bindMenu( popupState ) }
 			>
 				<PostsList recentPosts={ recentPosts } />
