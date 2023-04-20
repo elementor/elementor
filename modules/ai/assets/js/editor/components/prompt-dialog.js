@@ -12,6 +12,7 @@ const PromptDialog = ( props ) => {
 				hideBackdrop={ true }
 				maxWidth="sm"
 				sx={ {
+					zIndex: 9999,
 					'& .MuiDialog-container': {
 						alignItems: 'flex-start',
 						mt: '17vh',
