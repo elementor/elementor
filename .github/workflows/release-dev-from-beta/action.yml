@@ -58,13 +58,14 @@ runs:
         body_path: ${{ env.CHANGELOG_FILE }}
         prerelease: ${{ inputs.PRE_RELEASE }}
     - name: Publish to WordPress.org SVN
-      if: ${{ inputs.PRE_RELEASE }} == 'false'
+      if: inputs.PRE_RELEASE == 'false'
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
+            echo "Publishing to WordPress.org SVN"
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
               bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
             fi
