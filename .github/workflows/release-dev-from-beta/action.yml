@@ -20,6 +20,12 @@ inputs:
   PRE_RELEASE:
     description: 'flag to indicate if the release is pre-release.'
     required: true
+  CHANNEL:
+    description: 'The channel of the release.'
+    required: true
+  PACKAGE_VERSION:
+    description: 'The version of the package.'
+    required: true
 
 runs:
   using: "composite"
@@ -71,8 +77,10 @@ runs:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
+        CHANNEL: ${{ inputs.CHANNEL }}
+        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
       run: |
-            echo "Publishing to WordPress.org SVN Tag : ${{ env.RELEASE_FILENAME }}"
+            bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
               bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
             fi

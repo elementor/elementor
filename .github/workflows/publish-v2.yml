@@ -53,7 +53,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.RELEASE_FILENAME }}
+          tag_name: ${{ env.RELEASE_NAME }}
           files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
@@ -89,11 +89,14 @@ jobs:
       - name: Debug Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true'
         env:
-          PLUGIN_VERSION: ${{ env.RELEASE_FILENAME }}
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+          bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
       - name: Upload Dev Build To GitHub Artifacts
         if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true'
         uses: actions/upload-artifact@v3
@@ -104,11 +107,14 @@ jobs:
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
-          PLUGIN_VERSION: ${{ env.RELEASE_FILENAME }}
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+          bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' # Only for beta releases
@@ -120,6 +126,8 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Generate Changelog Content For Slack
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses: ./.github/workflows/generate-slack-changelog
