@@ -240,7 +240,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 			emptyView?.style.removeProperty( 'min-height' );
 
-			if ( 'custom' === gridRows?.unit ) {
+			if ( this.hasCustomUnit( gridRows ) && this.isNotOnlyANumber( gridRows ) && this.sizeNotEmpty( gridRows ) ) {
 				emptyView.style.minHeight = 'auto';
 			}
 		}
@@ -248,5 +248,19 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	shouldUpdateEmptyViewHeight() {
 		return !! this.elements.container.querySelector( '.elementor-empty-view' );
+	}
+
+	hasCustomUnit( gridRows ) {
+		return 'custom' === gridRows?.unit;
+	}
+
+	sizeNotEmpty( gridRows ) {
+		return '' !== gridRows?.size?.trim();
+	}
+
+	isNotOnlyANumber( gridRows ) {
+		const numberPattern = /^\d+$/;
+
+		return ! numberPattern.test( gridRows?.size );
 	}
 }

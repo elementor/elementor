@@ -214,8 +214,8 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await testPreset( frame, editor, 2, 2 );
 		} );
 
-		await test.step( 'Assert preset: rows-3 columns-3', async () => {
-			await testPreset( frame, editor, 3, 3 );
+		await test.step( 'Assert preset: rows-2 columns-3', async () => {
+			await testPreset( frame, editor, 2, 3 );
 		} );
 	} );
 
@@ -364,6 +364,34 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
 		} );
 
+		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has no value', async () => {
+			// Arrange.
+			const desiredCustomValue = '',
+				desiredMinHeight = '100px';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
+		await test.step( 'Empty view min-height should be 100px when grid-rows custom control has number value', async () => {
+			// Arrange.
+			const desiredCustomValue = '2',
+				desiredMinHeight = '100px';
+
+			// Act.
+			await gridRowsControl.locator( '.e-units-switcher' ).click();
+			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( desiredCustomValue );
+
+			// Assert.
+			await expect( emptyView ).toHaveCSS( 'min-height', desiredMinHeight );
+		} );
+
 		await test.step( 'Empty view min-height should be 100px when grid-rows unit is set to fr ', async () => {
 			// Arrange.
 			const desiredMinHeight = '100px',
@@ -401,6 +429,14 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await backArrow.click();
 			const selectTypeView = await frame.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
+		} );
+
+		await test.step( 'Assert back arrow in not visible when clicked on plus button', async () => {
+			await frame.locator( '.grid-preset-button' ).click();
+			await frame.locator( '[data-structure="2-2"]' ).click();
+			await frame.locator( '.elementor-editor-element-add' ).click();
+			const backArrow = await frame.locator( '.elementor-add-section-back' ).first();
+			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
 } );

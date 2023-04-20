@@ -1,5 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +17,34 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( template ) {
-		const templateData = require( `../templates/${ template }.json` );
+	updateImageDates( templateData ) {
+		const replaceUrl = ( url ) => {
+			const date = new Date();
+			const month = date.toLocaleString( 'default', { month: '2-digit' } );
+			const regex = /[0-9]{4}\/[0-9]{2}/g;
+			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
+		};
+		templateData.content[ 0 ].elements.forEach( ( el ) => {
+			if ( 'image' in el.settings ) {
+				el.settings.image.url = replaceUrl( el.settings.image.url );
+			}
+			if ( 'carousel' in el.settings ) {
+				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
+					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
+				}
+			}
+		} );
+	}
+
+	async loadTemplate( filePath, updateDatesForImages = false ) {
+		const templateData = require( filePath );
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -482,18 +509,17 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
 	}
 
 	async previewChanges( context ) {
@@ -619,6 +645,39 @@ module.exports = class EditorPage extends BasePage {
 
 		if ( currentState !== Boolean( setState ) ) {
 			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
 		}
 	}
 };
