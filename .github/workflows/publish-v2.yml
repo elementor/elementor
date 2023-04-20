@@ -126,7 +126,6 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
-          CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Generate Changelog Content For Slack
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
@@ -147,7 +146,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Release
-        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' && github.event.inputs.pre_release == 'false' # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
