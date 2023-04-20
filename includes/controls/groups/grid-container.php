@@ -123,19 +123,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
+					'icon' => 'eicon-align-start-h',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
+					'icon' => 'eicon-align-center-h',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
+					'icon' => 'eicon-align-end-h',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
+					'icon' => 'eicon-align-stretch-h',
 				],
 			],
 			'default' => '',
@@ -151,19 +151,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-h',
+					'icon' => 'eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-h',
+					'icon' => 'eicon-align-center-v',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-h',
+					'icon' => 'eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-h',
+					'icon' => 'eicon-align-stretch-v',
 				],
 			],
 			'selectors' => [
