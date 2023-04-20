@@ -84,6 +84,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_replace_urls() {
+		// Arrange.
 		$old_url = 'http://example.local/test';
 		$new_url = 'https://example2.local';
 
@@ -95,8 +96,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 			wp_slash( wp_json_encode( $this->create_mocked_elements_data( $old_url ) ) ) // Just like saving elements: \Elementor\Core\Base\Document::save_elements()
 		);
 
+		// Act.
 		Utils::replace_urls( $old_url, $new_url );
 
+		// Assert.
 		$result = json_decode(
 			get_post_meta( $post_id, '_elementor_data', true )
 		);
@@ -106,7 +109,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 			$result
 		);
 	}
-
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
