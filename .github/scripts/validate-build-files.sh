@@ -32,6 +32,11 @@ if [ ! -f "elementor.php" ]; then
 	exit 1
 fi
 
+if [ ! -f "readme.txt" ]; then
+	echo "readme.txt file does not exist"
+	exit 1
+fi
+
 if [[ $(grep -c "Version: $PLUGIN_VERSION" elementor.php) -eq 0 ]]; then
 	echo "elementor.php file does not contain the correct version"
 	exit 1
@@ -51,7 +56,7 @@ if [[ "$CHANNEL" == "beta" ]]; then
 	fi
 fi
 
-echo "Trunk Details:"
+echo "validate-build-files Details:"
 echo "---"
 echo "SVN Tag name: $PLUGIN_VERSION"
 echo "Channel: $CHANNEL"

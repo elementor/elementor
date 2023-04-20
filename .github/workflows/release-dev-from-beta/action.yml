@@ -60,7 +60,7 @@ runs:
         CHANNEL: dev
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
       run: |
-            bash "${GITHUB_WORKSPACE}/.github/scripts/test-svn-trunk.sh"
+            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
     - name: Upload Dev Build To GitHub Artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -83,7 +83,7 @@ runs:
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
             if [[ ${{ inputs.PRE_RELEASE }} == "true" ]]; then
-              exit 0
+              exit 1
             fi
 
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
