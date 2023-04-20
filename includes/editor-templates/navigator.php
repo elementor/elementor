@@ -15,11 +15,11 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 			<i class="eicon-expand" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php esc_html__( 'Expand all elements', 'elementor' ); ?></span>
 		</button>
-		<div id="elementor-navigator__header__title"><?php
+		<h2 id="elementor-navigator__header__title"><?php
 			echo $is_editor_v2_active
 				? esc_html__( 'Structure', 'elementor' )
 				: esc_html__( 'Navigator', 'elementor' );
-		?></div>
+		?></h2>
 		<button id="elementor-navigator__close">
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php

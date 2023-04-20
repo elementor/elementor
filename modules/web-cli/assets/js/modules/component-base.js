@@ -379,7 +379,6 @@ export default class ComponentBase extends Module {
 	renderTab( tab ) {} // eslint-disable-line
 
 	activateTab( tab, args ) {
-		this.currentTab = tab;
 		this.renderTab( tab, args );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
@@ -391,7 +390,6 @@ export default class ComponentBase extends Module {
 			.filter( '[data-tab="' + tab + '"]' )
 			.addClass( 'elementor-active' );
 	}
-
 	getActiveTabConfig() {
 		return this.tabs[ this.currentTab ] || {};
 	}
