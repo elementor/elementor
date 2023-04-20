@@ -187,6 +187,7 @@ class Utils {
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+
 		if ( ! $is_valid_urls ) {
 			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
