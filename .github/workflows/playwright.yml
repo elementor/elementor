@@ -48,7 +48,7 @@ jobs:
     needs: [build-plugin]
     strategy:
       matrix:
-        testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container-grid']
+        testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
