@@ -86,6 +86,20 @@ jobs:
           environment-id: "${{ env.PACKAGE_VERSION }}"
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
+      - name: Debug Publish to WordPress.org SVN
+        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release != 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_FILENAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+      - name: Upload Dev Build To GitHub Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: beta-svn-preview
+          path: elementor
+          retention-days: 7
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
