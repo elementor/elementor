@@ -108,7 +108,6 @@ class Modules_Manager {
 			'kit-elements-defaults',
 			'announcements',
 			'site-navigation',
-			'styleguide',
 		];
 	}
 
