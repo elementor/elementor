@@ -16,6 +16,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 	}
 
 	protected function init_fields() {
+		$icon_start = is_rtl() ? 'end' : 'start';
+		$icon_end = is_rtl() ? 'start' : 'end';
+
 		$fields = [];
 
 		$fields['items_grid'] = [
@@ -123,7 +126,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-align-start-h',
+					'icon' => 'eicon-align-' . $icon_start . '-h',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
@@ -131,7 +134,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-align-end-h',
+					'icon' => 'eicon-align-' . $icon_end . '-h',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
