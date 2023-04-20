@@ -682,11 +682,10 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async waitForVideoLoaded( isPublished = false ) {
-		let frame;
 		if ( isPublished ) {
 			await this.page.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
 		} else {
-			frame = this.getPreviewFrame();
+			const frame = this.getPreviewFrame();
 			await frame.waitForLoadState();
 			await frame.waitForSelector( EditorSelectors.videoIframe );
 			await frame.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
