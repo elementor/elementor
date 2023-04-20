@@ -51,8 +51,9 @@ if [[ "$CHANNEL" == "beta" ]]; then
 	fi
 fi
 
-#print the version than echo files ls
-echo "Version: $PLUGIN_VERSION"
+echo "Trunk Details:"
+echo "---"
+echo "SVN Tag name: $PLUGIN_VERSION"
 echo "Channel: $CHANNEL"
 echo "Package Version: $PACKAGE_VERSION"
 echo "Trunk Files:"
