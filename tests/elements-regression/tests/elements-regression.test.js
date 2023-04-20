@@ -39,6 +39,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
+			if ( 'video' === widgetType ) {
+				await page.waitForTimeout( 3000 );
+			}
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
