@@ -38,20 +38,26 @@ if [ ! -f "readme.txt" ]; then
 fi
 
 if [[ $(grep -c "Version: $PLUGIN_VERSION" elementor.php) -eq 0 ]]; then
-	echo "elementor.php file does not contain the correct version"
+	echo "elementor.php file does not contain the correct build version : $PLUGIN_VERSION"
+	EXISTING_VERSION=$(sed -n 's/.*Version: \(.*\)/\1/p' elementor.php)
+	echo "Existing version: $EXISTING_VERSION"
 	exit 1
 fi
 
 if [[ "$CHANNEL" == "ga" ]]; then
 	if [[ $(grep -c "Stable tag: $PACKAGE_VERSION" readme.txt) -eq 0 ]]; then
-		echo "readme.txt file does not contain the correct version"
+		echo "readme.txt file does not contain the correct build version : $PACKAGE_VERSION"
+		EXISTING_VERSION=$(sed -n 's/.*Stable tag: \(.*\)/\1/p' readme.txt)
+		echo "Existing version: $EXISTING_VERSION"
 		exit 1
 	fi
 fi
 
 if [[ "$CHANNEL" == "beta" ]]; then
 	if [[ $(grep -c "Beta tag: $PLUGIN_VERSION" readme.txt) -eq 0 ]]; then
-		echo "readme.txt file does not contain the correct version"
+		echo "readme.txt file does not contain the correct build version : $PLUGIN_VERSION"
+		EXISTING_VERSION=$(sed -n 's/.*Beta tag: \(.*\)/\1/p' readme.txt)
+		echo "Existing version: $EXISTING_VERSION"
 		exit 1
 	fi
 fi

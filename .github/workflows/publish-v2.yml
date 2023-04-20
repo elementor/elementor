@@ -90,8 +90,6 @@ jobs:
         if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
