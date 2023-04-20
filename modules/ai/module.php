@@ -56,6 +56,15 @@ class Module extends BaseModule {
 				]
 			);
 		} );
+
+		add_action( 'elementor/editor/after_enqueue_styles', function() {
+			wp_enqueue_style(
+				'elementor-ai',
+				$this->get_css_assets_url( 'modules/ai/editor' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		} );
 	}
 
 	public function ajax_ai_get_user_information( $data ) {
