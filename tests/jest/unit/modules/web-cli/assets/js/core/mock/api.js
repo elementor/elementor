@@ -34,7 +34,7 @@ export const setupMock = async () => {
 	global.location.hash = 'test-hash';
 
 	if ( ! global.window ) {
-		global.window = {};
+		global.window = global;
 	}
 
 	global._ = {
