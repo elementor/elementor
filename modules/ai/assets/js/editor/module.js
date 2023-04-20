@@ -8,6 +8,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
+
 		if ( ! aiOptions?.active ) {
 			return behaviors;
 		}

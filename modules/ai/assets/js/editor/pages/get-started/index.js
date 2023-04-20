@@ -16,7 +16,7 @@ const GetStarted = ( { onSuccess } ) => {
 		<Stack alignItems="center" gap={ 4 }>
 			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
 
-			<Typography variant="h4">{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
+			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
 			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
 
