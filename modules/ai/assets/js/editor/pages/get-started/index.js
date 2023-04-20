@@ -24,7 +24,7 @@ const GetStarted = ( { onSuccess } ) => {
 				<Checkbox id="e-ai-terms-approval" color="secondary" sx={ { p: 0 } } onChange={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
 
 				<Stack>
-					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" for="e-ai-terms-approval">
+					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" htmlFor="e-ai-terms-approval">
 						{ __( 'I approve the ', 'elementor' ) }
 						<Link href="https://go.elementor.com/ai-terms/" target="_blank" color="info.main">{ __( 'Terms of Service', 'elementor' ) }</Link>
 						{ ' & ' }

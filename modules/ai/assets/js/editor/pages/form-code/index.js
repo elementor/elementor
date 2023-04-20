@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
@@ -25,18 +26,9 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 } ) );
 
 const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits: initialCredits } ) => {
-	const {
-		prompt,
-		setPrompt,
-		send,
-		isLoading,
-		error,
-		resetError,
-		result,
-		setResult,
-		sendFeedback,
-		credits,
-	} = useCodePrompt( { ...additionalOptions, initialCredits } );
+	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, initialCredits } );
+
+	const [ prompt, setPrompt ] = useState( '' );
 
 	const autocompleteItems = 'css' === additionalOptions?.codeLanguage ? codeCssAutocomplete : codeHtmlAutocomplete;
 
@@ -49,7 +41,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	};
 
 	const applyPrompt = ( inputText ) => {
-		sendFeedback();
+		sendUsageData();
 
 		setControlValue( inputText );
 
@@ -62,9 +54,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } onClose={ resetError } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } /> }
 
-			{ ! result && (
+			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { pb: 4 } }>
 						<PromptSearch
@@ -86,17 +78,17 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 				</Box>
 			) }
 
-			{ result && (
+			{ data.result && (
 				<CodeDisplayWrapper>
 					<ReactMarkdown components={ { code: ( props ) => (
 						<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
 					) } }>
-						{ result }
+						{ data.result }
 					</ReactMarkdown>
 
 					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { mt: 8 } }>
 						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
-							<Button size="small" color="secondary" variant="text" onClick={ () => setResult( '' ) }>
+							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
 							</Button>
 						</Stack>

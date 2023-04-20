@@ -1,52 +1,48 @@
 import { useState } from 'react';
 import { setStatusFeedback } from '../api';
 
-const usePrompt = ( fetchData, config = {} ) => {
-	const [ prompt, setPrompt ] = useState( config.initialPrompt || '' );
-	const [ result, setResult ] = useState( () => config.initialResult || '' );
-	const [ error, setError ] = useState( '' );
-	const [ responseId, setResponseId ] = useState( '' );
+const normalizeResponse = ( { text, response_id: responseId, usage } ) => {
+	const creditsData = usage ? ( usage.quota - usage.usedQuota ) : 0;
+	const credits = Math.max( creditsData, 0 );
+
+	return {
+		result: text,
+		responseId,
+		credits,
+	};
+};
+
+const usePrompt = ( fetchData, initialState ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ credits, setCredits ] = useState( config.initialCredits || 0 );
+	const [ error, setError ] = useState( '' );
+	const [ data, setData ] = useState( initialState );
 
 	const send = async ( ...args ) => {
-		setIsLoading( true );
 		setError( '' );
+		setIsLoading( true );
 
-		try {
-			const promptResult = await fetchData( ...args );
-			const creditsData = promptResult.usage ? ( promptResult.usage.quota - promptResult.usage.usedQuota ) : 0;
-			const currentCredits = creditsData < 0 ? 0 : creditsData;
+		fetchData( ...args )
+			.then( ( result ) => setData( normalizeResponse( result ) ) )
+			.catch( ( err ) => setError( err?.responseText || err ) )
+			.finally( () => setIsLoading( false ) );
+	};
 
-			setResult( promptResult.text );
-			setResponseId( promptResult.response_id );
-			setCredits( currentCredits );
-		} catch ( promptError ) {
-			setError( promptError?.responseText || promptError );
-		}
+	const sendUsageData = () => data.responseId && setStatusFeedback( data.responseId );
 
+	const reset = () => {
+		// The credits should not be reset, because the previous value is still valid for the next request.
+		setData( ( prevState ) => ( { ...prevState, result: '', responseId: '' } ) );
+		setError( '' );
 		setIsLoading( false );
 	};
 
-	const sendFeedback = () => {
-		if ( responseId ) {
-			setStatusFeedback( responseId );
-		}
-	};
-
-	const resetError = () => setError( '' );
-
 	return {
-		prompt,
-		setPrompt,
 		isLoading,
 		error,
-		resetError,
-		result,
-		setResult,
+		data,
+		reset,
 		send,
-		sendFeedback,
-		credits,
+		sendUsageData,
 	};
 };
 
