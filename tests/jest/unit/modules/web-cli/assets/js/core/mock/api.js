@@ -33,7 +33,9 @@ export const setupMock = async () => {
 	global.location.href = 'http://localhost.test:8080/wp-admin/admin.php?page=elementor-web-preview';
 	global.location.hash = 'test-hash';
 
-	global.window = global;
+	if ( ! global.window ) {
+		global.window = {};
+	}
 
 	global._ = {
 		isEqual: ( a, b ) => a === b,

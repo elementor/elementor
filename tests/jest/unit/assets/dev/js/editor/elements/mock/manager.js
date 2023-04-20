@@ -80,7 +80,9 @@ export async function setupMock() {
 		},
 	};
 
-	global.window = {};
+	if ( ! global.window ) {
+		global.window = {};
+	}
 
 	global.jQuery = {};
 
