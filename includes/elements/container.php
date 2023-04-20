@@ -78,10 +78,10 @@ class Container extends Element_Base {
 	}
 
 	public function get_keywords() {
-		$keywords = [ 'Container', 'Flexbox', 'Flexbox Container', 'Layout' ];
+		$keywords = [ 'Container', 'Flex', 'Flexbox', 'Flexbox Container', 'Layout' ];
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			array_push( $keywords, 'Grid', 'Grid Container' );
+			array_push( $keywords, 'Grid', 'Grid Container', 'CSS Grid' );
 		}
 
 		return $keywords;
@@ -1598,6 +1598,9 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1613,6 +1616,9 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],

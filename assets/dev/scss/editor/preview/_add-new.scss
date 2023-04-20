@@ -210,15 +210,9 @@
 		}
 	}
 }
-
-#elementor-add-new-section {
-	margin: 60px auto;
+.elementor-add-section {
 
 	&[data-view="choose-action"] {
-
-		.elementor-add-section-close {
-			display: none;
-		}
 
 		.elementor-add-section-back {
 			display: none;
@@ -235,6 +229,17 @@
 	&[data-view="select-type"] {
 
 		.elementor-add-section-back {
+			display: none;
+		}
+	}
+}
+
+#elementor-add-new-section {
+	margin: 60px auto;
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-close {
 			display: none;
 		}
 	}
