@@ -22,7 +22,7 @@ test.describe( 'Container Grid tests @container-grid', () => {
 		} );
 	} );
 
-	test.only( 'Test grid container', async ( { page }, testInfo ) => {
+	test( 'Test grid container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
