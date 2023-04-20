@@ -220,8 +220,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_get_started( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		$app = $this->get_ai_app();
 
 		User::set_introduction_viewed( [
@@ -232,8 +230,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_status_feedback( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		if ( empty( $data['response_id'] ) ) {
 			throw new \Exception( 'Missing response_id' );
 		}
