@@ -30,14 +30,14 @@
 			border-top: var(--e-a-border);
 			padding: 10px;
 			display: flex;
-			justify-content: end;
+			justify-content: flex-end;
 			gap: 15px;
 		}
 
 		&-message {
 			height: 750px;
 			max-height: 85vh;
-			overflow-y: scroll;
+			overflow-y: auto;
 			padding: 20px;
 		}
 

@@ -64,6 +64,39 @@
 		}
 	}
 
+	// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
+	&.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e-dragging {
+
+					&-right,
+					&-left {
+						position: absolute;
+						width: var( --size );
+						height: 100%;
+						top: 0;
+						animation: grow-in-width 0.15s forwards;
+					}
+				
+					&-right {
+						right: 0;
+						left: auto;
+					}
+
+					&-left {
+						left: 0;
+						right: auto;
+					}
+				}
+			}
+		}
+	}
+
 	&.e-con--column {
 
 		&,
@@ -170,6 +203,33 @@
 	}
 }
 
+// Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
+body.rtl {
+
+	.e-con.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e-dragging {
+					
+					&-right {
+						left: 0;
+						right: auto;
+					}
+
+					&-left {
+						right: 0;
+						left: auto;
+					}
+				}
+			}
+		}
+	}
+}
+
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
 		transform-origin: 0 50%;
@@ -195,5 +255,19 @@
 		transform-origin: 50% 0;
 		transform: scaleY( 1 );
 		opacity: .9;
+	}
+}
+
+@keyframes grow-in-width {
+	from {
+		width: 0;
+	}
+
+	50% {
+		width: calc( var( --size ) / 2 );
+	}
+
+	to {
+		width: var( --size );
 	}
 }

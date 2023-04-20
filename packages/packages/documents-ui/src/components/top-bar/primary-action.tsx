@@ -59,7 +59,7 @@ export default function PrimaryAction() {
 					</Button>
 				</Tooltip>
 			</ButtonGroup>
-			<PrimaryActionMenu { ...bindMenu( popupState ) } />
+			<PrimaryActionMenu { ...bindMenu( popupState ) } onClick={ popupState.close } />
 		</>
 	);
 }
