@@ -63,7 +63,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Global Colors.
 		// Act.
-		await page.click( 'text=Global Colors' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
 
 		const siteSettingsColorsStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -84,7 +84,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Act 2.
-		await page.click( 'text=Global Fonts' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
 		await page.waitForSelector( '.elementor-control-section_text_style' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
@@ -131,7 +131,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Global Colors.
 		// Act.
-		await page.click( 'text=Global Colors' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
 
 		const siteSettingsColorsStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -152,7 +152,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await expect( styleguidePreviewDialog ).toBeHidden();
 
 		// Act 2.
-		await page.click( 'text=Global Fonts' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
 
 		const siteSettingsTypographyStyleguideSwitcherIsChecked = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 
@@ -250,7 +250,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			page.locator( 'text=Style Guide Preview' ).click(),
+			page.locator( '.elementor-control-title:has-text("Style Guide Preview")' ).click(),
 		] );
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
@@ -455,7 +455,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.waitForTimeout( 2000 );
 
 		// Act.
-		await page.click( 'text=Global Fonts' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
 
 		// Assert
 		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible();
@@ -469,7 +469,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		await page.waitForTimeout( 2000 );
 
-		await page.click( 'text=Global Colors' );
+		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
 
 		// Assert 2
 		await expect( editor.getPreviewFrame().getByText( 'Global Colors' ) ).toBeVisible();
