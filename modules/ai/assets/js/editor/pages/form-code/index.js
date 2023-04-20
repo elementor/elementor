@@ -25,8 +25,8 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 	},
 } ) );
 
-const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits: initialCredits } ) => {
-	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, initialCredits } );
+const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits } ) => {
+	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
 

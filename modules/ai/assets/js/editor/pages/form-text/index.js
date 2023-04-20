@@ -49,12 +49,12 @@ const FormText = (
 		getControlValue,
 		setControlValue,
 		additionalOptions,
-		credits: initialCredits,
+		credits,
 	},
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
 
-	const { data, isLoading, error, reset, send, sendUsageData } = useTextPrompt( { result: initialValue, credits: initialCredits } );
+	const { data, isLoading, error, reset, send, sendUsageData } = useTextPrompt( { result: initialValue, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
 
