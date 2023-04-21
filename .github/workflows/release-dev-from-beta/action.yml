@@ -30,8 +30,7 @@ runs:
     - name: Replace Release Name In Plugin File With Dev
       shell: bash
       run: |
-            PLUGIN_RELATIVE_PATH=${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
-            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_RELATIVE_PATH
+            unzip -q ${{ inputs.BUILD_ZIP_FILE_PATH }} -d $GITHUB_WORKSPACE
             PLUGIN_FILE_PATH=./$PLUGIN_RELATIVE_PATH
 
             # Replace beta with dev
