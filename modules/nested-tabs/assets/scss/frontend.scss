@@ -83,6 +83,8 @@
 			position: relative;
 			cursor: pointer;
 			outline: none;
+			flex-grow: 0;
+			flex-basis: 12.5%;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
