@@ -663,7 +663,7 @@ module.exports = class EditorPage extends BasePage {
 		let isLoading;
 
 		try {
-			await this.getFrame().waitForSelector(
+			await this.getPreviewFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ timeout: 500 },
 			);
@@ -674,10 +674,21 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isLoading ) {
-			await this.getFrame().waitForSelector(
+			await this.getPreviewFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ state: 'detached' },
 			);
+		}
+	}
+
+	async waitForVideoLoaded( isPublished = false ) {
+		if ( isPublished ) {
+			await this.page.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
+		} else {
+			const frame = this.getPreviewFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( EditorSelectors.videoIframe );
+			await frame.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
 		}
 	}
 };
