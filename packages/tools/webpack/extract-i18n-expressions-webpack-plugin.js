@@ -1,51 +1,43 @@
-const { sources: { RawSource } } = require( 'webpack' );
+const fs = require( 'fs' );
+const path = require( 'path' );
 
 const MODULE_FILTERS = Object.freeze( [ /(([^!?\s]+?)(?:\.js|\.jsx|\.ts|\.tsx))$/, /^((?!node_modules).)*$/ ] );
 
+const COMMENTS_REGEXPS = Object.freeze( [
+	// Matches translators comment block: `/* translators: %s */`.
+	/\/\*[\t ]*translators:.*\*\//gm,
+	/// Matches translators inline comment: `// translators: %s`.
+	/(\/\/)[\t ]*translators:[^\r\n]*/gm,
+] );
+
+const TRANSLATIONS_REGEXPS = Object.freeze( [
+	// Matches translation functions: `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
+	/\b_(?:_|n|nx|x)\(.*?,\s*(?<c>['"`])[\w-]+\k<c>\)/gm,
+] );
+
 module.exports = class ExtractI18nExpressionsWebpackPlugin {
-	translationsRegexps;
-	generateTranslationFilename;
-
-	constructor( {
-		// WordPress i18n function, example for regex match: `__('Hello', 'elementor')`, `_n('Me', 'Us', 2, 'elementor-pro')`.
-		translationsRegexps = [ /\b_(?:_|n|nx|x)\(.+,\s*(?<c>['"`])[\w-]+\k<c>\)/ ],
-		generateTranslationFilename,
-	} = {} ) {
-		if (
-			! translationsRegexps ||
-			! Array.isArray( translationsRegexps ) ||
-			translationsRegexps.some( ( regexp ) => ! ( regexp instanceof RegExp ) )
-		) {
-			throw new Error( '`translationsRegexps` must be an array of RegExp' );
-		}
-
-		this.generateTranslationFilename = generateTranslationFilename || this.defaultGenerateTranslationFilename;
-		this.translationsRegexps = translationsRegexps.map( ( regex ) => {
-			const flags = [ ...new Set( [ 'g', 'm', ...regex.flags.split( '' ) ] ) ].join( '' );
-
-			return new RegExp( regex.source, flags );
-		} );
-	}
-
 	apply( compiler ) {
 		// Learn more about Webpack plugin system: https://webpack.js.org/api/plugins/
+
+		let translationCallExpressions = [];
 
 		// Learn more about Webpack compilation process and hooks: https://webpack.js.org/api/compilation-hooks/
 		compiler.hooks.thisCompilation.tap( this.constructor.name, ( compilation ) => {
 			// We tap into the time that Webpack has finished processing all the other assets
 			// learn more: https://webpack.js.org/api/compilation-hooks/#processassets.
 			compilation.hooks.processAssets.tap( { name: this.constructor.name }, () => {
-				const translationCallExpressions = this.getTranslationCallExpressions( compilation );
-
-				// Add all the translation call expressions to Webpack assets as a seperated file,
-				// and let Webpack create this file.
-				this.addTranslationCallExpressionsToAssets( compilation, translationCallExpressions );
+				translationCallExpressions = this.getModuleExpressionsMap( compilation );
 			} );
+		} );
+
+		compiler.hooks.afterEmit.tapPromise( this.constructor.name, async ( compilation ) => {
+			// Create all the translations files based on the call expressions.
+			await this.createTranslationsFiles( compilation, translationCallExpressions );
 		} );
 	}
 
-	getTranslationCallExpressions( compilation ) {
-		const translationCallExpressions = new Map();
+	getModuleExpressionsMap( compilation ) {
+		const moduleExpressionsMap = new Map();
 
 		[ ...compilation.chunks ].forEach( ( chunk ) => {
 			const chunkJSFile = this.getFileFromChunk( chunk );
@@ -59,48 +51,49 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 				this.getSubModulesToCheck( module ).forEach( ( subModule ) => {
 					const mainEntryFile = this.findMainModuleOfEntry( subModule, compilation );
 
-					if ( ! translationCallExpressions.has( mainEntryFile ) ) {
-						translationCallExpressions.set( mainEntryFile, new Set() );
+					if ( ! moduleExpressionsMap.has( mainEntryFile ) ) {
+						moduleExpressionsMap.set( mainEntryFile, [] );
 					}
 
-					// Running over the submodules and find all the translation call expressions (e.g `__('Hello', 'elementor')`),
-					// extract them and add them to a Map, where the key is the main entry file, and the value is a Set of all the
+					// Running over the submodules and find all the translation call expressions and their translators comment
+					// (e.g `/* translators: %s: name*/ __('Hello %s', 'elementor')`),
+					// extract them and add them to a Map, where the key is the main entry file, and the value is an array of all the
 					// translation call expressions.
-					this.getTranslationCallExpressionsFromSubmodule( subModule ).forEach( ( callExpression ) => {
-						translationCallExpressions.get( mainEntryFile ).add( callExpression );
+					this.extractExpressionsFromSubmodule( subModule ).forEach( ( expression ) => {
+						moduleExpressionsMap.get( mainEntryFile ).push( expression );
 					} );
 				} );
 			} );
 		} );
 
-		return translationCallExpressions;
+		return moduleExpressionsMap;
 	}
 
-	addTranslationCallExpressionsToAssets( compilation, translationCallExpressions ) {
-		[ ...compilation.entrypoints ].forEach( ( [ id, entrypoint ] ) => {
+	async createTranslationsFiles( compilation, translationCallExpressions ) {
+		const promises = [ ...compilation.entrypoints ].map( ( [ id, entrypoint ] ) => {
 			const chunk = entrypoint.chunks.find( ( { name } ) => name === id );
+
 			const chunkJSFile = this.getFileFromChunk( chunk );
 
 			if ( ! chunkJSFile ) {
-				return;
+				return Promise.resolve();
 			}
 
 			const mainFilePath = compilation.options.entry[ id ].import[ 0 ];
 
 			const assetFilename = this.generateTranslationFilename(
+				compilation.options.output.path,
 				compilation.getPath( '[file]', { filename: chunkJSFile } )
 			);
 
-			// Create Webpack source object which represents a new file, and add it to Webpack assets array.
-			compilation.assets[ assetFilename ] = new RawSource(
-				[ ...( translationCallExpressions.get( mainFilePath ) || new Set() ) ]
-					.map( ( expr ) => `${ expr };` )
-					.join( '' )
+			const assetFileContent = this.generateTranslationFileContent(
+				translationCallExpressions.get( mainFilePath ) || []
 			);
 
-			// Let Webpack know that the file that was created is a part of the chunk we're currently processing.
-			chunk.files.add( assetFilename );
+			return fs.promises.writeFile( assetFilename, assetFileContent );
 		} );
+
+		return await Promise.all( promises );
 	}
 
 	getSubModulesToCheck( module ) {
@@ -124,7 +117,7 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 		return module.rawRequest;
 	}
 
-	getTranslationCallExpressionsFromSubmodule( subModule ) {
+	extractExpressionsFromSubmodule( subModule ) {
 		const source = subModule?._source?._valueAsString;
 
 		if ( ! source ) {
@@ -133,16 +126,36 @@ module.exports = class ExtractI18nExpressionsWebpackPlugin {
 
 		const translationCallExpressions = [];
 
-		this.translationsRegexps.forEach( ( regexp ) => {
-			[ ...source.matchAll( regexp ) ].forEach( ( [ callExpression ] ) => {
-				translationCallExpressions.push( callExpression );
+		[
+			...TRANSLATIONS_REGEXPS,
+			...COMMENTS_REGEXPS,
+		].forEach( ( regexp ) => {
+			[ ...source.matchAll( regexp ) ].forEach( ( res ) => {
+				translationCallExpressions.push( {
+					type: COMMENTS_REGEXPS.includes( regexp ) ? 'comment' : 'call-expression',
+					index: res.index,
+					value: res[ 0 ],
+				} );
 			} );
 		} );
 
 		return translationCallExpressions;
 	}
 
-	defaultGenerateTranslationFilename( filename ) {
-		return filename.replace( /(\.min)?\.js$/i, '.strings.js' );
+	generateTranslationFilename( basePath, filename ) {
+		return path.join(
+			basePath,
+			filename.replace( /(\.min)?\.js$/i, '.strings.js' )
+		);
+	}
+
+	generateTranslationFileContent( expressions ) {
+		return expressions
+			// Sort by the index it was found in the file based on the regexp (and not by the order it was added to the array).
+			.sort( ( a, b ) => a.index - b.index )
+			// Add a semicolon when needed.
+			.map( ( expr ) => `${ expr.value }${ expr.type === 'comment' ? '' : ';' }` )
+			// Join all the expressions to a single string with line-breaks between them.
+			.join( '\n' );
 	}
 };

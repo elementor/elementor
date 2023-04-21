@@ -4,7 +4,7 @@
  * Description: The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 3.11.5
+ * Version: 3.12.1
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.11.5' );
+define( 'ELEMENTOR_VERSION', '3.12.1' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -47,7 +47,7 @@ add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
 if ( ! version_compare( PHP_VERSION, '7.0', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '5.2', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '5.9', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
@@ -104,7 +104,7 @@ function elementor_fail_wp_version() {
 		esc_html__( '%1$sElementor isn’t running because WordPress is outdated.%2$s Update to version %3$s and get back to creating! %4$sShow me how%5$s', 'elementor' ),
 		'<h3>',
 		'</h3>',
-		'5.2',
+		'5.9',
 		'<a href="https://go.elementor.com/wp-dash-update-wordpress/" target="_blank">',
 		'</a>'
 	);

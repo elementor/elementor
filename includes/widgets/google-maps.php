@@ -176,7 +176,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'vh' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],

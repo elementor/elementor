@@ -40,7 +40,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo )
     await page.click( 'text=Create a new gallery' );
     await page.click( 'text=Insert gallery' );
 
-    const widget = await editor.getFrame().waitForSelector( '.elementor-image-carousel' );
+    const widget = await editor.getPreviewFrame().waitForSelector( '.elementor-image-carousel' );
     const widgetImages = await widget.$$( '.swiper-slide >> img' );
 
     // The lazyload loads images from data-src into src.

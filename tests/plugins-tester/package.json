@@ -5,15 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "wp-env": "wp-env",
-    "test": "node index.js"
+	"test": "node index.js",
+	"update-baseline": "node ./scripts/run-backstop.js --slug='elementor'"
   },
   "author": "Elementor Team",
   "dependencies": {
-    "@wordpress/env": "^5.7.0",
-    "backstopjs": "^6.1.4",
-    "canvas": "^2.10.2",
-    "merge-images": "^2.0.0",
-    "node-fetch": "^3.3.0"
+	"backstopjs": "^6.1.4",
+	"canvas": "^2.10.2",
+	"merge-images": "^2.0.0",
+	"node-fetch": "^3.3.0"
   }
 }

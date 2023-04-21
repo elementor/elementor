@@ -1,24 +1,14 @@
 <?php
 namespace Elementor\Core\Editor;
 
-use Elementor\Api;
-use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Icons_Manager;
 use Elementor\Plugin;
-use Elementor\Settings;
-use Elementor\Shapes;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Tools;
-use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
 
@@ -346,13 +336,9 @@ class Editor {
 
 		global $wp_styles, $wp_scripts;
 
-		$plugin = Plugin::$instance;
-
 		// Reset global variable
 		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_scripts = new \WP_Scripts(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		$this->get_loader()->register_scripts();
 
@@ -368,114 +354,11 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$settings = SettingsManager::get_settings_managers_config();
-		// Moved to document since 2.9.0.
-		unset( $settings['page'] );
-
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
-		$kits_manager = Plugin::$instance->kits_manager;
-
-		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
-
-		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
-
-		$config = [
-			'initial_document' => $document->get_config(),
-			'version' => ELEMENTOR_VERSION,
-			'home_url' => home_url(),
-			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
-			'admin_tools_url' => admin_url( 'admin.php?page=' . Tools::PAGE_ID ),
-			'autosave_interval' => AUTOSAVE_INTERVAL,
-			'tabs' => $plugin->controls_manager->get_tabs(),
-			'controls' => $plugin->controls_manager->get_controls_data(),
-			'elements' => $plugin->elements_manager->get_element_types_config(),
-			'schemes' => [
-				'items' => $plugin->schemes_manager->get_registered_schemes_data(),
-				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
-			],
-			'globals' => [
-				'defaults_enabled' => [
-					'colors' => $kits_manager->is_custom_colors_enabled(),
-					'typography' => $kits_manager->is_custom_typography_enabled(),
-				],
-			],
-			'icons' => [
-				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
-				'goProURL' => 'https://go.elementor.com/go-pro-icon-library/',
-			],
-			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
-			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
-			'settings' => $settings,
-			'system_schemes' => $plugin->schemes_manager->get_system_schemes(),
-			'wp_editor' => $this->get_wp_editor_config(),
-			'settings_page_link' => Settings::get_url(),
-			'tools_page_link' => Tools::get_url(),
-			'tools_page_nonce' => wp_create_nonce( 'tools-page-from-editor' ),
-			'elementor_site' => 'https://go.elementor.com/about-elementor/',
-			'docs_elementor_site' => 'https://go.elementor.com/docs/',
-			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
-			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
-			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
-			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
-			'user' => [
-				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
-				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User::get_introduction_meta(),
-				'locale' => get_user_locale(),
-			],
-			'preview' => [
-				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
-				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
-				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
-				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
-			],
-			'locale' => get_locale(),
-			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
-			'page_title_selector' => $page_title_selector,
-			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ) || class_exists( 'Advanced_Editor_Tools' ),
-			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
-			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
-			'ui' => [
-				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
-				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
-			],
-			// Empty array for BC to avoid errors.
-			'i18n' => [],
-			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
-			'responsive' => [
-				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
-				'icons_map' => Plugin::$instance->breakpoints->get_responsive_icons_classes_map(),
-			],
-			'promotion' => [
-				'elements' => $this->promotion->get_elements_promotion(),
-			],
-		];
-
-		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$config['promotionWidgets'] = Api::get_promotion_widgets();
-		}
-
-		$this->bc_move_document_filters();
-
-		/**
-		 * Localize editor settings.
-		 *
-		 * Filters the editor localized settings.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array $config  Editor configuration.
-		 * @param int   $post_id The ID of the current post being edited.
-		 */
-		$config = apply_filters( 'elementor/editor/localize_settings', $config );
-
-		Utils::print_js_config( 'elementor-editor', 'ElementorConfig', $config );
-
+		$this->get_loader()->print_client_settings();
 		$this->get_loader()->enqueue_scripts();
 		$this->get_loader()->load_scripts_translations();
 
-		$plugin->controls_manager->enqueue_control_scripts();
+		Plugin::$instance->controls_manager->enqueue_control_scripts();
 
 		/**
 		 * After editor enqueue scripts.
@@ -505,30 +388,10 @@ class Editor {
 		 */
 		do_action( 'elementor/editor/before_enqueue_styles' );
 
-		$suffix = Utils::is_script_debug() ? '' : '.min';
-
 		$this->get_loader()->register_styles();
 		$this->get_loader()->enqueue_styles();
 
-		$ui_theme = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
-
-		if ( 'light' !== $ui_theme ) {
-			$ui_theme_media_queries = 'all';
-
-			if ( 'auto' === $ui_theme ) {
-				$ui_theme_media_queries = '(prefers-color-scheme: dark)';
-			}
-
-			wp_enqueue_style(
-				'elementor-editor-dark-mode',
-				ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
-				[
-					'elementor-editor',
-				],
-				ELEMENTOR_VERSION,
-				$ui_theme_media_queries
-			);
-		}
+		$this->enqueue_theme_ui_styles();
 
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
@@ -550,49 +413,42 @@ class Editor {
 		do_action( 'elementor/editor/after_enqueue_styles' );
 	}
 
-	/**
-	 * Get WordPress editor config.
-	 *
-	 * Config the default WordPress editor with custom settings for Elementor use.
-	 *
-	 * @since 1.9.0
-	 * @access private
-	 */
-	private function get_wp_editor_config() {
-		// Remove all TinyMCE plugins.
-		remove_all_filters( 'mce_buttons', 10 );
-		remove_all_filters( 'mce_external_plugins', 10 );
+	private function enqueue_theme_ui_styles() {
+		$ui_theme_selected = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
 
-		if ( ! class_exists( '\_WP_Editors', false ) ) {
-			require ABSPATH . WPINC . '/class-wp-editor.php';
+		$ui_themes = [
+			'light',
+			'dark',
+		];
+
+		if ( 'auto' === $ui_theme_selected || ! in_array( $ui_theme_selected, $ui_themes, true ) ) {
+			$ui_light_theme_media_queries = '(prefers-color-scheme: light)';
+			$ui_dark_theme_media_queries = '(prefers-color-scheme: dark)';
+		} else {
+			$ui_light_theme_media_queries = 'none';
+			$ui_dark_theme_media_queries = 'none';
+
+			if ( 'light' === $ui_theme_selected ) {
+				$ui_light_theme_media_queries = 'all';
+			} elseif ( 'dark' === $ui_theme_selected ) {
+				$ui_dark_theme_media_queries = 'all';
+			}
 		}
 
-		// WordPress 4.8 and higher
-		if ( method_exists( '\_WP_Editors', 'print_tinymce_scripts' ) ) {
-			\_WP_Editors::print_default_editor_scripts();
-			\_WP_Editors::print_tinymce_scripts();
-		}
-		ob_start();
+		$this->enqueue_theme_ui( 'light', $ui_light_theme_media_queries );
+		$this->enqueue_theme_ui( 'dark', $ui_dark_theme_media_queries );
+	}
 
-		wp_editor(
-			'%%EDITORCONTENT%%',
-			'elementorwpeditor',
-			[
-				'editor_class' => 'elementor-wp-editor',
-				'editor_height' => 250,
-				'drag_drop_upload' => true,
-			]
+	private function enqueue_theme_ui( $ui_theme, $ui_theme_media_queries = 'all' ) {
+		$suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_style(
+			'e-theme-ui-' . $ui_theme,
+			ELEMENTOR_ASSETS_URL . 'css/theme-' . $ui_theme . $suffix . '.css',
+			[],
+			ELEMENTOR_VERSION,
+			$ui_theme_media_queries
 		);
-
-		$config = ob_get_clean();
-
-		// Don't call \_WP_Editors methods again
-		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
-		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
-
-		\_WP_Editors::editor_js();
-
-		return $config;
 	}
 
 	/**
@@ -639,7 +495,7 @@ class Editor {
 
 		$plugin->dynamic_tags->print_templates();
 
-		$this->init_editor_templates();
+		$this->get_loader()->register_additional_templates();
 
 		/**
 		 * Elementor editor footer.
@@ -726,55 +582,6 @@ class Editor {
 		return $results;
 	}
 
-	/**
-	 * Init editor templates.
-	 *
-	 * Initialize default elementor templates used in the editor panel.
-	 *
-	 * @since 1.7.0
-	 * @access private
-	 */
-	private function init_editor_templates() {
-		$template_names = [
-			'global',
-			'panel',
-			'panel-elements',
-			'repeater',
-			'templates',
-			'navigator',
-			'hotkeys',
-			'responsive-bar',
-		];
-
-		foreach ( $template_names as $template_name ) {
-			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/$template_name.php" );
-		}
-	}
-
-	private function bc_move_document_filters() {
-		global $wp_filter;
-
-		$old_tag = 'elementor/editor/localize_settings';
-		$new_tag = 'elementor/document/config';
-
-		if ( ! has_filter( $old_tag ) ) {
-			return;
-		}
-
-		foreach ( $wp_filter[ $old_tag ] as $priority => $filters ) {
-			foreach ( $filters as $filter_id => $filter_args ) {
-				if ( 2 === $filter_args['accepted_args'] ) {
-					remove_filter( $old_tag, $filter_id, $priority );
-
-					add_filter( $new_tag, $filter_args['function'], $priority, 2 );
-
-					// TODO: Hard deprecation
-					// _deprecated_hook( '`' . $old_tag . ` is no longer using post_id', '2.9.0', $new_tag' );
-				}
-			}
-		}
-	}
-
 	public function set_post_id( $post_id ) {
 		$this->post_id = $post_id;
 	}
@@ -802,9 +609,14 @@ class Editor {
 	private function register_editor_v2_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
-			'title' => esc_html__( 'Editor V2', 'elementor' ),
-			'description' => esc_html__( 'Enable the new editor.', 'elementor' ),
-			'hidden' => true,
+			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
+			'description' => sprintf(
+				esc_html__(
+					'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way. %s',
+					'elementor'
+				),
+				'<a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">' . esc_html__( 'Learn more', 'elementor' ) . '</a>'
+			),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
