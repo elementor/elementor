@@ -20,4 +20,4 @@ export const getCustomCSS = ( prompt, htmlMarkup, elementId ) => request( 'ai_ge
 
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
-export const setStatusFeedback = async ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
+export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
