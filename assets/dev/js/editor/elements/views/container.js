@@ -10,6 +10,28 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: EmptyView,
 
+	// // Set up event listeners using the "events" property
+	// events: {
+	// 	// Listen for the "remove:empty" event and call the onRemoveEmpty function
+	// 	'remove:empty': 'onRemoveEmpty'
+	// },
+
+	// childViewEvents: {
+	// 	'remove:empty': 'onRemoveEmpty'
+	// },
+
+	// onRemoveEmpty: function() {
+	// 	if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
+	// 		this.showEmptyView();
+	// 	}
+	// },
+
+	destroyEmptyView() {
+		if ( 'flex' === this.container.settings.get( 'container_type' ) ) {
+			Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		}
+	},
+
 	getChildViewContainer() {
 		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
 			? '> .e-con-inner'
