@@ -86,15 +86,16 @@ jobs:
           environment-id: "${{ env.PACKAGE_VERSION }}"
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
-      - name: Debug Publish to WordPress.org SVN
-        if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true'
-        env:
-          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
-          CHANNEL: ${{ env.CHANNEL }}
-          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+      - name: Unzip Release zip file
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+      - name: Upload Debug Build To GitHub Artifacts
+        if: env.CHANNEL != 'cloud'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.CHANNEL }}-svn-preview
+          path: elementor
+          retention-days: 7
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
@@ -104,16 +105,8 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
-          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
           bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-      - name: Upload Debug Build To GitHub Artifacts
-        if: env.CHANNEL != 'cloud'
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.CHANNEL }}-svn-preview
-          path: elementor
-          retention-days: 7
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
