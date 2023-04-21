@@ -29,7 +29,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 	} );
 
-	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel', 'tabs', 'video', 'spacer' ];
+	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel', 'tabs', 'video', 'spacer', 'text_path', 'social_icons', 'google_maps' ];
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -40,7 +40,11 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			if ( 'video' === widgetType ) {
-				await editorPage.waitForVideoLoaded();
+				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.videoIframe, elementToWaitFor: EditorSelectors.playIcon } );
+			}
+
+			if ( 'google_maps' === widgetType ) {
+				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.mapIframe, elementToWaitFor: EditorSelectors.showSatelliteViewBtn } );
 			}
 
 			const widgetCount = await editorPage.getWidgetCount();
@@ -55,8 +59,13 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
 			if ( 'video' === widgetType ) {
-				await editorPage.waitForVideoLoaded( true );
+				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.videoIframe, elementToWaitFor: EditorSelectors.playIcon, isPublished: true } );
 			}
+
+			if ( 'google_maps' === widgetType ) {
+				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.mapIframe, elementToWaitFor: EditorSelectors.showSatelliteViewBtn, isPublished: true } );
+			}
+
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
 	}

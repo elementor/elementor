@@ -13,6 +13,8 @@ const EditorSelectors = {
 	loadingElement: ( id ) => `.elementor-element-${ id }.elementor-loading`,
 	videoIframe: 'iframe.elementor-video',
 	playIcon: '[aria-label="Play"]',
+	mapIframe: 'iframe[title="Telaviv"]',
+	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 };
 
 export default EditorSelectors;

@@ -681,14 +681,14 @@ module.exports = class EditorPage extends BasePage {
 		}
 	}
 
-	async waitForVideoLoaded( isPublished = false ) {
-		if ( isPublished ) {
-			await this.page.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
+	async waitForIframeToLoaded( args = { iframeSelector, elementToWaitFor, isPublished: false } ) {
+		if ( args.isPublished ) {
+			await this.page.frameLocator( args.iframeSelector ).nth( 0 ).locator( args.elementToWaitFor ).waitFor();
 		} else {
 			const frame = this.getPreviewFrame();
 			await frame.waitForLoadState();
-			await frame.waitForSelector( EditorSelectors.videoIframe );
-			await frame.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
+			await frame.waitForSelector( args.iframeSelector );
+			await frame.frameLocator( args.iframeSelector ).nth( 0 ).locator( args.elementToWaitFor ).waitFor();
 		}
 	}
 };
