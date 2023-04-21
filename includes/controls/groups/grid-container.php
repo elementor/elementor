@@ -18,6 +18,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 	protected function init_fields() {
 		$icon_start = is_rtl() ? 'end' : 'start';
 		$icon_end = is_rtl() ? 'start' : 'end';
+
 		$fields = [];
 
 		$fields['items_grid'] = [
