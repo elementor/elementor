@@ -1,127 +1,55 @@
-const { expect } = require( '@playwright/test' );
-const test = require( '../src/test' );
-const elementsConfig = require( '../elements-config.json' );
-const testConfig = require( '../test.config' );
-const ConfigProvider = require( '../src/config-provider' );
-const controlHandlers = require( '../src/controls' );
-const { summary } = require( '../src/utils' );
+import { expect, test } from '@playwright/test';
+import _path from 'path';
+import WpAdminPage from '../../playwright/pages/wp-admin-page';
+import EditorPage from '../../playwright/pages/editor-page';
+import EditorSelectors from '../../playwright/selectors/editor-selectors';
+import { createDefaultMedia, deleteDefaultMedia } from '../../playwright/assets/api-requests';
 
-const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
+const imageIds = [];
+const image2 = {
+	title: 'image2',
+	extension: 'jpg',
+};
 
-test.describe( 'Elements regression', () => {
-	const testedElements = {};
-
-	test.afterAll( async ( {}, testInfo ) => {
-		// eslint-disable-next-line no-console
-		console.log( 'summaryData', summary( testedElements, elementsConfig ) );
-
-		// TODO: Need to find a better solution for now this is not working well.
-
-		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
-			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
-		}
+test.describe( 'Elementor regression tests with templates for CORE', () => {
+	test.beforeAll( async ( { browser, request }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		imageIds.push( await createDefaultMedia( request, image2 ) );
+		await wpAdmin.setExperiments( {
+			container: 'active',
+		} );
 	} );
 
-	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
-		// Dynamic widget test creation.
-		test( widgetType, async ( { editorPage } ) => {
-			testedElements[ widgetType ] = {};
+	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image' ];
+	for ( const widgetType of testData ) {
+		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
+			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
 
-			const elementId = await editorPage.addWidget( widgetType );
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+			const editorPage = new EditorPage( page, testInfo );
+			await wpAdminPage.openNewPage();
+			await editorPage.closeNavigatorIfOpen();
+			await editorPage.loadTemplate( filePath );
 
-			await editorPage.page.waitForTimeout( 500 );
-
-			await test.step( `default values`, async () => {
-				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
-
-				await editorPage.waitForElementRender( elementId );
-				await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, 'default.png' ] );
-
-				await editorPage.resetElementSettings( elementId );
-			} );
-
-			for ( const {
-				controlId,
-				controlConfig,
-				sectionConfig,
-			} of configMediator.getControlsForTests( widgetType ) ) {
-				// Dynamic control test step creation.
-				const control = createControlHandler(
-					editorPage.page,
-					{ config: controlConfig, sectionConfig },
-				);
-
-				if ( ! control || ! control.canTestControl() ) {
-					continue;
-				}
-
-				await test.step( controlId, async () => {
-					const testedValues = [];
-
-					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
-
-					await control.setup();
-
-					const initialValue = control.hasConditions() || control.hasSectionConditions()
-						? undefined
-						: await control.getValue();
-
-					for ( const value of await control.getTestValues( initialValue ) ) {
-						const valueLabel = control.generateSnapshotLabel( value );
-
-						await test.step( valueLabel, async () => {
-							testedValues.push( valueLabel );
-
-							await control.setValue( value );
-
-							await editorPage.waitForElementRender( elementId );
-							await expect( editorPage.getPreviewElement( elementId ) ).toHaveScreenshot( [ widgetType, controlId, `${ valueLabel }.png` ] );
-						} );
-					}
-
-					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
-
-					await control.teardown();
-
-					await editorPage.resetElementSettings( elementId );
-				} );
+			const widgetCount = await editorPage.getWidgetCount();
+			const widgetIds = [];
+			for ( let i = 0; i < widgetCount; i++ ) {
+				const widget = editorPage.getWidget().nth( i );
+				const id = await widget.getAttribute( 'data-id' );
+				widgetIds.push( id );
+				await editorPage.waitForElementRender( id );
+				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100 } );
 			}
+			await editorPage.publishAndViewPage();
+			await editorPage.waitForElementRender( widgetIds[ 0 ] );
+			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
 	}
+
+	test.afterAll( async ( { request } ) => {
+		await deleteDefaultMedia( request, imageIds );
+	} );
 } );
 
-/**
- * @param {import('@playwright/test').Page} page
- * @param {Object}                          options
- * @param {Object}                          options.config
- * @param {Object}                          options.sectionConfig
- * @return {null|import('../src/controls/control-base').ControlBase}
- */
-function createControlHandler( page, { config, sectionConfig } ) {
-	const ControlClass = controlHandlers[ config.type ];
-
-	if ( ! ControlClass ) {
-		return null;
-	}
-
-	return new ControlClass( page, { config, sectionConfig } );
-}
-
-async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
-	const controlDependencies = configMediator.getControlDependencies( widgetType, controlId );
-
-	for ( const {
-		controlConfig,
-		sectionConfig,
-		value,
-	} of controlDependencies ) {
-		const control = createControlHandler(
-			editorPage.page,
-			{ config: controlConfig, sectionConfig },
-		);
-
-		await control.setup();
-		await control.setValue( value );
-		await control.teardown();
-	}
-}
