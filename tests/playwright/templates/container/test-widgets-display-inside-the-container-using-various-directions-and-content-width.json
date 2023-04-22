@@ -1,0 +1,89 @@
+{
+	"content": [
+		{
+			"id": "2a5aadf4",
+			"settings": [],
+			"elements": [
+				{
+					"id": "17d6dfa4",
+					"settings": {
+						"tabs": [
+							{
+								"tab_title": "Accordion #1",
+								"tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+								"_id": "20a0e45"
+							},
+							{
+								"tab_title": "Accordion #2",
+								"tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+								"_id": "4382a46"
+							}
+						]
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "accordion",
+					"elType": "widget"
+				},
+				{
+					"id": "6b194330",
+					"settings": { "text": "Divider" },
+					"elements": [],
+					"isInner": false,
+					"widgetType": "divider",
+					"elType": "widget"
+				},
+				{
+					"id": "218b0a83",
+					"settings": {
+						"_background_background": "classic",
+						"_background_color": "#A81830"
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "spacer",
+					"elType": "widget"
+				},
+				{
+					"id": "3ae0be96",
+					"settings": {
+						"tabs": [
+							{
+								"tab_title": "Toggle #1",
+								"tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+								"_id": "987d698"
+							},
+							{
+								"tab_title": "Toggle #2",
+								"tab_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+								"_id": "aa96096"
+							}
+						]
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "toggle",
+					"elType": "widget"
+				},
+				{
+					"id": "3e025ab5",
+					"settings": {
+						"youtube_url": "https://www.youtube.com/watch?v=XHOmBV4js_E",
+						"vimeo_url": "https://vimeo.com/235215203",
+						"dailymotion_url": "https://www.dailymotion.com/video/x6tqhqb"
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "video",
+					"elType": "widget"
+				}
+			],
+			"isInner": false,
+			"elType": "container"
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "1",
+	"type": "page"
+}

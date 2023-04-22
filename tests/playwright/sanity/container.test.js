@@ -4,7 +4,7 @@ const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
-test.describe( 'Container tests @container', () => {
+test.describe.only( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -60,22 +60,16 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const templatePath = '../templates/container/test-widgets-display-inside-the-container-using-various-directions-and-content-width.json';
+		await editor.loadTemplate( templatePath );
+		const template = require( templatePath );
+		const containerId = template.content[ 0 ].id;
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
 
 		// Act.
-		await editor.addWidget( widgets.accordion, containerId );
-		await editor.addWidget( widgets.divider, containerId );
-		const spacer = await editor.addWidget( widgets.spacer, containerId );
-		await editor.addWidget( widgets.toggle, containerId );
-		await editor.addWidget( widgets.video, containerId );
-
-		// Set background colour to spacer.
-		await editor.setBackgroundColor( '#A81830', spacer );
 		// Select container.
 		await editor.selectElement( containerId );
 		// Set row direction.
@@ -132,7 +126,6 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
@@ -187,9 +180,6 @@ test.describe( 'Container tests @container', () => {
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
 
-		// Set Canvas template.
-		await editor.useCanvasTemplate();
-
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
 
@@ -225,7 +215,6 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.closeNavigatorIfOpen();
-		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
@@ -277,8 +266,6 @@ test.describe( 'Container tests @container', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 
-		// Set Canvas template.
-		await editor.useCanvasTemplate();
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Set row direction.
@@ -361,10 +348,6 @@ test.describe( 'Container tests @container', () => {
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
-		// Set Canvas template.
-		await editor.useCanvasTemplate();
-
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.selectElement( containerId );
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '200' );
 		await editor.activatePanelTab( 'style' );
@@ -458,7 +441,7 @@ test.describe( 'Container tests @container', () => {
 
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
-			const editor = await createCanvasPage( wpAdmin );
+			const editor = await wpAdmin.useElementorCleanPost();
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
 			expect( await container.screenshot( {
@@ -469,7 +452,7 @@ test.describe( 'Container tests @container', () => {
 			await wpAdmin.setLanguage( '' );
 		}
 
-		const editor = await createCanvasPage( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost();
 		const container = await addContainerAndHover( editor );
 
 		expect( await container.screenshot( {
@@ -525,7 +508,7 @@ test.describe( 'Container tests @container', () => {
 		}
 	} );
 
-	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
+	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {/////
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -678,12 +661,6 @@ test.describe( 'Container tests @container', () => {
 		expect( hasNoHorizontalScroll ).toBe( true );
 	} );
 } );
-
-async function createCanvasPage( wpAdmin ) {
-	const editor = await wpAdmin.openNewPage();
-	await editor.useCanvasTemplate();
-	return editor;
-}
 
 async function addContainerAndHover( editor ) {
 	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
