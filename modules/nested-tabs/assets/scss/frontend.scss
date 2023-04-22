@@ -67,6 +67,29 @@
 			border-radius: var( --n-tabs-content-border-radius );
 			min-width: 0;
 		}
+
+		.e-n-tab-title {
+			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+
+			&:not(:first-child) {
+				margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				margin-bottom: var( --n-tabs-gap );
+			}
+		}
+
+		> .e-con:not(.e-active) {
+			display: none;
+		}
 	}
 
 	.e-n-tab {
@@ -224,32 +247,6 @@
 			}
 		}
 	}
-
-	.e-n-tabs-content {
-
-		.e-n-tab-title {
-			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
-			-webkit-tap-highlight-color: transparent;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
-
-			&:not(:first-child) {
-				margin-top: var( --n-tabs-title-gap );
-			}
-
-			&.e-active {
-				margin-bottom: var( --n-tabs-gap );
-			}
-		}
-
-		> .e-con:not(.e-active) {
-			display: none;
-		}
-	}
 }
 
 .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title:hover {
@@ -274,7 +271,7 @@
 @mixin display-type-desktop-($device) {
 	.e-n-tabs {
 		flex-direction: var(--n-tabs-direction);
-		height: 400px;
+		//height: 400px;
 		flex-wrap: var(--n-tabs-direction-wrap);
 		justify-content: center;
 	}

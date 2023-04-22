@@ -188,6 +188,8 @@ export default class NestedTabs extends Base {
 			() => this.onShowTabContent( $requestedContent ),
 		);
 		$requestedContent.removeAttr( 'hidden' );
+
+		this.setWidgetHeight();
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -478,5 +480,29 @@ export default class NestedTabs extends Base {
 			$tabTitleContainerElement = this.elements.$tabContents.filter( this.getTabContentFilterSelector( index ) );
 
 		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
+	}
+
+	setWidgetHeight( tabIndex ) {
+		const settings = this.getSettings(),
+			$widget = this.$element,
+			activeClass = settings.classes.active,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			$activeContent = this.elements.$tabContents.filter( activeContentFilter ),
+			$widgetInner = $widget.find( '.e-n-tabs' );
+
+		// Check widget height without the active content container.
+		$widgetInner.css( 'height', '' );
+		$activeContent.css( 'height', '0px' );
+		$activeContent.css( 'overflow', 'hidden' );
+		const widgetHeightWithoutContent = $widgetInner.height();
+
+		// Check content container height.
+		$activeContent.css( 'height', '' );
+		$activeContent.css( 'overflow', '' );
+		const contentContainerHeight = $activeContent.outerHeight();
+
+		// Set the highest height value.
+		const widgetHeight = contentContainerHeight > widgetHeightWithoutContent ? contentContainerHeight : widgetHeightWithoutContent;
+		$widgetInner.css( 'height', widgetHeight + 'px' );
 	}
 }
