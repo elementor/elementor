@@ -145,10 +145,7 @@ test.describe.only( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 
@@ -162,10 +159,7 @@ test.describe.only( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -199,10 +193,7 @@ test.describe.only( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -240,10 +231,7 @@ test.describe.only( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect( await pageView.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
+		await expect( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
@@ -318,10 +306,7 @@ test.describe.only( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert.
-		expect( await containerElement.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
+		await expect( containerElement ).toHaveScreenshot( 'container-row-flex-wrap.png' );
 
 		await editor.togglePreviewMode();
 
@@ -366,10 +351,7 @@ test.describe.only( 'Container tests @container', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();
 
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-background.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-background.png' );
 
 		await editor.togglePreviewMode();
 
@@ -384,10 +366,7 @@ test.describe.only( 'Container tests @container', () => {
 
 		await editor.togglePreviewMode();
 
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 100,
-		} ) ).toMatchSnapshot( 'container-background-border-radius.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-background-border-radius.png' );
 
 		// Reset to the Default template.
 		await editor.togglePreviewMode();
@@ -419,10 +398,7 @@ test.describe.only( 'Container tests @container', () => {
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-column-spacer-align-center.png' );
 	} );
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
@@ -444,10 +420,7 @@ test.describe.only( 'Container tests @container', () => {
 			const editor = await wpAdmin.useElementorCleanPost();
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
-			expect( await container.screenshot( {
-				type: 'jpeg',
-				quality: 100,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
+			await expect( container ).toHaveScreenshot( 'container-rtl-centered.png' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
@@ -455,10 +428,7 @@ test.describe.only( 'Container tests @container', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 		const container = await addContainerAndHover( editor );
 
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-ltr-centered.png' );
 	} );
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
@@ -508,7 +478,7 @@ test.describe.only( 'Container tests @container', () => {
 		}
 	} );
 
-	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {/////
+	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -685,10 +655,7 @@ async function captureJustifySnapShot( editor, breakpoints, i, direction, page, 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	expect( await justifyControlsContent.screenshot( {
-		type: 'jpeg',
-		quality: 90,
-	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+	await expect( justifyControlsContent ).toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
 
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
 }
