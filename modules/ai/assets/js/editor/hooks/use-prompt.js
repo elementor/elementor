@@ -30,8 +30,7 @@ const usePrompt = ( fetchData, initialState ) => {
 	const sendUsageData = () => data.responseId && setStatusFeedback( data.responseId );
 
 	const reset = () => {
-		// The credits should not be reset, because the previous value is still valid for the next request.
-		setData( ( prevState ) => ( { ...prevState, result: '', responseId: '' } ) );
+		setData( ( { credits } ) => ( { credits, result: '', responseId: '' } ) );
 		setError( '' );
 		setIsLoading( false );
 	};
