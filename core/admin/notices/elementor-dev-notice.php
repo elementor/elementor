@@ -5,6 +5,7 @@ use Elementor\Core\Admin\Options\Site_Beta;
 use Elementor\Core\Options\Site_Option;
 use Elementor\User;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,7 +65,10 @@ class Elementor_Dev_Notice extends Base_Notice {
 			! $this->is_elementor_dev_installed() &&
 			! $this->is_install_screen() &&
 			(
-				$this->has_at_least_one_active_experiment() ||
+				(
+					$this->has_at_least_one_active_experiment() &&
+					$this->is_elementor_setting_page()
+				) ||
 				$this->is_promotion_plugins_installed() ||
 				$this->is_promotion_options_enabled()
 			);
@@ -147,7 +151,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 	}
 
 	/**
-	 * Checks if is one of the promotion options is enable.
+	 * Checks if is one of the promotion options is enabled.
 	 *
 	 * @return bool
 	 */
@@ -175,5 +179,16 @@ class Elementor_Dev_Notice extends Base_Notice {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if the current page is elementor settings page
+	 *
+	 * @return bool
+	 */
+	private function is_elementor_setting_page() {
+		$current_screen = get_current_screen();
+
+		return $current_screen && 'toplevel_page_' . Settings::PAGE_ID === $current_screen->id;
 	}
 }

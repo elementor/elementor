@@ -1,6 +1,4 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
-
-export class OpenDefault extends CommandInternalBase {
+export class OpenDefault extends $e.modules.CommandInternalBase {
 	apply( args = {} ) {
 		$e.route( elementor.documents.getCurrent().config.panel.default_route, args );
 

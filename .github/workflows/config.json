@@ -1,0 +1,7 @@
+{
+  "deployment" : {
+    "repository_owner" : "elementor",
+    "environment" : "prod",
+    "permitted" : "KingYes,shilo-ey,matipojo,TzviRabinovitch,udidol,nivnoimanelementor"
+  }
+}

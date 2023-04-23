@@ -37,7 +37,7 @@ class Global_Typography extends Tab_Base {
 	}
 
 	public function get_help_url() {
-		return 'https://go.elementor.com/global-fonts';
+		return 'https://go.elementor.com/global-fonts/';
 	}
 
 	protected function register_tab_controls() {
@@ -107,6 +107,11 @@ class Global_Typography extends Tab_Base {
 					'letter_spacing' => [
 						'selectors' => [
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
+						],
+					],
+					'word_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-word-spacing: {{SIZE}}{{UNIT}}',
 						],
 					],
 				],

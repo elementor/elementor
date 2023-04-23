@@ -1,0 +1,42 @@
+
+//Select
+.elementor-control-type-select {
+
+	.elementor-control-input-wrapper {
+		position: relative;
+
+		select {
+			appearance: none;
+			font-size: var(--control-title-size);
+			font-family: inherit;
+			font-weight: inherit;
+			font-style: inherit;
+			text-transform: inherit;
+			letter-spacing: inherit;
+			line-height: inherit;
+			flex-basis: 100%;
+			@include padding-start(5px); //fix for Chrome
+			@include padding-end(20px);
+			cursor: pointer;
+
+			&.e-select-placeholder {
+				color: var(--e-a-color-txt-disabled);
+			}
+		}
+
+		option.e-option-placeholder {
+			display: none;
+		}
+
+		&:after {
+			font-family: eicons;
+			content: '\e8ad';
+			font-size: 12px;
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			@include end(5px);
+			pointer-events: none;
+		}
+	}
+}

@@ -14,7 +14,7 @@ export const Enable = () => {
 
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', async ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
 					id = elementorCommon.helpers.getUniqueId(),
 					typography_typography = `globals/typography?id=${ id }`; // eslint-disable-line camelcase
 
@@ -25,6 +25,7 @@ export const Enable = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.enable( eButton, { typography_typography } );
 
 				assert.equal( eButton.globals.attributes.typography_typography, typography_typography );
@@ -37,7 +38,7 @@ export const Enable = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', async ( assert ) => {
-				const eButtons = ElementsHelper.multiCreateAutoButton(),
+				const eButtons = ElementsHelper.multiCreateWrappedButton(),
 					id = elementorCommon.helpers.getUniqueId(),
 					typography_typography = `globals/typography?id=${ id }`; // eslint-disable-line camelcase
 
@@ -48,6 +49,7 @@ export const Enable = () => {
 					},
 				} );
 
+				// eslint-disable-next-line camelcase
 				GlobalsHelper.multiEnable( eButtons, { typography_typography } );
 
 				eButtons.forEach( ( eButton ) => {

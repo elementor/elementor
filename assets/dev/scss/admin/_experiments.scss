@@ -4,8 +4,10 @@
 	&__title {
 		display: flex;
 		align-items: flex-start;
+		flex-direction: column;
 
 		&__indicator {
+			position: absolute;
 			height: 10px;
 			width: 10px;
 			border-radius: 50%;
@@ -15,12 +17,29 @@
 			margin-top: 2px;
 
 			&--active {
-				background: $editor-success;
+				background: $green;
 			}
 		}
 
 		&__label {
-			@include margin-start(10px);
+			@include margin-start(24px);
+		}
+
+		&__tag {
+			background: $wp-primary;
+			color: $white;
+			font-size: 0.8em;
+			padding: 3px 6px;
+			line-height: 1;
+			border-radius: 3px;
+			font-weight: 600;
+			margin-top: 5px;
+			@include margin-start(24px);
+
+			&__secondary {
+				background: rgba(0,0,0,0.1);
+				color: inherit;
+			}
 		}
 	}
 
@@ -28,18 +47,40 @@
 		margin:30px 0;
 	}
 
-	&__description {
-		max-width: 820px;
-	}
-
-	&__status {
-		margin-top: 5px;
-		font-size: 13px;
+	&__dependency, &__status {
+		margin-top: 4px;
+		font-size: 0.9em;
+		line-height: 18px;
 		font-weight: bold;
 		font-style: italic;
 	}
 
 	&__button.button {
 		@include margin(18px, 14px, 22px, 0);
+	}
+
+	&__dependency {
+		color: $wordpress;
+
+		&__title {
+			font-weight: inherit;
+		}
+	}
+}
+
+#tab-experiments {
+
+	.form-table tr {
+		border-bottom: 1px solid #dcdcde;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		.description {
+			font-size: 0.9em;
+			margin: 10px 0;
+			max-width: 820px;
+		}
 	}
 }

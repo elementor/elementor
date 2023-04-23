@@ -1,0 +1,13 @@
+.e-app-import-plugins-activation {
+	&__installing-plugins {
+		padding: spacing(10) 0;
+	}
+
+	&__plugin-name {
+		margin-inline-start: spacing(8);
+	}
+
+	&__plugin-status-item {
+		margin-bottom: spacing(12);
+	}
+}

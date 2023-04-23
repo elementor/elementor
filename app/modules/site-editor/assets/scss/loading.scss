@@ -1,0 +1,102 @@
+$e-elementor-loader-color: theme-elements-colors(body-bg);
+$e-elementor-loader-wrapper-color: tints(25);
+$e-elementor-loader-box-color: tints(75);
+
+:root {
+	--e-elementor-loader-color: #{$e-elementor-loader-color};
+	--e-elementor-loader-wrapper-color: #{$e-elementor-loader-wrapper-color};
+	--e-elementor-loader-box-color: #{$e-elementor-loader-box-color};
+}
+
+$e-elementor-loader-dark-color: dark-theme-elements-colors(body-bg);
+$e-elementor-loader-dark-wrapper-color: tints(750);
+$e-elementor-loader-dark-box-color: tints(700);
+
+.eps-theme-dark {
+	--e-elementor-loader-color: #{$e-elementor-loader-dark-color};
+	--e-elementor-loader-wrapper-color: #{$e-elementor-loader-dark-wrapper-color};
+	--e-elementor-loader-box-color: #{$e-elementor-loader-dark-box-color};
+}
+
+.elementor-loading {
+	background-color: var(--e-elementor-loader-color);
+	height: 100vh;
+}
+
+.elementor-loader-wrapper {
+	@include absolute-center;
+	width: 300px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.elementor-loader {
+	border-radius: 50%;
+	padding: 40px;
+	height: 150px;
+	width: 150px;
+	background-color: var(--e-elementor-loader-wrapper-color);
+	box-sizing: border-box; // For admin
+	box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, .02);
+}
+
+.elementor-loader-boxes {
+	height: 100%;
+	width: 100%;
+	position: relative;
+}
+
+.elementor-loader-box {
+	$animation-time: 1.8s;
+	position: absolute;
+	background-color: var(--e-elementor-loader-box-color);
+	animation: load $animation-time linear infinite;
+
+	&:nth-of-type(1) {
+		width: 20%;
+		height: 100%;
+		left: 0;
+		top: 0;
+	}
+
+	&:not(:nth-of-type(1)) {
+		right: 0;
+		height: 20%;
+		width: 60%;
+	}
+
+	&:nth-of-type(2) {
+		top: 0;
+		animation-delay: calc( #{$animation-time} / 4 * -1 );
+	}
+
+	&:nth-of-type(3) {
+		top: 40%;
+		animation-delay: calc( #{$animation-time} / 4 * -2 );
+	}
+
+	&:nth-of-type(4) {
+		bottom: 0;
+		animation-delay: calc( #{$animation-time} / 4 * -3 );
+	}
+}
+
+.elementor-loading-title {
+	$spacing: 7px;
+
+	color: $editor-light;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 30px;
+	letter-spacing: $spacing;
+	text-indent: $spacing;
+	font-size: 10px;
+	width: 100%;
+}
+
+@keyframes load {
+	0% { opacity: .3; }
+	50% { opacity: 1; }
+	100% { opacity: .3; }
+}

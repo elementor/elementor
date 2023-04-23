@@ -4,23 +4,23 @@ var TemplateLibraryTemplateView = require( 'elementor-templates/views/template/b
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-remote',
 
-	ui: function() {
+	ui() {
 		return jQuery.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			favoriteCheckbox: '.elementor-template-library-template-favorite-input',
 		} );
 	},
 
-	events: function() {
+	events() {
 		return jQuery.extend( TemplateLibraryTemplateView.prototype.events.apply( this, arguments ), {
 			'change @ui.favoriteCheckbox': 'onFavoriteCheckboxChange',
 		} );
 	},
 
-	onPreviewButtonClick: function() {
+	onPreviewButtonClick() {
 		$e.route( 'library/preview', { model: this.model } );
 	},
 
-	onFavoriteCheckboxChange: function() {
+	onFavoriteCheckboxChange() {
 		var isFavorite = this.ui.favoriteCheckbox[ 0 ].checked;
 
 		this.model.set( 'favorite', isFavorite );

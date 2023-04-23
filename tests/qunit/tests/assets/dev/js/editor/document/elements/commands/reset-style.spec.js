@@ -5,7 +5,10 @@ export const ResetStyle = () => {
 	QUnit.module( 'ResetStyle', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonStyled = ElementsHelper.createAutoButtonStyled();
+				const eButtonStyled = ElementsHelper.createWrappedButton( null, {
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 				// Ensure editor saver.
 				$e.internal( 'document/save/set-is-modified', { status: false } );
@@ -20,12 +23,13 @@ export const ResetStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
+				const eWidgetStyled = ElementsHelper.createWrappedButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					BackgroundBeforeReset = eWidgetStyled.settings.get( 'background_color' ); // Black
 
 				ElementsHelper.resetStyle( eWidgetStyled );
-
-				//const BackgroundAfterReset = eWidgetStyled.settings.get( 'background_color' ), // No Color
 
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
@@ -41,15 +45,19 @@ export const ResetStyle = () => {
 				// Redo.
 				HistoryHelper.redoValidate( assert, historyItem );
 
-				/*assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
+				/* Assert.equal( eWidgetStyled.settings.get( 'background_color' ), BackgroundAfterReset,
 					'Settings restored.' ); // TODO: in tests its not back to default color.*/
 			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtonStyled1 = ElementsHelper.createAutoButtonStyled(),
-					eButtonStyled2 = ElementsHelper.createAutoButtonStyled();
+				const settings = {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					},
+					eButtonStyled1 = ElementsHelper.createWrappedButton( null, settings ),
+					eButtonStyled2 = ElementsHelper.createWrappedButton( null, settings );
 
 				ElementsHelper.multiResetStyle( [ eButtonStyled1, eButtonStyled2 ] );
 
@@ -61,7 +69,10 @@ export const ResetStyle = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eWidgetsStyled = ElementsHelper.multiCreateAutoButtonStyled(),
+				const eWidgetsStyled = ElementsHelper.multiCreateWrappedButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					backgroundBeforeReset = eWidgetsStyled[ 0 ].settings.get( 'background_color' );
 
 				ElementsHelper.multiResetStyle( eWidgetsStyled );

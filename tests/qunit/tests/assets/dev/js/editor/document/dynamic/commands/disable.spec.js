@@ -5,7 +5,7 @@ export const Disable = () => {
 	QUnit.module( 'Disable', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
 					eButtonText = eButton.settings.get( 'text' ),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
@@ -43,7 +43,7 @@ export const Disable = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtons = ElementsHelper.multiCreateAutoButton(),
+				const eButtons = ElementsHelper.multiCreateWrappedButton(),
 					eButtonText = eButtons[ 0 ].settings.get( 'text' ),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',

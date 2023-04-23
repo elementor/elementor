@@ -24,7 +24,7 @@ class Revisions_Manager {
 	/**
 	 * Maximum number of revisions to display.
 	 */
-	const MAX_REVISIONS_TO_DISPLAY = 100;
+	const MAX_REVISIONS_TO_DISPLAY = 50;
 
 	/**
 	 * Authors list.
@@ -261,7 +261,7 @@ class Revisions_Manager {
 		}
 
 		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
-			throw new \Exception( esc_html__( 'Access denied.', 'elementor' ) );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		$revision_data = [

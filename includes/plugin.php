@@ -1,10 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
@@ -411,6 +411,11 @@ class Plugin {
 	public $inspector;
 
 	/**
+	 * @var Admin_Menu_Manager
+	 */
+	public $admin_menu_manager;
+
+	/**
 	 * Common functionality.
 	 *
 	 * Holds the plugin common functionality.
@@ -499,7 +504,7 @@ class Plugin {
 	 * @since 3.0.0
 	 * @access public
 	 *
-	 * @var Core\App\App
+	 * @var App\App
 	 */
 	public $app;
 
@@ -582,8 +587,11 @@ class Plugin {
 	 * @since 1.0.0
 	 */
 	public function __clone() {
-		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf( 'Cloning instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			'1.0.0'
+		);
 	}
 
 	/**
@@ -595,8 +603,11 @@ class Plugin {
 	 * @since 1.0.0
 	 */
 	public function __wakeup() {
-		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+		_doing_it_wrong(
+			__FUNCTION__,
+			sprintf( 'Unserializing instances of the singleton "%s" class is forbidden.', get_class( $this ) ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			'1.0.0'
+		);
 	}
 
 	/**
@@ -733,6 +744,9 @@ class Plugin {
 		$this->assets_loader = new Assets_Loader();
 		$this->uploads_manager = new Uploads_Manager();
 
+		$this->admin_menu_manager = new Admin_Menu_Manager();
+		$this->admin_menu_manager->register_actions();
+
 		User::init();
 		Api::init();
 		Tracker::init();
@@ -740,7 +754,7 @@ class Plugin {
 		$this->upgrade = new Core\Upgrade\Manager();
 		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
-		$this->app = new Core\App\App();
+		$this->app = new App\App();
 
 		if ( is_admin() ) {
 			$this->heartbeat = new Heartbeat();
@@ -848,7 +862,7 @@ class Plugin {
 		}
 
 		if ( property_exists( $this, $property ) ) {
-			throw new \Exception( 'Cannot access private property' );
+			throw new \Exception( 'Cannot access private property.' );
 		}
 
 		return null;
@@ -872,7 +886,7 @@ class Plugin {
 		Compatibility::register_actions();
 
 		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ] );
+		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
 	}
 
 	final public static function get_title() {

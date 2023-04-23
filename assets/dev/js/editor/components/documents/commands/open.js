@@ -1,12 +1,10 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Open extends CommandBase {
+export class Open extends $e.modules.CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
 
 	apply( args ) {
-		const { id } = args,
+		const { id, selector, shouldScroll = true } = args,
 			currentDocument = elementor.documents.getCurrent();
 
 		// Already opened.
@@ -24,7 +22,7 @@ export class Open extends CommandBase {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 				// Tell the editor to load the document.
-				return $e.internal( 'editor/documents/load', { config } );
+				return $e.internal( 'editor/documents/load', { config, selector, shouldScroll } );
 			} )
 			.always( () => {
 				// TODO: move to $e.hooks.ui.

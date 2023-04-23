@@ -1,6 +1,7 @@
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
-
-export class Settings extends CommandHistoryDebounce {
+/**
+ * @typedef {import('../../../container/container')} Container
+ */
+export class Settings extends $e.modules.editor.document.CommandHistoryDebounceBase {
 	/**
 	 * Function getSubTitle().
 	 *
@@ -8,7 +9,7 @@ export class Settings extends CommandHistoryDebounce {
 	 *
 	 * @param {{}} args
 	 *
-	 * @returns {string}
+	 * @return {string} sub title
 	 */
 	static getSubTitle( args ) {
 		const { containers = [ args.container ], settings = {}, isMultiSettings } = args,
@@ -30,7 +31,7 @@ export class Settings extends CommandHistoryDebounce {
 	 *
 	 * Redo/Restore.
 	 *
-	 * @param {{}} historyItem
+	 * @param {{}}      historyItem
 	 * @param {boolean} isRedo
 	 */
 	static restore( historyItem, isRedo ) {
@@ -53,8 +54,8 @@ export class Settings extends CommandHistoryDebounce {
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {{}} newSettings
-	 * @param {{}} oldSettings
+	 * @param {{}}        newSettings
+	 * @param {{}}        oldSettings
 	 */
 	addToHistory( container, newSettings, oldSettings ) {
 		const changes = {
@@ -121,10 +122,6 @@ export class Settings extends CommandHistoryDebounce {
 				settings: newSettings,
 			} );
 		} );
-	}
-
-	isDataChanged() {
-		return true;
 	}
 }
 

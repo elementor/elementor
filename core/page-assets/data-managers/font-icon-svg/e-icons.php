@@ -17,7 +17,7 @@ class E_Icons extends Base {
 		return [
 			'key' => $icon['value'],
 			'version' => self::LIBRARY_CURRENT_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_URL . 'lib/eicons/eicons.json',
+			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/eicons/eicons.json',
 			'data' => [
 				'icon_data' => [
 					'name' => $icon['value'],

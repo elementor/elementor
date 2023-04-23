@@ -20,9 +20,10 @@ var EventManager = function() {
 	/**
 	 * Removes the specified hook by resetting the value of it.
 	 *
-	 * @param type Type of hook, either 'actions' or 'filters'
-	 * @param hook The hook (namespace.identifier) to remove
-	 *
+	 * @param {string}   type     Type of hook, either 'actions' or 'filters'
+	 * @param {Function} hook     The hook (namespace.identifier) to remove
+	 * @param {Function} callback
+	 * @param {*}        context
 	 * @private
 	 */
 	function _removeHook( type, hook, callback, context ) {
@@ -56,7 +57,7 @@ var EventManager = function() {
 	 * Use an insert sort for keeping our hooks organized based on priority. This function is ridiculously faster
 	 * than bubble sort, etc: http://jsperf.com/javascript-sort
 	 *
-	 * @param hooks The custom array containing all of the appropriate hooks to perform an insert sort on.
+	 * @param {Array<*>} hooks The custom array containing all of the appropriate hooks to perform an insert sort on.
 	 * @private
 	 */
 	function _hookInsertSort( hooks ) {
@@ -77,18 +78,18 @@ var EventManager = function() {
 	/**
 	 * Adds the hook to the appropriate storage container
 	 *
-	 * @param type 'actions' or 'filters'
-	 * @param hook The hook (namespace.identifier) to add to our event manager
-	 * @param callback The function that will be called when the hook is executed.
-	 * @param priority The priority of this hook. Must be an integer.
-	 * @param [context] A value to be used for this
+	 * @param {string}   type      'actions' or 'filters'
+	 * @param {Array<*>} hook      The hook (namespace.identifier) to add to our event manager
+	 * @param {Function} callback  The function that will be called when the hook is executed.
+	 * @param {number}   priority  The priority of this hook. Must be an integer.
+	 * @param {*}        [context] A value to be used for this
 	 * @private
 	 */
 	function _addHook( type, hook, callback, priority, context ) {
 		var hookObject = {
-			callback: callback,
-			priority: priority,
-			context: context,
+			callback,
+			priority,
+			context,
 		};
 
 		// Utilize 'prop itself' : http://jsperf.com/hasownproperty-vs-in-vs-undefined/19
@@ -120,9 +121,9 @@ var EventManager = function() {
 	/**
 	 * Runs the specified hook. If it is an action, the value is not modified but if it is a filter, it is.
 	 *
-	 * @param type 'actions' or 'filters'
-	 * @param hook The hook ( namespace.identifier ) to be ran.
-	 * @param args Arguments to pass to the action/filter. If it's a filter, args is actually a single parameter.
+	 * @param {string}   type 'actions' or 'filters'
+	 * @param {*}        hook The hook ( namespace.identifier ) to be ran.
+	 * @param {Array<*>} args Arguments to pass to the action/filter. If it's a filter, args is actually a single parameter.
 	 * @private
 	 */
 	function _runHook( type, hook, args ) {
@@ -151,10 +152,10 @@ var EventManager = function() {
 	/**
 	 * Adds an action to the event manager.
 	 *
-	 * @param action Must contain namespace.identifier
-	 * @param callback Must be a valid callback function before this action is added
-	 * @param [priority=10] Used to control when the function is executed in relation to other callbacks bound to the same hook
-	 * @param [context] Supply a value to be used for this
+	 * @param {string}   action        Must contain namespace.identifier
+	 * @param {Function} callback      Must be a valid callback function before this action is added
+	 * @param {number}   [priority=10] Used to control when the function is executed in relation to other callbacks bound to the same hook
+	 * @param {*}        [context]     Supply a value to be used for this
 	 */
 	function addAction( action, callback, priority, context ) {
 		if ( 'string' === typeof action && 'function' === typeof callback ) {
@@ -169,7 +170,7 @@ var EventManager = function() {
 	 * Performs an action if it exists. You can pass as many arguments as you want to this function; the only rule is
 	 * that the first argument must always be the action.
 	 */
-	function doAction( /* action, arg1, arg2, ... */ ) {
+	function doAction( /* Action, arg1, arg2, ... */ ) {
 		var args = slice.call( arguments );
 		var action = args.shift();
 
@@ -183,8 +184,8 @@ var EventManager = function() {
 	/**
 	 * Removes the specified action if it contains a namespace.identifier & exists.
 	 *
-	 * @param action The action to remove
-	 * @param [callback] Callback function to remove
+	 * @param {string}   action     The action to remove
+	 * @param {Function} [callback] Callback function to remove
 	 */
 	function removeAction( action, callback ) {
 		if ( 'string' === typeof action ) {
@@ -197,10 +198,10 @@ var EventManager = function() {
 	/**
 	 * Adds a filter to the event manager.
 	 *
-	 * @param filter Must contain namespace.identifier
-	 * @param callback Must be a valid callback function before this action is added
-	 * @param [priority=10] Used to control when the function is executed in relation to other callbacks bound to the same hook
-	 * @param [context] Supply a value to be used for this
+	 * @param {string}   filter        Must contain namespace.identifier
+	 * @param {Function} callback      Must be a valid callback function before this action is added
+	 * @param {number}   [priority=10] Used to control when the function is executed in relation to other callbacks bound to the same hook
+	 * @param {*}        [context]     Supply a value to be used for this
 	 */
 	function addFilter( filter, callback, priority, context ) {
 		if ( 'string' === typeof filter && 'function' === typeof callback ) {
@@ -215,7 +216,7 @@ var EventManager = function() {
 	 * Performs a filter if it exists. You should only ever pass 1 argument to be filtered. The only rule is that
 	 * the first argument must always be the filter.
 	 */
-	function applyFilters( /* filter, filtered arg, arg2, ... */ ) {
+	function applyFilters( /* Filter, filtered arg, arg2, ... */ ) {
 		var args = slice.call( arguments );
 		var filter = args.shift();
 
@@ -229,8 +230,8 @@ var EventManager = function() {
 	/**
 	 * Removes the specified filter if it contains a namespace.identifier & exists.
 	 *
-	 * @param filter The action to remove
-	 * @param [callback] Callback function to remove
+	 * @param {string}   filter     The action to remove
+	 * @param {Function} [callback] Callback function to remove
 	 */
 	function removeFilter( filter, callback ) {
 		if ( 'string' === typeof filter ) {
@@ -244,15 +245,15 @@ var EventManager = function() {
 	 * Maintain a reference to the object scope so our public methods never get confusing.
 	 */
 	MethodsAvailable = {
-		removeFilter: removeFilter,
-		applyFilters: applyFilters,
-		addFilter: addFilter,
-		removeAction: removeAction,
-		doAction: doAction,
-		addAction: addAction,
+		removeFilter,
+		applyFilters,
+		addFilter,
+		removeAction,
+		doAction,
+		addAction,
 	};
 
-	// return all of the publicly available methods
+	// Return all of the publicly available methods
 	return MethodsAvailable;
 };
 

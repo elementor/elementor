@@ -7,8 +7,14 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
+		if ( container instanceof jQuery ) {
+			container = container[ 0 ];
+		}
+
 		// The Swiper will overlap the column width when applying custom margin values on the column.
-		container.closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
+		container.closest( '.elementor-widget-wrap' )?.classList.add( 'e-swiper-container' );
+
+		container.closest( '.elementor-widget' )?.classList.add( 'e-widget-swiper' );
 
 		return new Promise( ( resolve ) => {
 			if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {

@@ -1,4 +1,5 @@
 # directories
+coverage-report/
 node_modules/
 .sass-cache/
 log/
@@ -10,8 +11,10 @@ tmp/
 build/
 assets/css/
 assets/js/
+assets/lib/swiper/css/swiper*.css
 *.log
 *.map
+/templates/
 
 # build tools lock
 yarn.lock
@@ -28,4 +31,5 @@ coverage/
 
 # playwright
 test-results/
-tests/playwright/config/storageState.json
+**/storageState.json
+tests/playwright/config/local.config.js

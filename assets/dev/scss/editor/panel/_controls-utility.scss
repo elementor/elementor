@@ -1,0 +1,313 @@
+//
+// Controls Utility (child of panel controls)
+//
+
+//Start responsive switcher
+$item-size: 2.5em;
+$title-size: 12px;
+
+.elementor-control-responsive-switchers {
+	--selected-option: 0;
+	--pointer-position: var(--selected-option);
+
+	position: relative;
+	width: $item-size;
+	height: $item-size;
+	margin: calc( -#{$item-size} + #{$title-size}) 0;
+	@include margin-end(5px);
+
+	&__holder {
+		position: absolute;
+		width: 100%;
+		top: 0;
+		background-color: var(--e-a-bg-default);
+		border-radius: var(--e-a-border-radius);
+		transition: 0.15s;
+		border: 1px solid transparent;
+	}
+
+	&.elementor-responsive-switchers-open {
+		z-index: 11000;
+
+		.elementor-responsive-switcher {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+
+			&:hover {
+				color: var(--e-a-color-primary-bold);
+			}
+		}
+
+		.elementor-control-responsive-switchers__holder {
+			box-shadow: var(--e-a-dropdown-shadow);
+		}
+	}
+}
+
+.elementor-responsive-switcher {
+	all: unset;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+	height: 0;
+	width: 100%;
+	transform: scale(0);
+	opacity: 0;
+	transition: 0.15s;
+	font-size: 12px;
+	color: inherit;
+
+	&:hover {
+		color: var(--e-a-color-primary-bold);
+	}
+}
+
+@each $device in $devices {
+	.elementor-device-#{ $device } {
+		.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
+			height: $item-size;
+			transform: scale(1);
+			opacity: 1;
+		}
+		.elementor-responsive-switchers-open:not(:hover) {
+			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+				color: var(--e-a-color-primary-bold);
+			}
+		}
+	}
+}
+//End responsive switcher
+
+// Start control unit switcher
+.e-units-wrapper {
+	position: relative;
+	@include margin-start(auto);
+
+	.e-units-switcher {
+		cursor: pointer;
+		font-size: 10px;
+		padding: .5em;
+		margin: -.5em 0;
+		transition: all ease-in-out .15s;
+
+		&:hover {
+			color: var(--e-a-color-primary-bold);
+			background-color: var(--e-a-bg-hover);
+			border-radius: var(--e-a-border-radius);
+		}
+
+		&:not([data-selected="custom"]) {
+
+			i.eicon-edit {
+				display: none;
+			}
+		}
+
+		&[data-selected="custom"] {
+
+			span {
+				display: none;
+			}
+		}
+
+		i.eicon-angle-right {
+			transform: rotate(90deg);
+		}
+	}
+}
+
+.e-units-choices {
+
+	input {
+		display: none;
+
+		&:checked + label {
+			color: var(--e-a-color-primary-bold);
+		}
+	}
+
+	label {
+		cursor: pointer;
+		display: block;
+	}
+
+	& {
+		display: none;
+		overflow: hidden;
+		max-height: 0;
+		position: absolute;
+		top: -.8em;
+		@include start(-.5em);
+		width: $item-size;
+		text-align: center;
+		background-color: var(--e-a-bg-default);
+		border-radius: var(--e-a-border-radius);
+		box-shadow: var(--e-a-dropdown-shadow);
+		animation-timing-function: linear;
+		animation-delay: 0s;
+		animation-fill-mode: forwards;
+		z-index: 11000;
+
+		.elementor-units-choices-label {
+			display: flex;
+			align-items: center;
+			height: 3em;
+			justify-content: center;
+			font-size: $font-size-xs;
+			transition: 0.15s;
+
+			&:hover {
+				color: var(--e-a-color-primary-bold);
+			}
+
+			&:not([data-choose="custom"]) {
+
+				i {
+					display: none;
+				}
+			}
+
+			&[data-choose="custom"] {
+
+				span {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&.e-units-choices-open {
+		display: block;
+		animation-duration: 1s;
+		animation-name: e-units-choices-open;
+	}
+}
+
+$font-family-monospace: monospace;
+
+.e-units-custom {
+
+	input {
+		font-family: $font-family-monospace;
+		font-size: 0.85em;
+	}
+}
+
+@keyframes e-units-choices-open {
+	from { max-height: 0; }
+	// Intentionally 100vh and not 100% to avoid the element from being cut off.
+	to { max-height: 100vh; }
+}
+
+//End control unit switcher
+
+// Dimensions base css
+@mixin dimensions($control-name) {
+	.elementor-control-type-#{$control-name}s {
+
+		.elementor-control-#{$control-name}s {
+			display: flex;
+		}
+
+		li {
+			flex: 1;
+			transition: flex-grow .3s ease-in-out;
+
+			input,
+			.elementor-link-#{$control-name}s {
+				display: block;
+				text-align: center;
+				width: 100%;
+				height: $control-unit;
+			}
+
+			input {
+				@include border-start(none);
+				border-radius: 0;
+				padding: var(--e-a-border-radius);
+
+				&:focus {
+					@include border-start(var(--e-a-border-bold));
+					@include margin-start(-1px);
+					width: calc(100% + 1px);
+
+					+ .elementor-control-#{$control-name}-label {
+						color: var(--e-a-color-txt);
+					}
+				}
+			}
+
+			.elementor-link-#{$control-name}s {
+				border: var(--e-a-border-bold);
+				@include border-start(none);
+				background-color: var(--e-a-bg-default);
+				padding: 0;
+				outline: none;
+				border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+				cursor: pointer;
+			}
+
+			&:first-child {
+
+				input {
+					@include border-start(1px solid var(--e-a-border-color-bold));
+					border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
+
+					&:focus {
+						border-color: var(--e-a-border-color-focus);
+						@include margin-start(0);
+						width: 100%;
+					}
+				}
+			}
+
+			&:last-child {
+				max-width: $control-unit;
+			}
+		}
+
+		&.e-units-custom {
+
+			li {
+
+				&.elementor-control-#{$control-name}:focus-within {
+					flex: 2.5;
+				}
+			}
+		}
+
+		.elementor-control-#{$control-name}-label {
+			color: var(--e-a-color-txt-muted);
+			display: block;
+			text-align: center;
+			font-size: 9px;
+			padding-top: 5px;
+		}
+
+		.elementor-link-#{$control-name}s {
+
+			&.unlinked {
+				background-color: var(--e-a-bg-default);
+
+				.elementor-linked {
+					display: none;
+				}
+			}
+
+			&:not(.unlinked) {
+				background-color: var(--e-a-bg-active-bold);
+				color: var(--e-a-color-txt-accent);
+				border-color: var(--e-a-border-color-bold);
+
+				.elementor-unlinked {
+					display: none;
+				}
+			}
+		}
+	}
+}
+// End Dimensions base css

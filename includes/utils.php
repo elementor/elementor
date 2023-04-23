@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -113,6 +115,15 @@ class Utils {
 	}
 
 	/**
+	 * Whether elementor test mode is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_tests() {
+		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+	}
+
+	/**
 	 * Get pro link.
 	 *
 	 * Retrieve the link to Elementor Pro.
@@ -163,26 +174,42 @@ class Utils {
 		$from = trim( $from );
 		$to = trim( $to );
 
+		if ( empty( $from ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL.' );
+		}
+
+		if ( empty( $to ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL.' );
+		}
+
 		if ( $from === $to ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
+		$escaped_from = str_replace( '/', '\\/', $from );
+		$escaped_to = str_replace( '/', '\\/', $to );
+		$meta_value_like = '[%'; // meta_value LIKE '[%' are json formatted
 
-		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
 		$rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
-			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-		// @codingStandardsIgnoreEnd
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} " .
+				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
+				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s;",
+				$escaped_from,
+				$escaped_to,
+				$meta_value_like
+			)
+		);
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
+			throw new \Exception( 'An error occurred while replacing URL\'s.' );
 		}
 
 		// Allow externals to replace-urls, when they have to.
@@ -192,7 +219,7 @@ class Utils {
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
-			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
 	}
@@ -743,16 +770,81 @@ class Utils {
 
 	public static function print_wp_kses_extended( $string, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
-		// Since PHP 5.6 cannot use isset() on the result of an expression.
-		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
 
 		foreach ( $tags as $tag ) {
-			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
+			if ( isset( self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
 				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
 				$allowed_html = array_replace_recursive( $allowed_html, $extended_tags );
 			}
 		}
 
 		echo wp_kses( $string, $allowed_html );
+	}
+
+	public static function is_elementor_path( $path ) {
+		$path = wp_normalize_path( $path );
+
+		/**
+		 * Elementor related paths.
+		 *
+		 * Filters Elementor related paths.
+		 *
+		 * @param string[] $available_paths
+		 */
+		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', [ ELEMENTOR_PATH ] );
+
+		return (bool) ( new Collection( $available_paths ) )
+			->map( function ( $p ) {
+				// `untrailingslashit` in order to include other plugins prefixed with elementor.
+				return untrailingslashit( wp_normalize_path( $p ) );
+			} )
+			->find(function ( $p ) use ( $path ) {
+				return false !== strpos( $path, $p );
+			} );
+	}
+
+	/**
+	 * @param $file
+	 * @param mixed ...$args
+	 * @return false|string
+	 */
+	public static function file_get_contents( $file, ...$args ) {
+		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		return file_get_contents( $file, ...$args );
+	}
+
+	public static function get_super_global_value( $super_global, $key ) {
+		if ( ! isset( $super_global[ $key ] ) ) {
+			return null;
+		}
+
+		if ( $_FILES === $super_global ) {
+			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+
+			return $super_global[ $key ];
+		}
+
+		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	/**
+	 * Return specific object property value if exist from array of keys.
+	 *
+	 * @param $array
+	 * @param $keys
+	 * @return key|false
+	 */
+	public static function get_array_value_by_keys( $array, $keys ) {
+		$keys = (array) $keys;
+		foreach ( $keys as $key ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				return null;
+			}
+			$array = $array[ $key ];
+		}
+		return $array;
 	}
 }

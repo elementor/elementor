@@ -2,7 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.editor = '.elementor-code-editor';
@@ -10,7 +10,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	onReady: function() {
+	onReady() {
 		var self = this;
 
 		if ( 'undefined' === typeof ace ) {
@@ -24,7 +24,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
 		// Since the code control is wrapped with a dynamic div, the class elementor-control-tag-area need to be had dynamically to handle the dynamic tag functionality.
-		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor elementor-control-tag-area' );
+		jQuery( self.editor.container ).addClass( 'e-input-style elementor-code-editor elementor-control-tag-area' );
 
 		self.editor.setOptions( {
 			mode: 'ace/mode/' + self.model.attributes.language,
@@ -46,7 +46,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		if ( 'css' === self.model.attributes.language ) {
 			var selectorCompleter = {
-				getCompletions: function( editor, session, pos, prefix, callback ) {
+				getCompletions( editor, session, pos, prefix, callback ) {
 					var list = [],
 						token = session.getTokenAt( pos.row, pos.column );
 
@@ -94,11 +94,11 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	onResize: function() {
+	onResize() {
 		this.editor.resize();
 	},
 
-	onDestroy: function() {
+	onDestroy() {
 		elementor.panel.$el.off( 'resize.aceEditor' );
 	},
 } );

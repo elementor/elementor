@@ -45,6 +45,7 @@ const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 		const markdown = prAndVerifiedCommits.map((message) => `* ${message}`).join('\n');
 		fs.writeFileSync('temp-changelog.txt', markdown);
 	} catch (err) {
+		console.error( err.toString() );
 		process.exit(1);
 	}
 })();

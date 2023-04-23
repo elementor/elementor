@@ -16,7 +16,7 @@ export default class BreakpointValidator extends NumberValidator {
 	 * Since the active kit used in the Site Settings panel could be a draft, we need to use the panel's active
 	 * breakpoints settings and not the elementorFrontend.config values (which come from the DB).
 	 *
-	 * @returns Object
+	 * @return {*} Object
 	 */
 	getPanelActiveBreakpoints() {
 		const panelBreakpoints = elementor.documents.currentDocument.config.settings.settings.active_breakpoints.map( ( breakpointName ) => {

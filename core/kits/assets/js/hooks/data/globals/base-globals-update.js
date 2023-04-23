@@ -11,7 +11,7 @@ export class BaseGlobalsUpdate extends $e.modules.hookData.After {
 		elementorModules.ForceMethodImplementation();
 	}
 
-	applyModel( model, id, value ) {
+	applyModel( model, id, value ) { // eslint-disable-line no-unused-vars
 		elementorModules.ForceMethodImplementation();
 	}
 

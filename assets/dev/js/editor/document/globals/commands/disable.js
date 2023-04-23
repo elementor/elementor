@@ -31,7 +31,7 @@ export class Disable extends DisableEnable {
 
 			// Clear globals.
 			Object.keys( settings ).forEach( ( setting ) =>
-				container.globals.set( setting, '' )
+				container.globals.set( setting, '' ),
 			);
 
 			$e.internal( 'document/elements/set-settings', {

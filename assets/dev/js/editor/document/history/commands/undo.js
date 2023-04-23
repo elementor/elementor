@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Undo extends CommandBase {
+export class Undo extends $e.modules.CommandBase {
 	apply() {
 		elementor.documents.getCurrent().history.navigate();
 	}

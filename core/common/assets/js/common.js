@@ -4,8 +4,10 @@ import Debug from './utils/debug';
 import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
-import API from './api/';
-import WordpressComponent from 'elementor-api/components/wordpress/component';
+import WordpressComponent from './components/wordpress/component';
+import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
+import Events from 'elementor-common-modules/event-tracker/assets/js/events';
+import Notifications from 'elementor-utils/notifications';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
 	setMarionetteTemplateCompiler() {
@@ -29,6 +31,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 	}
 
 	initComponents() {
+		this.events = new Events();
+
 		this.debug = new Debug();
 
 		this.helpers = new Helpers();
@@ -37,7 +41,11 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		this.dialogsManager = new DialogsManager.Instance();
 
-		this.api = new API();
+		this.notifications = new Notifications();
+
+		this.api = window.$e;
+
+		$e.components.register( new EventsDispatcherComponent() );
 
 		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 			$e.components.register( new WordpressComponent() );

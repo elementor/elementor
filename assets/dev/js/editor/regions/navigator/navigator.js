@@ -37,7 +37,7 @@ export default class extends BaseRegion {
 
 	getDefaultStorage() {
 		return {
-			visible: false,
+			visible: true,
 			size: {
 				width: '',
 				height: '',
@@ -187,7 +187,7 @@ export default class extends BaseRegion {
 	/**
 	 * Set the navigator size to a specific value or default to the storage-saved value.
 	 *
-	 * @param {String} size A specific new size.
+	 * @param {string} size A specific new size.
 	 */
 	setSize( size = null ) {
 		if ( size ) {
@@ -288,7 +288,7 @@ export default class extends BaseRegion {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
 
-			if ( this.storage.visible ) {
+			if ( false !== this.storage.visible ) {
 				$e.route( 'navigator' );
 			}
 		}

@@ -3,39 +3,37 @@
 //
 
 #elementor-mode-switcher {
+	--e-a-mode-switcher-width: 15px;
+	--e-a-mode-switcher-height: 50px;
+	--e-a-mode-switcher-icon-size: 15px;
 	position: absolute;
 	@include start(100%);
 	top: 50%;
-	width: 15px;
-	height: 50px;
 	transform: translateY(-50%);
-	background-color: $editor-background;
-	font-size: 15px;
-	@include direction-box-shadow(3px, 1px 5px rgba(0, 0, 0, 0.1));
-	cursor: pointer;
+	background-color: var(--e-a-bg-default);
+	@include direction-box-shadow(3px, 1px 3px rgba(0, 0, 0, 0.05));
 
 	&:hover {
-		background-color: $editor-accent;
-		color: #FFFFFF;
+		background-color: var(--e-a-bg-hover);
 	}
-}
 
-#elementor-mode-switcher-inner, #elementor-mode-switcher-preview {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-#elementor-mode-switcher-preview {
-	cursor: pointer;
-
-	.eicon {
-		@include absolute-center;
+	&:focus-within {
+		background-color: var(--e-a-bg-active);
 	}
-}
 
-#elementor-mode-switcher-preview-input {
-	display: none;
+	&-preview {
+		i {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: var(--e-a-mode-switcher-width);
+			height: var(--e-a-mode-switcher-height);
+			font-size: var(--e-a-mode-switcher-icon-size);
+			cursor: pointer;
+		}
+	
+		&-input {
+			display: none;
+		}
+	}
 }

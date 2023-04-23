@@ -64,6 +64,12 @@ class Tools extends Base_Category {
 				'url' => $tools_url . '#tab-maintenance_mode',
 				'keywords' => [ 'tools', 'maintenance', 'coming soon', 'elementor' ],
 			],
+			'import-export' => [
+				'title' => esc_html__( 'Import Export', 'elementor' ),
+				'icon' => 'import-export',
+				'url' => $tools_url . '#tab-import-export-kit',
+				'keywords' => [ 'tools', 'import export', 'import', 'export', 'kit' ],
+			],
 		];
 
 		if ( ElementorTools::can_user_rollback_versions() ) {

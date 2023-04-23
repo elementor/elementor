@@ -2,14 +2,16 @@
 namespace Elementor;
 
 use Elementor\Core\Base\Document;
+use Elementor\TemplateLibrary\Forms\New_Template_Form;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
+$new_template_control_form = new New_Template_Form( [ 'id' => 'form' ] );
 $document_types = Plugin::$instance->documents->get_document_types();
 
 $types = [];
+$lock_configs = [];
 
 $selected = get_query_var( 'elementor_library_type' );
 
@@ -19,8 +21,12 @@ foreach ( $document_types as $document_type ) {
 		 * @var Document $instance
 		 */
 		$instance = new $document_type();
+		$lock_behavior = $document_type::get_lock_behavior_v2();
 
 		$types[ $instance->get_name() ] = $document_type::get_title();
+		$lock_configs[ $instance->get_name() ] = empty( $lock_behavior )
+			? (object) []
+			: $lock_behavior->get_config();
 	}
 }
 
@@ -35,6 +41,8 @@ foreach ( $document_types as $document_type ) {
  * @param Document $document_types Document types.
  */
 $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $types, $document_types );
+ksort( $types );
+
 ?>
 <script type="text/template" id="tmpl-elementor-new-template">
 	<div id="elementor-new-template__description">
@@ -47,14 +55,6 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 			);
 			?></div>
 		<div id="elementor-new-template__description__content"><?php echo esc_html__( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
-		<?php
-		/*
-		<div id="elementor-new-template__take_a_tour">
-			<i class="eicon-play-o"></i>
-			<a href="#"><?php echo esc_html__( 'Take The Video Tour', 'elementor\' ); ?></a>
-		</div>
-		*/
-		?>
 	</div>
 	<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="elementor_library">
@@ -65,11 +65,23 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
 			<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo esc_html__( 'Select the type of template you want to work on', 'elementor' ); ?></label>
 			<div class="elementor-form-field__select__wrapper">
+				<?php // Badge will be filled from js. ?>
+				<span id="elementor-new-template__form__template-type-badge" class="e-hidden">
+					<i id="elementor-new-template__form__template-type-badge__icon"></i>
+					<span id="elementor-new-template__form__template-type-badge__text"></span>
+				</span>
+
 				<select id="elementor-new-template__form__template-type" class="elementor-form-field__select" name="template_type" required>
 					<option value=""><?php echo esc_html__( 'Select', 'elementor' ); ?>...</option>
 					<?php
 					foreach ( $types as $value => $type_title ) {
-						printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $selected, $value, false ), esc_html( $type_title ) );
+						printf(
+							'<option value="%1$s" data-lock=\'%2$s\' %3$s>%4$s</option>',
+							esc_attr( $value ),
+							wp_json_encode( $lock_configs[ $value ] ?? (object) [] ),
+							selected( $selected, $value, false ),
+							esc_html( $type_title )
+						);
 					}
 					?>
 				</select>
@@ -83,7 +95,13 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		 *
 		 * @since 2.0.0
 		 */
-		do_action( 'elementor/template-library/create_new_dialog_fields' );
+		do_action( 'elementor/template-library/create_new_dialog_fields', $new_template_control_form );
+
+		$additional_controls = $new_template_control_form->get_controls();
+		if ( $additional_controls ) {
+			wp_add_inline_script( 'elementor-admin', 'const elementor_new_template_form_controls = ' . wp_json_encode( $additional_controls ) . ';' );
+			$new_template_control_form->render();
+		}
 		?>
 
 		<div id="elementor-new-template__form__post-title__wrapper" class="elementor-form-field">
@@ -94,6 +112,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 				<input type="text" placeholder="<?php echo esc_attr__( 'Enter template name (optional)', 'elementor' ); ?>" id="elementor-new-template__form__post-title" class="elementor-form-field__text" name="post_data[post_title]">
 			</div>
 		</div>
-		<button id="elementor-new-template__form__submit" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
+		<button id="elementor-new-template__form__submit" class="elementor-button e-primary"><?php echo esc_html__( 'Create Template', 'elementor' ); ?></button>
+		<a id="elementor-new-template__form__lock_button" class="elementor-button e-accent e-hidden" target="_blank"><?php // Will be filled from js. ?></a>
 	</form>
 </script>

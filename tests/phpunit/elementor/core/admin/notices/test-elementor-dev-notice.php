@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin\Notices;
 
 use Elementor\User;
+use Elementor\Settings;
 use Elementor\Core\Admin\Notices\Elementor_Dev_Notice;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -49,9 +50,21 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	public function test_should_print__when_one_experiment_in_active() {
+	public function promotion_plugins_data_provider() {
+		return [
+			[ 'woocommerce-beta-tester/woocommerce-beta-tester.php' ],
+			[ 'wp-jquery-update-test/wp-jquery-update-test.php' ],
+			[ 'wordpress-beta-tester/wp-beta-tester.php' ],
+			[ 'gutenberg/gutenberg.php' ],
+		];
+	}
+
+	/** @dataProvider admin_pages_data_provider */
+	public function test_should_print__when_one_experiment_in_active_and_the_admin_paged_is_allowed( $admin_page_id, $expected ) {
 		// Arrange
 		$this->act_as_admin_or_network_admin();
+
+		set_current_screen( $admin_page_id );
 
 		// Demonstrates a situation when the user sets the specific feature active (different from default-active)
 		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
@@ -67,15 +80,14 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 		$this->remove_test_features();
 
 		// Assert
-		$this->assertTrue( $result );
+		$this->assertEquals( $expected, $result );
 	}
 
-	public function promotion_plugins_data_provider() {
+	public function admin_pages_data_provider() {
 		return [
-			[ 'woocommerce-beta-tester/woocommerce-beta-tester.php' ],
-			[ 'wp-jquery-update-test/wp-jquery-update-test.php' ],
-			[ 'wordpress-beta-tester/wp-beta-tester.php' ],
-			[ 'gutenberg/gutenberg.php' ],
+			[ 'toplevel_page_' . Settings::PAGE_ID, true ],
+			[ 'dashboard', false ],
+			[ 'options-general', false ],
 		];
 	}
 

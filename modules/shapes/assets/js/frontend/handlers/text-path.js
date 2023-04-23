@@ -25,7 +25,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Initialize the object.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	onInit() {
 		this.elements = this.getDefaultElements();
@@ -46,7 +46,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Fetch & Inject the SVG markup.
 	 *
-	 * @return {Promise}
+	 * @return {Promise} success
 	 */
 	fetchSVG() {
 		const { url } = this.elements.pathContainer.dataset;
@@ -69,9 +69,9 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 *  Gets a text offset (relative to the starting point) as a string or int, and set it as percents to the
 	 *  `startOffset` attribute of the `<textPath>` element.
 	 *
-	 * @param offset {string|int} The text start offset.
+	 * @param {string|number} offset The text start offset.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	setOffset( offset ) {
 		if ( ! this.elements.textPath ) {
@@ -88,9 +88,9 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Handle element settings changes.
 	 *
-	 * @param setting {Object} The settings object from the editor.
+	 * @param {Object} setting The settings object from the editor.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	onElementChange( setting ) {
 		const {
@@ -121,7 +121,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 * Attach a unique ID to the `path` element in the SVG, based on the container's ID.
 	 * This function selects the first `path` with a `data-path-anchor` attribute, or defaults to the first `path` element.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	attachIdToPath() {
 		// Prioritize the custom `data` attribute over the `path` element, and fallback to the first `path`.
@@ -132,7 +132,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Initialize & build the SVG markup of the widget using the settings from the panel.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	initTextPath() {
 		const { start_point: startPoint } = this.getElementSettings();
@@ -157,16 +157,17 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Sets the text on the SVG path, including the link (if set) and its properties.
 	 *
-	 * @param newText {string} The new text to put in the text path.
+	 * @param {string} newText The new text to put in the text path.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	setText( newText ) {
 		const {
-			url,
 			is_external: isExternal,
 			nofollow,
-		} = this.getElementSettings()?.link;
+		} = this.getElementSettings().link;
+
+		const { linkUrl: url } = this.elements.pathContainer.dataset;
 
 		const target = isExternal ? '_blank' : '',
 			rel = nofollow ? 'nofollow' : '';
@@ -202,7 +203,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Determine if the text direction of the widget should be RTL or not, based on the site direction and the widget's settings.
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} is RTL
 	 */
 	isRTL() {
 		const { text_path_direction: direction } = this.getElementSettings();
@@ -218,16 +219,45 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	/**
 	 * Determine if it should RTL the text (reversing it, etc.).
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} should RTL
 	 */
 	shouldReverseText() {
-		return ( this.isRTL() && -1 === navigator.userAgent.indexOf( 'Firefox' ) );
+		if ( ! this.isRTL() ) {
+			return false;
+		}
+
+		const isFirefox = elementorFrontend.utils.environment.firefox;
+
+		if ( isFirefox ) {
+			return false;
+		}
+
+		const isChromium = elementorFrontend.utils.environment.blink;
+
+		if ( isChromium ) {
+			return ! this.isFixedChromiumVersion();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Chromium >= 96 fixed the issue with RTL text in SVG.
+	 *
+	 * @see https://chromium-review.googlesource.com/c/chromium/src/+/3159942
+	 * @see https://chromium.googlesource.com/chromium/src/+/4f1bc7d6ff8bfbf6348613bdb970fcdc2a706b5a/chrome/VERSION
+	 */
+	isFixedChromiumVersion() {
+		const FIXED_CHROMIUM_VERSION = 96;
+		const currentChromiumVersion = parseInt( navigator.userAgent.match( /(?:Chrom(?:e|ium)|Edg)\/([0-9]+)\./ )[ 1 ] );
+
+		return currentChromiumVersion >= FIXED_CHROMIUM_VERSION;
 	}
 
 	/**
 	 * Reverse the text path to support RTL.
 	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	reverseToRTL() {
 		// Make sure to use the inner `a` tag if exists.

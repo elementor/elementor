@@ -1,5 +1,7 @@
 /**
  * HTML5 - Drag and Drop
+ *
+ * @param {jQuery} $
  */
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
@@ -46,7 +48,7 @@
 		var onDragStart = function( event ) {
 			var groups = settings.groups || [],
 				dataContainer = {
-					groups: groups,
+					groups,
 				};
 
 			if ( hasFullDataTransferSupport( event ) ) {
@@ -93,6 +95,7 @@
 			defaultSettings = {
 				element: '',
 				items: '>',
+				horizontalThreshold: 0,
 				horizontalSensitivity: '10%',
 				axis: [ 'vertical', 'horizontal' ],
 				placeholder: true,
@@ -100,8 +103,6 @@
 				placeholderClass: 'html5dnd-placeholder',
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
-				getDropContainer: () => elementor.getPreviewContainer(),
-				getDropIndex: () => 0,
 				isDroppingAllowed: null,
 				onDragEnter: null,
 				onDragging: null,
@@ -127,7 +128,7 @@
 			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
-		var checkHorizontal = function( offsetX, elementWidth ) {
+		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
 			var isPercentValue,
 				sensitivity;
 
@@ -136,6 +137,19 @@
 			}
 
 			if ( ! hasVerticalDetection() ) {
+				const threshold = settings.horizontalThreshold,
+					{ left, right } = currentElement.getBoundingClientRect();
+
+				// For cases when the event is actually dispatched on the parent element, but
+				// `currentElement` is the actual element that the offset should be calculated by.
+				if ( clientX - threshold <= left ) {
+					return 'left';
+				}
+
+				if ( clientX + threshold >= right ) {
+					return 'right';
+				}
+
 				return offsetX > elementWidth / 2 ? 'right' : 'left';
 			}
 
@@ -169,7 +183,7 @@
 
 			event = event.originalEvent;
 
-			currentSide = checkHorizontal( event.offsetX, elementWidth );
+			currentSide = checkHorizontal( event.offsetX, event.clientX, elementWidth );
 
 			if ( currentSide ) {
 				return;
@@ -191,8 +205,35 @@
 				return;
 			}
 
-			var insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			const $currentElement = $( currentElement ),
+				isGridRowContainer = $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
+				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
 
+			// Make sure that the previous placeholder is removed before inserting a new one.
+			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+
+			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
+			if ( isGridRowContainer && ! isFirstInsert ) {
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
+					gridPlaceHolder = elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' ).addClass( 'e-dragging-' + currentSide );
+				gridPlaceHolder[ insertMethod ]( currentElement );
+
+				return;
+			}
+
+			// Fix placeholder placement for Flex Container with `flex-direction: row`.
+			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
+				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
+			if ( isRowContainer && ! isFirstInsert ) {
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
+					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
+
+				return;
+			}
+
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
@@ -221,11 +262,11 @@
 							if ( -1 !== draggableGroups.groups.indexOf( groupName ) ) {
 								isGroupMatch = true;
 
-								return false; // stops the forEach from extra loops
+								return false; // Stops the forEach from extra loops
 							}
 						} );
-					} catch ( e ) {
-					}
+						// eslint-disable-next-line no-empty
+					} catch ( e ) {}
 				} );
 
 				if ( ! isGroupMatch ) {
@@ -253,7 +294,17 @@
 
 			currentElement = this;
 
-			elementsCache.$element.parents().each( function() {
+			// Get both parents and children and do a drag-leave on them in order to prevent UI glitches
+			// of the placeholder that happen when the user drags from parent to child and vice versa.
+			const $parents = elementsCache.$element.parents(),
+				$children = elementsCache.$element.children();
+
+			// Remove all current element classes to take in account nested Droppable instances.
+			// TODO #1: Move to `doDragLeave()`?
+			// TODO #2: Find a better solution.
+			$children.find( '.' + settings.currentElementClass ).removeClass( settings.currentElementClass );
+
+			$parents.add( $children ).each( function() {
 				var droppableInstance = $( this ).data( 'html5Droppable' );
 
 				if ( ! droppableInstance ) {
@@ -265,7 +316,7 @@
 
 			setSide( event );
 
-			$e.run( 'editor/browser-import/validate', {
+			$e.internal( 'editor/browser-import/validate', {
 				input: event.originalEvent.dataTransfer.items,
 			} ).then( ( importAllowed ) => {
 				isDroppingAllowedState = isDroppingAllowed( event ) || importAllowed;
@@ -332,7 +383,7 @@
 		};
 
 		var onDrop = function( event ) {
-			const input = event.originalEvent.dataTransfer.files;
+			event.preventDefault();
 
 			setSide( event );
 
@@ -340,26 +391,9 @@
 				return;
 			}
 
-			event.preventDefault();
-
-			if ( input.length ) {
-				$e.run( 'editor/browser-import/import', {
-					input,
-					target: settings.getDropContainer(),
-					options: {
-						event,
-						target: {
-							at: settings.getDropIndex( currentSide, event ),
-						},
-					},
-				} );
-			} else {
-				settings.getDropContainer().view.createElementFromModel(
-					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
-					{
-						at: settings.getDropIndex( currentSide, event ),
-					}
-				);
+			// Trigger a Droppable-specific `onDropping` callback.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
 			}
 		};
 
@@ -424,6 +458,9 @@
 						$.removeData( this, pluginName );
 					}
 
+					return;
+				} else if ( 'destroy' === options ) {
+					// Escape the loop when an element is destroyed before initialisation.
 					return;
 				}
 

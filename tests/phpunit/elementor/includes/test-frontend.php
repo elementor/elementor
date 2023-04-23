@@ -70,4 +70,52 @@ class Test_Frontend extends Elementor_Test_Base {
 		$this->assertTrue( in_array( 'elementor-default', $result, true ) );
 		$this->assertFalse( in_array( 'elementor-page elementor-page-' . $post->ID , $result, true ) );
 	}
+
+	public function test_get_list_of_google_fonts_by_type() {
+		// Arrange
+		$frontend = new Frontend();
+
+		$frontend->fonts_to_enqueue = [ 'Roboto', 'Open Sans', 'Open Sans Hebrew' ];
+
+		// Act
+		$google_fonts = $frontend->get_list_of_google_fonts_by_type();
+
+		// Assert
+		$this->assertEquals( [ 'Roboto', 'Open Sans' ], $google_fonts['google'] );
+
+		$this->assertEquals( [ 'Open Sans Hebrew' ], $google_fonts['early'] );
+	}
+
+	public function test_get_stable_google_fonts_url() {
+		// Arrange
+		$frontend = new Frontend();
+
+		$mock_google_fonts = [ 'Roboto', 'Open Sans' ];
+
+		// Act
+		$fonts_url = $frontend->get_stable_google_fonts_url( $mock_google_fonts );
+
+		$font_display_url_str = '&display=' . get_option( 'elementor_font_display', 'auto' );
+
+		$font_strings = [
+			'Roboto:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic',
+			'Open+Sans:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic',
+		];
+
+		// Assert
+		$this->assertEquals( 'https://fonts.googleapis.com/css?family=' . implode( rawurlencode( '|' ), $font_strings ) . $font_display_url_str, $fonts_url );
+	}
+
+	public function test_get_early_access_google_font_urls() {
+		// Arrange
+		$frontend = new Frontend();
+
+		$mock_google_fonts = [ 'Open Sans Hebrew' ];
+
+		// Act
+		$font_urls = $frontend->get_early_access_google_font_urls( $mock_google_fonts );
+
+		// Assert
+		$this->assertContains( 'https://fonts.googleapis.com/earlyaccess/opensanshebrew.css', $font_urls );
+	}
 }

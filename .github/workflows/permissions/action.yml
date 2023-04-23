@@ -1,0 +1,31 @@
+name: Permissions
+description: Validate user permissions for the current repository & run the workflow.
+
+inputs:
+  ENVIRONMENT:
+   required: true
+   description: The environment to deploy to.
+  DEPLOYMENT_PERMITTED:
+   description: Comma separated list of users that are permitted to deploy.
+   required: true
+  DEPLOYMENT_REPOSITORY_OWNER:
+   description: The repository owner to restrict.
+   required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        if [[ "${{ inputs.DEPLOYMENT_REPOSITORY_OWNER }}" != "${{ github.event.repository.owner.login }}" ]];then
+          echo "Pass validation outside of main repo owner"
+          exit 0
+        fi
+        if [[ "${{ inputs.ENVIRONMENT }}" == "dev" ]];then
+          echo "Pass validation in the development environment"
+          exit 0
+        fi
+        if [[ "${{ inputs.DEPLOYMENT_PERMITTED }}" != *"${{ github.actor }}"* ]];then
+         echo "::error::No deployment permissions have been granted to the user : ${{ github.actor }}"
+         exit 1
+        fi

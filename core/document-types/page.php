@@ -38,6 +38,6 @@ class Page extends PageBase {
 	}
 
 	public static function get_plural_title() {
-		return __( 'Pages', 'elementor' );
+		return esc_html__( 'Pages', 'elementor' );
 	}
 }

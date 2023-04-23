@@ -2,13 +2,13 @@ var InnerTabsBehavior;
 
 InnerTabsBehavior = Marionette.Behavior.extend( {
 
-	onRenderCollection: function() {
+	onRenderCollection() {
 		this.handleInnerTabs( this.view );
 	},
 
-	handleInnerTabs: function( parent ) {
-		var closedClass = 'elementor-tab-close',
-			activeClass = 'elementor-tab-active',
+	handleInnerTabs( parent ) {
+		var closedClass = 'e-tab-close',
+			activeClass = 'e-tab-active',
 			tabsWrappers = parent.children.filter( function( view ) {
 				return 'tabs' === view.model.get( 'type' );
 			} );
@@ -40,9 +40,9 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 			} );
 	},
 
-	onChildviewControlTabClicked: function( childView ) {
-		var closedClass = 'elementor-tab-close',
-			activeClass = 'elementor-tab-active',
+	onChildviewControlTabClicked( childView ) {
+		var closedClass = 'e-tab-close',
+			activeClass = 'e-tab-active',
 			tabClicked = childView.model.get( 'name' ),
 			childrenUnderTab = this.view.children.filter( function( view ) {
 				return ( 'tab' !== view.model.get( 'type' ) && childView.model.get( 'tabs_wrapper' ) === view.model.get( 'tabs_wrapper' ) );

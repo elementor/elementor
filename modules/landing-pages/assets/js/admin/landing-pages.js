@@ -1,12 +1,12 @@
-import AdminMenuHandler from 'elementor-admin/admin-menu';
+import AdminMenuHandler from 'elementor-admin/menu-handler';
 
 export default class LandingPagesHandler extends AdminMenuHandler {
 	getDefaultSettings() {
 		const pageName = 'e-landing-page',
 			adminMenuSelectors = {
 				// The escaping is done because jQuery requires it for selectors.
-				landingPagesTablePage: 'a[href=\"edit.php?post_type=' + pageName + '\"]',
-				landingPagesAddNewPage: 'a[href=\"edit.php?post_type=elementor_library&page=' + pageName + '\"]',
+				landingPagesTablePage: 'a[href="edit.php?post_type=' + pageName + '"]',
+				landingPagesAddNewPage: 'a[href="edit.php?post_type=elementor_library&page=' + pageName + '"]',
 			};
 
 		return {

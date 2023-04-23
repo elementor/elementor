@@ -42,12 +42,16 @@ const octokit = new Octokit({ auth: TOKEN });
 		const compareStatus = res.data.status;
 		console.log(`Tag: ${BASE_TAG_NAME} '${compareStatus}' to branch: ${HEAD_BRANCH_NAME}`);
 		if (compareStatus !== 'identical') {
+			console.log(`compareStatus ${compareStatus}`);
 			// A Dev Edition version must include some Change Log lines. so, validate that there are commits that are not "Internal" and contain a Squash commiit pattern
 			const prAndVerifiedCommits = getPrCommits(res.data);
+			console.log(prAndVerifiedCommits);
 			if (prAndVerifiedCommits.length > 0) {
+				console.log(`No public commits, exit = 1`);
 				process.exit(1);
 			}
 		}
+		console.log(`exit = 0`);
 	} catch (err) {
 		console.error(`Failed to compare tag: ${BASE_TAG_NAME} to branch: ${HEAD_BRANCH_NAME} error: ${err.message}`);
 		process.exit(1);

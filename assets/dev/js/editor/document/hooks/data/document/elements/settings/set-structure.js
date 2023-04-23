@@ -20,7 +20,7 @@ export class SetStructure extends After {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( /**Container*/ container ) => {
+		containers.forEach( ( /** Container*/ container ) => {
 			container.view.adjustColumns();
 		} );
 

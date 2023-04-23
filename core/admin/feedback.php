@@ -6,6 +6,7 @@ use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -79,7 +80,6 @@ class Feedback extends Module {
 
 		return [];
 	}
-
 
 	/**
 	 * Print deactivate feedback dialog.
@@ -163,20 +163,13 @@ class Feedback extends Module {
 	 * @access public
 	 */
 	public function ajax_elementor_deactivate_feedback() {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_elementor_deactivate_feedback_nonce' ) ) {
+		$wpnonce = Utils::get_super_global_value( $_POST, '_wpnonce' ); // phpcs:ignore -- Nonce verification is made in `wp_verify_nonce()`.
+		if ( ! wp_verify_nonce( $wpnonce, '_elementor_deactivate_feedback_nonce' ) ) {
 			wp_send_json_error();
 		}
 
-		$reason_text = '';
-		$reason_key = '';
-
-		if ( ! empty( $_POST['reason_key'] ) ) {
-			$reason_key = $_POST['reason_key'];
-		}
-
-		if ( ! empty( $_POST[ "reason_{$reason_key}" ] ) ) {
-			$reason_text = $_POST[ "reason_{$reason_key}" ];
-		}
+		$reason_key = Utils::get_super_global_value( $_POST, 'reason_key' ) ?? '';
+		$reason_text = Utils::get_super_global_value( $_POST, "reason_{$reason_key}" ) ?? '';
 
 		Api::send_feedback( $reason_key, $reason_text );
 

@@ -31,7 +31,7 @@ abstract class Base extends Endpoint {
 		$items = $this->get_kit_items();
 
 		if ( ! isset( $items[ $id ] ) ) {
-			throw new Error_404( __( 'The Global value you are trying to use is not available.', 'elementor' ),
+			throw new Error_404( esc_html__( 'The Global value you are trying to use is not available.', 'elementor' ),
 				'global_not_found'
 			);
 		}
@@ -43,7 +43,7 @@ abstract class Base extends Endpoint {
 		$item = $request->get_body_params();
 
 		if ( ! isset( $item['title'] ) ) {
-			return new Data_Exception( __( 'Invalid title', 'elementor' ), 'invalid_title' );
+			return new Data_Exception( esc_html__( 'Invalid title', 'elementor' ), 'invalid_title' );
 		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();

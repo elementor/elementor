@@ -1,0 +1,17 @@
+{
+	"name": "@elementor/editor",
+	"dependencies": {
+		"@elementor/locations": "*",
+		"@elementor/store": "*",
+		"@elementor/ui": "*",
+		"@elementor/v1-adapters": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x",
+		"react-dom": "17.x"
+	},
+	"elementor": {
+		"type": "app"
+	}
+}

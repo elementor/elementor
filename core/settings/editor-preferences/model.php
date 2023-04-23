@@ -105,7 +105,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'responsive_heading',
 			[
-				'label' => __( 'Responsive Preview', 'elementor' ),
+				'label' => esc_html__( 'Responsive Preview', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
@@ -114,10 +114,10 @@ class Model extends BaseModel {
 		$this->add_control(
 			'show_hidden_elements',
 			[
-				'label' => __( 'Hidden Elements', 'elementor' ),
+				'label' => esc_html__( 'Hidden Elements', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_on' => 'Show',
-				'label_off' => 'Hide',
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'default' => 'yes',
 			]
 		);
@@ -134,6 +134,35 @@ class Model extends BaseModel {
 					'tablet' => esc_html__( 'Tablet', 'elementor' ),
 					'desktop' => esc_html__( 'Desktop', 'elementor' ),
 				],
+			]
+		);
+
+		$this->add_control(
+			'exit_to',
+			[
+				'label' => esc_html__( 'Exit to', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'description' => esc_html__( 'Decide where you want to go when you click the "Exit" button.', 'elementor' ),
+				'default' => 'this_post',
+				'options' => [
+					'this_post' => esc_html__( 'This Post', 'elementor' ),
+					'all_posts' => esc_html__( 'All Posts', 'elementor' ),
+					'dashboard' => esc_html__( 'WP Dashboard', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
+			'enable_styleguide_preview',
+			[
+				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors and fonts.', 'elementor' ),
+				'separator' => 'before',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'default' => 'yes',
 			]
 		);
 

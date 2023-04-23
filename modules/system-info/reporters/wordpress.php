@@ -47,6 +47,7 @@ class WordPress extends Base {
 			'is_multisite' => 'WP Multisite',
 			'max_upload_size' => 'Max Upload Size',
 			'memory_limit' => 'Memory limit',
+			'max_memory_limit' => 'Max Memory limit',
 			'permalink_structure' => 'Permalink Structure',
 			'language' => 'Language',
 			'timezone' => 'Timezone',
@@ -66,35 +67,30 @@ class WordPress extends Base {
 	 * @return array {
 	 *    Report data.
 	 *
-	 *    @type string $value          WordPress memory limit.
-	 *    @type string $recommendation Recommendation memory limit.
-	 *    @type bool   $warning        Whether to display a warning. True if the limit
-	 *                                 is below the recommended 64M, False otherwise.
+	 *    @type string $value WordPress memory limit.
 	 * }
 	 */
 	public function get_memory_limit() {
-		$result = [
-			'value' => ini_get( 'memory_limit' ),
+		return [
+			'value' => (string) WP_MEMORY_LIMIT,
 		];
+	}
 
-		$min_recommended_memory = '64M';
-
-		$memory_limit_bytes = wp_convert_hr_to_bytes( $result['value'] );
-
-		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
-
-		if ( $memory_limit_bytes < $min_recommended_bytes ) {
-			$result['recommendation'] = sprintf(
-				/* translators: 1: Minimum recommended_memory, 2: WordPress wp-config memory documentation. */
-				_x( 'We recommend setting memory to at least %1$s. For more information, read about <a href="%2$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
-				$min_recommended_memory,
-				'https://go.elementor.com/wordpress-wp-config-memory/'
-			);
-
-			$result['warning'] = true;
-		}
-
-		return $result;
+	/**
+	 * Get WordPress max memory limit.
+	 *
+	 * Retrieve the WordPress max memory limit.
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value WordPress max memory limit.
+	 * }
+	 */
+	public function get_max_memory_limit() {
+		return [
+			'value' => (string) WP_MAX_MEMORY_LIMIT,
+		];
 	}
 
 	/**

@@ -388,9 +388,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => esc_html__( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
+				'description' => esc_html__( 'When you turn on privacy mode, YouTube/Vimeo won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
-					'video_type' => 'youtube',
+					'video_type' => [ 'youtube', 'vimeo' ],
 				],
 				'frontend_available' => true,
 			]
@@ -514,6 +514,29 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'preload',
+			[
+				'label' => esc_html__( 'Preload', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'metadata' => esc_html__( 'Metadata', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
+				],
+				'description' => sprintf(
+					esc_html__( 'Preload attribute lets you specify how the video should be loaded when the page loads. %1$sLearn More%2$s', 'elementor' ),
+					'<a target="_blank" href="https://go.elementor.com/preload-video/">',
+					'</a>'
+				),
+				'default' => 'metadata',
+				'condition' => [
+					'video_type' => 'hosted',
+					'autoplay' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'poster',
 			[
 				'label' => esc_html__( 'Poster', 'elementor' ),
@@ -600,6 +623,41 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'play_icon',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
+							'label' => 'Default',
+							'icon' => 'eicon-play',
+						],
+						'icon' => [
+							'icon' => 'eicon-star',
+						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
+						'play-circle',
+					],
+					'fa-solid' => [
+						'play',
+						'play-circle',
+					],
+				],
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'show_play_icon!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'lightbox',
 			[
 				'label' => esc_html__( 'Lightbox', 'elementor' ),
@@ -638,9 +696,18 @@ class Widget_Video extends Widget_Base {
 					'11' => '1:1',
 					'916' => '9:16',
 				],
+				'selectors_dictionary' => [
+					'169' => '1.77777', // 16 / 9
+					'219' => '2.33333', // 21 / 9
+					'43' => '1.33333', // 4 / 3
+					'32' => '1.5', // 3 / 2
+					'11' => '1', // 1 / 1
+					'916' => '0.5625', // 9 / 16
+				],
 				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-				'frontend_available' => true,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
+				],
 			]
 		);
 
@@ -711,12 +778,13 @@ class Widget_Video extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
 					],
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
+					'play_icon[library]!' => 'svg',
 				],
 			]
 		);
@@ -754,6 +822,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button' => 'color: {{VALUE}}',
+					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button svg' => 'fill: {{VALUE}}',
 				],
 			]
 		);
@@ -765,6 +834,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover' => 'color: {{VALUE}}',
+					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover svg' => 'fill: {{VALUE}}',
 				],
 				'separator' => 'after',
 			]
@@ -818,6 +888,14 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	public function print_a11y_text( $image_overlay ) {
+		if ( empty( $image_overlay['alt'] ) ) {
+			echo esc_html__( 'Play Video', 'elementor' );
+		} else {
+			echo esc_html__( 'Play Video about', 'elementor' ) . ' ' . esc_attr( $image_overlay['alt'] );
+		}
 	}
 
 	/**
@@ -876,10 +954,6 @@ class Widget_Video extends Widget_Base {
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
 
-		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
-		}
-
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
 		?>
 		<div <?php $this->print_render_attribute_string( 'video-wrapper' ); ?>>
@@ -918,6 +992,7 @@ class Widget_Video extends Widget_Base {
 					$this->add_render_attribute( 'image-overlay', [
 						'data-elementor-open-lightbox' => 'yes',
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
+						'data-e-action-hash' => Plugin::instance()->frontend->create_action_hash( 'lightbox', $lightbox_options ),
 					] );
 
 					if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -941,14 +1016,17 @@ class Widget_Video extends Widget_Base {
 						<?php Group_Control_Image_Size::print_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
-						<div class="elementor-custom-embed-play" role="button">
+						<div class="elementor-custom-embed-play" role="button" aria-label="<?php $this->print_a11y_text( $settings['image_overlay'] ); ?>" tabindex="0">
 							<?php
-								Icons_Manager::render_icon( [
+							if ( empty( $settings['play_icon']['value'] ) ) {
+								$settings['play_icon'] = [
 									'library' => 'eicons',
 									'value' => 'eicon-play',
-								], [ 'aria-hidden' => 'true' ] );
+								];
+							}
+							Icons_Manager::render_icon( $settings['play_icon'], [ 'aria-hidden' => 'true' ] );
 							?>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Play Video', 'elementor' ); ?></span>
+							<span class="elementor-screen-only"><?php $this->print_a11y_text( $settings['image_overlay'] ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>
@@ -1034,6 +1112,10 @@ class Widget_Video extends Widget_Base {
 			$params['color'] = str_replace( '#', '', $settings['color'] );
 
 			$params['autopause'] = '0';
+
+			if ( ! empty( $settings['yt_privacy'] ) ) {
+				$params['dnt'] = 'true';
+			}
 		} elseif ( 'dailymotion' === $settings['video_type'] ) {
 			$params_dictionary = [
 				'controls',
@@ -1113,6 +1195,10 @@ class Widget_Video extends Widget_Base {
 			if ( $settings[ $option_name ] ) {
 				$video_params[ $option_name ] = '';
 			}
+		}
+
+		if ( $settings['preload'] ) {
+			$video_params['preload'] = $settings['preload'];
 		}
 
 		if ( $settings['mute'] ) {

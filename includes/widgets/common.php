@@ -52,6 +52,7 @@ class Widget_Common extends Widget_Base {
 	 * Returns an array of device args.
 	 *
 	 * @since 3.4.7
+	 * @deprcated 3.7.0 - Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
 	 * @access protected
 	 *
 	 * @param array $args arguments to duplicate per breakpoint
@@ -60,8 +61,10 @@ class Widget_Common extends Widget_Base {
 	 * @return array responsive device args
 	 */
 	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.0' );
+
 		$device_args = [];
-		$breakpoints = Breakpoints_Manager::get_default_config();
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
 			// If the device is not excluded, add it to the device args array.
@@ -161,18 +164,15 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Register common widget controls.
+	 * Register the Layout section.
 	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
-	 * @since 3.1.0
-	 * @access protected
+	 * @return void
 	 */
-	protected function register_controls() {
+	private function register_layout_section() {
 		$this->start_controls_section(
 			'_section_style',
 			[
-				'label' => esc_html__( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -192,7 +192,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -204,9 +204,358 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$experiments_manager = Plugin::$instance->experiments;
+		$is_container_active = $experiments_manager->is_feature_active( 'container' );
+
+		$this->add_responsive_control(
+			'_element_width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'inherit' => esc_html__( 'Full Width', 'elementor' ) . ' (100%)',
+					'auto' => esc_html__( 'Inline', 'elementor' ) . ' (auto)',
+					'initial' => esc_html__( 'Custom', 'elementor' ),
+				],
+				'selectors_dictionary' => [
+					'inherit' => '100%',
+				],
+				'prefix_class' => 'elementor-widget%s__width-',
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_element_custom_width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'px' => [
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'max' => 100,
+						'step' => 1,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [ '_element_width' => 'initial' ],
+			]
+		);
+
+		// Register Flex controls only if the Container experiment is active.
+		if ( $is_container_active ) {
+			$this->add_group_control(
+				Group_Control_Flex_Item::get_type(),
+				[
+					'name' => '_flex',
+					// Hack to increase specificity and make sure that the current widget overrides the
+					// parent flex settings.
+					'selector' => '{{WRAPPER}}.elementor-element',
+					'include' => [
+						'align_self',
+						'order',
+						'order_custom',
+						'size',
+						'grow',
+						'shrink',
+					],
+					'fields_options' => [
+						'align_self' => [
+							'separator' => 'before',
+						],
+					],
+				]
+			);
+		}
+
+		$vertical_align_conditions = [
+			'_element_width!' => '',
+			'_position' => '',
+		];
+
+		if ( $is_container_active ) {
+			$vertical_align_conditions['_element_vertical_align!'] = ''; // TODO: For BC.
+		}
+
+		// TODO: For BC - Remove in the future.
+		$this->add_responsive_control(
+			'_element_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'flex-start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'condition' => $vertical_align_conditions,
+				'selectors' => [
+					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_position_description',
+			[
+				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'absolute' => esc_html__( 'Absolute', 'elementor' ),
+					'fixed' => esc_html__( 'Fixed', 'elementor' ),
+				],
+				'prefix_class' => 'elementor-',
+				'frontend_available' => true,
+				'separator' => 'before',
+			]
+		);
+
+		$start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+		$end = ! is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+
+		$this->add_control(
+			'_offset_orientation_h',
+			[
+				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => $start,
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => $end,
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h!' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 0.1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_offset_orientation_v',
+			[
+				'label' => esc_html__( 'Vertical Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'end' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'render_type' => 'ui',
+				'condition' => [
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v!' => 'end',
+					'_position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v' => 'end',
+					'_position!' => '',
 				],
 			]
 		);
@@ -219,7 +568,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -230,6 +578,9 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
@@ -243,6 +594,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -253,7 +607,14 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Register the Motion Effects section.
+	 *
+	 * @return void
+	 */
+	private function register_effects_section() {
 		$this->start_controls_section(
 			'section_effects',
 			[
@@ -306,510 +667,13 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
-		$this->start_controls_section(
-			'_section_transform',
-			[
-				'label' => esc_html__( 'Transform', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->start_controls_tabs( '_tabs_positioning' );
-
-		$transform_prefix_class = 'e-';
-		$transform_return_value = 'transform';
-
-		foreach ( [ '', '_hover' ] as $tab ) {
-			$state = '_hover' === $tab ? ':hover' : '';
-
-			$this->start_controls_tab(
-				"_tab_positioning{$tab}",
-				[
-					'label' => '' === $tab ? esc_html__( 'Normal', 'elementor' ) : esc_html__( 'Hover', 'elementor' ),
-				]
-			);
-
-			$this->add_control(
-				"_transform_rotate_popover{$tab}",
-				[
-					'label' => esc_html__( 'Rotate', 'elementor' ),
-					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => $transform_prefix_class,
-					'return_value' => $transform_return_value,
-				]
-			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
-				"_transform_rotateZ_effect{$tab}",
-				[
-					'label' => esc_html__( 'Rotate', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => -360,
-							'max' => 360,
-						],
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
-					],
-					'condition' => [
-						"_transform_rotate_popover{$tab}!" => '',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_control(
-				"_transform_rotate_3d{$tab}",
-				[
-					'label' => esc_html__( '3D Rotate', 'elementor' ),
-					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'On', 'elementor' ),
-					'label_off' => esc_html__( 'Off', 'elementor' ),
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
-					],
-					'condition' => [
-						"_transform_rotate_popover{$tab}!" => '',
-					],
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_rotateX_effect{$tab}",
-				[
-					'label' => esc_html__( 'Rotate X', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => -360,
-							'max' => 360,
-						],
-					],
-					'condition' => [
-						"_transform_rotate_3d{$tab}!" => '',
-						"_transform_rotate_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_rotateY_effect{$tab}",
-				[
-					'label' => esc_html__( 'Rotate Y', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => -360,
-							'max' => 360,
-						],
-					],
-					'condition' => [
-						"_transform_rotate_3d{$tab}!" => '',
-						"_transform_rotate_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_perspective_effect{$tab}",
-				[
-					'label' => esc_html__( 'Perspective', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => 0,
-							'max' => 1000,
-						],
-					],
-					'condition' => [
-						"_transform_rotate_popover{$tab}!" => '',
-						"_transform_rotate_3d{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-perspective: {{SIZE}}px',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->end_popover();
-
-			$this->add_control(
-				"_transform_translate_popover{$tab}",
-				[
-					'label' => esc_html__( 'Offset', 'elementor' ),
-					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => $transform_prefix_class,
-					'return_value' => $transform_return_value,
-				]
-			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
-				"_transform_translateX_effect{$tab}",
-				[
-					'label' => esc_html__( 'Offset X', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
-					'range' => [
-						'%' => [
-							'min' => -100,
-							'max' => 100,
-						],
-						'px' => [
-							'min' => -1000,
-							'max' => 1000,
-						],
-					],
-					'condition' => [
-						"_transform_translate_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_translateY_effect{$tab}",
-				[
-					'label' => esc_html__( 'Offset Y', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
-					'range' => [
-						'%' => [
-							'min' => -100,
-							'max' => 100,
-						],
-						'px' => [
-							'min' => -1000,
-							'max' => 1000,
-						],
-					],
-					'condition' => [
-						"_transform_translate_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->end_popover();
-
-			$this->add_control(
-				"_transform_scale_popover{$tab}",
-				[
-					'label' => esc_html__( 'Scale', 'elementor' ),
-					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => $transform_prefix_class,
-					'return_value' => $transform_return_value,
-				]
-			);
-
-			$this->start_popover();
-
-			$this->add_control(
-				"_transform_keep_proportions{$tab}",
-				[
-					'label' => esc_html__( 'Keep Proportions', 'elementor' ),
-					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'On', 'elementor' ),
-					'label_off' => esc_html__( 'Off', 'elementor' ),
-					'default' => 'yes',
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_scale_effect{$tab}",
-				[
-					'label' => esc_html__( 'Scale', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => 0,
-							'max' => 2,
-							'step' => 0.1,
-						],
-					],
-					'condition' => [
-						"_transform_scale_popover{$tab}!" => '',
-						"_transform_keep_proportions{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scale: {{SIZE}};',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_scaleX_effect{$tab}",
-				[
-					'label' => esc_html__( 'Scale X', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => 0,
-							'max' => 2,
-							'step' => 0.1,
-						],
-					],
-					'condition' => [
-						"_transform_scale_popover{$tab}!" => '',
-						"_transform_keep_proportions{$tab}" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleX: {{SIZE}};',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_scaleY_effect{$tab}",
-				[
-					'label' => esc_html__( 'Scale Y', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => 0,
-							'max' => 2,
-							'step' => 0.1,
-						],
-					],
-					'condition' => [
-						"_transform_scale_popover{$tab}!" => '',
-						"_transform_keep_proportions{$tab}" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleY: {{SIZE}};',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->end_popover();
-
-			$this->add_control(
-				"_transform_skew_popover{$tab}",
-				[
-					'label' => esc_html__( 'Skew', 'elementor' ),
-					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => $transform_prefix_class,
-					'return_value' => $transform_return_value,
-				]
-			);
-
-			$this->start_popover();
-
-			$this->add_responsive_control(
-				"_transform_skewX_effect{$tab}",
-				[
-					'label' => esc_html__( 'Skew X', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => -360,
-							'max' => 360,
-						],
-					],
-					'condition' => [
-						"_transform_skew_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_responsive_control(
-				"_transform_skewY_effect{$tab}",
-				[
-					'label' => esc_html__( 'Skew Y', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
-							'min' => -360,
-							'max' => 360,
-						],
-					],
-					'condition' => [
-						"_transform_skew_popover{$tab}!" => '',
-					],
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->end_popover();
-
-			$this->add_control(
-				"_transform_flipX_effect{$tab}",
-				[
-					'label' => esc_html__( 'Flip Horizontal', 'elementor' ),
-					'type' => Controls_Manager::CHOOSE,
-					'options' => [
-						'transform' => [
-							'title' => esc_html__( 'Flip Horizontal', 'elementor' ),
-							'icon' => 'eicon-flip eicon-tilted',
-						],
-					],
-					'prefix_class' => $transform_prefix_class,
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipX: -1',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			$this->add_control(
-				"_transform_flipY_effect{$tab}",
-				[
-					'label' => esc_html__( 'Flip Vertical', 'elementor' ),
-					'type' => Controls_Manager::CHOOSE,
-					'options' => [
-						'transform' => [
-							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
-							'icon' => 'eicon-flip',
-						],
-					],
-					'prefix_class' => $transform_prefix_class,
-					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipY: -1',
-					],
-					'frontend_available' => true,
-				]
-			);
-
-			if ( '_hover' === $tab ) {
-				$this->add_control(
-					'_transform_transition_hover',
-					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
-						'type' => Controls_Manager::SLIDER,
-						'range' => [
-							'px' => [
-								'min' => 100,
-								'max' => 10000,
-							],
-						],
-						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
-						],
-					]
-				);
-			}
-
-			${"transform_origin_conditions{$tab}"} = [
-				[
-					'name' => "_transform_scale_popover{$tab}",
-					'operator' => '!=',
-					'value' => '',
-				],
-				[
-					'name' => "_transform_rotate_popover{$tab}",
-					'operator' => '!=',
-					'value' => '',
-				],
-				[
-					'name' => "_transform_flipX_effect{$tab}",
-					'operator' => '!=',
-					'value' => '',
-				],
-				[
-					'name' => "_transform_flipY_effect{$tab}",
-					'operator' => '!=',
-					'value' => '',
-				],
-			];
-
-			$this->end_controls_tab();
-		}
-
-		$this->end_controls_tabs();
-
-		$transform_origin_conditions = [
-			'relation' => 'or',
-			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
-		];
-
-		// Will override motion effect transform-origin
-		$this->add_responsive_control(
-			'motion_fx_transform_x_anchor_point',
-			[
-				'label' => esc_html__( 'X Anchor Point', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-h-align-center',
-					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
-					],
-				],
-				'conditions' => $transform_origin_conditions,
-				'separator' => 'before',
-				'selectors' => [
-					'{{WRAPPER}}' => '--e-transform-origin-x: {{VALUE}}',
-				],
-			]
-		);
-
-		// Will override motion effect transform-origin
-		$this->add_responsive_control(
-			'motion_fx_transform_y_anchor_point',
-			[
-				'label' => esc_html__( 'Y Anchor Point', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'top' => [
-						'title' => esc_html__( 'Top', 'elementor' ),
-						'icon' => 'eicon-v-align-top',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-v-align-middle',
-					],
-					'bottom' => [
-						'title' => esc_html__( 'Bottom', 'elementor' ),
-						'icon' => 'eicon-v-align-bottom',
-					],
-				],
-				'conditions' => $transform_origin_conditions,
-				'selectors' => [
-					'{{WRAPPER}}' => '--e-transform-origin-y: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-
+	/** Register the Background section.
+	 *
+	 * @return void
+	 */
+	private function register_background_section() {
 		$this->start_controls_section(
 			'_section_background',
 			[
@@ -832,6 +696,15 @@ class Widget_Common extends Widget_Base {
 			[
 				'name' => '_background',
 				'selector' => '{{WRAPPER}} > .elementor-widget-container',
+				'fields_options' => [
+					'image' => [
+						'background_lazyload' => [
+							'active' => true,
+							'keys' => [ '_background_image', 'url' ],
+							'selector' => '.elementor-widget-container',
+						],
+					],
+				],
 			]
 		);
 
@@ -876,7 +749,14 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Register the Border section.
+	 *
+	 * @return void
+	 */
+	private function register_border_section() {
 		$this->start_controls_section(
 			'_section_border',
 			[
@@ -907,7 +787,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -944,7 +824,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -982,7 +862,15 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
+	}
 
+
+	/**
+	 * Register the Mask section.
+	 *
+	 * @return void
+	 */
+	private function register_masking_section() {
 		$this->start_controls_section(
 			'_section_masking',
 			[
@@ -1002,16 +890,19 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control( '_mask_shape', [
-			'label' => esc_html__( 'Shape', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => $this->get_shapes(),
-			'default' => 'circle',
-			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
-			'condition' => [
-				'_mask_switch!' => '',
-			],
-		] );
+		$this->add_control(
+			'_mask_shape',
+			[
+				'label' => esc_html__( 'Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $this->get_shapes(),
+				'default' => 'circle',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
 
 		$this->add_control(
 			'_mask_image',
@@ -1074,7 +965,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Scale', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -1135,7 +1026,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'X Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -500,
@@ -1171,7 +1062,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Y Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => -500,
@@ -1208,10 +1099,10 @@ class Widget_Common extends Widget_Base {
 				'label' => esc_html__( 'Repeat', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'no-repeat' => esc_html__( 'No-Repeat', 'elementor' ),
+					'no-repeat' => esc_html__( 'No-repeat', 'elementor' ),
 					'repeat' => esc_html__( 'Repeat', 'elementor' ),
-					'repeat-x' => esc_html__( 'Repeat-X', 'elementor' ),
-					'repeat-Y' => esc_html__( 'Repeat-Y', 'elementor' ),
+					'repeat-x' => esc_html__( 'Repeat-x', 'elementor' ),
+					'repeat-Y' => esc_html__( 'Repeat-y', 'elementor' ),
 					'round' => esc_html__( 'Round', 'elementor' ),
 					'space' => esc_html__( 'Space', 'elementor' ),
 				],
@@ -1225,339 +1116,15 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
-		$this->start_controls_section(
-			'_section_position',
-			[
-				'label' => esc_html__( 'Positioning', 'elementor' ),
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
 
-		$this->add_responsive_control(
-			'_element_width',
-			[
-				'label' => esc_html__( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'inherit' => esc_html__( 'Full Width', 'elementor' ) . ' (100%)',
-					'auto' => esc_html__( 'Inline', 'elementor' ) . ' (auto)',
-					'initial' => esc_html__( 'Custom', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'inherit' => '100%',
-				],
-				'prefix_class' => 'elementor-widget%s__width-',
-				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_element_custom_width',
-			[
-				'label' => esc_html__( 'Custom Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'max' => 100,
-						'step' => 1,
-					],
-				],
-				'condition' => [
-					'_element_width' => 'initial',
-				],
-				'device_args' => $this->get_responsive_device_args( [
-					'condition' => [
-						'_element_width_{{DEVICE}}' => [ 'initial' ],
-					],
-				] ),
-				'size_units' => [ 'px', '%', 'vw' ],
-				'selectors' => [
-					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_element_vertical_align',
-			[
-				'label' => esc_html__( 'Vertical Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'flex-start' => [
-						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-v-align-top',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-v-align-middle',
-					],
-					'flex-end' => [
-						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-v-align-bottom',
-					],
-				],
-				'condition' => [
-					'_element_width!' => '',
-					'_position' => '',
-				],
-				'device_args' => $this->get_responsive_device_args( [
-					'condition' => [
-						'_element_width_{{DEVICE}}!' => '',
-						'_position' => '',
-					],
-				] ),
-				'selectors' => [
-					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_position_description',
-			[
-				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
-				'type' => Controls_Manager::RAW_HTML,
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
-				'render_type' => 'ui',
-				'condition' => [
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_position',
-			[
-				'label' => esc_html__( 'Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => '',
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'absolute' => esc_html__( 'Absolute', 'elementor' ),
-					'fixed' => esc_html__( 'Fixed', 'elementor' ),
-				],
-				'prefix_class' => 'elementor-',
-				'frontend_available' => true,
-			]
-		);
-
-		$start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
-		$end = ! is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
-
-		$this->add_control(
-			'_offset_orientation_h',
-			[
-				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'toggle' => false,
-				'default' => 'start',
-				'options' => [
-					'start' => [
-						'title' => $start,
-						'icon' => 'eicon-h-align-left',
-					],
-					'end' => [
-						'title' => $end,
-						'icon' => 'eicon-h-align-right',
-					],
-				],
-				'classes' => 'elementor-control-start-end',
-				'render_type' => 'ui',
-				'condition' => [
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_offset_x',
-			[
-				'label' => esc_html__( 'Offset', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => -1000,
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vw' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vh' => [
-						'min' => -200,
-						'max' => 200,
-					],
-				],
-				'default' => [
-					'size' => '0',
-				],
-				'size_units' => [ 'px', '%', 'vw', 'vh' ],
-				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'_offset_orientation_h!' => 'end',
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_offset_x_end',
-			[
-				'label' => esc_html__( 'Offset', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => -1000,
-						'max' => 1000,
-						'step' => 0.1,
-					],
-					'%' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vw' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vh' => [
-						'min' => -200,
-						'max' => 200,
-					],
-				],
-				'default' => [
-					'size' => '0',
-				],
-				'size_units' => [ 'px', '%', 'vw', 'vh' ],
-				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'_offset_orientation_h' => 'end',
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_offset_orientation_v',
-			[
-				'label' => esc_html__( 'Vertical Orientation', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'toggle' => false,
-				'default' => 'start',
-				'options' => [
-					'start' => [
-						'title' => esc_html__( 'Top', 'elementor' ),
-						'icon' => 'eicon-v-align-top',
-					],
-					'end' => [
-						'title' => esc_html__( 'Bottom', 'elementor' ),
-						'icon' => 'eicon-v-align-bottom',
-					],
-				],
-				'render_type' => 'ui',
-				'condition' => [
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_offset_y',
-			[
-				'label' => esc_html__( 'Offset', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => -1000,
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vh' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vw' => [
-						'min' => -200,
-						'max' => 200,
-					],
-				],
-				'size_units' => [ 'px', '%', 'vh', 'vw' ],
-				'default' => [
-					'size' => '0',
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'_offset_orientation_v!' => 'end',
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_offset_y_end',
-			[
-				'label' => esc_html__( 'Offset', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'min' => -1000,
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vh' => [
-						'min' => -200,
-						'max' => 200,
-					],
-					'vw' => [
-						'min' => -200,
-						'max' => 200,
-					],
-				],
-				'size_units' => [ 'px', '%', 'vh', 'vw' ],
-				'default' => [
-					'size' => '0',
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [
-					'_offset_orientation_v' => 'end',
-					'_position!' => '',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-
+	/**
+	 * Register the Responsive section.
+	 *
+	 * @return void
+	 */
+	private function register_responsive_section() {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
@@ -1569,7 +1136,12 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -1578,6 +1150,30 @@ class Widget_Common extends Widget_Base {
 		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * Register common widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function register_controls() {
+		$this->register_layout_section();
+
+		$this->register_effects_section();
+
+		$this->register_transform_section();
+
+		$this->register_background_section();
+
+		$this->register_border_section();
+
+		$this->register_masking_section();
+
+		$this->register_responsive_section();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 

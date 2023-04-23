@@ -117,6 +117,9 @@ class Widget_Read_More extends Widget_Base {
 				'label' => esc_html__( 'Read More Text', 'elementor' ),
 				'placeholder' => $default_link_text,
 				'default' => $default_link_text,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 

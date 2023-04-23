@@ -1,0 +1,334 @@
+//
+// Nested Tabs
+//
+.elementor-widget-n-tabs {
+	--n-tabs-color-accent-fallback: #61CE70;
+	--n-tabs-color-secondary-fallback: #54595F;
+	--n-tabs-default-padding-block: 15px;
+	--n-tabs-default-padding-inline: 35px;
+	--n-tabs-background-color: transparent;
+	--n-tabs-display: flex;
+	--n-tabs-direction: column;
+	--n-tabs-gap: 10px;
+	--n-tabs-heading-display: flex;
+	--n-tabs-heading-direction: row;
+	--n-tabs-heading-grow: initial;
+	--n-tabs-heading-justify-content: center;
+	--n-tabs-heading-width: initial;
+	--n-tabs-border-width: 1px;
+	--n-tabs-border-color: #{$gray-light};
+	--n-tabs-content-padding: initial;
+	--n-tabs-content-border-radius: initial;
+	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-title-color-hover: #{$white};
+	--n-tabs-title-color-active: #{$white};
+	--n-tabs-title-background-color: #{$editor-background-light};
+	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-width: initial;
+	--n-tabs-title-height: initial;
+	--n-tabs-title-font-size: 1rem;
+	--n-tabs-title-justify-content-toggle: initial;
+	--n-tabs-title-align-items-toggle: center;
+	--n-tabs-title-justify-content: center;
+	--n-tabs-title-align-items: center;
+	--n-tabs-title-direction: row;
+	--n-tabs-title-gap: 10px;
+	--n-tabs-title-flex-grow: 0;
+	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-border-radius: initial;
+	--n-tabs-title-transition: 0.3s;
+	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
+	--n-tabs-icon-color-active: #{$white};
+	--n-tabs-icon-gap: 5px;
+	width: 100%;
+	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
+
+	.e-n-tabs {
+		display: var( --n-tabs-display );
+		flex-direction: var( --n-tabs-direction );
+		gap: var( --n-tabs-gap );
+		text-align: $start;
+
+		&-heading {
+			display: var( --n-tabs-heading-display );
+			flex-basis: var( --n-tabs-heading-width );
+			flex-direction: var( --n-tabs-heading-direction );
+			flex-shrink: 0;
+			flex-wrap: wrap;
+			justify-content: var( --n-tabs-heading-justify-content );
+			gap: var( --n-tabs-title-gap );
+		}
+
+		&-content {
+			flex-grow: 1;
+			padding: var( --n-tabs-content-padding );
+			border-radius: var( --n-tabs-content-border-radius );
+			min-width: 0;
+		}
+	}
+
+	.e-n-tab {
+
+		&-title {
+			display: flex;
+			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
+			flex-direction: var( --n-tabs-title-direction );
+			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
+			gap: var( --n-tabs-icon-gap );
+			border-width: var( --n-tabs-border-width );
+			position: relative;
+			cursor: pointer;
+			outline: none;
+			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-basis: fit-content;
+			padding-top: var( --n-tabs-title-padding-top );
+			padding-right: var( --n-tabs-title-padding-right );
+			padding-bottom: var( --n-tabs-title-padding-bottom );
+			padding-left: var( --n-tabs-title-padding-left );
+			border-radius: var( --n-tabs-title-border-radius );
+			height: var( --n-tabs-title-height );
+			width: var( --n-tabs-title-width );
+			transition: background var( --n-tabs-title-transition ),
+					color var( --n-tabs-title-transition ),
+					border var( --n-tabs-title-transition ),
+					box-shadow var( --n-tabs-title-transition ),
+					text-shadow var( --n-tabs-title-transition ),
+					stroke var( --n-tabs-title-transition ),
+					stroke-width var( --n-tabs-title-transition ),
+					-webkit-text-stroke-width var( --n-tabs-title-transition ),
+					-webkit-text-stroke-color var( --n-tabs-title-transition ),
+					transform var( --n-tabs-title-transition );
+
+			& span svg,
+			& span i {
+				transition: color var( --n-tabs-title-transition ),
+					fill var( --n-tabs-title-transition );
+			}
+
+			&-text {
+				display: flex;
+			  	align-items: center;
+			  	font-size: var( --n-tabs-title-font-size );
+			}
+
+			.e-n-tab-icon {
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				order: var( --n-tabs-icon-order );
+				overflow: hidden;
+
+				i {
+					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+				}
+
+				svg {
+					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+				}
+
+				&:empty {
+					display: none;
+				}
+			}
+
+			&:not( .e-active ) {
+				background-color: var( --n-tabs-title-background-color );
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color );
+				}
+
+				.e-n-tab-icon {
+
+					i {
+						color: var( --n-tabs-icon-color );
+					}
+
+					svg {
+						fill: var( --n-tabs-icon-color );
+					}
+
+					i,
+					svg {
+
+						&:last-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
+						}
+					}
+				}
+			}
+
+			&:not( .e-active ).e-normal:hover {
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color-hover );
+				}
+
+				.e-n-tab-icon {
+
+					i {
+						color: var( --n-tabs-icon-color-hover );
+					}
+
+					svg {
+						fill: var( --n-tabs-icon-color-hover );
+					}
+				}
+			}
+
+			&.e-active {
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color-active );
+				}
+
+				.e-n-tab-icon {
+
+					i {
+						color: var( --n-tabs-icon-color-active );
+					}
+
+					svg {
+						fill: var( --n-tabs-icon-color-active );
+					}
+
+					i,
+					svg {
+
+						&:first-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
+						}
+					}
+				}
+
+			  	// Remove the hover animation from the active tabs.
+			  	&[class*="elementor-animation-"] {
+					&:focus,
+					&:active,
+					&:hover {
+						transform: initial;
+						animation: initial;
+					}
+				}
+			}
+		}
+	}
+
+	.e-n-tabs-content {
+
+		.e-collapse {
+			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+
+			&:not(:first-child) {
+				margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				margin-bottom: var( --n-tabs-gap );
+			}
+		}
+
+		> .e-con:not(.e-active) {
+			display: none;
+		}
+	}
+}
+
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-normal:hover {
+	background-color: var( --n-tabs-title-background-color-hover );
+	background-image: initial;
+}
+
+// TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
+	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
+
+	&.e-active {
+		background-color: var( --n-tabs-title-background-color-active );
+		background-image: initial;
+	}
+}
+
+// Responsive mode
+@mixin hide-normal-tabs-($device) {
+	.e-n-tabs-#{$device} {
+
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
+			display: none;
+		}
+	}
+}
+
+@mixin hide-collapse-tabs-($device) {
+	.e-n-tabs-#{$device} {
+
+		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+			display: none;
+		}
+	}
+}
+
+// Mobile.
+@media (min-width: $screen-mobile-next) {
+	@include hide-collapse-tabs-(mobile);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include hide-normal-tabs-(mobile);
+}
+
+// Mobile Extra.
+@media (min-width: $screen-mobile-extra-next) {
+	@include hide-collapse-tabs-(mobile_extra);
+}
+
+@media (max-width: $screen-mobile-extra-max) {
+	@include hide-normal-tabs-(mobile_extra);
+}
+
+// Tablet.
+@media (min-width: $screen-tablet-next) {
+	@include hide-collapse-tabs-(tablet);
+}
+
+@media (max-width: $screen-tablet-max) {
+	@include hide-normal-tabs-(tablet);
+}
+
+// Tablet Extra.
+@media (min-width: $screen-tablet-extra-next) {
+	@include hide-collapse-tabs-(tablet_extra);
+}
+
+@media (max-width: $screen-tablet-extra-max) {
+	@include hide-normal-tabs-(tablet_extra);
+}
+
+// Laptop.
+@media (min-width: $screen-desktop-min) {
+	@include hide-collapse-tabs-(laptop);
+}
+
+@media (max-width: $screen-laptop-max) {
+	@include hide-normal-tabs-(laptop);
+}

@@ -116,4 +116,4 @@
   ![widget-heading-with-dynamic-title-date-human-readable](./_images/widget-heading-with-dynamic-title-date-human-readable.png)
 
 
-### [Back](../readme.md) 
+### [Back](../component.md) 

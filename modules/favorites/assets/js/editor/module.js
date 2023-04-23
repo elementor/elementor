@@ -1,6 +1,10 @@
 import Component from './component';
 import Widgets from './types/widgets/widgets';
+import { registerHooks } from './notice';
 
+/**
+ * @typedef {import('./favorite-type')} FavoriteType
+ */
 class FavoritesModule extends elementorModules.editor.utils.Module {
 	types = {};
 
@@ -14,17 +18,26 @@ class FavoritesModule extends elementorModules.editor.utils.Module {
 		types.forEach( ( classRef ) => this.register( classRef ) );
 	}
 
+	onElementorInit() {
+		const hasSeenNotice = elementor.config.user.introduction[ 'favorites-notice' ];
+		if ( hasSeenNotice ) {
+			return;
+		}
+
+		registerHooks();
+	}
+
 	onElementorLoaded() {
 		this.component = $e.components.register(
-			new Component( { manager: this } )
+			new Component( { manager: this } ),
 		);
 	}
 
 	/**
 	 * Get registered favorites type instance.
 	 *
-	 * @param type
-	 * @returns { FavoriteType }
+	 * @param {string} type
+	 * @return { FavoriteType } type
 	 */
 	typeInstance( type ) {
 		if ( undefined === this.types[ type ] ) {
@@ -35,8 +48,7 @@ class FavoritesModule extends elementorModules.editor.utils.Module {
 	}
 
 	/**
-	 *
-	 * @param classRef
+	 * @param {*} classRef
 	 */
 	register( classRef ) {
 		const instance = new classRef();

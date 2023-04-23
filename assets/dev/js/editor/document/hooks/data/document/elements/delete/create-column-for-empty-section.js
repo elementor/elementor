@@ -1,6 +1,9 @@
 import After from 'elementor-api/modules/hooks/data/after';
 
-export class CreateColumnForEmptySection extends After {
+/**
+ * @typedef {import('../../../../../../container/container')} Container
+ */
+ export class CreateColumnForEmptySection extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}
@@ -18,24 +21,22 @@ export class CreateColumnForEmptySection extends After {
 
 		// Validate also that its a section, this is hook should not work with new flex container.
 		return containers.some(
-			( container ) => 'section' === container.parent.type && 0 === container.parent.children.length
+			( container ) => 'section' === container.parent.type && 0 === container.parent.children.length,
 		);
 	}
 
 	/**
 	 * @inheritDoc
 	 *
-	 * @param {{}} args
-	 * @param {Container||Container[]} containers
-	 *
-	 * @returns {boolean}
+	 * @param {{}}                         args
+	 * @param {Container|Array<Container>} containers
 	 */
 	apply( args, containers ) {
 		if ( ! Array.isArray( containers ) ) {
 			containers = [ containers ];
 		}
 
-		containers.forEach( ( /**Container*/ container ) => {
+		containers.forEach( ( /** Container*/ container ) => {
 			const parent = container.parent;
 
 			// If deleted the last column, should recreate it.

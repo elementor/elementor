@@ -7,16 +7,16 @@ import Container from './container/container';
 elementorModules.editor = {
 	elements: {
 		models: {
-			BaseSettings: BaseSettings,
+			BaseSettings,
 		},
 	},
 	utils: {
 		Module: EditorModule,
-		Introduction: Introduction,
+		Introduction,
 	},
 	views: {
-		ControlsStack: ControlsStack,
+		ControlsStack,
 	},
 
-	Container: Container,
+	Container,
 };

@@ -1,51 +1,65 @@
 export default class Helpers {
 	softDeprecated( name, version, replacement ) {
-		if ( elementorCommon.config.isDebug ) {
-			this.deprecatedMessage( 'soft', name, version, replacement );
-		}
+		elementorDevTools.deprecation.deprecated( name, version, replacement );
+
+		// This is is self is deprecated.
+		elementorDevTools.deprecation.deprecated(
+			'elementorCommon.helpers.softDeprecated',
+			'3.7.0',
+			'elementorDevTools.deprecation.deprecated',
+		);
 	}
 
 	hardDeprecated( name, version, replacement ) {
-		this.deprecatedMessage( 'hard', name, version, replacement );
+		elementorDevTools.deprecation.deprecated( name, version, replacement );
+
+		// This is is self is deprecated.
+		elementorDevTools.deprecation.deprecated(
+			'elementorCommon.helpers.hardDeprecated',
+			'3.7.0',
+			'elementorDevTools.deprecation.deprecated',
+		);
 	}
 
 	deprecatedMessage( type, name, version, replacement ) {
-		let message = `\`${ name }\` is ${ type } deprecated since ${ version }`;
+		elementorDevTools.deprecation.deprecated( name, version, replacement );
 
-		if ( replacement ) {
-			message += ` - Use \`${ replacement }\` instead`;
-		}
-
-		this.consoleWarn( message );
+		// This is is self is deprecated.
+		elementorDevTools.deprecation.deprecated(
+			'elementorCommon.helpers.deprecatedMessage',
+			'3.7.0',
+			'elementorDevTools.deprecation.deprecated',
+		);
 	}
 
 	consoleWarn( ...args ) {
-		const style = `font-size: 12px; background-image: url("${ elementorCommon.config.urls.assets }images/logo-icon.png"); background-repeat: no-repeat; background-size: contain;`;
+		elementorDevTools.consoleWarn( ...args );
 
-		args.unshift( '%c  %c', style, '' );
-
-		console.warn( ...args ); // eslint-disable-line no-console
+		// This is is self is deprecated.
+		elementorDevTools.deprecation.deprecated(
+			'elementorCommon.helpers.consoleWarn',
+			'3.7.0',
+			'elementorDevTools.consoleWarn',
+		);
 	}
 
 	consoleError( message ) {
-		// TODO: function is part of $e.
-		// Show an error if devTools is available.
-		if ( $e.devTools ) {
-			$e.devTools.log.error( message );
-		}
+		// eslint-disable-next-line no-console
+		console.error( message );
 
-		// If not a 'Hook-Break' then show error.
-		if ( ! ( message instanceof $e.modules.HookBreak ) ) {
-			// eslint-disable-next-line no-console
-			console.error( message );
-		}
+		// This is is self is deprecated.
+		elementorDevTools.deprecation.deprecated(
+			'elementorCommon.helpers.consoleError',
+			'3.7.0',
+			'console.error',
+		);
 	}
 
 	deprecatedMethod( methodName, version, replacement ) {
-		this.deprecatedMessage( 'hard', methodName, version, replacement );
+		elementorDevTools.deprecation.deprecated( methodName, version, replacement );
 
 		// This itself is deprecated.
-		this.softDeprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorCommon.helpers.softDeprecated || elementorCommon.helpers.hardDeprecated' );
+		elementorDevTools.deprecation.deprecated( 'elementorCommon.helpers.deprecatedMethod', '2.8.0', 'elementorDevTools.deprecation.deprecated' );
 	}
 
 	cloneObject( object ) {

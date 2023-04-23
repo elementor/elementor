@@ -1,6 +1,11 @@
 name: Elementor-ScreenShotter
 
-on: [ push, pull_request ]
+on: [pull_request]
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   run:
@@ -12,22 +17,37 @@ jobs:
       fail-fast: false
       matrix:
         wordpress_versions: [ 'latest' ]
-    name: WordPress ${{ matrix.wordpress_versions }}
+    name: ScreenShotter - WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Startup MySQL service
-        run:  sudo /etc/init.d/mysql start
+        run: sudo systemctl start mysql.service
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
       - name: Checkout source code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
       - name: Install Elementor-ScreenShotter
         run: | ##### TO DO: Remove all sudo
           sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
           sudo chown -R $USER /usr/local/lib/node_modules
           sudo chown -R $USER /usr/local/bin/
           npm i -g @elementor/screenshotter
+          npm i -g grunt-cli
       - name: Install Dependencies
-        run: | # Also, enable import SVG
+        run: |
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
-          cd /tmp/wordpress && wp option update elementor_unfiltered_files_upload 1
+      - name: Prepare Test
+        run: | # Enable the container experiment & enable import SVG
+          cd /tmp/wordpress
+          wp elementor experiments activate container
+          wp elementor experiments activate nested-elements
+          wp option update elementor_unfiltered_files_upload 1
+          wp option update blogdescription 'Just another WordPress site' # WP >= 6.1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
@@ -37,9 +57,15 @@ jobs:
       - name: Clean up report data
         if: failure()
         run: |
+          npm i canvas@^2.8.0 merge-images@^2.0.0
           node ./.github/scripts/screenshotter-cleanup.js
       - uses: actions/upload-artifact@master
         if: failure()
         with:
           name: backstop-output
           path: /tmp/wordpress/backstop_data
+      - uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: backstop-summary-core
+          path: /tmp/merged-screenshots

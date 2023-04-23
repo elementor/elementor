@@ -11,3 +11,4 @@ npx grunt build
 mv build elementor
 zip -r $PLUGIN_ZIP_FILENAME elementor
 echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+echo "PLUGIN_ZIP_PATH=./elementor/**/*" >> $GITHUB_ENV

@@ -1,0 +1,127 @@
+name: Create RC Tag
+# Required secrets for this workflow: SLACK_TOKEN, MAINTAIN_TOKEN , SLACK_CHANNEL_RELEASEBOT
+
+env:
+  CHANGELOG_FILE: 'temp-changelog.txt'
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        type: choice
+        description: 'The channel to get the version to'
+        required: true
+        default: 'cloud'
+        options:
+          - 'ga'
+          - 'cloud'
+          - 'beta'
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - name: Get Configuration
+        id: configuration
+        uses: maork-elementor/json-to-variables@main
+        with:
+            filename: './.github/workflows/config.json'
+            prefix: config
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Env Vars Configure
+        uses: ./.github/workflows/env-vars-configure
+        with:
+          CHANNEL: ${{ github.event.inputs.channel }}
+          REF: ${{ github.ref }}
+      - name: Bump Channel Version
+        uses: ./.github/workflows/bump-channel-version
+        with:
+          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+          CHANNEL: ${{ github.event.inputs.channel }}
+      - name: Install Dependencies
+        run: |
+          npm ci
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+      - name: Generate changelog
+        uses : ./.github/workflows/generate-changelog
+        with:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: ${{ github.ref }}
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
+          GENERATE_EMPTY_CHANGELOG: true
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
+          files: |
+            elementor-*.zip
+            ${{ env.CHANGELOG_FILE }}
+          prerelease: true
+          body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Post To Slack Created RC Release
+        uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASEBOT }}
+          PAYLOAD: |
+                  {
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                        },
+                        "accessory": {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "Open :point_left:",
+                            "emoji": true
+                          },
+                          "value": "open-release",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
+                          "action_id": "button-action"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
+                        }
+                      }
+                    ]
+                  }

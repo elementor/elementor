@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class PasteStyle extends CommandBase {
+export class PasteStyle extends $e.modules.CommandBase {
 	apply() {
 		const selectedElement = elementor.getCurrentElement();
 

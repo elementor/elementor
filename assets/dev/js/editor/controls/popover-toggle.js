@@ -17,6 +17,21 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 	}
 
+	onShow() {
+		const $popover = this.$el.next( '.elementor-controls-popover' );
+
+		// Attach the current control as a toggle of its popover.
+		if ( $popover.length ) {
+			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
+		}
+
+		$popover.on( 'hide', () => this.onPopoverHide() );
+	}
+
+	onPopoverHide() {
+		this.reRoute( false );
+	}
+
 	onResetInputClick() {
 		const globalData = this.model.get( 'global' );
 
@@ -43,7 +58,18 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 			this.triggerMethod( 'unlink:global:default' );
 		}
 
-		this.$el.next( '.elementor-controls-popover' ).toggle();
+		const $popover = this.$el.next( '.elementor-controls-popover' );
+
+		if ( ! $popover.is( ':visible' ) ) {
+			this.reRoute( true );
+		} else {
+			$popover.hide();
+			$popover.trigger( 'hide' );
+		}
+	}
+
+	activate() {
+		this.$el.next( '.elementor-controls-popover' ).show();
 	}
 
 	getGlobalCommand() {

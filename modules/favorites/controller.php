@@ -35,6 +35,14 @@ class Controller extends Controller_Base {
 		return $module->get( $type );
 	}
 
+	public function create_item_permissions_check( $request ) {
+		return current_user_can( 'edit_posts' );
+	}
+
+	public function delete_item_permissions_check( $request ) {
+		return $this->create_item_permissions_check( $request );
+	}
+
 	/**
 	 * Get the favorites module instance.
 	 *

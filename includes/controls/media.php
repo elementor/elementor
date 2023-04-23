@@ -47,6 +47,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'url' => '',
 			'id' => '',
+			'size' => '',
 		];
 	}
 
@@ -202,30 +203,31 @@ class Control_Media extends Control_Base_Multiple {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<#
 			if ( isViewable() ) {
-				let inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
+				let inputWrapperClasses = 'elementor-control-input-wrapper';
 
 				if ( ! data.label_block ) {
 					inputWrapperClasses += ' elementor-control-unit-5';
 				}
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
-					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media-area elementor-fit-aspect-ratio">
-							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
-								<i class="eicon-trash-o"></i>
+					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
+						<div class="elementor-control-media-area">
+							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+								<i class="eicon-trash-o" aria-hidden="true"></i>
+								<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 							</div>
 							<#
 								switch( getPreviewType() ) {
 									case 'image':
 										#>
-										<div class="elementor-control-media__preview elementor-fit-aspect-ratio"></div>
+										<div class="elementor-control-media__preview"></div>
 										<#
 										break;
 
 									case 'video':
 										#>
 										<video class="elementor-control-media-video" preload="metadata"></video>
-										<i class="eicon-video-camera"></i>
+										<i class="eicon-video-camera" aria-hidden="true"></i>
 										<#
 										break;
 								}
@@ -233,6 +235,7 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
 							<i class="eicon-plus-circle" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Add', 'elementor' ); ?></span>
 						</div>
 						<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 							<#
@@ -257,11 +260,13 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 					<div class="elementor-control-media__file__controls">
-						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
-							<i class="eicon-trash-o"></i>
+						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+							<i class="eicon-trash-o" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
-						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo esc_html__( 'Upload', 'elementor' ); ?>">
-							<i class="eicon-upload"></i>
+						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo esc_attr__( 'Upload', 'elementor' ); ?>">
+							<i class="eicon-upload" aria-hidden="true"></i>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Upload', 'elementor' ); ?></span>
 						</div>
 					</div>
 				</div>
@@ -269,9 +274,44 @@ class Control_Media extends Control_Base_Multiple {
 			<# if ( data.description ) { #>
 				<div class="elementor-control-field-description">{{{ data.description }}}</div>
 			<# } #>
+
+			<# if ( data.has_sizes ) { #>
+			<div class="elementor-control-type-select e-control-image-size">
+				<div class="elementor-control-field">
+					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
+					<div class="elementor-control-input-wrapper elementor-control-unit-5">
+						<select class="e-image-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
+							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
+								<option value="<?php echo esc_attr( $size_key ); ?>"><?php echo esc_html( $size_title ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+			</div>
+			<# } #>
+
 			<input type="hidden" data-setting="{{ data.name }}"/>
 		</div>
 		<?php
+	}
+
+	private function get_image_sizes() : array {
+		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
+
+		$image_sizes = [];
+
+		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
+			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
+			if ( is_array( $size_attributes ) ) {
+				$control_title .= sprintf( ' - %d x %d', $size_attributes['width'], $size_attributes['height'] );
+			}
+
+			$image_sizes[ $size_key ] = $control_title;
+		}
+
+		$image_sizes[''] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
+
+		return $image_sizes;
 	}
 
 	/**
@@ -288,6 +328,11 @@ class Control_Media extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'has_sizes' => false,
+			'ai' => [
+				'active' => true,
+				'type' => 'media',
+			],
 			'media_types' => [
 				'image',
 			],
@@ -356,5 +401,17 @@ class Control_Media extends Control_Base_Multiple {
 			}
 		}
 		return trim( strip_tags( $alt ) );
+	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( 'URL' !== $css_property || empty( $control_value['id'] ) ) {
+			return parent::get_style_value( $css_property, $control_value, $control_data );
+		}
+
+		if ( empty( $control_value['size'] ) ) {
+			$control_value['size'] = 'full';
+		}
+
+		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
 	}
 }

@@ -1,0 +1,9 @@
+{
+	"name": "@elementor/icons",
+	"dependencies": {
+		"@elementor/ui": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}

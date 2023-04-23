@@ -1,3 +1,5 @@
+import ExperimentsMessages from './behaviors/experiments-messages';
+
 export default class ExperimentsModule extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
@@ -48,6 +50,13 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 
 	onInit() {
 		super.onInit();
+
+		this.experimentsDependency = new ExperimentsMessages( {
+			selects: this.elements.$experimentSelects.toArray(),
+			submit: this.elements.$experimentForm.find( '#submit' ).get( 0 ),
+		} );
+
+		this.experimentsDependency.bindEvents();
 
 		if ( this.elements.$experimentIndicators.length ) {
 			import(

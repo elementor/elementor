@@ -1,28 +1,33 @@
 /**
  * Add element to the page using model and parent container.
  *
- * @param {Object} model - Model definition.
- * @param {string|null} container - Parent container ID. Optional.
- *
- * @return {Promise<*>}
+ * @param {Object}      options                     - Model definition.
+ * @param {*}           options.model
+ * @param {string|null} options.container           - Parent container ID. Optional.
+ * @param {boolean}     options.isContainerASection - If `container` is a section. Optional.
+ * @return {Promise<*>} element id
  */
-const addElement = async ( { model, container = null } ) => {
+ const addElement = async ( { model, container = null, isContainerASection = false } ) => {
 	let parent;
 
 	if ( container ) {
 		parent = elementor.getContainer( container );
 	} else {
 		// If a `container` isn't supplied - create a new Section.
-		const section = $e.run(
+		parent = $e.run(
 			'document/elements/create',
 			{
 				model: { elType: 'section' },
 				columns: 1,
 				container: elementor.getContainer( 'document' ),
-			}
+			},
 		);
 
-		parent = section.children[ 0 ];
+		isContainerASection = true;
+	}
+
+	if ( isContainerASection ) {
+		parent = parent.children[ 0 ];
 	}
 
 	const element = $e.run(
@@ -30,7 +35,7 @@ const addElement = async ( { model, container = null } ) => {
 		{
 			model,
 			container: parent,
-		}
+		},
 	);
 
 	return element.id;
@@ -41,9 +46,9 @@ const addElement = async ( { model, container = null } ) => {
  *
  * @param {string} id - Container ID.
  *
- * @return {string}
+ * @return {string} css selector
  */
-const getElementSelector = ( id ) => {
+ const getElementSelector = ( id ) => {
 	return `[data-id = "${ id }"]`;
 };
 

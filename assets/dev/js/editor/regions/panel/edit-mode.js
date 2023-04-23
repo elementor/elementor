@@ -1,3 +1,5 @@
+import environment from 'elementor-common/utils/environment';
+
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -8,36 +10,47 @@ EditModeItemView = Marionette.ItemView.extend( {
 	ui: {
 		previewButton: '#elementor-mode-switcher-preview-input',
 		previewLabel: '#elementor-mode-switcher-preview',
-		previewLabelA11y: '#elementor-mode-switcher-preview .elementor-screen-only',
+		previewLabelIcon: '#elementor-mode-switcher-preview i',
+		previewLabelA11yText: '#elementor-mode-switcher-preview .elementor-screen-only',
 	},
 
 	events: {
 		'change @ui.previewButton': 'onPreviewButtonChange',
+		'keyup @ui.previewLabelIcon': 'onPreviewButtonKeyUp',
 	},
 
-	initialize: function() {
+	initialize() {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeChanged );
 	},
 
-	getCurrentMode: function() {
+	getCurrentMode() {
 		return this.ui.previewButton.is( ':checked' ) ? 'preview' : 'edit';
 	},
 
-	setMode: function( mode ) {
+	setMode( mode ) {
 		this.ui.previewButton
 			.prop( 'checked', 'preview' === mode )
 			.trigger( 'change' );
 	},
 
-	toggleMode: function() {
+	toggleMode() {
 		this.setMode( this.ui.previewButton.prop( 'checked' ) ? 'edit' : 'preview' );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.onEditModeChanged();
 	},
 
-	onPreviewButtonChange: function() {
+	onPreviewButtonKeyUp( event ) {
+		const ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.keyCode ) {
+			this.toggleMode();
+			this.onPreviewButtonChange();
+		}
+	},
+
+	onPreviewButtonChange() {
 		const mode = this.getCurrentMode();
 
 		if ( 'edit' === mode ) {
@@ -49,11 +62,14 @@ EditModeItemView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onEditModeChanged: function( activeMode ) {
-		const title = 'preview' === activeMode ? __( 'Back to Editor', 'elementor' ) : __( 'Preview', 'elementor' );
+	onEditModeChanged( activeMode ) {
+		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
 
-		this.ui.previewLabel.attr( 'title', title );
-		this.ui.previewLabelA11y.text( title );
+		let text = 'preview' === activeMode ? __( 'Show Panel', 'elementor' ) : __( 'Hide Panel', 'elementor' );
+		text += ` (${ ctrlLabel } + P)`;
+
+		this.ui.previewLabel.attr( 'title', text );
+		this.ui.previewLabelA11yText.text( text );
 	},
 } );
 

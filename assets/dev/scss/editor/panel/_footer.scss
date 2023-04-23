@@ -3,55 +3,50 @@
 //
 
 #elementor-panel-footer {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	position: relative;
 	height: 40px;
-	background-color: $editor-darkest;
+	background-color: var(--e-a-dark-bg);
+	color: var(--e-a-dark-color-txt);
 }
 
 #elementor-panel-footer-tools {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
+	display: flex;
+	justify-content: space-between;
 	height: 100%;
 }
 
 .elementor-panel-footer-tool {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 15%;
 	cursor: pointer;
-	color: $editor-light;
-	transition: $transition-hover;
+	transition: var(--e-a-transition-hover);
+	border: 0;
+	color: currentColor;
+	background-color: transparent;
 
-	#elementor-panel-saver-button-update {
-		@include border-end(1px solid #2d8739);
-		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-
-		i {
-			@include margin-end(5px);
-		}
+	i {
+		font-size: 15px;
 	}
 
 	#elementor-panel-saver-button-save-options {
-		float: $start;
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
 
-		i {
+		i.eicon-chevron-right {
 			margin: auto;
+			transform: rotate(270deg);
+		}
+
+		&.elementor-disabled {
+			cursor: inherit;
 		}
 	}
 
-	&.elementor-open {
-		color: #fff;
-	}
+	&:not(.e-open) {
 
-	&:not(.elementor-open) {
-
-		&:hover {
-			color: $editor-lightest;
+		&:hover,
+		&:focus {
+			color: var(--e-a-dark-color-txt-hover);
 		}
 
 		.elementor-panel-footer-sub-menu-wrapper {
@@ -60,91 +55,9 @@
 	}
 }
 
-.elementor-panel-footer-sub-menu-wrapper {
-	position: absolute;
-	bottom: 100%;
-	left: 0;
-	width: 100%;
-	background-color: $editor-darker;
-	padding: 10px;
-	box-shadow: $panel-top-shadow;
-	cursor: default;
-	z-index: $super-layer;
-}
-
-.elementor-panel-footer-sub-menu {
-	border-radius: 5px;
-	overflow: hidden;
-}
-
-.elementor-panel-footer-sub-menu-item {
-	background-color: $editor-darkest;
-	display: table;
-	table-layout: fixed;
-	width: 100%;
-	cursor: pointer;
-
-	&.elementor-disabled {
-
-		.elementor-icon,
-		.elementor-title {
-			color: $editor-dark;
-		}
-	}
-
-	&:not(:last-child) {
-		margin-bottom: 1px;
-	}
-
-	&:hover {
-		background-color: rgba(0, 0, 0, 0.2);
-	}
-
-	&.active {
-		background-color: rgba(0, 0, 0, 0.3);
-	}
-
-	> * {
-		display: table-cell;
-		height: 40px;
-		vertical-align: middle;
-	}
-
-	.elementor-icon {
-		width: 40px;
-		color: $editor-light;
-	}
-
-	.elementor-title {
-		text-align: $start;
-		color: $editor-lightest;
-	}
-
-	.elementor-description {
-		width: 95px;
-		text-align: $start;
-		font-size: 11px;
-		font-style: italic;
-		color: $editor-light;
-	}
-}
-
-#elementor-panel-footer-help-title {
-	text-align: $start;
-	padding: 10px 0;
-	color: $editor-lightest;
-}
-
-#elementor-panel-footer-responsive {
-	& > i {
-		display: block;
-		height: 100%;
-		line-height: 40px;
-	}
-}
-
 #elementor-panel-footer-saver-publish {
-	width: 80px;
+	width: 30%;
+	@include margin-start(auto);
 
 	.elementor-button-state {
 
@@ -159,13 +72,11 @@
 }
 
 #elementor-panel-footer-saver-options {
-	width: 35px;
-	@include border-start(1px solid $editor-darkest);
+	width: 10%;
 
 	.elementor-last-edited-wrapper {
 		font-size: 11px;
 		font-style: italic;
-		color: $editor-light;
 		padding: 5px 0 15px;
 
 		&:not(.elementor-state-active) {
@@ -185,40 +96,89 @@
 			}
 		}
 	}
-}
 
-.elementor-disabled {
-	cursor: default;
+
+	&.e-open {
+
+		i.eicon-chevron-right {
+			transform: rotate(90deg);
+		}
+	}
 }
 
 #elementor-panel-saver- {
 
 	&button-{
-		&preview {
-			a {
-				color: $editor-light;
-			}
-		}
 
 		&publish,
 		&save-options {
+			padding: 0;
 			font-size: 11px;
-			text-transform: uppercase;
-			height: 26px;
+			height: 100%;
+			width: 100%;
+			border-radius: 0;
 
 			&.elementor-disabled {
-				background-color: $editor-darker;
-				color: $editor-light;
+				background-color: $e-gray-800;
+				color: $e-gray-300;
 			}
 		}
 
 		&publish {
-			width: 100%;
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-		}
 
-		&save-options {
-			width: 25px;
+			&:not(.elementor-disabled) {
+				border-inline-end: 1px solid $e-pink-300;
+			}
+
+			&.elementor-disabled {
+				border-inline-end: 1px solid $e-gray-700;
+			}
 		}
+	}
+}
+
+.elementor-panel-footer-sub-menu-wrapper {
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	width: 100%;
+	background-color: $editor-darker;
+	padding: 10px;
+	box-shadow: $panel-top-shadow;
+	cursor: default;
+	z-index: $super-layer;
+}
+
+.elementor-panel-footer-sub-menu {
+	border-radius: var(--e-border-radius);
+	overflow: hidden;
+	border: 1px solid $e-gray-700;
+}
+
+.elementor-panel-footer-sub-menu-item {
+	display: flex;
+	height: 40px;
+	color: $e-gray-100;
+	align-items: center;
+	column-gap: 10px;
+	padding: 0 20px;
+	transition: var(--e-a-transition-hover);
+	cursor: pointer;
+
+	&.elementor-disabled {
+		cursor: default;
+		color: $e-gray-500;
+	}
+
+	&:not(:last-child) {
+		border-bottom: 1px solid $e-gray-700;
+	}
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+
+	&.active {
+		background-color: rgba(255, 255, 255, 0.2);
 	}
 }

@@ -9,22 +9,22 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
-	getModalOptions: function() {
+	getModalOptions() {
 		return {
 			id: 'elementor-template-library-modal',
 		};
 	},
 
-	getLogoOptions: function() {
+	getLogoOptions() {
 		return {
 			title: __( 'Library', 'elementor' ),
-			click: function() {
+			click() {
 				$e.run( 'library/open', { toDefault: true } );
 			},
 		};
 	},
 
-	getTemplateActionButton: function( templateData ) {
+	getTemplateActionButton( templateData ) {
 		const subscriptionPlans = elementor.config.library_connect.subscription_plans,
 			baseAccessLevel = elementor.config.library_connect.base_access_level;
 
@@ -34,24 +34,15 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		const template = Marionette.TemplateCache.get( viewId );
 
-		// In case the access level of the template is not one of the defined.
-		// it will find the next access level that was defined.
-		// Example: access_level = 15, and access_level 15 is not exists in the plans the button will be "Go Expert" which is 20
-		const closestAccessLevel = Object.keys( subscriptionPlans )
-			.sort()
-			.find( ( accessLevel ) => {
-				return accessLevel >= templateData.accessLevel;
-			} );
-
-		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
+		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
 
 		return Marionette.Renderer.render( template, {
-			promotionText: `Go ${ subscriptionPlan.label }`,
+			promotionText: `Upgrade`,
 			promotionLink: subscriptionPlan.promotion_url,
 		} );
 	},
 
-	setHeaderDefaultParts: function() {
+	setHeaderDefaultParts() {
 		var headerView = this.getHeaderView();
 
 		headerView.tools.show( new TemplateLibraryHeaderActionsView() );
@@ -60,13 +51,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.showLogo();
 	},
 
-	showTemplatesView: function( templatesCollection ) {
+	showTemplatesView( templatesCollection ) {
 		this.modalContent.show( new TemplateLibraryCollectionView( {
 			collection: templatesCollection,
 		} ) );
 	},
 
-	showImportView: function() {
+	showImportView() {
 		const headerView = this.getHeaderView();
 
 		headerView.menuArea.reset();
@@ -76,19 +67,19 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	},
 
-	showConnectView: function( args ) {
+	showConnectView( args ) {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryConnectView( args ) );
 	},
 
-	showSaveTemplateView: function( elementModel ) {
+	showSaveTemplateView( elementModel ) {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
-	showPreviewView: function( templateModel ) {
+	showPreviewView( templateModel ) {
 		this.modalContent.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' ),
 		} ) );

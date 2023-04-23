@@ -6,6 +6,7 @@ export default class extends Backbone.Model {
 			url: '',
 			keywords: [],
 			actions: [],
+			lock: null,
 		};
 	}
 }

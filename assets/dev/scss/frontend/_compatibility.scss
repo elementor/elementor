@@ -19,11 +19,6 @@
 	padding: 0;
 }
 
-//Reset WP Admin for Theme Style support
-#wpadminbar * {
-	font-style: normal;
-}
-
 .e--ua-appleWebkit {
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
 	&.rtl { --flex-right: flex-start; }

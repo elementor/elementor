@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class Close extends CommandBase {
+export class Close extends $e.modules.CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}
@@ -33,7 +31,7 @@ export class Close extends CommandBase {
 				break;
 		}
 
-		$e.internal( 'editor/documents/unload', { document } );
+		await $e.internal( 'editor/documents/unload', { document } );
 
 		if ( onClose ) {
 			await onClose( document );

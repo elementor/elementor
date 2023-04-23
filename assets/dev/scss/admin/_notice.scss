@@ -102,7 +102,7 @@
 		display: block;
 		position: absolute;
 		top: 0;
-		right: 1px;
+		inset-inline-end: 1px;
 		border: none;
 		margin: 0;
 		padding: 9px;
@@ -118,8 +118,6 @@
 			border-radius: 20px;
 			speak: none;
 			text-align: center;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
 		}
 
 		&:hover:before,

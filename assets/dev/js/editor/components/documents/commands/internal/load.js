@@ -1,14 +1,13 @@
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import Document from '../../document';
 import Heartbeat from 'elementor-editor-utils/heartbeat';
 
-export class Load extends CommandInternalBase {
+export class Load extends $e.modules.CommandInternalBase {
 	validateArgs( args = {} ) {
 		this.requireArgument( 'config', args );
 	}
 
 	apply( args ) {
-		const { config } = args;
+		const { config, shouldScroll = true } = args;
 
 		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 			// When the Responsive Optimization experiment is active, the responsive controls are generated on the
@@ -51,7 +50,7 @@ export class Load extends CommandInternalBase {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
 			return $e.data.get( 'globals/index' ).then( () =>
-				$e.internal( 'editor/documents/attach-preview' )
+				$e.internal( 'editor/documents/attach-preview', { shouldScroll, selector: args.selector } ),
 			);
 		}
 

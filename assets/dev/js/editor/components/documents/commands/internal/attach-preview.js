@@ -1,14 +1,22 @@
-import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
+export class AttachPreview extends $e.modules.CommandInternalBase {
+	validateArgs( args = {} ) {
+		if ( args.selector ) {
+			this.requireArgumentType( 'selector', 'string' );
 
-export class AttachPreview extends CommandInternalBaseBase {
-	apply() {
+			if ( 0 === elementor.$previewContents.find( args.selector ).length ) {
+				throw new Error( 'Invalid argument. The `selector` argument must be existed selector.' );
+			}
+		}
+	}
+
+	apply( args ) {
 		const document = elementor.documents.getCurrent();
 
 		return $e.data.get( 'globals/index' )
 			.then( () => {
 				elementor.trigger( 'globals:loaded' );
 
-				return this.attachDocumentToPreview( document );
+				return this.attachDocumentToPreview( document, args );
 			} )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
@@ -25,40 +33,49 @@ export class AttachPreview extends CommandInternalBaseBase {
 		} );
 	}
 
-	attachDocumentToPreview( document ) {
+	attachDocumentToPreview( document, args ) {
+		const { selector = '.elementor-' + document.id, shouldScroll = true } = args;
+
 		return new Promise( ( resolve, reject ) => {
 			// Not yet loaded.
 			if ( ! document ) {
-				return reject();
+				return reject( `Can't attach preview, there is no open document.` );
 			}
 
 			if ( ! document.config.elements ) {
 				return resolve();
 			}
 
-			document.$element = elementor.$previewContents.find( '.elementor-' + document.id );
+			document.$element = elementor.$previewContents.find( selector );
+			const isInitialDocument = document.id === elementor.config.initial_document.id;
 
 			if ( ! document.$element.length ) {
-				elementor.onPreviewElNotFound();
+				if ( isInitialDocument ) {
+					elementor.onPreviewElNotFound();
+				}
 
-				return reject();
+				return reject( `Can't attach preview to document '${ document.id }', element '${ selector }' was not found.` );
 			}
 
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
-			// If not the same document.
-			if ( document.id !== elementor.config.initial_document.id ) {
+			if ( ! isInitialDocument ) {
 				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
 			}
 
-			elementor.initElements();
+			$e.internal( 'document/elements/populate', {
+				document,
+				elements: JSON.parse( JSON.stringify( document.config.elements ) ),
+			} );
 
 			elementor.initPreviewView( document );
 
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			elementor.helpers.scrollToView( document.$element );
+			if ( shouldScroll ) {
+				elementor.helpers.scrollToView( document.$element );
+			}
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )

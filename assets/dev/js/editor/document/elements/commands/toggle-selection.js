@@ -1,6 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
-
-export class ToggleSelection extends CommandBase {
+export class ToggleSelection extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -10,10 +8,10 @@ export class ToggleSelection extends CommandBase {
 
 		containers.forEach( ( container ) => {
 			$e.run(
-				elementor.selection.has( container ) && append ?
-					'document/elements/deselect' :
-					'document/elements/select',
-				args
+				elementor.selection.has( container ) && append
+					? 'document/elements/deselect'
+					: 'document/elements/select',
+				args,
 			);
 		} );
 	}

@@ -7,7 +7,7 @@ export const Paste = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn );
+					eButton = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eButton );
 
@@ -22,31 +22,6 @@ export const Paste = () => {
 				assert.equal( elementor.saver.isEditorChanged(), true,
 					'Command applied the saver editor is changed.' );
 			} );
-
-			QUnit.test( 'History', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
-
-				ElementsHelper.copy( eWidget );
-
-				const ePastedWidget = ElementsHelper.paste( eColumn ),
-					historyItem = HistoryHelper.getFirstItem().attributes;
-
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
-
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
-
-				// Element Does not exist.
-				HistoryHelper.destroyedValidate( assert, ePastedWidget );
-
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				// Element exist again.
-				HistoryHelper.recreatedValidate( assert, ePastedWidget );
-			} );
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
@@ -54,44 +29,55 @@ export const Paste = () => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = ElementsHelper.multiCreateButton( eColumns );
+					eButton = ElementsHelper.createWidgetButton( eColumns[ 0 ] ),
+					eHeading = ElementsHelper.createWidgetHeading( eColumns[ 0 ] ),
+					toCopy = [ eButton, eHeading ];
 
-				ElementsHelper.copy( eButtons[ 0 ] );
+				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
-				ElementsHelper.multiPaste( eColumns );
+				ElementsHelper.paste( eColumns[ 1 ] );
 
-				// Check pasted button exist.
-				let count = 1;
-				eColumns.forEach( ( eColumn ) => {
-					assert.equal( eColumn.children.length, 2,
-						`Button #${ count } were pasted.` );
-					++count;
-				} );
+				// Check pasted elements existence.
+				assert.equal( eColumns[ 1 ].children.length, 2, `Both elements pasted.` );
+
+				// Check whether they preserved their order.
+				for ( let i = 0; i < toCopy.length; i++ ) {
+					assert.equal(
+						eColumns[ 1 ].model.get( 'elements' ).models[ i ].get( 'widgetType' ),
+						toCopy[ i ].model.get( 'widgetType' ),
+						`Element ${ i + 1 } preserved its order.`,
+					);
+				}
 			} );
 
-			QUnit.test( 'History', ( assert ) => {
-				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
+			QUnit.test( 'Columns', ( assert ) => {
+				const eSection1 = ElementsHelper.createSection( 2 ),
+					eSection2 = ElementsHelper.createSection(),
+					eColumn1 = eSection1.children[ 0 ],
+					eColumn2 = eSection1.children[ 1 ],
+					toCopy = [ eColumn1, eColumn2 ];
 
-				ElementsHelper.copy( eWidget );
+				// We want to create different widgets in different columns in order to check later whether the paste
+				// order is preserved using the `widgetType`.
+				ElementsHelper.createWidgetButton( eColumn1 );
 
-				const ePastedWidget = ElementsHelper.paste( eColumn ),
-					historyItem = HistoryHelper.getFirstItem().attributes;
+				ElementsHelper.createWidgetHeading( eColumn2 );
 
-				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
+				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
-				// Undo.
-				HistoryHelper.undoValidate( assert, historyItem );
+				ElementsHelper.paste( eSection2 );
 
-				// Element Does not exist.
-				HistoryHelper.destroyedValidate( assert, ePastedWidget );
+				// Check pasted elements existence.
+				assert.equal( eSection2.children.length, 3, `Both elements pasted.` );
 
-				// Redo.
-				HistoryHelper.redoValidate( assert, historyItem );
-
-				// Element exist again.
-				HistoryHelper.recreatedValidate( assert, ePastedWidget );
+				// Check whether they preserved their order.
+				for ( let i = 0; i < toCopy.length; i++ ) {
+					assert.equal(
+						toCopy[ i ].children[ 0 ].model.get( 'widgetType' ),
+						eSection2.children[ i + 1 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
+						`Column ${ i + 1 } preserved its order.`,
+					);
+				}
 			} );
 		} );
 	} );

@@ -4,11 +4,11 @@ module.exports = Marionette.ItemView.extend( {
 
 	tagName: 'span',
 
-	className: function() {
+	className() {
 		return 'elementor-tag';
 	},
 
-	getTemplate: function() {
+	getTemplate() {
 		if ( ! this.hasTemplate ) {
 			return false;
 		}
@@ -16,7 +16,7 @@ module.exports = Marionette.ItemView.extend( {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-tag-' + this.getOption( 'name' ) + '-content' );
 	},
 
-	initialize: function() {
+	initialize() {
 		try {
 			this.getTemplate();
 		} catch ( e ) {
@@ -24,7 +24,7 @@ module.exports = Marionette.ItemView.extend( {
 		}
 	},
 
-	getConfig: function( key ) {
+	getConfig( key ) {
 		var config = elementor.dynamicTags.getConfig( 'tags.' + this.getOption( 'name' ) );
 
 		if ( key ) {
@@ -34,7 +34,7 @@ module.exports = Marionette.ItemView.extend( {
 		return config;
 	},
 
-	getContent: function() {
+	getContent() {
 		var contentType = this.getConfig( 'content_type' ),
 			data;
 
@@ -63,7 +63,7 @@ module.exports = Marionette.ItemView.extend( {
 		return data;
 	},
 
-	onRender: function() {
+	onRender() {
 		this.el.id = 'elementor-tag-' + this.getOption( 'id' );
 	},
 } );

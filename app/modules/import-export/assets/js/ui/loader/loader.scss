@@ -1,0 +1,28 @@
+$e-app-import-export-loader-color: tints(400);
+$e-app-import-export-loader-dark-color: dark-tints(400);
+
+$root: e-app-import-export-loader;
+
+.#{$root} {
+	--e-app-import-export-loader-color: #{$e-app-import-export-loader-color};
+
+	color: var(--e-app-import-export-loader-color);
+	font-size: 50px;
+
+	&.eicon-loading {
+		font-size: type( size, '30' );
+	}
+
+	&--absolute-center {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-loader-color: #{$e-app-import-export-loader-dark-color};
+	}
+}

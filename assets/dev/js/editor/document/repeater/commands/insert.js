@@ -1,6 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Insert extends CommandHistory {
+export class Insert extends $e.modules.editor.document.CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const containers = historyItem.get( 'containers' ),
 			data = historyItem.get( 'data' );
@@ -53,12 +51,8 @@ export class Insert extends CommandHistory {
 		};
 	}
 
-	isDataChanged() {
-		return true;
-	}
-
 	apply( args ) {
-		const { model, name, options = { at: null }, containers = [ args.container ] } = args,
+		const { model, name, options = { at: null }, containers = [ args.container ], renderAfterInsert = true } = args,
 			result = [];
 
 		containers.forEach( ( container ) => {
@@ -74,8 +68,10 @@ export class Insert extends CommandHistory {
 
 			result.push( collection.push( rowSettingsModel, options ) );
 
-			// Trigger render on widget but with the settings of the control.
-			repeaterContainer.render();
+			if ( renderAfterInsert ) {
+				// Trigger render on widget but with the settings of the control.
+				repeaterContainer.render();
+			}
 		} );
 
 		if ( 1 === result.length ) {

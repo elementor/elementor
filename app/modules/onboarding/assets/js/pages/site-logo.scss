@@ -1,0 +1,72 @@
+.e-onboarding {
+
+	&__page-siteLogo {
+
+		.e-app-upload-file__button {
+			color: var(--e-a-color-primary-bold);
+			border-color: var(--e-a-color-primary-bold);
+
+			&:hover {
+				background-color: $e-pink-50;
+			}
+		}
+	}
+
+	&__drop-zone {
+		margin-top: 3rem;
+	}
+
+	.eps-display-3 {
+		font-size: 16px;
+		margin-bottom: 0.5rem;
+	}
+
+	.e-app-upload-file__button {
+		max-width: 198px;
+		margin: 0 auto;
+	}
+
+	.e-app-drop-zone__secondary-text {
+		font-size: 14px;
+	}
+
+	&__logo {
+
+		&-container {
+			position: relative;
+			margin-top: 3rem;
+			min-height: 120px;
+			width: fit-content;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 220px;
+			border: 1px solid $e-gray-200;
+
+			img {
+				height: auto;
+				max-height: 100%;
+				width: auto;
+			}
+		}
+
+		&-remove {
+			position: absolute;
+			right: 8px;
+			top: 5px;
+
+			i {
+				font-size: 16px;
+				width: 15px;
+			}
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	&__is-uploading {
+		visibility: hidden;
+	}
+}

@@ -46,7 +46,7 @@ class General extends Base_Category {
 	public function get_category_items( array $options = [] ) {
 		return [
 			'saved-templates' => [
-				'title' => _x( 'Saved Templates', 'Template Library', 'elementor' ),
+				'title' => esc_html_x( 'Saved Templates', 'Template Library', 'elementor' ),
 				'icon' => 'library-save',
 				'url' => Source_Local::get_admin_url(),
 				'keywords' => [ 'template', 'section', 'page', 'library' ],
@@ -73,6 +73,12 @@ class General extends Base_Category {
 				'icon' => 'library-save',
 				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
 				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
+			],
+			'kit-library' => [
+				'title' => esc_html__( 'Kit Library', 'elementor' ),
+				'icon' => 'kit-parts',
+				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+				'keywords' => [ 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ],
 			],
 		];
 	}

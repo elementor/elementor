@@ -23,24 +23,19 @@ export default class Heartbeat {
 	};
 
 	initModal() {
-		const modal = elementorCommon.dialogsManager.createWidget( 'lightbox', {
+		const modal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Take Over', 'elementor' ),
-		} );
-
-		modal.addButton( {
-			name: 'go_back',
-			text: __( 'Go Back', 'elementor' ),
-			callback() {
-				parent.history.go( -1 );
+			strings: {
+				confirm: __( 'Take Over', 'elementor' ),
+				cancel: __( 'Go Back', 'elementor' ),
 			},
-		} );
-
-		modal.addButton( {
-			name: 'take_over',
-			text: __( 'Take Over', 'elementor' ),
-			callback() {
+			defaultOption: 'confirm',
+			onConfirm() {
 				wp.heartbeat.enqueue( 'elementor_force_post_lock', true );
 				wp.heartbeat.connectNow();
+			},
+			onCancel() {
+				parent.history.go( -1 );
 			},
 		} );
 
@@ -50,9 +45,8 @@ export default class Heartbeat {
 	showLockMessage( lockedUser ) {
 		const modal = this.getModal();
 
-		modal
-			/* translators: %s: Locked user name. */
-			.setMessage( sprintf( __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ), lockedUser ) )
+		// Translators: %s is locked username.
+		modal.setMessage( sprintf( __( '%s has taken over and is currently editing. Do you want to take over this page editing?', 'elementor' ), lockedUser ) )
 			.show();
 	}
 

@@ -6,7 +6,7 @@ export const Settings = () => {
 	QUnit.module( 'Settings', () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
 					{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),
@@ -35,7 +35,7 @@ export const Settings = () => {
 			} );
 
 			QUnit.test( 'History', ( assert ) => {
-				const eButton = ElementsHelper.createAutoButton(),
+				const eButton = ElementsHelper.createWrappedButton(),
 					defaultButtonText = eButton.settings.attributes.text,
 					text = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
@@ -82,7 +82,7 @@ export const Settings = () => {
 
 		QUnit.module( 'Multiple Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
-				const eButtons = ElementsHelper.multiCreateAutoButton(),
+				const eButtons = ElementsHelper.multiCreateWrappedButton(),
 					dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
 					dynamicValue = '{ dynamic text }',
 					{ id, name, settings } = elementor.dynamicTags.tagTextToTagData( dynamicTag ),

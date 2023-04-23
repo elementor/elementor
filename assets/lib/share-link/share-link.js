@@ -16,6 +16,17 @@
 			$element.on( 'click', function() {
 				openShareLink( networkName );
 			} );
+
+			// Add "Enter" and "Space" event only if the element has role=button attribute.
+			if ( 'button' === $element.attr( 'role' ) ) {
+				$element.on( 'keyup', ( event ) => {
+					if ( 13 === event.keyCode || 32 === event.keyCode ) {
+						event.preventDefault();
+
+						openShareLink( networkName );
+					}
+				} );
+			}
 		};
 
 		var openShareLink = function( networkName ) {
@@ -86,9 +97,9 @@
 		stumbleupon: 'https://www.stumbleupon.com/submit?url={url}',
 		pocket: 'https://getpocket.com/edit?url={url}',
 		whatsapp: 'https://api.whatsapp.com/send?text=*{title}*%0A{text}%0A{url}',
-		xing: 'https://www.xing.com/app/user?op=share&url={url}',
+		xing: 'https://www.xing.com/spi/shares/new?url={url}',
 		print: 'javascript:print()',
-		email: 'mailto:?subject={title}&body={text}\n{url}',
+		email: 'mailto:?subject={title}&body={text}%0A{url}',
 		telegram: 'https://telegram.me/share/url?url={url}&text={text}',
 		skype: 'https://web.skype.com/share?url={url}',
 	};

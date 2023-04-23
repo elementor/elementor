@@ -1,0 +1,23 @@
+name: Push New Version
+description: Git push the new version to the remote repository.
+
+inputs:
+  MAINTAIN_USERNAME:
+    required: true
+    description: The username of the maintainer.
+  MAINTAIN_EMAIL:
+    required: true
+    description: The email of the maintainer.
+  COMMIT_MESSAGE:
+    description: The commit message.
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            git config user.name ${{ inputs.MAINTAIN_USERNAME }}
+            git config user.email ${{ inputs.MAINTAIN_EMAIL }}
+            git commit -am "${{ inputs.COMMIT_MESSAGE }}"
+            git push

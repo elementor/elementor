@@ -38,7 +38,7 @@ Schemes = function() {
 			controlsStack,
 			( controlStyles ) => self.getSchemeValue( controlStyles.scheme.type, controlStyles.scheme.value, controlStyles.scheme.key ).value,
 			[ '{{WRAPPER}}' ],
-			[ settings.selectorWrapperPrefix + widgetType ]
+			[ settings.selectorWrapperPrefix + widgetType ],
 		);
 	};
 
@@ -154,6 +154,7 @@ Schemes = function() {
 	this.removeSchemeItem = function( schemeName, itemKey ) {
 		const items = schemes[ schemeName ].items;
 
+		// eslint-disable-next-line no-constant-condition
 		while ( true ) {
 			itemKey++;
 

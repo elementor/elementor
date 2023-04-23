@@ -2,8 +2,8 @@ name: Sync Branches
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */2 * * *'
+  # schedule:
+  #   - cron: '0 */2 * * *'
 
 jobs:
   run:
@@ -11,11 +11,15 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
       - name: Sync developer-edition branch
         env:
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -23,6 +27,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/sync-developer-edition-branch.sh"
       - name: Sync feature branches into developer-edition branch
+        if: ${{ false }} # Disabled for now
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}

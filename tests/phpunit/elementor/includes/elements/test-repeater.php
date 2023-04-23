@@ -14,7 +14,7 @@ class Test_Repeater extends Elementor_Test_Base {
 		$repeater = new Repeater();
 		$repeater->add_control( 'test_1', [
 			[
-				'label' => __( 'Placeholder', 'elementor-pro' ),
+				'label' => esc_html__( 'Placeholder', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 			],
@@ -23,7 +23,7 @@ class Test_Repeater extends Elementor_Test_Base {
 		$repeater2 = new Repeater();
 		$repeater2->add_control( 'test_2', [
 			[
-				'label' => __( 'Placeholder', 'elementor-pro' ),
+				'label' => esc_html__( 'Placeholder', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 			],
