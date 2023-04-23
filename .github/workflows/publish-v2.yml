@@ -106,7 +106,7 @@ jobs:
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
-          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org-debug.sh"
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
