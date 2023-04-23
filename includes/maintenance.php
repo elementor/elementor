@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use elementor\core\admin\options\Site_Font_Display;
 use Elementor\Core\Kits\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
@@ -54,13 +55,8 @@ class Maintenance {
 	public static function insert_defaults_options() {
 		$history = Upgrade_Manager::get_installs_history();
 		if ( empty( $history ) ) {
-			$default_options = [
-				'elementor_font_display' => 'swap',
-			];
-			foreach ( $default_options as $option_name => $option_value ) {
-				if ( \Elementor\Utils::is_empty( get_option( $option_name ) ) ) {
-					add_option( $option_name, $option_value );
-				}
+			if ( Utils::is_empty( Site_Font_Display::get_raw() ) ) {
+				Site_Font_Display::set_swap();
 			}
 		}
 	}

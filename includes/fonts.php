@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use elementor\core\admin\options\Site_Font_Display;
+use elementor\core\admin\options\Site_Google_Fonts;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1690,23 +1692,11 @@ class Fonts {
 	}
 
 	public static function is_google_fonts_enabled() : bool {
-		if ( null === static::$is_google_fonts_enabled ) {
-			$default_value = '1';
-
-			// TODO: For future use, using for new installs.
-			//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
-			//$default_value = $is_new_site ? '0' : '1';
-
-			$option = get_option( 'elementor_google_font', $default_value );
-
-			static::$is_google_fonts_enabled = '1' === $option;
-		}
-
-		return static::$is_google_fonts_enabled;
+		return Site_Google_Fonts::is_on();
 	}
 
 	public static function get_font_display_setting() {
-		return get_option( 'elementor_font_display', 'auto' );
+		return  Site_Font_Display::get();
 	}
 
 	public static function reset_local_cache() {

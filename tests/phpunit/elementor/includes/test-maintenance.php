@@ -4,9 +4,6 @@ namespace Elementor\Testing\Includes;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Maintenance extends Elementor_Test_Base {
-
-	const OPTION_KEY = 'elementor_font_display';
-
 	public function test_new_install_options() {
 		// Arrange.
 		$user = $this->act_as_admin();
@@ -16,7 +13,7 @@ class Test_Maintenance extends Elementor_Test_Base {
 		\Elementor\Maintenance::insert_defaults_options();
 
 		// Assert.
-		$this->assertEquals( 'swap', get_option( static::OPTION_KEY ) );
+		$this->assertEquals( 'swap', Site_Font_Display::get_raw() );
 	}
 
 	public function test_not_new_install_options() {
@@ -28,6 +25,6 @@ class Test_Maintenance extends Elementor_Test_Base {
 		\Elementor\Maintenance::insert_defaults_options();
 
 		// Assert.
-		$this->assertNotEquals( 'swap', get_option( static::OPTION_KEY ) );
+		$this->assertNotEquals( 'swap',  Site_Font_Display::get_raw() );
 	}
 }

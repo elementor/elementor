@@ -6,6 +6,8 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Admin\Options\Site_Beta;
 use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
+use elementor\core\admin\options\Site_Font_Display;
+use elementor\core\admin\options\Site_Google_Fonts;
 use Elementor\Core\Admin\Options\Site_Usage_Last_Send;
 use Elementor\Core\Admin\Options\Site_Usage_Notice;
 use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
@@ -847,6 +849,8 @@ class Admin extends App {
 
 		Plugin::$instance->options->register( Site_Beta::class );
 		Plugin::$instance->options->register( Site_CSS_Print_Method::class );
+		Plugin::$instance->options->register( Site_Font_Display::class );
+		Plugin::$instance->options->register( Site_Google_Fonts::class );
 		Plugin::$instance->options->register( Site_Usage_Last_Send::class );
 		Plugin::$instance->options->register( Site_Usage_Notice::class );
 		Plugin::$instance->options->register( Site_Usage_Opt_In::class );

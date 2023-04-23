@@ -3,6 +3,8 @@ namespace Elementor\Testing\Includes;
 
 use Elementor\Core\Admin\Options\Site_Beta;
 use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
+use elementor\core\admin\options\Site_Font_Display;
+use elementor\core\admin\options\Site_Google_Fonts;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
@@ -48,9 +50,9 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
 
-		update_option( 'elementor_google_font', '1' );
+		Site_Google_Fonts::set_on();
 
-		update_option( 'elementor_font_display', 'block' );
+		Site_Font_Display::set_block();
 
 		update_option( 'elementor_meta_generator_tag', '1' );
 

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use elementor\core\admin\options\Site_Font_Display;
 use Elementor\Plugin;
 use Elementor\Frontend;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -95,7 +96,7 @@ class Test_Frontend extends Elementor_Test_Base {
 		// Act
 		$fonts_url = $frontend->get_stable_google_fonts_url( $mock_google_fonts );
 
-		$font_display_url_str = '&display=' . get_option( 'elementor_font_display', 'auto' );
+		$font_display_url_str = '&display=' . Site_Font_Display::get();
 
 		$font_strings = [
 			'Roboto:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic',

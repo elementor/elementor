@@ -31,6 +31,10 @@ abstract class Site_Option extends Option_Base {
 		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
+	public static function get_raw() {
+		return add_option( static::get_full_key() );
+	}
+
 	public static function get() {
 		return get_option( static::get_full_key(), static::get_default() );
 	}
