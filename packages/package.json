@@ -42,6 +42,6 @@
   },
   "dependencies": {
     "@elementor/ui": "^1.4.42",
-    "@wordpress/i18n": "^4.24.0"
+    "@wordpress/i18n": "^4.29.0"
   }
 }
