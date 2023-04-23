@@ -35,8 +35,9 @@ export default function RecentlyEdited() {
 		<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { alignSelf: 'stretch', paddingInlineStart: 1, cursor: 'default' } }>
 			<Button
 				color="inherit"
+				size="small"
+				sx={ { borderRadius: '8px' } }
 				endIcon={ <ChevronDownIcon /> }
-				sx={ { height: '100%' } }
 				{ ...bindTrigger( popupState ) }
 			>
 				<Indicator
@@ -46,7 +47,7 @@ export default function RecentlyEdited() {
 			</Button>
 
 			<Menu
-				PaperProps={ { sx: { mt: 2, ml: -4, minWidth: 314 } } }
+				PaperProps={ { sx: { mt: 4, minWidth: 314 } } }
 				{ ...bindMenu( popupState ) }
 			>
 				<PostsList recentPosts={ recentPosts } />
