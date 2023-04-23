@@ -240,6 +240,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.12.2 - 2023-04-23 =
+
+* Fix: Hover active color is not working as expected in Tabs widget ([#21849](https://github.com/elementor/elementor/issues/21849))
+* Fix: Horizontal scrolling appears while editing when direction is set to row in Container ([#21805](https://github.com/elementor/elementor/issues/21805))
+* Fix: Responsive button is not clickable as expected in widgets panel ([#22073](https://github.com/elementor/elementor/issues/22073))
+* Fix: Improved code security enforcement in `Replace URL` functionality
+* Fix: General improvements in Elementor's new UI color scheme
+
 = 3.12.1 - 2023-04-02 =
 
 * Fix: Elementor's dark mode color scheme affects the front in various scenarios ([#21809](https://github.com/elementor/elementor/issues/21809), [#21832](https://github.com/elementor/elementor/issues/21832))
