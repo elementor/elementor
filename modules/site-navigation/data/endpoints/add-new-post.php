@@ -44,25 +44,23 @@ class Add_New_Post extends Endpoint {
 			return new \WP_Error( 500, sprintf( 'Post type %s does not exist.', $post_type ) );
 		}
 
-		if ( User::is_current_user_can_edit_post_type( $post_type ) ) {
-			$document = Plugin::$instance->documents->create( $post_type );
-			if ( is_wp_error( $document ) ) {
-				return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
-			}
-
-			return [
-				'id' => $document->get_main_id(),
-				'edit_url' => $document->get_edit_url(),
-			];
+		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+			return new \WP_Error( 500, sprintf( 'User dont have capability to create page of type - %s.', $post_type ) );
 		}
 
-		return new \WP_Error( 500, sprintf( 'User dont have capability to create page of type - %s.', $post_type ) );
+		$document = Plugin::$instance->documents->create( $post_type );
+		if ( is_wp_error( $document ) ) {
+			return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
+		}
+
+		return [
+			'id' => $document->get_main_id(),
+			'edit_url' => $document->get_edit_url(),
+		];
 	}
 
 	private function validate_post_type( $post_type ): bool {
-		$post_types = get_post_types(
-			[ 'public' => true ]
-		);
+		$post_types = get_post_types();
 
 		return in_array( $post_type, $post_types );
 	}

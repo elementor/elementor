@@ -57,14 +57,14 @@ class Test_Controller extends Elementor_Test_Base {
 	public function get_items_provider() {
 		return [
 			'no params' => [
-				'',
-				'',
-				'',
+				'posts_per_page' => '',
+				'post_type' => '',
+				'post__not_in' => '',
 			],
 			'invalid posts_per_page' => [
-				'invalid',
-				'',
-				'',
+				'posts_per_page' => 'invalid',
+				'post_type' => '',
+				'post__not_in' => '',
 			],
 		];
 	}
