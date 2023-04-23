@@ -75,6 +75,44 @@ class Admin extends App {
 		exit;
 	}
 
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
+
+		if ( ! file_exists( $asset_file ) ) {
+			return [];
+		}
+
+		$data = require $asset_file;
+
+		return [
+			'handle' => $data['handle'],
+			'src' => $data['src'],
+			'deps' => $data['deps'],
+		];
+	}
+
+	private function register_packages() {
+		Collection::make( [ 'ui', 'icons' ] )
+			->map( function( $package_name ) {
+				return $this->get_package_config( $package_name );
+			} )
+			->filter( function( $package_config ) {
+				return ! empty( $package_config );
+			} )
+			->each( function( $package_config ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$src = str_replace( '{{MIN_SUFFIX}}', $suffix, $package_config['src'] );
+
+				wp_register_script(
+					$package_config['handle'],
+					$src,
+					$package_config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	/**
 	 * Enqueue admin scripts.
 	 *
@@ -90,6 +128,21 @@ class Admin extends App {
 			'elementor-admin-modules',
 			$this->get_js_assets_url( 'admin-modules' ),
 			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		$this->register_packages();
+
+		// Temporary solution for the admin.
+		wp_register_script(
+			'elementor-ai-admin',
+			$this->get_js_assets_url( 'ai-admin' ),
+			[
+				'elementor-common',
+				'elementor-packages-ui',
+				'elementor-packages-icons',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);

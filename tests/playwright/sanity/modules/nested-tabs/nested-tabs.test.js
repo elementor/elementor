@@ -5,6 +5,7 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
+const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -30,7 +31,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const widgetId = await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
+		// Tests.
 		await testIconCount( page, editor );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
@@ -1041,6 +1044,22 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		}
 
 		await cleanup( wpAdmin );
+	} );
+
+	test( 'Nested tabs check flex wrap', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+
+		// Assert
+		const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+		await expect( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 	} );
 } );
 

@@ -6,6 +6,12 @@ import EditorSelectors from '../../playwright/selectors/editor-selectors';
 import { createDefaultMedia, deleteDefaultMedia } from '../../playwright/assets/api-requests';
 
 const imageIds = [];
+
+const image1 = {
+	title: 'image1',
+	extension: 'jpg',
+};
+
 const image2 = {
 	title: 'image2',
 	extension: 'jpg',
@@ -16,13 +22,14 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		imageIds.push( await createDefaultMedia( request, image1 ) );
 		imageIds.push( await createDefaultMedia( request, image2 ) );
 		await wpAdmin.setExperiments( {
 			container: 'active',
 		} );
 	} );
 
-	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image' ];
+	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel', 'tabs', 'video', 'spacer' ];
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -32,6 +39,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
+			if ( 'video' === widgetType ) {
+				await editorPage.waitForVideoLoaded();
+			}
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
@@ -44,6 +54,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			}
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
+			if ( 'video' === widgetType ) {
+				await editorPage.waitForVideoLoaded( true );
+			}
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
 	}

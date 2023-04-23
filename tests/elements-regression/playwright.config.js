@@ -17,7 +17,7 @@ export default {
 
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 3 : 1,
+	workers: process.env.CI ? 3 : 5,
 	fullyParallel: true,
 	reporter: process.env.CI ? 'github' : 'list',
 	use: {
