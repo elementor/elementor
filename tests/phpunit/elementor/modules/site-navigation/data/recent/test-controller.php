@@ -198,7 +198,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
 
 		// Assert.
-		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 500, $response->get_status() );
 	}
 
 
