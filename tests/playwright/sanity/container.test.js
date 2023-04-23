@@ -481,20 +481,11 @@ test.describe( 'Container tests @container', () => {
 	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const templatePath = '../templates/container/widgets-are-not-editable-in-preview-mode.json';
+		await editor.loadTemplate( templatePath );
 
-		// Set row direction.
-		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
-
-		// Add widgets.
-		await editor.addWidget( widgets.button, container );
-		await editor.addWidget( widgets.heading, container );
-		await editor.addWidget( widgets.image, container );
-
-		const preview = editor.getPreviewFrame();
-
-		const resizers = await preview.locator( '.ui-resizable-handle.ui-resizable-e' );
+		const resizers = await editor.getPreviewFrame().locator( '.ui-resizable-handle.ui-resizable-e' );
 		await expect( resizers ).toHaveCount( 4 );
 
 		await editor.togglePreviewMode();

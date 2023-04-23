@@ -9,8 +9,7 @@
 	],
 	"mappings": {
 		"elementor-templates": "./tests/playwright/templates",
-		"elementor-config": "./tests/wp-env/config",
-		"elementor-playwright-templates": "./templates/playwright"
+		"elementor-config": "./tests/wp-env/config"
 	},
 	"config": {
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
