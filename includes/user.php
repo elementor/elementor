@@ -30,7 +30,7 @@ class User {
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
 	/**
-	 * @deprecated 3.6.0 use `Site_Beta::get_full_key()` instead.
+	 * @deprecated 3.14.0 use `Site_Beta::get_full_key()` instead.
 	 */
 	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
 
