@@ -2,7 +2,7 @@
 
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
-		return [ /@reverse-columns/, /@nested-tabs/ ];
+		return [ /@reverse-columns/, /@nested-tabs/, /@container/ ];
 	}
 	return [];
 }
