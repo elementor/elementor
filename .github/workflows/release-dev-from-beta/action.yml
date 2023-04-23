@@ -87,6 +87,6 @@ runs:
             fi
 
             if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
-              bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+              bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org-debug.sh"
             fi
 
