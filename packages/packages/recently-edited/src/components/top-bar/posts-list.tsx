@@ -12,20 +12,13 @@ import DocTypeChip, { Props } from '../top-bar/chip-doc-type';
 import { Post } from '../../hooks/use-recent-posts';
 import usePage from '../../hooks/use-page';
 import { PlusIcon } from '@elementor/icons';
-import { useEffect } from 'react';
 
 export type RecentPostsProps = {
 	recentPosts: Post[];
 };
 
 export default function PostsList( { recentPosts }: RecentPostsProps ) {
-	const { createPage, pageData, isLoading } = usePage();
-
-	useEffect( () => {
-		if ( pageData ) {
-			window.location.href = pageData.edit_url;
-		}
-	}, [ pageData ] );
+	const { createPage, isLoading } = usePage( { onCreated } );
 
 	return (
 		<>
@@ -67,4 +60,8 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 			</MenuItem>
 		</>
 	);
+}
+
+function onCreated( url: string ) {
+	window.location.href = url;
 }

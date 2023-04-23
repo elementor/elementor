@@ -4,7 +4,6 @@ import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
 import useRecentPosts, { Post } from '../../../hooks/use-recent-posts';
-import { NewPost } from '../../../hooks/use-page';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),

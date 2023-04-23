@@ -6,9 +6,14 @@ export interface NewPost {
 	edit_url: string,
 }
 
-export default function usePage() {
+export type Args = {
+	onCreated: ( url : string ) => void;
+}
+
+export const endpointPath = '/elementor/v1/site-navigation/add-new-post';
+
+export default function usePage( { onCreated }: Args ) {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ pageData, setPageData ] = useState<NewPost|null>( null );
 
 	return {
 		createPage: () => {
@@ -18,20 +23,19 @@ export default function usePage() {
 				.then( ( newPost ) => newPost as NewPost )
 				.then( ( newPost ) => {
 					setIsLoading( false );
-					setPageData( newPost );
+					onCreated( newPost.edit_url );
 				} )
 				.catch( () => {
 					setIsLoading( false );
 				} );
 		},
 		isLoading,
-		pageData,
 	};
 }
 
 async function addNewPage() {
 	return await apiFetch( {
-		path: '/elementor/v1/site-navigation/add-new-post',
+		path: endpointPath,
 		method: 'POST',
 		data: { post_type: 'page' },
 	} );
