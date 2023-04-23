@@ -7,8 +7,7 @@
 	.elementor-panel-navigation-tab {
 		text-align: center;
 		padding: 10px 0;
-		font-size: 11px;
-		text-transform: uppercase;
+		font-size: $font-size-sm;
 		cursor: pointer;
 	}
 }
@@ -114,7 +113,7 @@
 		}
 
 		.title {
-			font-size: 11px;
+			font-size: 12px;
 		}
 
 		> .eicon-lock {

@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.12.1
+Stable tag: 3.12.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,6 +239,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.12.2 - 2023-04-23 =
+
+* Fix: Hover active color is not working as expected in Tabs widget ([#21849](https://github.com/elementor/elementor/issues/21849))
+* Fix: Horizontal scrolling appears while editing when direction is set to row in Container ([#21805](https://github.com/elementor/elementor/issues/21805))
+* Fix: Responsive button is not clickable as expected in widgets panel ([#22073](https://github.com/elementor/elementor/issues/22073))
+* Fix: Improved code security enforcement in `Replace URL` functionality
+* Fix: General improvements in Elementor's new UI color scheme
 
 = 3.12.1 - 2023-04-02 =
 
