@@ -2,10 +2,8 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
-use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -174,18 +172,6 @@ class Feedback extends Module {
 		Api::send_feedback( $reason_key, $reason_text );
 
 		wp_send_json_success();
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access protected
-	 */
-	protected function get_init_settings() {
-		if ( ! $this->is_plugins_screen() ) {
-			return [];
-		}
-
-		return [ 'is_tracker_opted_in' => Site_Usage_Opt_In::is_on() ];
 	}
 
 	/**
