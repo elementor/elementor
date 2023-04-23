@@ -7,13 +7,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 
 	useEffect( () => {
 		jQuery( approveButtonRef.current ).elementorConnect( {
-			success: ( _, data ) => {
-				elementorCommon.config.library_connect.is_connected = true;
-				elementorCommon.config.library_connect.current_access_level = data.accessLevel;
-
-				onSuccess();
-			},
-			// eslint-disable-next-line no-console
+			success: ( _, data ) => onSuccess( data ),
 			error: () => {
 				throw new Error( 'Elementor AI: Failed to connect.' );
 			},
@@ -24,7 +18,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 		<Stack alignItems="center" gap={ 5 }>
 			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
 
-			<Typography variant="h4">{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
+			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
 			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
 
