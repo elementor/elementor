@@ -177,7 +177,7 @@ class Tracker {
 	 * @deprcated since 3.6.0
 	 */
 	public static function is_allow_track() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Tracker::is_allow_track', '3.6.0', 'Site_Usage_Opt_In::is_on()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Tracker::is_allow_track', '3.14.0', 'Site_Usage_Opt_In::is_on()' );
 		return Site_Usage_Opt_In::is_on();
 	}
 
