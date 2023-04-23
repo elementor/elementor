@@ -643,9 +643,10 @@ async function toggleResponsiveControl( page, justifyControlsClass, breakpoints,
 async function captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix ) {
 	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
 
-	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
-	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+
+	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
+	const justifyControlsContent = page.locator( `${ justifyControlsClass } .elementor-control-content ` );
 	await expect( justifyControlsContent ).toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
 
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
