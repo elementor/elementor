@@ -40,9 +40,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			await editorPage.waitForIframeToLoaded( widgetType );
-			if ( 'text_path' === widgetType ) {
-				await page.waitForTimeout( 4000 );
-			}
+			await editorPage.getPreviewFrame().waitForLoadState( 'domcontentloaded' );
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
