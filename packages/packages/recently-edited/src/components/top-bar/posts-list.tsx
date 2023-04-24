@@ -49,7 +49,6 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 				size="small"
 				color="inherit"
 				component="div"
-				sx={ { pl: 5, fontSize: '12px', display: 'flex', justifyContent: 'flex-start' } }
 				onClick={ createPage }
 			>
 				<ListItemIcon>

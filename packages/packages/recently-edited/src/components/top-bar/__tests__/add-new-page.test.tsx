@@ -5,7 +5,8 @@ import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
 import useRecentPosts, { Post } from '../../../hooks/use-recent-posts';
 import apiFetch from '@wordpress/api-fetch';
-import { endpointPath } from '../../../hooks/use-create-page';
+import useCreatePage from '../../../hooks/use-create-page';
+import { renderHook } from '@testing-library/react-hooks';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
@@ -61,33 +62,32 @@ describe( '@elementor/recently-edited - Top bar add new page', () => {
 		// Arrange.
 		mockActiveDocument();
 
+		const onCreated = jest.fn();
+		const { result } = renderHook( () => useCreatePage( { onCreated } ) );
 		const newPost = {
 			id: 1,
 			edit_url: 'editurl.com',
 		};
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( newPost ) );
-
+		const { createPage } = result.current;
 		const isLoading = false;
 		const recentPosts: Post[] = [];
 
+		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( newPost ) );
 		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, recentPosts } );
 
+		const create = createPage;
 		const { getByText, getAllByRole } = render( <RecentlyEdited /> );
 
 		// Act.
 		const buttons = getAllByRole( 'button' );
 		buttons[ 0 ].click(); // Opens the recently edited menu
+
 		const addNewPage = getByText( 'Add new page', { exact: false } );
 		addNewPage.click();
 
 		// Assert.
 		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				data: { post_type: 'page' },
-				method: 'POST',
-				path: endpointPath,
-			} );
-			expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+			expect( create ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
