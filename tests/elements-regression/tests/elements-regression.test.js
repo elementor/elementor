@@ -29,7 +29,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 	} );
 
-	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel' ];
+	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel', 'tabs', 'video', 'spacer' ];
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -39,6 +39,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
+			if ( 'video' === widgetType ) {
+				await editorPage.waitForVideoLoaded();
+			}
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
@@ -51,6 +54,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			}
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
+			if ( 'video' === widgetType ) {
+				await editorPage.waitForVideoLoaded( true );
+			}
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
 		} );
 	}
