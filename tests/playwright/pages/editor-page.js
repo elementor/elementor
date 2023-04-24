@@ -681,14 +681,23 @@ module.exports = class EditorPage extends BasePage {
 		}
 	}
 
-	async waitForIframeToLoaded( args = { iframeSelector, elementToWaitFor, isPublished: false } ) {
-		if ( args.isPublished ) {
-			await this.page.frameLocator( args.iframeSelector ).nth( 0 ).locator( args.elementToWaitFor ).waitFor();
+	async waitForIframeToLoaded( widgetType, isPublished = false ) {
+		const frames = {
+			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
+			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
+		};
+
+		if ( ! ( widgetType in frames ) ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( 0 ).locator( frames[ widgetType ][ 1 ] ).waitFor();
 		} else {
 			const frame = this.getPreviewFrame();
 			await frame.waitForLoadState();
-			await frame.waitForSelector( args.iframeSelector );
-			await frame.frameLocator( args.iframeSelector ).nth( 0 ).locator( args.elementToWaitFor ).waitFor();
+			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
+			await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( 0 ).locator( frames[ widgetType ][ 1 ] ).waitFor();
 		}
 	}
 };

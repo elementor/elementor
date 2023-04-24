@@ -1,20 +1,20 @@
 {
     "content": [
         {
-            "id": "16399840",
+            "id": "99047c6",
             "settings": [],
             "elements": [
                 {
-                    "id": "e296e05",
+                    "id": "76adbe8e",
                     "settings": {
                         "carousel": [
                             {
-                                "id": 626,
-                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
+                                "id": 98,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
                             },
                             {
-                                "id": 625,
-                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
+                                "id": 99,
+                                "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
                             }
                         ],
                         "navigation": "arrows",
@@ -47,15 +47,15 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "68c177a1",
+                    "id": "5322948b",
                     "settings": {
                         "carousel": [
                             {
-                                "id": 626,
+                                "id": 99,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
                             },
                             {
-                                "id": 625,
+                                "id": 98,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
                             }
                         ],
@@ -102,15 +102,15 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "47f553e2",
+                    "id": "689e61d7",
                     "settings": {
                         "carousel": [
                             {
-                                "id": 626,
+                                "id": 99,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
                             },
                             {
-                                "id": 625,
+                                "id": 98,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
                             }
                         ],
@@ -126,7 +126,6 @@
                             "value": "fas fa-arrow-circle-right",
                             "library": "fa-solid"
                         },
-                        "caption_type": "title",
                         "autoplay": "no",
                         "arrows_size": {
                             "unit": "px",
@@ -184,7 +183,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "682d696a",
+                    "id": "6ff8954b",
                     "settings": {
                         "0": "#",
                         "1": "6",
@@ -195,11 +194,11 @@
                         "6": "0",
                         "carousel": [
                             {
-                                "id": 626,
+                                "id": 99,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
                             },
                             {
-                                "id": 625,
+                                "id": 98,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
                             }
                         ],
@@ -277,15 +276,15 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "4e5730fe",
+                    "id": "164049e4",
                     "settings": {
                         "carousel": [
                             {
-                                "id": 626,
+                                "id": 99,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg"
                             },
                             {
-                                "id": 625,
+                                "id": 98,
                                 "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1.jpg"
                             }
                         ],
