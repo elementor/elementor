@@ -449,6 +449,28 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
+
+	test( 'Test Empty View always shows', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		await test.step( 'Arrange', async () => {
+			await editor.closeNavigatorIfOpen();
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+			await editor.addWidget( 'heading', containerId );
+		} );
+
+		await test.step( 'After a widget is added', async () => {
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+		} );
+
+		await test.step( 'On initial page load when container is not empty', async () => {
+			await editor.saveAndReloadPage();
+			await wpAdmin.waitForPanel();
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {
