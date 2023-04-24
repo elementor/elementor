@@ -656,7 +656,7 @@ async function captureJustifySnapShot( editor, breakpoints, i, direction, page, 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsClassSelector = `${ justifyControlsClass } .elementor-control-content `;
 	await page.waitForSelector( justifyControlsClassSelector );
-	const justifyControlsContentLocator = page.locator( justifyControlsClassSelector );
+	const justifyControlsContentLocator = page.locator( justifyControlsClassSelector ).first();
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
 	await expect( justifyControlsContentLocator ).toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
 
