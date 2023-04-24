@@ -75,7 +75,6 @@ test.describe( 'Container Grid tests @container-grid', () => {
 		} );
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
-			await page.pause();
 			// Arrange
 			const justifyContentControl = await page.locator( '.elementor-control-grid_justify_content' );
 
@@ -167,6 +166,17 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.removeElement( newContainerId );
+		} );
+
+		await test.step( 'Assert correct icons for Justify Items and Align Items', async () => {
+			await editor.selectElement( containerId );
+			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-h/ );
+			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-v/ );
+
+			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'column' );
+			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
+			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
+			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'row' );
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
