@@ -22,7 +22,7 @@
 		position: relative;
 		display: block;
 		height: inherit;
-		font-size: 7px;
+		font-size: 10px;
 		background: var(--e-a-bg-active-bold);
 		border-radius: inherit;
 		transition: 0.15s ease-out;
@@ -43,13 +43,13 @@
 
 		&:before {
 			content: attr(data-off);
-			right: 3px;
+			right: 5px;
 			color: var(--e-a-color-txt-muted);
 		}
 
 		&:after {
 			content: attr(data-on);
-			left: 3px;
+			left: 5px;
 			color: var(--e-a-btn-color);
 			opacity: 0;
 		}

@@ -16,6 +16,9 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 	}
 
 	protected function init_fields() {
+		$icon_start = is_rtl() ? 'end' : 'start';
+		$icon_end = is_rtl() ? 'start' : 'end';
+
 		$fields = [];
 
 		$fields['items_grid'] = [
@@ -27,8 +30,8 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		$fields['outline'] = [
 			'label' => esc_html__( 'Grid Outline', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'label_on' => esc_html__( 'SHOW', 'elementor' ),
-			'label_off' => esc_html__( 'HIDE', 'elementor' ),
+			'label_on' => esc_html__( 'Show', 'elementor' ),
+			'label_off' => esc_html__( 'Hide', 'elementor' ),
 			'default' => 'yes',
 			'frontend_available' => true,
 		];
@@ -123,19 +126,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
+					'icon' => 'eicon-align-' . $icon_start . '-h',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
+					'icon' => 'eicon-align-center-h',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
+					'icon' => 'eicon-align-' . $icon_end . '-h',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
+					'icon' => 'eicon-align-stretch-h',
 				],
 			],
 			'default' => '',
@@ -151,19 +154,19 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-h',
+					'icon' => 'eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-h',
+					'icon' => 'eicon-align-center-v',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-h',
+					'icon' => 'eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Grid Container Control', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-h',
+					'icon' => 'eicon-align-stretch-v',
 				],
 			],
 			'selectors' => [
@@ -251,6 +254,29 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'responsive' => true,
 		];
+
+		// Only use the auto flow prefix class inside the editor.
+		$auto_flow_prefix_class = Plugin::$instance->editor->is_edit_mode() ? [ 'prefix_class' => 'e-con--' ] : [];
+
+		$fields['_is_row'] = array_merge( $auto_flow_prefix_class, [
+			'type' => Controls_Manager::HIDDEN,
+			'default' => 'row',
+			'condition' => [
+				'auto_flow' => [
+					'row',
+				],
+			],
+		] );
+
+		$fields['_is_column'] = array_merge( $auto_flow_prefix_class, [
+			'type' => Controls_Manager::HIDDEN,
+			'default' => 'column',
+			'condition' => [
+				'auto_flow' => [
+					'column',
+				],
+			],
+		] );
 
 		return $fields;
 	}
