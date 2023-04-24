@@ -40,7 +40,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			await editorPage.waitForIframeToLoaded( widgetType );
-			await editorPage.getPreviewFrame().waitForLoadState( 'domcontentloaded' );
+			await expect( editorPage.getPreviewFrame().locator( '.elementor-widget-empty-icon' ).first() ).not.toBeVisible();
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
