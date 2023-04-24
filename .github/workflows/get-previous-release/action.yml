@@ -13,13 +13,13 @@ runs:
       run: |
         # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
         # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
-        if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
+        if [[ "${{ inputs.CHANNEL }}"" == "cloud" || "${{ inputs.CHANNEL }}"" == "beta"] || "${{ inputs.CHANNEL }}"" == "dev"]]; then
            latest_tag=$(git ls-remote --tags | grep -v "\-rc" | awk -F/ '/-${{ inputs.CHANNEL }}/{print $3 $4}' | sort -t- -k1,1V -k2,2V | tail -n 1 | awk '{print "refs/tags/"$1}')
         fi
 
         # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
         # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
-        if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+        if [[ "${{ inputs.CHANNEL }}" == "ga" ]]; then
            latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
         fi
 
