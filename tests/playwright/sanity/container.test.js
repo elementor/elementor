@@ -3,6 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
+const EditorPage = require( '../pages/editor-page' );
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -640,16 +641,24 @@ async function toggleResponsiveControl( page, justifyControlsClass, breakpoints,
 	}
 }
 
+/**
+ *
+ * @param {EditorPage}                      editor
+ * @param {string[]}                        breakpoints
+ * @param {number}                          i
+ * @param {"right"|"down"|"left"|"up"}      direction
+ * @param {import('@playwright/test').Page} page
+ * @param {"ltr"|"rtl"}                     snapshotPrefix
+ */
 async function captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix ) {
 	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
-	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
+	const justifyControlsClassSelector = `${ justifyControlsClass } .elementor-control-content `;
+	await page.waitForSelector( justifyControlsClassSelector );
+	const justifyControlsContentLocator = page.locator( justifyControlsClassSelector );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	expect( await justifyControlsContent.screenshot( {
-		type: 'jpeg',
-		quality: 90,
-	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+	await expect( justifyControlsContentLocator ).toHaveScreenshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.png` );
 
 	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
 }
