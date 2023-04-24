@@ -405,6 +405,10 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
+
+		if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
+			this.handleGridEmptyView();
+		}
 	},
 
 	renderOnChange( settings ) {
@@ -481,12 +485,6 @@ const ContainerView = BaseElementView.extend( {
 			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
 		} else {
 			this.$el.html5Droppable( this.getDroppableOptions() );
-		}
-	},
-
-	onAddChild() {
-		if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
-			this.handleGridEmptyView();
 		}
 	},
 
