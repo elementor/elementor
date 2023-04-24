@@ -214,9 +214,8 @@ class Test_Controller extends Elementor_Test_Base {
 			'post_type' => 'test',
 		];
 		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT, $params );
-
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 400, $response->get_data()['code'] );
 	}
 
 	public function test_create_items() {
