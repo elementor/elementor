@@ -18,7 +18,7 @@ export type RecentPostsProps = {
 };
 
 export default function PostsList( { recentPosts }: RecentPostsProps ) {
-	const { createPage, isLoading } = useCreatePage( { onCreated } );
+	const { create, isLoading } = useCreatePage( { onCreated } );
 
 	return (
 		<>
@@ -49,7 +49,7 @@ export default function PostsList( { recentPosts }: RecentPostsProps ) {
 				size="small"
 				color="inherit"
 				component="div"
-				onClick={ createPage }
+				onClick={ create }
 			>
 				<ListItemIcon>
 					{ isLoading ? <CircularProgress /> : <PlusIcon /> }

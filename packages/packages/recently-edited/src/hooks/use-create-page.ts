@@ -16,7 +16,7 @@ export default function useCreatePage( { onCreated }: Args ) {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	return {
-		createPage: () => {
+		create: () => {
 			setIsLoading( true );
 
 			addNewPage()
