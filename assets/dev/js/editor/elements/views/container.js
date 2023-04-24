@@ -10,22 +10,6 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyView: EmptyView,
 
-	// // Set up event listeners using the "events" property
-	// events: {
-	// 	// Listen for the "remove:empty" event and call the onRemoveEmpty function
-	// 	'remove:empty': 'onRemoveEmpty'
-	// },
-
-	// childViewEvents: {
-	// 	'remove:empty': 'onRemoveEmpty'
-	// },
-
-	// onRemoveEmpty: function() {
-	// 	if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
-	// 		this.showEmptyView();
-	// 	}
-	// },
-
 	destroyEmptyView() {
 		// Do not remove the empty view with Grid Containers.
 		if ( 'flex' === this.container.settings.get( 'container_type' ) ) {
@@ -34,7 +18,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getChildViewContainer() {
-		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		this.childViewContainer = this.isBoxedWidth()
 			? '> .e-con-inner'
 			: '';
 
@@ -154,7 +138,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		const items = this.isBoxedWidth()
 		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
@@ -509,7 +493,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCorrectContainerElement() {
-		return 'boxed' === this.getContainer().settings.get( 'content_width' )
+		return this.isBoxedWidth()
 			? this.$el.find( '> .e-con-inner' )
 			: this.$el;
 	},
@@ -533,6 +517,10 @@ const ContainerView = BaseElementView.extend( {
 
 	isFlexContainer() {
 		return 'flex' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isBoxedWidth() {
+		return 'boxed' === this.getContainer().settings.get( 'content_width' );
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
