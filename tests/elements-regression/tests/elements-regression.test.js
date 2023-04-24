@@ -44,7 +44,13 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			}
 
 			if ( 'google_maps' === widgetType ) {
+				page.waitForTimeout( 3000 );
 				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.mapIframe, elementToWaitFor: EditorSelectors.showSatelliteViewBtn } );
+			}
+
+			// Just for testing
+			if ( 'text_path' === widgetType ) {
+				page.waitForTimeout( 3000 );
 			}
 
 			const widgetCount = await editorPage.getWidgetCount();
@@ -63,6 +69,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			}
 
 			if ( 'google_maps' === widgetType ) {
+				page.waitForTimeout( 3000 );
 				await editorPage.waitForIframeToLoaded( { iframeSelector: EditorSelectors.mapIframe, elementToWaitFor: EditorSelectors.showSatelliteViewBtn, isPublished: true } );
 			}
 

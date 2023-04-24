@@ -1,1 +1,261 @@
-{"content":[{"id":"3ba506fd","settings":[],"elements":[{"id":"466df602","settings":{"text":"Add Your Curvy Text Here","align":"left","size":{"unit":"px","size":200,"sizes":[]}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"361abe46","settings":{"text":"Add Your Curvy Text Here","path":"arc","align":"center","size":{"unit":"px","size":800,"sizes":[]},"text_typography_typography":"custom","text_typography_font_family":"Roboto","text_typography_font_size":{"unit":"px","size":39,"sizes":[]},"text_typography_font_weight":"200","text_typography_text_transform":"lowercase","text_typography_font_style":"italic","text_typography_line_height":{"unit":"px","size":100,"sizes":[]},"text_typography_letter_spacing":{"unit":"px","size":-3,"sizes":[]},"text_typography_word_spacing":{"unit":"px","size":20,"sizes":[]}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"494dc5f0","settings":{"text":"Add Your Curvy Text Here","path":"circle","align":"right","size":{"unit":"px","size":400,"sizes":[]},"rotation":{"unit":"deg","size":218,"sizes":[]},"start_point":{"unit":"%","size":24,"sizes":[]}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"4e626151","settings":{"text":"text direction -RTL","path":"line","text_path_direction":"rtl","text_typography_typography":"custom","text_typography_font_family":"Roboto","text_typography_font_weight":"600","text_stroke_text_stroke":{"unit":"px","size":1,"sizes":[]},"text_color_normal":"#D61212","__globals__":{"text_typography_typography":""}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"3478632c","settings":{"text":"text direction-LTR","path":"oval","text_path_direction":"ltr","text_typography_typography":"custom","text_typography_font_family":"Times New Roman","text_typography_font_size":{"unit":"px","size":24,"sizes":[]},"text_typography_font_weight":"700","text_typography_text_transform":"uppercase","text_stroke_text_stroke_type":"yes","text_stroke_text_stroke":{"unit":"px","size":1,"sizes":[]},"text_stroke_stroke_color":"#9A4343","word_spacing":{"unit":"px","size":20,"sizes":[]},"start_point":{"unit":"%","size":31,"sizes":[]},"__globals__":{"text_color_normal":"globals\/colors?id=accent"}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"523aaa2c","settings":{"text":"Add Your Curvy Text Here","path":"spiral","show_path":"#E8178A","size":{"unit":"px","size":400,"sizes":[]},"start_point":{"unit":"%","size":39,"sizes":[]},"__globals__":{"text_color_normal":"globals\/colors?id=primary"}},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"},{"id":"5160deda","settings":{"text":"Add Your Curvy Text Here","path":"custom"},"elements":[],"isInner":false,"widgetType":"text-path","elType":"widget"}],"isInner":false,"elType":"container"}],"page_settings":[],"version":"0.4","title":"text_path","type":"page"}
+{
+    "content": [
+        {
+            "id": "43f7f69c",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "71cfce2e",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "align": "left",
+                        "size": {
+                            "unit": "px",
+                            "size": 200,
+                            "sizes": []
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "21",
+                            "right": "21",
+                            "bottom": "21",
+                            "left": "21",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "3936ec99",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "arc",
+                        "align": "center",
+                        "size": {
+                            "unit": "px",
+                            "size": 100,
+                            "sizes": []
+                        },
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Roboto",
+                        "text_typography_font_size": {
+                            "unit": "px",
+                            "size": 39,
+                            "sizes": []
+                        },
+                        "text_typography_font_weight": "200",
+                        "text_typography_text_transform": "lowercase",
+                        "text_typography_font_style": "italic",
+                        "text_typography_line_height": {
+                            "unit": "px",
+                            "size": 100,
+                            "sizes": []
+                        },
+                        "text_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": -3,
+                            "sizes": []
+                        },
+                        "text_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "rotation": {
+                            "unit": "deg",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "_margin": {
+                            "unit": "px",
+                            "top": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "left": "0",
+                            "isLinked": true
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "11",
+                            "right": "11",
+                            "bottom": "11",
+                            "left": "11",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "9e16de3",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "circle",
+                        "align": "right",
+                        "size": {
+                            "unit": "px",
+                            "size": 200,
+                            "sizes": []
+                        },
+                        "rotation": {
+                            "unit": "deg",
+                            "size": 218,
+                            "sizes": []
+                        },
+                        "start_point": {
+                            "unit": "%",
+                            "size": 24,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "d35982c",
+                    "settings": {
+                        "text": "text direction -RTL",
+                        "path": "line",
+                        "text_path_direction": "rtl",
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Roboto",
+                        "text_typography_font_weight": "600",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "text_color_normal": "#D61212",
+                        "__globals__": {
+                            "text_typography_typography": ""
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "35",
+                            "right": "35",
+                            "bottom": "35",
+                            "left": "35",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "63b6c6d7",
+                    "settings": {
+                        "text": "text direction-LTR",
+                        "path": "oval",
+                        "text_path_direction": "ltr",
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Times New Roman",
+                        "text_typography_font_size": {
+                            "unit": "px",
+                            "size": 24,
+                            "sizes": []
+                        },
+                        "text_typography_font_weight": "700",
+                        "text_typography_text_transform": "uppercase",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "text_stroke_stroke_color": "#9A4343",
+                        "word_spacing": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "start_point": {
+                            "unit": "%",
+                            "size": 31,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "text_color_normal": "globals\/colors?id=accent"
+                        },
+                        "align": "right",
+                        "size": {
+                            "unit": "px",
+                            "size": 300,
+                            "sizes": []
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "45",
+                            "right": "45",
+                            "bottom": "45",
+                            "left": "45",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "1e73d095",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "spiral",
+                        "show_path": "#E8178A",
+                        "size": {
+                            "unit": "px",
+                            "size": 400,
+                            "sizes": []
+                        },
+                        "start_point": {
+                            "unit": "%",
+                            "size": 39,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "text_color_normal": "globals\/colors?id=primary"
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "45",
+                            "right": "45",
+                            "bottom": "45",
+                            "left": "45",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2dac8b90",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "custom"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "text_path",
+    "type": "page"
+}
