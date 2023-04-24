@@ -27,6 +27,7 @@ const ContainerView = BaseElementView.extend( {
 	// },
 
 	destroyEmptyView() {
+		// Do not remove the empty view with Grid Containers.
 		if ( 'flex' === this.container.settings.get( 'container_type' ) ) {
 			Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
 		}
@@ -193,6 +194,8 @@ const ContainerView = BaseElementView.extend( {
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
 				}
+
+				console.log( 'newIndex', newIndex );
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
@@ -482,6 +485,29 @@ const ContainerView = BaseElementView.extend( {
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		}
 	},
+
+	onAddChild() {
+		if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
+			this.handleGridEmptyView();
+		}
+	},
+
+	handleGridEmptyView() {
+		const currentContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
+			? this.$el.find( '> .e-con-inner' )
+			: this.$el;
+
+		this.moveElementToLastChild( currentContainer, currentContainer.find( '> .elementor-empty-view' ) );
+	},
+
+	moveElementToLastChild( parentElement, childElement ) {
+		let parent = parentElement.get(0);
+		let child = childElement.get(0);
+	  
+		if ( parent.lastChild !== child ) {
+			parent.appendChild( child );
+		}
+	}
 } );
 
 module.exports = ContainerView;

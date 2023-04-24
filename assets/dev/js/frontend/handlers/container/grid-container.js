@@ -31,7 +31,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onInit() {
-		this.emptyView = this.$element[ 0 ].querySelector('.elementor-empty-view');
 		super.onInit();
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
@@ -55,9 +54,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 
 		this.getCorrectContainer();
-
-		this.elements.outlineParentContainer.appendChild( this.emptyView );
-
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
