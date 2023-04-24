@@ -1522,7 +1522,7 @@ abstract class Document extends Controls_Stack {
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			// If the widget/element does not exist, like a plugin that creates a widget but deactivated.
 			if ( ! $element ) {
 				return null;
 			}

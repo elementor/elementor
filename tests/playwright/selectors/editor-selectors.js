@@ -11,6 +11,8 @@ const EditorSelectors = {
 	menuIcon: '#elementor-panel-header-menu-button i',
 	widget: '[data-element_type="widget"]',
 	loadingElement: ( id ) => `.elementor-element-${ id }.elementor-loading`,
+	videoIframe: 'iframe.elementor-video',
+	playIcon: '[aria-label="Play"]',
 };
 
 export default EditorSelectors;
