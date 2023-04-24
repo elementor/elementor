@@ -191,7 +191,7 @@ const ContainerView = BaseElementView.extend( {
 				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( [ 'bottom', 'right' ].includes( side ) && ! this.isDraggingOverGridContainerEmptyView() ) {
+				if ( this.shouldIncrementIndex() ) {
 					newIndex++;
 				}
 
@@ -514,9 +514,21 @@ const ContainerView = BaseElementView.extend( {
 			: this.$el;
 	},
 
-	isDraggingOverGridContainerEmptyView() {
-		return 'grid' === this.getContainer().settings.get( 'container_type' ) && 
-			this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	shouldIncrementIndex( side ) {
+		return this.draggingOnBottomOrRightSide( side ) &&
+			! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
+	},
+
+	draggingOnBottomOrRightSide( side ) {
+		return [ 'bottom', 'right' ].includes( side );
+	},
+
+	isGridContainer() {
+		return 'grid' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 } );
 
