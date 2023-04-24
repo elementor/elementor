@@ -9,10 +9,10 @@ const getCodeResult = async ( prompt, { codeLanguage, htmlMarkup, elementId } ) 
 	return getCustomCode( prompt, codeLanguage );
 };
 
-const useCodePrompt = ( { codeLanguage, htmlMarkup, elementId, initialCredits } ) => {
+const useCodePrompt = ( { codeLanguage, htmlMarkup, elementId, initialCredits: credits } ) => {
 	const promptData = usePrompt(
 		( promptValue ) => getCodeResult( promptValue, { codeLanguage, htmlMarkup, elementId } ),
-		{ initialCredits },
+		{ credits },
 	);
 
 	return promptData;
