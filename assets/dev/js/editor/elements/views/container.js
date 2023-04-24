@@ -11,7 +11,7 @@ const ContainerView = BaseElementView.extend( {
 	emptyView: EmptyView,
 
 	destroyEmptyView() {
-		// Do not remove the empty view with Grid Containers.
+		// Do not remove the empty view for Grid Containers.
 		if ( 'flex' === this.container.settings.get( 'container_type' ) ) {
 			Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
 		}
@@ -388,7 +388,7 @@ const ContainerView = BaseElementView.extend( {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
-			// Append the EmptyView to the end of the Grid Container on initial page load when there are already some widgets.
+			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() && ! this.isEmpty() ) {
 				delete this._showingEmptyView;
 				this.showEmptyView();
