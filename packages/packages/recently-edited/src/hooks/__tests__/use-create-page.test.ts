@@ -25,12 +25,10 @@ describe( '@elementor/recently-edited/use-page', () => {
 		};
 		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( newPost ) );
 
-		const {
-			createPage,
-		} = result.current;
+		const { create } = result.current;
 
 		// Act.
-		createPage();
+		create();
 
 		// Assert.
 		await waitFor( () => {

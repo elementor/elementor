@@ -4,9 +4,7 @@ import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
 import useRecentPosts, { Post } from '../../../hooks/use-recent-posts';
-import apiFetch from '@wordpress/api-fetch';
 import useCreatePage from '../../../hooks/use-create-page';
-import { renderHook } from '@testing-library/react-hooks';
 
 jest.mock( '@elementor/documents', () => ( {
 	useActiveDocument: jest.fn(),
@@ -19,12 +17,15 @@ jest.mock( '../../../hooks/use-recent-posts', () => (
 		__esModule: true,
 	}
 ) );
-jest.mock( '@wordpress/api-fetch' );
+jest.mock( '../../../hooks/use-create-page', () => (
+	{
+		default: jest.fn( () => ( { create: jest.fn(), isLoading: false } ) ),
+		__esModule: true,
+	}
+) );
 
 describe( '@elementor/recently-edited - Top bar add new page', () => {
 	beforeEach( () => {
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( [] ) );
-
 		jest.mocked( useActiveDocument ).mockImplementation( () =>
 			createMockDocument( { id: 1, title: 'Active Document' } )
 		);
@@ -32,10 +33,6 @@ describe( '@elementor/recently-edited - Top bar add new page', () => {
 		jest.mocked( useHostDocument ).mockImplementation( () =>
 			createMockDocument( { id: 2, title: 'Host Document' } )
 		);
-	} );
-
-	afterEach( () => {
-		jest.clearAllMocks();
 	} );
 
 	it( 'should render add new page button', () => {
@@ -62,20 +59,13 @@ describe( '@elementor/recently-edited - Top bar add new page', () => {
 		// Arrange.
 		mockActiveDocument();
 
-		const onCreated = jest.fn();
-		const { result } = renderHook( () => useCreatePage( { onCreated } ) );
-		const newPost = {
-			id: 1,
-			edit_url: 'editurl.com',
-		};
-		const { createPage } = result.current;
 		const isLoading = false;
 		const recentPosts: Post[] = [];
+		const create = jest.fn();
 
-		jest.mocked( apiFetch ).mockImplementation( () => Promise.resolve( newPost ) );
 		jest.mocked( useRecentPosts ).mockReturnValue( { isLoading, recentPosts } );
+		jest.mocked( useCreatePage ).mockReturnValue( { isLoading, create } );
 
-		const create = createPage;
 		const { getByText, getAllByRole } = render( <RecentlyEdited /> );
 
 		// Act.
