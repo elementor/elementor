@@ -14,6 +14,7 @@ const WizardDialog = ( props ) => {
 					height: '88vh',
 				},
 			} }
+			sx={ { zIndex: 9999 } }
 		>
 			<DialogHeader onClose={ props.onClose }>
 				{ props.headerAction }
