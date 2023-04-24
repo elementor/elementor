@@ -191,7 +191,7 @@ const ContainerView = BaseElementView.extend( {
 				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( this.shouldIncrementIndex() ) {
+				if ( this.shouldIncrementIndex( side ) ) {
 					newIndex++;
 				}
 
@@ -515,6 +515,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	shouldIncrementIndex( side ) {
+		if ( this.isFlexContainer() && this.draggingOnBottomOrRightSide( side ) ) {
+			return true;
+		}
+
 		return this.draggingOnBottomOrRightSide( side ) &&
 			! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
 	},
@@ -525,6 +529,10 @@ const ContainerView = BaseElementView.extend( {
 
 	isGridContainer() {
 		return 'grid' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isFlexContainer() {
+		return 'flex' === this.getContainer().settings.get( 'container_type' );
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
