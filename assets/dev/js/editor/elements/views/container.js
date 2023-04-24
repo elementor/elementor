@@ -387,6 +387,14 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+
+			// Append the EmptyView to the end of the Grid Container on initial page load when there are already some widgets.
+			if ( this.isGridContainer() && ! this.isEmpty() ) {
+				delete this._showingEmptyView;
+				this.showEmptyView();
+				this.handleGridEmptyView();
+			}
+
 			this.droppableInitialize( this.container.settings );
 		} );
 	},
@@ -487,9 +495,15 @@ const ContainerView = BaseElementView.extend( {
 		let parent = parentWrapperElement.get(0);
 		let child = childElementToMove.get(0);
 	  
-		if ( parent.lastChild !== child ) {
-			parent.appendChild( child );
+		if ( ! parent || ! child ) {
+			return;
 		}
+	  
+		if ( parent.lastChild === child ) {
+			return;
+		}
+	  
+		parent.appendChild( child );
 	},
 
 	getCorrectContainerElement() {
