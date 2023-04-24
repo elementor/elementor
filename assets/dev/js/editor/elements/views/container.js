@@ -493,22 +493,22 @@ const ContainerView = BaseElementView.extend( {
 
 		this.moveElementToLastChild(
 			currentContainer,
-			currentContainer.find( '> .elementor-empty-view' )
+			currentContainer.find( '> .elementor-empty-view' ),
 		);
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
-		let parent = parentWrapperElement.get(0);
-		let child = childElementToMove.get(0);
-	  
+		let parent = parentWrapperElement.get( 0 );
+		let child = childElementToMove.get( 0 );
+
 		if ( ! parent || ! child ) {
 			return;
 		}
-	  
+
 		if ( parent.lastChild === child ) {
 			return;
 		}
-	  
+
 		parent.appendChild( child );
 	},
 
