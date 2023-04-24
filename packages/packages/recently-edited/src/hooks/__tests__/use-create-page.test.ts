@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
-import usePage, { endpointPath } from '../use-page';
+import useCreatePage, { endpointPath } from '../use-create-page';
 
 // Mock apiFetch to return a promise that resolves to an empty array.
 jest.mock( '@wordpress/api-fetch' );
@@ -15,10 +15,10 @@ describe( '@elementor/recently-edited/use-page', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should run documents actions', async () => {
+	it( 'should run useCreatePage hook', async () => {
 		// Arrange.
 		const onCreated = jest.fn();
-		const { result } = renderHook( () => usePage( { onCreated } ) );
+		const { result } = renderHook( () => useCreatePage( { onCreated } ) );
 		const newPost = {
 			id: 1,
 			edit_url: 'editurl.com',

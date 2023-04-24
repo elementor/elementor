@@ -12,7 +12,7 @@ export type Args = {
 
 export const endpointPath = '/elementor/v1/site-navigation/add-new-post';
 
-export default function usePage( { onCreated }: Args ) {
+export default function useCreatePage( { onCreated }: Args ) {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	return {

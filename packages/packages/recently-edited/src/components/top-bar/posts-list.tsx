@@ -10,7 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import DocTypeChip, { Props } from '../top-bar/chip-doc-type';
 import { Post } from '../../hooks/use-recent-posts';
-import usePage from '../../hooks/use-page';
+import useCreatePage from '../../hooks/use-create-page';
 import { PlusIcon } from '@elementor/icons';
 
 export type RecentPostsProps = {
@@ -18,7 +18,7 @@ export type RecentPostsProps = {
 };
 
 export default function PostsList( { recentPosts }: RecentPostsProps ) {
-	const { createPage, isLoading } = usePage( { onCreated } );
+	const { createPage, isLoading } = useCreatePage( { onCreated } );
 
 	return (
 		<>
