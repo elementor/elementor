@@ -36,7 +36,6 @@ export default function RecentlyEdited() {
 			<Button
 				color="inherit"
 				size="small"
-				sx={ { borderRadius: '8px' } }
 				endIcon={ <ChevronDownIcon /> }
 				{ ...bindTrigger( popupState ) }
 			>
