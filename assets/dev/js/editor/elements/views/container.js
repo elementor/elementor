@@ -399,6 +399,14 @@ const ContainerView = BaseElementView.extend( {
 		} );
 	},
 
+	onRenderEmpty() {
+		this.$el.addClass( 'e-empty' );
+	},
+
+	onAddChild() {
+		this.$el.removeClass( 'e-empty' );
+	},
+
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 

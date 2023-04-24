@@ -4,7 +4,7 @@ const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
-test.describe( 'Container tests', () => {
+test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -570,8 +570,8 @@ test.describe( 'Container tests', () => {
 			// Set various controls
 			await page.locator( '.elementor-control-container_type select' ).selectOption( 'grid' );
 			const clickOptions = { position: { x: 0, y: 0 } }; // This is to avoid the "tipsy" alt info that can block the click of the next item.
-			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
-			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
+			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
+			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
 		}
 
 		// Assert.
