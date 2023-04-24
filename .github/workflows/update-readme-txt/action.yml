@@ -16,13 +16,14 @@ runs:
       - name: Get & Update Stable Tag In Readme.txt
         shell: bash
         run: |
+              git 
               # Get the latest ga tag e.g. 3.13.2
-              if [[ ${{ inputs.CHANNEL }} == "cloud"] || [${{ inputs.CHANNEL }} == "beta"] || [${{ inputs.CHANNEL }} == "dev" ]]; then
+              if [[ "${{ inputs.CHANNEL }}" == "cloud"] || ["${{ inputs.CHANNEL }}" == "beta"] || ["${{ inputs.CHANNEL }}" == "dev" ]]; then
                 latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 | sed 's/^refs\/tags\/v//')
               fi
 
               # Get the latest ga tag e.g. 3.13.2 from the package version in case of channel ga
-              if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+              if [[ "${{ inputs.CHANNEL }}" == "ga" ]]; then
                 latest_tag=${{ inputs.PACKAGE_VERSION }}
               fi
 
