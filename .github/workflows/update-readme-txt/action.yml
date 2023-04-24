@@ -1,0 +1,36 @@
+name: Update Readme.txt
+description: Sets the Stable tag in the readme.txt file
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version to (ga, cloud, beta).'
+  PACKAGE_VERSION:
+    required: true
+    description: 'The package version to get the version from.'
+
+
+runs:
+  using: "composite"
+  steps:
+      - name: Get & Update Stable Tag In Readme.txt
+        shell: bash
+        run: |
+              # Get the latest ga tag e.g. 3.13.2
+              if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ] || ${{ inputs.CHANNEL }} == "dev" ]]; then
+                latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 | sed 's/^refs\/tags\/v//')
+              fi
+
+              # Get the latest ga tag e.g. 3.13.2 from the package version in case of channel ga
+              if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+                latest_tag=${{ inputs.PACKAGE_VERSION }}
+              fi
+
+              sed -i "s/Stable tag: .*/Stable tag: ${latest_tag}/" readme.txt
+
+              echo "readme.txt updated with Stable tag: ${latest_tag}"
+
+
+              
+              
+

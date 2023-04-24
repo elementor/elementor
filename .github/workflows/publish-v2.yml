@@ -89,6 +89,11 @@ jobs:
       - name: Unzip Release zip file
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+      - name: Update Readme.txt
+        uses: ./.github/workflows/update-readme-txt
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
       - name: Upload Debug Build To GitHub Artifacts
         if: env.CHANNEL != 'cloud'
         uses: actions/upload-artifact@v3
