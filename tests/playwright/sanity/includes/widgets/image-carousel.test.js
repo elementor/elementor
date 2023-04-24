@@ -57,7 +57,7 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 		} ) ).toMatchSnapshot( 'carousel-arrows-position.jpeg' );
 	} );
 
-	await test.step( 'Verify select small width', async () => {
+	await test.step( 'Verify custom select control width', async () => {
 		await editor.selectElement( widgetId );
 		await editor.activatePanelTab( 'content' );
 		await expect( await page.locator( '.elementor-control-slides_to_show .elementor-control-input-wrapper' ) ).toHaveCSS( 'max-width', '80px' );

@@ -38,15 +38,9 @@
 			@include end(5px);
 			pointer-events: none;
 		}
-	}
 
-	.elementor-control-field {
-
-		&.elementor-control-field-select-small {
-
-			.elementor-control-input-wrapper {
-				max-width: 80px;
-			}
+		.elementor-control-field-select-small & {
+			max-width: 80px;
 		}
 	}
 }
