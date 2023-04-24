@@ -1,6 +1,6 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
-
 import PageContent from './page-content';
+import { onConnect } from './helpers';
 
 const App = ( props ) => {
 	return (
@@ -10,6 +10,7 @@ const App = ( props ) => {
 					type={ props.type }
 					controlType={ props.controlType }
 					onClose={ props.onClose }
+					onConnect={ onConnect }
 					getControlValue={ props.getControlValue }
 					setControlValue={ props.setControlValue }
 					additionalOptions={ props.additionalOptions }

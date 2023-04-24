@@ -8,10 +8,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 
-		this.getControlValue = () => 'Control Value';
-		// eslint-disable-next-line no-console
-		this.setControlValue = ( value ) => console.log( value );
-
 		this.config = window.ElementorAiConfig;
 	}
 
@@ -38,7 +34,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		document.body.append( rootElement );
 
 		ReactDOM.render( <App
-			controlView={ this.view }
 			type={ this.getOption( 'type' ) }
 			controlType={ this.getOption( 'controlType' ) }
 			getControlValue={ this.getOption( 'getControlValue' ) }
