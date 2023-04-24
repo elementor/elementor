@@ -1,9 +1,6 @@
 import { Typography } from '@elementor/ui';
 
 const PromptCredits = ( props ) => {
-	return <div></div>;
-
-	// eslint-disable-next-line no-unreachable
 	return (
 		<Typography variant="caption" color="text.tertiary">
 			{

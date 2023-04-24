@@ -9,8 +9,8 @@ const getTextResult = async ( prompt, instruction ) => {
 	return getCompletionText( prompt );
 };
 
-const useTextPrompt = ( config ) => {
-	const promptData = usePrompt( getTextResult, config );
+const useTextPrompt = ( initialValue ) => {
+	const promptData = usePrompt( getTextResult, initialValue );
 
 	return promptData;
 };

@@ -13,6 +13,7 @@ const PageContent = (
 		type,
 		controlType,
 		onClose,
+		onConnect,
 		getControlValue,
 		setControlValue,
 		additionalOptions,
@@ -30,7 +31,13 @@ const PageContent = (
 	if ( ! isConnected ) {
 		return (
 			<WizardDialog onClose={ onClose }>
-				<Connect connectUrl={ connectUrl } onSuccess={ fetchData } />
+				<Connect
+					connectUrl={ connectUrl }
+					onSuccess={ ( data ) => {
+						onConnect( data );
+						fetchData();
+					} }
+				/>
 			</WizardDialog>
 		);
 	}
@@ -76,6 +83,7 @@ PageContent.propTypes = {
 	type: PropTypes.string,
 	controlType: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
+	onConnect: PropTypes.func.isRequired,
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
