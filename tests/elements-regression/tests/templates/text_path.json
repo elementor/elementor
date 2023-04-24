@@ -1,11 +1,11 @@
 {
     "content": [
         {
-            "id": "43f7f69c",
+            "id": "75c67408",
             "settings": [],
             "elements": [
                 {
-                    "id": "71cfce2e",
+                    "id": "42bc931b",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "align": "left",
@@ -29,7 +29,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "3936ec99",
+                    "id": "52d5b2f",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "path": "arc",
@@ -92,7 +92,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "9e16de3",
+                    "id": "31e5dc67",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "path": "circle",
@@ -119,7 +119,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "d35982c",
+                    "id": "4f71f3f9",
                     "settings": {
                         "text": "text direction -RTL",
                         "path": "line",
@@ -151,7 +151,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "63b6c6d7",
+                    "id": "15c4e533",
                     "settings": {
                         "text": "text direction-LTR",
                         "path": "oval",
@@ -206,7 +206,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "1e73d095",
+                    "id": "1eeee17d",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "path": "spiral",
@@ -232,17 +232,6 @@
                             "left": "45",
                             "isLinked": true
                         }
-                    },
-                    "elements": [],
-                    "isInner": false,
-                    "widgetType": "text-path",
-                    "elType": "widget"
-                },
-                {
-                    "id": "2dac8b90",
-                    "settings": {
-                        "text": "Add Your Curvy Text Here",
-                        "path": "custom"
                     },
                     "elements": [],
                     "isInner": false,
