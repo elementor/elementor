@@ -24,6 +24,7 @@ runs:
         fi
 
         echo "channel=${{ inputs.CHANNEL }} , latest_tag=${latest_tag}"
+        echo "git rev-parse ${latest_tag}"
 
         # e.g. refs/tags/v3.11.0-xxxxx -> 71163df6d14ba8f29e25098fde0c85fc8c1d2ca7
         PREVIOUS_TAG_SHA=$(git rev-parse ${latest_tag})
