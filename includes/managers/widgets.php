@@ -136,21 +136,6 @@ class Widgets_Manager {
 	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
-		// Skip Pojo widgets.
-		$pojo_allowed_widgets = [
-			'Pojo_Widget_Recent_Posts',
-			'Pojo_Widget_Posts_Group',
-			'Pojo_Widget_Gallery',
-			'Pojo_Widget_Recent_Galleries',
-			'Pojo_Slideshow_Widget',
-			'Pojo_Forms_Widget',
-			'Pojo_Widget_News_Ticker',
-
-			'Pojo_Widget_WC_Products',
-			'Pojo_Widget_WC_Products_Category',
-			'Pojo_Widget_WC_Product_Categories',
-		];
-
 		// Allow themes/plugins to filter out their widgets.
 		$black_list = [];
 
@@ -168,10 +153,6 @@ class Widgets_Manager {
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 
 			if ( in_array( $widget_class, $black_list ) ) {
-				continue;
-			}
-
-			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $pojo_allowed_widgets ) ) {
 				continue;
 			}
 
