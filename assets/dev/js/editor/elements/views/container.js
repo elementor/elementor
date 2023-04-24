@@ -191,11 +191,9 @@ const ContainerView = BaseElementView.extend( {
 				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( [ 'bottom', 'right' ].includes( side ) ) {
+				if ( [ 'bottom', 'right' ].includes( side ) && ! this.isDraggingOverGridContainerEmptyView() ) {
 					newIndex++;
 				}
-
-				console.log( 'newIndex', newIndex );
 
 				// User is sorting inside a Container.
 				if ( draggedView ) {
@@ -493,11 +491,12 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	handleGridEmptyView() {
-		const currentContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
-			? this.$el.find( '> .e-con-inner' )
-			: this.$el;
+		const currentContainer = this.getCorrectContainerElement();
 
-		this.moveElementToLastChild( currentContainer, currentContainer.find( '> .elementor-empty-view' ) );
+		this.moveElementToLastChild(
+			currentContainer,
+			currentContainer.find( '> .elementor-empty-view' )
+		);
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
@@ -507,7 +506,18 @@ const ContainerView = BaseElementView.extend( {
 		if ( parent.lastChild !== child ) {
 			parent.appendChild( child );
 		}
-	}
+	},
+
+	getCorrectContainerElement() {
+		return 'boxed' === this.getContainer().settings.get( 'content_width' )
+			? this.$el.find( '> .e-con-inner' )
+			: this.$el;
+	},
+
+	isDraggingOverGridContainerEmptyView() {
+		return 'grid' === this.getContainer().settings.get( 'container_type' ) && 
+			this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
 } );
 
 module.exports = ContainerView;
