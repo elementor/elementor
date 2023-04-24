@@ -500,9 +500,9 @@ const ContainerView = BaseElementView.extend( {
 		this.moveElementToLastChild( currentContainer, currentContainer.find( '> .elementor-empty-view' ) );
 	},
 
-	moveElementToLastChild( parentElement, childElement ) {
-		let parent = parentElement.get(0);
-		let child = childElement.get(0);
+	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
+		let parent = parentWrapperElement.get(0);
+		let child = childElementToMove.get(0);
 	  
 		if ( parent.lastChild !== child ) {
 			parent.appendChild( child );
