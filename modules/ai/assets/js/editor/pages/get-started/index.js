@@ -16,7 +16,7 @@ const GetStarted = ( { onSuccess } ) => {
 		<Stack alignItems="center" gap={ 4 }>
 			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
 
-			<Typography variant="h4">{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
+			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
 			<Typography variant="body2">{ __( 'Create smarter with AI text and code generators built right into the editor.', 'elementor' ) }</Typography>
 
@@ -24,7 +24,7 @@ const GetStarted = ( { onSuccess } ) => {
 				<Checkbox id="e-ai-terms-approval" color="secondary" sx={ { p: 0 } } onChange={ () => setIsTermsChecked( ( prevState ) => ! prevState ) } />
 
 				<Stack>
-					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" for="e-ai-terms-approval">
+					<Typography variant="caption" sx={ { maxWidth: 520 } } component="label" htmlFor="e-ai-terms-approval">
 						{ __( 'I approve the ', 'elementor' ) }
 						<Link href="https://go.elementor.com/ai-terms/" target="_blank" color="info.main">{ __( 'Terms of Service', 'elementor' ) }</Link>
 						{ ' & ' }
