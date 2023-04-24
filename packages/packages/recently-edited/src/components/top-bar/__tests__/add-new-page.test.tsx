@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useHostDocument, useActiveDocument } from '@elementor/documents';
 import RecentlyEdited from '../recently-edited';
 import { createMockDocument } from 'test-utils';
@@ -55,7 +55,7 @@ describe( '@elementor/recently-edited - Top bar add new page', () => {
 		expect( label ).toBeInTheDocument();
 	} );
 
-	it( 'should trigger create page hook on click', async () => {
+	it( 'should trigger create page hook on click', () => {
 		// Arrange.
 		mockActiveDocument();
 
@@ -76,9 +76,7 @@ describe( '@elementor/recently-edited - Top bar add new page', () => {
 		addNewPage.click();
 
 		// Assert.
-		await waitFor( () => {
-			expect( create ).toHaveBeenCalledTimes( 1 );
-		} );
+		expect( create ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 
