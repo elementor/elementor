@@ -522,13 +522,6 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
-	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-		await this.page.waitForLoadState();
-		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
-		await this.page.reload();
-	}
-
 	async returnFromFrontendToEditor() {
 		await this.page.locator( '#wp-admin-bar-elementor_edit_page' ).click();
 		await this.page.waitForSelector( '#elementor-preview-iframe' );
