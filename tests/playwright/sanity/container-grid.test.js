@@ -450,7 +450,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test.only( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
+	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
