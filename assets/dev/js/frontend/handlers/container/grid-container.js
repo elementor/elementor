@@ -242,6 +242,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 			if ( this.hasCustomUnit( gridRows ) && this.isNotOnlyANumber( gridRows ) && this.sizeNotEmpty( gridRows ) ) {
 				emptyView.style.minHeight = 'auto';
+
+				if ( emptyView.offsetHeight <= 0 ) {
+					emptyView.style.minHeight = '100px';
+				}
 			}
 		}
 	}
