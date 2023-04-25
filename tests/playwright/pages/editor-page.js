@@ -692,7 +692,7 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isPublished ) {
-			await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( 0 ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			await this.page.frameLocator( frames[ widgetType ][ 0 ] ).last().locator( frames[ widgetType ][ 1 ] ).waitFor();
 		} else {
 			const frame = this.getPreviewFrame();
 			await frame.waitForLoadState();
