@@ -56,6 +56,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			await editorPage.waitForIframeToLoaded( widgetType );
+			if ( 'text_path' === widgetType ) {
+				await page.waitForTimeout( 4000 );
+			}
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
@@ -70,6 +73,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
 			await editorPage.waitForIframeToLoaded( widgetType, true );
+			await page.waitForLoadState( 'networkidle' );
 
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
 		} );
