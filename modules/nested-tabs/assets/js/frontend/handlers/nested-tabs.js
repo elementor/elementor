@@ -1,4 +1,4 @@
-import { isMenuInDropdownMode } from "../utils";
+import { isMenuInDropdownMode } from '../utils';
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
 export default class NestedTabs extends Base {
@@ -158,7 +158,7 @@ export default class NestedTabs extends Base {
 		};
 	}
 
-	onHideTabContent( $activeContent ) {}
+	onHideTabContent() {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
