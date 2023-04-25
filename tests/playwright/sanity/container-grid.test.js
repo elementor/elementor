@@ -449,6 +449,43 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
+
+	test.only( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
+			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.closeNavigatorIfOpen();
+		await editor.setSelectControlValue( 'container_type', 'grid' );
+		const frame = editor.getPreviewFrame();
+		const container = await frame.locator( '.e-grid .e-con-inner' );
+
+		await test.step( 'Assert auto flow on desktop', async () => {
+			await editor.changeResponsiveView( 'desktop' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+		} );
+
+		await test.step( 'Assert auto flow on tablet', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+		} );
+
+		await test.step( 'Assert auto flow on mobile', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {
