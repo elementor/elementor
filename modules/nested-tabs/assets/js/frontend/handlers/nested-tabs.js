@@ -392,7 +392,7 @@ export default class NestedTabs extends Base {
 		this.findElement( '.e-normal' ).each( function() {
 			const $desktopTabTitle = jQuery( this ),
 				tabTitleId = $desktopTabTitle.attr( 'data-id' ),
-				$mobileTabTitle = $widget.find( `.e-collapse:nth-child( ${ index * 2 - 1 } )` );
+				$mobileTabTitle = $widget.find( `.e-collapse:nth-child( ${ ( index * 2 ) - 1 } )` );
 
 			if ( isAccordionView ) {
 				$desktopTabTitle.attr( 'id', '' );
