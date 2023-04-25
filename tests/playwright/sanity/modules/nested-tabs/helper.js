@@ -104,6 +104,10 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
+async function hasFirstTabTitleId( context, selector ) {
+	return !! await context.locator( selector ).first().getAttribute( 'id' );
+}
+
 module.exports = {
 	tabIcons,
 	addIcon,
@@ -116,4 +120,5 @@ module.exports = {
 	setTabBorderColor,
 	setTabItemColor,
 	selectDropdownContainer,
+	hasFirstTabTitleId,
 };

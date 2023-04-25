@@ -5,6 +5,7 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
+const { testResponsiveIdHandling } = require( './tests/id' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
@@ -34,6 +35,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tests.
 		await testIconCount( page, editor );
 		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
+		await testResponsiveIdHandling( page, editor );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 

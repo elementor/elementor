@@ -522,6 +522,20 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async saveAndReloadPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
+		await this.page.reload();
+	}
+
+	async returnFromFrontendToEditor() {
+		await this.page.locator( '#wp-admin-bar-elementor_edit_page' ).click();
+		await this.page.waitForSelector( '#elementor-preview-iframe' );
+		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-element >> nth=0' );
+	}
+
 	async previewChanges( context ) {
 		const previewPagePromise = context.waitForEvent( 'page' );
 
@@ -690,5 +704,16 @@ module.exports = class EditorPage extends BasePage {
 			await frame.waitForSelector( EditorSelectors.videoIframe );
 			await frame.frameLocator( EditorSelectors.videoIframe ).nth( 0 ).locator( EditorSelectors.playIcon ).waitFor();
 		}
+	}
+
+	async setResponsiveViewInEditor( deviceType ) {
+		const responsiveBarIsVisible = await this.page.locator( '#elementor-preview-responsive-wrapper' ).evaluate( ( element ) => element.classList.contains( 'ui-resizable' ) );
+
+		if ( ! responsiveBarIsVisible ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+			await this.page.waitForSelector( '#e-responsive-bar' );
+		}
+
+		await this.page.locator( `#e-responsive-bar-switcher__option-${ deviceType }` ).click();
 	}
 };
