@@ -71,9 +71,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
 			await editorPage.waitForIframeToLoaded( widgetType, true );
 
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`,
-				{ maxDiffPixels: 100 },
-				{ timeout: 10000 } );
+			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
 		} );
 	}
 
