@@ -1,3 +1,4 @@
+import { isMenuInDropdownMode } from "../utils";
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
 export default class NestedTabs extends Base {
@@ -234,6 +235,9 @@ export default class NestedTabs extends Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+
+		this.resizeListenerNestedTabs = this.setResponsiveTabTitleId.bind( this );
+		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 	}
 
 	preventDefaultLinkBehaviourForTabTitle( event ) {
@@ -278,6 +282,8 @@ export default class NestedTabs extends Base {
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
 		}
+
+		this.setResponsiveTabTitleId();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -366,6 +372,38 @@ export default class NestedTabs extends Base {
 				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
 			}
 		}
+	}
+
+	setResponsiveTabTitleId( resizeEvent = false ) {
+		const elementSettings = this.getElementSettings(),
+			activeClass = this.getActiveClass(),
+			$activeDesktopTitle = this.elements.$tabTitles.filter( `.e-normal.${ activeClass }` ),
+			isAccordionView = isMenuInDropdownMode( elementSettings ),
+			visibleDesktopTabHasId = ! isAccordionView && !! $activeDesktopTitle.attr( 'id' ),
+			visibleAccordionTabHasId = isAccordionView && ! $activeDesktopTitle.attr( 'id' ),
+			$widget = this.$element;
+
+		if ( !! resizeEvent && ( visibleDesktopTabHasId || visibleAccordionTabHasId ) ) {
+			return;
+		}
+
+		let index = 1;
+
+		this.findElement( '.e-normal' ).each( function() {
+			const $desktopTabTitle = jQuery( this ),
+				tabTitleId = $desktopTabTitle.attr( 'data-id' ),
+				$mobileTabTitle = $widget.find( `.e-collapse:nth-child( ${ index } )` );
+
+			if ( isAccordionView ) {
+				$desktopTabTitle.attr( 'id', '' );
+				$mobileTabTitle.attr( 'id', tabTitleId );
+			} else {
+				$mobileTabTitle.attr( 'id', '' );
+				$desktopTabTitle.attr( 'id', tabTitleId );
+			}
+
+			index++;
+		} );
 	}
 
 	getActiveClass() {

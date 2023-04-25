@@ -364,6 +364,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'options' => $dropdown_options,
 				'default' => 'mobile',
 				'prefix_class' => 'e-n-tabs-',
+				'frontend_available' => true,
 			]
 		);
 
@@ -1048,6 +1049,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
+				'data-id' => $tab_id,
 				'class' => $tab_title_classes,
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
@@ -1065,7 +1067,6 @@ class NestedTabs extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
-				'id' => $tab_id . '-accordion',
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
@@ -1135,6 +1136,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
+					'data-id': tabId,
 					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass ],
 					'data-tab': tabCount,
 					'role': 'tab',
