@@ -86,7 +86,7 @@ class Test_Revert extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify revert runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the revert process because no revert runners have been specified. Try again by specifying revert runners.' );
 
 		// Arrange
 		$import = new Revert();

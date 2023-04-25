@@ -1,10 +1,10 @@
 === Elementor Website Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 5.0
+Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 3.10.1
+Stable tag: 3.12.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,7 +146,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
+* WordPress 5.9 or greater
 * PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
@@ -239,6 +239,102 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.12.2 - 2023-04-23 =
+
+* Fix: Hover active color is not working as expected in Tabs widget ([#21849](https://github.com/elementor/elementor/issues/21849))
+* Fix: Horizontal scrolling appears while editing when direction is set to row in Container ([#21805](https://github.com/elementor/elementor/issues/21805))
+* Fix: Responsive button is not clickable as expected in widgets panel ([#22073](https://github.com/elementor/elementor/issues/22073))
+* Fix: Improved code security enforcement in `Replace URL` functionality
+* Fix: General improvements in Elementor's new UI color scheme
+
+= 3.12.1 - 2023-04-02 =
+
+* Fix: Elementor's dark mode color scheme affects the front in various scenarios ([#21809](https://github.com/elementor/elementor/issues/21809), [#21832](https://github.com/elementor/elementor/issues/21832))
+* Fix: Reverted inline editing fix that caused DOM change in Button widget
+
+= 3.12.0 - 2023-03-29 =
+
+* New: A new color scheme for Elementor - the Editor and other Elementor screens have been recolored, simplified, and optimized for accessibility
+* New: Introducing a new Editor Top Bar as an Alpha experiment - consolidates all the common actions you need to perform on your website in a central and accessible location
+* Tweak: Added a vertical alignment control to icons in Icon List widget ([#16464](https://github.com/elementor/elementor/issues/16464), [#16056](https://github.com/elementor/elementor/issues/16056), [#19237](https://github.com/elementor/elementor/issues/19237), [#16237](https://github.com/elementor/elementor/issues/16237), [#18420](https://github.com/elementor/elementor/issues/18420))
+* Tweak: Adjusted the increments of `em` and `rem` when using the number scrubbing functionality ([#19399](https://github.com/elementor/elementor/issues/19399))
+* Tweak: Added `vw` unit to margin and padding in Column, Section, and Container elements ([#20890](https://github.com/elementor/elementor/issues/20890), props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added additional size units for icon in Social Icons widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Separated title and description control labels in Icon Box and Image Box widgets (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added units to `container_width` and `widgets_gap` in site settings (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Added units for Word Spacing control in Text Path widget (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Extracted Stretch Section handler to a more generic Stretch Element
+* Tweak: Refactored show and hide tab content callbacks to be more generic in Tabs widget
+* Tweak: Updated minimum required WordPress version to 5.9
+* Tweak: Separated overview dashboard function to multiple functions in WordPress dashboard
+* Tweak: Added thumbnail to most recently installed kit in Elementor Import/export screen
+* Tweak: Added Transition Duration control to text hover color in Icon List widget
+* Tweak: Display normal & hover icon colors in tabs view in Icon List widget
+* Tweak: Added additional size units and custom units in all elements
+* Tweak: Added remove current kit alert before applying a new kit in import process
+* Tweak: Removed redundant default units in various elements
+* Tweak: Upgrade Swiper Library feature promoted to Stable status
+* Tweak: Save as Default feature merged to version
+* Fix: Padding is set to text span instead of icon span in Icon List widget ([#9831](https://github.com/elementor/elementor/issues/9831), props [@cirkut](https://github.com/cirkut))
+* Fix: Save as Default functionality breaks Image Carousel and Loop Carousel widgets in various scenarios ([#21371](https://github.com/elementor/elementor/issues/21371))
+* Fix: Content styling controls are not targeting the right container in Tabs widget
+* Fix: Containers are still editable in Editor preview mode
+* Fix: "Choose Image" control is missing in Safari 14 in various image elements
+
+= 3.11.5 - 2023-03-14 =
+
+* Tweak: Improved SVG file upload sanitization for better security enforcement
+* Tweak: Improved code security enforcement in Text Path widget
+
+= 3.11.4 - 2023-03-12 =
+
+* Fix: Sticky and Motion Effects not working after latest Chrome update ([#21612](https://github.com/elementor/elementor/issues/21612))
+* Fix: Extra spacing appears on the bottom in Video widget
+
+= 3.11.3 - 2023-03-07 =
+
+* Fix: Lightbox is not presented as expected when Upgrade Swiper Library experiment is activated ([#21413](https://github.com/elementor/elementor/issues/21413))
+* Fix: "Choose Image" control is missing in Safari 14 in various image elements
+
+= 3.11.2 - 2023-02-22 =
+
+* Fix: Passing an HTMLElement to the Swiper instance utility doesn't work
+
+= 3.11.1 - 2023-02-15 =
+
+* Fix: Featured Image dynamic tag is not working in Background images ([#21313](https://github.com/elementor/elementor/issues/21313))
+
+= 3.11.0 - 2023-02-13 =
+
+* New: Introducing Copy and Paste Between Websites functionality ([#9424](https://github.com/elementor/elementor/issues/9424), [#19183](https://github.com/elementor/elementor/issues/19183))
+* New: Responsive background Image Size - Adjust image size per device to improve performance ([#6778](https://github.com/elementor/elementor/issues/6778), [#3722](https://github.com/elementor/elementor/issues/3722))
+* New: Updated Swiper Library to 8.4.5 as a Beta experiment ([#18724](https://github.com/elementor/elementor/issues/18724))
+* Tweak: Updated Google Fonts list with 125 new fonts ([#20229](https://github.com/elementor/elementor/issues/20229))
+* Tweak: Added `accent-color` support to Form fields in Site Settings
+* Tweak: Use `aspect-ratio` property instead of CSS trick in Video widget
+* Tweak: Updated `eicons` library to v5.18.0
+* Tweak: Added `generator` meta tag to identify active performance settings and experiments
+* Tweak: Improved logo visibility in Site Logo widget
+* Tweak: Updated error messages when replacing URLs in Elementor Tools screen
+* Tweak: Updated error messages on import/export functionality
+* Tweak: Added a responsive control to custom image spacing in Image Carousel widget
+* Tweak: Renamed "Experiments" settings tab to "Features" for better clarity
+* Tweak: Merged "Hide WP widgets from search" experiment to the version
+* Tweak: Promoted "Nested Elements" experiment to BETA status
+* Tweak: Promoted "Flexbox Container" experiment to RC status
+* Tweak: Promoted "Save as Default" experiment to Stable status
+* Fix: Rename `e-action-hash` attribute to `data-e-action-hash` attribute ([#20513](https://github.com/elementor/elementor/issues/20513), [#16418](https://github.com/elementor/elementor/issues/16418), props [@huubl](https://github.com/huubl))
+* Fix: Justify Content icons are inverted in RTL when direction is set to column in Container ([#20083](https://github.com/elementor/elementor/issues/20083))
+* Fix: Various issues when using the convert-to-container functionality
+* Fix: Tabs widget changes width size when direction set to row or column in Container
+* Fix: Adjusted right-click menu dark mode for blocked options
+* Fix: Can't rollback Elementor version to older Core version
+
+= 3.10.2 - 2023-01-29 =
+
+* Fix: PHP 8.x throws errors and notices in some cases ([#21087](https://github.com/elementor/elementor/issues/21087))
+* Fix: Keyboard actions are not blocked on main tab container in Tabs widget
 
 = 3.10.1 - 2023-01-17 =
 

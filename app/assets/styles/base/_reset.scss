@@ -18,7 +18,6 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 }
 
 // Body
-
 body {
 	margin: 0;
 	font-family: $eps-font-family;
@@ -26,14 +25,7 @@ body {
 	font-weight: $eps-font-weight-base;
 	line-height: $eps-line-height-base;
 	color: var(--body-color);
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
 	background-color: var(--body-bg);
-}
-
-::selection {
-	background-color: $eps-theme-accent;
-	color: $color-white;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -111,7 +103,6 @@ figure {
 }
 
 // Images and content
-
 img {
   vertical-align: middle;
   border-style: none; // Remove the border on images inside links in IE 10-.
@@ -161,7 +152,6 @@ select {
   word-wrap: normal;
 }
 
-
 button,
 [type="button"],
 [type="reset"],
@@ -179,27 +169,16 @@ button,
   }
 }
 
-// Remove inner border and padding from Firefox, but don't restore the outline like Normalize.
-button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
-[type="reset"]::-moz-focus-inner,
-[type="submit"]::-moz-focus-inner {
-  padding: 0;
-  border-style: none;
-}
-
 input[type="radio"],
 input[type="checkbox"] {
   box-sizing: border-box;
   padding: 0;
 }
 
-
 textarea {
   overflow: auto;
   resize: vertical;
 }
-
 
 // Always hide an element with the `hidden` HTML attribute (from PureCSS).
 [hidden] {
@@ -207,7 +186,6 @@ textarea {
 }
 
 // Opinionated resets:
-
 hr {
 	border: 0 none;
 	border-bottom: 1px solid var(--hr-color);

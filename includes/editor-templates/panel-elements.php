@@ -20,12 +20,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'Get more with Elementor Pro', 'elementor' ); ?></div>
-		<a class="elementor-button elementor-button-default elementor-nerd-box-link" target="_blank" href="https://go.elementor.com/pro-widgets/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
+		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-widgets/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="elementor-panel-category-title">{{{ title }}}</div>
+	<div class="elementor-panel-heading elementor-panel-category-title">
+		<div class="elementor-panel-heading-toggle">
+			<i class="eicon" aria-hidden="true"></i>
+		</div>
+		<div class="elementor-panel-heading-title">{{{ title }}}</div>
+	</div>
 	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
 </script>
 
@@ -49,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="icon">
 			<i class="{{ icon }}" aria-hidden="true"></i>
 		</div>
-		<div class="elementor-element-title-wrapper">
+		<div class="title-wrapper">
 			<div class="title">{{{ title }}}</div>
 		</div>
 	</div>
@@ -60,6 +65,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 		<div class="elementor-nerd-box-title"><?php echo esc_html__( 'Meet Our Global Widget', 'elementor' ); ?></div>
 		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
-		<a class="elementor-button elementor-button-default elementor-nerd-box-link" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
+		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 	</div>
 </script>

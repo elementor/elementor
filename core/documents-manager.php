@@ -509,11 +509,14 @@ class Documents_Manager {
 
 		$document->save( $data );
 
+		$post = $document->get_post();
+		$main_post = $document->get_main_post();
+
 		// Refresh after save.
-		$document = $this->get( $document->get_post()->ID, false );
+		$document = $this->get( $post->ID, false );
 
 		$return_data = [
-			'status' => $document->get_post()->post_status,
+			'status' => $post->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -523,6 +526,15 @@ class Documents_Manager {
 				],
 			],
 		];
+
+		$post_status_object = get_post_status_object( $main_post->post_status );
+
+		if ( $post_status_object ) {
+			$return_data['config']['document']['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		/**
 		 * Returned documents ajax saved data.

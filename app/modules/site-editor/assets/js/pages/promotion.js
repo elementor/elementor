@@ -17,7 +17,7 @@ export default function Promotion() {
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
-						<Button size="sm" color="cta" variant="contained" text={ __( 'Upgrade', 'elementor' ) } />
+						<Button size="sm" color="brand" variant="contained" text={ __( 'Upgrade', 'elementor' ) } />
 					</a>
 				</CardOverlay>
 			);

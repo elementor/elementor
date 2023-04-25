@@ -696,9 +696,18 @@ class Widget_Video extends Widget_Base {
 					'11' => '1:1',
 					'916' => '9:16',
 				],
+				'selectors_dictionary' => [
+					'169' => '16 / 9',
+					'219' => '21 / 9',
+					'43' => '4 / 3',
+					'32' => '3 / 2',
+					'11' => '1 / 1',
+					'916' => '9 / 16',
+				],
 				'default' => '169',
-				'prefix_class' => 'elementor-aspect-ratio-',
-				'frontend_available' => true,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-wrapper' => 'aspect-ratio: {{VALUE}}',
+				],
 			]
 		);
 
@@ -945,10 +954,6 @@ class Widget_Video extends Widget_Base {
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
 
-		if ( ! $settings['lightbox'] ) {
-			$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-fit-aspect-ratio' );
-		}
-
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
 		?>
 		<div <?php $this->print_render_attribute_string( 'video-wrapper' ); ?>>
@@ -987,7 +992,7 @@ class Widget_Video extends Widget_Base {
 					$this->add_render_attribute( 'image-overlay', [
 						'data-elementor-open-lightbox' => 'yes',
 						'data-elementor-lightbox' => wp_json_encode( $lightbox_options ),
-						'e-action-hash' => Plugin::instance()->frontend->create_action_hash( 'lightbox', $lightbox_options ),
+						'data-e-action-hash' => Plugin::instance()->frontend->create_action_hash( 'lightbox', $lightbox_options ),
 					] );
 
 					if ( Plugin::$instance->editor->is_edit_mode() ) {

@@ -19,21 +19,6 @@ class Module extends BaseModule {
 		return 'kit-elements-defaults';
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name' => 'kit-elements-defaults',
-			'title' => __( 'Save as Default', 'elementor' ),
-			'description' => __(
-				'Maintain consistency across your site by saving the changes to a widget as the default setting for future use. These settings will automatically apply to the widget every time you place it. Note: This feature doesn\'t affect existing widgets.',
-				'elementor'
-			) . ' <a href="https://go.elementor.com/wp-dash-save-as-default" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-			],
-		];
-	}
-
 	private function enqueue_scripts() {
 		wp_enqueue_script(
 			'elementor-kit-elements-defaults-editor',

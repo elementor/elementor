@@ -14,6 +14,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		ui.removeButton = '.elementor-control-media__remove';
 		ui.fileName = '.elementor-control-media__file__content__info__name';
 
+		ui.mediaInputImageSize = '.e-image-size-select';
+
 		return ui;
 	},
 
@@ -21,6 +23,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return _.extend( ControlMultipleBaseItemView.prototype.events.apply( this, arguments ), {
 			'click @ui.frameOpeners': 'openFrame',
 			'click @ui.removeButton': 'deleteImage',
+			'change @ui.mediaInputImageSize': 'onMediaInputImageSizeChange',
 		} );
 	},
 
@@ -46,12 +49,13 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	applySavedValue() {
 		const value = this.getControlValue( 'url' ),
 			url = value || this.getControlPlaceholder()?.url,
+			isPlaceholder = ( ! value && url ),
 			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
-			if ( ! value && url ) {
+			if ( isPlaceholder ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
 		} else if ( 'video' === mediaType ) {
@@ -61,7 +65,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.fileName.text( fileName );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
+		if ( this.ui.mediaInputImageSize ) {
+			let imageSize = this.getControlValue( 'size' );
+
+			if ( isPlaceholder ) {
+				imageSize = this.getControlPlaceholder()?.size;
+			}
+
+			this.ui.mediaInputImageSize
+				.val( imageSize )
+				.toggleClass( 'e-select-placeholder', isPlaceholder );
+		}
+
+		this.ui.controlMedia
+			.toggleClass( 'e-media-empty', ! value )
+			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 	},
 
 	openFrame( e ) {
@@ -107,6 +125,65 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
+	},
+
+	onMediaInputImageSizeChange() {
+		if ( ! this.model.get( 'has_sizes' ) ) {
+			return;
+		}
+
+		const currentControlValue = this.getControlValue(),
+			placeholder = this.getControlPlaceholder();
+
+		const hasImage = ( '' !== currentControlValue?.id ),
+			hasPlaceholder = placeholder?.id,
+			hasValue = hasImage || hasPlaceholder;
+
+		if ( ! hasValue ) {
+			return;
+		}
+
+		const shouldUpdateFromPlaceholder = ( hasPlaceholder && ! hasImage );
+
+		if ( shouldUpdateFromPlaceholder ) {
+			this.setValue( {
+				...placeholder,
+				size: currentControlValue.size,
+			} );
+
+			if ( this.model.get( 'responsive' ) ) {
+				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
+				this.renderWithChildren();
+			} else {
+				this.applySavedValue();
+			}
+
+			this.onMediaInputImageSizeChange();
+
+			return;
+		}
+
+		let imageURL;
+
+		elementor.channels.editor.once( 'imagesManager:detailsReceived', ( data ) => {
+			imageURL = data[ currentControlValue.id ]?.[ currentControlValue.size ];
+
+			if ( imageURL ) {
+				currentControlValue.url = imageURL;
+				this.setValue( currentControlValue );
+			}
+		} );
+
+		imageURL = elementor.imagesManager.getImageUrl( {
+			id: currentControlValue.id,
+			url: currentControlValue.url,
+			size: currentControlValue.size,
+		} );
+
+		if ( imageURL ) {
+			currentControlValue.url = imageURL;
+			this.setValue( currentControlValue );
+		}
 	},
 
 	/**
@@ -227,6 +304,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id,
 				alt: attachment.alt,
 				source: attachment.source,
+				size: this.model.get( 'default' ).size,
 			} );
 
 			if ( this.model.get( 'responsive' ) ) {
@@ -236,6 +314,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				this.applySavedValue();
 			}
 		}
+
+		this.onMediaInputImageSizeChange();
 
 		this.trigger( 'after:select' );
 	},

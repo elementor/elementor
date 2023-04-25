@@ -341,7 +341,7 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload', [] );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {

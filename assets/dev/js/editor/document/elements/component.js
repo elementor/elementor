@@ -80,15 +80,15 @@ export default class Component extends ComponentBase {
 				const storage = elementorCommon.storage.get( 'clipboard' );
 
 				// No storage? no paste.
-				if ( ! storage || ! storage[ 0 ] ) {
+				if ( ! storage || ! storage?.elements?.length || 'elementor' !== storage?.type ) {
 					return false;
 				}
 
-				if ( ! ( storage[ 0 ] instanceof Backbone.Model ) ) {
-					storage[ 0 ] = new Backbone.Model( storage[ 0 ] );
+				if ( ! ( storage.elements[ 0 ] instanceof Backbone.Model ) ) {
+					storage.elements[ 0 ] = new Backbone.Model( storage.elements[ 0 ] );
 				}
 
-				const pasteOptions = this.utils.getPasteOptions( storage[ 0 ], targetContainer );
+				const pasteOptions = this.utils.getPasteOptions( storage.elements[ 0 ], targetContainer );
 
 				return Object.values( pasteOptions ).some(
 					( opt ) => !! opt,

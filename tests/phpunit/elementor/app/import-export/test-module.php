@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -116,6 +117,8 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertCount( 1, $last_runner['wp-content']['post']['succeed'] );
 		$this->assertCount( 1, $last_runner['wp-content']['page']['succeed'] );
 		$this->assertCount( 7, $last_runner['wp-content']['nav_menu_item']['succeed'] );
+
+		self::assert_valid_import_session( $this, $import['session'] );
 	}
 
 	public function test_revert_last_imported_kit__with_import_by_runner() {
@@ -246,5 +249,24 @@ class Test_Module extends Elementor_Test_Base {
 				'should_show' => false,
 			],
 		];
+	}
+
+	public static function assert_valid_import_session( $instance, $session_id )
+	{
+		$import_session_keys = [
+			'session_id',
+			'kit_title',
+			'kit_name',
+			'kit_thumbnail',
+			'kit_source',
+			'user_id',
+			'start_timestamp',
+			'end_timestamp',
+			'runners',
+		];
+		$import_sessions = Revert::get_import_sessions();
+		$instance->assert_array_have_keys( $import_session_keys, $import_sessions[0] );
+
+		$instance->assertEquals( $session_id, $import_sessions[0]['session_id'] );
 	}
 }

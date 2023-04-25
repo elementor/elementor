@@ -5,6 +5,7 @@ inputs:
   CHANNEL:
     required: true
 
+# TODO - Remove this when publish-cloud is removed.
 outputs:
   prev_version:
     description: "previous cloud version"

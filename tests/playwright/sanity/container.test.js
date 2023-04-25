@@ -1,15 +1,31 @@
 const { test, expect } = require( '@playwright/test' );
 const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const widgets = require( '../enums/widgets.js' );
+const Breakpoints = require( '../assets/breakpoints' );
 
 test.describe( 'Container tests', () => {
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
-		// Arrange.
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
+	} );
 
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -17,9 +33,9 @@ test.describe( 'Container tests', () => {
 		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
 
 		// Add widgets.
-		const button = await editor.addWidget( 'button', container ),
-			heading = await editor.addWidget( 'heading', container ),
-			image = await editor.addWidget( 'image', container );
+		const button = await editor.addWidget( widgets.button, container ),
+			heading = await editor.addWidget( widgets.heading, container ),
+			image = await editor.addWidget( widgets.image, container );
 
 		// Act.
 		// Move the button to be last.
@@ -36,33 +52,25 @@ test.describe( 'Container tests', () => {
 
 		// Assert.
 		// Test that the image is between the heading & button.
-		expect( elBeforeButton ).toBe( elAfterHeading );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		expect( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
-	test.skip( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
+	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Close Navigator
 		await editor.closeNavigatorIfOpen();
+		await editor.useCanvasTemplate();
 
 		// Act.
-		// Add widgets.
-		await editor.addWidget( 'accordion', containerId );
-		await editor.addWidget( 'divider', containerId );
-		const spacer = await editor.addWidget( 'spacer', containerId );
-		await editor.addWidget( 'toggle', containerId );
-		await editor.addWidget( 'video', containerId );
+		await editor.addWidget( widgets.accordion, containerId );
+		await editor.addWidget( widgets.divider, containerId );
+		const spacer = await editor.addWidget( widgets.spacer, containerId );
+		await editor.addWidget( widgets.toggle, containerId );
+		await editor.addWidget( widgets.video, containerId );
 
 		// Set background colour to spacer.
 		await editor.setBackgroundColor( '#A81830', spacer );
@@ -75,13 +83,9 @@ test.describe( 'Container tests', () => {
 
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -90,12 +94,8 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
 
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-row-full.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -108,13 +108,9 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1500' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-full-start.jpeg' );
+		await expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -123,41 +119,24 @@ test.describe( 'Container tests', () => {
 		await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
-		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert
-		expect( await container.screenshot( {
-			type: 'jpeg',
-			quality: 90,
-		} ) ).toMatchSnapshot( 'container-column-boxed-start.jpeg' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		await expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
 	} );
 
-	test.skip( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Set Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
 			pageView = page.locator( 'body' );
 
 		// Act.
-		// Add widget.
-		await editor.addWidget( 'heading', container );
-		// Select container.
+		await editor.addWidget( widgets.heading, container );
 		await editor.selectElement( container );
 		// Set position absolute.
 		await editor.activatePanelTab( 'advanced' );
@@ -196,19 +175,11 @@ test.describe( 'Container tests', () => {
 		// Reset the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
-	test.skip( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
+	test( 'Test widgets inside the container using position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Close Navigator
@@ -244,25 +215,14 @@ test.describe( 'Container tests', () => {
 		// Reset the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Container full width and position fixed', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Use the Canvas template.
 		await editor.useCanvasTemplate();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -293,37 +253,22 @@ test.describe( 'Container tests', () => {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.getFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
+		await editor.getPreviewFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
 		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
-	test.skip( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
+	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -349,7 +294,6 @@ test.describe( 'Container tests', () => {
 		await editor.setWidgetCustomWidth( '80' );
 
 		await editor.addWidget( 'google_maps', container );
-		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
@@ -396,12 +340,8 @@ test.describe( 'Container tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.skip( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
+	test( 'Fallback image is not on top of background video', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		await page.goto( '/wp-admin/media-new.php' );
 
 		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
@@ -417,7 +357,7 @@ test.describe( 'Container tests', () => {
 		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
 			editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getFrame().locator( '.elementor-element-' + containerId );
+			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 
 		// Set Canvas template.
 		await editor.useCanvasTemplate();
@@ -449,20 +389,11 @@ test.describe( 'Container tests', () => {
 		// Reset to the Default template.
 		await editor.togglePreviewMode();
 		await editor.useDefaultTemplate();
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
 	test( 'Spacer alignment with container column setting', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -487,42 +418,32 @@ test.describe( 'Container tests', () => {
 		// Assert
 		expect( await container.screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
 	} );
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
-
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
 	} );
 
-	test.skip( 'Container handle should be centered', async ( { page }, testInfo ) => {
+	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
+
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 			const editor = await createCanvasPage( wpAdmin );
+			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
-
 			expect( await container.screenshot( {
 				type: 'jpeg',
-				quality: 90,
-			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg', { maxDiffPixels: 100 } );
+				quality: 100,
+			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
 		} finally {
 			await wpAdmin.setLanguage( '' );
 		}
@@ -533,14 +454,11 @@ test.describe( 'Container tests', () => {
 		expect( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
-		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
 	} );
 
 	test( 'Container Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -566,6 +484,71 @@ test.describe( 'Container tests', () => {
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
+
+	test( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const breakpoints = Breakpoints.getBasic().reverse();
+		const directions = [ 'right', 'down', 'left', 'up' ];
+
+		try {
+			let editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
+
+			await wpAdmin.setLanguage( 'he_IL' );
+			editor = await wpAdmin.useElementorCleanPost();
+			await editor.addElement( { elType: 'container' }, 'document' );
+			await testJustifyDirections( directions, breakpoints, editor, page, 'rtl' );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+	} );
+
+	test( 'Widgets are not editable in preview mode', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		// Add widgets.
+		await editor.addWidget( widgets.button, container );
+		await editor.addWidget( widgets.heading, container );
+		await editor.addWidget( widgets.image, container );
+
+		const preview = editor.getPreviewFrame();
+
+		const resizers = await preview.locator( '.ui-resizable-handle.ui-resizable-e' );
+		await expect( resizers ).toHaveCount( 4 );
+
+		await editor.togglePreviewMode();
+		await expect( resizers ).toHaveCount( 0 );
+	} );
+
+	test( 'Container no horizontal scroll', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		// Arrange.
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerSelector = '.elementor-element-edit-mode',
+			frame = await editor.getPreviewFrame();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		// Evaluate scroll widths in the browser context.
+		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
+			const container = document.querySelector( selector );
+			return container.scrollWidth <= container.clientWidth;
+		}, containerSelector );
+
+		// Check for no horizontal scroll.
+		expect( hasNoHorizontalScroll ).toBe( true );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
@@ -581,4 +564,35 @@ async function addContainerAndHover( editor ) {
 	const container = editor.getPreviewFrame().locator( containerSelector );
 	editor.getPreviewFrame().hover( containerSelector );
 	return container;
+}
+
+async function toggleResponsiveControl( page, justifyControlsClass, breakpoints, i ) {
+	await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i ] }` );
+	if ( i < breakpoints.length - 1 ) {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ i + 1 ] }` );
+	} else {
+		await page.click( `${ justifyControlsClass } .eicon-device-${ breakpoints[ 0 ] }` );
+	}
+}
+
+async function captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix ) {
+	await editor.page.click( `.elementor-control-responsive-${ breakpoints[ i ] } .eicon-arrow-${ direction }` );
+
+	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
+	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
+	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	expect( await justifyControlsContent.screenshot( {
+		type: 'jpeg',
+		quality: 90,
+	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
+
+	await toggleResponsiveControl( page, justifyControlsClass, breakpoints, i );
+}
+
+async function testJustifyDirections( directions, breakpoints, editor, page, snapshotPrefix ) {
+	for ( const direction of directions ) {
+		for ( let i = 0; i < breakpoints.length; i++ ) {
+			await captureJustifySnapShot( editor, breakpoints, i, direction, page, snapshotPrefix );
+		}
+	}
 }

@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"jsx": "react-jsx",
+		"moduleResolution": "Node",
+		"esModuleInterop": false,
+		"isolatedModules": true,
+
+		/* Strict Type-Checking */
+		"strict": true,
+		"allowJs": false,
+		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": false,
+
+		/* Less Strict Type-Checking */
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+
+		/** Makes sure there is no output (webpack will output our code) */
+		"noEmit": true,
+
+		/** Aliases for the packages */
+		"paths": {
+			"@elementor/*": ["./packages/*/src"],
+			"test-utils": ["./tests/test-utils"]
+		},
+
+		"typeRoots": ["./node_modules/@types"]
+	}
+}

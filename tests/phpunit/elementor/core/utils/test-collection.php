@@ -9,6 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Collection extends Elementor_Test_Base {
+	public function test_make() {
+		// Act
+		$collection = Collection::make( [ 1, 2, 3 ] );
+
+		// Assert
+		$this->assertEquals( [ 1, 2, 3 ], $collection->all() );
+	}
+
 	public function test_all() {
 		// Arrange
 		$collection = new Collection( $array = [ 'a' => 'a', 'b' => 'b' ] );

@@ -34,7 +34,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 						...group.actions,
 						{
 							name: 'save-as-default',
-							title: __( 'Save as Default', 'elementor' ),
+							title: __( 'Save as default', 'elementor' ),
 							callback: () => {
 								$e.run( 'kit-elements-defaults/confirm-creation', { container: view.getContainer() } );
 							},

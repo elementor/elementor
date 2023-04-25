@@ -18,11 +18,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -37,7 +37,7 @@ jobs:
       - name: Build
         run: npx grunt build
       - name: Save build to cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: restore-build
         with:
           path: ./build/*
@@ -58,11 +58,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
       - name: Restore build from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: restore-build
         with:
           path: ./build/*
@@ -72,28 +72,25 @@ jobs:
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
-      - name: Install wp-env
-        run: npm install --no-package-lock --no-save @wordpress/env@5.0.0
+      - name: Install dependencies
+        run: npm ci
       - name: Install WordPress environment
         run: |
-          npx wp-env start
-          # change wp-env folder owner to www-data
-          sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
+          npm run start-local-server
+          npm run test:setup:elements-regression
       - name: WordPress debug information
         run: |
-          npx wp-env run tests-cli "wp core version"
-          npx wp-env run tests-cli "wp --info"
+          npx wp-env run cli "wp core version"
+          npx wp-env run cli "wp --info"
       - name: Install playwright/test
         run: |
-          npm ci
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
           npm run test:elements-regression
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results
           path: test-results/
-          retention-days: 14
+          retention-days: 3

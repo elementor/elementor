@@ -1,0 +1,14 @@
+{
+	"name": "@elementor/editor",
+	"dependencies": {
+		"@elementor/locations": "*",
+		"@elementor/ui": "*",
+		"@elementor/store": "*",
+		"@elementor/v1-adapters": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x",
+		"react-dom": "17.x"
+	}
+}

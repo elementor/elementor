@@ -41,7 +41,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				invisible: 'elementor-invisible',
 				preventClose: 'elementor-lightbox-prevent-close',
 				slideshow: {
-					container: 'swiper-container',
+					container: elementorFrontend.config.swiperClass,
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
@@ -222,7 +222,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				type: 'image',
 				id: slideshowID,
 				url: element.href,
-				hash: element.getAttribute( 'e-action-hash' ),
+				hash: element.getAttribute( 'data-e-action-hash' ),
 				title: element.dataset.elementorLightboxTitle,
 				description: element.dataset.elementorLightboxDescription,
 				modalOptions: {
@@ -327,7 +327,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$.each( socialNetworks, ( key, data ) => {
 			const networkLabel = data.label,
-				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
+				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'data-e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
 				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
 
 			$link.prepend( $socialNetworkIconElement );
@@ -676,7 +676,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 
 			if ( slide.hash ) {
-				$slide.attr( 'e-action-hash', slide.hash );
+				$slide.attr( 'data-e-action-hash', slide.hash );
 			}
 
 			$slidesWrapper.append( $slide );
@@ -744,8 +744,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( ! isSingleSlide ) {
 				swiperOptions.navigation = {
-					prevEl: $prevButton,
-					nextEl: $nextButton,
+					prevEl: $prevButton[ 0 ],
+					nextEl: $nextButton[ 0 ],
 				};
 			}
 
@@ -1025,7 +1025,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				index: slideIndex,
 				title: this.dataset.elementorLightboxTitle,
 				description: this.dataset.elementorLightboxDescription,
-				hash: this.getAttribute( 'e-action-hash' ),
+				hash: this.getAttribute( 'data-e-action-hash' ),
 			};
 
 			if ( slideVideo ) {

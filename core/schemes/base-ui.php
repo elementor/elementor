@@ -116,7 +116,7 @@ abstract class Base_UI extends Base {
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-					<button class="elementor-button elementor-button-success" disabled><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+					<button class="elementor-button" disabled><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 				</div>
 			</div>
 			<?php $this->print_template_content(); ?>

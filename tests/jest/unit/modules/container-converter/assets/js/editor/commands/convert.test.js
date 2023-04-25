@@ -144,6 +144,8 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			type: 'section',
 			settings: {
 				setting_that_should_stay: 123,
+				layout: 'boxed',
+				height: 'min-height',
 				content_width: {
 					size: 100,
 					unit: '%',
@@ -187,6 +189,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 		const expected = {
 			...sectionDefaultSettings,
 			setting_that_should_stay: 123,
+			content_width: 'boxed',
 			boxed_width: {
 				size: 100,
 				unit: '%',
@@ -357,7 +360,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 		// Arrange.
 		const section = createContainer( {
 			type: 'section',
-			settings: { },
+			settings: {},
 		} );
 
 		const document = createContainer( {
@@ -382,6 +385,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			type: 'section',
 			isInner: true,
 			settings: {
+				layout: 'boxed',
 				content_width: {
 					size: 100,
 					unit: '%',
@@ -577,6 +581,7 @@ function createContainer( { type, widgetType, id, settings = {}, children = [], 
 			toJSON: () => ( {
 				elType: type,
 				isInner,
+				settings,
 			} ),
 		},
 		...args,

@@ -1,6 +1,6 @@
 .elementor-control-media {
 
-	&.elementor-media-empty {
+	&.e-media-empty {
 
 		.elementor-control-media-area {
 			.elementor-control-media__remove, .elementor-control-media__content__remove {
@@ -9,7 +9,14 @@
 		}
 	}
 
-	&:not(.elementor-media-empty) {
+	&.e-media-empty-placeholder {
+
+		.e-control-image-size {
+			display: none;
+		}
+	}
+
+	&:not(.e-media-empty) {
 		.elementor-control-media__content {
 			&__upload-button {
 				display: none;
@@ -17,29 +24,30 @@
 		}
 	}
 
-	.elementor-control-input-wrapper {
-		border: 1px solid $editor-lightest;
-	}
-
 	.eicon-plus-circle {
 		@include absolute-center;
-		color: #fff;
+		color: var(--e-a-color-white);
 		font-size: 20px;
 	}
 
 	&__content__upload-button {
-		background-color: $editor-lightest;
+		background-color: var(--e-a-bg-active-bold);
 	}
 
 	&__preview {
 		height: 100%;
 		background-size: cover;
 		background-position: center;
+		// BC: Fix for Safari 13 and older browsers that don't support "aspect-ratio: 21 / 9;"
+		// TODO: Remove this line when we stop supporting Safari 13
+		padding-bottom: 42.8571%;
 	}
 
 	&-area {
 		@include checkers-background(16px);
-		background-color: #f6f6f6;
+		background-color: var(--e-a-bg-default);
+		border: var(--e-a-border-bold);
+		aspect-ratio: 21 / 9;
 
 		&:not(:hover) {
 			.elementor-control-media__remove {
@@ -55,6 +63,8 @@
 	}
 
 	& &__content {
+		aspect-ratio: 21 / 9;
+		position: relative;
 		cursor: pointer;
 		overflow: hidden;
 
@@ -105,13 +115,13 @@
 		align-items: center;
 		justify-content: center;
 		flex-grow: 1;
-		color: #fff;
-		background-color: rgba($editor-dark, .85);
+		color: var(--e-a-color-white);
+		background-color: rgba(0, 0, 0, .9);
 		font-size: 11px;
-		transition: background .3s;
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			background-color: rgba($editor-dark, .95);
+			background-color: rgba(0, 0, 0, .8);
 		}
 	}
 
@@ -130,18 +140,18 @@
 		width: 20px;
 		height: 20px;
 		font-size: 11px;
-		color: $editor-light;
-		background-color: rgba(#fff, .9);
-		border-radius: 3px;
-		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.1);
+		color: var(--e-a-color-white);
+		background-color: rgba(0, 0, 0, .5);
+		border-radius: var(--e-border-radius);
+		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.2);
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			background-color: rgba(#fff, 1);
-			box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+			background-color: rgba(0, 0, 0, .6);
 		}
 	}
 
-	&.elementor-media-empty .elementor-control-file-area {
+	&.e-media-empty .elementor-control-file-area {
 		display: none;
 	}
 
@@ -152,7 +162,7 @@
 		align-items: center;
 		width: 100%;
 		margin-top: 10px;
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border);
 
 		&__content {
 			@include padding-start(5px);
@@ -175,7 +185,7 @@
 
 		&__controls {
 			display: flex;
-			@include border-start(1px solid $editor-lightest);
+			@include border-start(var(--e-a-border));
 
 			&__upload-button,
 			&__remove {
@@ -191,12 +201,12 @@
 			}
 
 			&__remove {
-				@include border-end(1px solid $editor-lightest);
+				@include border-end(var(--e-a-border));
 			}
 		}
 	}
 
-	&:not(.elementor-media-empty) &__file  {
+	&:not(.e-media-empty) &__file  {
 		&__content {
 			&__label {
 				display: none;
@@ -204,7 +214,7 @@
 		}
 	}
 
-	&.elementor-media-empty &__file {
+	&.e-media-empty &__file {
 		&__content {
 			&__info {
 				display: none;
@@ -220,11 +230,23 @@
 	.elementor-control-dynamic-switcher {
 		border: none;
 		border-radius: 0;
-		background-color: rgba($editor-dark, .85);
-		color: #fff;
+		background-color: rgba(0, 0, 0, .9);
+		color: var(--e-a-color-white);
 
 		&:hover {
-			background-color: rgba($editor-dark, .95);
+			background-color: rgba(0, 0, 0, .8);
+			color: var(--e-a-color-white);
+		}
+	}
+
+	.e-control-image-size {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		padding-top: 20px;
+
+		.elementor-control-input-wrapper {
+			@include margin-start(auto);
 		}
 	}
 }
@@ -238,10 +260,11 @@
 		}
 	}
 }
+
 .elementor-control:not( .elementor-control-type-icons ) {
 	.elementor-control-media {
 		&__preview {
-			background-color: $editor-lightest;
+			background-color: var(--e-a-bg-active-bold);
 		}
 	}
 }
