@@ -40,13 +40,13 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
 			await editorPage.waitForIframeToLoaded( widgetType );
-			await expect( editorPage.getPreviewFrame().locator( '.elementor-widget-empty-icon' ).first() ).not.toBeVisible();
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
 			for ( let i = 0; i < widgetCount; i++ ) {
 				const widget = editorPage.getWidget().nth( i );
 				const id = await widget.getAttribute( 'data-id' );
+				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
 				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
