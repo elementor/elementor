@@ -692,12 +692,22 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isPublished ) {
-			await this.page.frameLocator( frames[ widgetType ][ 0 ] ).last().locator( frames[ widgetType ][ 1 ] ).waitFor();
+			await this.page.locator( frames[ widgetType ][ 0 ] ).first().waitFor();
+			const count = await this.page.locator( frames[ widgetType ][ 0 ] ).count();
+			for ( let i = 1; i < count; i++ ) {
+				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
 		} else {
 			const frame = this.getPreviewFrame();
 			await frame.waitForLoadState();
 			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
-			await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( 0 ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
+			const iframeCount = await new Promise( ( resolved ) => {
+				resolved( frame.childFrames().length );
+			} );
+			for ( let i = 1; i < iframeCount; i++ ) {
+				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
 		}
 	}
 };
