@@ -5,6 +5,13 @@
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
+	&:not(.elementor-popup-modal) {
+
+		.dialog-header,
+		.dialog-message {
+			text-align: center;
+		}
+	}
 
 	.dialog {
 
@@ -29,6 +36,7 @@
 			&.dialog-lightbox-message {
 				padding: 0;
 			}
+
 		}
 
 		&-lightbox-close-button {
@@ -332,12 +340,12 @@
 	&__title {
 		font-size: 16px;
 		font-weight: bold;
-		text-align: center;
+		//text-align: center;
 	}
 
 	&__description {
 		font-size: 14px;
-		text-align: center;
+		//text-align: center;
 	}
 
 	&--ui-hidden {
