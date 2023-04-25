@@ -406,7 +406,7 @@ const ContainerView = BaseElementView.extend( {
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
 
-		if ( 'grid' === this.container.settings.get( 'container_type' ) ) {
+		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();
 		}
 	},
