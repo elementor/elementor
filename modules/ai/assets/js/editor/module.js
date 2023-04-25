@@ -46,7 +46,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				type: aiOptions.type,
 				additionalOptions: {
 					codeLanguage: aiOptions?.language || view.options.model.get( 'language' ),
-					htmlMarkup: htmlMarkup,
+					htmlMarkup,
 					elementId: view.options.container.id,
 				},
 				buttonLabel: __( 'Code with AI', 'elementor' ),
