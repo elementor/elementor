@@ -12,7 +12,7 @@ export default {
 	timeout: 3 * 60 * 1000,
 	globalSetup: resolve( __dirname, '../playwright/config/global-setup.js' ),
 	expect: {
-		timeout: 10000,
+		timeout: 5000,
 	},
 
 	forbidOnly: !! process.env.CI,

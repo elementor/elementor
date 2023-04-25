@@ -1,11 +1,33 @@
 {
     "content": [
         {
-            "id": "385b0253",
+            "id": "11158bce",
             "settings": [],
             "elements": [
                 {
-                    "id": "3f7b8b75",
+                    "id": "88bfcae",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "circle",
+                        "align": "right",
+                        "size": {
+                            "unit": "px",
+                            "size": 250,
+                            "sizes": []
+                        },
+                        "rotation": {
+                            "unit": "deg",
+                            "size": 310,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "70f8113",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "align": "left",
@@ -29,7 +51,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "b8a3611",
+                    "id": "425d6da5",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "path": "arc",
@@ -92,7 +114,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "1d7cc645",
+                    "id": "6dc08313",
                     "settings": {
                         "text": "text direction -RTL",
                         "path": "line",
@@ -124,7 +146,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "3289dabf",
+                    "id": "6938af01",
                     "settings": {
                         "text": "text direction-LTR",
                         "path": "oval",
@@ -179,7 +201,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "514d3981",
+                    "id": "51a56600",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
                         "path": "spiral",
@@ -204,33 +226,6 @@
                             "bottom": "45",
                             "left": "45",
                             "isLinked": true
-                        }
-                    },
-                    "elements": [],
-                    "isInner": false,
-                    "widgetType": "text-path",
-                    "elType": "widget"
-                },
-                {
-                    "id": "6cc29da5",
-                    "settings": {
-                        "text": "Add Your Curvy Text Here",
-                        "path": "circle",
-                        "align": "right",
-                        "size": {
-                            "unit": "px",
-                            "size": 200,
-                            "sizes": []
-                        },
-                        "rotation": {
-                            "unit": "deg",
-                            "size": 218,
-                            "sizes": []
-                        },
-                        "start_point": {
-                            "unit": "%",
-                            "size": 24,
-                            "sizes": []
                         }
                     },
                     "elements": [],
