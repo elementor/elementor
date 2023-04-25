@@ -452,38 +452,25 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
-			gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' ),
-			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			editor = await wpAdmin.useElementorCleanPost();
 
+		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
 		await editor.setSelectControlValue( 'container_type', 'grid' );
+
 		const frame = editor.getPreviewFrame();
 		const container = await frame.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert auto flow on desktop', async () => {
-			await editor.changeResponsiveView( 'desktop' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+			await testAutoFlowByDevice( editor, container, 'desktop' );
 		} );
 
 		await test.step( 'Assert auto flow on tablet', async () => {
-			await editor.changeResponsiveView( 'tablet' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+			await testAutoFlowByDevice( editor, container, 'tablet' );
 		} );
 
 		await test.step( 'Assert auto flow on mobile', async () => {
-			await editor.changeResponsiveView( 'mobile' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
-			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
-			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
+			await testAutoFlowByDevice( editor, container, 'mobile' );
 		} );
 	} );
 } );
@@ -517,4 +504,12 @@ async function testPreset( frame, editor, rows, cols ) {
 	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
 	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
 	await editor.cleanContent();
+}
+
+async function testAutoFlowByDevice( editor, container, device ) {
+	await editor.changeResponsiveView( device );
+	await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+	await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+	await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+	await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 }
