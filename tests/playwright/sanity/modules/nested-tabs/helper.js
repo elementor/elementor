@@ -104,7 +104,7 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
-async function hasFirstTabTitleId( context, selector ) {
+async function firstTabTitleHasId( context, selector ) {
 	return !! await context.locator( selector ).first().getAttribute( 'id' );
 }
 
@@ -120,5 +120,5 @@ module.exports = {
 	setTabBorderColor,
 	setTabItemColor,
 	selectDropdownContainer,
-	hasFirstTabTitleId,
+	firstTabTitleHasId,
 };

@@ -1,11 +1,11 @@
 const { expect } = require( '@playwright/test' );
 const { viewportSize } = require( '../../../../enums/viewport-sizes' );
-const { hasFirstTabTitleId } = require( '../helper' );
+const { firstTabTitleHasId } = require( '../helper' );
 
 async function testResponsiveIdHandling( page, editor ) {
 	// Arrange.
-	let hasDesktopTabTitleId = await hasFirstTabTitleId( editor.getPreviewFrame(), '.e-normal' ),
-		hasMobileTabTitleId = await hasFirstTabTitleId( editor.getPreviewFrame(), '.e-collapse' );
+	let hasDesktopTabTitleId = await firstTabTitleHasId( editor.getPreviewFrame(), '.e-normal' ),
+		hasMobileTabTitleId = await firstTabTitleHasId( editor.getPreviewFrame(), '.e-collapse' );
 
 	// Assert.
 	await expect( hasDesktopTabTitleId ).toBeTruthy();
@@ -13,10 +13,9 @@ async function testResponsiveIdHandling( page, editor ) {
 
 	// Arrange.
 	await editor.setResponsiveViewInEditor( 'mobile' );
-	await page.pause();
 
-	hasDesktopTabTitleId = await hasFirstTabTitleId( editor.getPreviewFrame(), '.e-normal' );
-	hasMobileTabTitleId = await hasFirstTabTitleId( editor.getPreviewFrame(), '.e-collapse' );
+	hasDesktopTabTitleId = await firstTabTitleHasId( editor.getPreviewFrame(), '.e-normal' );
+	hasMobileTabTitleId = await firstTabTitleHasId( editor.getPreviewFrame(), '.e-collapse' );
 
 	// Assert.
 	await expect( hasDesktopTabTitleId ).toBeFalsy();
@@ -25,8 +24,8 @@ async function testResponsiveIdHandling( page, editor ) {
 	// Arrange.
 	await editor.publishAndViewPage();
 
-	hasDesktopTabTitleId = await hasFirstTabTitleId( page, '.e-normal' );
-	hasMobileTabTitleId = await hasFirstTabTitleId( page, '.e-collapse' );
+	hasDesktopTabTitleId = await firstTabTitleHasId( page, '.e-normal' );
+	hasMobileTabTitleId = await firstTabTitleHasId( page, '.e-collapse' );
 
 	// Assert.
 	await expect( hasDesktopTabTitleId ).toBeTruthy();
@@ -35,8 +34,8 @@ async function testResponsiveIdHandling( page, editor ) {
 	// Arrange.
 	await page.setViewportSize( viewportSize.mobile );
 
-	hasDesktopTabTitleId = await hasFirstTabTitleId( page, '.e-normal' );
-	hasMobileTabTitleId = await hasFirstTabTitleId( page, '.e-collapse' );
+	hasDesktopTabTitleId = await firstTabTitleHasId( page, '.e-normal' );
+	hasMobileTabTitleId = await firstTabTitleHasId( page, '.e-collapse' );
 
 	// Assert.
 	await expect( hasDesktopTabTitleId ).toBeFalsy();
