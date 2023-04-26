@@ -196,7 +196,7 @@ class Module extends BaseModule {
 		}
 
 		if ( empty( $data['html_markup'] ) ) {
-			throw new \Exception( 'Missing html_markup' );
+			$data['html_markup'] = '';
 		}
 
 		if ( empty( $data['element_id'] ) ) {
