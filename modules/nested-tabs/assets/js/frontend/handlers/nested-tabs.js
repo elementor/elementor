@@ -240,14 +240,6 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 	}
 
-	bindEvents() {
-		this.elements.$tabTitles.on( this.getTabEvents() );
-		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
-
-		this.resizeListenerNestedTabs = this.setResponsiveTabTitleId.bind( this );
-		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
-	}
-
 	unbindEvents() {
 		this.elements.$tabTitles.off();
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate', this.reInitSwipers );
