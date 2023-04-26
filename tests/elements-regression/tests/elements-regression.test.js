@@ -3,7 +3,7 @@ import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import EditorSelectors from '../../playwright/selectors/editor-selectors';
-import { createDefaultMedia, deleteDefaultMedia } from '../../playwright/assets/api-requests';
+import { createDefaultMedia } from '../../playwright/assets/api-requests';
 
 const imageIds = [];
 
@@ -44,6 +44,14 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'text_path',
 		'social_icons',
 		'google_maps',
+		'accordion',
+		'icon_box',
+		'icon_list',
+		'star_rating',
+		'basic_gallery',
+		'counter',
+		'progress_bar',
+		'testimonial',
 	];
 
 	for ( const widgetType of testData ) {
@@ -77,9 +85,5 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
 		} );
 	}
-
-	test.afterAll( async ( { request } ) => {
-		await deleteDefaultMedia( request, imageIds );
-	} );
 } );
 
