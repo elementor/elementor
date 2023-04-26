@@ -508,8 +508,9 @@ async function testPreset( frame, editor, rows, cols ) {
 
 async function testAutoFlowByDevice( editor, container, device ) {
 	await editor.changeResponsiveView( device );
-	await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
+	const controlName = 'desktop' === device ? 'grid_auto_flow' : 'grid_auto_flow_' + device;
+	await editor.setSelectControlValue( controlName, 'row' );
 	await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
-	await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
+	await editor.setSelectControlValue( controlName, 'column' );
 	await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 }
