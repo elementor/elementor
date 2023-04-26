@@ -12,11 +12,11 @@ test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => 
 
 	await page.locator( '.elementor-control-media__preview' ).click();
 	await page.getByRole( 'tab', { name: 'Media Library' } ).click();
-	await page.getByRole( 'checkbox', { name: 'pennant-1.jpg' } ).click();
-	await page.locator( '#attachment-details-title' ).fill( 'Wordpress Flag (title)' );
-	await page.locator( '#attachment-details-alt-text' ).fill( 'Wordpress since 2003 (alt)' );
-	await page.locator( '#attachment-details-caption' ).fill( 'WP + Elementor = ❤️ (caption)' );
-	await page.locator( '#attachment-details-description' ).fill( 'Wordpress est 2003 (description)' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/elementor1.png' );
+	await page.locator( '#attachment-details-title' ).fill( 'Elementor Logo (title)' );
+	await page.locator( '#attachment-details-alt-text' ).fill( 'Elementor Logo (alt)' );
+	await page.locator( '#attachment-details-caption' ).fill( 'WP + Elementor ❤️ (caption)' );
+	await page.locator( '#attachment-details-description' ).fill( 'Elementor logo rectangle (description)' );
 	await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
 
 	await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
