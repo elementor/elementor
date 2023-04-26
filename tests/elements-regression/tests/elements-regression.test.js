@@ -29,7 +29,23 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 	} );
 
-	const testData = [ 'divider', 'heading', 'text_editor', 'button', 'image', 'icon', 'image_box', 'image_carousel', 'tabs', 'video', 'spacer' ];
+	const testData = [
+		'divider',
+		'heading',
+		'text_editor',
+		'button',
+		'image',
+		'icon',
+		'image_box',
+		'image_carousel',
+		'tabs',
+		'video',
+		'spacer',
+		'text_path',
+		'social_icons',
+		'google_maps',
+	];
+
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
@@ -39,25 +55,26 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath );
-			if ( 'video' === widgetType ) {
-				await editorPage.waitForVideoLoaded();
-			}
+			await editorPage.waitForIframeToLoaded( widgetType );
 
 			const widgetCount = await editorPage.getWidgetCount();
 			const widgetIds = [];
 			for ( let i = 0; i < widgetCount; i++ ) {
 				const widget = editorPage.getWidget().nth( i );
 				const id = await widget.getAttribute( 'data-id' );
+				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
-				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100 } );
+				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
 			}
+
+			const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads(.*)/g );
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForElementRender( widgetIds[ 0 ] );
-			if ( 'video' === widgetType ) {
-				await editorPage.waitForVideoLoaded( true );
-			}
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 } );
+			await editorPage.waitForIframeToLoaded( widgetType, true );
+			await response;
+
+			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
 		} );
 	}
 
