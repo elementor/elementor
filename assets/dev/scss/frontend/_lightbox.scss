@@ -12,7 +12,6 @@
 			text-align: center;
 		}
 	}
-
 	.dialog {
 
 		&-header {
@@ -340,12 +339,10 @@
 	&__title {
 		font-size: 16px;
 		font-weight: bold;
-		//text-align: center;
 	}
 
 	&__description {
 		font-size: 14px;
-		//text-align: center;
 	}
 
 	&--ui-hidden {
