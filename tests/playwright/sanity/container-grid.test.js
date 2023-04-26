@@ -173,10 +173,10 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-h/ );
 			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-v/ );
 
-			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'column' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
 			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
 			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
-			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
