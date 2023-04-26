@@ -48,6 +48,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'icon_box',
 		'icon_list',
 		'star_rating',
+		'basic_gallery',
+		'counter',
+		'progress_bar',
+		'testimonial',
 	];
 
 	for ( const widgetType of testData ) {
