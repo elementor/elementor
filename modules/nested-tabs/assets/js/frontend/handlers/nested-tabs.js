@@ -240,6 +240,20 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 	}
 
+	bindEvents() {
+		this.elements.$tabTitles.on( this.getTabEvents() );
+		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+
+		this.resizeListenerNestedTabs = this.setResponsiveTabTitleId.bind( this );
+		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
+	}
+
+	unbindEvents() {
+		this.elements.$tabTitles.off();
+		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate', this.reInitSwipers );
+		elementorFrontend.elements.$window.off( 'resize', this.resizeListenerNestedTabs );
+	}
+
 	preventDefaultLinkBehaviourForTabTitle( event ) {
 		// Support for old markup that includes an `<a>` tag in the tab
 		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
