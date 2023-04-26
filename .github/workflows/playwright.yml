@@ -91,16 +91,10 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright:${{ matrix.testSuite }} -- -u
+          npm run test:playwright:${{ matrix.testSuite }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: test-results/
           retention-days: 3
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-${{ matrix.testSuite }}-test-results-snapshots
-          path: tests/playwright/sanity/container.test.js-snapshots/
-          retention-days: 1
