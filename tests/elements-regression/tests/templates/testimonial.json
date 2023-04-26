@@ -1,19 +1,19 @@
 {
     "content": [
         {
-            "id": "180b961",
+            "id": "6e81b688",
             "settings": [],
             "elements": [
                 {
-                    "id": "54617e32",
+                    "id": "255c8c57",
                     "settings": {
                         "testimonial_content": "This is my custom text!",
                         "testimonial_image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image2.jpg",
-                            "id": 344,
-                            "size": "",
+                            "id": 8,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/Video.png",
                             "alt": "",
-                            "source": "library"
+                            "source": "library",
+                            "size": ""
                         },
                         "testimonial_name": "Test user",
                         "testimonial_job": "Developer",
@@ -77,15 +77,15 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "11e0981d",
+                    "id": "3244efd6",
                     "settings": {
                         "testimonial_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
                         "testimonial_image": {
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/image1-4.jpg",
-                            "id": 618,
-                            "size": "",
-                            "alt": "undefined",
-                            "source": "library"
+                            "id": 8,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/Video.png",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
                         },
                         "testimonial_image_size": "medium",
                         "testimonial_name": "John Doe",
@@ -200,13 +200,17 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "e589524",
+                    "id": "66d091c5",
                     "settings": {
                         "testimonial_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
                         "testimonial_name": "John Doe",
                         "testimonial_job": "Designer",
                         "testimonial_alignment": "right",
-                        "image_border_border": "groove"
+                        "image_border_border": "groove",
+                        "testimonial_image": {
+                            "id": "",
+                            "url": "http:\/\/localhost:8888\/wp-content\/plugins\/build\/assets\/images\/placeholder.png"
+                        }
                     },
                     "elements": [],
                     "isInner": false,
