@@ -39,8 +39,6 @@ module.exports = async ( config ) => {
 		baseURL: config.baseURL,
 	} );
 
-	process.env.API_CONTEXT = apiContext;
-
 	imageIds.push( await createDefaultMedia( apiContext, image1 ) );
 	imageIds.push( await createDefaultMedia( apiContext, image2 ) );
 
