@@ -51,5 +51,3 @@ runs:
               echo "Readme.txt updated with Stable tag: ${latest_tag}"
               echo "Readme.txt preview: \n"
               head -n 10 $README_TXT_PATH
-
-#remove all 
