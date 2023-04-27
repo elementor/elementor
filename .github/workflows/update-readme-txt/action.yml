@@ -26,7 +26,7 @@ runs:
                 # tail -n 1: This command selects the last (i.e., the highest) version number among the matched tags.
                 # sed 's/^refs\/tags\/v//': This command removes the leading "refs/tags/v" prefix from the selected tag name.
 
-                latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E '[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^refs\/tags\/v//' | sed 's/^refs\/tags\///' | sort -V | tail -n 1)
+                latest_tag=$(git ls-remote --tags | awk '{print $2}' | sed 's/^refs\/tags\/v//' | sed 's/^refs\/tags\///' | sort -V | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
 
               elif [[ "${{ inputs.CHANNEL }}" == "ga" ]]; then
 
