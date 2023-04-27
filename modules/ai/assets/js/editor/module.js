@@ -39,12 +39,14 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		const codeControls = [ 'code' ];
 		if ( codeControls.includes( aiOptions.type ) ) {
+			const htmlMarkup = view.options?.container?.view?.$el ? view.options.container.view.$el[ 0 ].outerHTML : '';
+
 			behaviors.ai = {
 				behaviorClass: AiBehavior,
 				type: aiOptions.type,
 				additionalOptions: {
 					codeLanguage: aiOptions?.language || view.options.model.get( 'language' ),
-					htmlMarkup: view.options.container.view.$el[ 0 ].outerHTML,
+					htmlMarkup,
 					elementId: view.options.container.id,
 				},
 				buttonLabel: __( 'Code with AI', 'elementor' ),
