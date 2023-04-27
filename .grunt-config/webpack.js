@@ -120,6 +120,8 @@ const entry = {
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
+	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
+	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 };
 
 const frontendEntries = {
