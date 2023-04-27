@@ -9,7 +9,6 @@ inputs:
     required: true
     description: 'The package version to get the version from.'
 
-
 runs:
   using: "composite"
   steps:
