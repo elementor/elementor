@@ -4,8 +4,6 @@
 @import "../../global/global";
 @import "../../direction/theme-light";
 
-@import "../container";
-
 @import "../units";
 @import "../breakpoints";
 @import "../dynamic-tags";
@@ -157,11 +155,11 @@ html.elementor-html {
 		}
 
 		&.elementor-element-edit-mode:hover {
-			box-shadow: 0 0 0 1px var(--e-p-border-widget);
+			box-shadow: 0 0 0 2px var(--e-p-border-widget);
 		}
 
 		&.elementor-element-editable {
-			box-shadow: 0 0 0 1px var(--e-p-border-widget-active);
+			box-shadow: 0 0 0 2px var(--e-p-border-widget-active);
 		}
 
 		&:not(:hover) {
