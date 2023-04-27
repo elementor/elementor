@@ -62,6 +62,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
+				// Testing timeouts
+				if ( 'html' === widgetType ) {
+					await page.waitForTimeout( 4000 );
+				}
 				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100, timeout: 10000 } );
 			}
 
