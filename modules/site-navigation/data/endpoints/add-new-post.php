@@ -49,6 +49,7 @@ class Add_New_Post extends Endpoint {
 		}
 
 		$document = Plugin::$instance->documents->create( $post_type );
+
 		if ( is_wp_error( $document ) ) {
 			return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
 		}
