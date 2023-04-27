@@ -57,7 +57,7 @@
         "@testing-library/dom": "^8.17.1",
         "@wordpress/babel-plugin-import-jsx-pragma": "~3.2.0",
         "@wordpress/babel-preset-default": "^3.0.2",
-        "@wordpress/env": "5.0.0",
+        "@wordpress/env": "^6.0.0",
         "@wordpress/eslint-plugin": "^12.6.0",
         "autoprefixer": "~10.4.12",
         "babel-jest": "^28.1.2",
@@ -124,9 +124,9 @@
         "prop-types": "^15.8.1",
         "reach-router-hash-history": "0.0.3",
         "react-draggable": "^4.4.5",
+        "react-markdown": "^8.0.5",
         "react-redux": "^7.2.6",
-        "write": "^2.0.0",
-        "react-markdown": "^8.0.5"
+        "write": "^2.0.0"
     },
     "overrides": {
         "@reach/router": {
