@@ -198,7 +198,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
 
 		// Assert.
-		$this->assertEquals( 401, $response->get_data()['code'] );
+		$this->assertEquals( 401, $response->get_status() );
 	}
 
 
@@ -215,7 +215,7 @@ class Test_Controller extends Elementor_Test_Base {
 		];
 		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT, $params );
 		// Assert.
-		$this->assertEquals( 400, $response->get_data()['code'] );
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 	public function test_create_items() {

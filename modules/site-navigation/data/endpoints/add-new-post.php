@@ -41,11 +41,11 @@ class Add_New_Post extends Endpoint {
 		$post_type = $request->get_param( 'post_type' );
 
 		if ( ! $this->validate_post_type( $post_type ) ) {
-			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $post_type ) );
+			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $post_type ), [ 'status' => 400 ] );
 		}
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
-			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ) );
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ), [ 'status' => 401 ] );
 		}
 
 		$document = Plugin::$instance->documents->create( $post_type );
