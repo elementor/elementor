@@ -65,7 +65,7 @@ jobs:
       - name: Update wp-env.json file
         env:
           PHP_VERSION: 7.4
-          WP_CORE_VERSION: 'latest'
+          WP_CORE_VERSION: '6.2'
         run: node ./.github/scripts/build-wp-env.js
       - name: Install dependencies
         run: npm ci
