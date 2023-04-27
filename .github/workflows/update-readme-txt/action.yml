@@ -26,7 +26,7 @@ runs:
                 latest_tag=${{ inputs.PACKAGE_VERSION }}
               fi
 
-              sed -i -E "s/Stable tag: .*/Stable tag: $latest_tag/g" ./readme.txt
+              sed -i -E "s/Stable tag: .*/Stable tag: ${latest_tag}/g" $GITHUB_WORKSPACE/elementor/readme.txt
 
               echo "readme.txt updated with Stable tag: ${latest_tag}"
 
