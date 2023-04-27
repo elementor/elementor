@@ -1,10 +1,11 @@
-const { chromium } = require( '@playwright/test' );
+const { chromium, request } = require( '@playwright/test' );
+const { createApiContext, createDefaultMedia, deleteDefaultMedia } = require( '../assets/api-requests' );
 
 module.exports = async ( config ) => {
 	config = config.projects[ 0 ].use;
 
-	const browser = await chromium.launch( { headless: config.headless } ),
-		page = await browser.newPage();
+	const browser = await chromium.launch( { headless: config.headless } );
+	const page = await browser.newPage();
 
 	await page.goto( `${ config.baseURL }/wp-admin` );
 
@@ -13,7 +14,6 @@ module.exports = async ( config ) => {
 	await page.fill( 'input[name="pwd"]', config.user.password );
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
-	process.env.WP_REST_NONCE = await page.evaluate( () => window.wpApiSettings.nonce );
 
 	// Save signed-in state to 'storageState.json'.
 	const storageState = await page.context().storageState( { path: config.storageState } );
@@ -23,5 +23,29 @@ module.exports = async ( config ) => {
 	process.env.STORAGE_STATE = JSON.stringify( storageState );
 	process.env.BASE_URL = config.baseURL;
 
+	const imageIds = [];
+	const image1 = {
+		title: 'image1',
+		extension: 'jpg',
+	};
+	const image2 = {
+		title: 'image2',
+		extension: 'jpg',
+	};
+
+	const apiContext = await createApiContext( request, {
+		storageStateObject: storageState,
+		wpRESTNonce: process.env.WP_REST_NONCE,
+		baseURL: config.baseURL,
+	} );
+
+	imageIds.push( await createDefaultMedia( apiContext, image1 ) );
+	imageIds.push( await createDefaultMedia( apiContext, image2 ) );
+
 	await browser.close();
+
+	// Teardown function.
+	return async () => {
+		await deleteDefaultMedia( apiContext, imageIds );
+	};
 };
