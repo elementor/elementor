@@ -15,6 +15,8 @@ const EditorSelectors = {
 	playIcon: '[aria-label="Play"]',
 	mapIframe: 'iframe[src*="https://maps.google.com/maps"]',
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
+	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
+	soundWaveForm: 'div.waveform.loaded',
 };
 
 export default EditorSelectors;
