@@ -90,6 +90,7 @@ jobs:
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
       - name: Update Readme.txt
+        if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
           CHANNEL: ${{ env.CHANNEL }}
