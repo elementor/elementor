@@ -10,7 +10,7 @@ export default function Indicator( { title, status }: Props ) {
 	return (
 		<Tooltip title={ title }>
 			<Stack direction="row" alignItems="center" spacing={ 2 }>
-				<Typography variant="body2" sx={ { alignSelf: 'stretch', maxWidth: '120px' } } noWrap>
+				<Typography variant="body2" sx={ { maxWidth: '120px' } } noWrap>
 					{ title }
 				</Typography>
 				{ status.value !== 'publish' &&

@@ -32,7 +32,7 @@ export default function RecentlyEdited() {
 	}
 
 	return (
-		<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { alignSelf: 'stretch', paddingInlineStart: 1, cursor: 'default' } }>
+		<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { paddingInlineStart: 1, cursor: 'default' } }>
 			<Button
 				color="inherit"
 				size="small"
