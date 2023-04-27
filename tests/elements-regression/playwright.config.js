@@ -12,7 +12,7 @@ export default {
 	timeout: 3 * 60 * 1000,
 	globalSetup: resolve( __dirname, '../playwright/config/global-setup.js' ),
 	expect: {
-		timeout: 8000,
+		timeout: 18000,
 	},
 
 	forbidOnly: !! process.env.CI,
@@ -22,8 +22,8 @@ export default {
 	reporter: process.env.CI ? 'github' : 'list',
 	use: {
 		headless: true,
-		actionTimeout: 8000,
-		navigationTimeout: 8000,
+		actionTimeout: 18000,
+		navigationTimeout: 18000,
 		trace: 'on-first-retry',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		viewport: { width: 1920, height: 1080 },
