@@ -18,7 +18,7 @@ runs:
         run: |
               README_TXT_PATH=$GITHUB_WORKSPACE/elementor/readme.txt
               if [[ "${{ inputs.CHANNEL }}" == "cloud" || "${{ inputs.CHANNEL }}" == "beta" || "${{ inputs.CHANNEL }}" == "dev" ]]; then
-              
+
                 # git ls-remote --tags: This command lists all the tags in the remote repository along with their corresponding commit hash.
                 # grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta": This series of commands excludes tags that contain the specified substrings "-rc", "-cloud", "-dev", and "-beta".
                 # awk '{print $2}': This command prints the second field (i.e., the tag name) from the output of the previous command.
@@ -27,7 +27,7 @@ runs:
                 # tail -n 1: This command selects the last (i.e., the highest) version number among the matched tags.
                 # sed 's/^refs\/tags\/v//': This command removes the leading "refs/tags/v" prefix from the selected tag name.
 
-                latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 | sed 's/^refs\/tags\/v//')
+                latest_tag=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta" | awk '{print $2}' | grep -E '[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^refs\/tags\/v//' | sed 's/^refs\/tags\///' | sort -V | tail -n 1)
 
               elif [[ "${{ inputs.CHANNEL }}" == "ga" ]]; then
 
@@ -51,3 +51,5 @@ runs:
               echo "Readme.txt updated with Stable tag: ${latest_tag}"
               echo "Readme.txt preview: \n"
               head -n 10 $README_TXT_PATH
+
+#remove all 
