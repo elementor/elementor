@@ -211,17 +211,11 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async selectElement( elementId ) {
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
-
-		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
-			return;
-		}
-
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.hover();
-		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-		await elementEditButton.click();
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/select', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 	}
 
 	async copyElement( elementId ) {
