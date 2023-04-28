@@ -62,11 +62,6 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
-      - name: Update wp-env.json file
-        env:
-          PHP_VERSION: 7.4
-          WP_CORE_VERSION: 'latest'
-        run: node ./.github/scripts/build-wp-env.js
       - name: Install dependencies
         run: npm ci
       - name: Install WordPress environment
