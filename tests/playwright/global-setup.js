@@ -1,5 +1,5 @@
 const { chromium, request } = require( '@playwright/test' );
-const { createApiContext, createDefaultMedia, deleteDefaultMedia } = require( '../assets/api-requests' );
+const { createApiContext, createDefaultMedia, deleteDefaultMedia } = require( './assets/api-requests' );
 
 module.exports = async ( config ) => {
 	config = config.projects[ 0 ].use;
