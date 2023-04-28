@@ -412,7 +412,7 @@ const ContainerView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
+		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type || settings.changed.grid_gaps ) {
 			this.reInitEmptyView();
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
@@ -547,11 +547,13 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	reInitEmptyView() {
-		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
-			delete this._showingEmptyView;
-			this.showEmptyView();
-			this.handleGridEmptyView();
-		}
+		setTimeout( () => {
+			if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
+				delete this._showingEmptyView;
+				this.showEmptyView();
+				this.handleGridEmptyView();
+			}
+		} );
 	},
 } );
 
