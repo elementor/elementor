@@ -118,6 +118,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
+			'responsive' => true,
 		];
 
 		$fields['justify_items'] = [
