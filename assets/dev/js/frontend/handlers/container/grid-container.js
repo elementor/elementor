@@ -245,11 +245,11 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 				emptyView.style.minHeight = 'auto';
 			}
 
-			if ( emptyView.offsetHeight <= 0 ) {
+			if ( emptyView?.offsetHeight <= 0 ) {
 				emptyView.style.minHeight = '100px';
 			}
 
-			if ( emptyView.offsetWidth <= 0 ) {
+			if ( emptyView?.offsetWidth <= 0 ) {
 				emptyView.style.minWidth = '100px';
 			}
 		}
