@@ -120,7 +120,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
-				return 99 < element.offsetWidth; // min-width is 100px.
+				return 99 < element.offsetWidth; // The min-width is 100px.
 			} );
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
