@@ -468,11 +468,11 @@ test.describe( 'Container Grid tests @container', () => {
 
 	test( 'Test Empty View always shows', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.useElementorCleanPost(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
-			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
 
