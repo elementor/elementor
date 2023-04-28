@@ -33,19 +33,19 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	onInit() {
 		super.onInit();
 		this.initLayoutOverlay();
-		this.updateEmptyViewDimensions();
+		this.updateEmptyViewHeight();
 	}
 
 	bindEvents() {
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewDimensions.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewDimensions.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
 	}
 
 	initLayoutOverlay() {
@@ -163,7 +163,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	onElementChange( propertyName ) {
 		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) || 0 === propertyName.indexOf( 'grid_columns_grid' ) || 0 === propertyName.indexOf( 'grid_auto_flow' ) ) {
-			this.updateEmptyViewDimensions();
+			this.updateEmptyViewHeight();
 		}
 
 		let propsThatTriggerGridLayoutRender = [
@@ -232,8 +232,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		window.removeEventListener( 'elementor/editor/element-destroyed', this.lifecycleChangeListener );
 	}
 
-	updateEmptyViewDimensions() {
-		if ( this.shouldupdateEmptyViewDimensions() ) {
+	updateEmptyViewHeight() {
+		if ( this.shouldupdateEmptyViewHeight() ) {
 			const { emptyView } = this.elements,
 				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
 				elementSettings = this.getElementSettings(),
@@ -251,7 +251,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 	}
 
-	shouldupdateEmptyViewDimensions() {
+	shouldupdateEmptyViewHeight() {
 		return !! this.elements.container.querySelector( '.elementor-empty-view' );
 	}
 
