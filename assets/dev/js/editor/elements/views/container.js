@@ -547,7 +547,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	reInitEmptyView() {
-		if ( ! this._showingEmptyView ) {
+		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
 			delete this._showingEmptyView;
 			this.showEmptyView();
 			this.handleGridEmptyView();

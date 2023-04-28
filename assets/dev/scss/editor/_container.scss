@@ -21,6 +21,13 @@
 		}
 	}
 
+	&.e-grid {
+
+		.elementor-empty-view {
+			min-width: 100px;
+		}
+	}
+
 	.elementor-widget-placeholder {
 		--size: 10px;
 		--margin-start: calc( -1 * var( --size ) );
