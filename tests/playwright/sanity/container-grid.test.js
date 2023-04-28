@@ -117,14 +117,6 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
 
-		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
-			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
-			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
-				return 99 < element.offsetWidth; // The min-width is 100px.
-			} );
-			await expect( dragAreaIsVisible ).toBeTruthy();
-		} );
-
 		await test.step( 'Assert boxed width content alignment', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			await page.locator( '.elementor-control-grid_columns_grid .elementor-slider-input input' ).fill( '' );
@@ -482,10 +474,18 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.closeNavigatorIfOpen();
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'container_type', 'grid' );
-			await editor.addWidget( 'heading', containerId );
+		} );
+
+		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
+			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
+				return 99 < element.offsetWidth; // The min-width is 100px.
+			} );
+			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
 
 		await test.step( 'After a widget is added', async () => {
+			await editor.addWidget( 'heading', containerId );
 			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 
