@@ -498,8 +498,8 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
-		let parent = parentWrapperElement.get( 0 );
-		let child = childElementToMove.get( 0 );
+		let parent = parentWrapperElement.get( 0 ),
+			child = childElementToMove.get( 0 );
 
 		if ( ! parent || ! child ) {
 			return;
