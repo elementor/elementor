@@ -4,13 +4,20 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
-		// Use the Container's `min-height` or default to 100px.
-		min-height: var( --min-height, 100px );
+		min-height: 100px;
 
 		.elementor-first-add {
 			width: auto;
 			height: auto;
 			inset: 0;
+		}
+	}
+
+	&:not(.e-grid) {
+
+		.elementor-empty-view {
+			// Use the Container's `min-height` or default to 100px.
+			min-height: var( --min-height, 100px );
 		}
 	}
 

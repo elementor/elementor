@@ -33,19 +33,19 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	onInit() {
 		super.onInit();
 		this.initLayoutOverlay();
-		this.updateEmptyViewHeight();
+		this.updateEmptyViewDimensions();
 	}
 
 	bindEvents() {
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewDimensions.bind( this ) );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewDimensions.bind( this ) );
 	}
 
 	initLayoutOverlay() {
@@ -162,8 +162,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) ) {
-			this.updateEmptyViewHeight();
+		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) || 0 === propertyName.indexOf( 'grid_columns_grid' ) || 0 === propertyName.indexOf( 'grid_auto_flow' ) ) {
+			this.updateEmptyViewDimensions();
 		}
 
 		let propsThatTriggerGridLayoutRender = [
@@ -177,6 +177,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			'height',
 			'min_height',
 			'padding',
+			'grid_auto_flow',
 		];
 
 		// Add responsive control names to the list of controls that trigger re-rendering.
@@ -231,8 +232,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		window.removeEventListener( 'elementor/editor/element-destroyed', this.lifecycleChangeListener );
 	}
 
-	updateEmptyViewHeight() {
-		if ( this.shouldUpdateEmptyViewHeight() ) {
+	updateEmptyViewDimensions() {
+		if ( this.shouldupdateEmptyViewDimensions() ) {
 			const { emptyView } = this.elements,
 				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
 				elementSettings = this.getElementSettings(),
@@ -242,15 +243,19 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 			if ( this.hasCustomUnit( gridRows ) && this.isNotOnlyANumber( gridRows ) && this.sizeNotEmpty( gridRows ) ) {
 				emptyView.style.minHeight = 'auto';
+			}
 
-				if ( emptyView.offsetHeight <= 0 ) {
-					emptyView.style.minHeight = '100px';
-				}
+			if ( emptyView.offsetHeight <= 0 ) {
+				emptyView.style.minHeight = '100px';
+			}
+
+			if ( emptyView.offsetWidth <= 0 ) {
+				emptyView.style.minWidth = '100px';
 			}
 		}
 	}
 
-	shouldUpdateEmptyViewHeight() {
+	shouldupdateEmptyViewDimensions() {
 		return !! this.elements.container.querySelector( '.elementor-empty-view' );
 	}
 
