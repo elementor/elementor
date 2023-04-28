@@ -3,27 +3,12 @@ import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import EditorSelectors from '../../playwright/selectors/editor-selectors';
-import { createDefaultMedia } from '../../playwright/assets/api-requests';
-
-const imageIds = [];
-
-const image1 = {
-	title: 'image1',
-	extension: 'jpg',
-};
-
-const image2 = {
-	title: 'image2',
-	extension: 'jpg',
-};
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
-	test.beforeAll( async ( { browser, request }, testInfo ) => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		imageIds.push( await createDefaultMedia( request, image1 ) );
-		imageIds.push( await createDefaultMedia( request, image2 ) );
 		await wpAdmin.setExperiments( {
 			container: 'active',
 		} );
@@ -52,6 +37,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'counter',
 		'progress_bar',
 		'testimonial',
+		'toggle',
+		'sound_cloud',
+		'html',
+		'alert',
 	];
 
 	for ( const widgetType of testData ) {
@@ -73,7 +62,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
-				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
+				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100, timeout: 10000 } );
 			}
 
 			const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads(.*)/g );
@@ -82,7 +71,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.waitForIframeToLoaded( widgetType, true );
 			await response;
 
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100 }, { timeout: 10000 } );
+			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100, timeout: 10000 } );
 		} );
 	}
 } );
