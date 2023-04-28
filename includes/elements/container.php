@@ -125,10 +125,7 @@ class Container extends Element_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# if ( 'boxed' === settings.content_width ) { #>
-			<div class="e-con-inner">
 		<#
-		}
 		if ( settings.background_video_link ) {
 			let videoAttributes = 'autoplay muted playsinline';
 
@@ -150,7 +147,7 @@ class Container extends Element_Base {
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
-			</div>
+			<div class="e-con-inner"></div>
 		<# } #>
 		<?php
 	}
@@ -260,8 +257,6 @@ class Container extends Element_Base {
 			<div class="e-con-inner">
 		<?php }
 
-		$this->render_video_background();
-
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
 		}
@@ -280,7 +275,9 @@ class Container extends Element_Base {
 		$settings = $this->get_settings_for_display();
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			</div>
-		<?php } ?>
+		<?php }
+		$this->render_video_background();
+		?>
 		</<?php $this->print_html_tag(); ?>>
 		<?php
 	}

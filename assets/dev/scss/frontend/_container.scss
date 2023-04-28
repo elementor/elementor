@@ -37,6 +37,7 @@
 	--e-con-grid-template-columns: repeat(3, 1fr);
 	--e-con-grid-template-rows: repeat(2, 1fr);
 
+	position: var( --position );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
@@ -172,7 +173,7 @@
 
 	// Background overlay.
 	&::before,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
+	> .elementor-background-video-container::before,
 	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
 	> .elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
@@ -191,21 +192,21 @@
 	}
 
 	> .elementor-background-slideshow,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
+	> .elementor-background-video-container {
 		@include border-radius-for-background-elements;
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+		> .elementor-background-video-container.elementor-hidden-phone {
 			display: none;
 		}
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
+	> .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-background-slideshow::before {
+	> .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
