@@ -451,6 +451,7 @@ class Module extends BaseModule {
 		];
 
 		$permissions = $server->get_paths_permissions( $paths_to_check );
+		throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 
 		// WP Content dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_WP_CONTENT_DIR ]['write'] ) {
@@ -561,7 +562,12 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_LOCAL;
 		}
 
-		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+		try {
+			$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+		} catch ( \Error $e ) {
+			error_log( $e );
+			wp_send_json_error( $e->getMessage(), 500 );
+		}
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
 		$conflicts = $uploaded_kit['conflicts'];

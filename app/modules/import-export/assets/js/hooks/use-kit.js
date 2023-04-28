@@ -83,9 +83,9 @@ export default function useKit() {
 							stopIterations = true;
 
 							setKitState( ( prevState ) => ( { ...prevState, ...{
-									status: KIT_STATUS_MAP.ERROR,
-									data: error,
-								} } ) );
+								status: KIT_STATUS_MAP.ERROR,
+								data: error,
+							} } ) );
 						} );
 				} else {
 					setAjax( ajaxConfig );
