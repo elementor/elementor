@@ -14,7 +14,7 @@
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
 	// isn't working properly.
-	--content-width: Min( 100%, var(--container-max-width, 1140px ) );
+	--content-width: Min( 100%, var(--container-max-width, 1140px) );
 	--width: 100%;
 	--min-height: initial;
 	--height: auto;
@@ -23,32 +23,32 @@
 	--margin-right: 0;
 	--margin-bottom: 0;
 	--margin-left: 0;
-	--padding-top: var(--container-default-padding-top, 10px );
-	--padding-right: var(--container-default-padding-right, 10px );
-	--padding-bottom: var(--container-default-padding-bottom, 10px );
-	--padding-left: var(--container-default-padding-left, 10px );
+	--padding-top: var(--container-default-padding-top, 10px);
+	--padding-right: var(--container-default-padding-right, 10px);
+	--padding-bottom: var(--container-default-padding-bottom, 10px);
+	--padding-left: var(--container-default-padding-left, 10px);
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
-	--gap: var(--widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
+	--gap: var(--widgets-spacing, 20px); // Use the gap from `Site Settings` or default to 20px.
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
 	--e-con-grid-template-columns: repeat(3, 1fr);
 	--e-con-grid-template-rows: repeat(2, 1fr);
 
-	width: var(--width );
+	width: var(--width);
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
 	min-width: 0;
-	min-height: var(--min-height );
-	height: var(--height );
-	border-radius: var(--border-radius );
-	margin: var(--margin-top ) var(--margin-right ) var(--margin-bottom ) var(--margin-left );
-	padding-left: var(--padding-left );
-	padding-right: var(--padding-right );
-	z-index: var(--z-index );
-	overflow: var(--overflow );
+	min-height: var(--min-height);
+	height: var(--height);
+	border-radius: var(--border-radius);
+	margin: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
+	padding-left: var(--padding-left);
+	padding-right: var(--padding-right);
+	z-index: var(--z-index);
+	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
 	&.e-flex {
@@ -56,7 +56,7 @@
 		--flex-basis: auto;
 		--flex-grow: 0;
 		--flex-shrink: 1;
-		flex: var(--flex-grow ) var(--flex-shrink ) var(--flex-basis );
+		flex: var(--flex-grow) var(--flex-shrink) var(--flex-basis);
 	}
 
 	&-full,
