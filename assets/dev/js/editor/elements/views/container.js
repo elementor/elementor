@@ -414,7 +414,7 @@ const ContainerView = BaseElementView.extend( {
 
 		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
 			if ( this.isGridContainer() ) {
-				this.handleGridEmptyView();
+				this.reInitEmptyView();
 			}
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
