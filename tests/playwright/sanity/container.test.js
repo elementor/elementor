@@ -25,7 +25,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -39,22 +39,61 @@ test.describe( 'Container tests @container', () => {
 			heading = await editor.addWidget( widgets.heading, container ),
 			image = await editor.addWidget( widgets.image, container );
 
-		// Act.
-		// Move the button to be last.
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
-		);
+		await test.step( 'Sort items in a Container using DnD', async () => {
+			// Act.
+			// Move the button to be last.
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( button ),
+				getElementSelector( image ),
+			);
 
-		const buttonEl = await editor.getElementHandle( button ),
-			headingEl = await editor.getElementHandle( heading );
+			const buttonEl = await editor.getElementHandle( button ),
+				headingEl = await editor.getElementHandle( heading );
 
-		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling ),
-			elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
+			const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling ),
+				elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
 
-		// Assert.
-		// Test that the image is between the heading & button.
-		expect( elBeforeButton ).toEqual( elAfterHeading );
+			// Assert.
+			// Test that the image is between the heading & button.
+			expect( elBeforeButton ).toEqual( elAfterHeading );
+		} );
+
+		await test.step( 'Assert position absolute of a widget inside a container', async () => {
+			// Test in container full width.
+			await editor.selectElement( container );
+			await editor.activatePanelTab( 'layout' );
+			await editor.setSelectControlValue( 'content_width', 'full' );
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+
+			// Set button to position absolute.
+			await editor.selectElement( button );
+			await editor.activatePanelTab( 'advanced' );
+			await editor.setSelectControlValue( '_position', 'absolute' );
+			await editor.setSliderControlValue( '_offset_x', '0' );
+			await editor.setSliderControlValue( '_offset_y', '0' );
+
+			let buttonOffsetLeft = await editor.getPreviewFrame().locator( `.elementor-element-${ button }` ).evaluate( ( element ) => element.getBoundingClientRect().left );
+
+			await expect( buttonOffsetLeft ).toEqual( 0 );
+
+			// Set container to boxed width of 600px.
+			await editor.selectElement( container );
+			await editor.activatePanelTab( 'layout' );
+			await editor.setSelectControlValue( 'content_width', 'boxed' );
+			await editor.setSliderControlValue( 'boxed_width', '600' );
+
+			buttonOffsetLeft = await editor.getPreviewFrame().locator( `.elementor-element-${ button }` ).evaluate( ( element ) => element.getBoundingClientRect().left );
+
+			await expect( buttonOffsetLeft ).not.toEqual( 0 );
+
+			// Reset settings.
+			await editor.selectElement( container );
+			await editor.setSliderControlValue( 'boxed_width', '' );
+
+			await editor.selectElement( button );
+			await editor.activatePanelTab( 'advanced' );
+			await editor.setSelectControlValue( '_position', '' );
+		} );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
