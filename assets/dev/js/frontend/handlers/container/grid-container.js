@@ -233,7 +233,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	updateEmptyViewHeight() {
-		if ( this.shouldupdateEmptyViewHeight() ) {
+		if ( this.shouldUpdateEmptyViewHeight() ) {
 			const { emptyView } = this.elements,
 				currentDevice = elementor.channels.deviceMode.request( 'currentMode' ),
 				elementSettings = this.getElementSettings(),
@@ -251,7 +251,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 	}
 
-	shouldupdateEmptyViewHeight() {
+	shouldUpdateEmptyViewHeight() {
 		return !! this.elements.container.querySelector( '.elementor-empty-view' );
 	}
 
