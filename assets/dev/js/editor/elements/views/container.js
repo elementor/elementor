@@ -12,8 +12,8 @@ const ContainerView = BaseElementView.extend( {
 
 	destroyEmptyView() {
 		// Do not remove the empty view for Grid Containers.
-		if ( 'flex' === this.container.settings.get( 'container_type' ) ) {
-			Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		if ( this.isFlexContainer() ) {
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
 		}
 	},
 
@@ -390,9 +390,7 @@ const ContainerView = BaseElementView.extend( {
 
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() && ! this.isEmpty() ) {
-				delete this._showingEmptyView;
-				this.showEmptyView();
-				this.handleGridEmptyView();
+				this.reInitEmptyView();
 			}
 
 			this.droppableInitialize( this.container.settings );
@@ -415,6 +413,7 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
+			this.reInitEmptyView();
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
@@ -545,6 +544,14 @@ const ContainerView = BaseElementView.extend( {
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
 		return this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
+
+	reInitEmptyView() {
+		if ( ! this._showingEmptyView ) {
+			delete this._showingEmptyView;
+			this.showEmptyView();
+			this.handleGridEmptyView();
+		}
 	},
 } );
 
