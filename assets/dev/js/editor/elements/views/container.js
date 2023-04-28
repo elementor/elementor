@@ -389,7 +389,7 @@ const ContainerView = BaseElementView.extend( {
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
-			if ( this.isGridContainer() && ! this.isEmpty() ) {
+			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
 			}
 
@@ -412,8 +412,10 @@ const ContainerView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type || settings.changed.grid_gaps ) {
-			this.reInitEmptyView();
+		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
+			if ( this.isGridContainer() ) {
+				this.handleGridEmptyView();
+			}
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
@@ -547,13 +549,11 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	reInitEmptyView() {
-		setTimeout( () => {
-			if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
-				delete this._showingEmptyView;
-				this.showEmptyView();
-				this.handleGridEmptyView();
-			}
-		} );
+		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
+			delete this._showingEmptyView;
+			this.showEmptyView();
+			this.handleGridEmptyView();
+		}
 	},
 } );
 
