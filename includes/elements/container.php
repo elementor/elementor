@@ -253,6 +253,8 @@ class Container extends Element_Base {
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
+		$this->render_video_background();
+
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			<div class="e-con-inner">
 		<?php }
@@ -275,9 +277,7 @@ class Container extends Element_Base {
 		$settings = $this->get_settings_for_display();
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			</div>
-		<?php }
-		$this->render_video_background();
-		?>
+		<?php } ?>
 		</<?php $this->print_html_tag(); ?>>
 		<?php
 	}

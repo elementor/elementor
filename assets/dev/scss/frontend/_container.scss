@@ -65,7 +65,6 @@
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
 		padding-bottom: var( --padding-bottom );
-		position: var( --position );
 	}
 
 	&-full.e-flex,
@@ -138,6 +137,7 @@
 		margin: 0 auto;
 		padding-inline: 0;
 		height: 100%;
+		position: relative;
 	}
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
