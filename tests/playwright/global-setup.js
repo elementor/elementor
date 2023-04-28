@@ -10,8 +10,12 @@ module.exports = async ( config ) => {
 	await page.goto( `${ config.baseURL }/wp-admin` );
 
 	await page.waitForSelector( 'text=Log In' );
-	await page.fill( 'input[name="log"]', config.user.username );
-	await page.fill( 'input[name="pwd"]', config.user.password );
+	await page.fill( 'input[name="log"]', config.user.username, {
+		strict: true,
+	} );
+	await page.fill( 'input[name="pwd"]', config.user.password, {
+		strict: true,
+	} );
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 

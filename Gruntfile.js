@@ -56,7 +56,7 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'create_eicons_frontend_js_file' );
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'webpack:developmentNoWatch' );
+			grunt.task.run( 'webpack:production' );
 		}
 
 		grunt.task.run( taskName );
@@ -135,7 +135,6 @@ module.exports = function( grunt ) {
 		'usebanner',
 		'clean',
 		'copy',
-		'default', // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', ( releaseType ) => {
