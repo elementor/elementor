@@ -255,10 +255,6 @@ class Container extends Element_Base {
 		<?php
 		$this->render_video_background();
 
-		if ( $this->is_boxed_container( $settings ) ) { ?>
-			<div class="e-con-inner">
-		<?php }
-
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
 		}
@@ -266,6 +262,10 @@ class Container extends Element_Base {
 		if ( ! empty( $settings['shape_divider_bottom'] ) ) {
 			$this->render_shape_divider( 'bottom' );
 		}
+
+		if ( $this->is_boxed_container( $settings ) ) { ?>
+			<div class="e-con-inner">
+		<?php }
 	}
 
 	/**
