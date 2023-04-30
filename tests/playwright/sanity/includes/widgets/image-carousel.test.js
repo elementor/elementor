@@ -30,7 +30,7 @@ test( 'Image Carousel', async ( { page }, testInfo ) => {
 	await test.step( 'Verify image population', async () => {
 		expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
 			type: 'jpeg',
-			quality: 70,
+			quality: 90,
 		} ) ).toMatchSnapshot( 'carousel.jpeg' );
 	} );
 
