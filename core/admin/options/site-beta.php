@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Core\Admin\Options;
 
-use Elementor\Core\Options\Site_Option;
+use elementor\core\options\On_Off_Option_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Beta extends Site_Option {
+class Site_Beta extends On_Off_Option_Base {
 
 	public static function get_key() {
 		return 'beta';
@@ -18,6 +18,6 @@ class Site_Beta extends Site_Option {
 	}
 
 	public static function get_default() {
-		return static::OPTION_NO;
+		return static::OPTION_FALSE;
 	}
 }

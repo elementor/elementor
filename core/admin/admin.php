@@ -2,8 +2,8 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\App\Modules\Onboarding\Options\Site_Is_Onboarded;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Admin\Options\Site_Beta;
 use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
 use elementor\core\admin\options\Site_Font_Display;
@@ -62,8 +62,6 @@ class Admin extends App {
 			return;
 		}
 
-		$already_had_onboarding = get_option( Onboarding_Module::ONBOARDING_OPTION );
-
 		// Get the latest installation from Elementor's Install log in the DB.
 		$latest_install = key( Upgrade_Manager::get_installs_history() );
 
@@ -74,7 +72,7 @@ class Admin extends App {
 			$is_new_install = true;
 		}
 
-		if ( $already_had_onboarding || ! $is_new_install ) {
+		if ( Site_Is_Onboarded::is_yes() || ! $is_new_install ) {
 			return;
 		}
 

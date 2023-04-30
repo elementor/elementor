@@ -16,6 +16,13 @@ class Site_CSS_Print_Method extends Site_Option {
 		return 'css_print_method';
 	}
 
+	public static function get_options(){
+		return [
+			static::OPTION_EXTERNAL => __( 'External File', 'elementor' ),
+			static::OPTION_INTERNAL => __( 'Internal Embedding', 'elementor' ),
+		];
+	}
+
 	public static function get_default() {
 		return static::OPTION_EXTERNAL;
 	}

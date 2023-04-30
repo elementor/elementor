@@ -2,8 +2,6 @@
 
 namespace Elementor\Core\Options;
 
-use Elementor\Core\Admin\Options\User_Introduction;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -12,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Option_Base {
 	const PREFIX = 'elementor_';
 
-	const OPTION_NO = 'no';
-	const OPTION_YES = 'yes';
+	protected static function get_options() {
+		throw new \Error( __METHOD__ . ' must be implemented' );
+	}
 
 	/**
 	 * @return mixed
@@ -44,6 +43,21 @@ abstract class Option_Base {
 	public static function set( $value ) {
 		$old_value = static::get();
 
+		// Avoid changing the value on the frontend.
+		if ( ! is_admin() ) {
+			throw new \Error( 'Config can only be changed in the admin' );
+		}
+
+		// Avoid changing to a value that is not in the options.
+		if ( ! static::validate( $value ) ) {
+			throw new \Error( 'Invalid value' );
+		}
+
+		// Avoid changing to a value that the user doesn't have permission to.
+		if ( ! static::has_permission( $value ) ) {
+			return false;
+		}
+
 		$success = static::setter( $value );
 
 		if ( $success && method_exists( static::class, 'on_change' ) ) {
@@ -60,7 +74,15 @@ abstract class Option_Base {
 	 *
 	 * @return bool
 	 */
-	public static function setter( $value ) {
+	protected static function setter( $value ) {
+		throw new \Error( __METHOD__ . ' must be implemented' );
+	}
+
+	protected static function validate( $value ) {
+		return in_array( $value, array_keys( static::get_options() ), true );
+	}
+
+	protected static function has_permission( $value ) {
 		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
@@ -101,21 +123,5 @@ abstract class Option_Base {
 		unset( $parent_value[ $key ] );
 
 		return static::set( $parent_value );
-	}
-
-	public static function is_on() {
-		return static::OPTION_YES === static::get();
-	}
-
-	public static function is_off() {
-		return ! static::is_on();
-	}
-
-	public static function set_on() {
-		return static::set( static::OPTION_YES );
-	}
-
-	public static function set_off() {
-		return static::delete();
 	}
 }

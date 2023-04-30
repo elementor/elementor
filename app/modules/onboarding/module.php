@@ -2,12 +2,13 @@
 namespace Elementor\App\Modules\Onboarding;
 
 use Automatic_Upgrader_Skin;
+use Elementor\App\Modules\Onboarding\Options\Site_Is_Onboarded;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Core\Options\Manager;
 use Elementor\Plugin;
-use Elementor\Tracker;
 use Elementor\Utils;
 use Plugin_Upgrader;
 
@@ -25,6 +26,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const VERSION = '1.0.0';
+
+	/**
+	 * @deprecated 3.14.0 Use `Site_Is_Onboarded` instead
+	 */
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
 	/**
@@ -72,7 +77,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',
-			'onboardingAlreadyRan' => get_option( self::ONBOARDING_OPTION ),
+			'onboardingAlreadyRan' => Site_Is_Onboarded::get(),
 			'onboardingVersion' => self::VERSION,
 			'isLibraryConnected' => $library->is_connected(),
 			// Used to check if the Hello Elementor theme is installed but not activated.
@@ -395,11 +400,7 @@ class Module extends BaseModule {
 	}
 
 	private function maybe_update_onboarding_db_option() {
-		$db_option = get_option( self::ONBOARDING_OPTION );
-
-		if ( ! $db_option ) {
-			update_option( self::ONBOARDING_OPTION, true );
-		}
+		Site_Is_Onboarded::set_yes();
 
 		return [
 			'status' => 'success',
@@ -450,6 +451,11 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		add_action( 'elementor/options/register', function ($options_manager ) {
+			/** @var Manager $options_manager */
+			$options_manager->register( Site_Is_Onboarded::class );
+		} );
+
 		add_action( 'elementor/init', function() {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {

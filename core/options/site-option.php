@@ -31,19 +31,23 @@ abstract class Site_Option extends Option_Base {
 		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
-	public static function get_raw() {
+	final public static function get_raw() {
 		return add_option( static::get_full_key() );
 	}
 
-	public static function get() {
+	final public static function get() {
 		return get_option( static::get_full_key(), static::get_default() );
 	}
 
-	public static function setter( $value ) {
+	final public static function delete() {
+		return delete_option( static::get_full_key() );
+	}
+
+	final protected static function setter( $value ): bool {
 		return update_option( static::get_full_key(), $value, static::should_autoload() );
 	}
 
-	public static function delete() {
-		return delete_option( static::get_full_key() );
+	protected static function has_permission( $value ) {
+		return current_user_can( 'manage_options' );
 	}
 }

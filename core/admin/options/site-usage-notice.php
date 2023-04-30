@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Core\Admin\Options;
 
-use Elementor\Core\Options\Site_Option;
+use elementor\core\options\On_Off_Option_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Usage_Notice extends Site_Option {
+class Site_Usage_Notice extends On_Off_Option_Base {
 	public static function get_key() {
 		return 'tracker_notice';
 	}
@@ -33,6 +33,6 @@ class Site_Usage_Notice extends Site_Option {
 	}
 
 	public static function set_off() {
-		return static::set( 1 );
+		return static::set( '1' );
 	}
 }

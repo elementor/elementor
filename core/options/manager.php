@@ -15,7 +15,9 @@ class Manager extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		do_action( 'elementor/options/register', $this );
+		add_action( 'elementor/init', function() {
+			do_action( 'elementor/options/register', $this );
+		}, 0 );
 	}
 
 	public function get_name() {

@@ -19,4 +19,8 @@ class Site_Usage_Last_Send extends Site_Option {
 	public static function should_autoload() {
 		return false;
 	}
+
+	protected static function validate($value) {
+		return is_int($value);
+	}
 }
