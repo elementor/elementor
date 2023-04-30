@@ -38,26 +38,30 @@ test.describe( 'On boarding', async () => {
 	 * text, And that clicking on it opens the popup to create an account in my.elementor.com
 	 */
 	test( 'Onboarding Create Account Popup Open', async ( { page } ) => {
+		// Arrange.
+		// Make sure Library is not connected
+		await page.goto( '/wp-admin/admin.php?page=elementor-connect' );
+		const resetButton = await page.waitForSelector( 'a[href*="elementor-connect&app=library&action=reset"' );
+		await resetButton.click();
+		await popup.waitForLoadState( 'domcontentloaded' );
+
+		// Act.
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
+		const ctaButtonLabel = await ctaButton.innerText();
+		const popupPromise = page.waitForEvent( 'popup' );
 
-		await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		await ctaButton.click();
 
-		const [ popup ] = await Promise.all( [
-			// It is important to call waitForEvent before click to set up waiting.
-			page.waitForEvent( 'popup' ),
-			// Opens popup.
-			page.click( 'a.e-onboarding__button-action' ),
-		] );
-
+		const popup = await popupPromise;
 		await popup.waitForLoadState( 'domcontentloaded' );
-
-		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
-
 		const signupForm = await popup.locator( 'form#signup-form' );
 
+		// Assert.
 		// Check that the popup opens the Elementor Connect screen.
+		await expect( ctaButtonLabel ).toBe( 'Create my account' );
+		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
 		await expect( signupForm ).toBeVisible();
 
 		popup.close();
