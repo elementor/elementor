@@ -14,7 +14,7 @@ on:
 jobs:
   merge-release-branch-to-develop:
     if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo' || github.actor == 'TzviRabinovitch' || github.actor == 'udidol') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v3
@@ -87,7 +87,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
   publish:
     needs: bump-version
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v3
