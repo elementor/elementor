@@ -86,14 +86,32 @@ jobs:
           environment-id: "${{ env.PACKAGE_VERSION }}"
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
+      - name: Unzip Release zip file
+        run: |
+          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+      - name: Update Readme.txt
+        if: env.CHANNEL != 'cloud'
+        uses: ./.github/workflows/update-readme-txt
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+      - name: Upload Debug Build To GitHub Artifacts
+        if: env.CHANNEL != 'cloud'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.CHANNEL }}-svn-preview
+          path: elementor
+          retention-days: 7
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
-          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
-          unzip -q /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip -d $GITHUB_WORKSPACE
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
         if: env.CHANNEL == 'beta' # Only for beta releases
@@ -105,6 +123,7 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Generate Changelog Content For Slack
         if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
         uses: ./.github/workflows/generate-slack-changelog
@@ -124,7 +143,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Release
-        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' && github.event.inputs.pre_release == 'false' # Only for GA and Cloud releases
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
