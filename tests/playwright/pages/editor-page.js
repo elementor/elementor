@@ -685,6 +685,7 @@ module.exports = class EditorPage extends BasePage {
 		const frames = {
 			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
 			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
 		};
 
 		if ( ! ( widgetType in frames ) ) {
