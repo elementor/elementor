@@ -75,10 +75,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
+		await saveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -143,10 +140,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
+		await saveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -447,11 +441,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.waitForTimeout( 2000 );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
-
+		await saveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		// Act.
@@ -462,11 +452,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
-
+		await saveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
@@ -530,4 +516,13 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	await page.waitForTimeout( 1000 );
 
 	return { editor, wpAdmin };
+}
+
+async function saveChanges( page ) {
+	for ( const dialog of await page.locator( '.dialog-confirm-widget-content' ).all() ) {
+		const dialogHeader = await dialog.locator( '.dialog-header' );
+		if ( dialogHeader.length && dialogHeader.isVisible() && dialogHeader.innerText().includes( 'Save Changes' ) ) {
+			await dialog.locator( '.dialog-button:has-text("Save")' ).click();
+		}
+	}
 }
