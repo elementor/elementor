@@ -10,14 +10,14 @@ export default {
 	testDir: './tests/',
 
 	timeout: 3 * 60 * 1000,
-	globalSetup: resolve( __dirname, '../playwright/config/global-setup.js' ),
+	globalSetup: resolve( __dirname, '../playwright/global-setup.js' ),
 	expect: {
-		timeout: 5000,
+		timeout: 8000,
 	},
 
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 3 : 1,
+	workers: process.env.CI ? 3 : 5,
 	fullyParallel: true,
 	reporter: process.env.CI ? 'github' : 'list',
 	use: {

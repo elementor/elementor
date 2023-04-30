@@ -1,0 +1,201 @@
+{
+    "content": [
+        {
+            "id": "3da16e20",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "68dde167",
+                    "settings": {
+                        "alert_title": "This is a custom alert text!",
+                        "alert_description": "This is alert content!",
+                        "dismiss_icon": {
+                            "value": "fas fa-times",
+                            "library": "fa-solid"
+                        },
+                        "border_left-width": {
+                            "unit": "px",
+                            "size": 46,
+                            "sizes": []
+                        },
+                        "dismiss_icon_size": {
+                            "unit": "px",
+                            "size": 65,
+                            "sizes": []
+                        },
+                        "dismiss_icon_vertical_position": {
+                            "unit": "px",
+                            "size": -13,
+                            "sizes": []
+                        },
+                        "dismiss_icon_horizontal_position": {
+                            "unit": "px",
+                            "size": 16,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "background": "globals\/colors?id=primary",
+                            "border_color": "globals\/colors?id=secondary",
+                            "title_color": "globals\/colors?id=secondary",
+                            "alert_title_typography": "globals\/typography?id=text",
+                            "description_color": "globals\/colors?id=secondary",
+                            "alert_description_typography": "globals\/typography?id=secondary",
+                            "dismiss_icon_normal_color": "globals\/colors?id=secondary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                },
+                {
+                    "id": "6ea03b06",
+                    "settings": {
+                        "alert_type": "success",
+                        "alert_title": "This is an Alert",
+                        "alert_description": "What is Lorem Ipsum?\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n\nWhy do we use it?\nIt is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n\n",
+                        "dismiss_icon": {
+                            "value": "fas fa-atom",
+                            "library": "fa-solid"
+                        },
+                        "background": "#D3DCDC",
+                        "border_color": "#FC31C2",
+                        "title_color": "#0B0909",
+                        "alert_title_typography": "custom",
+                        "alert_title_font_family": "Rock Salt",
+                        "alert_title_font_size": {
+                            "unit": "px",
+                            "size": 36,
+                            "sizes": []
+                        },
+                        "alert_title_font_weight": "200",
+                        "alert_title_text_transform": "uppercase",
+                        "alert_title_font_style": "italic",
+                        "alert_title_text_decoration": "underline",
+                        "alert_title_line_height": {
+                            "unit": "px",
+                            "size": 72,
+                            "sizes": []
+                        },
+                        "alert_title_letter_spacing": {
+                            "unit": "px",
+                            "size": 3.6,
+                            "sizes": []
+                        },
+                        "alert_title_word_spacing": {
+                            "unit": "px",
+                            "size": 18,
+                            "sizes": []
+                        },
+                        "description_color": "#DA0000",
+                        "alert_description_typography": "custom",
+                        "alert_description_font_family": "Arial",
+                        "alert_description_font_size": {
+                            "unit": "px",
+                            "size": 14,
+                            "sizes": []
+                        },
+                        "alert_description_font_weight": "200",
+                        "alert_description_text_transform": "capitalize",
+                        "alert_description_text_decoration": "overline",
+                        "alert_description_line_height": {
+                            "unit": "px",
+                            "size": 25,
+                            "sizes": []
+                        },
+                        "alert_description_letter_spacing": {
+                            "unit": "px",
+                            "size": 0.8,
+                            "sizes": []
+                        },
+                        "alert_description_word_spacing": {
+                            "unit": "px",
+                            "size": 7,
+                            "sizes": []
+                        },
+                        "dismiss_icon_size": {
+                            "unit": "px",
+                            "size": 40,
+                            "sizes": []
+                        },
+                        "dismiss_icon_normal_color": "#E72272"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                },
+                {
+                    "id": "1d48aaa2",
+                    "settings": {
+                        "alert_type": "warning",
+                        "alert_title": "This is an Alert",
+                        "alert_description": "I am a description. Click the edit button to change this text.",
+                        "_margin": {
+                            "unit": "px",
+                            "top": "3",
+                            "right": "3",
+                            "bottom": "3",
+                            "left": "3",
+                            "isLinked": true
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "4",
+                            "right": "4",
+                            "bottom": "4",
+                            "left": "4",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                },
+                {
+                    "id": "64a374c8",
+                    "settings": {
+                        "alert_type": "success",
+                        "alert_title": "This is an Alert",
+                        "alert_description": "I am a description. Click the edit button to change this text."
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                },
+                {
+                    "id": "8779ecc",
+                    "settings": {
+                        "alert_title": "This is an Alert",
+                        "alert_description": "I am a description. Click the edit button to change this text."
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                },
+                {
+                    "id": "66bb7a9c",
+                    "settings": {
+                        "alert_type": "danger",
+                        "alert_title": "This is an Alert",
+                        "alert_description": "I am a description. Click the edit button to change this text.",
+                        "show_dismiss": "hide"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "alert",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "alert",
+    "type": "page"
+}
