@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -37,7 +37,7 @@ jobs:
             composer.+(json|lock)
 
   JS-Lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
@@ -64,7 +64,7 @@ jobs:
         run: ./node_modules/eslint/bin/eslint.js .
 
   PHP-Lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
