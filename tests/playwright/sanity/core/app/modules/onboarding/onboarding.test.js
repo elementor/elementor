@@ -41,7 +41,7 @@ test.describe( 'On boarding', async () => {
 		// Arrange.
 		// Make sure Library is not connected
 		await page.goto( '/wp-admin/admin.php?page=elementor-connect' );
-		const resetButton = await page.waitForSelector( 'a[href*="elementor-connect&app=library&action=reset"' );
+		const resetButton = await page.waitForSelector( 'a[href*="elementor-connect&app=library&action=reset"]' );
 		await resetButton.click();
 		await page.waitForLoadState( 'domcontentloaded' );
 
