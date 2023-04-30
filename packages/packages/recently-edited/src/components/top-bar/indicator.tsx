@@ -1,4 +1,4 @@
-import { Tooltip, Typography, Stack } from '@elementor/ui';
+import { Typography, Stack, Tooltip as BaseTooltip, TooltipProps } from '@elementor/ui';
 import { Document } from '@elementor/documents';
 
 type Props = {
@@ -21,4 +21,17 @@ export default function Indicator( { title, status }: Props ) {
 			</Stack>
 		</Tooltip>
 	);
+}
+
+function Tooltip( props: TooltipProps ) {
+	return <BaseTooltip
+		PopperProps={ {
+			sx: {
+				'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
+					mt: 7,
+				},
+			},
+		} }
+		{ ...props }
+	/>;
 }
