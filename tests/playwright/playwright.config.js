@@ -1,4 +1,4 @@
-// @ts-check
+import { resolve } from 'path';
 
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
@@ -17,36 +17,36 @@ function getGrep() {
 }
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
-const config = {
-	timeout: 90_000, // 90 seconds
-	globalTimeout: 60 * 15_000, // 15 minutes
-	reporter: 'list',
-	testDir: '../sanity/',
+export default {
+	testDir: './sanity',
+	timeout: 90_000,
+	globalTimeout: 60 * 15_000,
+	globalSetup: resolve( __dirname, './global-setup.js' ),
 	grepInvert: getGrepInvert(),
 	grep: getGrep(),
-	globalSetup: require.resolve( './global-setup' ),
-	retries: 1,
-	forbidOnly: !! process.env.CI,
 	expect: {
-		timeout: 5_000, // 5 seconds
+		timeout: 5_000,
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 	},
+	forbidOnly: !! process.env.CI,
+	retries: process.env.CI ? 1 : 0,
+	workers: process.env.CI ? 1 : 1,
+	fullyParallel: false,
+	reporter: process.env.CI ? 'github' : 'list',
 	use: {
-		actionTimeout: 10_000, // 10 seconds
-		navigationTimeout: 10_000, // 10 seconds
-		headless: true,
-		storageState: './tests/playwright/config/storageState.json',
+		headless: process.env.CI ? true : false,
+		ignoreHTTPSErrors: true,
+		actionTimeout: 10_000,
+		navigationTimeout: 10_000,
+		trace: 'retain-on-failure',
+		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
-		video: 'on',
-		trace: 'retain-on-failure',
+		storageState: resolve( __dirname, 'storageState.json' ),
 		user: {
 			username: process.env.USERNAME || 'admin',
 			password: process.env.PASSWORD || 'password',
 		},
 		baseURLPrefixProxy: process.env.BASE_URL_PROXY_PREFIX || false,
 	},
-	workers: 1,
 };
-
-module.exports = config;
