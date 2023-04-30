@@ -43,7 +43,7 @@ test.describe( 'On boarding', async () => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-connect' );
 		const resetButton = await page.waitForSelector( 'a[href*="elementor-connect&app=library&action=reset"' );
 		await resetButton.click();
-		await popup.waitForLoadState( 'domcontentloaded' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Act.
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
