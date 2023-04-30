@@ -92,6 +92,9 @@ jobs:
       - name: Run Playwright tests
         run: |
           npm run test:playwright:${{ matrix.testSuite }}
+      - name: Run Playwright tests
+        run: |
+          npx wp-env logs development --watch=false
       - uses: actions/upload-artifact@v3
         if: always()
         with:
