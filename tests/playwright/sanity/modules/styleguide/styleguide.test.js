@@ -75,7 +75,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await saveChanges( page );
+		await styleguideSaveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -140,7 +140,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await saveChanges( page );
+		await styleguideSaveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -441,7 +441,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.waitForTimeout( 2000 );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await saveChanges( page );
+		await styleguideSaveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		// Act.
@@ -452,7 +452,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-		await saveChanges( page );
+		await styleguideSaveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
@@ -518,11 +518,17 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	return { editor, wpAdmin };
 }
 
-async function saveChanges( page ) {
+async function styleguideSaveChanges( page ) {
 	for ( const dialog of await page.locator( '.dialog-confirm-widget-content' ).all() ) {
-		const dialogHeader = await dialog.locator( '.dialog-header' );
-		if ( dialogHeader.length && dialogHeader.isVisible() && dialogHeader.innerText().includes( 'Save Changes' ) ) {
-			await dialog.locator( '.dialog-button:has-text("Save")' ).click();
+		if ( ! await dialog.isVisible( 1000 ) ) {
+			continue;
 		}
+
+		const dialogHeader = await dialog.locator( '.dialog-header' );
+		if ( ! dialogHeader.length || ! dialogHeader.innerText().includes( 'Save Changes' ) ) {
+			continue;
+		}
+
+		await dialog.locator( '.dialog-button:has-text("Save")' ).click();
 	}
 }
