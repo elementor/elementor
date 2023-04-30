@@ -36,7 +36,7 @@ export default function RecentlyEdited() {
 			<Button
 				color="inherit"
 				size="small"
-				endIcon={ <ChevronDownIcon /> }
+				endIcon={ <ChevronDownIcon fontSize="small" /> }
 				{ ...bindTrigger( popupState ) }
 			>
 				<Indicator
