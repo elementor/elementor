@@ -18,6 +18,10 @@ inputs:
     description: Port to use for the WP Env environment.
     default: '8888'
     required: false
+  TEMPLATES:
+    description: Relative folder to imports as templates, separated by commas.
+    default: ''
+    required: false
 
 runs:
   using: "composite"
@@ -29,6 +33,7 @@ runs:
         WP_CORE_VERSION: ${{ inputs.WP_CORE_VERSION }}
         PLUGINS: ${{ inputs.PLUGINS }}
         PORT: ${{ inputs.PORT }}
+        TEMPLATES: ${{ inputs.TEMPLATES }}
       run: |
           node ./.github/scripts/build-wp-env.js
     - name: Install wp-env

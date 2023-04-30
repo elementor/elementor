@@ -1,0 +1,52 @@
+name: Update Readme.txt
+description: Sets the Stable tag in the readme.txt file
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version to (ga, cloud, beta).'
+  PACKAGE_VERSION:
+    required: true
+    description: 'The package version to get the version from.'
+
+runs:
+  using: "composite"
+  steps:
+      - name: Get & Update Stable Tag In Readme.txt
+        shell: bash
+        run: |
+              README_TXT_PATH=$GITHUB_WORKSPACE/elementor/readme.txt
+              if [[ "${{ inputs.CHANNEL }}" == "cloud" || "${{ inputs.CHANNEL }}" == "beta" || "${{ inputs.CHANNEL }}" == "dev" ]]; then
+
+                # git ls-remote --tags: This command lists all the tags in the remote repository along with their corresponding commit hash.
+                # grep -v "\-rc" | grep -v "\-cloud" | grep -v "\-dev" | grep -v "\-beta": This series of commands excludes tags that contain the specified substrings "-rc", "-cloud", "-dev", and "-beta".
+                # awk '{print $2}': This command prints the second field (i.e., the tag name) from the output of the previous command.
+                # grep -E 'v[0-9]+\.[0-9]+\.[0-9]+$': This command uses a regular expression to match tags that follow the semantic versioning pattern "vX.Y.Z", where X, Y, and Z are numbers.
+                # sort -V: This command sorts the matched tags in ascending order based on their version numbers.
+                # tail -n 1: This command selects the last (i.e., the highest) version number among the matched tags.
+                # sed 's/^refs\/tags\/v//': This command removes the leading "refs/tags/v" prefix from the selected tag name.
+
+                latest_tag=$(git ls-remote --tags | awk '{print $2}' | sed 's/^refs\/tags\/v//' | sed 's/^refs\/tags\///' | sort -V | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
+
+              elif [[ "${{ inputs.CHANNEL }}" == "ga" ]]; then
+
+                # We currently update the Stable tag in the readme.txt file only for the GA channel with the
+                # New package version. This is because the GA channel is the only channel that has a stable
+
+                latest_tag=${{ inputs.PACKAGE_VERSION }}
+
+              else
+                echo "Invalid channel: ${{ inputs.CHANNEL }}"
+                exit 1
+              fi
+
+              if [[ -z "${latest_tag}" ]]; then
+                echo "latest_tag is empty"
+                exit 1
+              fi
+
+              sed -i -E "s/Stable tag: .*/Stable tag: ${latest_tag}/g" $README_TXT_PATH
+
+              echo "Readme.txt updated with Stable tag: ${latest_tag}"
+              echo "Readme.txt preview: \n"
+              head -n 10 $README_TXT_PATH
