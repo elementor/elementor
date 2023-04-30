@@ -45,7 +45,6 @@ export default function RecentlyEdited() {
 			</Button>
 
 			<Menu
-				MenuListProps={ { component: 'div' } }
 				PaperProps={ { sx: { minWidth: 314 } } }
 				{ ...bindMenu( popupState ) }
 			>

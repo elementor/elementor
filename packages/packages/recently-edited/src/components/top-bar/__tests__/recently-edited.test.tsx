@@ -173,6 +173,8 @@ describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 		const label = getByText( 'Recent' );
 		expect( label ).toBeInTheDocument();
 
+		const menuItems = getAllByRole( 'menuitem' );
+		expect( menuItems ).toHaveLength( 1 );
 		expect( getByText( 'Test post' ) ).toBeInTheDocument();
 	} );
 } );

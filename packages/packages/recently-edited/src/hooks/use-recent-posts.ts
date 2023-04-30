@@ -15,8 +15,6 @@ export interface Post {
 	date_modified: number,
 }
 
-export const endpointPath = '/elementor/v1/site-navigation/recent-posts';
-
 export default function useRecentPosts( documentId?: number ) {
 	const [ recentPosts, setRecentPosts ] = useState<Post[]>( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -45,7 +43,7 @@ async function fetchRecentlyEditedPosts( documentId: number ) {
 	};
 
 	return await apiFetch( {
-		path: addQueryArgs( endpointPath, queryParams ),
+		path: addQueryArgs( '/elementor/v1/site-navigation/recent-posts', queryParams ),
 	} ).then( ( response ) => response as Post[] )
 		.catch( () => [] );
 }
