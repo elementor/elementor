@@ -383,10 +383,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await addButton.click();
 
 		// Assert
-		await expect( await editor.getPreviewFrame().getByText( 'New Item #1' + fontsContentText ).count() ).toEqual( 1 );
+		const customFontsCount = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).count();
+		await expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = await page.locator( '.elementor-repeater-fields' ).nth( 4 ).getByText( 'Edit Remove Reorder' );
+		const listItem = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
 		const remove = await listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
@@ -395,11 +396,9 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.getByRole( 'button', { name: 'Delete' } ).click();
 
 		// Assert 2
-		const number = await editor.getPreviewFrame().getByText( 'New Item #1' + fontsContentText ).count();
+		const number = await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count();
 		await expect( number ).toEqual( 0 );
 	} );
-
-	// TODO 21/03/2023 : Adding and removing new fonts!!!!!.
 
 	test( 'Changed color in picker to reflect in styleguide', async ( { page }, testInfo ) => {
 		// Arrange.
@@ -525,10 +524,11 @@ async function styleguideSaveChanges( page ) {
 		}
 
 		const dialogHeader = await dialog.locator( '.dialog-header' );
-		if ( ! dialogHeader.length || ! dialogHeader.innerText().includes( 'Save Changes' ) ) {
+		if ( ! dialogHeader.count() || ! ( await dialogHeader.innerText() ).includes( 'Save Changes' ) ) {
 			continue;
 		}
 
-		await dialog.locator( '.dialog-button:has-text("Save")' ).click();
+		const saveButton = await dialog.locator( '.dialog-button:has-text("Save")' );
+		await saveButton.click();
 	}
 }
