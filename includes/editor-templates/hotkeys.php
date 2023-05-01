@@ -13,7 +13,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<# var ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl'; #>
 	<div id="elementor-hotkeys__content">
 
-		<div id="elementor-hotkeys__actions" class="elementor-hotkeys__col">
+		<div class="elementor-hotkeys__col">
 
 			<div class="elementor-hotkeys__header">
 				<h3><?php echo esc_html__( 'Actions', 'elementor' ); ?></h3>
@@ -90,7 +90,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 
 		</div>
 
-		<div id="elementor-hotkeys__navigation" class="elementor-hotkeys__col">
+		<div class="elementor-hotkeys__col">
 
 			<div class="elementor-hotkeys__header">
 				<h3><?php echo esc_html__( 'Panels', 'elementor' ); ?></h3>
@@ -147,7 +147,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 
 		</div>
 
-		<div id="elementor-hotkeys__navigation" class="elementor-hotkeys__col">
+		<div class="elementor-hotkeys__col">
 
 			<div class="elementor-hotkeys__header">
 				<h3><?php echo esc_html__( 'Go To', 'elementor' ); ?></h3>
