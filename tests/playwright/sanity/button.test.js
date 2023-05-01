@@ -24,18 +24,18 @@ test( 'Button controls should return to default', async ( { page }, testInfo ) =
 
 	await editor.getPreviewFrame().waitForSelector( 'a[role="button"]:has-text("Click here")' );
 
-	const widget = await editor.getPreviewFrame().locator( 'div[data-element_type="widget"]' ),
-		controlSeletor = 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]',
+	const widget = editor.getPreviewFrame().locator( 'div[data-element_type="widget"]' ),
+		controlSelector = 'div.elementor-control-responsive-desktop:has-text("Alignment") label[data-tooltip="Center"]',
 		alignCenterClassRegex = /elementor-align-center/;
 
 	// Act
-	await editor.page.click( controlSeletor );
+	await editor.page.click( controlSelector );
 
 	// Assert
 	await expect( widget ).toHaveClass( alignCenterClassRegex );
 
 	// Act
-	await editor.page.click( controlSeletor );
+	await editor.page.click( controlSelector );
 
 	// Assert
 	await expect( widget ).not.toHaveClass( alignCenterClassRegex );

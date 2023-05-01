@@ -218,6 +218,18 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		return defaults;
 	},
 
+	getChildControlView( id ) {
+		return this.getControlViewByModel( this.getControlModel( id ) );
+	},
+
+	getControlViewByModel( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlModel( _id ) {
+		return this.collection.findWhere( { _id } );
+	},
+
 	onButtonAddRowClick() {
 		const newModel = $e.run( 'document/repeater/insert', {
 			container: this.options.container,
