@@ -19,7 +19,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, ...props } ) => {
 			description: (
 				<>
 					{ __( 'We couldn\'t connect to your account due to technical difficulties on our end. Reconnect your account to continue.', 'elementor' ) }
-					{ ' ' }<a href="https://elementor.com/help/disconnecting-reconnecting-your-elementor-account/" target="_blank">{ __( 'Show me how', 'elementor' ) }</a>
+					{ ' ' }<a href="https://elementor.com/help/disconnecting-reconnecting-your-elementor-account/" target="_blank" rel="noreferrer">{ __( 'Show me how', 'elementor' ) }</a>
 				</>
 			),
 		},
@@ -73,6 +73,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, ...props } ) => {
 
 PromptErrorMessage.propTypes = {
 	error: PropTypes.string,
+	onRetry: PropTypes.func,
 };
 
 export default PromptErrorMessage;
