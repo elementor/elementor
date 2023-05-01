@@ -48,12 +48,12 @@
 
 	&__description {
 		font-size: 15px;
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	&__input-wrapper{
 		display:flex;
-		margin-top: 30px;
+		margin-block-start: 30px;
 
 		.elementor-button {
 			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
@@ -63,7 +63,7 @@
 	&__email {
 		flex-grow: 1;
 		border: var(--e-a-border);
-		@include border-end(0);
+		border-inline-end: 0;
 		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		margin: 0;
 		padding: 10px;
@@ -71,7 +71,7 @@
 	}
 
 	&__terms {
-		margin-top: 40px;
+		margin-block-start: 40px;
 		font-size: 11px;
 		color: var(--e-a-color-txt-muted);
 	}
