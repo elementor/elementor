@@ -63,13 +63,13 @@ $description-color: #515962;
 			}
 
 			.announcement-body-content{
-				padding: 32px;
+				padding: 30px;
 
 				.announcement-body-title {
 					font-size: 18px;
 					font-weight: $eps-font-weight-bold;
 					color: $base-color;
-					padding: 20px 0 12px;
+					padding-bottom: 15px;
 				}
 
 				.announcement-body-description {
@@ -77,6 +77,20 @@ $description-color: #515962;
 					line-height: 24px;
 					font-weight: $eps-font-weight-normal;
 					color: $description-color;
+				}
+
+				p {
+					margin-bottom: 15px;
+				}
+
+				ul {
+					margin-left: 20px;
+					margin-bottom: 15px;
+				}
+
+				li {
+					list-style: square;
+					margin-bottom: 5px;
 				}
 			}
 		}

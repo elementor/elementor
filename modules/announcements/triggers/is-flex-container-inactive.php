@@ -38,7 +38,7 @@ class IsFlexContainerInactive extends Trigger_Base {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( 'container' );
 		$counter = $this->get_user_announcement_count();
 
-		return ! $is_feature_active && (int) $counter < 1;
+		return ! $is_feature_active && (int) $counter < 10;
 	}
 
 	/**
