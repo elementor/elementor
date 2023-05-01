@@ -170,7 +170,6 @@ const FormText = (
 					</Grid>
 
 					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { my: 8 } }>
-						<PromptCredits credits={ credits } />
 						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
