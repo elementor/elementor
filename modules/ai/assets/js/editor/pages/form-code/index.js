@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useRef, useState} from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
@@ -30,12 +30,21 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	const [ prompt, setPrompt ] = useState( '' );
 
+	const lastRun = useRef( {} );
+
 	const autocompleteItems = 'css' === additionalOptions?.codeLanguage ? codeCssAutocomplete : codeHtmlAutocomplete;
 
 	const showSuggestions = ! prompt;
 
+	const onRetry = () => send( lastRun.current?.prompt, lastRun.current?.instruction );
+
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
+
+		lastRun.current = {
+			prompt,
+			instruction: null,
+		};
 
 		send( prompt );
 	};
@@ -54,7 +63,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } onRetry={ onRetry } sx={ { mb: 6 } } /> }
 
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>

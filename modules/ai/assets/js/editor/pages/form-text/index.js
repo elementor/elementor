@@ -11,6 +11,7 @@ import PromptAction from '../../components/prompt-action';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
+import PromptCredits from "../../components/prompt-credits";
 
 const promptActions = [
 	{
@@ -62,17 +63,30 @@ const FormText = (
 
 	const resultField = useRef( null );
 
+	const lastRun = useRef( {} );
+
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
 	const showSuggestions = ! prompt;
 
+	const onRetry = () => send( lastRun.current?.prompt, lastRun.current?.instruction );
+
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
+
+		lastRun.current = { prompt, instruction: null };
 
 		send( prompt );
 	};
 
-	const handleCustomInstruction = async ( instruction ) => send( resultField.current.value, instruction );
+	const handleCustomInstruction = async ( instruction ) => {
+		lastRun.current = {
+			prompt: resultField.current.value,
+			instruction,
+		};
+
+		send( resultField.current.value, instruction );
+	}
 
 	const handleSuggestion = ( suggestion ) => {
 		setPrompt( suggestion + ' ' );
@@ -93,7 +107,7 @@ const FormText = (
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } onRetry={ onRetry } sx={ { mb: 6 } } /> }
 
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
@@ -156,6 +170,7 @@ const FormText = (
 					</Grid>
 
 					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { my: 8 } }>
+						<PromptCredits credits={ credits } />
 						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
