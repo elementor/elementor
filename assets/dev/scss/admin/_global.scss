@@ -8,7 +8,7 @@
 			content: "\e813";
 			font-family: eicons;
 			font-size: 18px;
-			margin-top: 1px;
+			margin-block-start: 1px;
 		}
 
 		// Menu Go Pro
@@ -63,7 +63,7 @@
 	cursor: pointer;
 
 	i {
-		@include margin-end(3px);
+		margin-inline-end: 3px;
 		font-size: 125%;
 		font-style: normal;
 	}
@@ -131,7 +131,7 @@ body {
 		}
 
 		#elementor-editor {
-			margin-bottom: 50px;
+			margin-block-end: 50px;
 		}
 
 		.edit-post-text-editor__body {
@@ -153,7 +153,7 @@ body {
 				line-height: 1;
 
 				i {
-					@include padding-end(5px);
+					padding-inline-end: 5px;
 				}
 			}
 		}
@@ -216,8 +216,8 @@ body {
 		speak: none;
 		display: inline-block;
 		padding: 0;
-		top: 8px;
-		@include start(-4px);
+		inset-block-start: 8px;
+		inset-inline-start: -4px;
 		position: relative;
 		vertical-align: top;
 		content: "\f463";
@@ -257,7 +257,7 @@ body {
 	p {
 		font-size: 16px;
 		font-weight: normal;
-		margin-bottom: 40px;
+		margin-block-end: 40px;
 	}
 
 	.elementor-button {
@@ -274,7 +274,7 @@ body {
 
 // Settings
 .elementor-settings-form-page {
-	padding-top: 30px;
+	padding-block-start: 30px;
 
 	&:not(.elementor-active) {
 		display: none;
@@ -295,7 +295,7 @@ body {
 }
 
 .e-major-update-warning {
-	margin-bottom: 5px;
+	margin-block-end: 5px;
 	max-width: 1000px;
 	display: flex;
 
@@ -305,13 +305,13 @@ body {
 
 	&__icon {
 		font-size: 17px;
-		@include margin-end(9px);
-		@include margin-start(2px);
+		margin-inline-end: 9px;
+		margin-inline-start: 2px;
 	}
 
 	&__title {
 		font-weight: 600;
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 	}
 
 	+ p {
@@ -353,10 +353,10 @@ body {
 			background: transparent;
 			box-shadow: none;
 			border: none;
-			padding-top: 5px;
-			padding-bottom: 5px;
-			@include padding-end(15px);
-			@include padding-start(0);
+			padding-block-start: 5px;
+			padding-block-end: 5px;
+			padding-inline-end: 15px;
+			padding-inline-start: 0;
 		}
 	}
 }
