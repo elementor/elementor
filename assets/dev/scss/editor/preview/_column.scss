@@ -18,14 +18,23 @@
 		}
 	}
 
-	&:hover,
-	&.elementor-element-editable {
+	&:hover {
 
 		> .elementor-element-overlay {
-			border: 1px solid var(--e-a-color-white);
 
 			&:after {
 				content: '';
+			}
+		}
+	}
+
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+				outline: 2px solid var(--e-p-border-column);
 			}
 		}
 	}
