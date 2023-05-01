@@ -72,21 +72,18 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
-      - name: Update wp-env.json file
+      - name: Run wp-env
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        env:
+        uses: ./.github/workflows/run-wp-env
+        with:
+          TEMPLATES: './tests/lighthouse/templates'
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
-        run: node ./.github/scripts/build-wp-env.js
-      - name: Install wp-env and lhci
+      - name: Install lhci
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           npm ci
-          npm install --no-package-lock --no-save @lhci/cli@0.8.0
-      - name: Install WordPress environment
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
-        run: |
-          npm run start-local-server
+          npm install --no-package-lock --no-save @lhci/cli@0.11.1
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
