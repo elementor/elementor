@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
+use Elementor\Core\Editor\Client_Settings;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			} )
 			->values();
 
+		$environment_script_config = [
+			'handle' => 'elementor-editor-environment-v2',
+			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js',
+			'deps' => [
+				'elementor-packages-settings',
+			],
+		];
+
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
@@ -43,7 +52,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
 			$packages_data->values(),
-			[ $loader_script_config ]
+			[
+				$environment_script_config,
+				$loader_script_config,
+			]
 		);
 	}
 
@@ -57,6 +69,8 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $package_data ) {
 				return $package_data['handle'];
 			} )
+			// Must be first.
+			->prepend( 'elementor-editor-environment-v2' )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
@@ -65,14 +79,15 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	public function get_client_settings() {
 		$common_configs = Editor_Common_Configs::get_client_settings();
 
+		$this->register_packages_client_settings();
+		$client_settings = new Client_Settings();
+
+		do_action( 'elementor/editor-v2/client-settings', $client_settings );
+
 		$v2_config = [
-			'handle' => 'elementor-editor-loader-v2',
+			'handle' => 'elementor-editor-environment-v2',
 			'name' => 'elementorEditorV2Settings',
-			'settings' => [
-				'urls' => [
-					'admin' => admin_url(),
-				],
-			],
+			'settings' => $client_settings->get(),
 		];
 
 		return array_merge( $common_configs, [ $v2_config ] );
@@ -134,5 +149,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		}
 
 		return $this->packages_data;
+	}
+
+	private function register_packages_client_settings() {
+		add_action( 'elementor/editor-v2/client-settings', function( Client_Settings $settings ) {
+			$settings->register('@elementor/editor-app-bar', [
+				'admin_url' => admin_url(),
+			] );
+		} );
 	}
 }

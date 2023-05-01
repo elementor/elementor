@@ -421,6 +421,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return $this;
 	}
 
+	public function prepend( ...$values ) {
+		return new static(
+			array_merge( $values, $this->items )
+		);
+	}
+
 	/**
 	 * @param mixed $offset
 	 *
