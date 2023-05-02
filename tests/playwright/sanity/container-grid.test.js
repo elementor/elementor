@@ -208,7 +208,6 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( buttonHandle ).not.toBeVisible();
 			await expect( buttonHandle ).toHaveCount( 0 );
 
-
 			// Clean up
 			await editor.removeElement( buttonID );
 		} );
