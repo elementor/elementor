@@ -83,7 +83,7 @@ jobs:
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run update-baseline
       - uses: actions/upload-artifact@v2
-        # if: failure()
+        if: failure()
         with:
           name: errors-reports
           path: ./tests/plugins-tester/errors-reports/
