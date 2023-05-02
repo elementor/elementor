@@ -36,7 +36,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			'handle' => 'elementor-editor-environment-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js',
 			'deps' => [
-				'elementor-packages-settings',
+				'elementor-packages-env',
 			],
 		];
 

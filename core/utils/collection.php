@@ -422,9 +422,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	public function prepend( ...$values ) {
-		return new static(
-			array_merge( $values, $this->items )
-		);
+		$this->items = array_merge( $values, $this->items );
+
+		return $this;
 	}
 
 	/**

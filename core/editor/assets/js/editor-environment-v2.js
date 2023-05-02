@@ -1,5 +1,5 @@
-if ( ! window.__UNSTABLE__elementorPackages?.settings ) {
-	throw new Error( 'The "@elementor/settings" package was not loaded.' );
+if ( ! window.__UNSTABLE__elementorPackages?.env ) {
+	throw new Error( 'The "@elementor/env" package was not loaded.' );
 }
 
-window.__UNSTABLE__elementorPackages.settings.setSettings( window.elementorEditorV2Settings );
+window.__UNSTABLE__elementorPackages.env.load( window.elementorEditorV2Settings );
