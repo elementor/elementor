@@ -117,6 +117,7 @@ $description-color: var(--e-a-color-txt);
 				transition: var(--e-a-transition-hover);
 				background: transparent;
 				color: var(--e-a-color-txt);
+				cursor: pointer;
 
 				&:hover {
 					background: var(--e-a-bg-hover);
