@@ -120,7 +120,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
-				return 200 < element.offsetWidth;
+				return 99 < element.offsetWidth; // The min-width is 100px.
 			} );
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
@@ -500,6 +500,28 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert auto flow on mobile', async () => {
 			await testAutoFlowByDevice( editor, container, 'mobile' );
+		} );
+	} );
+
+	test( 'Test Empty View always shows', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		await test.step( 'Arrange', async () => {
+			await editor.closeNavigatorIfOpen();
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+			await editor.addWidget( 'heading', containerId );
+		} );
+
+		await test.step( 'After a widget is added', async () => {
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+		} );
+
+		await test.step( 'On initial page load when container is not empty', async () => {
+			await editor.saveAndReloadPage();
+			await wpAdmin.waitForPanel();
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
 } );
