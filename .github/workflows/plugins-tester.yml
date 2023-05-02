@@ -86,5 +86,5 @@ jobs:
         if: failure()
         with:
           name: errors-reports
-          path: ./tests/plugins-tester/errors-reports/
+          path: ./tests/plugins-tester/reports/elementor/backstop_data/
           retention-days: 7
