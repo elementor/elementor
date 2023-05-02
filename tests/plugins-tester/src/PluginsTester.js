@@ -71,7 +71,7 @@ export class PluginsTester {
 	}
 
 	runServer() {
-		this.cmd( 'wp-env start' );
+		this.cmd( 'npm run wp-env start' );
 	}
 
 	setCwd() {
@@ -79,17 +79,17 @@ export class PluginsTester {
 	}
 
 	prepareTestSite() {
-		this.cmd( `wp-env run cli wp theme activate hello-elementor` );
+		this.cmd( `npx wp-env run cli wp theme activate hello-elementor` );
 		try {
-			this.cmd( `wp-env run cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"` );
+			this.cmd( `npx wp-env run cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"` );
 		} catch ( error ) {
 			this.options.logger.error( error );
 		}
 
-		this.cmd( `wp-env run cli wp rewrite structure "/%postname%/" --hard` );
-		this.cmd( `wp-env run cli wp cache flush` );
-		this.cmd( `wp-env run cli wp rewrite flush --hard` );
-		this.cmd( `wp-env run cli wp elementor flush-css` );
+		this.cmd( `npx wp-env run cli wp rewrite structure "/%postname%/" --hard` );
+		this.cmd( `npx wp-env run cli wp cache flush` );
+		this.cmd( `npx wp-env run cli wp rewrite flush --hard` );
+		this.cmd( `npx wp-env run cli wp elementor flush-css` );
 		this.cmd( `npx wp-env run cli wp post list --post_type=page` );
 	}
 }
