@@ -522,7 +522,7 @@ export default class Container extends ArgsObject {
 	}
 
 	isGridContainer() {
-		return 'grid' === this.parent.args.model.attributes.settings.attributes.container_type;
+		return 'grid' === this.parent.settings.get( 'container_type' );
 	}
 
 	/**
