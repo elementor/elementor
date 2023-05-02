@@ -1,0 +1,163 @@
+// Container presets
+
+.e-con {
+
+	&-select-preset {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 25px;
+
+		// Views.
+		&[data-view="choose-preset"] > *:not( &__inner ) {
+			display: none;
+		}
+
+		&[data-view="drop-area"] > *:not( .elementor-first-add ) {
+			display: none;
+		}
+
+		&__title {
+			font-family: var(--e-a-font-family);
+			font-size: 15px;
+			font-weight: 400;
+			color: var(--e-a-color-txt);
+		}
+
+		&__list {
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			max-width: 650px;
+
+			.e-con-preset {
+				cursor: pointer;
+				flex-basis: 90px;
+
+				svg {
+					width: 100%;
+					height: auto;
+				}
+
+				path {
+					fill: var(--e-a-color-white);
+				}
+
+				rect {
+					fill: var(--e-a-bg-active-bold);
+					transition: .3s all;
+				}
+
+				&:hover {
+					rect {
+						fill: var(--e-a-color-txt);
+					}
+				}
+
+				&[data-preset="r100"] {
+					@if 'rtl' == $direction {
+						transform: scaleX(-1);
+					}
+				}
+			}
+		}
+	}
+
+	&-shared-styles {
+		font-family: var(--e-a-font-family);
+		line-height: 1;
+		color: var(--e-a-color-txt);
+		min-height: 159px;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 25px;
+	}
+
+	&-select-type {
+
+		&__title {
+			font-size: 15px;
+			font-weight: 400;
+		}
+
+		&__icons {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+			gap: 40px;
+
+			&__icon {
+				cursor: pointer;
+
+				svg {
+					margin-bottom: 10px;
+					width: 85px;
+
+					&:hover {
+
+						rect {
+							fill: var(--e-a-color-txt);
+						}
+
+						path {
+							stroke: var(--e-a-color-white);
+						}
+					}
+				}
+
+				&__subtitle {
+					font-size: 14px;
+					font-weight: 500;
+				}
+			}
+		}
+	}
+
+	&-select-preset-grid {
+
+		&__title {
+			font-size: 15px;
+			font-weight: 400;
+		}
+
+		&__list {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+			gap: 20px;
+
+			svg {
+				cursor: pointer;
+
+				&:hover {
+
+					rect {
+						fill: var(--e-a-color-txt);
+					}
+
+					path {
+						stroke: var(--e-a-color-white);
+					}
+				}
+			}
+		}
+	}
+
+	// To avoid horizontal scroll
+	.ui-resizable {
+
+		&-e {
+			right: 0;
+		}
+
+		&-w {
+			left: 0;
+		}
+	}
+}
