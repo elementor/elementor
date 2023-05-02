@@ -138,7 +138,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		const items = this.isBoxedWidth()
 		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
