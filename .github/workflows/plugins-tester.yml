@@ -81,10 +81,10 @@ jobs:
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm run update-baseline
+        run: cd ./tests/plugins-tester && npm test
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: errors-reports
-          path: ./tests/plugins-tester/reports/elementor/backstop_data/
+          path: ./tests/plugins-tester/errors-reports/
           retention-days: 7
