@@ -73,14 +73,3 @@
 		pointer-events: none;
 	}
 }
-
-.e-grid {
-
-	& * .ui-resizable {
-
-		&-e, &-w {
-			width: 0;
-			cursor: none;
-		}
-	}
-}

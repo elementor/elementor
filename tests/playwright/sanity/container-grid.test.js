@@ -206,7 +206,8 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			await expect( buttonHandle ).not.toBeVisible();
-			await expect( buttonHandle ).toHaveCSS( 'width', '0px' );
+			await expect( buttonHandle ).toHaveCount( 0 );
+
 
 			// Clean up
 			await editor.removeElement( buttonID );
@@ -221,7 +222,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			await expect( buttonHandle ).toBeVisible();
-			await expect( buttonHandle ).toHaveCSS( 'width', '10px' );
+			await expect( buttonHandle ).toHaveCount( 1 );
 
 			// Clean up
 			await editor.removeElement( flexContainerId );
