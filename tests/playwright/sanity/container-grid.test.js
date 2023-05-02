@@ -197,6 +197,35 @@ test.describe( 'Container Grid tests @container-grid', () => {
 			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
 			await page.locator( '#e-responsive-bar__close-button' ).click();
 		} );
+
+		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {
+			// Act
+			const buttonID = await editor.addWidget( 'button', containerId ),
+				buttonSelector = `.elementor-element-${ buttonID }`,
+				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+
+			// Assert
+			await expect( buttonHandle ).not.toBeVisible();
+			await expect( buttonHandle ).toHaveCount( 0 );
+
+			// Clean up
+			await editor.removeElement( buttonID );
+		} );
+
+		await test.step( 'Elements with class .ui-resizable-e inside flex-containers should be visible', async () => {
+			// Act
+			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' ),
+				buttonID = await editor.addWidget( 'button', flexContainerId ),
+				buttonSelector = `.elementor-element-${ buttonID }`,
+				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+
+			// Assert
+			await expect( buttonHandle ).toBeVisible();
+			await expect( buttonHandle ).toHaveCount( 1 );
+
+			// Clean up
+			await editor.removeElement( flexContainerId );
+		} );
 	} );
 
 	test( 'Grid container presets', async ( { page }, testInfo ) => {
