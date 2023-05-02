@@ -522,10 +522,6 @@ export default class Container extends ArgsObject {
 	}
 
 	isGridContainer() {
-		return this.isGrid();
-	}
-
-	isGrid() {
 		return 'grid' === this.parent.args.model.attributes.settings.attributes.container_type;
 	}
 
