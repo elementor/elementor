@@ -1,10 +1,10 @@
-@import "assets/dev/scss/helpers/variables";
-@import "app/assets/styles/tokens/_font";
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../app/assets/styles/tokens/_font";
 
-$base-color: #0C0D0E;
-$button-base-color: #524CFF;
-$button-base-color-hover: #4C43E5;
-$description-color: #515962;
+$base-color: var(--e-a-color-txt-accent);
+$button-base-color: var(--e-a-btn-bg-accent);
+$button-base-color-hover: var(--e-a-btn-bg-accent-hover);
+$description-color: var(--e-a-color-txt);
 
 #e-announcements-root {
 	position: fixed;
@@ -89,7 +89,7 @@ $description-color: #515962;
 				}
 
 				li {
-					list-style: square;
+					list-style: disc;
 					margin-bottom: 5px;
 				}
 			}
@@ -102,7 +102,6 @@ $description-color: #515962;
 
 			.button-item {
 				margin-inline-start: 12px;
-				padding: 12px;
 				color: $button-base-color;
 				font-size: 18px;
 				font-weight: $eps-font-weight-medium;
