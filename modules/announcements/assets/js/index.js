@@ -15,7 +15,7 @@ export default class AnnouncementIndex {
 		const unMount = () => {
 			ReactDOM.unmountComponentAtNode( container );
 			document.getElementById( 'e-announcements-root' ).remove();
-		}
+		};
 
 		await $e.components.register( new AnnouncementCommands() );
 
