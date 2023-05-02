@@ -9,6 +9,7 @@ import GenerateButton from '../../components/generate-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
+import PromptCredits from "../../components/prompt-credits";
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -25,7 +26,7 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 	},
 } ) );
 
-const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits } ) => {
+const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, usagePercentage } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
@@ -79,10 +80,14 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } /> }
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { py: 4, mt: 8 } }>
-						<GenerateButton>
-							{ __( 'Generate code', 'elementor' ) }
-						</GenerateButton>
+					<Stack direction="row" alignItems="center" sx={ { py: 4, mt: 8 } }>
+						<PromptCredits usagePercentage={ usagePercentage } />
+
+						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
+							<GenerateButton>
+								{ __( 'Generate code', 'elementor' ) }
+							</GenerateButton>
+						</Stack>
 					</Stack>
 				</Box>
 			) }
@@ -95,8 +100,10 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						{ data.result }
 					</ReactMarkdown>
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { mt: 8 } }>
-						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
+					<Stack direction="row" alignItems="center" sx={ { mt: 8 } }>
+						<PromptCredits usagePercentage={ usagePercentage } />
+
+						<Stack direction="row" gap={ 3 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
 							</Button>
@@ -119,6 +126,7 @@ FormCode.propTypes = {
 		initialCredits: PropTypes.number,
 	} ),
 	credits: PropTypes.number,
+	usagePercentage: PropTypes.number,
 };
 
 export default FormCode;
