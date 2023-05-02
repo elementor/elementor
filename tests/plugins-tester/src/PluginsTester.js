@@ -91,5 +91,6 @@ export class PluginsTester {
 		this.cmd( `npx wp-env run cli wp rewrite flush --hard` );
 		this.cmd( `npx wp-env run cli wp elementor flush-css` );
 		this.cmd( `npx wp-env run cli wp post list --post_type=page` );
+		this.cmd( `npx wp-env run cli wp option update blogname "elementor"` );
 	}
 }
