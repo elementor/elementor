@@ -43,6 +43,12 @@ $e-dialog-confirm-space: 20px;
 		.dialog-button {
 			@extend .elementor-button;
 
+			&:hover,
+			&:focus,
+			&:visited {
+				color: initial;
+			}
+
 			&.dialog-ok {
 				@extend .e-primary;
 			}
