@@ -416,6 +416,12 @@ const ContainerView = BaseElementView.extend( {
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
 			}
+
+			// Make sure the Empty view is removed if we changed from grid to flex and there were widgets.
+			if ( this.isFlexContainer() && ! this.isEmpty() ) {
+				this.getCorrectContainerElement().find( '> .elementor-empty-view' ).remove();
+			}
+
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
