@@ -153,7 +153,7 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 	private function register_packages_client_settings() {
 		add_action( 'elementor/editor-v2/client-settings', function( Client_Settings $settings ) {
-			$settings->register('@elementor/editor-app-bar', [
+			$settings->register( '@elementor/editor-app-bar', [
 				'admin_url' => admin_url(),
 			] );
 		} );
