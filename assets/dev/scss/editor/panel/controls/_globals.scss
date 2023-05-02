@@ -16,10 +16,15 @@
 			align-items: center;
 			justify-content: center;
 			cursor: pointer;
+			transition: var(--e-a-transition-hover);
+
+			&:hover {
+				background-color: var(--e-a-bg-hover);
+			}
 
 			&--active {
 				color: var(--e-a-color-primary-bold);
-				background-color: var(--e-a-bg-active);
+				background-color: var(--e-a-bg-active-bold);
 			}
 		}
 
