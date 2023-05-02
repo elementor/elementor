@@ -520,12 +520,15 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	shouldIncrementIndex( side ) {
-		if ( this.isFlexContainer() && this.draggingOnBottomOrRightSide( side ) ) {
-			return true;
+		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
+			return false;
 		}
 
-		return this.draggingOnBottomOrRightSide( side ) &&
-			! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
+		if ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	draggingOnBottomOrRightSide( side ) {
@@ -550,8 +553,8 @@ const ContainerView = BaseElementView.extend( {
 
 	reInitEmptyView() {
 		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
-			delete this._showingEmptyView;
-			this.showEmptyView();
+			delete this._showingEmptyView; // Marionette property that needs to be falsy for showEmptyView() to fully execute.
+			this.showEmptyView(); // Marionette function.
 			this.handleGridEmptyView();
 		}
 	},

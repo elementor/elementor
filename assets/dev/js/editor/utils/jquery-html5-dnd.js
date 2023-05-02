@@ -217,6 +217,7 @@
 			if ( isGridRowContainer ) {
 				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
 			}
+
 			if ( isGridRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
 					gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );

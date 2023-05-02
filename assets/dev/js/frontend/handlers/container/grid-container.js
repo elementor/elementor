@@ -162,7 +162,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) || 0 === propertyName.indexOf( 'grid_columns_grid' ) || 0 === propertyName.indexOf( 'grid_auto_flow' ) ) {
+		if ( this.isControlThatMayAffectEmptyViewHeight( propertyName ) ) {
 			this.updateEmptyViewHeight();
 		}
 
@@ -186,6 +186,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		if ( propsThatTriggerGridLayoutRender.includes( propertyName ) ) {
 			this.initLayoutOverlay();
 		}
+	}
+
+	isControlThatMayAffectEmptyViewHeight( propertyName ) {
+		return 0 === propertyName.indexOf( 'grid_rows_grid' ) || 0 === propertyName.indexOf( 'grid_columns_grid' ) || 0 === propertyName.indexOf( 'grid_auto_flow' );
 	}
 
 	/**
