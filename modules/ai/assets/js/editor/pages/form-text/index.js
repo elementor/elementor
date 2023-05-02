@@ -64,29 +64,24 @@ const FormText = (
 
 	const resultField = useRef( null );
 
-	const lastRun = useRef( {} );
+	const lastRun = useRef( () => {} );
 
 	const autocompleteItems = 'textarea' === type ? textareaAutocomplete : textAutocomplete;
 
 	const showSuggestions = ! prompt;
 
-	const onRetry = () => send( lastRun.current?.prompt, lastRun.current?.instruction );
-
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		lastRun.current = { prompt, instruction: null };
+		lastRun.current = () => send( prompt );
 
-		send( prompt );
+		lastRun.current();
 	};
 
 	const handleCustomInstruction = async ( instruction ) => {
-		lastRun.current = {
-			prompt: resultField.current.value,
-			instruction,
-		};
+		lastRun.current = () => send( resultField.current.value, instruction );
 
-		send( resultField.current.value, instruction );
+		lastRun.current();
 	};
 
 	const handleSuggestion = ( suggestion ) => {
@@ -108,7 +103,7 @@ const FormText = (
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } onRetry={ onRetry } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 6 } } /> }
 
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
