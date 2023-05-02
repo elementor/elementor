@@ -111,7 +111,7 @@ class Module extends BaseApp {
 					[
 						'label' => 'Learn More',
 						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup/',
+						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
 					],
 				],
 				'triggers' => [
