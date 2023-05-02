@@ -524,11 +524,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		if ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() ) {
-			return false;
-		}
-
-		return true;
+		return ! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
 	},
 
 	draggingOnBottomOrRightSide( side ) {
