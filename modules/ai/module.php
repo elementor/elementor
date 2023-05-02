@@ -82,10 +82,16 @@ class Module extends BaseModule {
 			];
 		}
 
+		$user_usage = wp_parse_args( $app->get_usage(), [
+			'hasAiSubscription' => false,
+			'usedQuota' => 0,
+			'quota' => 100,
+		] );
+
 		return [
 			'is_connected' => true,
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'usage' => $app->get_usage(),
+			'usage' => $user_usage,
 		];
 	}
 
