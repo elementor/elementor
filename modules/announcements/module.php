@@ -94,7 +94,7 @@ class Module extends BaseApp {
 				'description' => '<p>Instantly turn your ideas into original text and custom code with a free trial of Elementor AI installed on the newest versions of Elementor.</p>
 				<ul>
 					<li>Effortlessly write professional copy about any topic, in any tone. Then instantly translate it to twenty-five languages.</li>
-					<li>No code? No problem. Generate custom HTML and CSS with a prompt.</li>
+					<li>No code? No problem. Generate Custom Code, CSS, and HTML with a prompt</li>
 					<li>Coming soon:  A picture might be worth a thousand words, but all you need is a short description to generate the perfect image for your site.</li>
 				</ul>',
 				'media' => [
@@ -103,7 +103,7 @@ class Module extends BaseApp {
 				],
 				'cta' => [
 					[
-						'label' => 'I\'m Excited',
+						'label' => 'Continue',
 						'variant' => 'primary',
 						'target' => '_blank',
 						'url' => ElementorSettings::get_url() . '#tab-experiments',
