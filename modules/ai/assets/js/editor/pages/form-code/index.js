@@ -9,7 +9,7 @@ import GenerateButton from '../../components/generate-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
-import PromptCredits from "../../components/prompt-credits";
+import PromptCredits from '../../components/prompt-credits';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {

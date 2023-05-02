@@ -11,7 +11,7 @@ import PromptAction from '../../components/prompt-action';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
-import PromptCredits from "../../components/prompt-credits";
+import PromptCredits from '../../components/prompt-credits';
 
 const promptActions = [
 	{
