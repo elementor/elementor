@@ -521,6 +521,10 @@ export default class Container extends ArgsObject {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 
+	isGridContainer() {
+		return 'grid' === this.parent.settings.get( 'container_type' );
+	}
+
 	/**
 	 * @return {boolean}
 	 */
