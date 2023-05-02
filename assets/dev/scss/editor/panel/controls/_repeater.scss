@@ -23,6 +23,7 @@
 
 	.elementor-repeater-row-controls {
 		border: var(--e-a-border-bold);
+		border-block-start: none;
 		padding-block-start: 15px;
 
 		&:not(.editable) {
@@ -51,35 +52,35 @@
 			&:focus {
 				background-color: var(--e-a-bg-hover);
 			}
+		}
 
-			&.elementor-repeater-row-item-title {
-				flex: 1;
-				justify-content: flex-start;
-				padding: 0 10px;
-				font-size: var(--control-title-size);
-				@include ellipsis;
+		.elementor-repeater-row-item-title {
+			flex: 1;
+			justify-content: flex-start;
+			padding: 0 10px;
+			font-size: var(--control-title-size);
+			@include ellipsis;
 
-				.eicon,
-				i,
-				svg {
-					margin-inline-end: 5px;
-				}
-
-				img[src$="svg"] {
-					width: 1em;
-				}
+			.eicon,
+			i,
+			svg {
+				margin-inline-end: 5px;
 			}
 
-			&.elementor-repeater-row-tool {
-				width: 40px;
-				border-inline-start: 1px solid var(--e-a-border-color-bold);
+			img[src$="svg"] {
+				width: 1em;
 			}
+		}
 
-			&.elementor-repeater-row-handle-sortable {
-				width: 10px;
-				border-inline-end: 1px solid var(--e-a-border-color-bold);
-				cursor: move;
-			}
+		.elementor-repeater-row-tool {
+			width: 40px;
+			border-inline-start: 1px solid var(--e-a-border-color-bold);
+		}
+
+		.elementor-repeater-row-handle-sortable {
+			width: 10px;
+			border-inline-end: 1px solid var(--e-a-border-color-bold);
+			cursor: move;
 		}
 	}
 
