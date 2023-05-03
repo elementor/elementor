@@ -232,6 +232,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'bottom',
 				],
 			],
+			'frontend_available' => true,
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_vertical', [
@@ -351,6 +352,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -1122,7 +1124,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>"
+			</div>
 			<div class="e-n-tabs-content" role="tablist" aria-orientation="vertical">
 				<?php echo $mobile_tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>

@@ -64,19 +64,8 @@
 			flex-shrink: 0;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
-
-			//position: relative;
-			//width: 100%;
 			overflow-x: var(--n-tabs-heading-overflow-x);
-			//overflow-y: hidden;
-			//white-space: nowrap;
-			//will-change: transform;
-			//user-select: none;
-
 			flex-wrap: var(--n-tabs-heading-wrap);
-
-			//justify-content: flex-start;
-
 			-ms-overflow-style: none;  /* IE and Edge */
 			scrollbar-width: none;  /* Firefox */
 
@@ -144,7 +133,6 @@
 
 			--n-tabs-title-margin-left-scroll: min( calc( var( --e-n-tabs-heading-margin-left, 0 ) * 1px ), 0px );
 			--n-tabs-title-margin-right-scroll: max( calc( var( --e-n-tabs-heading-margin-left, 0 ) * -1px ), 0px );
-
 			margin-left: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-left-scroll ) );
 			margin-right: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-right-scroll ) );
 
@@ -282,6 +270,7 @@
 			-moz-user-select: none;
 			-ms-user-select: none;
 			user-select: none;
+			width: 100%;
 
 			&:not(:first-child) {
 				margin-top: var( --n-tabs-title-gap );
