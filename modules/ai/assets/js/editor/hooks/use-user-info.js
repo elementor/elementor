@@ -15,6 +15,7 @@ const useUserInfo = () => {
 	} );
 
 	const credits = userInfo.usage.quota - userInfo.usage.usedQuota;
+	const usagePercentage = ( userInfo.usage.usedQuota / userInfo.usage.quota ) * 100;
 
 	const fetchData = async () => {
 		setIsLoading( true );
@@ -37,6 +38,7 @@ const useUserInfo = () => {
 		connectUrl: userInfo.connect_url,
 		hasSubscription: userInfo.usage.hasAiSubscription,
 		credits: credits < 0 ? 0 : credits,
+		usagePercentage: Math.round( usagePercentage ),
 		fetchData,
 	};
 };
