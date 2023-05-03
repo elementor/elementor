@@ -50,8 +50,7 @@ test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => 
 		await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
 		await page.getByRole( 'combobox', { name: 'Link' } ).selectOption( 'file' );
 		await page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( 'yes' );
-		await frame.locator( '.elementor-widget-image' ).click();
-		await frame.locator( '.dialog-message.animated' ).waitFor();
+		await frame.locator( '.elementor-widget-image img' ).click();
 	} );
 
 	await test.step( 'Assert', async () => {
