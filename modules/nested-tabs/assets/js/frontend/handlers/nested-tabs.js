@@ -1,6 +1,12 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
 export default class NestedTabs extends Base {
+	constructor( ...args ) {
+		super( ...args );
+
+		this.resizeListenerNestedTabs = null;
+	}
+
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -236,19 +242,23 @@ export default class NestedTabs extends Base {
 			mousedown: this.changeScrollStatus.bind( this ),
 			mouseup: this.changeScrollStatus.bind( this ),
 			mouseleave: this.changeScrollStatus.bind( this ),
-			mousemove: this.horizontalTabTitleScroll.bind( this ),
+			mousemove: this.setHorizontalTabTitleScrollValues.bind( this ),
 		};
 	}
 
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
+
+		this.resizeListenerNestedTabs = this.setHorizontalScrollAlignment.bind( this );
+		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
 	unbindEvents() {
 		this.elements.$tabTitles.off();
 		this.elements.$headingContainer.off();
+		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
 
@@ -294,6 +304,8 @@ export default class NestedTabs extends Base {
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
 		}
+
+		this.setHorizontalScrollAlignment();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -509,11 +521,39 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	horizontalTabTitleScroll( event ) {
-		const slider = this.elements.$headingContainer[ 0 ],
-			isActiveScroll = slider.classList.contains( 'e-scroll' );
+	setHorizontalScrollAlignment( event = {} ) {
+		if ( ! this.elements ) {
+			return;
+		}
 
-		if ( ! isActiveScroll ) {
+		const slider = this.elements.$headingContainer[ 0 ];
+
+		if ( 'resize' === event.type ) {
+			slider.style.setProperty( '--e-n-tabs-heading-margin-left', '' );
+		}
+
+		console.log( 'resize' );
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice ),
+			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
+
+		if ( ( '' === tabTitleAlignment || 'center' === tabTitleAlignment ) && headingContentIsWiderThanWrapper ) {
+			slider.style.setProperty( '--n-tabs-heading-justify-content', 'flex-start' );
+		} else {
+			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
+		}
+	}
+
+	getHorizontalScrollSetting( device ) {
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', device ) || 'disable';
+	}
+
+	setHorizontalTabTitleScrollValues( event ) {
+		const slider = this.elements.$headingContainer[ 0 ],
+			isActiveScroll = slider.classList.contains( 'e-scroll' ),
+			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting( elementorFrontend.getCurrentDeviceMode() );
+
+		if ( ! isActiveScroll || ! isHorizontalScrollActive ) {
 			return;
 		}
 
@@ -530,7 +570,7 @@ export default class NestedTabs extends Base {
 
 		if ( 20 < mouseMoveX ) {
 			toScrollDistanceX = maximumScrollValue;
-		} else if  ( -20 > mouseMoveX ) {
+		} else if ( -20 > mouseMoveX ) {
 			toScrollDistanceX = -1 * maximumScrollValue;
 		} else {
 			toScrollDistanceX = mouseMoveX / 10;
