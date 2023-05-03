@@ -121,10 +121,12 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	const widgetContainer = await editor.getPreviewFrame().locator( '.e-con-inner > .elementor-element > .elementor-widget-container' ).first();
 
 	await test.step( 'Image Carousel retains height in boxed flex Container', async () => {
+		await editor.togglePreviewMode();
 		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel.jpeg' );
 	} );
 
 	await test.step( 'Image Carousel retains height in full width flex container', async () => {
+		await editor.togglePreviewMode();
 		await editor.selectElement( container );
 		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'full' );
 		await editor.togglePreviewMode();
@@ -132,6 +134,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	} );
 
 	await test.step( 'Image Carousel retains height in full width grid container', async () => {
+		await editor.togglePreviewMode();
 		await changeContainerType( editor, page, container, 'grid' );
 		await page.getByRole( 'spinbutton', { name: 'Columns' } ).fill( '1' );
 		await page.getByRole( 'spinbutton', { name: 'Rows' } ).fill( '1' );
@@ -140,6 +143,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	} );
 
 	await test.step( 'Image Carousel retains height in boxed width grid container', async () => {
+		await editor.togglePreviewMode();
 		await editor.selectElement( container );
 		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'boxed' );
 		await editor.togglePreviewMode();
