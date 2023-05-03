@@ -173,6 +173,16 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 					</div>
 				</div>
 
+				<?php if ( Plugin::$instance->experiments->is_feature_active( 'notes' ) ) : ?>
+				<div class="elementor-hotkeys__item">
+					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Notes', 'elementor' ); ?></div>
+					<div class="elementor-hotkeys__item--shortcut">
+						<span>Shift</span>
+						<span>C</span>
+					</div>
+				</div>
+				<?php endif ?>
+
 				<div class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Keyboard Shortcuts', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
