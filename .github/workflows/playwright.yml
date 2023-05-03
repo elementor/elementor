@@ -60,11 +60,6 @@ jobs:
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Docker Cache
-        uses: ScribeMD/docker-cache@0.3.3
-        with:
-          # Caching by OS, package-lock.json for @wordpress/env version and .wp-env.json for the WordPress version
-          key: docker-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/.wp-env.json') }}
       - name: Restore build from cache
         uses: actions/cache/restore@v3
         id: restore-build
