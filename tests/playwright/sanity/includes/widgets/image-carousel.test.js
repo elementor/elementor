@@ -124,7 +124,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 
 	await test.step( 'Image Carousel retains height in boxed flex Container', async () => {
 		await editor.togglePreviewMode();
-		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-lg-container.jpeg' );
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-flex-boxed.jpeg' );
 	} );
 
 	await test.step( 'Image Carousel retains height in full width flex container', async () => {
@@ -132,7 +132,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 		await editor.selectElement( container );
 		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'full' );
 		await editor.togglePreviewMode();
-		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-lg-container.jpeg' );
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-flex-full.jpeg' );
 	} );
 
 	await test.step( 'Image Carousel retains height in full width grid container', async () => {
@@ -141,7 +141,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 		await page.getByRole( 'spinbutton', { name: 'Columns' } ).fill( '1' );
 		await page.getByRole( 'spinbutton', { name: 'Rows' } ).fill( '1' );
 		await editor.togglePreviewMode();
-		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-lg-container.jpeg' );
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-grid-full.jpeg' );
 	} );
 
 	await test.step( 'Image Carousel retains height in boxed width grid container', async () => {
@@ -149,7 +149,7 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 		await editor.selectElement( container );
 		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'boxed' );
 		await editor.togglePreviewMode();
-		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-lg-container.jpeg' );
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-grid-boxed.jpeg' );
 	} );
 
 	await test.step( 'Clean up', async () => {
