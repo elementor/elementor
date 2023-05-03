@@ -1,4 +1,8 @@
 export default class AiPromotionBehavior extends Marionette.Behavior {
+	initialize() {
+		this.promotionLabel = __( 'Coming soon', 'elementor' );
+	}
+
 	onRender() {
 		const promotionLabel = this.getOption( 'promotionLabel' );
 
@@ -15,7 +19,7 @@ export default class AiPromotionBehavior extends Marionette.Behavior {
 			},
 		} );
 
-		this.$el.find( '.elementor-control-title' ).after(
+		this.$el.find( '.elementor-control-title:eq(0)' ).after(
 			$button,
 		);
 	}
