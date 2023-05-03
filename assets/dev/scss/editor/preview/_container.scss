@@ -134,9 +134,6 @@
 					margin-inline-end: 0;
 					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
 				}
-			}
-		}
-	}
 
 				// Placeholder on first widget.
 				> :not( .elementor-element ) + .elementor-widget-placeholder {
