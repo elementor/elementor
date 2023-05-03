@@ -95,7 +95,14 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	addToPage() {
-		const selectedElements = elementor.selection.getElements();
+		const selectedElements = elementor.selection
+			.getElements()
+			.filter( ( { view } ) => {
+				// Remove elements that don't exist in the DOM, because of a bug in the selection manager
+				// that returns also elements that were removed from the DOM.
+				return elementor.$previewContents[ 0 ].contains( view.$el[ 0 ] );
+			} );
+
 		const isMultiElement = selectedElements.length > 1;
 
 		if ( isMultiElement ) {
@@ -105,7 +112,7 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.channels.panelElements.reply( 'element:selected', this );
 
 		let [ element ] = selectedElements;
-		const shouldUseNewSection = ! element?.isRendered || 'section' === element.model.get( 'elType' );
+		const shouldUseNewSection = ! element || 'section' === element.model.get( 'elType' );
 
 		if ( shouldUseNewSection ) {
 			elementor.getPreviewView().addNewSectionView.onDropping();
