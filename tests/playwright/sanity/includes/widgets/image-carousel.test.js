@@ -111,25 +111,37 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	const editor = await wpAdmin.useElementorCleanPost();
 
 	const container = await editor.addElement( { elType: 'container' }, 'document' );
-
 	await editor.addWidget( 'image-carousel', container );
 	await addImagesToImageCarousel( editor, page );
-
-	await page.getByRole( 'combobox', { name: 'Image Size' } ).selectOption( 'medium' ); // 300px
 
 	await editor.selectElement( container );
 	await page.getByRole( 'spinbutton', { name: 'Min Height' } ).fill( '1500' );
 
 	const widgetContainer = await editor.getPreviewFrame().locator( '.e-con-inner > .elementor-element > .elementor-widget-container' ).first();
 
-	await test.step( 'Test Flex', async () => {
-		await expect( widgetContainer ).toHaveCSS( 'height', /\b(2[7-9]\d|3\d\d)+(px)?\b/ ); // 270 - 400px to include navigation & slight responsive sizing changes causing flakiness.
+	await test.step( 'Image Carousel retains height in boxed flex Container', async () => {
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
 	} );
 
-	await test.step( 'Test Grid', async () => {
+	await test.step( 'Image Carousel retains height in full width flex container', async () => {
 		await editor.selectElement( container );
-		await page.getByRole( 'combobox', { name: 'Container Layout' } ).selectOption( 'grid' );
-		await expect( widgetContainer ).toHaveCSS( 'height', /\b(2[7-9]\d|3\d\d)+(px)?\b/ ); // 270 - 400px to include navigation & slight responsive sizing changes causing flakiness.
+		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'full' );
+
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+	} );
+
+	await test.step( 'Image Carousel retains height in full width grid container', async () => {
+		await changeContainerType( editor, page, container, 'grid' );
+		await page.getByRole( 'spinbutton', { name: 'Columns' } ).fill( '1' );
+		await page.getByRole( 'spinbutton', { name: 'Rows' } ).fill( '1' );
+
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
+	} );
+
+	await test.step( 'Image Carousel retains height in boxed width grid container', async () => {
+		await editor.selectElement( container );
+		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'boxed' );
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 70 } ) ).toMatchSnapshot( 'carousel.jpeg' );
 	} );
 
 	await test.step( 'Clean up', async () => {
@@ -141,6 +153,10 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	} );
 } );
 
+async function changeContainerType( editor, page, container, gridOrFlex ) {
+	await editor.selectElement( container );
+	await page.getByRole( 'combobox', { name: 'Container Layout' } ).selectOption( gridOrFlex );
+}
 async function addImagesToImageCarousel( editor, page ) {
 	await page.locator( '.eicon-plus-circle' ).first().click();
 
