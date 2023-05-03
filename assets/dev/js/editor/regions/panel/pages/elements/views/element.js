@@ -20,6 +20,8 @@ module.exports = Marionette.ItemView.extend( {
 			events.mousedown = 'onMouseDown';
 		}
 
+		events.click = 'addToPage';
+
 		return events;
 	},
 
@@ -90,5 +92,36 @@ module.exports = Marionette.ItemView.extend( {
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
 		} );
+	},
+
+	addToPage() {
+		const selectedElements = elementor.selection.getElements();
+		const isMultiElement = selectedElements.length > 1;
+
+		if ( isMultiElement ) {
+			return;
+		}
+
+		elementor.channels.panelElements.reply( 'element:selected', this );
+
+		let [ element ] = selectedElements;
+		const shouldUseNewSection = ! element || 'section' === element.model.get( 'elType' );
+
+		if ( shouldUseNewSection ) {
+			elementor.getPreviewView().addNewSectionView.onDropping();
+			return;
+		}
+
+		const shouldUseParent = 'widget' === element.model.get( 'elType' );
+		const options = {};
+
+		if ( shouldUseParent ) {
+			const { parent, model } = element;
+
+			options.at = parent.model.get( 'elements' ).findIndex( model ) + 1;
+			element = parent;
+		}
+
+		element.view.addElementFromPanel( options );
 	},
 } );
