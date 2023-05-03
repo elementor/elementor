@@ -231,9 +231,25 @@ export default class NestedTabs extends Base {
 		};
 	}
 
+	getHeadingEvents() {
+		return {
+			mousedown: this.changeScrollStatus.bind( this ),
+			mouseup: this.changeScrollStatus.bind( this ),
+			mouseleave: this.changeScrollStatus.bind( this ),
+			mousemove: this.horizontalTabTitleScroll.bind( this ),
+		};
+	}
+
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
+		this.elements.$headingContainer.on( this.getHeadingEvents() );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+	}
+
+	unbindEvents() {
+		this.elements.$tabTitles.off();
+		this.elements.$headingContainer.off();
+		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
 
 	preventDefaultLinkBehaviourForTabTitle( event ) {
@@ -478,5 +494,49 @@ export default class NestedTabs extends Base {
 			$tabTitleContainerElement = this.elements.$tabContents.filter( this.getTabContentFilterSelector( index ) );
 
 		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
+	}
+
+	changeScrollStatus( event ) {
+		const slider = this.elements.$headingContainer[ 0 ];
+
+		if ( 'mousedown' === event.type ) {
+			slider.classList.add( 'e-scroll' );
+			slider.dataset.pageX = event.pageX;
+		} else {
+			slider.classList.remove( 'e-scroll' );
+			slider.classList.remove( 'e-scroll-active' );
+			slider.dataset.pageX = '';
+		}
+	}
+
+	horizontalTabTitleScroll( event ) {
+		const slider = this.elements.$headingContainer[ 0 ],
+			isActiveScroll = slider.classList.contains( 'e-scroll' );
+
+		if ( ! isActiveScroll ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const previousPositionX = parseFloat( slider.dataset.pageX ),
+			currentMarginLeft = !! slider.style.getPropertyValue( '--e-n-tabs-heading-margin-left' )
+				? parseFloat( slider.style.getPropertyValue( '--e-n-tabs-heading-margin-left' ) )
+				: 0,
+			mouseMoveX = event.pageX - previousPositionX,
+			maximumScrollValue = 5;
+
+		let toScrollDistanceX = 0;
+
+		if ( 20 < mouseMoveX ) {
+			toScrollDistanceX = maximumScrollValue;
+		} else if  ( -20 > mouseMoveX ) {
+			toScrollDistanceX = -1 * maximumScrollValue;
+		} else {
+			toScrollDistanceX = mouseMoveX / 10;
+		}
+
+		slider.style.setProperty( '--e-n-tabs-heading-margin-left', currentMarginLeft + toScrollDistanceX );
+		slider.classList.add( 'e-scroll-active' );
 	}
 }

@@ -15,6 +15,8 @@
 	--n-tabs-heading-grow: initial;
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
+	--n-tabs-heading-overflow-x: initial;
+	--n-tabs-heading-wrap: wrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -25,7 +27,7 @@
 	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
-	--n-tabs-title-width: initial;
+	--n-tabs-title-width: max-content;
 	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
 	--n-tabs-title-justify-content-toggle: initial;
@@ -39,6 +41,7 @@
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-margin-inline-toggle: 0;
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
@@ -59,9 +62,44 @@
 			flex-basis: var( --n-tabs-heading-width );
 			flex-direction: var( --n-tabs-heading-direction );
 			flex-shrink: 0;
-			flex-wrap: wrap;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
+
+			//position: relative;
+			//width: 100%;
+			overflow-x: var(--n-tabs-heading-overflow-x);
+			//overflow-y: hidden;
+			//white-space: nowrap;
+			//will-change: transform;
+			//user-select: none;
+
+			flex-wrap: var(--n-tabs-heading-wrap);
+
+			//justify-content: flex-start;
+
+			-ms-overflow-style: none;  /* IE and Edge */
+			scrollbar-width: none;  /* Firefox */
+
+			&::-webkit-scrollbar {
+				display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+			}
+
+			&.e-scroll {
+				cursor: grabbing;
+				cursor: -webkit-grabbing;
+
+				&-active {
+					position: relative;
+
+					&::before {
+						content: '';
+						position: absolute;
+						inset-block: 0;
+						inset-inline: -1000vw;
+						z-index: $second-layer;
+					}
+				}
+			}
 		}
 
 		&-content {
@@ -85,7 +123,7 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
-			flex-basis: fit-content;
+			flex-shrink: 0;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
@@ -103,6 +141,12 @@
 					-webkit-text-stroke-width var( --n-tabs-title-transition ),
 					-webkit-text-stroke-color var( --n-tabs-title-transition ),
 					transform var( --n-tabs-title-transition );
+
+			--n-tabs-title-margin-left-scroll: min( calc( var( --e-n-tabs-heading-margin-left, 0 ) * 1px ), 0px );
+			--n-tabs-title-margin-right-scroll: max( calc( var( --e-n-tabs-heading-margin-left, 0 ) * -1px ), 0px );
+
+			margin-left: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-left-scroll ) );
+			margin-right: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-right-scroll ) );
 
 			& span svg,
 			& span i {
