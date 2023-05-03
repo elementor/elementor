@@ -1,4 +1,4 @@
-@import "../editor/buttons";
+@use "../editor/buttons-mixin" as *;
 
 //
 // Dialog Confirm
@@ -41,7 +41,7 @@ $e-dialog-confirm-space: 20px;
 		gap: 15px;
 
 		.dialog-button {
-			@extend .elementor-button;
+			@include e-button;
 
 			&:hover,
 			&:focus,
