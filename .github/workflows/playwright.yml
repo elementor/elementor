@@ -20,16 +20,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: Cache node modules
+      - name: Restore NPM Cache
         uses: actions/cache/restore@v3
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Save build to cache
-        uses: actions/cache/restore@v3
-        with:
-          path: ./build/*
-          key: playwright-build-${{ github.sha }}
       - name: Install dependencies
         run: npm ci
       - name: Build
@@ -65,6 +60,12 @@ jobs:
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Restore Docker Cache
+        uses: actions/cache/restore@v3
+        with:
+          path: /var/lib/docker/
+          # Caching by OS, package-lock.json for @wordpress/env version and .wp-env.json for the WordPress version
+          key: docker-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/.wp-env.json') }}
       - name: Restore build from cache
         uses: actions/cache/restore@v3
         id: restore-build
@@ -107,3 +108,9 @@ jobs:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: test-results/
           retention-days: 3
+      - name: Save Docker Cache
+        uses: actions/cache/save@v3
+        with:
+          path: /var/lib/docker/
+          # Caching by OS, package-lock.json for @wordpress/env version and .wp-env.json for the WordPress version
+          key: docker-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/.wp-env.json') }}
