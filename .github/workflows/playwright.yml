@@ -41,6 +41,12 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: build
+          path: build/
+          retention-days: 1
 
   Playwright:
     name: Playwright test (Performance on) - ${{ matrix.testSuite }} on PHP 7.4
