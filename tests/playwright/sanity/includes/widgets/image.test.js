@@ -32,7 +32,7 @@ test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	expect( src ).not.toBeNull();
 } );
 
-test.only( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
+test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
 	const frame = page.frameLocator( '#elementor-preview-iframe' );
