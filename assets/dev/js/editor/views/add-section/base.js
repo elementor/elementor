@@ -275,6 +275,7 @@ import environment from 'elementor-common/utils/environment';
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
+					scrollIntoView: true,
 				},
 			} );
 
