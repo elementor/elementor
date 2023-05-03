@@ -99,7 +99,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	} );
 } );
 
-test.only( 'Test that Image Carousel navigation does not re-size with grid or flex container resize', async ( { page }, testInfo ) => {
+test( 'Test that Image Carousel navigation does not re-size with grid or flex container resize', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.setExperiments( {
