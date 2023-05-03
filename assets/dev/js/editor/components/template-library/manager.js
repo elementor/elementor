@@ -132,6 +132,9 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
+	/**
+	 * @deprecated since 2.8.0, use `$e.run( 'library/insert-template' )` instead.
+	 */
 	this.importTemplate = function( model, args = {} ) {
 		elementorDevTools.deprecation.deprecated( 'importTemplate', '2.8.0',
 			"$e.run( 'library/insert-template' )" );

@@ -468,6 +468,9 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * @deprecated since 3.5.0, use `container.children.findRecursive( callback )` instead.
+	 */
 	findChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.findChildrenRecursive( callback )',
@@ -478,6 +481,9 @@ export default class Container extends ArgsObject {
 		return this.children.findRecursive( callback );
 	}
 
+	/**
+	 * @deprecated since 3.5.0, use `container.children.forEachRecursive( callback )` instead.
+	 */
 	forEachChildrenRecursive( callback ) {
 		elementorDevTools.deprecation.deprecated(
 			'container.forEachChildrenRecursive( callback )',

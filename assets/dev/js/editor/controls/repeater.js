@@ -188,7 +188,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	// BC since 3.0.0, ensure a new child is appear in container children.
+	/**
+	 * BC since 3.0.0, ensure a new child is appear in container children.
+	 *
+	 * @deprecated since 3.0.0, use `$e.run( 'document/repeater/insert' )` instead.
+	 */
 	updateContainer( model ) {
 		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
 			isInChildren = container.children.filter( ( child ) => {
@@ -201,7 +205,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	// BC since 3.0.0, ensure a container children are reset on collection reset.
+	/**
+	 * BC since 3.0.0, ensure a container children are reset on collection reset.
+	 *
+	 * @deprecated since 3.0.0, use `$e.run( 'document/repeater/remove' )` instead.
+	 */
 	resetContainer() {
 		elementorDevTools.deprecation.deprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
 		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];
