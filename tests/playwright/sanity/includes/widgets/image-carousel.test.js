@@ -117,8 +117,10 @@ test( 'Test that Image Carousel navigation does not re-size with grid or flex co
 	await editor.selectElement( container );
 	await page.getByRole( 'spinbutton', { name: 'Min Height' } ).fill( '1500' );
 	await editor.selectElement( widget );
+	await page.getByText( 'Additional Options' ).click();
+	await page.getByRole( 'combobox', { name: 'Autoplay' } ).selectOption( 'no' );
 
-	const widgetContainer = await editor.getPreviewFrame().locator( '.e-con-inner > .elementor-element > .elementor-widget-container' ).first();
+	const widgetContainer = await editor.getPreviewFrame().locator( '.elementor-element > .elementor-widget-container' ).first();
 
 	await test.step( 'Image Carousel retains height in boxed flex Container', async () => {
 		await editor.togglePreviewMode();
