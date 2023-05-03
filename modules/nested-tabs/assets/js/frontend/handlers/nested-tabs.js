@@ -521,6 +521,13 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+	isTabTitleAlignedCentered() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
+
+		return ( '' === tabTitleAlignment || 'center' === tabTitleAlignment );
+	}
+
 	setHorizontalScrollAlignment( event = {} ) {
 		if ( ! this.elements ) {
 			return;
@@ -532,12 +539,9 @@ export default class NestedTabs extends Base {
 			slider.style.setProperty( '--e-n-tabs-heading-margin-left', '' );
 		}
 
-		console.log( 'resize' );
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice ),
-			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
+		const headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
 
-		if ( ( '' === tabTitleAlignment || 'center' === tabTitleAlignment ) && headingContentIsWiderThanWrapper ) {
+		if ( this.isTabTitleAlignedCentered() && headingContentIsWiderThanWrapper ) {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', 'flex-start' );
 		} else {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
@@ -551,9 +555,10 @@ export default class NestedTabs extends Base {
 	setHorizontalTabTitleScrollValues( event ) {
 		const slider = this.elements.$headingContainer[ 0 ],
 			isActiveScroll = slider.classList.contains( 'e-scroll' ),
-			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting( elementorFrontend.getCurrentDeviceMode() );
+			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting( elementorFrontend.getCurrentDeviceMode() ),
+			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
 
-		if ( ! isActiveScroll || ! isHorizontalScrollActive ) {
+		if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
 			return;
 		}
 
