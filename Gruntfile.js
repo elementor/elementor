@@ -134,7 +134,6 @@ module.exports = function( grunt ) {
 		'usebanner',
 		'clean',
 		'copy',
-		'default', // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', ( releaseType ) => {
