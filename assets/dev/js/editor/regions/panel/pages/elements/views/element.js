@@ -95,40 +95,61 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	addToPage() {
-		const selectedElements = elementor.selection
+		const selectedElements = this.getSelectedElements();
+		const isMultiSelect = selectedElements.length > 1;
+
+		// Currently, we don't support multi-selected elements.
+		if ( isMultiSelect ) {
+			return;
+		}
+
+		const [ element ] = selectedElements;
+		const { view, options } = this.getDroppingOptions( element );
+
+		elementor.channels.panelElements.reply( 'element:selected', this );
+
+		view.addElementFromPanel( {
+			...options,
+			scrollIntoView: true,
+		} );
+	},
+
+	getSelectedElements() {
+		return elementor.selection
 			.getElements()
 			.filter( ( { view } ) => {
 				// Remove elements that don't exist in the DOM, because of a bug in the selection manager
 				// that returns also elements that were removed from the DOM.
 				return elementor.$previewContents[ 0 ].contains( view.$el[ 0 ] );
 			} );
+	},
 
-		const isMultiElement = selectedElements.length > 1;
+	getDroppingOptions( element ) {
+		const shouldDropToDocument = ! element || 'section' === element.model.get( 'elType' );
 
-		if ( isMultiElement ) {
-			return;
+		if ( shouldDropToDocument ) {
+			return {
+				view: elementor.getPreviewView(),
+				options: {},
+			};
 		}
 
-		elementor.channels.panelElements.reply( 'element:selected', this );
+		const shouldDropToParent = 'widget' === element.model.get( 'elType' );
 
-		let [ element ] = selectedElements;
-		const shouldUseNewSection = ! element || 'section' === element.model.get( 'elType' );
-
-		if ( shouldUseNewSection ) {
-			elementor.getPreviewView().addElementFromPanel();
-			return;
-		}
-
-		const shouldUseParent = 'widget' === element.model.get( 'elType' );
-		const options = {};
-
-		if ( shouldUseParent ) {
+		if ( shouldDropToParent ) {
 			const { parent, model } = element;
 
-			options.at = parent.model.get( 'elements' ).findIndex( model ) + 1;
-			element = parent;
+			return {
+				view: parent.view,
+				options: {
+					at: parent.model.get( 'elements' ).findIndex( model ) + 1,
+				},
+			};
 		}
 
-		element.view.addElementFromPanel( options );
+		return {
+			view: element.view,
+			options: {},
+		};
 	},
 } );

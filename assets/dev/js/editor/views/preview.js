@@ -78,7 +78,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		);
 	},
 
-	addElementFromPanel() {
+	addElementFromPanel( options ) {
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
 		}
@@ -98,16 +98,15 @@ const Preview = BaseSectionsContainerView.extend( {
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
-					scrollIntoView: true,
 				},
 			} );
 
 		if ( ! isContainerActive ) {
 			// Create the element in column.
-			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel( options );
 		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
 			// Create the element in a Container, only if the dragged element is not a Container already.
-			containingElement.view.addElementFromPanel();
+			containingElement.view.addElementFromPanel( options );
 		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
