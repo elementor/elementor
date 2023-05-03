@@ -105,7 +105,7 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.channels.panelElements.reply( 'element:selected', this );
 
 		let [ element ] = selectedElements;
-		const shouldUseNewSection = ! element || 'section' === element.model.get( 'elType' );
+		const shouldUseNewSection = ! element?.isRendered || 'section' === element.model.get( 'elType' );
 
 		if ( shouldUseNewSection ) {
 			elementor.getPreviewView().addNewSectionView.onDropping();
