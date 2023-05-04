@@ -185,10 +185,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-direction: column;  --n-tabs-direction-wrap: initial;',
-				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-direction-wrap: initial;',
-				'end' => '--n-tabs-direction: column; --n-tabs-direction-wrap: wrap;',
-				'start' => '--n-tabs-direction: column; --n-tabs-direction-wrap: wrap;',
+				'top' => '--n-tabs-direction: row; --n-tabs-title-order: -1; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%;',
+				'bottom' => '--n-tabs-direction: row; --n-tabs-title-order: 2; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%;',
+				'end' => '--n-tabs-direction: column; --n-tabs-title-order: 2; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial;',
+				'start' => '--n-tabs-direction: column; --n-tabs-title-order: -1; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -217,10 +217,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'stretch' => '--n-tabs-heading-justify-content: initial; --n-tabs-title-width: 100%; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1;',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
+				'stretch' => '--n-tabs-justify-content: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -256,10 +256,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'stretch' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center;',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
+				'stretch' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -290,7 +290,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-heading-width: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-title-width-column: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'tabs_direction' => [
@@ -1077,6 +1077,7 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<div class="e-n-tabs-column-break"></div>
 		</div>
 		<?php
 	}
@@ -1139,6 +1140,7 @@ class NestedTabs extends Widget_Nested_Base {
 				</div>
 				<# } ); #>
 			<# } #>
+			<div class="e-n-tabs-column-break"></div>
 		</div>
 		<?php
 	}
