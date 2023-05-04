@@ -116,7 +116,7 @@ jobs:
         if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
         with:
-          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip 
           PLUGIN_NAME: ${{ github.event.repository.name }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
