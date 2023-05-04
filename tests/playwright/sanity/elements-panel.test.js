@@ -42,21 +42,13 @@ test( 'block adding from panel an inner section inside an inner section', async 
 	expect( secondInnerSection ).not.toBeDefined();
 } );
 
-async function addElementByClick( editor, { elType, widgetType } ) {
-	const isWidget = 'widget' === elType;
-
-	const type = isWidget ? widgetType : elType;
-	const title = type.charAt( 0 ).toUpperCase() + type.slice( 1 ).replace( '-', ' ' );
+async function addWidgetByClick( editor, widgetType ) {
+	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
 
 	await editor.page.locator( '#elementor-panel-header-add-button' ).click();
 	await editor.page.locator( `.elementor-panel-category-items :text-is('${ title }')` ).click();
 
-	const selector = isWidget ? `.elementor-widget-${ widgetType }` : `.elementor-element-${ elType }`;
-	const newElement = await editor.getPreviewFrame().locator( selector );
+	const newElement = await editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` );
 
 	return newElement.evaluate( ( el ) => el.dataset.id );
-}
-
-function addWidgetByClick( editor, widgetType ) {
-	return addElementByClick( editor, { elType: 'widget', widgetType } );
 }
