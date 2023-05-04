@@ -50,13 +50,6 @@ jobs:
         with:
           SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           DESTINATION_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.RELEASE_NAME }}
-          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
-          body_path: ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.pre_release }}
       - name: Read changelog and set current date
         if: env.CHANNEL == 'ga' && github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/get-changelog-datetime
@@ -102,6 +95,19 @@ jobs:
           name: ${{ env.CHANNEL }}-svn-preview
           path: elementor
           retention-days: 7
+      - name: Archive Release folder with updated Readme.txt for GitHub release
+        run: |
+          currentPath=$(pwd)
+          cd $GITHUB_WORKSPACE
+          zip -r /tmp/update-readme-txt/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip elementor
+          cd $currentPath
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_NAME }}
+          files: /tmp/update-readme-txt/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          body_path: ${{ env.CHANGELOG_FILE }}
+          prerelease: ${{ github.event.inputs.pre_release }}
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
