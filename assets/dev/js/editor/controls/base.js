@@ -126,6 +126,13 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes, settings.controls );
 
+		const parentContainerType = this.model.get('parent_container_type');
+
+		if ( isVisible && parentContainerType ) {
+			isVisible = this.container.settings.get( 'container_type' ) === parentContainerType ||
+    			this.container.parent?.settings.get('container_type') === parentContainerType;
+		}
+
 		this.$el.toggleClass( 'elementor-hidden-control', ! isVisible );
 
 		elementor.getPanelView().updateScrollbar();

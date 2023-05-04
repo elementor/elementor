@@ -24,6 +24,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'custom' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
 			],
 			'responsive' => true,
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['basis'] = [
@@ -54,6 +55,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'basis_type' => 'custom',
 			],
 			'responsive' => true,
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['align_self'] = [
@@ -83,6 +85,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['order'] = [
@@ -116,6 +119,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['order_custom'] = [
@@ -128,6 +132,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'condition' => [
 				'order' => 'custom',
 			],
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['size'] = [
@@ -162,6 +167,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['grow'] = [
@@ -176,6 +182,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'condition' => [
 				'size' => 'custom',
 			],
+			'parent_container_type' => 'flex',
 		];
 
 		$fields['shrink'] = [
@@ -190,6 +197,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'condition' => [
 				'size' => 'custom',
 			],
+			'parent_container_type' => 'flex',
 		];
 
 		return $fields;
