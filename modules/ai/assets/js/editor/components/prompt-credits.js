@@ -12,7 +12,7 @@ const PromptCredits = ( props ) => {
 				sprintf( __( 'You\'ve used %s of the free trial.', 'elementor' ), props.usagePercentage + '%' )
 			}
 			{ ' ' }
-			<a href="https://go.elementor.com/ai-popup-purchase-limit-reached/" target="_blank" rel="noreferrer">{ __( 'Upgrade for unlimited access', 'elementor' ) }</a>.
+			<a href="https://go.elementor.com/ai-popup-purchase-limit-reached-80-percent/" target="_blank" rel="noreferrer">{ __( 'Upgrade for unlimited access', 'elementor' ) }</a>.
 		</Typography>
 	);
 };
