@@ -122,9 +122,9 @@ module.exports = Marionette.ItemView.extend( {
 		return elementor.selection
 			.getElements()
 			.filter( ( { view } ) => {
-				// Remove elements that don't exist in the DOM, because of a bug in the selection manager
-				// that returns also elements that were removed from the DOM.
-				return elementor.$previewContents[ 0 ].contains( view.$el[ 0 ] );
+				// Remove elements that don't exist in the current document's DOM, because of a bug in
+				// the selection manager that doesn't deselect elements properly.
+				return elementor.documents.getCurrent().$element?.[ 0 ].contains( view.$el[ 0 ] );
 			} );
 	},
 

@@ -98,6 +98,7 @@ const Preview = BaseSectionsContainerView.extend( {
 				columns: 1,
 				options: {
 					at: this.getOption( 'at' ),
+					...options,
 				},
 			} );
 
