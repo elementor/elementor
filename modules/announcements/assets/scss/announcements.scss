@@ -33,7 +33,7 @@ $description-color: var(--e-a-color-txt);
 			border-bottom: var(--e-a-border);
 
 			.eicon-elementor {
-				color: $white;
+				color: var(--e-a-color-logo);
 				background-color: var(--e-a-bg-logo);
 				border-radius: 50%;
 				padding: 8px;
