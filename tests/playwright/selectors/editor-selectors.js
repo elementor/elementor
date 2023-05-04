@@ -11,6 +11,12 @@ const EditorSelectors = {
 	menuIcon: '#elementor-panel-header-menu-button i',
 	widget: '[data-element_type="widget"]',
 	loadingElement: ( id ) => `.elementor-element-${ id }.elementor-loading`,
+	videoIframe: 'iframe.elementor-video',
+	playIcon: '[aria-label="Play"]',
+	mapIframe: 'iframe[src*="https://maps.google.com/maps"]',
+	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
+	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
+	soundWaveForm: 'div.waveform.loaded',
 };
 
 export default EditorSelectors;
