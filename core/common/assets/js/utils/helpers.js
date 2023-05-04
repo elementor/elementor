@@ -1,5 +1,8 @@
 export default class Helpers {
 	/**
+	 * @param {string} name
+	 * @param {string} version
+	 * @param {string} replacement
 	 * @deprecated since 3.7.0, use `elementorDevTools.deprecation.deprecated()` instead.
 	 */
 	softDeprecated( name, version, replacement ) {
@@ -10,6 +13,9 @@ export default class Helpers {
 	}
 
 	/**
+	 * @param {string} name
+	 * @param {string} version
+	 * @param {string} replacement
 	 * @deprecated since 3.7.0, use `elementorDevTools.deprecation.deprecated()` instead.
 	 */
 	hardDeprecated( name, version, replacement ) {
@@ -20,6 +26,10 @@ export default class Helpers {
 	}
 
 	/**
+	 * @param {string} type
+	 * @param {string} name
+	 * @param {string} version
+	 * @param {string} replacement
 	 * @deprecated since 3.7.0, use `elementorDevTools.deprecation.deprecated()` instead.
 	 */
 	deprecatedMessage( type, name, version, replacement ) {
@@ -30,6 +40,7 @@ export default class Helpers {
 	}
 
 	/**
+	 * @param {*} args
 	 * @deprecated since 3.7.0, use `elementorDevTools.consoleWarn()` instead.
 	 */
 	consoleWarn( ...args ) {
@@ -40,6 +51,7 @@ export default class Helpers {
 	}
 
 	/**
+	 * @param {string} message
 	 * @deprecated since 3.7.0, use `console.error()` instead.
 	 */
 	consoleError( message ) {
@@ -51,6 +63,9 @@ export default class Helpers {
 	}
 
 	/**
+	 * @param {string} methodName
+	 * @param {string} version
+	 * @param {string} replacement
 	 * @deprecated since 2.8.0, use `elementorDevTools.deprecation.deprecated()` instead.
 	 */
 	deprecatedMethod( methodName, version, replacement ) {

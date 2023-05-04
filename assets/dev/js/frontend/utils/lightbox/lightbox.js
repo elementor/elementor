@@ -239,7 +239,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	/**
-	 * @deprecated 3.1.4
+	 * @param {*} html
+	 * @deprecated since 3.1.4
 	 */
 	setHTMLContent( html ) {
 		if ( window.elementorCommon ) {

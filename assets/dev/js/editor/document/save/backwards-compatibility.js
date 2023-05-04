@@ -66,15 +66,17 @@ export default class BackwardsCompatibility extends ComponentBase {
 	}
 
 	/**
-	 * @deprecated since 2.9.0, use `$e.run( 'document/save/publish' )` instead.
+	 * @param {*} options
+	 * @deprecated since 2.9.0, use `$e.run( 'document/save/publish', { options } )` instead.
 	 */
 	publish( options ) {
-		elementorDevTools.deprecation.deprecated( 'publish()', '2.9.0', "$e.run( 'document/save/publish' )" );
+		elementorDevTools.deprecation.deprecated( 'publish( options )', '2.9.0', "$e.run( 'document/save/publish', { options } )" );
 
 		return $e.run( 'document/save/auto', { options } );
 	}
 
 	/**
+	 * @param {*} options
 	 * @deprecated since 2.9.0, use `$e.run( 'document/save/auto', { force: true } )` instead.
 	 */
 	saveAutoSave( options ) {
@@ -104,10 +106,11 @@ export default class BackwardsCompatibility extends ComponentBase {
 	}
 
 	/**
-	 * @deprecated since 2.9.0, use `$e.run( 'document/save/update' )` instead.
+	 * @param {*} options
+	 * @deprecated since 2.9.0, use `$e.run( 'document/save/update', options )` instead.
 	 */
 	update( options ) {
-		elementorDevTools.deprecation.deprecated( 'update()', '2.9.0', "$e.run( 'document/save/update' )" );
+		elementorDevTools.deprecation.deprecated( 'update( options )', '2.9.0', "$e.run( 'document/save/update', options )" );
 
 		return $e.run( 'document/save/update', options );
 	}
@@ -122,19 +125,21 @@ export default class BackwardsCompatibility extends ComponentBase {
 	}
 
 	/**
-	 * @deprecated since 2.9.0, use `$e.internal( 'document/save/save' )` instead.
+	 * @param {*} options
+	 * @deprecated since 2.9.0, use `$e.internal( 'document/save/save', options )` instead.
 	 */
 	saveEditor( options ) {
-		elementorDevTools.deprecation.deprecated( 'saveEditor()', '2.9.0', "$e.internal( 'document/save/save' )" );
+		elementorDevTools.deprecation.deprecated( 'saveEditor( options )', '2.9.0', "$e.internal( 'document/save/save', options )" );
 
 		$e.internal( 'document/save/save', options );
 	}
 
 	/**
-	 * @deprecated since 2.9.0, use `$e.internal( 'document/save/set-is-modified' )` instead.
+	 * @param {*} status
+	 * @deprecated since 2.9.0, use `$e.internal( 'document/save/set-is-modified', { status } )` instead.
 	 */
 	setFlagEditorChange( status ) {
-		elementorDevTools.deprecation.deprecated( 'setFlagEditorChange()', '2.9.0', "$e.internal( 'document/save/set-is-modified' )" );
+		elementorDevTools.deprecation.deprecated( 'setFlagEditorChange( status )', '2.9.0', "$e.internal( 'document/save/set-is-modified', { status } )" );
 
 		$e.internal( 'document/save/set-is-modified', { status } );
 	}

@@ -100,6 +100,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	/**
+	 * @param {string} settingName
 	 * @deprecated since 3.0.0, use `getKitSettings()` instead and remove the `elementor_` prefix.
 	 */
 	getGeneralSettings( settingName ) {

@@ -140,6 +140,7 @@ module.exports = function( $ ) {
 	};
 
 	/**
+	 * @param {string} handlerName
 	 * @deprecated since 3.1.0, use `elementorFrontend.elementsHandler.getHandler` instead.
 	 */
 	this.getHandlers = function( handlerName ) {

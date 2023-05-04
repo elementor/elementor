@@ -425,6 +425,8 @@ module.exports = {
 	},
 
 	/**
+	 * @param {string} string
+	 * @param {string} replaces
 	 * @deprecated since 2.0.0, use native JS `.replace()` method.
 	 */
 	stringReplaceAll( string, replaces ) {
@@ -461,10 +463,11 @@ module.exports = {
 	},
 
 	/**
+	 * @param {Object} object - An object to clone.
 	 * @deprecated since 2.3.0, use `elementorCommon.helpers.cloneObject()` instead.
 	 */
 	cloneObject( object ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject()', '2.3.0', 'elementorCommon.helpers.cloneObject()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject( object )', '2.3.0', 'elementorCommon.helpers.cloneObject( object )' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -499,10 +502,11 @@ module.exports = {
 	},
 
 	/**
-	 * @deprecated since 2.8.0, use `new ColorPicker()` instead.
+	 * @param {*} $element
+	 * @deprecated since 2.8.0, use `new ColorPicker( { picker: { el: $element } } )` instead.
 	 */
 	wpColorPicker( $element ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker( $element )', '2.8.0', 'new ColorPicker( { picker: { el: $element } } )' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},
