@@ -185,10 +185,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-direction: row; --n-tabs-title-order: -1; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%;',
-				'bottom' => '--n-tabs-direction: row; --n-tabs-title-order: 2; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%;',
-				'end' => '--n-tabs-direction: column; --n-tabs-title-order: 2; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial;',
-				'start' => '--n-tabs-direction: column; --n-tabs-title-order: -1; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial;',
+				'top' => '--n-tabs-direction: row; --n-tabs-title-order: -1; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto;',
+				'bottom' => '--n-tabs-direction: row; --n-tabs-title-order: 2; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto;',
+				'end' => '--n-tabs-direction: column; --n-tabs-title-order: 2; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial;',
+				'start' => '--n-tabs-direction: column; --n-tabs-title-order: -1; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',

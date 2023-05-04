@@ -35,7 +35,7 @@ export default class NestedTabs extends Base {
 				tablist: '[role="tablist"]',
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-con',
-				headingContainer: '.e-n-tabs',
+				widgetWrapper: '.e-n-tabs',
 				activeTabContentContainers: '.e-con.e-active',
 				mobileTabTitle: '.e-n-tab-title',
 			},
@@ -63,7 +63,7 @@ export default class NestedTabs extends Base {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
-			$headingContainer: this.findElement( selectors.headingContainer ),
+			$widgetWrapper: this.findElement( selectors.widgetWrapper ),
 		};
 	}
 
@@ -136,17 +136,26 @@ export default class NestedTabs extends Base {
 
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
-			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
+			$activeTitle = this.getActiveTabObject().tabTitle,
+			$activeContent = this.getActiveTabObject().tabContent;
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
+		$activeTitle.add( $activeContent ).removeClass( this.getActiveClass() );
 		$activeTitle.attr( this.getTitleDeactivationAttributes() );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
 		$activeContent.attr( 'hidden', 'hidden' );
+	}
+
+	getActiveTabObject( tabIndex ) {
+		const settings = this.getSettings(),
+			activeClass = settings.classes.active,
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector(tabIndex) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector(tabIndex) : '.' + activeClass;
+
+		return {
+			tabTitle: this.elements.$tabTitles.filter( activeTitleFilter ),
+			tabContent: this.elements.$tabContents.filter( activeContentFilter ),
+		};
 	}
 
 	getTitleDeactivationAttributes() {
@@ -280,6 +289,8 @@ export default class NestedTabs extends Base {
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
 		}
+
+		this.tabsTitleWidthListener();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -314,7 +325,7 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
+			const isMobileVersion = 'none' === this.elements.$widgetWrapper.css( 'display' );
 
 			if ( isMobileVersion ) {
 				this.activateMobileTab( tabIndex );
@@ -338,10 +349,10 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
-		const $activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
+		const $activeTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
 
-		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
-			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
+		if ( ! elementor.helpers.isInViewport( $activeTitle[ 0 ] ) ) {
+			$activeTitle[ 0 ].scrollIntoView( { block: 'center' } );
 		}
 	}
 
@@ -504,5 +515,45 @@ export default class NestedTabs extends Base {
 		// Set the highest height value.
 		const widgetHeight = contentContainerHeight > widgetHeightWithoutContent ? contentContainerHeight : widgetHeightWithoutContent;
 		$widgetInner.css( 'height', widgetHeight + 'px' );
+	}
+
+	getControlValue( controlKey ) {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), controlKey, '', currentDevice );
+	}
+
+	tabsTitleWidthListener() {
+		// run when direction change.
+		// Run on resize.
+		// Run when with value changes.
+		
+		const horizontalTabDirections = [ '', 'top', 'bottom' ],
+			tabsDirection = this.getControlValue( 'tabs_direction' );
+
+		if ( horizontalTabDirections.includes( tabsDirection ) || !! this.getControlValue( 'tabs_width' ) ) {
+			this.$element.css( '--n-tabs-title-width-computed', '' );
+			return;
+		}
+
+		const $activeTitle = this.getActiveTabObject().tabTitle;
+		let previousWidth = 0;
+
+		this.observedContainer = new ResizeObserver( ( $observedTitle ) => {
+			const currentWidth = $observedTitle[ 0 ].borderBoxSize?.[ 0 ].inlineSize;
+
+			if ( !! currentWidth && currentWidth !== previousWidth ) {
+				previousWidth = currentWidth;
+
+				if ( 0 !== previousWidth ) {
+					this.updateTabsTitleWidthValue();
+				}
+			}
+		} );
+
+		this.observedContainer.observe( $activeTitle[ 0 ] );
+	}
+
+	updateTabsTitleWidthValue() {
+		console.log( 'change' );
 	}
 }
