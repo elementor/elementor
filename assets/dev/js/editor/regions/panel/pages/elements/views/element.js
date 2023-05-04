@@ -125,11 +125,20 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	getDroppingOptions( element ) {
-		const shouldDropToDocument = ! element || 'section' === element.model.get( 'elType' );
+		const shouldDropToDocument = ! element;
 
 		if ( shouldDropToDocument ) {
 			return {
 				view: elementor.getPreviewView(),
+				options: {},
+			};
+		}
+
+		const shouldDropToColumn = 'section' === element.model.get( 'elType' );
+
+		if ( shouldDropToColumn ) {
+			return {
+				view: element.view.children.findByIndex( 0 ),
 				options: {},
 			};
 		}
