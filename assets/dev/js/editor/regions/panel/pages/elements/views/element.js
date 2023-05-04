@@ -106,6 +106,10 @@ module.exports = Marionette.ItemView.extend( {
 		const [ element ] = selectedElements;
 		const { view, options } = this.getDroppingOptions( element );
 
+		if ( ! view?.addElementFromPanel ) {
+			return;
+		}
+
 		elementor.channels.panelElements.reply( 'element:selected', this );
 
 		view.addElementFromPanel( {
