@@ -526,7 +526,7 @@ export default class NestedTabs extends Base {
 		// run when direction change.
 		// Run on resize.
 		// Run when with value changes.
-		
+
 		const horizontalTabDirections = [ '', 'top', 'bottom' ],
 			tabsDirection = this.getControlValue( 'tabs_direction' );
 
