@@ -92,7 +92,8 @@ jobs:
           retention-days: 7
       - name: Archive Release folder with updated Readme.txt for GitHub release
         run: |
-          zip -r /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip $GITHUB_WORKSPACE/elementor
+          cd $GITHUB_WORKSPACE
+          zip -r /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip elementor
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
