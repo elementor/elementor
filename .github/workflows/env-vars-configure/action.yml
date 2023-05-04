@@ -48,8 +48,3 @@ runs:
         uses : ./.github/workflows/get-previous-release
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
-
-
-
-
-git ls-remote --tags elementor | grep -v "\-rc" | grep "beta" | grep "3.13.0" | tail -n1 | awk -F'beta' '{print $2}' || echo 0
