@@ -20,8 +20,6 @@ module.exports = Marionette.ItemView.extend( {
 			events.mousedown = 'onMouseDown';
 		}
 
-		events.click = 'addToPage';
-
 		return events;
 	},
 
@@ -52,6 +50,8 @@ module.exports = Marionette.ItemView.extend( {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
+
+		this.ui.element.on( 'click', () => this.addToPage() );
 
 		this.ui.element.html5Draggable( {
 			onDragStart: () => {
@@ -104,10 +104,50 @@ module.exports = Marionette.ItemView.extend( {
 		}
 
 		const [ element ] = selectedElements;
-		const { view, options } = this.getDroppingOptions( element );
+
+		// Order matters.
+		const scenariosMap = {
+			addToDocument: {
+				check: () => ! element,
+				getArgs: () => ( {
+					view: elementor.getPreviewView(),
+					options: {},
+				} ),
+			},
+			addToFirstColumn: {
+				check: () => 'section' === element.model.get( 'elType' ),
+				getArgs: () => ( {
+					view: element.view.children?.findByIndex( 0 ),
+					options: {},
+				} ),
+			},
+			addToParent: {
+				check: () => 'widget' === element.model.get( 'elType' ),
+				getArgs: () => {
+					const { parent, model } = element;
+
+					return {
+						view: parent.view,
+						options: {
+							at: parent.model.get( 'elements' ).findIndex( model ) + 1,
+						},
+					};
+				},
+			},
+			default: {
+				check: () => true,
+				getArgs: () => ( {
+					view: element.view,
+					options: {},
+				} ),
+			},
+		};
+
+		const { getArgs } = Object.values( scenariosMap ).find( ( { check } ) => check() );
+		const { view, options } = getArgs();
 
 		if ( ! view?.addElementFromPanel ) {
-			return;
+			throw new Error( "View doesn't support adding from panel", view );
 		}
 
 		elementor.channels.panelElements.reply( 'element:selected', this );
@@ -126,43 +166,5 @@ module.exports = Marionette.ItemView.extend( {
 				// the selection manager that doesn't deselect elements properly.
 				return elementor.documents.getCurrent().$element?.[ 0 ].contains( view.$el[ 0 ] );
 			} );
-	},
-
-	getDroppingOptions( selectedElement ) {
-		const shouldDropToDocument = ! selectedElement;
-
-		if ( shouldDropToDocument ) {
-			return {
-				view: elementor.getPreviewView(),
-				options: {},
-			};
-		}
-
-		const shouldDropToColumn = 'section' === selectedElement.model.get( 'elType' );
-
-		if ( shouldDropToColumn ) {
-			return {
-				view: selectedElement.view.children.findByIndex( 0 ),
-				options: {},
-			};
-		}
-
-		const shouldDropToParent = 'widget' === selectedElement.model.get( 'elType' );
-
-		if ( shouldDropToParent ) {
-			const { parent, model } = selectedElement;
-
-			return {
-				view: parent.view,
-				options: {
-					at: parent.model.get( 'elements' ).findIndex( model ) + 1,
-				},
-			};
-		}
-
-		return {
-			view: selectedElement.view,
-			options: {},
-		};
 	},
 } );
