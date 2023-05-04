@@ -133,6 +133,8 @@ TemplateLibraryManager = function() {
 	};
 
 	/**
+	 * @param model - Template model.
+	 * @param {Object} args - Template arguments.
 	 * @deprecated since 2.8.0, use `$e.run( 'library/insert-template' )` instead.
 	 */
 	this.importTemplate = function( model, args = {} ) {

@@ -191,6 +191,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 	/**
 	 * BC since 3.0.0, ensure a new child is appear in container children.
 	 *
+	 * @param model - Container model.
 	 * @deprecated since 3.0.0, use `$e.run( 'document/repeater/insert' )` instead.
 	 */
 	updateContainer( model ) {

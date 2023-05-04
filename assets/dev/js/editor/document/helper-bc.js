@@ -1,5 +1,9 @@
 export default class BackwardsCompatibility {
 	/**
+	 * @param parent
+	 * @param key
+	 * @param value
+	 * @param {boolean=} multiple
 	 * @deprecated since 2.9.0, use `$e.components.get( 'document' ).utils.findViewRecursive( parent, key, value, multiple )` instead.
 	 */
 	static findViewRecursive( parent, key, value, multiple = true ) {
@@ -9,6 +13,7 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param id - View ID.
 	 * @deprecated since 2.9.0, use `$e.components.get( 'document' ).utils.findViewById( id )` instead.
 	 */
 	static findViewById( id ) {
@@ -18,6 +23,7 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param id - Container ID.
 	 * @deprecated since 2.9.0, use `$e.components.get( 'document' ).utils.findContainerById( id )` instead.
 	 */
 	static findContainerById( id ) {
@@ -27,6 +33,8 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param childModel
+	 * @param parentModel
 	 * @deprecated since 3.4.0, use `parentModel.isValidChild( childModel )` instead.
 	 */
 	static isValidChild( childModel, parentModel ) {
@@ -36,6 +44,8 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param childModel
+	 * @param targetContainer
 	 * @deprecated since 3.4.0, use `$e.components.get( 'document/elements' ).utils.isValidGrandChild( childModel, targetContainer )` instead.
 	 */
 	static isValidGrandChild( childModel, targetContainer ) {
@@ -45,6 +55,8 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param sourceModel
+	 * @param targetContainer
 	 * @deprecated since 3.4.0, use `$e.components.get( 'document/elements' ).utils.isSameElement( sourceModel, targetContainer )` instead.
 	 */
 	static isSameElement( sourceModel, targetContainer ) {
@@ -54,6 +66,8 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param sourceModel
+	 * @param targetContainer
 	 * @deprecated since 3.4.0, use `$e.components.get( 'document/elements' ).utils.getPasteOptions( sourceModel, targetContainer )` instead.
 	 */
 	static getPasteOptions( sourceModel, targetContainer ) {
@@ -63,6 +77,7 @@ export default class BackwardsCompatibility {
 	}
 
 	/**
+	 * @param targetContainer
 	 * @deprecated since 3.4.0, use `$e.components.get( 'document/elements' ).utils.isPasteEnabled( targetContainer )` instead.
 	 */
 	static isPasteEnabled( targetContainer ) {
