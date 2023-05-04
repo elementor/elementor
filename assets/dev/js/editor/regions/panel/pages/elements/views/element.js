@@ -128,8 +128,8 @@ module.exports = Marionette.ItemView.extend( {
 			} );
 	},
 
-	getDroppingOptions( element ) {
-		const shouldDropToDocument = ! element;
+	getDroppingOptions( selectedElement ) {
+		const shouldDropToDocument = ! selectedElement;
 
 		if ( shouldDropToDocument ) {
 			return {
@@ -138,19 +138,19 @@ module.exports = Marionette.ItemView.extend( {
 			};
 		}
 
-		const shouldDropToColumn = 'section' === element.model.get( 'elType' );
+		const shouldDropToColumn = 'section' === selectedElement.model.get( 'elType' );
 
 		if ( shouldDropToColumn ) {
 			return {
-				view: element.view.children.findByIndex( 0 ),
+				view: selectedElement.view.children.findByIndex( 0 ),
 				options: {},
 			};
 		}
 
-		const shouldDropToParent = 'widget' === element.model.get( 'elType' );
+		const shouldDropToParent = 'widget' === selectedElement.model.get( 'elType' );
 
 		if ( shouldDropToParent ) {
-			const { parent, model } = element;
+			const { parent, model } = selectedElement;
 
 			return {
 				view: parent.view,
@@ -161,7 +161,7 @@ module.exports = Marionette.ItemView.extend( {
 		}
 
 		return {
-			view: element.view,
+			view: selectedElement.view,
 			options: {},
 		};
 	},
