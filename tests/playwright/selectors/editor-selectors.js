@@ -17,8 +17,16 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
-	getButtonByName: ( name ) => `a[role="button"]:has-text("${ name }")`,
-	buttonIdInp: '[data-setting="button_css_id"]',
+	button: {
+		getByName: ( name ) => `a[role="button"]:has-text("${ name }")`,
+		id: '[data-setting="button_css_id"]',
+		url: 'input[data-setting="url"]',
+		linkOptions: 'button[data-tooltip="Link Options"]',
+		targetBlankChbox: 'input[data-setting="is_external"]',
+		noFollowChbox: 'input[data-setting="nofollow"]',
+		customAttributesInp: 'input[data-setting="custom_attributes"]',
+	},
+
 };
 
 export default EditorSelectors;

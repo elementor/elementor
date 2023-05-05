@@ -10,18 +10,35 @@ export default class ButtonWidget {
 
 	async addWidget( defaultBtnName ) {
 		await this.editorPage.addWidget( 'button' );
-		await this.editorPage.getPreviewFrame().waitForSelector( EditorSelectors.getButtonByName( defaultBtnName ) );
+		await this.editorPage.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 	}
 
 	async setButtonId( buttonId, buttonName ) {
-		await this.page.locator( EditorSelectors.buttonIdInp ).type( buttonId );
-		await expect( this.editorPage.getPreviewFrame().locator( EditorSelectors.getButtonByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
+		await this.page.locator( EditorSelectors.button.id ).type( buttonId );
+		await expect( this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
 	}
 
 	async getButtonId( defaultBtnName, isPublished = true ) {
 		if ( isPublished ) {
-			return await this.page.locator( EditorSelectors.getButtonByName( defaultBtnName ) ).getAttribute( 'id' );
+			return await this.page.locator( EditorSelectors.button.getByName( defaultBtnName ) ).getAttribute( 'id' );
 		}
-		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.getButtonByName( defaultBtnName ) ).getAttribute( 'id' );
+		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) ).getAttribute( 'id' );
+	}
+
+	async setButtonLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined } ) {
+		const urlInput = this.page.locator( EditorSelectors.button.url );
+		await urlInput.clear();
+		await urlInput.type( link );
+		await this.page.locator( EditorSelectors.button.linkOptions ).click();
+		if ( options.targetBlank ) {
+			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
+		}
+		if ( options.targetBlank ) {
+			await this.page.locator( EditorSelectors.button.noFollowChbox ).check();
+		}
+		if ( options.customAttributes ) {
+			await this.page.locator( EditorSelectors.button.customAttributesInp ).type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
+		}
+		await this.editorPage.getPreviewFrame().getByRole( 'heading', { name: 'Hello world!' } ).click();
 	}
 }
