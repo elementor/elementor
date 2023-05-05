@@ -108,7 +108,7 @@ export default class Component extends ComponentBase {
 	 * @return {void}
 	 */
 	onCloseRoute( route ) {
-		this.activeModelId = null;
+		// this.activeModelId = null;
 		super.onCloseRoute( route );
 
 		$e.uiStates.remove( 'document/direction-mode' );
