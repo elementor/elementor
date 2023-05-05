@@ -149,8 +149,8 @@ export default class NestedTabs extends Base {
 	getActiveTabObject( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector(tabIndex) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector(tabIndex) : '.' + activeClass;
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass;
 
 		return {
 			tabTitle: this.elements.$tabTitles.filter( activeTitleFilter ),
@@ -375,6 +375,9 @@ export default class NestedTabs extends Base {
 			++index;
 		} );
 
+		const $columnBreakElement = $widget.find( '.e-n-tabs-column-break' );
+		$widget.find( '.e-n-tabs' ).append( $columnBreakElement );
+
 		// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
 		// if ( $removed.length ) {
 		// 	return elementorModules.ViewModule.prototype.onInit.apply( this, args );
@@ -522,6 +525,24 @@ export default class NestedTabs extends Base {
 		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), controlKey, '', currentDevice );
 	}
 
+	getPropsThatTriggerTabTitleWidthChange() {
+		return [
+			'tabs_direction',
+			'tabs_width',
+		];
+	}
+
+	onElementChange( propertyName ) {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			responsivePropertyName = 'desktop' === currentDevice
+				? propertyName
+				: `${ propertyName }_${ currentDevice }`;
+
+		if ( this.getPropsThatTriggerTabTitleWidthChange().includes( responsivePropertyName ) ) {
+			this.tabsTitleWidthListener();
+		}
+	}
+
 	tabsTitleWidthListener() {
 		// run when direction change.
 		// Run on resize.
@@ -545,15 +566,11 @@ export default class NestedTabs extends Base {
 				previousWidth = currentWidth;
 
 				if ( 0 !== previousWidth ) {
-					this.updateTabsTitleWidthValue();
+					this.$element.css( '--n-tabs-title-width-computed', `${ currentWidth }px` );
 				}
 			}
 		} );
 
 		this.observedContainer.observe( $activeTitle[ 0 ] );
-	}
-
-	updateTabsTitleWidthValue() {
-		console.log( 'change' );
 	}
 }

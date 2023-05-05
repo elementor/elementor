@@ -290,7 +290,7 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
-				'{{WRAPPER}}' => '--n-tabs-title-width-column: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--n-tabs-title-width-column: {{SIZE}}{{UNIT}}; --n-tabs-title-width-computed: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'tabs_direction' => [
