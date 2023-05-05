@@ -1061,6 +1061,32 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
 		await expect( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 	} );
+
+	test( 'Check none breakpoint', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
+			await editor.addWidget( 'nested-tabs', container );
+
+			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
+		} );
+
+		await test.step( 'Assert no accordion on mobile view', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await expect( nestedTabsHeading ).toBeVisible();
+
+			const nestedTabsCollapse = await frame.locator( '.e-n-tab-title.e-collapse' ).first();
+			await expect( nestedTabsCollapse ).not.toBeVisible();
+		} );
+	} );
 } );
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
