@@ -69,7 +69,7 @@ test( 'Verify button link control', async ( { page }, testInfo ) => {
 
 	const buttonInEditor = editor.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) );
 	await expect( buttonInEditor ).toHaveAttribute( 'target', '_blank' );
-	await expect( buttonInEditor ).toHaveAttribute( 'href', 'https://elementor.com/' );
+	await expect( buttonInEditor ).toHaveAttribute( 'href', link );
 	await expect( buttonInEditor ).toHaveAttribute( 'rel', 'nofollow' );
 	await expect( buttonInEditor ).toHaveAttribute( customAttributes.key, customAttributes.value );
 
@@ -77,7 +77,7 @@ test( 'Verify button link control', async ( { page }, testInfo ) => {
 
 	const publishedButton = page.locator( EditorSelectors.button.getByName( defaultBtnName ) );
 	await expect( publishedButton ).toHaveAttribute( 'target', '_blank' );
-	await expect( publishedButton ).toHaveAttribute( 'href', 'https://elementor.com/' );
+	await expect( publishedButton ).toHaveAttribute( 'href', link );
 	await expect( publishedButton ).toHaveAttribute( 'rel', 'nofollow' );
 	await expect( publishedButton ).toHaveAttribute( customAttributes.key, customAttributes.value );
 } );
