@@ -36,7 +36,7 @@ export default class Component extends ComponentBase {
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( undefined === activeControl ) {
+		if ( this.shouldRenderTab( tab, args ) ) {
 			this.activeTabs[ args.model.id ] = tab;
 
 			elementor.getPanelView().setPage( 'editor', title, {
@@ -48,6 +48,16 @@ export default class Component extends ComponentBase {
 		}
 
 		this.activateControl( activeControl );
+	}
+
+	shouldRenderTab( tab, args ) {
+		return (
+			(
+				this.activeModelId !== args.model.id ||
+				tab !== this.activeTabs[ args.model.id ]
+			) &&
+			undefined === args.model.activeControl
+		);
 	}
 
 	setDefaultTab( args ) {
@@ -106,6 +116,7 @@ export default class Component extends ComponentBase {
 	 * @return {void}
 	 */
 	onCloseRoute( route ) {
+		this.activeModelId = null;
 		super.onCloseRoute( route );
 
 		$e.uiStates.remove( 'document/direction-mode' );
