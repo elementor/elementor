@@ -8,6 +8,7 @@ export default class Component extends ComponentBase {
 
 		// Remember last used tab.
 		this.activeTabs = {};
+		this.activeModelId = null;
 	}
 
 	getNamespace() {
@@ -37,6 +38,7 @@ export default class Component extends ComponentBase {
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
 		if ( this.shouldRenderTab( tab, args ) ) {
+			this.activeModelId = args.model.id;
 			this.activeTabs[ args.model.id ] = tab;
 
 			elementor.getPanelView().setPage( 'editor', title, {
