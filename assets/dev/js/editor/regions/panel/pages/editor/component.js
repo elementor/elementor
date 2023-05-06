@@ -58,7 +58,7 @@ export default class Component extends ComponentBase {
 				this.activeModelId !== args.model.id ||
 				tab !== this.activeTabs[ args.model.id ]
 			) &&
-			undefined === args.model.activeControl
+			undefined === args.activeControl
 		);
 	}
 
