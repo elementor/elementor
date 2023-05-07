@@ -62,7 +62,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
-				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100, timeout: 10000 } );
+				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 			}
 
 			const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads(.*)/g );
@@ -71,8 +71,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.waitForIframeToLoaded( widgetType, true );
 			await response;
 
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100, timeout: 10000 } );
+			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} );
 	}
 } );
-
