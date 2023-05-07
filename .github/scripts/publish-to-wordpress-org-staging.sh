@@ -42,7 +42,7 @@ echo "Preparing files"
 cd $SVN_PATH/trunk
 
 echo "svn delete"
-svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD" | | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
+svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD" | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
 
 echo "svn add"
 svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD" | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
