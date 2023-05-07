@@ -26,7 +26,7 @@ mkdir -p $SVN_PATH
 cd $SVN_PATH
 
 echo "Checkout from SVN"
-svn co https://svn.riouxsvn.com/elementor/trunk
+svn co https://svn.riouxsvn.com/elementor/trunk . --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 
 echo "Clean trunk folder"
 cd $SVN_PATH/trunk
