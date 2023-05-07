@@ -332,3 +332,11 @@
 @media (max-width: $screen-laptop-max) {
 	@include hide-normal-tabs-(laptop);
 }
+
+
+// Breakpoint - none.
+.e-n-tabs-none {
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+		display: none;
+	}
+}
