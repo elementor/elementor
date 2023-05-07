@@ -57,7 +57,7 @@ export default class Component extends ComponentBase {
 		const lastRoute = history[ history.length - 1 ].route;
 		const lastRouteParts = lastRoute.split( '/' );
 
-		return lastRouteParts[ lastRouteParts.length - 1 ] === 'categories';
+		return 'categories' === lastRouteParts[ lastRouteParts.length - 1 ];
 	}
 
 	setDefaultTab( args ) {
