@@ -348,10 +348,12 @@ export default class extends Marionette.CompositeView {
 
 		if ( ENTER_KEY === event.keyCode ) {
 			this.onItemClick( event );
+			return;
 		}
 
 		if ( SPACE_KEY === event.keyCode ) {
 			this.onToggleListClick( event );
+			return;
 		}
 	}
 
