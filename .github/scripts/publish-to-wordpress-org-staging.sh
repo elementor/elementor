@@ -42,12 +42,12 @@ echo "Preparing files"
 cd $SVN_PATH/trunk
 
 echo "svn delete"
-svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD" | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
+svn status | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete;
 
 echo "svn add"
-svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD" | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
+svn status | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add;
 
-svn status --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD";
+svn status
 
 echo "Commit files to trunk"
 svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
