@@ -32,7 +32,7 @@ export default {
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 1 : 1,
 	fullyParallel: false,
-	reporter: process.env.CI ? 'github' : 'list',
+	reporter: process.env.CI ? [ 'github', 'list' ] : 'list',
 	use: {
 		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
