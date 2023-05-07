@@ -353,7 +353,6 @@ export default class extends Marionette.CompositeView {
 
 		if ( SPACE_KEY === event.keyCode ) {
 			this.onToggleListClick( event );
-			return;
 		}
 	}
 
