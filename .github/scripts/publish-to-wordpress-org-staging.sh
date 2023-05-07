@@ -50,7 +50,7 @@ echo "Commit files to trunk"
 svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 
 echo "Copy files from trunk to tag ${PLUGIN_VERSION}"
-svn cp https://plugins.svn.wordpress.org/elementor/trunk https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION} --message "Tagged ${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
+svn cp https://svn.riouxsvn.com/elementor/trunk https://svn.riouxsvn.com/elementor/tags/${PLUGIN_VERSION} --message "Tagged ${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 svn update
 
 echo "Remove the SVN folder from the workspace (for multiple releases in the same Action)"
