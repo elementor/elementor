@@ -445,6 +445,10 @@ class Widgets_Manager {
 	 * @return bool|string Rendered widget form.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		if ( empty( $request['widget_type'] ) ) {
 			return false;
 		}

@@ -566,6 +566,14 @@ class Documents_Manager {
 	public function ajax_discard_changes( $request ) {
 		$document = $this->get( $request['editor_post_id'] );
 
+		if ( ! $document ) {
+			throw new \Exception( 'Not found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		$autosave = $document->get_autosave();
 
 		if ( $autosave ) {
