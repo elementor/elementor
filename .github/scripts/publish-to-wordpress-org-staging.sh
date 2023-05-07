@@ -54,7 +54,7 @@ svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --usern
 
 echo "Copy files from trunk to tag ${PLUGIN_VERSION}"
 svn cp https://svn.riouxsvn.com/elementor/trunk https://svn.riouxsvn.com/elementor/tags/${PLUGIN_VERSION} --message "Tagged ${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
-svn update
+svn update --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 
 echo "Remove the SVN folder from the workspace (for multiple releases in the same Action)"
 rm -rf $SVN_PATH
