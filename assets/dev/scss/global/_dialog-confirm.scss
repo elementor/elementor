@@ -1,4 +1,4 @@
-@use "buttons-mixin" as *;
+@use "../helpers/mixins";
 
 //
 // Dialog Confirm
@@ -41,7 +41,7 @@ $e-dialog-confirm-space: 20px;
 		gap: 15px;
 
 		.dialog-button {
-			@include e-button;
+			@include mixins.e-button;
 
 			&:hover,
 			&:focus,

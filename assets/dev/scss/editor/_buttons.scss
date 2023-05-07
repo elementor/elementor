@@ -2,8 +2,6 @@
 // Buttons
 //
 
-@use "../global/buttons-mixin" as *;
-
 .elementor-button,
 .e-btn {
 	@include e-button;
