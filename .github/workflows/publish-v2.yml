@@ -101,6 +101,17 @@ jobs:
           files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip 
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
+      - name: Publish to RiouxSVN SVN - staging
+        if: env.CHANNEL != 'cloud' && github.event.inputs.pre_release == 'true' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD_STAGING }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME_STAGING }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org-staging.sh"
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
