@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
-test.only( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
+test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
