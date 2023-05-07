@@ -103,7 +103,14 @@ class Documents_Manager {
 	 * @param Ajax $ajax_manager An instance of the ajax manager.
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
+		$ajax_manager->register_ajax_action_v2( 'save_builder', [ $this, 'ajax_save' ], function ( $payload ) {
+			$document = $this->get( $payload['editor_post_id'] );
+
+			if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Access denied.' );
+			}
+		} );
+
 		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
 		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
 	}
@@ -472,10 +479,6 @@ class Documents_Manager {
 	 */
 	public function ajax_save( $request ) {
 		$document = $this->get( $request['editor_post_id'] );
-
-		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied.' );
-		}
 
 		$this->switch_to_document( $document );
 

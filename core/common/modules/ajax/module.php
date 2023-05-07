@@ -117,6 +117,28 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Register ajax action with a permission callback.
+	 *
+	 * Add new actions for a specific ajax request and the callback function to
+	 * handle the response.
+	 *
+	 * @param string   $tag      Ajax request name/tag.
+	 * @param callable $callback The callback function.
+	 * @param callable $permission_callback The permission callback function.
+	 *
+	 * @since 3.13.0
+	 * @access public
+	 *
+	 */
+	public function register_ajax_action_v2( string $tag, callable $callback, callable $permission_callback ) {
+		if ( ! did_action( 'elementor/ajax/register_actions' ) ) {
+			_doing_it_wrong( __METHOD__, esc_html( sprintf( 'Use `%s` hook to register ajax action.', 'elementor/ajax/register_actions' ) ), '2.0.0' );
+		}
+
+		$this->ajax_actions[ $tag ] = compact( 'tag', 'callback', 'permission_callback' );
+	}
+
+	/**
 	 * Handle ajax request.
 	 *
 	 * Verify ajax nonce, and run all the registered actions for this request.
@@ -169,6 +191,15 @@ class Module extends BaseModule {
 
 			if ( $editor_post_id ) {
 				$action_data['data']['editor_post_id'] = $editor_post_id;
+			}
+
+			// Handle permission callback
+			if ( isset( $this->ajax_actions[ $action_data['action'] ]['permission_callback'] ) ) {
+				$permission_callback = $this->ajax_actions[ $action_data['action'] ]['permission_callback'];
+				if ( ! call_user_func( $permission_callback, $action_data['data'] ) ) {
+					$this->add_response_data( false, esc_html__( 'Permission denied.', 'elementor' ), Exceptions::UNAUTHORIZED );
+					continue;
+				}
 			}
 
 			try {
