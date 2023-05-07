@@ -29,6 +29,9 @@ echo "Checkout from SVN"
 svn co https://svn.riouxsvn.com/elementor/trunk . --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 
 echo "Clean trunk folder"
+if [ ! -d "$SVN_PATH/trunk" ]; then
+  mkdir -p $SVN_PATH/trunk
+fi
 cd $SVN_PATH/trunk
 find . -maxdepth 1 -not -name ".svn" -not -name "." -not -name ".." -exec rm -rf {} +
 
