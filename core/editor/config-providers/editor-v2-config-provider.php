@@ -118,17 +118,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			$packages_data = apply_filters( 'elementor/editor-v2/packages/config', [] );
 
 			$this->packages_data = Collection::make( $packages_data )
+				->filter( function ( $package_data ) {
+					return isset( $package_data['handle'] );
+				} ) 
 				->map_with_keys( function ( $data, $name ) {
-					$type = $data['type'] ?? static::PACKAGE_TYPE_UTIL;
-
 					return [
-						$name => [
-							'handle' => $data['handle'],
-							'src' => $data['src'],
-							'deps' => $data['deps'],
-							'i18n' => $data['i18n'],
-							'type' => $type,
-						],
+						$name => array_replace([
+							'type' => static::PACKAGE_TYPE_UTIL,
+						], $data ),
 					];
 				} );
 		}
