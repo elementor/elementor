@@ -120,7 +120,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame().locator( '.elementor-empty-view' ).evaluate( ( element ) => {
-				return 200 < element.offsetWidth;
+				return 99 < element.offsetWidth; // The min-width is 100px.
 			} );
 			await expect( dragAreaIsVisible ).toBeTruthy();
 		} );
@@ -173,10 +173,10 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-h/ );
 			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).toHaveClass( /eicon-align-start-v/ );
 
-			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'column' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'column' );
 			await expect( page.locator( '.elementor-control-grid_justify_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
 			await expect( page.locator( '.elementor-control-grid_align_items .elementor-choices label >> nth=0' ).locator( 'i' ) ).not.toHaveCSS( 'transform', 'matrix( 0, -1, 1, 0, 0, 0 )' );
-			await page.locator( '.elementor-group-control-auto_flow select' ).selectOption( 'row' );
+			await editor.setSelectControlValue( 'grid_auto_flow', 'row' );
 		} );
 
 		await test.step( 'Assert mobile is in one column', async () => {
@@ -196,6 +196,35 @@ test.describe( 'Container Grid tests @container', () => {
 			// Reset desktop view
 			await page.locator( '#e-responsive-bar-switcher__option-desktop' ).click();
 			await page.locator( '#e-responsive-bar__close-button' ).click();
+		} );
+
+		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {
+			// Act
+			const buttonID = await editor.addWidget( 'button', containerId ),
+				buttonSelector = `.elementor-element-${ buttonID }`,
+				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+
+			// Assert
+			await expect( buttonHandle ).not.toBeVisible();
+			await expect( buttonHandle ).toHaveCount( 0 );
+
+			// Clean up
+			await editor.removeElement( buttonID );
+		} );
+
+		await test.step( 'Elements with class .ui-resizable-e inside flex-containers should be visible', async () => {
+			// Act
+			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' ),
+				buttonID = await editor.addWidget( 'button', flexContainerId ),
+				buttonSelector = `.elementor-element-${ buttonID }`,
+				buttonHandle = await frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+
+			// Assert
+			await expect( buttonHandle ).toBeVisible();
+			await expect( buttonHandle ).toHaveCount( 1 );
+
+			// Clean up
+			await editor.removeElement( flexContainerId );
 		} );
 	} );
 
@@ -449,6 +478,52 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
+
+	test( 'Test grid auto flow on different breakpoints', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.closeNavigatorIfOpen();
+		await editor.setSelectControlValue( 'container_type', 'grid' );
+
+		const frame = editor.getPreviewFrame();
+		const container = await frame.locator( '.e-grid .e-con-inner' );
+
+		await test.step( 'Assert auto flow on desktop', async () => {
+			await testAutoFlowByDevice( editor, container, 'desktop' );
+		} );
+
+		await test.step( 'Assert auto flow on tablet', async () => {
+			await testAutoFlowByDevice( editor, container, 'tablet' );
+		} );
+
+		await test.step( 'Assert auto flow on mobile', async () => {
+			await testAutoFlowByDevice( editor, container, 'mobile' );
+		} );
+	} );
+
+	test( 'Test Empty View always shows', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		await test.step( 'Arrange', async () => {
+			await editor.closeNavigatorIfOpen();
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+			await editor.addWidget( 'heading', containerId );
+		} );
+
+		await test.step( 'After a widget is added', async () => {
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+		} );
+
+		await test.step( 'On initial page load when container is not empty', async () => {
+			await editor.saveAndReloadPage();
+			await wpAdmin.waitForPanel();
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {
@@ -480,4 +555,13 @@ async function testPreset( frame, editor, rows, cols ) {
 	await expect( container ).toHaveCSS( 'grid-template-rows', oldRowsAndCols[ 0 ] );
 	await expect( container ).toHaveCSS( 'grid-template-columns', oldRowsAndCols[ 1 ] );
 	await editor.cleanContent();
+}
+
+async function testAutoFlowByDevice( editor, container, device ) {
+	await editor.changeResponsiveView( device );
+	const controlName = 'desktop' === device ? 'grid_auto_flow' : 'grid_auto_flow_' + device;
+	await editor.setSelectControlValue( controlName, 'row' );
+	await expect( container ).toHaveCSS( 'grid-auto-flow', 'row' );
+	await editor.setSelectControlValue( controlName, 'column' );
+	await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 }
