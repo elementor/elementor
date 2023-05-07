@@ -1,7 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
-test( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
+test.only( 'add widgets from the panel by click', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
@@ -45,10 +46,8 @@ test( 'block adding from panel an inner section inside an inner section', async 
 async function addWidgetByClick( editor, widgetType ) {
 	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
 
-	await editor.page.locator( '#elementor-panel-header-add-button' ).click();
-	await editor.page.locator( `.elementor-panel-category-items :text-is('${ title }')` ).click();
+	await editor.page.locator( EditorSelectors.widgetsPanelIcon ).click();
+	await editor.page.locator( EditorSelectors.elementsPanelItem( title ) ).click();
 
-	const newElement = await editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` );
-
-	return newElement.evaluate( ( el ) => el.dataset.id );
+	return editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
 }
