@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Editor\Config_Providers;
 
-use Elementor\Core\Editor\Client_Settings;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,14 +79,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		$common_configs = Editor_Common_Configs::get_client_settings();
 
 		$this->register_packages_client_settings();
-		$client_settings = new Client_Settings();
 
-		do_action( 'elementor/editor-v2/client-settings', $client_settings );
+		$client_settings = apply_filters( 'elementor/editor-v2/packages/client-settings', [] );
 
 		$v2_config = [
 			'handle' => 'elementor-editor-environment-v2',
 			'name' => 'elementorEditorV2Settings',
-			'settings' => $client_settings->get(),
+			'settings' => $client_settings,
 		];
 
 		return array_merge( $common_configs, [ $v2_config ] );
@@ -152,10 +150,12 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	private function register_packages_client_settings() {
-		add_action( 'elementor/editor-v2/client-settings', function( Client_Settings $settings ) {
-			$settings->register( '@elementor/editor-app-bar', [
+		add_filter( 'elementor/editor-v2/packages/client-settings', function( array $settings ) {
+			$settings['@elementor/editor-app-bar'] = [
 				'admin_url' => admin_url(),
-			] );
+			];
+
+			return $settings;
 		} );
 	}
 }
