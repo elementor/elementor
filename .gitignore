@@ -12,8 +12,8 @@ build/
 assets/css/
 assets/js/
 assets/lib/swiper/css/swiper*.css
+assets/lib/swiper/css/swiper*.map
 *.log
-*.map
 /templates/
 
 # build tools lock
