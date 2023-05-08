@@ -41,11 +41,16 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'sound_cloud',
 		'html',
 		'alert',
+		'button_hover',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
+			const hoverSelector = {
+				button_hover: 'a',
+			};
+			let animations = 'disabled';
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
@@ -62,7 +67,17 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 				widgetIds.push( id );
 				await editorPage.waitForElementRender( id );
-				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+
+				if ( widgetType.includes( 'hover' ) ) {
+					animations = 'allow';
+					await widget.locator( hoverSelector[ widgetType ] ).hover();
+					await page.waitForTimeout( 1000 );
+					await expect( widget.locator( hoverSelector[ widgetType ] ) )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations } );
+				} else {
+					await expect( widget )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations } );
+				}
 			}
 
 			const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads(.*)/g );
@@ -71,7 +86,18 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.waitForIframeToLoaded( widgetType, true );
 			await response;
 
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
+			if ( widgetType.includes( 'hover' ) ) {
+				for ( let i = 0; i < widgetCount; i++ ) {
+					animations = 'allow';
+					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
+					await page.waitForTimeout( 1000 );
+					await expect( page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ) ).
+						toHaveScreenshot( `${ widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations } );
+				}
+			} else {
+				await expect( page.locator( EditorSelectors.container ) )
+					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations } );
+			}
 		} );
 	}
 } );
