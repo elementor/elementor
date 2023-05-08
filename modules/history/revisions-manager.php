@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -367,6 +368,11 @@ class Revisions_Manager {
 	}
 
 	public static function ajax_get_revisions() {
+		// Check for the current post.
+		if ( ! User::is_current_user_can_edit() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		return self::get_revisions();
 	}
 
