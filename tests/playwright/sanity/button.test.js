@@ -5,8 +5,6 @@ import ButtonWidget from '../pages/widgets/button_widget.js';
 
 const defaultBtnName = 'Click here';
 
-test.describe.configure( { mode: 'parallel' } );
-
 test( 'Button widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),

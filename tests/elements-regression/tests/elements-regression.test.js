@@ -50,7 +50,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const hoverSelector = {
 				button_hover: 'a',
 			};
-			let animations = 'disabled';
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
@@ -80,7 +79,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			if ( widgetType.includes( 'hover' ) ) {
 				for ( let i = 0; i < widgetCount; i++ ) {
-					animations = 'allow';
 					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
 					await page.waitForTimeout( 1000 );
 					await expect( page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ) ).
@@ -88,7 +86,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				}
 			} else {
 				await expect( page.locator( EditorSelectors.container ) )
-					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations } );
+					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 			}
 		} );
 	}
