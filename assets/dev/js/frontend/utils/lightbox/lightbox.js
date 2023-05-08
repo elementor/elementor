@@ -238,10 +238,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
 	},
 
-	/**
-	 * @param {*} html
-	 * @deprecated since 3.1.4
-	 */
 	setHTMLContent( html ) {
 		if ( window.elementorCommon ) {
 			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent()', '3.1.4' );
