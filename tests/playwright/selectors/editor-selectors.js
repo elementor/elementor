@@ -3,6 +3,7 @@ const EditorSelectors = {
 	container: '[data-element_type="container"]',
 	closeNavigatorBtn: '#elementor-navigator__close',
 	widgetsPanelIcon: '#elementor-panel-header-add-button i',
+	elementsPanelItem: ( title ) => `.elementor-panel-category-items :text-is('${ title }')`,
 	searchWidgetLabel: 'Search Widget...',
 	addNewPresetLbl: 'Add New Container',
 	addNewPreset: ( preset ) => `[data-preset=${ preset }]`,
