@@ -306,15 +306,50 @@ class Widget_Icon extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon svg' => 'height: {{SIZE}}{{UNIT}};'
 				],
 				'separator' => 'before',
 			]
 		);
 
 		$this->add_control(
+			'fit_to_size', [
+				'label' => esc_html__( 'Fit to Size', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Avoid gaps around icons when width and height aren\'t equal',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'default' => 'Off',
+				'prefix_class' => 'elementor-icon-',
+				'frontend_available' => true,
+			]
+		);
+
+
+		$this->add_control(
 			'icon_padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'range' => [
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+				],
+				'condition' => [
+					'view!' => 'default',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_fit_to_size',
+			[
+				'label' => esc_html__( 'Fit to Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
@@ -412,10 +447,15 @@ class Widget_Icon extends Widget_Base {
 			$icon_tag = 'a';
 		}
 
+		if ( $settings['fit_to_size'] && 'yes' === $settings['fit_to_size']) {
+		$this->add_render_attribute( 'icon-wrapper', 'class', 'e-icon-fit' );
+		}
+
 		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
 			// add old default
 			$settings['icon'] = 'fa fa-star';
 		}
+
 
 		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
@@ -448,12 +488,13 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+		<# let link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-				iconTag = link ? 'a' : 'div';
+				iconTag = link ? 'a' : 'div',
+				fitToSize = settings.fit_to_size ? 'e-icon-fit' : '';
 		#>
-		<div class="elementor-icon-wrapper">
+		<div class="elementor-icon-wrapper {{ fitToSize }}">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
 				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}

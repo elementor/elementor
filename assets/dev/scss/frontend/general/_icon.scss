@@ -17,42 +17,46 @@
 	}
 }
 
-// For the all elements with icon options.
-.elementor-icon {
-	display: inline-block;
-	line-height: 1;
-	transition: $transition-hover;
-	color: $gray;
-	font-size: 50px;
-	text-align: center;
-
-	&:hover {
+	// For the all elements with icon options.
+	.elementor-icon {
+		display: inline-block;
+		line-height: 1;
+		transition: $transition-hover;
 		color: $gray;
-	}
+		font-size: 50px;
+		text-align: center;
 
-	i, svg {
-		width: 1em;
-		height: 1em;
-		position: relative;
-		display: block;
+		&:hover {
+			color: $gray;
+		}
 
-		&:before {
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
+		&.e-icon-fit > svg {
+			width: 100%;
+		}
+
+		i, svg {
+			width: 1em;
+			height: 1em;
+			position: relative;
+			display: block;
+
+			&:before {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+		}
+
+		i.fad {
+			width: initial;
 		}
 	}
 
-	i.fad {
-		width: initial;
-	}
-}
-
-// Used in Icon and Icons Box.
-.elementor-shape {
-	&-circle {
-		.elementor-icon {
-			border-radius: 50%;
+	// Used in Icon and Icons Box.
+	.elementor-shape {
+		&-circle {
+			.elementor-icon {
+				border-radius: 50%;
+			}
 		}
 	}
-}
