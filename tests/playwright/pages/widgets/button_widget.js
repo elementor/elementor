@@ -8,9 +8,9 @@ export default class ButtonWidget {
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
 
-	async addWidget( defaultBtnName ) {
+	async addWidget( buttonName ) {
 		await this.editorPage.addWidget( 'button' );
-		await this.editorPage.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
+		await this.editorPage.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( buttonName ) );
 	}
 
 	async setButtonId( buttonId, buttonName ) {
@@ -18,11 +18,11 @@ export default class ButtonWidget {
 		await expect( this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ) ).toHaveAttribute( 'id', buttonId );
 	}
 
-	async getButtonId( defaultBtnName, isPublished = true ) {
+	async getButtonId( buttonName, isPublished = true ) {
 		if ( isPublished ) {
-			return await this.page.locator( EditorSelectors.button.getByName( defaultBtnName ) ).getAttribute( 'id' );
+			return await this.page.locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
 		}
-		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) ).getAttribute( 'id' );
+		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
 	}
 
 	async setButtonLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined } ) {
@@ -39,6 +39,6 @@ export default class ButtonWidget {
 		if ( options.customAttributes ) {
 			await this.page.locator( EditorSelectors.button.customAttributesInp ).type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
 		}
-		await this.editorPage.getPreviewFrame().getByRole( 'heading', { name: 'Hello world!' } ).click();
+		await this.editorPage.getPreviewFrame().getByRole( 'heading', { name: 'Hello world!' } ).nth( 0 ).click();
 	}
 }
