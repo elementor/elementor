@@ -55,10 +55,6 @@ module.exports = class WpAdminPage extends BasePage {
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 
-		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
-			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
-		}
-
 		return editor;
 	}
 
