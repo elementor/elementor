@@ -21,7 +21,7 @@ export default {
 	fullyParallel: true,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
-		headless: process.env.CI ? true : false,
+		headless: process.env.CI ? true : true,
 		actionTimeout: 8_000,
 		navigationTimeout: 8_000,
 		trace: 'retain-on-failure',
