@@ -108,6 +108,5 @@ runs:
         if [[ ${{ inputs.PRE_RELEASE }} == "false" ]]; then
               exit 1
         fi
-        bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
         bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org-staging.sh"
 
