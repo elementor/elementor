@@ -30,11 +30,11 @@ export default {
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 3 : 1,
+	workers: process.env.CI ? 1 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
-		headless: process.env.CI ? true : true,
+		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
