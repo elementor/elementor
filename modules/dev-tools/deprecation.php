@@ -261,6 +261,22 @@ class Deprecation {
 	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
 		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
 
+		$hook_usage = $this->get_hook_usage( $hook );
+
+		$diff = $this->compare_version( $base_version, $version );
+
+		if ( $diff && $diff <= self::SOFT_VERSIONS_COUNT ) {
+			foreach ($hook_usage as $item) {
+				if ( ! isset( $this->soft_deprecated_notices[ $hook ] ) ) {
+					$this->soft_deprecated_notices[ $hook ] = [
+						$version,
+						$replacement,
+						sprintf( 'Callback: %s on file %s:%d', $item['callback'], $item['file'], $item['line']),
+					];
+				}
+			}
+		}
+
 		if ( $print_deprecated ) {
 			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ) );
 		}
@@ -405,5 +421,49 @@ class Deprecation {
 			'file' => $source['file'],
 			'line' => $source['line'],
 		];
+	}
+
+	private function get_hook_usage( $hook ): array {
+		global $wp_filter;
+		$hook_callbacks = [];
+
+		if ( empty( $wp_filter[ $hook ] ) ) {
+			return $hook_callbacks;
+		}
+
+		$callbacks = $wp_filter[ $hook ]->callbacks ?? [];
+
+		foreach ( $callbacks as $priority => $callback ) {
+			foreach ( $callback as $key => $value ) {
+				$function = $value['function'];
+
+				// It can be a string function name that not exists anymore.
+				if ( ( is_string( $function ) && is_callable( $function ) ) || is_object( $function ) ) {
+					$reflection = new \ReflectionFunction($function);
+				} elseif ( is_array( $function ) ) {
+					$reflection = new \ReflectionMethod($function[0], $function[1]);
+				} else {
+					$reflection = null;
+				}
+
+				if ( ! empty( $reflection ) ) {
+					$usage = [
+						'callback' => $reflection->getName(),
+						'file' => $reflection->getFileName(),
+						'line' => $reflection->getStartLine(),
+					];
+				} else {
+					$usage = [
+						'callback' => $function,
+						'file' => 'callback-not-found',
+						'line' => '0',
+					];
+				}
+
+				$hook_callbacks[] = $usage;
+			}
+		}
+
+		return $hook_callbacks;
 	}
 }
