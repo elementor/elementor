@@ -327,13 +327,14 @@ class Widget_Icon extends Widget_Base
                 'description' => 'Avoid gaps around icons when width and height aren\'t equal',
                 'label_off' => esc_html__('Off', 'elementor'),
                 'label_on' => esc_html__('On', 'elementor'),
-                'default' => 'Off',
+                                'default' => 'no',
                 'prefix_class' => 'elementor-icon-',
                 'frontend_available' => true,
-								'condition' => [
-									'selected_icon[library]' => 'svg',
-								],
-						]
+                                'condition' => [
+                                    'selected_icon[library]' => 'svg',
+                                ],
+                                'render_type' => 'template',
+                        ]
         );
 
 
@@ -374,6 +375,7 @@ class Widget_Icon extends Widget_Base
                 'condition' => [
                     'view!' => 'default',
                 ],
+                                'render_type' => 'template',
             ]
         );
 
@@ -505,7 +507,7 @@ class Widget_Icon extends Widget_Base
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div',
-				fitToSize = settings.fit_to_size ? 'e-icon-fit' : '';
+				fitToSize = ('yes' === settings.fit_to_size)  ? 'e-icon-fit' : '';
 		#>
 		<div class="elementor-icon-wrapper {{ fitToSize }}">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>

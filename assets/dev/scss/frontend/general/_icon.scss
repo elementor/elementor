@@ -30,7 +30,7 @@
 			color: $gray;
 		}
 
-		&.e-icon-fit > svg {
+		&-wrapper.e-icon-fit > svg {
 			width: 100%; // Fit SVG that does not have 1/1 proportion
 		}
 
