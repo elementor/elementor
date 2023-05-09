@@ -7,7 +7,7 @@ export class Load extends $e.modules.CommandInternalBase {
 	}
 
 	apply( args ) {
-		const { config, shouldScroll = true } = args;
+		const { config, attach = true, shouldScroll = true } = args;
 
 		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 			// When the Responsive Optimization experiment is active, the responsive controls are generated on the
@@ -49,9 +49,13 @@ export class Load extends $e.modules.CommandInternalBase {
 		if ( elementor.loaded ) {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
-			return $e.data.get( 'globals/index' ).then( () =>
-				$e.internal( 'editor/documents/attach-preview', { shouldScroll, selector: args.selector } ),
-			);
+			return $e.data.get( 'globals/index' ).then( () => {
+				if ( attach ) {
+					return $e.internal( 'editor/documents/attach-preview', { shouldScroll, selector: args.selector } );
+				}
+
+				return Promise.resolve();
+			} );
 		}
 
 		return Promise.resolve( document );
