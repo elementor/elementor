@@ -374,6 +374,7 @@ class Widget_Icon extends Widget_Base
                 'condition' => [
                     'view!' => 'default',
                 ],
+								'render_type' => 'template',
             ]
         );
 
