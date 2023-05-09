@@ -3,6 +3,7 @@ const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 
 test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
+	await wpAdmin.enableAdvancedUploads();
 	const editor = await wpAdmin.useElementorCleanPost();
 	const frame = page.frameLocator( '#elementor-preview-iframe' );
 
@@ -11,7 +12,6 @@ test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
 
 		await page.locator( '.elementor-control-media__preview' ).hover();
 		await page.getByText( 'Upload SVG' ).click();
-		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
 
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/test-svg-wide.svg' );
 		// Await page.getByRole( 'checkbox', { name: 'test-svg-wide' } ).first().click();
