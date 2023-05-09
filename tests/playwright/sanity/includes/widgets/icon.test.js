@@ -24,7 +24,7 @@ test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
 
 	await test.step( 'Editor Aspect Ratio updated', async () => {
 		await editor.togglePreviewMode();
-		const icon = frame.locator( '.elementor-icon' );
+		const icon = frame.locator( '.elementor-icon-wrapper' );
 
 		await expect( icon ).toHaveClass( /e-icon-fit/ );
 
@@ -54,7 +54,7 @@ test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
 
 		await expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
 
-		const icon = page.locator( '.elementor-icon' );
+		const icon = page.locator( '.elementor-icon-wrapper' );
 
 		await expect( icon ).toHaveClass( /e-icon-fit/ );
 	} );
