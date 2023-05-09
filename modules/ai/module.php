@@ -56,6 +56,15 @@ class Module extends BaseModule {
 				]
 			);
 		} );
+
+		add_action( 'elementor/editor/after_enqueue_styles', function() {
+			wp_enqueue_style(
+				'elementor-ai',
+				$this->get_css_assets_url( 'modules/ai/editor' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		} );
 	}
 
 	public function ajax_ai_get_user_information( $data ) {
@@ -73,10 +82,16 @@ class Module extends BaseModule {
 			];
 		}
 
+		$user_usage = wp_parse_args( $app->get_usage(), [
+			'hasAiSubscription' => false,
+			'usedQuota' => 0,
+			'quota' => 100,
+		] );
+
 		return [
 			'is_connected' => true,
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'usage' => $app->get_usage(),
+			'usage' => $user_usage,
 		];
 	}
 
@@ -187,7 +202,7 @@ class Module extends BaseModule {
 		}
 
 		if ( empty( $data['html_markup'] ) ) {
-			throw new \Exception( 'Missing html_markup' );
+			$data['html_markup'] = '';
 		}
 
 		if ( empty( $data['element_id'] ) ) {
@@ -211,8 +226,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_get_started( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		$app = $this->get_ai_app();
 
 		User::set_introduction_viewed( [
@@ -223,8 +236,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_set_status_feedback( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
 		if ( empty( $data['response_id'] ) ) {
 			throw new \Exception( 'Missing response_id' );
 		}

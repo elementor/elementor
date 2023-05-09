@@ -19,8 +19,7 @@
 		}
 	}
 
-	&:hover,
-	&.elementor-element-editable {
+	&:hover {
 
 		> .elementor-element-overlay {
 
@@ -29,167 +28,321 @@
 			}
 		}
 	}
+
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+				outline-width: 2px;
+			}
+		}
+	}
 }
 
 .e-con {
 
-	// Container presets.
-	&-select-preset {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 25px;
+	.e-con-inner {
 
-		// Views.
-		&[data-view="choose-preset"] > *:not( &__inner ) {
-			display: none;
+		.e-con {
+
+			> .elementor-element-overlay {
+
+				&:after {
+					outline: 1px dashed var(--e-p-border-con-in);
+				}
+			}
+
+			&.elementor-element-editable {
+
+				> .elementor-element-overlay {
+
+					&:after {
+						outline: 2px solid var(--e-p-border-con-in);
+					}
+				}
+			}
+		}
+	}
+
+	.elementor-empty-view {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		min-height: 100px;
+
+		.elementor-first-add {
+			width: auto;
+			height: auto;
+			inset: 0;
+		}
+	}
+
+	&:not(.e-grid) {
+
+		.elementor-empty-view {
+			// Use the Container's `min-height` or default to 100px.
+			min-height: var( --min-height, 100px );
+		}
+	}
+
+	&.e-grid {
+
+		.elementor-empty-view {
+			min-width: 100px;
+		}
+	}
+
+	.elementor-widget-placeholder {
+		--size: 10px;
+		--margin-start: calc( -1 * var( --size ) );
+		--margin-end: calc( -2 * var( --size ) );
+
+		flex-shrink: 0;
+		align-self: stretch;
+		z-index: $first-layer;
+		pointer-events: none; // Prevent the placeholder from blocking the drop area.
+	}
+
+	&.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			> .elementor-widget-placeholder {
+				position: relative;
+				z-index: $editor-layer; // To put it above the element overlay.
+				width: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-inline-start: var( --margin-start );
+				height: auto;
+				min-height: 100%;
+				animation-name: dnd-placeholder-widget-vertical;
+				animation-fill-mode: both;
+			}
 		}
 
-		&[data-view="drop-area"] > *:not( .elementor-first-add ) {
-			display: none;
-		}
+		// Fix nested Containers DnD issues (ED-5424).
+		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
 
-		&__title {
-			font-family: var(--e-a-font-family);
-			font-size: 15px;
-			font-weight: 400;
-			color: var(--e-a-color-txt);
-		}
+			&,
+			& > .e-con-inner {
 
-		&__list {
-			display: flex;
-			gap: 20px;
-			align-items: center;
-			justify-content: center;
-			flex-wrap: wrap;
-			max-width: 650px;
-
-			.e-con-preset {
-				cursor: pointer;
-				flex-basis: 90px;
-
-				svg {
-					width: 100%;
-					height: auto;
+				// Any placeholder which is not on first widget.
+				> .elementor-widget-placeholder {
+					margin-inline-end: 0;
+					margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
 				}
 
-				path {
-					fill: var(--e-a-color-white);
+				// Placeholder on first widget.
+				> :not( .elementor-element ) + .elementor-widget-placeholder {
+					margin-inline-end: var( --margin-end );
+					margin-inline-start: var( --margin-start );
+				}
+			}
+		}
+	}
+
+	// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
+	&.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e-dragging {
+
+					&-right,
+					&-left {
+						position: absolute;
+						width: var( --size );
+						height: 100%;
+						top: 0;
+						animation: grow-in-width 0.15s forwards;
+					}
+
+					&-right {
+						right: 0;
+						left: auto;
+					}
+
+					&-left {
+						left: 0;
+						right: auto;
+					}
+				}
+			}
+		}
+	}
+
+	&.e-con--column {
+
+		&,
+		& > .e-con-inner {
+
+			> .elementor-widget-placeholder {
+				height: var( --size );
+				// To make sure that it doesn't push & break the layout when appearing.
+				margin-block-start: var( --margin-start );
+				margin-block-end: var( --margin-end );
+				animation-name: dnd-placeholder-widget-horizontal;
+			}
+		}
+
+		> .elementor-widget-placeholder {
+
+			// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+			&:nth-last-child( 2 ) {
+				margin-block-start: calc( 2 * var( --margin-start ) );
+				--margin-end: 0;
+			}
+		}
+
+		& > .e-con-inner {
+
+			> .elementor-widget-placeholder {
+
+				&:last-child {
+					--margin-end: 0;
+				}
+			}
+		}
+	}
+
+	// Extracted from the inline CSS of `behaviors/sortable.js`.
+	.elementor-sortable-helper {
+		height: 84px;
+		width: 125px;
+		z-index: -1;
+	}
+
+	// Inner Container handle.
+	// TODO: Find a better solution.
+	& > &,
+	&-inner > &,
+	.elementor-widget & {
+
+		> .elementor-element-overlay {
+
+			.elementor-editor-element-setting {
+				position: relative;
+				background-color: var(--e-p-border-con-in);
+
+				&:hover {
+					background-color: var(--e-p-border-con-in-hover);
 				}
 
-				rect {
-					fill: var(--e-a-bg-active-bold);
+				// Hide any unwanted setting controls.
+				&.elementor-editor-element-add,
+				&.elementor-editor-element-edit + .elementor-editor-element-remove,
+				&:first-child::before,
+				&:last-child::after {
+					display: none;
+				}
+
+				// Extended actions ("editing handles").
+				&:not( .elementor-editor-element-edit ) {
+					margin-inline-start: -25px;
+					z-index: -1;
 					transition: .3s all;
+					will-change: margin-inline-start;
 				}
+			}
 
-				&:hover {
-					rect {
-						fill: var(--e-a-color-txt);
+			> .elementor-editor-element-settings:hover {
+				> :is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+					margin-inline-start: 0;
+				}
+			}
+
+			.elementor-editor-element-settings {
+				inset: initial;
+				transform: none;
+				inset-inline-start: 0;
+				top: 0;
+				border-radius: 0;
+				border-end-end-radius: 3px;
+				height: auto;
+
+				// Replace the edit eicon with Container eicon.
+				i.eicon-handle::before {
+					content: '\e9b4'; // eicon-inner-container.
+					font-size: 20px;
+					display: block;
+					padding: 2px;
+				}
+			}
+		}
+	}
+}
+
+// Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
+body.rtl {
+
+	.e-con.e-grid.e-con--row {
+
+		&,
+		& > .e-con-inner {
+
+			.elementor-widget-placeholder {
+
+				&.e-dragging {
+
+					&-right {
+						left: 0;
+						right: auto;
 					}
-				}
 
-				&[data-preset="r100"] {
-					@if 'rtl' == $direction {
-						transform: scaleX(-1);
+					&-left {
+						right: 0;
+						left: auto;
 					}
 				}
 			}
 		}
 	}
+}
 
-	&-shared-styles {
-		font-family: var(--e-a-font-family);
-		line-height: 1;
-		color: var(--e-a-color-txt);
-		min-height: 159px;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 25px;
+@keyframes dnd-placeholder-widget-vertical {
+	0% {
+		transform-origin: 0 50%;
+		transform: translateX( 50% ) scaleX( 0 );
+		opacity: 0;
 	}
 
-	&-select-type {
+	100% {
+		transform-origin: 0 50%;
+		transform: translateX( 50% ) scaleX( 1 );
+		opacity: .9;
+	}
+}
 
-		&__title {
-			font-size: 15px;
-			font-weight: 400;
-		}
-
-		&__icons {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			gap: 40px;
-
-			&__icon {
-				cursor: pointer;
-
-				svg {
-					margin-bottom: 10px;
-					width: 85px;
-
-					&:hover {
-
-						rect {
-							fill: var(--e-a-color-txt);
-						}
-
-						path {
-							stroke: var(--e-a-color-white);
-						}
-					}
-				}
-
-				&__subtitle {
-					font-size: 14px;
-					font-weight: 500;
-				}
-			}
-		}
+@keyframes dnd-placeholder-widget-horizontal {
+	0% {
+		transform-origin: 50% 0;
+		transform: scaleY( 0 );
+		opacity: 0;
 	}
 
-	&-select-preset-grid {
+	100% {
+		transform-origin: 50% 0;
+		transform: scaleY( 1 );
+		opacity: .9;
+	}
+}
 
-		&__title {
-			font-size: 15px;
-			font-weight: 400;
-		}
-
-		&__list {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			gap: 20px;
-
-			svg {
-				cursor: pointer;
-
-				&:hover {
-
-					rect {
-						fill: var(--e-a-color-txt);
-					}
-
-					path {
-						stroke: var(--e-a-color-white);
-					}
-				}
-			}
-		}
+@keyframes grow-in-width {
+	from {
+		width: 0;
 	}
 
-	// To avoid horizontal scroll
-	.ui-resizable {
+	50% {
+		width: calc( var( --size ) / 2 );
+	}
 
-		&-e {
-			right: 0;
-		}
-
-		&-w {
-			left: 0;
-		}
+	to {
+		width: var( --size );
 	}
 }

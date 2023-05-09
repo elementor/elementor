@@ -19,77 +19,96 @@ class Ai extends Library {
 	}
 
 	public function get_usage() {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'status/check',
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	private function ai_request( $method, $endpoint, $body ) {
+		return $this->http_request(
+			$method,
+			$endpoint,
+			[
+				'timeout' => 25,
+				'headers' => [
+					'x-elementor-ai-version' => '2',
+				],
+				'body' => $body,
 			],
-			true
+			[
+				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			]
 		);
 	}
 
 	public function set_get_started() {
-		return $this->request( 'status/get-started',
+		return $this->ai_request(
+			'POST',
+			'status/get-started',
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 
 	public function set_status_feedback( $response_id ) {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'status/feedback/' . $response_id,
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 
 	public function get_completion_text( $prompt ) {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'text/completion',
 			[
 				'prompt' => $prompt,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 
 	public function get_edit_text( $input, $instruction ) {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'text/edit',
 			[
 				'input' => $input,
 				'instruction' => $instruction,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 
 	public function get_custom_code( $prompt, $language ) {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'text/custom-code',
 			[
 				'prompt' => $prompt,
 				'language' => $language,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 
 	public function get_custom_css( $prompt, $html_markup, $element_id ) {
-		return $this->request(
+		return $this->ai_request(
+			'POST',
 			'text/custom-css',
 			[
 				'prompt' => $prompt,
@@ -97,20 +116,7 @@ class Ai extends Library {
 				'element_id' => $element_id,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
-		);
-	}
-
-	public function create_images( $prompt ) {
-		return $this->request(
-			'image/generations',
-			[
-				'prompt' => $prompt,
-				'api_version' => ELEMENTOR_VERSION,
-				'site_lang' => get_bloginfo( 'language' ),
-			],
-			true
+			]
 		);
 	}
 

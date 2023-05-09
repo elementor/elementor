@@ -138,6 +138,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'ai' => [
+					'active' => false,
+				],
 				'frontend_available' => true,
 			]
 		);
@@ -160,6 +163,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'vimeo',
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -181,6 +187,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'dailymotion',
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -191,6 +200,9 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => 'hosted',
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);
@@ -210,6 +222,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => '',
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);
@@ -235,6 +250,9 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);

@@ -17,8 +17,34 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( filePath ) {
+	updateImageDates( templateData ) {
+		const replaceUrl = ( url ) => {
+			const date = new Date();
+			const month = date.toLocaleString( 'default', { month: '2-digit' } );
+			const regex = /[0-9]{4}\/[0-9]{2}/g;
+			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
+		};
+		templateData.content[ 0 ].elements.forEach( ( el ) => {
+			if ( 'image' in el.settings ) {
+				el.settings.image.url = replaceUrl( el.settings.image.url );
+			}
+			if ( 'carousel' in el.settings ) {
+				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
+					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
+				}
+			}
+		} );
+	}
+
+	async loadTemplate( filePath, updateDatesForImages = false ) {
 		const templateData = require( filePath );
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -496,6 +522,13 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async saveAndReloadPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
+		await this.page.reload();
+	}
+
 	async previewChanges( context ) {
 		const previewPagePromise = context.waitForEvent( 'page' );
 
@@ -637,7 +670,7 @@ module.exports = class EditorPage extends BasePage {
 		let isLoading;
 
 		try {
-			await this.getFrame().waitForSelector(
+			await this.getPreviewFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ timeout: 500 },
 			);
@@ -648,10 +681,41 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isLoading ) {
-			await this.getFrame().waitForSelector(
+			await this.getPreviewFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ state: 'detached' },
 			);
+		}
+	}
+
+	async waitForIframeToLoaded( widgetType, isPublished = false ) {
+		const frames = {
+			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
+			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
+		};
+
+		if ( ! ( widgetType in frames ) ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			await this.page.locator( frames[ widgetType ][ 0 ] ).first().waitFor();
+			const count = await this.page.locator( frames[ widgetType ][ 0 ] ).count();
+			for ( let i = 1; i < count; i++ ) {
+				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
+		} else {
+			const frame = this.getPreviewFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
+			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
+			const iframeCount = await new Promise( ( resolved ) => {
+				resolved( frame.childFrames().length );
+			} );
+			for ( let i = 1; i < iframeCount; i++ ) {
+				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
 		}
 	}
 };
