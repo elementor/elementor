@@ -119,11 +119,11 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 
 			$this->packages_data = Collection::make( $packages_data )
 				->filter( function ( $package_data ) {
-					return isset( $package_data['handle'] );
+					return ! empty( $package_data['handle'] );
 				} ) 
 				->map_with_keys( function ( $data, $name ) {
 					return [
-						$name => array_replace([
+						$name => array_replace( [
 							'type' => static::PACKAGE_TYPE_UTIL,
 						], $data ),
 					];
