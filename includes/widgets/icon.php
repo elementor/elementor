@@ -330,7 +330,10 @@ class Widget_Icon extends Widget_Base
                 'default' => 'Off',
                 'prefix_class' => 'elementor-icon-',
                 'frontend_available' => true,
-            ]
+								'condition' => [
+									'selected_icon[library]' => 'svg',
+								],
+						]
         );
 
 
