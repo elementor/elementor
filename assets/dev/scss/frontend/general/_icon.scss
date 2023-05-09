@@ -7,6 +7,7 @@
 		fill: #fff;
 	}
 }
+
 .elementor-view-framed {
 	.elementor-icon {
 		padding: .5em;
@@ -17,46 +18,46 @@
 	}
 }
 
-	// For the all elements with icon options.
-	.elementor-icon {
-		display: inline-block;
-		line-height: 1;
-		transition: $transition-hover;
+// For the all elements with icon options.
+.elementor-icon {
+	display: inline-block;
+	line-height: 1;
+	transition: $transition-hover;
+	color: $gray;
+	font-size: 50px;
+	text-align: center;
+
+	&:hover {
 		color: $gray;
-		font-size: 50px;
-		text-align: center;
+	}
 
-		&:hover {
-			color: $gray;
-		}
+	&-wrapper.e-icon-fit > svg {
+		width: 100%; // Fit SVG that does not have 1/1 proportion
+	}
 
-		&-wrapper.e-icon-fit > svg {
-			width: 100%; // Fit SVG that does not have 1/1 proportion
-		}
+	i, svg {
+		width: 1em;
+		height: 1em;
+		position: relative;
+		display: block;
 
-		i, svg {
-			width: 1em;
-			height: 1em;
-			position: relative;
-			display: block;
-
-			&:before {
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-		}
-
-		i.fad {
-			width: initial;
+		&:before {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
 		}
 	}
 
-	// Used in Icon and Icons Box.
-	.elementor-shape {
-		&-circle {
-			.elementor-icon {
-				border-radius: 50%;
-			}
+	i.fad {
+		width: initial;
+	}
+}
+
+// Used in Icon and Icons Box.
+.elementor-shape {
+	&-circle {
+		.elementor-icon {
+			border-radius: 50%;
 		}
 	}
+}
