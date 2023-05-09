@@ -374,6 +374,11 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+		// Don't allow adding inner-sections inside inner-sections.
+		if ( 'section' === model.elType && this.isInner() ) {
+			return;
+		}
+
 		const customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {

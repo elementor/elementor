@@ -126,6 +126,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-image-carousel-slides-to-show: {{VALUE}}',
 				],
+				'content_classes' => 'elementor-control-field-select-small',
 			]
 		);
 
@@ -142,6 +143,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'slides_to_show!' => '1',
 				],
 				'frontend_available' => true,
+				'content_classes' => 'elementor-control-field-select-small',
 			]
 		);
 
@@ -319,6 +321,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'description' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Manage your site’s lightbox settings in the %1$sLightbox panel%2$s.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-lightbox\' ) )">',
+					'</a>'
+				),
 				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
@@ -934,13 +942,13 @@ class Widget_Image_Carousel extends Widget_Base {
 					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
-					<div class="elementor-swiper-button elementor-swiper-button-prev">
+					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'previous' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous image', 'elementor' ); ?></span>
 					</div>
-					<div class="elementor-swiper-button elementor-swiper-button-next">
+					<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'next' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Next', 'elementor' ); ?></span>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Next image', 'elementor' ); ?></span>
 					</div>
 				<?php endif; ?>
 			<?php endif; ?>

@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const packagesConfigs = require( './webpack.packages.js' );
+
 // Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
@@ -117,6 +119,11 @@ const entry = {
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
+	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
+	// Temporary solution for the AI App in the Admin.
+	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
+	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
+	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 };
 
 const frontendEntries = {
@@ -134,6 +141,8 @@ const externals = {
 	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
+	'@elementor/ui': '__UNSTABLE__elementorPackages.ui',
+	'@elementor/icons': '__UNSTABLE__elementorPackages.icons',
 };
 
 const plugins = [
@@ -197,6 +206,7 @@ const webpackConfig = [
 		},
 		entry: frontendEntries,
 	},
+	packagesConfigs.dev,
 ];
 
 const prodSharedOptimization = {
@@ -280,6 +290,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 		config.entry[ entryPoint + '.min' ] = entryValue;
 	}
 } );
+
+// The 'packages' config doesn't need a `.min` suffix (it has its own config).
+webpackProductionConfig.push( packagesConfigs.prod );
 
 const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
