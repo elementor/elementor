@@ -51,7 +51,10 @@ export class Load extends $e.modules.CommandInternalBase {
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
 			return $e.data.get( 'globals/index' ).then( () => {
 				if ( attach ) {
-					return $e.internal( 'editor/documents/attach-preview', { shouldScroll, selector: args.selector } );
+					return $e.internal( 'editor/documents/attach-preview', {
+						shouldScroll,
+						selector: args.selector,
+					} );
 				}
 
 				return Promise.resolve();

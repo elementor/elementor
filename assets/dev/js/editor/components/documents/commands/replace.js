@@ -23,15 +23,22 @@ export class Replace extends $e.modules.CommandBase {
 		} );
 	}
 
-	clearDocumentsCache( exclude ) {
+	clearDocumentsCache( currentDocumentId ) {
+		const exclude = [
+			currentDocumentId,
+			elementor.config.kit_id,
+		];
+
 		// Clear the documents cache to prevent memory leaks.
-		for ( const docId in elementor.documents.documents ) {
-			if ( parseInt( docId ) === parseInt( exclude ) ) {
+		for ( const id in elementor.documents.documents ) {
+			const isExcluded = exclude.includes( parseInt( id ) );
+
+			if ( isExcluded ) {
 				continue;
 			}
 
-			elementor.documents.invalidateCache( docId );
-			delete elementor.documents.documents[ docId ];
+			elementor.documents.invalidateCache( id );
+			delete elementor.documents.documents[ id ];
 		}
 	}
 
