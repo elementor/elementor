@@ -1,6 +1,10 @@
 //
 // Nested Tabs
 //
+body {
+	background: pink !important;
+}
+
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
 	--n-tabs-color-secondary-fallback: #54595F;
@@ -97,7 +101,7 @@
 		}
 
 		> .e-con {
-			--n-tabs-content-max-width-column: calc( 100% - var( --n-tabs-title-width-computed ) - var( --n-tabs-gap ) );
+			--n-tabs-content-max-width-column: calc( 100% - var( --n-tabs-title-width-column ) - var( --n-tabs-gap ) );
 			max-width: var( --n-tabs-content-max-width-toggle, var( --n-tabs-content-max-width-column ) );
 
 			&:not(.e-active) {

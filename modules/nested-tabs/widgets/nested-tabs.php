@@ -80,8 +80,8 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
-		$nested_tabs_heading_selector_class = ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading, {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content )';
-		$nested_tabs_content_selector_class = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
+		$nested_tabs_heading_selector_class = ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs )';
+		$nested_tabs_content_selector_class = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs ) > .e-con';
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -419,7 +419,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title:not( .e-active ):not( :hover ), {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-n-tab-title:not( .e-active ) )',
+				'selector' => ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tab-title:not( .e-active ):not( :hover ), {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-n-tab-title:not( .e-active ) )',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -472,7 +472,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$nested_tabs_heading_selector_class} > ..e-n-tab-title:not( .e-active ):hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -494,7 +494,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > ..e-n-tab-title:not( .e-active ):hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -512,7 +512,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow_hover',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$nested_tabs_heading_selector_class} > ..e-n-tab-title:not( .e-active ):hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 			]
 		);
 
@@ -720,7 +720,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > ..e-n-tab-title:not( .e-active ):hover",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -734,7 +734,7 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_hover',
-				'selector' => "{$nested_tabs_heading_selector_class} > ..e-n-tab-title:not( .e-active ):hover :is( span, a, i )",
+				'selector' => "{$nested_tabs_heading_selector_class} > .e-n-tab-title:not( .e-active ):hover :is( span, a, i )",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),

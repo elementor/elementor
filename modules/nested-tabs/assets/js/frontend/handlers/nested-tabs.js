@@ -213,6 +213,8 @@ export default class NestedTabs extends Base {
 	onTabClick( event ) {
 		event.preventDefault();
 		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+
+		console.log( 'click' );
 	}
 
 	onTabKeyDown( event ) {
@@ -244,7 +246,7 @@ export default class NestedTabs extends Base {
 
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
-		// elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
+		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -555,13 +557,11 @@ export default class NestedTabs extends Base {
 	}
 
 	tabsTitleWidthListener() {
-		// Run on resize.
-
 		const horizontalTabDirections = [ '', 'top', 'bottom' ],
 			tabsDirection = this.getControlValue( 'tabs_direction' );
 
 		if ( horizontalTabDirections.includes( tabsDirection ) || !! this.getControlValue( 'tabs_width' ) ) {
-			this.$element.css( '--n-tabs-title-width-computed', '' );
+			this.$element.css( '--n-tabs-title-width-column', '' );
 			return;
 		}
 
@@ -569,13 +569,16 @@ export default class NestedTabs extends Base {
 		let previousWidth = 0;
 
 		this.observedContainer = new ResizeObserver( ( $observedTitle ) => {
+			this.$element.css( '--n-tabs-title-width-column', '' );
+
 			const currentWidth = $observedTitle[ 0 ].borderBoxSize?.[ 0 ].inlineSize;
 
 			if ( !! currentWidth && currentWidth !== previousWidth ) {
 				previousWidth = currentWidth;
 
 				if ( 0 !== previousWidth ) {
-					this.$element.css( '--n-tabs-title-width-computed', `${ currentWidth }px` );
+					this.$element.css( '--n-tabs-title-width-column', `${ currentWidth }px` );
+					this.setWidgetHeight();
 				}
 			}
 		} );
