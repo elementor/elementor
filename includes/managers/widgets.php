@@ -339,7 +339,7 @@ class Widgets_Manager {
 	/**
 	 * @throws \Exception
 	 */
-	public function ajax_get_widget_types_controls_config(array $data ) {
+	public function ajax_get_widget_types_controls_config( array $data ) {
 		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
 
 		wp_raise_memory_limit( 'admin' );

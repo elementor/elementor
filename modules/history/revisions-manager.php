@@ -360,7 +360,7 @@ class Revisions_Manager {
 	/**
 	 * @throws \Exception
 	 */
-	public static function ajax_get_revisions($data ) {
+	public static function ajax_get_revisions( $data ) {
 		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
 
 		return self::get_revisions();
