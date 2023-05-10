@@ -215,7 +215,7 @@ class Documents_Manager {
 	 * @return Document
 	 * @throws \Exception
 	 */
-	public function get_for_edit( $id ): Document {
+	public function get_with_permissions( $id ): Document {
 		$document = $this->get( $id );
 
 		if ( ! $document ) {
@@ -230,14 +230,14 @@ class Documents_Manager {
 	}
 
 	/**
-	 * An alias for `get_for_edit`.
+	 * An `void` version for `get_with_permissions`.
 	 *
 	 * @param $id
 	 * @return void
 	 * @throws \Exception
 	 */
 	public function check_permissions( $id ) {
-		$this->get_for_edit( $id );
+		$this->get_with_permissions( $id );
 	}
 
 	/**
@@ -601,7 +601,7 @@ class Documents_Manager {
 	 *
 	 */
 	public function ajax_discard_changes( $request ) {
-		$document = $this->get_for_edit( $request['editor_post_id'] );
+		$document = $this->get_with_permissions( $request['editor_post_id'] );
 
 		$autosave = $document->get_autosave();
 

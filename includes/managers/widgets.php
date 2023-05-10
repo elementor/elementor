@@ -407,7 +407,7 @@ class Widgets_Manager {
 	 * }
 	 */
 	public function ajax_render_widget( $request ) {
-		$document = Plugin::$instance->documents->get_for_edit( $request['editor_post_id'] );
+		$document = Plugin::$instance->documents->get_with_permissions( $request['editor_post_id'] );
 
 		// Override the global $post for the render.
 		query_posts(

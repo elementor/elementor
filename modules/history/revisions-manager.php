@@ -255,7 +255,7 @@ class Revisions_Manager {
 			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = Plugin::$instance->documents->get_for_edit( $data['id'] );
+		$revision = Plugin::$instance->documents->get_with_permissions( $data['id'] );
 
 		return [
 			'settings' => $revision->get_settings(),
