@@ -75,20 +75,21 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->values();
 	}
 
-	public function get_client_settings() {
-		$common_configs = Editor_Common_Configs::get_client_settings();
+	public function get_client_env() {
+		$this->register_packages_client_env();
 
-		$this->register_packages_client_settings();
+		$client_env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
-		$client_settings = apply_filters( 'elementor/editor-v2/packages/client-settings', [] );
-
-		$v2_config = [
+		$v2_env = [
 			'handle' => 'elementor-editor-environment-v2',
-			'name' => 'elementorEditorV2Settings',
-			'settings' => $client_settings,
+			'name' => 'elementorEditorV2Env',
+			'env' => $client_env,
 		];
 
-		return array_merge( $common_configs, [ $v2_config ] );
+		return array_merge(
+			Editor_Common_Configs::get_client_env(),
+			[ $v2_env ]
+		);
 	}
 
 	public function get_style_configs() {
@@ -149,13 +150,13 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return $this->packages_data;
 	}
 
-	private function register_packages_client_settings() {
-		add_filter( 'elementor/editor-v2/packages/client-settings', function( array $settings ) {
-			$settings['@elementor/editor-app-bar'] = [
+	private function register_packages_client_env() {
+		add_filter( 'elementor/editor-v2/packages/client-env', function( array $env ) {
+			$env['@elementor/editor-app-bar'] = [
 				'admin_url' => admin_url(),
 			];
 
-			return $settings;
+			return $env;
 		} );
 	}
 }
