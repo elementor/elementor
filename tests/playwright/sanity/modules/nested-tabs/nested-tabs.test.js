@@ -1112,6 +1112,44 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect( videoContainer ).toHaveCount( 1 );
 	} );
+
+	test.only( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		Array.from( { length: 7 }, async () => {
+			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > div:nth-child(2)' ).click();
+		} );
+
+		await test.step( 'Assert overflow x', async () => {
+			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await expect( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
+		} );
+
+		await test.step( 'Assert scrolling behaviour', async () => {
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 200, 0 );
+			}, await nestedTabsHeading.elementHandle() );
+			const lastTab = await frame.getByRole( 'tab', { name: 'Tab #3' } );
+			await expect( lastTab ).toBeVisible();
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 0, 200 );
+			}, await nestedTabsHeading.elementHandle() );
+			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
+			await expect( firstTab ).toBeVisible();
+		} );
+	} );
 } );
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {

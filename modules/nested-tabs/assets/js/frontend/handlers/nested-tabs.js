@@ -314,6 +314,17 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+	onElementChange( propertyName ) {
+		// Console.log( 'propertyName', propertyName );
+		// A this.setHorizontalScrollAlignment
+		if ( 'tabs_justify_horizontal' === propertyName ) {
+			this.setHorizontalScrollAlignment();
+		}
+		if ( 'horizontal_scroll' === propertyName ) {
+			this.setHorizontalScrollAlignment();
+		}
+	}
+
 	/**
 	 * @param {string}  tabIndex
 	 * @param {boolean} fromUser - Whether the call is caused by the user or internal.
@@ -525,7 +536,14 @@ export default class NestedTabs extends Base {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
 			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
 
-		return ( '' === tabTitleAlignment || 'center' === tabTitleAlignment );
+		return ( '' === tabTitleAlignment || 'center' === tabTitleAlignment || 'end' === tabTitleAlignment );
+	}
+
+	isHorizontalScroll() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			horizontalScroll = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
+
+		return 'enable' === horizontalScroll;
 	}
 
 	setHorizontalScrollAlignment( event = {} ) {
@@ -539,10 +557,8 @@ export default class NestedTabs extends Base {
 			slider.style.setProperty( '--e-n-tabs-heading-margin-left', '' );
 		}
 
-		const headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
-
-		if ( this.isTabTitleAlignedCentered() && headingContentIsWiderThanWrapper ) {
-			slider.style.setProperty( '--n-tabs-heading-justify-content', 'flex-start' );
+		if ( this.isTabTitleAlignedCentered() && this.isHorizontalScroll() ) {
+			slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
 		} else {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
 		}
@@ -581,7 +597,10 @@ export default class NestedTabs extends Base {
 			toScrollDistanceX = mouseMoveX / 10;
 		}
 
-		slider.style.setProperty( '--e-n-tabs-heading-margin-left', currentMarginLeft + toScrollDistanceX );
+		const marginLeft = currentMarginLeft + toScrollDistanceX;
+		const allowedMarginLeft = marginLeft < 0 ? 0 : marginLeft; // Prevent negative margin
+
+		slider.style.setProperty( '--e-n-tabs-heading-margin-left', allowedMarginLeft );
 		slider.classList.add( 'e-scroll-active' );
 	}
 }
