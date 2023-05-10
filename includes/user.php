@@ -253,7 +253,7 @@ class User {
 	/**
 	 * @throws \Exception
 	 */
-	public static function register_as_beta_tester(array $data ) {
+	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
 		}
