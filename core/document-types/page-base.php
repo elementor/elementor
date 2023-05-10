@@ -200,6 +200,16 @@ abstract class PageBase extends Document {
 			);
 		}
 
+		$document->add_control(
+			'post_name',
+			[
+				'label' => esc_html__( 'Slug', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $document->post->post_name,
+				'separator' => 'before',
+			]
+		);
+
 		$document->end_injection();
 	}
 

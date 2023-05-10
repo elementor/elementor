@@ -114,6 +114,10 @@ class Manager extends CSS_Manager {
 			$post->post_excerpt = $data['post_excerpt'];
 		}
 
+		if ( isset( $data['post_name'] ) ) {
+			$post->post_name = $data['post_name'];
+		}
+
 		if ( isset( $data['post_status'] ) ) {
 			$this->save_post_status( $id, $data['post_status'] );
 			unset( $post->post_status );
@@ -309,6 +313,7 @@ class Manager extends CSS_Manager {
 			'template',
 			'post_excerpt',
 			'post_featured_image',
+			'post_name',
 		];
 	}
 
