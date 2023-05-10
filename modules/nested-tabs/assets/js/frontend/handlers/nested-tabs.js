@@ -244,7 +244,18 @@ export default class NestedTabs extends Base {
 
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
+		// elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+	}
+
+	unbindEvents() {
+		this.elements.$tabTitles.off();
+		elementorFrontend.elements.$window.off( 'resize' );
+		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
+	}
+
+	resizeListenerNestedTabs() {
+		this.tabsTitleWidthListener();
 	}
 
 	preventDefaultLinkBehaviourForTabTitle( event ) {
@@ -544,9 +555,7 @@ export default class NestedTabs extends Base {
 	}
 
 	tabsTitleWidthListener() {
-		// run when direction change.
 		// Run on resize.
-		// Run when with value changes.
 
 		const horizontalTabDirections = [ '', 'top', 'bottom' ],
 			tabsDirection = this.getControlValue( 'tabs_direction' );
