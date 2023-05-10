@@ -1018,8 +1018,6 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
-		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
-
 		if ( ! empty( $settings['link'] ) ) {
 			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
 		}
@@ -1036,7 +1034,7 @@ class NestedTabs extends Widget_Nested_Base {
 			// Tabs title.
 			$tab_count = $index + 1;
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+			$tab_title = $item['tab_title'];
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 			$tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
 			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];

@@ -205,7 +205,6 @@ export default class NestedTabs extends Base {
 	}
 
 	onTabKeyDown( event ) {
-		this.preventDefaultLinkBehaviourForTabTitle( event );
 		this.onKeydownAvoidUndesiredPageScrolling( event );
 	}
 
@@ -234,13 +233,6 @@ export default class NestedTabs extends Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
-	}
-
-	preventDefaultLinkBehaviourForTabTitle( event ) {
-		// Support for old markup that includes an `<a>` tag in the tab
-		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
-			event.preventDefault();
-		}
 	}
 
 	onKeydownAvoidUndesiredPageScrolling( event ) {
