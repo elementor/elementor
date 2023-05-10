@@ -51,7 +51,6 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 		if ( 'js' === templateType ) {
 			editModel.setHtmlCache();
 			this.render();
-			editModel.renderOnLeave = true;
 		} else {
 			editModel.renderRemoteServer();
 		}
