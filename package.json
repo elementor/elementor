@@ -1,7 +1,7 @@
 {
     "name": "elementor",
     "slug": "elementor",
-    "version": "3.13.0",
+    "version": "3.14.0",
     "last_beta_version": "3.12.0-beta3",
     "last_cloud_version": "3.13.0-cloud2",
     "last_dev_version": "3.9.0-dev2",
@@ -10,7 +10,7 @@
     "homepage": "https://elementor.com/",
     "scripts": {
         "setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
-        "start-local-server": "npm run setup-templates && wp-env start --update",
+        "start-local-server": "npm run setup-templates && wp-env start",
         "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
         "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
         "test:qunit": "grunt qunit",
