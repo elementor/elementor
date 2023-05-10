@@ -37,6 +37,19 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 
 		return events;
 	}
+
+	renderHTML() {
+		const templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
+
+		if ( 'js' === templateType ) {
+			this.getEditModel().setHtmlCache();
+			this.render();
+			editModel.renderOnLeave = true;
+		} else {
+			editModel.renderRemoteServer();
+		}
+	}
 }
 
 export default View;
