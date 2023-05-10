@@ -304,10 +304,29 @@ class Widget_Icon extends Widget_Base {
 						'max' => 300,
 					],
 				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+				'selectors'  => [
+					'{{WRAPPER}} .elementor-icon'     => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon svg' => 'height: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'fit_to_size',
+			[
+				'label'              => esc_html__( 'Fit to Size', 'elementor' ),
+				'type'               => Controls_Manager::SWITCHER,
+				'description'        => 'Avoid gaps around icons when width and height aren\'t equal',
+				'label_off'          => esc_html__( 'Off', 'elementor' ),
+				'label_on'           => esc_html__( 'On', 'elementor' ),
+				'default'            => 'no',
+				'prefix_class'       => 'elementor-icon-',
+				'frontend_available' => true,
+				'condition'          => [
+					'selected_icon[library]' => 'svg',
+				],
+				'render_type'        => 'template',
 			]
 		);
 
@@ -328,6 +347,27 @@ class Widget_Icon extends Widget_Base {
 				'condition' => [
 					'view!' => 'default',
 				],
+			]
+		);
+
+		$this->add_control(
+			'icon_fit_to_size',
+			[
+				'label'       => esc_html__( 'Fit to Size', 'elementor' ),
+				'type'        => Controls_Manager::SLIDER,
+				'selectors'   => [
+					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'range'       => [
+					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+				],
+				'condition'   => [
+					'view!' => 'default',
+				],
+				'render_type' => 'template',
 			]
 		);
 
@@ -417,6 +457,10 @@ class Widget_Icon extends Widget_Base {
 			$settings['icon'] = 'fa fa-star';
 		}
 
+		if ( 'yes' === $settings['fit_to_size'] ) {
+			$this->add_render_attribute( 'icon-wrapper', 'class', 'e-icon-fit' );
+		}
+
 		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
 			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
@@ -451,9 +495,10 @@ class Widget_Icon extends Widget_Base {
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-				iconTag = link ? 'a' : 'div';
+				iconTag = link ? 'a' : 'div',
+				fitToSize = ('yes' === settings.fit_to_size)  ? 'e-icon-fit' : '';
 		#>
-		<div class="elementor-icon-wrapper">
+		<div class="elementor-icon-wrapper {{ fitToSize }}">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
 				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}
