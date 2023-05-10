@@ -49,7 +49,7 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 			editModel = this.getEditModel();
 
 		if ( 'js' === templateType ) {
-			this.getEditModel().setHtmlCache();
+			editModel.setHtmlCache();
 			this.render();
 			editModel.renderOnLeave = true;
 		} else {
