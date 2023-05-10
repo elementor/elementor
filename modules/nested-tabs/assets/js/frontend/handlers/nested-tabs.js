@@ -581,9 +581,6 @@ export default class NestedTabs extends Base {
 		event.preventDefault();
 
 		const previousPositionX = parseFloat( slider.dataset.pageX ),
-			currentMarginLeft = !! slider.style.getPropertyValue( '--e-n-tabs-heading-margin-left' )
-				? parseFloat( slider.style.getPropertyValue( '--e-n-tabs-heading-margin-left' ) )
-				: 0,
 			mouseMoveX = event.pageX - previousPositionX,
 			maximumScrollValue = 5;
 
@@ -597,10 +594,6 @@ export default class NestedTabs extends Base {
 			toScrollDistanceX = mouseMoveX / 10;
 		}
 
-		const marginLeft = currentMarginLeft + toScrollDistanceX;
-		const allowedMarginLeft = marginLeft < 0 ? 0 : marginLeft; // Prevent negative margin
-
-		slider.style.setProperty( '--e-n-tabs-heading-margin-left', allowedMarginLeft );
-		slider.classList.add( 'e-scroll-active' );
+		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
 	}
 }

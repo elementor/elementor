@@ -131,10 +131,8 @@
 					-webkit-text-stroke-color var( --n-tabs-title-transition ),
 					transform var( --n-tabs-title-transition );
 
-			--n-tabs-title-margin-left-scroll: min( calc( var( --e-n-tabs-heading-margin-left, 0 ) * 1px ), 0px );
-			--n-tabs-title-margin-right-scroll: max( calc( var( --e-n-tabs-heading-margin-left, 0 ) * -1px ), 0px );
-			margin-left: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-left-scroll ) );
-			margin-right: var( --n-tabs-title-margin-inline-toggle, var( --n-tabs-title-margin-right-scroll ) );
+			margin-left: var( --n-tabs-title-margin-inline-toggle );
+			margin-right: var( --n-tabs-title-margin-inline-toggle );
 
 			& span svg,
 			& span i {
