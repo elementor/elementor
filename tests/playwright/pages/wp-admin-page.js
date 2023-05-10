@@ -39,6 +39,10 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		}
+
 		return new EditorPage( this.page, this.testInfo );
 	}
 

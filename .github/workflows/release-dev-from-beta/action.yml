@@ -53,11 +53,6 @@ runs:
 
             echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
             echo "DEV_RELEASE_NAME=${DEV_RELEASE_NAME}" >> $GITHUB_ENV
-    - name: Update Readme.txt
-      uses: ./.github/workflows/update-readme-txt
-      with:
-        CHANNEL: dev
-        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
     - name: Test SVN Trunk With Dev Build
       shell: bash
       env:
