@@ -533,7 +533,7 @@ class Widget_Accordion extends Widget_Base {
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		?>
-		<div class="elementor-accordion" role="tablist">
+		<div class="elementor-accordion">
 			<?php
 			foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
@@ -546,7 +546,6 @@ class Widget_Accordion extends Widget_Base {
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
-					'role' => 'tab',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -555,7 +554,7 @@ class Widget_Accordion extends Widget_Base {
 					'id' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
-					'role' => 'tabpanel',
+					'role' => 'region',
 					'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 				] );
 
@@ -619,7 +618,7 @@ class Widget_Accordion extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="elementor-accordion" role="tablist">
+		<div class="elementor-accordion">
 			<#
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
@@ -637,7 +636,6 @@ class Widget_Accordion extends Widget_Base {
 						'class': [ 'elementor-tab-title' ],
 						'tabindex': tabindex + tabCount,
 						'data-tab': tabCount,
-						'role': 'tab',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );
@@ -646,7 +644,7 @@ class Widget_Accordion extends Widget_Base {
 						'id': 'elementor-tab-content-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab': tabCount,
-						'role': 'tabpanel',
+						'role': 'region',
 						'aria-labelledby': 'elementor-tab-title-' + tabindex + tabCount
 					} );
 
