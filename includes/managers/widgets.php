@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
@@ -449,6 +450,10 @@ class Widgets_Manager {
 	 * @return bool|string Rendered widget form.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
+		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		if ( empty( $request['widget_type'] ) ) {
 			return false;
 		}
