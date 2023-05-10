@@ -339,8 +339,8 @@ class Widgets_Manager {
 	public function ajax_get_widget_types_controls_config( array $data ) {
 		wp_raise_memory_limit( 'admin' );
 
-		if ( ! User::is_current_user_can_edit() ) {
-			throw new \Exception( 'Access denied' );
+		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+			throw new \Exception( 'Access denied.' );
 		}
 
 		$config = [];
