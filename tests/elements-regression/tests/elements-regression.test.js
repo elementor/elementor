@@ -55,7 +55,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const editorPage = new EditorPage( page, testInfo );
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
-			await editorPage.loadTemplate( filePath );
+			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
 
 			const widgetCount = await editorPage.getWidgetCount();
