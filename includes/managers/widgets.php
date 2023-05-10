@@ -335,7 +335,12 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function ajax_get_widget_types_controls_config( array $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
 		wp_raise_memory_limit( 'admin' );
 
 		$config = [];
@@ -401,11 +406,7 @@ class Widgets_Manager {
 	 * }
 	 */
 	public function ajax_render_widget( $request ) {
-		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
-
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
-		}
+		$document = Plugin::$instance->documents->get_with_permissions( $request['editor_post_id'] );
 
 		// Override the global $post for the render.
 		query_posts(
@@ -443,8 +444,11 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
+	 * @throws \Exception
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
+		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );
+
 		if ( empty( $request['widget_type'] ) ) {
 			return false;
 		}
