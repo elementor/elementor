@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
