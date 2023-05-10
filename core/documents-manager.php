@@ -230,7 +230,7 @@ class Documents_Manager {
 	}
 
 	/**
-	 * An `void` version for `get_with_permissions`.
+	 * A `void` version for `get_with_permissions`.
 	 *
 	 * @param $id
 	 * @return void
