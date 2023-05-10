@@ -315,13 +315,13 @@ export default class NestedTabs extends Base {
 	}
 
 	onElementChange( propertyName ) {
-		// Console.log( 'propertyName', propertyName );
-		// A this.setHorizontalScrollAlignment
-		if ( 'tabs_justify_horizontal' === propertyName ) {
-			this.setHorizontalScrollAlignment();
-		}
-		if ( 'horizontal_scroll' === propertyName ) {
-			this.setHorizontalScrollAlignment();
+		if ( this.isHorizontalScroll() ) {
+			if ( propertyName.includes( 'horizontal_scroll' ) ) {
+				this.setHorizontalScrollAlignment();
+			}
+			if ( propertyName.includes( 'tabs_justify_horizontal' ) ) {
+				this.setHorizontalScrollAlignment();
+			}
 		}
 	}
 
