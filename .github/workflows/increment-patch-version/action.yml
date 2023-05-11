@@ -1,5 +1,5 @@
 name: Increment Patch Version 
-description: Increment Patch Version - Only for GA releases, increment the patch version in the plugin's main file (elementor.php) and push the changes to the repository ref.
+description: If a GA release already exists, the patch version should be incremented by 1.
 
 runs:
   using: "composite"
