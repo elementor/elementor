@@ -161,12 +161,12 @@ class Editor_Common_Configs {
 		];
 	}
 
-	public static function get_client_settings() {
+	public static function get_client_env() {
 		return [
 			[
 				'handle' => 'elementor-editor',
 				'name' => 'ElementorConfig',
-				'settings' => Editor_Common_Client_Settings::get_client_settings(),
+				'env' => Editor_Common_Client_Env::get_client_env(),
 			],
 		];
 	}

@@ -23,9 +23,9 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		// Attach the current control as a toggle of its popover.
 		if ( $popover.length ) {
 			$popover[ 0 ].dataset.popoverToggle = `elementor-control-default-${ this.model.cid }`;
+			$popover.on( 'hide', () => this.onPopoverHide() );
+			$popover.attr( 'data-on-hide', true );
 		}
-
-		$popover.on( 'hide', () => this.onPopoverHide() );
 	}
 
 	onPopoverHide() {
@@ -59,6 +59,11 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		}
 
 		const $popover = this.$el.next( '.elementor-controls-popover' );
+
+		if ( ! $popover.attr( 'data-on-hide' ) ) {
+			$popover.attr( 'data-on-hide', true );
+			$popover.on( 'hide', () => this.onPopoverHide() );
+		}
 
 		if ( ! $popover.is( ':visible' ) ) {
 			this.reRoute( true );
