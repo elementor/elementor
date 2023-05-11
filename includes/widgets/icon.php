@@ -330,7 +330,6 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-
 		$this->add_control(
 			'icon_padding',
 			[

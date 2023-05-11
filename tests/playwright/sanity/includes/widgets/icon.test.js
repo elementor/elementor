@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 
-test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
+test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.enableAdvancedUploads();
 	const editor = await wpAdmin.useElementorCleanPost(),
