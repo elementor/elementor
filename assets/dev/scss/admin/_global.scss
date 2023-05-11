@@ -14,16 +14,17 @@
 		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
 			font-weight: 600;
-			background-color: var(--e-a-btn-bg-accent);
-			color: var(--e-a-btn-color-invert);
+			background-color: $wp-admin-brand-color;
+			color: $white;
 			margin: 3px 10px 0;
 			display: block;
 			text-align: center;
-			border-radius: var(--e-a-border-radius);
-			transition: var(--e-a-transition);
+			border-radius: $default-border-radius;
+			transition: $transition-hover;
 
-			&:hover {
-				background-color: var(--e-a-btn-bg-accent-hover);
+			&:hover,
+			&:focus {
+				background-color: lighten($wp-admin-brand-color, 10%);
 				box-shadow: none;
 			}
 		}
@@ -47,9 +48,13 @@
 }
 
 .elementor-plugins-gopro {
-	color: $editor-accent;
-	text-shadow: 1px 1px 1px #eee;
+	color: $wp-admin-brand-color;
 	font-weight: bold;
+
+	&:hover,
+	&:focus {
+		color: lighten($wp-admin-brand-color, 10%);
+	}
 }
 
 // Switcher Editor
