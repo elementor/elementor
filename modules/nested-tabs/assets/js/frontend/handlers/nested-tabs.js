@@ -535,9 +535,9 @@ export default class NestedTabs extends Base {
 	tabIsNotAtStart() {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
 			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice ),
-			alowedAlignments = [ 'center', 'end', '', undefined ];
+			allowedAlignments = [ 'center', 'end', '', undefined ];
 
-		return alowedAlignments.includes( tabTitleAlignment );
+		return allowedAlignments.includes( tabTitleAlignment );
 	}
 
 	isHorizontalScroll() {
