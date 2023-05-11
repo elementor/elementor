@@ -41,7 +41,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Basic Gallery', 'elementor' );
+		return esc_html__( 'WordPress Gallery', 'elementor' );
 	}
 
 	/**
