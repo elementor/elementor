@@ -1,20 +1,25 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 
-test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
+test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.enableAdvancedUploads();
 	const editor = await wpAdmin.useElementorCleanPost();
-	const frame = page.frameLocator( '#elementor-preview-iframe' );
+
+	const iconWidget = await editor.addWidget( 'icon' );
+
+	await test.step( 'Fit Aspect hidden for Icons', async () => {
+		await page.getByRole( 'button', { name: 'Style' } ).click();
+		await expect( await page.locator( '.elementor-control-fit_to_size .elementor-switch-label' ) ).toBeHidden();
+	} );
 
 	await test.step( 'Act', async () => {
-		await editor.addWidget( 'icon' );
-
+		await page.getByRole( 'button', { name: 'Content' } ).click();
 		await page.locator( '.elementor-control-media__preview' ).hover();
 		await page.getByText( 'Upload SVG' ).click();
 
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/test-svg-wide.svg' );
-		// Await page.getByRole( 'checkbox', { name: 'test-svg-wide' } ).first().click();
+		// A await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/test-svg-wide.svg' );
+		await page.getByRole( 'checkbox', { name: 'test-svg-wide' } ).first().click();
 		await page.getByRole( 'button', { name: 'Insert Media' } ).click();
 
 		await page.getByRole( 'button', { name: 'Style' } ).click();
@@ -22,41 +27,36 @@ test( 'Enable Icon Aspect Ratio', async ( { page }, testInfo ) => {
 		await page.getByRole( 'spinbutton', { name: 'Size' } ).fill( '300' );
 	} );
 
-	await test.step( 'Editor Aspect Ratio updated', async () => {
+	await test.step( 'Editor Fit-to-size enabled', async () => {
 		await editor.togglePreviewMode();
-		const icon = frame.locator( '.elementor-icon-wrapper' );
 
-		await expect( icon ).toHaveClass( /e-icon-fit/ );
-
-		const iconDimensions = await page.evaluate( () => {
-			const element = document.querySelector( '.elementor-icon' );
-			return {
-				width: element.offsetWidth,
-				height: element.offsetHeight,
-			};
-		} );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-element-' + iconWidget + ' .elementor-icon' );
+		const iconDimensions = await getIconDimensions( page, iconWidget );
+		await page.pause();
 
 		await expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
-
 		await editor.togglePreviewMode();
 	} );
 
-	await test.step( 'FrontEnd Aspect Ratio updated', async () => {
+	await test.step( 'FrontEnd Fit-to-size enabled', async () => {
 		await editor.publishAndViewPage();
 
-		const iconDimensions = await page.evaluate( () => {
-			const element = document.querySelector( '.elementor-icon' );
-			return {
-				width: element.offsetWidth,
-				height: element.offsetHeight,
-			};
-		} );
+		await page.waitForSelector( '.elementor-element-' + iconWidget + ' .elementor-icon' );
+		const iconDimensions = await getIconDimensions( page, iconWidget );
 
 		await expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
-
-		const icon = page.locator( '.elementor-icon-wrapper' );
-
-		await expect( icon ).toHaveClass( /e-icon-fit/ );
 	} );
+
+	await wpAdmin.disableAdvancedUploads();
 } );
+
+async function getIconDimensions( page, icon ) {
+	return await page.evaluate( ( icon ) => {
+		console.log( icon );
+		const element = document.querySelectorAll( '.elementor-element-' + icon + ' .elementor-icon' );
+		console.log( element[ 0 ] );
+		// Return element[ 0 ].getBoundingClientRect();
+		return {};
+	}, icon );
+}
 
