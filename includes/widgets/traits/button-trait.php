@@ -442,10 +442,11 @@ trait Button_Trait {
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$instance->add_link_attributes( 'button', $settings['link'] );
 			$instance->add_render_attribute( 'button', 'class', 'elementor-button-link' );
+		} else {
+			$instance->add_render_attribute( 'button', 'role', 'button' );
 		}
 
 		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
-		$instance->add_render_attribute( 'button', 'role', 'button' );
 
 		if ( ! empty( $settings['button_css_id'] ) ) {
 			$instance->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
