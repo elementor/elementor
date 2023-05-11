@@ -41,7 +41,6 @@
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
-	--n-tabs-title-margin-inline-toggle: 0;
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
@@ -112,6 +111,7 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-basis: content;
 			flex-shrink: 0;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
@@ -130,9 +130,6 @@
 					-webkit-text-stroke-width var( --n-tabs-title-transition ),
 					-webkit-text-stroke-color var( --n-tabs-title-transition ),
 					transform var( --n-tabs-title-transition );
-
-			margin-left: var( --n-tabs-title-margin-inline-toggle );
-			margin-right: var( --n-tabs-title-margin-inline-toggle );
 
 			& span svg,
 			& span i {

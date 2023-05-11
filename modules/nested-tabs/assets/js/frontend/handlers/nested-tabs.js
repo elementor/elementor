@@ -532,18 +532,31 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	isTabTitleAlignedCentered() {
+	tabIsNotAtStart() {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
+			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice ),
+			alowedAlignments = [ 'center', 'end', '', undefined ];
 
-		return ( '' === tabTitleAlignment || 'center' === tabTitleAlignment || 'end' === tabTitleAlignment );
+		return alowedAlignments.includes( tabTitleAlignment );
 	}
 
 	isHorizontalScroll() {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
 			horizontalScroll = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
 
-		return 'enable' === horizontalScroll;
+		const slider = this.elements.$headingContainer[ 0 ];
+
+		return slider.clientWidth < this.getChildrenWidth( slider.children ) && 'enable' === horizontalScroll;
+	}
+
+	getChildrenWidth( children ) {
+		let totalWidth = 0;
+
+		for ( let i = 0; i < children.length; i++ ) {
+			totalWidth += children[ i ].offsetWidth;
+		}
+
+		return totalWidth;
 	}
 
 	setHorizontalScrollAlignment( event = {} ) {
@@ -553,11 +566,7 @@ export default class NestedTabs extends Base {
 
 		const slider = this.elements.$headingContainer[ 0 ];
 
-		if ( 'resize' === event.type ) {
-			slider.style.setProperty( '--e-n-tabs-heading-margin-left', '' );
-		}
-
-		if ( this.isTabTitleAlignedCentered() && this.isHorizontalScroll() ) {
+		if ( this.tabIsNotAtStart() && this.isHorizontalScroll() ) {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
 		} else {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );

@@ -75,6 +75,19 @@ class NestedTabs extends Widget_Nested_Base {
 		return 'elementor-widget-n-tabs';
 	}
 
+	protected function get_responsive_unit_defaults() {
+		$responsive_unit_defaults = [];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$responsive_unit_defaults[ $breakpoint_name . '_default' ] = [
+					'horizontal_scroll' => 'disable',
+			];
+		}
+
+		return $responsive_unit_defaults;
+	}
+
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
@@ -346,8 +359,8 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 				'default' => 'disable',
 				'selectors_dictionary' => [
-					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial; --n-tabs-title-margin-inline-toggle: 0;',
-					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll; --n-tabs-title-margin-inline-toggle: initial;',
+					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial;',
+					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll;',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
