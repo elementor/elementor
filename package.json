@@ -1,7 +1,7 @@
 {
     "name": "elementor",
     "slug": "elementor",
-    "version": "3.13.0",
+    "version": "3.14.0",
     "last_beta_version": "3.12.0-beta3",
     "last_cloud_version": "3.13.0-cloud2",
     "last_dev_version": "3.9.0-dev2",
@@ -108,12 +108,13 @@
         "webpack": "^5.73.0"
     },
     "dependencies": {
-        "@elementor/editor": "0.1.0",
-        "@elementor/editor-app-bar": "0.1.0",
+        "@elementor/editor": "0.2.0",
+        "@elementor/editor-app-bar": "0.2.0",
         "@elementor/editor-documents": "0.1.0",
         "@elementor/editor-responsive": "0.1.0",
         "@elementor/editor-site-navigation": "0.1.0",
         "@elementor/editor-v1-adapters": "0.1.0",
+        "@elementor/env": "0.2.0",
         "@elementor/icons": "0.1.0",
         "@elementor/locations": "0.1.0",
         "@elementor/store": "0.1.0",
