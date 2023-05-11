@@ -1,0 +1,37 @@
+name: Increment Patch Version 
+description: Increment Patch Version - Only for GA releases, increment the patch version in the plugin's main file (elementor.php) and push the changes to the repository ref.
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+          # get the latest version
+          current_package_version=$(node -p "require('./package.json').version")
+          major_minor=$(echo "$current_package_version" | cut -d'.' -f1-2)
+
+          # get the latest version
+          latest_ga_version=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep -v "beta" | grep -v "dev" | grep -v "cloud" | grep "[0-9]\+\.[0-9]\+\.[0-9]\+$" | grep "$major_minor" | awk -F/ '{print $3}' | sort -rV | head -n 1)
+
+          # exit with status code 0 if no latest version is found
+          #
+          if [ -z "$latest_ga_version" ]; then
+            exit 0
+          fi
+
+          # extract major, minor and patch versions
+          major=$(echo $latest_ga_version | awk -F. '{print $1}')
+          minor=$(echo $latest_ga_version | awk -F. '{print $2}')
+          patch=$(echo $latest_ga_version | awk -F. '{print $3}')
+
+          # increment patch version by 1
+          patch=$(($patch + 1))
+
+          # generate the updated version number
+          updated_version="${major}.${minor}.${patch}"
+
+          PACKAGE_VERSION=${updated_version}-ga-rc
+
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "CLEAN_PACKAGE_VERSION=${updated_version}" >> $GITHUB_ENV
+
