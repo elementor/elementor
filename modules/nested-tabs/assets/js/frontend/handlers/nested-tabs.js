@@ -139,9 +139,12 @@ export default class NestedTabs extends Base {
 			$activeTitle = this.getActiveTabObject().tabTitle,
 			$activeContent = this.getActiveTabObject().tabContent;
 
+		/* To be updated */
 		$activeTitle.add( $activeContent ).removeClass( this.getActiveClass() );
 		$activeTitle.attr( this.getTitleDeactivationAttributes() );
 
+		/* To be updated */
+		/* Study */
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
 		$activeContent.attr( 'hidden', 'hidden' );
 	}
@@ -154,6 +157,8 @@ export default class NestedTabs extends Base {
 
 		return {
 			tabTitle: this.elements.$tabTitles.filter( activeTitleFilter ),
+			/* To be updated */
+			/* To be removed */
 			tabContent: this.elements.$tabContents.filter( activeContentFilter ),
 		};
 	}
@@ -166,7 +171,7 @@ export default class NestedTabs extends Base {
 		};
 	}
 
-	onHideTabContent( $activeContent ) {}
+	onHideTabContent() {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
@@ -182,6 +187,7 @@ export default class NestedTabs extends Base {
 			const previousTabIndex = Math.max( ( tabIndex - 1 ), 1 );
 
 			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( previousTabIndex ) );
+			/* To be updated */
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
@@ -192,17 +198,22 @@ export default class NestedTabs extends Base {
 			'aria-expanded': 'true',
 		} );
 
+		/* To be updated */
+		/* Study */
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
+		/* To be updated */
+		/* Study */
 		$requestedContent.removeAttr( 'hidden' );
-
-		this.setWidgetHeight();
 	}
 
 	onShowTabContent( $requestedContent ) {
 		elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
+
+		/* To be updated */
+		/* Study */
 		elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
 	}
 
@@ -213,8 +224,6 @@ export default class NestedTabs extends Base {
 	onTabClick( event ) {
 		event.preventDefault();
 		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
-
-		console.log( 'click' );
 	}
 
 	onTabKeyDown( event ) {
@@ -257,7 +266,7 @@ export default class NestedTabs extends Base {
 	}
 
 	resizeListenerNestedTabs() {
-		this.tabsTitleWidthListener();
+		// this.setTabTitleWidth();
 	}
 
 	preventDefaultLinkBehaviourForTabTitle( event ) {
@@ -303,7 +312,7 @@ export default class NestedTabs extends Base {
 			this.activateDefaultTab();
 		}
 
-		this.tabsTitleWidthListener();
+		// this.setTabTitleWidth( 'initialisation' );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -341,6 +350,8 @@ export default class NestedTabs extends Base {
 			const isMobileVersion = 'none' === this.elements.$widgetWrapper.css( 'display' );
 
 			if ( isMobileVersion ) {
+				/* To be updated */
+				/* Still relevant?? */
 				this.activateMobileTab( tabIndex );
 				return;
 			}
@@ -377,19 +388,20 @@ export default class NestedTabs extends Base {
 		const settings = this.getSettings(),
 			$widget = this.$element;
 
-		let index = 1;
+		let index = 0;
 
 		this.findElement( '.e-con' ).each( function() {
 			const $currentContainer = jQuery( this ),
-				$tabTitle = $widget.find( `${ settings.selectors.tabTitle }:nth-child(${ index })` );
+				$tabTitle = $widget.find( settings.selectors.tabTitle )[ index ];
 
 			$currentContainer.insertAfter( $tabTitle );
 
 			++index;
 		} );
 
-		const $columnBreakElement = $widget.find( '.e-n-tabs-column-break' );
-		$widget.find( '.e-n-tabs' ).append( $columnBreakElement );
+		/* To be updated */
+		/* Study */
+		/* To be removed? */
 
 		// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
 		// if ( $removed.length ) {
@@ -403,6 +415,8 @@ export default class NestedTabs extends Base {
 		return settings.classes.active;
 	}
 
+	/* To be updated */
+	/* Can be removed? */
 	getVisibleTabTitle( tabTitleFilter ) {
 		const $tabTitle = this.elements.$tabTitles.filter( tabTitleFilter ),
 			isTabTitleDesktopVisible = null !== $tabTitle[ 0 ]?.offsetParent;
@@ -410,6 +424,9 @@ export default class NestedTabs extends Base {
 		return isTabTitleDesktopVisible ? $tabTitle[ 0 ] : $tabTitle[ 1 ];
 	}
 
+	/* To be updated */
+	/* Study new behaviour */
+	/* To be removed? */
 	getKeyPressed( event ) {
 		const keyTab = 9,
 			keyEscape = 27,
@@ -428,6 +445,9 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	changeFocusFromContentContainerItemBackToTabTitle( event ) {
 		if ( this.hasDropdownLayout() ) {
 			return;
@@ -459,6 +479,10 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	changeFocusFromActiveTabTitleToContentContainer( event ) {
 		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
@@ -472,6 +496,10 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	itemInsideContentContainerHasFocus( position ) {
 		const currentItem = elementorFrontend.elements.window.document.activeElement,
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
@@ -480,18 +508,30 @@ export default class NestedTabs extends Base {
 		return $focusableItems[ itemIndex ] === currentItem;
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	getFocusableItemsInsideActiveContentContainer() {
 		const settings = this.getSettings();
 
 		return this.$element.find( settings.selectors.activeTabContentContainers ).find( ':focusable' );
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	setTabindexOfActiveContainerItems( tabIndex ) {
 		const $focusableItems = this.getFocusableItemsInsideActiveContentContainer();
 
 		$focusableItems.attr( 'tabindex', tabIndex );
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	setActiveCurrentContainerItemsToFocusable() {
 		const currentTabTitle = elementorFrontend.elements.window.document.activeElement,
 			currentTabTitleIndex = parseInt( currentTabTitle?.getAttribute( 'data-tab' ) );
@@ -501,6 +541,9 @@ export default class NestedTabs extends Base {
 		}
 	}
 
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	tabTitleHasActiveContentContainer( index ) {
 		const $tabTitleElement = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( index ) ),
 			isTabTitleActive = $tabTitleElement[ 0 ]?.classList.contains( `${ this.getActiveClass() }` ),
@@ -509,7 +552,11 @@ export default class NestedTabs extends Base {
 		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
 	}
 
-	setWidgetHeight( tabIndex ) {
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
+	setWidgetHeight( tabIndex, trigger ) {
 		const settings = this.getSettings(),
 			$widget = this.$element,
 			activeClass = settings.classes.active,
@@ -518,7 +565,7 @@ export default class NestedTabs extends Base {
 			$widgetInner = $widget.find( '.e-n-tabs' );
 
 		// Check widget height without the active content container.
-		$widgetInner.css( 'height', '' );
+		$widgetInner.css( '--n-tabs-height-calculated', '' );
 		$activeContent.css( 'height', '0px' );
 		$activeContent.css( 'overflow', 'hidden' );
 		const widgetHeightWithoutContent = $widgetInner.height();
@@ -530,14 +577,29 @@ export default class NestedTabs extends Base {
 
 		// Set the highest height value.
 		const widgetHeight = contentContainerHeight > widgetHeightWithoutContent ? contentContainerHeight : widgetHeightWithoutContent;
-		$widgetInner.css( 'height', widgetHeight + 'px' );
+		$widgetInner.css( '--n-tabs-height-calculated', widgetHeight + 'px' );
+		// $widget.css( '--n-tabs-opacity', 'initial' );
+
+		if ( 'initialisation' === trigger ) {
+			setTimeout( () => {
+				this.$element.css( '--n-tabs-opacity', 'initial' );
+			}, 100 );
+		}
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	getControlValue( controlKey ) {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode();
 		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), controlKey, '', currentDevice );
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	getPropsThatTriggerTabTitleWidthChange() {
 		return [
 			'tabs_direction',
@@ -545,6 +607,10 @@ export default class NestedTabs extends Base {
 		];
 	}
 
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
 	onElementChange( propertyName ) {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
 			responsivePropertyName = 'desktop' === currentDevice
@@ -552,16 +618,20 @@ export default class NestedTabs extends Base {
 				: `${ propertyName }_${ currentDevice }`;
 
 		if ( this.getPropsThatTriggerTabTitleWidthChange().includes( responsivePropertyName ) ) {
-			this.tabsTitleWidthListener();
+			// this.setTabTitleWidth();
 		}
 	}
 
-	tabsTitleWidthListener() {
+
+	/* To be updated */
+	/* Study */
+	/* To be removed? */
+	setTabTitleWidth( trigger ) {
 		const horizontalTabDirections = [ '', 'top', 'bottom' ],
 			tabsDirection = this.getControlValue( 'tabs_direction' );
 
 		if ( horizontalTabDirections.includes( tabsDirection ) || !! this.getControlValue( 'tabs_width' ) ) {
-			this.$element.css( '--n-tabs-title-width-column', '' );
+			this.$element.css( '--n-tabs-title-width-container', '' );
 			return;
 		}
 
@@ -569,16 +639,17 @@ export default class NestedTabs extends Base {
 		let previousWidth = 0;
 
 		this.observedContainer = new ResizeObserver( ( $observedTitle ) => {
-			this.$element.css( '--n-tabs-title-width-column', '' );
-
 			const currentWidth = $observedTitle[ 0 ].borderBoxSize?.[ 0 ].inlineSize;
 
 			if ( !! currentWidth && currentWidth !== previousWidth ) {
 				previousWidth = currentWidth;
 
 				if ( 0 !== previousWidth ) {
-					this.$element.css( '--n-tabs-title-width-column', `${ currentWidth }px` );
-					this.setWidgetHeight();
+					this.$element.css( '--n-tabs-title-width-container', `${ currentWidth }px` );
+
+					setTimeout( () => {
+						this.setWidgetHeight( null, trigger );
+					} );
 				}
 			}
 		} );
