@@ -22,10 +22,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget name.
 	 *
+	 * @return string Widget name.
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string Widget name.
 	 */
 	public function get_name() {
 		return 'icon';
@@ -36,10 +36,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget title.
 	 *
+	 * @return string Widget title.
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string Widget title.
 	 */
 	public function get_title() {
 		return esc_html__( 'Icon', 'elementor' );
@@ -50,10 +50,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget icon.
 	 *
+	 * @return string Widget icon.
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @return string Widget icon.
 	 */
 	public function get_icon() {
 		return 'eicon-favorite';
@@ -66,10 +66,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
+	 * @return array Widget categories.
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @return array Widget categories.
 	 */
 	public function get_categories() {
 		return [ 'basic' ];
@@ -80,10 +80,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
+	 * @return array Widget keywords.
 	 * @since 2.1.0
 	 * @access public
 	 *
-	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
 		return [ 'icon' ];
@@ -305,8 +305,8 @@ class Widget_Icon extends Widget_Base {
 						'max' => 300,
 					],
 				],
-				'selectors'  => [
-					'{{WRAPPER}} .elementor-icon'     => 'font-size: {{SIZE}}{{UNIT}};',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-icon svg' => 'height: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'before',
@@ -316,18 +316,17 @@ class Widget_Icon extends Widget_Base {
 		$this->add_control(
 			'fit_to_size',
 			[
-				'label'              => esc_html__( 'Fit to Size', 'elementor' ),
-				'type'               => Controls_Manager::SWITCHER,
-				'description'        => 'Avoid gaps around icons when width and height aren\'t equal',
-				'label_off'          => esc_html__( 'Off', 'elementor' ),
-				'label_on'           => esc_html__( 'On', 'elementor' ),
-				'condition'          => [
+				'label' => esc_html__( 'Fit to Size', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Avoid gaps around icons when width and height aren\'t equal',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'condition' => [
 					'selected_icon[library]' => 'svg',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-wrapper svg'     => 'width: 100%;',
-				],
-				'render_type'        => 'template',
+					'{{WRAPPER}} .elementor-icon-wrapper svg' => 'width: 100%;',
+				]
 			]
 		);
 
@@ -352,26 +351,6 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'icon_fit_to_size',
-			[
-				'label'       => esc_html__( 'Fit to Size', 'elementor' ),
-				'type'        => Controls_Manager::SLIDER,
-				'selectors'   => [
-					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
-				],
-				'range'       => [
-					'em' => [
-						'min' => 0,
-						'max' => 5,
-					],
-				],
-				'condition'   => [
-					'view!' => 'default',
-				],
-				'render_type' => 'template',
-			]
-		);
 
 		$this->add_responsive_control(
 			'rotate',
@@ -459,24 +438,24 @@ class Widget_Icon extends Widget_Base {
 			$settings['icon'] = 'fa fa-star';
 		}
 
-
 		if ( ! empty( $settings['icon'] ) ) {
 			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
 			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new   = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
 		?>
-		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-			<<?php Utils::print_unescaped_internal_string( $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ) ); ?>>
-			<?php if ( $is_new || $migrated ) :
-				Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
-			else : ?>
-				<i <?php $this->print_render_attribute_string( 'icon' ); ?>></i>
-			<?php endif; ?>
-			</<?php Utils::print_unescaped_internal_string( $icon_tag ); ?>>
+	<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
+		<<?php Utils::print_unescaped_internal_string( $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ) ); ?>
+		>
+		<?php if ( $is_new || $migrated ) :
+			Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
+		else : ?>
+			<i <?php $this->print_render_attribute_string( 'icon' ); ?>></i>
+		<?php endif; ?>
+		</<?php Utils::print_unescaped_internal_string( $icon_tag ); ?>>
 		</div>
 		<?php
 	}
@@ -491,19 +470,19 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# let link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-		iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-		iconTag = link ? 'a' : 'div';
+		<# const link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
+				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
-					{{{ iconHTML.value }}}
-				<# } else { #>
-					<i class="{{ settings.icon }}" aria-hidden="true"></i>
-				<# } #>
-			</{{{ iconTag }}}>
+			<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+			{{{ iconHTML.value }}}
+			<# } else { #>
+			<i class="{{ settings.icon }}" aria-hidden="true"></i>
+			<# } #>
+		</{{{ iconTag }}}>
 		</div>
 		<?php
 	}
