@@ -184,8 +184,6 @@ export default class ColorPicker extends elementorModules.Module {
 
 		setTimeout( () => {
 			resultInput.select();
-
-			this.picker._recalc = true;
 		}, 100 );
 	}
 

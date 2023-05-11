@@ -90,15 +90,45 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		return [
 			[
-				'title' => 'Activate Containers for Brilliant Layouts',
-				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
+				'title' => 'Create smarter with Elementor AI',
+				'description' => '<p>Instantly turn your ideas into original text and custom code with a free trial of Elementor AI installed on the newest versions of Elementor.</p>
+				<ul>
+					<li>Effortlessly write professional copy about any topic, in any tone. Then instantly translate it to twenty-five languages.</li>
+					<li>No code? No problem. Generate Custom Code, CSS, and HTML with a prompt</li>
+					<li>Coming soon:  A picture might be worth a thousand words, but all you need is a short description to generate the perfect image for your site.</li>
+				</ul>',
 				'media' => [
 					'type' => 'image',
 					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
 				],
 				'cta' => [
 					[
-						'label' => 'Activate Containers',
+						'label' => 'Continue',
+						'variant' => 'primary',
+						'target' => '_blank',
+					],
+					[
+						'label' => 'Learn More',
+						'target' => '_blank',
+						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
+					],
+				],
+				'triggers' => [
+					[
+						'action' => 'aiStared',
+					],
+				],
+			],
+			[
+				'title' => 'Activate Containers for Brilliant Layouts',
+				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
+				'media' => [
+					'type' => 'image',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/containers-announcement.png',
+				],
+				'cta' => [
+					[
+						'label' => 'Activate Container',
 						'variant' => 'primary',
 						'target' => '_blank',
 						'url' => ElementorSettings::get_url() . '#tab-experiments',
