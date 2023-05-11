@@ -14,19 +14,17 @@ test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 	} );
 
 	await test.step( 'Act', async () => {
-		await page.pause();
 		await page.getByRole( 'button', { name: 'Content' } ).click();
-		await page.locator( '.elementor-control-media__preview' ).hover();
-		await page.waitForTimeout( 1000 );
+		const mediaUploadControl = await page.locator( '.elementor-control-media__preview' );
+		await mediaUploadControl.hover();
+		await mediaUploadControl.waitFor();
 
 		await page.getByText( 'Upload SVG' ).click();
 
-		// await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/test-svg-wide.svg' );
-		// await page.getByRole( 'checkbox', { name: 'test-svg-wide' } ).first().click();
+		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/test-svg-wide.svg' );
 		await page.getByRole( 'button', { name: 'Insert Media' } ).click();
 
 		await page.getByRole( 'button', { name: 'Style' } ).click();
-		await page.pause();
 		await page.locator( '.elementor-switch-label' ).click();
 		await page.getByRole( 'spinbutton', { name: 'Size' } ).fill( '300' );
 	} );
@@ -34,10 +32,10 @@ test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 	await test.step( 'Editor Fit-to-size enabled', async () => {
 		await editor.togglePreviewMode();
 
-		let iconSVG = await editor.getPreviewFrame().locator( iconSelector ),
+		const iconSVG = await editor.getPreviewFrame().locator( iconSelector ),
 			iconDimensions = await iconSVG.boundingBox();
 
-		await expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
+		await expect( iconDimensions.height !== iconDimensions.width ).toBeTruthy(); // Not 1-1 proportion
 		await editor.togglePreviewMode();
 	} );
 
@@ -46,7 +44,7 @@ test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 
 		await page.waitForSelector( '.elementor-element-' + iconWidget + ' .elementor-icon' );
 
-		let iconSVG = await page.locator( iconSelector ),
+		const iconSVG = await page.locator( iconSelector ),
 			iconDimensions = await iconSVG.boundingBox();
 
 		await expect( iconDimensions.height === iconDimensions.width ).toBeFalsy(); // Not 1-1 proportion
@@ -54,15 +52,4 @@ test.only( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 
 	await wpAdmin.disableAdvancedUploads();
 } );
-
-async function getIconDimensions( page, icon ) {
-	return await page.evaluate( ( icon ) => {
-		console.log( icon );
-		console.log( '.elementor-element-' + icon + ' .elementor-icon' );
-		const element = document.querySelectorAll( '.elementor-element-' + icon + ' .elementor-icon' );
-		console.log( element );
-		// Return element[ 0 ].getBoundingClientRect();
-		return {};
-	}, icon );
-}
 
