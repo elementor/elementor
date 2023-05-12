@@ -22,10 +22,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget name.
 	 *
-	 * @return string Widget name.
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @return string Widget name.
 	 */
 	public function get_name() {
 		return 'icon';
@@ -36,10 +36,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget title.
 	 *
-	 * @return string Widget title.
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @return string Widget title.
 	 */
 	public function get_title() {
 		return esc_html__( 'Icon', 'elementor' );
@@ -50,10 +50,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve icon widget icon.
 	 *
-	 * @return string Widget icon.
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @return string Widget icon.
 	 */
 	public function get_icon() {
 		return 'eicon-favorite';
@@ -70,6 +70,7 @@ class Widget_Icon extends Widget_Base {
 	 * @since 2.0.0
 	 * @access public
 	 *
+	 * @return string Widget icon.
 	 */
 	public function get_categories() {
 		return [ 'basic' ];
@@ -80,10 +81,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * @return array Widget keywords.
 	 * @since 2.1.0
 	 * @access public
 	 *
+	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
 		return [ 'icon' ];
@@ -442,7 +443,7 @@ class Widget_Icon extends Widget_Base {
 		}
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new   = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
