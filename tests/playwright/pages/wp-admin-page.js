@@ -149,8 +149,8 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	/*
-   *  Disable uploading SVG files
-  */
+     *  Disable uploading SVG files
+     */
 	async disableAdvancedUploads() {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
