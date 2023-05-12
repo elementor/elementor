@@ -31,8 +31,9 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		// Activate experiment callback.
 		$activate = function ( $site = '', $id = null ) use ( $args, $is_network ) {
-			$success = 'Experiment activated successfully';
-			$error = 'Cannot activate experiment';
+			$plural = count($args) > 0 ? 's' : '';
+			$success = 'Experiment'.$plural.' activated successfully';
+			$error = 'Cannot activate experiment'.$plural;
 
 			if ( $is_network ) {
 				$success .= " for site {$site}";
@@ -40,9 +41,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			}
 
 			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[0] );
-
-			update_option( $option, Experiments_Manager::STATE_ACTIVE );
+			foreach ( $args as $experiment ) {
+				$option = $experiments_manager->get_feature_option_key( $experiment );
+				update_option( $option, Experiments_Manager::STATE_ACTIVE );
+			}
 
 			try {
 				\WP_CLI::success( $success );
@@ -78,8 +80,9 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		// Activate experiment callback.
 		$activate = function ( $site = '' ) use ( $args, $is_network ) {
-			$success = 'Experiment deactivated successfully';
-			$error = 'Cannot deactivate experiment';
+			$plural = count($args) > 0 ? 's' : '';
+			$success = 'Experiment'.$plural.' deactivated successfully';
+			$error = 'Cannot deactivate experiment'.$plural;
 
 			if ( $is_network ) {
 				$success .= " for site {$site}";
@@ -87,9 +90,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			}
 
 			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[0] );
-
-			update_option( $option, Experiments_Manager::STATE_INACTIVE );
+			foreach ( $args as $experiment ) {
+				$option = $experiments_manager->get_feature_option_key( $experiment );
+				update_option( $option, Experiments_Manager::STATE_INACTIVE );
+			}
 
 			try {
 				\WP_CLI::success( $success );
