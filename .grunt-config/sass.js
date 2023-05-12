@@ -58,13 +58,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'modules/styleguide/assets/scss',
-				src: '*.scss',
-				dest: 'assets/css/modules/styleguide',
-				ext: '.css',
-			},
-			{
-				expand: true,
 				cwd: 'modules/ai/assets/scss',
 				src: 'editor.scss',
 				dest: 'assets/css/modules/ai',
