@@ -185,10 +185,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-display: flex; --n-tabs-direction: row; --n-tabs-title-order: -1; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto; --n-tabs-opacity: initial; --n-tabs-gap-toggle: initial; --n-tabs-height-toggle: auto; --n-tabs-grid-template-columns: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial;',
-				'bottom' => '--n-tabs-display: flex;--n-tabs-direction: row; --n-tabs-title-order: 2; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto; --n-tabs-opacity: initial; --n-tabs-gap-toggle: initial; --n-tabs-height-toggle: auto; --n-tabs-grid-template-columns: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial;',
-				'end' => '--n-tabs-display: grid; --n-tabs-direction: column; --n-tabs-title-order: 2; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial; --n-tabs-opacity: 0; --n-tabs-gap-toggle: var( --n-tabs-gap-half ); --n-tabs-height-toggle: initial; --n-tabs-grid-template-columns: 1fr auto; --n-tabs-grid-template-areas: var( --grid-template-areas-end );',
-				'start' => '--n-tabs-display: grid; --n-tabs-direction: column; --n-tabs-title-order: -1; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial; --n-tabs-opacity: 0; --n-tabs-gap-toggle: var( --n-tabs-gap-half ); --n-tabs-height-toggle: initial; --n-tabs-grid-template-columns: auto 1fr; --n-tabs-grid-template-areas: var( --grid-template-areas-start );',
+				'top' => '--n-tabs-display: flex; --n-tabs-direction: row; --n-tabs-title-order: -1; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto; --n-tabs-opacity: initial; --n-tabs-gap-toggle: initial; --n-tabs-height-toggle: auto; --n-tabs-grid-template-columns: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-gap ); --n-tabs-title-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap );',
+				'bottom' => '--n-tabs-display: flex;--n-tabs-direction: row; --n-tabs-title-order: 2; --n-tabs-column-break-display: none; --n-tabs-content-max-width-toggle: 100%; --n-tabs-title-width-toggle: auto; --n-tabs-opacity: initial; --n-tabs-gap-toggle: initial; --n-tabs-height-toggle: auto; --n-tabs-grid-template-columns: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-gap ); --n-tabs-title-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap );',
+				'end' => '--n-tabs-display: grid; --n-tabs-direction: column; --n-tabs-title-order: 2; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial; --n-tabs-opacity: 0; --n-tabs-gap-toggle: var( --n-tabs-gap-half ); --n-tabs-height-toggle: initial; --n-tabs-grid-template-columns: 1fr auto; --n-tabs-grid-template-areas: var( --grid-template-areas-end ); --n-tabs-row-gap: 0px; --n-tabs-title-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap );',
+				'start' => '--n-tabs-display: grid; --n-tabs-direction: column; --n-tabs-title-order: -1; --n-tabs-column-break-display: flex; --n-tabs-content-max-width-toggle: initial; --n-tabs-title-width-toggle: initial; --n-tabs-opacity: 0; --n-tabs-gap-toggle: var( --n-tabs-gap-half ); --n-tabs-height-toggle: initial; --n-tabs-grid-template-columns: auto 1fr; --n-tabs-grid-template-areas: var( --grid-template-areas-start ); --n-tabs-row-gap: 0px; --n-tabs-title-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap );',
 			],
 			'selectors' => [
 				'{{WRAPPER}}, {{WRAPPER}} .e-n-tabs' => '{{VALUE}}',
@@ -217,10 +217,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: initial;',
-				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: initial;',
-				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: initial;',
-				'stretch' => '--n-tabs-justify-content: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: initial;',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: initial;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: initial;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: initial;',
+				'stretch' => '--n-tabs-justify-content: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1; --n-tabs-spacer-top-height: initial; --n-tabs-spacer-bottom-height: initial; --n-tabs-spacer-top-display: none; --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -256,10 +256,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0; --n-tabs-spacer-bottom-height: 1fr; --n-tabs-spacer-top-display: none;  --n-tabs-spacer-bottom-display: flex; --n-tab-margin-top-first-tab: calc( var( --n-tabs-gap ) / -2 ); --n-tab-margin-bottom-last-tab: initial;',
-				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 1fr; --n-tabs-spacer-top-display: flex;  --n-tabs-spacer-bottom-display: flex; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: initial;',
-				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 0; --n-tabs-spacer-top-display: flex;  --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tab-margin-bottom-last-tab: calc( var( --n-tabs-gap ) / -2 );',
-				'stretch' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0; --n-tabs-spacer-bottom-height: 0; --n-tabs-spacer-top-display: none;  --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: calc( var( --n-tabs-gap ) / -2 ); --n-tab-margin-bottom-last-tab: calc( var( --n-tabs-gap ) / -2 );',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0; --n-tabs-spacer-bottom-height: 1fr; --n-tabs-spacer-top-display: none;  --n-tabs-spacer-bottom-display: flex; --n-tab-margin-top-first-tab: calc( var( --n-tabs-gap ) / -2 ); --n-tabs-title-margin-bottom-last-tab: initial;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 1fr; --n-tabs-spacer-top-display: flex;  --n-tabs-spacer-bottom-display: flex; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: initial;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 0; --n-tabs-spacer-top-display: flex;  --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: initial; --n-tabs-title-margin-bottom-last-tab: calc( var( --n-tabs-gap ) / -2 );',
+				'stretch' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0; --n-tabs-spacer-bottom-height: 0; --n-tabs-spacer-top-display: none;  --n-tabs-spacer-bottom-display: none; --n-tab-margin-top-first-tab: calc( var( --n-tabs-gap ) / -2 ); --n-tabs-title-margin-bottom-last-tab: calc( var( --n-tabs-gap ) / -2 );',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -1087,18 +1087,27 @@ class NestedTabs extends Widget_Nested_Base {
 			widgetWrapperKey = 'e-n-tabs-' + elementUid,
 			numberOfTabs = settings['tabs'].length;
 
-		let gridTemplateAreasTabsStart = ''
-			gridTemplateAreasTabsEnd = '',
-			gridTemplateRowsTabs = '';
+		let gridTemplateAreasTabsStart = "",
+			gridTemplateAreasTabsEnd = "",
+			gridTemplateRowsTabs = '',
+			gridTemplateAreasSpacerStart = "",
+			gridTemplateAreasSpacerEnd = "",
+			gridTemplateRowsSpacer = '';
 
 		_.each( settings['tabs'], function( item, index ) {
-			gridTemplateAreasTabsStart += "'tab" + index + " content' ";
-			gridTemplateAreasTabsEnd += "'content tab" + index + "' ";
-			gridTemplateRowsTabs += 'auto ';
+			if ( !! index ) {
+				gridTemplateAreasSpacerStart = " '. content' ";
+				gridTemplateAreasSpacerEnd = " 'content .' ";
+				gridTemplateRowsSpacer = 'var( --n-tabs-title-space-between ) ';
+			}
+
+			gridTemplateAreasTabsStart += gridTemplateAreasSpacerStart + "'tab" + index + " content' ";
+			gridTemplateAreasTabsEnd += gridTemplateAreasSpacerEnd + "'content tab" + index + "' ";
+			gridTemplateRowsTabs += gridTemplateRowsSpacer + 'auto ';
 		} );
 
-		const gridTemplateAreasValuesStart = "'spacerTop content' " + gridTemplateAreasTabsStart + "'spacerBottom content'",
-			gridTemplateAreasValuesEnd = "'content spacerBottom' " + gridTemplateAreasTabsEnd + "'content spacerTop'",
+		const gridTemplateAreasValuesStart = "'spacer-top content' " + gridTemplateAreasTabsStart + "'spacer-bottom content'",
+			gridTemplateAreasValuesEnd = "'content spacer-bottom' " + gridTemplateAreasTabsEnd + "'content spacer-top'",
 			gridTemplateRowsValues = 'var( --n-tabs-spacer-top-height ) ' + gridTemplateRowsTabs + '	var( --n-tabs-spacer-bottom-height )';
 
 		view.addRenderAttribute( widgetWrapperKey, {

@@ -20,8 +20,8 @@
 	--n-tabs-background-color: transparent;
 	--n-tabs-direction: row; // Rami
 	--n-tabs-justify-content: center; // Rami
+	--n-tabs-row-gap-toggle: initial;
 	--n-tabs-gap: 10px;
-	--n-tabs-gap-half: calc( var( --n-tabs-gap ) / 2 );
 	--n-tabs-column-break-display: none;
 	//--n-tabs-heading-display: flex;
 	//--n-tabs-heading-direction: row;
@@ -49,6 +49,7 @@
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
 	--n-tabs-title-flex-grow: 0;
+	--n-tabs-title-margin-bottom: initial;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
@@ -59,10 +60,6 @@
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
 	--n-tabs-icon-gap: 5px;
-	--n-tabs-spacer-top-height: 0;
-	--n-tabs-spacer-bottom-height: 0;
-	--n-tabs-spacer-top-display: none;
-	--n-tabs-spacer-bottom-display: none;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 	//opacity: var( --n-tabs-opacity );
@@ -71,7 +68,8 @@
 		display: var( --n-tabs-display );
 		flex-direction: var( --n-tabs-direction ); // Rami
 		justify-content: var( --n-tabs-justify-content );
-		gap: var( --n-tabs-gap-toggle, var( --n-tabs-gap ) );
+		column-gap: var( --n-tabs-column-gap );
+		row-gap: var( --n-tabs-row-gap );
 		text-align: $start;
 		min-width: 0;
 		flex-wrap: wrap; // Rami
@@ -98,14 +96,7 @@
 
 
 		.e-n-tab-title {
-			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
-			-webkit-tap-highlight-color: transparent;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
+
 
 			//&:not(:first-child) {
 			//	margin-top: var( --n-tabs-title-gap );
@@ -124,13 +115,6 @@
 			&:not(.e-active) {
 				display: none;
 			}
-		}
-
-		&-column-break {
-			display: var( --n-tabs-column-break-display );
-			height: 100%;
-			width: 0;
-			order: 0;
 		}
 	}
 
@@ -167,6 +151,14 @@
 					-webkit-text-stroke-width var( --n-tabs-title-transition ),
 					-webkit-text-stroke-color var( --n-tabs-title-transition ),
 					transform var( --n-tabs-title-transition );
+			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
 
 			& span svg,
 			& span i {
@@ -287,14 +279,6 @@
 						animation: initial;
 					}
 				}
-			}
-
-			&:first-of-type {
-				margin-top: var( --n-tab-margin-top-first-tab );
-			}
-
-			&--last {
-				margin-bottom: var( --n-tab-margin-bottom-last-tab );
 			}
 		}
 	}
