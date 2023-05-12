@@ -1,0 +1,331 @@
+{
+    "content": [
+        {
+            "id": "42631c6c",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "291fea32",
+                    "settings": {
+                        "image": {
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
+                        },
+                        "thumbnail_size": "thumbnail",
+                        "title_text": "This is the heading number 1",
+                        "description_text": "Some test description! Thumbnail, H1, spacing  - 60 , width - 60",
+                        "position": "left",
+                        "title_size": "h1",
+                        "image_space": {
+                            "unit": "px",
+                            "size": 60,
+                            "sizes": []
+                        },
+                        "image_size": {
+                            "unit": "%",
+                            "size": 60,
+                            "sizes": []
+                        },
+                        "image_border_border": "solid",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "image_opacity": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "background_hover_transition": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "text_align": "left",
+                        "__globals__": {
+                            "image_border_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-box",
+                    "elType": "widget"
+                },
+                {
+                    "id": "583bbb1d",
+                    "settings": {
+                        "image": {
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
+                        },
+                        "thumbnail_size": "medium",
+                        "title_text": "This is the heading number 3",
+                        "description_text": "Medium large, H4",
+                        "position": "right",
+                        "title_size": "h4",
+                        "image_border_border": "dotted",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "5",
+                            "right": "5",
+                            "bottom": "5",
+                            "left": "5",
+                            "isLinked": true
+                        },
+                        "image_border_color": "#1918C8",
+                        "image_border_radius": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "image_opacity": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "background_hover_transition": {
+                            "unit": "px",
+                            "size": 0.4,
+                            "sizes": []
+                        },
+                        "text_align": "right",
+                        "content_vertical_alignment": "middle",
+                        "title_stroke_text_stroke_type": "yes",
+                        "title_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "title_shadow_text_shadow_type": "yes",
+                        "title_shadow_text_shadow": {
+                            "horizontal": -35,
+                            "vertical": 20,
+                            "blur": 16,
+                            "color": "rgba(0, 0, 0, 0.97)"
+                        },
+                        "description_typography_typography": "custom",
+                        "description_typography_font_family": "Roboto",
+                        "description_typography_font_size": {
+                            "unit": "px",
+                            "size": 41,
+                            "sizes": []
+                        },
+                        "description_typography_font_weight": "200",
+                        "description_typography_text_transform": "capitalize",
+                        "description_typography_text_decoration": "line-through",
+                        "description_typography_line_height": {
+                            "unit": "px",
+                            "size": 43,
+                            "sizes": []
+                        },
+                        "description_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 3.6,
+                            "sizes": []
+                        },
+                        "description_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 23,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "title_color": "globals\/colors?id=accent",
+                            "title_typography_typography": "globals\/typography?id=text",
+                            "description_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-box",
+                    "elType": "widget"
+                },
+                {
+                    "id": "9498215",
+                    "settings": {
+                        "image": {
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
+                        },
+                        "thumbnail_size": "medium",
+                        "title_text": "This is the heading number 2",
+                        "description_text": "medium H2",
+                        "title_size": "h2",
+                        "image_space": {
+                            "unit": "px",
+                            "size": 30,
+                            "sizes": []
+                        },
+                        "image_size": {
+                            "unit": "%",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "image_border_border": "double",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "20",
+                            "right": "20",
+                            "bottom": "20",
+                            "left": "20",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "size": 12,
+                            "sizes": []
+                        },
+                        "image_opacity": {
+                            "unit": "px",
+                            "size": 0.8,
+                            "sizes": []
+                        },
+                        "background_hover_transition": {
+                            "unit": "px",
+                            "size": 1.7,
+                            "sizes": []
+                        },
+                        "text_align": "center",
+                        "title_bottom_space": {
+                            "unit": "px",
+                            "size": 40,
+                            "sizes": []
+                        },
+                        "title_typography_typography": "custom",
+                        "title_typography_font_family": "Rock Salt",
+                        "title_typography_font_size": {
+                            "unit": "px",
+                            "size": 41,
+                            "sizes": []
+                        },
+                        "title_typography_font_weight": "800",
+                        "title_typography_text_transform": "lowercase",
+                        "title_typography_font_style": "italic",
+                        "title_typography_text_decoration": "overline",
+                        "title_typography_line_height": {
+                            "unit": "px",
+                            "size": 81,
+                            "sizes": []
+                        },
+                        "title_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": 3.8,
+                            "sizes": []
+                        },
+                        "title_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 24,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "image_border_color": "globals\/colors?id=text",
+                            "title_color": "globals\/colors?id=secondary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-box",
+                    "elType": "widget"
+                },
+                {
+                    "id": "47c0c015",
+                    "settings": {
+                        "image": {
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
+                        },
+                        "thumbnail_custom_dimension": {
+                            "width": "300",
+                            "height": "300"
+                        },
+                        "title_text": "This is the heading. number 4",
+                        "description_text": "large, H6, full, border type - dashed",
+                        "title_size": "h6",
+                        "image_border_border": "dashed",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "text_align": "justify",
+                        "title_color": "#1679A2",
+                        "description_color": "#C11717",
+                        "description_typography_font_family": "Roboto",
+                        "description_typography_font_size": {
+                            "unit": "px",
+                            "size": 19,
+                            "sizes": []
+                        },
+                        "description_typography_font_weight": "400"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-box",
+                    "elType": "widget"
+                },
+                {
+                    "id": "357d0fe8",
+                    "settings": {
+                        "image": {
+                            "id": 628,
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/image2.jpg",
+                            "alt": "",
+                            "source": "library",
+                            "size": ""
+                        },
+                        "title_text": "This is the heading",
+                        "description_text": "border type groove",
+                        "image_border_border": "groove",
+                        "image_border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "image_border_radius": {
+                            "unit": "px",
+                            "size": 19,
+                            "sizes": []
+                        },
+                        "content_vertical_alignment": "middle"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "image-box",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "image_box",
+    "type": "page"
+}

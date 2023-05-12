@@ -108,6 +108,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				}
 			} else {
 				try {
+					if ( this.unitHasCustomSelector( control, value ) ) {
+						cssProperty = control.unit_selectors_dictionary[ value.unit ];
+					}
+
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
 						const externalControlMissing = controlName && ! controls[ controlName ];
 
@@ -211,6 +215,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 			this.stylesheet.addRules( selector, outputCssProperty, query );
 		} );
+	},
+
+	unitHasCustomSelector( control, value ) {
+		return control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ value.unit ];
 	},
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {

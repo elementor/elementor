@@ -218,6 +218,12 @@ class Widget_Image extends Widget_Base {
 			[
 				'label' => esc_html__( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'description' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Manage your site’s lightbox settings in the %1$sLightbox panel%2$s.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-lightbox\' ) )">',
+					'</a>'
+				),
 				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
@@ -358,6 +364,32 @@ class Widget_Image extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}} img' => 'object-fit: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'object-position',
+			[
+				'label' => esc_html__( 'Object Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => esc_html__( 'Center Center', 'elementor' ),
+					'center left' => esc_html__( 'Center Left', 'elementor' ),
+					'center right' => esc_html__( 'Center Right', 'elementor' ),
+					'top center' => esc_html__( 'Top Center', 'elementor' ),
+					'top left' => esc_html__( 'Top Left', 'elementor' ),
+					'top right' => esc_html__( 'Top Right', 'elementor' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => [
+					'{{WRAPPER}} img' => 'object-position: {{VALUE}};',
+				],
+				'condition' => [
+					'object-fit' => 'cover',
 				],
 			]
 		);
