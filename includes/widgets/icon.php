@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,11 +65,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
-	 * @return array Widget categories.
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @return string Widget icon.
+	 * @return array Widget categories.
 	 */
 	public function get_categories() {
 		return [ 'basic' ];
