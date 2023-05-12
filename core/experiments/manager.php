@@ -434,7 +434,12 @@ class Manager extends Base_Object {
 			'name' => 'container_grid',
 			'title' => esc_html__( 'Grid Container', 'elementor' ),
 			'tag' => esc_html__( 'Feature', 'elementor' ),
-			'description' => esc_html__( 'Create advanced layouts and responsive designs with the new Container Grid element.', 'elementor' ),
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+			'description' => sprintf( esc_html__(
+				'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements. %1$sLearn more%2$s',
+				'elementor'
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
+
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 			'hidden' => false,

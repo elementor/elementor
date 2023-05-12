@@ -126,6 +126,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-image-carousel-slides-to-show: {{VALUE}}',
 				],
+				'content_classes' => 'elementor-control-field-select-small',
 			]
 		);
 
@@ -142,6 +143,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					'slides_to_show!' => '1',
 				],
 				'frontend_available' => true,
+				'content_classes' => 'elementor-control-field-select-small',
 			]
 		);
 

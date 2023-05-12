@@ -18,7 +18,7 @@ const PageContent = (
 		setControlValue,
 		additionalOptions,
 	} ) => {
-	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits } = useUserInfo();
+	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 
 	if ( isLoading ) {
 		return (
@@ -59,6 +59,7 @@ const PageContent = (
 					setControlValue={ setControlValue }
 					additionalOptions={ additionalOptions }
 					credits={ credits }
+					usagePercentage={ usagePercentage }
 				/>
 			</PromptDialog>
 		);
@@ -74,6 +75,7 @@ const PageContent = (
 				setControlValue={ setControlValue }
 				additionalOptions={ additionalOptions }
 				credits={ credits }
+				usagePercentage={ usagePercentage }
 			/>
 		</PromptDialog>
 	);
