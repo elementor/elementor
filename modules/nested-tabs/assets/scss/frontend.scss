@@ -27,7 +27,7 @@
 	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
-	--n-tabs-title-width: max-content;
+	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
 	--n-tabs-title-justify-content-toggle: initial;
