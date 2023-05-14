@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.13.2 - 2023-05-11 =
+
+* Security Fix: Addressed security weaknesses in access management related functions
+
 = 3.13.1 - 2023-05-09 =
 
 * Tweak: Removed autocomplete functionality in Color Picker
