@@ -176,7 +176,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 	/**
 	 * @param string $experiments_str comma delimeted string of experiments
-	 * 
+	 *
 	 * @return array array of experiments
 	 */
 	private function parse_experiments( $experiments_str ) {
@@ -185,7 +185,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 	/**
 	 * @param array $experiments experiments
-	 * 
+	 *
 	 * @return string plural
 	 */
 	private function get_plural( $experiments ) {
@@ -195,7 +195,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	/**
 	 * @param Experiments_Manager $experiments_manager manager
 	 * @param array $experiments experiments
-	 * 
+	 *
 	 * @return bool true when all experiments exist, otherwise false
 	 */
 	private function check_experiments_exist( $experiments_manager, $experiments ) {
