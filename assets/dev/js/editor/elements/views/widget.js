@@ -45,7 +45,7 @@ const WidgetView = BaseWidget.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as a Global', 'elementor' ),
+					title: __( 'Save as a global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
 						! elementor.selection.isMultiple(),

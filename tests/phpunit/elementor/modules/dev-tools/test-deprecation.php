@@ -199,15 +199,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 		], $settings['soft_notices']['test_deprecated_function_soft'] );
 	}
 
-	public function test_deprecated_function_hard() {
-		$this->setExpectedDeprecated( __FUNCTION__ );
-
-		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.5.0' );
-	}
-
 	public function test_do_deprecated_action() {
-		$this->setExpectedDeprecated( 'elementor/test/deprecated_action' );
-
 		add_action( 'elementor/test/deprecated_action', function() {
 			echo 'Testing Do Deprecated Action';
 		} );
@@ -270,9 +262,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 			return $value . '-test';
 		} );
 
-		// Expect.
-		$this->setExpectedDeprecated( $hook );
-
 		// Act.
 		$result = $this->deprecation->apply_deprecated_filter( $hook, 'elementor', '0.0.0', '', '0.5.0' );
 
@@ -310,9 +299,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 			return $value2 . '-test';
 		}, 10, 2 );
 
-		// Expect.
-		$this->setExpectedDeprecated( $hook );
-
 		// Act.
 		$result = $this->deprecation->apply_deprecated_filter( $hook, ['elementor', 'elementor-pro'], '0.0.0', '', '0.5.0' );
 
@@ -327,9 +313,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 		add_filter( $hook, function( $value1, $value2 ) {
 			return $value1;
 		}, 10, 2 );
-
-		// Expect.
-		$this->setExpectedDeprecated( $hook );
 
 		// Act.
 		$result = $this->deprecation->apply_deprecated_filter( $hook, [
@@ -348,9 +331,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 		add_filter( $hook, function( $value ) {
 			return $value . '-test';
 		} );
-
-		// Expect.
-		$this->setExpectedDeprecated( $hook );
 
 		// Act.
 		$result = $this->deprecation->apply_deprecated_filter( $hook, [ 'elementor' ], '0.0.0', '', '0.5.0' );

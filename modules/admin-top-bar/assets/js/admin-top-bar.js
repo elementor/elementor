@@ -29,7 +29,7 @@ export default function AdminTopBar() {
 		$e.route( 'finder' );
 	};
 
-	const controlSign = environment.mac ? '⌘' : '^';
+	const controlSign = environment.mac ? '&#8984;' : '^';
 	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
 	return (

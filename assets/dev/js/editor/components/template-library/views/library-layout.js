@@ -34,19 +34,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		const template = Marionette.TemplateCache.get( viewId );
 
-		// In case the access level of the template is not one of the defined.
-		// it will find the next access level that was defined.
-		// Example: access_level = 15, and access_level 15 is not exists in the plans the button will be "Go Expert" which is 20
-		const closestAccessLevel = Object.keys( subscriptionPlans )
-			.sort()
-			.find( ( accessLevel ) => {
-				return accessLevel >= templateData.accessLevel;
-			} );
-
-		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
+		const subscriptionPlan = subscriptionPlans[ templateData.accessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
 
 		return Marionette.Renderer.render( template, {
-			promotionText: `Go ${ subscriptionPlan.label }`,
+			promotionText: `Upgrade`,
 			promotionLink: subscriptionPlan.promotion_url,
 		} );
 	},

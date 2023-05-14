@@ -13,6 +13,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
+use Elementor\Tests\Phpunit\Elementor\App\ImportExport\Test_Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
@@ -77,6 +78,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$this->assert_valid_terms_with_elementor_content( $result, $manifest );
 		$this->assert_valid_terms_with_wp_content( $result );
+		Test_Module::assert_valid_import_session( $this, $import->get_session_id() );
 
 		// Cleanups
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
@@ -87,7 +89,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify import runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 
 		// Arrange
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );
@@ -449,7 +451,7 @@ class Test_Import extends Elementor_Test_Base {
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectExceptionMessage( 'session-does-not-exits-error' );
+		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exist.' );
 
 		// Act
 		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );
@@ -471,6 +473,95 @@ class Test_Import extends Elementor_Test_Base {
 		foreach ( $manifest['templates'] as $template ) {
 			$this->assertFalse( $template['thumbnail'] );
 		}
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_manifest() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_empty_kit_thumbnail() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+		];
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( 'api-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	public function test_init_import_session__get_kit_thumbnail_from_api_wp_error() {
+		$import_settings = [
+			'referrer' => 'kit-library',
+			'id' => '123',
+		];
+		$cleanup = $this->mock_get_kit_wp_error();
+		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
+		$import->init_import_session();
+
+		$import_sessions = get_option( 'elementor_import_sessions' );
+		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
+
+		$cleanup();
+	}
+
+	private function mock_get_kit() {
+		$filter = function() {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'thumbnail' => 'api-thumbnail'
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
+	}
+
+	private function mock_get_kit_wp_error() {
+		$filter = function() {
+			return [
+				'body' => new \WP_Error( 500, 'No Response' ),
+			];
+		};
+
+		add_filter( 'pre_http_request',  $filter );
+
+		return function() use( $filter ) {
+			remove_filter( 'pre_http_request', $filter );
+		};
 	}
 
 	private function assert_valid_taxonomies( $result ) {

@@ -115,6 +115,15 @@ class Utils {
 	}
 
 	/**
+	 * Whether elementor test mode is enabled or not.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_tests() {
+		return defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+	}
+
+	/**
 	 * Get pro link.
 	 *
 	 * Retrieve the link to Elementor Pro.
@@ -165,23 +174,39 @@ class Utils {
 		$from = trim( $from );
 		$to = trim( $to );
 
+		if ( empty( $from ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the old URL was not provided. Try again by entering the old URL.' );
+		}
+
+		if ( empty( $to ) ) {
+			throw new \Exception( 'Couldn’t replace your address because the new URL was not provided. Try again by entering the new URL.' );
+		}
+
 		if ( $from === $to ) {
-			throw new \Exception( "The `from` and `to` URL's must be different URL's." );
+			throw new \Exception( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( "The `from` and `to` URL's must be valid URL's." );
+			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
+		$escaped_from = str_replace( '/', '\\/', $from );
+		$escaped_to = str_replace( '/', '\\/', $to );
+		$meta_value_like = '[%'; // meta_value LIKE '[%' are json formatted
 
-		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
 		$rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
-			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-		// @codingStandardsIgnoreEnd
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} " .
+				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
+				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s;",
+				$escaped_from,
+				$escaped_to,
+				$meta_value_like
+			)
+		);
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( 'An error occurred while replacing URL\'s.' );
@@ -194,7 +219,7 @@ class Utils {
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
-			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
+			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
 	}
@@ -791,9 +816,9 @@ class Utils {
 		return file_get_contents( $file, ...$args );
 	}
 
-	public static function get_super_global_value( $super_global, $key, $default = null ) {
+	public static function get_super_global_value( $super_global, $key ) {
 		if ( ! isset( $super_global[ $key ] ) ) {
-			return $default;
+			return null;
 		}
 
 		if ( $_FILES === $super_global ) {

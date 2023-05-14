@@ -17,14 +17,18 @@ $top-bar-height: 50px;
 // The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 #e-admin-top-bar-root {
 	@include end( 0 );
-	background: $white;
-	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
+	font-family: var(--e-a-font-family);
+	background: var(--e-a-bg-default);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 	display: none;
 	position: absolute;
 	top: 0;
 	width: calc(100% - 160px);
 	z-index: $first-layer;
 
+	body.folded & {
+		width: calc(100% - 36px);
+	}
 
 	.e-admin-top-bar {
 		display: flex;
@@ -34,23 +38,22 @@ $top-bar-height: 50px;
 	}
 
 	.page-title-action {
-		background: $gray-lightest;
-		border: 1px solid $blue;
-		border-radius: 3px;
-		box-sizing: border-box;
-		color: $blue;
-		cursor: pointer;
-		display: inline-block;
-		line-height: 30px;
-		margin: 0 4px;
-		min-height: 30px;
-		padding: 0 10px;
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.2;
+		text-transform: uppercase;
 		text-decoration: none;
+		padding: 8px 16px;
+		outline: none;
+		border: none;
+		border-radius: var(--e-a-border-radius);
+		background-color: var(--e-a-btn-bg);
+		color: var(--e-a-btn-color-invert);
+		transition: var(--e-a-transition-hover);
 
 		&:hover {
-			background: $gray-lighter;
-			border-color: $blue-flat;
-			color: $blue-flat;
+			background-color: var(--e-a-btn-bg-hover);
+			color: var(--e-a-btn-color-invert);
 		}
 	}
 
@@ -78,30 +81,17 @@ $top-bar-height: 50px;
 
 	}
 
-	.e-admin-top-bar__heading-logo {
-		width: 30px;
-	}
-
-	.e-admin-top-bar__heading-logo {
-		background: $editor-accent;
-		border-radius: 15px;
-		color: $white;
-		display: inline-block;
-		font-size: pxToRem(14px);
-		height: pxToRem(30px);
-		line-height: pxToRem(30px);
-		text-align: center;
-		width: pxToRem(30px);
-	}
-
 	.e-admin-top-bar__heading-title {
-		color: $editor-darkest;
+		color: var(--e-a-color-txt);
 		font-size: 15px;
 		font-weight: 700;
-		font-family: 'Roboto', Arial, Helvetica, Verdana, sans-serif;
 		padding: 0 8px;
 		line-height: normal;
-		text-transform: uppercase;
+	}
+
+	.e-admin-top-bar__main-area-buttons {
+		display: inline-flex;
+		gap: 5px;
 	}
 
 	&.e-admin-top-bar--active {
@@ -139,20 +129,17 @@ $top-bar-height: 50px;
 		justify-content: center;
 		margin: 0 10px;
 		text-decoration: none;
-		color: $editor-dark;
-
-		.e-admin-top-bar__bar-button-title {
-			color: $editor-dark;
-		}
+		color: var(--e-a-color-txt);
 
 		.e-admin-top-bar__bar-button-icon {
 			margin: 0 4px;
 		}
 
 		&:hover {
+
 			.e-admin-top-bar__bar-button-title,
 			.e-admin-top-bar__bar-button-icon{
-				color: $editor-accent;
+				color: var(--e-a-color-txt-hover);
 			}
 		}
 	}
@@ -160,7 +147,6 @@ $top-bar-height: 50px;
 	.e-admin-top-bar__bar-button-title {
 		font-size: 13px;
 		font-weight: 500;
-		font-family: $admin-font-family;
 		margin: 0 4px;
 		line-height: normal;
 	}

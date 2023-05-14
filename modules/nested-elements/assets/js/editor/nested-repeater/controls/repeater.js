@@ -23,16 +23,25 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 		};
 	}
 
-	updateActiveRow() {
-		let activeItemIndex = 1;
+	onChildviewClickDuplicate( childView ) {
+		$e.run( 'document/repeater/duplicate', {
+			container: this.options.container,
+			name: this.model.get( 'name' ),
+			index: childView._index,
+			renderAfterInsert: false,
+		} );
 
-		if ( this.currentEditableChild ) {
-			activeItemIndex = this.currentEditableChild.itemIndex;
+		this.toggleMinRowsClass();
+	}
+
+	updateActiveRow() {
+		if ( ! this.currentEditableChild ) {
+			return;
 		}
 
 		$e.run( 'document/repeater/select', {
 			container: this.container,
-			index: activeItemIndex,
+			index: this.currentEditableChild.itemIndex,
 			options: { useHistory: false },
 		} );
 	}

@@ -3,11 +3,20 @@ $eps-theme-colors: (
 		disabled: $eps-theme-disabled,
 		light: $eps-theme-light,
 		dark: $eps-theme-dark,
-		info: $eps-theme-info,
 		cta: $eps-theme-cta,
+		brand: $eps-theme-brand,
+		accent: $eps-theme-accent,
+		primary: $eps-theme-cta,
+		primary-bg: $eps-theme-primary-bg,
+		secondary: $eps-body-color,
+		info: $eps-theme-info,
+		info-bg: $eps-theme-info-bg,
 		danger: $eps-theme-danger,
+		danger-bg: $eps-theme-danger-bg,
 		success: $eps-theme-success,
+		success-bg: $eps-theme-success-bg,
 		warning: $eps-theme-warning,
+		warning-bg: $eps-theme-warning-bg,
 );
 
 $eps-theme-elements-colors: (

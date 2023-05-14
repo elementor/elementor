@@ -334,7 +334,7 @@ class Container extends Element_Base {
 		$width_control_settings = [
 			'label' => esc_html__( 'Width', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', '%', 'vw', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'range' => [
 				'px' => [
 					'min' => 500,
@@ -422,7 +422,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Min Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -923,7 +923,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -962,7 +962,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1213,7 +1213,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--margin-top: {{TOP}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}}; --margin-bottom: {{BOTTOM}}{{UNIT}}; --margin-left:{{LEFT}}{{UNIT}};',
 				],
@@ -1225,7 +1225,7 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
 				],
@@ -1340,7 +1340,7 @@ class Container extends Element_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'size_units' => [ 'px', '%', 'vw', 'vh', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
@@ -1379,7 +1379,7 @@ class Container extends Element_Base {
 				'default' => [
 					'size' => '0',
 				],
-				'size_units' => [ 'px', '%', 'vw', 'vh', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'custom' ],
 				'selectors' => [
 					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
@@ -1439,7 +1439,7 @@ class Container extends Element_Base {
 						'max' => 200,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vh', 'vw', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
 					'size' => '0',
 				],
@@ -1477,7 +1477,7 @@ class Container extends Element_Base {
 						'max' => 200,
 					],
 				],
-				'size_units' => [ 'px', '%', 'vh', 'vw', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'default' => [
 					'size' => '0',
 				],

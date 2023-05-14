@@ -1,21 +1,6 @@
-import View from './views/view';
-import EmptyView from './views/empty';
-
-export class NestedTabs extends elementor.modules.elements.types.Base {
+export class NestedTabs extends elementor.modules.elements.types.NestedElementBase {
 	getType() {
 		return 'nested-tabs';
-	}
-
-	getView() {
-		return View;
-	}
-
-	getEmptyView() {
-		return EmptyView;
-	}
-
-	getModel() {
-		return $e.components.get( 'nested-elements/nested-repeater' ).exports.NestedModelBase;
 	}
 }
 

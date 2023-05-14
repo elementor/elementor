@@ -142,7 +142,7 @@
 
 	& > .elementor-widget-divider {
 		// Fix - Divider widget has undefined width and height issues inside the flex container (ED-7722).
-		width: var( --container-widget-width );
-		--flex-grow: var( --container-widget-flex-grow );
+		width: var( --container-widget-width , 100%);
+	  	--flex-grow: var( --container-widget-flex-grow );
 	}
 }

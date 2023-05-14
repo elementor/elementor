@@ -1,0 +1,15 @@
+{
+	"name": "@elementor/site-settings",
+	"dependencies": {
+		"@elementor/icons": "*",
+		"@elementor/top-bar": "*",
+		"@elementor/editor": "*",
+		"@elementor/ui": "*",
+		"@elementor/v1-adapters": "*",
+		"@elementor/documents": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}

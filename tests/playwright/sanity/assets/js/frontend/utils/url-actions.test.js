@@ -141,7 +141,7 @@ test.describe( 'URL Actions', () => {
 		 */
 		const frontendMountainImageElement = await page.$( '.elementor-widget-image a[href*="mountain-image"]' );
 
-		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'e-action-hash' );
+		const mountainImageHash = await frontendMountainImageElement.getAttribute( 'data-e-action-hash' );
 
 		const pageURL = page.url();
 

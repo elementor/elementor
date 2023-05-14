@@ -90,6 +90,7 @@ class Modules_Manager {
 			'dev-tools',
 			'landing-pages',
 			'compatibility-tag',
+			'generator-tag',
 			'elements-color-picker',
 			'shapes',
 			'favorites',
@@ -104,6 +105,7 @@ class Modules_Manager {
 			'performance-lab',
 			'lazyload',
 			'kit-elements-defaults',
+			'announcements',
 		];
 	}
 

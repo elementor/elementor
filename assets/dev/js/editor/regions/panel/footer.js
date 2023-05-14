@@ -10,7 +10,7 @@ module.exports = Marionette.ItemView.extend( {
 	ui: {
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
-		deviceModeIcon: '#elementor-panel-footer-responsive > i',
+		deviceModeIcon: '#elementor-panel-footer-responsive',
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
@@ -99,12 +99,12 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
-		var isOpen = $tool.hasClass( 'elementor-open' );
+		var isOpen = $tool.hasClass( 'e-open' );
 
-		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
+		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'e-open' );
 
 		if ( ! isOpen ) {
-			$tool.addClass( 'elementor-open' );
+			$tool.addClass( 'e-open' );
 		}
 	},
 

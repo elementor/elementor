@@ -20,7 +20,14 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	},
 
 	attributes() {
-		const subscriptionPlan = elementor.config.library_connect.subscription_plans[ this.model.get( 'accessLevel' ) ];
+		const getSubscriptionPlan = () => {
+			const subscriptionPlans = elementor.config.library_connect.subscription_plans;
+
+			// 1 is Pro plan.
+			return subscriptionPlans[ this.model.get( 'accessLevel' ) ] ?? subscriptionPlans[ 1 ];
+		};
+
+		const subscriptionPlan = getSubscriptionPlan();
 
 		if ( ! subscriptionPlan ) {
 			return {};

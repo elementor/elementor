@@ -1,0 +1,172 @@
+name: Publish V2
+# Required secrets for this workflow: MAINTAIN_USERNAME, MAINTAIN_EMAIL, SLACK_TOKEN, SLACK_CHANNEL_RELEASE
+
+on:
+  workflow_dispatch:
+    inputs:
+      pre_release:
+        type: boolean
+        description: 'Pre-release?'
+        required: false
+
+env:
+  CHANGELOG_FILE: '/tmp/temp-changelog.txt'
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Parse ref branch name
+        uses: ./.github/workflows/parse-branch-name
+        with:
+          BRANCH_NAME: ${{ github.ref }}
+      - name: Download release zip file from RC tag artifact
+        uses: robinraju/release-downloader@v1.7
+        with:
+          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          out-file-path: /tmp/
+      - name: Download change log file from RC tag artifact
+        uses: robinraju/release-downloader@v1.7
+        with:
+          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          fileName: temp-changelog.txt
+          out-file-path: /tmp/
+      - name: Get Release Name
+        uses : ./.github/workflows/get-release-name
+        with:
+          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+      - name: Rename Release zip file to new release name
+        uses : ./.github/workflows/copy-file
+        with:
+          SOURCE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          DESTINATION_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_NAME }}
+          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
+          body_path: ${{ env.CHANGELOG_FILE }}
+          prerelease: ${{ github.event.inputs.pre_release }}
+      - name: Read changelog and set current date
+        if: env.CHANNEL == 'ga' # Only for GA releases
+        uses : ./.github/workflows/get-changelog-datetime
+      - name: Parse Jira Keys from changelog # Only for GA releases
+        if: env.CHANNEL == 'ga' 
+        id: jira_keys
+        uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
+        with:
+          commit-message: '${{ env.CHANGELOG }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Push Deployment Info to Jira
+        if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' && github.repository_owner == 'elementor' # Only for GA releases
+        uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
+        with:
+          client-id: '${{ secrets.JIRA_CLIENT_ID }}'
+          client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
+          cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
+          issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
+          display-name: "${{ env.PACKAGE_VERSION }}"
+          url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          description: "This PR was merged to the following release(s)"
+          last-updated: '${{ env.NOW }}'
+          state: 'successful'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          environment-id: "${{ env.PACKAGE_VERSION }}"
+          environment-display-name: "${{ env.PACKAGE_VERSION }}"
+          environment-type: 'production'
+      - name: Publish to WordPress.org SVN
+        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        env:
+          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+      - name: Release Dev From Beta
+        if: env.CHANNEL == 'beta' # Only for beta releases
+        uses: ./.github/workflows/release-dev-from-beta
+        with:
+          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
+          PLUGIN_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      - name: Generate Changelog Content For Slack
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
+        uses: ./.github/workflows/generate-slack-changelog
+      - name: Merge to master
+        if: env.CHANNEL == 'ga' # Only for GA releases
+        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
+        with:
+          type: now
+          from_branch: ${{ github.ref }}
+          target_branch: master
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+      # TODO: Remove comment after we will be sure that the release is working. ( We want to create for the first time a release without deleting the tag)
+      # - name: Remove git tag
+      #   uses: dev-drprasad/delete-tag-and-release@085c6969f18bad0de1b9f3fe6692a3cd01f64fe5 # v0.2.0
+      #   with:
+      #     tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Post To Slack Created Release
+        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' # Only for GA and Cloud releases
+        uses : ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          PAYLOAD: |
+                  {
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                        },
+                        "accessory": {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "Open :point_left:",
+                            "emoji": true
+                          },
+                          "value": "open-release",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.RELEASE_NAME }}",
+                          "action_id": "button-action"
+                        }
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*${{ env.RELEASE_NAME }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
+                        }
+                      }
+                    ]
+                  }
