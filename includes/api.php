@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Api\Config\Site_Remote_Feed;
+use Elementor\Core\Api\Config\Site_Remote_Library;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,11 +21,13 @@ class Api {
 
 	/**
 	 * Elementor library option key.
+	 * @deprecated 3.14.0 Use \Elementor\Core\Api\Config\Site_Remote_Library::get_key() instead.
 	 */
 	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
 
 	/**
 	 * Elementor feed option key.
+	 * @deprecated 3.14.0 Use \Elementor\Core\Api\Config\Site_Remote_Feed::get_key() instead.
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
@@ -101,13 +105,13 @@ class Api {
 			}
 
 			if ( isset( $info_data['library'] ) ) {
-				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
+				Site_Remote_Library::set( $info_data['library'] );
 
 				unset( $info_data['library'] );
 			}
 
 			if ( isset( $info_data['feed'] ) ) {
-				update_option( self::FEED_OPTION_KEY, $info_data['feed'], 'no' );
+				Site_Remote_Feed::set( $info_data['feed'] );
 
 				unset( $info_data['feed'] );
 			}
@@ -184,13 +188,7 @@ class Api {
 	public static function get_library_data( $force_update = false ) {
 		self::get_info_data( $force_update );
 
-		$library_data = get_option( self::LIBRARY_OPTION_KEY );
-
-		if ( empty( $library_data ) ) {
-			return [];
-		}
-
-		return $library_data;
+		return Site_Remote_Library::get();
 	}
 
 	/**
@@ -210,13 +208,7 @@ class Api {
 	public static function get_feed_data( $force_update = false ) {
 		self::get_info_data( $force_update );
 
-		$feed = get_option( self::FEED_OPTION_KEY );
-
-		if ( empty( $feed ) ) {
-			return [];
-		}
-
-		return $feed;
+		return Site_Remote_Feed::get();
 	}
 
 	/**
