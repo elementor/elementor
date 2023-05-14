@@ -240,6 +240,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.13.2 - 2023-05-11 =
+
+* Security Fix: Addressed security weaknesses in access management related functions
+
+= 3.13.1 - 2023-05-09 =
+
+* Tweak: Removed autocomplete functionality in Color Picker
+* Fix: 'Editing Handle' location issue in various places in the Editor
+
 = 3.13.0 - 2023-05-08 =
 
 * New: Introducing Elementor AI Write - Boost your productivity and efficiency, while elevating your website's design and content.
