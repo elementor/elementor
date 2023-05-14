@@ -15,4 +15,18 @@ class User_Introduction extends User_Config_Base {
 	public static function get_default() {
 		return [];
 	}
+
+	public static function validate( $value ) {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		foreach ( $value as $key => $val ) {
+			if ( ! is_string( $key ) || ! is_bool( $val ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

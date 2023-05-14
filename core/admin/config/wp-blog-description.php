@@ -17,6 +17,6 @@ class WP_Blog_Description extends WP_Option_Base {
 	}
 
 	protected static function validate($value) {
-		return !empty($value) && is_string($value);
+		return is_string($value);
 	}
 }
