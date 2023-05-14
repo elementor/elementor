@@ -14,6 +14,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	public function test_activate_single_experiment() {
 		// Arrange
+		$wp_cli = new Wp_Cli();
 		$experiment = 'container';
 		$experiments_manager = Plugin::instance()->experiments;
 		$option = $experiments_manager->get_feature_option_key( $experiment );
@@ -31,6 +32,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	public function test_activate_multiple_experiments() {
 		// Arrange
+		$wp_cli = new Wp_Cli();
 		$experiment1 = 'container';
 		$experiment2 = 'admin_menu_rearrangement';
 		$experiments_manager = Plugin::instance()->experiments;
@@ -53,6 +55,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	public function test_deactivate_single_experiment() {
 		// Arrange
+		$wp_cli = new Wp_Cli();
 		$experiment = 'container';
 		$experiments_manager = Plugin::instance()->experiments;
 		$option = $experiments_manager->get_feature_option_key( $experiment );
@@ -70,6 +73,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	public function test_deactivate_multiple_experiments() {
 		// Arrange
+		$wp_cli = new Wp_Cli();
 		$experiment1 = 'container';
 		$experiment2 = 'admin_menu_rearrangement';
 		$experiments_manager = Plugin::instance()->experiments;
