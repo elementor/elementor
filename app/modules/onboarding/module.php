@@ -3,6 +3,7 @@ namespace Elementor\App\Modules\Onboarding;
 
 use Automatic_Upgrader_Skin;
 use Elementor\App\Modules\Onboarding\Options\Site_Is_Onboarded;
+use Elementor\Core\Admin\Config\WP_Blog_Name;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
@@ -67,7 +68,6 @@ class Module extends BaseModule {
 
 		$custom_site_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_site_logo_id, 'full' );
-		$site_name = get_option( 'blogname', '' );
 
 		$hello_theme = wp_get_theme( 'hello-elementor' );
 		$hello_theme_errors = is_object( $hello_theme->errors() ) ? $hello_theme->errors()->errors : [];
@@ -85,7 +85,7 @@ class Module extends BaseModule {
 			'helloActivated' => 'hello-elementor' === get_option( 'template' ),
 			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
-			'siteName' => esc_html( $site_name ),
+			'siteName' => esc_html( WP_Blog_Name::get() ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',
@@ -181,8 +181,7 @@ class Module extends BaseModule {
 		 */
 		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
 
-		// The site name is sanitized in `update_options()`
-		update_option( 'blogname', $new_site_name );
+		WP_Blog_Name::set( $new_site_name );
 
 		return [
 			'status' => 'success',

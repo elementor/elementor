@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits;
 
+use Elementor\Core\Admin\Config\WP_Blog_Description;
+use Elementor\Core\Admin\Config\WP_Blog_Name;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
@@ -115,8 +117,8 @@ class Test_Manager extends Elementor_Test_Base {
 		// Make sure that it fetched again from the DB and not from the cache.
 		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
 
-		$name = get_option( 'blogname' );
-		$description = get_option( 'blogdescription' );
+		$name = WP_Blog_Name::get();
+		$description = WP_Blog_Description::get();
 
 		$expected_name = 'Test name';
 		$expected_description = 'Test description';
@@ -124,15 +126,15 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNotEquals( $name, $expected_name );
 		$this->assertNotEquals( $description, $expected_description );
 
-		update_option( 'blogname', $expected_name );
-		update_option( 'blogdescription', $expected_description );
+		WP_Blog_Name::set( $expected_name );
+		WP_Blog_Description::set( $expected_description );
 
 		$this->assertEquals( $expected_name, $kit->get_settings( 'site_name' ) );
 		$this->assertEquals( $expected_description, $kit->get_settings( 'site_description' ) );
 		$this->assertEquals( $custom_colors_array, $kit->get_settings( 'custom_colors' ), 'It should not remove the old kit settings.' );
 
-		update_option( 'blogname', $name );
-		update_option( 'blogdescription', $description );
+		WP_Blog_Name::set( $name );
+		WP_Blog_Description::set( $description );
 	}
 
 	public function test_it_should_clear_files_cache_when_saving_kit() {

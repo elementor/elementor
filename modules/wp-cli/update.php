@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Modules\WpCli;
 
+use Elementor\Core\Admin\Config\WP_Blog_Name;
+use Elementor\Core\Admin\Config\WP_Home;
+
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,11 +54,11 @@ class Update extends \WP_CLI_Command {
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
-				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );
+				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . WP_Blog_Name::get() );
 
 				$this->do_db_upgrade( $assoc_args );
 
-				\WP_CLI::success( 'Done! - ' . get_option( 'home' ) );
+				\WP_CLI::success( 'Done! - ' . WP_Home::get() );
 
 				restore_current_blog();
 			}

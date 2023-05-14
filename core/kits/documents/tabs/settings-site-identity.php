@@ -3,6 +3,9 @@
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Admin\Config\WP_Blog_Description;
+use Elementor\Core\Admin\Config\WP_Blog_Name;
+use Elementor\Core\Admin\Config\WP_Site_Icon;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Files\Uploads_Manager;
 
@@ -63,7 +66,7 @@ class Settings_Site_Identity extends Tab_Base {
 			'site_name',
 			[
 				'label' => esc_html__( 'Site Name', 'elementor' ),
-				'default' => get_option( 'blogname' ),
+				'default' => WP_Blog_Name::get(),
 				'placeholder' => esc_html__( 'Choose name', 'elementor' ),
 				'label_block' => true,
 				'export' => false,
@@ -131,11 +134,11 @@ class Settings_Site_Identity extends Tab_Base {
 		}
 
 		if ( isset( $data['settings']['site_name'] ) ) {
-			update_option( 'blogname', $data['settings']['site_name'] );
+			WP_Blog_Name::set( $data['settings']['site_name'] );
 		}
 
 		if ( isset( $data['settings']['site_description'] ) ) {
-			update_option( 'blogdescription', $data['settings']['site_description'] );
+			WP_Blog_Description::set( $data['settings']['site_description'] );
 		}
 
 		if ( isset( $data['settings']['site_logo'] ) ) {
@@ -143,7 +146,7 @@ class Settings_Site_Identity extends Tab_Base {
 		}
 
 		if ( isset( $data['settings']['site_favicon'] ) ) {
-			update_option( 'site_icon', $data['settings']['site_favicon']['id'] );
+			WP_Site_Icon::set( $data['settings']['site_favicon']['id'] );
 		}
 	}
 }

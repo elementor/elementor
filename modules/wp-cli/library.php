@@ -2,6 +2,8 @@
 namespace Elementor\Modules\WpCli;
 
 use Elementor\Api;
+use Elementor\Core\Admin\Config\WP_Blog_Name;
+use Elementor\Core\Admin\Config\WP_Home;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -49,11 +51,11 @@ class Library extends \WP_CLI_Command {
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
-				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );
+				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . WP_Blog_Name::get() );
 
 				$this->do_sync( isset( $assoc_args['force'] ) );
 
-				\WP_CLI::success( 'Done! - ' . get_option( 'home' ) );
+				\WP_CLI::success( 'Done! - ' . WP_Home::get() );
 
 				restore_current_blog();
 			}
