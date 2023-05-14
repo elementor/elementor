@@ -228,7 +228,7 @@ class Tracker {
 			self::send_tracking_data( true );
 		} else {
 			Site_Usage_Opt_In::set_off();
-			Site_Usage_Notice::set_off();
+			Site_Usage_Notice::set_hidden();
 		}
 	}
 

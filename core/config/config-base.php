@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Config_Base {
 	const PREFIX = '';
 
-	const OPTION_TRUE = true;
-	const OPTION_FALSE = false;
+	const VALUE_TRUE = true;
+	const VALUE_FALSE = false;
 
 	protected static function get_options() {
 		throw new \Error( __METHOD__ . ' must be implemented' );

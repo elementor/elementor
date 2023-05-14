@@ -12,9 +12,6 @@ class User_Beta_Tester extends User_Config_Base {
 
 	use Config_Boolean_Trait;
 
-	const CONFIG_TRUE = true ;
-	const CONFIG_FALSE = false;
-
 	const SIGNUP = 'beta_tester_signup';
 
 	public static function get_key(): string {
@@ -22,6 +19,6 @@ class User_Beta_Tester extends User_Config_Base {
 	}
 
 	public static function get_default() {
-		return static::CONFIG_FALSE;
+		return static::VALUE_FALSE;
 	}
 }

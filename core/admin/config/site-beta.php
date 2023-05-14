@@ -21,6 +21,6 @@ class Site_Beta extends Site_Config_Base {
 	}
 
 	public static function get_default() {
-		return static::CONFIG_FALSE;
+		return static::VALUE_FALSE;
 	}
 }

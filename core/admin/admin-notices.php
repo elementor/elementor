@@ -203,7 +203,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( Site_Usage_Notice::is_off() ) {
+		if ( Site_Usage_Notice::is_hidden() ) {
 			return false;
 		}
 

@@ -10,13 +10,13 @@ trait Config_Boolean_Trait {
 
 	protected static function get_options(): array {
 		return [
-			static::CONFIG_TRUE => __( 'True', 'elementor' ),
-			static::CONFIG_FALSE => __( 'False', 'elementor' ),
+			static::VALUE_TRUE => __( 'True', 'elementor' ),
+			static::VALUE_FALSE => __( 'False', 'elementor' ),
 		];
 	}
 
 	public static function is_true(): bool {
-		return static::CONFIG_TRUE === static::get();
+		return static::VALUE_TRUE === static::get();
 	}
 
 	public static function is_false(): bool {
@@ -24,10 +24,10 @@ trait Config_Boolean_Trait {
 	}
 
 	public static function set_true(): bool {
-		return static::set( static::CONFIG_TRUE );
+		return static::set( static::VALUE_TRUE );
 	}
 
 	public static function set_false(): bool {
-		return static::set( static::CONFIG_FALSE );
+		return static::set( static::VALUE_FALSE );
 	}
 }

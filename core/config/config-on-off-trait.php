@@ -12,8 +12,8 @@ trait Config_On_Off_Trait {
 
 	protected static function get_options(): array {
 		return [
-			static::CONFIG_TRUE => __( 'On', 'elementor' ),
-			static::CONFIG_FALSE => __( 'Off', 'elementor' ),
+			static::VALUE_TRUE => __( 'On', 'elementor' ),
+			static::VALUE_FALSE => __( 'Off', 'elementor' ),
 		];
 	}
 
