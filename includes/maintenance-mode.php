@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\Maintenance_Mode\Config\Site_Maintenance_Mode_Exclude_Mode as Exclude_Mode;
+use Elementor\Modules\Maintenance_Mode\Config\Site_Maintenance_Mode_Exclude_Roles as Exclude_Roles;
+use Elementor\Modules\Maintenance_Mode\Config\Site_Maintenance_Mode_Mode as Mode;
+use Elementor\Modules\Maintenance_Mode\Config\Site_Maintenance_Mode_Template_Id as Template_Id;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,16 +23,19 @@ class Maintenance_Mode {
 
 	/**
 	 * The options prefix.
+	 * @deprecated 3.14.0
 	 */
 	const OPTION_PREFIX = 'elementor_maintenance_mode_';
 
 	/**
 	 * The maintenance mode.
+	 * @deprecated 3.14.0 Use Site_Maintenance_Mode_Mode::OPTION_MAINTENANCE instead.
 	 */
 	const MODE_MAINTENANCE = 'maintenance';
 
 	/**
 	 * The coming soon mode.
+	 * @deprecated 3.14.0 Use Site_Maintenance_Mode_Mode::OPTION_COMING_SOON instead.
 	 */
 	const MODE_COMING_SOON = 'coming_soon';
 
@@ -107,8 +114,6 @@ class Maintenance_Mode {
 
 		$user = wp_get_current_user();
 
-		$exclude_mode = self::get( 'exclude_mode', [] );
-
 		$is_login_page = false;
 
 		/**
@@ -126,12 +131,12 @@ class Maintenance_Mode {
 			return;
 		}
 
-		if ( 'logged_in' === $exclude_mode && is_user_logged_in() ) {
+		if ( Exclude_Mode::is_logged_in() && is_user_logged_in() ) {
 			return;
 		}
 
-		if ( 'custom' === $exclude_mode ) {
-			$exclude_roles = self::get( 'exclude_roles', [] );
+		if ( Exclude_Mode::is_custom() ) {
+			$exclude_roles = Exclude_Roles::get();
 			$user_roles = $user->roles;
 
 			if ( is_multisite() && is_super_admin() ) {
@@ -147,7 +152,7 @@ class Maintenance_Mode {
 
 		add_filter( 'body_class', [ $this, 'body_class' ] );
 
-		if ( 'maintenance' === self::get( 'mode' ) ) {
+		if ( Mode::is_maintenance() ) {
 			$protocol = wp_get_server_protocol();
 			header( "$protocol 503 Service Unavailable", true, 503 );
 			header( 'Content-Type: text/html; charset=utf-8' );
@@ -155,11 +160,11 @@ class Maintenance_Mode {
 		}
 
 		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$GLOBALS['post'] = get_post( Template_Id::get() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
 		query_posts( [
-			'p' => self::get( 'template_id' ),
+			'p' => Template_Id::get(),
 			'post_type' => Source_Local::CPT,
 		] );
 	}
@@ -180,16 +185,6 @@ class Maintenance_Mode {
 	 * @param Tools $tools An instance of the Tools settings page.
 	 */
 	public function register_settings_fields( Tools $tools ) {
-		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [
-			'type' => 'page',
-		] );
-
-		$templates_options = [];
-
-		foreach ( $templates as $template ) {
-			$templates_options[ $template['template_id'] ] = esc_html( $template['title'] );
-		}
-
 		ob_start();
 
 		$this->print_template_description();
@@ -211,11 +206,7 @@ class Maintenance_Mode {
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
-									'options' => [
-										'' => esc_html__( 'Disabled', 'elementor' ),
-										self::MODE_COMING_SOON => esc_html__( 'Coming Soon', 'elementor' ),
-										self::MODE_MAINTENANCE => esc_html__( 'Maintenance', 'elementor' ),
-									],
+									'options' => ,
 									'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
 												esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
 												'</div>' .
@@ -227,19 +218,16 @@ class Maintenance_Mode {
 												'</div>',
 								],
 							],
-							'maintenance_mode_exclude_mode' => [
+								Exclude_Mode::get_key() => [
 								'label' => esc_html__( 'Who Can Access', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
-									'std' => 'logged_in',
-									'options' => [
-										'logged_in' => esc_html__( 'Logged In', 'elementor' ),
-										'custom' => esc_html__( 'Custom', 'elementor' ),
-									],
+									'std' => Exclude_Mode::get_default(),
+									'options' => Exclude_Mode::get_options(),
 								],
 							],
-							'maintenance_mode_exclude_roles' => [
+								Exclude_Roles::get_key() => [
 								'label' => esc_html__( 'Roles', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
@@ -247,14 +235,14 @@ class Maintenance_Mode {
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
 							],
-							'maintenance_mode_template_id' => [
+								Template_Id::get_key() => [
 								'label' => esc_html__( 'Choose Template', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
-									'std' => '',
+									'std' => Template_Id::get_default(),
 									'show_select' => true,
-									'options' => $templates_options,
+									'options' => Template_Id::get_options(),
 									'desc' => $template_description,
 								],
 							],
@@ -284,7 +272,7 @@ class Maintenance_Mode {
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
 		] );
 
-		$document = Plugin::$instance->documents->get( self::get( 'template_id' ) );
+		$document = Plugin::$instance->documents->get( Template_Id::get() );
 
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
@@ -312,10 +300,15 @@ class Maintenance_Mode {
 		<?php
 	}
 
+	/**
+	 * @param $old_value
+	 * @param $value
+	 *
+	 * @deprecated 3.14.0 Use `Site_Maintenance_Mode_Mode::on_wp_change()` instead.
+	 * @return void
+	 */
 	public function on_update_mode( $old_value, $value ) {
-		if ( $old_value !== $value ) {
-			do_action( 'elementor/maintenance_mode/mode_changed', $old_value, $value );
-		}
+		Mode::on_wp_change( $value, $old_value );
 	}
 
 	/**
@@ -327,9 +320,7 @@ class Maintenance_Mode {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'update_option_elementor_maintenance_mode_mode', [ $this, 'on_update_mode' ], 10, 2 );
-
-		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
+		$is_enabled = ! Mode::is_disabled() && (bool) Template_Id::get();
 
 		if ( is_admin() ) {
 			$page_id = Tools::PAGE_ID;
@@ -357,7 +348,7 @@ class Maintenance_Mode {
 	 * @access private
 	 */
 	private function print_template_description() {
-		$template_id = self::get( 'template_id' );
+		$template_id = Template_Id::get();
 
 		$edit_url = '';
 
