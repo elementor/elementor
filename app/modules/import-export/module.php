@@ -50,6 +50,7 @@ class Module extends BaseModule {
 	const META_KEY_ELEMENTOR_IMPORT_SESSION_ID = '_elementor_import_session_id';
 
 	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
+	const IMPORT_PLUGINS_ACTION = 'import-plugins';
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -441,6 +442,22 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+
+		// TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+		if ( self::IMPORT_PLUGINS_ACTION === ElementorUtils::get_super_global_value( $_SERVER, 'HTTP_X_ELEMENTOR_ACTION' ) ) {
+			add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
+		}
+		// TODO ^^^
+	}
+
+	/**
+	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
+	 *
+	 * TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+	 * @return array
+	 */
+	public function empty_pages(): array {
+		return [];
 	}
 
 	private function ensure_writing_permissions() {
