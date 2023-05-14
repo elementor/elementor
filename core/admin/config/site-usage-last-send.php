@@ -1,13 +1,13 @@
 <?php
-namespace Elementor\Core\Admin\Options;
+namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Options\Site_Option;
+use Elementor\Core\Config\Site_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Usage_Last_Send extends Site_Option {
+class Site_Usage_Last_Send extends Site_Config_Base {
 	public static function get_key() {
 		return 'tracker_last_send';
 	}

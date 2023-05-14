@@ -8,7 +8,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Options\Manager as Options_Manager;
+use Elementor\Core\Config\Manager as Config_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
@@ -571,9 +571,9 @@ class Plugin {
 	public $assets_loader;
 
 	/**
-	 * @var Core\Options\Manager
+	 * @var Core\Config\Manager
 	 */
-	public $options;
+	public $config;
 
 	/**
 	 * Clone.
@@ -709,7 +709,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
-		$this->options = new Options_Manager();
+		$this->config = new Config_Manager();
 		$this->experiments = new Experiments_Manager();
 		$this->breakpoints = new Breakpoints_Manager();
 		$this->inspector = new Inspector();

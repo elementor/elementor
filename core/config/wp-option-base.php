@@ -1,12 +1,13 @@
 <?php
 
-namespace Elementor\Core\Options;
+namespace Elementor\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Site_Option extends Option_Base {
+abstract class WP_Option_Base extends Config_Base {
+	const PREFIX = '';
 
 	public static function on_register() {
 		if ( method_exists( static::class, 'on_wp_change' ) ) {
@@ -24,15 +25,8 @@ abstract class Site_Option extends Option_Base {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
-	public static function should_autoload() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
-
 	final public static function get_raw() {
-		return add_option( static::get_full_key() );
+		return get_option( static::get_full_key() );
 	}
 
 	final public static function get() {
@@ -43,8 +37,8 @@ abstract class Site_Option extends Option_Base {
 		return delete_option( static::get_full_key() );
 	}
 
-	final protected static function setter( $value ): bool {
-		return update_option( static::get_full_key(), $value, static::should_autoload() );
+	protected static function setter( $value ): bool {
+		return update_option( static::get_full_key(), $value );
 	}
 
 	protected static function has_permission( $value ) {

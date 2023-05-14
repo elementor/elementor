@@ -1,8 +1,8 @@
 <?php
 namespace Elementor;
 
-use elementor\core\admin\options\Site_Font_Display;
-use elementor\core\admin\options\Site_Google_Fonts;
+use Elementor\Core\Admin\Config\Site_Font_Display;
+use Elementor\Core\Admin\Config\Site_Google_Fonts;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {

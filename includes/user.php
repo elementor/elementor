@@ -1,8 +1,8 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Admin\Options\User_Beta_Tester;
-use Elementor\Core\Admin\Options\User_Introduction;
+use Elementor\Core\Admin\Config\User_Beta_Tester;
+use Elementor\Core\Admin\Config\User_Introduction;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Config\Site_Usage_Opt_In;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
 use Elementor\Core\Utils\Collection;

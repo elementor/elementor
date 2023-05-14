@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use elementor\core\admin\options\Site_Google_Fonts;
+use Elementor\Core\Admin\Config\Site_Google_Fonts;
 use Elementor\Fonts;
 use ElementorEditorTesting\Elementor_Test_Base;
 

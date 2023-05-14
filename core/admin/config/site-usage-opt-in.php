@@ -1,13 +1,13 @@
 <?php
-namespace Elementor\Core\Admin\Options;
+namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Options\On_Off_Option_Base;
+use Elementor\Core\Config\On_Off_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Usage_Opt_In extends On_Off_Option_Base {
+class Site_Usage_Opt_In extends On_Off_Config_Base {
 	public static function get_key() {
 		return 'allow_tracking';
 	}
@@ -17,6 +17,6 @@ class Site_Usage_Opt_In extends On_Off_Option_Base {
 	}
 
 	public static function get_default() {
-		return static::OPTION_FALSE;
+		return static::CONFIG_FALSE;
 	}
 }

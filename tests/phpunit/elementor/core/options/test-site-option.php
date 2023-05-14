@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Core\Options;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Site_Option_Test extends \Elementor\Core\Options\Site_Option {
+class Site_Option_Test extends \Elementor\Core\Config\Site_Config_Base {
 	public static function should_autoload() {
 		return false;
 	}

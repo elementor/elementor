@@ -2,8 +2,8 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
-use Elementor\Core\Admin\Options\Site_Usage_Notice;
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Config\Site_Usage_Notice;
+use Elementor\Core\Admin\Config\Site_Usage_Opt_In;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;

@@ -2,7 +2,7 @@
 namespace Elementor\Core\Editor\Config_Providers;
 
 use Elementor\Api;
-use Elementor\Core\Admin\Options\User_Introduction;
+use Elementor\Core\Admin\Config\User_Introduction;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;

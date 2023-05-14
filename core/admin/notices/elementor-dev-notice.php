@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\Admin\Notices;
 
-use Elementor\Core\Admin\Options\Site_Beta;
-use Elementor\Core\Options\Site_Option;
+use Elementor\Core\Admin\Config\Site_Beta;
+use Elementor\Core\Config\Site_Config_Base;
 use Elementor\User;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -161,7 +161,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 				return true;
 			}
 
-			/** @var Site_Option $option_class */
+			/** @var Site_Config_Base $option_class */
 			return $option_class::is_on();
 		}, false );
 	}

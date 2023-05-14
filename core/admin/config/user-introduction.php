@@ -1,13 +1,13 @@
 <?php
-namespace Elementor\Core\Admin\Options;
+namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Options\User_Option;
+use Elementor\Core\Config\User_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class User_Introduction extends User_Option {
+class User_Introduction extends User_Config_Base {
 	public static function get_key() {
 		return 'introduction';
 	}

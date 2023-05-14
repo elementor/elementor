@@ -1,13 +1,13 @@
 <?php
-namespace elementor\core\admin\options;
+namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Options\Site_Option;
+use Elementor\Core\Config\Site_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_Font_Display extends Site_Option {
+class Site_Font_Display extends Site_Config_Base {
 
 	const OPTION_AUTO = 'auto';
 	const OPTION_BLOCK = 'block';

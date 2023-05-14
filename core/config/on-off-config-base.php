@@ -1,16 +1,16 @@
 <?php
 
-namespace Elementor\Core\Options;
+namespace Elementor\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class On_Off_Option_Base extends Boolean_Option_Base {
+abstract class On_Off_Config_Base extends Boolean_Config_Base {
 	protected static function get_options() {
 		return [
-			static::OPTION_TRUE => __( 'On', 'elementor' ),
-			static::OPTION_FALSE => __( 'Off', 'elementor' ),
+			static::CONFIG_TRUE => __( 'On', 'elementor' ),
+			static::CONFIG_FALSE => __( 'Off', 'elementor' ),
 		];
 	}
 

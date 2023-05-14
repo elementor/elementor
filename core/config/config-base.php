@@ -1,13 +1,13 @@
 <?php
 
-namespace Elementor\Core\Options;
+namespace Elementor\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Option_Base {
-	const PREFIX = 'elementor_';
+abstract class Config_Base {
+	const PREFIX = '';
 
 	protected static function get_options() {
 		throw new \Error( __METHOD__ . ' must be implemented' );

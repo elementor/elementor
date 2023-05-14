@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\App\Modules\Onboarding\Options;
 
-use elementor\core\options\Yes_No_Option_Base;
+use Elementor\Core\Config\Yes_No_Option_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

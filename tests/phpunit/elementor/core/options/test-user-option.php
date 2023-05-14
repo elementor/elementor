@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Core\Options;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class User_Option_Test extends \Elementor\Core\Options\User_Option {
+class User_Option_Test extends \Elementor\Core\Config\User_Config_Base {
 
 	public static function get_key() {
 		return 'test';

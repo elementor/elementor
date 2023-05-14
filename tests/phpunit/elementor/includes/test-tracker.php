@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use Elementor\Core\Admin\Options\Site_Beta;
-use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
-use elementor\core\admin\options\Site_Font_Display;
-use elementor\core\admin\options\Site_Google_Fonts;
+use Elementor\Core\Admin\Config\Site_Beta;
+use Elementor\Core\Admin\Config\Site_CSS_Print_Method;
+use Elementor\Core\Admin\Config\Site_Font_Display;
+use Elementor\Core\Admin\Config\Site_Google_Fonts;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;

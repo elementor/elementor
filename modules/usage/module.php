@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\Usage;
 
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Config\Site_Usage_Opt_In;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;

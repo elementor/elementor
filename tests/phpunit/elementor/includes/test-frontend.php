@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use elementor\core\admin\options\Site_Font_Display;
+use Elementor\Core\Admin\Config\Site_Font_Display;
 use Elementor\Plugin;
 use Elementor\Frontend;
 use ElementorEditorTesting\Elementor_Test_Base;

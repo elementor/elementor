@@ -1,12 +1,13 @@
 <?php
 
-namespace Elementor\Core\Options;
+namespace Elementor\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class User_Option extends Option_Base {
+abstract class User_Config_Base extends Config_Base {
+	const PREFIX = 'elementor_';
 
 	public static function get() {
 		$value = get_user_option( static::get_full_key(), get_current_user_id() );

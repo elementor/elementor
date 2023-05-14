@@ -1,14 +1,14 @@
 <?php
-namespace Elementor\Core\Admin\Options;
+namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Options\Site_Option;
+use Elementor\Core\Config\Site_Config_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_CSS_Print_Method extends Site_Option {
+class Site_CSS_Print_Method extends Site_Config_Base {
 	const OPTION_EXTERNAL = 'external';
 	const OPTION_INTERNAL = 'internal';
 

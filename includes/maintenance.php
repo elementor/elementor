@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use elementor\core\admin\options\Site_Font_Display;
+use Elementor\Core\Admin\Config\Site_Font_Display;
 use Elementor\Core\Kits\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 

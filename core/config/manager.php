@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Options;
+namespace Elementor\Core\Config;
 
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -16,16 +16,16 @@ class Manager extends BaseModule {
 		parent::__construct();
 
 		add_action( 'elementor/init', function() {
-			do_action( 'elementor/options/register', $this );
+			do_action( 'elementor/config/register', $this );
 		}, 0 );
 	}
 
 	public function get_name() {
-		return 'options';
+		return 'config';
 	}
 
 	/**
-	 * @param Option_Base|string $classname
+	 * @param Config_Base|string $classname
 	 */
 	public function register( $classname ) {
 		$this->registered[ $classname::get_key() ] = $classname::get_key();
@@ -38,11 +38,11 @@ class Manager extends BaseModule {
 	/**
 	 * @param $key
 	 *
-	 * @return Option_Base
+	 * @return Config_Base
 	 */
 	public function get( $key ) {
 		if ( ! isset( $this->registered[ $key ] ) ) {
-			throw new \Error( esc_attr( $key ) . ' is not a valid option.' );
+			throw new \Error( esc_attr( $key ) . ' is not a valid config.' );
 		}
 
 		return $this->registered[ $key ];

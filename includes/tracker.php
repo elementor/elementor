@@ -2,9 +2,9 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\EventTracker\DB as Events_DB_Manager;
-use Elementor\Core\Admin\Options\Site_Usage_Last_Send;
-use Elementor\Core\Admin\Options\Site_Usage_Notice;
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Config\Site_Usage_Last_Send;
+use Elementor\Core\Admin\Config\Site_Usage_Notice;
+use Elementor\Core\Admin\Config\Site_Usage_Opt_In;
 use Elementor\Core\Experiments\Experiments_Reporter;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 

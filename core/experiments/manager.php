@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Experiments;
 
-use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Config\Site_Usage_Opt_In;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Collection;
