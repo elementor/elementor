@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Admin\Config;
 
-use Elementor\Core\Config\Config_Boolean_Trait;
+use Elementor\Core\Config\Config_On_Off_Trait;
 use Elementor\Core\Config\Site_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Site_Google_Fonts extends Site_Config_Base {
 
-	use Config_Boolean_Trait;
+	use Config_On_Off_Trait;
 
 	const VALUE_TRUE = '1';
 
