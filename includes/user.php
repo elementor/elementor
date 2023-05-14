@@ -262,7 +262,7 @@ class User {
 			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
 		}
 
-		User_Beta_Tester::set_on();
+		User_Beta_Tester::set_true();
 
 		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,

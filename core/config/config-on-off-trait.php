@@ -6,27 +6,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Site_On_Off_Config_Base extends Site_Boolean_Config_Base {
-	protected static function get_options() {
+trait Config_On_Off_Trait {
+
+	use Config_Boolean_Trait;
+
+	protected static function get_options(): array {
 		return [
 			static::CONFIG_TRUE => __( 'On', 'elementor' ),
 			static::CONFIG_FALSE => __( 'Off', 'elementor' ),
 		];
 	}
 
-	public static function is_on() {
+	public static function is_on(): bool {
 		return static::is_true();
 	}
 
-	public static function is_off() {
+	public static function is_off(): bool {
 		return static::is_false();
 	}
 
-	public static function set_on() {
+	public static function set_on(): bool {
 		return static::set_true();
 	}
 
-	public static function set_off() {
+	public static function set_off(): bool {
 		return static::set_false();
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Admin\Config;
 
+use Elementor\Core\Config\Config_Boolean_Trait;
 use Elementor\Core\Config\User_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,13 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class User_Beta_Tester extends User_Config_Base {
+
+	use Config_Boolean_Trait;
+
+	const CONFIG_TRUE = true ;
+	const CONFIG_FALSE = false;
+
 	const SIGNUP = 'beta_tester_signup';
 
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'beta_tester';
 	}
 
 	public static function get_default() {
-		return static::OPTION_NO;
+		return static::CONFIG_FALSE;
 	}
 }

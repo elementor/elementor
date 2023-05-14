@@ -6,7 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Site_Yes_No_Option_Base extends Site_Boolean_Config_Base {
+trait Config_Yes_No_Trait {
+
+	use Config_Boolean_Trait;
 
 	protected static function get_options() {
 		return [

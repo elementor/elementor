@@ -6,30 +6,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Site_Boolean_Config_Base extends Site_Config_Base {
-	const CONFIG_TRUE = true;
-	const CONFIG_FALSE = false;
+trait Config_Boolean_Trait {
 
-	protected static function get_options() {
+	protected static function get_options(): array {
 		return [
 			static::CONFIG_TRUE => __( 'True', 'elementor' ),
 			static::CONFIG_FALSE => __( 'False', 'elementor' ),
 		];
 	}
 
-	public static function is_true() {
+	public static function is_true(): bool {
 		return static::CONFIG_TRUE === static::get();
 	}
 
-	public static function is_false() {
+	public static function is_false(): bool {
 		return ! static::is_true();
 	}
 
-	public static function set_true() {
+	public static function set_true(): bool {
 		return static::set( static::CONFIG_TRUE );
 	}
 
-	public static function set_false() {
+	public static function set_false(): bool {
 		return static::set( static::CONFIG_FALSE );
 	}
 }
