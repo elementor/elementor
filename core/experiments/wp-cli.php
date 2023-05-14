@@ -31,7 +31,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		// Activate experiment callback.
 		$activate = function ( $site = '', $id = null ) use ( $args, $is_network ) {
-			$plural = count($args) > 0 ? 's' : '';
+			$plural = count( $args ) > 0 ? 's' : '';
 			$success = 'Experiment' . $plural . ' activated successfully';
 			$error = 'Cannot activate experiment' . $plural;
 
@@ -80,7 +80,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		// Activate experiment callback.
 		$activate = function ( $site = '' ) use ( $args, $is_network ) {
-			$plural = count($args) > 0 ? 's' : '';
+			$plural = count( $args ) > 0 ? 's' : '';
 			$success = 'Experiment' . $plural . ' deactivated successfully';
 			$error = 'Cannot deactivate experiment' . $plural;
 
