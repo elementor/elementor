@@ -14,10 +14,10 @@ $e-gray-300:	#9DA5AE;
 $e-gray-400:	#818A96;
 $e-gray-500:	#69727D;
 $e-gray-600:	#515962;
-$e-gray-700:	#3A3F45;
-$e-gray-725:	#2F3032;
-$e-gray-750:	#222325;
-$e-gray-800:	#1A1C1E;
+$e-gray-700:	#3f444b;
+$e-gray-725:	#333438;
+$e-gray-750:	#2b2c31;
+$e-gray-800:	#1f2124;
 $e-gray-900:	#0C0D0E;
 
 //Editor Facelift 2023 - Teal
@@ -131,6 +131,8 @@ $wp-warning: #ffb900;
 $wp-warning-text: #f56e28;
 $wp-success: #46b450;
 $wp-success-text: #79ba49;
+//BC for wp-admin (previous version)
+$wp-admin-brand-color: #93003c;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -139,6 +141,7 @@ $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 $slides_gui: rgba(238, 238, 238, .9);
 
 $transition-hover: all .3s;
+$default-border-radius: 3px;
 $control-unit: 27px;
 $panel-width: 280px;
 $panel-xl-width: 300px;
