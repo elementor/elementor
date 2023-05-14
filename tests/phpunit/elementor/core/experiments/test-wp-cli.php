@@ -45,8 +45,8 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
 		// Assert
-		$this->assertEquals( true, $is_option1_active );
-		$this->assertEquals( true, $is_option2_active );
+		$this->assertEquals( true, $is_option1_active, $experiment1 );
+		$this->assertEquals( true, $is_option2_active, $experiment2 );
 	}
 
 	public function test_deactivate_single_experiment() {
@@ -82,7 +82,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
 		// Assert
-		$this->assertEquals( false, $is_option1_active );
-		$this->assertEquals( false, $is_option2_active );
+		$this->assertEquals( false, $is_option1_active, $experiment1 );
+		$this->assertEquals( false, $is_option2_active, $experiment2 );
 	}
 }
