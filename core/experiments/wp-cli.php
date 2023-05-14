@@ -45,7 +45,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		// Activate experiment callback.
-		$activate = function ( $site = '', $id = null ) use ( $args, $is_network ) {
+		$activate = function ( $site = '', $id = null ) use ( $experiments_manager, $experiments, $is_network, $success, $error ) {
 			foreach ( $experiments as $experiment ) {
 				$option = $experiments_manager->get_feature_option_key( $experiment );
 				update_option( $option, Experiments_Manager::STATE_ACTIVE );
@@ -99,7 +99,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		// Activate experiment callback.
-		$activate = function ( $site = '' ) use ( $args, $is_network ) {
+		$activate = function ( $site = '' ) use ( $experiments_manager, $experiments, $is_network, $success, $error ) {
 
 			foreach ( $experiments as $experiment ) {
 				$option = $experiments_manager->get_feature_option_key( $experiment );
