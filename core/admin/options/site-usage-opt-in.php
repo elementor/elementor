@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Admin\Options;
 
-use elementor\core\options\On_Off_Option_Base;
+use Elementor\Core\Options\On_Off_Option_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

@@ -1,6 +1,6 @@
 <?php
 
-namespace elementor\core\options;
+namespace Elementor\Core\Options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
