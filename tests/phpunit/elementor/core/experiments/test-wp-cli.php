@@ -15,7 +15,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 	public function test_activate_single_experiment() {
 		// Arrange
 		$wp_cli = new Wp_Cli();
-		$experiment = 'experiment1';
+		$experiment = 'experiment_to_activate';
 		$test_experiment = [
 			'name' => $experiment,
 			'state' => Experiments_Manager::STATE_INACTIVE,

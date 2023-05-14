@@ -124,7 +124,7 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user=root --password=""$EXTRA
+	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
 check_for_svn
