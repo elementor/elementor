@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Boolean_Config_Base extends Config_Base {
+abstract class Site_Boolean_Config_Base extends Site_Config_Base {
 	const CONFIG_TRUE = true;
 	const CONFIG_FALSE = false;
 

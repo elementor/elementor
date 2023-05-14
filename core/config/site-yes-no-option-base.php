@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Yes_No_Option_Base extends Boolean_Config_Base {
+abstract class Site_Yes_No_Option_Base extends Site_Boolean_Config_Base {
 
 	protected static function get_options() {
 		return [

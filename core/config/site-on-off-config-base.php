@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class On_Off_Config_Base extends Boolean_Config_Base {
+abstract class Site_On_Off_Config_Base extends Site_Boolean_Config_Base {
 	protected static function get_options() {
 		return [
 			static::CONFIG_TRUE => __( 'On', 'elementor' ),
