@@ -55,7 +55,7 @@ set -ex
 check_for_svn() {
   if [ ! `which svn` ]; then
     echo 'Please install "svn" and re run this script.'
-    ehco 'Mac users: `brew install svn`'
+    echo 'Mac users: `brew install svn`'
     exit 1
   fi
 }
@@ -124,7 +124,7 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	mysqladmin create $DB_NAME --user=root --password=""$EXTRA
 }
 
 check_for_svn

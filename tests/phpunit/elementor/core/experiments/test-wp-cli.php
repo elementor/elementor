@@ -15,10 +15,13 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 	public function test_activate_single_experiment() {
 		// Arrange
 		$wp_cli = new Wp_Cli();
-		$experiment = 'container';
+		$experiment = 'experiment1';
+		$test_experiment = [
+			'name' => $experiment,
+			'state' => Experiments_Manager::STATE_INACTIVE,
+		];
 		$experiments_manager = Plugin::instance()->experiments;
-		$option = $experiments_manager->get_feature_option_key( $experiment );
-		update_option( $option, Experiments_Manager::STATE_INACTIVE );
+		$experiments_manager->add_feature( $test_experiment );
 
 		// Act
 		$wp_cli->activate( array( $experiment ), array() );
@@ -31,16 +34,22 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 	public function test_activate_multiple_experiments() {
 		// Arrange
 		$wp_cli = new Wp_Cli();
-		$experiment1 = 'container';
-		$experiment2 = 'admin_menu_rearrangement';
+		$experiment1 = 'experiment_to_activate_1';
+		$test_experiment1 = [
+			'name' => $experiment1,
+			'state' => Experiments_Manager::STATE_INACTIVE,
+		];
+		$experiment2 = 'experiment_to_activate_2';
+		$test_experiment2 = [
+			'name' => $experiment2,
+			'state' => Experiments_Manager::STATE_INACTIVE,
+		];
 		$experiments_manager = Plugin::instance()->experiments;
-		$option1 = $experiments_manager->get_feature_option_key( $experiment1 );
-		update_option( $option1, Experiments_Manager::STATE_INACTIVE );
-		$option2 = $experiments_manager->get_feature_option_key( $experiment2 );
-		update_option( $option2, Experiments_Manager::STATE_INACTIVE );
+		$experiments_manager->add_feature( $test_experiment1 );
+		$experiments_manager->add_feature( $test_experiment2 );
 
 		// Act
-		$wp_cli->activate( array( $experiment1, $experiment2 ), array() );
+		$wp_cli->activate( array( $experiment1 . ',' . $experiment2 ), array() );
 		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
@@ -52,10 +61,13 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 	public function test_deactivate_single_experiment() {
 		// Arrange
 		$wp_cli = new Wp_Cli();
-		$experiment = 'container';
+		$experiment = 'experiment_to_deactivate';
+		$test_experiment = [
+			'name' => $experiment,
+			'state' => Experiments_Manager::STATE_ACTIVE,
+		];
 		$experiments_manager = Plugin::instance()->experiments;
-		$option = $experiments_manager->get_feature_option_key( $experiment );
-		update_option( $option, Experiments_Manager::STATE_ACTIVE );
+		$experiments_manager->add_feature( $test_experiment );
 
 		// Act
 		$wp_cli->deactivate( array( $experiment ), array() );
@@ -68,16 +80,22 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 	public function test_deactivate_multiple_experiments() {
 		// Arrange
 		$wp_cli = new Wp_Cli();
-		$experiment1 = 'container';
-		$experiment2 = 'admin_menu_rearrangement';
+		$experiment1 = 'experiment_to_deactivate_1';
+		$test_experiment1 = [
+			'name' => $experiment1,
+			'state' => Experiments_Manager::STATE_ACTIVE,
+		];
+		$experiment2 = 'experiment_to_deactivate_2';
+		$test_experiment2 = [
+			'name' => $experiment2,
+			'state' => Experiments_Manager::STATE_ACTIVE,
+		];
 		$experiments_manager = Plugin::instance()->experiments;
-		$option1 = $experiments_manager->get_feature_option_key( $experiment1 );
-		update_option( $option1, Experiments_Manager::STATE_ACTIVE );
-		$option2 = $experiments_manager->get_feature_option_key( $experiment2 );
-		update_option( $option2, Experiments_Manager::STATE_ACTIVE );
+		$experiments_manager->add_feature( $test_experiment1 );
+		$experiments_manager->add_feature( $test_experiment2 );
 
 		// Act
-		$wp_cli->activate( array( $experiment1, $experiment2 ), array() );
+		$wp_cli->deactivate( array( $experiment1 . ',' . $experiment2 ), array() );
 		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
