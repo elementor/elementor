@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Admin\Config\Site_Font_Display;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Maintenance extends Elementor_Test_Base {

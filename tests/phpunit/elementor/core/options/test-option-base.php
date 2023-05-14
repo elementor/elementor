@@ -3,11 +3,14 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use Elementor\Core\Config\Config_Base;
+use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
+class Config_Base_Test extends \Elementor\Core\Config\Site_Config_Base {
 	static $value;
 	static $changed;
+
+	use Config_Boolean_Trait;
 
 	public static function should_autoload() {
 		return false;
@@ -42,7 +45,7 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 	}
 }
 
-class Test_Option_Base extends Elementor_Test_Base {
+class Test_Config_Base extends Elementor_Test_Base {
 
 	public function test__get_prefix() {
 		// Assert.
@@ -103,42 +106,42 @@ class Test_Option_Base extends Elementor_Test_Base {
 		], Config_Base_Test::$changed );
 	}
 
-	public function test__is_on() {
+	public function test__is_true() {
 		// Arrange.
-		Config_Base_Test::$value = Config_Base::OPTION_YES;
+		Config_Base_Test::$value = Config_Base::VALUE_TRUE;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_on() );
+		$this->assertTrue( Config_Base_Test::is_true() );
 	}
 
-	public function test__is_off() {
+	public function test__is_false() {
 		// Arrange.
-		Config_Base_Test::$value = Config_Base::OPTION_NO;
+		Config_Base_Test::$value = Config_Base::VALUE_FALSE;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_off(), 'is_off() should return true if value is "no"' );
+		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is "no"' );
 
 		// Arrange.
 		Config_Base_Test::$value = null;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_off(), 'is_off() should return true if value is null' );
+		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is null' );
 	}
 
-	public function test__set_on() {
+	public function test__set_true() {
 		// Act.
-		Config_Base_Test::set_on();
+		Config_Base_Test::set_true();
 
 		// Assert.
-		$this->assertTrue(  Config_Base::OPTION_YES === Config_Base_Test::$value );
+		$this->assertTrue(  Config_Base::VALUE_TRUE === Config_Base_Test::$value );
 	}
 
-	public function test__set_off() {
+	public function test__set_false() {
 		// Act.
-		Config_Base_Test::set_off();
+		Config_Base_Test::set_false();
 
 		// Assert.
-		$this->assertTrue(  null === Config_Base_Test::$value );
+		$this->assertTrue(  Config_Base::VALUE_FALSE === Config_Base_Test::$value );
 	}
 
 	// tearDown
