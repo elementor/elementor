@@ -596,7 +596,7 @@ class Module extends BaseModule {
 				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
 				'referrer' => $referrer,
 			],
-        ] );
+		] );
 
 		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
 
