@@ -219,6 +219,21 @@ abstract class Base extends Base_File {
 			$meta = $this->get_meta();
 		}
 
+		$name = $this->get_name();
+
+		/**
+		 * Before-Enqueue CSS file.
+		 *
+		 * Fires before CSS file is enqueued on Elementor.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 3.8.0
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( "elementor/css-file/{$name}/before-enqueue", $this );
+
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
@@ -248,7 +263,21 @@ abstract class Base extends Base_File {
 			}
 		}
 
-		$name = $this->get_name();
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires when CSS file is enqueued on Elementor.
+		 *
+		 * Use the {@see 'elementor/css-file/{$name}/after-enqueue'} hook instead.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 2.0.0
+		 * @deprecated 3.8.0 . Use {@see 'elementor/css-file/{$name}/after-enqueue'} hook instead.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action_deprecated( "elementor/css-file/{$name}/enqueue", [$this], '3.8.0', "elementor/css-file/{$name}/after-enqueue" );
 
 		/**
 		 * Enqueue CSS file.
@@ -257,11 +286,11 @@ abstract class Base extends Base_File {
 		 *
 		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
 		 *
-		 * @since 2.0.0
+		 * @since 3.8.0
 		 *
 		 * @param Base $this The current CSS file.
 		 */
-		do_action( "elementor/css-file/{$name}/enqueue", $this );
+		do_action( "elementor/css-file/{$name}/after-enqueue", $this );
 	}
 
 	/**
