@@ -133,13 +133,13 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider print_client_settings_data_provider
+	 * @dataProvider print_client_env_data_provider
 	 */
-	public function test_print_client_settings( $is_registered, $client_settings, $expected ) {
+	public function test_print_client_env( $is_registered, $client_env, $expected ) {
 		// Arrange
 		$script_config = $is_registered
 			? [
-				'handle' => $client_settings['handle'],
+				'handle' => $client_env['handle'],
 				'src' => 'source.js',
 				'deps' => [],
 				'version' => '1.0.0',
@@ -148,42 +148,42 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 
 		$this->mock_config_provider->method( 'get_script_configs' )->willReturn( [ $script_config ] );
 
-		$this->mock_config_provider->method( 'get_client_settings' )->willReturn( [ $client_settings ] );
+		$this->mock_config_provider->method( 'get_client_env' )->willReturn( [ $client_env ] );
 
 		$editor_loader = new Editor_Loader( $this->mock_config_provider );
 		$editor_loader->register_scripts();
 
 		// Act
-		$editor_loader->print_client_settings();
+		$editor_loader->print_client_env();
 
 		// Assert
 		$this->assertEquals(
 			$expected,
-			wp_scripts()->get_data( $client_settings['handle'] ?? null, 'before' )
+			wp_scripts()->get_data( $client_env['handle'] ?? null, 'before' )
 		);
 	}
 
-	public function print_client_settings_data_provider() {
+	public function print_client_env_data_provider() {
 		return [
 			// Non registered script, should not print anything.
 			[
 				'is_registered' => false,
-				'client_settings' => [
+				'client_env' => [
 					'handle' => 'not-registered',
 					'name' => 'notRegistered',
-					'settings' => [
+					'env' => [
 						'test' => 'not-registered',
 					],
 				],
 				'expected' => false,
 			],
-			// Registered script, should print settings in a global variable.
+			// Registered script, should print env in a global variable.
 			[
 				'is_registered' => true,
-				'client_settings' => [
+				'client_env' => [
 					'handle' => 'existing-handle',
 					'name' => 'existingHandle',
-					'settings' => [
+					'env' => [
 						'test' => 'existing-handle',
 					],
 				],
@@ -192,21 +192,21 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 					1 => 'var existingHandle = {"test":"existing-handle"};',
 				],
 			],
-			// Config without settings, should not print anything.
+			// Config without env, should not print anything.
 			[
 				'is_registered' => true,
-				'client_settings' => [
-					'handle' => 'no-settings',
-					'name' => 'noSettings',
+				'client_env' => [
+					'handle' => 'no-env',
+					'name' => 'noEnv',
 				],
 				'expected' => false,
 			],
 			// Config without name, should not print anything.
 			[
 				'is_registered' => true,
-				'client_settings' => [
+				'client_env' => [
 					'handle' => 'no-name',
-					'settings' => [
+					'env' => [
 						'test' => 'no-name',
 					],
 				],
@@ -215,9 +215,9 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 			// Config without handle, should not print anything.
 			[
 				'is_registered' => false,
-				'client_settings' => [
+				'client_env' => [
 					'name' => 'noHandle',
-					'settings' => [
+					'env' => [
 						'test' => 'no-handle',
 					],
 				],

@@ -254,7 +254,14 @@ class User {
 		User_Introduction::set_sub_option( $data['introductionKey'], true );
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public static function register_as_beta_tester( array $data ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
+		}
+
 		User_Beta_Tester::set_on();
 
 		$response = wp_safe_remote_post(
