@@ -22,12 +22,10 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 		// Act
 		$wp_cli->activate( array( $experiment ), array() );
-		$option_state = $experiments_manager->get_feature_actual_state( $experiment );
+		$is_option_active = $experiments_manager->is_feature_active( $experiment );
 
 		// Assert
-		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $option_state );
-
-		// Cleanups
+		$this->assertEquals( true, $is_option_active );
 	}
 
 	public function test_activate_multiple_experiments() {
@@ -43,14 +41,12 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 		// Act
 		$wp_cli->activate( array( $experiment1, $experiment2 ), array() );
-		$option1_state = $experiments_manager->get_feature_actual_state( $experiment1 );
-		$option2_state = $experiments_manager->get_feature_actual_state( $experiment2 );
+		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
+		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
 		// Assert
-		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $option1_state );
-		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $option2_state );
-
-		// Cleanups
+		$this->assertEquals( true, $is_option1_active );
+		$this->assertEquals( true, $is_option2_active );
 	}
 
 	public function test_deactivate_single_experiment() {
@@ -63,12 +59,10 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 		// Act
 		$wp_cli->deactivate( array( $experiment ), array() );
-		$option_state = $experiments_manager->get_feature_actual_state( $experiment );
+		$is_option_active = $experiments_manager->is_feature_active( $experiment );
 
 		// Assert
-		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $option_state );
-
-		// Cleanups
+		$this->assertEquals( false, $is_option_active );
 	}
 
 	public function test_deactivate_multiple_experiments() {
@@ -84,13 +78,11 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 		// Act
 		$wp_cli->activate( array( $experiment1, $experiment2 ), array() );
-		$option1_state = $experiments_manager->get_feature_actual_state( $experiment1 );
-		$option2_state = $experiments_manager->get_feature_actual_state( $experiment2 );
+		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
+		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
 		// Assert
-		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $option1_state );
-		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $option2_state );
-
-		// Cleanups
+		$this->assertEquals( false, $is_option1_active );
+		$this->assertEquals( false, $is_option2_active );
 	}
 }
