@@ -541,11 +541,10 @@ class Module extends BaseModule {
 			}
 		} catch ( \Error $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
-                    'meta' => [
-                        'trace' => $e->getTraceAsString(),
-                    ],
-                ]
-            );
+				'meta' => [
+					'trace' => $e->getTraceAsString(),
+				],
+			] );
 			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
@@ -593,12 +592,11 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
-				'meta' => [
-					'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
-                    'referrer' => $referrer,
-				],
-			]
-		);
+			'meta' => [
+				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
+				'referrer' => $referrer,
+			],
+        ] );
 
 		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
 
