@@ -142,7 +142,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Release
-        if: env.CHANNEL == 'ga'  || env.CHANNEL == 'cloud' && github.event.inputs.pre_release == 'false' # Only for GA and Cloud releases
+        if: github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -174,7 +174,7 @@ jobs:
                             "emoji": true
                           },
                           "value": "open-release",
-                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.RELEASE_NAME }}",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
                           "action_id": "button-action"
                         }
                       },
