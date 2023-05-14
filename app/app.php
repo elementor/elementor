@@ -90,6 +90,7 @@ class App extends BaseApp {
 		return [
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'pages_url' => admin_url( 'edit.php?post_type=page' ),
 			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),

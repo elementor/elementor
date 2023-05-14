@@ -23,7 +23,7 @@ use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const ZIP_FILE_ERROR_KEY = 'zip-file-error';
+	const ZIP_FILE_ERROR_KEY = 'invalid-zip-file-error';
 
 	/**
 	 * @var Import_Runner_Base[]
@@ -177,6 +177,10 @@ class Import {
 
 			$this->set_default_settings();
 		}
+
+		add_filter( 'wp_php_error_args', function ( $args, $error ) {
+			return $this->filter_php_error_args( $args, $error );
+		}, 10, 2 );
 	}
 
 	/**
@@ -772,5 +776,20 @@ class Import {
 		$import_sessions[ $this->session_id ]['runners'] = $this->runners_import_metadata;
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	/**
+	 * Filter the php error args and return 408 status code if the error is a timeout.
+	 *
+	 * @param array $args
+	 * @param array $error
+	 * @return array
+	 */
+	private function filter_php_error_args( $args, $error ) {
+		if ( str_contains( $error['message'], 'Maximum execution time' ) ) {
+			$args['response'] = 408;
+		}
+
+		return $args;
 	}
 }
