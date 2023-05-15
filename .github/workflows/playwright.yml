@@ -18,16 +18,18 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Check If this is only a change log PR
+      - name: Check if this is only a changelog PR
         id: changelog_diff_files
         uses: technote-space/get-diff-action@v6
         with:
+          # PATTERNS are:
+          # Everything: **/*
+          # Everything in directories starting with a period: .*/**/*
+          # Not readme.txt: !readme.txt
           PATTERNS: |
             **/*
-            .github/**/*
-            .grunt-config/**/*
+            .*/**/*
             !readme.txt
-            !.github/workflows/playwright.yml
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
