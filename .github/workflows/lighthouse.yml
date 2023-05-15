@@ -13,6 +13,8 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -29,12 +31,12 @@ jobs:
             .*/**/*
             !readme.txt
       - name: Install Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
       - name: Cache node modules
         if: steps.changelog_diff_files.outputs.diff
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -72,54 +74,54 @@ jobs:
             wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
       - name: Restore build from cache
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         uses: actions/cache@v2
         id: restore-build
         with:
           path: ./build/*
           key: ${{ github.sha }}
       - name: Run wp-env
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         uses: ./.github/workflows/run-wp-env
         with:
           TEMPLATES: './tests/lighthouse/templates'
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
       - name: Install lhci
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         run: |
           npm ci
           npm install --no-package-lock --no-save @lhci/cli@0.11.1
       - name: WordPress debug information
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         run: |
           npx wp-env run cli "wp core version"
           npx wp-env run cli "wp --info"
       - name: Run Lighthouse tests
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: matrix.wpCoreVersion != 'master'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
       - name: Save HTML dumps on failure
-        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
       - name: Upload Lighthouse reports on failure
-        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master'
         uses: actions/upload-artifact@v2
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
           retention-days: 7
       - name: Upload Lighthouse HTML dumps on failure
-        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master'
         uses: actions/upload-artifact@v2
         with:
           name: lighthouseci-htmls
