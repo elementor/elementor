@@ -356,7 +356,7 @@ class Module extends BaseModule {
 		// The 'name' property will be set, and in others it is the 'pagename', so we have to cover both cases.
 		if ( ! empty( $query->query['name'] ) ) {
 			$query->set( 'post_type', $query_post_types );
-		} elseif ( ! empty( $query->query['pagename'] ) && false === strpos( $query->query['pagename'], '/' ) ) {
+		} elseif ( ! empty( $query->query['pagename'] ) && false === \Elementor\Utils::strpos( $query->query['pagename'], '/' ) ) {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.

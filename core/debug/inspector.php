@@ -66,16 +66,16 @@ class Inspector {
 	 */
 	public function parse_template_path( $template ) {
 		// `untrailingslashit` for windows path style.
-		if ( 0 === strpos( $template, untrailingslashit( ELEMENTOR_PATH ) ) ) {
+		if ( 0 === \Elementor\Utils::strpos( $template, untrailingslashit( ELEMENTOR_PATH ) ) ) {
 			return 'Elementor - ' . basename( $template );
 		}
 
-		if ( 0 === strpos( $template, get_stylesheet_directory() ) ) {
+		if ( 0 === \Elementor\Utils::strpos( $template, get_stylesheet_directory() ) ) {
 			return wp_get_theme()->get( 'Name' ) . ' - ' . basename( $template );
 		}
 
 		$plugins_dir = dirname( ELEMENTOR_PATH );
-		if ( 0 === strpos( $template, $plugins_dir ) ) {
+		if ( 0 === \Elementor\Utils::strpos( $template, $plugins_dir ) ) {
 			return ltrim( str_replace( $plugins_dir, '', $template ), '/\\' );
 		}
 

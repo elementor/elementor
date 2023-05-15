@@ -198,7 +198,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 				continue;
 			}
 
-			if ( false === strpos( $method_name, $prefix ) ) {
+			if ( false === \Elementor\Utils::strpos( $method_name, $prefix ) ) {
 				continue;
 			}
 

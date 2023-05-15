@@ -119,8 +119,8 @@ class Svg extends Base {
 		$content = $this->strip_line_breaks( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
-		$start = strpos( $content, '<svg' );
-		$end = strrpos( $content, '</svg>' );
+		$start = \Elementor\Utils::strpos( $content, '<svg' );
+		$end = strrpos( $content ?? '', '</svg>' );
 		if ( false === $start || false === $end ) {
 			return false;
 		}
@@ -322,7 +322,7 @@ class Svg extends Base {
 		if ( function_exists( 'mb_strpos' ) ) {
 			return 0 === mb_strpos( $contents, $needle );
 		} else {
-			return 0 === strpos( $contents, $needle );
+			return 0 === \Elementor\Utils::strpos( $contents, $needle );
 		}
 	}
 
@@ -403,7 +403,7 @@ class Svg extends Base {
 	 * @return bool
 	 */
 	private function is_a_attribute( $name, $check ) {
-		return 0 === strpos( $name, $check . '-' );
+		return 0 === \Elementor\Utils::strpos( $name, $check . '-' );
 	}
 
 	/**
@@ -808,7 +808,7 @@ class Svg extends Base {
 		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
 		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
 
-		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
+		if ( ( false !== \Elementor\Utils::strpos( $string, '<?' ) ) || ( false !== \Elementor\Utils::strpos( $string, '<%' ) ) ) {
 			return '';
 		}
 		return $string;
@@ -827,7 +827,7 @@ class Svg extends Base {
 		// Remove comments.
 		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
 		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
-		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
+		if ( ( false !== \Elementor\Utils::strpos( $string, '<!--' ) ) || ( false !== \Elementor\Utils::strpos( $string, '/*' ) ) ) {
 			return '';
 		}
 		return $string;

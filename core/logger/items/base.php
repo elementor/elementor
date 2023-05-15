@@ -162,7 +162,7 @@ class Base implements Log_Item_Interface {
 
 			$stack = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // @codingStandardsIgnoreLine
 
-			while ( ! empty( $stack ) && ! empty( $stack[0]['file'] ) && ( false !== strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) ) {
+			while ( ! empty( $stack ) && ! empty( $stack[0]['file'] ) && ( false !== \Elementor\Utils::strpos( $stack[0]['file'], 'core' . DIRECTORY_SEPARATOR . 'logger' ) ) ) {
 				array_shift( $stack );
 			}
 

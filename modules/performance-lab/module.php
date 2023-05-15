@@ -38,7 +38,7 @@ class Module extends BaseModule {
 	}
 
 	private function replace_css_with_webp( $value, $css_property, $matches ) {
-		if ( 0 === strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
+		if ( 0 === \Elementor\Utils::strpos( $css_property, 'background-image' ) && '{{URL}}' === $matches[0] ) {
 			$value['url'] = $this->performance_lab_get_webp_src( $value['id'], 'full', $value['url'] );
 		}
 		return $value;

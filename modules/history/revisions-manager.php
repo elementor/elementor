@@ -155,7 +155,7 @@ class Revisions_Manager {
 			if ( $revision->ID === $post->ID ) {
 				$type = 'current';
 				$type_label = esc_html__( 'Current Version', 'elementor' );
-			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
+			} elseif ( false !== \Elementor\Utils::strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
 				$type_label = esc_html__( 'Autosave', 'elementor' );
 			} else {

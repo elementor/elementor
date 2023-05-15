@@ -130,7 +130,7 @@ class WP_Import extends \WP_Importer {
 		foreach ( $disposition_header as $value ) {
 			$value = trim( $value );
 
-			if ( strpos( $value, ';' ) === false ) {
+			if ( \Elementor\Utils::strpos( $value, ';' ) === false ) {
 				continue;
 			}
 
@@ -140,7 +140,7 @@ class WP_Import extends \WP_Importer {
 			$attributes = [];
 
 			foreach ( $attr_parts as $part ) {
-				if ( strpos( $part, '=' ) === false ) {
+				if ( \Elementor\Utils::strpos( $part, '=' ) === false ) {
 					continue;
 				}
 

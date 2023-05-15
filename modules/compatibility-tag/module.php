@@ -72,7 +72,7 @@ class Module extends Base_Module {
 				'block-builder/block-builder.php',
 			] )
 			->filter( function ( array $data ) {
-				return false !== strpos( strtolower( $data['Name'] ), 'elementor' );
+				return false !== \Elementor\Utils::strpos( strtolower( $data['Name'] ), 'elementor' );
 			} );
 	}
 }

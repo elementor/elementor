@@ -972,7 +972,7 @@ class Upgrades {
 
 			$old_attachment_metadata = $attachment_metadata;
 			foreach ( $attachment_metadata['sizes'] as $size_key => $size_value ) {
-				if ( 0 !== strpos( $size_key, 'elementor_custom_' ) ) {
+				if ( 0 !== \Elementor\Utils::strpos( $size_key, 'elementor_custom_' ) ) {
 					continue;
 				}
 

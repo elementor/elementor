@@ -73,7 +73,7 @@ class Images_Manager {
 		$sizes[] = $size;
 		$urls = [];
 		foreach ( $sizes as $size ) {
-			if ( 0 === strpos( $size, 'custom_' ) ) {
+			if ( 0 === \Elementor\Utils::strpos( $size, 'custom_' ) ) {
 				preg_match( '/custom_(\d*)x(\d*)/', $size, $matches );
 
 				$matches[1] = (int) $matches[1];
@@ -156,7 +156,7 @@ class Images_Manager {
 		if ( ! empty( $image_meta ) && ! empty( $image_meta['sizes'] ) ) {
 			( new Collection( $image_meta['sizes'] ) )
 			->filter( function ( $value, $key ) {
-				return ( 0 === strpos( $key, 'elementor_custom_' ) );
+				return ( 0 === \Elementor\Utils::strpos( $key, 'elementor_custom_' ) );
 			} )
 			->pluck( 'file' )
 			->each( function ( $path ) {
