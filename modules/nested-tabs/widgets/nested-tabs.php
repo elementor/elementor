@@ -1010,7 +1010,6 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function render() {
-		// Copied from tabs.php
 		$settings = $this->get_settings_for_display();
 		$tabs = $settings['tabs'];
 
@@ -1022,12 +1021,17 @@ class NestedTabs extends Widget_Nested_Base {
 			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
 		}
 
-		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
 		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
 		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
+		$grid_template_areas_tabs_start = "";
+		$grid_template_areas_tabs_end = "";
+		$grid_template_rows_tabs = '';
+		$grid_template_areas_spacer_start = "";
+		$grid_template_areas_spacer_end = "";
+		$grid_template_rows_spacer = '';
 
 		foreach ( $tabs as $index => $item ) {
 			// Tabs title.
@@ -1040,6 +1044,16 @@ class NestedTabs extends Widget_Nested_Base {
 				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
+			if ( 1 === $index ) {
+				$grid_template_areas_spacer_start = " '. content' ";
+				$grid_template_areas_spacer_end = " 'content .' ";
+				$grid_template_rows_spacer = 'var( --n-tabs-title-space-between ) ';
+			}
+
+			$grid_template_areas_tabs_start .= $grid_template_areas_spacer_start . "'tab" . $index . " content' ";
+			$grid_template_areas_tabs_end .= $grid_template_areas_spacer_end . "'content tab" . $index . "' ";
+			$grid_template_rows_tabs .= $grid_template_rows_spacer . 'auto ';
+
 			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
@@ -1051,6 +1065,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'tabindex' => 1 === $tab_count ? '0' : '-1',
 				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
 				'aria-expanded' => 'false',
+				'style' => 'grid-area: tab' . $index,
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
@@ -1074,6 +1089,16 @@ class NestedTabs extends Widget_Nested_Base {
 			$tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
 			$tabs_title_html .= "</div>$tab_content";
 		}
+
+		$grid_template_areas_values_start = "'spacer-top content' " . $grid_template_areas_tabs_start . "'spacer-bottom content'";
+		$grid_template_areas_values_end = "'content spacer-bottom' " . $grid_template_areas_tabs_end . "'content spacer-top'";
+		$grid_template_rows_values = 'var( --n-tabs-spacer-top-height ) ' . $grid_template_rows_tabs . ' var( --n-tabs-spacer-bottom-height )';
+
+		$this->add_render_attribute( 'elementor-tabs', [
+			'class' => 'e-n-tabs',
+			'role' => 'tablist',
+			'style' => '--grid-template-areas-start: ' . $grid_template_areas_values_start . '; --grid-template-areas-end: ' . $grid_template_areas_values_end . '; grid-template-rows: ' . $grid_template_rows_values . ';',
+		] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -1095,7 +1120,7 @@ class NestedTabs extends Widget_Nested_Base {
 			gridTemplateRowsSpacer = '';
 
 		_.each( settings['tabs'], function( item, index ) {
-			if ( !! index ) {
+			if ( 1 === index ) {
 				gridTemplateAreasSpacerStart = " '. content' ";
 				gridTemplateAreasSpacerEnd = " 'content .' ";
 				gridTemplateRowsSpacer = 'var( --n-tabs-title-space-between ) ';
