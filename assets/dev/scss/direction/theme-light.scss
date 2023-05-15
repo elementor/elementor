@@ -23,7 +23,7 @@
 	//Backgrounds
 	--e-a-bg-default: 			#{$white};
 	--e-a-bg-invert: 			#{$e-gray-900};
-	--e-a-bg-hover: 			#{$e-gray-25};
+	--e-a-bg-hover: 			#{$e-gray-50};
 	--e-a-bg-active: 			#{$e-gray-75};
 	--e-a-bg-active-bold: 		#{$e-gray-100};
 	--e-a-bg-loading: 			#{$e-gray-25};
@@ -37,7 +37,7 @@
 
 	//Text & Icons
 	--e-a-color-txt: 			#{$e-gray-600};
-	--e-a-color-txt-muted: 		#{$e-gray-500};
+	--e-a-color-txt-muted: 		#{$e-gray-400};
 	--e-a-color-txt-disabled: 	#{$e-gray-200};
 	--e-a-color-txt-invert: 	#{$white};
 	--e-a-color-txt-accent: 	#{$e-gray-900};
@@ -51,7 +51,7 @@
 	--e-a-border-color-accent: 	#{$e-gray-900};
 	--e-a-border:				1px solid var(--e-a-border-color);
 	--e-a-border-bold:			1px solid var(--e-a-border-color-bold);
-	--e-a-border-radius: 		3px;
+	--e-a-border-radius: 		#{$default-border-radius};
 
 	//Buttons
 	--e-a-btn-color: 			#{$e-gray-900};

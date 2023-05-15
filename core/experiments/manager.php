@@ -82,7 +82,7 @@ class Manager extends Base_Object {
 			'generator_tag' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -410,6 +410,12 @@ class Manager extends Base_Object {
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
+			'messages' => [
+				'on_deactivate' => esc_html__(
+					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
+					'elementor'
+				),
+			],
 		] );
 
 		$this->add_feature( [
@@ -422,6 +428,24 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.11.0',
 			],
 			'default' => self::STATE_INACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'container_grid',
+			'title' => esc_html__( 'Grid Container', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ),
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+			'description' => sprintf( esc_html__(
+				'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements. %1$sLearn more%2$s',
+				'elementor'
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
+
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'hidden' => false,
+			'dependencies' => [
+				'container',
+			],
 		] );
 	}
 
