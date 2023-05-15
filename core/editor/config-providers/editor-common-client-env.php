@@ -17,10 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_Common_Client_Settings {
-	public static function get_client_settings() {
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
-
+class Editor_Common_Client_Env {
+	public static function get_client_env() {
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
@@ -32,7 +30,7 @@ class Editor_Common_Client_Settings {
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
-		$client_settings = [
+		$client_env = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
@@ -105,7 +103,7 @@ class Editor_Common_Client_Settings {
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$client_settings['promotionWidgets'] = Api::get_promotion_widgets();
+			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
 		}
 
 		static::bc_move_document_filters();
@@ -117,10 +115,10 @@ class Editor_Common_Client_Settings {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $client_settings  Editor configuration.
+		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		return apply_filters( 'elementor/editor/localize_settings', $client_settings );
+		return apply_filters( 'elementor/editor/localize_settings', $client_env );
 	}
 
 	private static function bc_move_document_filters() {
