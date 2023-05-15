@@ -139,7 +139,7 @@
 				}
 			}
 
-			&:not( .e-active ) {
+			&:not( [aria-selected="true"] ) {
 				background-color: var( --n-tabs-title-background-color );
 
 				&,
@@ -167,9 +167,13 @@
 						}
 					}
 				}
+
+				+ .e-con {
+					display: none;
+				}
 			}
 
-			&:not( .e-active ).e-n-tab-title:hover {
+			&:not( [aria-selected="true"] ).e-n-tab-title:hover {
 
 				&,
 				& a {
@@ -188,7 +192,7 @@
 				}
 			}
 
-			&.e-active {
+			&[aria-selected="true"] {
 
 				&,
 				& a {
@@ -229,10 +233,6 @@
 
 			+ .e-con {
 				grid-area: content;
-			}
-
-			&:not( [aria-selected="true"] ) + .e-con {
-				display: none;
 			}
 		}
 	}

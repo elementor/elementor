@@ -37,7 +37,7 @@ export default class NestedTabs extends Base {
 				tabContent: '.e-con',
 				widgetWrapper: '.e-n-tabs',
 				activeTabContentContainers: '.e-con.e-active',
-				mobileTabTitle: '.e-n-tab-title',
+				mobileTabTitle: '.e-n-tab-title',  // To be updated.
 			},
 			classes: {
 				active: 'e-active',
@@ -62,7 +62,7 @@ export default class NestedTabs extends Base {
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
-			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
+			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ), // To be updated.
 			$widgetWrapper: this.findElement( selectors.widgetWrapper ),
 		};
 	}
@@ -147,14 +147,11 @@ export default class NestedTabs extends Base {
 
 	getActiveTabObject( tabIndex ) {
 		const settings = this.getSettings(),
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]',
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass;
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]';
 
 		return {
 			tabTitle: this.elements.$tabTitles.filter( activeTitleFilter ),
-			/* To be updated */
-			/* To be removed */
-			tabContent: this.elements.$tabContents.filter( activeContentFilter ),
+			tabContent: this.elements.$tabTitles.filter( activeTitleFilter ).next(),
 		};
 	}
 
@@ -357,6 +354,8 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
+		/* To be updated */
+		/* Study */
 		const $activeTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
 
 		if ( ! elementor.helpers.isInViewport( $activeTitle[ 0 ] ) ) {
@@ -382,11 +381,6 @@ export default class NestedTabs extends Base {
 
 			++index;
 		} );
-
-		// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-		if ( $removed.length ) {
-			return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-		}
 	}
 
 	getActiveClass() {
