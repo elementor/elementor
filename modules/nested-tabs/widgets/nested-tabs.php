@@ -1059,12 +1059,9 @@ class NestedTabs extends Widget_Nested_Base {
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
 				'class' => $tab_title_classes,
-				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'data-tab' => $tab_count,
 				'role' => 'tab',
-				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
-				'aria-expanded' => 'false',
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
 			] );
 
@@ -1173,9 +1170,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass,itemLastClass ],
 					'data-tab': tabCount,
 					'role': 'tab',
-					'tabindex': 1 === tabCount ? '0' : '-1',
-					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-expanded': 'false',
+					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'style': 'grid-area: tab' + index + ';',
 				} );
 

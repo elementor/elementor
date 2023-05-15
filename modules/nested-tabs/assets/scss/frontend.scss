@@ -65,14 +65,6 @@
 		grid-template-areas: var( --n-tabs-grid-template-areas );
 		grid-template-columns: var( --n-tabs-grid-template-columns );
 		flex-shrink: 0; // Check
-
-		> .e-con {
-			grid-area: content;
-
-			&:not(.e-active) {
-				display: none;
-			}
-		}
 	}
 
 	.e-n-tab {
@@ -233,6 +225,14 @@
 						animation: initial;
 					}
 				}
+			}
+
+			+ .e-con {
+				grid-area: content;
+			}
+
+			&:not( [aria-selected="true"] ) + .e-con {
+				display: none;
 			}
 		}
 	}

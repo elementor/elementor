@@ -139,20 +139,15 @@ export default class NestedTabs extends Base {
 			$activeTitle = this.getActiveTabObject().tabTitle,
 			$activeContent = this.getActiveTabObject().tabContent;
 
-		/* To be updated */
-		$activeTitle.add( $activeContent ).removeClass( this.getActiveClass() );
 		$activeTitle.attr( this.getTitleDeactivationAttributes() );
 
-		/* To be updated */
-		/* Study */
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+		$activeContent.attr( 'hidden', 'hidden' ); // I am not sure what this is used for...
 	}
 
 	getActiveTabObject( tabIndex ) {
 		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]',
 			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass;
 
 		return {
@@ -165,9 +160,7 @@ export default class NestedTabs extends Base {
 
 	getTitleDeactivationAttributes() {
 		return {
-			tabindex: '-1',
 			'aria-selected': 'false',
-			'aria-expanded': 'false',
 		};
 	}
 
@@ -175,7 +168,6 @@ export default class NestedTabs extends Base {
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
-			activeClass = settings.classes.active,
 			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		let $requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) ),
@@ -187,26 +179,18 @@ export default class NestedTabs extends Base {
 			const previousTabIndex = Math.max( ( tabIndex - 1 ), 1 );
 
 			$requestedTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( previousTabIndex ) );
-			/* To be updated */
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 		$requestedTitle.attr( {
-			tabindex: '0',
 			'aria-selected': 'true',
-			'aria-expanded': 'true',
 		} );
 
-		/* To be updated */
-		/* Study */
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
-		/* To be updated */
-		/* Study */
-		$requestedContent.removeAttr( 'hidden' );
+		$requestedContent.removeAttr( 'hidden' ); // I am not sure what this is used for.
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -399,14 +383,10 @@ export default class NestedTabs extends Base {
 			++index;
 		} );
 
-		/* To be updated */
-		/* Study */
-		/* To be removed? */
-
 		// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-		// if ( $removed.length ) {
-		// 	return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-		// }
+		if ( $removed.length ) {
+			return elementorModules.ViewModule.prototype.onInit.apply( this, args );
+		}
 	}
 
 	getActiveClass() {
