@@ -3,14 +3,6 @@
 //
 .elementor-widget-n-tabs {
 	--n-tabs-display: flex;
-
-	//grid-template-areas:
-    //    "tab1 content"
-    //    "tab2 content"
-    //    "tab3 content";
-	//grid-template-rows: 1fr auto 1fr;
-
-	//--n-tabs-opacity: initial;
 	--n-tabs-height-toggle: auto;
 	--n-tabs-height: initial;
 	--n-tabs-color-accent-fallback: #61CE70;
@@ -18,18 +10,14 @@
 	--n-tabs-default-padding-block: 15px;
 	--n-tabs-default-padding-inline: 35px;
 	--n-tabs-background-color: transparent;
-	--n-tabs-direction: row; // Rami
-	--n-tabs-justify-content: center; // Rami
+	--n-tabs-direction: row;
+	--n-tabs-justify-content: center;
 	--n-tabs-row-gap-toggle: initial;
 	--n-tabs-gap: 10px;
 	--n-tabs-column-break-display: none;
-	//--n-tabs-heading-display: flex;
-	//--n-tabs-heading-direction: row;
-	//--n-tabs-heading-grow: initial;
 	--n-tabs-title-width: initial;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
-	--n-tabs-content-max-width-toggle: 100%; // Rami
 	--n-tabs-content-padding: initial;
 	--n-tabs-content-border-radius: initial;
 	--n-tabs-title-order: -1;
@@ -39,7 +27,6 @@
 	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
-	//--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
 	--n-tabs-title-justify-content-toggle: initial;
@@ -62,54 +49,22 @@
 	--n-tabs-icon-gap: 5px;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
-	//opacity: var( --n-tabs-opacity );
 
 	.e-n-tabs {
 		display: var( --n-tabs-display );
-		flex-direction: var( --n-tabs-direction ); // Rami
+		flex-direction: var( --n-tabs-direction );
 		justify-content: var( --n-tabs-justify-content );
 		column-gap: var( --n-tabs-column-gap );
 		row-gap: var( --n-tabs-row-gap );
 		text-align: $start;
 		min-width: 0;
-		flex-wrap: wrap; // Rami
+		flex-wrap: wrap;
 		height: var( --n-tabs-height-toggle, var( --n-tabs-height-calculated ) );
 		grid-template-areas: var( --n-tabs-grid-template-areas );
 		grid-template-columns: var( --n-tabs-grid-template-columns );
-
-
-		/*** Content ***/
-
-		//flex-grow: 1;
-		//padding: var( --n-tabs-content-padding );
-		//border-radius: var( --n-tabs-content-border-radius );
-
-
-		/*** Heading ***/
-		//flex-basis: var( --n-tabs-title-width-column );
-		//flex-direction: var( --n-tabs-heading-direction );
-
-		//gap: var( --n-tabs-title-gap );
-
-		/*** Heading - Tab Titles ***/
-		flex-shrink: 0;
-
-
-		.e-n-tab-title {
-
-
-			//&:not(:first-child) {
-			//	margin-top: var( --n-tabs-title-gap );
-			//}
-			//
-			//&.e-active {
-			//	margin-bottom: var( --n-tabs-gap );
-			//}
-		}
+		flex-shrink: 0; // Check
 
 		> .e-con {
-			//--n-tabs-content-max-width-column: calc( 100% - var( --n-tabs-title-width-container ) - var( --n-tabs-gap ) );
-			//max-width: var( --n-tabs-content-max-width-toggle, var( --n-tabs-content-max-width-column ) );
 			grid-area: content;
 
 			&:not(.e-active) {
@@ -125,7 +80,6 @@
 			order: var( --n-tabs-title-order );
 			display: flex;
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
-			//flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
 			border-width: var( --n-tabs-border-width );
@@ -133,14 +87,12 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
-			//flex-basis: fit-content;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
-			//width: var( --n-tabs-title-width );
 			transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
 					border var( --n-tabs-title-transition ),
@@ -305,11 +257,6 @@
 
 @mixin display-type-desktop-($device) {
 	.e-n-tabs {
-		//flex-direction: var(--n-tabs-direction);
-		//height: 400px;
-		//flex-wrap: var(--n-tabs-direction-wrap);
-
-		//justify-content: center;
 	}
 }
 
