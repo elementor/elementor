@@ -42,6 +42,9 @@
 	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
+	--n-tabs-spacer-top-height: 0px;
+	--n-tabs-spacer-bottom-height: 0px;
+	--n-tabs-title-space-between: 0px;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};

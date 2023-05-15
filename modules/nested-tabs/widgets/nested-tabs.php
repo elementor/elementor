@@ -217,10 +217,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
-				'stretch' => '--n-tabs-justify-content: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1;',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 0px;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 0px;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 0px;',
+				'stretch' => '--n-tabs-justify-content: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 1; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 0px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -256,10 +256,10 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
-				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
-				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0;',
-				'stretch' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0;',
+				'start' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 1fr;',
+				'center' => '--n-tabs-justify-content: center; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 1fr;',
+				'end' => '--n-tabs-justify-content: flex-end; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 1fr; --n-tabs-spacer-bottom-height: 0px;',
+				'stretch' => '--n-tabs-justify-content: flex-start; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-title-flex-grow: 0; --n-tabs-spacer-top-height: 0px; --n-tabs-spacer-bottom-height: 0px;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
