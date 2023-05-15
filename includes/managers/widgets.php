@@ -5,6 +5,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
+use Elementor\Modules\NestedAccordion\Widgets\NestedAccordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -242,7 +243,11 @@ class Widgets_Manager {
 	private function register_promoted_widgets() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
 			$nested_tabs = new NestedTabs();
-			$this->_widget_types = [ $nested_tabs->get_name() => $nested_tabs ] + $this->_widget_types;
+			$nested_accordion = new NestedAccordion();
+			$this->_widget_types = [
+				$nested_tabs->get_name() => $nested_tabs,
+				$nested_accordion->get_name() => $nested_accordion,
+			] + $this->_widget_types;
 		}
 	}
 
