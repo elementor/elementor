@@ -13,9 +13,17 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+      - name: Check If this is only a change log PR
+        id: changelog_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            !readme.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -44,6 +52,7 @@ jobs:
     name: Playwright test (Performance on) - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
+    if: ${{ needs.file-diff.outputs.changelog_diff }}
     strategy:
       matrix:
         testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container']
@@ -102,3 +111,15 @@ jobs:
           name: playwright-test-results-${{ matrix.testSuite }}
           path: test-results/
           retention-days: 3
+
+  test-result:
+    needs: Playwright
+    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    runs-on: ubuntu-22.04
+    name: Playwright - Test Results
+    steps:
+      - name: Test status
+        run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Check Playwright matrix status
+        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+        run: exit 1
