@@ -47,7 +47,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		if ( $is_network ) {
 			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
 		} else {
-			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error);
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
 		}
 	}
 
@@ -82,7 +82,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		if ( $is_network ) {
 			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
 		} else {
-			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error);
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
 		}
 	}
 
