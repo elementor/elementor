@@ -526,26 +526,14 @@ export default class NestedTabs extends Base {
 			slider.dataset.pageX = event.pageX;
 		} else {
 			slider.classList.remove( 'e-scroll' );
-			slider.classList.remove( 'e-scroll-active' );
 			slider.dataset.pageX = '';
 		}
 	}
 
-	tabIsNotAtStart() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			tabTitleAlignment = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice ),
-			allowedAlignments = [ 'center', 'end', '', undefined ];
-
-		return allowedAlignments.includes( tabTitleAlignment );
-	}
-
 	isHorizontalScroll() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			horizontalScroll = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
-
 		const slider = this.elements.$headingContainer[ 0 ];
 
-		return slider.clientWidth < this.getChildrenWidth( slider.children ) && 'enable' === horizontalScroll;
+		return slider.clientWidth < this.getChildrenWidth( slider.children ) && 'enable' === this.getHorizontalScrollSetting();
 	}
 
 	getChildrenWidth( children ) {
@@ -566,7 +554,7 @@ export default class NestedTabs extends Base {
 		const slider = this.elements.$headingContainer[ 0 ];
 		const { tabs_justify_horizontal: tabsDirection } = this.getElementSettings();
 
-		if ( this.tabIsNotAtStart() && this.isHorizontalScroll() ) {
+		if ( this.isHorizontalScroll() ) {
 			this.initialScrollPosition( slider, tabsDirection );
 		}
 	}
@@ -574,24 +562,29 @@ export default class NestedTabs extends Base {
 	initialScrollPosition( slider, tabsDirection ) {
 		switch ( tabsDirection ) {
 			case 'center':
-				slider.scrollLeft -= this.getChildrenWidth( slider.children ) / 2;
+				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
+				slider.scrollLeft = this.getChildrenWidth( slider.children ) / 4;
 				break;
 			case 'end':
-				slider.scrollLeft -= this.getChildrenWidth( slider.children );
+				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
+				slider.scrollLeft = this.getChildrenWidth( slider.children );
 				break;
 			default:
 				slider.scrollLeft = 0;
 		}
 	}
 
-	getHorizontalScrollSetting( device ) {
-		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', device ) || 'disable';
+	getHorizontalScrollSetting() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			horizontalScrollSetting = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
+
+		return horizontalScrollSetting;
 	}
 
 	setHorizontalTabTitleScrollValues( event ) {
 		const slider = this.elements.$headingContainer[ 0 ],
 			isActiveScroll = slider.classList.contains( 'e-scroll' ),
-			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting( elementorFrontend.getCurrentDeviceMode() ),
+			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting(),
 			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
 
 		if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
