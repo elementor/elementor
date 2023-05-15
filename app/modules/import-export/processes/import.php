@@ -23,7 +23,9 @@ use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
 
-	const ZIP_FILE_ERROR_KEY = 'invalid-zip-file-error';
+	const ZIP_FILE_ERROR_KEY = 'invalid-zip-file';
+
+	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
 	/**
 	 * @var Import_Runner_Base[]
@@ -598,6 +600,10 @@ class Import {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
 
 		if ( is_wp_error( $extraction_result ) ) {
+			if ( isset( $extraction_result->errors[ 'zip_error' ] ) ) {
+				throw new \Error( static::ZIP_ARCHIVE_ERROR_KEY );
+			}
+
 			throw new \Error( static::ZIP_FILE_ERROR_KEY );
 		}
 
@@ -613,7 +619,8 @@ class Import {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
 
 		if ( ! $manifest ) {
-			throw new \Error( static::MANIFEST_ERROR_KEY );
+			Plugin::$instance->logger->get_logger()->error( static::MANIFEST_ERROR_KEY );
+			throw new \Error( static::ZIP_FILE_ERROR_KEY );
 		}
 
 		$this->init_adapters( $manifest );
@@ -786,7 +793,7 @@ class Import {
 	 * @return array
 	 */
 	private function filter_php_error_args( $args, $error ) {
-		if ( str_contains( $error['message'], 'Maximum execution time' ) ) {
+		if ( strpos( $error['message'], 'Maximum execution time' ) !== false ) {
 			$args['response'] = 408;
 		}
 

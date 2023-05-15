@@ -17,7 +17,7 @@ const messagesContent = {
 			</InlineLink>
 		</>,
 	},
-	'zip-archive-module-not-installed': {
+	'zip-archive-module-missing': {
 		title: __( 'Couldn’t handle the Kit', 'elementor' ),
 		text: __( 'Seems like your server is missing the PHP zip module. Install it on your server or contact your site host for further instructions.', 'elementor' ),
 	},
