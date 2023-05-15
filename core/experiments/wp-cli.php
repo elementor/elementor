@@ -44,24 +44,10 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::error( 'Experiments do not exist' . $args[0] );
 		}
 
-		// Activate experiment callback.
-		$activate = function ( $site = '', $id = null ) use ( $experiments_manager, $experiments, $is_network, $success, $error ) {
-			foreach ( $experiments as $experiment ) {
-				$option = $experiments_manager->get_feature_option_key( $experiment );
-				update_option( $option, Experiments_Manager::STATE_ACTIVE );
-			}
-
-			try {
-				\WP_CLI::success( $success );
-			} catch ( \Exception $e ) {
-				\WP_CLI::error( $error );
-			}
-		};
-
 		if ( $is_network ) {
-			$this->foreach_sites( $activate );
+			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
 		} else {
-			$activate();
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error);
 		}
 	}
 
@@ -88,35 +74,15 @@ class Wp_Cli extends \WP_CLI_Command {
 		$success = 'Experiment' . $plural . ' deactivated successfully';
 		$error = 'Cannot deactivate experiment' . $plural;
 
-		if ( $is_network ) {
-			$success .= " for site {$site}";
-			$error .= " for site {$site}";
-		}
-
 		$experiments_manager = Plugin::instance()->experiments;
 		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
 			\WP_CLI::error( 'Experiments do not exist' );
 		}
 
-		// Activate experiment callback.
-		$activate = function ( $site = '' ) use ( $experiments_manager, $experiments, $is_network, $success, $error ) {
-
-			foreach ( $experiments as $experiment ) {
-				$option = $experiments_manager->get_feature_option_key( $experiment );
-				update_option( $option, Experiments_Manager::STATE_INACTIVE );
-			}
-
-			try {
-				\WP_CLI::success( $success );
-			} catch ( \Exception $e ) {
-				\WP_CLI::error( $error );
-			}
-		};
-
 		if ( $is_network ) {
-			$this->foreach_sites( $activate );
+			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
 		} else {
-			$activate();
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error);
 		}
 	}
 
@@ -159,7 +125,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 *
 	 * @return void
 	 */
-	private function foreach_sites( callable $callback ) {
+	private function foreach_sites( callable $callback, $experiments, $state, $is_network, $success, $error ) {
 		$blog_ids = get_sites( [
 			'fields' => 'ids',
 			'number' => 0,
@@ -168,7 +134,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		foreach ( $blog_ids as $blog_id ) {
 			switch_to_blog( $blog_id );
 
-			$callback( get_option( 'home' ), $blog_id );
+			$callback( get_option( 'home' ), $experiments, $state, $is_network, $success, $error );
 
 			restore_current_blog();
 		}
@@ -206,5 +172,24 @@ class Wp_Cli extends \WP_CLI_Command {
 			}
 		}
 		return true;
+	}
+
+	private function update_experiment_state( $experiments, $state, $is_network, $success_message, $error_message, $site_id = '' ) {
+		if ( $is_network ) {
+			$success_message .= " for site {$site}";
+			$error_message .= " for site {$site}";
+		}
+
+		$experiments_manager = Plugin::instance()->experiments;
+		foreach ( $experiments as $experiment ) {
+			$option = $experiments_manager->get_feature_option_key( $experiment );
+			update_option( $option, $state );
+		}
+
+		try {
+			\WP_CLI::success( $success_message );
+		} catch ( \Exception $e ) {
+			\WP_CLI::error( $error_message );
+		}
 	}
 }
