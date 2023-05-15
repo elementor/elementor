@@ -313,7 +313,6 @@ export default class NestedTabs extends Base {
 			this.changeActiveTab( value, false );
 		}
 	}
-
 	onElementChange( propertyName ) {
 		if ( this.isHorizontalScroll() ) {
 			if ( propertyName.includes( 'horizontal_scroll' ) ) {
@@ -565,11 +564,23 @@ export default class NestedTabs extends Base {
 		}
 
 		const slider = this.elements.$headingContainer[ 0 ];
+		const { tabs_justify_horizontal: tabsDirection } = this.getElementSettings();
 
 		if ( this.tabIsNotAtStart() && this.isHorizontalScroll() ) {
-			slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-		} else {
-			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
+			this.initialScrollPosition( slider, tabsDirection );
+		}
+	}
+
+	initialScrollPosition( slider, tabsDirection ) {
+		switch ( tabsDirection ) {
+			case 'center':
+				slider.scrollLeft -= this.getChildrenWidth( slider.children ) / 2;
+				break;
+			case 'end':
+				slider.scrollLeft -= this.getChildrenWidth( slider.children );
+				break;
+			default:
+				slider.scrollLeft = 0;
 		}
 	}
 
