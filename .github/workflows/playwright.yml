@@ -53,7 +53,7 @@ jobs:
     name: Playwright test (Performance on) - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: env.GIT_DIFF
+    if: ${{ needs.file-diff.outputs.changelog_diff.diff }}
     strategy:
       matrix:
         testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container']
