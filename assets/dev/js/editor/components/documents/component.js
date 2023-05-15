@@ -115,6 +115,17 @@ export default class Component extends ComponentBase {
 		return elementor.config.initial_document.id;
 	}
 
+	setInitialById( id ) {
+		const document = this.get( id );
+
+		if ( ! document ) {
+			return;
+		}
+
+		elementor.config.initial_document = document.config;
+		elementorCommon.ajax.addRequestConstant( 'initial_document_id', document.id );
+	}
+
 	/**
 	 * Function setCurrent().
 	 *
