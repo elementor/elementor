@@ -22,7 +22,11 @@ jobs:
         id: changelog_diff_files
         uses: technote-space/get-diff-action@v6
         with:
-          PATTERNS: '**/*'
+          PATTERNS: |
+            **/*
+            .github/**/*
+            .grunt-config/**/*
+            !readme.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
