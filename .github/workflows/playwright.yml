@@ -23,6 +23,7 @@ jobs:
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
+            **/*
             !readme.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
