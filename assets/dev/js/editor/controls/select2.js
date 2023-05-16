@@ -75,8 +75,11 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 		}
 	},
 
+	/**
+	 * @deprecated since 3.0.0
+	 */
 	onReady() {
-		elementorDevTools.deprecation.deprecated( 'onReady', '3.0.0' );
+		elementorDevTools.deprecation.deprecated( 'onReady()', '3.0.0' );
 	},
 
 	/**
