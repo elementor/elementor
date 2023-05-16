@@ -128,7 +128,7 @@ class Module extends BaseApp {
 				],
 				'cta' => [
 					[
-						'label' => 'I\'m Excited',
+						'label' => 'Activate Container',
 						'variant' => 'primary',
 						'target' => '_blank',
 						'url' => ElementorSettings::get_url() . '#tab-experiments',

@@ -1,4 +1,4 @@
-@import "buttons";
+@use "../helpers/mixins";
 
 //
 // Dialog Confirm
@@ -41,7 +41,13 @@ $e-dialog-confirm-space: 20px;
 		gap: 15px;
 
 		.dialog-button {
-			@extend .elementor-button;
+			@include mixins.e-button;
+
+			&:hover,
+			&:focus,
+			&:visited {
+				color: initial;
+			}
 
 			&.dialog-ok {
 				@extend .e-primary;
