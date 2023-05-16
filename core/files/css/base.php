@@ -652,10 +652,9 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
-
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
-		$current_duplication_mode = $this->get_responsive_control_duplication_mode();
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $current_duplication_mode );
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
 
 		$this->render_css();
 
