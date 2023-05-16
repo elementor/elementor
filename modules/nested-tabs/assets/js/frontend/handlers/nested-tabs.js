@@ -314,13 +314,11 @@ export default class NestedTabs extends Base {
 		}
 	}
 	onElementChange( propertyName ) {
-		if ( this.isHorizontalScroll() ) {
-			if ( propertyName.includes( 'horizontal_scroll' ) ) {
-				this.setHorizontalScrollAlignment();
-			}
-			if ( propertyName.includes( 'tabs_justify_horizontal' ) ) {
-				this.setHorizontalScrollAlignment();
-			}
+		if ( propertyName.includes( 'horizontal_scroll' ) ) {
+			this.setHorizontalScrollAlignment();
+		}
+		if ( propertyName.includes( 'tabs_justify_horizontal' ) ) {
+			this.setHorizontalScrollAlignment();
 		}
 	}
 
@@ -552,15 +550,27 @@ export default class NestedTabs extends Base {
 		}
 
 		const slider = this.elements.$headingContainer[ 0 ];
-		const { tabs_justify_horizontal: tabsDirection } = this.getElementSettings();
+		const tabsDirection = this.getTabsDirection();
 
 		if ( this.isHorizontalScroll() ) {
 			this.initialScrollPosition( slider, tabsDirection );
+		} else {
+			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
 		}
+	}
+
+	getTabsDirection() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			tabsDirection = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
+
+		return tabsDirection;
 	}
 
 	initialScrollPosition( slider, tabsDirection ) {
 		switch ( tabsDirection ) {
+			// To cover defaults and center
+			case undefined:
+			case '':
 			case 'center':
 				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
 				slider.scrollLeft = this.getChildrenWidth( slider.children ) / 4;
@@ -570,6 +580,7 @@ export default class NestedTabs extends Base {
 				slider.scrollLeft = this.getChildrenWidth( slider.children );
 				break;
 			default:
+				slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
 				slider.scrollLeft = 0;
 		}
 	}
