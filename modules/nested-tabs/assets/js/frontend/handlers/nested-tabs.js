@@ -539,9 +539,10 @@ export default class NestedTabs extends Base {
 
 	getChildrenWidth( children ) {
 		let totalWidth = 0;
-		const parentContainer = children[ 0 ].parentNode;
-		const computedStyles = getComputedStyle( parentContainer );
-		const gap = parseFloat( computedStyles.gap ) || 0; // Get the gap value or default to 0 if it's not specified
+
+		const parentContainer = children[ 0 ].parentNode,
+			computedStyles = getComputedStyle( parentContainer ),
+			gap = parseFloat( computedStyles.gap ) || 0; // Get the gap value or default to 0 if it's not specified
 
 		for ( let i = 0; i < children.length; i++ ) {
 			totalWidth += children[ i ].offsetWidth + gap;
@@ -555,8 +556,8 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
-		const slider = this.elements.$headingContainer[ 0 ];
-		const tabsDirection = this.getTabsDirection();
+		const slider = this.elements.$headingContainer[ 0 ],
+			tabsDirection = this.getTabsDirection();
 
 		if ( this.isHorizontalScroll() ) {
 			this.initialScrollPosition( slider, tabsDirection );
@@ -612,16 +613,17 @@ export default class NestedTabs extends Base {
 
 		const previousPositionX = parseFloat( slider.dataset.pageX ),
 			mouseMoveX = event.pageX - previousPositionX,
-			maximumScrollValue = 5;
+			maximumScrollValue = 5,
+			step = 20;
 
 		let toScrollDistanceX = 0;
 
-		if ( 20 < mouseMoveX ) {
+		if ( step < mouseMoveX ) {
 			toScrollDistanceX = maximumScrollValue;
-		} else if ( -20 > mouseMoveX ) {
+		} else if ( step * -1 > mouseMoveX ) {
 			toScrollDistanceX = -1 * maximumScrollValue;
 		} else {
-			toScrollDistanceX = mouseMoveX / 10;
+			toScrollDistanceX = mouseMoveX / step;
 		}
 
 		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
