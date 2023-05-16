@@ -11,6 +11,8 @@
 	--n-tabs-direction: row;
 	--n-tabs-justify-content: center;
 	--n-tabs-gap: 10px;
+	--n-tabs-column-gap: var( --n-tabs-title-gap );
+	--n-tabs-row-gap: var( --n-tabs-title-gap );
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -31,8 +33,6 @@
 	--n-tabs-title-align-items: center;
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
-	--n-tabs-column-gap: var( --n-tabs-title-gap );
-	--n-tabs-row-gap: var( --n-tabs-title-gap );
 	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
@@ -40,7 +40,7 @@
 	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
-	--n-tabs-title-space-between: initial;
+	--n-tabs-title-grid-space-between: initial;
 	--n-tabs-column-width: auto;
 	--n-tabs-title-width: initial;
 	--n-tabs-spacer-top-height: 0px;
@@ -63,25 +63,26 @@
 		flex-wrap: wrap;
 		grid-template-areas: var( --n-tabs-grid-template-areas );
 		grid-template-columns: var( --n-tabs-grid-template-columns );
-		flex-shrink: 0; // Check
+	}
+
+	button.e-n-tab-title {
+		border-style: initial;
 	}
 
 	.e-n-tab {
 
 		&-title {
-			order: initial;
-			width: 100%;
-			height: initial;
 			display: flex;
+			width: 100%;
 			flex-direction: var( --n-tabs-title-direction );
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
+			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-shrink: 0;
 			gap: var( --n-tabs-icon-gap );
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
-			//outline: none; // Check?
-			flex-grow: var( --n-tabs-title-flex-grow );
 			margin-bottom: var( --n-tabs-title-gap );
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
@@ -105,7 +106,15 @@
 			-khtml-user-select: none;
 			-moz-user-select: none;
 			-ms-user-select: none;
-			user-select: none;
+			user-select: none; // Is the button styling sufficient?
+
+			&:focus {
+				outline-color: transparent;
+			}
+
+			&:focus-visible {
+				outline-color: rgb(0, 95, 204);
+			}
 
 			& span svg,
 			& span i {
@@ -174,7 +183,7 @@
 				}
 			}
 
-			&:not( [aria-selected="true"] ).e-n-tab-title:hover {
+			&:not( [aria-selected="true"] ):hover {
 
 				&,
 				& a {

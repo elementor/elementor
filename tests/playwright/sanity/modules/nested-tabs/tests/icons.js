@@ -2,7 +2,7 @@ const { expect } = require( '@playwright/test' );
 
 async function testIconCount( page, editor ) {
 	// Act.
-	const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active .elementor-add-new-section i' ).count(),
+	const iconCountForTabs = await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tab-title[aria-selected=true] + .e-con .elementor-add-new-section i' ).count(),
 		iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
 
 	// Assert.

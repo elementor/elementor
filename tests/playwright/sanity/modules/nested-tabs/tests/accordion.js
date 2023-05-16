@@ -14,24 +14,24 @@ async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	await editor.publishAndViewPage();
 	await page.setViewportSize( viewportSize.mobile );
 
-	const tabTitle1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
-		tabTitle2 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
-		tabTitle3 = await page.locator( '.e-n-tabs-content > div:nth-child( 5 )' ),
-		activeTabTitleSelector = '.e-collapse.e-active';
+	const tabTitle1 = await page.locator( '.e-n-tabs > div:nth-child( 1 )' ),
+		tabTitle2 = await page.locator( '.e-n-tabs > div:nth-child( 3 )' ),
+		tabTitle3 = await page.locator( '.e-n-tabs > div:nth-child( 5 )' ),
+		activeTabTitleSelector = '.e-n-tab-title[aria-selected=true]';
 
-	await expect( tabTitle1 ).toHaveClass( /e-active/ );
+	await expect( tabTitle1 ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickMobileTab( page, '1' );
-	await expect( tabTitle2 ).toHaveClass( /e-active/ );
+	await expect( tabTitle2 ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickMobileTab( page, '2' );
-	await expect( tabTitle3 ).toHaveClass( /e-active/ );
+	await expect( tabTitle3 ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickMobileTab( page, '1' );
-	await expect( tabTitle2 ).toHaveClass( /e-active/ );
+	await expect( tabTitle2 ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickMobileTab( page, '0' );
-	await expect( tabTitle1 ).toHaveClass( /e-active/ );
+	await expect( tabTitle1 ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }
 

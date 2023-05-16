@@ -32,22 +32,22 @@ async function setIconsToTabs( page, TabIcons ) {
 }
 
 async function editTab( editor, tabIndex ) {
-	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	const tabTitleSelector = '.e-n-tabs .e-n-tab-title';
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }[aria-selected=true]` );
 	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
 	await editor.page.waitForTimeout( 100 );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tab-title[aria-selected=true] + .e-con.elementor-element-edit-mode' ).getAttribute( 'data-id' );
 }
 
 // Click on tab by position.
 async function clickTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
 }
 
 // Click on tab by position.
 async function clickMobileTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition } ` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
 }
 
 async function setup( wpAdmin, customExperiment = '' ) {
@@ -91,17 +91,17 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 }
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
-	const isActiveTab = await editor.getPreviewFrame().locator( `.e-normal >> nth=${ itemNumber }` ).evaluate( ( element ) => element.classList.contains( 'e-active ' ) );
+	const isActiveTab = await editor.getPreviewFrame().locator( `.e-n-tab-title >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).hover();
-	const elementEditButton = editor.getPreviewFrame().locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await editor.getPreviewFrame().locator( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' ).hover();
+	const elementEditButton = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected=true] + .e-con > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content > .e-con.e-active' );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
+	await editor.getPreviewFrame().waitForSelector( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' );
+	return await editor.getPreviewFrame().locator( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' ).getAttribute( 'data-id' );
 }
 
 module.exports = {

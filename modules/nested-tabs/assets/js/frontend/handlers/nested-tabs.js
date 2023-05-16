@@ -81,7 +81,7 @@ export default class NestedTabs extends Base {
 		this.setSettings( originalToggleMethods );
 	}
 
-		handleKeyboardNavigation( event ) {
+	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
 			$tabs = this.elements.$tabTitles,
 			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
@@ -90,6 +90,9 @@ export default class NestedTabs extends Base {
 			isVertical = this.isWidgetInDropdownMode() || hasVerticalTabs;
 
 		switch ( event.key ) {
+			case 'Escape':
+				console.log( 'Terug' );
+				break;
 			case 'ArrowLeft':
 			case 'ArrowRight':
 				if ( isVertical ) {
@@ -121,7 +124,6 @@ export default class NestedTabs extends Base {
 
 		if ( !! $nextTab ) {
 			$nextTab.trigger( 'focus' );
-			console.log( 'next' );
 		} else if ( -1 === tabIndex + direction ) {
 			$tabs.last().trigger( 'focus' );
 		} else {
@@ -210,7 +212,6 @@ export default class NestedTabs extends Base {
 			case 'ArrowRight':
 			case 'ArrowUp':
 			case 'ArrowDown':
-				console.log( 'keyup' );
 				this.handleKeyboardNavigation( event );
 				break;
 			case 'Enter':
@@ -231,11 +232,13 @@ export default class NestedTabs extends Base {
 
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
+		this.elements.$tabList.find( '.e-con' ).children().on( 'keydown', this.onEscapeContentContainer.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
 	unbindEvents() {
 		this.elements.$tabTitles.off();
+		this.elements.$tabList.find( '.e-con' ).children().off();
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
 
@@ -250,6 +253,13 @@ export default class NestedTabs extends Base {
 		// We listen to the keydown events for these keys in order to prevent undesired page scrolling.
 		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
 			event.preventDefault();
+		}
+	}
+
+	onEscapeContentContainer( event ) {
+		if ( 'Escape' === event.key ) {
+			const currentTab = event.currentTarget.closest( '.e-n-tabs > .e-con' ).previousSibling;
+			currentTab.focus();
 		}
 	}
 

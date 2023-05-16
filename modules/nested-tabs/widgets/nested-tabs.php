@@ -98,6 +98,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'dynamic' => [
 				'active' => true,
 			],
+//			'render_type' => 'template', // Do we need to rerender the elements after a repeater item change?
 		] );
 
 		$repeater->add_control(
@@ -185,10 +186,10 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-display: flex; --n-tabs-title-order: -1; --n-tabs-grid-template-columns: initial; --n-tabs-title-width-toggle: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-title-gap ); --n-tabs-title-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap ); --n-tabs-content-margin-block: var( --n-tabs-content-margin-gap ) 0px;',
-				'bottom' => '--n-tabs-display: flex; --n-tabs-title-order: 2; --n-tabs-grid-template-columns: initial; --n-tabs-title-width-toggle: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-title-gap ); --n-tabs-title-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap ); --n-tabs-content-margin-block: 0px var( --n-tabs-content-margin-gap );',
-				'end' => '--n-tabs-display: grid; --n-tabs-title-order: initial; --n-tabs-grid-template-columns: 1fr var( --n-tabs-column-width ); --n-tabs-title-width-toggle: 100%; --n-tabs-grid-template-areas: var( --grid-template-areas-end ); --n-tabs-row-gap: 0px; --n-tabs-title-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap ); --n-tabs-content-margin-block: 0px 0px;',
-				'start' => '--n-tabs-display: grid; --n-tabs-title-order: initial; --n-tabs-grid-template-columns: var( --n-tabs-column-width ) 1fr; --n-tabs-title-width-toggle: 100%; --n-tabs-grid-template-areas: var( --grid-template-areas-start ); --n-tabs-row-gap: 0px; --n-tabs-title-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap ); --n-tabs-content-margin-block: 0px 0px',
+				'top' => '--n-tabs-display: flex; --n-tabs-title-order: -1; --n-tabs-grid-template-columns: initial; --n-tabs-title-width-toggle: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-title-gap ); --n-tabs-title-grid-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap ); --n-tabs-content-margin-block: var( --n-tabs-content-margin-gap ) 0px;',
+				'bottom' => '--n-tabs-display: flex; --n-tabs-title-order: 2; --n-tabs-grid-template-columns: initial; --n-tabs-title-width-toggle: initial; --n-tabs-title-width: initial; --n-tabs-grid-template-areas: initial; --n-tabs-row-gap: var( --n-tabs-title-gap ); --n-tabs-title-grid-space-between: initial; --n-tabs-column-gap: var( --n-tabs-title-gap ); --n-tabs-content-margin-block: 0px var( --n-tabs-content-margin-gap );',
+				'end' => '--n-tabs-display: grid; --n-tabs-title-order: initial; --n-tabs-grid-template-columns: 1fr var( --n-tabs-column-width ); --n-tabs-title-width-toggle: 100%; --n-tabs-grid-template-areas: var( --grid-template-areas-end ); --n-tabs-row-gap: 0px; --n-tabs-title-grid-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap ); --n-tabs-content-margin-block: 0px 0px;',
+				'start' => '--n-tabs-display: grid; --n-tabs-title-order: initial; --n-tabs-grid-template-columns: var( --n-tabs-column-width ) 1fr; --n-tabs-title-width-toggle: 100%; --n-tabs-grid-template-areas: var( --grid-template-areas-start ); --n-tabs-row-gap: 0px; --n-tabs-title-grid-space-between: var( --n-tabs-title-gap ); --n-tabs-column-gap: var( --n-tabs-gap ); --n-tabs-content-margin-block: 0px 0px',
 			],
 			'selectors' => [
 				'{{WRAPPER}}, {{WRAPPER}} .e-n-tabs' => '{{VALUE}}',
@@ -1052,7 +1053,7 @@ class NestedTabs extends Widget_Nested_Base {
 			if ( 1 === $index ) {
 				$grid_template_areas_spacer_start = " '. content' ";
 				$grid_template_areas_spacer_end = " 'content .' ";
-				$grid_template_rows_spacer = 'var( --n-tabs-title-space-between ) ';
+				$grid_template_rows_spacer = 'var( --n-tabs-title-grid-space-between ) ';
 			}
 
 			$grid_template_areas_tabs_start .= $grid_template_areas_spacer_start . "'tab" . $index . " content' ";
@@ -1068,6 +1069,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'role' => 'tab',
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
+				'aria-label' => esc_html__( 'To be updated', 'elementor' ),
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
@@ -1125,7 +1127,7 @@ class NestedTabs extends Widget_Nested_Base {
 			if ( 1 === index ) {
 				gridTemplateAreasSpacerStart = " '. content' ";
 				gridTemplateAreasSpacerEnd = " 'content .' ";
-				gridTemplateRowsSpacer = 'var( --n-tabs-title-space-between ) ';
+				gridTemplateRowsSpacer = 'var( --n-tabs-title-grid-space-between ) ';
 			}
 
 			gridTemplateAreasTabsStart += gridTemplateAreasSpacerStart + "'tab" + index + " content' ";
@@ -1180,6 +1182,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'data-tab': tabCount,
 					'role': 'tab',
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
+					'aria-label': '<?php echo esc_html__( 'To be updated', 'elementor' ); ?>',
 					'style': 'grid-area: tab' + index + ';',
 				} );
 

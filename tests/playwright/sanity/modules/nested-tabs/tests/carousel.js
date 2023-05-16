@@ -4,7 +4,7 @@ const { selectDropdownContainer, clickTab } = require( '../helper' );
 async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId ) {
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, widgetId, 0 ),
-		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
+		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs > .e-n-tab-title[aria-selected=ture] + .e-con' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 	// Add images.
 	await editor.populateImageCarousel();
