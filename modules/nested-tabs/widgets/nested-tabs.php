@@ -98,7 +98,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'dynamic' => [
 				'active' => true,
 			],
-//			'render_type' => 'template', // Do we need to rerender the elements after a repeater item change?
+			// 'render_type' => 'template', // Do we need to rerender the elements after a repeater item change?
 		] );
 
 		$repeater->add_control(
@@ -1029,11 +1029,11 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$tabs_title_html = '';
 
-		$grid_template_areas_tabs_start = "";
-		$grid_template_areas_tabs_end = "";
+		$grid_template_areas_tabs_start = '';
+		$grid_template_areas_tabs_end = '';
 		$grid_template_rows_tabs = '';
-		$grid_template_areas_spacer_start = "";
-		$grid_template_areas_spacer_end = "";
+		$grid_template_areas_spacer_start = '';
+		$grid_template_areas_spacer_end = '';
 		$grid_template_rows_spacer = '';
 
 		foreach ( $tabs as $index => $item ) {

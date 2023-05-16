@@ -91,7 +91,6 @@ export default class NestedTabs extends Base {
 
 		switch ( event.key ) {
 			case 'Escape':
-				console.log( 'Terug' );
 				break;
 			case 'ArrowLeft':
 			case 'ArrowRight':
@@ -131,7 +130,7 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	deactivateActiveTab( tabIndex ) {
+	deactivateActiveTab() {
 		const settings = this.getSettings(),
 			$activeTitle = this.getActiveTabObject().tabTitle,
 			$activeContent = this.getActiveTabObject().tabContent;
@@ -143,8 +142,7 @@ export default class NestedTabs extends Base {
 	}
 
 	getActiveTabObject( tabIndex ) {
-		const settings = this.getSettings(),
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]';
+		const activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]';
 
 		return {
 			tabTitle: this.elements.$tabTitles.filter( activeTitleFilter ),
@@ -354,7 +352,7 @@ export default class NestedTabs extends Base {
 		}
 	}
 
-	createMobileTabs( args ) {
+	createMobileTabs() {
 		if ( ! elementorFrontend.isEditMode() ) {
 			return;
 		}
