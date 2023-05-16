@@ -3,8 +3,6 @@
 //
 .elementor-widget-n-tabs {
 	--n-tabs-display: flex;
-	--n-tabs-height-toggle: auto;
-	--n-tabs-height: initial;
 	--n-tabs-color-accent-fallback: #61CE70;
 	--n-tabs-color-secondary-fallback: #54595F;
 	--n-tabs-default-padding-block: 15px;
@@ -12,14 +10,13 @@
 	--n-tabs-background-color: transparent;
 	--n-tabs-direction: row;
 	--n-tabs-justify-content: center;
-	--n-tabs-row-gap-toggle: initial;
 	--n-tabs-gap: 10px;
-	--n-tabs-column-break-display: none;
-	--n-tabs-title-width: initial;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
 	--n-tabs-content-border-radius: initial;
+	--n-tabs-content-margin-gap: calc( var( --n-tabs-gap ) - var( --n-tabs-title-gap ) );
+	--n-tabs-content-margin-block: var( --n-tabs-content-margin-gap ) 0px;
 	--n-tabs-title-order: -1;
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
@@ -27,7 +24,6 @@
 	--n-tabs-title-background-color: #{$editor-background-light};
 	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
-	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
 	--n-tabs-title-justify-content-toggle: initial;
 	--n-tabs-title-align-items-toggle: center;
@@ -35,6 +31,8 @@
 	--n-tabs-title-align-items: center;
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
+	--n-tabs-column-gap: var( --n-tabs-title-gap );
+	--n-tabs-row-gap: var( --n-tabs-title-gap );
 	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
@@ -42,9 +40,11 @@
 	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
+	--n-tabs-title-space-between: initial;
+	--n-tabs-column-width: auto;
+	--n-tabs-title-width: initial;
 	--n-tabs-spacer-top-height: 0px;
 	--n-tabs-spacer-bottom-height: 0px;
-	--n-tabs-title-space-between: 0px;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
@@ -53,15 +53,14 @@
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
 	.e-n-tabs {
-		display: var( --n-tabs-display );
-		flex-direction: var( --n-tabs-direction );
-		justify-content: var( --n-tabs-justify-content );
-		column-gap: var( --n-tabs-column-gap );
-		row-gap: var( --n-tabs-row-gap );
+		display: flex;
+		justify-content: initial;
+		flex-direction: column;
+		column-gap: initial;
+		row-gap: initial;
 		text-align: $start;
 		min-width: 0;
 		flex-wrap: wrap;
-		height: var( --n-tabs-height-toggle, var( --n-tabs-height-calculated ) );
 		grid-template-areas: var( --n-tabs-grid-template-areas );
 		grid-template-columns: var( --n-tabs-grid-template-columns );
 		flex-shrink: 0; // Check
@@ -70,23 +69,25 @@
 	.e-n-tab {
 
 		&-title {
-			width: var( --n-tabs-title-width );
-			order: var( --n-tabs-title-order );
+			order: initial;
+			width: 100%;
+			height: initial;
 			display: flex;
+			flex-direction: var( --n-tabs-title-direction );
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
-			outline: none;
+			//outline: none; // Check?
 			flex-grow: var( --n-tabs-title-flex-grow );
+			margin-bottom: var( --n-tabs-title-gap );
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
 			padding-left: var( --n-tabs-title-padding-left );
 			border-radius: var( --n-tabs-title-border-radius );
-			height: var( --n-tabs-title-height );
 			transition: background var( --n-tabs-title-transition ),
 					color var( --n-tabs-title-transition ),
 					border var( --n-tabs-title-transition ),
@@ -233,6 +234,15 @@
 
 			+ .e-con {
 				grid-area: content;
+				margin-top: var( --n-tabs-content-margin-gap );
+				margin-bottom: var( --n-tabs-title-gap );
+			}
+
+			&--last {
+
+				+ .e-con {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}
@@ -244,21 +254,35 @@
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title ) {
+:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tab-title ) {
 
-	&.e-active {
+	&[aria-selected="true"] {
 		background-color: var( --n-tabs-title-background-color-active );
 		background-image: initial;
 	}
 }
 
-// Responsive mode
-@mixin display-type-accordion-($device) {
-}
-
+// Desktop mode.
 @mixin display-type-desktop-($device) {
-	.e-n-tabs {
+	.elementor-widget-n-tabs {
+
+		.e-n-tabs {
+			display: var(--n-tabs-display);
+			justify-content: var( --n-tabs-justify-content );
+			flex-direction: var( --n-tabs-direction );
+			column-gap: var( --n-tabs-column-gap );
+			row-gap: var( --n-tabs-row-gap );
+		}
+
+		.e-n-tab-title {
+			width: var( --n-tabs-title-width-toggle, var( --n-tabs-title-width ) );
+			order: var( --n-tabs-title-order );
+			margin: 0;
+
+			+ .e-con {
+				margin-block: var( --n-tabs-content-margin-block );
+			}
+		}
 	}
 }
 
@@ -267,17 +291,9 @@
 	@include display-type-desktop-(mobile);
 }
 
-@media (max-width: $screen-mobile-max) {
-	@include display-type-accordion-(mobile);
-}
-
 // Mobile Extra.
 @media (min-width: $screen-mobile-extra-next) {
 	@include display-type-desktop-(mobile_extra);
-}
-
-@media (max-width: $screen-mobile-extra-max) {
-	@include display-type-accordion-(mobile_extra);
 }
 
 // Tablet.
@@ -285,24 +301,12 @@
 	@include display-type-desktop-(tablet);
 }
 
-@media (max-width: $screen-tablet-max) {
-	@include display-type-accordion-(tablet);
-}
-
 // Tablet Extra.
 @media (min-width: $screen-tablet-extra-next) {
 	@include display-type-desktop-(tablet_extra);
 }
 
-@media (max-width: $screen-tablet-extra-max) {
-	@include display-type-accordion-(tablet_extra);
-}
-
 // Laptop.
 @media (min-width: $screen-desktop-min) {
 	@include display-type-desktop-(laptop);
-}
-
-@media (max-width: $screen-laptop-max) {
-	@include display-type-accordion-(laptop);
 }
