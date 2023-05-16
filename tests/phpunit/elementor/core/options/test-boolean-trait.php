@@ -6,7 +6,7 @@ use Elementor\Core\Config\Config_Base;
 use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
+class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
 	use Config_Boolean_Trait;
 
 	const PREFIX = 'elementor_';
