@@ -17,6 +17,12 @@ export class Open extends $e.modules.CommandBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
+		// Because the initial document has changed, we need to clear cached values (e.g. header wp_preview URL).
+		if ( setAsInitial ) {
+			elementorCommon.ajax.addRequestConstant( 'initial_document_id', id );
+			elementor.documents.invalidateCache();
+		}
+
 		return elementor.documents.request( id )
 			.then( ( config ) => {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );

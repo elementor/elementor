@@ -161,8 +161,15 @@ export default class Component extends ComponentBase {
 		return elementorCommon.ajax.load( this.getRequestArgs( id ), true );
 	}
 
-	invalidateCache( id ) {
-		elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+	invalidateCache( id = null ) {
+		if ( id ) {
+			elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+			return;
+		}
+
+		Object.keys( this.documents ).forEach( ( id ) => {
+			elementorCommon.ajax.invalidateCache( this.getRequestArgs( id ) );
+		} );
 	}
 
 	getRequestArgs( id ) {
