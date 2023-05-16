@@ -46,7 +46,8 @@ abstract class Config_Base {
 		$old_value = static::get();
 
 		// Avoid changing the value on the frontend.
-		if ( ! is_admin() ) {
+		$current_action = current_action();
+		if ( ! is_admin() && ( ! $current_action || 0 !== strpos( $current_action, 'activate_elementor' /* covers also pro */ ) ) ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 
