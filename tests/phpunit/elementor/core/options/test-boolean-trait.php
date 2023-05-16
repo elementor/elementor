@@ -52,71 +52,61 @@ class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
 	}
 }
 
-class Test_Config_Base extends Elementor_Test_Base {
-
-	public function test__get_prefix() {
-		// Assert.
-		$this->assertEquals( 'elementor_', Config_Base_Test::get_prefix() );
-	}
-
-	public function test__get_full_key() {
-		// Assert.
-		$this->assertEquals( 'elementor_test', Config_Base_Test::get_full_key() );
-	}
+class Test_Config_Boolean_Trait extends Elementor_Test_Base {
 
 	public function test__on_change() {
 		// Act.
-		Config_Base_Test::set_true();
+		Config_Boolean_Trait_Test::set_true();
 
 		// Assert.
 		$this->assertEquals( [
 			'new' => 1,
 			'old' => null,
-		], Config_Base_Test::$changed );
+		], Config_Boolean_Trait_Test::$changed );
 	}
 
 	public function test__is_true() {
 		// Arrange.
-		Config_Base_Test::$value = Config_Base::VALUE_TRUE;
+		Config_Boolean_Trait_Test::$value = Config_Base::VALUE_TRUE;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_true() );
+		$this->assertTrue( Config_Boolean_Trait_Test::is_true() );
 	}
 
 	public function test__is_false() {
 		// Arrange.
-		Config_Base_Test::$value = Config_Base::VALUE_FALSE;
+		Config_Boolean_Trait_Test::$value = Config_Base::VALUE_FALSE;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is "no"' );
+		$this->assertTrue( Config_Boolean_Trait_Test::is_false(), 'is_false() should return true if value is "no"' );
 
 		// Arrange.
-		Config_Base_Test::$value = null;
+		Config_Boolean_Trait_Test::$value = null;
 
 		// Assert.
-		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is null' );
+		$this->assertTrue( Config_Boolean_Trait_Test::is_false(), 'is_false() should return true if value is null' );
 	}
 
 	public function test__set_true() {
 		// Act.
-		Config_Base_Test::set_true();
+		Config_Boolean_Trait_Test::set_true();
 
 		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_TRUE === Config_Base_Test::$value );
+		$this->assertTrue(  Config_Base::VALUE_TRUE === Config_Boolean_Trait_Test::$value );
 	}
 
 	public function test__set_false() {
 		// Act.
-		Config_Base_Test::set_false();
+		Config_Boolean_Trait_Test::set_false();
 
 		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_FALSE === Config_Base_Test::$value );
+		$this->assertTrue(  Config_Base::VALUE_FALSE === Config_Boolean_Trait_Test::$value );
 	}
 
 	// tearDown
 	public function tearDown() {
 		parent::tearDown();
 
-		Config_Base_Test::$value = null;
+		Config_Boolean_Trait_Test::$value = null;
 	}
 }
