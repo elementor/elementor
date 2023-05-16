@@ -446,7 +446,7 @@ class Icons_Manager {
 			/**
 			 * Is icon migration allowed.
 			 *
-			 * Filters whther the icons migration allowed.
+			 * Filters whether the icons migration allowed.
 			 *
 			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */

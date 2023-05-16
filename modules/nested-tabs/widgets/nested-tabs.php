@@ -335,7 +335,9 @@ class NestedTabs extends Widget_Nested_Base {
 			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
 		] );
 
-		$dropdown_options = [];
+		$dropdown_options = [
+			'none' => esc_html__( 'None', 'elementor' ),
+		];
 		$excluded_breakpoints = [
 			'laptop',
 			'tablet_extra',

@@ -319,3 +319,11 @@
 @media (min-width: $screen-desktop-min) {
 	@include display-type-desktop-(laptop);
 }
+
+
+// Breakpoint - none.
+.e-n-tabs-none {
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+		display: none;
+	}
+}
