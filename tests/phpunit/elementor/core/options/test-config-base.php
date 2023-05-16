@@ -7,8 +7,6 @@ use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
-	use Config_Boolean_Trait;
-
 	const PREFIX = 'elementor_';
 
 	static $value;
@@ -48,40 +46,17 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 	}
 
 	protected static function validate( $value ) {
-		return is_string( $value ) || is_array( $value ) /* sub option */;
+		return is_string( $value );
 	}
 }
 
-class Config_Base_Test_Sub_Option extends \Elementor\Core\Config\Config_Base {
-	static $value;
-	static $changed;
-
+class Config_Base_Test_Sub_Option extends Config_Base_Test {
 	public static function get_key() {
 		return 'test_sub_option';
 	}
 
 	public static function get_default() {
 		return ['default-value'];
-	}
-
-	public static function get() {
-		return static::$value;
-	}
-
-	public static function setter( $value ) {
-		static::$value = $value;
-		return true;
-	}
-
-	public static function delete() {
-		static::$value = null;
-	}
-
-	public static function on_change( $new_value, $old_value = null ) {
-		static::$changed = [
-			'new' => $new_value,
-			'old' => $old_value,
-		];
 	}
 
 	protected static function validate( $value ) {
@@ -148,44 +123,6 @@ class Test_Config_Base extends Elementor_Test_Base {
 			'new' => 'new-value',
 			'old' => null,
 		], Config_Base_Test::$changed );
-	}
-
-	public function test__is_true() {
-		// Arrange.
-		Config_Base_Test::$value = Config_Base::VALUE_TRUE;
-
-		// Assert.
-		$this->assertTrue( Config_Base_Test::is_true() );
-	}
-
-	public function test__is_false() {
-		// Arrange.
-		Config_Base_Test::$value = Config_Base::VALUE_FALSE;
-
-		// Assert.
-		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is "no"' );
-
-		// Arrange.
-		Config_Base_Test::$value = null;
-
-		// Assert.
-		$this->assertTrue( Config_Base_Test::is_false(), 'is_false() should return true if value is null' );
-	}
-
-	public function test__set_true() {
-		// Act.
-		Config_Base_Test::set_true();
-
-		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_TRUE === Config_Base_Test::$value );
-	}
-
-	public function test__set_false() {
-		// Act.
-		Config_Base_Test::set_false();
-
-		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_FALSE === Config_Base_Test::$value );
 	}
 
 	// tearDown
