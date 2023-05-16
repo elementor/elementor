@@ -109,7 +109,7 @@
     },
     "dependencies": {
         "@elementor/editor": "0.2.0",
-        "@elementor/editor-app-bar": "0.2.0",
+        "@elementor/editor-app-bar": "0.3.0",
         "@elementor/editor-documents": "0.1.0",
         "@elementor/editor-responsive": "0.1.0",
         "@elementor/editor-site-navigation": "0.1.0",

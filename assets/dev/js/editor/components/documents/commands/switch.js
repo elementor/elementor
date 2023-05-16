@@ -7,7 +7,7 @@ export class Switch extends $e.modules.CommandBase {
 		const { id, mode, onClose, shouldScroll = true, setAsInitial = false } = args;
 
 		if ( setAsInitial ) {
-			// The attach-preview will remove it.
+			// Will be removed by the attach-preview after the iframe has loaded.
 			jQuery( '#elementor-preview-loading' ).show();
 		}
 
