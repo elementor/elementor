@@ -46,6 +46,47 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 			'old' => $old_value,
 		];
 	}
+
+	protected static function validate( $value ) {
+		return is_string( $value ) || is_array( $value ) /* sub option */;
+	}
+}
+
+class Config_Base_Test_Sub_Option extends \Elementor\Core\Config\Config_Base {
+	static $value;
+	static $changed;
+
+	public static function get_key() {
+		return 'test_sub_option';
+	}
+
+	public static function get_default() {
+		return ['default-value'];
+	}
+
+	public static function get() {
+		return static::$value;
+	}
+
+	public static function setter( $value ) {
+		static::$value = $value;
+		return true;
+	}
+
+	public static function delete() {
+		static::$value = null;
+	}
+
+	public static function on_change( $new_value, $old_value = null ) {
+		static::$changed = [
+			'new' => $new_value,
+			'old' => $old_value,
+		];
+	}
+
+	protected static function validate( $value ) {
+		return is_array( $value );
+	}
 }
 
 class Test_Config_Base extends Elementor_Test_Base {
@@ -62,21 +103,21 @@ class Test_Config_Base extends Elementor_Test_Base {
 
 	public function test__get_sub_option() {
 		// Arrange.
-		Config_Base_Test::$value = [ 'sub_option' => 'sub_value' ];
+		Config_Base_Test_Sub_Option::$value = [ 'sub_option' => 'sub_value' ];
 
 		// Assert.
-		$this->assertEquals( 'sub_value', Config_Base_Test::get_sub_option( 'sub_option' ) );
+		$this->assertEquals( 'sub_value', Config_Base_Test_Sub_Option::get_sub_option( 'sub_option' ) );
 	}
 
 	public function test__set_sub_option() {
 		// Arrange.
-		Config_Base_Test::$value = [];
+		Config_Base_Test_Sub_Option::$value = [];
 
 		// Act.
-		Config_Base_Test::set_sub_option( 'sub_option', 'sub_value' );
+		Config_Base_Test_Sub_Option::set_sub_option( 'sub_option', 'sub_value' );
 
 		// Assert.
-		$this->assertEquals( [ 'sub_option' => 'sub_value' ], Config_Base_Test::$value );
+		$this->assertEquals( [ 'sub_option' => 'sub_value' ], Config_Base_Test_Sub_Option::$value );
 	}
 
 	public function test__set_invalid_sub_option() {
@@ -84,7 +125,7 @@ class Test_Config_Base extends Elementor_Test_Base {
 		$this->expectException( \Error::class );
 
 		// Act.
-		Config_Base_Test::set_sub_option( 'sub_option', 'sub_value' );
+		Config_Base_Test_Sub_Option::set_sub_option( 'sub_option', 'sub_value' );
 	}
 
 	public function test__delete_sub_option() {
@@ -92,10 +133,10 @@ class Test_Config_Base extends Elementor_Test_Base {
 		$this->test__set_sub_option();
 
 		// Act.
-		Config_Base_Test::delete_sub_option( 'sub_option' );
+		Config_Base_Test_Sub_Option::delete_sub_option( 'sub_option' );
 
 		// Assert.
-		$this->assertEquals( [], Config_Base_Test::$value );
+		$this->assertEquals( [], Config_Base_Test_Sub_Option::$value );
 	}
 
 	public function test__on_change() {
@@ -152,5 +193,6 @@ class Test_Config_Base extends Elementor_Test_Base {
 		parent::tearDown();
 
 		Config_Base_Test::$value = null;
+		Config_Base_Test_Sub_Option::$value = null;
 	}
 }
