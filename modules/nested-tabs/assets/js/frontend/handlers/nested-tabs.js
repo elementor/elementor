@@ -314,10 +314,13 @@ export default class NestedTabs extends Base {
 		}
 	}
 	onElementChange( propertyName ) {
-		if ( propertyName.includes( 'horizontal_scroll' ) ) {
-			this.setHorizontalScrollAlignment();
-		}
-		if ( propertyName.includes( 'tabs_justify_horizontal' ) ) {
+		const propsToListen = [
+			'horizontal_scroll',
+			'tabs_justify_horizontal',
+			'tabs_title_space_between',
+		];
+
+		if ( propsToListen.includes( propertyName ) ) {
 			this.setHorizontalScrollAlignment();
 		}
 	}
@@ -536,9 +539,12 @@ export default class NestedTabs extends Base {
 
 	getChildrenWidth( children ) {
 		let totalWidth = 0;
+		const parentContainer = children[ 0 ].parentNode;
+		const computedStyles = getComputedStyle( parentContainer );
+		const gap = parseFloat( computedStyles.gap ) || 0; // Get the gap value or default to 0 if it's not specified
 
 		for ( let i = 0; i < children.length; i++ ) {
-			totalWidth += children[ i ].offsetWidth;
+			totalWidth += children[ i ].offsetWidth + gap;
 		}
 
 		return totalWidth;
@@ -573,7 +579,7 @@ export default class NestedTabs extends Base {
 			case '':
 			case 'center':
 				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = this.getChildrenWidth( slider.children ) / 4;
+				slider.scrollLeft = ( this.getChildrenWidth( slider.children ) - slider.offsetWidth ) / 2;
 				break;
 			case 'end':
 				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
