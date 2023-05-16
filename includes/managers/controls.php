@@ -883,31 +883,7 @@ class Controls_Manager {
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
 	public function stack_cache_has_been_cleared() {
-		$has_responsive_control = ! $this->dose_stacks_contain_responsive_control();
-		$has_been_cleared = $this->has_been_cleared;
-
-		return $has_been_cleared || $has_responsive_control;
-	}
-
-	/**
-	 * Dose stack contain responsive control.
-	 * This method checks if the stack contains responsive control.
-	 * This way we know if the stack has been cleared.
-	 * @since 3.13.0
-	 * @access public
-	 * @return bool True if the stack contains responsive control, False otherwise.
-	 */
-	public function dose_stacks_contain_responsive_control() {
-		$has_responsive_control = false;
-		foreach ( $this->stacks as $stack ) {
-			foreach ( $stack['controls'] as $control ) {
-				if ( preg_match( '/_mobile$|_tablet$/', $control['name'] ) ) {
-					$has_responsive_control = true;
-					break;
-				}
-			}
-		}
-		return $has_responsive_control;
+		return $this->has_been_cleared;
 	}
 
 	/**
