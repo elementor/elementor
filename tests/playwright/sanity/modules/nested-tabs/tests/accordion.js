@@ -14,9 +14,9 @@ async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	await editor.publishAndViewPage();
 	await page.setViewportSize( viewportSize.mobile );
 
-	const tabTitle1 = await page.locator( '.e-n-tabs > div:nth-child( 1 )' ),
-		tabTitle2 = await page.locator( '.e-n-tabs > div:nth-child( 3 )' ),
-		tabTitle3 = await page.locator( '.e-n-tabs > div:nth-child( 5 )' ),
+	const tabTitle1 = await page.locator( '.e-n-tabs > button >> nth=0' ),
+		tabTitle2 = await page.locator( '.e-n-tabs > button >> nth=1' ),
+		tabTitle3 = await page.locator( '.e-n-tabs > button >> nth=2' ),
 		activeTabTitleSelector = '.e-n-tab-title[aria-selected=true]';
 
 	await expect( tabTitle1 ).toHaveAttribute( 'aria-selected', 'true' );

@@ -91,17 +91,18 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 }
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
-	const isActiveTab = await editor.getPreviewFrame().locator( `.e-n-tab-title >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
+	const widgetSelector = `.elementor-element-${ widgetId }`,
+		isActiveTab = await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' ).hover();
-	const elementEditButton = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected=true] + .e-con > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con` ).hover();
+	const elementEditButton = editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title[aria-selected=true] + .e-con > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit` );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con' ).getAttribute( 'data-id' );
+	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector } .e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con` );
+	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tabs > .e-n-tab-title[aria-selected=true] + .e-con` ).getAttribute( 'data-id' );
 }
 
 module.exports = {
