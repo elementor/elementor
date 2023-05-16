@@ -652,9 +652,16 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
-		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
+		$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->stack_cache_has_been_cleared();
+		$has_document = Plugin::$instance->documents->get_current();
+		if ( ! $stack_cache_has_been_cleared && $has_document ) {
+			Plugin::$instance->controls_manager->clear_stack_cache();
+		}
+
+		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+		$current_duplication_mode = $this->get_responsive_control_duplication_mode();
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $current_duplication_mode );
 
 		$this->render_css();
 
