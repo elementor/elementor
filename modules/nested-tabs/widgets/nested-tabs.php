@@ -1067,6 +1067,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'class' => $tab_title_classes,
 				'data-tab' => $tab_count,
 				'role' => 'tab',
+				'aria-label' => esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ),
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
 				'aria-label' => esc_html__( 'To be updated', 'elementor' ),
@@ -1101,6 +1102,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
 			'role' => 'tablist',
+			'aria-label' => esc_html__( 'Nested Tabs', 'elementor' ),
 			'style' => '--grid-template-areas-start: ' . $grid_template_areas_values_start . '; --grid-template-areas-end: ' . $grid_template_areas_values_end . '; grid-template-rows: ' . $grid_template_rows_values . ';',
 		] );
 		?>
@@ -1142,6 +1144,7 @@ class NestedTabs extends Widget_Nested_Base {
 		view.addRenderAttribute( widgetWrapperKey, {
 			'class': 'e-n-tabs',
 			'role': 'tablist',
+			'aria-label': "<php esc_html__( 'Nested Tabs', 'elementor' ); ?>",
 			'style': '--grid-template-areas-start: ' + gridTemplateAreasValuesStart + '; --grid-template-areas-end: ' + gridTemplateAreasValuesEnd + '; grid-template-rows: ' + gridTemplateRowsValues + ';',
 		} );
 		#>
@@ -1181,6 +1184,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'class': tabTitleClassArray,
 					'data-tab': tabCount,
 					'role': 'tab',
+					'aria-label': "<php esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ); ?>",
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'aria-label': '<?php echo esc_html__( 'To be updated', 'elementor' ); ?>',
 					'style': 'grid-area: tab' + index + ';',
