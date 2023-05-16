@@ -52,7 +52,7 @@ abstract class Config_Base {
 
 		// Avoid changing to a value that is not in the options.
 		if ( ! static::validate( $value ) ) {
-			throw new \Error( self::class . ': Invalid value: ' . print_r( $value, true ) );
+			throw new \Error( static::class . ': Invalid value: ' . var_export( $value, true ) );
 		}
 
 		// Avoid changing to a value that the user doesn't have permission to.
