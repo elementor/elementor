@@ -26,4 +26,8 @@ abstract class User_Config_Base extends Config_Base {
 	public static function delete() {
 		return delete_user_option( get_current_user_id(), static::get_full_key() );
 	}
+
+	protected static function has_permission( $value ) {
+		return is_user_logged_in() || current_user_can( 'manage_options' );
+	}
 }
