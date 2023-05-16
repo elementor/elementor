@@ -1,4 +1,4 @@
-import NestedAccordion from './nested-accordion'
+import NestedAccordion from './nested-accordion';
 
 export default class Module {
 	constructor() {

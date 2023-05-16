@@ -136,13 +136,14 @@ class NestedAccordion extends Widget_Nested_Base {
 			$this->print_child( $index );
 			$tab_content = ob_get_clean();
 
-			$tabs_title_html .= "\t<detais {$title_render_attributes}>{$tab_title}";
-			$tabs_title_html .= "\t\t<summary>{$tab_content}</summary>";
-			$tabs_title_html .= "\t</detais>";
+			$tabs_title_html .= "\t<details {$title_render_attributes}>";
+			$tabs_title_html .= "\t\t<summary>{$tab_title}</summary>";
+			$tabs_title_html .= "\t\t{$tab_content}";
+			$tabs_title_html .= "\t</details>";
 		}
 
 		?>
-		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
 			<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
