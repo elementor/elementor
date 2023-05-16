@@ -17,9 +17,11 @@ export class Open extends $e.modules.CommandBase {
 			elementor.$previewContents.find( `.elementor-${ id }` ).addClass( 'loading' );
 		}
 
-		// Because the initial document has changed, we need to clear cached values (e.g. header wp_preview URL).
 		if ( setAsInitial ) {
+			// Set the new initial document id to be sent with all requests.
 			elementorCommon.ajax.addRequestConstant( 'initial_document_id', id );
+
+			// Because the initial document has changed, we need to clear cached values (e.g. header wp_preview URL),
 			elementor.documents.invalidateCache();
 		}
 
