@@ -614,16 +614,16 @@ export default class NestedTabs extends Base {
 		const previousPositionX = parseFloat( slider.dataset.pageX ),
 			mouseMoveX = event.pageX - previousPositionX,
 			maximumScrollValue = 5,
-			step = 20;
+			stepLimit = 20;
 
 		let toScrollDistanceX = 0;
 
-		if ( step < mouseMoveX ) {
+		if ( stepLimit < mouseMoveX ) {
 			toScrollDistanceX = maximumScrollValue;
-		} else if ( step * -1 > mouseMoveX ) {
+		} else if ( stepLimit * -1 > mouseMoveX ) {
 			toScrollDistanceX = -1 * maximumScrollValue;
 		} else {
-			toScrollDistanceX = mouseMoveX / step;
+			toScrollDistanceX = mouseMoveX;
 		}
 
 		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
