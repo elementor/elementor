@@ -51,6 +51,10 @@ class Test_Site_Option extends Elementor_Test_Base {
 		$this->assertEmpty( get_option( 'elementor_test' ) );
 	}
 
+	protected static function validate( $value ) {
+		return is_string( $value );
+	}
+
 	public function tearDown() {
 		parent::tearDown();
 
