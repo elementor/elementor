@@ -201,12 +201,12 @@ class Maintenance_Mode {
 							echo '<div>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 						},
 						'fields' => [
-							'maintenance_mode_mode' => [
+								Mode::get_key() => [
 								'label' => esc_html__( 'Choose Mode', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
-									'options' => ,
+									'options' => Mode::get_options(),
 									'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
 												esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
 												'</div>' .
