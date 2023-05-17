@@ -60,38 +60,33 @@ class Test_Controls extends Elementor_Test_Base {
 
 	public function test_clear_stack_cache() {
 		// Arrange
-		$stacks_mock = [
-			'button' => [
-				'controls' => [
-					'border_border' => [
-					'type'=>'select',
-					'tab'=>'style',
-					'section'=>'section_style',
-					'label'=>'Border Type',
-					'options'=>[''=>'Default'],
-					'none'=>'None',
-					'solid'=>'Solid',
-					'double'=>'Double',
-					'dotted'=>'Dotted',
-					'dashed'=>'Dashed',
-					'groove'=>'Groove',
-					'selectors'=>['{{WRAPPER}} .elementor-button'=>'border-style: {{VALUE}};'],
-					'separator'=>'before',
-					'classes'=>'elementor-group-control-border elementor-group-control elementor-group-control-border',
-					'name'=>'border_border',
-					'default'=>''
-					],
-				],
-			],
+		$control_data = [
+			'type'=>'select',
+			'tab'=>'style',
+			'section'=>'section_style',
+			'label'=>'Border Type',
+			'options'=>[''=>'Default'],
+			'none'=>'None',
+			'solid'=>'Solid',
+			'double'=>'Double',
+			'dotted'=>'Dotted',
+			'dashed'=>'Dashed',
+			'groove'=>'Groove',
+			'selectors'=>['{{WRAPPER}} .elementor-button'=>'border-style: {{VALUE}};'],
+			'separator'=>'before',
+			'classes'=>'elementor-group-control-border elementor-group-control elementor-group-control-border',
+			'name'=>'border_border',
+			'default'=>''
 		];
 
 		$widget = new Mock_Widget( [
 			'settings' => [],
 			'id' => '1',
-		], $stacks_mock );
+		], [] );
 
 		// Act
 		Plugin::$instance->controls_manager->open_stack( $widget );
+		Plugin::$instance->controls_manager->add_control_to_stack( $widget, 'border_border', $control_data, [] );
 
 		// Assert
 		$stacks = Plugin::$instance->controls_manager->get_stacks();
