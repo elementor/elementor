@@ -314,15 +314,15 @@ export default class NestedTabs extends Base {
 		}
 	}
 	onElementChange( propertyName ) {
-		const propsToListen = [
-			'horizontal_scroll',
-			'tabs_justify_horizontal',
-			'tabs_title_space_between',
-		];
-
-		if ( propsToListen.includes( propertyName ) ) {
+		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			this.setHorizontalScrollAlignment();
 		}
+	}
+
+	checkSliderPropsToWatch( propertyName ) {
+		return 0 === propertyName.indexOf( 'horizontal_scroll' ) ||
+			0 === propertyName.indexOf( 'tabs_justify_horizontal' ) ||
+			0 === propertyName.indexOf( 'tabs_title_space_between' );
 	}
 
 	/**
@@ -556,10 +556,11 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
-		const slider = this.elements.$headingContainer[ 0 ],
-			tabsDirection = this.getTabsDirection();
+		const slider = this.elements.$headingContainer[ 0 ];
 
 		if ( this.isHorizontalScroll() ) {
+			const tabsDirection = this.getTabsDirection();
+
 			this.initialScrollPosition( slider, tabsDirection );
 		} else {
 			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
