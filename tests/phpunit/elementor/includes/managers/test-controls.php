@@ -60,7 +60,7 @@ class Test_Controls extends Elementor_Test_Base {
 
 	public function test_clear_stack_cache() {
 		// Arrange
-		$stacks = [
+		$stacks_mock = [
 			'button' => [
 				'controls' => [
 					'border_border' => [
@@ -88,10 +88,14 @@ class Test_Controls extends Elementor_Test_Base {
 		$widget = new Mock_Widget( [
 			'settings' => [],
 			'id' => '1',
-		], $stacks );
+		], $stacks_mock );
 
 		// Act
 		Plugin::$instance->controls_manager->open_stack( $widget );
+
+		// Assert
+		$stacks = Plugin::$instance->controls_manager->get_stacks();
+		$this->assertNotEmpty( $stacks );
 
 		// Assert
 		$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared();
