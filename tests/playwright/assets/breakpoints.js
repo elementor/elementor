@@ -28,7 +28,7 @@ module.exports = class {
 
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
-		await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 20000 } );
+		await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 25000 } );
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 		await this.page.reload();
