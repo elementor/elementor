@@ -49,11 +49,11 @@ module.exports = class WpAdminPage extends BasePage {
 
 		await this.waitForPanel();
 
+		await this.closeAnnouncementsIfVisible();
+
 		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
-
-		await this.closeAnnouncementsIfVisible();
 
 		return editor;
 	}

@@ -31,7 +31,7 @@ module.exports = class {
 		await this.page.reload();
 
 		if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
-			await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 25000 } );
+			await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
 		}
 
 		await this.page.waitForSelector( '#elementor-editor-wrapper' );
