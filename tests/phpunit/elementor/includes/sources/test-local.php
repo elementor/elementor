@@ -39,7 +39,7 @@ class Test_Local extends Elementor_Test_Base {
 		$wp_list_table = null;
 	}
 
-	public function test_save_item__subscriber_cannot_create_template() {
+	public function test_save_item__subscribers_cannot_create_template() {
 		// Arrange
 		$this->act_as_subscriber();
 
@@ -90,7 +90,7 @@ class Test_Local extends Elementor_Test_Base {
 		$this->assertEquals( 'invalid_template_type', $result->get_error_code() );
 	}
 
-	public function test_save_item__editor_can_create_page() {
+	public function test_save_item__editors_can_create_templates() {
 		// Arrange
 		$this->act_as_editor();
 
