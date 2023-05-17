@@ -291,9 +291,9 @@ class Controls_Manager {
 	private static $tabs;
 
 	/**
-	 * Has been cleared.
+	 * Has stacks cache been cleared.
 	 *
-	 * Holds whether the controls manager has been clear stack.
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -301,7 +301,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	public $has_been_cleared = false;
+	public $has_stacks_cache_been_cleared = false;
 
 	/**
 	 * Init tabs.
@@ -876,14 +876,13 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Should clear stack cache.
-	 * Whether the CSS requires to clear the controls stack cache.
+	 * Has Stacks Cache Been Cleared.
 	 * @since 3.13.0
 	 * @access protected
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function stack_cache_has_been_cleared() {
-		return $this->has_been_cleared;
+	public function has_stacks_cache_been_cleared() {
+		return $this->has_stacks_cache_been_cleared;
 	}
 
 	/**
@@ -894,7 +893,7 @@ class Controls_Manager {
 	 */
 	public function clear_stack_cache() {
 		$this->stacks = [];
-		$this->has_been_cleared = true;
+		$this->has_stacks_cache_been_cleared = true;
 	}
 
 	/**
