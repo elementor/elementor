@@ -1,13 +1,14 @@
 const { execSync } = require( 'child_process' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
+const { createApiContext, createPost } = require( '../assets/api-requests' );
+const { request } = require( '@playwright/test' );
 
 /**
  * This post is used for any tests that need a post, with empty elements.
  *
  * @type {number}
  */
-const CLEAN_POST_ID = 1;
 
 module.exports = class WpAdminPage extends BasePage {
 	async gotoDashboard() {
@@ -46,12 +47,27 @@ module.exports = class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
-	async useElementorCleanPost() {
-		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
+	async useElementorCleanPost( ) {
+		const postData = {
+			slug: 'hello-world 333',
+			status: 'publish',
+			title: 'Simple post',
+			content: 'Test post',
+			excerpt: {
+				rendered: '<p>Welcome to Single test post</p>\n',
+				protected: false,
+			} };
+		const apiContext = await createApiContext( request, {
+			storageStateObject: JSON.parse( process.env.STORAGE_STATE ),
+			wpRESTNonce: process.env.WP_REST_NONCE,
+			baseURL: process.env.BASE_URL,
+		} );
+		const postId = await createPost( apiContext, postData );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.waitForPanel();
 
-		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
+		const editor = new EditorPage( this.page, this.testInfo, postId );
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 

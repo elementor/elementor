@@ -32,6 +32,24 @@ export async function createDefaultMedia( request, image ) {
 	return id;
 }
 
+export async function createPost( request, data = {} ) {
+	const response = await request.post( '/index.php', {
+		params: { rest_route: '/wp/v2/posts' },
+		headers,
+		multipart: data,
+	} );
+
+	if ( ! response.ok() ) {
+		throw new Error( `
+			Failed to create default media: ${ response.status() }.
+			${ await response.text() }
+		` );
+	}
+	const { id } = await response.json();
+
+	return id;
+}
+
 export async function deleteDefaultMedia( request, ids ) {
 	const requests = [];
 	for ( const id in ids ) {
