@@ -40,9 +40,7 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
-		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
-			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
-		}
+		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
 	}
@@ -68,6 +66,7 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.waitForPanel();
 
 		const editor = new EditorPage( this.page, this.testInfo, postId );
+		await this.closeAnnouncementsIfVisible();
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 
@@ -153,5 +152,29 @@ module.exports = class WpAdminPage extends BasePage {
 	async openSiteSettings() {
 		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
 		await this.page.click( 'text=Site Settings' );
+	}
+
+	/*
+	 * Enable uploading SVG files
+	 */
+	async enableAdvancedUploads() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+	}
+
+	/*
+     *  Disable uploading SVG files
+     */
+	async disableAdvancedUploads() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+	}
+
+	async closeAnnouncementsIfVisible() {
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		}
 	}
 };

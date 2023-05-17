@@ -139,6 +139,10 @@ module.exports = function( $ ) {
 		} );
 	};
 
+	/**
+	 * @param {string} handlerName
+	 * @deprecated since 3.1.0, use `elementorFrontend.elementsHandler.getHandler` instead.
+	 */
 	this.getHandlers = function( handlerName ) {
 		elementorDevTools.deprecation.deprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
 
