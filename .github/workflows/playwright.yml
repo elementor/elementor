@@ -102,13 +102,7 @@ jobs:
           npx wp-env run cli "wp --info"
       - name: Activate performance experiments
         run: |
-          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg"
-          npx wp-env run cli "wp elementor experiments activate e_lazyload"
-          npx wp-env run cli "wp elementor experiments activate e_dom_optimization"
-          npx wp-env run cli "wp elementor experiments activate e_optimized_assets_loading"
-          npx wp-env run cli "wp elementor experiments activate e_optimized_css_loading"
-          npx wp-env run cli "wp elementor experiments activate a11y_improvements"
-          npx wp-env run cli "wp elementor experiments activate additional_custom_breakpoints"
+          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,a11y_improvements,additional_custom_breakpoints"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
