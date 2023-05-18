@@ -28,7 +28,13 @@ const EditorSelectors = {
 		customAttributesInp: 'input[data-setting="custom_attributes"]',
 	},
 	entryTitle: 'h1.entry-title',
-
+	emptyWidgetIcon: '.elementor-widget-empty-icon',
+	widgets: {
+		video: '.elementor-widget-video',
+		sideBar: '.elementor-widget-sidebar',
+		imageGalleryWidget: '.elementor-widget-image-gallery',
+		googleMaps: '.elementor-widget-google_maps',
+	},
 };
 
 export default EditorSelectors;
