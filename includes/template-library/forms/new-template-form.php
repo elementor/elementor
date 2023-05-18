@@ -24,7 +24,7 @@ class New_Template_Form extends Controls_Stack {
 					$this->render_select( $control );
 					break;
 				default:
-					throw new \Exception( '"' . $control['type'] . '" control type is not supported' );
+					throw new \Exception( "'{$control['type']}' control type is not supported." );
 			}
 		}
 	}
@@ -34,11 +34,11 @@ class New_Template_Form extends Controls_Stack {
 		$wrapper_class = isset( $control_settings['wrapper_class'] ) ? $control_settings['wrapper_class'] : '';
 		?>
 		<div id="<?php echo esc_attr( $control_id ); ?>__wrapper" class="elementor-form-field <?php echo esc_attr( $wrapper_class ); ?>">
-			<label for="<?php echo esc_html( $control_id ); ?>" class="elementor-form-field__label">
+			<label for="<?php echo esc_attr( $control_id ); ?>" class="elementor-form-field__label">
 				<?php echo esc_html( $control_settings['label'] ); ?>
 			</label>
 			<div class="elementor-form-field__select__wrapper">
-				<select id="<?php echo esc_html( $control_id ); ?>" class="elementor-form-field__select" name="meta[<?php echo esc_html( $control_settings['name'] ); ?>]">
+				<select id="<?php echo esc_attr( $control_id ); ?>" class="elementor-form-field__select" name="meta[<?php echo esc_html( $control_settings['name'] ); ?>]">
 					<?php
 					foreach ( $control_settings['options'] as $key => $value ) {
 						echo sprintf( '<option value="%1$s">%2$s</option>', esc_html( $key ), esc_html( $value ) );

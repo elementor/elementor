@@ -58,7 +58,7 @@ class Render_Mode_Manager {
 	 */
 	public function register_render_mode( $class_name ) {
 		if ( ! is_subclass_of( $class_name, Render_Mode_Base::class ) ) {
-			throw new \Exception( "'{$class_name}' must extends 'Render_Mode_Base'" );
+			throw new \Exception( "'{$class_name}' must extend 'Render_Mode_Base'." );
 		}
 
 		$this->render_modes[ $class_name::get_name() ] = $class_name;

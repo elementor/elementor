@@ -63,7 +63,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
 
 		$this->assertArrayHasKey( 'data', $result );
-		$this->assertCount( 8, $result['data'] );
+		$this->assertCount( 7, $result['data'] );
 		$this->assertEqualSets( [
 			[
 				'text' => 'Creative',
@@ -85,7 +85,6 @@ class Test_Controller extends Elementor_Test_Base {
 				'text' => 'Creative',
 				'type' => 'tags',
 			],
-
 			// Subscription plans added as taxonomies locally and not from server
 			[
 				'text' => Repository::SUBSCRIPTION_PLAN_FREE_TAG,
@@ -93,10 +92,6 @@ class Test_Controller extends Elementor_Test_Base {
 			],
 			[
 				'text' => $subscription_plans[Module::ACCESS_LEVEL_PRO]['label'],
-				'type' => 'subscription_plans'
-			],
-			[
-				'text' => $subscription_plans[Module::ACCESS_LEVEL_EXPERT]['label'],
 				'type' => 'subscription_plans'
 			],
 		], $result['data'] );

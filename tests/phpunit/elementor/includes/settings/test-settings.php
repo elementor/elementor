@@ -19,7 +19,7 @@ class Test_Settings extends Elementor_Test_Base {
 
 			$meta = $global_css->get_meta();
 
-			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'] );
+			$this->assertEquals( Global_CSS::CSS_STATUS_EMPTY, $meta['status'], $option_name );
 
 			// Assert add_option.
 			add_option ( $option_name, 'test_value' );
@@ -58,7 +58,7 @@ class Test_Settings extends Elementor_Test_Base {
 			'elementor_custom_fonts' => 'Custom Fonts',
 			'elementor_custom_icons' => 'Custom Icons',
 			'elementor_custom_custom_code' => 'Custom Code',
-			'go_elementor_pro' => '<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> Upgrade',
+			'go_elementor_pro' => 'Upgrade',
 		];
 
 		$index = 0;

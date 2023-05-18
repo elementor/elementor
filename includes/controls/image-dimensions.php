@@ -99,7 +99,7 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 					<input id="<?php $this->print_control_uid( 'height' ); ?>" type="number" data-setting="height" />
 					<label for="<?php $this->print_control_uid( 'height' ); ?>" class="elementor-image-dimensions-field-description"><?php echo esc_html__( 'Height', 'elementor' ); ?></label>
 				</div>
-				<button class="elementor-button elementor-button-success elementor-image-dimensions-apply-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+				<button class="elementor-button elementor-image-dimensions-apply-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 		<?php

@@ -5,7 +5,7 @@ $eps-checkbox-hover-border-color: darken(tints(300), $eps-hover-state-operator);
 $eps-checkbox-active-border-color: lighten(tints(300), $eps-active-state-operator);
 $eps-checkbox-border-radius: $eps-radius;
 $eps-checkbox-background-color: theme-colors(light);
-$eps-checkbox-checked-background-color: theme-colors(success);
+$eps-checkbox-checked-background-color: theme-colors(secondary);
 $eps-checkbox-checked-hover-background-color: darken($eps-checkbox-checked-background-color, $eps-hover-state-operator);
 $eps-checkbox-checked-active-background-color: lighten($eps-checkbox-checked-background-color, $eps-active-state-operator);
 $eps-checkbox-checked-disabled-background-color: theme-colors(disabled);

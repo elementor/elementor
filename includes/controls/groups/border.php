@@ -76,6 +76,7 @@ class Group_Control_Border extends Group_Control_Base {
 		$fields['width'] = [
 			'label' => esc_html_x( 'Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
 				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 			],

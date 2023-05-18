@@ -216,6 +216,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 50,
@@ -296,6 +297,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Weight', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 1,
 				],
@@ -320,6 +322,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -338,7 +341,7 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -348,6 +351,10 @@ class Widget_Icon_List extends Widget_Base {
 						'max' => 100,
 					],
 					'%' => [
+						'min' => 1,
+						'max' => 100,
+					],
+					'vh' => [
 						'min' => 1,
 						'max' => 100,
 					],
@@ -390,6 +397,15 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'icon_colors' );
+
+		$this->start_controls_tab(
+			'icon_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'icon_color',
 			[
@@ -406,10 +422,19 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
 		$this->add_control(
 			'icon_color_hover',
 			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -419,11 +444,33 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'icon_color_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon i' => 'transition: color {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'transition: fill {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->add_responsive_control(
 			'icon_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'size' => 14,
 				],
@@ -431,9 +478,34 @@ class Widget_Icon_List extends Widget_Base {
 					'px' => [
 						'min' => 6,
 					],
+					'%' => [
+						'min' => 6,
+					],
+					'vw' => [
+						'min' => 6,
+					],
 				],
+				'separator' => 'before',
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-icon-list-icon-size: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_indent',
+			[
+				'label' => esc_html__( 'Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 50,
+					],
+				],
+				'separator' => 'after',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-icon' => is_rtl() ? 'padding-left: {{SIZE}}{{UNIT}};' : 'padding-right: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -446,7 +518,7 @@ class Widget_Icon_List extends Widget_Base {
 		$this->add_responsive_control(
 			'icon_self_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -474,6 +546,58 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_self_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'flex-start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--icon-vertical-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_vertical_offset',
+			[
+				'label' => esc_html__( 'Adjust Vertical Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'default' => [
+					'size' => 0,
+				],
+				'range' => [
+					'px' => [
+						'min' => -15,
+						'max' => 15,
+					],
+					'em' => [
+						'min' => -1,
+						'max' => 1,
+						'step' => 0.1,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--icon-vertical-offset: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -481,49 +605,6 @@ class Widget_Icon_List extends Widget_Base {
 			[
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'text_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_SECONDARY,
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_color_hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-text' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_indent',
-			[
-				'label' => esc_html__( 'Text Indent', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 50,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-text' => is_rtl() ? 'padding-right: {{SIZE}}{{UNIT}};' : 'padding-left: {{SIZE}}{{UNIT}};',
-				],
 			]
 		);
 
@@ -545,6 +626,71 @@ class Widget_Icon_List extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-icon-list-text',
 			]
 		);
+
+		$this->start_controls_tabs( 'text_colors' );
+
+		$this->start_controls_tab(
+			'text_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'text_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-text' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_SECONDARY,
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'text_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'text_color_hover',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-text' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color_hover_transition',
+			[
+				'label' => __( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+					'size' => 0.3,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-list-text' => 'transition: color {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}

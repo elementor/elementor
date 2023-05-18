@@ -27,7 +27,7 @@ class Test_Categories_Manager extends Elementor_Test_Base {
 		// Assert
 		$new_categories = $categories_manager->get_categories();
 
-		$this->assertEquals( $old_categories + [ 'mock' => $mock ], $new_categories );
+		$this->assertEquals( $old_categories + [ 'mock_id' => $mock ], $new_categories );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Test_Categories_Manager extends Elementor_Test_Base {
 		$old_categories = $categories_manager->get_categories();
 
 		// Act
-		$categories_manager->register( $mock, 'mock_id' );
+		$categories_manager->register( $mock );
 
 		// Assert
 		$new_categories = $categories_manager->get_categories();

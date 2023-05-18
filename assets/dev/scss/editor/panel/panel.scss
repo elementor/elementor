@@ -1,0 +1,134 @@
+//
+// Panel
+//
+
+:root {
+	--e-is-preview-mode: 0;
+
+	@media (max-width: $editor-screen-lg-max) {
+		--e-editor-panel-width: #{$panel-width};
+	}
+
+	@media (min-width: $editor-screen-xl-min) {
+		--e-editor-panel-width: #{$panel-xl-width};
+	}
+}
+
+.elementor-panel {
+
+	@import "reset";
+
+	// Global
+	@import "global";
+
+	position: relative;
+	height: 100%;
+	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
+	width: var(--e-editor-panel-width);
+	overflow: visible;
+	background-color: var(--e-a-bg-default);
+	z-index: $first-layer;
+	font-family: var(--e-a-font-family);
+	font-size: 13px;
+	@include start(0);
+
+	.elementor-editor-preview & {
+		--e-is-preview-mode: 1;
+
+		> .ui-resizable-e,
+		> .ui-resizable-w {
+			display: none;
+		}
+	}
+
+	.ps__rail-y {
+		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
+	}
+
+	.elementor-responsive-panel {
+		padding: 0 15px;
+		display: grid;
+		gap: 10px;
+		// The uppercase M in `Min` is used in order to avoid SASS conflicts with CSS `min` function.
+		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
+		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
+		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
+
+		// Stretch a grid item to full width.
+		& > .e-responsive-panel-stretch {
+			grid-column: 1 / -1;
+		}
+	}
+
+    // Header
+    @import "header";
+
+    // Categories
+    @import "categories";
+
+    // Schemes
+    //@import "schemes"; //TODO: deprecated v3.0.0
+
+	// Menu
+	@import "menu";
+
+	// Document Settings
+	@import "document-settings";
+
+	// Element Edit
+    @import "element-settings";
+
+    //Footer
+    @import "footer";
+}
+
+// Panel Elements
+@import "elements";
+
+#elementor-panel-inner {
+	position: relative;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	@include direction-box-shadow(0, 0 5px 0 rgba(0, 0, 0, 0.1));
+}
+
+// Main Panel
+#elementor-panel-content-wrapper {
+	position: relative;
+	width: 100%;
+	flex: 1;
+}
+
+.elementor-panel-container {
+	clear: both;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#elementor-panel-get-pro-elements {
+
+	.elementor-nerd-box-message {
+		margin-top: 10px;
+	}
+
+	.elementor-nerd-box-icon {
+		margin-top: 20px;
+	}
+}
+
+#elementor-panel-notice-wrapper .elementor-panel-notice {
+	width: 90%;
+	margin: 0 auto;
+	font-style: unset;
+	margin-bottom: 15px;
+	a {
+		font-weight: bold;
+		font-style: italic;
+		border-bottom: 2px dotted var(--e-a-color-info);
+		display: inline-block;
+	}
+}
+
+//Compatibility
+@import "compatibility";

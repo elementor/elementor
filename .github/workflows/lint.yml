@@ -1,6 +1,6 @@
 name: Lint
 
-on: [push, pull_request]
+on: [pull_request]
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -17,34 +17,38 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
+            package*.json
+            .github/**/*.yml
       - name: Check PHP files diff
         id: php_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
-
+            ruleset.xml
+            .github/**/*.yml
+            composer.+(json|lock)
 
   JS-Lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
@@ -55,19 +59,19 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: Run Lint
         run: ./node_modules/eslint/bin/eslint.js .
 
   PHP-Lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup PHP 7.4
-        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
       - name: Install Dependencies
@@ -76,20 +80,57 @@ jobs:
           composer require php-parallel-lint/php-parallel-lint
       - name: Run Lint
         run: |
-          vendor/bin/phpcs -p -s -n . --standard=./phpcs.xml --extensions=php
-      - name: Run PHP Syntax Lint
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.4 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php8.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php8.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Setup PHP 7.1 # not included in ubuntu 18.04
-        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
+          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+      - name: Setup PHP 7.1 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '7.1'
       - name: Run PHP Syntax Lint 7.1
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 7.2 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+      - name: Run PHP Syntax Lint 7.2
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 7.3 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.3'
+      - name: Run PHP Syntax Lint 7.3
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 7.4 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Run PHP Syntax Lint 7.4
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 8.0 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Run PHP Syntax Lint 8.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 8.1 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Run PHP Syntax Lint 8.1
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v

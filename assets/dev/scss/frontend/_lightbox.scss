@@ -5,6 +5,13 @@
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
+	&:not(.elementor-popup-modal) {
+
+		.dialog-header,
+		.dialog-message {
+			text-align: center;
+		}
+	}
 
 	.dialog {
 
@@ -68,11 +75,9 @@
 		}
 	}
 
-	.swiper- {
-
-		&container {
-			height: 100%;
-		}
+	.swiper,
+	.swiper-container {
+		height: 100%;
 	}
 
 	.elementor-lightbox-item {
@@ -127,6 +132,26 @@
 		}
 	}
 
+	.swiper,
+	.swiper-container {
+
+		.elementor-swiper-button {
+
+			&-prev {
+				left: 0;
+			}
+
+			&-next {
+				right: 0;
+			}
+		}
+
+		.swiper-pagination-fraction {
+			width: max-content;
+			color: $white;
+		}
+	}
+
 	.elementor-swiper-button {
 		&:focus {
 			outline-width: 1px;
@@ -139,14 +164,6 @@
 			width: 15%;
 			justify-content: center;
 			font-size: var(--lightbox-navigation-icons-size);
-		}
-
-		&-prev {
-			left: 0;
-		}
-
-		&-next {
-			right: 0;
 		}
 
 		@media (max-width: $screen-mobile-max) {

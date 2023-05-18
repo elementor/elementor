@@ -9,36 +9,40 @@
 		@include padding-start(10px);
 
 		&-toggle {
-			border: 1px solid $editor-lightest;
+			border: var(--e-a-border-bold);
 			@include border-end(0);
 			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			cursor: pointer;
+			transition: var(--e-a-transition-hover);
 
-			&--active i {
-				color: $editor-info;
+			&:hover {
+				background-color: var(--e-a-bg-hover);
+			}
+
+			&--active {
+				color: var(--e-a-color-primary-bold);
+				background-color: var(--e-a-bg-active-bold);
 			}
 		}
 
 		&-container {
-			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-			border-radius: 3px;
-			background-color: #fff;
+			box-shadow: var(--e-a-popover-shadow);
+			border-radius: var(--e-a-border-radius);
+			background-color: var(--e-a-bg-default);
 			padding-bottom: 5px;
 		}
 
 		&-title {
 			padding: 15px 20px;
 			font-weight: 500;
-			color: $editor-dark;
-			border-bottom: 1px solid $editor-background;
+			border-bottom: var(--e-a-border);
 			display: flex;
 
 			& > i {
 				@include margin-end(5px);
-				color: $editor-lightest;
 			}
 
 			&-text {
@@ -54,7 +58,7 @@
 				width: 270px;
 				z-index: 1;
 				background-color: rgba(0,0,0,0.9);
-				color: #fff;
+				color: var(--e-a-color-white);
 				padding: 20px;
 				border-radius: 3px;
 
@@ -69,7 +73,6 @@
 			}
 
 			i {
-				color: $editor-lightest;
 				font-size: 13px;
 			}
 		}
@@ -86,14 +89,6 @@
 	&__manage-button {
 		font-weight: 500;
 		cursor: pointer;
-
-		&:hover i {
-				color: $editor-kit-accent;
-		}
-
-		i {
-			color: $editor-dark;
-		}
 	}
 
 	// Typography Globals
@@ -158,8 +153,6 @@
 		}
 
 		&-title {
-			font-weight: 500;
-			color: $editor-dark;
 			flex-grow: 1;
 			@include ellipsis;
 			@include padding-end(10px);
@@ -167,12 +160,11 @@
 
 		&-hex {
 			font-size: 10px;
-			font-weight: 500;
-			color: $editor-lighter;
+			color: var(--e-a-color-txt-muted);
 		}
 
 		.pcr-button {
-			background-color: #fff;
+			background-color: var(--e-a-bg-default);
 		}
 
 		&.e-global__preview-item--selected {
@@ -181,13 +173,13 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				color: #ffffff;
+				color: var(--e-a-color-white);
 
 				&:before {
 					font-family: 'eicons';
 					font-size: 13px;
 					content: '\e90e'; // eicon-check
-					text-shadow: 0px 0px 1px #000;
+					text-shadow: 0 0 1px #000;
 					z-index: 1;
 				 }
 			}
@@ -199,49 +191,30 @@
 		position: relative;
 
 		&:hover {
-			background-color: $editor-background-light;
-
-			.e-global__color-hex {
-				color: $editor-light;
-			}
+			background-color: var(--e-a-bg-hover);
 		}
 	}
 
 	&__confirm {
 
-		&-add {
-
-			// Multiple selectors because a CSS specificity override was necessary
-			.dialog-buttons-wrapper > .dialog-button.dialog-confirm-ok {
-				color: $editor-success;
-			}
-		}
-
-		&-delete {
-
-			i {
-				color: $editor-warning;
-			}
-		}
-
+		&-delete,
 		&-message-text {
 
 			i {
-				color: $editor-orange;
+				color: var(--e-a-color-warning);
 			}
 		}
 
 		&-input-wrapper {
 			display: flex;
 			align-items: center;
-			border: 1px solid $editor-light;
-			border-radius: 3px;
-			margin-top: 10px;
+			border: var(--e-a-border);
+			border-radius: var(--e-a-border-radius);
+			margin: 15px 0;
 			padding: 2px;
 
 			input {
-				font-family: Roboto, Arial, sans-serif;
-				font-weight: 500;
+				font-family: var(--e-a-font-family);
 				font-size: 12px;
 				padding: 2px;
 				border: 0;

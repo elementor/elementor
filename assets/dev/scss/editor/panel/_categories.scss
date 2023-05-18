@@ -5,57 +5,27 @@
 
 .elementor-panel-category {
 	position: relative;
+	border-bottom: var(--e-a-border);
 
-	&:first-child {
+	.elementor-panel-heading {
+		padding: 0 15px;
+		border: none;
+		background-color: transparent;
 
-		.elementor-panel-category-title {
-			padding-top: 14px;
+		&:focus {
+			// background-color: var(--e-a-bg-hover);
 		}
 	}
 
 	&.elementor-active {
 
-		.elementor-panel-category-title {
-
-			&:before {
-				transform: rotate(getValueByDirection(90deg, -90deg));
-			}
-		}
-	}
-
-	&:not(.elementor-active) {
-
-		&:after {
-			content: '';
-			position: absolute;
-			left: 15px;
-			right: 15px;
-			bottom: 0;
-			height: 8px;
-			background: linear-gradient(rgba(0, 0, 0, 0.03), transparent);
-			transform: translateY(100%);
-		}
-	}
-
-	&-title {
-		margin: 0 15px;
-		padding: 20px 0;
-		position: relative;
-		text-transform: uppercase;
-		font-size: 11px;
-		cursor: pointer;
-
-		&:before {
-			content: getValueByDirection( '\e87d', '\e87e' );
-			font-family: eicons;
-			position: absolute;
-			@include end(0);
-			transition: transform .3s;
+		.elementor-panel-heading {
+			border: none;
 		}
 	}
 
 	&-items {
-		padding: 0 10px;
+		padding-bottom: 20px;
 
 		&-empty {
 			grid-column-start: 1;

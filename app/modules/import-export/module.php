@@ -31,6 +31,8 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
+	const IMPORT_RUNNER_TRIGGER_KEY = 'elementor_import_kit__runner';
+
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
 	const REFERRER_LOCAL = 'local';
@@ -46,6 +48,7 @@ class Module extends BaseModule {
 	const META_KEY_ELEMENTOR_IMPORT_SESSION_ID = '_elementor_import_session_id';
 
 	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
+	const IMPORT_PLUGINS_ACTION = 'import-plugins';
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -87,6 +90,8 @@ class Module extends BaseModule {
 		}
 
 		( new Usage() )->register();
+
+		$this->revert = new Revert();
 	}
 
 	public function get_init_settings() {
@@ -155,7 +160,6 @@ class Module extends BaseModule {
 			],
 		];
 
-		$this->revert = new Revert();
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
 
@@ -169,16 +173,16 @@ class Module extends BaseModule {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>',
-					! empty( $penultimate_imported_kit['kit_name'] ) ? $penultimate_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $penultimate_imported_kit['kit_title'] ) ? $penultimate_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $penultimate_imported_kit['start_timestamp'] )
 				);
 			} else {
 				$revert_text = sprintf(
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
-					! empty( $last_imported_kit['kit_name'] ) ? $last_imported_kit['kit_name'] : esc_html__( 'imported kit', 'elementor' ),
+					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
 					'<br>'
 				);
@@ -194,7 +198,7 @@ class Module extends BaseModule {
 					<div class="tab-import-export-kit__container">
 						<div class="tab-import-export-kit__box">
 							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
 								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 							</a>
 						</div>
@@ -206,8 +210,9 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $should_show_revert_section ) {
+
 				$link_attributes = [
-					'href' => wp_nonce_url( admin_url( 'admin-post.php?action=elementor_revert_kit' ), 'elementor_revert_kit' ),
+					'href' => $this->get_revert_href(),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
 				];
@@ -219,11 +224,65 @@ class Module extends BaseModule {
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
+					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
 						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
 					</a>
 				</div>
 			<?php } ?>
+		</div>
+		<?php
+	}
+
+	private function get_revert_href(): string {
+		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
+		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
+		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
+	}
+
+	/**
+	 * Checks if referred by a kit and adds the referrer ID to the href
+	 *
+	 * @param string $href
+	 *
+	 * @return string
+	 */
+	private function maybe_add_referrer_param( string $href ): string {
+		$param_name = 'referrer_kit';
+
+		if ( empty( $_GET[ $param_name ] ) ) {
+			return $href;
+		}
+
+		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
+	}
+
+	/**
+	 * Render the last kit thumbnail if exists
+	 *
+	 * @param $last_imported_kit
+	 *
+	 * @return void
+	 */
+	private function render_last_kit_thumbnail( $last_imported_kit ) {
+		if ( empty( $last_imported_kit['kit_thumbnail'] ) ) {
+			return;
+		}
+
+		?>
+		<div class="tab-import-export-kit__kit-item-row">
+			<article class="tab-import-export-kit__kit-item">
+				<header>
+					<h3>
+						<?php echo esc_html( $last_imported_kit['kit_title'] ); ?>
+					</h3>
+				</header>
+				<img
+					src="<?php echo esc_url( $last_imported_kit['kit_thumbnail'] ); ?>"
+					alt="<?php echo esc_attr( $last_imported_kit['kit_title'] ); ?>"
+					loading="lazy"
+				>
+			</article>
 		</div>
 		<?php
 	}
@@ -255,16 +314,20 @@ class Module extends BaseModule {
 	 * Import a kit by session_id.
 	 * Upload and import a kit by kit zip file.
 	 *
+	 * If the split_to_chunks flag is true, the process won't start
+	 * It will initialize the import process and return the session_id and the runners.
+	 *
 	 * Assigning the Import process to the 'import' property,
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
 	 * @param array $settings Settings the import use to determine which content to import.
 	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function import_kit( $path, $settings ) {
+	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
 
 		$this->import = new Import( $path, $settings );
@@ -272,7 +335,41 @@ class Module extends BaseModule {
 
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
+		if ( $split_to_chunks ) {
+			$this->import->init_import_session( true );
+
+			return [
+				'session' => $this->import->get_session_id(),
+				'runners' => $this->import->get_runners_name(),
+			];
+		}
+
 		return $this->import->run();
+	}
+
+	/**
+	 * Resuming import process by re-creating the import instance and running the specific runner.
+	 *
+	 * @param string $session_id The id off the import session.
+	 * @param string $runner_name The specific runner that we want to run.
+	 *
+	 * @return array Two types of response.
+	 *      1. The status and the runner name.
+	 *      2. The imported data. (Only if the runner is the last one in the import process)
+	 * @throws \Exception
+	 */
+	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
+		// Check session_id
+		$this->import = Import::from_session( $session_id );
+		$runners = $this->import->get_runners_name();
+
+		$run = $this->import->run_runner( $runner_name );
+
+		if ( end( $runners ) === $run['runner'] ) {
+			return $this->import->get_imported_data();
+		}
+
+		return $run;
 	}
 
 	/**
@@ -286,7 +383,7 @@ class Module extends BaseModule {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function export_kit( $settings ) {
+	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
 
 		$this->export = new Export( $settings );
@@ -329,8 +426,7 @@ class Module extends BaseModule {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
-				isset( $_POST['_nonce'] ) &&
-				wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) &&
+				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
 				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
@@ -344,6 +440,22 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+
+		// TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+		if ( self::IMPORT_PLUGINS_ACTION === ElementorUtils::get_super_global_value( $_SERVER, 'HTTP_X_ELEMENTOR_ACTION' ) ) {
+			add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
+		}
+		// TODO ^^^
+	}
+
+	/**
+	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
+	 *
+	 * TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+	 * @return array
+	 */
+	public function empty_pages(): array {
+		return [];
 	}
 
 	private function ensure_writing_permissions() {
@@ -386,6 +498,15 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_localize_script(
+			'elementor-import-export-admin',
+			'elementorImportExport',
+			[
+				'lastImportedSession' => $this->revert->get_last_import_session(),
+				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			]
+		);
 	}
 
 	/**
@@ -393,7 +514,9 @@ class Module extends BaseModule {
 	 */
 	private function maybe_handle_ajax() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		switch ( $_POST['action'] ) {
+		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
+
+		switch ( $action ) {
 			case static::EXPORT_TRIGGER_KEY:
 				$this->handle_export_kit();
 				break;
@@ -406,6 +529,10 @@ class Module extends BaseModule {
 				$this->handle_import_kit();
 				break;
 
+			case static::IMPORT_RUNNER_TRIGGER_KEY:
+				$this->handle_import_kit__runner();
+				break;
+
 			default:
 				break;
 		}
@@ -415,19 +542,22 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		// PHPCS - Already validated in caller function.
-		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// PHPCS - A URL that should contain special chars (auth headers information).
+		$file_url = isset( $_POST['e_import_file'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			? wp_unslash( $_POST['e_import_file'] )
+			: '';
+
+		// Import from kit library
+		if ( ! empty( $file_url ) ) {
 			if (
-				! isset( $_POST['e_kit_library_nonce'] ) ||
-				! wp_verify_nonce( $_POST['e_kit_library_nonce'], 'kit-library-import' )
+				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
-				throw new \Error( esc_html__( 'Invalid kit library nonce', 'elementor' ) );
+				throw new \Error( 'Invalid kit library nonce.' );
 			}
 
-			$file_url = $_POST['e_import_file'];
-
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( esc_html__( 'Invalid URL', 'elementor' ) );
+				throw new \Error( 'Invalid URL.' );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
@@ -444,7 +574,7 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_KIT_LIBRARY;
 		} else {
 			// PHPCS - Already validated in caller function.
-			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
 			$referrer = static::REFERRER_LOCAL;
 		}
 
@@ -482,10 +612,27 @@ class Module extends BaseModule {
 	 */
 	private function handle_import_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$tmp_folder_id = $settings['session'];
 
-		$import = $this->import_kit( $tmp_folder_id, $settings );
+		$import = $this->import_kit( $tmp_folder_id, $settings, true );
+
+		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
+		$import['configData'] = $this->get_config_data();
+
+		wp_send_json_success( $import );
+	}
+
+	/**
+	 * Handle ajax request for running specific runner in the import kit process.
+	 */
+	private function handle_import_kit__runner() {
+		// PHPCS - Already validated in caller function
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$session_id = $settings['session'];
+		$runner = $settings['runner'];
+
+		$import = $this->import_kit_by_runner( $session_id, $runner );
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
@@ -498,14 +645,14 @@ class Module extends BaseModule {
 	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
-		$settings = json_decode( stripslashes( $_POST['data'] ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];
 		$file = ElementorUtils::file_get_contents( $file_name );
 
 		if ( ! $file ) {
-			throw new \Error( esc_html__( 'Could not read the exported file', 'elementor' ) );
+			throw new \Error( 'Could not read the exported file.' );
 		}
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
@@ -533,6 +680,9 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'elementorHomePageUrl' => $this->get_elementor_home_page_url(),
 			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+			'tools_url' => Tools::get_url(),
+			'importSessions' => Revert::get_import_sessions(),
+			'lastImportedSession' => $this->revert->get_last_import_session(),
 		];
 	}
 

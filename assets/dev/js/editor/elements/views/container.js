@@ -2,17 +2,23 @@
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import EmptyView from 'elementor-elements/views/container/empty-view';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
-
+const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: EmptyView,
+
+	destroyEmptyView() {
+		// Do not remove the empty view for Grid Containers.
+		if ( this.isFlexContainer() ) {
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		}
+	},
 
 	getChildViewContainer() {
-		this.childViewContainer = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		this.childViewContainer = this.isBoxedWidth()
 			? '> .e-con-inner'
 			: '';
 
@@ -21,6 +27,12 @@ const ContainerView = BaseElementView.extend( {
 
 	className() {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+	},
+
+	childViewOptions() {
+		return {
+			emptyViewOwner: this,
+		};
 	},
 
 	tagName() {
@@ -37,11 +49,20 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( 'flex_direction' );
+		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	getDirectionSettingKey() {
+		const containerType = this.container.settings.get( 'container_type' ),
+			directionSettingKey = 'grid' === containerType
+				? 'grid_auto_flow'
+				: 'flex_direction';
+
+		return directionSettingKey;
 	},
 
 	behaviors() {
@@ -103,7 +124,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableAxis() {
 		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
-			currentDirection = this.getContainer().settings.get( 'flex_direction' );
+			currentDirection = this.getContainer().settings.get( this.getDirectionSettingKey() );
 
 		const axisMap = {
 			[ ContainerHelper.DIRECTION_COLUMN ]: 'vertical',
@@ -117,7 +138,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = 'boxed' === this.getContainer().settings.get( 'content_width' )
+		const items = this.isBoxedWidth()
 		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
 		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
@@ -154,7 +175,7 @@ const ContainerView = BaseElementView.extend( {
 				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( [ 'bottom', 'right' ].includes( side ) ) {
+				if ( this.shouldIncrementIndex( side ) ) {
 					newIndex++;
 				}
 
@@ -306,19 +327,21 @@ const ContainerView = BaseElementView.extend( {
 			icon: 'handle',
 		};
 
-		if ( elementor.getPreferences( 'edit_buttons' ) ) {
-			editTools.duplicate = {
+		if ( ! this.getContainer().isLocked() ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+				editTools.duplicate = {
+					/* Translators: %s: Element Name. */
+					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
+					icon: 'clone',
+				};
+			}
+
+			editTools.remove = {
 				/* Translators: %s: Element Name. */
-				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
-				icon: 'clone',
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
 			};
 		}
-
-		editTools.remove = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
 
 		return editTools;
 	},
@@ -364,14 +387,41 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+
+			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
+			if ( this.isGridContainer() ) {
+				this.reInitEmptyView();
+			}
+
 			this.droppableInitialize( this.container.settings );
 		} );
+	},
+
+	onRenderEmpty() {
+		this.$el.addClass( 'e-empty' );
+	},
+
+	onAddChild() {
+		this.$el.removeClass( 'e-empty' );
+
+		if ( this.isGridContainer() ) {
+			this.handleGridEmptyView();
+		}
 	},
 
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		if ( settings.changed.flex_direction || settings.changed.content_width ) {
+		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
+			if ( this.isGridContainer() ) {
+				this.reInitEmptyView();
+			}
+
+			// Make sure the Empty view is removed if we changed from grid to flex and there were widgets.
+			if ( this.isFlexContainer() && ! this.isEmpty() ) {
+				this.getCorrectContainerElement().find( '> .elementor-empty-view' ).remove();
+			}
+
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
@@ -442,6 +492,72 @@ const ContainerView = BaseElementView.extend( {
 			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
 		} else {
 			this.$el.html5Droppable( this.getDroppableOptions() );
+		}
+	},
+
+	handleGridEmptyView() {
+		const currentContainer = this.getCorrectContainerElement();
+
+		this.moveElementToLastChild(
+			currentContainer,
+			currentContainer.find( '> .elementor-empty-view' ),
+		);
+	},
+
+	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
+		let parent = parentWrapperElement.get( 0 ),
+			child = childElementToMove.get( 0 );
+
+		if ( ! parent || ! child ) {
+			return;
+		}
+
+		if ( parent.lastChild === child ) {
+			return;
+		}
+
+		parent.appendChild( child );
+	},
+
+	getCorrectContainerElement() {
+		return this.isBoxedWidth()
+			? this.$el.find( '> .e-con-inner' )
+			: this.$el;
+	},
+
+	shouldIncrementIndex( side ) {
+		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
+			return false;
+		}
+
+		return ! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
+	},
+
+	draggingOnBottomOrRightSide( side ) {
+		return [ 'bottom', 'right' ].includes( side );
+	},
+
+	isGridContainer() {
+		return 'grid' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isFlexContainer() {
+		return 'flex' === this.getContainer().settings.get( 'container_type' );
+	},
+
+	isBoxedWidth() {
+		return 'boxed' === this.getContainer().settings.get( 'content_width' );
+	},
+
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
+
+	reInitEmptyView() {
+		if ( ! this.getCorrectContainerElement().find( '> .elementor-empty-view' ).length ) {
+			delete this._showingEmptyView; // Marionette property that needs to be falsy for showEmptyView() to fully execute.
+			this.showEmptyView(); // Marionette function.
+			this.handleGridEmptyView();
 		}
 	},
 } );

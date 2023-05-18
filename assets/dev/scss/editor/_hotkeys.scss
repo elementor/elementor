@@ -2,67 +2,24 @@
 #elementor-hotkeys {
 	text-align: $start;
 
+	&__modal {
+
+		.dialog-buttons-wrapper {
+			display: none;
+		}
+	}
+
 	&__content {
 		display: flex;
+		gap: 70px;
+		padding: 10px 30px;
 		width: 100%;
 		overflow: hidden;
-		margin-bottom: 30px;
 
 		@media (max-width: $editor-screen-md-max) {
 			flex-direction: column;
-		}
-	}
-
-	&__actions {
-
-		.elementor-hotkeys__list {
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 3px;
-			}
-		}
-
-		.elementor-hotkeys__header,
-		.elementor-hotkeys__list {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-end(25px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-end(50px);
-			}
-		}
-	}
-
-	&__navigation {
-
-		.elementor-hotkeys__list {
-			border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-
-			@media (max-width: $editor-screen-md-max) {
-				border-radius: 3px;
-			}
-		}
-
-		.elementor-hotkeys__header {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-start(25px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-start(50px);
-			}
-		}
-
-		.elementor-hotkeys__list {
-			@media (min-width: $editor-screen-lg-min) {
-				@include padding-start(15px);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include padding-start(40px);
-			}
+			gap: 20px;
+			padding: 20px;
 		}
 	}
 }
@@ -83,26 +40,17 @@
 	}
 
 	&__header{
-		padding: 10px 30px;
+		padding: 10px 0;
 		font-weight: 500;
-
-		@media (max-width: $editor-screen-xs-max) {
-			padding-right: 10px;
-			padding-left: 10px;
-		}
 	}
 
 	&__list {
-		background-color: #ffffff;
+		background-color: var(--e-a-bg-default);
 		height: calc(100% - 42px);
-		padding: 10px 20px;
+		padding: 10px 0;
 
 		@media (max-width: $editor-screen-xs-max) {
 			padding: 0;
-		}
-
-		@media (max-width: $editor-screen-md-max) {
-			margin-bottom: 30px;
 		}
 
 		@media (max-width: $editor-screen-md-max) {
@@ -114,14 +62,9 @@
 		display: flex;
 		align-items: center;
 		padding: 20px 10px;
-		border-bottom: 1px solid $gray-lighter;
 
-		&:last-child {
-			margin-bottom: 30px;
-
-			@media (max-width: $editor-screen-xs-max) {
-				margin-bottom: 0;
-			}
+		&:not(:last-child) {
+			border-block-end: var(--e-a-border);
 		}
 
 		&--label {
@@ -140,7 +83,7 @@
 
 			span {
 				position: relative;
-				background-color: $gray-lighter;
+				background-color: var(--e-a-bg-active);
 				padding: 5px 12px;
 				margin-right: 27px;
 				border-radius: 3px;
@@ -151,7 +94,7 @@
 				}
 
 				&:after {
-					content: '+';
+					content: ' + ';
 					position: absolute;
 					right: -18px;
 					width: 9px;

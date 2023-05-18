@@ -1,11 +1,16 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--display: flex;
-	--flex-direction: column;
-	--flex-basis: auto;
-	--flex-grow: 0;
-	--flex-shrink: 1;
+	--border-width-top: 0px;
+	--border-width-right: 0px;
+	--border-width-bottom: 0px;
+	--border-width-left: 0px;
+	--border-style: initial;
+	--border-color: initial;
+	--container-widget-width: 100%;
+	--container-widget-height: initial;
+	--container-widget-flex-grow: 0;
+	--container-widget-align-self: initial;
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
 	// isn't working properly.
@@ -29,9 +34,10 @@
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
+	--e-con-grid-template-columns: repeat(3, 1fr);
+	--e-con-grid-template-rows: repeat(2, 1fr);
 
 	position: var( --position );
-	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
 	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
@@ -46,12 +52,24 @@
 	overflow: var( --overflow );
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
+	&.e-flex {
+		--flex-direction: column;
+		--flex-basis: auto;
+		--flex-grow: 0;
+		--flex-shrink: 1;
+		flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
+	}
+
 	&-full,
 	& > .e-con-inner {
-		flex-direction: var( --flex-direction );
 		text-align: var( --text-align );
 		padding-top: var( --padding-top );
 		padding-bottom: var( --padding-bottom );
+	}
+
+	&-full.e-flex,
+	&.e-flex > .e-con-inner {
+		flex-direction: var( --flex-direction );
 	}
 
 	&,
@@ -59,35 +77,66 @@
 		display: var( --display );
 	}
 
+	&.e-grid {
+		--grid-justify-content: start;
+		--grid-align-content: start;
+		--grid-auto-flow: row;
+	}
+
+	&.e-grid,
+	&.e-grid > .e-con-inner {
+		grid-template-columns: var( --e-con-grid-template-columns );
+		grid-template-rows: var( --e-con-grid-template-rows );
+		justify-content: var( --grid-justify-content );
+		align-content: var( --grid-align-content );
+		grid-auto-flow: var( --grid-auto-flow );
+	}
+
 	// Set default values to the outer div of the boxed container.
-	&-boxed {
+	&-boxed.e-flex {
 		flex-direction: column;
-		text-align: initial;
 		flex-wrap: initial;
 		justify-content: initial;
 		align-items: initial;
 		align-content: initial;
+	}
+
+	&-boxed.e-grid {
+		justify-items: initial;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
+	}
+
+	&-boxed {
+		text-align: initial;
 		gap: initial;
 	}
 
-	& > .e-con-inner {
+	&.e-flex > .e-con-inner {
 		flex-wrap: var( --flex-wrap );
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
 		align-content: var( --align-content );
-		gap: var( --gap );
-		width: 100%;
-		max-width: var( --content-width );
-		margin: 0 auto;
-		padding-inline: 0;
-		height: 100%;
-
 		// Set default values to the inner div of the boxed container.
 		flex-basis: initial;
 		// Ensure that the inner div covers the full height of the container.
 		flex-grow: 1;
 		flex-shrink: initial;
 		align-self: initial;
+	}
+
+	&.e-grid > .e-con-inner {
+		justify-items: var( --justify-items );
+		align-items: var( --align-items );
+	}
+
+	& > .e-con-inner {
+		gap: var( --gap );
+		width: 100%;
+		max-width: var( --content-width );
+		margin: 0 auto;
+		padding-inline: 0;
+		height: 100%;
 	}
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
@@ -107,38 +156,56 @@
 		margin-bottom: 0;
 	}
 
+	@mixin border-radius-for-background-elements {
+		border-radius: var(--border-radius);
+		border-style: var(--border-style);
+		border-color: var(--border-color);
+		border-top-width: var(--border-width-top);
+		border-right-width: var(--border-width-right);
+		border-bottom-width: var(--border-width-bottom);
+		border-left-width: var(--border-width-left);
+		top: calc( 0px - var(--border-width-top) );
+		left: calc( 0px - var(--border-width-left) );
+		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
+		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+	}
+
 	// Background overlay.
 	&::before,
-	> .elementor-background-video-container::before,
-	> .e-con-inner > .elementor-background-video-container::before,
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
+	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
+	> .elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
 		mix-blend-mode: var( --overlay-mix-blend-mode );
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition, 0.3s );
-		border-radius: var( --border-radius );
+		@include border-radius-for-background-elements;
 	}
 
 	&::before {
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	> .elementor-background-video-container:before,
-	> .e-con-inner > .elementor-background-video-container:before {
+	> .elementor-background-slideshow,
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
+		@include border-radius-for-background-elements;
+	}
+
+	@media (max-width: $screen-mobile-max) {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+			display: none;
+		}
+	}
+
+	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	> .elementor-background-slideshow:before,
-	> .e-con-inner > .elementor-background-slideshow:before {
+	:is( &, & > .e-con-inner ) > .elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
@@ -155,7 +222,7 @@
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			width: 100%;
 		}
@@ -185,7 +252,7 @@
 }
 
 @media ( max-width: $editor-screen-sm-max ) {
-	.e-con {
+	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: wrap;
 	}

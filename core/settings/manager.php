@@ -126,7 +126,6 @@ class Manager {
 	 * @access private
 	 * @static
 	 */
-
 	private static function get_manager_class( $manager_name ) {
 		return __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
 	}

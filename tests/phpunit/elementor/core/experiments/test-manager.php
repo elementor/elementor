@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Non_Existing_Dependency;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Core\Upgrade\Manager;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
@@ -46,6 +47,8 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 			'mutable' => true,
 			'hidden' => false,
+			'generator_tag' => false,
+			'tags' => [],
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );
@@ -53,8 +56,196 @@ class Test_Manager extends Elementor_Test_Base {
 		$re_added_feature = $this->add_test_feature( $test_feature_data );
 
 		$this->assertEquals( $test_set, $new_feature );
-
 		$this->assertEquals( null, $re_added_feature );
+	}
+
+	/**
+	 * @dataProvider get_tags_data_provider
+	 */
+	public function test_add_feature__with_tags( $name, $data, $expected ) {
+		// Act.
+		$new_feature = $this->add_test_feature( [
+			'name' => $name,
+			'tag' => $data['tag'] ?? '',
+			'tags' => $data['tags'] ?? [],
+		] );
+
+		// Assert.
+		$this->assertEquals( $expected['tag'], $new_feature['tag'] );
+		$this->assertEquals( $expected['tags'], $new_feature['tags'] );
+	}
+
+	public function get_tags_data_provider() {
+		return [
+			'New feature passing one tag to "tag" as a string' => [
+				'name' => 'test_feature_with_tags1',
+				'data' => [
+					'tag' => 'First tag',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						]
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						]
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as a comma separated string' => [
+				'name' => 'test_feature_with_tags2',
+				'data' => [
+					'tag' => 'First tag, Second tag',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as a comma separated string with a trailing comma' => [
+				'name' => 'test_feature_with_tags3',
+				'data' => [
+					'tag' => 'First tag, Second tag,',
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing two tags to "tag" as an incorrectly structured array' => [
+				'name' => 'test_feature_with_tags4',
+				'data' => [
+					'tag' => [
+						'First tag',
+						'Second tag',
+					],
+				],
+				'expected' => [
+					'tag' => [],
+					'tags' => [],
+				]
+			],
+			'New feature passing two tags to "tags" as an incorrectly structured array' => [
+				'name' => 'test_feature_with_tags5',
+				'data' => [
+					'tags' => [
+						'First tag',
+						'Second tag',
+					],
+				],
+				'expected' => [
+					'tag' => '',
+					'tags' => [],
+				]
+			],
+			'New feature passing two tags to "tags" as a correctly structured array' => [
+				'name' => 'test_feature_with_tags6',
+				'data' => [
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Second tag',
+						],
+					],
+				],
+				'expected' => [
+					'tag' => '',
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Second tag',
+						],
+					],
+				]
+			],
+			'New feature passing tags to both "tag" and "tags"' => [
+				'name' => 'test_feature_with_tags7',
+				'data' => [
+					'tag' => 'First tag',
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Third tag',
+						],
+					],
+				],
+				'expected' => [
+					'tag' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+					],
+					'tags' => [
+						[
+							'type' => 'default',
+							'label' => 'First tag',
+						],
+						[
+							'type' => 'default',
+							'label' => 'Second tag',
+						],
+						[
+							'type' => 'secondary',
+							'label' => 'Third tag',
+						],
+					],
+				]
+			],
+		];
 	}
 
 	public function test_add_feature__ensure_wrap_core_dependency() {
@@ -84,6 +275,27 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
 
+	public function test_add_feature__adding_non_existing_dependency() {
+		// Arrange.
+		$test_feature_data = [
+			'name' => 'test_feature',
+			'state' => Experiments_Manager::STATE_INACTIVE,
+			'dependencies' => [
+				'feature-that-not-exists',
+			],
+		];
+
+		// Act.
+		$this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$feature = $this->experiments->get_features( 'test_feature' );
+
+		$this->assertCount( 1, $feature['dependencies'] );
+		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
+		$this->assertEquals( 'feature-that-not-exists', $feature['dependencies'][0]->get_name() );
+	}
+
 	public function test_feature_can_be_added_as_hidden() {
 		// Act
 		$args = [ 'hidden' => true ];
@@ -93,18 +305,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$feature = $this->experiments->get_features( 'test_feature' );
 		$this->assertNotEmpty( $feature );
 		$this->assertTrue( $feature['hidden'] );
-	}
-
-	public function test_features_are_added_as_not_hidden_by_default() {
-		// Act
-		$this->add_test_feature();
-
-		// Assert
-		$features = $this->experiments->get_features();
-		$this->assertNotEmpty( $features );
-		foreach ( $features as $feature ) {
-			$this->assertFalse( $feature['hidden'] );
-		}
 	}
 
 	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {

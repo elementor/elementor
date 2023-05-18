@@ -3,70 +3,106 @@
 //
 
 .elementor-panel-navigation {
-	background-color: $white;
-	box-shadow: $panel-bottom-shadow;
-	display: table;
-	table-layout: fixed;
+	display: flex;
 	width: 100%;
+	border-bottom: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
-		display: table-cell;
+		all: unset;
+		flex: auto;
+		transition: var(--e-a-transition-hover);
+		border-bottom: 3px solid transparent;
+		cursor: pointer;
 
-		&.elementor-active {
-			background-image: linear-gradient(to bottom, $editor-background-light, #fff);
-			border-bottom: 3px solid $editor-accent;
+		&:hover,
+		&:focus {
+			background-color: var(--e-a-bg-hover);
 		}
 
-		a {
+		&:focus {
+			outline: 0;
+		}
+
+		&.elementor-active {
+			border-color: var(--e-a-border-color-accent);
+			color: var(--e-a-color-txt-accent);
+
+			// TODO: Remove `a` in Elementor 3.14.0
+			a,
+			span {
+				color: var(--e-a-color-txt-accent);
+			}
+		}
+
+		// TODO: Remove `a` in Elementor 3.14.0
+		a,
+		span {
+			color: inherit;
 			display: block;
 			text-align: center;
 			padding: 12px 0 8px;
-			font-size: 10px;
-			color: $editor-dark;
+			font-size: $font-size-xs;
 
 			&:before {
 				font-family: eicons;
-				font-size: 16px;
+				font-size: $font-size-lg;
 				display: block;
-				margin-bottom: 6px;
+				margin-bottom: 8px;
 			}
 		}
 	}
 }
 
 .elementor-tab-control-content {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e92c';
 	}
 }
 
 .elementor-tab-control-style {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e921';
 	}
 }
 
-.elementor-tab-control-advanced, .elementor-tab-control-settings, .elementor-tab-control-general_style {
-	a:before {
+.elementor-tab-control-advanced,
+.elementor-tab-control-settings,
+.elementor-tab-control-general_style {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e916';
 	}
 }
 
+//TODO: Remove
 .elementor-tab-control-responsive {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e885';
 	}
 }
 
-.elementor-tab-control-layout, .elementor-tab-control-column {
-	a:before {
-		content: '\e899';
+.elementor-tab-control-lightbox {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
+		content: '\e922';
 	}
 }
+//END
 
-.elementor-tab-control-lightbox {
-	a:before {
-		content: '\e922';
+.elementor-tab-control-layout,
+.elementor-tab-control-column {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
+		content: '\e899';
 	}
 }
 
@@ -80,15 +116,21 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		color: $editor-dark;
-		font-size: 12px;
+		font-size: 85%;
+		line-height: 2;
+		padding-inline-start: 5px;
+		color: inherit;
 		font-weight: 500;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
+
+		&:hover,
+		&:focus {
+			color: var(--e-a-color-info);
+		}
 
 		i {
 			padding: 0 5px;
-			color: $editor-light;
-			font-size: 18px;
+			font-size: 125%;
 			position: relative;
 
 			&:after {
@@ -102,22 +144,6 @@
 				#{$end}: 0;
 				border-radius: 50%;
 				z-index: -1;
-			}
-		}
-
-		&:hover {
-			color: $editor-darkest;
-
-			i {
-				color: $editor-info;
-
-				&:before {
-					content: '\e941';
-				}
-
-				&:after {
-					background: #fff;
-				}
 			}
 		}
 	}

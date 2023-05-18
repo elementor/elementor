@@ -1,52 +1,37 @@
-// @ts-check
-const dotenv = require( 'dotenv' );
-const path = require( 'path' );
+import { config as _config } from 'dotenv';
+import { resolve } from 'path';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-dotenv.config( {
-	path: path.resolve( __dirname, './.env' ),
+_config( {
+	path: resolve( __dirname, './.env' ),
 } );
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
-const config = {
+export default {
 	testDir: './tests/',
-	/* Maximum time one test can run for. */
-	timeout: 2 * 60 * 1000, // 2 minutes
-	globalSetup: path.resolve( __dirname, './src/global-setup.js' ),
+
+	timeout: 3 * 60_000,
+	globalSetup: resolve( __dirname, '../playwright/global-setup.js' ),
 	expect: {
-		/**
-		 * Maximum time expect() should wait for the condition to be met.
-		 * For example in `await expect(locator).toHaveText();`
-		 */
-		timeout: 5 * 1000, // 5 seconds
+		timeout: 8_000,
 	},
-	/* Fail the build on CI if you accidentally left test.only in the source code. */
+
 	forbidOnly: !! process.env.CI,
-	/* Retry on CI only */
 	retries: process.env.CI ? 1 : 0,
-	/* Retry on CI only */
-	workers: process.env.CI ? 1 : undefined,
-	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: process.env.CI ? 'github' : 'list',
-	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+	workers: process.env.CI ? 3 : 5,
+	fullyParallel: true,
+	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
-		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-		actionTimeout: 0,
-		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-		trace: 'on-first-retry',
-		video: process.env.ELEMENTS_REGRESSION_VIDEO || ( process.env.CI ? 'on-first-retry' : 'off' ),
+		headless: process.env.CI ? true : false,
+		actionTimeout: 8_000,
+		navigationTimeout: 8_000,
+		trace: 'retain-on-failure',
+		video: process.env.CI ? 'retain-on-failure' : 'off',
 		viewport: { width: 1920, height: 1080 },
-		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8889',
-		storageState: path.resolve( __dirname, 'storage-state.json' ),
-		validateAllPreviousCasesChecked: process.env.ELEMENTS_REGRESSION_VALIDATE_ALL_PREVIOUS_TEST_CASES || ( process.env.CI ? 'on' : 'off' ),
+		baseURL: process.env.ELEMENTS_REGRESSION_BASE_URL || 'http://localhost:8888',
+		storageState: resolve( __dirname, 'storageState.json' ),
 		user: {
 			username: process.env.ELEMENTS_REGRESSION_WP_USERNAME || 'admin',
 			password: process.env.ELEMENTS_REGRESSION_WP_PASSWORD || 'password',
 		},
 	},
 };
-
-module.exports = config;

@@ -5,11 +5,26 @@ var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
-	behaviors: {
-		Scrubbing: {
-			behaviorClass: Scrubbing,
-			scrubSettings: { intentTime: 800 },
-		},
+	behaviors() {
+		return {
+			...ControlBaseUnitsItemView.prototype.behaviors.apply( this ),
+			Scrubbing: {
+				behaviorClass: Scrubbing,
+				scrubSettings: {
+					intentTime: 800,
+					valueModifier: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.1 : 1;
+					},
+					enhancedNumber: () => {
+						const currentUnit = this.getControlValue( 'unit' );
+
+						return ( [ 'rem', 'em' ].includes( currentUnit ) ) ? 0.5 : 10;
+					},
+				},
+			},
+		};
 	},
 
 	ui() {
@@ -180,6 +195,18 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 
 	isLinkedDimensions() {
 		return this.getControlValue( 'isLinked' );
+	},
+
+	updateUnitChoices() {
+		ControlBaseUnitsItemView.prototype.updateUnitChoices.apply( this, arguments );
+
+		let inputType = 'number';
+
+		if ( this.isCustomUnit() ) {
+			inputType = 'text';
+		}
+
+		this.ui.controls.attr( 'type', inputType );
 	},
 } );
 

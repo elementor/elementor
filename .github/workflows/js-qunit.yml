@@ -1,6 +1,6 @@
 name: Qunit
 
-on: [push, pull_request]
+on: [pull_request]
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -9,33 +9,35 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     name: Qunit - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check JS files diff
         id: js_diff_files
-        uses: technote-space/get-diff-action@v4
+        uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
+            package*.json
+            .github/**/*.yml
 
   q-unit:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     name: Qunit - Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v2
         env:

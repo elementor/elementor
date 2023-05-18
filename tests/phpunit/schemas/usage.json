@@ -931,6 +931,15 @@
 									"title": "Is enable unfilterd file uploads?",
 									"default": ""
 								},
+								"google_font": {
+									"$id": "#/usages/settings/advanced/google_font",
+									"title": "Google Fonts",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
+								},
 								"font_display": {
 									"$id": "#/usages/settings/advanced/font_display",
 									"title": "Google Fonts Load",
@@ -951,6 +960,15 @@
 									],
 									"title": "Does Font awesome 4 enabled?",
 									"default": "yes"
+								},
+								"meta_generator_tag": {
+									"$id": "#/usages/settings/advanced/meta_generator_tag",
+									"enum": [
+										"",
+										"1"
+									],
+									"title": "Generator Tag",
+									"default": ""
 								}
 							},
 							"additionalProperties": false
@@ -982,6 +1000,29 @@
 													]
 												}
 											]
+										},
+										"tags": {
+											"$id": "#/usages/settings/experiments/$experiment/tags",
+											"title": "Tags of the experiment",
+											"type": "array",
+											"items": {
+												"$id": "#/usages/settings/experiments/$experiment/tags/tag",
+												"title": "The tag schema",
+												"type": "object",
+												"properties": {
+													"type": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/type",
+														"type": "string",
+														"title": "The tag type"
+													},
+													"label": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/label",
+														"type": "string",
+														"title": "The tag label"
+													}
+												},
+												"additionalProperties": false
+											}
 										}
 									},
 									"additionalProperties": false
@@ -1010,34 +1051,40 @@
 							"experiments": {
 								"e_dom_optimization": {
 									"default": "active",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"e_optimized_assets_loading": {
 									"default": "inactive",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"e_optimized_css_loading": {
 									"default": "inactive",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"a11y_improvements": {
 									"default": "active",
 									"state": "default"
 								},
-								"e_import_export": {
-									"default": "active",
-									"state": "default"
-								},
 								"landing-pages": {
 									"default": "active",
-									"state": "default"
-								},
-								"elements-color-picker": {
-									"default": "active",
-									"state": "default"
-								},
-								"admin-top-bar": {
-									"default": "inactive",
 									"state": "default"
 								},
 								"form-submissions": {

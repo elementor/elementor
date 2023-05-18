@@ -5,21 +5,28 @@
 	font-size: 12px;
 
 	.e-select2-placeholder {
-		color: $editor-light;
+		color: var(--e-a-color-txt-muted);
 	}
 
 	&.select2-container--default {
 
 		.select2-selection--single {
-			height: 27px;
+			height: $control-unit;
+			background-color: transparent;
 
 			.select2-selection__rendered {
-				color: $editor-dark;
-				line-height: 27px;
+				color: var(--e-a-color-txt);
+				line-height: $control-unit;
 			}
 		}
 
+		.select2-results__option--highlighted[aria-selected] {
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
+		}
+
 		.select2-selection--multiple {
+			background-color: var(--e-a-bg-default);
 			min-height: $control-unit;
 			line-height: 0;
 
@@ -28,7 +35,8 @@
 			}
 
 			.select2-selection__choice {
-				background-color: $editor-background-light;
+				background-color: var(--e-a-btn-bg);
+				color: var(--e-a-btn-color-invert);
 				line-height: 1.2;
 				font-size: 10px;
 				border: none;
@@ -44,7 +52,7 @@
 					&:after {
 						content: '\e815';
 						font-family: "eicons";
-						color: $editor-light;
+						color: var(--e-a-btn-color-invert);
 						text-indent: 0;
 						position: absolute;
 						left: 0;
@@ -64,7 +72,7 @@
 			}
 
 			.select2-selection__choice__remove{
-				color: $editor-light;
+				color: var(--e-a-btn-color-invert);
 				@include margin-end(3px);
 			}
 		}
@@ -74,7 +82,9 @@
 
 		.select2-selection--single,
 		.select2-selection--multiple {
-			border-color: $editor-lightest;
+			background-color: var(--e-a-bg-default);
+			color: var(--e-a-color-txt);
+			border-color: var(--e-a-border-color);
 		}
 	}
 
@@ -83,7 +93,7 @@
 
 		.select2-selection--single,
 		.select2-selection--multiple {
-			border-color: $editor-light;
+			border-color: var(--e-a-border-color-bold);
 		}
 	}
 }
@@ -102,15 +112,19 @@
 }
 
 .select2-results__option[aria-selected=true] {
-	color: $editor-darkest;
+	background-color: var(--e-a-bg-active);
+	color: var(--e-a-color-txt-active);
 
 	&:not(.select2-results__option--highlighted) {
-		background-color: initial;
+		background-color: var(--e-a-bg-active);
 	}
 }
 
 .select2-dropdown {
-	border-color: $editor-light;
+	border-color: var(--e-a-border-color);
+	background-color: var(--e-a-bg-default);
+	color: var(--e-a-color-txt);
+	box-shadow: var(--e-a-dropdown-shadow);
 
 	.select2-search__field {
 		outline: none;

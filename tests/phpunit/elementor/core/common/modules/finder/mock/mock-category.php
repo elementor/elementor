@@ -14,7 +14,7 @@ class Mock_Category extends Base_Category {
 	}
 
 	public function get_id() {
-		return 'mock';
+		return 'mock_id';
 	}
 
 	public function get_category_items( array $options = [] ) {

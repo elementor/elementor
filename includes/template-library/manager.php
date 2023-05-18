@@ -8,6 +8,7 @@ use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 use Elementor\User;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,7 +33,7 @@ class Manager {
 	 *
 	 * @var Source_Base[]
 	 */
-	protected $_registered_sources = [];
+	protected $_registered_sources = []; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Imported template images.
@@ -43,7 +44,7 @@ class Manager {
 	 *
 	 * @var Import_Images
 	 */
-	private $_import_images = null;
+	private $_import_images = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Template library manager constructor.
@@ -187,10 +188,10 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 *
+	 * @param bool $force_update
 	 * @return array
 	 */
-	public function get_templates( $filter_sources = [] ) {
+	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
@@ -198,7 +199,7 @@ class Manager {
 				continue;
 			}
 
-			$templates = array_merge( $templates, $source->get_items() );
+			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update ] ) );
 		}
 
 		return $templates;
@@ -227,9 +228,10 @@ class Manager {
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
+		$force_update = ! empty( $args['sync'] );
 
 		return [
-			'templates' => $this->get_templates( $filter_sources ),
+			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
 		];
 	}
@@ -437,8 +439,8 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-
-		return $source->import_template( $_FILES['file']['name'], $_FILES['file']['tmp_name'] );
+		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
 	/**
@@ -519,6 +521,25 @@ class Manager {
 		return $source->mark_as_favorite( $args['template_id'], filter_var( $args['favorite'], FILTER_VALIDATE_BOOLEAN ) );
 	}
 
+	public function import_from_json( array $args ) {
+		$validate_args = $this->ensure_args( [ 'editor_post_id', 'elements' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$elements = json_decode( $args['elements'], true );
+
+		$document = Plugin::$instance->documents->get( $args['editor_post_id'] );
+		if ( ! $document ) {
+			return new \WP_Error( 'template_error', 'Document not found.' );
+		}
+
+		$import_data = $document->get_import_data( [ 'content' => $elements ] );
+
+		return $import_data['content'];
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -559,14 +580,14 @@ class Manager {
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
-			throw new \Exception( 'Access Denied' );
+			throw new \Exception( 'Access denied.' );
 		}
 
 		if ( ! empty( $data['editor_post_id'] ) ) {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
 			if ( ! get_post( $editor_post_id ) ) {
-				throw new \Exception( esc_html__( 'Post not found.', 'elementor' ) );
+				throw new \Exception( 'Post not found.' );
 			}
 
 			Plugin::$instance->db->switch_to_post( $editor_post_id );
@@ -600,6 +621,7 @@ class Manager {
 			'delete_template',
 			'import_template',
 			'mark_template_as_favorite',
+			'import_from_json',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -625,9 +647,9 @@ class Manager {
 			$this->handle_direct_action_error( 'Access Denied' );
 		}
 
-		$action = $_REQUEST['library_action'];
+		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' ); // phpcs:ignore -- Nonce already verified.
 
-		$result = $this->$action( $_REQUEST );
+		$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
 
 		if ( is_wp_error( $result ) ) {
 			/** @var \WP_Error $result */

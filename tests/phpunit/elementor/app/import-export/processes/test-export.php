@@ -53,7 +53,7 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_run__fails_when_no_runners_are_registered() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Please specify export runners.' );
+		$this->expectExceptionMessage( 'Couldn’t execute the export process because no export runners have been specified. Try again by specifying export runners.' );
 
 		// Arrange
 		$export = new Export();

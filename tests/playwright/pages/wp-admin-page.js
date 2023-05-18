@@ -1,3 +1,4 @@
+const { execSync } = require( 'child_process' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
 
@@ -9,7 +10,7 @@ const EditorPage = require( './editor-page.js' );
 const CLEAN_POST_ID = 1;
 
 module.exports = class WpAdminPage extends BasePage {
-    async gotoDashboard() {
+	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
@@ -35,8 +36,10 @@ module.exports = class WpAdminPage extends BasePage {
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
+
+		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
 	}
@@ -45,6 +48,8 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();
+
+		await this.closeAnnouncementsIfVisible();
 
 		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
 
@@ -84,7 +89,20 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
+			// Try to make the element visible - Since some experiments may be hidden for the user,
+			// but actually exist and need to be tested.
+			await this.page.evaluate( ( el ) => {
+				const element = document.querySelector( el );
+
+				if ( element ) {
+					element.style.display = 'block';
+				}
+			}, `.elementor_experiment-${ id }` );
+
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
+
+			// Click to confirm any experiment that has dependencies.
+			await this.confirmExperimentModalIfOpen();
 		}
 
 		await this.page.click( '#submit' );
@@ -94,5 +112,54 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
+	}
+
+	async confirmExperimentModalIfOpen() {
+		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
+
+		if ( await dialogButton.isVisible() ) {
+			await dialogButton.click();
+
+			// Clicking the confirm button - "Activate" or "Deactivate" - will immediately save the existing experiments,
+			// so we need to wait for the page to save and reload before we continue on to set any more experiments.
+			await this.page.waitForLoadState( 'load' );
+		}
+	}
+
+	getActiveTheme() {
+		return execSync( `npx wp-env run cli "wp theme list --status=active --field=name --format=csv"` ).toString().trim();
+	}
+
+	activateTheme( theme ) {
+		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
+	}
+
+	async openSiteSettings() {
+		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
+		await this.page.click( 'text=Site Settings' );
+	}
+
+	/*
+	 * Enable uploading SVG files
+	 */
+	async enableAdvancedUploads() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+	}
+
+	/*
+     *  Disable uploading SVG files
+     */
+	async disableAdvancedUploads() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+	}
+
+	async closeAnnouncementsIfVisible() {
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		}
 	}
 };

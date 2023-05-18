@@ -214,7 +214,10 @@ class User {
 	 * @static
 	 */
 	public static function ajax_set_admin_notice_viewed() {
-		if ( empty( $_REQUEST['notice_id'] ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$notice_id = Utils::get_super_global_value( $_REQUEST, 'notice_id' );
+
+		if ( ! $notice_id ) {
 			wp_die();
 		}
 
@@ -223,7 +226,7 @@ class User {
 			$notices = [];
 		}
 
-		$notices[ $_REQUEST['notice_id'] ] = 'true';
+		$notices[ $notice_id ] = 'true';
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 
 		if ( ! wp_doing_ajax() ) {
@@ -247,7 +250,14 @@ class User {
 		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public static function register_as_beta_tester( array $data ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			throw new \Exception( __( 'You do not have permissions to install plugins on this site.', 'elementor' ) );
+		}
+
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
 		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,

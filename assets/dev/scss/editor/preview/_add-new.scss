@@ -1,0 +1,251 @@
+//
+// Add New
+//
+
+.elementor-add-section {
+	// Avoid theme conflicts.
+	all: initial;
+	display: flex;
+	max-width: 1160px;
+	position: relative;
+	margin-inline: auto;
+
+	&:not(.elementor-dragging-on-child) {
+
+		.elementor-add-section-inner {
+			border: 2px dashed var(--e-a-border-color-bold);
+			background-color: rgba(255, 255, 255, .5);
+		}
+	}
+
+	&.elementor-dragging-on-child {
+
+		.elementor-add-section-inner {
+			border: 2px dashed var(--e-a-color-primary);
+		}
+	}
+
+	&[data-view="choose-action"] {
+
+		.e-view:not( .elementor-add-new-section ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-preset"] {
+
+		.e-view:not( .elementor-select-preset ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-container-preset"] {
+
+		.e-view:not( .e-con-select-preset ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-type"] {
+
+		.e-view:not( .e-con-select-type ) {
+			display: none;
+		}
+	}
+
+	&[data-view="select-container-preset-grid"] {
+
+		.e-view:not( .e-con-select-preset-grid ) {
+			display: none;
+		}
+	}
+}
+
+.elementor-add-section-inner {
+	text-align: center;
+	margin: 20px;
+	padding: 40px 0;
+	display: flex;
+	justify-content: center;
+	flex-grow: 1;
+}
+
+.elementor-add-new-section {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.elementor-add-section-area-button {
+	padding: 12px;
+	height: 40px;
+	width: 40px;
+	border-radius: 50%;
+	font-size: 16px;
+	display: flex;
+	outline: none;
+	border: none;
+	background-color: var(--e-a-btn-bg);
+	color: var(--e-a-btn-color-invert);
+	transition: var(--e-a-transition-hover);
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--e-a-btn-bg-hover);
+		color: var(--e-a-btn-color-invert);
+	}
+
+	i {
+		margin: 0;
+	}
+
+	&.elementor-add-section-button {
+		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-primary-hover);
+			color: var(--e-a-btn-color);
+		}
+	}
+}
+
+.elementor-add-section-drag-title,
+.elementor-select-preset-title {
+	font-family: var(--e-a-font-family);
+	font-size: 13px;
+	line-height: 1;
+	color: var(--e-a-color-txt);
+}
+
+.elementor-add-section-drag-title {
+	font-style: italic;
+	font-weight: normal;
+	margin-top: 10px;
+	width: 100%;
+}
+
+.elementor-select-preset-title {
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.elementor-add-section-close {
+	right: 40px;
+}
+
+.elementor-add-section-back {
+	left: 40px;
+}
+
+.elementor-wizard-icon {
+	position: absolute;
+	top: 40px;
+	font-size: 20px;
+	cursor: pointer;
+	line-height: 1;
+	color: var(--e-a-color-txt);
+
+	&:hover {
+		color: var(--e-a-color-txt-hover);
+	}
+}
+
+.elementor-select-preset-list {
+	list-style: none;
+	padding: 0 25px;
+	margin: 20px auto 0;
+	overflow: hidden;
+	max-width: 700px;
+
+	.elementor-preset {
+		cursor: pointer;
+		margin: 0;
+		padding: 10px;
+		float: $start;
+		max-width: 33.333%;
+
+		&:not(:hover) {
+
+			path,
+			rect {
+				fill: var(--e-a-bg-active-bold);
+				transition: .3s all;
+			}
+		}
+
+		&:hover {
+
+			path,
+			rect {
+				fill: var(--e-a-color-txt);
+			}
+		}
+
+		.e-preset--container {
+			position: relative;
+			display: flex;
+
+			&::before {
+				content: var( --text );
+				font-family: var(--e-a-font-family);
+				font-size: 13px;
+				font-weight: 500;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				color: var(--e-a-color-white);
+				transform: translate( -50%, -50% );
+			}
+		}
+
+		svg {
+			height: 50px;
+			width: 100%;
+
+			@if 'rtl' == $direction {
+				transform: rotate(180deg);
+			}
+		}
+	}
+}
+.elementor-add-section {
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-back {
+			display: none;
+		}
+	}
+
+	&[data-view="select-preset"] {
+
+		.elementor-add-section-back {
+			display: none;
+		}
+	}
+
+	&[data-view="select-type"] {
+
+		.elementor-add-section-back {
+			display: none;
+		}
+	}
+}
+
+#elementor-add-new-section {
+	margin: 60px auto;
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-close {
+			display: none;
+		}
+	}
+}
+
+.elementor-add-section-inline {
+	margin: 10px auto;
+	width: 100%;
+}

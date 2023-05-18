@@ -1,6 +1,6 @@
 name: PHPUnit
 
-on: [push, pull_request]
+on: [pull_request]
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -9,46 +9,57 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check PHP files diff
         id: php_diff_files
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
             **/*.php
-            composer.json
+            composer.+(json|lock)
+            .github/**/*.yml
 
   test:
-    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7.
+    runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['nightly', 'latest', '5.8', '5.7']
+        wordpress_versions: ['nightly', 'latest', '6.0', '5.9']
         php_versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      - name: Startup MySQL service
-        run: sudo /etc/init.d/mysql start
       - name: Checkout source code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_versions }}
+          coverage: xdebug
       - name: Install Dependencies
         run: |
-          bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
+          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
       - name: Run Tests with Coverage (latest PHP & WP)
         if: ${{ matrix.php_versions >= 7.4 && matrix.wordpress_versions == 'latest' }}
         run: |

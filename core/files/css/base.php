@@ -327,7 +327,7 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
-		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [] );
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [], $this );
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
@@ -340,6 +340,10 @@ abstract class Base extends Base_File {
 				}
 			} else {
 				try {
+					if ( $this->unit_has_custom_selector( $control, $value ) ) {
+						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
+					}
+
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
@@ -375,6 +379,10 @@ abstract class Base extends Base_File {
 
 								throw new \Exception();
 							}
+						}
+
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
 						}
 
 						return $parsed_value;
@@ -426,6 +434,10 @@ abstract class Base extends Base_File {
 
 			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
+	}
+
+	protected function unit_has_custom_selector( $control, $value ) {
+		return isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $value['unit'] ] );
 	}
 
 	/**

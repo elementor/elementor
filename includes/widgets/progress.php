@@ -221,7 +221,7 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper' => 'border-radius: {{SIZE}}{{UNIT}}; overflow: hidden;',
 				],
@@ -342,8 +342,15 @@ class Widget_Progress extends Widget_Base {
 			'aria-valuemin' => '0',
 			'aria-valuemax' => '100',
 			'aria-valuenow' => $progress_percentage,
-			'aria-valuetext' => $settings['inner_text'],
 		] );
+
+		if ( ! empty( $settings['inner_text'] ) ) {
+			$this->add_render_attribute(
+				'wrapper',
+				'aria-valuetext',
+				sprintf( '%s (%s)', $progress_percentage . '%', $settings['inner_text'] )
+			);
+		}
 
 		if ( ! empty( $settings['progress_type'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'class', 'progress-' . $settings['progress_type'] );
@@ -403,8 +410,11 @@ class Widget_Progress extends Widget_Base {
 			'aria-valuemin': '0',
 			'aria-valuemax': '100',
 			'aria-valuenow': progress_percentage,
-			'aria-valuetext': settings.inner_text
 		} );
+
+		if ( '' !== settings.inner_text ) {
+			view.addRenderAttribute( 'progressWrapper', 'aria-valuetext', progress_percentage + '% (' + settings.inner_text + ')' );
+		}
 
 		view.addRenderAttribute( 'inner_text', {
 			'class': 'elementor-progress-text'

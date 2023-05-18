@@ -2,28 +2,149 @@
 // Variables
 //
 
-// Primary Colors
-$white:         #ffffff;
+//Editor Facelift 2023 - Grays
 $black:         #000000;
+$white:         #ffffff;
+$e-gray-25:		#F9FAFA;
+$e-gray-50:		#F1F2F3;
+$e-gray-75:		#E6E8EA;
+$e-gray-100:	#D5D8DC;
+$e-gray-200:	#BABFC5;
+$e-gray-300:	#9DA5AE;
+$e-gray-400:	#818A96;
+$e-gray-500:	#69727D;
+$e-gray-600:	#515962;
+$e-gray-700:	#3f444b;
+$e-gray-725:	#333438;
+$e-gray-750:	#2b2c31;
+$e-gray-800:	#1f2124;
+$e-gray-900:	#0C0D0E;
 
-$gray-darkest:  #2C2C2C;
-$gray-darker:   #373a3c;
-$gray-dark:     #55595c;
-$gray:          #818a91;
-$gray-light:    #D4D4D4;
-$gray-lighter:  #eceeef;
-$gray-lightest: #f7f7f7;
+//Editor Facelift 2023 - Teal
+$e-teal-50: 	#ECFDF5;
+$e-teal-300:	#5EEAD4;
+$e-teal-400:	#1DDDBF;
+$e-teal-500:	#12AA9A;
+$e-teal-600:	#0A875A;
+$e-teal-900:	#032317;
+
+//Editor Facelift 2023 - Pink
+$e-pink-50:		#FAE8FF;
+$e-pink-100:	#F5D0FE;
+$e-pink-200:	#F3BAFD;
+$e-pink-300:	#F0ABFC;
+$e-pink-400:	#EB8EFB;
+$e-pink-600:	#E73CF6;
+$e-pink-700:	#E315F5;
+$e-pink-800:	#D004D4;
+$e-pink-900:	#C00BB9;
+$e-pink-a100:	#310132;
+
+//Editor Facelift 2023 - Indigo
+$e-indigo-600:	#524CFF;
+$e-indigo-700:	#4C43E5;
+$e-indigo-800:	#4338CA;
+$e-purple:		$e-indigo-600;
+
+//Editor Facelift 2023 - Semantic Colors
+$e-primary:				$e-pink-200;
+$e-primary-bold:		$e-pink-800;
+$e-secondary: 			$e-gray-600;
+$e-success:				$e-teal-600;
+$e-info: 				#2563EB;
+$e-danger:				#DC2626;
+$e-warning: 			#F59E0B;
+$e-accent: 				$e-purple;
+$e-primary-bg:			$e-pink-50;
+$e-success-bg:			#F2FDF5;
+$e-danger-bg:			#FEF1F4;
+$e-info-bg: 			#F0F7FF;
+$e-warning-bg: 			#FFFBEB;
+$e-primary-dark-bg:		$e-pink-a100;
+$e-success-dark-bg:		$e-teal-900;
+$e-info-dark-bg: 		#0A1A3D;
+$e-danger-dark-bg:		#390A0A;
+$e-warning-dark-bg: 	#311808;
+
+// Editor Facelift 2023 - Aliases for backwards compatible
+$editor-danger: $e-danger;
+$editor-warning: $e-warning;
+$editor-success: $e-success;
+$editor-info: $e-info;
+$editor-alert-danger: $e-danger;
+$editor-alert-warning: $e-warning;
+$editor-alert-info: $e-info;
+$editor-alert-success: $e-success;
+$editor-alert-danger-bg: $e-danger-bg;
+$editor-alert-warning-bg: $e-warning-bg;
+$editor-alert-info-bg: $e-info-bg;
+$editor-alert-success-bg: $e-success-bg;
+
+// Primary Colors
+$gray-darkest:  $e-gray-900;
+$gray-darker:   $e-gray-800;
+$gray-dark:     $e-gray-700;
+$gray:          $e-gray-500;
+$gray-light:    $e-gray-100;
+$gray-lighter:  $e-gray-50;
+$gray-lightest: $e-gray-25;
 $gray-mouse:    #CCD6DF;
-$gray-bg:       #e6e9ec;
-
+$gray-bg:		$e-gray-25;
 $blue:          #0275d8;
 $blue-flat:     #1b607f;
 $blue-light:    #5bc0de;
-$green:         #5cb85c;
+$green:         #39b54a;
+$cyan:          #58D0F5;
 $green-light:   #2ecc71;
 $orange:        #f0ad4e;
 $red:           #d9534f;
-$purple:		#9C7AC1;
+$purple:		$e-purple;
+
+// WordPress Admin
+$wp-primary: #0085ba;
+$admin-font-family: Roboto, Arial, Helvetica, sans-serif; // Default fonts for admin
+
+//Brand Colors
+$brand-color-dark-pink: $e-purple;
+$brand-color-royal-blue: #010150;
+$brand-color-dark: #434363;
+
+// Editor colors
+$editor-darkest:$e-gray-900;
+$editor-darker: $e-gray-800;
+$editor-dark: 	$e-gray-700;
+
+$editor-light: $e-gray-300;
+$editor-lighter: $e-gray-200;
+$editor-lightest: $e-gray-100;
+
+$editor-accent: $e-accent;
+$editor-background: $white;
+$editor-background-light: $e-gray-50;
+$editor-background-lighter: $e-gray-100;
+
+$editor-orange: $e-warning;
+$editor-red: $e-danger;
+
+// WordPress colors
+$wp-warning: #ffb900;
+$wp-warning-text: #f56e28;
+$wp-success: #46b450;
+$wp-success-text: #79ba49;
+//BC for wp-admin (previous version)
+$wp-admin-brand-color: #93003c;
+
+// Panel style
+$panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
+$panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+
+$slides_gui: rgba(238, 238, 238, .9);
+
+$transition-hover: all .3s;
+$default-border-radius: 3px;
+$control-unit: 27px;
+$panel-width: 280px;
+$panel-xl-width: 300px;
 
 // Platform
 $platform-primary: #040080;
@@ -42,6 +163,28 @@ $platform-danger-bg: #FDE8EC;
 $platform-danger-text: #B92136;
 $platform-success-bg: #ECF9F2;
 $platform-success-text: #117740;
+
+//Font-size
+$font-size-xs: 10px;
+$font-size-sm: 12px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+
+//
+// ========================= FRONT-END =========================
+//
+
+// Layers (Z-indexes)
+$under-layer: -1;
+$ground-layer: 0;
+$first-layer: 1;
+$second-layer: 2;
+$third-layer: 3;
+$fourth-layer: 4;
+
+$element-overlay: 9998;
+$editor-layer: 9999;
+$super-layer: 10000;
 
 // Info Alert
 $info:			#5bc0de;
@@ -97,6 +240,7 @@ $google-plus:	#dd4b39;
 $houzz:			#7ac142;
 $instagram:		#262626;
 $jsfiddle:		#487AA2;
+$link:			#818a91;
 $linkedin:		#0077b5;
 $medium:		#00ab6b;
 $meetup:		#ec1c40;
@@ -136,83 +280,6 @@ $yelp:			#af0606;
 $youtube:		#cd201f;
 $five-h-px:		#0099e5; //500px
 
-// WordPress Admin
-$wp-primary: #0085ba;
-$admin-font-family: Roboto, Arial, Helvetica, Verdana, sans-serif; // Default fonts for admin
-
-//Brand Colors
-$brand-color-dark-pink: #93003c;
-$brand-color-royal-blue: #010150;
-$brand-color-dark: #434363;
-$brand-color-light: #93003c; //fallback (deprecated v3.0)
-
-// Editor colors
-$editor-darkest:#495157;
-$editor-darker: #556068;
-$editor-dark: 	#6d7882;
-
-$editor-light: #a4afb7;
-$editor-lighter: #c2cbd2;
-$editor-lightest: #d5dadf;
-
-$editor-accent: $brand-color-dark-pink;
-$editor-background: $gray-bg;
-$editor-background-light: #f1f3f5;
-$editor-background-lighter: #fcfcfc;
-
-$editor-orange: #fcb92c;
-$editor-red: #d72b3f;
-
-$editor-danger: $editor-red;
-$editor-warning: #b01b1b;
-$editor-success: #39b54a;
-$editor-info: #71d7f7;
-
-// Container element primary color.
-// TODO: Need a final color from the Design.
-$editor-container-primary: #0098c7;
-
-$editor-kit-accent: #4ab7f4;
-
-// Panel Alert
-$editor-alert-danger: $editor-danger;
-$editor-alert-warning: $editor-orange;
-$editor-alert-info: $editor-info;
-$editor-alert-success: $editor-success;
-
-$editor-alert-danger-bg: #fefbfc;
-$editor-alert-warning-bg: #fcfcfc;
-$editor-alert-info-bg: #f3fcff;
-$editor-alert-success-bg: #fcfffc;
-
-// WordPress colors
-$wp-warning: #ffb900;
-$wp-warning-text: #f56e28;
-
-$wp-success: #46b450;
-$wp-success-text: #79ba49;
-
-// Panel style
-$panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
-$panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-
-$slides_gui: rgba(238, 238, 238, .9);
-
-// Panel Transition
-$transition-hover: all .3s;
-
-// Layers (Z-indexes)
-$under-layer: -1;
-$ground-layer: 0;
-$first-layer: 1;
-$second-layer: 2;
-$third-layer: 3;
-$fourth-layer: 4;
-
-$element-overlay: 9998;
-$editor-layer: 9999;
-$super-layer: 10000;
-
 // Grid Columns
 $column-sizes: (
 		10: 10%,
@@ -235,12 +302,6 @@ $column-sizes: (
 		90: 90%,
 		100: 100%
 );
-
-$control-unit: 27px;
-
-// Panel
-$panel-width: 280px;
-$panel-xl-width: 300px;
 
 // Grid Breakpoints
 $breakpoints: (

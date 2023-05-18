@@ -1,9 +1,8 @@
 
 // Inner Tabs
 .elementor-control-type-tabs {
-	font-size: 0.8em;
-	text-transform: uppercase;
 	display: flex;
+	font-size: var(--control-title-size);
 }
 
 .elementor-control-type-tab {
@@ -11,29 +10,33 @@
 	width: 100%;
 	padding: 0;
 	line-height: $control-unit - 2;
-	border-top: 1px solid $editor-lightest;
-	border-bottom: 1px solid $editor-lightest;
-	@include border-end(1px solid $editor-lightest);
+	border-top: var(--e-a-border-bold);
+	border-bottom: var(--e-a-border-bold);
+	@include border-end(var(--e-a-border-bold));
+	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
 	&:first-child {
-		@include border-start(1px solid $editor-lightest);
-		@include _dimension_side_property(border-top, start, radius, 3px);
-		@include _dimension_side_property(border-bottom, start, radius, 3px);
+		@include border-start(var(--e-a-border-bold));
+		@include _dimension_side_property(border-top, start, radius, var(--e-a-border-radius));
+		@include _dimension_side_property(border-bottom, start, radius, var(--e-a-border-radius));
 	}
 
 	&:last-child {
-		@include _dimension_side_property(border-top, end, radius, 3px);
-		@include _dimension_side_property(border-bottom, end, radius, 3px);
+		@include _dimension_side_property(border-top, end, radius, var(--e-a-border-radius));
+		@include _dimension_side_property(border-bottom, end, radius, var(--e-a-border-radius));
 	}
 
-	&.elementor-tab-active {
-		background-color: $editor-light;
-		border-color: $editor-light;
-		color: #ffffff;
+	&:hover {
+		background-color: var(--e-a-bg-hover);
+	}
+
+	&.e-tab-active {
+		background-color: var(--e-a-bg-active-bold);
+		color: var(--e-a-color-txt-accent);
 	}
 }
 
-.elementor-tab-close {
+.e-tab-close {
 	display: none !important;
 }

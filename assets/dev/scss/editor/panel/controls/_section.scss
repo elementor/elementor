@@ -1,9 +1,12 @@
+#elementor-controls {
+	padding-top: 15px;
+}
+
 .elementor-control-type-section {
-	margin-top: 10px;
 	padding: 0;
 
-	&.elementor-open {
-		padding-bottom: 15px;
+	&.e-open {
+		padding-bottom: 10px;
 	}
 
 	+ .elementor-control {
@@ -14,5 +17,9 @@
 				display: none;
 			}
 		}
+	}
+
+	&:not(:first-child):not(.elementor-control-type-section + .elementor-control-type-section) {
+		margin-top: 25px;
 	}
 }

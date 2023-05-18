@@ -17,7 +17,8 @@
 		&:checked {
 
 			+ .elementor-control-popover-toggle-toggle-label {
-				color: $editor-info;
+				color: var(--e-a-color-txt-active);
+				background-color: var(--e-a-bg-active-bold);
 			}
 		}
 
@@ -29,18 +30,27 @@
 		}
 	}
 
-	.elementor-control-popover-toggle-reset-label {
-		color: $editor-lighter;
-		@include margin-end(5px);
-	}
-
 	.elementor-control-popover-toggle-toggle-label {
 		height: $control-unit;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 3px;
-		border: 1px solid $editor-lightest;
+		border-radius: var(--e-a-border-radius);
+		border: var(--e-a-border-bold);
+		transition: var(--e-a-transition-hover);
+
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+	}
+
+	.elementor-control-popover-toggle-reset-label {
+		color: var(--e-a-color-txt-muted);
+		margin-inline-start: 5px; //Considering the direction hack
+
+		&:hover {
+			color: var(--e-a-color-txt);
+		}
 	}
 }
 
@@ -54,7 +64,7 @@
 .e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
-		border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 		flex-shrink: 0;
 	}
 }

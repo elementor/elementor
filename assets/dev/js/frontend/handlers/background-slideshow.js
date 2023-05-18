@@ -2,7 +2,7 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 	getDefaultSettings() {
 		return {
 			classes: {
-				swiperContainer: 'elementor-background-slideshow swiper-container',
+				swiperContainer: `elementor-background-slideshow ${ elementorFrontend.config.swiperClass }`,
 				swiperWrapper: 'swiper-wrapper',
 				swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
 				swiperPreloader: 'swiper-lazy-preloader',

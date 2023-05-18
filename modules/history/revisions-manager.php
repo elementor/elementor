@@ -24,7 +24,7 @@ class Revisions_Manager {
 	/**
 	 * Maximum number of revisions to display.
 	 */
-	const MAX_REVISIONS_TO_DISPLAY = 100;
+	const MAX_REVISIONS_TO_DISPLAY = 50;
 
 	/**
 	 * Authors list.
@@ -254,22 +254,12 @@ class Revisions_Manager {
 			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = Plugin::$instance->documents->get( $data['id'] );
+		$revision = Plugin::$instance->documents->get_with_permissions( $data['id'] );
 
-		if ( ! $revision ) {
-			throw new \Exception( 'Invalid revision.' );
-		}
-
-		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
-			throw new \Exception( esc_html__( 'Access denied.', 'elementor' ) );
-		}
-
-		$revision_data = [
+		return [
 			'settings' => $revision->get_settings(),
 			'elements' => $revision->get_elements_data(),
 		];
-
-		return $revision_data;
 	}
 
 	/**
@@ -366,7 +356,12 @@ class Revisions_Manager {
 		return [];
 	}
 
-	public static function ajax_get_revisions() {
+	/**
+	 * @throws \Exception
+	 */
+	public static function ajax_get_revisions( $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
 		return self::get_revisions();
 	}
 

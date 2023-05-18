@@ -18,6 +18,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area',
+		notice: '#elementor-panel-elements-notice-area',
 	},
 
 	regionViews: {},
@@ -58,12 +59,24 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			},
 		};
 
-		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
-	},
+		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews, {
+			notice: this.notice,
+			elements: this.elements,
+			search: this.search,
+		} );
+},
 
 	initElementsCollection() {
 		const elementsCollection = new PanelElementsElementsCollection(),
 			isContainerActive = elementorCommon.config.experimentalFeatures.container;
+
+		// Deprecated widget handling.
+		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
+			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
+				// Hide the old version.
+				elementor.widgetsCache[ widgetName ].show_in_panel = false;
+			}
+		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {

@@ -64,13 +64,21 @@ class Module extends BaseModule {
 	}
 
 	private function append_lazyload_selector( $control, $value ) {
+		$is_dominant_color_enabled = $this->is_dominant_color_enabled();
+
 		if ( Utils::get_array_value_by_keys( $control, [ 'background_lazyload', 'active' ] ) ) {
 			foreach ( $control['selectors'] as $selector => $css_property ) {
 				if ( 0 === strpos( $css_property, 'background-image' ) ) {
 					if ( ! empty( $value['url'] ) ) {
 						$css_property  = str_replace( 'url("{{URL}}")', 'var(--e-bg-lazyload-loaded)', $css_property );
 						$control['selectors'][ $selector ] = $css_property . '--e-bg-lazyload: url("' . $value['url'] . '");';
-						$control = $this->apply_dominant_color_background( $control, $value, $selector );
+
+						if ( $is_dominant_color_enabled ) {
+							$dominant_color = $this->get_dominant_color( $value['id'] );
+							if ( $dominant_color ) {
+								$control['selectors'][ $selector ] .= "background-color: #{$dominant_color} ;";
+							}
+						}
 					}
 				}
 			}
@@ -78,13 +86,45 @@ class Module extends BaseModule {
 		return $control;
 	}
 
-	private function apply_dominant_color_background( $control, $value, $selector ) {
-		$metadata = wp_get_attachment_metadata( $value['id'] );
-		$dominant_color = Utils::get_array_value_by_keys( $metadata, [ 'dominant_color' ] );
-		if ( $dominant_color ) {
-			$control['selectors'][ $selector ] .= "background-color: #{$dominant_color};";
+	private function is_dominant_color_enabled() {
+		if ( ! function_exists( 'perflab_get_active_modules' ) ) {
+			return false;
 		}
-		return $control;
+
+		$active_modules = perflab_get_active_modules();
+
+		return in_array( 'images/dominant-color', $active_modules, true );
+	}
+
+	private function get_dominant_color( $attachment_id ) {
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+
+		// Performance Lab adds these metadata
+		$has_transparency = $metadata['has_transparency'] ?? false;
+		$dominant_color = esc_attr( $metadata['dominant_color'] ?? false );
+
+		if ( $dominant_color && ! $has_transparency ) {
+			return $dominant_color;
+		}
+
+		return false;
+	}
+
+	private function is_document_support_lazyload( $post_id ) {
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+
+		if ( $document ) {
+			$support_lazyload = $document->get_property( 'support_lazyload' );
+			if ( false === $support_lazyload ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public function __construct() {
@@ -96,12 +136,36 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/element/after_add_attributes', function( Element_Base $element ) {
+
+			$current_document = \Elementor\Plugin::$instance->documents->get_current();
+
+			if ( ! $current_document ) {
+				return;
+			}
+
+			$post_id = $current_document->get_main_id();
+
+			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
+				return;
+			}
+
 			$this->update_element_attributes( $element );
 		} );
 
-		add_filter('elementor/files/css/selectors', function( $control, $value ) {
+		add_filter('elementor/files/css/selectors', function( $control, $value, $css_instance ) {
+
+			$post_id = method_exists( $css_instance, 'get_post_id' ) ? $css_instance->get_post_id() : false;
+
+			if ( ! $post_id ) {
+				return $control;
+			}
+
+			if ( ! $this->is_document_support_lazyload( $post_id ) ) {
+				return $control;
+			}
+
 			return $this->append_lazyload_selector( $control, $value );
-		}, 10, 2 );
+		}, 10, 3);
 
 		add_filter( 'body_class', function( $classes ) {
 			$classes[] = 'e-lazyload';
@@ -114,8 +178,8 @@ class Module extends BaseModule {
 
 		add_action( 'wp_footer', function() {
 			?>
-			<script type='text/javascript' defer>
-				document.addEventListener( 'DOMContentLoaded', function() {
+			<script type='text/javascript'>
+				const lazyloadRunObserver = () => {
 					const dataAttribute = 'data-e-bg-lazyload';
 					const lazyloadBackgrounds = document.querySelectorAll( `[${ dataAttribute }]:not(.lazyloaded)` );
 					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
@@ -126,7 +190,9 @@ class Module extends BaseModule {
 							if ( lazyloadSelector ) {
 								lazyloadBackground = entry.target.querySelector( lazyloadSelector );
 							}
-							lazyloadBackground.classList.add( 'lazyloaded' );
+							if( lazyloadBackground ) {
+								lazyloadBackground.classList.add( 'lazyloaded' );
+							}
 							lazyloadBackgroundObserver.unobserve( entry.target );
 						}
 					});
@@ -134,6 +200,13 @@ class Module extends BaseModule {
 					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
 						lazyloadBackgroundObserver.observe( lazyloadBackground );
 					} );
+				};
+				const events = [
+					'DOMContentLoaded',
+					'elementor/lazyload/observe',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
 				} );
 			</script>
 			<?php

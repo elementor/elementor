@@ -15,5 +15,8 @@ class Elementor_Test_PerformanceLab extends Elementor_Test_Base {
 		$performance_lab = new PerformanceLab();
 		$webp_src = $method->invokeArgs( $performance_lab, [ $image_id, 'full', $image_url ] );
 		$this->assertEquals( '.webp', substr( $webp_src, -5 ) );
+
+		// Clean up
+		wp_delete_attachment( $image_id, true );
 	}
 }

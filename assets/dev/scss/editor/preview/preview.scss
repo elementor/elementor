@@ -1,8 +1,8 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
 @import "../../helpers/direction";
-
-@import "../container";
+@import "../../global/global";
+@import "../../direction/theme-light";
 
 @import "../units";
 @import "../breakpoints";
@@ -11,14 +11,48 @@
 @import "../panel/controls";
 @import "../resizable";
 
+@import "theme";
+@import "add-new";
 @import "animations";
 @import "compatibility";
 @import "inline-editor";
 
-//Eyedropper Experiment
 @import "../../../../../modules/elements-color-picker/assets/scss/elements-color-picker";
 
-@import "../_flex-icons.scss";
+@import "../flex-icons.scss";
+
+
+// mixins
+@mixin e-grid-outline-base {
+	padding-top: var(--padding-top);
+	padding-bottom: var(--padding-bottom);
+	display: grid;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	grid-gap: var(--gap);
+	justify-items: var(--justify-items);
+	align-items: var(--align-items);
+	grid-auto-flow: var(--grid-auto-flow);
+	justify-content: var(--grid-justify-content);
+	align-content: var(--grid-align-content);
+	min-height: var(--min-height);
+}
+
+@mixin e-grid-outline-boxed {
+	@include e-grid-outline-base;
+	width: var(--width);
+	margin: 0 auto;
+}
+
+@mixin e-grid-outline-full-width {
+	@include e-grid-outline-base;
+	padding-right: var(--padding-right);
+	padding-left: var(--padding-left);
+	width: 100%;
+	left: 0;
+}
 
 // Hidden WP Admin Bar
 html.elementor-html {
@@ -38,14 +72,14 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
-	--primary-color: #{ $editor-info };
-	--secondary-color: #{ darken($editor-info, 20%) };
-	--outline-color: var( --primary-color );
+	--primary-color: var(--e-p-border-con);
+	--secondary-color: var(--e-p-border-con-hover);
+	--outline-color: var(--e-p-border-con-active);
 
 	.e-con {
-		--primary-color: #{ $editor-container-primary };
-		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
-		--outline-color: var( --primary-color );
+		--primary-color: var(--e-p-border-con);
+		--secondary-color: var(--e-p-border-con-hover);
+		--outline-color: var( --outline-color );
 
 		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
 		// between Containers.
@@ -53,6 +87,41 @@ html.elementor-html {
 		&.elementor-dragging-on-child,
 		&.e-con-boxed.elementor-html5dnd-current-element {
 			outline: 1px solid var( --outline-color );
+		}
+	}
+
+	.e-grid-outline {
+		display: none;
+	}
+
+	.elementor-element-editable.e-grid {
+
+		&.e-con-full {
+
+			> .e-grid-outline {
+
+				@include e-grid-outline-full-width;
+			}
+		}
+
+		&.e-con-boxed {
+
+			> .e-con-inner{
+
+				position: relative;
+
+				> .e-grid-outline {
+
+					@include e-grid-outline-boxed;
+				}
+			}
+		}
+
+		.e-grid-outline-item {
+			border: 1px dashed #{$editor-light};
+			pointer-events: none;
+			width: 100%;
+			height: 100%;
 		}
 	}
 
@@ -85,13 +154,16 @@ html.elementor-html {
 			opacity: .3;
 		}
 
-		&:not(.elementor-loading):not(.elementor-widget-menu-anchor) { // Don't apply transition on anchor widget - Safari hack
-			//transition: all .1s;
+		&.elementor-element-edit-mode:hover {
+			box-shadow: 0 0 0 1px var(--e-p-border-widget);
 		}
 
-		&.elementor-element-editable,
-		&.elementor-element-edit-mode:hover {
-			box-shadow: 0 0 0 1px $editor-info;
+		&.elementor-element-editable {
+
+			&,
+			&:hover {
+				box-shadow: 0 0 0 2px var(--e-p-border-widget);
+			}
 		}
 
 		&:not(:hover) {
@@ -115,9 +187,9 @@ html.elementor-html {
 		padding: 0;
 		margin: 0;
 		font-size: 11px;
-		color: #fff;
+		color: var(--e-p-border-widget-invert);
 		width: 25px;
-		transition: margin .3s, width .3s, font .3s;
+		transition: var(--e-a-transition-hover);
 	}
 
 	.elementor-inline-editing {
@@ -205,7 +277,7 @@ html.elementor-html {
 
 		&:before {
 			content: '';
-			background-color: $editor-info;
+			background-color: var(--e-p-draggable-color);
 			transition-timing-function: ease-out;
 			opacity: .9;
 			height: $widget-placeholder-size;
@@ -218,7 +290,7 @@ html.elementor-html {
 
 		&:after {
 			content: '';
-			background-color: $editor-info;
+			background-color: var(--e-p-draggable-color);
 			transition-timing-function: ease-out;
 			opacity: .9;
 			height: $widget-placeholder-size;
@@ -227,7 +299,8 @@ html.elementor-html {
 		}
 	}
 
-	&.elementor-absolute, &.elementor-fixed {
+	&.elementor-absolute,
+	&.elementor-fixed {
 		cursor: grab;
 
 		&:active {
@@ -243,117 +316,6 @@ html.elementor-html {
 	}
 }
 
-// Section & Container
-.elementor-section,
-.e-con {
-
-	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
-
-		&:after {
-			position: absolute;
-			left: 2px;
-			right: 2px;
-			top: 2px;
-			bottom: 2px;
-			outline: 2px solid var( --outline-color );
-			animation: section-outline .75s;
-		}
-	}
-
-	&:hover,
-	&.elementor-element-editable {
-
-		> .elementor-element-overlay {
-
-			&:after {
-				content: '';
-			}
-		}
-	}
-
-	// Section Full (No more columns) - Overlay
-	&-filled {
-
-		.elementor-sortable-placeholder {
-
-			&.elementor-column {
-				display: none;
-			}
-		}
-
-		.elementor-row {
-
-			&.elementor-draggable-over {
-				border: 1px solid $editor-danger;
-			}
-		}
-	}
-}
-
-// Column
-.elementor-column {
-
-	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
-
-		&:after {
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			outline: 1px dashed $editor-dark;
-		}
-	}
-
-	&:hover,
-	&.elementor-element-editable {
-
-		> .elementor-element-overlay {
-			border: 1px solid $white;
-
-			&:after {
-				content: '';
-			}
-		}
-	}
-
-	&.elementor-dragging-on-child {
-
-		> .elementor-element-overlay {
-			border: 1px solid $editor-info;
-
-			&:after {
-				display: none;
-			}
-		}
-	}
-
-	> .ui-resizable-e, > .ui-resizable-w {
-		cursor: col-resize;
-		width: 7px;
-		position: absolute;
-		@include end(-5px);
-		top: 0;
-		height: 100%;
-	}
-
-	&:last-of-type {
-		> .ui-resizable-e, > .ui-resizable-w {
-			display: none !important;
-		}
-	}
-
-	@media (max-width: $editor-screen-md-max) {
-		> .ui-resizable-e, > .ui-resizable-w {
-			display: none !important;
-		}
-	}
-}
-
 // General - Overlay Settings
 .elementor-editor-element-settings {
 	position: absolute;
@@ -362,148 +324,20 @@ html.elementor-html {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--e-a-font-family);
 	font-size: 13px;
 	font-weight: normal;
 	font-style: normal;
 	line-height: 1;
 	z-index: $first-layer;
 	pointer-events: all;
+	transition: var(--e-a-transition-hover);
 }
 
 .elementor-editor-element-edit {
 
 	@media(min-width: $editor-screen-lg-min) {
 		cursor: move;
-	}
-}
-
-// Section & Container - Overlay Settings
-.elementor-editor-section-settings,
-.elementor-editor-container-settings {
-	height: 24px;
-	top: 1px;
-  	left: 50%;
-  	transform: translateX( -50% ) translateY( -100% );
-	background-color: var( --primary-color );
-	border-radius: 5px 5px 0 0;
-	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
-
-	i.eicon-handle {
-		font-size: 16px;
-	}
-
-	.elementor-editor-element-setting {
-
-		&:hover {
-			background-color: var( --secondary-color );
-		}
-
-		&:first-child {
-			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
-
-			&:before {
-				content: '';
-				position: absolute;
-				border: solid transparent;
-				top: 2px;
-				@include border-end-property(color, var( --primary-color ));
-				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
-				@include end(calc(100% - 1px));
-			}
-
-			&:hover {
-
-				&:before {
-					@include border-end-property(color, var( --secondary-color ));
-				}
-			}
-		}
-
-		&:last-child {
-			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
-
-			&:after {
-				content: '';
-				position: absolute;
-				border: solid transparent;
-				top: 2px;
-				@include border-start-property(color, var( --primary-color ));
-				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
-				@include start(calc(100% - 1px));
-			}
-
-			&:hover {
-
-				&:after {
-					@include border-start-property(color, var( --secondary-color ));
-				}
-			}
-		}
-	}
-}
-
-// Top Section / Container (Handles inside)
-.e-handles-inside,
-.elementor-section--handles-inside {
-
-	> .elementor-element-overlay > .elementor-editor-element-settings {
-		transform: translateX(-50%);
-		border-radius: 0 0 5px 5px;
-
-		.elementor-editor-element-setting {
-			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
-
-				&:before {
-					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
-				}
-			}
-
-			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
-
-				&:after {
-					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
-				}
-			}
-		}
-	}
-}
-
-// Column - Overlay Settings
-.elementor-editor-column-settings {
-	top: -1px;
-	@include start(-1px);
-	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
-	overflow: hidden;
-
-	.elementor-editor-element-setting {
-		background-color: $editor-darkest;
-
-		&:not(:hover) {
-			background-image: linear-gradient(to bottom, $editor-dark, $editor-darker);
-		}
-	}
-}
-
-// Widget - Overlay Settings
-.elementor-editor-widget-settings {
-	z-index: $second-layer;
-	top: -1px;
-	@include end(-1px);
-	flex-direction: row-reverse;
-	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
-	overflow: hidden;
-
-	.elementor-editor-element-setting {
-		background-color: darken($editor-info, 20%);
-
-		&:not(:hover) {
-			background-image: linear-gradient(to top, darken($editor-info, 10%), $editor-info);
-		}
 	}
 }
 
@@ -518,7 +352,7 @@ html.elementor-html {
 
 .elementor-first-add {
 	text-align: center;
-	border: 1px dashed $editor-lightest;
+	border: 1px dashed var(--e-a-border-color-bold);
 	display: flex;
 	height: 100%;
 	width: 100%;
@@ -535,12 +369,13 @@ html.elementor-html {
 
 .elementor-sortable-helper {
 	position: absolute;
-	border-radius: 3px;
-	background-color: #fff;
-	text-align: center;
-	color: $editor-darker;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 	cursor: move;
+	border: var(--e-a-border);
+	border-radius: var(--e-a-border-radius);
+	background-color: var(--e-a-bg-active);
+	border-color: var(--e-a-border-color-accent);
+	color: var(--e-a-color-active);
+	text-align: center;
 
 	.icon {
 		font-size: 28px;
@@ -548,80 +383,15 @@ html.elementor-html {
 		line-height: 1;
 	}
 
-	.elementor-element-title-wrapper {
-		display: table;
-		width: 100%;
+	.title-wrapper {
+		display: flex;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.title {
 		font-size: 11px;
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		display: table-cell;
-		vertical-align: middle;
-		height: 40px;
-	}
-}
-
-//Content Only (writing mode)
-.elementor-editor-content-only {
-	//Empty Section
-	.elementor-first-add {
-		display: none;
-	}
-
-	// Section
-	.elementor-section {
-
-		> .elementor-element-overlay {
-			display: none;
-
-			&:after {
-				display: none;
-			}
-		}
-
-		&:hover,
-		&.elementor-element-editable {
-
-			> .elementor-element-overlay {
-
-				&:after {
-					display: none;
-				}
-			}
-		}
-	}
-
-	// Column
-	.elementor-column {
-
-		> .elementor-element-overlay {
-			display: none;
-
-			&:after {
-				display: none;
-			}
-		}
-
-		&:hover,
-		&.elementor-element-editable {
-
-			> .elementor-element-overlay {
-
-				&:after {
-					display: none;
-				}
-			}
-		}
-	}
-
-	.elementor-editor-element-edit {
-
-		@media(min-width: $editor-screen-lg-min) {
-			cursor: pointer;
-		}
 	}
 }
 
@@ -629,7 +399,7 @@ html.elementor-html {
 .elementor-sortable-placeholder {
 
 	&:not(.elementor-column-placeholder) {
-		background-color: $editor-info;
+		background-color: var(--e-p-draggable-color);
 		animation-duration: 250ms;
 		opacity: .9;
 		width: 100%;
@@ -652,27 +422,6 @@ html.elementor-html {
 	animation-name: placeholder-section;
 }
 
-.elementor-column-placeholder {
-	position: relative;
-
-	&:before, &:after {
-		content: '';
-		position: absolute;
-		top: 10px;
-		bottom: 10px;
-		right: 10px;
-		left: 10px;
-	}
-
-	&:before {
-		border: 1px solid $editor-dark;
-	}
-
-	&:after {
-		border: 1px dashed #fff;
-	}
-}
-
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
@@ -683,7 +432,7 @@ html.elementor-html {
 
 	&:after {
 		content: '';
-		background-color: $editor-info;
+		background-color: var(--e-p-draggable-color);
 		transition-timing-function: ease-out;
 		opacity: .9;
 		height: $widget-placeholder-size;
@@ -707,249 +456,6 @@ html.elementor-html {
 
 		.elementor-sortable-placeholder {
 			display: none;
-		}
-	}
-}
-
-// Add new Section
-.elementor-add-section {
-	// Avoid theme conflicts.
-	all: initial;
-	display: flex;
-	max-width: 1160px;
-	position: relative;
-	margin-inline: auto;
-
-	&:not(.elementor-dragging-on-child) {
-
-		.elementor-add-section-inner {
-			border: 2px dashed $editor-lightest;
-			background-color: rgba(255, 255, 255, .5);
-		}
-	}
-
-	&.elementor-dragging-on-child {
-
-		.elementor-add-section-inner {
-			border: 3px dashed $editor-info;
-		}
-	}
-
-	&[data-view="choose-action"] {
-
-		.e-view:not( .elementor-add-new-section ) {
-			display: none;
-		}
-	}
-
-	&[data-view="select-preset"] {
-
-		.e-view:not( .elementor-select-preset ) {
-			display: none;
-		}
-	}
-
-	&[data-view="select-container-preset"] {
-
-		.e-view:not( .e-con-select-preset ) {
-			display: none;
-		}
-	}
-}
-
-.elementor-add-section-inner {
-	text-align: center;
-	margin: 20px;
-	padding: 40px 0;
-	flex-grow: 1;
-}
-
-.elementor-add-new-section {
-	display: inline-block; // For smooth dragging above
-
-	.elementor-add-section-area-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		height: 40px;
-		width: 40px;
-		color: #fff;
-		font-size: 16px;
-		border-radius: 50%;
-		transition: all .3s;
-		cursor: pointer;
-
-		&:hover {
-			opacity: 0.85;
-			box-shadow: 0 0 2px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .2);
-		}
-
-		&:active {
-			box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .1);
-		}
-	}
-
-	.elementor-add-section-button {
-		background-color: $editor-accent;
-		margin-inline-start: 5px;
-	}
-
-	.elementor-add-template-button {
-		background-color: $editor-dark;
-		@include margin-start(5px);
-	}
-}
-
-.elementor-add-section-drag-title {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	font-weight: normal;
-	font-style: italic;
-	line-height: 1;
-	color: $editor-darker;
-	margin-top: 15px;
-}
-
-.elementor-add-section-close {
-	position: absolute;
-	right: 40px;
-	top: 40px;
-	font-size: 20px;
-	cursor: pointer;
-	line-height: 1;
-	color: $editor-lightest;
-
-	&:hover {
-		color: $editor-dark;
-	}
-}
-
-.elementor-select-preset-title {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	font-weight: 500;
-	font-style: normal;
-	text-transform: uppercase;
-	color: $editor-darker;
-}
-
-.elementor-select-preset-list {
-	list-style: none;
-	padding: 0 25px;
-	margin: 20px auto 0;
-	overflow: hidden;
-	max-width: 700px;
-
-	.elementor-preset {
-		cursor: pointer;
-		margin: 0;
-		padding: 10px;
-		float: $start;
-		max-width: 33.333%;
-
-		&:hover {
-
-			path,
-			rect {
-				fill: $editor-dark;
-			}
-		}
-
-		&:not(:hover) {
-
-			path,
-			rect {
-				fill: $editor-lightest;
-			}
-		}
-
-		.e-preset--container {
-			position: relative;
-			display: flex;
-
-			&::before {
-				content: var( --text );
-				font-family: $admin-font-family;
-				font-size: 13px;
-				font-weight: 500;
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				color: $white;
-				transform: translate( -50%, -50% );
-			}
-		}
-
-		svg {
-			height: 50px;
-			width: 100%;
-
-			@if 'rtl' == $direction {
-				transform: rotate(180deg);
-			}
-		}
-	}
-}
-
-#elementor-add-new-section {
-	margin: 60px auto;
-
-	&[data-view="choose-action"] {
-
-		.elementor-add-section-close {
-			display: none;
-		}
-	}
-}
-
-.elementor-add-section-inline {
-	margin: 10px auto;
-	width: 100%;
-}
-
-.elementor-column-percents-tooltip {
-	position: absolute;
-	display: none;
-	pointer-events: none;
-	top: 50%;
-	transform: translateY(-50%);
-	color: #fff;
-	font-size: 10px;
-	background-color: $editor-darker;
-	width: 40px;
-	padding: 3.5px 0;
-	text-align: center;
-	z-index: 1;
-	line-height: 1;
-
-	&:after {
-		content: '';
-		position: absolute;
-		width: 0;
-		height: 0;
-		border: 8.5px solid transparent;
-		top: 0;
-	}
-
-	&[data-side="left"] {
-		border-radius: 3px 0 0 3px;
-		right: 15px;
-
-		&:after {
-			left: 100%;
-			border-left-color: $editor-darker;
-			border-right-width: 0;
-		}
-	}
-
-	&[data-side="right"] {
-		border-radius: 0 3px 3px 0;
-		left: 15px;
-
-		&:after {
-			right: 100%;
-			border-right-color: $editor-darker;
-			border-left-width: 0;
 		}
 	}
 }
@@ -983,7 +489,7 @@ html.elementor-html {
 	&.e-con {
 
 		> .elementor-element-overlay {
-			background-color: $editor-lightest;
+			background-color: var(--e-a-bg-hover);
 			mix-blend-mode: color;
 		}
 
@@ -1023,86 +529,8 @@ html.elementor-html {
 	}
 }
 
-.e-con {
-
-	// Container presets.
-	&-select-preset {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 25px;
-
-		// Views.
-		&[data-view="choose-preset"] > *:not( &__inner ) {
-			display: none;
-		}
-
-		&[data-view="drop-area"] > *:not( .elementor-first-add ) {
-			display: none;
-		}
-
-		&__title {
-			font-family: $admin-font-family;
-			font-size: 13px;
-			font-weight: 500;
-			text-transform: uppercase;
-			color: $editor-darker;
-		}
-
-		&__list {
-			display: flex;
-			gap: 20px;
-			align-items: center;
-			justify-content: center;
-			flex-wrap: wrap;
-			max-width: 650px;
-
-			.e-con-preset {
-				cursor: pointer;
-				flex-basis: 90px;
-
-				svg {
-					width: 100%;
-					height: auto;
-				}
-
-				path {
-					fill: $white;
-				}
-
-				rect {
-					fill: $editor-lightest;
-					transition: .3s all;
-				}
-
-				&:hover {
-					rect {
-						fill: $editor-dark;
-					}
-				}
-
-				&[data-preset="r100"] {
-					@if 'rtl' == $direction {
-						transform: scaleX(-1);
-					}
-				}
-			}
-		}
-	}
-
-	// To avoid horizontal scroll in `flex-direction: column`
-	&.e-con--column {
-
-		.ui-resizable {
-
-			&-e {
-				right: 0;
-			}
-
-			&-w {
-				left: 0;
-			}
-		}
-	}
-}
+@import "section";
+@import "column";
+@import "widget";
+@import "container";
+@import "presets";

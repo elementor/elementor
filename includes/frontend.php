@@ -143,6 +143,16 @@ class Frontend extends App {
 	private $google_fonts_index = 0;
 
 	/**
+	 * @var string
+	 */
+	private $e_swiper_asset_path;
+
+	/**
+	 * @var string
+	 */
+	private $e_swiper_version;
+
+	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -163,6 +173,7 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -268,7 +279,7 @@ class Frontend extends App {
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>
-			<meta name="theme-color" content="<?php echo esc_html( $mobile_theme_color ); ?>">
+			<meta name="theme-color" content="<?php echo esc_attr( $mobile_theme_color ); ?>">
 			<?php
 		}
 	}
@@ -322,6 +333,12 @@ class Frontend extends App {
 	 */
 	public function add_content_filter() {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	public function init_swiper_settings() {
+		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
+		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
+		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
 	}
 
 	/**
@@ -543,6 +560,13 @@ class Frontend extends App {
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
+		wp_register_style(
+			'swiper',
+			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			[],
+			$this->e_swiper_version
+		);
+
 		/**
 		 * After frontend register styles.
 		 *
@@ -630,6 +654,8 @@ class Frontend extends App {
 			}
 
 			wp_enqueue_style( 'elementor-frontend' );
+
+			wp_enqueue_style( 'swiper' );
 
 			/**
 			 * After frontend styles enqueued.
@@ -949,7 +975,7 @@ class Frontend extends App {
 	 *                            Default is an empty array.
 	 */
 	private function enqueue_google_fonts( $google_fonts = [] ) {
-		$print_google_fonts = true;
+		$print_google_fonts = Fonts::is_google_fonts_enabled();
 
 		/**
 		 * Print frontend google fonts.
@@ -1381,6 +1407,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
+			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1530,9 +1557,9 @@ class Frontend extends App {
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
-				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
 				[],
-				'5.3.6',
+				$this->e_swiper_version,
 				true
 			);
 

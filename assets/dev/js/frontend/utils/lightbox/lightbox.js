@@ -41,7 +41,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				invisible: 'elementor-invisible',
 				preventClose: 'elementor-lightbox-prevent-close',
 				slideshow: {
-					container: 'swiper-container',
+					container: elementorFrontend.config.swiperClass,
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
@@ -110,8 +110,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			closeButtonOptions: {
 				...closeIcon,
 				attributes: {
-					tabindex: 0,
 					role: 'button',
+					tabindex: 0,
 					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
 				},
 			},
@@ -222,7 +222,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				type: 'image',
 				id: slideshowID,
 				url: element.href,
-				hash: element.getAttribute( 'e-action-hash' ),
+				hash: element.getAttribute( 'data-e-action-hash' ),
 				title: element.dataset.elementorLightboxTitle,
 				description: element.dataset.elementorLightboxDescription,
 				modalOptions: {
@@ -240,7 +240,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	setHTMLContent( html ) {
 		if ( window.elementorCommon ) {
-			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent()', '3.1.4' );
 		}
 
 		this.getModal().setMessage( html );
@@ -327,8 +327,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		$.each( socialNetworks, ( key, data ) => {
 			const networkLabel = data.label,
-				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
-				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
+				$link = $( '<a>', { href: this.createShareLink( key, itemUrl, $activeSlide.attr( 'data-e-action-hash' ) ), target: '_blank' } ).text( networkLabel ),
+				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key, 'aria-hidden': 'true' } );
 
 			$link.prepend( $socialNetworkIconElement );
 			$linkList.append( $link );
@@ -382,6 +382,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elements.$iconShare = $( iconElement, {
 				class: slideshowClasses.iconShare,
 				role: 'button',
+				tabindex: 0,
 				'aria-label': i18n.share,
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
@@ -406,6 +407,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				showZoomElements = [],
 				showZoomAttrs = {
 					role: 'switch',
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.zoom,
 				},
@@ -440,6 +442,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				fullScreenElements = [],
 				fullScreenAttrs = {
 					role: 'switch',
+					tabindex: 0,
 					'aria-checked': false,
 					'aria-label': i18n.fullscreen,
 				},
@@ -676,7 +679,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 
 			if ( slide.hash ) {
-				$slide.attr( 'e-action-hash', slide.hash );
+				$slide.attr( 'data-e-action-hash', slide.hash );
 			}
 
 			$slidesWrapper.append( $slide );
@@ -690,11 +693,13 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
-				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
+			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon, 'aria-hidden': 'true' } ),
+				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon, 'aria-hidden': 'true' } ),
+				$prevButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.previous ),
+				$nextButtonLabel = $( '<span>', { class: 'screen-reader-text' } ).html( i18n.next );
 
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $prevButtonIcon );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $nextButtonIcon );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose } ).append( $prevButtonIcon, $prevButtonLabel );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose } ).append( $nextButtonIcon, $nextButtonLabel );
 
 			$container.append(
 				$nextButton,
@@ -744,8 +749,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( ! isSingleSlide ) {
 				swiperOptions.navigation = {
-					prevEl: $prevButton,
-					nextEl: $nextButton,
+					prevEl: $prevButton[ 0 ],
+					nextEl: $nextButton[ 0 ],
 				};
 			}
 
@@ -1025,7 +1030,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				index: slideIndex,
 				title: this.dataset.elementorLightboxTitle,
 				description: this.dataset.elementorLightboxDescription,
-				hash: this.getAttribute( 'e-action-hash' ),
+				hash: this.getAttribute( 'data-e-action-hash' ),
 			};
 
 			if ( slideVideo ) {

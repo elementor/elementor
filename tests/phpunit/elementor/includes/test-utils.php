@@ -60,28 +60,55 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	 * @throws \Exception
 	 */
 	public function test_should_replace_0_urls() {
-		$this->assertSame( '0 rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
+		$this->assertSame( '0 database rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different
+	 * @expectedExceptionMessage Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_equal() {
-		//$this->expectExceptionMessage( 'The `from` and `to` URL\'s must be different' );
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because both of the URLs provided are identical. Try again by entering different URLs.' );
 		Utils::replace_urls( 'http://' . home_url() . '/elementor', 'http://' . home_url() . '/elementor' );
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s
+	 * @expectedExceptionMessage Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
 	public function test_should_throw_error_because_urls_are_invalid() {
+		//$this->expectExceptionMessage( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		Utils::replace_urls( 'elementor', '/elementor' );
 	}
 
+	public function test_replace_urls() {
+		// Arrange.
+		$old_url = 'http://example.local/test';
+		$new_url = 'https://example2.local';
+
+		$post_id = $this->factory()->create_and_get_default_post()->ID;
+
+		update_post_meta(
+			$post_id,
+			'_elementor_data',
+			wp_slash( wp_json_encode( $this->create_mocked_elements_data( $old_url ) ) ) // Just like saving elements: \Elementor\Core\Base\Document::save_elements()
+		);
+
+		// Act.
+		Utils::replace_urls( $old_url, $new_url );
+
+		// Assert.
+		$result = json_decode(
+			get_post_meta( $post_id, '_elementor_data', true )
+		);
+
+		$this->assertEquals(
+			$this->create_mocked_elements_data( $new_url ),
+			$result
+		);
+	}
 
 	public function test_should_not_get_exit_to_dashboard_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
@@ -195,5 +222,114 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $content );
+	}
+
+	public function test_get_super_global_value__returns_value() {
+		// Arrange
+		$_REQUEST['key'] = 'value';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
+
+		// Assert
+		$this->assertEquals( 'value', $value );
+	}
+
+	public function test_get_super_global_value__unslashed() {
+		// Arrange
+		$_REQUEST['key'] = 'value\\//';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST,  'key' );
+
+		// Assert
+		$this->assertEquals( 'value//', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized() {
+		// Arrange
+		$_REQUEST['key'] = 'value<script>alert(1)</script>';
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( 'valuealert(1)', $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__returns_sanitized_associative_array() {
+		// Arrange
+		$_REQUEST['key'] = [ 'key' => 'value<script>alert(1)</script>' ];
+
+		// Act
+		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
+
+		// Assert
+		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
+	}
+
+	public function test_get_super_global_value__files() {
+		// Arrange
+		$_FILES['file'] = [
+			'name' => '..%2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		$sanitized = [
+			'name' => '2ffile_upload_test.php',
+			'type' => 'text/plain',
+			'tmp_name' => '/tmp/php/php123456',
+			'error' => 0,
+			'size' => 123,
+		];
+
+		// Act
+		$file = Utils::get_super_global_value( $_FILES,  'file' );
+
+		// Assert
+		$this->assertEquals( $sanitized, $file);
+	}
+
+	private function create_mocked_elements_data( $url ) {
+		return [
+			(object) [
+				'id' => '43eb7878',
+				'elType' => 'container',
+				'settings' => (object) [
+					'background_image' => (object) [
+						"id" => 22,
+						"url" => "{$url}/wp-content/uploads/2023/04/u2.jpg",
+						"size" => "",
+						"source" => "library"
+					],
+				],
+				'elements' => [
+					(object) [
+						'id' => '43eb7879',
+						'elType' => 'widget',
+						'settings' => (object) [
+							"image" => (object) [
+								"id" => 23,
+								"url" => "{$url}/wp-content/uploads/2023/04/u3.jpg"
+							],
+						],
+					]
+				]
+			],
+		];
 	}
 }

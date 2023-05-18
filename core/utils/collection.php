@@ -27,6 +27,15 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * @param array $items
+	 *
+	 * @return static
+	 */
+	public static function make( array $items ) {
+		return new static( $items );
+	}
+
+	/**
 	 * @param callable|null $callback
 	 *
 	 * @return $this
@@ -408,6 +417,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		foreach ( $values as $value ) {
 			$this->items[] = $value;
 		}
+
+		return $this;
+	}
+
+	public function prepend( ...$values ) {
+		$this->items = array_merge( $values, $this->items );
 
 		return $this;
 	}

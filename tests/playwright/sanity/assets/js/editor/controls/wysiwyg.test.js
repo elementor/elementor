@@ -28,7 +28,6 @@ test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page }, testInf
 	const value = await editor.page.inputValue( '.elementor-wp-editor' );
 
 	// Assert.
-	// The assertion is divided because the value may contain an auto P tag.
 	expect( value ).toContain( '&lt;hr&gt;' );
-	expect( value ).toContain( '<hr />' );
+	expect( value ).toContain( '<hr />' ); // It's seperated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
 } );
