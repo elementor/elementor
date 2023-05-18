@@ -577,20 +577,14 @@ export default class NestedTabs extends Base {
 	}
 
 	initialScrollPosition( slider, tabsDirection ) {
+		const isRTL = elementorCommon.config.isRTL;
 		switch ( tabsDirection ) {
-			// To cover defaults and center
-			case undefined:
-			case '':
-			case 'center':
-				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = ( this.getChildrenWidth( slider.children ) - slider.offsetWidth ) / 2;
-				break;
 			case 'end':
 				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = this.getChildrenWidth( slider.children );
+				slider.scrollLeft = isRTL ? -1 * this.getChildrenWidth( slider.children ) : this.getChildrenWidth( slider.children );
 				break;
 			default:
-				slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
+				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
 				slider.scrollLeft = 0;
 		}
 	}
