@@ -7,7 +7,8 @@
         --swiper-pagination-bullet-size: 6px;
         --swiper-pagination-bullet-horizontal-gap: 6px;
 
-        .swiper {
+        .swiper,
+        .swiper-container {
 
             .swiper-slide {
 
@@ -68,18 +69,24 @@
             }
 
             // Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
-            &.swiper-cube  .elementor-swiper-button {
-                transform: translate3d(0, -50%, 1px);
+            &.swiper-cube {
+
+	            .elementor-swiper-button,
+	            ~ .elementor-swiper-button {
+		            transform: translate3d(0, -50%, 1px);
+	            }
             }
         }
 
         &.elementor-pagination-position-outside {
             $caption-space: 30px;
 
-            .swiper {
-                padding-bottom: $caption-space;
+            .swiper,
+            .swiper-container {
+	            padding-bottom: $caption-space;
 
-                .elementor-swiper-button {
+                .elementor-swiper-button,
+                ~ .elementor-swiper-button {
                     top: calc(50% - #{$caption-space} / 2);
                 }
             }
@@ -97,10 +104,12 @@
 
             &outside {
 
-                .swiper {
+                .swiper,
+                .swiper-container {
                     width: calc(100% - 60px);
 
-                    .elementor-swiper-button {
+                    .elementor-swiper-button,
+                    ~ .elementor-swiper-button {
 
                         &-prev {
                             left: 0;
