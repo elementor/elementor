@@ -18,7 +18,7 @@ class NestedAccordion extends Widget_Nested_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Nested-Accordion', 'elementor' );
+		return esc_html__( 'Accordion', 'elementor' );
 	}
 
 	public function get_icon() {

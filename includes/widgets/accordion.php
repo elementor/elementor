@@ -73,6 +73,10 @@ class Widget_Accordion extends Widget_Base {
 		return [ 'accordion', 'tabs', 'toggle' ];
 	}
 
+	public function show_in_panel(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+	}
+
 	/**
 	 * Register accordion widget controls.
 	 *
