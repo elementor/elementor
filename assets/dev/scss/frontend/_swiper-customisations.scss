@@ -20,8 +20,7 @@
                 display: none;
             }
 
-            .elementor-swiper-button,
-			~ .elementor-swiper-button {
+            .elementor-swiper-button, ~ .elementor-swiper-button {
                 position: absolute;
                 display: inline-flex; // Position exactly in center
                 z-index: 1;
