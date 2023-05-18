@@ -21,7 +21,7 @@
             }
 
             .elementor-swiper-button,
-            .elementor-swiper-buttontest {
+            ~ .elementor-swiper-button {
                 position: absolute;
                 display: inline-flex; // Position exactly in center
                 z-index: 1;
