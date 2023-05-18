@@ -10,19 +10,17 @@
         .swiper {
 
             .swiper-slide {
-        
+
                 figure {
                     line-height: 0;
                 }
             }
-        
+
             .elementor-lightbox-content-source {
                 display: none;
             }
 
-            .elementor-swiper-button,
-			.elementor-swiper-button-kjadlsf,
-			.elementor-swiper-button-test {
+            .elementor-swiper-button {
                 position: absolute;
                 display: inline-flex; // Position exactly in center
                 z-index: 1;
@@ -31,30 +29,30 @@
                 color: $slides_gui;
                 top: 50%;
                 transform: translateY(-50%);
-            
+
                 svg {
                     fill: $slides_gui;
                     height: 1em;
                     width: 1em;
                 }
-            
+
                 &-prev {
                     left: 10px;
                 }
-            
+
                 &-next {
                     right: 10px;
                 }
-            
+
                 &.swiper-button-disabled {
                     opacity: 0.3;
                 }
             }
 
             .swiper-image-stretch {
-        
+
                 .swiper-slide {
-            
+
                     .swiper-slide-image {
                         width: 100%;
                     }
@@ -73,10 +71,10 @@
                 transform: translate3d(0, -50%, 1px);
             }
         }
-        
+
         &.elementor-pagination-position-outside {
             $caption-space: 30px;
-        
+
             .swiper {
                 padding-bottom: $caption-space;
 
@@ -85,28 +83,28 @@
                 }
             }
         }
-        
+
         .elementor-swiper {
             position: relative;
         }
-        
+
         .elementor-main-swiper {
             position: static;
         }
-        
+
         &.elementor-arrows-position- {
-        
+
             &outside {
-        
+
                 .swiper {
                     width: calc(100% - 60px);
 
                     .elementor-swiper-button {
-        
+
                         &-prev {
                             left: 0;
                         }
-            
+
                         &-next {
                             right: 0;
                         }
