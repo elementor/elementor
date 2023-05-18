@@ -600,7 +600,7 @@ class Import {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
 
 		if ( is_wp_error( $extraction_result ) ) {
-			if ( isset( $extraction_result->errors[ 'zip_error' ] ) ) {
+			if ( isset( $extraction_result->errors['zip_error'] ) ) {
 				throw new \Error( static::ZIP_ARCHIVE_ERROR_KEY );
 			}
 
