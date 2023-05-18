@@ -519,6 +519,7 @@ export default class NestedTabs extends Base {
 		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
 	}
 
+	// This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
 	changeScrollStatus( event ) {
 		const slider = this.elements.$headingContainer[ 0 ];
 
@@ -527,6 +528,7 @@ export default class NestedTabs extends Base {
 			slider.dataset.pageX = event.pageX;
 		} else {
 			slider.classList.remove( 'e-scroll' );
+			slider.classList.remove( 'e-scroll-active' );
 			slider.dataset.pageX = '';
 		}
 	}
@@ -628,5 +630,6 @@ export default class NestedTabs extends Base {
 		}
 
 		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
+		slider.classList.add( 'e-scroll-active' );
 	}
 }
