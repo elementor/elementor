@@ -76,8 +76,6 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 	}
 
 	public function get_client_env() {
-		$this->register_packages_client_env();
-
 		$client_env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
 		$v2_env = [
@@ -145,15 +143,5 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		}
 
 		return $this->packages_data;
-	}
-
-	private function register_packages_client_env() {
-		add_filter( 'elementor/editor-v2/packages/client-env', function( array $env ) {
-			$env['@elementor/editor-app-bar'] = [
-				'admin_url' => admin_url(),
-			];
-
-			return $env;
-		} );
 	}
 }
