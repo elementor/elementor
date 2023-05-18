@@ -27,6 +27,7 @@ const EditorSelectors = {
 		noFollowChbox: 'input[data-setting="nofollow"]',
 		customAttributesInp: 'input[data-setting="custom_attributes"]',
 	},
+	entryTitle: 'h1.entry-title',
 
 };
 

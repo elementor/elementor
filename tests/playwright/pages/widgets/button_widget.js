@@ -39,6 +39,6 @@ export default class ButtonWidget {
 		if ( options.customAttributes ) {
 			await this.page.locator( EditorSelectors.button.customAttributesInp ).type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
 		}
-		await this.editorPage.getPreviewFrame().getByRole( 'heading', { name: 'Hello world!' } ).nth( 0 ).click();
+		await this.editorPage.getPreviewFrame().locator( EditorSelectors.entryTitle ).click();
 	}
 }
