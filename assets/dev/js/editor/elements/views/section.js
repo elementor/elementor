@@ -21,11 +21,13 @@ const SectionView = BaseElementView.extend( {
 
 	addSectionView: null,
 
+	/**
+	 * @deprecated since 2.9.0, use `toggleSectionIsFull()` instead.
+	 */
 	_checkIsFull() {
 		this.toggleSectionIsFull();
 
-		elementorDevTools.deprecation.deprecated( '_checkIsFull', '2.9.0',
-			'toggleSectionIsFull()' );
+		elementorDevTools.deprecation.deprecated( '_checkIsFull()', '2.9.0', 'toggleSectionIsFull()' );
 	},
 
 	toggleSectionIsFull() {
