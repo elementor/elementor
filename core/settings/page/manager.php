@@ -118,6 +118,10 @@ class Manager extends CSS_Manager {
 			$post->post_name = $data['post_name'];
 		}
 
+		if ( isset( $data['menu_order'] ) && is_post_type_hierarchical( $post->post_type ) ) {
+			$post->menu_order = $data['menu_order'];
+		}
+
 		if ( isset( $data['post_status'] ) ) {
 			$this->save_post_status( $id, $data['post_status'] );
 			unset( $post->post_status );
@@ -314,6 +318,7 @@ class Manager extends CSS_Manager {
 			'post_excerpt',
 			'post_featured_image',
 			'post_name',
+			'menu_order',
 		];
 	}
 
