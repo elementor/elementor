@@ -10,9 +10,12 @@ class Page extends PageBase {
 	/**
 	 * Get Properties
 	 *
-	 * Return Document Configuration Properties.
+	 * Return the page document configuration properties.
 	 *
-	 * @return array $properties
+	 * @access public
+	 * @static
+	 *
+	 * @return array
 	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -23,6 +26,13 @@ class Page extends PageBase {
 		return $properties;
 	}
 
+	/**
+	 * Get Type
+	 *
+	 * Return the page document type.
+	 *
+	 * @return string
+	 */
 	public static function get_type() {
 		return 'wp-page';
 	}
@@ -30,13 +40,27 @@ class Page extends PageBase {
 	/**
 	 * Get Title
 	 *
+	 * Return the page document title.
+	 *
 	 * @access public
 	 * @static
+	 *
+	 * @return string
 	 */
 	public static function get_title() {
 		return esc_html__( 'Page', 'elementor' );
 	}
 
+	/**
+	 * Get Plural Title
+	 *
+	 * Return the page document plural title.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return string
+	 */
 	public static function get_plural_title() {
 		return esc_html__( 'Pages', 'elementor' );
 	}

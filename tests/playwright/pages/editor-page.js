@@ -1,5 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +17,34 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( template ) {
-		const templateData = require( `../templates/${ template }.json` );
+	updateImageDates( templateData ) {
+		const replaceUrl = ( url ) => {
+			const date = new Date();
+			const month = date.toLocaleString( 'default', { month: '2-digit' } );
+			const regex = /[0-9]{4}\/[0-9]{2}/g;
+			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
+		};
+		templateData.content[ 0 ].elements.forEach( ( el ) => {
+			if ( 'image' in el.settings ) {
+				el.settings.image.url = replaceUrl( el.settings.image.url );
+			}
+			if ( 'carousel' in el.settings ) {
+				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
+					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
+				}
+			}
+		} );
+	}
+
+	async loadTemplate( filePath, updateDatesForImages = false ) {
+		const templateData = require( filePath );
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -94,6 +121,14 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async addElement( model, container = null, isContainerASection = false ) {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
+	}
+
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 	}
 
 	/**
@@ -230,14 +265,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -295,7 +330,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
@@ -474,18 +509,24 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
+	}
+
+	async saveAndReloadPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
+		await this.page.reload();
 	}
 
 	async previewChanges( context ) {
@@ -533,6 +574,35 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Check if an item is in the viewport.
+	 *
+	 * @param {string} itemSelector
+	 * @return {Promise<void>}
+	 */
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
+	}
+
+	/**
 	 * Open a section of the active widget.
 	 *
 	 * @param {string} sectionId
@@ -565,5 +635,87 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSelectControlValue( controlId, value ) {
 		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getPreviewFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getPreviewFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
+		}
+	}
+
+	async waitForIframeToLoaded( widgetType, isPublished = false ) {
+		const frames = {
+			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
+			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
+		};
+
+		if ( ! ( widgetType in frames ) ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			await this.page.locator( frames[ widgetType ][ 0 ] ).first().waitFor();
+			const count = await this.page.locator( frames[ widgetType ][ 0 ] ).count();
+			for ( let i = 1; i < count; i++ ) {
+				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
+		} else {
+			const frame = this.getPreviewFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
+			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
+			const iframeCount = await new Promise( ( resolved ) => {
+				resolved( frame.childFrames().length );
+			} );
+			for ( let i = 1; i < iframeCount; i++ ) {
+				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
+		}
 	}
 };

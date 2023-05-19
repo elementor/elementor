@@ -8,97 +8,86 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Config_Provider implements Config_Provider_Interface {
-	const APP_PACKAGE = 'editor';
-
-	const EXTENSION_PACKAGES = [
-		'documents',
-		'documents-ui',
-		'elements-panel',
-		'finder',
-		'help',
-		'history',
-		'responsive',
-		'site-settings',
-		'structure',
-		'theme-builder',
-		'top-bar',
-		'user-preferences',
-	];
-
-	const UTIL_PACKAGES = [
-		'icons',
-		'locations',
-		'ui',
-		'v1-adapters',
-		'store',
-	];
+	const PACKAGE_TYPE_APP = 'app';
+	const PACKAGE_TYPE_EXTENSION = 'extension';
+	const PACKAGE_TYPE_UTIL = 'util';
 
 	/**
-	 * Cached script assets.
+	 * Cached packages data.
 	 *
 	 * @var Collection
 	 */
-	private $packages_script_assets;
+	private $packages_data;
 
 	public function get_script_configs() {
-		$packages_script_configs = $this->get_packages_script_assets()
-			->map( function ( $script_asset, $package_name ) {
-				return [
-					'handle' => $script_asset['handle'],
-					'src' => "{{ELEMENTOR_ASSETS_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js",
-					'deps' => $script_asset['deps'],
-					'i18n' => [
-						'domain' => 'elementor',
-						'replace_requested_file' => true,
-					],
-				];
-			} );
+		$packages_data = $this->get_packages_data();
 
-		$editor_script_config = $packages_script_configs->get( static::APP_PACKAGE );
+		$apps_handles = $packages_data
+			->filter( function ( $package_data ) {
+				return static::PACKAGE_TYPE_APP === $package_data['type'];
+			} )
+			->map( function ( $package_data ) {
+				return $package_data['handle'];
+			} )
+			->values();
+
+		$environment_script_config = [
+			'handle' => 'elementor-editor-environment-v2',
+			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js',
+			'deps' => [
+				'elementor-packages-env',
+			],
+		];
 
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
 			'deps' => array_merge(
 				[ 'elementor-editor' ],
-				$editor_script_config ? [ $editor_script_config['handle'] ] : []
+				$apps_handles
 			),
 		];
 
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
-			$packages_script_configs->values(),
-			[ $loader_script_config ]
+			$packages_data->values(),
+			[
+				$environment_script_config,
+				$loader_script_config,
+			]
 		);
 	}
 
 	public function get_script_handles_to_enqueue() {
-		return $this->get_packages_script_assets()
-			->filter( function ( $script_asset, $package_name ) {
-				return in_array( $package_name, static::EXTENSION_PACKAGES, true );
+		$types_to_enqueue = [ static::PACKAGE_TYPE_EXTENSION ];
+
+		return $this->get_packages_data()
+			->filter( function ( $package_data ) use ( $types_to_enqueue ) {
+				return in_array( $package_data['type'], $types_to_enqueue, true );
 			} )
-			->map( function ( $script_asset ) {
-				return $script_asset['handle'];
+			->map( function ( $package_data ) {
+				return $package_data['handle'];
 			} )
+			// Must be first.
+			->prepend( 'elementor-editor-environment-v2' )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
 
-	public function get_client_settings() {
-		$common_configs = Editor_Common_Configs::get_client_settings();
+	public function get_client_env() {
+		$client_env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
-		$v2_config = [
-			'handle' => 'elementor-editor-loader-v2',
-			'name' => 'elementorEditorV2Settings',
-			'settings' => [
-				'urls' => [
-					'admin' => admin_url(),
-				],
-			],
+		$v2_env = [
+			'handle' => 'elementor-editor-environment-v2',
+			'name' => 'elementorEditorV2Env',
+			'env' => $client_env,
 		];
 
-		return array_merge( $common_configs, [ $v2_config ] );
+		return array_merge(
+			Editor_Common_Configs::get_client_env(),
+			[ $v2_env ]
+		);
 	}
 
 	public function get_style_configs() {
@@ -129,26 +118,30 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return Editor_Common_Configs::get_additional_template_paths();
 	}
 
-	private function get_packages_script_assets() {
-		if ( ! $this->packages_script_assets ) {
-			$this->packages_script_assets = Collection::make( [ static::APP_PACKAGE ] )
-				->merge( static::EXTENSION_PACKAGES )
-				->merge( static::UTIL_PACKAGES )
-				->map_with_keys( function ( $package_name ) {
-					$assets_path = ELEMENTOR_ASSETS_PATH;
-					$script_asset_path = "{$assets_path}js/packages/{$package_name}.asset.php";
+	private function get_packages_data() {
+		if ( ! $this->packages_data ) {
+			// Loading the file that is responsible for registering the packages in the filter.
+			$loader = ELEMENTOR_ASSETS_PATH . 'js/packages/loader.php';
 
-					if ( ! file_exists( $script_asset_path ) ) {
-						return [];
-					}
+			if ( file_exists( $loader ) ) {
+				require_once $loader;
+			}
 
-					/** @var array{ handle: string, deps: string[] } $script_asset */
-					$script_asset = require $script_asset_path;
+			$packages_data = apply_filters( 'elementor/editor-v2/packages/config', [] );
 
-					return [ $package_name => $script_asset ];
+			$this->packages_data = Collection::make( $packages_data )
+				->filter( function ( $package_data ) {
+					return ! empty( $package_data['handle'] );
+				} )
+				->map_with_keys( function ( $data, $name ) {
+					return [
+						$name => array_replace( [
+							'type' => static::PACKAGE_TYPE_UTIL,
+						], $data ),
+					];
 				} );
 		}
 
-		return $this->packages_script_assets;
+		return $this->packages_data;
 	}
 }

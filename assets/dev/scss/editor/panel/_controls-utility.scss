@@ -60,9 +60,6 @@ $title-size: 12px;
 	transition: 0.15s;
 	font-size: 12px;
 	color: inherit;
-}
-
-a.elementor-responsive-switcher {
 
 	&:hover {
 		color: var(--e-a-color-primary-bold);
@@ -92,8 +89,7 @@ a.elementor-responsive-switcher {
 
 	.e-units-switcher {
 		cursor: pointer;
-		text-transform: uppercase;
-		font-size: 9px;
+		font-size: 10px;
 		padding: .5em;
 		margin: -.5em 0;
 		transition: all ease-in-out .15s;
@@ -161,8 +157,7 @@ a.elementor-responsive-switcher {
 			align-items: center;
 			height: 3em;
 			justify-content: center;
-			text-transform: uppercase;
-			font-size: 9px;
+			font-size: $font-size-xs;
 			transition: 0.15s;
 
 			&:hover {
@@ -286,7 +281,7 @@ $font-family-monospace: monospace;
 		}
 
 		.elementor-control-#{$control-name}-label {
-			color: var(--e-a-color-txt-disabled);
+			color: var(--e-a-color-txt-muted);
 			display: block;
 			text-align: center;
 			font-size: 9px;
