@@ -33,7 +33,7 @@ module.exports = class {
 			container: false,
 		} );
 
-		this.editor = await this.wpAdminPage.useElementorCleanPost();
+		this.editor = await this.wpAdminPage.openNewPage();
 
 		if ( isExperimentBreakpoints ) {
 			const breakpoints = new Breakpoints( this.page, this.testInfo );
