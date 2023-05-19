@@ -261,13 +261,6 @@ export default class NestedTabs extends Base {
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
 
-	preventDefaultLinkBehaviourForTabTitle( event ) {
-		// Support for old markup that includes an `<a>` tag in the tab
-		if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
-			event.preventDefault();
-		}
-	}
-
 	onKeydownAvoidUndesiredPageScrolling( event ) {
 		// We listen to keydowon event for these keys in order to prevent undesired page scrolling
 		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
