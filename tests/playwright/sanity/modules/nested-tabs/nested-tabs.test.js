@@ -1087,6 +1087,31 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await expect( nestedTabsCollapse ).not.toBeVisible();
 		} );
 	} );
+
+	test( 'Check that background video is loaded in nested elements item container', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'nested-tabs', container );
+
+		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
+			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			videoUrl = 'https://youtu.be/XNoaN8qu4fg',
+			videoContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
+			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
+			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
+
+		await editor.selectElement( contentContainerOneId );
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.eicon-video-camera' ).first().click();
+		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+
+		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
+		await expect( videoContainer ).toHaveCount( 1 );
+	} );
 } );
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
