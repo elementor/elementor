@@ -45,6 +45,9 @@ export default class Component extends ComponentBase {
 			'change-device-mode': {
 				keys: 'ctrl+shift+m',
 			},
+			'page-settings': {
+				keys: 'ctrl+shift+y',
+			},
 			'editor-preferences': {
 				keys: 'ctrl+shift+u',
 			},
