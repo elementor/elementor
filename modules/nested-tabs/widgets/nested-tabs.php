@@ -232,6 +232,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'bottom',
 				],
 			],
+			'frontend_available' => true,
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_vertical', [
@@ -330,8 +331,30 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_tabs_responsive', [
-			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+			'label' => esc_html__( 'Additional Settings', 'elementor' ),
 		] );
+
+		$this->add_responsive_control(
+			'horizontal_scroll',
+			[
+				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: Scroll tabs if they don’t fit into their parent container.', 'elementor' ),
+				'options' => [
+					'disable' => esc_html__( 'Disable', 'elementor' ),
+					'enable' => esc_html__( 'Enable', 'elementor' ),
+				],
+				'default' => 'disable',
+				'selectors_dictionary' => [
+					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial;',
+					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'frontend_available' => true,
+			]
+		);
 
 		$dropdown_options = [
 			'none' => esc_html__( 'None', 'elementor' ),
