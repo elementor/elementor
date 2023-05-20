@@ -525,6 +525,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'default' => 'top',
+				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);
