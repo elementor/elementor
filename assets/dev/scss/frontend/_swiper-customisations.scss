@@ -7,7 +7,7 @@
         --swiper-pagination-bullet-size: 6px;
         --swiper-pagination-bullet-horizontal-gap: 6px;
 
-        :is(.swiper, .swiper-container) {
+        :is( .swiper, .swiper-container ) {
 
             .swiper-slide {
 
@@ -80,7 +80,7 @@
             }
         }
 
-        :where(.swiper-container-horizontal) {
+        :where( .swiper-container-horizontal ) {
 
             ~ .swiper-pagination-bullets {
                 bottom: 5px;
@@ -103,8 +103,8 @@
         &.elementor-pagination-position-outside {
             $caption-space: 30px;
 
-            :is(.swiper, .swiper-container) {
-	            padding-bottom: $caption-space;
+            :is( .swiper, .swiper-container ) {
+                padding-bottom: $caption-space;
 
                 .elementor-swiper-button,
                 ~ .elementor-swiper-button {
@@ -125,7 +125,7 @@
 
             &outside {
 
-                :is(.swiper, .swiper-container) {
+                :is( .swiper, .swiper-container ) {
                     width: calc(100% - 60px);
 
                     .elementor-swiper-button,
