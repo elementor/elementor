@@ -95,7 +95,7 @@ class Elementor_Content extends Import_Runner_Base {
 		);
 
 		if ( is_wp_error( $new_document ) ) {
-			return $new_document;
+			throw new \Exception( $new_document->get_error_message() );
 		}
 
 		$post_data['import_settings'] = $post_settings;

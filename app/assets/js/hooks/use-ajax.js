@@ -55,8 +55,9 @@ export default function useAjax() {
 					const status = response.success ? 'success' : 'error';
 					setAjaxState( ( prevState ) => ( { ...prevState, status, response: response?.data } ) );
 				} )
-				.catch( () => {
-					setAjaxState( ( prevState ) => ( { ...prevState, status: 'error' } ) );
+				.catch( ( error ) => {
+					const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+					setAjaxState( ( prevState ) => ( { ...prevState, status: 'error', response } ) );
 				} )
 				.finally( () => {
 					setAjaxState( ( prevState ) => ( { ...prevState, isComplete: true } ) );
