@@ -19,9 +19,9 @@ class Site_Font_Display extends Site_Config_Base {
 
 	public static function get_options() {
 		return [
-			self::OPTION_AUTO => __( 'Auto', 'elementor' ),
-			self::OPTION_BLOCK => __( 'Block', 'elementor' ),
-			self::OPTION_SWAP => __( 'Swap', 'elementor' ),
+			self::OPTION_AUTO => esc_html__( 'Auto', 'elementor' ),
+			self::OPTION_BLOCK => esc_html__( 'Block', 'elementor' ),
+			self::OPTION_SWAP => esc_html__( 'Swap', 'elementor' ),
 		];
 	}
 

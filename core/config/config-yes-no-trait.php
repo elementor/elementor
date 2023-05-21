@@ -12,8 +12,8 @@ trait Config_Yes_No_Trait {
 
 	protected static function get_options() {
 		return [
-			static::VALUE_TRUE => __( 'Yes', 'elementor' ),
-			static::VALUE_FALSE => __( 'No', 'elementor' ),
+			static::VALUE_TRUE => esc_html__( 'Yes', 'elementor' ),
+			static::VALUE_FALSE => esc_html__( 'No', 'elementor' ),
 		];
 	}
 
