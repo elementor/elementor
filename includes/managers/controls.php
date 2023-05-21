@@ -878,7 +878,7 @@ class Controls_Manager {
 	/**
 	 * Has Stacks Cache Been Cleared.
 	 * @since 3.13.0
-	 * @access protected
+	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
 	public function has_stacks_cache_been_cleared() {
