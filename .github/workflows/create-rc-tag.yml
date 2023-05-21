@@ -89,7 +89,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                          "text": "Hi All :smile:\n\nWe just Published RC Tag of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                         }
                       },
                       {
@@ -99,7 +99,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                          "text": "GitHub RC Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",
@@ -109,7 +109,7 @@ jobs:
                             "emoji": true
                           },
                           "value": "open-release",
-                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
                           "action_id": "button-action"
                         }
                       },
