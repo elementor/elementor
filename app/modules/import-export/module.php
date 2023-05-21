@@ -37,7 +37,9 @@ class Module extends BaseModule {
 
 	const REFERRER_LOCAL = 'local';
 
-	const PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+	const PLUGIN_PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
+
+	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
 
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
@@ -454,19 +456,19 @@ class Module extends BaseModule {
 
 		// WP Content dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_WP_CONTENT_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_WP_CONTENT_DIR );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 		}
 
 		// WP Uploads dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_UPLOADS_DIR );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 		}
 
 		// Elementor uploads dir permissions is divided to 2 cases:
 		// 1. If the dir exists, it has to be writable.
 		// 2. If the dir doesn't exist, the parent dir has to be writable (wp uploads dir), so we can create it.
 		if ( $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY . 'in - ' . Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
 		}
 	}
 
@@ -499,25 +501,34 @@ class Module extends BaseModule {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$action = ElementorUtils::get_super_global_value( $_POST, 'action' );
 
-		switch ( $action ) {
-			case static::EXPORT_TRIGGER_KEY:
-				$this->handle_export_kit();
-				break;
+		try {
+			switch ( $action ) {
+				case static::EXPORT_TRIGGER_KEY:
+					$this->handle_export_kit();
+					break;
 
-			case static::UPLOAD_TRIGGER_KEY:
-				$this->handle_upload_kit();
-				break;
+				case static::UPLOAD_TRIGGER_KEY:
+					$this->handle_upload_kit();
+					break;
 
-			case static::IMPORT_TRIGGER_KEY:
-				$this->handle_import_kit();
-				break;
+				case static::IMPORT_TRIGGER_KEY:
+					$this->handle_import_kit();
+					break;
 
-			case static::IMPORT_RUNNER_TRIGGER_KEY:
-				$this->handle_import_kit__runner();
-				break;
+				case static::IMPORT_RUNNER_TRIGGER_KEY:
+					$this->handle_import_kit__runner();
+					break;
 
-			default:
-				break;
+				default:
+					break;
+			}
+		} catch ( \Error $e ) {
+			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
+				'meta' => [
+					'trace' => $e->getTraceAsString(),
+				],
+			] );
+			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
 
@@ -540,17 +551,19 @@ class Module extends BaseModule {
 			}
 
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( 'Invalid URL.' );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
 			}
 
 			$remote_zip_request = wp_remote_get( $file_url );
 
 			if ( is_wp_error( $remote_zip_request ) ) {
-				throw new \Error( $remote_zip_request->get_error_message() );
+				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
 			}
 
 			if ( 200 !== $remote_zip_request['response']['code'] ) {
-				throw new \Error( $remote_zip_request['response']['message'] );
+				Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
 			}
 
 			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
@@ -561,7 +574,15 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_LOCAL;
 		}
 
+		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
+			'meta' => [
+				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
+				'referrer' => $referrer,
+			],
+		] );
+
 		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
 		$conflicts = $uploaded_kit['conflicts'];
@@ -571,7 +592,7 @@ class Module extends BaseModule {
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
-			throw new \Error( static::PERMISSIONS_ERROR_KEY );
+			throw new \Error( static::PLUGIN_PERMISSIONS_ERROR_KEY );
 		}
 
 		$result = [
