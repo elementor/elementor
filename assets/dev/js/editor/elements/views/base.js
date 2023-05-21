@@ -746,12 +746,12 @@ BaseElementView = BaseContainer.extend( {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
-					break;
+				break;
 
 				case 'content': {
 					changed = renderDataBinding( dataBinding );
 				}
-					break;
+				break;
 			}
 
 			if ( changed ) {

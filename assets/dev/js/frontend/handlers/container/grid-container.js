@@ -130,8 +130,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	 * Set the control value for the current device.
 	 * Distinguish between grid custom values and slider controls.
 	 *
-	 * @param {string} control  - The control name.
-	 * @param {string} device   - The device mode.
+	 * @param {string} control - The control name.
+	 * @param {string} device - The device mode.
 	 * @param {string} property - The CSS property name we need to copy from the parent container.
 	 *
 	 * @return {Object} - E,g. {value: repeat(2, 1fr), length: 2}.
@@ -202,7 +202,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	 */
 	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
 		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList();
-		const responsiveControlNames = [];
+		let responsiveControlNames = [];
 
 		for ( const prop of propsThatTriggerGridLayoutRender ) {
 			for ( const breakpoint of activeBreakpoints ) {
