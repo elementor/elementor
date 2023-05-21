@@ -1,3 +1,4 @@
+import { createRoot, render } from '@wordpress/element';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 /**
@@ -35,7 +36,11 @@ export default class EmptyView extends Marionette.ItemView {
 			defaultElement = <EmptyComponent container={ container } />;
 		}
 
-		ReactDOM.render( defaultElement, this.el );
+		if ( createRoot ) {
+			createRoot( this.el ).render( defaultElement );
+		} else {
+			render( defaultElement, this.el );
+		}
 	}
 
 	attachElContent() {
