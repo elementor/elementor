@@ -64,7 +64,14 @@ class Module extends \Elementor\Core\Base\Module {
 		return $value;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function ajax_enable_safe_mode( $data ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
 		// It will run `$this->>update_safe_mode`.
 		update_option( 'elementor_safe_mode', 'yes' );
 
