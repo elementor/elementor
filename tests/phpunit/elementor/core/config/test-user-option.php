@@ -13,6 +13,12 @@ class User_Option_Test extends \Elementor\Core\Config\User_Config_Base {
 	public static function get_default() {
 		return 'default-value';
 	}
+
+	protected static function get_options() {
+		return [
+			'test' => 'Test',
+		];
+	}
 }
 
 class Test_User_Option extends Elementor_Test_Base {

@@ -22,6 +22,8 @@ class Test_Fonts extends Elementor_Test_Base {
 	}
 
 	public function test_is_google_fonts_enabled__returns_false() {
+		$this->act_as_admin();
+
 		// Arrange.
 		Site_Google_Fonts::set_off();
 
@@ -43,6 +45,8 @@ class Test_Fonts extends Elementor_Test_Base {
 	}
 
 	public function test_get_font_groups__without_google() {
+		$this->act_as_admin();
+
 		// Arrange.
 		Site_Google_Fonts::set_off();
 

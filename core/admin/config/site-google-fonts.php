@@ -21,6 +21,16 @@ class Site_Google_Fonts extends Site_Config_Base {
 		return 'google_font';
 	}
 
+	protected static function get_options() {
+		// Force keys to be strings
+		$integers = parent::get_options();
+		$obj = new \stdClass;
+		foreach($integers as $key => $value){
+			$obj->{$key} = $value;
+		}
+		return (array) $obj;
+	}
+
 	public static function get_default() {
 		// TODO: For future use, using for new installs.
 		//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );

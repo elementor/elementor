@@ -50,6 +50,10 @@ class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
 	protected static function validate( $value ) {
 		return is_bool( $value );
 	}
+
+	protected static function has_permission($value) {
+		return true;
+	}
 }
 
 class Test_Config_Boolean_Trait extends Elementor_Test_Base {

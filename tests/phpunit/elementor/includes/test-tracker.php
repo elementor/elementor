@@ -40,6 +40,7 @@ class Test_Tracker extends Elementor_Test_Base {
 
 	public function test_get_settings_advanced_usage() {
 		// Arrange.
+		$this->act_as_admin();
 
 		// Load font_awesome_support settings.
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
@@ -126,6 +127,8 @@ class Test_Tracker extends Elementor_Test_Base {
 	}
 
 	public function test_get_tools_version_control_usage() {
+		$this->act_as_admin();
+
 		// Arrange.
 		Site_Beta::set_on();
 
