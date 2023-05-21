@@ -209,6 +209,16 @@ abstract class PageBase extends Document {
 			);
 		}
 
+		$document->add_control(
+			'post_name',
+			[
+				'label' => esc_html__( 'Slug', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => $document->post->post_name,
+				'separator' => 'before',
+			]
+		);
+
 		if ( is_post_type_hierarchical( $document->post->post_type ) ) {
 			$document->add_control(
 				'menu_order',
@@ -221,15 +231,18 @@ abstract class PageBase extends Document {
 			);
 		}
 
-		$document->add_control(
-			'post_name',
-			[
-				'label' => esc_html__( 'Slug', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => $document->post->post_name,
-				'separator' => 'before',
-			]
-		);
+    if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
+			$document->add_control(
+				'comment_status',
+				[
+					'label' => esc_html__( 'Allow Comments', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'open',
+					'default' => $document->post->comment_status,
+					'separator' => 'before',
+				]
+			);
+		}
 
 		$document->end_injection();
 	}
