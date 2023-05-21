@@ -201,7 +201,6 @@ module.exports = {
 				rendered: false,
 			};
 		}
-		return null;
 	},
 
 	isIconMigrated( settings, controlName ) {

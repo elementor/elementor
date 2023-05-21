@@ -3,67 +3,67 @@ import { useMemo } from 'react';
 export default function useKitData( kitData ) {
 	const getLabel = ( type, key, amount ) => {
 		// The summary-titles data will not exist in the kitData as part of the export process, and therefore should be taken from the elementorAppConfig.
-			const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles,
-				label = summaryTitlesData[ type ][ key ];
+		const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles,
+			label = summaryTitlesData[ type ][ key ];
 
-			if ( label?.single ) {
-				if ( ! amount ) {
-					return '';
-				}
-
-				const title = amount > 1 ? label.plural : label.single;
-
-				return amount + ' ' + title;
+		if ( label?.single ) {
+			if ( ! amount ) {
+				return '';
 			}
 
-			return label;
-		},
-		getTemplates = () => {
-			const templates = {};
+			const title = amount > 1 ? label.plural : label.single;
 
-			for ( const key in kitData?.templates ) {
-				const type = kitData.templates[ key ].doc_type;
+			return amount + ' ' + title;
+		}
 
-				if ( ! templates[ type ] ) {
-					templates[ type ] = 0;
-				}
+		return label;
+	},
+	getTemplates = () => {
+		const templates = {};
 
-				templates[ type ]++;
+		for ( const key in kitData?.templates ) {
+			const type = kitData.templates[ key ].doc_type;
+
+			if ( ! templates[ type ] ) {
+				templates[ type ] = 0;
 			}
 
-			return Object
-				.entries( templates )
-				.map( ( [ key, amount ] ) => getLabel( 'templates', key, amount ) )
-				.filter( ( value ) => value );
-		},
-		getSiteSettings = () => {
-			const siteSettings = kitData?.[ 'site-settings' ] || {};
+			templates[ type ]++;
+		}
 
-			return Object
-				.values( siteSettings )
-				.map( ( item ) => getLabel( 'site-settings', item ) );
-		},
-		getContent = () => {
-			const content = kitData?.content || {},
-				wpContent = kitData?.[ 'wp-content' ] || {};
+		return Object
+			.entries( templates )
+			.map( ( [ key, amount ] ) => getLabel( 'templates', key, amount ) )
+			.filter( ( value ) => value );
+	},
+	getSiteSettings = () => {
+		const siteSettings = kitData?.[ 'site-settings' ] || {};
 
-			let mergedContent = { ...content };
+		return Object
+			.values( siteSettings )
+			.map( ( item ) => getLabel( 'site-settings', item ) );
+	},
+	getContent = () => {
+		const content = kitData?.content || {},
+			wpContent = kitData?.[ 'wp-content' ] || {};
 
-			for ( const key in mergedContent ) {
-				mergedContent[ key ] = Object.keys( mergedContent[ key ] ).concat( wpContent[ key ] || [] );
-			}
+		let mergedContent = { ...content };
 
-			// In case that wpContent has properties that doesn't exist in the content object.
-			mergedContent = { ...wpContent, ...mergedContent };
+		for ( const key in mergedContent ) {
+			mergedContent[ key ] = Object.keys( mergedContent[ key ] ).concat( wpContent[ key ] || [] );
+		}
 
-			return Object
-				.entries( mergedContent )
-				.map( ( [ key, data ] ) => getLabel( 'content', key, data.length ) )
-				.filter( ( value ) => value );
-		},
-		getPlugins = () => {
-			return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
-		};
+		// In case that wpContent has properties that doesn't exist in the content object.
+		mergedContent = { ...wpContent, ...mergedContent };
+
+		return Object
+			.entries( mergedContent )
+			.map( ( [ key, data ] ) => getLabel( 'content', key, data.length ) )
+			.filter( ( value ) => value );
+	},
+	getPlugins = () => {
+		return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
+	};
 
 	return useMemo( () => ( {
 		templates: getTemplates(),
