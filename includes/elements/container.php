@@ -577,14 +577,13 @@ class Container extends Element_Base {
 			'footer' => 'footer',
 			'main' => 'main',
 			'article' => 'article',
-			'section' => 'section',
 			'aside' => 'aside',
 			'nav' => 'nav',
 			'a' => 'a ' . esc_html__( '(link)', 'elementor' ),
 		];
 
 		$options = [
-			'' => esc_html__( 'Default', 'elementor' ),
+			'section' => esc_html__( 'Default', 'elementor' ),
 		] + $possible_tags;
 
 		$this->add_control(
