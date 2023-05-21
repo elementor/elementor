@@ -5,6 +5,13 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Site_Option_Test extends \Elementor\Core\Config\Site_Config_Base {
+
+	protected static function get_options() {
+		return [
+			'test' => 'Test',
+		];
+	}
+
 	public static function should_autoload() {
 		return false;
 	}
@@ -28,6 +35,8 @@ class Test_Site_Option extends Elementor_Test_Base {
 	}
 
 	public function test__set() {
+		$this->act_as_admin();
+
 		// Act
 		Site_Option_Test::set( 'test' );
 
