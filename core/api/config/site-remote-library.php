@@ -20,7 +20,7 @@ class Site_Remote_Library extends Site_Config_Base {
 		return false;
 	}
 
-	protected static function validate($value) {
+	protected static function validate( $value ) {
 		return is_array( $value );
 	}
 }

@@ -21,7 +21,7 @@ class Site_Google_Fonts extends Site_Config_Base {
 		return 'google_font';
 	}
 
-	protected static function validate($value) {
+	protected static function validate( $value ) {
 		// Validate as string, the options array is converted by PHP to integers.
 		return in_array( $value, [ static::VALUE_TRUE, static::VALUE_FALSE ] );
 	}

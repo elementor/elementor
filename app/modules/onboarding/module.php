@@ -450,7 +450,7 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/config/register', function ($options_manager ) {
+		add_action( 'elementor/config/register', function ( $options_manager ) {
 			/** @var Manager $options_manager */
 			$options_manager->register( Site_Is_Onboarded::class );
 		} );

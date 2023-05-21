@@ -16,7 +16,7 @@ class Site_CSS_Print_Method extends Site_Config_Base {
 		return 'css_print_method';
 	}
 
-	public static function get_options(){
+	public static function get_options() {
 		return [
 			static::OPTION_EXTERNAL => esc_html__( 'External File', 'elementor' ),
 			static::OPTION_INTERNAL => esc_html__( 'Internal Embedding', 'elementor' ),

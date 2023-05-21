@@ -33,15 +33,15 @@ class Site_Font_Display extends Site_Config_Base {
 		return true;
 	}
 
-	Public static function set_block() {
+	public static function set_block() {
 		static::set( self::OPTION_BLOCK );
 	}
 
-	Public static function set_swap() {
+	public static function set_swap() {
 		static::set( self::OPTION_SWAP );
 	}
 
-	Public static function set_auto() {
+	public static function set_auto() {
 		static::set( self::OPTION_AUTO );
 	}
 }

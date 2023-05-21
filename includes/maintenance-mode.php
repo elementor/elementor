@@ -201,7 +201,7 @@ class Maintenance_Mode {
 							echo '<div>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
 						},
 						'fields' => [
-								Mode::get_key() => [
+							Mode::get_key() => [
 								'label' => esc_html__( 'Choose Mode', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
@@ -218,7 +218,7 @@ class Maintenance_Mode {
 												'</div>',
 								],
 							],
-								Exclude_Mode::get_key() => [
+							Exclude_Mode::get_key() => [
 								'label' => esc_html__( 'Who Can Access', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
@@ -227,7 +227,7 @@ class Maintenance_Mode {
 									'options' => Exclude_Mode::get_options(),
 								],
 							],
-								Exclude_Roles::get_key() => [
+							Exclude_Roles::get_key() => [
 								'label' => esc_html__( 'Roles', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',
@@ -235,7 +235,7 @@ class Maintenance_Mode {
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
 							],
-								Template_Id::get_key() => [
+							Template_Id::get_key() => [
 								'label' => esc_html__( 'Choose Template', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor-default-hide',

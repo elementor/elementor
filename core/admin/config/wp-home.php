@@ -16,7 +16,7 @@ class WP_Home extends WP_Option_Base {
 		return '';
 	}
 
-	protected static function validate($value) {
-		return !empty( $value ) && is_string( $value );
+	protected static function validate( $value ) {
+		return ! empty( $value ) && is_string( $value );
 	}
 }

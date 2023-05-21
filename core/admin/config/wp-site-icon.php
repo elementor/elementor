@@ -16,7 +16,7 @@ class WP_Site_Icon extends WP_Option_Base {
 		return '';
 	}
 
-	protected static function validate($value) {
+	protected static function validate( $value ) {
 		return is_scalar( $value );
 	}
 }
