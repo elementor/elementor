@@ -41,6 +41,8 @@ class Test_Site_Option extends Elementor_Test_Base {
 	}
 
 	public function test_delete() {
+		$this->act_as_admin();
+
 		// Arrange
 		$this->test__get();
 

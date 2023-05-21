@@ -34,8 +34,9 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 		return true;
 	}
 
-	public static function delete() {
+	public static function deleter(): bool {
 		static::$value = null;
+		return true;
 	}
 
 	public static function on_change( $new_value, $old_value = null ) {
@@ -47,6 +48,10 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 
 	protected static function validate( $value ) {
 		return is_string( $value );
+	}
+
+	protected static function has_permission($value){
+		return true;
 	}
 }
 
@@ -61,6 +66,10 @@ class Config_Base_Test_Sub_Option extends Config_Base_Test {
 
 	protected static function validate( $value ) {
 		return is_array( $value );
+	}
+
+	protected static function has_permission($value){
+		return true;
 	}
 }
 

@@ -72,6 +72,19 @@ abstract class Config_Base {
 		return $success;
 	}
 
+	final public static function delete(): bool {
+		if ( ! is_admin() ) {
+			throw new \Error( 'Config can only be changed in the admin' );
+		}
+
+		// Avoid changing to a value that the user doesn't have permission to.
+		if ( ! static::has_permission( '' ) ) {
+			return false;
+		}
+
+		return static::deleter();
+	}
+
 	/**
 	 * @param mixed $value
 	 *
@@ -92,7 +105,7 @@ abstract class Config_Base {
 	/**
 	 * @return bool
 	 */
-	public static function delete() {
+	protected static function deleter(): bool {
 		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 

@@ -33,7 +33,7 @@ abstract class WP_Option_Base extends Config_Base {
 		return get_option( static::get_full_key(), static::get_default() );
 	}
 
-	final public static function delete() {
+	final protected static function deleter(): bool {
 		return delete_option( static::get_full_key() );
 	}
 

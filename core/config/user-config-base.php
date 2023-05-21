@@ -23,7 +23,7 @@ abstract class User_Config_Base extends Config_Base {
 		return update_user_option( get_current_user_id(), static::get_full_key(), $value );
 	}
 
-	public static function delete() {
+	protected static function deleter(): bool {
 		return delete_user_option( get_current_user_id(), static::get_full_key() );
 	}
 

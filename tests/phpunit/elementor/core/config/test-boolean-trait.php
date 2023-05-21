@@ -36,8 +36,9 @@ class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
 		return true;
 	}
 
-	public static function delete() {
+	public static function deleter(): bool {
 		static::$value = null;
+		return true;
 	}
 
 	public static function on_change( $new_value, $old_value = null ) {
