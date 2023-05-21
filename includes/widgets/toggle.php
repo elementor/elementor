@@ -567,6 +567,7 @@ class Widget_Toggle extends Widget_Base {
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
+					'role' => 'button',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -654,6 +655,7 @@ class Widget_Toggle extends Widget_Base {
 						'id': 'elementor-tab-title-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-title' ],
 						'data-tab': tabCount,
+						'role': 'button',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );
