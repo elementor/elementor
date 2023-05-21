@@ -20,6 +20,7 @@
 	"scripts": {
 	  "lint": "phpcs --standard=ruleset.xml",
 	  "test": "phpunit",
+	  "test:win": "set WP_PHPUNIT__TESTS_CONFIG=./tmp/wordpress-tests-lib/wp-tests-config.php && phpunit --configuration phpunit.xml",
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
 	  "coverage": "composer run coverage:test && composer run coverage:check",
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
