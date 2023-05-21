@@ -6,7 +6,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Site_Option_Test extends \Elementor\Core\Config\Site_Config_Base {
 
-	protected static function get_options() {
+	public static function get_options() {
 		return [
 			'test' => 'Test',
 		];

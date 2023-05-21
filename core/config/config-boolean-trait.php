@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Config_Boolean_Trait {
 
-	protected static function get_options(): array {
+	public static function get_options(): array {
 		return [
 			static::VALUE_TRUE => esc_html__( 'True', 'elementor' ),
 			static::VALUE_FALSE => esc_html__( 'False', 'elementor' ),

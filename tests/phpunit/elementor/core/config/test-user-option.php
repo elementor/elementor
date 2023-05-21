@@ -14,7 +14,7 @@ class User_Option_Test extends \Elementor\Core\Config\User_Config_Base {
 		return 'default-value';
 	}
 
-	protected static function get_options() {
+	public static function get_options() {
 		return [
 			'test' => 'Test',
 		];

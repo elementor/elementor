@@ -10,7 +10,7 @@ trait Config_On_Off_Trait {
 
 	use Config_Boolean_Trait;
 
-	protected static function get_options(): array {
+	public static function get_options(): array {
 		return [
 			static::VALUE_TRUE => esc_html__( 'On', 'elementor' ),
 			static::VALUE_FALSE => esc_html__( 'Off', 'elementor' ),
