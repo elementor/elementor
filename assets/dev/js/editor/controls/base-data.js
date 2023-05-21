@@ -205,7 +205,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 		try {
 			return parent && this.container.panel.getControlView( parent );
 			// eslint-disable-next-line no-empty
-		} catch ( e ) {}
+		} catch ( e ) {
+			return null;
+		}
 	},
 
 	/**
