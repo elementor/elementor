@@ -16,6 +16,9 @@ runs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
+      - name: Increment Patch Version
+        if: inputs.CHANNEL == 'ga'
+        uses: ./.github/workflows/increment-patch-version
       - shell: bash
         run: |
             # This command retrieves the latest tag that matches the specified channel and package version, 
