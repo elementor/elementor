@@ -48,6 +48,9 @@ export default class Component extends ComponentBase {
 			'page-settings': {
 				keys: 'ctrl+shift+y',
 			},
+			'editor-preferences': {
+				keys: 'ctrl+shift+u',
+			},
 		};
 	}
 }
