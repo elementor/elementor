@@ -19,7 +19,7 @@ const EditorSelectors = {
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
 	button: {
-		getByName: ( name ) => `a[role="button"]:has-text("${ name }")`,
+		getByName: ( name ) => `.elementor-button:has-text("Click here")`,
 		id: '[data-setting="button_css_id"]',
 		url: 'input[data-setting="url"]',
 		linkOptions: 'button[data-tooltip="Link Options"]',
