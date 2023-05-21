@@ -42,7 +42,7 @@ abstract class Config_Base {
 	 *
 	 * @return bool
 	 */
-	public static function set( $value ) {
+	final public static function set( $value ) {
 		$old_value = static::get();
 
 		// Avoid changing the value on the frontend.
