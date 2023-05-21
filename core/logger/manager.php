@@ -265,7 +265,7 @@ class Manager extends BaseModule {
 	}
 
 	public function __construct() {
-		register_shutdown_function( [ $this, 'shutdown' ] );
+		add_action( 'shutdown', [ $this, 'shutdown' ] );
 
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
 

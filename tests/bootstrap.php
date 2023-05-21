@@ -54,9 +54,9 @@ require __DIR__ . '/phpunit/trait-responsive-control-testing.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
-require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
-
 Autoloader::run();
+
+require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
 
 remove_action( 'admin_init', '_maybe_update_themes' );
 remove_action( 'admin_init', '_maybe_update_core' );

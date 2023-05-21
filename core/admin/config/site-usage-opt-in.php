@@ -12,6 +12,10 @@ class Site_Usage_Opt_In extends Site_Config_Base {
 
 	use Config_On_Off_Trait;
 
+	const VALUE_TRUE = 'yes';
+
+	const VALUE_FALSE = 'no';
+
 	public static function get_key() {
 		return 'allow_tracking';
 	}
