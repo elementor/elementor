@@ -20,7 +20,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 		// Arrange.
 		require_once __DIR__ . '/../base/mock/mock-upgrades-manager.php';
 
-		$this->expect
 		/**
 		 * @var Module $usage_module
 		 */
