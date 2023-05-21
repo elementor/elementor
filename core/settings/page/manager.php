@@ -123,6 +123,10 @@ class Manager extends CSS_Manager {
 			unset( $post->post_status );
 		}
 
+		if ( isset( $data['comment_status'] ) && post_type_supports( $post->post_type, 'comments' ) ) {
+			$post->comment_status = $data['comment_status'];
+		}
+
 		wp_update_post( $post );
 
 		// Check updated status
@@ -314,6 +318,7 @@ class Manager extends CSS_Manager {
 			'post_excerpt',
 			'post_featured_image',
 			'menu_order',
+			'comment_status',
 		];
 	}
 
