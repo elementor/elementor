@@ -301,7 +301,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	public $has_stacks_cache_been_cleared = false;
+	private $has_stacks_cache_been_cleared = false;
 
 	/**
 	 * Init tabs.
