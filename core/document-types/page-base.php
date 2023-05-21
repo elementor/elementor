@@ -231,7 +231,7 @@ abstract class PageBase extends Document {
 			);
 		}
 
-    if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
+		if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
 			$document->add_control(
 				'comment_status',
 				[
