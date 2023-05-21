@@ -14,9 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class PageBase extends Document {
 
 	/**
+	 * Get Properties
+	 *
+	 * Return the document configuration properties.
+	 *
 	 * @since 2.0.8
 	 * @access public
 	 * @static
+	 *
+	 * @return array
 	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -92,6 +98,7 @@ abstract class PageBase extends Document {
 					'<a href="javascript: $e.run( \'panel/global/open\' ).then( () => $e.route( \'panel/global/settings-layout\' ) )">',
 					'</a>'
 				),
+				'separator' => 'before',
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],
@@ -182,6 +189,7 @@ abstract class PageBase extends Document {
 					'label' => esc_html__( 'Excerpt', 'elementor' ),
 					'type' => Controls_Manager::TEXTAREA,
 					'default' => $document->post->post_excerpt,
+					'separator' => 'before',
 				]
 			);
 		}
@@ -196,6 +204,32 @@ abstract class PageBase extends Document {
 						'id' => get_post_thumbnail_id(),
 						'url' => (string) get_the_post_thumbnail_url( $document->post->ID ),
 					],
+					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( is_post_type_hierarchical( $document->post->post_type ) ) {
+			$document->add_control(
+				'menu_order',
+				[
+					'label' => esc_html__( 'Order', 'elementor' ),
+					'type' => Controls_Manager::NUMBER,
+					'default' => $document->post->menu_order,
+					'separator' => 'before',
+				]
+			);
+		}
+
+		if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
+			$document->add_control(
+				'comment_status',
+				[
+					'label' => esc_html__( 'Allow Comments', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'open',
+					'default' => $document->post->comment_status,
+					'separator' => 'before',
 				]
 			);
 		}
