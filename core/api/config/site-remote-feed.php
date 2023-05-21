@@ -22,6 +22,6 @@ class Site_Remote_Feed extends Site_Config_Base {
 	}
 
 	protected static function validate($value) {
-		return is_array($value);
+		return is_array( $value );
 	}
 }
