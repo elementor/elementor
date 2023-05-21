@@ -21,6 +21,6 @@ class Site_Usage_Last_Send extends Site_Config_Base {
 	}
 
 	protected static function validate($value) {
-		return is_int($value);
+		return is_int( $value );
 	}
 }
