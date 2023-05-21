@@ -97,7 +97,7 @@ class Test_Config_Boolean_Trait extends Elementor_Test_Base {
 		Config_Boolean_Trait_Test::set_true();
 
 		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_TRUE === Config_Boolean_Trait_Test::$value );
+		$this->assertTrue( Config_Base::VALUE_TRUE === Config_Boolean_Trait_Test::$value );
 	}
 
 	public function test__set_false() {
@@ -105,7 +105,7 @@ class Test_Config_Boolean_Trait extends Elementor_Test_Base {
 		Config_Boolean_Trait_Test::set_false();
 
 		// Assert.
-		$this->assertTrue(  Config_Base::VALUE_FALSE === Config_Boolean_Trait_Test::$value );
+		$this->assertTrue( Config_Base::VALUE_FALSE === Config_Boolean_Trait_Test::$value );
 	}
 
 	// tearDown

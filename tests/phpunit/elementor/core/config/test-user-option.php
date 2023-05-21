@@ -34,7 +34,7 @@ class Test_User_Option extends Elementor_Test_Base {
 		$this->set_test_value();
 
 		// Assert
-		$this->assertEquals('test' , User_Option_Test::get() );
+		$this->assertEquals( 'test' , User_Option_Test::get() );
 	}
 
 	public function test__set() {
@@ -42,12 +42,12 @@ class Test_User_Option extends Elementor_Test_Base {
 		User_Option_Test::set( 'test' );
 
 		// Assert
-		$this->assertEquals('test' , get_user_option( 'elementor_test', get_current_user_id() ) );
+		$this->assertEquals( 'test' , get_user_option( 'elementor_test', get_current_user_id() ) );
 	}
 
 	public function test__get_default() {
 		// Assert
-		$this->assertEquals('default-value' , User_Option_Test::get() );
+		$this->assertEquals( 'default-value' , User_Option_Test::get() );
 	}
 
 	public function test_delete() {

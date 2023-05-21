@@ -26,6 +26,6 @@ class Test_Maintenance extends Elementor_Test_Base {
 		\Elementor\Maintenance::insert_defaults_options();
 
 		// Assert.
-		$this->assertNotEquals( 'swap',  Site_Font_Display::get_raw() );
+		$this->assertNotEquals( 'swap', Site_Font_Display::get_raw() );
 	}
 }
