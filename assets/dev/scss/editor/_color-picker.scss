@@ -72,7 +72,7 @@
 		}
 
 		.pcr-interaction {
-			padding-bottom: 20px;
+			padding-block-end: 20px;
 
 			input.pcr-result {
 				border: var(--e-a-border);
@@ -108,7 +108,7 @@
 	}
 
 	&-selection {
-		padding-top: 20px;
+		padding-block-start: 20px;
 	}
 
 	.elementor-control-dynamic-switcher {

@@ -15,13 +15,13 @@
 			padding: 5px 0;
 
 			&:not(:last-child) {
-				border-bottom: var(--e-a-border);
+				border-block-end: var(--e-a-border);
 			}
 		}
 
 		&__item {
 			padding: 5px 10px;
-			@include padding-end(20px);
+			padding-inline-end: 20px;
 			display: flex;
 			cursor: pointer;
 			transition: var(--e-a-transition-hover);
