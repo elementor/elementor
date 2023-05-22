@@ -163,7 +163,6 @@ module.exports = {
 					rendered: false,
 				};
 			}
-			return;
 		}
 
 		const iconType = icon.library,
@@ -201,6 +200,7 @@ module.exports = {
 				rendered: false,
 			};
 		}
+		return undefined;
 	},
 
 	isIconMigrated( settings, controlName ) {
@@ -264,10 +264,10 @@ module.exports = {
 				break;
 
 			case 'earlyaccess': {
-					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-					break;
-				}
+				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+				break;
+			}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {

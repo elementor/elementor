@@ -8,7 +8,7 @@ export default class LocalizedValueStore {
 	 * English values will be returned as is
 	 * Paste will return an empty value
 	 *
-	 * @param  event - the incoming event
+	 * @param event - the incoming event
 	 * @return string
 	 */
 
