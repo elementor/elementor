@@ -38,4 +38,72 @@ class Test_Local extends Elementor_Test_Base {
 		$post_type = null;
 		$wp_list_table = null;
 	}
+
+	public function test_save_item__subscribers_cannot_create_template() {
+		// Arrange
+		$this->act_as_subscriber();
+
+		// Act
+		$result = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+			'status' => 'publish',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'save_error', $result->get_error_code() );
+	}
+
+	public function test_save_item__contributors_cannot_publish_templates() {
+		// Arrange
+		$this->act_as( 'contributor' );
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+			'status' => 'publish',
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'pending', $document->get_post()->post_status );
+	}
+
+	public function test_save_item__contributors_cannot_create_pages() {
+		// Arrange
+		$this->act_as( 'contributor' );
+
+		// Act
+		$result = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'wp-page',
+			'content' => [],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'invalid_template_type', $result->get_error_code() );
+	}
+
+	public function test_save_item__editors_can_create_templates() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'publish', $document->get_post()->post_status );
+	}
 }
