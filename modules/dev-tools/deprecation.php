@@ -123,7 +123,7 @@ class Deprecation {
 		$version_explode_count = count( $version_explode );
 
 		if ( $version_explode_count < 3 || $version_explode_count > 4 ) {
-			trigger_error( 'Invalid Semantic Version string provided' );
+			trigger_error( 'Invalid Semantic Version string provided' . $version );
 
 			return false;
 		}
@@ -185,7 +185,7 @@ class Deprecation {
 	 * @param string $replacement Optional
 	 * @param string $base_version Optional. Default is `null`
 	 *
-	 * @return bool|void
+	 * @return array
 	 * @throws \Exception
 	 */
 	private function check_deprecation( $entity, $version, $replacement, $base_version = null ) {
@@ -199,23 +199,187 @@ class Deprecation {
 			throw new \Exception( 'Invalid deprecation diff.' );
 		}
 
-		$print_deprecated = false;
+		$print_deprecated = array();
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
-			// Soft deprecated.
-			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
-				$this->soft_deprecated_notices[ $entity ] = [
-					$version,
-					$replacement,
-				];
+		if ( $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated() ) {
+			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+
+			$external_sources = $this->find_third_party_sources( $backtrace );
+
+			$source_message = 'Elementor';
+			$plugin_name = 'unknown';
+			if ( ! ( empty( $external_sources ) ) ) {
+				$calling_source = $external_sources[ array_key_first( $external_sources ) ];
+				$plugin_name = $this->get_plugin_name( $calling_source['file'] );
+				if ( empty( $plugin_name ) ) {
+					$plugin_name = 'none';
+				}
+				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
+			}
+			if ( $this->should_console_log_deprecated() ) {
+				// Soft deprecated.
+				if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
+					$this->soft_deprecated_notices[ $entity ] = [
+						$version,
+						$replacement,
+						$source_message,
+					];
+				}
 			}
 
-			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
-				$print_deprecated = true;
+			if ( $this->should_print_deprecated( $version, $base_version ) ) {
+				$print_deprecated = array(
+					'source' => $source_message,
+					'plugin' => $plugin_name,
+				);
+			}
+		}
+		return $print_deprecated;
+	}
+
+	private function get_plugin_name( $filename ) {
+		$plugin_path = substr( strstr( $filename, WP_PLUGIN_DIR ), strlen( WP_PLUGIN_DIR ) );
+		if ( empty( $plugin_path ) ) {
+			return '';
+		}
+		$plugin_name = explode( '/', $plugin_path )[1];
+		return $plugin_name;
+	}
+
+	private function is_elementor_file( $stack_element ) {
+		$filename = $stack_element['file'];
+		return ( strpos( $filename, 'elementor/' ) !== false || strpos( $filename, 'elementor-pro/' ) !== false );
+	}
+
+	private function is_plugin( $stack_element ) {
+		$filename = $stack_element['file'];
+		if ( strpos( $filename, WP_PLUGIN_DIR ) !== false ) {
+			return true;
+		}
+		return false;
+
+	}
+
+	private function find_third_party_sources( $stack_trace ) {
+		$sources = array_filter($stack_trace, function ( $elem ) {
+			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) ) && $this->is_plugin( $elem );
+		} );
+		return $sources;
+	}
+
+	/**
+	 * Checks whether deprecation message should be printed.
+	 * If the user is logged in and has admin privileges, the message will be printed.
+	 * If the user is not logged in, the message will be printed only if the user has WP_DEBUG enabled.
+	 * If the user is logged in but does not have admin privileges, the message will be printed only if the user has ELEMENTOR_DEBUG enabled.
+	 *
+	 *
+	 * @param  mixed $version
+	 * @param  mixed $base_version
+	 * @return bool
+	 */
+	private function should_print_deprecated( $version, $base_version ) {
+
+		$elementor_debug = ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG );
+		$wp_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+		$user_is_admin = current_user_can( 'manage_options' );
+		$user_is_logged_in = is_user_logged_in();
+
+		if ( null === $base_version ) {
+			$base_version = $this->current_version;
+		}
+		$first_deprecation_stage = $this->compare_version( $base_version, $version ) <= self::SOFT_VERSIONS_COUNT;
+
+		if ( $wp_debug ) {
+			if ( $elementor_debug ) {
+				return true;
+			}
+			if ( $user_is_admin ) {
+				return true;
+			}
+			if ( $user_is_logged_in && ! $first_deprecation_stage ) {
+				return true;
 			}
 		}
 
-		return $print_deprecated;
+		return false;
+
+	}
+
+	private function should_console_log_deprecated() {
+		return ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+	}
+
+	private function notify_deprecated_function( $function_name, $version, $replacement = '', $calling_plugin = '', $call_location = '' ) {
+
+		/**
+		 * Fires when a deprecated function is called.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param string $function_name The function that was called.
+		 * @param string $replacement   The function that should have been called.
+		 * @param string $version       The version of WordPress that deprecated the function.
+		 */
+		do_action( 'deprecated_function_run', $function_name, $replacement, $version );
+
+		/**
+		 * Filters whether to trigger an error for deprecated functions.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param bool $trigger Whether to trigger the error for deprecated functions. Default true.
+		 */
+		if ( apply_filters( 'deprecated_function_trigger_error', true ) ) {
+			$message_string = __( '' );
+			$error_message_args = [ esc_html( $function_name ), esc_html( $version ) ];
+			if ( $replacement ) {
+				$error_message_args[] = $replacement;
+				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller plugin: %4$s. Called from: %5$s.', 'elementor' );
+			} else {
+				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller plugin: %3$s. Called from: %4$s.', 'elementor' );
+			}
+			$error_message_args[] = $calling_plugin;
+			$error_message_args[] = $call_location;
+			trigger_error(
+				vsprintf(
+					// PHPCS - $message_string is already escaped above.
+					$message_string, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					$error_message_args // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				),
+				E_USER_DEPRECATED
+			);
+		}
+	}
+
+
+
+	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin, $source ) {
+
+		$message = empty( $message ) ? '' : ' ' . $message;
+		// These arguments are escaped because they are printed later, and are not escaped when printed.
+		$error_message_args = [ esc_html( $argument ), esc_html( $version ) ];
+
+		if ( $replacement ) {
+			/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
+			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller plugin: %4$s. Called from: %5$s.', 'elementor' );
+			$error_message_args[] = $replacement;
+		} else {
+			/* translators: 1: Function argument, 2: Elementor version number. */
+			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller plugin: %3$s. Called from: %4$s.', 'elementor' );
+		}
+		$error_message_args[] = $plugin;
+		$error_message_args[] = $source;
+
+		trigger_error(
+			vsprintf(
+				// PHPCS - $translation_string is already escaped above.
+				$translation_string,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// PHPCS - $error_message_args is an array.
+				$error_message_args  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			) . esc_html( $message ),
+			E_USER_DEPRECATED
+		);
 	}
 
 	/**
@@ -231,14 +395,16 @@ class Deprecation {
 	 * @param string $base_version Optional. Default is `null`
 	 * @throws \Exception
 	 */
-	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
+	public function deprecated_function( $function, $version, $replacement = '', $base_version = null, $debug_mode = false ) {
+
 		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
 
-		if ( $print_deprecated ) {
+		if ( ! empty( $print_deprecated ) ) {
 			// PHPCS - We need to echo special characters because they can exist in function calls.
-			_deprecated_function( $function, esc_html( $version ), $replacement );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'] );
 		}
 	}
+
 
 	/**
 	 * Deprecated Hook
@@ -254,10 +420,11 @@ class Deprecation {
 	 * @throws \Exception
 	 */
 	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
-		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
 
-		if ( $print_deprecated ) {
-			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ) );
+		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
+		if ( ! empty( $print_deprecated ) ) {
+			$message = sprintf( 'Caller plugin: %1$s. Called from: %2$s.', $print_deprecated['plugin'], $print_deprecated['source'] );
+			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ), $message );
 		}
 	}
 
@@ -277,29 +444,8 @@ class Deprecation {
 	public function deprecated_argument( $argument, $version, $replacement = '', $message = '' ) {
 		$print_deprecated = $this->check_deprecation( $argument, $version, $replacement );
 
-		if ( $print_deprecated ) {
-			$message = empty( $message ) ? '' : ' ' . $message;
-			// These arguments are escaped because they are printed later, and are not escaped when printed.
-			$error_message_args = [ esc_html( $argument ), esc_html( $version ) ];
-
-			if ( $replacement ) {
-				/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
-				$translation_string = esc_html__( 'The %1$s argument is deprecated since version %2$s! Use %3$s instead.', 'elementor' );
-				$error_message_args[] = $replacement;
-			} else {
-				/* translators: 1: Function argument, 2: Elementor version number. */
-				$translation_string = esc_html__( 'The %1$s argument is deprecated since version %2$s!', 'elementor' );
-			}
-
-			trigger_error(
-				vsprintf(
-					// PHPCS - $translation_string is already escaped above.
-					$translation_string,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					// PHPCS - $error_message_args is an array.
-					$error_message_args  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				) . esc_html( $message ),
-				E_USER_DEPRECATED
-			);
+		if ( ! empty( $print_deprecated ) ) {
+			$this->notify_deprecated_argument( $argument, $version, $replacement, $message, $print_deprecated['plugin'], $print_deprecated['source'] );
 		}
 	}
 
@@ -327,6 +473,7 @@ class Deprecation {
 
 		do_action_ref_array( $hook, $args );
 	}
+
 
 	/**
 	 * Apply Deprecated Filter
@@ -361,9 +508,7 @@ class Deprecation {
 
 		// Avoid associative arrays.
 		$args = array_values( $args );
-
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
-
 		return apply_filters_ref_array( $hook, $args );
 	}
 }
