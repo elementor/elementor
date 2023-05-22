@@ -502,24 +502,10 @@ class Source_Local extends Source_Base {
 		$defaults = [
 			'title' => esc_html__( '(no title)', 'elementor' ),
 			'page_settings' => [],
+			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 		];
 
 		$template_data = wp_parse_args( $template_data, $defaults );
-		$template_data['status'] = current_user_can( 'publish_posts' ) ? 'publish' : 'pending';
-
-		$allowed_document_types = Plugin::$instance->documents->get_document_types( [
-			'show_in_library' => true,
-		] );
-
-		$is_allowed_type = in_array(
-			$template_data['type'],
-			array_keys( $allowed_document_types ),
-			true
-		);
-
-		if ( ! $is_allowed_type ) {
-			return new \WP_Error( 'invalid_template_type', esc_html__( 'Invalid template type.', 'elementor' ) );
-		}
 
 		$document = Plugin::$instance->documents->create(
 			$template_data['type'],
