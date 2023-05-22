@@ -84,7 +84,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				accordionWrapper = await frame.locator( '.elementor-accordion' ).first(),
 				toggleWidgetInPanel = await page.locator( 'i.eicon-toggle' ).first(),
 				widgetPanelButton = await page.locator( '#elementor-panel-header-add-button .eicon-apps' ),
-				widgetSearchBar = await page.locator( '#elementor-panel-elements-search-wrapper input#elementor-panel-elements-search-input' ),
+				widgetSearchBar = '#elementor-panel-elements-search-wrapper input#elementor-panel-elements-search-input',
 				nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item' ),
 				nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
 
@@ -95,7 +95,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				// Act
 				await editor.closeNavigatorIfOpen();
 				widgetPanelButton.click();
-				widgetSearchBar.fill( 'toggle' );
+				await page.waitForSelector( widgetSearchBar );
+				await page.locator( widgetSearchBar ).fill( 'toggle' );
 
 				// Assert
 				await expect( toggleWidgetInPanel ).toBeHidden();
@@ -150,12 +151,3 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		} );
 	} );
 } );
-
-// Async function selectElement( frame, elementID ) {
-// 	let nestedAccordion = await frame.locator( `.elementor-element-${ elementID }` );
-// 	const element = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID );
-// 	await element.hover();
-// 	const elementEditButton = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-// 	await elementEditButton.click();
-// 	return nestedAccordion;
-// }
