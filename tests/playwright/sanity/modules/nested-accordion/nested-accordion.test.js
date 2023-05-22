@@ -134,7 +134,19 @@ test.describe( 'Nested Accordion', () => {
 				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents + 1 );
 			} );
 
-			await test.step( 'remove an item to the repeater', async () => {} );
+			await test.step( 'remove an item to the repeater', async () => {
+				// Arrange
+				const deleteItemButton = await page.locator( '.elementor-repeater-add' ),
+					numberOfTitles = await nestedAccordionItemTitle.count(),
+					numberOfContents = await nestedAccordionItemContent.count();
+
+				// Act
+				deleteItemButton.click();
+
+				// Assert
+				await expect( nestedAccordionItemTitle ).toHaveCount( await numberOfTitles - 1 );
+				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents - 1 );
+			} );
 			await test.step( 'duplicate an item to the repeater', async () => {} );
 			await test.step( 'only one an item to the repeater', async () => {} );
 		} );

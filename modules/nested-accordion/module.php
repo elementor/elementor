@@ -3,7 +3,6 @@ namespace Elementor\Modules\NestedAccordion;
 
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
-use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -18,7 +17,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function get_name() {
-		return 'nested-accordion';
+		return self::EXPERIMENT_NAME;
 	}
 
 	/**
