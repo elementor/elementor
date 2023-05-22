@@ -579,7 +579,7 @@ class Widget_Toggle extends Widget_Base {
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 
 		?>
-		<div class="elementor-toggle" role="tablist">
+		<div class="elementor-toggle">
 			<?php
 			foreach ( $settings['tabs'] as $index => $item ) :
 				$tab_count = $index + 1;
@@ -592,7 +592,7 @@ class Widget_Toggle extends Widget_Base {
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
-					'role' => 'tab',
+					'role' => 'button',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -601,7 +601,7 @@ class Widget_Toggle extends Widget_Base {
 					'id' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
-					'role' => 'tabpanel',
+					'role' => 'region',
 					'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 				] );
 
@@ -662,7 +662,7 @@ class Widget_Toggle extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="elementor-toggle" role="tablist">
+		<div class="elementor-toggle">
 			<#
 			if ( settings.tabs ) {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
@@ -680,7 +680,7 @@ class Widget_Toggle extends Widget_Base {
 						'id': 'elementor-tab-title-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-title' ],
 						'data-tab': tabCount,
-						'role': 'tab',
+						'role': 'button',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );
@@ -689,7 +689,7 @@ class Widget_Toggle extends Widget_Base {
 						'id': 'elementor-tab-content-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab': tabCount,
-						'role': 'tabpanel',
+						'role': 'region',
 						'aria-labelledby': 'elementor-tab-title-' + tabindex + tabCount
 					} );
 
