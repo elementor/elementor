@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-test.describe( 'Nested Accordion', () => {
+test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const page = await browser.newPage();
@@ -44,7 +44,7 @@ test.describe( 'Nested Accordion', () => {
 
 				// Assert
 				await expect( await accordionWrapper ).toHaveCount( 1 );
-				await expect( await toggleWrapper).toHaveCount( 1 );
+				await expect( await toggleWrapper ).toHaveCount( 1 );
 			} );
 		} );
 	} );
@@ -104,7 +104,7 @@ test.describe( 'Nested Accordion', () => {
 			await test.step( 'Check that Nested accordion replaces old accordion widget', async () => {
 				// Act
 				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-				nestedAccordion = await selectElement( frame, nestedAccordionID );
+				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 				// Assert
 				await expect( await nestedAccordion ).toHaveCount( 1 );
@@ -136,28 +136,26 @@ test.describe( 'Nested Accordion', () => {
 
 			await test.step( 'remove an item to the repeater', async () => {
 				// Arrange
-				const deleteItemButton = await page.locator( '.elementor-repeater-add' ),
+				const deleteItemButton = await page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
 					numberOfTitles = await nestedAccordionItemTitle.count(),
 					numberOfContents = await nestedAccordionItemContent.count();
 
 				// Act
-				deleteItemButton.click();
+				deleteItemButton.last().click();
 
 				// Assert
 				await expect( nestedAccordionItemTitle ).toHaveCount( await numberOfTitles - 1 );
 				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents - 1 );
 			} );
-			await test.step( 'duplicate an item to the repeater', async () => {} );
-			await test.step( 'only one an item to the repeater', async () => {} );
 		} );
 	} );
 } );
 
-async function selectElement( frame, elementID ) {
-	let nestedAccordion = await frame.locator( `.elementor-element-${ elementID }` );
-	const element = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID );
-	await element.hover();
-	const elementEditButton = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-	await elementEditButton.click();
-	return nestedAccordion;
-}
+// async function selectElement( frame, elementID ) {
+// 	let nestedAccordion = await frame.locator( `.elementor-element-${ elementID }` );
+// 	const element = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID );
+// 	await element.hover();
+// 	const elementEditButton = frame.locator( '.elementor-edit-mode .elementor-element-' + elementID + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+// 	await elementEditButton.click();
+// 	return nestedAccordion;
+// }

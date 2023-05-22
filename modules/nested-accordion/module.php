@@ -3,6 +3,8 @@ namespace Elementor\Modules\NestedAccordion;
 
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
+use  Elementor\Modules\NestedElements\Module as NestedElementsModule;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -13,7 +15,7 @@ class Module extends \Elementor\Core\Base\Module {
 	const EXPERIMENT_NAME = 'nested-accordion';
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
 
 	public function get_name() {

@@ -21,8 +21,8 @@ export default class NestedAccordion extends Base {
 			const $titles = this.findElement( '.e-n-accordion details' );
 			let index = 0;
 
-			this.findElement( '.e-n-accordion > .e-con' ).each( function () {
-				$titles[ index ].appendChild(this);
+			this.findElement( '.e-n-accordion > .e-con' ).each( function() {
+				$titles[ index ].appendChild( this );
 				index++;
 			} );
 		}
