@@ -208,25 +208,8 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @param {string} elementId - Element ID;
 	 *
-	 * @return {Promise<void>}
+	 * @return {Object} element;
 	 */
-	// async selectElement( elementId ) {
-	// 	await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
-	//
-	// 	await this.page.pause();
-	//
-	// 	if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
-	// 		return;
-	// 	}
-	//
-	// 	await this.page.pause();
-	// 	const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-	// 	await element.hover();
-	// 	const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-	// 	await elementEditButton.click();
-	// 	await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
-	// }
-
 	async selectElement( elementId ) {
 		await this.page.evaluate( async ( { id } ) => {
 			$e.run( 'document/elements/select', {
@@ -234,7 +217,7 @@ module.exports = class EditorPage extends BasePage {
 			} );
 		}, { id: elementId } );
 
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' )
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
 	async copyElement( elementId ) {
