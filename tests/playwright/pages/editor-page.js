@@ -217,7 +217,8 @@ module.exports = class EditorPage extends BasePage {
 			} );
 		}, { id: elementId } );
 
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ' .elementor-element-editable' );
+		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
 	}
 
 	async copyElement( elementId ) {
