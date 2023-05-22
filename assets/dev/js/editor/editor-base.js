@@ -977,7 +977,7 @@ export default class EditorBase extends Marionette.Application {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
 
-		this.$preview[ 0 ].contentWindow.location.reload( true );
+		this.$preview[ 0 ].src = this.config.initial_document.urls.preview;
 	}
 
 	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
@@ -1612,9 +1612,9 @@ export default class EditorBase extends Marionette.Application {
 
 	toggleDocumentCssFiles( document, state ) {
 		const selectors = [
-			`#elementor-post-${ document.config.id }-css`,
-			`#elementor-preview-${ document.config.revisions.current_id }`,
-		],
+				`#elementor-post-${ document.config.id }-css`,
+				`#elementor-preview-${ document.config.revisions.current_id }`,
+			],
 			$files = this.$previewContents.find( selectors.join( ',' ) ),
 			type = state ? 'text/css' : 'elementor/disabled-css';
 
