@@ -32,7 +32,7 @@
 
 	.elementor-control-popover-toggle-reset-label {
 		color: var(--e-a-color-txt-muted);
-		@include margin-end(5px);
+		margin-inline-end: 5px;
 
 		&:hover {
 			color: var(--e-a-color-txt);
@@ -52,7 +52,7 @@
 .elementor-controls-popover {
 
 	&.e-controls-popover--typography {
-		padding-top: 0;
+		padding-block-start: 0;
 	}
 }
 
