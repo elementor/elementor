@@ -19,6 +19,7 @@ export class Open extends $e.modules.CommandBase {
 
 		if ( setAsInitial ) {
 			// Set the new initial document id to be sent with all requests.
+			// The next request needs to have the new initial document id in order to have the correct preview URL.
 			elementorCommon.ajax.addRequestConstant( 'initial_document_id', id );
 
 			// Because the initial document has changed, we need to clear cached values (e.g. header wp_preview URL),
