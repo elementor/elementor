@@ -236,7 +236,9 @@
 
 		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
 		.elementor-control-input-wrapper {
-			direction: $direction;
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
 		}
 	}
 
