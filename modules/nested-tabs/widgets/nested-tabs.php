@@ -232,6 +232,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'bottom',
 				],
 			],
+			'frontend_available' => true,
 		] );
 
 		$this->add_responsive_control( 'tabs_justify_vertical', [
@@ -330,8 +331,30 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_tabs_responsive', [
-			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+			'label' => esc_html__( 'Additional Settings', 'elementor' ),
 		] );
+
+		$this->add_responsive_control(
+			'horizontal_scroll',
+			[
+				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: Scroll tabs if they don’t fit into their parent container.', 'elementor' ),
+				'options' => [
+					'disable' => esc_html__( 'Disable', 'elementor' ),
+					'enable' => esc_html__( 'Enable', 'elementor' ),
+				],
+				'default' => 'disable',
+				'selectors_dictionary' => [
+					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial;',
+					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'frontend_available' => true,
+			]
+		);
 
 		$dropdown_options = [
 			'none' => esc_html__( 'None', 'elementor' ),
@@ -1018,8 +1041,6 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
-		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
-
 		if ( ! empty( $settings['link'] ) ) {
 			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
 		}
@@ -1036,7 +1057,7 @@ class NestedTabs extends Widget_Nested_Base {
 			// Tabs title.
 			$tab_count = $index + 1;
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+			$tab_title = $item['tab_title'];
 			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 			$tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
 			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];

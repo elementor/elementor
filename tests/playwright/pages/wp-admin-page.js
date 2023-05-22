@@ -39,9 +39,7 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
-		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
-			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
-		}
+		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
 	}
@@ -50,6 +48,8 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();
+
+		await this.closeAnnouncementsIfVisible();
 
 		const editor = new EditorPage( this.page, this.testInfo, CLEAN_POST_ID );
 
@@ -155,5 +155,11 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+	}
+
+	async closeAnnouncementsIfVisible() {
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		}
 	}
 };
