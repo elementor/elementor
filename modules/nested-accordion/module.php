@@ -13,9 +13,9 @@ class Module extends \Elementor\Core\Base\Module {
 
 	const EXPERIMENT_NAME = 'nested-accordion';
 
-//	public static function is_active() {
-//		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
-//	}
+	public static function is_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
 
 	public function get_name() {
 		return 'nested-accordion';
