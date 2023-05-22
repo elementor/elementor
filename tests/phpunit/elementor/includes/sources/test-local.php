@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Local extends Elementor_Test_Base {
@@ -13,7 +14,10 @@ class Test_Local extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$this->source = $this
+			->getMockBuilder( Source_Local::class )
+			->setMethods( [ 'is_wp_cli' ] )
+			->getMock();
 	}
 
 	public function test_maybe_render_blank_state() {
@@ -98,6 +102,27 @@ class Test_Local extends Elementor_Test_Base {
 		$document_id = $this->source->save_item( [
 			'title' => 'test-title',
 			'type' => 'page',
+			'content' => [],
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'publish', $document->get_post()->post_status );
+	}
+
+	public function test_save_item__should_skip_template_type_check_in_cli() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->source
+			->method( 'is_wp_cli' )
+			->willReturn( true );
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'wp-page',
 			'content' => [],
 		] );
 
