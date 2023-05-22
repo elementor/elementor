@@ -95,6 +95,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				// Act
 				await editor.closeNavigatorIfOpen();
 				widgetPanelButton.click();
+
 				await page.waitForSelector( widgetSearchBar );
 				await page.locator( widgetSearchBar ).fill( 'toggle' );
 
