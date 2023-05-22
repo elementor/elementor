@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.13.3 - 2023-05-22 =
+
+* Security Fix: Addressed security weaknesses in template creation mechanism
+* Tweak: Improved error messages when a kit is not downloaded successfully in Kit Library
+
 = 3.13.2 - 2023-05-11 =
 
 * Security Fix: Addressed security weaknesses in access management related functions
