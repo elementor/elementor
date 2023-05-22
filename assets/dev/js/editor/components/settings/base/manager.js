@@ -40,8 +40,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getSettings( 'name' ) + '_settings';
 	},
 
+	/**
+	 * @deprecated since 3.7.0, use `getContainerType()` instead.
+	 */
 	getContainerId() {
-		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+		elementorDevTools.deprecation.deprecated( 'getContainerId()', '3.7.0', 'getContainerType()' );
 
 		return this.getContainerType();
 	},
