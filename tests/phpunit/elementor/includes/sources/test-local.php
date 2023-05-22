@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Local extends Elementor_Test_Base {
@@ -13,7 +14,10 @@ class Test_Local extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$this->source = $this
+			->getMockBuilder( Source_Local::class )
+			->setMethods( [ 'is_wp_cli' ] )
+			->getMock();
 	}
 
 	public function test_maybe_render_blank_state() {
@@ -37,5 +41,94 @@ class Test_Local extends Elementor_Test_Base {
 		// Clean - globals.
 		$post_type = null;
 		$wp_list_table = null;
+	}
+
+	public function test_save_item__subscribers_cannot_create_template() {
+		// Arrange
+		$this->act_as_subscriber();
+
+		// Act
+		$result = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+			'status' => 'publish',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'save_error', $result->get_error_code() );
+	}
+
+	public function test_save_item__contributors_cannot_publish_templates() {
+		// Arrange
+		$this->act_as( 'contributor' );
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+			'status' => 'publish',
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'pending', $document->get_post()->post_status );
+	}
+
+	public function test_save_item__contributors_cannot_create_pages() {
+		// Arrange
+		$this->act_as( 'contributor' );
+
+		// Act
+		$result = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'wp-page',
+			'content' => [],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'invalid_template_type', $result->get_error_code() );
+	}
+
+	public function test_save_item__editors_can_create_templates() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'page',
+			'content' => [],
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'publish', $document->get_post()->post_status );
+	}
+
+	public function test_save_item__should_skip_template_type_check_in_cli() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->source
+			->method( 'is_wp_cli' )
+			->willReturn( true );
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => 'wp-page',
+			'content' => [],
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'publish', $document->get_post()->post_status );
 	}
 }
