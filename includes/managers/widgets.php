@@ -261,10 +261,7 @@ class Widgets_Manager {
 
 			if ( Plugin::$instance->experiments->is_feature_active( $module_name ) ) {
 				$instance = new $class_name();
-
-				$this->_widget_types = [
-					$instance->get_name() => $instance,
-				] + $this->_widget_types;
+				$this->_widget_types[ $instance->get_name() ] = $instance;
 			}
 		}
 	}

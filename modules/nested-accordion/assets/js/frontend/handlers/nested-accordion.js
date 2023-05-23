@@ -1,6 +1,6 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
-export default class Nested_Accordion extends Base {
+export default class NestedAccordion extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -34,5 +34,4 @@ export default class Nested_Accordion extends Base {
 			$titles[ index ].appendChild( element );
 		} );
 	}
-
 }
