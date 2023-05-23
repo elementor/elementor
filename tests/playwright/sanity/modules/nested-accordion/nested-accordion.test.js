@@ -136,7 +136,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents + 1 );
 			} );
 
-			await test.step( 'Remove an item to the repeater', async () => {
+			await test.step( 'Remove an item from the repeater', async () => {
 				// Arrange
 				const deleteItemButton = await page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
 					numberOfTitles = await nestedAccordionItemTitle.count(),
