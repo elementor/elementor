@@ -12,9 +12,7 @@ abstract class Site_Config_Base extends WP_Option_Base {
 	/**
 	 * @return bool
 	 */
-	public static function should_autoload() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract public static function should_autoload(): bool;
 
 	final protected static function setter( $value ): bool {
 		return update_option( static::get_full_key(), $value, static::should_autoload() );

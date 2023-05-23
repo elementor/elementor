@@ -14,30 +14,22 @@ abstract class Config_Base {
 	const VALUE_TRUE = true;
 	const VALUE_FALSE = false;
 
-	public static function get_options() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract public static function get_options(): array;
 
 	/**
 	 * @return mixed
 	 */
-	public static function get() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract public static function get_value();
 
 	/**
 	 * @return string
 	 */
-	public static function get_key() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract public static function get_key(): string;
 
 	/**
-	 * @return string
+	 * @return mixed
 	 */
-	public static function get_default() {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract public static function get_default();
 
 	/**
 	 * @param mixed $value
@@ -119,25 +111,14 @@ abstract class Config_Base {
 
 	/**
 	 * @param mixed $value
-	 *
-	 * @return bool
 	 */
-	protected static function setter( $value ) {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract protected static function setter( $value ): bool;
 
 	protected static function validate( $value ) {
 		return in_array( $value, array_keys( static::get_options() ), true );
 	}
 
-	protected static function has_permission( $value ) {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract protected static function has_permission( $value ): bool;
 
-	/**
-	 * @return bool
-	 */
-	protected static function deleter(): bool {
-		throw new \Error( __METHOD__ . ' must be implemented' );
-	}
+	abstract protected static function deleter(): bool;
 }
