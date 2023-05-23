@@ -28,7 +28,7 @@ class Manager extends BaseModule {
 		return 'config';
 	}
 
-	static public function is_admin(): bool {
+	public static function is_admin(): bool {
 		$current_action = current_action();
 
 		$is_plugin_activation = strpos( $current_action, 'activate_' ) === 0;
