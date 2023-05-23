@@ -74,6 +74,18 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Hide widget from panel.
+	 *
+	 * Hide the toggle widget from the panel if nested-accordion experiment is active.
+	 *
+	 * @since 3.15.0
+	 * @return bool
+	 */
+	public function show_in_panel(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+	}
+
+	/**
 	 * Register accordion widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -112,6 +124,17 @@ class Widget_Accordion extends Widget_Base {
 				'default' => esc_html__( 'Accordion Content', 'elementor' ),
 			]
 		);
+
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
+			$this->add_deprecation_message(
+				'3.15.0',
+				esc_html__(
+					'You are currently editing an Accordion Widget in its old version. Any new Accordion widget dragged into the canvas will be the new Accordion widget, with the improved Nested capabilities.',
+					'elementor'
+				),
+				'nested-accordion'
+			);
+		}
 
 		$this->add_control(
 			'tabs',
