@@ -29,4 +29,12 @@ class User_Introduction extends User_Config_Base {
 
 		return true;
 	}
+
+	public static function set_viewed( $key, $value ): bool {
+		return static::set_sub_option( $key, $value );
+	}
+
+	public static function is_viewed( $key ): bool {
+		return ! ! static::get_sub_option( $key );
+	}
 }

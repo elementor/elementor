@@ -251,7 +251,7 @@ class User {
 	 * @static
 	 */
 	public static function set_introduction_viewed( array $data ) {
-		User_Introduction::set_sub_option( $data['introductionKey'], true );
+		User_Introduction::set_viewed( $data['introductionKey'], true );
 	}
 
 	/**
