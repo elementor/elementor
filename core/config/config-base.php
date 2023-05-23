@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Config;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -45,9 +47,7 @@ abstract class Config_Base {
 	final public static function set( $value ) {
 		$old_value = static::get();
 
-		// Avoid changing the value on the frontend.
-		$current_action = current_action();
-		if ( ! is_admin() && ( ! $current_action || 0 !== strpos( $current_action, 'activate_elementor' /* covers also pro */ ) ) ) {
+		if ( ! Plugin::$instance->config->is_admin() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 
@@ -73,7 +73,7 @@ abstract class Config_Base {
 	}
 
 	final public static function delete(): bool {
-		if ( ! is_admin() ) {
+		if ( ! Plugin::$instance->config->is_admin() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 

@@ -18,6 +18,10 @@ class Manager extends BaseModule {
 		add_action( 'elementor/init', function() {
 			do_action( 'elementor/config/register', $this );
 		}, 0 );
+
+		add_action( 'activate_plugin', function() {
+			$this->is_plugin_activation = true;
+		}, 0 );
 	}
 
 	public function get_name() {
@@ -50,5 +54,13 @@ class Manager extends BaseModule {
 
 	public function get_all() {
 		return $this->registered;
+	}
+
+	public function is_admin(): bool {
+		$current_action = current_action();
+
+		$is_plugin_activation = strpos( $current_action, 'activate_' ) === 0;
+
+		return is_admin() || $is_plugin_activation;
 	}
 }
