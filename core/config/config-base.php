@@ -39,7 +39,7 @@ abstract class Config_Base {
 		}
 
 		// Avoid changing to a value that the user doesn't have permission to.
-		if ( ! static::has_permission( $value ) ) {
+		if ( ! Manager::is_allowed_cli() && ! static::has_permission( $value ) ) {
 			throw new \Exception( static::class . ': User does not have permission to change config' );
 		}
 

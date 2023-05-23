@@ -36,6 +36,10 @@ class Manager extends BaseModule {
 		return is_admin() || $is_plugin_activation;
 	}
 
+	public static function is_allowed_cli(): bool {
+		return defined( 'WP_CLI' ) && WP_CLI && ! get_current_user_id();
+	}
+
 	/**
 	 * @param Config_Base|string $classname
 	 */
