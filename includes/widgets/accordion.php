@@ -106,7 +106,7 @@ class Widget_Accordion extends Widget_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Accordion Title', 'elementor' ),
 				'dynamic' => [
@@ -122,7 +122,6 @@ class Widget_Accordion extends Widget_Base {
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Accordion Content', 'elementor' ),
-				'show_label' => false,
 			]
 		);
 
