@@ -8,19 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Usage_Last_Send extends Site_Config_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'tracker_last_send';
 	}
 
-	public static function get_default() {
+	public static function get_default(): int {
 		return false;
 	}
 
-	public static function should_autoload() {
+	public static function should_autoload(): bool {
 		return false;
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return is_int( $value );
 	}
 }

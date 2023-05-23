@@ -16,7 +16,7 @@ class Site_Beta extends Site_Config_Base {
 
 	const VALUE_FALSE = 'no';
 
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'beta';
 	}
 
@@ -24,7 +24,7 @@ class Site_Beta extends Site_Config_Base {
 		return false;
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		return static::VALUE_FALSE;
 	}
 }

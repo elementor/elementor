@@ -16,15 +16,15 @@ class Site_Usage_Opt_In extends Site_Config_Base {
 
 	const VALUE_FALSE = 'no';
 
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'allow_tracking';
 	}
 
-	public static function should_autoload() {
+	public static function should_autoload(): bool {
 		return false;
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		return static::VALUE_FALSE;
 	}
 }

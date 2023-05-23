@@ -12,11 +12,15 @@ class Site_Is_Onboarded extends Site_Config_Base {
 
 	use Config_Yes_No_Trait;
 
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'onboarded';
 	}
 
-	public static function should_autoload() {
+	public static function should_autoload(): bool {
 		return false;
+	}
+
+	public static function get_default() {
+		return static::VALUE_FALSE;
 	}
 }

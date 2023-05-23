@@ -19,4 +19,8 @@ class Site_Maintenance_Mode_Exclude_Roles extends Site_Config_Base {
 	public static function should_autoload(): bool {
 		return true;
 	}
+
+	protected static function validate( $value ): bool {
+		return is_array( $value );
+	}
 }

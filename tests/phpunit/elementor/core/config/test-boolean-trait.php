@@ -6,57 +6,6 @@ use Elementor\Core\Config\Config_Base;
 use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
-	use Config_Boolean_Trait;
-
-	const PREFIX = 'elementor_';
-
-	static $value;
-	static $changed;
-
-
-	public static function should_autoload() {
-		return false;
-	}
-
-	public static function get_key() {
-		return 'test';
-	}
-
-	public static function get_default() {
-		return static::VALUE_FALSE;
-	}
-
-	public static function get_value() {
-		return static::$value;
-	}
-
-	public static function setter( $value ) {
-		static::$value = $value;
-		return true;
-	}
-
-	public static function deleter(): bool {
-		static::$value = null;
-		return true;
-	}
-
-	public static function on_change( $new_value, $old_value = null ) {
-		static::$changed = [
-			'new' => $new_value,
-			'old' => $old_value,
-		];
-	}
-
-	protected static function validate( $value ) {
-		return is_bool( $value );
-	}
-
-	protected static function has_permission($value) {
-		return true;
-	}
-}
-
 class Test_Config_Boolean_Trait extends Elementor_Test_Base {
 
 	public function test__on_change() {

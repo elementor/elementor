@@ -21,12 +21,12 @@ class Site_Google_Fonts extends Site_Config_Base {
 		return 'google_font';
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		// Validate as string, the options array is converted by PHP to integers.
 		return in_array( $value, [ static::VALUE_TRUE, static::VALUE_FALSE ] );
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		// TODO: For future use, using for new installs.
 		//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
 		//$default_value = $is_new_site ? static::OPTION_FALSE : static::OPTION_TRUE;

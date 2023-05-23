@@ -14,8 +14,6 @@ abstract class Config_Base {
 	const VALUE_TRUE = true;
 	const VALUE_FALSE = false;
 
-	abstract public static function get_options(): array;
-
 	/**
 	 * @return mixed
 	 */
@@ -35,23 +33,24 @@ abstract class Config_Base {
 	 * @param mixed $value
 	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	final public static function set( $value ): bool {
-		$old_value = static::get_value();
-
 		if ( ! Manager::is_admin() ) {
-			throw new \Error( 'Config can only be changed in the admin' );
-		}
-
-		// Avoid changing to a value that is not in the options.
-		if ( ! static::validate( $value ) ) {
-			throw new \Error( static::class . ': Invalid value: ' . var_export( $value, true ) );
+			throw new \Exception( static::class . ': Config can only be changed in the admin' );
 		}
 
 		// Avoid changing to a value that the user doesn't have permission to.
 		if ( ! static::has_permission( $value ) ) {
-			return false;
+			throw new \Exception( static::class . ': User does not have permission to change config' );
 		}
+
+		// Avoid changing to a value that is not in the options.
+		if ( ! static::validate( $value ) ) {
+			throw new \Exception( static::class . ': Invalid value: ' . var_export( $value, true ) );
+		}
+
+		$old_value = static::get_value();
 
 		$success = static::setter( $value );
 
@@ -114,9 +113,7 @@ abstract class Config_Base {
 	 */
 	abstract protected static function setter( $value ): bool;
 
-	protected static function validate( $value ) {
-		return in_array( $value, array_keys( static::get_options() ), true );
-	}
+	abstract protected static function validate( $value ): bool;
 
 	abstract protected static function has_permission( $value ): bool;
 

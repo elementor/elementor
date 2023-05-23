@@ -88,12 +88,12 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_api_upgrade_plugin() {
-		$upgrade_notice = Api::get_upgrade_notice();
-		if ( empty( $upgrade_notice ) ) {
+		if ( ! current_user_can( 'update_plugins' ) ) {
 			return false;
 		}
 
-		if ( ! current_user_can( 'update_plugins' ) ) {
+		$upgrade_notice = Api::get_upgrade_notice();
+		if ( empty( $upgrade_notice ) ) {
 			return false;
 		}
 
@@ -164,12 +164,12 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_api_notice() {
-		$admin_notice = Api::get_admin_notice();
-		if ( empty( $admin_notice ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return false;
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		$admin_notice = Api::get_admin_notice();
+		if ( empty( $admin_notice ) ) {
 			return false;
 		}
 

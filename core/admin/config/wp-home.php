@@ -8,15 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Home extends WP_Option_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'home';
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		return '';
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return ! empty( $value ) && is_string( $value );
 	}
 }

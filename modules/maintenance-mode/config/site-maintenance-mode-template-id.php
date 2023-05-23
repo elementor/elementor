@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Maintenance_Mode\Config;
 
+use Elementor\Core\Config\Config_Enum_Trait;
 use Elementor\Core\Config\Site_Config_Base;
 use Elementor\Plugin;
 
@@ -9,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Maintenance_Mode_Template_Id extends Site_Config_Base {
+	use Config_Enum_Trait;
 
 	const OPTION_DEFAULT = '';
 

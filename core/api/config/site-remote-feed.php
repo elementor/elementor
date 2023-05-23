@@ -9,19 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Remote_Feed extends Site_Config_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'remote_info_feed_data';
 	}
 
-	public static function get_default() {
+	public static function get_default(): array {
 		return [];
 	}
 
-	public static function should_autoload() {
+	public static function should_autoload(): bool {
 		return false;
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return is_array( $value );
 	}
 }

@@ -8,15 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Site_Icon extends WP_Option_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'site_icon';
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		return '';
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return is_scalar( $value );
 	}
 }

@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class User_Introduction extends User_Config_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'introduction';
 	}
 
-	public static function get_default() {
+	public static function get_default(): array {
 		return [];
 	}
 

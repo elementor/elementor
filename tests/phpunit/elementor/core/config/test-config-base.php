@@ -3,21 +3,20 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use Elementor\Core\Config\Config_Base;
-use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
+class Config_Base_Test extends Config_Base {
 	const PREFIX = 'elementor_';
 
 	static $value;
 	static $changed;
 
 
-	public static function should_autoload() {
+	public static function should_autoload(): bool {
 		return false;
 	}
 
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'test';
 	}
 
@@ -29,7 +28,7 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 		return static::$value;
 	}
 
-	public static function setter( $value ) {
+	public static function setter( $value ): bool {
 		static::$value = $value;
 		return true;
 	}
@@ -46,29 +45,29 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 		];
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return is_string( $value );
 	}
 
-	protected static function has_permission($value){
+	protected static function has_permission( $value ): bool {
 		return true;
 	}
 }
 
 class Config_Base_Test_Sub_Option extends Config_Base_Test {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'test_sub_option';
 	}
 
-	public static function get_default() {
-		return ['default-value'];
+	public static function get_default(): array {
+		return [ 'default-value' ];
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ) : bool {
 		return is_array( $value );
 	}
 
-	protected static function has_permission($value){
+	protected static function has_permission( $value ): bool {
 		return true;
 	}
 }

@@ -4,28 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Site_Option_Test extends \Elementor\Core\Config\Site_Config_Base {
-
-	public static function get_options() {
-		return [
-			'test' => 'Test',
-		];
-	}
-
-	public static function should_autoload() {
-		return false;
-	}
-
-	public static function get_key() {
-		return 'test';
-	}
-
-	public static function get_default() {
-		return 'default-value';
-	}
-}
-
-class Test_Site_Option extends Elementor_Test_Base {
+class Test_Site_Config extends Elementor_Test_Base {
 	public function test__get() {
 		// Act
 		$this->set_test_value();
@@ -62,7 +41,7 @@ class Test_Site_Option extends Elementor_Test_Base {
 		$this->assertEmpty( get_option( 'elementor_test' ) );
 	}
 
-	protected static function validate( $value ) {
+	protected static function validate( $value ): bool {
 		return is_string( $value );
 	}
 

@@ -2,24 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
+use Elementor\Core\Config\User_Config_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
-
-class User_Option_Test extends \Elementor\Core\Config\User_Config_Base {
-
-	public static function get_key() {
-		return 'test';
-	}
-
-	public static function get_default() {
-		return 'default-value';
-	}
-
-	public static function get_options() {
-		return [
-			'test' => 'Test',
-		];
-	}
-}
 
 class Test_User_Option extends Elementor_Test_Base {
 
@@ -34,12 +18,12 @@ class Test_User_Option extends Elementor_Test_Base {
 		$this->set_test_value();
 
 		// Assert
-		$this->assertEquals( 'test' , User_Option_Test::get_value() );
+		$this->assertEquals( 'test' , User_Config_Test::get_value() );
 	}
 
 	public function test__set() {
 		// Act
-		User_Option_Test::set( 'test' );
+		User_Config_Test::set( 'test' );
 
 		// Assert
 		$this->assertEquals( 'test' , get_user_option( 'elementor_test', get_current_user_id() ) );
@@ -47,7 +31,7 @@ class Test_User_Option extends Elementor_Test_Base {
 
 	public function test__get_default() {
 		// Assert
-		$this->assertEquals( 'default-value' , User_Option_Test::get_value() );
+		$this->assertEquals( 'default-value' , User_Config_Test::get_value() );
 	}
 
 	public function test_delete() {
@@ -57,7 +41,7 @@ class Test_User_Option extends Elementor_Test_Base {
 		$this->test__get();
 
 		// Act
-		User_Option_Test::delete();
+		User_Config_Test::delete();
 
 		// Assert
 		$this->assertEmpty( get_user_option( 'elementor_test', get_current_user_id() ) );
