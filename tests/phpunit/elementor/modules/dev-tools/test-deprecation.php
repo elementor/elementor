@@ -203,7 +203,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_deprecated_function_as_admin() {
 		$this->act_as_admin();
-		$function_name = 'blablabla';
+		$function_name = 'test';
 		$this->setExpectedDeprecated( $function_name );
 		$this->run_function_deprecated_test( $function_name );
 	}
