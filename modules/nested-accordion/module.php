@@ -15,11 +15,17 @@ class Module extends \Elementor\Core\Base\Module {
 	const EXPERIMENT_NAME = 'nested-accordion';
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	public function get_name() {
 		return self::EXPERIMENT_NAME;
+	}
+
+	public function get_widgets() {
+		return [
+			'NestedAccordion',
+		];
 	}
 
 	/**
@@ -29,7 +35,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public static function get_experimental_data() {
 		return [
-			'name' => static::EXPERIMENT_NAME,
+			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Nested Accordion', 'elementor' ),
 			'description' => sprintf(
 			/* translators: 1: Link opening tag, 2: Link closing tag. */
