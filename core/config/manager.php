@@ -32,7 +32,7 @@ class Manager extends BaseModule {
 	 * @param Config_Base|string $classname
 	 */
 	public function register( $classname ) {
-		$this->registered[ $classname::get_key() ] = $classname::get_key();
+		$this->registered[ $classname::get_key() ] = $classname;
 
 		if ( method_exists( $classname, 'on_register' ) ) {
 			$classname::on_register();
