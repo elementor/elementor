@@ -5,7 +5,7 @@ export default class NestedAccordion extends Base {
 		return {
 			selectors: {
 				accordionContentContainers: '.e-n-accordion > .e-con',
-				accordionTitles: '.e-n-accordion details',
+				accordionItems: '.e-n-accordion .e-n-accordion-item',
 			},
 		};
 	}
@@ -15,7 +15,7 @@ export default class NestedAccordion extends Base {
 
 		return {
 			$contentContainers: this.findElement( selectors.accordionContentContainers ),
-			$titles: this.findElement( selectors.accordionTitles ),
+			$items: this.findElement( selectors.accordionItems ),
 		};
 	}
 
@@ -28,10 +28,10 @@ export default class NestedAccordion extends Base {
 	}
 
 	interlaceContainers() {
-		const { $contentContainers, $titles } = this.getDefaultElements();
+		const { $contentContainers, $items } = this.getDefaultElements();
 
 		$contentContainers.each( ( index, element ) => {
-			$titles[ index ].appendChild( element );
+			$items[ index ].appendChild( element );
 		} );
 	}
 }
