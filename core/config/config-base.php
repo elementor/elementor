@@ -44,7 +44,7 @@ abstract class Config_Base {
 	 *
 	 * @return bool
 	 */
-	final public static function set( $value ) {
+	final public static function set( $value ): bool {
 		$old_value = static::get();
 
 		if ( ! Manager::is_admin() ) {

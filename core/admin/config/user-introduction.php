@@ -16,7 +16,7 @@ class User_Introduction extends User_Config_Base {
 		return [];
 	}
 
-	public static function validate( $value ) {
+	public static function validate( $value ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;
 		}

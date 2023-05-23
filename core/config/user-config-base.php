@@ -19,7 +19,7 @@ abstract class User_Config_Base extends Config_Base {
 		return $value;
 	}
 
-	public static function setter( $value ) {
+	public static function setter( $value ): bool {
 		return update_user_option( get_current_user_id(), static::get_full_key(), $value );
 	}
 
@@ -27,7 +27,7 @@ abstract class User_Config_Base extends Config_Base {
 		return delete_user_option( get_current_user_id(), static::get_full_key() );
 	}
 
-	protected static function has_permission( $value ) {
+	protected static function has_permission( $value ): bool {
 		return is_user_logged_in() || current_user_can( 'manage_options' );
 	}
 }

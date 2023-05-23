@@ -41,7 +41,7 @@ abstract class WP_Option_Base extends Config_Base {
 		return update_option( static::get_full_key(), $value );
 	}
 
-	protected static function has_permission( $value ) {
+	protected static function has_permission( $value ): bool {
 		return current_user_can( 'manage_options' );
 	}
 }

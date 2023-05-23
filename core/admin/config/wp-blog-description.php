@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Blog_Description extends WP_Option_Base {
-	public static function get_key() {
+	public static function get_key(): string {
 		return 'blogdescription';
 	}
 
-	public static function get_default() {
+	public static function get_default(): string {
 		return '';
 	}
 
