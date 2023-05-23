@@ -28,6 +28,14 @@ class Manager extends BaseModule {
 		return 'config';
 	}
 
+	static function is_admin(): bool {
+		$current_action = current_action();
+
+		$is_plugin_activation = strpos( $current_action, 'activate_' ) === 0;
+
+		return is_admin() || $is_plugin_activation;
+	}
+
 	/**
 	 * @param Config_Base|string $classname
 	 */
@@ -54,13 +62,5 @@ class Manager extends BaseModule {
 
 	public function get_all() {
 		return $this->registered;
-	}
-
-	public function is_admin(): bool {
-		$current_action = current_action();
-
-		$is_plugin_activation = strpos( $current_action, 'activate_' ) === 0;
-
-		return is_admin() || $is_plugin_activation;
 	}
 }

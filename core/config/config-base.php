@@ -47,7 +47,7 @@ abstract class Config_Base {
 	final public static function set( $value ) {
 		$old_value = static::get();
 
-		if ( ! Plugin::$instance->config->is_admin() ) {
+		if ( ! Manager::is_admin() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 
@@ -73,7 +73,7 @@ abstract class Config_Base {
 	}
 
 	final public static function delete(): bool {
-		if ( ! Plugin::$instance->config->is_admin() ) {
+		if ( ! Manager::is_admin() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 
