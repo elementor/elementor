@@ -5,7 +5,7 @@ export default class NestedAccordion extends Base {
 		return {
 			selectors: {
 				accordionContentContainers: '.e-n-accordion > .e-con',
-				accordionItems: '.e-n-accordion .e-n-accordion-item',
+				accordionItems: '.e-n-accordion-item',
 			},
 		};
 	}
