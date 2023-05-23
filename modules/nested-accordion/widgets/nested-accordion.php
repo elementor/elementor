@@ -87,8 +87,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$repeater->add_control( 'item_title', [
 			'label' => esc_html__( 'Title', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
-			'default' => esc_html__( 'item Title', 'elementor' ),
-			'placeholder' => esc_html__( 'item Title', 'elementor' ),
+			'default' => esc_html__( 'Item Title', 'elementor' ),
+			'placeholder' => esc_html__( 'Item Title', 'elementor' ),
 			'label_block' => true,
 			'dynamic' => [
 				'active' => true,
