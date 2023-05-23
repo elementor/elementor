@@ -95,7 +95,7 @@ class Widget_Toggle extends Widget_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
@@ -111,7 +111,6 @@ class Widget_Toggle extends Widget_Base {
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Toggle Content', 'elementor' ),
-				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],
