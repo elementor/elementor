@@ -2,8 +2,6 @@
 
 namespace Elementor\Core\Config;
 
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
