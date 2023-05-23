@@ -210,7 +210,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_deprecated_argument_as_admin() {
 		$this->act_as_admin();
-		$argument_name = 'argumatura';
+		$argument_name = 'test';
 		$this->setExpectedDeprecated( $argument_name );
 		$this->expectError();
 		$this->run_argument_deprecated_test( $argument_name );
