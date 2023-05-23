@@ -117,8 +117,8 @@ class Test_Manager extends Elementor_Test_Base {
 		// Make sure that it fetched again from the DB and not from the cache.
 		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
 
-		$name = WP_Blog_Name::get();
-		$description = WP_Blog_Description::get();
+		$name = WP_Blog_Name::get_value();
+		$description = WP_Blog_Description::get_value();
 
 		$expected_name = 'Test name';
 		$expected_description = 'Test description';

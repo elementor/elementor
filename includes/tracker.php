@@ -64,7 +64,7 @@ class Tracker {
 	 * @return string Return `yes` if tracking allowed, `no` otherwise.
 	 */
 	public static function check_for_settings_optin( $new_value ) {
-		$old_value = Site_Usage_Opt_In::get();
+		$old_value = Site_Usage_Opt_In::get_value();
 
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
 			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
@@ -274,7 +274,7 @@ class Tracker {
 	 *                   tracking data never sent.
 	 */
 	private static function get_last_send_time() {
-		$last_send_time = Site_Usage_Last_Send::get();
+		$last_send_time = Site_Usage_Last_Send::get_value();
 
 		/**
 		 * Tracker last send time.

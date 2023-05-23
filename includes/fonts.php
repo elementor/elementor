@@ -1696,7 +1696,7 @@ class Fonts {
 	}
 
 	public static function get_font_display_setting() {
-		return Site_Font_Display::get();
+		return Site_Font_Display::get_value();
 	}
 
 	public static function reset_local_cache() {

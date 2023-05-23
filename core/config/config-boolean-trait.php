@@ -16,7 +16,7 @@ trait Config_Boolean_Trait {
 	}
 
 	public static function is_true(): bool {
-		return static::VALUE_TRUE === static::get();
+		return static::VALUE_TRUE === static::get_value();
 	}
 
 	public static function is_false(): bool {

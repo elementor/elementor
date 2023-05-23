@@ -27,7 +27,7 @@ class Config_Boolean_Trait_Test extends \Elementor\Core\Config\Config_Base {
 		return static::VALUE_FALSE;
 	}
 
-	public static function get() {
+	public static function get_value() {
 		return static::$value;
 	}
 

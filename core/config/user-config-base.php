@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class User_Config_Base extends Config_Base {
 	const PREFIX = 'elementor_';
 
-	public static function get() {
+	public static function get_value() {
 		$value = get_user_option( static::get_full_key(), get_current_user_id() );
 
 		if ( false === $value ) {

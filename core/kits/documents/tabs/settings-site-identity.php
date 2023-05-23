@@ -66,7 +66,7 @@ class Settings_Site_Identity extends Tab_Base {
 			'site_name',
 			[
 				'label' => esc_html__( 'Site Name', 'elementor' ),
-				'default' => WP_Blog_Name::get(),
+				'default' => WP_Blog_Name::get_value(),
 				'placeholder' => esc_html__( 'Choose name', 'elementor' ),
 				'label_block' => true,
 				'export' => false,

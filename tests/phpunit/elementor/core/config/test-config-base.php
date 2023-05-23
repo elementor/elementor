@@ -25,7 +25,7 @@ class Config_Base_Test extends \Elementor\Core\Config\Config_Base {
 		return 'default-value';
 	}
 
-	public static function get() {
+	public static function get_value() {
 		return static::$value;
 	}
 

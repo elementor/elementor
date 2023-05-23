@@ -903,11 +903,11 @@ class Admin extends App {
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
 			'user' => [
-				'introduction' => User_Introduction::get(),
+				'introduction' => User_Introduction::get_value(),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => User_Beta_Tester::SIGNUP,
-				'has_email' => User_Beta_Tester::get(),
+				'has_email' => User_Beta_Tester::get_value(),
 				'option_enabled' => Site_Beta::is_on(),
 				'signup_dismissed' => User_Introduction::is_viewed( User_Beta_Tester::SIGNUP ),
 			],

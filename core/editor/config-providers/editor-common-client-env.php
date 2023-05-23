@@ -72,7 +72,7 @@ class Editor_Common_Client_Env {
 			'user' => [
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User_Introduction::get(),
+				'introduction' => User_Introduction::get_value(),
 				'locale' => get_user_locale(),
 			],
 			'preview' => [

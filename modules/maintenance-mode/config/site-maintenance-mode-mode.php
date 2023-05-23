@@ -37,15 +37,15 @@ class Site_Maintenance_Mode_Mode extends Site_Config_Base {
 	}
 
 	public static function is_maintenance(): bool {
-		return static::OPTION_MAINTENANCE === static::get();
+		return static::OPTION_MAINTENANCE === static::get_value();
 	}
 
 	public static function is_coming_soon(): bool {
-		return static::OPTION_COMING_SOON === static::get();
+		return static::OPTION_COMING_SOON === static::get_value();
 	}
 
 	public static function is_disabled(): bool {
-		return static::OPTION_DISABLED === static::get();
+		return static::OPTION_DISABLED === static::get_value();
 	}
 
 	public static function set_maintenance() {

@@ -51,11 +51,11 @@ class Library extends \WP_CLI_Command {
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
-				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . WP_Blog_Name::get() );
+				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . WP_Blog_Name::get_value() );
 
 				$this->do_sync( isset( $assoc_args['force'] ) );
 
-				\WP_CLI::success( 'Done! - ' . WP_Home::get() );
+				\WP_CLI::success( 'Done! - ' . WP_Home::get_value() );
 
 				restore_current_blog();
 			}

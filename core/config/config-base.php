@@ -45,7 +45,7 @@ abstract class Config_Base {
 	 * @return bool
 	 */
 	final public static function set( $value ): bool {
-		$old_value = static::get();
+		$old_value = static::get_value();
 
 		if ( ! Manager::is_admin() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
@@ -94,13 +94,13 @@ abstract class Config_Base {
 	}
 
 	public static function get_sub_option( $key ) {
-		$parent_value = static::get();
+		$parent_value = static::get_value();
 
 		return isset( $parent_value[ $key ] ) ? $parent_value[ $key ] : null;
 	}
 
 	public static function set_sub_option( $key, $value ) {
-		$parent_value = static::get();
+		$parent_value = static::get_value();
 		if ( ! is_array( $parent_value ) ) {
 			throw new \Error( 'Parent option is not an array' );
 		}
@@ -111,7 +111,7 @@ abstract class Config_Base {
 	}
 
 	public static function delete_sub_option( $key ) {
-		$parent_value = static::get();
+		$parent_value = static::get_value();
 		unset( $parent_value[ $key ] );
 
 		return static::set( $parent_value );

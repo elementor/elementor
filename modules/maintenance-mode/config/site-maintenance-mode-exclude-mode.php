@@ -31,11 +31,11 @@ class Site_Maintenance_Mode_Exclude_Mode extends Site_Config_Base {
 	}
 
 	public static function is_logged_in(): bool {
-		return static::OPTION_LOGGED_IN === static::get();
+		return static::OPTION_LOGGED_IN === static::get_value();
 	}
 
 	public static function is_custom(): bool {
-		return static::OPTION_CUSTOM === static::get();
+		return static::OPTION_CUSTOM === static::get_value();
 	}
 
 	public static function set_logged_in() {

@@ -188,7 +188,7 @@ class Api {
 	public static function get_library_data( $force_update = false ) {
 		self::get_info_data( $force_update );
 
-		return Site_Remote_Library::get();
+		return Site_Remote_Library::get_value();
 	}
 
 	/**
@@ -208,7 +208,7 @@ class Api {
 	public static function get_feed_data( $force_update = false ) {
 		self::get_info_data( $force_update );
 
-		return Site_Remote_Feed::get();
+		return Site_Remote_Feed::get_value();
 	}
 
 	/**

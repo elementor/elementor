@@ -294,7 +294,7 @@ class User {
 	 * @static
 	 */
 	public static function get_introduction_meta( $key = '' ) {
-		$user_introduction_meta = User_Introduction::get();
+		$user_introduction_meta = User_Introduction::get_value();
 
 		if ( ! $user_introduction_meta ) {
 			$user_introduction_meta = [];

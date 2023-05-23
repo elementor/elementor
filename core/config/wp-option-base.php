@@ -29,7 +29,7 @@ abstract class WP_Option_Base extends Config_Base {
 		return get_option( static::get_full_key() );
 	}
 
-	final public static function get() {
+	final public static function get_value() {
 		return get_option( static::get_full_key(), static::get_default() );
 	}
 

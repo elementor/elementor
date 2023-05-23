@@ -29,7 +29,7 @@ class Site_Usage_Notice extends Site_Config_Base {
 	}
 
 	public static function is_hidden() {
-		return '1' === static::get();
+		return '1' === static::get_value();
 	}
 
 	public static function set_hidden() {

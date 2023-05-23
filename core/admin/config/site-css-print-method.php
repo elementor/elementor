@@ -32,7 +32,7 @@ class Site_CSS_Print_Method extends Site_Config_Base {
 	}
 
 	public static function is_external() {
-		return static::OPTION_EXTERNAL === static::get();
+		return static::OPTION_EXTERNAL === static::get_value();
 	}
 
 	public static function on_wp_change( $new_value, $old_value = null ) {

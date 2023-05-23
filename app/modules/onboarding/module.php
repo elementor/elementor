@@ -77,7 +77,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',
-			'onboardingAlreadyRan' => Site_Is_Onboarded::get(),
+			'onboardingAlreadyRan' => Site_Is_Onboarded::get_value(),
 			'onboardingVersion' => self::VERSION,
 			'isLibraryConnected' => $library->is_connected(),
 			// Used to check if the Hello Elementor theme is installed but not activated.
@@ -85,7 +85,7 @@ class Module extends BaseModule {
 			'helloActivated' => 'hello-elementor' === get_option( 'template' ),
 			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
-			'siteName' => esc_html( WP_Blog_Name::get() ),
+			'siteName' => esc_html( WP_Blog_Name::get_value() ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',

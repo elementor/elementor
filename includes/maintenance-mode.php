@@ -136,7 +136,7 @@ class Maintenance_Mode {
 		}
 
 		if ( Exclude_Mode::is_custom() ) {
-			$exclude_roles = Exclude_Roles::get();
+			$exclude_roles = Exclude_Roles::get_value();
 			$user_roles = $user->roles;
 
 			if ( is_multisite() && is_super_admin() ) {
@@ -160,11 +160,11 @@ class Maintenance_Mode {
 		}
 
 		// Setup global post for Elementor\frontend so `_has_elementor_in_page = true`.
-		$GLOBALS['post'] = get_post( Template_Id::get() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$GLOBALS['post'] = get_post( Template_Id::get_value() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
 		query_posts( [
-			'p' => Template_Id::get(),
+			'p' => Template_Id::get_value(),
 			'post_type' => Source_Local::CPT,
 		] );
 	}
@@ -272,7 +272,7 @@ class Maintenance_Mode {
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
 		] );
 
-		$document = Plugin::$instance->documents->get( Template_Id::get() );
+		$document = Plugin::$instance->documents->get( Template_Id::get_value() );
 
 		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
@@ -320,7 +320,7 @@ class Maintenance_Mode {
 	 * @access public
 	 */
 	public function __construct() {
-		$is_enabled = ! Mode::is_disabled() && (bool) Template_Id::get();
+		$is_enabled = ! Mode::is_disabled() && (bool) Template_Id::get_value();
 
 		if ( is_admin() ) {
 			$page_id = Tools::PAGE_ID;
@@ -348,7 +348,7 @@ class Maintenance_Mode {
 	 * @access private
 	 */
 	private function print_template_description() {
-		$template_id = Template_Id::get();
+		$template_id = Template_Id::get_value();
 
 		$edit_url = '';
 
