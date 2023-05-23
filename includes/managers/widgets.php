@@ -5,7 +5,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
-use Elementor\Modules\NestedAccordion\Widgets\NestedAccordion;
+use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +46,7 @@ class Widgets_Manager {
 	 */
 	private $_promoted_widgets = [
 		'nested-elements' => NestedTabs::class,
-		'nested-accordion' => NestedAccordion::class,
+		'nested-accordion' => Nested_Accordion::class,
 	];
 
 	/**

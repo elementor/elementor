@@ -1,30 +1,38 @@
-import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
+import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
-export default class NestedAccordion extends Base {
+export default class Nested_Accordion extends Base {
 	getDefaultSettings() {
 		return {
-			selectors: {},
-			classes: {
-				active: 'e-active',
+			selectors: {
+				accordionContentContainers: '.e-n-accordion > .e-con',
+				accordionTitles: '.e-n-accordion details',
 			},
+		};
+	}
+
+	getDefaultElements() {
+		const selectors = this.getSettings( 'selectors' );
+
+		return {
+			$contentContainers: this.findElement( selectors.accordionContentContainers ),
+			$titles: this.findElement( selectors.accordionTitles ),
 		};
 	}
 
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		this.interlaceContainers();
+		if ( elementorFrontend.isEditMode() ) {
+			this.interlaceContainers();
+		}
 	}
 
 	interlaceContainers() {
-		if ( elementorFrontend.isEditMode() ) {
-			const $titles = this.findElement( '.e-n-accordion details' );
-			let index = 0;
+		const { $contentContainers, $titles } = this.getDefaultElements();
 
-			this.findElement( '.e-n-accordion > .e-con' ).each( function() {
-				$titles[ index ].appendChild( this );
-				index++;
-			} );
-		}
+		$contentContainers.each( ( index, element ) => {
+			$titles[ index ].appendChild( element );
+		} );
 	}
+
 }

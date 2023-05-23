@@ -19,12 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.15.0
  */
-class NestedAccordion extends Widget_Nested_Base {
+class Nested_Accordion extends Widget_Nested_Base {
 
 	const NESTED_ACCORDION = 'nested-accordion';
 
 	public function get_name() {
-		return self::NESTED_ACCORDION;
+		return static::NESTED_ACCORDION;
 	}
 
 	public function get_title() {
@@ -40,7 +40,7 @@ class NestedAccordion extends Widget_Nested_Base {
 	}
 
 	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::NESTED_ACCORDION );
+		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
 	}
 
 	protected function item_content_container( int $index ) {
@@ -139,17 +139,17 @@ class NestedAccordion extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
 
 		foreach ( $items as $index => $item ) {
-			$item_title_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
-			$item_title_classes = [ 'e-n-accordion-item', 'e-normal' ];
-			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-title-' . $id_int : $item['element_css_id'];
+			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
+			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
+			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
 
-			$this->add_render_attribute( $item_title_setting_key, [
+			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
-				'class' => $item_title_classes,
+				'class' => $item_classes,
 			] );
 
-			$title_render_attributes = $this->get_render_attribute_string( $item_title_setting_key );
+			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
 
 			// items content.
 			ob_start();
@@ -157,7 +157,7 @@ class NestedAccordion extends Widget_Nested_Base {
 			$item_content = ob_get_clean();
 
 			$items_title_html .= "\t<details {$title_render_attributes}>";
-			$items_title_html .= "\t\t<summary>{$item_title}</summary>";
+			$items_title_html .= "\t\t<summary class='e-n-accordion-item-title'>{$item_title}</summary>";
 			$items_title_html .= "\t\t{$item_content}";
 			$items_title_html .= "\t</details>";
 		}
@@ -179,7 +179,7 @@ class NestedAccordion extends Widget_Nested_Base {
 			const itemCount = index + 1,
 				itemUid = elementUid + itemCount,
 				itemWrapperKey = itemUid,
-				itemTitleKey = 'item-title-' + itemUid;
+				itemTitleKey = 'item-' + itemUid;
 
 			if ( '' !== item.element_css_id ) {
 				itemId = item.element_css_id;
@@ -192,10 +192,14 @@ class NestedAccordion extends Widget_Nested_Base {
 				'class': [ 'e-n-accordion-item','e-normal' ],
 			} );
 
+			view.addRenderAttribute( itemTitleKey, {
+				'class': [ 'e-n-accordion-item-title' ],
+			} );
+
 			#>
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
-				<summary>{{{ item.item_title }}}</summary>
+				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>{{{ item.item_title }}}</summary>
 			</details>
 			<# } ); #>
 		<# } #>

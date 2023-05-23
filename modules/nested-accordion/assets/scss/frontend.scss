@@ -5,29 +5,32 @@
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
 
-	details {
+	.e-n-accordion {
 
-		summary {
-			list-style: none;
-			font-size: var(--n-accordion-title-font-size);
-			padding: var(--n-accordion-title-padding);
-			border-width: var(--n-accordion-border-width);
-			border-color: var(--n-accordion-border-color);
-			border-style: var(--n-accordion-border-style);
+		&-item {
 
-			i {
-				color: var(--n-accordion-icon-color);
+			> .e-con {
+				border-width: var(--n-accordion-border-width);
+				border-color: var(--n-accordion-border-color);
+				border-style: var(--n-accordion-border-style);
 			}
 
-			svg {
-				fill: var(--n-accordion-icon-color);
-			}
-		}
+			&-title {
+				list-style: none;
+				font-size: var(--n-accordion-title-font-size);
+				padding: var(--n-accordion-title-padding);
+				border-width: var(--n-accordion-border-width);
+				border-color: var(--n-accordion-border-color);
+				border-style: var(--n-accordion-border-style);
 
-		> .e-con {
-			border-width: var(--n-accordion-border-width);
-			border-color: var(--n-accordion-border-color);
-			border-style: var(--n-accordion-border-style);
+				i {
+					color: var(--n-accordion-icon-color);
+				}
+
+				svg {
+					fill: var(--n-accordion-icon-color);
+				}
+			}
 		}
 	}
 }

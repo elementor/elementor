@@ -130,9 +130,7 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
-		$is_nested_tabs_active = Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' );
-
-		if ( $is_nested_tabs_active ) {
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
 			$this->add_deprecation_message(
 				'3.15.0',
 				esc_html__(
