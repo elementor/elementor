@@ -67,6 +67,10 @@ jobs:
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
+      - name: Remove Git Tag
+        uses : ./.github/workflows/remove-git-tag
+        with:
+          TAG_NAME: ${{ env.PACKAGE_VERSION }}
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
