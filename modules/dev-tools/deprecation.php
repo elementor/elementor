@@ -248,7 +248,7 @@ class Deprecation {
 
 	private function is_elementor_file( $stack_element ) {
 		$filename = $stack_element['file'];
-		return ( strpos( $filename, 'elementor/' ) !== false || strpos( $filename, 'elementor-pro/' ) !== false );
+		return ( strpos( $filename, '//elementor/' ) !== false || strpos( $filename, 'elementor-pro/' ) !== false );
 	}
 
 	private function is_plugin( $stack_element ) {
