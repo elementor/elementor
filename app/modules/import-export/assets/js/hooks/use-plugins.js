@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 
 export const PLUGINS_RESPONSE_MAP = Object.freeze( {
-		INITIAL: 'initial',
-		SUCCESS: 'success',
-		ERROR: 'error',
-	} );
+	INITIAL: 'initial',
+	SUCCESS: 'success',
+	ERROR: 'error',
+} );
 
 export const PLUGIN_STATUS_MAP = Object.freeze( {
 	ACTIVE: 'active',
