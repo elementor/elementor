@@ -304,11 +304,11 @@ class Maintenance_Mode {
 	 * @param $old_value
 	 * @param $value
 	 *
-	 * @deprecated 3.14.0 Use `Site_Maintenance_Mode_Mode::on_wp_change()` instead.
+	 * @deprecated 3.14.0 Use `Site_Maintenance_Mode_Mode::on_external_change()` instead.
 	 * @return void
 	 */
 	public function on_update_mode( $old_value, $value ) {
-		Mode::on_wp_change( $value, $old_value );
+		Mode::on_external_change( $value, $old_value );
 	}
 
 	/**

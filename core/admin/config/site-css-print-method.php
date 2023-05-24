@@ -37,7 +37,7 @@ class Site_CSS_Print_Method extends Site_Config_Base {
 		return static::OPTION_EXTERNAL === static::get_value();
 	}
 
-	public static function on_wp_change() {
+	public static function on_external_change() {
 		Plugin::$instance->files_manager->clear_cache();
 	}
 

@@ -19,7 +19,7 @@ class Site_Maintenance_Mode_Mode extends Site_Config_Base {
 		return 'maintenance_mode_mode';
 	}
 
-	public static function on_wp_change( $value, $old_value ) {
+	public static function on_external_change( $value, $old_value ) {
 		do_action( 'elementor/maintenance_mode/mode_changed', $old_value, $value );
 	}
 
