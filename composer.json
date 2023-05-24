@@ -19,6 +19,7 @@
 	},
 	"scripts": {
 	  "lint": "phpcs --standard=ruleset.xml",
+	  "lint:fix": "phpcbf . --standard=ruleset.xml --extensions=php",
 	  "test": "phpunit",
 	  "test:win": "set WP_PHPUNIT__TESTS_CONFIG=./tmp/wordpress-tests-lib/wp-tests-config.php && phpunit --configuration phpunit.xml",
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
