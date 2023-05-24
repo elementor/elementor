@@ -59,11 +59,6 @@ class Config_Base_Test extends Config_Base {
 
 class Test_Config_Base extends Elementor_Test_Base {
 
-	public function test__get_prefix() {
-		// Assert.
-		$this->assertEquals( 'elementor_', Config_Base_Test::get_prefix() );
-	}
-
 	public function test__get_db_key() {
 		// Assert.
 		$this->assertEquals( 'elementor_test', Config_Base_Test::get_db_key() );

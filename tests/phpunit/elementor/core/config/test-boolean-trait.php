@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
 use Elementor\Core\Config\Config_Base;
-use Elementor\Core\Config\Config_Boolean_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Config_Boolean_Trait extends Elementor_Test_Base {
