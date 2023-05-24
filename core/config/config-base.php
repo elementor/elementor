@@ -34,7 +34,7 @@ abstract class Config_Base {
 	 * @throws \Exception
 	 */
 	final public static function set( $value ): bool {
-		if ( ! Manager::is_admin() ) {
+		if ( ! Manager::is_backend() ) {
 			throw new \Exception( static::class . ': Config can only be changed in the admin' );
 		}
 
@@ -62,7 +62,7 @@ abstract class Config_Base {
 	}
 
 	final public static function delete(): bool {
-		if ( ! Manager::is_admin() ) {
+		if ( ! Manager::is_backend() ) {
 			throw new \Error( 'Config can only be changed in the admin' );
 		}
 
