@@ -65,7 +65,7 @@ jobs:
     if: ${{ needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
-        testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container']
+        testSuite: ['elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3

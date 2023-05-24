@@ -9,14 +9,14 @@ import Icon from 'elementor-app/ui/atoms/icon';
 import './plugins-table.scss';
 
 function PluginsTable( {
-		plugins,
-		layout,
-		withHeader,
-		withStatus,
-		onSelect,
-		initialSelected,
-		initialDisabled,
-	} ) {
+	plugins,
+	layout,
+	withHeader,
+	withStatus,
+	onSelect,
+	initialSelected,
+	initialDisabled,
+} ) {
 	const CellText = ( cellTextProps ) => (
 		<Text className="e-app-import-export-plugins-table__cell-content">
 			{ cellTextProps.text }

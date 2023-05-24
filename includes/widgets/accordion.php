@@ -74,6 +74,18 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	/**
+	 * Hide widget from panel.
+	 *
+	 * Hide the toggle widget from the panel if nested-accordion experiment is active.
+	 *
+	 * @since 3.15.0
+	 * @return bool
+	 */
+	public function show_in_panel(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+	}
+
+	/**
 	 * Register accordion widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -94,7 +106,7 @@ class Widget_Accordion extends Widget_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Accordion Title', 'elementor' ),
 				'dynamic' => [
@@ -110,9 +122,19 @@ class Widget_Accordion extends Widget_Base {
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Accordion Content', 'elementor' ),
-				'show_label' => false,
 			]
 		);
+
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
+			$this->add_deprecation_message(
+				'3.15.0',
+				esc_html__(
+					'You are currently editing an Accordion Widget in its old version. Any new Accordion widget dragged into the canvas will be the new Accordion widget, with the improved Nested capabilities.',
+					'elementor'
+				),
+				'nested-accordion'
+			);
+		}
 
 		$this->add_control(
 			'tabs',
@@ -546,6 +568,7 @@ class Widget_Accordion extends Widget_Base {
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
+					'role' => 'button',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -636,6 +659,7 @@ class Widget_Accordion extends Widget_Base {
 						'class': [ 'elementor-tab-title' ],
 						'tabindex': tabindex + tabCount,
 						'data-tab': tabCount,
+						'role': 'button',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );

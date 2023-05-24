@@ -11,10 +11,10 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 
 	getSelect2DefaultOptions() {
 		const defaultOptions = {
-			allowClear: true,
-			placeholder: this.getSelect2Placeholder(),
-			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
-		},
+				allowClear: true,
+				placeholder: this.getSelect2Placeholder(),
+				dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
+			},
 			lockedOptions = this.model.get( 'lockedOptions' );
 
 		// If any non-deletable options are passed, remove the 'x' element from the template for selected items.
