@@ -25,6 +25,7 @@
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
 	  "coverage": "composer run coverage:test && composer run coverage:check",
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+	  "coverage:test:html": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-html coverage-report/html",
 	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
 	},
 	"config": {
