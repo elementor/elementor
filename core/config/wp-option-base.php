@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class WP_Option_Base extends Config_Base {
+
 	public static function get_db_key(): string {
 		return static::get_key();
 	}

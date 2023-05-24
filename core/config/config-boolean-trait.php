@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Config_Boolean_Trait {
+
 	use Config_Enum_Trait;
 
 	public static function get_options(): array {

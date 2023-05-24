@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Config_Base {
+
 	const VALUE_TRUE = true;
 	const VALUE_FALSE = false;
 

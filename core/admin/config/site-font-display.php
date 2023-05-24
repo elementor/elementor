@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Font_Display extends Site_Config_Base {
+
 	use Config_Enum_Trait;
 
 	const OPTION_AUTO = 'auto';

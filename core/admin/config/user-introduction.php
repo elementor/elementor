@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class User_Introduction extends User_Config_Base {
+
 	use Config_Array_Trait;
 
 	public static function get_key(): string {

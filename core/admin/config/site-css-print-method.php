@@ -10,7 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_CSS_Print_Method extends Site_Config_Base {
+
 	use Config_Enum_Trait;
+
 	const OPTION_EXTERNAL = 'external';
 	const OPTION_INTERNAL = 'internal';
 

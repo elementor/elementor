@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Maintenance_Mode_Mode extends Site_Config_Base {
+
 	use Config_Enum_Trait;
 
 	const OPTION_DISABLED = '';

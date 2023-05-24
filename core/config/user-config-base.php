@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class User_Config_Base extends Config_Base {
+
 	const DB_KEY_PREFIX = 'elementor_';
 
 	public static function get_db_key(): string {

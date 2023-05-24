@@ -6,6 +6,7 @@ use Elementor\Core\Config\Config_Base;
 use Elementor\Core\Config\Config_Boolean_Trait;
 
 class Config_Boolean_Trait_Test extends Config_Base {
+
     use Config_Boolean_Trait;
 
     const DB_KEY_PREFIX = 'elementor_';

@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Config_Array_Trait {
+
 	public static function get_sub_option( $key ) {
 		$parent_value = static::get_value();
 
