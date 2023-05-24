@@ -212,7 +212,7 @@ class Deprecation {
 				$calling_source = $external_sources[ array_key_first( $external_sources ) ];
 				$plugin_name = $this->get_plugin_name( $calling_source['file'] );
 				if ( empty( $plugin_name ) ) {
-					$plugin_name = 'none';
+					$plugin_name = 'unknown';
 				}
 				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 			}
@@ -228,10 +228,10 @@ class Deprecation {
 			}
 
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
-				$print_deprecated = array(
+				$print_deprecated = [
 					'source' => $source_message,
 					'plugin' => $plugin_name,
-				);
+				];
 			}
 		}
 		return $print_deprecated;
@@ -351,10 +351,10 @@ class Deprecation {
 			);
 		}
 	}
-
-
-
 	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin, $source ) {
+
+
+		do_action( 'deprecated_argument_run', $function_name, $message, $version );
 
 		$message = empty( $message ) ? '' : ' ' . $message;
 		// These arguments are escaped because they are printed later, and are not escaped when printed.
@@ -385,7 +385,7 @@ class Deprecation {
 	/**
 	 * Deprecated Function
 	 *
-	 * Handles the deprecation process for functions.
+	 * Handles the deprecation process for functions
 	 *
 	 * @since 3.1.0
 	 *
