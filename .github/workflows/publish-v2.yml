@@ -31,13 +31,13 @@ jobs:
       - name: Download release zip file from RC tag artifact
         uses: robinraju/release-downloader@v1.7
         with:
-          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          tag: ${{ env.CLEAN_PACKAGE_NAME }}
           fileName: ${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip
           out-file-path: /tmp/
       - name: Download change log file from RC tag artifact
         uses: robinraju/release-downloader@v1.7
         with:
-          tag: v${{ env.CLEAN_PACKAGE_NAME }}
+          tag: ${{ env.CLEAN_PACKAGE_NAME }}
           fileName: temp-changelog.txt
           out-file-path: /tmp/
       - name: Get Release Name

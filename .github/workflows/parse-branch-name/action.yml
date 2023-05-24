@@ -13,7 +13,6 @@ runs:
       run: |
             CLEAN_PACKAGE_NAME=${{ inputs.BRANCH_NAME }}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
-            CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
 
             PACKAGE_VERSION=$(echo $CLEAN_PACKAGE_NAME | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
             CHANNEL=$(echo $CLEAN_PACKAGE_NAME | cut -d "-" -f2)
