@@ -20,6 +20,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			'click @ui.addImages': 'onAddImagesClick',
 			'click @ui.clearGallery': 'onClearGalleryClick',
 			'click @ui.galleryThumbnails': 'onGalleryThumbnailsClick',
+			'keyup @ui.galleryThumbnails': 'onGalleryThumbnailsKeyPress',
 		} );
 	},
 
@@ -212,6 +213,15 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 	onGalleryThumbnailsClick() {
 		this.openFrame( 'edit' );
+	},
+
+	onGalleryThumbnailsKeyPress( event ) {
+		const ENTER_KEY = 13,
+			SPACE_KEY = 32;
+
+		if ( ENTER_KEY === event.which || SPACE_KEY === event.which ) {
+			this.onGalleryThumbnailsClick( event );
+		}
 	},
 } );
 
