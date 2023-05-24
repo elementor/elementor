@@ -2,35 +2,41 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
 
+use Elementor\Tests\Phpunit\Elementor\Core\Config\Mock\Site_Config_Array;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Config_Array_Trait extends Elementor_Test_Base {
 
+	// test default value
+	public function test__get_default() {
+		// Assert.
+		$this->assertEquals( [ 'default-value' ], Site_Config_Array::get_value() );
+	}
+
 	public function test__get_sub_option() {
 		// Arrange.
-		Config_Base_Test_Sub_Option::$value = [ 'sub_option' => 'sub_value' ];
+		update_option( 'elementor_test', [ 'sub_option' => 'sub_value' ] );
 
 		// Assert.
-		$this->assertEquals( 'sub_value', Config_Base_Test_Sub_Option::get_sub_option( 'sub_option' ) );
+		$this->assertEquals( 'sub_value', Site_Config_Array::get_sub_option( 'sub_option' ) );
 	}
 
 	public function test__set_sub_option() {
-		// Arrange.
-		Config_Base_Test_Sub_Option::$value = [];
+		update_option( 'elementor_test', [] );
 
 		// Act.
-		Config_Base_Test_Sub_Option::set_sub_option( 'sub_option', 'sub_value' );
+		Site_Config_Array::set_sub_option( 'sub_option', 'sub_value' );
 
 		// Assert.
-		$this->assertEquals( [ 'sub_option' => 'sub_value' ], Config_Base_Test_Sub_Option::$value );
+		$this->assertEquals( [ 'sub_option' => 'sub_value' ], get_option( 'elementor_test' ) );
 	}
 
 	public function test__set_invalid_sub_option() {
 		// Assert.
-		$this->expectException( \Error::class );
+		$this->expectException( \Exception::class, 'Invalid sub option' );
 
 		// Act.
-		Config_Base_Test_Sub_Option::set_sub_option( 'sub_option', 'sub_value' );
+		Site_Config_Array::set( 'sub_value' );
 	}
 
 	public function test__delete_sub_option() {
@@ -38,15 +44,9 @@ class Test_Config_Array_Trait extends Elementor_Test_Base {
 		$this->test__set_sub_option();
 
 		// Act.
-		Config_Base_Test_Sub_Option::delete_sub_option( 'sub_option' );
+		Site_Config_Array::delete_sub_option( 'sub_option' );
 
 		// Assert.
-		$this->assertEquals( [], Config_Base_Test_Sub_Option::$value );
-	}
-	// tearDown
-	public function tearDown() {
-		parent::tearDown();
-
-		Config_Base_Test_Sub_Option::$value = null;
+		$this->assertEquals( [], get_option( 'elementor_test', null )  );
 	}
 }

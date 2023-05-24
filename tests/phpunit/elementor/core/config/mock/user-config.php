@@ -1,10 +1,11 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Core\Config;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Config\Mock;
 
 use Elementor\Core\Config\User_Config_Base;
 
-class User_Config_Test extends User_Config_Base {
+class User_Config extends User_Config_Base {
+
     public static function get_key(): string {
         return 'test';
     }
@@ -13,7 +14,7 @@ class User_Config_Test extends User_Config_Base {
         return 'default-value';
     }
 
-    protected static function validate($value): bool {
-        return is_string($value);
+    protected static function validate( $value ): bool {
+        return is_string( $value );
     }
 }

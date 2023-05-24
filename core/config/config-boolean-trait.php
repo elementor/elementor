@@ -17,6 +17,10 @@ trait Config_Boolean_Trait {
 		];
 	}
 
+	public static function validate( $value ): bool {
+		return in_array( $value, [ static::VALUE_TRUE, static::VALUE_FALSE ], true );
+	}
+
 	public static function is_true(): bool {
 		return static::VALUE_TRUE === static::get_value();
 	}

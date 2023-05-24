@@ -2,6 +2,10 @@
 
 namespace Elementor\Core\Config;
 
+use Elementor\Core\Config\Exceptions\InvalidAppException;
+use Elementor\Core\Config\Exceptions\InvalidValueException;
+use Elementor\Core\Config\Exceptions\PermissionDeniedException;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -33,19 +37,18 @@ abstract class Config_Base {
 	 */
 	final public static function set( $value ): bool {
 		if ( ! Manager::is_backend() ) {
-			throw new \Exception( static::class . ': Config can only be changed in the admin' );
+			throw new InvalidAppException( static::class . ': Config can only be changed from backend' );
 		}
 
 		// Avoid changing to a value that the user doesn't have permission to.
 		if ( ! Manager::is_allowed_cli() && ! static::has_permission( $value ) ) {
-			throw new \Exception( static::class . ': User does not have permission to change config' );
+			throw new PermissionDeniedException( static::class . ': User does not have permission to change config' );
 		}
 
 		// Avoid changing to a value that is not in the options.
 		if ( ! static::validate( $value ) ) {
-			throw new \Exception( static::class . ': Invalid value: ' . var_export( $value, true ) );
+			throw new InvalidValueException( static::class . ': Invalid value: ' . var_export( $value, true ) );
 		}
-
 		$old_value = static::get_value();
 
 		$success = static::setter( $value );
