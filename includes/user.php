@@ -25,12 +25,12 @@ class User {
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
 	/**
-	 * @deprecated 3.6.0 use `User_Introduction::get_full_key()` instead.
+	 * @deprecated 3.6.0 use `User_Introduction::get_db_key()` instead.
 	 */
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
 	/**
-	 * @deprecated 3.14.0 use `Site_Beta::get_full_key()` instead.
+	 * @deprecated 3.14.0 use `Site_Beta::get_db_key()` instead.
 	 */
 	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
 

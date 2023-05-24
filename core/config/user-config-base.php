@@ -7,10 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class User_Config_Base extends Config_Base {
-	const PREFIX = 'elementor_';
+	const DB_KEY_PREFIX = 'elementor_';
+
+	public static function get_db_key(): string {
+		return static::DB_KEY_PREFIX . static::get_key();
+	}
 
 	public static function get_value() {
-		$value = get_user_option( static::get_full_key(), get_current_user_id() );
+		$value = get_user_option( static::get_db_key(), get_current_user_id() );
 
 		if ( false === $value ) {
 			$value = static::get_default();
@@ -20,11 +24,11 @@ abstract class User_Config_Base extends Config_Base {
 	}
 
 	public static function setter( $value ): bool {
-		return update_user_option( get_current_user_id(), static::get_full_key(), $value );
+		return update_user_option( get_current_user_id(), static::get_db_key(), $value );
 	}
 
 	protected static function deleter(): bool {
-		return delete_user_option( get_current_user_id(), static::get_full_key() );
+		return delete_user_option( get_current_user_id(), static::get_db_key() );
 	}
 
 	protected static function has_permission( $value ): bool {

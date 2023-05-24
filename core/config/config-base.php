@@ -7,8 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Config_Base {
-	const PREFIX = '';
-
 	const VALUE_TRUE = true;
 	const VALUE_FALSE = false;
 
@@ -17,10 +15,9 @@ abstract class Config_Base {
 	 */
 	abstract public static function get_value();
 
-	/**
-	 * @return string
-	 */
 	abstract public static function get_key(): string;
+
+	abstract public static function get_db_key(): string;
 
 	/**
 	 * @return mixed
@@ -72,14 +69,6 @@ abstract class Config_Base {
 		}
 
 		return static::deleter();
-	}
-
-	public static function get_prefix() {
-		return static::PREFIX;
-	}
-
-	public static function get_full_key() {
-		return static::get_prefix() . static::get_key();
 	}
 
 	public static function get_sub_option( $key ) {

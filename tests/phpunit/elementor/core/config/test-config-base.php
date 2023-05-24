@@ -11,6 +11,9 @@ class Config_Base_Test extends Config_Base {
 	static $value;
 	static $changed;
 
+	public static function get_db_key(): string {
+		return static::PREFIX . static::get_key();
+	}
 
 	public static function should_autoload(): bool {
 		return false;
@@ -79,9 +82,9 @@ class Test_Config_Base extends Elementor_Test_Base {
 		$this->assertEquals( 'elementor_', Config_Base_Test::get_prefix() );
 	}
 
-	public function test__get_full_key() {
+	public function test__get_db_key() {
 		// Assert.
-		$this->assertEquals( 'elementor_test', Config_Base_Test::get_full_key() );
+		$this->assertEquals( 'elementor_test', Config_Base_Test::get_db_key() );
 	}
 
 	public function test__get_sub_option() {

@@ -7,13 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class WP_Option_Base extends Config_Base {
-	const PREFIX = '';
+	public static function get_db_key(): string {
+		return static::get_key();
+	}
 
 	public static function on_register() {
 		if ( method_exists( static::class, 'on_external_change' ) ) {
 			/** @var static $classname */
 			$classname = static::class;
-			$option_name = static::get_full_key();
+			$option_name = static::get_db_key();
 
 			add_action( "add_option_{$option_name}", function( $option, $value ) use ( $classname ) {
 				$classname::on_external_change( $value );
@@ -26,19 +28,19 @@ abstract class WP_Option_Base extends Config_Base {
 	}
 
 	final public static function get_raw() {
-		return get_option( static::get_full_key() );
+		return get_option( static::get_db_key() );
 	}
 
 	final public static function get_value() {
-		return get_option( static::get_full_key(), static::get_default() );
+		return get_option( static::get_db_key(), static::get_default() );
 	}
 
 	final protected static function deleter(): bool {
-		return delete_option( static::get_full_key() );
+		return delete_option( static::get_db_key() );
 	}
 
 	protected static function setter( $value ): bool {
-		return update_option( static::get_full_key(), $value );
+		return update_option( static::get_db_key(), $value );
 	}
 
 	protected static function has_permission( $value ): bool {
