@@ -292,7 +292,7 @@ const renderIconManager = function( props ) {
 	return render( <IconsManager
 		{ ... props }
 		containerElement={ containerElement } />,
-		containerElement,
+	containerElement,
 	);
 };
 export { renderIconManager };
