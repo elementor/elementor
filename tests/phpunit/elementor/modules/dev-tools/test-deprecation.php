@@ -221,12 +221,12 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$this->assertTrue(true); // hack because phpunit demands assert
 	}
 
-	private function run_function_deprecated_test($function_name = 'blablabla'){
-		$this->deprecation->deprecated_function( $function_name, '2.5.0', 'altalena', '6.5.0' );
+	private function run_function_deprecated_test($function_name = 'test'){
+		$this->deprecation->deprecated_function( $function_name, '2.5.0', 'test2', '6.5.0' );
 	}
 
-	private function run_argument_deprecated_test( $argument_name = 'argumatura' ){
-		$this->deprecation->deprecated_argument( $argument_name, '2.5.0', 'jumbo', '6.5.0' );
+	private function run_argument_deprecated_test( $argument_name = 'test' ){
+		$this->deprecation->deprecated_argument( $argument_name, '2.5.0', 'test2', '6.5.0' );
 
 	}
 
