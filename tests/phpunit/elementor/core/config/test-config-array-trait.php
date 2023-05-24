@@ -47,6 +47,6 @@ class Test_Config_Array_Trait extends Elementor_Test_Base {
 		Site_Config_Array::delete_sub_option( 'sub_option' );
 
 		// Assert.
-		$this->assertEquals( [], get_option( 'elementor_test', null )  );
+		$this->assertEquals( [], get_option( 'elementor_test', null ) );
 	}
 }

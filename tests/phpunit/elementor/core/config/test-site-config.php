@@ -14,7 +14,7 @@ class Test_Site_Config extends Elementor_Test_Base {
 		update_option( 'elementor_test', 'test' );
 
 		// Assert
-		$this->assertEquals( 'test' , Site_Config::get_value() );
+		$this->assertEquals( 'test', Site_Config::get_value() );
 	}
 
 	public function test__set() {
@@ -24,7 +24,7 @@ class Test_Site_Config extends Elementor_Test_Base {
 		Site_Config::set( 'test' );
 
 		// Assert
-		$this->assertEquals( 'test' , get_option( 'elementor_test' ) );
+		$this->assertEquals( 'test', get_option( 'elementor_test' ) );
 	}
 
 	public function test__set_from_front_is_avoided() {
@@ -64,7 +64,7 @@ class Test_Site_Config extends Elementor_Test_Base {
 
 	public function test__get_default() {
 		// Assert
-		$this->assertEquals('default-value' , Site_Config::get_value() );
+		$this->assertEquals( 'default-value', Site_Config::get_value() );
 	}
 
 	public function test_delete() {
@@ -102,7 +102,7 @@ class Test_Site_Config extends Elementor_Test_Base {
 		return is_string( $value );
 	}
 
-	private function set_is_backend(bool $value ) {
+	private function set_is_backend( bool $value ) {
 		// Mock is_admin() function.
 		$GLOBALS['current_screen'] = new class( $value ) {
 

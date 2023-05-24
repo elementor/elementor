@@ -49,6 +49,7 @@ abstract class Config_Base {
 		if ( ! static::validate( $value ) ) {
 			throw new InvalidValueException( static::class . ': Invalid value: ' . var_export( $value, true ) );
 		}
+
 		$old_value = static::get_value();
 
 		$success = static::setter( $value );
