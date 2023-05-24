@@ -10,7 +10,7 @@ trait Config_Array_Trait {
 	public static function get_sub_option( $key ) {
 		$parent_value = static::get_value();
 
-		return $parent_value[$key] ?? null;
+		return $parent_value[ $key ] ?? null;
 	}
 
 	public static function set_sub_option( $key, $value ) {
