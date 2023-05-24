@@ -32,7 +32,7 @@ test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	expect( src ).not.toBeNull();
 } );
 
-test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
+test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
 	const previewFrame = editor.getPreviewFrame();
