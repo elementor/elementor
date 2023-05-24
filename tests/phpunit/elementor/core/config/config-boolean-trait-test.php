@@ -8,11 +8,14 @@ use Elementor\Core\Config\Config_Boolean_Trait;
 class Config_Boolean_Trait_Test extends Config_Base {
     use Config_Boolean_Trait;
 
-    const PREFIX = 'elementor_';
+    const DB_KEY_PREFIX = 'elementor_';
 
     static $value;
     static $changed;
 
+	public static function get_db_key(): string {
+		return static::DB_KEY_PREFIX . static::get_key();
+	}
 
     public static function should_autoload(): bool {
         return false;
