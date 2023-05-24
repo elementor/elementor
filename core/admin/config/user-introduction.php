@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Admin\Config;
 
+use Elementor\Core\Config\Config_Array_Trait;
 use Elementor\Core\Config\User_Config_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class User_Introduction extends User_Config_Base {
+	use Config_Array_Trait;
+
 	public static function get_key(): string {
 		return 'introduction';
 	}
