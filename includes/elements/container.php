@@ -78,10 +78,10 @@ class Container extends Element_Base {
 	}
 
 	public function get_keywords() {
-		$keywords = [ 'Container', 'Flexbox', 'Flexbox Container', 'Layout' ];
+		$keywords = [ 'Container', 'Flex', 'Flexbox', 'Flexbox Container', 'Layout' ];
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			array_push( $keywords, 'Grid', 'Grid Container' );
+			array_push( $keywords, 'Grid', 'Grid Container', 'CSS Grid' );
 		}
 
 		return $keywords;
@@ -336,6 +336,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Container Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'flex',
+				'prefix_class' => 'e-',
 				'options' => [
 					'flex' => esc_html__( 'Flexbox', 'elementor' ),
 					'grid' => esc_html__( 'Grid', 'elementor' ),
@@ -343,7 +344,7 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
-				'prefix_class' => 'e-',
+				'separator' => 'after',
 			];
 		}
 
@@ -352,11 +353,12 @@ class Container extends Element_Base {
 			'label' => esc_html__( 'Container Layout', 'elementor' ),
 			'type' => Controls_Manager::HIDDEN,
 			'render_type' => 'none',
-			'prefix_class' => 'e-',
 			'default' => 'flex',
+			'prefix_class' => 'e-',
 			'selectors' => [
 				'{{WRAPPER}}' => '--display: {{VALUE}}',
 			],
+			'separator' => 'after',
 		];
 	}
 
@@ -381,6 +383,13 @@ class Container extends Element_Base {
 		} else {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 		}
+
+		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
+
+		$this->add_control(
+			'container_type',
+			$this->get_container_type_control_options( $is_container_grid_active )
+		);
 
 		$this->add_control(
 			'content_width',
@@ -508,13 +517,6 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
 				],
 			]
-		);
-
-		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
-
-		$this->add_control(
-			'container_type',
-			$this->get_container_type_control_options( $is_container_grid_active )
 		);
 
 		$this->add_group_control(
@@ -1598,6 +1600,9 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1613,6 +1618,9 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -1710,7 +1718,12 @@ class Container extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]

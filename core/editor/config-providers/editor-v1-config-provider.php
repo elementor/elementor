@@ -7,12 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_script_configs() {
-		$ui_package = $this->get_ui_package_config();
+		$ui_package = $this->get_package_config( 'ui' );
+		$icons_package = $this->get_package_config( 'icons' );
 
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
 			[
 				$ui_package,
+				$icons_package,
 				[
 					'handle' => 'elementor-responsive-bar',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
@@ -40,8 +42,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		];
 	}
 
-	public function get_client_settings() {
-		return Editor_Common_Configs::get_client_settings();
+	public function get_client_env() {
+		return Editor_Common_Configs::get_client_env();
 	}
 
 	public function get_style_configs() {
@@ -74,8 +76,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		);
 	}
 
-	private function get_ui_package_config() {
-		$asset_file = ELEMENTOR_ASSETS_PATH . 'js/packages/ui.asset.php';
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
 
 		if ( ! file_exists( $asset_file ) ) {
 			return [];

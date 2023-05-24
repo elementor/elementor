@@ -45,15 +45,7 @@ jobs:
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
-      - name: Push a backup branch
-        uses: ./.github/workflows/create-branch
-        with:
-          BRANCH_NAME: ${{ env.CLEAN_PACKAGE_VERSION }}-${{ github.event.inputs.channel }}-rc-backup
-          SOURCE_BRANCH: ${{ github.ref }}
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
+          REF: ${{ github.ref }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -79,6 +71,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
+          target_commitish: ${{ env.CLEAN_REF }}
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
@@ -96,7 +89,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                          "text": "Hi All :smile:\n\nWe just Published RC Tag of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                         }
                       },
                       {
@@ -106,7 +99,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                          "text": "GitHub RC Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",
@@ -116,7 +109,7 @@ jobs:
                             "emoji": true
                           },
                           "value": "open-release",
-                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
                           "action_id": "button-action"
                         }
                       },

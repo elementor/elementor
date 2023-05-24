@@ -509,13 +509,23 @@ class Widget_Icon_Box extends Widget_Base {
 			'content_vertical_alignment',
 			[
 				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'top' => esc_html__( 'Top', 'elementor' ),
-					'middle' => esc_html__( 'Middle', 'elementor' ),
-					'bottom' => esc_html__( 'Bottom', 'elementor' ),
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'middle' => [
+						'title' => esc_html__( 'Middle', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
 				'default' => 'top',
+				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
 			]
 		);

@@ -39,6 +39,7 @@ import environment from 'elementor-common/utils/environment';
 		return {
 			addNewSection: '.elementor-add-new-section',
 			closeButton: '.elementor-add-section-close',
+			backButton: '.elementor-add-section-back',
 			addSectionButton: '.elementor-add-section-button',
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
@@ -55,6 +56,7 @@ import environment from 'elementor-common/utils/environment';
 			'click @ui.addSectionButton': 'onAddSectionButtonClick',
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
+			'click @ui.backButton': () => this.setView( AddSectionBase.getSelectType() ),
 			'click @ui.presets': 'onPresetSelected',
 			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),
@@ -256,35 +258,7 @@ import environment from 'elementor-common/utils/environment';
 	}
 
 	onDropping() {
-		if ( elementor.helpers.maybeDisableWidget() ) {
-			return;
-		}
-
-		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
-			historyId = $e.internal( 'document/history/start-log', {
-				type: 'add',
-				title: elementor.helpers.getModelLabel( selectedElement.model ),
-			} ),
-			containingElement = $e.run( 'document/elements/create', {
-				model: {
-					elType: AddSectionBase.IS_CONTAINER_ACTIVE ? 'container' : 'section',
-				},
-				container: elementor.getPreviewContainer(),
-				columns: 1,
-				options: {
-					at: this.getOption( 'at' ),
-				},
-			} );
-
-		if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
-			// Create the element in column.
-			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
-		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
-			// Create the element in a Container, only if the dragged element is not a Container already.
-			containingElement.view.addElementFromPanel();
-		}
-
-		$e.internal( 'document/history/end-log', { id: historyId } );
+		elementor.getPreviewView().addElementFromPanel();
 	}
 
 	onAfterPaste() {}

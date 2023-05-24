@@ -47,11 +47,12 @@ export default class CommandBase extends CommandInfra {
 	 * Validate `arg.container` & `arg.containers`.
 	 *
 	 * @param {{}} args
+	 * @deprecated since 3.7.0, extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase` instead.
 	 *
 	 * @throws {Error}
 	 */
 	requireContainer( args = this.args ) {
-		Deprecation.deprecated( 'requireContainer', '3.7.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
+		Deprecation.deprecated( 'requireContainer()', '3.7.0', 'Extend `$e.modules.editor.CommandContainerBase` or `$e.modules.editor.CommandContainerInternalBase`' );
 
 		if ( ! args.container && ! args.containers ) {
 			throw Error( 'container or containers are required.' );

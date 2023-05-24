@@ -11,7 +11,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
-	<div id="elementor-mode-switcher"></div>
 	<div id="elementor-panel-state-loading">
 		<i class="eicon-loading eicon-animation-spin"></i>
 	</div>
@@ -20,6 +19,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<footer id="elementor-panel-footer">
 		<div class="elementor-panel-container"></div>
 	</footer>
+	<div id="elementor-mode-switcher"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu">
@@ -70,7 +70,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
 	</button>
-	<div id="elementor-panel-header-title"></div>
+	<h2 id="elementor-panel-header-title"></h2>
 	<button id="elementor-panel-header-add-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
@@ -148,11 +148,11 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 </script>
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
-	<input id="elementor-mode-switcher-preview-input" type="checkbox">
-	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview">
-		<i class="eicon" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
+	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>">
+		<i class="eicon" aria-hidden="true" tabindex="0"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
+	<input id="elementor-mode-switcher-preview-input" type="checkbox">
 </script>
 
 <script type="text/template" id="tmpl-editor-content">

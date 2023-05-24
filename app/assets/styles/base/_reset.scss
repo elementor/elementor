@@ -28,11 +28,6 @@ body {
 	background-color: var(--body-bg);
 }
 
-::selection {
-	background-color: $eps-theme-accent;
-	color: $color-white;
-}
-
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important;
 }
