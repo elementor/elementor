@@ -128,6 +128,39 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'button_text' => 'Add Item',
 		] );
 
+		$this->add_responsive_control( 'accordion_item_title_position_horizontal', [
+			'label' => esc_html__( 'Item Position', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-start-h',
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'elementor' ),
+					'icon' => 'eicon-h-align-center',
+				],
+				'end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-end-h',
+				],
+				'stretch' => [
+					'title' => esc_html__( 'Stretch', 'elementor' ),
+					'icon' => 'eicon-h-align-stretch',
+				],
+			],
+			'default' => 'start',
+			'selectors_dictionary' => [
+				'start' => '--n-accordion-items-heading-justify-content: initial; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: initial;',
+				'center' => '--n-accordion-items-heading-justify-content: center; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: center;',
+				'end' => '--n-accordion-items-heading-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: flex-end;',
+				'stretch' => '--n-accordion-items-heading-justify-content: space-between; --n-accordion-item-title-flex-grow: 1; --n-accordion-item-title-justify-content: center; --n-accordion-item-title-justify-content-mobile: center;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
 		$this->end_controls_section();
 	}
 
