@@ -5,6 +5,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		return {
 			selectors: {
 				carousel: `.${ elementorFrontend.config.swiperClass }`,
+				swiperWrapper: '.swiper-wrapper',
 				slideContent: '.swiper-slide',
 				paginationBullet: '.swiper-pagination-bullet',
 				paginationBulletWrapper: '.swiper-pagination-bullets',
@@ -16,6 +17,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$swiperContainer: this.$element.find( selectors.carousel ),
+				$swiperWrapper: this.$element.find( selectors.swiperWrapper ),
 				$paginationBullets: this.$element.find( selectors.paginationBullet ),
 				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
 			};
@@ -124,9 +126,15 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 
 		swiperOptions.on = {
-			slideChange: () => {
-				this.a11ySetPaginationTabindex();
+			slideChangeTransitionEnd: () => {
 				this.a11ySetSlideAriaHidden();
+			},
+			slideChange: () => {
+				if ( ! this.swiper ) {
+					return;
+				}
+
+				this.a11ySetPaginationTabindex();
 			},
 			keyPress: ( keyCode ) => {
 				switch ( keyCode ) {
@@ -259,21 +267,24 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetSlideAriaHidden() {
-		const slides = this.elements.$slides,
-			currentIndex = this.swiper?.activeIndex,
-			slidesPerView = this.getSwiperSettings().slidesPerView;
+		const currentIndex = this.swiper?.activeIndex;
 
 		if ( ! currentIndex ) {
 			return;
 		}
 
-		console.log( slidesPerView );
+		const swiperWrapperBorderBox = this.elements.$swiperWrapper[ 0 ]?.borderBoxSize,
+			swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
+			slides = Array.from( this.elements.$slides );
 
 		slides.forEach( ( slide, index ) => {
-			if ( index >= currentIndex && index <= ( currentIndex + slidesPerView ) ) {
-				slide.setAttribute( 'aria-hidden', false );
-			} else {
+			const slideWidth = slide.clientWidth;
+
+			if ( 0 >= ( slide.offsetLeft - slideWidth ) || ( swiperWrapperWidth ) <= ( slide.offsetLeft - slideWidth ) ) {
 				slide.setAttribute( 'aria-hidden', true );
+				slide.style.opacity = '0.2';
+			} else {
+				slide.setAttribute( 'aria-hidden', false );
 			}
 		} );
 	}
