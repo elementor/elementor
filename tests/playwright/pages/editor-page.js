@@ -30,8 +30,9 @@ module.exports = class EditorPage extends BasePage {
 				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
 					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
 				}
-			} else {
-				const key = _.findKey( el.settings, 'url' );
+			}
+			const key = _.findKey( el.settings, 'url' );
+			if ( key ) {
 				el.settings[ key ].url = replaceUrl( el.settings[ key ].url );
 			}
 		} );
