@@ -1,18 +1,22 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
-	--n-accordion-title-padding: 10px 15px;
+	--n-accordion-title-padding: 0.5rem 1rem;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
 
-	--n-accordion-items-heading-justify-content: initial;
 	--n-accordion-item-title-flex-grow: initial;
 	--n-accordion-item-title-justify-content: initial;
 	--n-accordion-item-title-justify-content-mobile: initial;
 
+	--n-accordion-title-icon-order: initial;
+
 	.e-n-accordion {
 
 		&-item {
+			display: flex;
+			flex-direction: column;
+			position: relative;
 
 			> .e-con {
 				border-width: var(--n-accordion-border-width);
@@ -29,15 +33,48 @@
 				border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
-				justify-content: var(--n-accordion-items-heading-justify-content);
+				justify-content: var(--n-accordion-item-title-justify-content);
 				flex-grow: var(--n-menu-item-title-flex-grow);
 
-				i {
-					color: var(--n-accordion-icon-color);
+				&-icon {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					order: var( --n-accordion-title-icon-order );
+
+
+					span > i {
+						color: var(--n-accordion-icon-color);
+					}
+
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
 				}
 
-				svg {
-					fill: var(--n-accordion-icon-color);
+				& > span {
+					cursor: pointer;
+				}
+			}
+
+			&[open] {
+				.e-n-accordion-item-title-icon-opened {
+					display: flex;
+				}
+
+				.e-n-accordion-item-title-icon-closed {
+					display: none;
+				}
+			}
+
+			&:not([open]) {
+
+				.e-n-accordion-item-title-icon-opened {
+					display: none;
+				}
+
+				.e-n-accordion-item-title-icon-closed {
+					display: flex;
 				}
 			}
 		}

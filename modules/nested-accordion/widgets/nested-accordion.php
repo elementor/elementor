@@ -2,10 +2,12 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
+use phpDocumentor\Reflection\Types\Boolean;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -151,17 +153,124 @@ class Nested_Accordion extends Widget_Nested_Base {
 			],
 			'default' => 'start',
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-items-heading-justify-content: initial; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: initial;',
-				'center' => '--n-accordion-items-heading-justify-content: center; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: center;',
-				'end' => '--n-accordion-items-heading-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content: initial; --n-accordion-item-title-justify-content-mobile: flex-end;',
-				'stretch' => '--n-accordion-items-heading-justify-content: space-between; --n-accordion-item-title-flex-grow: 1; --n-accordion-item-title-justify-content: center; --n-accordion-item-title-justify-content-mobile: center;',
+				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: initial;',
+				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: center;',
+				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;  --n-accordion-item-title-justify-content-mobile: flex-end;',
+				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1; --n-accordion-item-title-justify-content-mobile: center;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 		] );
 
+		$this->add_control(
+			'heading_accordion_item_title_icon',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control( 'accordion_item_title_icon_position', [
+			'label' => esc_html__( 'Position', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'left' => [
+					'title' => esc_html__( 'Left', 'elementor' ),
+					'icon' => 'eicon-h-align-left',
+				],
+				'right' => [
+					'title' => esc_html__( 'Right', 'elementor' ),
+					'icon' => 'eicon-h-align-right',
+				],
+			],
+			'default' => 'right',
+			'selectors_dictionary' => [
+				'left' => '--n-accordion-title-icon-order: -1;',
+				'right' => '--n-accordion-title-icon-order: initial;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+		] );
+
+		$this->add_control(
+			'accordion_item_title_icon',
+			[
+				'label' => esc_html__( 'Expand', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'default' => [
+					'value' => 'fas fa-caret-down',
+					'library' => 'fa-solid',
+				],
+				'recommended' => [
+					'fa-solid' => [
+						'chevron-down',
+						'angle-down',
+						'angle-double-down',
+						'caret-down',
+						'caret-square-down',
+					],
+					'fa-regular' => [
+						'caret-square-down',
+					],
+				],
+				'skin' => 'inline',
+				'label_block' => false,
+			]
+		);
+
+		$this->add_control(
+			'accordion_item_title_icon_active',
+			[
+				'label' => esc_html__( 'Collapse', 'elementor' ),
+				'type' => Controls_Manager::ICONS,
+				'fa4compatibility' => 'icon_active',
+				'default' => [
+					'value' => 'fas fa-caret-up',
+					'library' => 'fa-solid',
+				],
+				'recommended' => [
+					'fa-solid' => [
+						'chevron-up',
+						'angle-up',
+						'angle-double-up',
+						'caret-up',
+						'caret-square-up',
+					],
+					'fa-regular' => [
+						'caret-square-up',
+					],
+				],
+				'skin' => 'inline',
+				'label_block' => false,
+			]
+		);
+
 		$this->end_controls_section();
+	}
+
+	protected function is_active_icon_exist($settings): bool {
+		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
+	}
+
+	protected function render_accordion_icons($settings){
+		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
+		$icon_active_html = $this->is_active_icon_exist( $settings )
+			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
+			: $icon_html;
+
+
+		ob_start();
+		?>
+		<span class='e-n-accordion-item-title-icon'>
+			<span class='e-n-accordion-item-title-icon-opened' ><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+ 		    <span class='e-n-accordion-item-title-icon-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+		</span>
+
+		<?php
+		return ob_get_clean();
 	}
 
 	protected function render() {
@@ -169,6 +278,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$items_title_html = '';
+		$icons = $this->render_accordion_icons($settings);
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
 
 		foreach ( $items as $index => $item ) {
@@ -189,10 +299,17 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->print_child( $index );
 			$item_content = ob_get_clean();
 
-			$items_title_html .= "\t<details {$title_render_attributes}>";
-			$items_title_html .= "\t\t<summary class='e-n-accordion-item-title'>{$item_title}</summary>";
-			$items_title_html .= "\t\t{$item_content}";
-			$items_title_html .= "\t</details>";
+			ob_start();
+			?>
+				<details <?php echo $title_render_attributes // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<summary class='e-n-accordion-item-title'>
+						<span class='e-n-accordion-item-title-text'><?php echo $item_title // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<?php echo $icons // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</summary>
+					<?php echo $item_content // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</details>
+			<?php
+			$items_title_html .= ob_get_clean();
 		}
 
 		?>
@@ -206,7 +323,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		?>
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
-			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
+				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '';
+				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
+					? itemTitleIcon
+					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' ); #>
 
 			<# _.each( settings['items'], function( item, index ) {
 			const itemCount = index + 1,
@@ -232,7 +353,15 @@ class Nested_Accordion extends Widget_Nested_Base {
 			#>
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
-				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>{{{ item.item_title }}}</summary>
+				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
+					<span class="e-n-accordion-item-title-text">{{{ item.item_title }}}</span>
+					<# if (settings.accordion_item_title_icon.value) { #>
+						<span class="e-n-accordion-item-title-icon">
+							<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
+							<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
+						</span>
+					<# } #>
+				</summary>
 			</details>
 			<# } ); #>
 		<# } #>
