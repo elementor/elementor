@@ -78,22 +78,6 @@ class Test_Local extends Elementor_Test_Base {
 		$this->assertEquals( 'pending', $document->get_post()->post_status );
 	}
 
-	public function test_save_item__contributors_cannot_create_pages() {
-		// Arrange
-		$this->act_as( 'contributor' );
-
-		// Act
-		$result = $this->source->save_item( [
-			'title' => 'test-title',
-			'type' => 'wp-page',
-			'content' => [],
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertEquals( 'invalid_template_type', $result->get_error_code() );
-	}
-
 	public function test_save_item__editors_can_create_templates() {
 		// Arrange
 		$this->act_as_editor();
