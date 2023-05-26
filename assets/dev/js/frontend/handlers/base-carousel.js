@@ -273,16 +273,19 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const swiperWrapperBorderBox = this.elements.$swiperWrapper[ 0 ]?.borderBoxSize,
-			swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
+		let swiperWrapperTransform = this.elements.$swiperWrapper[ 0 ]?.style.transform;
+		swiperWrapperTransform = swiperWrapperTransform.replace( 'translate3d(', '' );
+		swiperWrapperTransform = swiperWrapperTransform.split( ',' );
+		swiperWrapperTransform = parseInt( swiperWrapperTransform[ 0 ].replace( 'px', '' ) );
+
+		const swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
 			slides = Array.from( this.elements.$slides );
 
 		slides.forEach( ( slide, index ) => {
 			const slideWidth = slide.clientWidth;
 
-			if ( 0 >= ( slide.offsetLeft - slideWidth ) || ( swiperWrapperWidth ) <= ( slide.offsetLeft - slideWidth ) ) {
+			if ( 0 >= ( slide.offsetLeft + swiperWrapperTransform ) || ( swiperWrapperWidth ) <= ( slide.offsetLeft + swiperWrapperTransform ) ) {
 				slide.setAttribute( 'aria-hidden', true );
-				slide.style.opacity = '0.2';
 			} else {
 				slide.setAttribute( 'aria-hidden', false );
 			}
