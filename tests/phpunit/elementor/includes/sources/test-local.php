@@ -14,10 +14,7 @@ class Test_Local extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->source = $this
-			->getMockBuilder( Source_Local::class )
-			->setMethods( [ 'is_wp_cli' ] )
-			->getMock();
+		$this->source = Plugin::$instance->templates_manager->get_source( 'local' );
 	}
 
 	public function test_maybe_render_blank_state() {
