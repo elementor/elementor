@@ -109,7 +109,7 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'alert_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your title', 'elementor' ),
 				'default' => esc_html__( 'This is an Alert', 'elementor' ),
@@ -128,7 +128,6 @@ class Widget_Alert extends Widget_Base {
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'default' => esc_html__( 'I am a description. Click the edit button to change this text.', 'elementor' ),
 				'separator' => 'none',
-				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],

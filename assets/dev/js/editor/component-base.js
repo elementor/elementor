@@ -24,7 +24,7 @@ export default class ComponentBase extends ApiComponentBase {
 	 * Get the control's view by path
 	 *
 	 * @param {EditorView} currentView
-	 * @param {string} controlPath
+	 * @param {string}     controlPath
 	 *
 	 * @return {ControlBaseDataView}
 	 */

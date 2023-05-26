@@ -41,6 +41,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			'data-id': this.getID(),
 			'data-element_type': this.model.get( 'elType' ),
+			'data-model-cid': this.model.cid,
 		};
 	},
 
@@ -553,7 +554,9 @@ BaseElementView = BaseContainer.extend( {
 	renderCustomElementID() {
 		const customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
-		this.$el.attr( 'id', customElementID );
+		if ( customElementID ) {
+			this.$el.attr( 'id', customElementID );
+		}
 	},
 
 	renderUI() {
@@ -743,12 +746,12 @@ BaseElementView = BaseContainer.extend( {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
-				break;
+					break;
 
 				case 'content': {
 					changed = renderDataBinding( dataBinding );
 				}
-				break;
+					break;
 			}
 
 			if ( changed ) {

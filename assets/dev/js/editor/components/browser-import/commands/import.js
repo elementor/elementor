@@ -16,12 +16,12 @@ export class Import extends $e.modules.CommandBase {
 		targets.forEach( ( target ) => {
 			result.push(
 				this.component.manager
-				.createSession( input, target, options )
-				.then( async ( session ) => {
-					if ( await session.validate() ) {
-						session.apply();
-					}
-				} ),
+					.createSession( input, target, options )
+					.then( async ( session ) => {
+						if ( await session.validate() ) {
+							session.apply();
+						}
+					} ),
 			);
 		} );
 

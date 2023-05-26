@@ -20,8 +20,8 @@ export default class BreakpointValidator extends NumberValidator {
 	 */
 	getPanelActiveBreakpoints() {
 		const panelBreakpoints = elementor.documents.currentDocument.config.settings.settings.active_breakpoints.map( ( breakpointName ) => {
-			return breakpointName.replace( 'viewport_', '' );
-		} ),
+				return breakpointName.replace( 'viewport_', '' );
+			} ),
 			panelActiveBreakpoints = {};
 
 		panelBreakpoints.forEach( ( breakpointName ) => {
