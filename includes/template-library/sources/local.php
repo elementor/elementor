@@ -574,9 +574,7 @@ class Source_Local extends Source_Base {
 	protected function is_valid_template_type( $type ) {
 		$allowed_document_types = Plugin::$instance->documents->get_document_types( [
 			'show_in_library' => true,
-		] );
-
-		$allowed_document_types[] = 'widget';
+		] ) + [ 'widget' => 'ElementorPro\Modules\GlobalWidget\Documents\Widget' ];
 
 		return in_array(
 			$type,
