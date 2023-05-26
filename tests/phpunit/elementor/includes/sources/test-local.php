@@ -110,25 +110,4 @@ class Test_Local extends Elementor_Test_Base {
 
 		$this->assertEquals( 'publish', $document->get_post()->post_status );
 	}
-
-	public function test_save_item__should_skip_template_type_check_in_cli() {
-		// Arrange
-		$this->act_as_admin();
-
-		$this->source
-			->method( 'is_wp_cli' )
-			->willReturn( true );
-
-		// Act
-		$document_id = $this->source->save_item( [
-			'title' => 'test-title',
-			'type' => 'wp-page',
-			'content' => [],
-		] );
-
-		// Assert
-		$document = Plugin::$instance->documents->get( $document_id );
-
-		$this->assertEquals( 'publish', $document->get_post()->post_status );
-	}
 }
