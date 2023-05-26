@@ -1,6 +1,12 @@
 import SwiperHandlerBase from './base-swiper';
 
 export default class CarouselHandlerBase extends SwiperHandlerBase {
+	constructor( ...args ) {
+		super( ...args );
+
+		this.isPaginationBound = false;
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -85,7 +91,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
-			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
+			showPagination = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation || elementSettings.pagination;
 
 		if ( showArrows ) {
 			swiperOptions.navigation = {
@@ -94,11 +100,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 		}
 
-		if ( showDots ) {
+		if ( showPagination ) {
 			swiperOptions.pagination = {
 				el: `.elementor-element-${ this.getID() } .swiper-pagination`,
-				type: 'bullets',
+				type: !! elementSettings.pagination ? elementSettings.pagination : 'bullets',
 				clickable: true,
+				renderBullet: ( index, classname ) => {
+					return `<span class="${ classname }" data-bullet-index="${ index }"></span>`;
+				},
 			};
 		}
 
@@ -122,7 +131,17 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		swiperOptions.on = {
 			slideChange: () => {
-				this.handlePaginationAccessibility();
+				this.a11ySetPaginationTabindex();
+			},
+			keyPress: ( keyCode ) => {
+				switch ( keyCode ) {
+					case 38:
+						this.swiper.slidePrev();
+						break;
+					case 40:
+						this.swiper.slideNext();
+						break;
+				}
 			},
 		};
 
@@ -148,7 +167,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			this.togglePauseOnHover( true );
 		}
 
-		this.handlePaginationAccessibility();
+		this.a11ySetPaginationTabindex();
 	}
 
 	updateSwiperOption( propertyName ) {
@@ -224,15 +243,23 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.swiper.update();
 	}
 
-	handlePaginationAccessibility() {
-		const selectors = this.getSettings( 'selectors' ),
-			$paginationWrapper = this.$element.find( selectors.paginationBulletWrapper ),
-			paginationBullets = Array.from( this.$element.find( selectors.paginationBullet ) );
+	getPaginationBullets( array = true ) {
+		const paginationBullets = this.$element.find( this.getSettings( 'selectors' ).paginationBullet );
 
-		paginationBullets.forEach( ( bullet ) => {
+		return array ? Array.from( paginationBullets ) : paginationBullets;
+	}
+
+	a11ySetPaginationTabindex() {
+		this.getPaginationBullets().forEach( ( bullet ) => {
 			if ( ! bullet.classList.contains( 'swiper-pagination-bullet-active' ) ) {
 				bullet.removeAttribute( 'tabindex' );
 			}
 		} );
+
+		const isHorizontalArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
+
+		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isHorizontalArrowKey ) {
+			this.$element.find( '.swiper-pagination-bullet-active' ).trigger( 'focus' );
+		}
 	}
 }
