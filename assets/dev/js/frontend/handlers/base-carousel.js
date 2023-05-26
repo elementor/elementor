@@ -6,6 +6,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			selectors: {
 				carousel: `.${ elementorFrontend.config.swiperClass }`,
 				slideContent: '.swiper-slide',
+				paginationBullet: '.swiper-pagination-bullet',
+				paginationBulletWrapper: '.swiper-pagination-bullets',
 			},
 		};
 	}
@@ -14,6 +16,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$swiperContainer: this.$element.find( selectors.carousel ),
+				$paginationBullets: this.$element.find( selectors.paginationBullet ),
+				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
 			};
 
 		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
@@ -36,6 +40,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
+			keyboard: true,
 		};
 
 		swiperOptions.breakpoints = {};
@@ -91,7 +96,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		if ( showDots ) {
 			swiperOptions.pagination = {
-				el: '.swiper-pagination',
+				el: `.elementor-element-${ this.getID() } .swiper-pagination`,
 				type: 'bullets',
 				clickable: true,
 			};
@@ -103,6 +108,23 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				loadPrevNextAmount: 1,
 			};
 		}
+
+		if ( !! elementSettings.a11y_pagination_previous_slide ) {
+			swiperOptions.a11y = {
+				enabled: true,
+				prevSlideMessage: elementSettings.a11y_pagination_previous_slide,
+				nextSlideMessage: elementSettings.a11y_pagination_next_slide,
+				firstSlideMessage: elementSettings.a11y_pagination_first_slide,
+				lastSlideMessage: elementSettings.a11y_pagination_last_slide,
+				paginationBulletMessage: `${ elementSettings.a11y_pagination_bullet_message } {{index}}`,
+			};
+		}
+
+		swiperOptions.on = {
+			slideChange: () => {
+				this.handlePaginationAccessibility();
+			},
+		};
 
 		return swiperOptions;
 	}
@@ -125,6 +147,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
+
+		this.handlePaginationAccessibility();
 	}
 
 	updateSwiperOption( propertyName ) {
@@ -198,5 +222,17 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.swiper.params.spaceBetween = newSpaceBetween;
 
 		this.swiper.update();
+	}
+
+	handlePaginationAccessibility() {
+		const selectors = this.getSettings( 'selectors' ),
+			$paginationWrapper = this.$element.find( selectors.paginationBulletWrapper ),
+			paginationBullets = Array.from( this.$element.find( selectors.paginationBullet ) );
+
+		paginationBullets.forEach( ( bullet ) => {
+			if ( ! bullet.classList.contains( 'swiper-pagination-bullet-active' ) ) {
+				bullet.removeAttribute( 'tabindex' );
+			}
+		} );
 	}
 }
