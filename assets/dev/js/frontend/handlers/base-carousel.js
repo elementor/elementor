@@ -1,12 +1,6 @@
 import SwiperHandlerBase from './base-swiper';
 
 export default class CarouselHandlerBase extends SwiperHandlerBase {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.isPaginationBound = false;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -132,6 +126,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		swiperOptions.on = {
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
+				this.a11ySetSlideAriaHidden();
 			},
 			keyPress: ( keyCode ) => {
 				switch ( keyCode ) {
@@ -261,5 +256,25 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isHorizontalArrowKey ) {
 			this.$element.find( '.swiper-pagination-bullet-active' ).trigger( 'focus' );
 		}
+	}
+
+	a11ySetSlideAriaHidden() {
+		const slides = this.elements.$slides,
+			currentIndex = this.swiper?.activeIndex,
+			slidesPerView = this.getSwiperSettings().slidesPerView;
+
+		if ( ! currentIndex ) {
+			return;
+		}
+
+		console.log( slidesPerView );
+
+		slides.forEach( ( slide, index ) => {
+			if ( index >= currentIndex && index <= ( currentIndex + slidesPerView ) ) {
+				slide.setAttribute( 'aria-hidden', false );
+			} else {
+				slide.setAttribute( 'aria-hidden', true );
+			}
+		} );
 	}
 }
