@@ -576,6 +576,8 @@ class Source_Local extends Source_Base {
 			'show_in_library' => true,
 		] );
 
+		$allowed_document_types[] = 'widget';
+
 		return in_array(
 			$type,
 			array_keys( $allowed_document_types ),
