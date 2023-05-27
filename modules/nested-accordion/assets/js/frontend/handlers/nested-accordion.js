@@ -49,7 +49,7 @@ export default class NestedAccordion extends Base {
 		if ( stateFirstExpanded === defaultState ) {
 			accordionItems[ 0 ].setAttribute( 'open', '' );
 		} else {
-			accordionItems.each( ( item ) => item.removeAttribute( 'open' ) );
+			accordionItems.each( ( _, item ) => item.removeAttribute( 'open' ) );
 		}
 	}
 
@@ -58,5 +58,13 @@ export default class NestedAccordion extends Base {
 			defaultState = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'default_state', '', currentDevice );
 
 		return defaultState;
+	}
+
+	bindEvents() {
+		elementorFrontend.elements.$window.on( 'resize', this.applyDefaultStateCondition.bind( this ) );
+	}
+
+	unbindEvents() {
+		elementorFrontend.elements.$window.off( 'resize' );
 	}
 }
