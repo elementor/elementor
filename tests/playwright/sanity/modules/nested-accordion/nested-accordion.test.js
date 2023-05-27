@@ -149,6 +149,34 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle ).toHaveCount( await numberOfTitles - 1 );
 				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents - 1 );
 			} );
+
+			await test.step( 'Check default state behaviour', async () => {
+				// Check default state -> first item is open
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', '' );
+
+				const allItems = await nestedAccordionItemTitle.all(),
+					allItemExceptFirst = allItems.slice( 1 );
+
+				for ( const item of allItemExceptFirst ) {
+					await expect( item ).not.toHaveAttribute( 'open', '' );
+				}
+
+				// Check all collapsed state -> all items are closed
+				await editor.openSection( 'section_interactions' );
+				await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
+
+				for ( const item of allItems ) {
+					await expect( item ).not.toHaveAttribute( 'open', '' );
+				}
+
+				// Check manual select of first expand -> first item is open
+				await editor.setSelectControlValue( 'default_state', 'first_expended' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', '' );
+
+				for ( const item of allItemExceptFirst ) {
+					await expect( item ).not.toHaveAttribute( 'open', '' );
+				}
+			} );
 		} );
 	} );
 } );

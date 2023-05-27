@@ -25,6 +25,8 @@ export default class NestedAccordion extends Base {
 		if ( elementorFrontend.isEditMode() ) {
 			this.interlaceContainers();
 		}
+
+		this.applyDefaultStateCondition();
 	}
 
 	interlaceContainers() {
@@ -33,5 +35,28 @@ export default class NestedAccordion extends Base {
 		$contentContainers.each( ( index, element ) => {
 			$items[ index ].appendChild( element );
 		} );
+	}
+
+	applyDefaultStateCondition() {
+		if ( ! this.elements ) {
+			return;
+		}
+
+		const accordionItems = this.elements.$items,
+			defaultState = this.getDefaultStateCondition(),
+			stateFirstExpanded = 'first_expended';
+
+		if ( stateFirstExpanded === defaultState ) {
+			accordionItems[ 0 ].setAttribute( 'open', '' );
+		} else {
+			accordionItems.each( ( item ) => item.removeAttribute( 'open' ) );
+		}
+	}
+
+	getDefaultStateCondition() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
+			defaultState = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'default_state', '', currentDevice );
+
+		return defaultState;
 	}
 }
