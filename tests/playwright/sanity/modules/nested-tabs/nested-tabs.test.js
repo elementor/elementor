@@ -1124,7 +1124,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
 		Array.from( { length: 7 }, async () => {
-			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > div:nth-child(2)' ).click();
+			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > button:nth-child(2)' ).click();
 		} );
 
 		await test.step( 'Assert overflow x', async () => {
