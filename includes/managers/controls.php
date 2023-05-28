@@ -504,7 +504,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->register()` instead.
+	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
 	 * @param string       $control_id       Control ID.
 	 * @param Base_Control $control_instance Control instance, usually the
@@ -515,7 +515,7 @@ class Controls_Manager {
 		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 		//	__METHOD__,
 		//	'3.5.0',
-		//	'register'
+		//	'register()'
 		//);
 
 		$this->register( $control_instance, $control_id );
@@ -556,7 +556,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
+	 * @deprecated 3.5.0 Use `unregister()` method instead.
 	 *
 	 * @param string $control_id Control ID.
 	 *
@@ -566,7 +566,7 @@ class Controls_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'unregister'
+			'unregister()'
 		);
 
 		return $this->unregister( $control_id );
