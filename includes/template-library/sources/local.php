@@ -46,7 +46,8 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
-	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
+	 *
+	 * @deprecated 2.3.0 Use `Elementor\Core\Base\Document::TYPE_META_KEY` const instead.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
