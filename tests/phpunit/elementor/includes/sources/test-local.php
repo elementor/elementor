@@ -1,9 +1,13 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Documents_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Testing\Includes\Mocks\Extended_Library_Document;
 use ElementorEditorTesting\Elementor_Test_Base;
+
+require_once __DIR__ . '/mocks/extended-library-document.php';
 
 class Test_Local extends Elementor_Test_Base {
 	/**
@@ -102,6 +106,28 @@ class Test_Local extends Elementor_Test_Base {
 		$document_id = $this->source->save_item( [
 			'title' => 'test-title',
 			'type' => 'page',
+			'content' => [],
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $document_id );
+
+		$this->assertEquals( 'publish', $document->get_post()->post_status );
+	}
+
+	public function test_save_item__any_library_document_should_be_supported() {
+		// Arrange
+		$this->act_as_editor();
+
+		Plugin::$instance->documents->register_document_type(
+			Extended_Library_Document::get_type(),
+			Extended_Library_Document::class
+		);
+
+		// Act
+		$document_id = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => Extended_Library_Document::get_type(),
 			'content' => [],
 		] );
 
