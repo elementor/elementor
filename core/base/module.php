@@ -28,7 +28,7 @@ abstract class Module extends Base_Object {
 	 *
 	 * @var \ReflectionClass
 	 */
-//	private $reflection;
+	private $reflection;
 
 	/**
 	 * Module components.
