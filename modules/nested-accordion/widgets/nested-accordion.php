@@ -132,7 +132,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'title_tag',
 			[
-				'label' => esc_html__( 'Title HTML Tag', 'elementor-pro' ),
+				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'h1' => 'H1',
