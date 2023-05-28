@@ -83,9 +83,11 @@ export default function useKit() {
 						.catch( ( error ) => {
 							stopIterations = true;
 
+							const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
 							setKitState( ( prevState ) => ( { ...prevState, ...{
 								status: KIT_STATUS_MAP.ERROR,
-								data: error.responseJSON?.data || {},
+								data: response || {},
 							} } ) );
 						} );
 				} else {

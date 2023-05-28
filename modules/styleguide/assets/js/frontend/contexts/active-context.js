@@ -70,8 +70,8 @@ const ActiveProvider = ( props ) => {
 
 		ref.current.scrollIntoView( {
 			behavior: 'smooth',
-				block: 'start',
-				inline: 'start',
+			block: 'start',
+			inline: 'start',
 		} );
 	};
 
