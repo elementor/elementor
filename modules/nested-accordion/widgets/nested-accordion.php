@@ -143,6 +143,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'h6' => 'H6',
 					'div' => 'div',
 					'span' => 'span',
+					'p' => 'p',
 				],
 				'default' => 'h2',
 				'separator' => 'before',
@@ -152,9 +153,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	protected function render_title() {
-
-	}
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$items = $settings['items'];
@@ -197,10 +195,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
-
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 );
-			var titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
+			const titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
 			#>
 
 			<# _.each( settings['items'], function( item, index ) {
