@@ -273,7 +273,7 @@ class Module extends BaseModule {
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
-		
+
 		return [
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
@@ -339,14 +339,14 @@ class Module extends BaseModule {
 			throw new \Exception( $image_data->get_error_message() );
 		}
 
-		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
+		/*if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
 			// todo: uncomment once endpoint is ready send checkpoint
-//			$app = $this->get_ai_app();
-//			$app->set_used_gallery_image( $image['id'] );
-		}
+			// $app = $this->get_ai_app();
+			// $app->set_used_gallery_image( $image['id'] );
+		}*/
 
 		return [
-			'image' => array_merge( $image_data, $data )
+			'image' => array_merge( $image_data, $data ),
 		];
 	}
 
