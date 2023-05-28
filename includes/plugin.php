@@ -772,7 +772,7 @@ class Plugin {
 	 * Get Legacy Mode
 	 *
 	 * @since 3.0.0
-	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead
+	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead.
 	 *
 	 * @param string $mode_name Optional. Default is null
 	 *
