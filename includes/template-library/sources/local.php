@@ -578,7 +578,13 @@ class Source_Local extends Source_Base {
 			return false;
 		}
 
-		return is_a( $document_class, Library_Document::class, true );
+		$cpt = $document_class::get_property( 'cpt' );
+
+		if ( ! $cpt || ! is_array( $cpt ) || 1 !== count( $cpt ) ) {
+			return false;
+		}
+
+		return in_array( static::CPT, $cpt, true );
 	}
 
 	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
