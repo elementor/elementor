@@ -2,9 +2,9 @@
 
 namespace Elementor\Testing\Includes\Mocks;
 
-use Elementor\Modules\Library\Documents\Library_Document;
+use Elementor\Core\Base\Document;
 
-class Non_Library_Document extends Library_Document {
+class Non_Library_Document extends Document {
 
 	public static function get_properties() {
 		$properties = parent::get_properties();

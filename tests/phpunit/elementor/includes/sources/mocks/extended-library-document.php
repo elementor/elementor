@@ -2,13 +2,15 @@
 
 namespace Elementor\Testing\Includes\Mocks;
 
-use Elementor\Modules\Library\Documents\Library_Document;
+use Elementor\Core\Base\Document;
 
-class Extended_Library_Document extends Library_Document {
+class Extended_Library_Document extends Document {
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
 		$properties['show_in_library'] = false;
+
+		$properties['cpt'] = [ 'elementor_library' ];
 
 		return $properties;
 	}
