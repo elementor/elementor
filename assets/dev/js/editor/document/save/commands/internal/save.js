@@ -33,14 +33,17 @@ export class Save extends $e.modules.CommandInternalBase {
 			currentHistoryId: document.history.currentItem.get( 'id' ),
 		};
 
-		const deferred = elementorCommon.ajax.addRequest( 'save_builder', {
+		const deferred = elementorCommon.ajax.addRequest(
+			'save_builder',
+			{
 				data: {
 					status,
 					elements,
 					settings,
 				},
 				error: ( data ) => this.onSaveError( data, status, document ),
-			} ).then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
+			} )
+			.then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'save', args );

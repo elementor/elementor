@@ -75,6 +75,18 @@ class Widget_Toggle extends Widget_Base {
 	}
 
 	/**
+	 * Hide widget from panel.
+	 *
+	 * Hide the toggle widget from the panel if nested-accordion experiment is active.
+	 *
+	 * @since 3.15.0
+	 * @return bool
+	 */
+	public function show_in_panel(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+	}
+
+	/**
 	 * Register toggle widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -95,7 +107,7 @@ class Widget_Toggle extends Widget_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
@@ -111,12 +123,22 @@ class Widget_Toggle extends Widget_Base {
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Toggle Content', 'elementor' ),
-				'show_label' => false,
 				'dynamic' => [
 					'active' => true,
 				],
 			]
 		);
+
+		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
+			$this->add_deprecation_message(
+				'3.15.0',
+				esc_html__(
+					'You are currently editing a Toggle widget in its old version. Drag a new Accordion widget onto your page to use a newer version, providing nested capabilities.',
+					'elementor'
+				),
+				'nested-accordion'
+			);
+		}
 
 		$this->add_control(
 			'tabs',

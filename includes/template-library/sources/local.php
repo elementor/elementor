@@ -572,15 +572,19 @@ class Source_Local extends Source_Base {
 	}
 
 	protected function is_valid_template_type( $type ) {
-		$allowed_document_types = Plugin::$instance->documents->get_document_types( [
-			'show_in_library' => true,
-		] );
+		$document_class = Plugin::$instance->documents->get_document_type( $type, false );
 
-		return in_array(
-			$type,
-			array_keys( $allowed_document_types ),
-			true
-		);
+		if ( ! $document_class ) {
+			return false;
+		}
+
+		$cpt = $document_class::get_property( 'cpt' );
+
+		if ( ! $cpt || ! is_array( $cpt ) || 1 !== count( $cpt ) ) {
+			return false;
+		}
+
+		return in_array( static::CPT, $cpt, true );
 	}
 
 	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.

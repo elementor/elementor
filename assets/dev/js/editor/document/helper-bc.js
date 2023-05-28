@@ -1,8 +1,8 @@
 export default class BackwardsCompatibility {
 	/**
-	 * @param {*} parent
-	 * @param {string} key
-	 * @param {string} value
+	 * @param {*}        parent
+	 * @param {string}   key
+	 * @param {string}   value
 	 * @param {boolean=} multiple
 	 * @deprecated since 2.9.0, use `$e.components.get( 'document' ).utils.findViewRecursive( parent, key, value, multiple )` instead.
 	 */
