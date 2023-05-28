@@ -1376,6 +1376,15 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * Add filter by category.
+	 *
+	 * In the templates library, add a filter by Elementor library category.
+	 *
+	 * @access public
+	 *
+	 * @param string $post_type The post type slug.
+	 */
 	public function add_filter_by_category( $post_type ) {
 		if ( self::CPT !== $post_type ) {
 			return;
