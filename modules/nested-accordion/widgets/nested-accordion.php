@@ -2,6 +2,8 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
@@ -45,6 +47,47 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	/**
+	 * @param $state
+	 * @return void
+	 */
+	public function add_border_and_radius_style( $state ): void {
+
+		$selector = '{{WRAPPER}}  .e-n-accordion-item';
+		switch ( $state ) {
+			case 'hover':
+				$selector .= ':hover';
+				break;
+			case 'active':
+				$selector .= '[open]';
+				break;
+		}
+		$this->start_controls_tab('accordion_' . $state . '_border_and_background', [
+			'label' => esc_html__( ucfirst( $state ), 'elementor' ),
+		]);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'accordion_background_' . $state,
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => $selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'accordion_border_' . $state,
+				'selector' => $selector,
+			]
+		);
+
+		$this->end_controls_tab();
+
+	}
+
+	/**
 	 * @return void
 	 */
 	private function add_style_section(): void {
@@ -77,15 +120,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+			'size_units' => [ 'px' ],
 			'range' => [
 				'px' => [
 					'min' => 0,
 					'max' => 200,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
 				],
 			],
 			'default' => [
@@ -97,7 +136,44 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'frontend_available' => true,
 		] );
 
+		$this->start_controls_tabs( 'accordion__border_and_background' );
+
+		$states = array( 'normal', 'hover', 'active' );
+
+		foreach ( $states as &$state ) {
+			$this->add_border_and_radius_style( $state );
+		}
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'accordion_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-n-accordion-item'  => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+
+
+				],
+				'separator' => 'before',
+			],
+		);
+
+		$this->add_responsive_control(
+			'accordion_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .e-n-accordion-item' => '--n-accordion-padding-top: {{TOP}}{{UNIT}}; --n-accordion-padding-right: {{RIGHT}}{{UNIT}}; --n-accordion-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-accordion-padding-left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->end_controls_section();
+
 	}
 
 	protected function item_content_container( int $index ) {

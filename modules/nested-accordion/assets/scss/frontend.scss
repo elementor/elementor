@@ -6,12 +6,22 @@
 	--n-accordion-border-style: solid;
   	--n-accordion-item-title-space-between: 0px;
   	--n-accordion-item-title-distance-from-content: 0px;
-
+  	--n-accordion-padding-top:0px;
+  	--n-accordion-padding-right:0px;
+  	--n-accordion-padding-bottom:0px;
+  	--n-accordion-padding-left:0px;
 
 	.e-n-accordion {
 
 
 		&-item {
+
+		  	padding-top: var( --n-accordion-padding-top );
+		  	padding-right: var( --n-accordion-padding-right );
+		  	padding-bottom: var( --n-accordion-padding-bottom );
+		  	padding-left: var( --n-accordion-padding-left );
+
+
 		  	&:not(:last-child) {
 				margin-bottom: var(--n-accordion-item-title-space-between);
 		  	}
