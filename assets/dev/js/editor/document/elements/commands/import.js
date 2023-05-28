@@ -27,7 +27,7 @@ export class Import extends $e.modules.editor.document.CommandHistoryBase {
 		const { data,
 				options = args.options || {},
 				container = args.container || elementor.getPreviewContainer(),
-		} = args,
+			} = args,
 			result = [];
 
 		let at = isNaN( options.at ) ? container.view.collection.length : options.at;

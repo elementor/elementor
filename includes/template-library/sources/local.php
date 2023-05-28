@@ -502,10 +502,21 @@ class Source_Local extends Source_Base {
 		$defaults = [
 			'title' => esc_html__( '(no title)', 'elementor' ),
 			'page_settings' => [],
-			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 		];
 
 		$template_data = wp_parse_args( $template_data, $defaults );
+		$template_data['status'] = current_user_can( 'publish_posts' ) ? 'publish' : 'pending';
+
+		// BC: Allow importing any template type when using CLI
+		// to support users that rely on this mechanism.
+		$should_check_template_type = ! $this->is_wp_cli();
+
+		if (
+				$should_check_template_type &&
+				! $this->is_valid_template_type( $template_data['type'] )
+		) {
+			return new \WP_Error( 'invalid_template_type', esc_html__( 'Invalid template type.', 'elementor' ) );
+		}
 
 		$document = Plugin::$instance->documents->create(
 			$template_data['type'],
@@ -558,6 +569,27 @@ class Source_Local extends Source_Base {
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
 		return $template_id;
+	}
+
+	protected function is_valid_template_type( $type ) {
+		$document_class = Plugin::$instance->documents->get_document_type( $type, false );
+
+		if ( ! $document_class ) {
+			return false;
+		}
+
+		$cpt = $document_class::get_property( 'cpt' );
+
+		if ( ! $cpt || ! is_array( $cpt ) || 1 !== count( $cpt ) ) {
+			return false;
+		}
+
+		return in_array( static::CPT, $cpt, true );
+	}
+
+	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
+	protected function is_wp_cli() {
+		return Utils::is_wp_cli();
 	}
 
 	/**

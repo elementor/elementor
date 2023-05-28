@@ -221,6 +221,19 @@ abstract class PageBase extends Document {
 			);
 		}
 
+		if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
+			$document->add_control(
+				'comment_status',
+				[
+					'label' => esc_html__( 'Allow Comments', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'return_value' => 'open',
+					'default' => $document->post->comment_status,
+					'separator' => 'before',
+				]
+			);
+		}
+
 		$document->end_injection();
 	}
 
