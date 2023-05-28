@@ -5,9 +5,11 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Testing\Includes\Mocks\Extended_Library_Document;
+use Elementor\Testing\Includes\Mocks\Non_Library_Document;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 require_once __DIR__ . '/mocks/extended-library-document.php';
+require_once __DIR__ . '/mocks/non-library-document.php';
 
 class Test_Local extends Elementor_Test_Base {
 	/**
@@ -138,6 +140,32 @@ class Test_Local extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		$this->assertEquals( 'publish', $document->get_post()->post_status );
+
+		// Cleanup
+		Plugin::$instance->documents = $original_documents_manager;
+	}
+
+	public function test_save_item__non_library_document_should_not_be_supported() {
+		// Arrange
+		$this->act_as_editor();
+
+		$original_documents_manager = Plugin::$instance->documents;
+		Plugin::$instance->documents = new Documents_Manager();
+
+		Plugin::$instance->documents->register_document_type(
+			Non_Library_Document::get_type(),
+			Non_Library_Document::class
+		);
+
+		// Act
+		$result = $this->source->save_item( [
+			'title' => 'test-title',
+			'type' => Non_Library_Document::get_type(),
+			'content' => [],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
 
 		// Cleanup
 		Plugin::$instance->documents = $original_documents_manager;
