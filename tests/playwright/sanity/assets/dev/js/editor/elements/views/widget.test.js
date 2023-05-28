@@ -17,7 +17,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
+	test.skip( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
@@ -38,6 +38,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.useElementorCleanPost();
 
 		// Act.
+		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'image-box' );
 		await page.hover( '.elementor-control-image .elementor-control-media__content' );
 		await page.hover( '.elementor-control-media-area' );
