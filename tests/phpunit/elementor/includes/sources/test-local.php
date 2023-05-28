@@ -119,6 +119,9 @@ class Test_Local extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_editor();
 
+		$original_documents_manager = Plugin::$instance->documents;
+		Plugin::$instance->documents = new Documents_Manager();
+
 		Plugin::$instance->documents->register_document_type(
 			Extended_Library_Document::get_type(),
 			Extended_Library_Document::class
@@ -135,6 +138,9 @@ class Test_Local extends Elementor_Test_Base {
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		$this->assertEquals( 'publish', $document->get_post()->post_status );
+
+		// Cleanup
+		Plugin::$instance->documents = $original_documents_manager;
 	}
 
 	public function test_save_item__should_skip_template_type_check_in_cli() {
