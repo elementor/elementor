@@ -6,6 +6,7 @@ use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -128,15 +129,39 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'button_text' => 'Add Item',
 		] );
 
+		$this->add_control(
+			'title_tag',
+			[
+				'label' => esc_html__( 'Title HTML Tag', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+				],
+				'default' => 'h2',
+				'separator' => 'before',
+
+			]
+		);
 		$this->end_controls_section();
 	}
 
+	protected function render_title() {
+
+	}
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$items_title_html = '';
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
+		$tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
@@ -157,7 +182,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_content = ob_get_clean();
 
 			$items_title_html .= "\t<details {$title_render_attributes}>";
-			$items_title_html .= "\t\t<summary class='e-n-accordion-item-title'>{$item_title}</summary>";
+			$items_title_html .= "\t\t<summary class='e-n-accordion-item-title'><{$tag}>{$item_title}</{$tag}></summary>";
 			$items_title_html .= "\t\t{$item_content}";
 			$items_title_html .= "\t</details>";
 		}
@@ -172,8 +197,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
+
 			<# if ( settings['items'] ) {
-			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+			const elementUid = view.getIDInt().toString().substr( 0, 3 );
+			var titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
+			#>
 
 			<# _.each( settings['items'], function( item, index ) {
 			const itemCount = index + 1,
@@ -199,7 +227,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 			#>
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
-				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>{{{ item.item_title }}}</summary>
+				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
+					<{{{ titleHTMLTag }}}>
+						{{{ item.item_title }}}
+					</ {{{ titleHTMLTag }}}>
+				</summary>
 			</details>
 			<# } ); #>
 		<# } #>
