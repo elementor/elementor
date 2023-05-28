@@ -44,6 +44,62 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
 	}
 
+	/**
+	 * @return void
+	 */
+	private function add_style_section(): void {
+		$this->start_controls_section(
+			'style',
+			[
+				'label' => esc_html__( 'Accordion', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control( 'accordion_item_title_space_between', [
+			'label' => esc_html__( 'Space between Items', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
+			'label' => esc_html__( 'Distance from content', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+				'%' => [
+					'min' => 0,
+					'max' => 100,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
+			],
+			'frontend_available' => true,
+		] );
+
+		$this->end_controls_section();
+	}
+
 	protected function item_content_container( int $index ) {
 		return [
 			'elType' => 'container',
@@ -151,6 +207,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 		$this->end_controls_section();
+
+		$this->add_style_section();
+
 	}
 
 	protected function render() {

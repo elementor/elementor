@@ -4,15 +4,23 @@
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
+  	--n-accordion-item-title-space-between: 0px;
+  	--n-accordion-item-title-distance-from-content: 0px;
+
 
 	.e-n-accordion {
 
+
 		&-item {
+		  	&:not(:last-child) {
+				margin-bottom: var(--n-accordion-item-title-space-between);
+		  	}
 
 			> .e-con {
 				border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
+			  	margin-top: var(--n-accordion-item-title-distance-from-content);
 			}
 
 			&-title {
