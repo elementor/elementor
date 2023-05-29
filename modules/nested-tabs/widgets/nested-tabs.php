@@ -80,6 +80,8 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
+		$start_logical = is_rtl() ? 'end' : 'start';
+		$end_logical = is_rtl() ? 'start' : 'end';
 		$nested_tabs_heading_selector_class = ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading, {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content )';
 		$nested_tabs_content_selector_class = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
 
@@ -195,16 +197,13 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 		] );
 
-		$start = is_rtl() ? 'end' : 'start';
-		$end = is_rtl() ? 'start' : 'end';
-
 		$this->add_responsive_control( 'tabs_justify_horizontal', [
 			'label' => esc_html__( 'Justify', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => "eicon-flex eicon-align-$start-h",
+					'icon' => "eicon-flex eicon-align-$start_logical-h",
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
@@ -212,7 +211,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => "eicon-flex eicon-align-$end-h",
+					'icon' => "eicon-flex eicon-align-$end_logical-h",
 				],
 				'stretch' => [
 					'title' => esc_html__( 'Stretch', 'elementor' ),

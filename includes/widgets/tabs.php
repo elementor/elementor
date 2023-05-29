@@ -87,6 +87,9 @@ class Widget_Tabs extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$start = is_rtl() ? 'end' : 'start';
+		$end = is_rtl() ? 'start' : 'end';
+
 		$this->start_controls_section(
 			'section_tabs',
 			[
@@ -176,9 +179,6 @@ class Widget_Tabs extends Widget_Base {
 				'separator' => 'before',
 			]
 		);
-
-		$start = is_rtl() ? 'end' : 'start';
-		$end = is_rtl() ? 'start' : 'end';
 
 		$this->add_control(
 			'tabs_align_horizontal',
