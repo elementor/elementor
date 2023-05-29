@@ -4,15 +4,15 @@ const labelToDashCash = ( str ) => str.toLowerCase().replace( / /g, '-' );
 
 const PromptActionSelection = ( props ) => {
 	const actionId = labelToDashCash( props.label );
-
+	const { wrapperStyle = { width: 138 } } = props;
 	return (
-		<FormControl sx={ { width: 138 } }>
+		<FormControl sx={ wrapperStyle }>
 			<InputLabel id={ actionId }>{ props.label }</InputLabel>
 
 			<Select
 				labelId={ actionId }
 				id={ actionId }
-				value=""
+				value={ props.value || '' }
 				color="secondary"
 				onChange={ props.onChange }
 				size="small"
@@ -29,7 +29,7 @@ const PromptActionSelection = ( props ) => {
 					<MenuItem
 						dense
 						key={ option.label }
-						value={ option.label }
+						value={ option.value ?? option.label }
 					>
 						{ option.label }
 					</MenuItem>
@@ -43,8 +43,11 @@ PromptActionSelection.propTypes = {
 	label: PropTypes.string.isRequired,
 	options: PropTypes.arrayOf( PropTypes.shape( {
 		label: PropTypes.string.isRequired,
+		value: PropTypes.string,
 	} ) ).isRequired,
 	onChange: PropTypes.func.isRequired,
+	value: PropTypes.string,
+	wrapperStyle: PropTypes.object,
 };
 
 export default PromptActionSelection;

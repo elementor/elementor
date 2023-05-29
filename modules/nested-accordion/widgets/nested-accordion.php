@@ -8,6 +8,7 @@ use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use phpDocumentor\Reflection\Types\Boolean;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -226,6 +227,27 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$this->add_control(
+			'title_tag',
+			[
+				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'h2',
+				'separator' => 'before',
+
+			]
+		);
 		$this->end_controls_section();
 	}
 
@@ -258,6 +280,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons = $this->render_accordion_icons($settings);
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
+		$tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
@@ -281,7 +304,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			?>
 				<details <?php echo $title_render_attributes // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo $item_title // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class='e-n-accordion-item-title-text'><?php echo "<$tag> $item_title </$tag>" // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<?php echo $icons // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</summary>
 					<?php echo $item_content // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -306,6 +329,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
 					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' ); #>
+			const elementUid = view.getIDInt().toString().substr( 0, 3 );
+			const titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
+			#>
 
 			<# _.each( settings['items'], function( item, index ) {
 			const itemCount = index + 1,
@@ -332,7 +358,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
-					<span class="e-n-accordion-item-title-text">{{{ item.item_title }}}</span>
+					<span class="e-n-accordion-item-title-text">
+						<{{{ titleHTMLTag }}}>
+							{{{ item.item_title }}}
+						</ {{{ titleHTMLTag }}}>
+					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
 						<span class="e-n-accordion-item-title-icon">
 							<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
