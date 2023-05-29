@@ -5,9 +5,9 @@
 .elementor-control-type-repeater {
 
 	.elementor-control:not(.elementor-control-type-tab) {
-		padding-right: 10px;
-		padding-left: 10px;
-		padding-bottom: 10px;
+		padding-inline-start: 10px;
+		padding-inline-end: 10px;
+		padding-block-end: 10px;
 	}
 
 	&.elementor-repeater-has-minimum-rows {
@@ -23,7 +23,7 @@
 
 	.elementor-repeater-row-controls {
 		border: var(--e-a-border-bold);
-		border-block-start: none;
+		border-block-start-width: 0;
 		padding-block-start: 15px;
 
 		&:not(.editable) {

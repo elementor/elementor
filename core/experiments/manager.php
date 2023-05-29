@@ -447,6 +447,11 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_ai_images',
+			'hidden' => true,
+		] );
 	}
 
 	/**

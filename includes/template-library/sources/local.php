@@ -46,7 +46,8 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
-	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
+	 *
+	 * @deprecated 2.3.0 Use `Elementor\Core\Base\Document::TYPE_META_KEY` const instead.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -1380,6 +1381,15 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * Add filter by category.
+	 *
+	 * In the templates library, add a filter by Elementor library category.
+	 *
+	 * @access public
+	 *
+	 * @param string $post_type The post type slug.
+	 */
 	public function add_filter_by_category( $post_type ) {
 		if ( self::CPT !== $post_type ) {
 			return;
@@ -1399,7 +1409,13 @@ class Source_Local extends Source_Base {
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
-		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
+
+		printf(
+			/* translators: 1: Taxonomy slug, 2: Label text. */
+			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
+			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
+			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )
+		);
 		wp_dropdown_categories( $dropdown_options );
 	}
 
