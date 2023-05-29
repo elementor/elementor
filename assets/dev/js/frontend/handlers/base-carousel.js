@@ -46,7 +46,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
-			// Keyboard: true,
 		};
 
 		swiperOptions.breakpoints = {};
@@ -137,16 +136,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
-			},
-			keyPress: ( keyCode ) => {
-				switch ( keyCode ) {
-					case 38:
-						this.swiper.slidePrev();
-						break;
-					case 40:
-						this.swiper.slideNext();
-						break;
-				}
 			},
 		};
 
@@ -307,15 +296,18 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		swiperWrapperTransform = parseInt( swiperWrapperTransform[ 0 ].replace( 'px', '' ) );
 
 		const swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
-			slides = Array.from( this.elements.$slides );
+			// Slides = Array.from( this.elements.$slides ),
+			$slides = this.elements.$swiperContainer.find( this.getSettings( 'selectors' ).slideContent );
 
-		slides.forEach( ( slide, index ) => {
+		$slides.each( ( index, slide ) => {
 			const slideWidth = slide.clientWidth;
 
 			if ( 0 >= ( slide.offsetLeft + swiperWrapperTransform ) || ( swiperWrapperWidth ) <= ( slide.offsetLeft + swiperWrapperTransform ) ) {
 				slide.setAttribute( 'aria-hidden', true );
+				slide.setAttribute( 'inert', '' );
 			} else {
 				slide.setAttribute( 'aria-hidden', false );
+				slide.removeAttribute( 'inert' );
 			}
 		} );
 	}
