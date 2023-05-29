@@ -8,7 +8,7 @@ const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
-test.only( 'Nested Tabs tests @nested-tabs', () => {
+test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
