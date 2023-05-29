@@ -8,7 +8,7 @@ const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
-test.describe( 'Nested Tabs tests @nested-tabs', () => {
+test.only( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
 	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
@@ -50,7 +50,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tabs direction to 'stretch'.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-flex eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 
@@ -275,7 +275,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
 		await editor.selectElement( parentWidgetId );
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-flex eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		await editor.activatePanelTab( 'style' );
@@ -324,7 +324,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
+	test.once( 'Verify the correct working of the title alignment', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -379,7 +379,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Justify: Stretch.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-flex eicon-align-stretch-h' ).click();
 		// Unset align title to 'right'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
 
