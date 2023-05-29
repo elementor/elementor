@@ -161,6 +161,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			this.togglePauseOnHover( true );
 		}
 
+		this.a11ySetWidgetAriaDetails();
 		this.a11ySetPaginationTabindex();
 	}
 
@@ -267,6 +268,13 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const paginationBullets = this.$element.find( this.getSettings( 'selectors' ).paginationBullet );
 
 		return array ? Array.from( paginationBullets ) : paginationBullets;
+	}
+
+	a11ySetWidgetAriaDetails() {
+		const $widget = this.$element;
+
+		$widget.attr( 'aria-roledescription', 'carousel' );
+		$widget.attr( 'aria-label', 'Scroll: ArrowLeft/Right' );
 	}
 
 	a11ySetPaginationTabindex() {
