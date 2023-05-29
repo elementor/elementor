@@ -1,12 +1,6 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
 export default class NestedTabs extends Base {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.resizeListenerNestedTabs = null;
-	}
-
 	/**
 	 * @param {string|number} tabIndex
 	 *

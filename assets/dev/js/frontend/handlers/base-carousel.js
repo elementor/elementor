@@ -7,6 +7,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				carousel: `.${ elementorFrontend.config.swiperClass }`,
 				swiperWrapper: '.swiper-wrapper',
 				slideContent: '.swiper-slide',
+				swiperArrow: '.elementor-swiper-button',
+				paginationWrapper: '.swiper-pagination',
 				paginationBullet: '.swiper-pagination-bullet',
 				paginationBulletWrapper: '.swiper-pagination-bullets',
 			},
@@ -18,6 +20,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			elements = {
 				$swiperContainer: this.$element.find( selectors.carousel ),
 				$swiperWrapper: this.$element.find( selectors.swiperWrapper ),
+				$swiperArrows: this.$element.find( selectors.swiperArrow ),
+				$paginationWrapper: this.$element.find( selectors.paginationWrapper ),
 				$paginationBullets: this.$element.find( selectors.paginationBullet ),
 				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
 			};
@@ -42,7 +46,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			loop: 'yes' === elementSettings.infinite,
 			speed: elementSettings.speed,
 			handleElementorBreakpoints: true,
-			keyboard: true,
+			// Keyboard: true,
 		};
 
 		swiperOptions.breakpoints = {};
@@ -114,16 +118,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 		}
 
-		if ( !! elementSettings.a11y_pagination_previous_slide ) {
-			swiperOptions.a11y = {
-				enabled: true,
-				prevSlideMessage: elementSettings.a11y_pagination_previous_slide,
-				nextSlideMessage: elementSettings.a11y_pagination_next_slide,
-				firstSlideMessage: elementSettings.a11y_pagination_first_slide,
-				lastSlideMessage: elementSettings.a11y_pagination_last_slide,
-				paginationBulletMessage: `${ elementSettings.a11y_pagination_bullet_message } {{index}}`,
-			};
-		}
+		swiperOptions.a11y = {
+			enabled: true,
+			prevSlideMessage: __( 'Previous slide', 'elementor' ),
+			nextSlideMessage: __( 'Next slide', 'elementor' ),
+			firstSlideMessage: __( 'This is the first slide', 'elementor' ),
+			lastSlideMessage: __( 'This is the last slide', 'elementor' ),
+			paginationBulletMessage: `${ __( 'Go to slide', 'elementor' ) } {{index}}`,
+		};
 
 		swiperOptions.on = {
 			afterInit: () => {
@@ -134,6 +136,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			},
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
+				this.handleElementHandlers();
 			},
 			keyPress: ( keyCode ) => {
 				switch ( keyCode ) {
@@ -170,6 +173,32 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 
 		this.a11ySetPaginationTabindex();
+	}
+
+	bindEvents() {
+		this.elements.$swiperArrows.on( 'keydown', this.onDirectionArrowKeydown.bind( this ) );
+		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
+		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
+	}
+
+	unbindEvents() {
+		this.elements.$swiperArrows.off();
+		this.elements.$paginationWrapper.off();
+		this.elements.$swiperContainer.off();
+	}
+
+	onDirectionArrowKeydown( event ) {
+		const inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
+			currentKeydown = event.originalEvent.code,
+			isInlineDirectionKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown );
+
+		if ( ! isInlineDirectionKeydown ) {
+			return true;
+		} else if ( 'ArrowLeft' === currentKeydown ) {
+			this.swiper.slidePrev();
+		} else if ( 'ArrowRight' === currentKeydown ) {
+			this.swiper.slideNext();
+		}
 	}
 
 	updateSwiperOption( propertyName ) {
@@ -290,4 +319,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			}
 		} );
 	}
+
+	handleElementHandlers() {}
 }
