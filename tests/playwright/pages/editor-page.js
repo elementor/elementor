@@ -715,4 +715,18 @@ module.exports = class EditorPage extends BasePage {
 			}
 		}
 	}
+
+	async waitForElement( isPublished, selector ) {
+		if ( selector === undefined ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			this.page.waitForSelector( selector );
+		} else {
+			const frame = this.getFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( selector );
+		}
+	}
 };
