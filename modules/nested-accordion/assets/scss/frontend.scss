@@ -10,6 +10,7 @@
 	--n-accordion-item-title-justify-content-mobile: initial;
 
 	--n-accordion-title-icon-order: initial;
+	--n-accordion-title-icon-padding: 0 15px;
 
 	.e-n-accordion {
 
@@ -40,6 +41,7 @@
 					display: flex;
 					flex-direction: row;
 					align-items: center;
+					padding: var( --n-accordion-title-icon-padding );
 					order: var( --n-accordion-title-icon-order );
 
 
@@ -87,6 +89,10 @@
 		&item{
 			&-title {
 				justify-content: var(--n-accordion-item-title-justify-content-mobile);
+
+				&-icon {
+					order: var( --n-accordion-title-icon-order );
+				}
 			}
 		}
 	}

@@ -133,6 +133,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_responsive_control( 'accordion_item_title_position_horizontal', [
 			'label' => esc_html__( 'Item Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
+			'separator' => 'before',
 			'options' => [
 				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
@@ -172,23 +173,23 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( 'accordion_item_title_icon_position', [
+		$this->add_responsive_control( 'accordion_item_title_icon_position', [
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'left' => [
-					'title' => esc_html__( 'Left', 'elementor' ),
+				'start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-h-align-left',
 				],
-				'right' => [
-					'title' => esc_html__( 'Right', 'elementor' ),
+				'end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-h-align-right',
 				],
 			],
-			'default' => 'right',
+			'default' => 'start',
 			'selectors_dictionary' => [
-				'left' => '--n-accordion-title-icon-order: -1;',
-				'right' => '--n-accordion-title-icon-order: initial;',
+				'start' => '--n-accordion-title-icon-order: -1;',
+				'end' => '--n-accordion-title-icon-order: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -201,20 +202,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'label' => esc_html__( 'Expand', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'default' => [
-					'value' => 'fas fa-caret-down',
+					'value' => 'fas fa-plus',
 					'library' => 'fa-solid',
-				],
-				'recommended' => [
-					'fa-solid' => [
-						'chevron-down',
-						'angle-down',
-						'angle-double-down',
-						'caret-down',
-						'caret-square-down',
-					],
-					'fa-regular' => [
-						'caret-square-down',
-					],
 				],
 				'skin' => 'inline',
 				'label_block' => false,
@@ -228,20 +217,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon_active',
 				'default' => [
-					'value' => 'fas fa-caret-up',
+					'value' => 'fas fa-minus',
 					'library' => 'fa-solid',
 				],
-				'recommended' => [
-					'fa-solid' => [
-						'chevron-up',
-						'angle-up',
-						'angle-double-up',
-						'caret-up',
-						'caret-square-up',
-					],
-					'fa-regular' => [
-						'caret-square-up',
-					],
+				'condition' => [
+					'accordion_item_title_icon[value]!' => '',
 				],
 				'skin' => 'inline',
 				'label_block' => false,
