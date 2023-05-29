@@ -166,6 +166,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'default'            => 'first_expended',
 			'frontend_available' => true,
 		] );
+
+		$this->end_controls_section();
 	}
 
 	protected function render() {
