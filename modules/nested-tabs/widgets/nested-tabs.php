@@ -203,19 +203,19 @@ class NestedTabs extends Widget_Nested_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => "eicon-flex eicon-align-$start_logical-h",
+					'icon' => "eicon-align-$start_logical-h",
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-h',
+					'icon' => 'eicon-align-center-h',
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => "eicon-flex eicon-align-$end_logical-h",
+					'icon' => "eicon-align-$end_logical-h",
 				],
 				'stretch' => [
 					'title' => esc_html__( 'Stretch', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-h',
+					'icon' => 'eicon-align-stretch-h',
 				],
 			],
 			'selectors_dictionary' => [
@@ -243,19 +243,19 @@ class NestedTabs extends Widget_Nested_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-v',
+					'icon' => 'eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-center-v',
+					'icon' => 'eicon-align-center-v',
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-v',
+					'icon' => 'eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html__( 'Stretch', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-stretch-v',
+					'icon' => 'eicon-align-stretch-v',
 				],
 			],
 			'selectors_dictionary' => [
