@@ -42,12 +42,16 @@
 				100% { opacity: 0 }
 			}
 
-			&[open] summary~* {
-				animation: open .5s;
+			&[open] {
+				.e-n-accordion-item-title ~ * {
+					animation: open .5s;
+				}
 			}
 
-			&.closing summary~* {
-				animation: close .5s;
+			&.closing {
+				.e-n-accordion-item-title ~ * {
+					animation: close .5s;
+				}
 			}
 		}
 	}

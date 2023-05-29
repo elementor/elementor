@@ -43,7 +43,7 @@ export default class NestedAccordion extends Base {
 		}
 
 		const accordionItems = this.elements.$items,
-			defaultState = this.getDefaultStateCondition(),
+			{ default_state: defaultState } = this.getElementSettings(),
 			stateFirstExpanded = 'first_expended';
 
 		if ( stateFirstExpanded === defaultState ) {
@@ -53,17 +53,11 @@ export default class NestedAccordion extends Base {
 		}
 	}
 
-	getDefaultStateCondition() {
-		return elementorFrontend.utils.controls.getControlValue( this.getElementSettings(), 'default_state', '' );
-	}
-
 	bindEvents() {
-		elementorFrontend.elements.$window.on( 'resize', this.applyDefaultStateCondition.bind( this ) );
 		this.bindAnimationListeners();
 	}
 
 	unbindEvents() {
-		elementorFrontend.elements.$window.off( 'resize' );
 		this.removeAnimationListeners();
 	}
 
@@ -72,38 +66,36 @@ export default class NestedAccordion extends Base {
 
 		$items.each( ( _, element ) => {
 			element.addEventListener( 'click', ( e ) => {
-				if ( element.hasAttribute( 'open' ) ) {
-					e.preventDefault();
-					element.classList.add( 'closing' );
-				}
+				this.applyAnimationClasses( e, element );
 			} );
 
 			element.addEventListener( 'animationend', ( e ) => {
-				if ( 'close' === e.animationName ) {
-					element.removeAttribute( 'open' );
-					element.classList.remove( 'closing' );
-				}
+				this.removeAnimationClasses( e, element );
 			} );
 		} );
+	}
+
+	applyAnimationClasses( e, element ) {
+		if ( element.hasAttribute( 'open' ) ) {
+			e.preventDefault();
+			element.classList.add( 'closing' );
+		}
+	}
+
+	removeAnimationClasses( e, element ) {
+		if ( 'close' === e.animationName ) {
+			element.removeAttribute( 'open' );
+			element.classList.remove( 'closing' );
+		}
 	}
 
 	removeAnimationListeners() {
 		const { $items } = this.getDefaultElements();
 
 		$items.each( ( _, element ) => {
-			element.removeEventListener( 'click', ( e ) => {
-				if ( element.hasAttribute( 'open' ) ) {
-					e.preventDefault();
-					element.classList.add( 'closing' );
-				}
-			} );
+			element.removeEventListener( 'click' );
 
-			element.removeEventListener( 'animationend', ( e ) => {
-				if ( 'close' === e.animationName ) {
-					element.removeAttribute( 'open' );
-					element.classList.remove( 'closing' );
-				}
-			} );
+			element.removeEventListener( 'animationend' );
 		} );
 	}
 }
