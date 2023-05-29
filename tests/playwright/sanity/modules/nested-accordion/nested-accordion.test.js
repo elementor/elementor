@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
@@ -150,5 +150,101 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents - 1 );
 			} );
 		} );
+
+		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				frame = editor.getPreviewFrame(),
+				nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item' ),
+				nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
+
+			await test.step( 'Add Widget and navigate to Style Tab', async () => {
+				// Act
+				await editor.addWidget( 'nested-accordion', container );
+				await editor.activatePanelTab( 'style' );
+				await editor.openSection( 'section_accordion_style' );
+			} );
+
+			await test.step( 'test space between Items and content', async () => {
+				// Act
+				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
+				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
+
+				// Assert.
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'margin-bottom', '15px' );
+				await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '5px' );
+			} );
+			await test.step( 'test normal background color and border style', async () => {
+				// Act
+				await setBorderAndBackground( editor, 'normal', '#ff0000', 'solid', '#00ff00' );
+
+				// Assert
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-style', 'solid' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 255, 0)' );
+			} );
+			await test.step( 'test hover background color and border style', async () => {
+				// Act
+				await setBorderAndBackground( editor, 'hover', '#00ff00', 'dashed', '#0000ff' );
+				nestedAccordionItemTitle.first().hover();
+
+				// Assert
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-style', 'dashed' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 0, 255)' );
+			} );
+
+			await test.step( 'test active background color and border style', async () => {
+				// Act
+				await setBorderAndBackground( editor, 'active', '#0000ff', 'dotted', '#ff0000' );
+				nestedAccordionItemTitle.first().click();
+
+				// Assert
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-style', 'dotted' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(255, 0, 0)' );
+			} );
+
+			await test.step( 'test border radius ', async () => {
+				// Act
+				await page.locator( '.elementor-control-accordion_border_radius .elementor-control-dimensions li:first-child input' ).fill( '25' );
+
+				// Assert
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-radius', '25px' );
+			} );
+
+			await test.step( 'test padding', async () => {
+				// Act
+				await page.locator( '.elementor-control-accordion_padding .elementor-control-dimensions li:first-child input' ).fill( '50' );
+
+				// Assert
+				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'padding', '50px' );
+			} );
+		} );
 	} );
 } );
+
+async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
+	await setState();
+	await setBackgroundColor();
+	await setBorderType();
+	await setBorderColor();
+
+	async function setBackgroundColor() {
+		await editor.page.locator( '.elementor-control-accordion_background_' + state + '_background .eicon-paint-brush' ).click();
+		await editor.setColorControlValue( color, 'accordion_background_' + state + '_color' );
+	}
+
+	async function setBorderType() {
+		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+	}
+
+	async function setBorderColor() {
+		await editor.setColorControlValue( borderColor, 'accordion_border_' + state + '_color' );
+	}
+
+	async function setState() {
+		await editor.page.click( '.elementor-control-accordion_' + state + '_border_and_background' );
+	}
+}

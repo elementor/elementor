@@ -47,22 +47,27 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	/**
-	 * @param $state
+	 * @string $state
 	 * @return void
 	 */
 	public function add_border_and_radius_style( $state ): void {
 
 		$selector = '{{WRAPPER}}  .e-n-accordion-item';
+		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+
 		switch ( $state ) {
 			case 'hover':
 				$selector .= ':hover';
+				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
 				break;
 			case 'active':
 				$selector .= '[open]';
+				$translated_tab_text = esc_html__( 'Active', 'elementor' );
 				break;
 		}
+
 		$this->start_controls_tab('accordion_' . $state . '_border_and_background', [
-			'label' => esc_html__( ucfirst( $state ), 'elementor' ),
+			'label' => $translated_tab_text,
 		]);
 
 		$this->add_group_control(
@@ -71,7 +76,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'name' => 'accordion_background_' . $state,
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
 				'selector' => $selector,
+
 			]
 		);
 
@@ -91,8 +105,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 * @return void
 	 */
 	private function add_style_section(): void {
+
 		$this->start_controls_section(
-			'style',
+			'section_accordion_style',
 			[
 				'label' => esc_html__( 'Accordion', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
@@ -138,11 +153,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$this->start_controls_tabs( 'accordion__border_and_background' );
 
-		$states = array( 'normal', 'hover', 'active' );
-
-		foreach ( $states as &$state ) {
+		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
 			$this->add_border_and_radius_style( $state );
 		}
+
 		$this->end_controls_tabs();
 
 		$this->add_responsive_control(
@@ -150,11 +164,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-n-accordion-item'  => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-
-
 				],
 				'separator' => 'before',
 			],

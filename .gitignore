@@ -34,3 +34,5 @@ coverage/
 test-results/
 **/storageState.json
 tests/playwright/config/local.config.js
+
+tests/playwright/.env

@@ -715,4 +715,14 @@ module.exports = class EditorPage extends BasePage {
 			}
 		}
 	}
+
+	async setColorControlValue( color, colorControlId ) {
+		const controlSelector = '.elementor-control-' + colorControlId;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.page.locator( controlSelector ).click();
+	}
+
+
 };

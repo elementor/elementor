@@ -13,16 +13,11 @@
 
 	.e-n-accordion {
 
-
 		&-item {
 
-		  	padding-top: var( --n-accordion-padding-top );
-		  	padding-right: var( --n-accordion-padding-right );
-		  	padding-bottom: var( --n-accordion-padding-bottom );
-		  	padding-left: var( --n-accordion-padding-left );
+		  padding: var(--n-accordion-padding-top) var(--n-accordion-padding-right) var(--n-accordion-padding-bottom) var(--n-accordion-padding-left);
 
-
-		  	&:not(:last-child) {
+		  &:not(:last-child) {
 				margin-bottom: var(--n-accordion-item-title-space-between);
 		  	}
 
