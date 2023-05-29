@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Widget tests', () => {
-    test( 'Widget Transform controls', async ( { page }, testInfo ) => {
+	test( 'Widget Transform controls', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
@@ -11,7 +11,7 @@ test.describe( 'Widget tests', () => {
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-            widgetId = await editor.addWidget( 'heading', containerId ),
+			widgetId = await editor.addWidget( 'heading', containerId ),
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.

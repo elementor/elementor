@@ -10,35 +10,33 @@ const PromptDialog = ( props ) => {
 				onClose={ props.onClose }
 				fullWidth={ true }
 				hideBackdrop={ true }
-				maxWidth="sm"
+				maxWidth={ props.maxWidth || 'sm' }
 				sx={ {
 					'& .MuiDialog-container': {
 						alignItems: 'flex-start',
-						mt: '17vh',
+						mt: '15vh',
 					},
 				} }
 				PaperProps={ {
 					sx: {
-						maxHeight: '72vh',
+						maxHeight: '76vh',
 					},
 				} }
+				scroll="paper"
 			>
-				<DialogHeader onClose={ props.onClose }>
-					{ props.headerAction }
-				</DialogHeader>
-
-				<DialogContent>
-					{ props.children }
-				</DialogContent>
+				{ props.children }
 			</Dialog>
 		</Draggable>
 	);
 };
 
 PromptDialog.propTypes = {
-	headerAction: PropTypes.node,
 	onClose: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
+	maxWidth: PropTypes.oneOf( [ 'xs', 'sm', 'md', 'lg', 'xl', false ] ),
 };
+
+PromptDialog.Header = DialogHeader;
+PromptDialog.Content = DialogContent;
 
 export default PromptDialog;
