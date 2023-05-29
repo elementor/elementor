@@ -152,7 +152,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'icon' => 'eicon-h-align-stretch',
 				],
 			],
-			'default' => 'start',
 			'selectors_dictionary' => [
 				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: initial;',
 				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: center;',
@@ -186,10 +185,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'icon' => 'eicon-h-align-right',
 				],
 			],
-			'default' => 'start',
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-title-icon-order: -1;',
-				'end' => '--n-accordion-title-icon-order: initial;',
+				'start' => '--n-accordion-title-icon-order: -1; --n-accordion-title-icon-padding-inline: 0 15px;',
+				'end' => '--n-accordion-title-icon-order: initial; --n-accordion-title-icon-padding-inline: 15px 0;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
