@@ -21,3 +21,9 @@ export const getCustomCSS = ( prompt, htmlMarkup, elementId ) => request( 'ai_ge
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
 export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
+
+export const getTextToImageGeneration = ( prompt, promptSettings ) => request( 'ai_get_text_to_image', { prompt, promptSettings } );
+
+export const getImageToImageGeneration = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image', { prompt, promptSettings, image } );
+
+export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
