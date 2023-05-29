@@ -156,7 +156,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'label' => esc_html__( 'Interactions section', 'elementor' ),
 		] );
 
-		$this->add_responsive_control( 'default_state', [
+		$this->add_control( 'default_state', [
 			'label'              => esc_html__( 'Default State', 'elementor' ),
 			'type'               => Controls_Manager::SELECT,
 			'options'            => [

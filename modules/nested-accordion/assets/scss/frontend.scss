@@ -31,6 +31,24 @@
 					fill: var(--n-accordion-icon-color);
 				}
 			}
+
+			@keyframes open {
+				0% { opacity: 0 }
+				100% { opacity: 1 }
+			}
+
+			@keyframes close {
+				0% { opacity: 1 }
+				100% { opacity: 0 }
+			}
+
+			&[open] summary~* {
+				animation: open .5s;
+			}
+
+			&.closing summary~* {
+				animation: close .5s;
+			}
 		}
 	}
 }
