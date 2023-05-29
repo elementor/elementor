@@ -169,7 +169,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
 			nestedAccordionTitle = frame.locator( 'summary .e-n-accordion-item-title' ).filter( { hasText: 'One' } );
 
-		Test.step( 'Widget Screenshot matches intended design', async () => {
+		await test.step( 'Widget Screenshot matches intended design', async () => {
 			expect( await nestedAccordion.screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'nested-carousel-title-import.jpg' );
 		} );
 
