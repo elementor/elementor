@@ -177,6 +177,9 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$start = is_rtl() ? 'end' : 'start';
+		$end = is_rtl() ? 'start' : 'end';
+
 		$this->add_control(
 			'tabs_align_horizontal',
 			[
@@ -185,19 +188,19 @@ class Widget_Tabs extends Widget_Base {
 				'options' => [
 					'' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => "eicon-flex eicon-align-$start-h",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-h-align-center',
+						'icon' => 'eicon-flex eicon-align-center-h',
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
+						'icon' => "eicon-flex eicon-align-$end-h",
 					],
 					'stretch' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
-						'icon' => 'eicon-h-align-stretch',
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-flex eicon-align-stretch-h',
 					],
 				],
 				'prefix_class' => 'elementor-tabs-alignment-',
@@ -219,15 +222,15 @@ class Widget_Tabs extends Widget_Base {
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-v-align-middle',
+						'icon' => 'eicon-flex eicon-align-center-v',
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 					'stretch' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
-						'icon' => 'eicon-v-align-stretch',
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-flex eicon-align-stretch-v',
 					],
 				],
 				'prefix_class' => 'elementor-tabs-alignment-',

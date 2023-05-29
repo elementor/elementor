@@ -195,25 +195,28 @@ class NestedTabs extends Widget_Nested_Base {
 			],
 		] );
 
+		$start = is_rtl() ? 'end' : 'start';
+		$end = is_rtl() ? 'start' : 'end';
+
 		$this->add_responsive_control( 'tabs_justify_horizontal', [
 			'label' => esc_html__( 'Justify', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-h',
+					'icon' => "eicon-flex eicon-align-$start-h",
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
-					'icon' => 'eicon-h-align-center',
+					'icon' => 'eicon-flex eicon-align-center-h',
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-h',
+					'icon' => "eicon-flex eicon-align-$end-h",
 				],
 				'stretch' => [
-					'title' => esc_html__( 'Justified', 'elementor' ),
-					'icon' => 'eicon-h-align-stretch',
+					'title' => esc_html__( 'Stretch', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-h',
 				],
 			],
 			'selectors_dictionary' => [
@@ -245,15 +248,15 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
-					'icon' => 'eicon-v-align-middle',
+					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
-					'title' => esc_html__( 'Justified', 'elementor' ),
-					'icon' => 'eicon-v-align-stretch',
+					'title' => esc_html__( 'Stretch', 'elementor' ),
+					'icon' => 'eicon-flex eicon-align-stretch-v',
 				],
 			],
 			'selectors_dictionary' => [
