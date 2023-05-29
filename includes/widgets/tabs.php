@@ -218,7 +218,7 @@ class Widget_Tabs extends Widget_Base {
 				'options' => [
 					'' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-v-align-top',
+						'icon' => 'eicon-align-start-v',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -226,7 +226,7 @@ class Widget_Tabs extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-v-align-bottom',
+						'icon' => 'eicon-align-end-v',
 					],
 					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
