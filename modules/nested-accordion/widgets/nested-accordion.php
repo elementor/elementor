@@ -153,7 +153,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_interactions', [
-				'label' => esc_html__( 'Interactions section', 'elementor' ),
+			'label' => esc_html__( 'Interactions section', 'elementor' ),
 		] );
 
 		$this->add_responsive_control( 'default_state', [
