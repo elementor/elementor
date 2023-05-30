@@ -33,5 +33,6 @@ jobs:
           baseBranch: ${{ github.event.inputs.base-branch }}
           headTag: ${{ github.event.inputs.head-tag }}
           filters: ${{ github.event.inputs.filters }}
+          repository: ${{ github.repository }}
         
     

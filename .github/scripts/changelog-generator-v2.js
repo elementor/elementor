@@ -4,8 +4,8 @@ const octokit = new Octokit({
 	auth: `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`
 })
 
-const { baseBranch, headTag, filters } = process.env
-const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+const { baseBranch, headTag, filters , repository } = process.env
+const [owner, repo] = repository.split('/')
 
 // run async function code block
 (async () => {
