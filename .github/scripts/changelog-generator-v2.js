@@ -42,13 +42,15 @@ filters = process.env.filters.split(',')
 		}
 	})
 
+    let newPullRequestsFilterd = pullRequestsAfterRelease
+
 	if (filters.length > 0) {
 		newPullRequestsFilterd = newPullRequestsFilterd.filter(pullRequest => {
 			return !filters.some(filter => pullRequest.title.includes(filter))
 		})
 	}
 
-    let newPullRequestsFilterd = pullRequestsAfterRelease.map(pullRequest => () => {
+    newPullRequestsFilterd = pullRequestsAfterRelease.map(pullRequest => () => {
 
         let row = {
             title: pullRequest.title,
