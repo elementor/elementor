@@ -5,6 +5,7 @@ const octokit = new Octokit({
 })
 
 const { baseBranch, headTag, filters, repositoryName: repo, owner } = process.env
+filters = filters.split(',')
 
 // run async function code block
 ;(async () => {
