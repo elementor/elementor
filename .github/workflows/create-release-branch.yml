@@ -38,6 +38,3 @@ jobs:
 
           git commit -m "Release branch $increment_version created"
           git push origin $increment_version
-
-
-      
