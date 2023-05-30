@@ -19,6 +19,8 @@ const [owner, repo] = repository.split('/')
 
 	const releaseDate = new Date(release.data.created_at)
 
+    console.log('releaseDate', releaseDate)
+
 	// Fetch all pull requests with pagination
 	const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {
 		owner,
@@ -29,6 +31,8 @@ const [owner, repo] = repository.split('/')
 		state: 'closed',
 		base: baseBranch
 	})
+
+    console.log('pullRequests', pullRequests)
 
 	// Filter pull requests merged after the release
 	const pullRequestsAfterRelease = pullRequests.filter(pr => {
@@ -44,6 +48,8 @@ const [owner, repo] = repository.split('/')
 		url: pullRequest.html_url
 	}))
 
+    console.log('newPullRequestsFilterd', newPullRequestsFilterd)
+    
 	if (filters.length > 0) {
 		newPullRequestsFilterd = newPullRequestsFilterd.filter(pullRequest => {
 			return !filters.some(filter => pullRequest.title.includes(filter))
