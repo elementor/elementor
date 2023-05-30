@@ -67,7 +67,7 @@ filters = process.env.filters.split(',')
     })
 
     const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(data);
+    const csv = json2csvParser.parse(newPullRequestsFilterd);
     
     fs.writeFile(`changelog-${baseBranch}-${headTag}.csv`, csv, function(err) {
       if (err) throw err;
