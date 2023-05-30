@@ -280,8 +280,8 @@ class Deprecation {
 	 */
 	private function should_print_deprecated( $version, $base_version ) {
 
-		$elementor_debug = ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG );
-		$wp_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+		$is_elementor_debug = ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG );
+		$is_wp_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 		$user_is_admin = current_user_can( 'manage_options' );
 		$user_is_logged_in = is_user_logged_in();
 
@@ -290,8 +290,8 @@ class Deprecation {
 		}
 		$first_deprecation_stage = $this->compare_version( $base_version, $version ) <= self::SOFT_VERSIONS_COUNT;
 
-		if ( $wp_debug ) {
-			if ( $elementor_debug ) {
+		if ( $is_wp_debug ) {
+			if ( $is_elementor_debug ) {
 				return true;
 			}
 			if ( $user_is_admin ) {
