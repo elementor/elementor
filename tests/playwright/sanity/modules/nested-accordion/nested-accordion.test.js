@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
@@ -166,7 +166,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.openSection( 'section_accordion_style' );
 			} );
 
-			await test.step( 'test space between Items and content', async () => {
+			await test.step( 'Test space between Items and content', async () => {
 				// Act
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
 				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
@@ -175,7 +175,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'margin-bottom', '15px' );
 				await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '5px' );
 			} );
-			await test.step( 'test normal background color and border style', async () => {
+			await test.step( 'Test normal background color and border style', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'normal', '#ff0000', 'solid', '#00ff00' );
 
@@ -184,7 +184,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-style', 'solid' );
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 255, 0)' );
 			} );
-			await test.step( 'test hover background color and border style', async () => {
+			await test.step( 'Test hover background color and border style', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'hover', '#00ff00', 'dashed', '#0000ff' );
 				nestedAccordionItemTitle.first().hover();
@@ -195,7 +195,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 0, 255)' );
 			} );
 
-			await test.step( 'test active background color and border style', async () => {
+			await test.step( 'Test active background color and border style', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'active', '#0000ff', 'dotted', '#ff0000' );
 				nestedAccordionItemTitle.first().click();
@@ -206,7 +206,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(255, 0, 0)' );
 			} );
 
-			await test.step( 'test border radius ', async () => {
+			await test.step( 'Test border radius ', async () => {
 				// Act
 				await page.locator( '.elementor-control-accordion_border_radius .elementor-control-dimensions li:first-child input' ).fill( '25' );
 
@@ -214,7 +214,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-radius', '25px' );
 			} );
 
-			await test.step( 'test padding', async () => {
+			await test.step( 'Test padding', async () => {
 				// Act
 				await page.locator( '.elementor-control-accordion_padding .elementor-control-dimensions li:first-child input' ).fill( '50' );
 

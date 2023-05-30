@@ -148,7 +148,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'selectors' => [
 				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
 			],
-			'frontend_available' => true,
 		] );
 
 		$this->start_controls_tabs( 'accordion__border_and_background' );
@@ -166,7 +165,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-n-accordion-item'  => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
 			],
@@ -179,7 +178,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-n-accordion-item' => '--n-accordion-padding-top: {{TOP}}{{UNIT}}; --n-accordion-padding-right: {{RIGHT}}{{UNIT}}; --n-accordion-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-accordion-padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} ' => '--n-accordion-padding-top: {{TOP}}{{UNIT}}; --n-accordion-padding-right: {{RIGHT}}{{UNIT}}; --n-accordion-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-accordion-padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

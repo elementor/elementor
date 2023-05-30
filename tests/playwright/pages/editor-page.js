@@ -723,6 +723,4 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 		await this.page.locator( controlSelector ).click();
 	}
-
-
 };
