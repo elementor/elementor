@@ -216,6 +216,7 @@ class Deprecation {
 				}
 				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 			}
+
 			if ( $this->should_console_log_deprecated() ) {
 				// Soft deprecated.
 				if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
