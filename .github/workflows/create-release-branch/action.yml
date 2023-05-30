@@ -5,7 +5,6 @@ inputs:
   REF:
     description: 'The name of the source branch.'
     required: true
-    default: 'main'
   MAINTAIN_USERNAME:
     description: 'The username of the maintainer.'
     required: true
@@ -23,7 +22,7 @@ runs:
         git config --global user.name "${{ inputs.MAINTAIN_USERNAME }}"
 
         #e.g `refs/heads/3.14`
-        current_branch_version=$(echo "${{ inputs.REF }} | cut -d'/' -f 3)
+        current_branch_version=$(echo "${{ inputs.REF }}" | cut -d'/' -f 3)
         echo "Current branch version is $current_branch_version"
 
         # e.g `main`
