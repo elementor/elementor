@@ -129,9 +129,7 @@ module.exports = Marionette.CompositeView.extend( {
 				},
 				container,
 				columns: Number( ! containerExperiment ),
-				options: {
-					at: options.at,
-				},
+				options,
 			} );
 
 			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
