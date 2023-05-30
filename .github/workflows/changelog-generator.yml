@@ -42,6 +42,3 @@ jobs:
         with:
           name: changelog
           path: changelog-${{ github.event.inputs.base-branch }}-${{ github.event.inputs.head-tag }}.csv
-      
-        
-    
