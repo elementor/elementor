@@ -190,11 +190,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const isRTL = elementorCommon.config.isRTL,
 			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
-			isInlineDirectionKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
+			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
 			directionStart = isRTL ? 'ArrowRight' : 'ArrowLeft',
 			directionEnd = isRTL ? 'ArrowLeft' : 'ArrowRight';
 
-		if ( ! isInlineDirectionKeydown ) {
+		if ( ! isDirectionInlineKeydown ) {
 			return true;
 		} else if ( directionStart === currentKeydown ) {
 			this.swiper.slidePrev();
@@ -325,7 +325,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		const isHorizontalArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
-		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isHorizontalArrowKey ) {
+		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isDirectionInlineArrowKey ) {
 			this.$element.find( '.swiper-pagination-bullet-active' ).trigger( 'focus' );
 		}
 	}
