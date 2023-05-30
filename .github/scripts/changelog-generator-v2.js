@@ -4,10 +4,7 @@ const octokit = new Octokit({
 	auth: process.env.GITHUB_TOKEN
 })
 
-const { baseBranch, headTag, filters, repository } = process.env
-const [repo] = repository.split('/')[1]
-const owner = 'elementor'
-
+const { baseBranch, headTag, filters, repository: repo, owner } = process.env
 
 // run async function code block
 ;(async () => {
@@ -20,7 +17,7 @@ const owner = 'elementor'
 
 	const releaseDate = new Date(release.data.created_at)
 
-    console.log('releaseDate', releaseDate)
+	console.log('releaseDate', releaseDate)
 
 	// Fetch all pull requests with pagination
 	const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {

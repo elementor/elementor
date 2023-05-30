@@ -33,7 +33,8 @@ jobs:
           baseBranch: ${{ github.event.inputs.base-branch }}
           headTag: ${{ github.event.inputs.head-tag }}
           filters: ${{ github.event.inputs.filters }}
-          repository: ${{ github.repository }}
+          repository_name: ${{ github.event.repository.name }}
+          owner: 'elementor'
           token: ${{ secrets.MAINTAIN_TOKEN }}
         
     
