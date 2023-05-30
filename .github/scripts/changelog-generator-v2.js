@@ -20,45 +20,40 @@ async function fetchReleaseDetails () {
 	return new Date(release.data.created_at)
 }
 
-// Fetch all pull requests with pagination
-async function fetchAllPullRequests (releaseDate) {
-	const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {
+// Fetch all commits with pagination
+async function fetchAllCommits (releaseDate) {
+	const commits = await octokit.paginate(octokit.rest.repos.listCommits, {
 		owner,
 		repo,
-		per_page: 100,
-		sort: 'updated',
-		direction: 'desc',
-		state: 'closed',
-		base: baseBranch
+		per_page: 100
 	})
 
-	return pullRequests.filter(pr => {
-		if (pr.merged_at === null) return false
-		const prMergeDate = new Date(pr.merged_at)
-		return pr.base.ref === baseBranch && prMergeDate > releaseDate
+	return commits.filter(commit => {
+		const commitDate = new Date(commit.commit.committer.date)
+		return commitDate > releaseDate
 	})
 }
 
-// Filter pull requests based on title
-function filterPullRequests (pullRequests) {
+// Filter commits based on commit message
+function filterCommits (commits) {
 	if (filters.length === 0) {
-		return pullRequests
+		return commits
 	}
 
-	return pullRequests.filter(pullRequest => {
-		return !filters.some(filter => pullRequest.title.includes(filter))
+	return commits.filter(commit => {
+		return !filters.some(filter => commit.commit.message.includes(filter))
 	})
 }
 
-// Parse and restructure pull requests
-function parsePullRequests (pullRequests) {
-	return pullRequests.map(pullRequest => {
+// Parse and restructure commits
+function parseCommits (commits) {
+	return commits.map(commit => {
 		let row = {
-			title: pullRequest.title,
-			pullRequestURL: pullRequest.html_url
+			message: commit.commit.message,
+			commitURL: commit.html_url
 		}
 
-		let taskNumber = pullRequest.title.match(/\[(.*?)\]/g)
+		let taskNumber = commit.commit.message.match(/\[(.*?)\]/g)
 		if (taskNumber) {
 			taskNumber = taskNumber[0].replace('[', '').replace(']', '')
 			row.JiraTaskURL = `https://elementor.atlassian.net/browse/${taskNumber}`
@@ -70,7 +65,7 @@ function parsePullRequests (pullRequests) {
 
 // Write to CSV file
 function writeToCSV (data) {
-	const fields = ['title', 'pullRequestURL', 'JiraTaskURL']
+	const fields = ['message', 'commitURL', 'JiraTaskURL']
 	const json2csvParser = new Parser({ fields })
 	const csv = json2csvParser.parse(data)
 
@@ -80,13 +75,13 @@ function writeToCSV (data) {
 	})
 }
 
-;(async () => {
+(async () => {
 	const releaseDate = await fetchReleaseDetails()
 	console.log('releaseDate', releaseDate)
 
-	let pullRequests = await fetchAllPullRequests(releaseDate)
-	pullRequests = filterPullRequests(pullRequests)
-	const parsedPullRequests = parsePullRequests(pullRequests)
+	let commits = await fetchAllCommits(releaseDate)
+	commits = filterCommits(commits)
+	const parsedCommits = parseCommits(commits)
 
-	writeToCSV(parsedPullRequests)
+	writeToCSV(parsedCommits)
 })()
