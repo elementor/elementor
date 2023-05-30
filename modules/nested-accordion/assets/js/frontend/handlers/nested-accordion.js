@@ -131,8 +131,11 @@ export default class NestedAccordion extends Base {
 	expand( el, summary, content ) {
 		this.isExpanding = true;
 
+		const fallbackHeightForEditor = 214,
+			contentHeight = content ? content.offsetHeight : fallbackHeightForEditor;
+
 		const startHeight = `${ el.offsetHeight }px`,
-			endHeight = `${ summary.offsetHeight + content.offsetHeight }px`;
+			endHeight = `${ summary.offsetHeight + contentHeight }px`;
 
 		if ( this.animation ) {
 			this.animation.cancel();
