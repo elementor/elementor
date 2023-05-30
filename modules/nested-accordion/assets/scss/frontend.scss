@@ -6,17 +6,14 @@
 	--n-accordion-border-style: solid;
   	--n-accordion-item-title-space-between: 0px;
   	--n-accordion-item-title-distance-from-content: 0px;
-  	--n-accordion-padding-top:0px;
-  	--n-accordion-padding-right:0px;
-  	--n-accordion-padding-bottom:0px;
-  	--n-accordion-padding-left:0px;
+  	--n-accordion-padding:0px;
   	--n-accordion-border-radius :0px;
 
 	.e-n-accordion {
 
 		&-item {
 
-		  padding: var(--n-accordion-padding-top) var(--n-accordion-padding-right) var(--n-accordion-padding-bottom) var(--n-accordion-padding-left);
+		  padding: var(--n-accordion-padding) ;
 		  border-radius:  var(--n-accordion-border-radius);
 
 		  &:not(:last-child) {

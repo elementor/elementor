@@ -46,11 +46,91 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
 	}
 
+	private function add_accordion_style_section() {
+		$this->start_controls_section(
+			'section_accordion_style',
+			[
+				'label' => esc_html__( 'Accordion', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control('accordion_item_title_space_between', [
+			'label' => esc_html__( 'Space between Items', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
+			],
+		]);
+
+		$this->add_responsive_control('accordion_item_title_distance_from_content', [
+			'label' => esc_html__( 'Distance from content', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
+			],
+		]);
+
+		$this->start_controls_tabs( 'accordion__border_and_background' );
+
+		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
+			$this->add_border_and_radius_style( $state );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'accordion_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'accordion_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} ' => '--n-accordion-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	/**
 	 * @string $state
-	 * @return void
 	 */
-	public function add_border_and_radius_style( $state ): void {
+	private function add_border_and_radius_style( $state ) {
 
 		$selector = '{{WRAPPER}}  .e-n-accordion-item';
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
@@ -101,89 +181,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	}
 
-	/**
-	 * @return void
-	 */
-	private function add_style_section(): void {
+	private function add_style_tab() {
 
-		$this->start_controls_section(
-			'section_accordion_style',
-			[
-				'label' => esc_html__( 'Accordion', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_responsive_control( 'accordion_item_title_space_between', [
-			'label' => esc_html__( 'Space between Items', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
-				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
-			],
-		] );
-
-		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
-			'label' => esc_html__( 'Distance from content', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
-				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
-			],
-		] );
-
-		$this->start_controls_tabs( 'accordion__border_and_background' );
-
-		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
-			$this->add_border_and_radius_style( $state );
-		}
-
-		$this->end_controls_tabs();
-
-		$this->add_responsive_control(
-			'accordion_border_radius',
-			[
-				'label' => esc_html__( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_responsive_control(
-			'accordion_padding',
-			[
-				'label' => esc_html__( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}} ' => '--n-accordion-padding-top: {{TOP}}{{UNIT}}; --n-accordion-padding-right: {{RIGHT}}{{UNIT}}; --n-accordion-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-accordion-padding-left: {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
+		$this->add_accordion_style_section();
 
 	}
 
@@ -295,7 +295,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 		$this->end_controls_section();
 
-		$this->add_style_section();
+		$this->add_style_tab();
 
 	}
 
