@@ -278,7 +278,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$items_title_html = '';
-		$icons = $this->render_accordion_icons($settings);
+		$icons_content = $this->render_accordion_icons($settings);
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
 		$titleHTMLTag = Utils::validate_html_tag( $settings['title_tag'] );
 
@@ -305,7 +305,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<details <?php echo esc_html( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-text'><?php echo esc_html("<$titleHTMLTag> $item_title </$titleHTMLTag>"); ?></span>
-						<?php echo esc_html( $icons ); ?>
+						<?php echo esc_html( $icons_content ); ?>
 					</summary>
 					<?php echo esc_html( $item_content ); ?>
 				</details>
@@ -360,7 +360,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					<span class="e-n-accordion-item-title-text">
 						<{{{ titleHTMLTag }}}>
 							{{{ item.item_title }}}
-					</{{{ titleHTMLTag }}}>
+						</{{{ titleHTMLTag }}}>
 					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
 					<span class="e-n-accordion-item-title-icon">
