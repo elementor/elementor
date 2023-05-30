@@ -152,9 +152,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$this->start_controls_tabs( 'accordion__border_and_background' );
 
-		$states = array( 'normal', 'hover', 'active' );
-
-		foreach ( $states as $state ) {
+		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
 			$this->add_border_and_radius_style( $state );
 		}
 
@@ -170,7 +168,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
-			],
+			]
 		);
 
 		$this->add_responsive_control(
