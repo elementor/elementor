@@ -41,4 +41,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: changelog
+          retention-days: 3
           path: changelog-${{ github.event.inputs.base-branch }}-${{ github.event.inputs.head-tag }}.csv

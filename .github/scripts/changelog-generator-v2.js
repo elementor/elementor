@@ -20,9 +20,9 @@ async function fetchReleaseDetails () {
 	return new Date(release.data.created_at)
 }
 
-// Fetch all commits with pagination
+// Fetch the last 100 commits
 async function fetchAllCommits (releaseDate) {
-	const commits = await octokit.paginate(octokit.rest.repos.listCommits, {
+	const { data: commits } = await octokit.rest.repos.listCommits({
 		owner,
 		repo,
 		per_page: 100
@@ -33,6 +33,7 @@ async function fetchAllCommits (releaseDate) {
 		return commitDate > releaseDate
 	})
 }
+
 
 // Filter commits based on commit message
 function filterCommits (commits) {
