@@ -1,4 +1,4 @@
-import { Octokit } from "octokit";
+const Octokit = require('octokit');
 
 const octokit = new Octokit({ auth: `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` });
 
@@ -22,7 +22,7 @@ const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {
     sort: 'updated',
     direction: 'desc',
     state: 'closed',
-    base: base,
+    base: baseBranch,
 });
 
 // Filter pull requests merged after the release
@@ -34,7 +34,7 @@ const pullRequestsAfterRelease = pullRequests.filter(pr => {
     }
 });
 
-let newPullRequestsFilterd = results
+let newPullRequestsFilterd = pullRequestsAfterRelease
 .map((pullRequest) => ({
   title: pullRequest.title,
   url: pullRequest.html_url,

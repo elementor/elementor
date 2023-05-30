@@ -26,7 +26,7 @@ jobs:
           ref: ${{ github.ref }}
       - name: Install dependencies
         run: |
-          npm i octokit
+          npm install octokit@2.0.19
       - name: Generate changelog
         run: node ./.github/scripts/changelog-generator-v2.js
         env:
