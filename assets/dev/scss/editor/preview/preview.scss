@@ -56,7 +56,7 @@
 
 // Hidden WP Admin Bar
 html.elementor-html {
-	margin-top: 0 !important;
+	margin-block-start: 0 !important;
 }
 
 .elementor-edit-area {
@@ -128,7 +128,7 @@ html.elementor-html {
 	.elementor-inner-section {
 
 		&:first-child {
-			margin-top: 15px;
+			margin-block-start: 15px;
 		}
 	}
 
@@ -379,7 +379,7 @@ html.elementor-html {
 
 	.icon {
 		font-size: 28px;
-		padding-top: 15px;
+		padding-block-start: 15px;
 		line-height: 1;
 	}
 
