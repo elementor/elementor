@@ -19,6 +19,14 @@ jobs:
 
           #e.g refs/heads/3.14
           current_branch_version=$(echo ${{ github.ref }} | cut -d'/' -f 3)
+
+          # e.g 3.14
+          if ! [[ $current_branch_version =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version ${{ github.ref }}"
+            exit 1
+          fi
+
+          # e.g 3.15
           increment_version=$(echo $current_branch_version | awk -F. -v OFS=. '{$NF++;print}')
 
           git checkout -b $increment_version
