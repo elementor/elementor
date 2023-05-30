@@ -1,4 +1,4 @@
-name: Ghangelog Generator
+name: Changelog Generator
 
 on:
   workflow_dispatch:
