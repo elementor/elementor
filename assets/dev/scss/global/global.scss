@@ -43,7 +43,7 @@
 	}
 
 	&:focus {
-		z-index: $second-layer;
+		z-index: 11; // The z-index should be one number higher than the carousel pagination.
 		inset-inline-start: .4rem;
 		inset-block-start: .4rem;
 		padding: .75rem 1.25rem;

@@ -1,6 +1,12 @@
 import SwiperHandlerBase from './base-swiper';
 
 export default class CarouselHandlerBase extends SwiperHandlerBase {
+	constructor( ...args ) {
+		super( ...args );
+
+		this.a11yWidgetAccessedByTabKey = null;
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -170,6 +176,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperPlayButton.on( 'click', this.onClickPlayButton.bind( this ) );
+		this.elements.$swiperPlayButton.on( 'focus', this.onFocusPlayButton.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -194,10 +201,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onClickPlayButton() {
-		if ( elementorFrontend.isEditMode() ) {
-			return;
-		}
-
 		const buttonElement = event.currentTarget,
 			isActive = buttonElement.classList.contains( 'e-active' );
 
@@ -210,6 +213,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			this.swiper.autoplay.start();
 			this.elements.$swiperWrapper.attr( 'aria-live', 'off' );
 		}
+	}
+
+	onFocusPlayButton() {
+		if ( ! this.a11yWidgetAccessedByTabKey ) {
+			this.onClickPlayButton();
+		}
+
+		this.a11yWidgetAccessedByTabKey = true;
 	}
 
 	updateSwiperOption( propertyName ) {

@@ -965,9 +965,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
-				<?php if ( $show_dots ) : ?>
-					<div class="swiper-pagination"></div>
-				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'previous' ); ?>
@@ -975,6 +972,10 @@ class Widget_Image_Carousel extends Widget_Base {
 					<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'next' ); ?>
 					</div>
+				<?php endif; ?>
+
+				<?php if ( $show_dots ) : ?>
+					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>
