@@ -167,10 +167,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		const nestedAccordionWidgetId = '48f02ad',
 			frame = editor.getPreviewFrame(),
 			nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
-			nestedAccordionTitle = frame.locator( 'summary .e-n-accordion-item-title' ).filter( { hasText: 'One' } );
+			nestedAccordionTitle = frame.locator( 'summary' ).first().filter( { hasText: 'One' } );
 
 		await test.step( 'Widget Screenshot matches intended design', async () => {
-			expect( await frame.locator( '.e-n-accordion' ).first().screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'nested-carousel-title-and-icons.jpg' );
+			expect( await frame.locator( '.e-n-accordion' ).first().screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'nested-carousel-title-and-icons.jpg' );
 		} );
 
 		await test.step( 'Check that the title icon is displayed', async () => {
@@ -181,6 +181,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		} );
 
 		await test.step( 'Check that icon changes when Accordion is opened', async () => {
+			await frame.waitForLoadState( 'load', { timeout: 7000 } );
 			await nestedAccordionTitle.click( { timeout: 5000 } );
 			await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
 			await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
