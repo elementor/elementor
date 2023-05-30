@@ -1,14 +1,15 @@
-const { Octokit } = require('octokit');
+const { Octokit } = require('octokit')
 
 const octokit = new Octokit({
 	auth: `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`
 })
 
-const { baseBranch, headTag, filters , repository } = process.env
+const { baseBranch, headTag, filters, repository } = process.env
+console.log({ baseBranch, headTag, filters, repository })
 const [owner, repo] = repository.split('/')
 
 // run async function code block
-(async () => {
+;(async () => {
 	// Fetch release details
 	const release = await octokit.rest.repos.getReleaseByTag({
 		owner,
@@ -50,4 +51,4 @@ const [owner, repo] = repository.split('/')
 	}
 
 	console.table(newPullRequestsFilterd)
-})();
+})()
