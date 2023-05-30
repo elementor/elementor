@@ -5,8 +5,9 @@ const octokit = new Octokit({
 })
 
 const { baseBranch, headTag, filters, repository } = process.env
-console.log({ baseBranch, headTag, filters, repository })
-const [owner, repo] = repository.split('/')
+const [repo] = repository.split('/')[1]
+const owner = 'elementor'
+
 
 // run async function code block
 ;(async () => {
@@ -32,8 +33,6 @@ const [owner, repo] = repository.split('/')
 		base: baseBranch
 	})
 
-    console.log('pullRequests', pullRequests)
-
 	// Filter pull requests merged after the release
 	const pullRequestsAfterRelease = pullRequests.filter(pr => {
 		if (pr.merged_at === null) return false
@@ -48,14 +47,11 @@ const [owner, repo] = repository.split('/')
 		url: pullRequest.html_url
 	}))
 
-    console.log('newPullRequestsFilterd', newPullRequestsFilterd)
-    
 	if (filters.length > 0) {
 		newPullRequestsFilterd = newPullRequestsFilterd.filter(pullRequest => {
 			return !filters.some(filter => pullRequest.title.includes(filter))
 		})
 	}
 
-    console.log('newPullRequestsFilterd', newPullRequestsFilterd)
 	console.table(newPullRequestsFilterd)
 })()
