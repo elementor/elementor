@@ -34,7 +34,7 @@ const { baseBranch, headTag, filters, repositoryName: repo, owner } = process.en
 	const pullRequestsAfterRelease = pullRequests.filter(pr => {
 		if (pr.merged_at === null) return false
 		const prMergeDate = new Date(pr.merged_at)
-		if (pr.base.ref === base && prMergeDate > releaseDate) {
+		if (pr.base.ref === baseBranch && prMergeDate > releaseDate) {
 			return true
 		}
 	})
