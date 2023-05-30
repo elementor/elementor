@@ -145,16 +145,19 @@ module.exports = Marionette.ItemView.extend( {
 
 		const { getArgs } = Object.values( scenariosMap ).find( ( { check } ) => check() );
 		const { view, options } = getArgs();
+		const container = view.getContainer();
 
-		if ( ! view?.addElementFromPanel ) {
+		if ( ! container ) {
 			throw new Error( "View doesn't support adding from panel", view );
 		}
 
-		elementor.channels.panelElements.reply( 'element:selected', this );
-
-		view.addElementFromPanel( {
-			...options,
-			scrollIntoView: true,
+		$e.run( 'preview/drop', {
+			container,
+			options: {
+				...options,
+				scrollIntoView: true,
+			},
+			model: this.model.toJSON(),
 		} );
 	},
 
