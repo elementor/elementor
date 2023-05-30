@@ -7,6 +7,7 @@ export default class NestedAccordion extends Base {
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 			},
+			default_state: 'first_expended',
 		};
 	}
 
@@ -43,10 +44,10 @@ export default class NestedAccordion extends Base {
 		}
 
 		const accordionItems = this.elements.$items,
-			{ default_state: defaultState } = this.getElementSettings(),
-			stateFirstExpanded = 'first_expended';
+			{ default_state: currentState } = this.getElementSettings(),
+			{ default_state: defaultState } = this.getDefaultSettings();
 
-		if ( stateFirstExpanded === defaultState ) {
+		if ( currentState === defaultState ) {
 			accordionItems[ 0 ].setAttribute( 'open', '' );
 		} else {
 			accordionItems.each( ( _, item ) => item.removeAttribute( 'open' ) );
