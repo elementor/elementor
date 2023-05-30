@@ -154,10 +154,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: initial;',
-				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial; --n-accordion-item-title-justify-content-mobile: center;',
-				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;  --n-accordion-item-title-justify-content-mobile: flex-end;',
-				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1; --n-accordion-item-title-justify-content-mobile: center;',
+				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial;',
+				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial;',
+				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;',
+				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -251,11 +251,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	protected function is_active_icon_exist($settings): bool {
+	private function is_active_icon_exist($settings): bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
-	protected function render_accordion_icons($settings){
+	private function render_accordion_icons($settings){
 		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $this->is_active_icon_exist( $settings )
 			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
@@ -265,8 +265,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
- 		    <span class='e-n-accordion-item-title-icon-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
+ 		    <span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -302,12 +302,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-				<details <?php echo $title_render_attributes // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<details <?php echo esc_html( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo "<$titleHTMLTag> $item_title </$titleHTMLTag>" // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-						<?php echo $icons // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span class='e-n-accordion-item-title-text'><?php echo esc_html("<$titleHTMLTag> $item_title </$titleHTMLTag>"); ?></span>
+						<?php echo esc_html( $icons ); ?>
 					</summary>
-					<?php echo $item_content // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo esc_html( $item_content ); ?>
 				</details>
 			<?php
 			$items_title_html .= ob_get_clean();
@@ -315,7 +315,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
-			<?php echo $items_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php echo esc_html( $items_title_html ); ?>
 		</div>
 		<?php
 	}
@@ -325,11 +325,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
+				titleHTMLTag = elementor.helpers.validateHTMLTag( settings['title_tag'] ),
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
-					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' ),
-				titleHTMLTag = elementor.helpers.validateHTMLTag( settings['title_tag'] );
+					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' );
 			#>
 
 			<# _.each( settings['items'], function( item, index ) {
@@ -360,13 +360,13 @@ class Nested_Accordion extends Widget_Nested_Base {
 					<span class="e-n-accordion-item-title-text">
 						<{{{ titleHTMLTag }}}>
 							{{{ item.item_title }}}
-						</ {{{ titleHTMLTag }}}>
+					</{{{ titleHTMLTag }}}>
 					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
-						<span class="e-n-accordion-item-title-icon">
-							<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
-							<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
-						</span>
+					<span class="e-n-accordion-item-title-icon">
+						<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
+						<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
+					</span>
 					<# } #>
 				</summary>
 			</details>

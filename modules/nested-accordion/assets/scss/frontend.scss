@@ -4,11 +4,9 @@
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
-
 	--n-accordion-item-title-flex-grow: initial;
 	--n-accordion-item-title-justify-content: initial;
 	--n-accordion-item-title-justify-content-mobile: initial;
-
 	--n-accordion-title-icon-order: -1;
 	--n-accordion-title-icon-padding-inline: 0 15px;
 
@@ -43,7 +41,6 @@
 					align-items: center;
 					padding-inline: var( --n-accordion-title-icon-padding-inline );
 					order: var( --n-accordion-title-icon-order );
-
 
 					span > i {
 						color: var(--n-accordion-icon-color);
@@ -82,64 +79,3 @@
 		}
 	}
 }
-
-//Responsive Mode
-@mixin title-styling-($device) {
-	.e-n-accordion-#{$device} {
-		&item{
-			&-title {
-				justify-content: var(--n-accordion-item-title-justify-content-mobile);
-
-				&-icon {
-					order: var( --n-accordion-title-icon-order );
-				}
-			}
-		}
-	}
-}
-
-// Mobile.
-@media (min-width: $screen-mobile-next) {
-	@include title-styling-(mobile);
-}
-
-@media (max-width: $screen-mobile-max) {
-	@include title-styling-(mobile);
-}
-
-// Mobile Extra.
-@media (min-width: $screen-mobile-extra-next) {
-	@include title-styling-(mobile_extra);
-}
-
-@media (max-width: $screen-mobile-extra-max) {
-	@include title-styling-(mobile_extra);
-}
-
-// Tablet.
-@media (min-width: $screen-tablet-next) {
-	@include title-styling-(tablet);
-}
-
-@media (max-width: $screen-tablet-max) {
-	@include title-styling-(tablet);
-}
-
-// Tablet Extra.
-@media (min-width: $screen-tablet-extra-next) {
-	@include title-styling-(tablet_extra);
-}
-
-@media (max-width: $screen-tablet-extra-max) {
-	@include title-styling-(tablet_extra);
-}
-
-// Laptop.
-@media (min-width: $screen-desktop-min) {
-	@include title-styling-(laptop);
-}
-
-@media (max-width: $screen-laptop-max) {
-	@include title-styling-(laptop);
-}
-
