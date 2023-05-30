@@ -1,11 +1,11 @@
 // Panel elements categories
 #elementor-panel-elements-categories {
-	padding-bottom: 10px;
+	padding-block-end: 10px;
 }
 
 .elementor-panel-category {
 	position: relative;
-	border-bottom: var(--e-a-border);
+	border-block-end: var(--e-a-border);
 
 	.elementor-panel-heading {
 		padding: 0 15px;
@@ -25,7 +25,7 @@
 	}
 
 	&-items {
-		padding-bottom: 20px;
+		padding-block-end: 20px;
 
 		&-empty {
 			grid-column-start: 1;

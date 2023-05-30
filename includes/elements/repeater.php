@@ -123,13 +123,13 @@ class Repeater extends Element_Base {
 	 * Retrieve the fields from the current repeater control.
 	 *
 	 * @since 1.5.0
-	 * @deprecated 2.1.0 Use `Repeater::get_controls()` instead.
+	 * @deprecated 2.1.0 Use `get_controls()` method instead.
 	 * @access public
 	 *
 	 * @return array Repeater fields.
 	 */
 	public function get_fields() {
-		_deprecated_function( __METHOD__, '2.1.0', __CLASS__ . '::get_controls()' );
+		_deprecated_function( __METHOD__, '2.1.0', 'get_controls()' );
 
 		return array_values( $this->get_controls() );
 	}

@@ -1,6 +1,7 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
+const _ = require( 'lodash' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -25,13 +26,14 @@ module.exports = class EditorPage extends BasePage {
 			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
 		};
 		templateData.content[ 0 ].elements.forEach( ( el ) => {
-			if ( 'image' in el.settings ) {
-				el.settings.image.url = replaceUrl( el.settings.image.url );
-			}
 			if ( 'carousel' in el.settings ) {
 				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
 					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
 				}
+			}
+			const key = _.findKey( el.settings, 'url' );
+			if ( key ) {
+				el.settings[ key ].url = replaceUrl( el.settings[ key ].url );
 			}
 		} );
 	}
