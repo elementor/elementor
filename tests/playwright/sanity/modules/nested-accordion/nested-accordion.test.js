@@ -133,8 +133,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await addItemButton.click();
 
 				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( await numberOfTitles + 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents + 1 );
+				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 			} );
 
 			await test.step( 'Remove an item from the repeater', async () => {
@@ -147,8 +147,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await deleteItemButton.last().click();
 
 				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( await numberOfTitles - 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( await numberOfContents - 1 );
+				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
+				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
 		} );
 	} );
@@ -164,13 +164,13 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await editor.closeNavigatorIfOpen();
 
-		const NestedAccordionWidgetId = '48f02ad',
+		const nestedAccordionWidgetId = '48f02ad',
 			frame = editor.getPreviewFrame(),
 			nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
 			nestedAccordionTitle = frame.locator( 'summary .e-n-accordion-item-title' ).filter( { hasText: 'One' } );
 
 		await test.step( 'Widget Screenshot matches intended design', async () => {
-			expect( await nestedAccordion.screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'nested-carousel-title-import.jpg' );
+			expect( await frame.locator( '.e-n-accordion' ).first().screenshot( { type: 'jpeg', quality: 100 } ) ).toMatchSnapshot( 'nested-carousel-title-and-icons.jpg' );
 		} );
 
 		await test.step( 'Check that the title icon is displayed', async () => {
@@ -188,21 +188,21 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await nestedAccordionTitle.click( { timeout: 5000 } );
 		} );
 
-		await editor.selectElement( NestedAccordionWidgetId );
+		await editor.selectElement( nestedAccordionWidgetId );
 
 		await test.step( 'Check title position default start', async () => {
-			await editor.selectElement( NestedAccordionWidgetId );
+			await editor.selectElement( nestedAccordionWidgetId );
 			// Assert
 			// Normal = Flex-start
 			await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
-			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-start-h', { timeout: 5000 } ).click();
+			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-start-h' ).click();
 			await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal', { timeout: 5000 } );
 		} );
 
 		await test.step( 'Check title position end', async () => {
 		// Act
-			await editor.selectElement( NestedAccordionWidgetId );
-			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-end-h', { timeout: 5000 } ).click();
+			await editor.selectElement( nestedAccordionWidgetId );
+			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-end-h' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
 			await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
@@ -210,8 +210,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title position center', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
-			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-center', { timeout: 5000 } ).click();
+			await editor.selectElement( nestedAccordionWidgetId );
+			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-center' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
 			await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
@@ -219,8 +219,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title position justify', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
-			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch', { timeout: 5000 } ).click();
+			await editor.selectElement( nestedAccordionWidgetId );
+			await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
 			await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
@@ -233,15 +233,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title icon position right', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
-			await page.locator( '.elementor-control-accordion_item_title_icon_position .elementor-control-input-wrapper .eicon-h-align-right', { timeout: 5000 } ).click();
+			await editor.selectElement( nestedAccordionWidgetId );
+			await page.locator( '.elementor-control-accordion_item_title_icon_position .elementor-control-input-wrapper .eicon-h-align-right' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
 			await expect( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
 		} );
 
 		// Mobile
-		await editor.selectElement( NestedAccordionWidgetId );
+		await editor.selectElement( nestedAccordionWidgetId );
 		await page.getByText( 'Desktop Tablet Portrait Mobile Portrait' ).first().click();
 		await page.getByRole( 'button', { name: 'Mobile Portrait' } ).first().click();
 
@@ -269,7 +269,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title position mobile is flex-end', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
+			await editor.selectElement( nestedAccordionWidgetId );
 			await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-align-end-h' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
@@ -278,7 +278,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title position mobile is center', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
+			await editor.selectElement( nestedAccordionWidgetId );
 			await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-center' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
@@ -287,7 +287,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title position mobile is justify', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
+			await editor.selectElement( nestedAccordionWidgetId );
 			await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
@@ -301,7 +301,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		await test.step( 'Check title icon position left', async () => {
 			// Act
-			await editor.selectElement( NestedAccordionWidgetId );
+			await editor.selectElement( nestedAccordionWidgetId );
 			await page.locator( '.elementor-control-accordion_item_title_icon_position_mobile .elementor-control-input-wrapper .eicon-h-align-left' ).click();
 			// Assert
 			await frame.waitForLoadState( 'load', { timeout: 5000 } );
