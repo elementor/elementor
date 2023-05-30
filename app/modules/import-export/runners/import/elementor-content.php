@@ -3,6 +3,8 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
@@ -78,7 +80,10 @@ class Elementor_Content extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
+	/**
+	 * @throws \Exception
+	 */
+	private function import_post(array $post_settings, array $post_data, $post_type, array $imported_terms ) {
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -117,7 +122,7 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 
 		if ( ! empty( $post_settings['show_on_front'] ) ) {
-			$this->set_page_on_front( $new_post_id );
+			WP_Page_On_Front::set( $new_post_id );
 		}
 
 		$this->set_session_post_meta( $new_post_id, $this->import_session_id );
@@ -136,18 +141,10 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function init_page_on_front_data() {
-		$this->show_page_on_front = 'page' === get_option( 'show_on_front' );
+		$this->show_page_on_front = WP_Show_On_Front::is_page();
 
 		if ( $this->show_page_on_front ) {
-			$this->page_on_front_id = (int) get_option( 'page_on_front' );
-		}
-	}
-
-	private function set_page_on_front( $page_id ) {
-		update_option( 'page_on_front', $page_id );
-
-		if ( ! $this->show_page_on_front ) {
-			update_option( 'show_on_front', 'page' );
+			$this->page_on_front_id = WP_Page_On_Front::get_value();
 		}
 	}
 

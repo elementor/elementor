@@ -9,6 +9,7 @@ use Elementor\App\Modules\ImportExport\Runners\Export\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Export\Wp_Content;
 use Elementor\App\Modules\ImportExport\Processes\Export;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -191,10 +192,10 @@ class Test_Export extends Elementor_Test_Base {
 
 	public function test_run__export_elementor_content() {
 		// Arrange
+		$this->act_as_admin();
 		$elementor_page = $this->factory()->documents->publish_and_get( [ 'post_type' => 'page', ] );
 
-		update_option( 'page_on_front', $elementor_page->get_id() );
-		update_option( 'show_on_front', 'page' );
+		WP_Page_On_Front::set( $elementor_page->get_id() );
 
 		$documents = ( new Collection( [
 			$elementor_page,

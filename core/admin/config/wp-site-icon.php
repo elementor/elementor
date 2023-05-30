@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WP_Site_Icon extends WP_Option_Base {
+
 	public static function get_key(): string {
 		return 'site_icon';
 	}

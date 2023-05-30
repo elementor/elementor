@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Config_Array_Trait {
 
-	public static function get_default(): array {
+	public static function get_default() {
 		return [];
 	}
 

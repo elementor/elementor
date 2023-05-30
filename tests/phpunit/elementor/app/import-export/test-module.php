@@ -77,6 +77,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_import_kit__by_chunks() {
 		// Arrange
+		$this->act_as_admin();
+
 		$import_export_module = new Module();
 
 		// Act
@@ -89,6 +91,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_import_kit_by_runner() {
 		// Arrange
+		$this->act_as_admin();
+
 		$import_settings = [
 			'include' => [
 				'settings',
@@ -123,6 +127,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_revert_last_imported_kit__with_import_by_runner() {
 		// Arrange
+		$this->act_as_admin();
+
 		$taxonomies = get_taxonomies();
 
 		$base_terms = get_terms( [ 'taxonomy' => $taxonomies, 'hide_empty' => false ] );
@@ -164,6 +170,8 @@ class Test_Module extends Elementor_Test_Base {
 	 */
 	public function test_should_show_revert_section( $has_pro, $import_session, $should_show ) {
 		// Arrange
+		$this->act_as_admin();
+
 		$mock_module = $this->getMockBuilder( Module::class )
 			->setMethods( [ 'has_pro' ] )
 			->getMock();

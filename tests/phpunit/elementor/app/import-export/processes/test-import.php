@@ -10,6 +10,8 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Processes\Import;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
@@ -310,8 +312,7 @@ class Test_Import extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		update_option( 'page_on_front', 0 );
-		update_option( 'show_on_front', 'posts' );
+		WP_Page_On_Front::set( 0 );
 
 		$import_settings = [
 			'include' => [ 'content' ],
@@ -327,8 +328,8 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$page_on_front = get_option( 'page_on_front' );
-		$show_on_front = get_option( 'show_on_front' );
+		$page_on_front = WP_Page_On_Front::get_value();
+		$show_on_front = WP_Show_On_Front::get_value();
 
 		$this->assertCount( 1, $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
@@ -382,6 +383,8 @@ class Test_Import extends Elementor_Test_Base {
 
 	public function test_run__import_content_with_one_cpt_selected_and_one_not() {
 		// Arrange
+		$this->act_as_admin();
+
 		register_post_type( 'tests' );
 		register_post_type( 'sectests' );
 

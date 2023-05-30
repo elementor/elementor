@@ -12,6 +12,8 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Plugins as Import_Plugins;
 use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies as Import_Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates as Import_Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content as Import_Wp_Content;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -21,6 +23,8 @@ class Test_Revert extends Elementor_Test_Base {
 
 	public function test_run__revert_all_one_imported_only() {
 		// Arrange
+		$this->act_as_admin();
+
 		register_post_type( 'tests' );
 		register_post_type( 'sectests' );
 		register_taxonomy( 'tests_tax', [ 'tests' ], [] );
@@ -120,16 +124,16 @@ class Test_Revert extends Elementor_Test_Base {
 
 	public function test_run__revert_elementor_content_only() {
 		// Arrange
+		$this->act_as_admin();
 		$document = $this->factory()->documents->publish_and_get();
 
-		update_option( 'page_on_front', $document->get_id() );
-		update_option( 'show_on_front', 'page' );
+		WP_Page_On_Front::set( $document->get_id() );
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 		$import->register( new Import_Elementor_Content() );
 		$import->run();
 
-		$after_import__option_page_on_front = get_option( 'page_on_front' );
+		$after_import__option_page_on_front = WP_Page_On_Front::get_value();
 
 		$revert = new Revert();
 		$revert->register( new Revert_Elementor_Content() );
@@ -138,8 +142,8 @@ class Test_Revert extends Elementor_Test_Base {
 		$revert->run();
 
 		// Arrange
-		$after_revert__option_page_on_front = get_option( 'page_on_front' );
-		$after_revert__option_show_on_front = get_option( 'show_on_front' );
+		$after_revert__option_page_on_front = WP_Page_On_Front::get_value();
+		$after_revert__option_show_on_front = WP_Show_On_Front::get_value();
 
 		$this->assertEquals( $document->get_id(), $after_revert__option_page_on_front );
 		$this->assertEquals( 'page', $after_revert__option_show_on_front );

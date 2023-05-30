@@ -3,6 +3,8 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
@@ -135,10 +137,10 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	private function init_page_on_front_data() {
-		$show_page_on_front = 'page' === get_option( 'show_on_front' );
+		$show_page_on_front = WP_Show_On_Front::is_page();
 
 		if ( $show_page_on_front ) {
-			$this->page_on_front_id = (int) get_option( 'page_on_front' );
+			$this->page_on_front_id = WP_Page_On_Front::get_value();
 		}
 	}
 }

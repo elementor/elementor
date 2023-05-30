@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Utils\ImportExport;
 
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
 use Elementor\Core\Utils\ImportExport\Parsers\WXR_Parser;
 use WP_Error;
 
@@ -680,7 +681,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( $this->page_on_front === $original_post_id ) {
-				update_option( 'page_on_front', $post_id );
+				WP_Page_On_Front::set( $post_id );
 			}
 
 			// Map pre-import ID to local ID.

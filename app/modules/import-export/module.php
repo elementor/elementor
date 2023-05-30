@@ -4,6 +4,8 @@ namespace Elementor\App\Modules\ImportExport;
 use Elementor\App\Modules\ImportExport\Processes\Export;
 use Elementor\App\Modules\ImportExport\Processes\Import;
 use Elementor\App\Modules\ImportExport\Processes\Revert;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
@@ -788,23 +790,19 @@ class Module extends BaseModule {
 	}
 
 	private function get_elementor_editor_home_page_url() {
-		if ( 'page' !== get_option( 'show_on_front' ) ) {
+		if ( ! WP_Show_On_Front::is_page() ) {
 			return '';
 		}
 
-		$frontpage_id = get_option( 'page_on_front' );
-
-		return $this->get_elementor_editor_page_url( $frontpage_id );
+		return $this->get_elementor_editor_page_url( WP_Page_On_Front::get_value() );
 	}
 
 	private function get_elementor_home_page_url() {
-		if ( 'page' !== get_option( 'show_on_front' ) ) {
+		if ( ! WP_Show_On_Front::is_page() ) {
 			return '';
 		}
 
-		$frontpage_id = get_option( 'page_on_front' );
-
-		return $this->get_elementor_page_url( $frontpage_id );
+		return $this->get_elementor_page_url( WP_Page_On_Front::get_value() );
 	}
 
 	private function get_recently_edited_elementor_page_url() {

@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Core\Utils\ImportExport;
 
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -657,12 +660,12 @@ class WP_Exporter {
 		$rss_info_language = get_bloginfo_rss( 'language' );
 		$pub_date = gmdate( 'D, d M Y H:i:s +0000' );
 
-		$show_page_on_front = 'page' === get_option( 'show_on_front' );
+		$show_page_on_front = WP_Show_On_Front::is_page();
 
 		$page_on_front_xml = '';
 
 		if ( $show_page_on_front ) {
-			$page_on_front_id = (int) get_option( 'page_on_front' );
+			$page_on_front_id = WP_Page_On_Front::get_value();
 
 			if ( in_array( $page_on_front_id, $post_ids ) ) {
 				$page_on_front_xml = "<wp:page_on_front>$page_on_front_id</wp:page_on_front>";

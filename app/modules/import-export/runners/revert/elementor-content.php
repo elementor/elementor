@@ -3,6 +3,8 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Core\Admin\Config\WP_Page_On_Front;
+use Elementor\Core\Admin\Config\WP_Show_On_Front;
 use Elementor\Plugin;
 
 class Elementor_Content extends Revert_Runner_Base {
@@ -61,10 +63,10 @@ class Elementor_Content extends Revert_Runner_Base {
 	}
 
 	private function init_page_on_front_data() {
-		$this->show_page_on_front = 'page' === get_option( 'show_on_front' );
+		$this->show_page_on_front = WP_Show_On_Front::is_page();
 
 		if ( $this->show_page_on_front ) {
-			$this->page_on_front_id = (int) get_option( 'page_on_front' );
+			$this->page_on_front_id = WP_Page_On_Front::get_value();
 		}
 	}
 
@@ -81,14 +83,6 @@ class Elementor_Content extends Revert_Runner_Base {
 			return;
 		}
 
-		$this->set_page_on_front( $document->get_main_id() );
-	}
-
-	private function set_page_on_front( $page_id ) {
-		update_option( 'page_on_front', $page_id );
-
-		if ( ! $this->show_page_on_front ) {
-			update_option( 'show_on_front', 'page' );
-		}
+		WP_Page_On_Front::set( $document->get_main_id() );
 	}
 }
