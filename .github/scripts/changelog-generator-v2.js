@@ -50,5 +50,6 @@ const [owner, repo] = repository.split('/')
 		})
 	}
 
+    console.log('newPullRequestsFilterd', newPullRequestsFilterd)
 	console.table(newPullRequestsFilterd)
 })()
