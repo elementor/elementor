@@ -73,6 +73,15 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+
+		$this->add_render_attribute( '_wrapper', [
+				'aria-roledescription' => 'carousel',
+				'aria-label' => __( 'Horizontal scrolling: ArrowLeft/Right', 'elementor' ),
+		] );
+	}
+
 	/**
 	 * Register image carousel widget controls.
 	 *

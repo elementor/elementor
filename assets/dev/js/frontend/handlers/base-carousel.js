@@ -271,10 +271,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetWidgetAriaDetails() {
+		if ( ! elementorFrontend.isEditMode() ) {
+			return;
+		}
+
 		const $widget = this.$element;
 
 		$widget.attr( 'aria-roledescription', 'carousel' );
-		$widget.attr( 'aria-label', 'Scroll: ArrowLeft/Right' );
+		$widget.attr( 'aria-label', __( 'Horizontal scrolling: ArrowLeft/Right', 'elementor' ) );
 	}
 
 	a11ySetPaginationTabindex() {
