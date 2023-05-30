@@ -80,18 +80,22 @@ export default class NestedAccordion extends Base {
 
 		$titles.each( ( index, title ) => {
 			title.addEventListener( 'click', ( e ) => {
-				e.preventDefault();
-
-				const detailsNode = $items[ index ],
-					contentNode = $accordionContent[ index ];
-
-				if ( this.isClosing || ! $items[ index ].open ) {
-					this.open( detailsNode, title, contentNode );
-				} else if ( this.isExpanding || $items[ index ].open ) {
-					this.shrink( detailsNode, title );
-				}
+				this.clickListener( e, $items, $accordionContent, index, title );
 			} );
 		} );
+	}
+
+	clickListener( e, $items, $accordionContent, index, title ) {
+		e.preventDefault();
+
+		const detailsNode = $items[ index ],
+			contentNode = $accordionContent[ index ];
+
+		if ( this.isClosing || ! $items[ index ].open ) {
+			this.open( detailsNode, title, contentNode );
+		} else if ( this.isExpanding || $items[ index ].open ) {
+			this.shrink( detailsNode, title );
+		}
 	}
 
 	shrink( el, summary ) {
@@ -153,31 +157,12 @@ export default class NestedAccordion extends Base {
 		el.style.height = el.style.overflow = '';
 	}
 
-	applyAnimationClasses( e, element ) {
-		if ( element.hasAttribute( 'open' ) ) {
-			// E.preventDefault();
-			// element.classList.add( 'closing' );
-		}
-	}
-
-	removeAnimationClasses( e, element ) {
-		if ( 'close' === e.animationName ) {
-			// E.preventDefault();
-			// element.removeAttribute( 'open' );
-			// element.classList.remove( 'closing' );
-		}
-	}
-
 	removeAnimationListeners() {
-		const { $items } = this.getDefaultElements();
+		const { $titles, $items, $accordionContent } = this.getDefaultElements();
 
-		$items.each( ( _, element ) => {
-			element.removeEventListener( 'click', ( e ) => {
-				this.applyAnimationClasses( e, element );
-			} );
-
-			element.removeEventListener( 'animationend', ( e ) => {
-				this.removeAnimationClasses( e, element );
+		$titles.each( ( index, title ) => {
+			title.removeEventListener( 'click', ( e ) => {
+				this.clickListener( e, $items, $accordionContent, index, title );
 			} );
 		} );
 	}
