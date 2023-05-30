@@ -1,4 +1,4 @@
-const { Octokit } = require("@octokit/rest");
+const { Octokit } = require('octokit');
 
 const octokit = new Octokit({
 	auth: `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`
