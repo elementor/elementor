@@ -27,6 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install octokit@2.0.19
+          npm install json2csv@v5
       - name: Generate changelog
         run: node ./.github/scripts/changelog-generator-v2.js
         env:
@@ -36,5 +37,11 @@ jobs:
           repositoryName: ${{ github.event.repository.name }}
           owner: 'elementor'
           token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Upload changelog
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog
+          path: changelog-${{ github.event.inputs.base-branch }}-${{ github.event.inputs.head-tag }}.csv
+      
         
     

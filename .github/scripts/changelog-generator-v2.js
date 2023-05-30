@@ -1,11 +1,13 @@
 const { Octokit } = require('octokit')
+const fs = require('fs')
+const { Parser } = require('json2csv');
 
 const octokit = new Octokit({
 	auth: process.env.GITHUB_TOKEN
 })
 
-const { baseBranch, headTag, filters, repositoryName: repo, owner } = process.env
-filters = filters.split(',')
+const { baseBranch, headTag, repositoryName: repo, owner } = process.env
+filters = process.env.filters.split(',')
 
 // run async function code block
 ;(async () => {
@@ -40,16 +42,34 @@ filters = filters.split(',')
 		}
 	})
 
-	let newPullRequestsFilterd = pullRequestsAfterRelease.map(pullRequest => ({
-		title: pullRequest.title,
-		url: pullRequest.html_url
-	}))
-
 	if (filters.length > 0) {
 		newPullRequestsFilterd = newPullRequestsFilterd.filter(pullRequest => {
 			return !filters.some(filter => pullRequest.title.includes(filter))
 		})
 	}
 
-	console.table(newPullRequestsFilterd)
+    let newPullRequestsFilterd = pullRequestsAfterRelease.map(pullRequest => () => {
+
+        let row = {
+            title: pullRequest.title,
+            pullRequestURL: pullRequest.html_url,
+        }
+
+        let taskNumber = pullRequest.title.match(/\[(.*?)\]/g)
+        if (taskNumber) {
+            taskNumber = taskNumber[0].replace('[', '').replace(']', '')
+            row.JiraTaskURL = `https://elementor.atlassian.net/browse/${taskNumber}`
+        }
+
+        return row
+    })
+
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(data);
+    
+    fs.writeFile(`changelog-${baseBranch}-${headTag}.csv`, csv, function(err) {
+      if (err) throw err;
+      console.log('file saved');
+    });
+
 })()
