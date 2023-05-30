@@ -187,15 +187,18 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onDirectionArrowKeydown( event ) {
-		const inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
+		const isRTL = elementorCommon.config.isRTL,
+			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
-			isInlineDirectionKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown );
+			isInlineDirectionKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
+			directionStart = isRTL ? 'ArrowRight' : 'ArrowLeft',
+			directionEnd = isRTL ? 'ArrowLeft' : 'ArrowRight';
 
 		if ( ! isInlineDirectionKeydown ) {
 			return true;
-		} else if ( 'ArrowLeft' === currentKeydown ) {
+		} else if ( directionStart === currentKeydown ) {
 			this.swiper.slidePrev();
-		} else if ( 'ArrowRight' === currentKeydown ) {
+		} else if ( directionEnd === currentKeydown ) {
 			this.swiper.slideNext();
 		}
 	}
