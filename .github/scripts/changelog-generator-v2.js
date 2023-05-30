@@ -1,28 +1,27 @@
 const { Octokit } = require('octokit')
 const fs = require('fs')
-const { Parser } = require('json2csv');
+const { Parser } = require('json2csv')
 
 const octokit = new Octokit({
 	auth: process.env.GITHUB_TOKEN
 })
 
 const { baseBranch, headTag, repositoryName: repo, owner } = process.env
-filters = process.env.filters.split(',')
 
-// run async function code block
-;(async () => {
-	// Fetch release details
+const filters = process.env.filters.split(',')
+
+// Fetch release details
+async function fetchReleaseDetails () {
 	const release = await octokit.rest.repos.getReleaseByTag({
 		owner,
 		repo,
 		tag: headTag
 	})
+	return new Date(release.data.created_at)
+}
 
-	const releaseDate = new Date(release.data.created_at)
-
-	console.log('releaseDate', releaseDate)
-
-	// Fetch all pull requests with pagination
+// Fetch all pull requests with pagination
+async function fetchAllPullRequests (releaseDate) {
 	const pullRequests = await octokit.paginate(octokit.rest.pulls.list, {
 		owner,
 		repo,
@@ -33,45 +32,61 @@ filters = process.env.filters.split(',')
 		base: baseBranch
 	})
 
-	// Filter pull requests merged after the release
-	const pullRequestsAfterRelease = pullRequests.filter(pr => {
+	return pullRequests.filter(pr => {
 		if (pr.merged_at === null) return false
 		const prMergeDate = new Date(pr.merged_at)
-		if (pr.base.ref === baseBranch && prMergeDate > releaseDate) {
-			return true
-		}
+		return pr.base.ref === baseBranch && prMergeDate > releaseDate
 	})
+}
 
-    let newPullRequestsFilterd = pullRequestsAfterRelease
-
-	if (filters.length > 0) {
-		newPullRequestsFilterd = newPullRequestsFilterd.filter(pullRequest => {
-			return !filters.some(filter => pullRequest.title.includes(filter))
-		})
+// Filter pull requests based on title
+function filterPullRequests (pullRequests) {
+	if (filters.length === 0) {
+		return pullRequests
 	}
 
-    newPullRequestsFilterd = pullRequestsAfterRelease.map(pullRequest => () => {
+	return pullRequests.filter(pullRequest => {
+		return !filters.some(filter => pullRequest.title.includes(filter))
+	})
+}
 
-        let row = {
-            title: pullRequest.title,
-            pullRequestURL: pullRequest.html_url,
-        }
+// Parse and restructure pull requests
+function parsePullRequests (pullRequests) {
+	return pullRequests.map(pullRequest => {
+		let row = {
+			title: pullRequest.title,
+			pullRequestURL: pullRequest.html_url
+		}
 
-        let taskNumber = pullRequest.title.match(/\[(.*?)\]/g)
-        if (taskNumber) {
-            taskNumber = taskNumber[0].replace('[', '').replace(']', '')
-            row.JiraTaskURL = `https://elementor.atlassian.net/browse/${taskNumber}`
-        }
+		let taskNumber = pullRequest.title.match(/\[(.*?)\]/g)
+		if (taskNumber) {
+			taskNumber = taskNumber[0].replace('[', '').replace(']', '')
+			row.JiraTaskURL = `https://elementor.atlassian.net/browse/${taskNumber}`
+		}
 
-        return row
-    })
+		return row
+	})
+}
 
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(newPullRequestsFilterd);
-    
-    fs.writeFile(`changelog-${baseBranch}-${headTag}.csv`, csv, function(err) {
-      if (err) throw err;
-      console.log('file saved');
-    });
+// Write to CSV file
+function writeToCSV (data) {
+	const fields = ['title', 'pullRequestURL', 'JiraTaskURL']
+	const json2csvParser = new Parser({ fields })
+	const csv = json2csvParser.parse(data)
 
+	fs.writeFile(`changelog-${baseBranch}-${headTag}.csv`, csv, function (err) {
+		if (err) throw err
+		console.log('file saved')
+	})
+}
+
+;(async () => {
+	const releaseDate = await fetchReleaseDetails()
+	console.log('releaseDate', releaseDate)
+
+	let pullRequests = await fetchAllPullRequests(releaseDate)
+	pullRequests = filterPullRequests(pullRequests)
+	const parsedPullRequests = parsePullRequests(pullRequests)
+
+	writeToCSV(parsedPullRequests)
 })()
