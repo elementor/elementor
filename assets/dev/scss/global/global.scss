@@ -26,6 +26,33 @@
 	border: 0;
 }
 
+.e-play-button {
+
+	&:not( .e-active ) {
+
+		.e-play-button-stop {
+			display: none;
+		}
+	}
+
+	&.e-active {
+
+		.e-play-button-start {
+			display: none;
+		}
+	}
+
+	&:focus {
+		z-index: $second-layer;
+		inset-inline-start: .4rem;
+		inset-block-start: .4rem;
+		padding: .75rem 1.25rem;
+		width: initial;
+		height: initial;
+		clip: initial;
+	}
+}
+
 .elementor-clearfix:after{
 	content: '';
 	display: block;

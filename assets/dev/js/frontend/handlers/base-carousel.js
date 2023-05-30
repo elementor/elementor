@@ -11,6 +11,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				paginationWrapper: '.swiper-pagination',
 				paginationBullet: '.swiper-pagination-bullet',
 				paginationBulletWrapper: '.swiper-pagination-bullets',
+				swiperPlayButton: '.e-play-button',
 			},
 		};
 	}
@@ -24,6 +25,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				$paginationWrapper: this.$element.find( selectors.paginationWrapper ),
 				$paginationBullets: this.$element.find( selectors.paginationBullet ),
 				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
+				$swiperPlayButton: this.$element.find( selectors.swiperPlayButton ),
 			};
 
 		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
@@ -127,9 +129,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		};
 
 		swiperOptions.on = {
-			afterInit: () => {
-				this.a11ySetSlideAriaHidden();
-			},
 			slideChangeTransitionEnd: () => {
 				this.a11ySetSlideAriaHidden();
 			},
@@ -163,18 +162,21 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		this.a11ySetWidgetAriaDetails();
 		this.a11ySetPaginationTabindex();
+		this.a11ySetSlideAriaHidden( 'initialisation' );
 	}
 
 	bindEvents() {
 		this.elements.$swiperArrows.on( 'keydown', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
+		this.elements.$swiperPlayButton.on( 'click', this.onClickPlayButton.bind( this ) );
 	}
 
 	unbindEvents() {
 		this.elements.$swiperArrows.off();
 		this.elements.$paginationWrapper.off();
 		this.elements.$swiperContainer.off();
+		this.elements.$swiperPlayButton.off();
 	}
 
 	onDirectionArrowKeydown( event ) {
@@ -188,6 +190,25 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			this.swiper.slidePrev();
 		} else if ( 'ArrowRight' === currentKeydown ) {
 			this.swiper.slideNext();
+		}
+	}
+
+	onClickPlayButton() {
+		if ( elementorFrontend.isEditMode() ) {
+			return;
+		}
+
+		const buttonElement = event.currentTarget,
+			isActive = buttonElement.classList.contains( 'e-active' );
+
+		if ( isActive ) {
+			buttonElement.classList.remove( 'e-active' );
+			this.swiper.autoplay.stop();
+			this.elements.$swiperWrapper.attr( 'aria-live', 'polite' );
+		} else {
+			buttonElement.classList.add( 'e-active' );
+			this.swiper.autoplay.start();
+			this.elements.$swiperWrapper.attr( 'aria-live', 'off' );
 		}
 	}
 
@@ -295,10 +316,10 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 	}
 
-	a11ySetSlideAriaHidden() {
-		const currentIndex = this.swiper?.activeIndex;
+	a11ySetSlideAriaHidden( status = '' ) {
+		const currentIndex = 'initialisation' === status ? 0 : this.swiper?.activeIndex;
 
-		if ( ! currentIndex ) {
+		if ( 'number' !== typeof currentIndex ) {
 			return;
 		}
 
@@ -306,12 +327,13 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		swiperWrapperTransform = swiperWrapperTransform.replace( 'translate3d(', '' );
 		swiperWrapperTransform = swiperWrapperTransform.split( ',' );
 		swiperWrapperTransform = parseInt( swiperWrapperTransform[ 0 ].replace( 'px', '' ) );
+		swiperWrapperTransform = !! swiperWrapperTransform ? swiperWrapperTransform : 0;
 
 		const swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
 			$slides = this.elements.$swiperContainer.find( this.getSettings( 'selectors' ).slideContent );
 
 		$slides.each( ( index, slide ) => {
-			const isSlideInsideWrapper = 0 < ( slide.offsetLeft + swiperWrapperTransform ) && ( swiperWrapperWidth ) > ( slide.offsetLeft + swiperWrapperTransform );
+			const isSlideInsideWrapper = 0 <= ( slide.offsetLeft + swiperWrapperTransform ) && ( swiperWrapperWidth > ( slide.offsetLeft + swiperWrapperTransform ) );
 
 			if ( ! isSlideInsideWrapper ) {
 				slide.setAttribute( 'aria-hidden', true );
