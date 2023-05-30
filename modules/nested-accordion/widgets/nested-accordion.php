@@ -280,7 +280,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons = $this->render_accordion_icons($settings);
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
-		$tag = Utils::validate_html_tag( $settings['title_tag'] );
+		$titleHTMLTag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
@@ -304,7 +304,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			?>
 				<details <?php echo $title_render_attributes // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo "<$tag> $item_title </$tag>" // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+						<span class='e-n-accordion-item-title-text'><?php echo "<$titleHTMLTag> $item_title </$titleHTMLTag>" // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<?php echo $icons // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</summary>
 					<?php echo $item_content // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -325,12 +325,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
-				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '';
+				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
-					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' ); #>
-			const elementUid = view.getIDInt().toString().substr( 0, 3 );
-			const titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
+					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' ),
+				titleHTMLTag = elementor.helpers.validateHTMLTag( settings['title_tag'] );
 			#>
 
 			<# _.each( settings['items'], function( item, index ) {
