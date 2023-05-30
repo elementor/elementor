@@ -17,6 +17,7 @@ runs:
   using: "composite"
   steps:
     - name: Create Branch
+      shell: bash
       run: |
         git config --global user.email "${{ inputs.MAINTAIN_EMAIL }}"
         git config --global user.name "${{ inputs.MAINTAIN_USERNAME }}"
