@@ -893,7 +893,17 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
+			$slide_count = $index + 1;
+			$slide_setting_key = 'swiper_slide_' . $index;
+
+			$this->add_render_attribute( $slide_setting_key, [
+				'class' => 'swiper-slide',
+				'role' => 'group',
+				'aria-roledescription' => 'slide',
+				'aria-label' => $slide_count . ' ' . esc_html__( 'of', 'elementor' ) . ' ' . count( $settings['carousel'] ),
+			] );
+
+			$slide_html = '<div ' . $this->get_render_attribute_string( $slide_setting_key ) . '>' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( $lazyload ) {
 				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
@@ -955,11 +965,9 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'previous' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous image', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'next' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Next image', 'elementor' ); ?></span>
 					</div>
 				<?php endif; ?>
 			<?php endif; ?>
