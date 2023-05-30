@@ -151,7 +151,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test.only( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -166,16 +166,33 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.openSection( 'section_accordion_style' );
 			} );
 
-			await test.step( 'Test space between Items and content', async () => {
+			await test.step( 'space between items should be applied to all items but the last one', async () => {
 				// Act
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
-				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
 
 				// Assert.
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'margin-bottom', '15px' );
-				await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '5px' );
+				await expect( nestedAccordionItemTitle.last() ).toHaveCSS( 'margin-bottom', '0px' );
 			} );
-			await test.step( 'Test normal background color and border style', async () => {
+			await test.step( 'Distance from content should not be applied to closed items', async () => {
+				// Act
+				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
+
+				// Assert.
+				await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
+			} );
+			await test.step( 'Distance from content should  be applied to open items', async () => {
+				// Act
+				nestedAccordionItemTitle.first().click();
+				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
+
+				// Assert.
+				await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
+
+				// Restore to previous state
+				nestedAccordionItemTitle.first().click();
+			} );
+			await test.step( 'Normal background color and border style should be applied to closed item', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'normal', '#ff0000', 'solid', '#00ff00' );
 
@@ -184,7 +201,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-style', 'solid' );
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 255, 0)' );
 			} );
-			await test.step( 'Test hover background color and border style', async () => {
+			await test.step( 'Hover background color and border style should be applied on hovering', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'hover', '#00ff00', 'dashed', '#0000ff' );
 				nestedAccordionItemTitle.first().hover();
@@ -195,7 +212,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(0, 0, 255)' );
 			} );
 
-			await test.step( 'Test active background color and border style', async () => {
+			await test.step( 'Active background color and border style should be applied to open items', async () => {
 				// Act
 				await setBorderAndBackground( editor, 'active', '#0000ff', 'dotted', '#ff0000' );
 				nestedAccordionItemTitle.first().click();
@@ -206,15 +223,16 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-color', 'rgb(255, 0, 0)' );
 			} );
 
-			await test.step( 'Test border radius ', async () => {
+			await test.step( 'Border radius values should affect all items', async () => {
 				// Act
 				await page.locator( '.elementor-control-accordion_border_radius .elementor-control-dimensions li:first-child input' ).fill( '25' );
 
 				// Assert
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-radius', '25px' );
+				await expect( nestedAccordionItemTitle.last() ).toHaveCSS( 'border-radius', '25px' );
 			} );
 
-			await test.step( 'Test padding', async () => {
+			await test.step( 'Padding values should affect all items', async () => {
 				// Act
 				await page.locator( '.elementor-control-accordion_padding .elementor-control-dimensions li:first-child input' ).fill( '50' );
 
