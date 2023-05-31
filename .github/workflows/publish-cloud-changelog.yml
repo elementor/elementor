@@ -36,5 +36,5 @@ jobs:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           owner: ${{ github.repository_owner }}
           repo: "elementor-cloud-changelog"
-          changeLogUrl: "https://elementor.com/pro/changelog/" # Get the html UI from here
+          changeLogUrl: "https://elementor.com/pro/changelog/" # Get HTML markup from this URL
           packageVersion: ${{ inputs.PACKAGE_VERSION }}
