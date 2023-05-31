@@ -1,14 +1,14 @@
 name: Publiush Cloud Changelog
 
-on: [workflow_dispatch]
-
-inputs:
-  CHANGELOG_CONTENT:
-    description: 'The content of the changelog'
-    required: true
-  PACKAGE_VERSION:
-    description: 'The version of the package'
-    required: true
+on:
+  workflow_dispatch:
+    inputs:
+      CHANGELOG_CONTENT:
+        description: 'The content of the changelog'
+        required: true
+      PACKAGE_VERSION:
+        description: 'The version of the package'
+        required: true
 
 jobs:
   publish-changelog:
