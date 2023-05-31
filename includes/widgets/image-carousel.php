@@ -73,15 +73,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'carousel', 'slider' ];
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-
-		$this->add_render_attribute( '_wrapper', [
-			'aria-roledescription' => 'carousel',
-			'aria-label' => __( 'Horizontal scrolling: ArrowLeft/Right', 'elementor' ),
-		] );
-	}
-
 	/**
 	 * Register image carousel widget controls.
 	 *
@@ -964,7 +955,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				</span>
 				<span class="a11y-play-button-stop">
 					<?php Icons_Manager::render_icon(
-						[®ia-hidden' => 'true' ]
+						[
+							'library' => 'fa-solid',
+							'value' => 'fas fa-pause',
+						],
+						[ 'aria-hidden' => 'true' ]
 					); ?>
 				</span>
 			</button>
