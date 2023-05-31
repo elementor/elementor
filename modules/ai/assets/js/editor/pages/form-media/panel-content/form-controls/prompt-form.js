@@ -73,6 +73,12 @@ const PromptForm = ( {
 				placeholder={ placeholderInitialValue }
 				onChange={ ( event ) => setPrompt( event.target.value ) }
 				value={ prompt }
+				onKeyDown={ ( event ) => {
+					if ( 'Tab' === event.key ) {
+						event.preventDefault();
+						setPrompt( placeholderInitialValue );
+					}
+				} }
 			/>
 
 			<PromptActionSelection
