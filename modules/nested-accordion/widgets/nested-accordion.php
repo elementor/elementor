@@ -160,10 +160,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'label'              => esc_html__( 'Default State', 'elementor' ),
 			'type'               => Controls_Manager::SELECT,
 			'options'            => [
-				'first_expended' => esc_html__( 'First expended', 'elementor' ),
+				'first_expanded' => esc_html__( 'First expended', 'elementor' ),
 				'all_collapsed'  => esc_html__( 'All collapsed', 'elementor' ),
 			],
-			'default'            => 'first_expended',
+			'default'            => 'first_expanded',
 			'frontend_available' => true,
 		] );
 

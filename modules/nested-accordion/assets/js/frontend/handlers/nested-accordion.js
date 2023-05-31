@@ -17,7 +17,7 @@ export default class NestedAccordion extends Base {
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionContent: '.e-n-accordion-item > .elementor-element',
 			},
-			default_state: 'first_expended',
+			default_state: 'first_expanded',
 		};
 	}
 
@@ -56,19 +56,21 @@ export default class NestedAccordion extends Base {
 			return;
 		}
 
-		const { $titles, $items, $accordionContent } = this.getDefaultElements(),
+		const accordionItems = this.elements.$items,
 			{ default_state: currentState } = this.getElementSettings(),
 			{ default_state: defaultState } = this.getDefaultSettings();
 
 		if ( currentState === defaultState ) {
-			this.open( $items[ 0 ], $titles[ 0 ], $accordionContent[ 0 ] );
+			accordionItems[ 0 ].setAttribute( 'open', '' );
 		} else {
-			$items.each( ( _, item ) => item.removeAttribute( 'open' ) );
+			accordionItems.each( ( _, item ) => item.removeAttribute( 'open' ) );
 		}
 	}
 
 	bindEvents() {
-		this.bindAnimationListeners();
+		setTimeout( () => {
+			this.bindAnimationListeners();
+		}, 200 ); // Wait for content to load before binding events.
 	}
 
 	unbindEvents() {
@@ -113,8 +115,7 @@ export default class NestedAccordion extends Base {
 		this.animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 1000,
-			easing: 'ease-out',
+			duration: 500,
 		} );
 
 		this.animation.onfinish = () => this.onAnimationFinish( item, false );
@@ -131,11 +132,8 @@ export default class NestedAccordion extends Base {
 	expand( item, title, content ) {
 		this.isExpanding = true;
 
-		const fallbackHeightForEditor = 214,
-			contentHeight = content ? content.offsetHeight : fallbackHeightForEditor;
-
 		const startHeight = `${ item.offsetHeight }px`,
-			endHeight = `${ title.offsetHeight + contentHeight }px`;
+			endHeight = `${ title.offsetHeight + content.offsetHeight }px`;
 
 		if ( this.animation ) {
 			this.animation.cancel();
@@ -144,8 +142,7 @@ export default class NestedAccordion extends Base {
 		this.animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 1000,
-			easing: 'ease-out',
+			duration: 500,
 		} );
 
 		this.animation.onfinish = () => this.onAnimationFinish( item, true );
