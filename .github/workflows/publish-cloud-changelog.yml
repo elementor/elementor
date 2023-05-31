@@ -23,6 +23,7 @@ jobs:
         run: |
             npm install --no-package-lock --no-save octokit@v2.0.19
             npm install --no-package-lock --no-save cheerio@v1.0.0-rc.12
+            npm install --no-package-lock --no-save util@v0.12.5
       - name: Publish Changelog
         shell: bash
         run: node ./.github/scripts/publish-cloud-changelog.js
