@@ -25,8 +25,7 @@ jobs:
           npm install octokit@v2.0.19
       - name: Publish Changelog
         shell: bash
-        run: |
-          node "${GITHUB_WORKSPACE}/.github/scripts/publish-cloud-changelog.js"
+        run: node ./.github/scripts/publish-cloud-changelog.js
         env:
           CHANGELOG_CONTENT: ${{ inputs.CHANGELOG_CONTENT }}
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
