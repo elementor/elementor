@@ -40,7 +40,7 @@
 		background-position: center;
 		// BC: Fix for Safari 13 and older browsers that don't support "aspect-ratio: 21 / 9;"
 		// TODO: Remove this line when we stop supporting Safari 13
-		padding-bottom: 42.8571%;
+		padding-block-end: 42.8571%;
 	}
 
 	&-area {
@@ -105,7 +105,7 @@
 		> * {
 
 			&:not(:first-child) {
-				@include margin-start(1px);
+				margin-inline-start: 1px;
 			}
 		}
 	}
@@ -161,11 +161,11 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		margin-top: 10px;
+		margin-block-start: 10px;
 		border: var(--e-a-border);
 
 		&__content {
-			@include padding-start(5px);
+			padding-inline-start: 5px;
 			font-size: 12px;
 
 			&__label {
@@ -178,14 +178,14 @@
 				font-weight: 500;
 
 				&__icon {
-					@include margin-end(5px);
+					margin-inline-end: 5px;
 				}
 			}
 		}
 
 		&__controls {
 			display: flex;
-			@include border-start(var(--e-a-border));
+			border-inline-start: var(--e-a-border);
 
 			&__upload-button,
 			&__remove {
@@ -201,7 +201,7 @@
 			}
 
 			&__remove {
-				@include border-end(var(--e-a-border));
+				border-inline-end: var(--e-a-border);
 			}
 		}
 	}
@@ -243,10 +243,10 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		padding-top: 20px;
+		padding-block-start: 20px;
 
 		.elementor-control-input-wrapper {
-			@include margin-start(auto);
+			margin-inline-start: auto;
 		}
 	}
 }
