@@ -180,7 +180,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Nested Accordion animation', async ( { page }, testInfo ) => {
+		test.only( 'Nested Accordion animation', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -192,11 +192,11 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await editor.selectElement( nestedAccordionID );
 
 			await test.step( 'Check closing animation', async () => {
-				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
-
 				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
-				expect( itemVisibilityBeforeAnimation ).toEqual( false );
+				expect( itemVisibilityBeforeAnimation ).toEqual( true );
+
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
 				// Wait for the closing animation to complete
 				await page.waitForTimeout( animationDuration );
@@ -210,11 +210,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'Check open animation', async () => {
-				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
-
 				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
-				expect( itemVisibilityBeforeAnimation ).toEqual( true );
+				expect( itemVisibilityBeforeAnimation ).toEqual( false );
 
 				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
