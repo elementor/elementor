@@ -1,4 +1,4 @@
-name: Publiush Cloud Changelog
+name: Publish Cloud Changelog
 
 on:
   workflow_dispatch:
