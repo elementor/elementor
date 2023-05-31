@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../container/container')} Container
  */
- export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
+export class PasteStyle extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 

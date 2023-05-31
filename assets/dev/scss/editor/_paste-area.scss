@@ -2,7 +2,7 @@
 	text-align: center;
 
 	.dialog-header {
-		padding-top: 60px;
+		padding-block-start: 60px;
 		font-size: 30px;
 	}
 
@@ -41,7 +41,7 @@
 
 			.eicon-loading {
 				display: block;
-				margin-top: 15px;
+				margin-block-start: 15px;
 			}
 		}
 	}
@@ -52,7 +52,7 @@
 
 		&:before {
 			content: '';
-			border-top: var(--e-a-border);
+			border-block-start: var(--e-a-border);
 			display: block;
 			margin: 10px -15px;
 		}

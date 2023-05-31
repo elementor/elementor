@@ -24,7 +24,8 @@ export default function ProgressBar() {
 		} );
 	}
 
-	progressBarItemsConfig.push( {
+	progressBarItemsConfig.push(
+		{
 			id: 'siteName',
 			title: __( 'Site Name', 'elementor' ),
 			route: 'site-name',
@@ -38,7 +39,8 @@ export default function ProgressBar() {
 			id: 'goodToGo',
 			title: __( 'Good to Go', 'elementor' ),
 			route: 'good-to-go',
-	} );
+		},
+	);
 
 	const progressBarItems = progressBarItemsConfig.map( ( itemConfig, index ) => {
 		itemConfig.index = index;

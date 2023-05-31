@@ -26,7 +26,7 @@ export default function OverviewTaxonomyBadge( props ) {
 	return (
 		<Link
 			onClick={ () => {
-					props?.onClick( taxonomyText );
+				props?.onClick( taxonomyText );
 			} }
 			to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }
 		>

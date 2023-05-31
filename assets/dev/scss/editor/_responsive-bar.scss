@@ -130,9 +130,9 @@
 
 #e-responsive-bar {
 	width: 100%;
-	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+	margin-block-start: calc(-40px + (40px * var(--e-is-device-mode)));
 	z-index: 1;
-	transition: margin-top .2s ease-in-out;
+	transition: margin-block-start .2s ease-in-out;
 	display: grid;
 	grid-template-columns: auto 1fr;
 	align-items: center;

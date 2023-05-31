@@ -346,9 +346,9 @@ class Revisions_Manager {
 	 * Fired by `elementor/editor/editor_settings` filter.
 	 *
 	 * @since 1.7.0
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @static
-	 * @deprecated 3.1.0
 	 */
 	public static function editor_settings() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
