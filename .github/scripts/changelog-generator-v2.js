@@ -25,7 +25,8 @@ async function fetchAllCommits (releaseDate) {
 	const { data: commits } = await octokit.rest.repos.listCommits({
 		owner,
 		repo,
-		per_page: 100
+		per_page: 100,
+		base: baseBranch
 	})
 
 	return commits.filter(commit => {
