@@ -21,8 +21,8 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          npm install cheerio@v1.0.0-rc.12
-          npm install octokit@v2.0.19
+            npm install octokit@v2.0.19
+            npm install cheerio@v1.0.0-rc.12
       - name: Publish Changelog
         shell: bash
         run: node ./.github/scripts/publish-cloud-changelog.js
