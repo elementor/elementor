@@ -1,9 +1,14 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
-	--n-accordion-title-padding: 10px 15px;
+	--n-accordion-title-padding: 0.5rem 1rem;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
+	--n-accordion-item-title-flex-grow: initial;
+	--n-accordion-item-title-justify-content: initial;
+	--n-accordion-item-title-justify-content-mobile: initial;
+	--n-accordion-title-icon-order: -1;
+	--n-accordion-title-icon-padding-inline: 0 15px;
   	--n-accordion-item-title-space-between: 0px;
   	--n-accordion-item-title-distance-from-content: 0px;
   	--n-accordion-padding: 0px;
@@ -12,6 +17,9 @@
 	.e-n-accordion {
 
 		&-item {
+			display: flex;
+			flex-direction: column;
+			position: relative;
 
 		  padding: var(--n-accordion-padding) ;
 		  border-radius: var(--n-accordion-border-radius);
@@ -27,19 +35,56 @@
 			}
 
 			&-title {
+				display: flex;
+				flex-direction: row;
 				list-style: none;
 				font-size: var(--n-accordion-title-font-size);
 				padding: var(--n-accordion-title-padding);
 				border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
+				justify-content: var(--n-accordion-item-title-justify-content);
+				flex-grow: var(--n-menu-item-title-flex-grow);
 
-				i {
-					color: var(--n-accordion-icon-color);
+				&-icon {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					padding-inline: var( --n-accordion-title-icon-padding-inline );
+					order: var( --n-accordion-title-icon-order );
+
+					span > i {
+						color: var(--n-accordion-icon-color);
+					}
+
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
 				}
 
-				svg {
-					fill: var(--n-accordion-icon-color);
+				& > span {
+					cursor: pointer;
+				}
+			}
+
+			&[open] {
+				.e-n-accordion-item-title-icon-opened {
+					display: flex;
+				}
+
+				.e-n-accordion-item-title-icon-closed {
+					display: none;
+				}
+			}
+
+			&:not([open]) {
+
+				.e-n-accordion-item-title-icon-opened {
+					display: none;
+				}
+
+				.e-n-accordion-item-title-icon-closed {
+					display: flex;
 				}
 
 			}
