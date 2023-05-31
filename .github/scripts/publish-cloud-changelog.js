@@ -90,8 +90,25 @@ async function wget (url) {
 	$('.elementor-widget-theme-post-content ul').remove()
 	$('.elementor-widget-theme-post-content p').remove()
 
-	//for each line in changeLog add a new li
-	const changeLogLines = changeLog.split('\n')
+    const gitConventionalCommitsPrefixes = [
+        'Internal:',
+        'Bugfix:',
+        'Tweak:',
+        'Fix:',
+        'New:',
+        'Feature:',
+        'Enhancement:',
+        'Breaking:',
+        'Documentation:',
+        'Build:',
+        'Chore:',
+        'CI:',
+        'Tests:'
+    ];
+
+    //split to array  - on every git commit prefix 
+    const changeLogLines = changeLog.split(new RegExp(`(${gitConventionalCommitsPrefixes.join('|')})`));
+
 	const $ul = $('<ul></ul>')
 	changeLogLines.forEach(line => {
 		$ul.append(`<li>${line}</li>`)
