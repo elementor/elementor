@@ -1,5 +1,3 @@
-'use strict';
-
 const cheerio = require('cheerio');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
