@@ -251,22 +251,21 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	private function is_active_icon_exist($settings): bool {
+	private function is_active_icon_exist( $settings ) :bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
-	private function render_accordion_icons($settings){
+	private function render_accordion_icons( $settings ) {
 		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $this->is_active_icon_exist( $settings )
 			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
 			: $icon_html;
 
-
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
 			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
- 		    <span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
+			<span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -278,9 +277,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$items_title_html = '';
-		$icons_content = $this->render_accordion_icons($settings);
+		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
-		$titleHTMLTag = Utils::validate_html_tag( $settings['title_tag'] );
+		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
@@ -304,7 +303,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			?>
 				<details <?php echo esc_html( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo esc_html("<$titleHTMLTag> $item_title </$titleHTMLTag>"); ?></span>
+						<span class='e-n-accordion-item-title-text'><?php echo esc_html( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
 						<?php echo esc_html( $icons_content ); ?>
 					</summary>
 					<?php echo esc_html( $item_content ); ?>
