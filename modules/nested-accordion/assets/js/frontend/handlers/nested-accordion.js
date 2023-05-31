@@ -6,6 +6,7 @@ const OPEN_STATE = 'open';
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
+
 		this.animations = new Map();
 	}
 
@@ -16,7 +17,7 @@ export default class NestedAccordion extends Base {
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
-				accordionContent: '.e-n-accordion-item > .elementor-element',
+				accordionContent: '.e-n-accordion-item > .e-con',
 			},
 			default_state: 'first_expanded',
 		};
