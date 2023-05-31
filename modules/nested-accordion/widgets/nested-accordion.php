@@ -184,7 +184,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
-			$isOpen = $default_state === 'first_expanded' && $index === 0 ? 'open' : '';
+			$is_open = 'first_expanded' === $default_state && 0 === $index ? 'open' : '';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -192,7 +192,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
-			$title_render_attributes = $title_render_attributes . ' ' . $isOpen;
+			$title_render_attributes = $title_render_attributes . ' ' . $is_open;
 
 			// items content.
 			ob_start();
