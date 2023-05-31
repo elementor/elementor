@@ -166,7 +166,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.openSection( 'section_accordion_style' );
 			} );
 
-			await test.step( 'space between items should be applied to all items but the last one', async () => {
+			await test.step( 'Space between items should be applied to all items but the last one', async () => {
 				// Act
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
 
