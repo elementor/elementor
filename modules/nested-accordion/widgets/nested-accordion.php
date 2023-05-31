@@ -243,8 +243,23 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'span' => 'span',
 					'p' => 'p',
 				],
+				'selectors_dictionary' => [
+					'h1' => '--n-accordion-title-font-size: 2.5rem; --n-accordion-title-icon-margin-block: 0.5rem 1rem;',
+					'h2' => '--n-accordion-title-font-size: 2rem; --n-accordion-title-icon-margin-block: 0.5rem 1rem;',
+					'h3' => '--n-accordion-title-font-size: 1,75rem; --n-accordion-title-icon-margin-block: 0.5rem 1rem;',
+					'h4' => '--n-accordion-title-font-size: 1.5rem; --n-accordion-title-icon-margin-block: 0.5rem 1rem;',
+					'h5' => '--n-accordion-title-font-size: 1rem;  --n-accordion-title-icon-margin-block: 0.5rem 1rem;',
+					'h6' => '--n-accordion-title-font-size: 1.rem;  --n-accordion-title-icon-margin-block: 0.65rem 1rem;',
+					'div' => '--n-accordion-title-font-size: 1.rem;--n-accordion-title-icon-margin-block: 0;',
+					'span' => '--n-accordion-title-font-size: 1.rem;  --n-accordion-title-icon-margin-block: 0;',
+					'p' => '--n-accordion-title-font-size: 1.rem; --n-accordion-title-icon-margin-block: 0 0.9rem;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
 				'default' => 'h2',
 				'separator' => 'before',
+				'render_type' => 'template',
 
 			]
 		);
@@ -260,7 +275,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$icon_active_html = $this->is_active_icon_exist( $settings )
 			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
 			: $icon_html;
-
 
 		ob_start();
 		?>

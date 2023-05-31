@@ -1,14 +1,14 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
+	--n-accordion-title-flex-grow: initial;
+	--n-accordion-title-justify-content: initial;;
 	--n-accordion-title-padding: 0.5rem 1rem;
+	--n-accordion-title-icon-margin-block: 0rem;
+	--n-accordion-title-icon-order: -1;
+	--n-accordion-title-icon-padding-inline: 0 15px;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
-	--n-accordion-item-title-flex-grow: initial;
-	--n-accordion-item-title-justify-content: initial;
-	--n-accordion-item-title-justify-content-mobile: initial;
-	--n-accordion-title-icon-order: -1;
-	--n-accordion-title-icon-padding-inline: 0 15px;
 
 	.e-n-accordion {
 
@@ -27,12 +27,11 @@
 				display: flex;
 				flex-direction: row;
 				list-style: none;
-				font-size: var(--n-accordion-title-font-size);
 				padding: var(--n-accordion-title-padding);
 				border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
-				justify-content: var(--n-accordion-item-title-justify-content);
+				justify-content: var(--n-accordion-title-justify-content);
 				flex-grow: var(--n-menu-item-title-flex-grow);
 
 				&-icon {
@@ -41,6 +40,10 @@
 					align-items: center;
 					padding-inline: var( --n-accordion-title-icon-padding-inline );
 					order: var( --n-accordion-title-icon-order );
+					overflow: hidden;
+					position: relative;
+					width: fit-content;
+					margin-block: var(--n-accordion-title-icon-margin-block);
 
 					span > i {
 						color: var(--n-accordion-icon-color);
