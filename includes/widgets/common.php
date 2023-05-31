@@ -52,7 +52,7 @@ class Widget_Common extends Widget_Base {
 	 * Returns an array of device args.
 	 *
 	 * @since 3.4.7
-	 * @deprcated 3.7.0 - Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
+	 * @deprecated 3.7.0 Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
 	 * @access protected
 	 *
 	 * @param array $args arguments to duplicate per breakpoint

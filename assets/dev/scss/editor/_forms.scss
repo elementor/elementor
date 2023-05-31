@@ -60,7 +60,7 @@ input[type="checkbox"] {
 	content: none;
 	height: 15px;
 	border-radius: var(--e-a-border-radius);
-	@include margin-end(5px);
+	margin-inline-end: 5px;
 	width: 15px;
 	border: var(--e-a-border-bold);
 	display: inline-flex;

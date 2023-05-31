@@ -447,6 +447,19 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_ai_images',
+			'title' => esc_html__( 'AI Images', 'elementor' ),
+			'tag' => esc_html__( 'Feature', 'elementor' ),
+			'description' => sprintf( esc_html__(
+				'Create Images using AI. %1$sLearn more%2$s',
+				'elementor'
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-ai-images/">', '</a>'),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'hidden' => true,
+		] );
 	}
 
 	/**

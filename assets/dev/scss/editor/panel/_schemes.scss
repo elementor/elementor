@@ -3,7 +3,7 @@
 //
 .elementor-panel-scheme-title {
 	padding: 10px 20px;
-	margin-top: 10px;
+	margin-block-start: 10px;
 }
 
 .elementor-panel-scheme-description {
@@ -15,7 +15,7 @@
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
-	border-bottom: var(--e-a-border);
+	border-block-end: var(--e-a-border);
 }
 
 .elementor-panel-scheme-button-wrapper {
@@ -54,7 +54,7 @@
 	display: table;
 	table-layout: fixed;
 	width: 100%;
-	margin-bottom: 15px;
+	margin-block-end: 15px;
 
 	 > * {
 		 display: table-cell;
@@ -81,13 +81,13 @@
 }
 
 .elementor-panel-scheme-color-system-scheme {
-	margin-bottom: 10px;
+	margin-block-end: 10px;
 
 	.elementor-title {
 		font-size: 11px;
 		color: $editor-light;
 		font-style: italic;
-		margin-top: 5px;
+		margin-block-start: 5px;
 	}
 }
 
@@ -121,6 +121,6 @@
 	}
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
 	}
 }

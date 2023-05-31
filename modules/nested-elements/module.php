@@ -39,7 +39,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/controls/controls_registered', function ( $controls_manager ) {
+		add_action( 'elementor/controls/register', function ( $controls_manager ) {
 			$controls_manager->register( new Controls\Control_Nested_Repeater() );
 		} );
 

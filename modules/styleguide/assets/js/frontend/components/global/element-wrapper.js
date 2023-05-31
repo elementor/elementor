@@ -31,12 +31,12 @@ const Wrapper = styled( DivBase )`
 
 	@media (max-width: 767px) {
 		${ ( { columns } ) => {
-			const columnWidth = 100 / ( columns.mobile ?? 1 );
+		const columnWidth = 100 / ( columns.mobile ?? 1 );
 
-			return css`
+		return css`
 				flex: 0 0 ${ columnWidth }%;
 			`;
-		} }
+	} }
 	}
 `;
 

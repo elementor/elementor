@@ -6,7 +6,7 @@ import forceMethodImplementation from '../../utils/force-method-implementation';
  * @typedef {import('../../modules/hook-base')} HookBase
  */
 
- export default class HooksBase extends Module {
+export default class HooksBase extends Module {
 	/**
 	 * Function constructor().
 	 *

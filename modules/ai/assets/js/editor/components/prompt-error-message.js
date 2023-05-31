@@ -1,6 +1,6 @@
-import { Alert, Button, AlertTitle } from '@elementor/ui';
+import { Alert, Button, AlertTitle, Box } from '@elementor/ui';
 
-const PromptErrorMessage = ( { error, onRetry = () => {}, ...props } ) => {
+const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'default', ...props } ) => {
 	const messages = {
 		default: {
 			text: <AlertTitle>{ __( 'Unknown error. Please try again later.', 'elementor' ) }</AlertTitle>,
@@ -49,28 +49,26 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, ...props } ) => {
 
 	const message = messages[ error ] || messages.default;
 
+	const action = message?.buttonText && (
+		<Button
+			color="inherit"
+			size="small"
+			variant="outlined"
+			onClick={ message.buttonAction }
+		>
+			{ message.buttonText }
+		</Button>
+	);
+
 	return (
 		<Alert
 			severity={ message.severity || 'error' }
-			action={ message?.buttonText && (
-				<Button
-					color="inherit"
-					size="small"
-					variant="outlined"
-					onClick={ message.buttonAction }
-					sx={ {
-						height: 'auto',
-						// TODO: Fix in UI library.
-						minHeight: '32px',
-					} }
-				>
-					{ message.buttonText }
-				</Button>
-			) }
+			action={ 'default' === actionPosition && action }
 			{ ...props }
 		>
 			{ message.text }
 			{ message.description }
+			{ 'bottom' === actionPosition && <Box sx={ { mt: 3 } }>{ action }</Box> }
 		</Alert>
 	);
 };
@@ -78,6 +76,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, ...props } ) => {
 PromptErrorMessage.propTypes = {
 	error: PropTypes.string,
 	onRetry: PropTypes.func,
+	actionPosition: PropTypes.oneOf( [ 'default', 'bottom' ] ),
 };
 
 export default PromptErrorMessage;
