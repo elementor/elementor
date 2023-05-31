@@ -959,7 +959,8 @@ class Widget_Image_Carousel extends Widget_Base {
 						[
 							'library' => 'fa-solid',
 							'value' => 'fas fa-play',
-						]
+						],
+						[ 'aria-hidden' => 'true' ]
 					); ?>
 				</span>
 				<span class="a11y-play-button-stop">
@@ -967,7 +968,8 @@ class Widget_Image_Carousel extends Widget_Base {
 						[
 							'library' => 'fa-solid',
 							'value' => 'fas fa-pause',
-						]
+						],
+						[ 'aria-hidden' => 'true' ]
 					); ?>
 				</span>
 			</button>

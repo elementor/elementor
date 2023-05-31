@@ -315,7 +315,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const $widget = this.$element;
 
 		$widget.attr( 'aria-roledescription', 'carousel' );
-		$widget.attr( 'aria-label', __( 'Horizontal scrolling: ArrowLeft/Right', 'elementor' ) );
+		$widget.attr( 'aria-label', __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ) );
 	}
 
 	a11ySetPaginationTabindex() {
@@ -325,7 +325,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			}
 		} );
 
-		const isHorizontalArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
+		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
 		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isDirectionInlineArrowKey ) {
 			this.$element.find( '.swiper-pagination-bullet-active' ).trigger( 'focus' );
