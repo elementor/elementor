@@ -41,8 +41,6 @@ export default class NestedAccordion extends Base {
 		if ( elementorFrontend.isEditMode() ) {
 			this.interlaceContainers();
 		}
-
-		this.applyDefaultStateCondition();
 	}
 
 	interlaceContainers() {
@@ -51,19 +49,6 @@ export default class NestedAccordion extends Base {
 		$contentContainers.each( ( index, element ) => {
 			$items[ index ].appendChild( element );
 		} );
-	}
-
-	applyDefaultStateCondition() {
-		if ( ! this.elements ) {
-			return;
-		}
-
-		const accordionItems = this.elements.$items,
-			{ default_state: currentState } = this.getElementSettings(),
-			{ default_state: defaultState } = this.getDefaultSettings(),
-			setItemState = ( item, isOpen ) => isOpen ? item.setAttribute( OPEN_STATE, '' ) : item.removeAttribute( OPEN_STATE );
-
-		accordionItems.each( ( index, item ) => setItemState( item, 0 === index && currentState === defaultState ) );
 	}
 
 	bindEvents() {

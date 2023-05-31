@@ -153,7 +153,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Check default state behaviour', async () => {
 				// Check default state -> first item is open
-				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', '' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				const allItems = await nestedAccordionItemTitle.all(),
 					allItemExceptFirst = allItems.slice( 1 );
@@ -172,10 +172,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				// Check manual select of first expand -> first item is open
 				await editor.setSelectControlValue( 'default_state', 'first_expanded' );
-				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', '' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				for ( const item of allItemExceptFirst ) {
-					await expect( item ).not.toHaveAttribute( 'open', '' );
+					await expect( item ).not.toHaveAttribute( 'open', 'true' );
 				}
 			} );
 		} );

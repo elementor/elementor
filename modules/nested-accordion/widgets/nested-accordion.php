@@ -177,12 +177,14 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
 		$tag = Utils::validate_html_tag( $settings['title_tag'] );
+		$default_state = $settings['default_state'];
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
+			$isOpen = $default_state === 'first_expanded' && $index === 0 ? 'open' : '';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -190,6 +192,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
+			$title_render_attributes = $title_render_attributes . ' ' . $isOpen;
 
 			// items content.
 			ob_start();
@@ -213,8 +216,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 		?>
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
-			const elementUid = view.getIDInt().toString().substr( 0, 3 );
-			const titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag );
+			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
+				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+				defaultState = settings.default_state;
 			#>
 
 			<# _.each( settings['items'], function( item, index ) {
@@ -229,10 +233,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 				itemId = 'e-n-accordion-item-' + itemUid;
 			}
 
-			view.addRenderAttribute( itemWrapperKey, {
+			const itemWrapperAttributes = {
 				'id': itemId,
 				'class': [ 'e-n-accordion-item','e-normal' ],
-			} );
+			};
+
+			if ( defaultState === 'first_expanded' && index === 0 ) {
+				itemWrapperAttributes['open'] = true;
+			}
+
+			view.addRenderAttribute( itemWrapperKey,  itemWrapperAttributes);
 
 			view.addRenderAttribute( itemTitleKey, {
 				'class': [ 'e-n-accordion-item-title' ],
