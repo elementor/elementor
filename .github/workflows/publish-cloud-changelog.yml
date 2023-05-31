@@ -25,15 +25,11 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-            npm install --no-package-lock --no-save octokit@v2.0.19
-            npm install --no-package-lock --no-save cheerio@v1.0.0-rc.12
+            npm install octokit@2.0.19
+            npm install cheerio@v1.0.0-rc.12
       - name: Publish Changelog
         shell: bash
         run: |
-          echo $(pwd)
-          echo $(ls -la)
-          cd ${GITHUB_WORKSPACE}/.github/scripts
-          echo $(ls -la)
           node ${GITHUB_WORKSPACE}/.github/scripts/publish-cloud-changelog.js
         env:
           CHANGELOG_CONTENT: ${{ inputs.CHANGELOG_CONTENT }}

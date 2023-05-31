@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const fs = require('fs');
-const { Octokit } = require('octokit')
+const { Octokit } = require('octokit');
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 
