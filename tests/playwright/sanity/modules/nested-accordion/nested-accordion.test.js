@@ -185,29 +185,24 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				frame = editor.getPreviewFrame(),
-				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-
-			await test.step( 'Check initial animation', async () => {
-				// Wait for the initial "open" animation to complete
-				await page.waitForTimeout( 1500 );
-
-				const newMaxHeight = await frame.isVisible( '.e-n-accordion-item:first-child > div' );
-
-				// Check that the value has changed.
-				expect( newMaxHeight ).not.toEqual( false );
-			} );
+				nestedAccordionID = await editor.addWidget( 'nested-accordion', container ),
+				animationDuration = 500;
 
 			await editor.closeNavigatorIfOpen();
 			await editor.selectElement( nestedAccordionID );
 
 			await test.step( 'Check closing animation', async () => {
-				await frame.locator( '.e-n-accordion-item:first-child > summary' ).click();
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
+
+				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
+
+				expect( itemVisibilityBeforeAnimation ).toEqual( false );
 
 				// Wait for the closing animation to complete
-				await page.waitForTimeout( 1500 );
+				await page.waitForTimeout( animationDuration );
 
 				// Check the computed height
-				const maxHeightAfterClose = await frame.locator( '.e-n-accordion-item:first-child > .elementor-element' ).evaluate( ( element ) =>
+				const maxHeightAfterClose = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
 					window.getComputedStyle( element ).getPropertyValue( 'height' ),
 				);
 
@@ -215,13 +210,19 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'Check open animation', async () => {
-				await frame.locator( '.e-n-accordion-item:first-child > summary' ).click();
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
+
+				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
+
+				expect( itemVisibilityBeforeAnimation ).toEqual( true );
+
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
 				// Wait for the open animation to complete
-				await page.waitForTimeout( 1500 );
+				await page.waitForTimeout( animationDuration );
 
 				// Check the computed height
-				const maxHeightAfterOpen = await frame.locator( '.e-n-accordion-item:first-child > .elementor-element' ).evaluate( ( element ) =>
+				const maxHeightAfterOpen = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
 					window.getComputedStyle( element ).getPropertyValue( 'height' ),
 				);
 
