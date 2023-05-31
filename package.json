@@ -109,11 +109,11 @@
         "webpack": "^5.73.0"
     },
     "dependencies": {
-        "@elementor/editor": "0.3.0",
-        "@elementor/editor-app-bar": "0.4.0",
-        "@elementor/editor-documents": "0.4.0",
-        "@elementor/editor-responsive": "0.3.0",
-        "@elementor/editor-site-navigation": "0.4.1",
+        "@elementor/editor": "0.4.0",
+        "@elementor/editor-app-bar": "0.4.1",
+        "@elementor/editor-documents": "0.5.0",
+        "@elementor/editor-responsive": "0.3.1",
+        "@elementor/editor-site-navigation": "0.4.2",
         "@elementor/editor-v1-adapters": "0.2.0",
         "@elementor/env": "0.2.0",
         "@elementor/icons": "0.2.1",
