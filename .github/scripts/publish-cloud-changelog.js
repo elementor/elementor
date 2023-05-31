@@ -36,12 +36,11 @@ async function publishToGithubPages (
 	}
 }
 
-async function generateAndPublishChangelog (octokit, owner, repo, changelog) {
-	const htmlContent = generateHTML(changelog)
+async function generateAndPublishChangelog (octokit, owner, repo, htmlContent) {
 	await publishToGithubPages(
 		octokit,
 		owner,
-		'elementor-cloud-changelog',
+		repo,
 		'index.html',
 		'Update changelog',
 		htmlContent
