@@ -34,19 +34,19 @@ export default function Menu( props ) {
 				{ props.children }
 				<ul>
 					{ (
-					props.menuItems.map( ( item ) => (
-						<Match key={ item.type } path={ item.url }>
-							{ ( { match } ) => {
-								return (
-									<li key={ item.type } className={ `eps-menu-item${ match ? ' eps-menu-item--active' : '' }` }>
-										<Button text={ item.title } className="eps-menu-item__link" { ...item } />
-										<ActionButton { ...item } />
-									</li>
-								);
-							} }
-						</Match>
-					) )
-				) }
+						props.menuItems.map( ( item ) => (
+							<Match key={ item.type } path={ item.url }>
+								{ ( { match } ) => {
+									return (
+										<li key={ item.type } className={ `eps-menu-item${ match ? ' eps-menu-item--active' : '' }` }>
+											<Button text={ item.title } className="eps-menu-item__link" { ...item } />
+											<ActionButton { ...item } />
+										</li>
+									);
+								} }
+							</Match>
+						) )
+					) }
 				</ul>
 			</nav>
 		</LocationProvider>
