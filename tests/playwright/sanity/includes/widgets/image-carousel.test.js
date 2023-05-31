@@ -127,3 +127,62 @@ test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => 
 		additional_custom_breakpoints: 'inactive',
 	} );
 } );
+
+test.only( 'Accessibility test', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+
+	await wpAdmin.setExperiments( {
+		e_swiper_latest: false,
+	} );
+
+	const editor = await wpAdmin.useElementorCleanPost();
+
+	await editor.useDefaultTemplate();
+
+	// Close Navigator
+	await editor.closeNavigatorIfOpen();
+
+	// Act.
+	const headingId = await editor.addWidget( 'heading' ),
+		widgetId = await editor.addWidget( 'image-carousel' );
+
+	// Populate the widget with images.
+	await editor.populateImageCarousel();
+	await editor.openSection( 'section_additional_options' );
+	await editor.setSelectControlValue( 'autoplay', 'yes' );
+
+	await test.step( 'Assert a11y play button in the editor', async () => {
+		// Assert.
+		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
+		await page.keyboard.press( 'Shift+Tab' );
+		await expect( await editor.getPreviewFrame().locator( '.a11y-play-button' ) ).toBeFocused();
+
+		await editor.selectElement( widgetId );
+		await editor.openSection( 'section_additional_options' );
+		await editor.setSelectControlValue( 'autoplay', 'no' );
+		await editor.setNumberControlValue( 'speed', 0 );
+	} );
+
+	await test.step( 'Assert keyboard navigation inside the editor', async () => {
+		// Assert.
+		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
+		await page.keyboard.press( 'Tab' );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+		await page.keyboard.press( 'Enter' );
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await page.keyboard.press( 'ArrowLeft' );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+		await page.keyboard.press( 'Enter' );
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await page.keyboard.press( 'Tab' );
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await expect( await editor.getPreviewFrame().locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
+	} );
+} );
+
+async function getActiveSlideDataValue( context ) {
+	await context.waitForSelector( '.swiper-slide-active' );
+	return await context.locator( '.swiper-slide-active' ).getAttribute( 'data-swiper-slide-index' );
+}

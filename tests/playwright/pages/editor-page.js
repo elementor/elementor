@@ -344,6 +344,10 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
+	}
+
 	/**
 	 * Set a widget to `flew grow`.
 	 *
