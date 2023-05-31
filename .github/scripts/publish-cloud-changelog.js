@@ -90,7 +90,6 @@ function splitOnPrefixes(text, prefixes) {
 		'<style>.elementor-popup-modal {display: none !important;}</style>'
 	)
 
-	//get [data-widget_type="theme-post-content.default"] and remove all h4 and ul and p
 	$('.elementor-widget-theme-post-content h4').remove()
 	$('.elementor-widget-theme-post-content ul').remove()
 	$('.elementor-widget-theme-post-content p').remove()
