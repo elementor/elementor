@@ -2,6 +2,7 @@ const { addElement, getElementSelector } = require( '../assets/elements-utils' )
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 const _ = require( 'lodash' );
+import _path from 'path';
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -146,6 +147,49 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
 		return widgetId;
+	}
+
+	/**
+	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
+	 *
+	 * @param {string}  dirName              - use __dirname to get the current directory
+	 * @param {string}  fileName             - without json extension
+	 * @param {string}  widgetSelector       - css selector
+	 * @param {boolean} updateDatesForImages - flag to update dates for images
+	 */
+	async loadJsonPageTemplate( dirName, fileName, widgetSelector, updateDatesForImages = false ) {
+		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
+		const templateData = require( filePath );
+		const pageTemplateData =
+		{
+			content: templateData,
+			page_settings: [],
+			version: '0.4',
+			title: 'Elementor Test',
+			type: 'page',
+		};
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, pageTemplateData );
+
+		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
 	}
 
 	/**

@@ -1,5 +1,4 @@
- {
- "content": [
+[
   {
     "id": "7d373d8",
     "elType": "container",
@@ -79,9 +78,4 @@
     ],
     "isInner": false
   }
-],
-   "page_settings": [],
-   "version": "0.4",
-   "title": "animated_headline",
-   "type": "page"
- }
+]

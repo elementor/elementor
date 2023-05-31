@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import _path from 'path';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
@@ -184,11 +183,9 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 		// Act
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
-			filePath = _path.resolve( __dirname, `./templates/nested-accordion-title-and-icons.json` );
+			editor = await wpAdmin.useElementorCleanPost();
 
-		await editor.loadTemplate( filePath, false );
-		await editor.waitForElement( { isPublished: false, selector: '.elementor-widget-n-accordion' } );
+		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 
 		await editor.closeNavigatorIfOpen();
 
