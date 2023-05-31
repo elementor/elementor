@@ -77,7 +77,10 @@ async function wget (url) {
 }
 
 function splitOnPrefixes(text, prefixes) {
-    const prefixRegex = new RegExp('(' + prefixes.join('|') + ')([^:]*)', 'g');
+    // Create a regex pattern that matches any of the prefixes followed by any characters that are not a prefix.
+    const prefixPattern = '(' + prefixes.join('|') + ')([^(' + prefixes.join('|') + ')]*)';
+    const prefixRegex = new RegExp(prefixPattern, 'g');
+    
     let match;
     let result = [];
     while ((match = prefixRegex.exec(text)) !== null) {
@@ -85,7 +88,6 @@ function splitOnPrefixes(text, prefixes) {
     }
     return result;
 }
-
 
 (async () => {
 	await wget(changeLogUrl)
