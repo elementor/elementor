@@ -26,7 +26,9 @@ jobs:
       - name: Publish Changelog
         shell: bash
         run: |
-          cd ./.github/scripts
+          echo $(pwd)
+          echo $(ls -la)
+          cd ${GITHUB_WORKSPACE}/.github/scripts
           echo $(ls -la)
           node ${GITHUB_WORKSPACE}/.github/scripts/publish-cloud-changelog.js
         env:
