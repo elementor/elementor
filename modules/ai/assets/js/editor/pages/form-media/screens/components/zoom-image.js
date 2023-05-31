@@ -55,7 +55,19 @@ const ZoomImage = (
 						</Stack>
 					</Box>
 
-					<img src={ currentImage.image_url } alt={ '' } />
+					<Box
+						display="flex"
+						justifyContent="center"
+						alignItems="center"
+						sx={ {
+							bgcolor: 'secondary.background',
+							width: 512,
+							height: 512,
+							overflow: 'hidden',
+						} }
+					>
+						<img src={ currentImage.image_url } alt={ '' } />
+					</Box>
 				</Stack>
 
 				<IconButton onClick={ () => imageNavigation.navigateNextImage() } size="large" color="secondary">

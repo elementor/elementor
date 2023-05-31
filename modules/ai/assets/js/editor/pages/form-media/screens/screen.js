@@ -1,4 +1,5 @@
-import ImageLoader from '../../../components/image-loader';
+import { useMemo } from 'react';
+import ImageLoader from './image-loader';
 import { IMAGE_PROMPT_SETTINGS, SCREENS } from '../consts/consts';
 import FormGenerateResult from './generate-result';
 import PromptGallery from './prompt-gallery';
@@ -15,6 +16,12 @@ export const Screen = ( {
 	promptSettings,
 	updatePromptSettings,
 } ) => {
+	/**
+	 * The aspect ratio value should be changed only when getting a new instance of the images array.
+	 * Otherwise, each change of the selection will cause a re-render and will affect the current images.
+	 */
+	const cachedAspectRation = useMemo( () => promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ], [ images ] );
+
 	if ( isLoading || isUploading ) {
 		return <ImageLoader />;
 	}
@@ -24,6 +31,7 @@ export const Screen = ( {
 			images,
 			generateNewPrompt,
 			maybeUploadImage,
+			aspectRatio: cachedAspectRation,
 		} } />;
 	}
 
@@ -35,7 +43,7 @@ export const Screen = ( {
 		setPrompt,
 		maybeUploadImage,
 		updatePromptSettings,
-		selectedCategory: promptSettings[ IMAGE_PROMPT_SETTINGS.STYLE_PRESET ],
+		selectedCategory: promptSettings[ IMAGE_PROMPT_SETTINGS.IMAGE_TYPE ],
 	} } />;
 };
 
