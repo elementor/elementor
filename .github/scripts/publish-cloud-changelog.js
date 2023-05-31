@@ -77,16 +77,8 @@ async function wget (url) {
 }
 
 function splitOnPrefixes(text, prefixes) {
-    // Create a regex pattern that matches any of the prefixes followed by any characters that are not a prefix.
-    const prefixPattern = '(' + prefixes.join('|') + ')([^(' + prefixes.join('|') + ')]*)';
-    const prefixRegex = new RegExp(prefixPattern, 'g');
-    
-    let match;
-    let result = [];
-    while ((match = prefixRegex.exec(text)) !== null) {
-        result.push(match[0].trim());
-    }
-    return result;
+    const prefixRegex = new RegExp('(?=' + prefixes.join('|') + ')');
+    return text.split(prefixRegex).filter(Boolean).map(str => str.trim());
 }
 
 (async () => {
