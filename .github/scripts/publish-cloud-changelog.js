@@ -5,6 +5,21 @@ const fs = require('fs')
 const { Octokit } = require('octokit')
 const octokit = new Octokit({ auth: process.env.token })
 
+
+async function getShaForPath(octokit, owner, repo, path, ref) {
+    try {
+      const response = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref,
+      });
+      return response.data.sha;
+    } catch (error) {
+      return null;
+    }
+  }
+
 const {
 	changeLog,
 	owner,
@@ -23,13 +38,15 @@ async function publishToGithubPages (
 ) {
 	const contentEncoded = Buffer.from(htmlContent, 'utf8').toString('base64')
 	try {
+        const sha = await getShaForPath(octokit, owner, repo, path, 'gh-pages') ?? null;
 		await octokit.rest.repos.createOrUpdateFileContents({
 			owner,
 			repo,
 			path,
 			message,
 			content: contentEncoded,
-			branch: 'gh-pages' // Assuming you're using the gh-pages branch for GitHub Pages
+			branch: 'gh-pages',
+            sha
 		})
 	} catch (error) {
 		console.error('Failed to publish to GitHub Pages:', error)
