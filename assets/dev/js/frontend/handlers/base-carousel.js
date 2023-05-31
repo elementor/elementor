@@ -17,7 +17,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				paginationWrapper: '.swiper-pagination',
 				paginationBullet: '.swiper-pagination-bullet',
 				paginationBulletWrapper: '.swiper-pagination-bullets',
-				swiperPlayButton: '.e-play-button',
+				swiperPlayButton: '.a11y-play-button',
 			},
 		};
 	}
@@ -209,10 +209,12 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		if ( isActive ) {
 			buttonElement.classList.remove( 'e-active' );
+			buttonElement.setAttribute( 'aria-label', __( 'Play slides', 'elementor' ) );
 			this.swiper.autoplay.stop();
 			this.elements.$swiperWrapper.attr( 'aria-live', 'polite' );
 		} else {
 			buttonElement.classList.add( 'e-active' );
+			buttonElement.setAttribute( 'aria-label', __( 'Pause slides', 'elementor' ) );
 			this.swiper.autoplay.start();
 			this.elements.$swiperWrapper.attr( 'aria-live', 'off' );
 		}

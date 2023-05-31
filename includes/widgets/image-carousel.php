@@ -953,9 +953,23 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 
 		if ( 'yes' ===  $settings['autoplay'] ) { ?>
-			<button class="elementor-screen-only e-play-button e-active">
-				<span class="e-play-button-start"><?php echo esc_html__( 'Play slides', 'elementor' ); ?></span>
-				<span class="e-play-button-stop"><?php echo esc_html__( 'Pause slides', 'elementor' ); ?></span>
+			<button class="elementor-screen-only a11y-play-button e-active" aria-label="<?php echo esc_html__( 'Pause slides', 'elementor-pro' ); ?>">
+				<span class="a11y-play-button-start">
+					<?php Icons_Manager::render_icon(
+						[
+							'library' => 'fa-solid',
+							'value' => 'fas fa-play',
+						]
+					); ?>
+				</span>
+				<span class="a11y-play-button-stop">
+					<?php Icons_Manager::render_icon(
+						[
+							'library' => 'fa-solid',
+							'value' => 'fas fa-pause',
+						]
+					); ?>
+				</span>
 			</button>
 		<?php }
 		?>
