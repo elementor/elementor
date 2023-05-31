@@ -1,6 +1,6 @@
 name: Publiush Cloud Changelog
 
-on: [dispatch]
+on: [workflow_dispatch]
 
 inputs:
   CHANGELOG_CONTENT:
