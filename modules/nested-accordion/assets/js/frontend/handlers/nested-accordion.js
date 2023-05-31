@@ -1,12 +1,12 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
+const ANIMATION_DURATION = 500;
+
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
 
-		this.animation = null;
-		this.isClosing = false;
-		this.isExpanding = false;
+		this.animations = new Map();
 	}
 	getDefaultSettings() {
 		return {
@@ -93,9 +93,9 @@ export default class NestedAccordion extends Base {
 		const item = $items[ index ],
 			content = $accordionContent[ index ];
 
-		if ( this.isClosing || ! item.open ) {
+		if ( ! item.open ) {
 			this.open( item, title, content );
-		} else if ( this.isExpanding || item.open ) {
+		} else if ( item.open ) {
 			this.shrink( item, title );
 		}
 	}
@@ -103,23 +103,23 @@ export default class NestedAccordion extends Base {
 	shrink( item, itemTitle ) {
 		item.style.overflow = 'hidden';
 
-		this.isClosing = true;
-
 		const startHeight = `${ item.offsetHeight }px`,
 			endHeight = `${ itemTitle.offsetHeight }px`;
 
-		if ( this.animation ) {
-			this.animation.cancel();
+		let animation = this.animations.get( item );
+
+		if ( animation ) {
+			animation.cancel();
 		}
 
-		this.animation = item.animate( {
+		animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 500,
+			duration: ANIMATION_DURATION,
 		} );
 
-		this.animation.onfinish = () => this.onAnimationFinish( item, false );
-		this.animation.oncancel = () => this.isClosing = false;
+		animation.onfinish = () => this.onAnimationFinish( item, false );
+		this.animations.set( item, animation );
 	}
 
 	open( item, title, content ) {
@@ -130,30 +130,28 @@ export default class NestedAccordion extends Base {
 	}
 
 	expand( item, title, content ) {
-		this.isExpanding = true;
-
 		const startHeight = `${ item.offsetHeight }px`,
 			endHeight = `${ title.offsetHeight + content.offsetHeight }px`;
 
-		if ( this.animation ) {
-			this.animation.cancel();
+		let animation = this.animations.get( item );
+
+		if ( animation ) {
+			animation.cancel();
 		}
 
-		this.animation = item.animate( {
+		animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 500,
+			duration: ANIMATION_DURATION,
 		} );
 
-		this.animation.onfinish = () => this.onAnimationFinish( item, true );
-		this.animation.oncancel = () => this.isExpanding = false;
+		animation.onfinish = () => this.onAnimationFinish( item, true );
+		this.animations.set( item, animation );
 	}
 
 	onAnimationFinish( item, isOpen ) {
 		item.open = isOpen;
-		this.animation = null;
-		this.isClosing = false;
-		this.isExpanding = false;
+		this.animations.set( item, null );
 		item.style.height = item.style.overflow = '';
 	}
 
