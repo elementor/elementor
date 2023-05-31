@@ -32,9 +32,9 @@ jobs:
         run: |
           node ${GITHUB_WORKSPACE}/.github/scripts/publish-cloud-changelog.js
         env:
-          CHANGELOG_CONTENT: ${{ inputs.CHANGELOG_CONTENT }}
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          OWNER: ${{ github.repository_owner }}
-          REPO: "elementor-cloud-changelog"
-          TEMPLATE_URL: "https://elementor.com/pro/changelog/"
-          PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
+          changeLog: ${{ inputs.CHANGELOG_CONTENT }}
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          owner: ${{ github.repository_owner }}
+          repo: "elementor-cloud-changelog"
+          changeLogUrl: "https://elementor.com/pro/changelog/" # Get the html UI from here
+          packageVersion: ${{ inputs.PACKAGE_VERSION }}
