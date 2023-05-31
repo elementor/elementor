@@ -88,76 +88,76 @@ export default class NestedAccordion extends Base {
 	clickListener( e, $items, $accordionContent, index, title ) {
 		e.preventDefault();
 
-		const detailsNode = $items[ index ],
-			contentNode = $accordionContent[ index ];
+		const item = $items[ index ],
+			content = $accordionContent[ index ];
 
-		if ( this.isClosing || ! $items[ index ].open ) {
-			this.open( detailsNode, title, contentNode );
-		} else if ( this.isExpanding || $items[ index ].open ) {
-			this.shrink( detailsNode, title );
+		if ( this.isClosing || ! item.open ) {
+			this.open( item, title, content );
+		} else if ( this.isExpanding || item.open ) {
+			this.shrink( item, title );
 		}
 	}
 
-	shrink( el, summary ) {
-		el.style.overflow = 'hidden';
+	shrink( item, itemTitle ) {
+		item.style.overflow = 'hidden';
 
 		this.isClosing = true;
 
-		const startHeight = `${ el.offsetHeight }px`,
-			endHeight = `${ summary.offsetHeight }px`;
+		const startHeight = `${ item.offsetHeight }px`,
+			endHeight = `${ itemTitle.offsetHeight }px`;
 
 		if ( this.animation ) {
 			this.animation.cancel();
 		}
 
-		this.animation = el.animate( {
+		this.animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 1500,
+			duration: 1000,
 			easing: 'ease-out',
 		} );
 
-		this.animation.onfinish = () => this.onAnimationFinish( el, false );
+		this.animation.onfinish = () => this.onAnimationFinish( item, false );
 		this.animation.oncancel = () => this.isClosing = false;
 	}
 
-	open( el, summary, content ) {
-		el.style.overflow = 'hidden';
-		el.style.height = `${ el.offsetHeight }px`;
-		el.open = true;
-		window.requestAnimationFrame( () => this.expand( el, summary, content ) );
+	open( item, title, content ) {
+		item.style.overflow = 'hidden';
+		item.style.height = `${ item.offsetHeight }px`;
+		item.open = true;
+		window.requestAnimationFrame( () => this.expand( item, title, content ) );
 	}
 
-	expand( el, summary, content ) {
+	expand( item, title, content ) {
 		this.isExpanding = true;
 
 		const fallbackHeightForEditor = 214,
 			contentHeight = content ? content.offsetHeight : fallbackHeightForEditor;
 
-		const startHeight = `${ el.offsetHeight }px`,
-			endHeight = `${ summary.offsetHeight + contentHeight }px`;
+		const startHeight = `${ item.offsetHeight }px`,
+			endHeight = `${ title.offsetHeight + contentHeight }px`;
 
 		if ( this.animation ) {
 			this.animation.cancel();
 		}
 
-		this.animation = el.animate( {
+		this.animation = item.animate( {
 			height: [ startHeight, endHeight ],
 		}, {
-			duration: 1500,
+			duration: 1000,
 			easing: 'ease-out',
 		} );
 
-		this.animation.onfinish = () => this.onAnimationFinish( el, true );
+		this.animation.onfinish = () => this.onAnimationFinish( item, true );
 		this.animation.oncancel = () => this.isExpanding = false;
 	}
 
-	onAnimationFinish( el, open ) {
-		el.open = open;
+	onAnimationFinish( item, isOpen ) {
+		item.open = isOpen;
 		this.animation = null;
 		this.isClosing = false;
 		this.isExpanding = false;
-		el.style.height = el.style.overflow = '';
+		item.style.height = item.style.overflow = '';
 	}
 
 	removeAnimationListeners() {
