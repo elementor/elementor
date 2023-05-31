@@ -76,7 +76,12 @@ async function wget (url) {
 	}
 }
 
-;(async () => {
+function splitOnPrefixes(text, prefixes) {
+    const prefixRegex = new RegExp('(' + prefixes.join('|') + ')');
+    return text.split(prefixRegex).filter(Boolean);
+}
+
+(async () => {
 	await wget(changeLogUrl)
 	const html = fs.readFileSync('index.html', 'utf8')
 	const $ = cheerio.load(html)
@@ -106,8 +111,7 @@ async function wget (url) {
         'Tests:'
     ];
 
-    //split to array  - on every git commit prefix 
-    const changeLogLines = changeLog.split(new RegExp(`(${gitConventionalCommitsPrefixes.join('|')})`));
+    const changeLogLines = splitOnPrefixes(changeLog, gitConventionalCommitsPrefixes);
 
 	const $ul = $('<ul></ul>')
 	changeLogLines.forEach(line => {
