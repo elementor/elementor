@@ -77,9 +77,15 @@ async function wget (url) {
 }
 
 function splitOnPrefixes(text, prefixes) {
-    const prefixRegex = new RegExp('(' + prefixes.join('|') + ')');
-    return text.split(prefixRegex).filter(Boolean);
+    const prefixRegex = new RegExp('(' + prefixes.join('|') + ')([^:]*)', 'g');
+    let match;
+    let result = [];
+    while ((match = prefixRegex.exec(text)) !== null) {
+        result.push(match[0].trim());
+    }
+    return result;
 }
+
 
 (async () => {
 	await wget(changeLogUrl)
