@@ -1,13 +1,14 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
 const ANIMATION_DURATION = 500;
+const OPEN_STATE = 'open';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
-
 		this.animations = new Map();
 	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -58,19 +59,14 @@ export default class NestedAccordion extends Base {
 
 		const accordionItems = this.elements.$items,
 			{ default_state: currentState } = this.getElementSettings(),
-			{ default_state: defaultState } = this.getDefaultSettings();
+			{ default_state: defaultState } = this.getDefaultSettings(),
+			setItemState = ( item, isOpen ) => isOpen ? item.setAttribute( OPEN_STATE, '' ) : item.removeAttribute( OPEN_STATE );
 
-		if ( currentState === defaultState ) {
-			accordionItems[ 0 ].setAttribute( 'open', '' );
-		} else {
-			accordionItems.each( ( _, item ) => item.removeAttribute( 'open' ) );
-		}
+		accordionItems.each( ( index, item ) => setItemState( item, 0 === index && currentState === defaultState ) );
 	}
 
 	bindEvents() {
-		setTimeout( () => {
-			this.bindAnimationListeners();
-		}, 200 ); // Wait for content to load before binding events.
+		setTimeout( this.bindAnimationListeners.bind( this ), 200 ); // Wait for content to load before binding events.
 	}
 
 	unbindEvents() {
@@ -81,13 +77,13 @@ export default class NestedAccordion extends Base {
 		const { $titles, $items, $accordionContent } = this.getDefaultElements();
 
 		$titles.each( ( index, title ) => {
-			title.addEventListener( 'click', ( e ) => {
-				this.clickListener( e, $items, $accordionContent, index, title );
-			} );
+			const clickListener = this.clickListener.bind( this, $items, $accordionContent, index, title );
+			title.addEventListener( 'click', clickListener );
+			title.clickListener = clickListener; // Save reference for later removal
 		} );
 	}
 
-	clickListener( e, $items, $accordionContent, index, title ) {
+	clickListener( $items, $accordionContent, index, title, e ) {
 		e.preventDefault();
 
 		const item = $items[ index ],
@@ -95,31 +91,29 @@ export default class NestedAccordion extends Base {
 
 		if ( ! item.open ) {
 			this.open( item, title, content );
-		} else if ( item.open ) {
+		} else {
 			this.shrink( item, title );
 		}
 	}
 
-	shrink( item, itemTitle ) {
+	animateItem( item, startHeight, endHeight, isOpen ) {
 		item.style.overflow = 'hidden';
-
-		const startHeight = `${ item.offsetHeight }px`,
-			endHeight = `${ itemTitle.offsetHeight }px`;
-
 		let animation = this.animations.get( item );
 
 		if ( animation ) {
 			animation.cancel();
 		}
 
-		animation = item.animate( {
-			height: [ startHeight, endHeight ],
-		}, {
-			duration: ANIMATION_DURATION,
-		} );
-
-		animation.onfinish = () => this.onAnimationFinish( item, false );
+		animation = item.animate( { height: [ startHeight, endHeight ] }, { duration: ANIMATION_DURATION } );
+		animation.onfinish = () => this.onAnimationFinish( item, isOpen );
 		this.animations.set( item, animation );
+	}
+
+	shrink( item, itemTitle ) {
+		const startHeight = `${ item.offsetHeight }px`,
+			endHeight = `${ itemTitle.offsetHeight }px`;
+
+		this.animateItem( item, startHeight, endHeight, false );
 	}
 
 	open( item, title, content ) {
@@ -133,20 +127,7 @@ export default class NestedAccordion extends Base {
 		const startHeight = `${ item.offsetHeight }px`,
 			endHeight = `${ title.offsetHeight + content.offsetHeight }px`;
 
-		let animation = this.animations.get( item );
-
-		if ( animation ) {
-			animation.cancel();
-		}
-
-		animation = item.animate( {
-			height: [ startHeight, endHeight ],
-		}, {
-			duration: ANIMATION_DURATION,
-		} );
-
-		animation.onfinish = () => this.onAnimationFinish( item, true );
-		this.animations.set( item, animation );
+		this.animateItem( item, startHeight, endHeight, true );
 	}
 
 	onAnimationFinish( item, isOpen ) {
@@ -156,12 +137,10 @@ export default class NestedAccordion extends Base {
 	}
 
 	removeAnimationListeners() {
-		const { $titles, $items, $accordionContent } = this.getDefaultElements();
+		const { $titles } = this.getDefaultElements();
 
-		$titles.each( ( index, title ) => {
-			title.removeEventListener( 'click', ( e ) => {
-				this.clickListener( e, $items, $accordionContent, index, title );
-			} );
+		$titles.each( ( _, title ) => {
+			title.removeEventListener( 'click', title.clickListener );
 		} );
 	}
 }
