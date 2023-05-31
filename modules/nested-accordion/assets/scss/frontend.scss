@@ -57,22 +57,22 @@
 			}
 
 			&[open] {
-				.e-n-accordion-item-title-icon-opened {
+				.e-opened {
 					display: flex;
 				}
 
-				.e-n-accordion-item-title-icon-closed {
+				.e-closed {
 					display: none;
 				}
 			}
 
 			&:not([open]) {
 
-				.e-n-accordion-item-title-icon-opened {
+				.e-opened {
 					display: none;
 				}
 
-				.e-n-accordion-item-title-icon-closed {
+				.e-closed {
 					display: flex;
 				}
 			}

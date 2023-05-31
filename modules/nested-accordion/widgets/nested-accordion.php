@@ -265,8 +265,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
- 		    <span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
+ 		    <span class='e-closed'><?php echo esc_html( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -364,8 +364,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
 					<span class="e-n-accordion-item-title-icon">
-						<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
-						<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
+						<span class="e-opened">{{{ itemTitleIconActive.value }}}</span>
+						<span class="e-closed">{{{ itemTitleIcon.value }}}</span>
 					</span>
 					<# } #>
 				</summary>
