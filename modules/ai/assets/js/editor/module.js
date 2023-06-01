@@ -1,5 +1,6 @@
 import AiBehavior from './ai-behavior';
 import AiPromotionBehavior from './ai-promotion-behavior';
+import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/consts/consts';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
@@ -71,6 +72,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
+						defaultImageType: aiOptions?.default_image_type || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
 					},
 				};
 			}

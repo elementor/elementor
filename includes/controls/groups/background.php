@@ -244,6 +244,11 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['image'] = [
 			'label' => esc_html_x( 'Image', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
+			'ai' => [
+				'active' => true,
+				'type' => 'media',
+				'default_image_type' => 'background',
+			],
 			'dynamic' => [
 				'active' => true,
 			],
