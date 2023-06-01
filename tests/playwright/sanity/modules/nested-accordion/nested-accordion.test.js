@@ -151,7 +151,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.only( 'Nested Accordion Title Text and Title Icons', async ( { browser }, testInfo ) => {
+		test( 'Nested Accordion Title Text and Title Icons', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
