@@ -160,10 +160,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'label'              => esc_html__( 'Default State', 'elementor' ),
 			'type'               => Controls_Manager::SELECT,
 			'options'            => [
-				'first_expanded' => esc_html__( 'First expended', 'elementor' ),
+				'expanded' => esc_html__( 'First expended', 'elementor' ),
 				'all_collapsed'  => esc_html__( 'All collapsed', 'elementor' ),
 			],
-			'default'            => 'first_expanded',
+			'default'            => 'expanded',
 			'frontend_available' => true,
 		] );
 
@@ -184,7 +184,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
-			$is_open = 'first_expanded' === $default_state && 0 === $index ? 'open' : '';
+			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -238,7 +238,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'class': [ 'e-n-accordion-item','e-normal' ],
 			};
 
-			if ( defaultState === 'first_expanded' && index === 0 ) {
+			if ( defaultState === 'expanded' && index === 0 ) {
 				itemWrapperAttributes['open'] = true;
 			}
 

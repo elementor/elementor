@@ -1,7 +1,6 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
 const ANIMATION_DURATION = 500;
-const OPEN_STATE = 'open';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
@@ -19,7 +18,7 @@ export default class NestedAccordion extends Base {
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionContent: '.e-n-accordion-item > .e-con',
 			},
-			default_state: 'first_expanded',
+			default_state: 'expanded',
 		};
 	}
 

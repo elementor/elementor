@@ -171,7 +171,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				}
 
 				// Check manual select of first expand -> first item is open
-				await editor.setSelectControlValue( 'default_state', 'first_expanded' );
+				await editor.setSelectControlValue( 'default_state', 'expanded' );
 				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				for ( const item of allItemExceptFirst ) {
