@@ -5,6 +5,8 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.type = 'text';
 		this.controlType = 'text';
 		this.buttonLabel = __( 'Write with AI', 'elementor' );
+		this.mediaButtonLabel = __( 'Create with AI', 'elementor' );
+		this.editButtonLabel = __( 'Edit with AI', 'elementor' );
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 
@@ -49,9 +51,22 @@ export default class AiBehavior extends Marionette.Behavior {
 		/>, rootElement );
 	}
 
+	getAiButtonLabel() {
+		const defaultValue = this.getOption( 'additionalOptions' )?.defaultValue;
+		const currentValue = this.getOption( 'getControlValue' )();
+		const isMedia = 'media' === this.getOption( 'type' );
+		const isDefaultValue = ( ! isMedia && defaultValue === currentValue ) || ( isMedia && currentValue?.url === defaultValue?.url );
+
+		if ( ! isDefaultValue ) {
+			return this.getOption( 'editButtonLabel' );
+		}
+
+		return isMedia ? this.getOption( 'mediaButtonLabel' ) : this.getOption( 'buttonLabel' );
+	}
+
 	onRender() {
 		const isPromotion = ! this.config.is_get_started;
-		const buttonLabel = this.getOption( 'buttonLabel' );
+		const buttonLabel = this.getAiButtonLabel();
 
 		const $button = jQuery( '<button>', {
 			class: 'e-ai-button',
