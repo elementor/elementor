@@ -128,8 +128,9 @@ class Tools extends Settings_Page {
 
 		$rollback_versions = $this->get_rollback_versions();
 		$version = Utils::get_super_global_value( $_GET, 'version' );
+		$is_cloud = strpos( ELEMENTOR_VERSION, '-cloud' ) !== false;
 
-		if ( empty( $version ) || ! in_array( $version, $rollback_versions, true ) ) {
+		if ( ! $is_cloud && empty( $version ) || ! in_array( $version, $rollback_versions, true ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
@@ -143,6 +144,8 @@ class Tools extends Settings_Page {
 				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
 			]
 		);
+
+		$rollback = apply_filters( 'elementor/settings/tools/rollback/post', $version, $plugin_slug );
 
 		$rollback->run();
 
@@ -181,8 +184,12 @@ class Tools extends Settings_Page {
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
 
-	private function get_rollback_versions() {
+	public function get_rollback_versions() {
+
 		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
+
+		$rollback_versions = apply_filters( 'elementor/settings/tools/rollback/versions', $rollback_versions );
+
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
