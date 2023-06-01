@@ -1,4 +1,4 @@
-import { Box, Typography } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import { IMAGE_ACTIONS } from '../consts/consts';
 import useImageNavigation from '../../../hooks/use-image-navigation';
 import ZoomImage from './components/zoom-image';
@@ -8,6 +8,7 @@ const FormGenerateResult = (
 	{
 		maybeUploadImage,
 		images,
+		aspectRatio,
 	},
 ) => {
 	const { zoomedImageIndex, setZoomedImageIndex, imageNavigation } = useImageNavigation( images );
@@ -27,7 +28,7 @@ const FormGenerateResult = (
 	};
 
 	return (
-		<Box sx={ { overflowY: 'scroll', p: 10 } } flexGrow={ 1 }>
+		<Box sx={ { overflowY: 'scroll', p: 8 } } flexGrow={ 1 }>
 			{ zoomedImageIndex > -1
 				? <ZoomImage { ...{
 					images,
@@ -38,6 +39,7 @@ const FormGenerateResult = (
 				: <ResultsGrid { ...{
 					images,
 					handleImageAction,
+					aspectRatio,
 				} } />
 			}
 		</Box>
@@ -47,6 +49,7 @@ const FormGenerateResult = (
 FormGenerateResult.propTypes = {
 	maybeUploadImage: PropTypes.func.isRequired,
 	images: PropTypes.array,
+	aspectRatio: PropTypes.string,
 };
 
 export default FormGenerateResult;

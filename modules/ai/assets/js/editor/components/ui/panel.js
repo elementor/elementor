@@ -9,9 +9,9 @@ const Panel = ( { sx = {}, ...props } ) => {
 			PaperProps={ {
 				sx: {
 					position: 'relative',
-					width: 300,
+					width: 360,
 					px: 8,
-					pt: 10,
+					pt: 8,
 					bgcolor: 'background.default',
 				},
 			} }

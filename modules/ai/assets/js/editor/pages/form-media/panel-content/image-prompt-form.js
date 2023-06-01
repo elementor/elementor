@@ -24,11 +24,11 @@ const ImagePromptForm = (
 
 	return (
 		<Box component="form" onSubmit={ handleSubmit }>
-			<Typography variant="h4" sx={ { mb: 3 } }>
+			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Imagine anything create everything', 'elementor' ) }
 			</Typography>
 			<Typography variant="body1" sx={ { mb: 8 } }>
-				{ __( 'Describe your vision to create stunning images for your website', 'elementor' ) }
+				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
 			</Typography>
 
 			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } actionPosition="bottom" onRetry={ handleSubmit } /> }
@@ -49,7 +49,6 @@ const ImagePromptForm = (
 						<Stack gap={ 5 } sx={ { my: 6 } }>
 							<Button
 								fullWidth
-								size="large"
 								type="submit"
 								variant="contained"
 								color="secondary"
@@ -71,7 +70,7 @@ const ImagePromptForm = (
 						</Stack>
 					)
 					: (
-						<GenerateButton disabled={ ( ! panelActive || '' === prompt ) } fullWidth size="large" sx={ { my: 6 } }>
+						<GenerateButton size="medium" disabled={ ( ! panelActive || '' === prompt ) } fullWidth sx={ { my: 6 } }>
 							{ __( 'Generate images', 'elementor' ) }
 						</GenerateButton>
 					)

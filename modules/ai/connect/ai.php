@@ -13,6 +13,7 @@ class Ai extends Library {
 	const STYLE_PRESET = 'style_preset';
 	const IMAGE_TYPE = 'image_type';
 	const IMAGE_STRENGTH = 'image_strength';
+	const ASPECT_RATIO = 'ratio';
 	const PROMPT = 'prompt';
 
 	public function get_title() {
@@ -181,7 +182,8 @@ class Ai extends Library {
 			'image/text-to-image',
 			[
 				self::PROMPT => $prompt,
-				self::IMAGE_TYPE => $prompt_settings[ self::STYLE_PRESET ] . '/' . $prompt_settings[ self::IMAGE_TYPE ],
+				self::IMAGE_TYPE => $prompt_settings[ self::IMAGE_TYPE ] . '/' . $prompt_settings[ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $prompt_settings[ self::ASPECT_RATIO ],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
@@ -207,8 +209,9 @@ class Ai extends Library {
 			'image/image-to-image',
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => $image_data['promptSettings'][ self::STYLE_PRESET ] . '/' . $image_data['promptSettings'][ self::IMAGE_TYPE ],
+				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
 				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
+				self::ASPECT_RATIO => $image_data['promptSettings'][ self::ASPECT_RATIO ],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
