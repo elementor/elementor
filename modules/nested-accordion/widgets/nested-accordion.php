@@ -298,10 +298,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial;',
-				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial;',
-				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;',
-				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1;',
+				'start' => '--n-accordion-title-justify-content: initial; --n-accordion-title-flex-grow: initial;',
+				'center' => '--n-accordion-title-justify-content: center; --n-accordion-title-flex-grow: initial;',
+				'end' => '--n-accordion-item-justify-content: flex-end; --n-accordion-title-flex-grow: initial;',
+				'stretch' => '--n-accordion-title-justify-content: space-between; --n-accordion-title-flex-grow: 1;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -411,27 +411,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$this->add_style_tab();
 
-	}
-
-	private function is_active_icon_exist( $settings ) :bool {
-		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
-	}
-
-	private function render_accordion_icons( $settings ) {
-		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
-		$icon_active_html = $this->is_active_icon_exist( $settings )
-			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
-			: $icon_html;
-
-		ob_start();
-		?>
-		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
-			<span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
-		</span>
-
-		<?php
-		return ob_get_clean();
 	}
 
 	private function is_active_icon_exist($settings): bool {
