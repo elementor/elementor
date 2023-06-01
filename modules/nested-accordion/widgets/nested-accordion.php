@@ -301,7 +301,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-				<details <?php echo $title_render_attributes; ?>>
+				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-text'><?php echo wp_kses_post( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
 						<?php echo wp_kses_post( $icons_content ); ?>
