@@ -76,7 +76,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await page.close();
 		} );
 
-		test( 'General Test', async ( { page }, testInfo ) => {
+		test.only( 'General Test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -151,7 +151,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Nested Accordion Title Text and Title Icons', async ( { browser }, testInfo ) => {
+		test.only( 'Nested Accordion Title Text and Title Icons', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
@@ -397,6 +397,71 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				// Assert
 				await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'padding', '50px' );
+			} );
+
+			await test.step( 'Test Frontend', async () => {
+				// Act
+				await editor.publishAndViewPage();
+
+				const nestedAccordionWidgetFront = await page.locator( 'e-n-accordion' ),
+					nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' ),
+					nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' ),
+					nestedAccordionItemContentFront = nestedAccordionItem.locator( '.e-con' );
+
+				await test.step( 'Space between items should be applied to all items but the last one', async () => {
+					// Assert.
+					await expect( nestedAccordionItemFront.first() ).toHaveCSS( 'margin-bottom', '15px' );
+					await expect( nestedAccordionItem.last() ).toHaveCSS( 'margin-bottom', '0px' );
+				} );
+
+				await test.step( 'Distance from content should not be applied to closed items', async () => {
+					// Assert.
+					await expect( nestedAccordionItemContentFront.first() ).toHaveCSS( 'margin-top', '0px' );
+				} );
+				await test.step( 'Distance from content should be applied to open items', async () => {
+					// Act
+					nestedAccordionItem.first().click();
+
+					// Assert.
+					await expect( nestedAccordionItemContentFront.first() ).toHaveCSS( 'margin-top', '0px' );
+
+					// Restore to previous state
+					nestedAccordionItem.first().click();
+				} );
+				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
+					// Assert
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-style', 'solid' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-color', 'rgb(0, 255, 0)' );
+				} );
+				await test.step( 'Hover background color and border style should be applied on hovering', async () => {
+					nestedAccordionItemTitleFront.first().hover();
+
+					// Assert
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-style', 'dashed' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-color', 'rgb(0, 0, 255)' );
+				} );
+
+				await test.step( 'Active background color and border style should be applied to open items', async () => {
+					nestedAccordionItemTitle.first().click();
+
+					// Assert
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-style', 'dotted' );
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-color', 'rgb(255, 0, 0)' );
+				} );
+
+				await test.step( 'Border radius values should affect all items', async () => {
+					// Assert
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-radius', '25px' );
+					await expect( nestedAccordionItemTitleFront.last() ).toHaveCSS( 'border-radius', '25px' );
+				} );
+
+				await test.step( 'Padding values should affect all items', async () => {
+					// Assert
+					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'padding', '50px' );
+				} );
 			} );
 		} );
 	} );
