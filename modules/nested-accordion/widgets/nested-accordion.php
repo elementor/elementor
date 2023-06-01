@@ -292,7 +292,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'class' => $item_classes,
 			] );
 
-			$title_render_attributes = esc_html( $this->get_render_attribute_string( $item_setting_key ) );
+			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
 
 			// items content.
 			ob_start();
