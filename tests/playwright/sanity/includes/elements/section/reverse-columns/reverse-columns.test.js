@@ -11,7 +11,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 			continue;
 		}
 
-		test.skip( `Reverse columns:${ testDevice } - Experiment breakpoints:Off`, async ( { page }, testInfo ) => {
+		test( `Reverse columns:${ testDevice } - Experiment breakpoints:Off`, async ( { page }, testInfo ) => {
 			const reverseColumns = new ReverseColumns( page, testInfo );
 			await reverseColumns.testReverseColumnsOneActivated( testDevice );
 		} );
