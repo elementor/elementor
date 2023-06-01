@@ -156,7 +156,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'selectors_dictionary' => [
 				'start' => '--n-accordion-title-justify-content: initial; --n-accordion-title-flex-grow: initial;',
 				'center' => '--n-accordion-title-justify-content: center; --n-accordion-title-flex-grow: initial;',
-				'end' => '--n-accordion-item-justify-content: flex-end; --n-accordion-title-flex-grow: initial;',
+				'end' => '--n-accordion-title-justify-content: flex-end; --n-accordion-title-flex-grow: initial;',
 				'stretch' => '--n-accordion-title-justify-content: space-between; --n-accordion-title-flex-grow: 1;',
 			],
 			'selectors' => [
