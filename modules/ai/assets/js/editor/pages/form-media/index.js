@@ -116,6 +116,8 @@ const FormMedia = (
 		setScreen( SCREENS.GALLERY );
 		setPanel( PANELS.TEXT_TO_IMAGE );
 		setHasUnsavedChanges( false );
+		reset();
+		resetUpload();
 	};
 
 	return (
