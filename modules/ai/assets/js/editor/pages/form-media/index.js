@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Box } from '@elementor/ui';
 import useImagePrompt from '../../hooks/use-image-prompt';
 import useImageUpload from '../../hooks/use-image-upload';
-import usePromptSettings from '../../hooks/use-prompt-settings';
+import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
 import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS } from './consts/consts';
+import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS } from './consts/consts';
 import { Screen } from './screens/screen';
 import { PanelContent } from './panel-content/panel-content';
 import Panel from '../../components/ui/panel';
@@ -16,6 +16,7 @@ const FormMedia = (
 		additionalOptions,
 		controlView,
 		credits,
+		setHasUnsavedChanges,
 	},
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? { id: '', url: '' } : getControlValue();
@@ -25,18 +26,20 @@ const FormMedia = (
 		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.IMAGE_TO_IMAGE,
 	);
 	const [ prompt, setPrompt ] = useState( '' );
-	const { promptSettings, updatePromptSettings, resetPromptSettings } = usePromptSettings();
+	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings();
 	const [ images, setImages ] = useState( [] );
 	const [ insertToControl, setInsertToControl ] = useState( false );
-	const { data, isLoading, error, send, sendUsageData } = useImagePrompt( {
+	const { data, isLoading, error, send, sendUsageData, reset } = useImagePrompt( {
 		result: initialValue,
 		credits,
 		responseId: false,
 	} );
-	const { attachmentData, isUploading, uploadError, upload } = useImageUpload();
+	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
 
 	const panelActive = ! isLoading && ! isUploading;
+
 	const setAttachment = () => {
+		setHasUnsavedChanges( false );
 		sendUsageData();
 		controlView.setSettingsModel( attachmentData.image );
 		controlView.applySavedValue();
@@ -57,6 +60,7 @@ const FormMedia = (
 			} else {
 				setEditImage( attachmentData.image );
 				setPanel( PANELS.IMAGE_TO_IMAGE );
+				updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
 			}
 		}
 	}, [ isUploading ] );
@@ -78,6 +82,7 @@ const FormMedia = (
 				return setAttachment( attachment );
 			}
 			setPanel( PANELS.IMAGE_TO_IMAGE );
+			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
 		}
 
 		// Normalize object to match the upload function
@@ -88,10 +93,15 @@ const FormMedia = (
 				use_gallery_image: true,
 			};
 		}
+
 		upload( { image: { ...imageToUpload }, prompt: prompt || imageToUpload.prompt } );
 	};
 
 	const submitPrompt = ( promptType, userPrompt ) => {
+		reset();
+		resetUpload();
+		setHasUnsavedChanges( true );
+
 		if ( PANELS.TEXT_TO_IMAGE === promptType ) {
 			return send( userPrompt, promptSettings );
 		}
@@ -105,10 +115,13 @@ const FormMedia = (
 		resetPromptSettings();
 		setScreen( SCREENS.GALLERY );
 		setPanel( PANELS.TEXT_TO_IMAGE );
+		setHasUnsavedChanges( false );
+		reset();
+		resetUpload();
 	};
 
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } }>
+		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%">
 			<Box position="relative">
 				<Panel>
 					<PanelContent { ...{
@@ -143,13 +156,12 @@ const FormMedia = (
 };
 
 FormMedia.propTypes = {
-	type: PropTypes.string.isRequired,
-	controlType: PropTypes.string,
 	getControlValue: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.object,
 	controlView: PropTypes.object,
 	credits: PropTypes.number,
+	setHasUnsavedChanges: PropTypes.func.isRequired,
 };
 
 export default FormMedia;
