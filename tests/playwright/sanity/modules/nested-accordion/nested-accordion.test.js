@@ -144,7 +144,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				// Act
 				await deleteItemButton.last().click();
-				await deleteItemButton.last().click();
 
 				// Assert
 				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
