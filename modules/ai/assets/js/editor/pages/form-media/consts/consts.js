@@ -17,9 +17,10 @@ export const PANELS = {
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
-	STYLE_PRESET: 'style_preset',
 	IMAGE_TYPE: 'image_type',
+	STYLE_PRESET: 'style_preset',
 	IMAGE_STRENGTH: 'image_strength',
+	ASPECT_RATIO: 'ratio',
 };
 
 export const IMAGE_PROMPT_CATEGORIES = [
@@ -93,3 +94,13 @@ export const IMAGE_PROMPT_CATEGORIES = [
 		},
 	},
 ];
+
+export const IMAGE_ASPECT_RATIOS = {
+	'1:1': __( 'Sqaure', 'elementor' ) + ' (1:1)',
+	'3:2': __( 'Landscape', 'elementor' ) + ' (3:2)',
+	'4:3': __( 'Landscape', 'elementor' ) + ' (4:3)',
+	'16:9': __( 'Landscape', 'elementor' ) + ' (16:9)',
+	'2:3': __( 'Portrait', 'elementor' ) + ' (2:3)',
+	'3:4': __( 'Portrait', 'elementor' ) + ' (3:4)',
+	'9:16': __( 'Portrait', 'elementor' ) + ' (9:16)',
+};

@@ -3,6 +3,8 @@ namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Icons_Manager;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
@@ -44,6 +46,148 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
+	}
+
+	private function add_accordion_style_section() {
+
+		$this->start_controls_section(
+			'section_accordion_style',
+			[
+				'label' => esc_html__( 'Accordion', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control('accordion_item_title_space_between', [
+			'label' => esc_html__( 'Space between Items', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
+			],
+		]);
+
+		$this->add_responsive_control('accordion_item_title_distance_from_content', [
+			'label' => esc_html__( 'Distance from content', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 200,
+				],
+			],
+			'default' => [
+				'size' => 0,
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
+			],
+		]);
+
+		$this->start_controls_tabs( 'accordion__border_and_background' );
+
+		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
+			$this->add_border_and_radius_style( $state );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'accordion_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'accordion_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} ' => '--n-accordion-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	/**
+	 * @string $state
+	 */
+	private function add_border_and_radius_style( $state ) {
+
+		$selector = '{{WRAPPER}}  .e-n-accordion-item';
+		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+
+		switch ( $state ) {
+			case 'hover':
+				$selector .= ':hover';
+				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
+				break;
+			case 'active':
+				$selector .= '[open]';
+				$translated_tab_text = esc_html__( 'Active', 'elementor' );
+				break;
+		}
+
+		$this->start_controls_tab('accordion_' . $state . '_border_and_background', [
+			'label' => $translated_tab_text,
+		]);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'accordion_background_' . $state,
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'elementor' ),
+					],
+					'width' => [
+						'label' => esc_html__( 'Border Width', 'elementor' ),
+					],
+				],
+				'selector' => $selector,
+
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'accordion_border_' . $state,
+				'selector' => $selector,
+			]
+		);
+
+		$this->end_controls_tab();
+
+	}
+
+	private function add_style_tab() {
+
+		$this->add_accordion_style_section();
+
 	}
 
 	protected function item_content_container( int $index ) {
@@ -264,6 +408,30 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 		$this->end_controls_section();
+
+		$this->add_style_tab();
+
+	}
+
+	private function is_active_icon_exist( $settings ) :bool {
+		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
+	}
+
+	private function render_accordion_icons( $settings ) {
+		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
+		$icon_active_html = $this->is_active_icon_exist( $settings )
+			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
+			: $icon_html;
+
+		ob_start();
+		?>
+		<span class='e-n-accordion-item-title-icon'>
+			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
+			<span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
+		</span>
+
+		<?php
+		return ob_get_clean();
 	}
 
 	private function is_active_icon_exist($settings): bool {
@@ -292,9 +460,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items = $settings['items'];
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 		$items_title_html = '';
-		$icons_content = $this->render_accordion_icons($settings);
+		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
-		$titleHTMLTag = Utils::validate_html_tag( $settings['title_tag'] );
+		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
@@ -318,7 +486,18 @@ class Nested_Accordion extends Widget_Nested_Base {
 			?>
 				<details <?php echo esc_html( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo esc_html("<$titleHTMLTag> $item_title </$titleHTMLTag>"); ?></span>
+						<span class='e-n-accordion-item-title-text'><?php echo esc_html("<$title_html_tag> $item_title </$title_html_tag>"); ?></span>
+						<?php echo esc_html( $icons_content ); ?>
+					</summary>
+					<?php echo esc_html( $item_content ); ?>
+				</details>
+			<?php
+			$items_title_html .= ob_get_clean();
+			ob_start();
+			?>
+				<details <?php echo esc_html( $title_render_attributes ); ?>>
+					<summary class='e-n-accordion-item-title'>
+						<span class='e-n-accordion-item-title-text'><?php echo esc_html( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
 						<?php echo esc_html( $icons_content ); ?>
 					</summary>
 					<?php echo esc_html( $item_content ); ?>

@@ -1,5 +1,6 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
+	--n-accordion-title-padding: 0.5rem 1rem;
 	--n-accordion-title-flex-grow: initial;
 	--n-accordion-title-justify-content: initial;;
 	--n-accordion-title-padding: 0.5rem 1rem;
@@ -9,6 +10,15 @@
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
+	--n-accordion-item-title-flex-grow: initial;
+	--n-accordion-item-title-justify-content: initial;
+	--n-accordion-item-title-justify-content-mobile: initial;
+	--n-accordion-title-icon-order: -1;
+	--n-accordion-title-icon-padding-inline: 0 15px;
+  	--n-accordion-item-title-space-between: 0px;
+  	--n-accordion-item-title-distance-from-content: 0px;
+  	--n-accordion-padding: 0px;
+  	--n-accordion-border-radius: 0px;
 
 	.e-n-accordion {
 
@@ -16,6 +26,16 @@
 			display: flex;
 			flex-direction: column;
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+
+		  padding: var(--n-accordion-padding) ;
+		  border-radius: var(--n-accordion-border-radius);
+
+		  &:not(:last-child) {
+				margin-bottom: var(--n-accordion-item-title-space-between);
+		  	}
 
 			> .e-con {
 				border-width: var(--n-accordion-border-width);
@@ -78,7 +98,39 @@
 				.e-closed {
 					display: flex;
 				}
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
+				}
+
+				& > span {
+					cursor: pointer;
+				}
+			}
+
+			&[open] {
+				.e-opened {
+					display: flex;
+				}
+
+				.e-closed {
+					display: none;
+				}
+			}
+
+			&:not([open]) {
+
+				.e-open {
+					display: none;
+				}
+
+				.e-closed {
+					display: flex;
+				}
+
+			}
+			&[open] .e-n-accordion-item-title {
+				margin-bottom: var(--n-accordion-item-title-distance-from-content);
 			}
 		}
 	}
-}
