@@ -123,7 +123,7 @@ class Deprecation {
 		$version_explode_count = count( $version_explode );
 
 		if ( $version_explode_count < 3 || $version_explode_count > 4 ) {
-			trigger_error( 'Invalid Semantic Version string provided' . var_export( $version, 1 ) );
+			trigger_error( 'Invalid Semantic Version string provided: ' . var_export( $version, 1 ) );
 
 			return false;
 		}
