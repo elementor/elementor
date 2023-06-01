@@ -17,11 +17,19 @@ const PromptActionSelection = ( props ) => {
 				onChange={ props.onChange }
 				size="small"
 				label={ props.label }
+				disabled={ props.disabled }
 				MenuProps={ {
 					PaperProps: {
 						sx: {
 							width: 138,
 						},
+					},
+				} }
+				sx={ {
+					// Fixing global CSS of the editor that targets input[disabled] globally.
+					'&.Mui-disabled .MuiSelect-nativeInput': {
+						backgroundColor: 'initial',
+						opacity: 0,
 					},
 				} }
 			>
@@ -48,6 +56,7 @@ PromptActionSelection.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	value: PropTypes.string,
 	wrapperStyle: PropTypes.object,
+	disabled: PropTypes.bool,
 };
 
 export default PromptActionSelection;
