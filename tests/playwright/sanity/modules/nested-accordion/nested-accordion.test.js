@@ -337,13 +337,14 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 		} );
 	} );
 
-	test( 'Accordion style Tests', async ( { page }, testInfo ) => {
+	test.only( 'Accordion style Tests', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
-			nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item' ),
-			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
+			nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
+			nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item-title' ),
+			nestedAccordionItemContent = nestedAccordionItem.locator( '.e-con' );
 
 		await test.step( 'Add Widget and navigate to Style Tab', async () => {
 			// Act
@@ -357,8 +358,8 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 			await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
 
 			// Assert.
-			await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'margin-bottom', '15px' );
-			await expect( nestedAccordionItemTitle.last() ).toHaveCSS( 'margin-bottom', '0px' );
+			await expect( nestedAccordionItem.first() ).toHaveCSS( 'margin-bottom', '15px' );
+			await expect( nestedAccordionItem.last() ).toHaveCSS( 'margin-bottom', '0px' );
 		} );
 		await test.step( 'Distance from content should not be applied to closed items', async () => {
 			// Act
@@ -367,16 +368,16 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 			// Assert.
 			await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
 		} );
-		await test.step( 'Distance from content should  be applied to open items', async () => {
+		await test.step( 'Distance from content should be applied to open items', async () => {
 			// Act
-			nestedAccordionItemTitle.first().click();
+			nestedAccordionItem.first().click();
 			await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
 
 			// Assert.
 			await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
 
 			// Restore to previous state
-			nestedAccordionItemTitle.first().click();
+			nestedAccordionItem.first().click();
 		} );
 		await test.step( 'Normal background color and border style should be applied to closed item', async () => {
 			// Act

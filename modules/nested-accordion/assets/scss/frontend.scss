@@ -1,6 +1,5 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
-	--n-accordion-title-padding: 0.5rem 1rem;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
@@ -21,9 +20,6 @@
 			flex-direction: column;
 			position: relative;
 
-		  padding: var(--n-accordion-padding) ;
-		  border-radius: var(--n-accordion-border-radius);
-
 		  &:not(:last-child) {
 				margin-bottom: var(--n-accordion-item-title-space-between);
 		  	}
@@ -39,12 +35,13 @@
 				flex-direction: row;
 				list-style: none;
 				font-size: var(--n-accordion-title-font-size);
-				padding: var(--n-accordion-title-padding);
 				border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
 				justify-content: var(--n-accordion-item-title-justify-content);
 				flex-grow: var(--n-menu-item-title-flex-grow);
+			  	border-radius: var(--n-accordion-border-radius);
+			  	padding: var(--n-accordion-padding) ;
 
 				&-icon {
 					display: flex;
@@ -88,6 +85,7 @@
 				}
 
 			}
+
 			&[open] .e-n-accordion-item-title {
 				margin-bottom: var(--n-accordion-item-title-distance-from-content);
 			}

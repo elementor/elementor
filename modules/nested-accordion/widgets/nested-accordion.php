@@ -135,7 +135,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 */
 	private function add_border_and_radius_style( $state ) {
 
-		$selector = '{{WRAPPER}}  .e-n-accordion-item';
+		$selector = '{{WRAPPER}}  .e-n-accordion-item-title';
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
 		switch ( $state ) {
@@ -144,7 +144,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
 				break;
 			case 'active':
-				$selector .= '[open]';
+				$selector = '{{WRAPPER}} .e-n-accordion-item[open] .e-n-accordion-item-title';
 				$translated_tab_text = esc_html__( 'Active', 'elementor' );
 				break;
 		}
@@ -161,10 +161,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'exclude' => [ 'image' ],
 				'fields_options' => [
 					'color' => [
-						'label' => esc_html__( 'Border Color', 'elementor' ),
-					],
-					'width' => [
-						'label' => esc_html__( 'Border Width', 'elementor' ),
+						'label' => esc_html__( 'Color', 'elementor' ),
 					],
 				],
 				'selector' => $selector,
