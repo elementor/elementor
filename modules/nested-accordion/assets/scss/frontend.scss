@@ -40,7 +40,8 @@
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
 				justify-content: var(--n-accordion-item-title-justify-content);
-				flex-grow: var(--n-menu-item-title-flex-grow);
+				border-radius: var(--n-accordion-border-radius);
+			  	flex-grow: var(--n-menu-item-title-flex-grow);
 
 				&-icon {
 					display: flex;

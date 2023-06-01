@@ -309,7 +309,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.only( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -407,4 +407,28 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
  */
 async function getIcon( nestedAccordionItem, iconIndex ) {
 	return await nestedAccordionItem.locator( 'i' ).nth( iconIndex );
+}
+
+async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
+	await setState();
+	await setBackgroundColor();
+	await setBorderType();
+	await setBorderColor();
+
+	async function setBackgroundColor() {
+		await editor.page.locator( '.elementor-control-accordion_background_' + state + '_background .eicon-paint-brush' ).click();
+		await editor.setColorControlValue( color, 'accordion_background_' + state + '_color' );
+	}
+
+	async function setBorderType() {
+		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+	}
+
+	async function setBorderColor() {
+		await editor.setColorControlValue( borderColor, 'accordion_border_' + state + '_color' );
+	}
+
+	async function setState() {
+		await editor.page.click( '.elementor-control-accordion_' + state + '_border_and_background' );
+	}
 }
