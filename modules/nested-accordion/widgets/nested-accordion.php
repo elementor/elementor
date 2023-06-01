@@ -2,6 +2,8 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Border;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
