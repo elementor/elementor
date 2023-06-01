@@ -264,8 +264,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo $icon_active_html; ?></span>
-			<span class='e-n-accordion-item-title-icon-closed'><?php echo $icon_html; ?></span>
+			<span class='e-n-accordion-item-title-icon-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
+			<span class='e-n-accordion-item-title-icon-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -292,7 +292,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'class' => $item_classes,
 			] );
 
-			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
+			$title_render_attributes = esc_html( $this->get_render_attribute_string( $item_setting_key ) );
 
 			// items content.
 			ob_start();
@@ -301,12 +301,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-				<details <?php echo $title_render_attributes ; ?>>
+				<details <?php echo $title_render_attributes; ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo "<$title_html_tag> $item_title </$title_html_tag>"; ?></span>
-						<?php echo $icons_content; ?>
+						<span class='e-n-accordion-item-title-text'><?php echo wp_kses_post( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
+						<?php echo wp_kses_post( $icons_content ); ?>
 					</summary>
-					<?php echo $item_content; ?>
+					<?php echo wp_kses_post( $item_content ); ?>
 				</details>
 			<?php
 			$items_title_html .= ob_get_clean();
@@ -314,7 +314,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
-			<?php echo $items_title_html; ?>
+			<?php echo wp_kses_post( $items_title_html ); ?>
 		</div>
 		<?php
 	}
