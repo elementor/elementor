@@ -207,12 +207,14 @@ class Deprecation {
 			$external_sources = $this->find_third_party_sources( $backtrace );
 
 			$source_message = 'Elementor';
-			$plugin_name = 'unknown';
+			$plugin_name = 'Unknown';
 			if ( ! ( empty( $external_sources ) ) ) {
 				$calling_source = $external_sources[ array_key_first( $external_sources ) ];
-				$plugin_name = $this->get_plugin_name( $calling_source['file'] );
+				//$plugin_name = $this->get_plugin_name( $calling_source['file'] );
+				$plugin_name = $this->get_source( $calling_source['file'] )['name'];
+				$source_type = $this->get_source( $calling_source['file'] )['type'];
 				if ( empty( $plugin_name ) ) {
-					$plugin_name = 'unknown';
+					$plugin_name = 'unknown...';
 				}
 				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 			}
@@ -232,24 +234,33 @@ class Deprecation {
 				$print_deprecated = [
 					'source' => $source_message,
 					'plugin' => $plugin_name,
+					'source_type' => $source_type ?? 'unknown',
 				];
 			}
 		}
 		return $print_deprecated;
 	}
 
-	private function get_plugin_name( $filename ) {
-		$plugin_path = substr( strstr( $filename, WP_PLUGIN_DIR ), strlen( WP_PLUGIN_DIR ) );
-		if ( empty( $plugin_path ) ) {
-			return '';
+	private function get_source( $filename ) {
+		$file = str_replace( WP_CONTENT_DIR, '', $filename, $is_in_content );
+		$name = 'Unknown';
+		if ( 1 === $is_in_content ) {
+			$root_folder = explode( '/', $file );
+			$type = $root_folder[1];
+			$name = $root_folder[2];
+		} else {
+			$type = 'unknown';
+			$name = '';
 		}
-		$plugin_name = explode( '/', $plugin_path )[1];
-		return $plugin_name;
+		return [
+			'name' => $name,
+			'type' => $type,
+		];
 	}
 
 	private function is_elementor_file( $stack_element ) {
 		$filename = $stack_element['file'];
-		return ( strpos( $filename, '//elementor/' ) !== false || strpos( $filename, '//elementor-pro/' ) !== false );
+		return ( strpos( $filename, '/elementor/' ) !== false || strpos( $filename, '/elementor-pro/' ) !== false );
 	}
 
 	private function is_plugin( $stack_element ) {
@@ -263,7 +274,7 @@ class Deprecation {
 
 	private function find_third_party_sources( $stack_trace ) {
 		$sources = array_filter($stack_trace, function ( $elem ) {
-			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) ) && $this->is_plugin( $elem );
+			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) );
 		} );
 		return $sources;
 	}
@@ -311,7 +322,7 @@ class Deprecation {
 		return ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 	}
 
-	private function notify_deprecated_function( $function_name, $version, $replacement = '', $calling_plugin = '', $call_location = '' ) {
+	private function notify_deprecated_function( $function_name, $version, $replacement = '', $calling_plugin = '', $call_location = '', $type = 'plugin' ) {
 
 		/**
 		 * Fires when a deprecated function is called.
@@ -336,10 +347,11 @@ class Deprecation {
 			$error_message_args = [ esc_html( $function_name ), esc_html( $version ) ];
 			if ( $replacement ) {
 				$error_message_args[] = $replacement;
-				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller plugin: %4$s. Called from: %5$s.', 'elementor' );
+				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' );
 			} else {
-				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller plugin: %3$s. Called from: %4$s.', 'elementor' );
+				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller %3$s: %4$s. Called from: %5$s.', 'elementor' );
 			}
+			$error_message_args[] = $type;
 			$error_message_args[] = $calling_plugin;
 			$error_message_args[] = $call_location;
 			trigger_error(
@@ -352,8 +364,7 @@ class Deprecation {
 			);
 		}
 	}
-	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin, $source ) {
-
+	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin = '', $source = '', $type = 'plugin' ) {
 
 		do_action( 'deprecated_argument_run', $function_name, $message, $version );
 
@@ -363,12 +374,13 @@ class Deprecation {
 
 		if ( $replacement ) {
 			/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
-			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller plugin: %4$s. Called from: %5$s.', 'elementor' );
+			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' );
 			$error_message_args[] = $replacement;
 		} else {
 			/* translators: 1: Function argument, 2: Elementor version number. */
-			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller plugin: %3$s. Called from: %4$s.', 'elementor' );
+			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller %3$s: %4$s. Called from: %5$s.', 'elementor' );
 		}
+		$error_message_args[] = $type;
 		$error_message_args[] = $plugin;
 		$error_message_args[] = $source;
 
@@ -402,7 +414,7 @@ class Deprecation {
 
 		if ( ! empty( $print_deprecated ) ) {
 			// PHPCS - We need to echo special characters because they can exist in function calls.
-			$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'] );
+			$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
 		}
 	}
 
@@ -446,7 +458,7 @@ class Deprecation {
 		$print_deprecated = $this->check_deprecation( $argument, $version, $replacement );
 
 		if ( ! empty( $print_deprecated ) ) {
-			$this->notify_deprecated_argument( $argument, $version, $replacement, $message, $print_deprecated['plugin'], $print_deprecated['source'] );
+			$this->notify_deprecated_argument( $argument, $version, $replacement, $message, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
 		}
 	}
 
