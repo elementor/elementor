@@ -366,7 +366,7 @@ class Deprecation {
 	}
 	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin = '', $source = '', $type = 'plugin' ) {
 
-		do_action( 'deprecated_argument_run', $function_name, $message, $version );
+		do_action( 'deprecated_argument_run', $argument, $message, $version );
 
 		$message = empty( $message ) ? '' : ' ' . $message;
 		// These arguments are escaped because they are printed later, and are not escaped when printed.
