@@ -29,7 +29,7 @@ const MediaDialog = ( {
 		<>
 			<PromptDialog onClose={ onClose } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ onCloseIntent }>
-					{ ! hasSubscription && <UpgradeChip /> }
+					{ <UpgradeChip hasSubscription={ hasSubscription } /> }
 				</PromptDialog.Header>
 
 				<FormMedia

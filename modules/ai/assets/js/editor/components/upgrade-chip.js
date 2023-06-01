@@ -62,13 +62,18 @@ const Chip = styled( ChipBase )( () => ( {
 	},
 } ) );
 
-const UpgradeChip = () => {
+const UpgradeChip = ( {
+	hasSubscription = false,
+} ) => {
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const anchorEl = useRef( null );
 
 	const showPopover = () => setIsPopoverOpen( true );
 
 	const hidePopover = () => setIsPopoverOpen( false );
+
+	const actionUrl = hasSubscription ? 'https://go.elementor.com/ai-popup-purchase-dropdown/?upgrade' : 'https://go.elementor.com/ai-popup-purchase-dropdown/';
+	const actionLabel = hasSubscription ? __( 'Upgrade Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
 
 	return (
 		<Box
@@ -112,7 +117,7 @@ const UpgradeChip = () => {
 						variant="contained"
 						color="accent"
 						size="small"
-						href="https://go.elementor.com/ai-popup-purchase-dropdown/"
+						href={ actionUrl }
 						target="_blank"
 						startIcon={ <UpgradeIcon /> }
 						sx={ {
@@ -121,7 +126,7 @@ const UpgradeChip = () => {
 							},
 						} }
 					>
-						{ __( 'Get Elementor AI', 'elementor' ) }
+						{ actionLabel }
 					</Button>
 				</StyledContent>
 			</Popper>
@@ -130,3 +135,7 @@ const UpgradeChip = () => {
 };
 
 export default UpgradeChip;
+
+UpgradeChip.propTypes = {
+	hasSubscription: PropTypes.bool,
+};

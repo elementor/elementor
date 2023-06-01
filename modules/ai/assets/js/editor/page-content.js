@@ -98,7 +98,7 @@ const PageContent = (
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
-					{ ! hasSubscription && <UpgradeChip /> }
+					{ <UpgradeChip hasSubscription={ hasSubscription } /> }
 				</PromptDialog.Header>
 
 				<PromptDialog.Content>
@@ -118,7 +118,7 @@ const PageContent = (
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
-				{ ! hasSubscription && <UpgradeChip /> }
+				{ <UpgradeChip hasSubscription={ hasSubscription } /> }
 			</PromptDialog.Header>
 
 			<PromptDialog.Content>
