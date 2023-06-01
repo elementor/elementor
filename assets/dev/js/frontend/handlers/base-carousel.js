@@ -1,12 +1,6 @@
 import SwiperHandlerBase from './base-swiper';
 
 export default class CarouselHandlerBase extends SwiperHandlerBase {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.a11yWidgetAccessedByTabKey = null;
-	}
-
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -17,7 +11,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				paginationWrapper: '.swiper-pagination',
 				paginationBullet: '.swiper-pagination-bullet',
 				paginationBulletWrapper: '.swiper-pagination-bullets',
-				swiperPlayButton: '.a11y-play-button',
 			},
 		};
 	}
@@ -31,7 +24,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				$paginationWrapper: this.$element.find( selectors.paginationWrapper ),
 				$paginationBullets: this.$element.find( selectors.paginationBullet ),
 				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
-				$swiperPlayButton: this.$element.find( selectors.swiperPlayButton ),
 			};
 
 		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
@@ -175,15 +167,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$swiperArrows.on( 'keydown', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
-		this.elements.$swiperPlayButton.on( 'click', this.onClickPlayButton.bind( this ) );
-		this.elements.$swiperPlayButton.on( 'focus', this.onFocusPlayButton.bind( this ) );
+		this.$element.find( ':focusable' ).on( 'focus', this.onFocusDisableAutoplay.bind( this ) );
 	}
 
 	unbindEvents() {
 		this.elements.$swiperArrows.off();
 		this.elements.$paginationWrapper.off();
 		this.elements.$swiperContainer.off();
-		this.elements.$swiperPlayButton.off();
+		this.$element.find( ':focusable' ).off();
 	}
 
 	onDirectionArrowKeydown( event ) {
@@ -203,29 +194,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 	}
 
-	onClickPlayButton() {
-		const buttonElement = event.currentTarget,
-			isActive = buttonElement.classList.contains( 'e-active' );
-
-		if ( isActive ) {
-			buttonElement.classList.remove( 'e-active' );
-			buttonElement.setAttribute( 'aria-label', __( 'Play slides', 'elementor' ) );
-			this.swiper.autoplay.stop();
-			this.elements.$swiperWrapper.attr( 'aria-live', 'polite' );
-		} else {
-			buttonElement.classList.add( 'e-active' );
-			buttonElement.setAttribute( 'aria-label', __( 'Pause slides', 'elementor' ) );
-			this.swiper.autoplay.start();
-			this.elements.$swiperWrapper.attr( 'aria-live', 'off' );
-		}
-	}
-
-	onFocusPlayButton() {
-		if ( ! this.a11yWidgetAccessedByTabKey ) {
-			this.onClickPlayButton();
-		}
-
-		this.a11yWidgetAccessedByTabKey = true;
+	onFocusDisableAutoplay() {
+		this.swiper.autoplay.stop();
 	}
 
 	updateSwiperOption( propertyName ) {

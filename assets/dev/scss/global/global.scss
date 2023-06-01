@@ -26,59 +26,6 @@
 	border: 0;
 }
 
-.a11y-play-button {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	aspect-ratio: 1;
-	border-radius: 50%;
-	--a11y-play-button-icon-size: 1rem;
-
-	span {
-		display: flex;
-	}
-
-	&:not( .e-active ) {
-
-		.a11y-play-button-stop {
-			display: none;
-		}
-	}
-
-	&.e-active {
-
-		.a11y-play-button-start {
-			display: none;
-		}
-	}
-
-	svg {
-		width: var(--a11y-play-button-icon-size);
-	}
-
-	i {
-		font-size: var(--a11y-play-button-icon-size);
-	}
-
-	&:focus {
-		z-index: 11; // The z-index should be one number higher than the carousel pagination.
-		inset-inline-start: .4rem;
-		inset-block-start: .4rem;
-		padding: .8rem;
-		width: initial;
-		height: initial;
-		clip: initial;
-
-		svg {
-			fill: $white;
-		}
-
-		i {
-			color: $white;
-		}
-	}
-}
-
 .elementor-clearfix:after{
 	content: '';
 	display: block;
