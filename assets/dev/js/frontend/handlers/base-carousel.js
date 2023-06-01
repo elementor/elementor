@@ -302,6 +302,15 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 	}
 
+	getSwiperWrapperTranformXValue() {
+		let transformValue = this.elements.$swiperWrapper[ 0 ]?.style.transform;
+		transformValue = transformValue.replace( 'translate3d(', '' );
+		transformValue = transformValue.split( ',' );
+		transformValue = parseInt( transformValue[ 0 ].replace( 'px', '' ) );
+
+		return !! transformValue ? transformValue : 0;
+	}
+
 	a11ySetSlideAriaHidden( status = '' ) {
 		const currentIndex = 'initialisation' === status ? 0 : this.swiper?.activeIndex;
 
@@ -309,17 +318,12 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		let swiperWrapperTransform = this.elements.$swiperWrapper[ 0 ]?.style.transform;
-		swiperWrapperTransform = swiperWrapperTransform.replace( 'translate3d(', '' );
-		swiperWrapperTransform = swiperWrapperTransform.split( ',' );
-		swiperWrapperTransform = parseInt( swiperWrapperTransform[ 0 ].replace( 'px', '' ) );
-		swiperWrapperTransform = !! swiperWrapperTransform ? swiperWrapperTransform : 0;
-
-		const swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
+		const swiperWrapperTransformXValue = this.getSwiperWrapperTranformXValue(),
+			swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
 			$slides = this.elements.$swiperContainer.find( this.getSettings( 'selectors' ).slideContent );
 
 		$slides.each( ( index, slide ) => {
-			const isSlideInsideWrapper = 0 <= ( slide.offsetLeft + swiperWrapperTransform ) && ( swiperWrapperWidth > ( slide.offsetLeft + swiperWrapperTransform ) );
+			const isSlideInsideWrapper = 0 <= ( slide.offsetLeft + swiperWrapperTransformXValue ) && ( swiperWrapperWidth > ( slide.offsetLeft + swiperWrapperTransformXValue ) );
 
 			if ( ! isSlideInsideWrapper ) {
 				slide.setAttribute( 'aria-hidden', true );
