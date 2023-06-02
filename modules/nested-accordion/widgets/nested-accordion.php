@@ -289,23 +289,26 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
-			'label' => esc_html__( 'Distance from content', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
+		$this->add_responsive_control(
+			'accordion_item_title_distance_from_content',
+			[
+				'label' => esc_html__( 'Distance from content', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 200,
+					],
 				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
-			],
-		]);
+				'default' => [
+					'size' => 0,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
 
 		$this->start_controls_tabs( 'accordion_border_and_background' );
 
