@@ -150,57 +150,26 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
 		} );
-	} );
-} );
 
-test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
-	// Act
-	const page = await browser.newPage(),
-		wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost(),
-		frame = editor.getPreviewFrame();
+		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
+			// Act
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost(),
+				frame = editor.getPreviewFrame();
 
-	await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+			await editor.closeNavigatorIfOpen();
 
-	await editor.closeNavigatorIfOpen();
+			await test.step( 'Widget Editor Screenshot matches intended design', async () => {
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
 
-	await test.step( 'Widget Editor Screenshot matches intended design', async () => {
-		await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
-	} );
-
-	await editor.publishAndViewPage();
-
-	await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
-		await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
-	} );
-} );
-
-
-test.describe( 'Nested Accordion Title Text and Title Icons', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-			'nested-accordion': 'active',
+			await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
+				await editor.publishAndViewPage();
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
+			} );
 		} );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
-
-		await page.close();
-	} );
 
 		test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 			// Act
@@ -357,82 +326,82 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 			} );
 		} );
 
-	test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
-		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+		test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost();
 
-		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 
-		await editor.closeNavigatorIfOpen();
+			await editor.closeNavigatorIfOpen();
 
-		const nestedAccordionWidgetId = '48f02ad',
-			frame = editor.getPreviewFrame();
+			const nestedAccordionWidgetId = '48f02ad',
+				frame = editor.getPreviewFrame();
 
-		await test.step( 'Check title <h1> text and icon  alignment', async () => {
-			const tag = 'h1';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			await test.step( 'Check title <h1> text and icon  alignment', async () => {
+				const tag = 'h1';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <h2> text and icon alignment', async () => {
+				const tag = 'h2';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <h3> text and icon alignment', async () => {
+				const tag = 'h3';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <h4> text and icon alignment', async () => {
+				const tag = 'h4';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <h5> text and icon alignment', async () => {
+				const tag = 'h5';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <h6> text and icon alignment', async () => {
+				const tag = 'h6';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <p> text and icon alignment', async () => {
+				const tag = 'p';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <span> text and icon alignment', async () => {
+				const tag = 'span';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+			await test.step( 'Check title <div> text and icon alignment', async () => {
+				const tag = 'div';
+				await frame.waitForLoadState( 'load' );
+				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
+				// Assert
+				await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
 		} );
-		await test.step( 'Check title <h2> text and icon alignment', async () => {
-			const tag = 'h2';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <h3> text and icon alignment', async () => {
-			const tag = 'h3';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <h4> text and icon alignment', async () => {
-			const tag = 'h4';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <h5> text and icon alignment', async () => {
-			const tag = 'h5';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <h6> text and icon alignment', async () => {
-			const tag = 'h6';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <p> text and icon alignment', async () => {
-			const tag = 'p';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <span> text and icon alignment', async () => {
-			const tag = 'span';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-		await test.step( 'Check title <div> text and icon alignment', async () => {
-			const tag = 'div';
-			await frame.waitForLoadState( 'load' );
-			await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
-			// Assert
-			await screenshotWidget( `nested-accordion-title-${ tag }-alignment.jpg`, frame.locator( '.e-n-accordion' ).first() );
-		} );
-	} );
 
 		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
@@ -474,14 +443,14 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 
 				await test.step( 'Distance from content should be applied to open items', async () => {
 					// Act
-					nestedAccordionItem.first().click();
+					await nestedAccordionItem.first().click();
 					await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
 
 					// Assert.
 					await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
 
 					// Restore to previous state
-					nestedAccordionItem.first().click();
+					await nestedAccordionItem.first().click();
 				} );
 
 				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
@@ -497,7 +466,7 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 				await test.step( 'Hover background color and border style should be applied on hovering', async () => {
 					// Act
 					await setBorderAndBackground( editor, 'hover', '#00ff00', 'dashed', '#0000ff' );
-					nestedAccordionItemTitle.first().hover();
+					await nestedAccordionItemTitle.first().hover();
 
 					// Assert
 					await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
@@ -508,7 +477,7 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 				await test.step( 'Active background color and border style should be applied to open items', async () => {
 					// Act
 					await setBorderAndBackground( editor, 'active', '#0000ff', 'dotted', '#ff0000' );
-					nestedAccordionItemTitle.first().click();
+					await nestedAccordionItemTitle.first().click();
 
 					// Assert
 					await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
@@ -550,13 +519,13 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 				} );
 				await test.step( 'Distance from content should be applied to open items', async () => {
 					// Act
-					nestedAccordionItemFront.first().click();
+					await nestedAccordionItemFront.first().click();
 
 					// Assert.
 					await expect( nestedAccordionItemContentFront.first() ).toHaveCSS( 'margin-top', '0px' );
 
 					// Restore to previous state
-					nestedAccordionItemFront.first().click();
+					await nestedAccordionItemFront.first().click();
 				} );
 				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
 					// Assert
@@ -565,7 +534,7 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-color', 'rgb(0, 255, 0)' );
 				} );
 				await test.step( 'Hover background color and border style should be applied on hovering', async () => {
-					nestedAccordionItemTitleFront.first().hover();
+					await nestedAccordionItemTitleFront.first().hover();
 
 					// Assert
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
@@ -574,7 +543,7 @@ test.describe( 'Nested Accordion Title Text and Title Icons', () => {
 				} );
 
 				await test.step( 'Active background color and border style should be applied to open items', async () => {
-					nestedAccordionItemTitleFront.first().click();
+					await nestedAccordionItemTitleFront.first().click();
 
 					// Assert
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
