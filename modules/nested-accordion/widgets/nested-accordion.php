@@ -268,7 +268,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'accordion_item_title_space_between', [
+		$this->add_responsive_control(
+		        'accordion_item_title_space_between', [
 			'label' => esc_html__( 'Space between Items', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px' ],
