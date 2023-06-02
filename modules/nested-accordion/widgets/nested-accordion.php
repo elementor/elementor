@@ -303,7 +303,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			],
 		]);
 
-		$this->start_controls_tabs( 'accordion__border_and_background' );
+		$this->start_controls_tabs( 'accordion_border_and_background' );
 
 		foreach ( [ 'normal', 'hover', 'active' ] as &$state ) {
 			$this->add_border_and_radius_style( $state );
