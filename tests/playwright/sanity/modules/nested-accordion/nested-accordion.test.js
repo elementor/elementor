@@ -309,7 +309,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.only( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -317,10 +317,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
 				nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item-title' ),
 				nestedAccordionItemContent = nestedAccordionItem.locator( '.e-con' ),
-				nestedAccordionWidgetFront = await page.locator( 'e-n-accordion' ),
+				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
 				nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' ),
 				nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' ),
-				nestedAccordionItemContentFront = nestedAccordionItem.locator( '.e-con' );
+				nestedAccordionItemContentFront = nestedAccordionItemFront.locator( '.e-con' );
 
 			await test.step( 'Editor', async () => {
 				await test.step( 'Add Widget and navigate to Style Tab', async () => {
@@ -328,6 +328,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await editor.addWidget( 'nested-accordion', container );
 					await editor.activatePanelTab( 'style' );
 					await editor.openSection( 'section_accordion_style' );
+				} );
+
+				await test.step( 'Space between items should be applied to all items but the last one', async () => {
+					// Act
+					await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
+
+					// Assert.
+					await expect( nestedAccordionItem.first() ).toHaveCSS( 'margin-bottom', '15px' );
+					await expect( nestedAccordionItem.last() ).toHaveCSS( 'margin-bottom', '0px' );
 				} );
 
 				await test.step( 'Distance from content should not be applied to closed items', async () => {
@@ -403,7 +412,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Frontend', async () => {
 				// Act
 				await editor.publishAndViewPage();
-				await page.pause();
 
 				await test.step( 'Space between items should be applied to all items but the last one', async () => {
 					// Assert.
@@ -441,7 +449,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				} );
 
 				await test.step( 'Active background color and border style should be applied to open items', async () => {
-					nestedAccordionItemTitle.first().click();
+					nestedAccordionItemTitleFront.first().click();
 
 					// Assert
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
