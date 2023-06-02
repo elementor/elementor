@@ -21,7 +21,7 @@
 			position: relative;
 
 			&:not(:last-child) {
-			  margin-bottom: var(--n-accordion-item-title-space-between);
+			    margin-bottom: var(--n-accordion-item-title-space-between);
 			}
 
 			> .e-con {
