@@ -278,10 +278,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetWidgetAriaDetails() {
-		if ( ! elementorFrontend.isEditMode() ) {
-			return;
-		}
-
 		const $widget = this.$element;
 
 		$widget.attr( 'aria-roledescription', 'carousel' );
