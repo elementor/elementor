@@ -286,7 +286,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			],
 		]);
 
-		$this->add_responsive_control('accordion_item_title_distance_from_content', [
+		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px' ],
