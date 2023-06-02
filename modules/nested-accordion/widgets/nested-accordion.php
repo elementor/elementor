@@ -340,7 +340,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-
 	/**
 	 * @string $state
 	 */
