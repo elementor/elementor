@@ -252,7 +252,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 		$this->end_controls_section();
 		$this->add_style_tab();
-
 	}
 
 	private function add_style_tab() {
