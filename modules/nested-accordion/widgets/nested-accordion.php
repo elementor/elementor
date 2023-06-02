@@ -364,9 +364,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 				break;
 		}
 
-		$this->start_controls_tab( 'accordion_' . $state . '_border_and_background', [
-			'label' => $translated_tab_text,
-		]);
+		$this->start_controls_tab(
+			'accordion_' . $state . '_border_and_background',
+			[
+				'label' => $translated_tab_text,
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
