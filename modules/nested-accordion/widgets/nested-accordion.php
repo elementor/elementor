@@ -269,23 +269,25 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 
 		$this->add_responsive_control(
-		        'accordion_item_title_space_between', [
-			'label' => esc_html__( 'Space between Items', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
+			'accordion_item_title_space_between',
+			[
+				'label' => esc_html__( 'Space between Items', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 200,
+					],
 				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
-			],
-		]);
+				'default' => [
+					'size' => 0,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
 
 		$this->add_responsive_control( 'accordion_item_title_distance_from_content', [
 			'label' => esc_html__( 'Distance from content', 'elementor' ),
