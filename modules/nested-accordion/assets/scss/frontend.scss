@@ -1,6 +1,5 @@
 .elementor-widget-n-accordion {
 	--n-accordion-title-font-size: 15px;
-	--n-accordion-title-padding: 0.5rem 1rem;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
@@ -11,7 +10,7 @@
 	--n-accordion-title-icon-padding-inline: 0 15px;
   	--n-accordion-item-title-space-between: 0px;
   	--n-accordion-item-title-distance-from-content: 0px;
-  	--n-accordion-padding: 0px;
+  	--n-accordion-padding: 10px;
   	--n-accordion-border-radius: 0px;
 
 	.e-n-accordion {
@@ -21,12 +20,9 @@
 			flex-direction: column;
 			position: relative;
 
-		  padding: var(--n-accordion-padding) ;
-		  border-radius: var(--n-accordion-border-radius);
-
-		  &:not(:last-child) {
+			&:not(:last-child) {
 				margin-bottom: var(--n-accordion-item-title-space-between);
-		  	}
+			}
 
 			> .e-con {
 				border-width: var(--n-accordion-border-width);
@@ -39,12 +35,13 @@
 				flex-direction: row;
 				list-style: none;
 				font-size: var(--n-accordion-title-font-size);
-				padding: var(--n-accordion-title-padding);
-				border-width: var(--n-accordion-border-width);
+			  	padding: var(--n-accordion-padding);
+			  	border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
 				justify-content: var(--n-accordion-item-title-justify-content);
-				flex-grow: var(--n-menu-item-title-flex-grow);
+				border-radius: var(--n-accordion-border-radius);
+			  	flex-grow: var(--n-menu-item-title-flex-grow);
 
 				&-icon {
 					display: flex;
@@ -68,6 +65,11 @@
 			}
 
 			&[open] {
+
+			  	.e-n-accordion-item-title {
+					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+			  	}
+
 				.e-n-accordion-item-title-icon-opened {
 					display: flex;
 				}
@@ -86,10 +88,6 @@
 				.e-n-accordion-item-title-icon-closed {
 					display: flex;
 				}
-
-			}
-			&[open] .e-n-accordion-item-title {
-				margin-bottom: var(--n-accordion-item-title-distance-from-content);
 			}
 		}
 	}
