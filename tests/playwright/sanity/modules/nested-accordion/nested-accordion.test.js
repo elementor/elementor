@@ -151,6 +151,28 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
+		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
+			// Act
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost(),
+				frame = editor.getPreviewFrame();
+
+			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+
+			await editor.closeNavigatorIfOpen();
+
+			await test.step( 'Widget Editor Screenshot matches intended design', async () => {
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+
+			await editor.publishAndViewPage();
+
+			await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
+			} );
+		} );
+
 		test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
@@ -165,10 +187,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				frame = editor.getPreviewFrame(),
 				nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
 				nestedAccordionTitle = frame.locator( 'summary' ).first().filter( { hasText: 'One' } );
-
-			await test.step( 'Widget Screenshot matches intended design', async () => {
-				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
-			} );
 
 			await test.step( 'Check that the title icon is displayed', async () => {
 				// Assert
