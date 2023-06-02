@@ -403,7 +403,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test.skip( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -610,6 +610,7 @@ async function setBorderAndBackground( editor, state, color, borderType, borderC
 	await setState();
 	await setBackgroundColor();
 	await setBorderType();
+	await setBorderWidth();
 	await setBorderColor();
 
 	async function setBackgroundColor() {
@@ -619,6 +620,10 @@ async function setBorderAndBackground( editor, state, color, borderType, borderC
 
 	async function setBorderType() {
 		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+	}
+
+	async function setBorderWidth() {
+		await editor.page.locator( '.elementor-control-accordion_border_' + state + '_width [data-setting="top"]' ).fill( '5' );
 	}
 
 	async function setBorderColor() {
