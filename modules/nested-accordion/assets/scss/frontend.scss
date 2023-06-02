@@ -36,6 +36,10 @@
 				justify-content: var(--n-accordion-title-justify-content);
 				flex-grow: var(--n-menu-title-flex-grow);
 
+				&-text h1,h2,h3,h4,h5,h6,p {
+					margin-block: 0;
+				}
+
 				&-icon {
 					display: flex;
 					flex-direction: row;
@@ -45,7 +49,6 @@
 					overflow: hidden;
 					position: relative;
 					width: fit-content;
-					margin-block: var(--n-accordion-title-icon-margin-block);
 
 					span > i {
 						color: var(--n-accordion-icon-color);
