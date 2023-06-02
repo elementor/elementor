@@ -258,7 +258,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_accordion_style_section();
 	}
 
-
 	private function add_accordion_style_section() {
 		$this->start_controls_section(
 			'section_accordion_style',
