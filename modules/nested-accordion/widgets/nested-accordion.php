@@ -259,7 +259,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
-				'default' => 'h2',
+				'default' => 'div',
 				'separator' => 'before',
 				'render_type' => 'template',
 
