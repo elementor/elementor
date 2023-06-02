@@ -255,9 +255,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	private function add_style_tab() {
-
 		$this->add_accordion_style_section();
-
 	}
 
 
