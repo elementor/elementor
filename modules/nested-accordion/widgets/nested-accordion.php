@@ -373,7 +373,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 					],
 				],
 				'selector' => $selector,
-
 			]
 		);
 
