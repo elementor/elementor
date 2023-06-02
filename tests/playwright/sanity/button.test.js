@@ -49,7 +49,7 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	const buttonId = 'mySuperId';
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const buttonWidget = new ButtonWidget( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
 	await buttonWidget.addWidget( defaultBtnName );
 	await buttonWidget.setButtonId( buttonId, defaultBtnName );
 	await editor.publishAndViewPage();
@@ -61,21 +61,13 @@ test( 'Verify button link control', async ( { page }, testInfo ) => {
 	const customAttributes = { key: 'mykey', value: 'myValue' };
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const buttonWidget = new ButtonWidget( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const editor = await wpAdmin.openNewPage();
+
 	await buttonWidget.addWidget( defaultBtnName );
-	await buttonWidget.setButtonLink( link, { targetBlank: true, noFollow: true, customAttributes } );
-
+	await buttonWidget.setLink( link, { targetBlank: true, noFollow: true, customAttributes } );
 	const buttonInEditor = editor.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) );
-	await expect( buttonInEditor ).toHaveAttribute( 'target', '_blank' );
-	await expect( buttonInEditor ).toHaveAttribute( 'href', link );
-	await expect( buttonInEditor ).toHaveAttribute( 'rel', 'nofollow' );
-	await expect( buttonInEditor ).toHaveAttribute( customAttributes.key, customAttributes.value );
-
+	await buttonWidget.verifyLink( buttonInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
 	await editor.publishAndViewPage();
-
 	const publishedButton = page.locator( EditorSelectors.button.getByName( defaultBtnName ) );
-	await expect( publishedButton ).toHaveAttribute( 'target', '_blank' );
-	await expect( publishedButton ).toHaveAttribute( 'href', link );
-	await expect( publishedButton ).toHaveAttribute( 'rel', 'nofollow' );
-	await expect( publishedButton ).toHaveAttribute( customAttributes.key, customAttributes.value );
+	await buttonWidget.verifyLink( publishedButton, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
 } );
