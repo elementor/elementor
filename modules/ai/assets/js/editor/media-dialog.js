@@ -12,6 +12,7 @@ const MediaDialog = ( {
 	controlView,
 	additionalOptions,
 	credits,
+	needsUpgradeChip = false,
 } ) => {
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
 	const [ showUnsavedChangeAlert, setShowUnsavedChangeAlert ] = useState( false );
@@ -29,7 +30,7 @@ const MediaDialog = ( {
 		<>
 			<PromptDialog onClose={ onClose } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ onCloseIntent }>
-					{ <UpgradeChip hasSubscription={ hasSubscription } /> }
+					{ needsUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } /> }
 				</PromptDialog.Header>
 
 				<FormMedia
@@ -84,7 +85,7 @@ MediaDialog.propTypes = {
 	controlView: PropTypes.object,
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
-
+	needsUpgradeChip: PropTypes.bool,
 };
 
 export default MediaDialog;

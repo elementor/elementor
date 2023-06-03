@@ -21,7 +21,7 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-
+	const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -90,6 +90,7 @@ const PageContent = (
 				credits={ credits }
 				hasSubscription={ hasSubscription }
 				DialogProps={ promptDialogStyleProps }
+				needsUpgradeChip={ needsUpgradeChip }
 			/>
 		);
 	}
@@ -98,7 +99,7 @@ const PageContent = (
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
-					{ <UpgradeChip hasSubscription={ hasSubscription } /> }
+					{ needsUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } /> }
 				</PromptDialog.Header>
 
 				<PromptDialog.Content>
@@ -118,7 +119,7 @@ const PageContent = (
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
-				{ <UpgradeChip hasSubscription={ hasSubscription } /> }
+				{ needsUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } /> }
 			</PromptDialog.Header>
 
 			<PromptDialog.Content>
