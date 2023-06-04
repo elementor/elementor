@@ -114,6 +114,9 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-view-',
+				'condition' => [
+					'selected_icon[value]!' => '',
+				],
 			]
 		);
 
@@ -181,6 +184,7 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => 'top',
 				'mobile_default' => 'top',
 				'options' => [
 					'left' => [
@@ -197,15 +201,8 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor%s-position-',
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'selected_icon[value]',
-							'operator' => '!=',
-							'value' => '',
-						],
-					],
+				'condition' => [
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -237,15 +234,8 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
-				'conditions' => [
-					'relation' => 'or',
-					'terms' => [
-						[
-							'name' => 'selected_icon[value]',
-							'operator' => '!=',
-							'value' => '',
-						],
-					],
+				'condition' => [
+					'selected_icon[value]!' => '',
 				],
 			]
 		);
@@ -509,14 +499,27 @@ class Widget_Icon_Box extends Widget_Base {
 			'content_vertical_alignment',
 			[
 				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'top' => esc_html__( 'Top', 'elementor' ),
-					'middle' => esc_html__( 'Middle', 'elementor' ),
-					'bottom' => esc_html__( 'Bottom', 'elementor' ),
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'middle' => [
+						'title' => esc_html__( 'Middle', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
 				'default' => 'top',
+				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
+				'condition' => [
+					'position!' => 'top',
+				],
 			]
 		);
 

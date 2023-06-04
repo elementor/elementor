@@ -46,7 +46,8 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
-	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
+	 *
+	 * @deprecated 2.3.0 Use `Elementor\Core\Base\Document::TYPE_META_KEY` const instead.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -502,10 +503,21 @@ class Source_Local extends Source_Base {
 		$defaults = [
 			'title' => esc_html__( '(no title)', 'elementor' ),
 			'page_settings' => [],
-			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 		];
 
 		$template_data = wp_parse_args( $template_data, $defaults );
+		$template_data['status'] = current_user_can( 'publish_posts' ) ? 'publish' : 'pending';
+
+		// BC: Allow importing any template type when using CLI
+		// to support users that rely on this mechanism.
+		$should_check_template_type = ! $this->is_wp_cli();
+
+		if (
+				$should_check_template_type &&
+				! $this->is_valid_template_type( $template_data['type'] )
+		) {
+			return new \WP_Error( 'invalid_template_type', esc_html__( 'Invalid template type.', 'elementor' ) );
+		}
 
 		$document = Plugin::$instance->documents->create(
 			$template_data['type'],
@@ -558,6 +570,27 @@ class Source_Local extends Source_Base {
 		do_action( 'elementor/template-library/after_update_template', $template_id, $template_data );
 
 		return $template_id;
+	}
+
+	protected function is_valid_template_type( $type ) {
+		$document_class = Plugin::$instance->documents->get_document_type( $type, false );
+
+		if ( ! $document_class ) {
+			return false;
+		}
+
+		$cpt = $document_class::get_property( 'cpt' );
+
+		if ( ! $cpt || ! is_array( $cpt ) || 1 !== count( $cpt ) ) {
+			return false;
+		}
+
+		return in_array( static::CPT, $cpt, true );
+	}
+
+	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
+	protected function is_wp_cli() {
+		return Utils::is_wp_cli();
 	}
 
 	/**
@@ -1348,6 +1381,15 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * Add filter by category.
+	 *
+	 * In the templates library, add a filter by Elementor library category.
+	 *
+	 * @access public
+	 *
+	 * @param string $post_type The post type slug.
+	 */
 	public function add_filter_by_category( $post_type ) {
 		if ( self::CPT !== $post_type ) {
 			return;
@@ -1367,7 +1409,13 @@ class Source_Local extends Source_Base {
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
-		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
+
+		printf(
+			/* translators: 1: Taxonomy slug, 2: Label text. */
+			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
+			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
+			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )
+		);
 		wp_dropdown_categories( $dropdown_options );
 	}
 
@@ -1420,9 +1468,6 @@ class Source_Local extends Source_Base {
 			'type' => $data['type'],
 			'page_settings' => $page_settings,
 		] );
-
-		// Remove the temporary file, now that we're done with it.
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $file_path );
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;

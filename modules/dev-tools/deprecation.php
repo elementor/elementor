@@ -199,7 +199,7 @@ class Deprecation {
 			throw new \Exception( 'Invalid deprecation diff.' );
 		}
 
-		$print_deprecated = array();
+		$print_deprecated = [];
 
 		if ( $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated() ) {
 			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
