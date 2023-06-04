@@ -402,6 +402,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await editor.addWidget( 'nested-accordion', container );
 					await editor.activatePanelTab( 'style' );
 					await editor.openSection( 'section_accordion_style' );
+					await editor.closeNavigatorIfOpen();
 				} );
 
 				await test.step( 'Space between items should be applied to all items but the last one', async () => {
@@ -423,14 +424,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				await test.step( 'Distance from content should be applied to open items', async () => {
 					// Act
-					nestedAccordionItem.first().click();
 					await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
 
 					// Assert.
 					await expect( nestedAccordionItemContent.first() ).toHaveCSS( 'margin-top', '0px' );
-
-					// Restore to previous state
-					nestedAccordionItem.first().click();
 				} );
 
 				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
@@ -467,7 +464,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				await test.step( 'Border radius values should affect all items', async () => {
 					// Act
-					await page.locator( '.elementor-control-accordion_border_radius .elementor-control-dimensions li:first-child input' ).fill( '25' );
+					const borderInput = '.elementor-control-accordion_border_radius .elementor-control-dimensions li:first-child input';
+					await page.waitForSelector( borderInput );
+					await page.locator( borderInput ).fill( '25' );
 
 					// Assert
 					await expect( nestedAccordionItemTitle.first() ).toHaveCSS( 'border-radius', '25px' );
@@ -503,11 +502,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					// Assert.
 					await expect( nestedAccordionItemContentFront.first() ).toHaveCSS( 'margin-top', '0px' );
-
-					// Restore to previous state
-					nestedAccordionItemFront.first().click();
 				} );
 				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
+
 					// Assert
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'border-style', 'solid' );
