@@ -109,6 +109,9 @@ class Widget_Image_Box extends Widget_Base {
 				'name' => 'thumbnail', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `thumbnail_size` and `thumbnail_custom_dimension`.
 				'default' => 'full',
 				'separator' => 'none',
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -176,6 +179,9 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-position-',
 				'toggle' => false,
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -215,6 +221,9 @@ class Widget_Image_Box extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'image[url]!' => '',
+				],
 			]
 		);
 
@@ -453,6 +462,9 @@ class Widget_Image_Box extends Widget_Base {
 				'default' => 'top',
 				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
+				'condition' => [
+					'position!' => 'top',
+				],
 			]
 		);
 

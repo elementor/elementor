@@ -25,7 +25,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 
 	bindEvents() {
 		this.elements.$experimentsButtons.on( 'click', ( event ) => this.onExperimentsButtonsClick( event ) );
-    }
+	}
 
 	onExperimentsButtonsClick( event ) {
 		const submitButton = jQuery( event.currentTarget );
@@ -61,8 +61,8 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 		if ( this.elements.$experimentIndicators.length ) {
 			import(
 				/* webpackIgnore: true */
-				`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
-				).then( () => this.addIndicatorsTooltips() );
+				`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0` )
+				.then( () => this.addIndicatorsTooltips() );
 		}
 	}
 }

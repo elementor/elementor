@@ -139,8 +139,8 @@ const ContainerView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = this.isBoxedWidth()
-		? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
-		: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+			? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
+			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
 			axis: this.getDroppableAxis(),
@@ -505,7 +505,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
-		let parent = parentWrapperElement.get( 0 ),
+		const parent = parentWrapperElement.get( 0 ),
 			child = childElementToMove.get( 0 );
 
 		if ( ! parent || ! child ) {
