@@ -64,6 +64,7 @@ const Chip = styled( ChipBase )( () => ( {
 
 const UpgradeChip = ( {
 	hasSubscription = false,
+	usagePercentage = 0,
 } ) => {
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const anchorEl = useRef( null );
@@ -72,7 +73,10 @@ const UpgradeChip = ( {
 
 	const hidePopover = () => setIsPopoverOpen( false );
 
-	const actionUrl = hasSubscription ? 'https://go.elementor.com/ai-popup-purchase-dropdown/?upgrade' : 'https://go.elementor.com/ai-popup-purchase-dropdown/';
+	let actionUrl = 'https://go.elementor.com/ai-popup-purchase-dropdown/';
+	if ( hasSubscription ) {
+		actionUrl = usagePercentage >= 100 ? 'https://go.elementor.com/ai-popup-upgrade-limit-reached/' : 'https://go.elementor.com/ai-popup-upgrade-limit-reached-80-percent/';
+	}
 	const actionLabel = hasSubscription ? __( 'Upgrade Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
 
 	return (
@@ -138,4 +142,5 @@ export default UpgradeChip;
 
 UpgradeChip.propTypes = {
 	hasSubscription: PropTypes.bool,
+	usagePercentage: PropTypes.number,
 };

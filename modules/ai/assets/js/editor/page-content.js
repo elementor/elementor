@@ -21,7 +21,6 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-	const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -36,6 +35,17 @@ const PageContent = (
 				height: ! isLoading && 'media' === type ? '95vh' : 'auto',
 			},
 		},
+	};
+
+	const maybeRenderUpgradeChip = () => {
+		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
+		if ( ! needsUpgradeChip ) {
+			return;
+		}
+		return <UpgradeChip
+			hasSubscription={ hasSubscription }
+			usagePercentage={ usagePercentage }
+		/>;
 	};
 
 	if ( isLoading ) {
@@ -88,9 +98,8 @@ const PageContent = (
 				controlView={ controlView }
 				additionalOptions={ additionalOptions }
 				credits={ credits }
-				hasSubscription={ hasSubscription }
+				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
 				DialogProps={ promptDialogStyleProps }
-				needsUpgradeChip={ needsUpgradeChip }
 			/>
 		);
 	}
@@ -99,7 +108,7 @@ const PageContent = (
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
-					{ needsUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } /> }
+					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
 				<PromptDialog.Content>
@@ -119,7 +128,7 @@ const PageContent = (
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
-				{ needsUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } /> }
+				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 
 			<PromptDialog.Content>
