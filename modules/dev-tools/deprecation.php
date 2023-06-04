@@ -343,7 +343,7 @@ class Deprecation {
 		 * @param bool $trigger Whether to trigger the error for deprecated functions. Default true.
 		 */
 		if ( apply_filters( 'deprecated_function_trigger_error', true ) ) {
-			$message_string = __( '' );
+			$message_string = '';
 			$error_message_args = [ esc_html( $function_name ), esc_html( $version ) ];
 			if ( $replacement ) {
 				$error_message_args[] = $replacement;
