@@ -504,6 +504,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await expect( nestedAccordionItemContentFront.first() ).toHaveCSS( 'margin-top', '0px' );
 				} );
 				await test.step( 'Normal background color and border style should be applied to closed item', async () => {
+					// Hover last item so that the first won't be hovered.
+					nestedAccordionItemTitleFront.last().hover();
 
 					// Assert
 					await expect( nestedAccordionItemTitleFront.first() ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
