@@ -4,7 +4,7 @@ import useImagePrompt from '../../hooks/use-image-prompt';
 import useImageUpload from '../../hooks/use-image-upload';
 import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
 import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS } from './consts/consts';
+import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES } from './consts/consts';
 import { Screen } from './screens/screen';
 import { PanelContent } from './panel-content/panel-content';
 import Panel from '../../components/ui/panel';
@@ -26,7 +26,9 @@ const FormMedia = (
 		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.IMAGE_TO_IMAGE,
 	);
 	const [ prompt, setPrompt ] = useState( '' );
-	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings();
+	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
+		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
+	} );
 	const [ images, setImages ] = useState( [] );
 	const [ insertToControl, setInsertToControl ] = useState( false );
 	const { data, isLoading, error, send, sendUsageData, reset } = useImagePrompt( {
