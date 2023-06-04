@@ -102,18 +102,31 @@
 
 .elementor-panel-container {
 	clear: both;
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-inline-start: 15px;
+	padding-inline-end: 15px;
 }
 
 #elementor-panel-get-pro-elements {
 
 	.elementor-nerd-box-message {
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
+	}
+}
+
+#elementor-panel-notice-wrapper .elementor-panel-notice {
+	width: 90%;
+	margin: 0 auto;
+	font-style: unset;
+	margin-bottom: 15px;
+	a {
+		font-weight: bold;
+		font-style: italic;
+		border-bottom: 2px dotted var(--e-a-color-info);
+		display: inline-block;
 	}
 }
 

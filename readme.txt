@@ -1,8 +1,8 @@
-=== Elementor Website Builder ===
+=== Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.9
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 7.0
 Stable tag: 3.12.1
 License: GPLv3
@@ -239,6 +239,61 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.13.4 - 2023-05-28 =
+
+* Fix: Unable to save a new Global Widget ([#22544](https://github.com/elementor/elementor/issues/22544))
+
+= 3.13.3 - 2023-05-22 =
+
+* Security Fix: Addressed security weaknesses in template creation mechanism
+* Tweak: Improved error messages when a kit is not downloaded successfully in Kit Library
+
+= 3.13.2 - 2023-05-11 =
+
+* Security Fix: Addressed security weaknesses in access management related functions
+
+= 3.13.1 - 2023-05-09 =
+
+* Tweak: Removed autocomplete functionality in Color Picker
+* Fix: 'Editing Handle' location issue in various places in the Editor
+
+= 3.13.0 - 2023-05-08 =
+
+* New: Introducing Elementor AI Write - Boost your productivity and efficiency, while elevating your website's design and content.
+* New: CSS Grid layout in Container - ideal for grid-like layouts and achieving infinite design possibilities ([#18839](https://github.com/elementor/elementor/issues/18839))
+* Tweak: Added RGBA and HSLA types to color picker ([#18308](https://github.com/elementor/elementor/issues/18308))
+* Tweak: Improved items behavior when the width of all the tabs titles exceeds the parent container width ([#21650](https://github.com/elementor/elementor/issues/21650))
+* Tweak: Adjusted Favorites section functionality for better user experience ([#20939](https://github.com/elementor/elementor/issues/20939))
+* Tweak: Added quick site navigation within the editor's new Top Bar
+* Tweak: Added the Save Options functionality to new Editor Top Bar
+* Tweak: Added "Site Settings" hotkey to keyboard shortcuts panel
+* Tweak: Removed Pojo integration from Elementor
+* Tweak: General improvements in Elementor's new color scheme
+* Tweak: Updated `Pickr` library to v1.8.0
+* Tweak: Updated `eicons` library to v5.20.0
+* Tweak: Added Lazy Load support to various Elementor Editor and Admin images
+* Tweak: Added Lazy Load support for embedded video thumbnail image
+* Tweak: Improved accessibility in Lightbox functionality
+* Tweak: Added keyboard accessibility to Elementor Editor tabs
+* Tweak: Added keyboard accessibility to Elementor Editor icons
+* Tweak: Added keyboard accessibility to Elementor widget categories
+* Tweak: Added keyboard accessibility to header and footer in widgets panel
+* Tweak: Added keyboard accessibility to "Edit with Elementor" button
+* Tweak: Added keyboard accessibility to navigation arrows in Image Carousel widget
+* Tweak: Added keyboard accessibility to URL control "Link Options" button
+* Tweak: Added keyboard accessibility to editor "mode switcher"
+* Tweak: Added keyboard accessibility to close and toggle buttons in Navigator
+* Tweak: HTML structure changed in Elementor Editor components for better readability
+* Fix: Can't paste widgets into the 'Drag widget here' area when using Container ([#21652](https://github.com/elementor/elementor/issues/21652), [#22142](https://github.com/elementor/elementor/issues/22142))
+* Fix: Removed redundant scroll in Finder
+* Fix: Carousel widgets are not working correctly inside Nested Tabs widget
+* Fix: Lightbox image captions are not aligned to the center
+* Fix: Border radius not affecting the Video and Slideshow background types in Container
+* Fix: Update translation strings escaping for safe use in attributes output
+* Fix: Added `aspect-ratio` fallback in Video widget for old browsers
+* Fix: Disabled 'Dominant Color' on PNG and GIF images in Lazy Load Background Images experiment
+* Fix: Wrong ARIA text value in Progress Bar widget
 
 = 3.12.1 - 2023-04-02 =
 

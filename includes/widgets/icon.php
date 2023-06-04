@@ -306,8 +306,26 @@ class Widget_Icon extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon svg' => 'height: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'fit_to_size',
+			[
+				'label' => esc_html__( 'Fit to Size', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Avoid gaps around icons when width and height aren\'t equal',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'condition' => [
+					'selected_icon[library]' => 'svg',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-wrapper svg' => 'width: 100%;',
+				],
 			]
 		);
 
@@ -448,7 +466,7 @@ class Widget_Icon extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
+		<# const link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 				iconTag = link ? 'a' : 'div';

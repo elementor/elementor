@@ -5,10 +5,12 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
+const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
+	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
 	test.beforeEach( async () => {
 		pageId = await createPage();
@@ -29,7 +31,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const widgetId = await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
+		// Tests.
 		await testIconCount( page, editor );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
@@ -46,7 +50,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tabs direction to 'stretch'.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 
@@ -97,7 +101,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -122,7 +126,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -228,7 +232,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -271,7 +275,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
 		await editor.selectElement( parentWidgetId );
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		await editor.activatePanelTab( 'style' );
@@ -299,7 +303,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -326,7 +330,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -375,7 +379,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Justify: Stretch.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-align-stretch-h' ).click();
 		// Unset align title to 'right'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
 
@@ -396,7 +400,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
@@ -436,23 +440,28 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tab hover color.
 		await setTabItemColor( page, editor, 'tabs', 'tabs_title_hover', 'tabs_title_background_color_hover_color', '#ff0000' );
+		// Set tab active color.
+		await setTabItemColor( page, editor, 'tabs', 'tabs_title_active', 'tabs_title_background_color_active_color', '#00ffff' );
 
 		await editor.publishAndViewPage();
 
 		// Hover background style.
 		const hoverTabBackgroundColor = 'rgb(255, 0, 0)',
+			activeTabBackgroundColor = 'rgb(0, 255, 255)',
 			activeTab = page.locator( '.e-normal.e-active' ),
 			nonActiveTab = page.locator( '.e-normal:not( .e-active ):last-child' );
 
 		// Assert.
 		// Check that by default the hover color isn't applied.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		await expect( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
 
 		// Hover over tab.
 		await activeTab.hover();
 		// Check that active tab doesn't change background color on hover.
 		await expect( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+		await expect( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
 		// Check that non-active tab receives the hover background color.
 		await nonActiveTab.hover();
 		await expect( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
@@ -466,7 +475,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -487,7 +496,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -553,7 +562,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		await editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ).click();
 
@@ -644,7 +653,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		const activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ),
 			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
@@ -789,7 +798,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab activation works correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab activation works correctly', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -827,7 +836,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test the nested tabs behaviour when using container flex row @latest', async ( { page }, testInfo ) => {
+	test( 'Test the nested tabs behaviour when using container flex row', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -897,12 +906,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Tabs and containers are duplicated correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Tabs and containers are duplicated correctly', async ( { page }, testInfo ) => {
 		/**
 		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
 		 * receives the correct index.
 		 */
-			// Arrange.
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost();
@@ -1035,6 +1044,111 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		}
 
 		await cleanup( wpAdmin );
+	} );
+
+	test( 'Nested tabs check flex wrap', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+
+		// Assert
+		const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+		await expect( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
+	} );
+
+	test( 'Check none breakpoint', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
+			await editor.addWidget( 'nested-tabs', container );
+
+			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
+		} );
+
+		await test.step( 'Assert no accordion on mobile view', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await expect( nestedTabsHeading ).toBeVisible();
+
+			const nestedTabsCollapse = await frame.locator( '.e-n-tab-title.e-collapse' ).first();
+			await expect( nestedTabsCollapse ).not.toBeVisible();
+		} );
+	} );
+
+	test( 'Check that background video is loaded in nested elements item container', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'nested-tabs', container );
+
+		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
+			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			videoUrl = 'https://youtu.be/XNoaN8qu4fg',
+			videoContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
+			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
+			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
+
+		await editor.selectElement( contentContainerOneId );
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.eicon-video-camera' ).first().click();
+		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+
+		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
+		await expect( videoContainer ).toHaveCount( 1 );
+	} );
+
+	test( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		Array.from( { length: 7 }, async () => {
+			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > button:nth-child(2)' ).click();
+		} );
+
+		await test.step( 'Assert overflow x', async () => {
+			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await expect( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
+		} );
+
+		await test.step( 'Assert scrolling behaviour', async () => {
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 200, 0 );
+			}, await nestedTabsHeading.elementHandle() );
+			const lastTab = await frame.getByRole( 'tab', { name: 'Tab #3' } );
+			await expect( lastTab ).toBeVisible();
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 0, 200 );
+			}, await nestedTabsHeading.elementHandle() );
+			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
+			await expect( firstTab ).toBeVisible();
+		} );
 	} );
 } );
 

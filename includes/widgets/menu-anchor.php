@@ -92,6 +92,9 @@ class Widget_Menu_Anchor extends Widget_Base {
 			[
 				'label' => esc_html__( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
 				'placeholder' => esc_html__( 'For Example: About', 'elementor' ),
 				'description' => esc_html__( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,

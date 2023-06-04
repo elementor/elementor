@@ -6,16 +6,16 @@ export const ExportContext = React.createContext();
 
 export default function ExportContextProvider( props ) {
 	const initialState = {
-		downloadUrl: '',
-		exportedData: null,
-		isExportProcessStarted: false,
-		plugins: [],
-		kitInfo: {
-			title: null,
-			description: null,
+			downloadUrl: '',
+			exportedData: null,
+			isExportProcessStarted: false,
+			plugins: [],
+			kitInfo: {
+				title: null,
+				description: null,
+			},
 		},
-	},
-	[ data, dispatch ] = useReducer( reducer, initialState );
+		[ data, dispatch ] = useReducer( reducer, initialState );
 
 	return (
 		<ExportContext.Provider value={ { data, dispatch } }>
