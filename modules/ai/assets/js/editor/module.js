@@ -72,7 +72,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
-						defaultImageType: aiOptions?.default_image_type || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
+						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
 					},
 				};
 			}
