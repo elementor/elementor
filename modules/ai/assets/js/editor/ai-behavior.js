@@ -5,7 +5,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.type = 'text';
 		this.controlType = 'text';
 		this.buttonLabel = __( 'Write with AI', 'elementor' );
-		this.mediaButtonLabel = __( 'Create with AI', 'elementor' );
 		this.editButtonLabel = __( 'Edit with AI', 'elementor' );
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
@@ -57,11 +56,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		const isMedia = 'media' === this.getOption( 'type' );
 		const isDefaultValue = ( ! isMedia && defaultValue === currentValue ) || ( isMedia && currentValue?.url === defaultValue?.url );
 
-		if ( ! isDefaultValue ) {
-			return this.getOption( 'editButtonLabel' );
-		}
-
-		return isMedia ? this.getOption( 'mediaButtonLabel' ) : this.getOption( 'buttonLabel' );
+		return isDefaultValue ? this.getOption( 'buttonLabel' ) : this.getOption( 'editButtonLabel' );
 	}
 
 	onRender() {

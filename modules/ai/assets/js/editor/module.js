@@ -67,6 +67,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				behaviors.ai = {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,
+					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
 					setControlValue: ( value ) => {},
 					controlView: view,
