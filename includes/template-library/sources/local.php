@@ -46,7 +46,8 @@ class Source_Local extends Source_Base {
 
 	/**
 	 * Elementor template-library meta key.
-	 * @deprecated 2.3.0 Use \Elementor\Core\Base\Document::TYPE_META_KEY instead
+	 *
+	 * @deprecated 2.3.0 Use `Elementor\Core\Base\Document::TYPE_META_KEY` const instead.
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 
@@ -572,15 +573,19 @@ class Source_Local extends Source_Base {
 	}
 
 	protected function is_valid_template_type( $type ) {
-		$allowed_document_types = Plugin::$instance->documents->get_document_types( [
-			'show_in_library' => true,
-		] );
+		$document_class = Plugin::$instance->documents->get_document_type( $type, false );
 
-		return in_array(
-			$type,
-			array_keys( $allowed_document_types ),
-			true
-		);
+		if ( ! $document_class ) {
+			return false;
+		}
+
+		$cpt = $document_class::get_property( 'cpt' );
+
+		if ( ! $cpt || ! is_array( $cpt ) || 1 !== count( $cpt ) ) {
+			return false;
+		}
+
+		return in_array( static::CPT, $cpt, true );
 	}
 
 	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
@@ -1376,6 +1381,15 @@ class Source_Local extends Source_Base {
 		<?php
 	}
 
+	/**
+	 * Add filter by category.
+	 *
+	 * In the templates library, add a filter by Elementor library category.
+	 *
+	 * @access public
+	 *
+	 * @param string $post_type The post type slug.
+	 */
 	public function add_filter_by_category( $post_type ) {
 		if ( self::CPT !== $post_type ) {
 			return;
@@ -1395,7 +1409,13 @@ class Source_Local extends Source_Base {
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
 		);
-		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
+
+		printf(
+			/* translators: 1: Taxonomy slug, 2: Label text. */
+			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
+			esc_attr( self::TAXONOMY_CATEGORY_SLUG ),
+			esc_html_x( 'Filter by category', 'Template Library', 'elementor' )
+		);
 		wp_dropdown_categories( $dropdown_options );
 	}
 
