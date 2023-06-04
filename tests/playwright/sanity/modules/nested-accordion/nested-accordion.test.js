@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { colors } from '../../../enums/colors';
+import { borderStyle } from '../../../enums/border-styles';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
