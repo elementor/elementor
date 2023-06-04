@@ -11,4 +11,9 @@ runs:
   steps:
     - shell: bash
       run: |
-        git push origin :refs/tags/${{ inputs.TAG_NAME }}
+        # Ignore errors if the tag doesn't exist, log and continue.
+        if git push --delete --quiet origin "${{ inputs.TAG_NAME }}" 2>/dev/null; then
+          echo "Tag successfully deleted."
+        else
+          echo "Tag doesn't exist, but continuing script execution."
+        fi
