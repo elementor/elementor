@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useContext, useState } from 'react';
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useOnboardingAjax from '../hooks/use-onboarding-ajax';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import Content from '../../../../../assets/js/layout/content';
 import DropZone from '../../../../../assets/js/organisms/drop-zone';
@@ -11,7 +11,7 @@ export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
 
 	const { state } = useContext( OnboardingContext ),
-		{ ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useAjax(),
+		{ ajaxState: installProZipAjaxState, setAjax: setInstallProZipAjaxState } = useOnboardingAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		[ fileSource, setFileSource ] = useState();
@@ -20,8 +20,8 @@ export default function UploadAndInstallPro() {
 		setIsLoading( true );
 
 		setInstallProZipAjaxState( {
+			endpoint: 'upload-and-install-pro',
 			data: {
-				action: 'elementor_upload_and_install_pro',
 				fileToUpload: file,
 			},
 		} );
