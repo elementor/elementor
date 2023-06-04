@@ -55,7 +55,6 @@ const ImageVariationsForm = ( {
 				promptSettings,
 				updatePromptSettings,
 				hasImage: true,
-				disableAspectRatio: true,
 			} } />
 
 			<Stack gap={ 5 } sx={ { my: 6 } }>
