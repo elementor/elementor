@@ -37,8 +37,8 @@
 	--e-a-bg-warning: 			#{$e-warning-dark-bg};
 
 	//Text & Icons
-	--e-a-color-txt: 			#{$e-gray-200};
-	--e-a-color-txt-muted: 		#{$e-gray-400};
+	--e-a-color-txt: 			#{$e-gray-100};
+	--e-a-color-txt-muted: 		#{$e-gray-300};
 	--e-a-color-txt-disabled: 	#{$e-gray-500};
 	--e-a-color-txt-invert: 	#{$white};
 	--e-a-color-txt-accent: 	#{$white};
@@ -52,7 +52,7 @@
 	--e-a-border-color-accent: 	#{$white};
 	--e-a-border:				1px solid var(--e-a-border-color);
 	--e-a-border-bold:			1px solid var(--e-a-border-color-bold);
-	--e-a-border-radius: 		3px;
+	--e-a-border-radius: 		#{$default-border-radius};
 
 	//Buttons
 	--e-a-btn-color: 			#{$e-gray-900};

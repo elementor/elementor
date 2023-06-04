@@ -15,6 +15,8 @@
 	--n-tabs-heading-grow: initial;
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
+	--n-tabs-heading-overflow-x: initial;
+	--n-tabs-heading-wrap: wrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -34,6 +36,7 @@
 	--n-tabs-title-align-items: center;
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
+	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
@@ -60,12 +63,38 @@
 			flex-shrink: 0;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
+			overflow-x: var(--n-tabs-heading-overflow-x);
+			flex-wrap: var(--n-tabs-heading-wrap);
+			-ms-overflow-style: none;  /* IE and Edge */
+			scrollbar-width: none;  /* Firefox */
+
+			&::-webkit-scrollbar {
+				display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+			}
+
+			&.e-scroll {
+				cursor: grabbing;
+				cursor: -webkit-grabbing;
+
+				&-active {
+					position: relative;
+
+					&::before {
+						content: '';
+						position: absolute;
+						inset-block: 0;
+						inset-inline: -1000vw;
+						z-index: $second-layer;
+					}
+				}
+			}
 		}
 
 		&-content {
 			flex-grow: 1;
 			padding: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
+			min-width: 0;
 		}
 	}
 
@@ -81,6 +110,9 @@
 			position: relative;
 			cursor: pointer;
 			outline: none;
+			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-basis: content;
+			flex-shrink: 0;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
@@ -233,6 +265,7 @@
 			-moz-user-select: none;
 			-ms-user-select: none;
 			user-select: none;
+			width: 100%;
 
 			&:not(:first-child) {
 				margin-top: var( --n-tabs-title-gap );
@@ -326,4 +359,12 @@
 
 @media (max-width: $screen-laptop-max) {
 	@include hide-normal-tabs-(laptop);
+}
+
+
+// Breakpoint - none.
+.e-n-tabs-none {
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+		display: none;
+	}
 }

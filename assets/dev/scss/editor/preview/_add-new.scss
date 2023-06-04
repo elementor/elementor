@@ -122,7 +122,7 @@
 .elementor-add-section-drag-title {
 	font-style: italic;
 	font-weight: normal;
-	margin-top: 10px;
+	margin-block-start: 10px;
 	width: 100%;
 }
 
@@ -210,15 +210,9 @@
 		}
 	}
 }
-
-#elementor-add-new-section {
-	margin: 60px auto;
+.elementor-add-section {
 
 	&[data-view="choose-action"] {
-
-		.elementor-add-section-close {
-			display: none;
-		}
 
 		.elementor-add-section-back {
 			display: none;
@@ -235,6 +229,17 @@
 	&[data-view="select-type"] {
 
 		.elementor-add-section-back {
+			display: none;
+		}
+	}
+}
+
+#elementor-add-new-section {
+	margin: 60px auto;
+
+	&[data-view="choose-action"] {
+
+		.elementor-add-section-close {
 			display: none;
 		}
 	}

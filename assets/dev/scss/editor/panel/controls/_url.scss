@@ -39,6 +39,8 @@
 			justify-content: center;
 			flex-shrink: 0;
 			border: var(--e-a-border-bold);
+			color: currentColor;
+			background-color: transparent;
 			border-inline-start-width: 0;
 			cursor: pointer;
 
@@ -48,11 +50,20 @@
 
 			&-options {
 				display: none;
-				padding-top: 10px;
+				padding-block-start: 10px;
 
 				.elementor-control-field-description {
-					margin-top: 10px;
+					margin-block-start: 10px;
 				}
+			}
+
+			&:hover {
+				color: var(--e-a-color-txt-hover);
+			}
+
+			&:focus {
+				color: var(--e-a-color-txt-active);
+				border-color: var(--e-a-border-color-focus);
 			}
 		}
 
@@ -61,7 +72,7 @@
 			align-items: center;
 
 			&:not(:last-child) {
-				padding-bottom: 10px;
+				padding-block-end: 10px;
 			}
 
 			input,
@@ -89,7 +100,7 @@
 
 			input {
 				width: 100%;
-				margin-top: 10px;
+				margin-block-start: 10px;
 			}
 		}
 	}
@@ -143,6 +154,6 @@
 
 	.elementor-autocomplete-item-info {
 		font-size: 10px;
-		padding-top: 2px;
+		padding-block-start: 2px;
 	}
 }

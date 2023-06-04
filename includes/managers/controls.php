@@ -291,6 +291,19 @@ class Controls_Manager {
 	private static $tabs;
 
 	/**
+	 * Has stacks cache been cleared.
+	 *
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
+	 *
+	 * @since 3.13.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array
+	 */
+	private $has_stacks_cache_been_cleared = false;
+
+	/**
 	 * Init tabs.
 	 *
 	 * Initialize control tabs.
@@ -491,7 +504,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->register()` instead.
+	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
 	 * @param string       $control_id       Control ID.
 	 * @param Base_Control $control_instance Control instance, usually the
@@ -502,7 +515,7 @@ class Controls_Manager {
 		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 		//	__METHOD__,
 		//	'3.5.0',
-		//	'register'
+		//	'register()'
 		//);
 
 		$this->register( $control_instance, $control_id );
@@ -543,7 +556,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
+	 * @deprecated 3.5.0 Use `unregister()` method instead.
 	 *
 	 * @param string $control_id Control ID.
 	 *
@@ -553,7 +566,7 @@ class Controls_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'unregister'
+			'unregister()'
 		);
 
 		return $this->unregister( $control_id );
@@ -860,6 +873,27 @@ class Controls_Manager {
 		unset( $this->stacks[ $stack_id ]['controls'][ $control_id ] );
 
 		return true;
+	}
+
+	/**
+	 * Has Stacks Cache Been Cleared.
+	 * @since 3.13.0
+	 * @access public
+	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
+	 */
+	public function has_stacks_cache_been_cleared() {
+		return $this->has_stacks_cache_been_cleared;
+	}
+
+	/**
+	 * Clear stack.
+	 * This method clears the stack.
+	 * @since 3.13.0
+	 * @access public
+	 */
+	public function clear_stack_cache() {
+		$this->stacks = [];
+		$this->has_stacks_cache_been_cleared = true;
 	}
 
 	/**
