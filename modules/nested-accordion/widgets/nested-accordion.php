@@ -156,10 +156,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial;',
-				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial;',
-				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;',
-				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1;',
+				'start' => '--n-accordion-title-justify-content: initial; --n-accordion-title-flex-grow: initial;',
+				'center' => '--n-accordion-title-justify-content: center; --n-accordion-title-flex-grow: initial;',
+				'end' => '--n-accordion-title-justify-content: flex-end; --n-accordion-title-flex-grow: initial;',
+				'stretch' => '--n-accordion-title-justify-content: space-between; --n-accordion-title-flex-grow: 1;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -245,8 +245,23 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'span' => 'span',
 					'p' => 'p',
 				],
-				'default' => 'h2',
+				'selectors_dictionary' => [
+					'h1' => '--n-accordion-title-font-size: 2.5rem;',
+					'h2' => '--n-accordion-title-font-size: 2rem;',
+					'h3' => '--n-accordion-title-font-size: 1,75rem;',
+					'h4' => '--n-accordion-title-font-size: 1.5rem;',
+					'h5' => '--n-accordion-title-font-size: 1rem;',
+					'h6' => '--n-accordion-title-font-size: 1rem; ',
+					'div' => '--n-accordion-title-font-size: 1rem;',
+					'span' => '--n-accordion-title-font-size: 1rem; ',
+					'p' => '--n-accordion-title-font-size: 1rem;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'default' => 'div',
 				'separator' => 'before',
+				'render_type' => 'template',
 
 			]
 		);
@@ -455,7 +470,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tab();
 	}
 
-	private function is_active_icon_exist( $settings ) :bool {
+	private function is_active_icon_exist( $settings ):bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
@@ -468,8 +483,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
-			<span class='e-n-accordion-item-title-icon-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
+			<span class='e-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -510,7 +525,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						<span class='e-n-accordion-item-title-text'><?php echo wp_kses_post( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
 						<?php echo wp_kses_post( $icons_content ); ?>
 					</summary>
-					<?php echo wp_kses_post( $item_content ); ?>
+					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</details>
 			<?php
 			$items_title_html .= ob_get_clean();
@@ -567,8 +582,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
 					<span class="e-n-accordion-item-title-icon">
-						<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
-						<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
+						<span class="e-opened">{{{ itemTitleIconActive.value }}}</span>
+						<span class="e-closed">{{{ itemTitleIcon.value }}}</span>
 					</span>
 					<# } #>
 				</summary>
