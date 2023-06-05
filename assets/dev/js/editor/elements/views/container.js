@@ -266,6 +266,7 @@ const ContainerView = BaseElementView.extend( {
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
 		} );
