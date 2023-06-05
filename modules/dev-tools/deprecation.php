@@ -210,13 +210,15 @@ class Deprecation {
 			$plugin_name = 'Unknown';
 			if ( ! ( empty( $external_sources ) ) ) {
 				$calling_source = $external_sources[ array_key_first( $external_sources ) ];
-				//$plugin_name = $this->get_plugin_name( $calling_source['file'] );
-				$plugin_name = $this->get_source( $calling_source['file'] )['name'];
-				$source_type = $this->get_source( $calling_source['file'] )['type'];
+				$source_type = '';
+				if ( array_key_exists( 'file', $calling_source ) ) {
+					$plugin_name = $this->get_source( $calling_source['file'] )['name'];
+					$source_type = $this->get_source( $calling_source['file'] )['type'];
+					$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
+				}
 				if ( empty( $plugin_name ) ) {
 					$plugin_name = 'unknown...';
 				}
-				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 			}
 
 			if ( $this->should_console_log_deprecated() ) {
@@ -259,6 +261,9 @@ class Deprecation {
 	}
 
 	private function is_elementor_file( $stack_element ) {
+		if ( ! array_key_exists( 'file', $stack_element ) ) {
+			return false;
+		}
 		$filename = $stack_element['file'];
 		return ( strpos( $filename, '/elementor/' ) !== false || strpos( $filename, '/elementor-pro/' ) !== false );
 	}
