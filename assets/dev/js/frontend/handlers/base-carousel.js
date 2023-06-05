@@ -270,10 +270,10 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.swiper.update();
 	}
 
-	getPaginationBullets( array = true ) {
+	getPaginationBullets( type = 'array' ) {
 		const paginationBullets = this.$element.find( this.getSettings( 'selectors' ).paginationBullet );
 
-		return array ? Array.from( paginationBullets ) : paginationBullets;
+		return 'array' === type ? Array.from( paginationBullets ) : paginationBullets;
 	}
 
 	a11ySetWidgetAriaDetails() {
@@ -284,16 +284,19 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetPaginationTabindex() {
+		const bulletClass = this.swiper?.params.pagination.bulletClass,
+			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
+
 		this.getPaginationBullets().forEach( ( bullet ) => {
-			if ( ! bullet.classList.contains( 'swiper-pagination-bullet-active' ) ) {
+			if ( ! bullet.classList.contains( activeBulletClass ) ) {
 				bullet.removeAttribute( 'tabindex' );
 			}
 		} );
 
 		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
-		if ( event?.target.classList.contains( 'swiper-pagination-bullet' ) && isDirectionInlineArrowKey ) {
-			this.$element.find( '.swiper-pagination-bullet-active' ).trigger( 'focus' );
+		if ( event?.target?.classList.contains( bulletClass ) && isDirectionInlineArrowKey ) {
+			this.$element.find( `.${ activeBulletClass }` ).trigger( 'focus' );
 		}
 	}
 
@@ -330,5 +333,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		} );
 	}
 
+	// Empty method which can be overwritten by child methods.
 	handleElementHandlers() {}
 }
