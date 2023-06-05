@@ -422,6 +422,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Editor', async () => {
 				await test.step( 'Add Widget and navigate to Style Tab', async () => {
 					// Act
+					await editor.closeNavigatorIfOpen();
 					nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 					nestedAccordion = await editor.selectElement( nestedAccordionID );
 					nestedAccordionItem.first().click();
@@ -449,6 +450,98 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordionItemFront.first().click();
 				nestedAccordionItemTitleFront.nth( 2 ).hover();
 				await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'accordion-style-front.png' );
+			} );
+		} );
+
+		test( 'Content style Tests', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				frame = editor.getPreviewFrame(),
+				nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item' ),
+				nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
+
+			await editor.closeNavigatorIfOpen();
+			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			const nestedAccordion = await editor.selectElement( nestedAccordionID );
+			await editor.activatePanelTab( 'style' );
+			await editor.openSection( 'section_content_style' );
+
+			await test.step( 'open accordion', async () => {
+				for ( let i = 0; i < await nestedAccordionItemContent.count(); i++ ) {
+					await nestedAccordionItemTitle.nth( i ).click();
+					await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
+				}
+			} );
+
+			await test.step( 'set background', async () => {
+				// Act
+				await editor.page.locator( '.elementor-control-content_background_background .eicon-paint-brush' ).click();
+				await editor.setColorControlValue( colors.red.hex, 'content_background_color' );
+			} );
+
+			await test.step( 'Set Border controls', async () => {
+				// Act
+				await editor.page.selectOption( '.elementor-control-content_border_border >> select', { value: borderStyle.solid } );
+				await editor.setDimensionsValue( 'content_border_width', '5' );
+				await editor.setColorControlValue( colors.blue.hex, 'content_border_color' );
+				await editor.setDimensionsValue( 'content_border_radius', '25' );
+			} );
+
+			await test.step( 'set padding', async () => {
+				// Act
+				await editor.setDimensionsValue( 'content_padding', '50' );
+			} );
+
+			await test.step( 'compare editor images', async () => {
+				await expect( nestedAccordion ).toHaveScreenshot( 'nested-Accordion-content-style.png' );
+			} );
+
+			await test.step( 'Container\'s style should override item\'s style', async () => {
+				await test.step( 'Open container settings', async () => {
+					// Act
+					await nestedAccordionItemContent.first().hover();
+					await nestedAccordionItemTitle.first().locator( '.elementor-editor-container-settings' ).click();
+				} );
+
+				await test.step( 'override background and border', async () => {
+					// Act
+					await editor.activatePanelTab( 'style' );
+					await editor.openSection( 'section_background' );
+					await editor.page.locator( '.elementor-control-background_background .eicon-paint-brush' ).click();
+					await editor.setColorControlValue( colors.black.hex, 'background_color' );
+					await editor.openSection( 'section_border' );
+					await editor.page.selectOption( '.elementor-control-border_border >> select', { value: borderStyle.dotted } );
+					await editor.setDimensionsValue( 'border_width', '12' );
+					await editor.setColorControlValue( colors.purple.hex, 'border_color' );
+					await editor.setDimensionsValue( 'border_radius', '30' );
+				} );
+
+				await test.step( 'override padding', async () => {
+					// Act
+					await editor.activatePanelTab( 'advanced' );
+					await editor.setDimensionsValue( 'padding', '22' );
+				} );
+
+				await test.step( 'compare container override', async () => {
+					await expect( nestedAccordion ).toHaveScreenshot( 'nested-Accordion-content-style-override.png' );
+				} );
+
+				await test.step( 'compare frontend', async () => {
+					// Act
+					await editor.publishAndViewPage();
+					const nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
+						nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' );
+
+					await test.step( 'open accordion', async () => {
+						for ( let i = 0; i < await nestedAccordionItemTitleFront.count(); i++ ) {
+							await nestedAccordionItemTitleFront.nth( i ).click();
+						}
+					} );
+
+					// Assert.
+					await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'nested-Accordion-content-style-front.png' );
+				} );
 			} );
 		} );
 	} );
