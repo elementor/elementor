@@ -267,21 +267,26 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 		$this->end_controls_section();
 
-		$this->start_controls_section( 'section_interactions', [
-			'label' => esc_html__( 'Interactions section', 'elementor' ),
-		] );
+		$this->start_controls_section(
+			'section_interactions',
+			[
+				'label' => esc_html__( 'Interactions section', 'elementor' ),
+			]
+		);
 
-		$this->add_control( 'default_state', [
-			'label'              => esc_html__( 'Default State', 'elementor' ),
-			'type'               => Controls_Manager::SELECT,
-			'options'            => [
-				'expanded' => esc_html__( 'First expanded', 'elementor' ),
-				'all_collapsed'  => esc_html__( 'All collapsed', 'elementor' ),
-			],
-			'default'            => 'expanded',
-			'frontend_available' => true,
-		] );
-
+		$this->add_control(
+			'default_state',
+			[
+				'label' => esc_html__( 'Default State', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'expanded' => esc_html__( 'First expanded', 'elementor' ),
+					'all_collapsed' => esc_html__( 'All collapsed', 'elementor' ),
+				],
+				'default' => 'expanded',
+				'frontend_available' => true,
+			]
+		);
 		$this->end_controls_section();
 
 		$this->add_style_tab();
