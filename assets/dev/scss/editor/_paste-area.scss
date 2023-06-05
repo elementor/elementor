@@ -1,7 +1,8 @@
 #elementor-paste-area-dialog {
+	text-align: center;
 
 	.dialog-header {
-		padding-top: 60px;
+		padding-block-start: 60px;
 		font-size: 30px;
 	}
 
@@ -30,6 +31,7 @@
 	}
 
 	.dialog-widget-content {
+		width: 400px;
 
 		.eicon-loading {
 			display: none;
@@ -39,18 +41,18 @@
 
 			.eicon-loading {
 				display: block;
-				margin-top: 15px;
+				margin-block-start: 15px;
 			}
 		}
 	}
 
 	#elementor-paste-area-dialog__error {
-		color: var(--e-global-color-danger);
+		color: var(--e-a-color-danger);
 		font-size: 12px;
 
 		&:before {
 			content: '';
-			border-top: var(--e-a-border);
+			border-block-start: var(--e-a-border);
 			display: block;
 			margin: 10px -15px;
 		}

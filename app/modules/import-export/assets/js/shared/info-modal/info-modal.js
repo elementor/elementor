@@ -17,12 +17,12 @@ export const infoButtonProps = {
 
 export default function InfoModal( props ) {
 	const attrs = {
-			className: 'e-app-import-export-info-modal',
-			setShow: props.setShow,
-			onOpen: props.onOpen,
-			onClose: props.onClose,
-			referrer: props.referrer,
-		};
+		className: 'e-app-import-export-info-modal',
+		setShow: props.setShow,
+		onOpen: props.onOpen,
+		onClose: props.onClose,
+		referrer: props.referrer,
+	};
 
 	if ( Object.prototype.hasOwnProperty.call( props, 'show' ) ) {
 		attrs.show = props.show;

@@ -384,15 +384,12 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				// The `%' and `em` units are not supported as the widget implements icons differently then other icons.
+				'size_units' => [ 'px', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 6,
 						'max' => 300,
-					],
-					'%' => [
-						'min' => 6,
-						'max' => 100,
 					],
 				],
 				'selectors' => [

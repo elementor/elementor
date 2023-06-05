@@ -86,6 +86,7 @@ class Modules_Manager {
 			'gutenberg',
 			'wp-cli',
 			'safe-mode',
+			'ai',
 			'usage',
 			'dev-tools',
 			'landing-pages',
@@ -98,6 +99,7 @@ class Modules_Manager {
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
+			'nested-accordion',
 			'container-converter',
 			'web-cli',
 			'promotions',
@@ -106,6 +108,8 @@ class Modules_Manager {
 			'lazyload',
 			'kit-elements-defaults',
 			'announcements',
+			'site-navigation',
+			'styleguide',
 		];
 	}
 

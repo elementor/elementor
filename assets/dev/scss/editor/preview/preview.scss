@@ -4,8 +4,6 @@
 @import "../../global/global";
 @import "../../direction/theme-light";
 
-@import "../container";
-
 @import "../units";
 @import "../breakpoints";
 @import "../dynamic-tags";
@@ -23,9 +21,42 @@
 
 @import "../flex-icons.scss";
 
+
+// mixins
+@mixin e-grid-outline-base {
+	padding-top: var(--padding-top);
+	padding-bottom: var(--padding-bottom);
+	display: grid;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	grid-gap: var(--gap);
+	justify-items: var(--justify-items);
+	align-items: var(--align-items);
+	grid-auto-flow: var(--grid-auto-flow);
+	justify-content: var(--grid-justify-content);
+	align-content: var(--grid-align-content);
+	min-height: var(--min-height);
+}
+
+@mixin e-grid-outline-boxed {
+	@include e-grid-outline-base;
+	width: var(--width);
+	margin: 0 auto;
+}
+
+@mixin e-grid-outline-full-width {
+	@include e-grid-outline-base;
+	padding-right: var(--padding-right);
+	padding-left: var(--padding-left);
+	width: 100%;
+	left: 0;
+}
+
 // Hidden WP Admin Bar
 html.elementor-html {
-	margin-top: 0 !important;
+	margin-block-start: 0 !important;
 }
 
 .elementor-edit-area {
@@ -59,10 +90,45 @@ html.elementor-html {
 		}
 	}
 
+	.e-grid-outline {
+		display: none;
+	}
+
+	.elementor-element-editable.e-grid {
+
+		&.e-con-full {
+
+			> .e-grid-outline {
+
+				@include e-grid-outline-full-width;
+			}
+		}
+
+		&.e-con-boxed {
+
+			> .e-con-inner{
+
+				position: relative;
+
+				> .e-grid-outline {
+
+					@include e-grid-outline-boxed;
+				}
+			}
+		}
+
+		.e-grid-outline-item {
+			border: 1px dashed #{$editor-light};
+			pointer-events: none;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
 	.elementor-inner-section {
 
 		&:first-child {
-			margin-top: 15px;
+			margin-block-start: 15px;
 		}
 	}
 
@@ -93,7 +159,11 @@ html.elementor-html {
 		}
 
 		&.elementor-element-editable {
-			box-shadow: 0 0 0 1px var(--e-p-border-widget-active);
+
+			&,
+			&:hover {
+				box-shadow: 0 0 0 2px var(--e-p-border-widget);
+			}
 		}
 
 		&:not(:hover) {
@@ -309,7 +379,7 @@ html.elementor-html {
 
 	.icon {
 		font-size: 28px;
-		padding-top: 15px;
+		padding-block-start: 15px;
 		line-height: 1;
 	}
 
@@ -463,3 +533,4 @@ html.elementor-html {
 @import "column";
 @import "widget";
 @import "container";
+@import "presets";

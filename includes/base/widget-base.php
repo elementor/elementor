@@ -317,10 +317,10 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @since 1.7.12
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `register_skins()` method instead.
 	 */
 	protected function _register_skins() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_skins()' );
 
 		$this->register_skins();
 	}
@@ -854,7 +854,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $toolbar Optional. Toolbar type. Accepted values are `advanced`, `basic` or `none`. Default is
 	 *                        `basic`.
 	 */
-	public function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
+	protected function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
 		}

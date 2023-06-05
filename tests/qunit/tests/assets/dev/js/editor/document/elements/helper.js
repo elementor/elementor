@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../../../../../../../../../assets/dev/js/editor/container/container')} Container
  */
- export default class ElementsHelper {
+export default class ElementsHelper {
 	static createAuto( elType, widgetType = 'button' ) {
 		let result = null;
 

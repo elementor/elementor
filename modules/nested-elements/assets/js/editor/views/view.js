@@ -37,6 +37,24 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 
 		return events;
 	}
+
+	/**
+	 * Function renderHTML().
+	 *
+	 * The `renderHTML()` method is overridden as it causes redundant renders when removing focus from any nested element.
+	 * This is because the original `renderHTML()` method sets `editModel.renderOnLeave = true;`.
+	 */
+	renderHTML() {
+		const templateType = this.getTemplateType(),
+			editModel = this.getEditModel();
+
+		if ( 'js' === templateType ) {
+			editModel.setHtmlCache();
+			this.render();
+		} else {
+			editModel.renderRemoteServer();
+		}
+	}
 }
 
 export default View;

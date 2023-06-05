@@ -58,12 +58,11 @@ export default class ComponentBase extends Module {
 		ForceMethodImplementation();
 	}
 
+	/**
+	 * @deprecated since 3.7.0, use `getServiceName()` instead.
+	 */
 	getRootContainer() {
-		Deprecation.deprecated(
-			'getRootContainer()',
-			'3.7.0',
-			'getServiceName()',
-		);
+		Deprecation.deprecated( 'getRootContainer()', '3.7.0', 'getServiceName()' );
 
 		return this.getServiceName();
 	}
@@ -379,7 +378,6 @@ export default class ComponentBase extends Module {
 	renderTab( tab ) {} // eslint-disable-line
 
 	activateTab( tab, args ) {
-		this.currentTab = tab;
 		this.renderTab( tab, args );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
@@ -391,7 +389,6 @@ export default class ComponentBase extends Module {
 			.filter( '[data-tab="' + tab + '"]' )
 			.addClass( 'elementor-active' );
 	}
-
 	getActiveTabConfig() {
 		return this.tabs[ this.currentTab ] || {};
 	}

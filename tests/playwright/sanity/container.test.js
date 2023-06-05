@@ -4,7 +4,7 @@ const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
-test.describe( 'Container tests', () => {
+test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -397,6 +397,7 @@ test.describe( 'Container tests', () => {
 		await page.locator( '.elementor-control-border_width .elementor-control-input-wrapper input' ).first().fill( '30' );
 		await page.locator( '.elementor-control-border_radius .elementor-control-input-wrapper input' ).first().fill( '60' );
 		await editor.setContainerBorderColor( '#333333', containerId );
+		await page.locator( 'body' ).click();
 
 		await editor.togglePreviewMode();
 
@@ -446,6 +447,7 @@ test.describe( 'Container tests', () => {
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
+		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
@@ -568,8 +570,8 @@ test.describe( 'Container tests', () => {
 			// Set various controls
 			await page.locator( '.elementor-control-container_type select' ).selectOption( 'grid' );
 			const clickOptions = { position: { x: 0, y: 0 } }; // This is to avoid the "tipsy" alt info that can block the click of the next item.
-			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
-			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
+			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
+			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
 		}
 
 		// Assert.
@@ -591,42 +593,124 @@ test.describe( 'Container tests', () => {
 		}
 	} );
 
-	test( 'Verify that elements are in the correct order after passing into a new container', async ( { page }, testInfo ) => {
+	test( 'Verify pasting of elements into the Container Element Add section', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
-			containerId2 = await editor.addElement( { elType: 'container' }, 'document' );
+			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
+			containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( widgets.button, containerId1 );
-		await editor.addWidget( widgets.heading, containerId2 );
+		const headingId = await editor.addWidget( widgets.heading, containerId2 );
+		await editor.addWidget( widgets.spacer, containerId3 );
 
-		// Copy container 1.
-		await editor.copyElement( containerId1 );
+		// Copy container 2 and paste it at the top of the page.
+		await editor.copyElement( containerId2 );
+		await editor.openAddElementSection( containerId1 );
+		await editor.pasteElement( '.elementor-add-section-inline' );
 
-		// Open Add Section Inline element.
+		// Copy container 3 and paste it above container 2.
+		await editor.copyElement( containerId3 );
 		await editor.openAddElementSection( containerId2 );
+		await editor.pasteElement( '.elementor-add-section-inline' );
 
-		// Paste container 1 onto New Container element.
+		// Copy the heading widget and paste it above container 3.
+		await editor.copyElement( headingId );
+		await editor.openAddElementSection( containerId3 );
 		await editor.pasteElement( '.elementor-add-section-inline' );
 
 		// Assert.
-		// Verify that the first container has a `data-id` value of `containerId1`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( containerId1 );
-		// Verify that the second container doesn't have a `data-id` value of `containerId1` or `containerId2`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId1 );
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( containerId2 );
-		// Verify that the second container has a button widget.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
-		// Verify that the third container has `a `data-id` value of `containerId2`.
-		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
+		// Expected order:
+		// 1. Copy of container 2 with a heading widget.
+		// 2. Container 1.
+		// 3. Copy of container 3 with a spacer widget.
+		// 4. Container 2.
+		// 5. A new container with a heading widget.
+		// 6. Container 3.
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=0' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-heading/ );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId1 );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=2' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-spacer/ );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=3' ).getAttribute( 'data-id' ) ).toEqual( containerId2 );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=4' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-heading/ );
+		await expect( await editor.getPreviewFrame().locator( '.e-con >> nth=5' ).getAttribute( 'data-id' ) ).toEqual( containerId3 );
+	} );
+
+	test( 'Test container wizard', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+		const frame = await editor.getPreviewFrame();
+
+		await test.step( 'Test container type selector', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			const toFlex = await frame.locator( '.flex-preset-button' );
+			const toGrid = await frame.locator( '.grid-preset-button' );
+			await expect( toFlex ).toBeVisible();
+			await expect( toGrid ).toBeVisible();
+			await frame.locator( '.elementor-add-section-close' ).click();
+		} );
+
+		await test.step( 'Test wizard flex container', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.flex-preset-button' ).click();
+			const flexList = frame.locator( '.e-con-select-preset__list' );
+			await expect( flexList ).toBeVisible();
+			await frame.locator( '.elementor-add-section-close' ).click();
+		} );
+
+		await test.step( 'Test wizard grid container', async () => {
+			await frame.locator( '.elementor-add-section-button' ).click();
+			await frame.locator( '.grid-preset-button' ).click();
+			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
+			await expect( gridList ).toBeVisible();
+		} );
+	} );
+
+	test( 'Container no horizontal scroll', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		// Arrange.
+		const editor = await wpAdmin.useElementorCleanPost(),
+			containerSelector = '.elementor-element-edit-mode',
+			frame = await editor.getPreviewFrame();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Set row direction.
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		// Evaluate scroll widths in the browser context.
+		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
+			const container = document.querySelector( selector );
+			return container.scrollWidth <= container.clientWidth;
+		}, containerSelector );
+
+		// Check for no horizontal scroll.
+		expect( hasNoHorizontalScroll ).toBe( true );
+	} );
+
+	test( 'Convert to container does not show when only containers are on the page', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.useElementorCleanPost();
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( widgets.button, containerId );
+
+		await page.click( '#elementor-panel-saver-button-publish-label' );
+		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
+
+		await page.reload();
+		await editor.ensurePanelLoaded();
+
+		await page.locator( '#elementor-panel-footer-settings' ).click();
+
+		expect( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
 	const editor = await wpAdmin.openNewPage();
-	await editor.page.waitForLoadState( 'networkidle' );
 	await editor.useCanvasTemplate();
 	return editor;
 }

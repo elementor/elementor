@@ -10,7 +10,7 @@
 
 	.wp-editor-tabs {
 		border: var(--e-a-border-bold);
-		border-bottom: none;
+		border-block-end: none;
 		border-start-start-radius: var(--e-a-border-radius);
 		border-start-end-radius: var(--e-a-border-radius);
 		border-end-end-radius: 0;
@@ -84,6 +84,17 @@
 	.mce-toolbar-grp,
 	.quicktags-toolbar {
 		background-color: var(--e-a-bg-default);
+	}
+
+	.mce-toolbar {
+
+		.mce-btn-group .mce-btn.mce-listbox {
+			background-color: var(--e-a-bg-default);
+
+			button {
+				color: var(--e-a-color-txt);
+			}
+		}
 	}
 
 	.mce-toolbar-grp {
