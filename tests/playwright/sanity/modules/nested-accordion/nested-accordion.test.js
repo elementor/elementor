@@ -261,15 +261,14 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			const nestedAccordionWidgetId = '48f02ad',
 				frame = editor.getPreviewFrame(),
-				nestedAccordion = frame.locator( '.e-n-accordion' ),
+				nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
 				nestedAccordionTitle = frame.locator( 'summary' ).first().filter( { hasText: 'One' } );
 
 			await test.step( 'Check that the title icon is displayed', async () => {
 				// Assert
-				await nestedAccordion.locator( 'i' ).nth( 1 ).highlight();
-				await expect( await nestedAccordion.locator( 'i' ).nth( 0 ) ).toBeVisible();
-				await expect( await nestedAccordion.locator( 'i' ).nth( 0 ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 1 ) ).toBeHidden();
+				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeVisible();
+				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toHaveClass( 'fas fa-plus' );
+				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 0 ) ).toBeHidden();
 			} );
 
 			await test.step( 'Check that icon changes when Accordion is opened', async () => {
@@ -277,7 +276,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await nestedAccordionTitle.click( { timeout: 5000 } );
 				await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
 				await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await nestedAccordion.locator( 'i' ).nth( 0 ) ).toBeHidden();
+				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeHidden();
 				await nestedAccordionTitle.click( { timeout: 5000 } );
 			} );
 
@@ -343,18 +342,18 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Mobile -Check that the title icon is displayed', async () => {
 				// Assert
-				await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
-				await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
+				await expect( await getIcon( nestedAccordion, 1 ) ).toBeVisible();
+				await expect( await getIcon( nestedAccordion, 1 ) ).toHaveClass( 'fas fa-plus' );
 
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 1 ) ).toBeHidden();
+				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 0 ) ).toBeHidden();
 			} );
 
 			await test.step( 'Mobile - Check that icon changes when the mobile Accordion is opened', async () => {
 				await frame.waitForLoadState( 'load' );
 				await nestedAccordionTitle.click();
-				await expect( await getIcon( nestedAccordion, 1 ) ).toBeVisible();
-				await expect( await getIcon( nestedAccordion, 1 ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await getIcon( nestedAccordion, 1 ) ).toBeVisible();
+				await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
+				await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
+				await expect( await getIcon( nestedAccordion, 1 ) ).toBeHidden();
 				await nestedAccordionTitle.click();
 			} );
 
@@ -505,7 +504,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					await editor.activatePanelTab( 'style' );
 					await editor.openSection( 'section_accordion_style' );
-					await editor.closeNavigatorIfOpen();
 				} );
 
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
