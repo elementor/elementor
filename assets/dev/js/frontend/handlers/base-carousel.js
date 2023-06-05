@@ -105,7 +105,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				type: !! elementSettings.pagination ? elementSettings.pagination : 'bullets',
 				clickable: true,
 				renderBullet: ( index, classname ) => {
-					return `<span class="${ classname }" data-bullet-index="${ index }"></span>`;
+					return `<span class="${ classname }" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
 				},
 			};
 		}
@@ -119,11 +119,10 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		swiperOptions.a11y = {
 			enabled: true,
-			prevSlideMessage: __( 'Previous slide', 'elementor' ),
-			nextSlideMessage: __( 'Next slide', 'elementor' ),
-			firstSlideMessage: __( 'This is the first slide', 'elementor' ),
-			lastSlideMessage: __( 'This is the last slide', 'elementor' ),
-			paginationBulletMessage: `${ __( 'Go to slide', 'elementor' ) } {{index}}`,
+			prevSlideMessage: elementorFrontend.config.i18n.a11yCarouselPrevSlideMessage,
+			nextSlideMessage: elementorFrontend.config.i18n.a11yCarouselNextSlideMessage,
+			firstSlideMessage: elementorFrontend.config.i18n.a11yCarouselFirstSlideMessage,
+			lastSlideMessage: elementorFrontend.config.i18n.a11yCarouselLastSlideMessage,
 		};
 
 		swiperOptions.on = {
@@ -178,7 +177,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onDirectionArrowKeydown( event ) {
-		const isRTL = elementorCommon.config.isRTL,
+		const isRTL = elementorFrontend.config.isRTL,
 			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
 			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
@@ -281,7 +280,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const $widget = this.$element;
 
 		$widget.attr( 'aria-roledescription', 'carousel' );
-		$widget.attr( 'aria-label', __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ) );
+		$widget.attr( 'aria-label', elementorFrontend.config.i18n.a11yCarouselWrapperAriaLabel );
 	}
 
 	a11ySetPaginationTabindex() {
