@@ -61,4 +61,3 @@ test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo 
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 	} );
 } );
-

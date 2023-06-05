@@ -52,3 +52,4 @@ test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 
 	await wpAdmin.disableAdvancedUploads();
 } );
+
