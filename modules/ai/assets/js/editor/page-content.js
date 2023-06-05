@@ -7,7 +7,7 @@ import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
 import UpgradeChip from './components/upgrade-chip';
-import FormMedia from './pages/form-media';
+import MediaDialog from './media-dialog';
 
 const PageContent = (
 	{
@@ -21,10 +21,36 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
+	const promptDialogStyleProps = {
+		sx: {
+			'& .MuiDialog-container': {
+				alignItems: 'flex-start',
+				mt: 'media' === type ? '2.5vh' : '18vh',
+			},
+		},
+		PaperProps: {
+			sx: {
+				m: 0,
+				maxHeight: 'media' === type ? '95vh' : '76vh',
+				height: ! isLoading && 'media' === type ? '95vh' : 'auto',
+			},
+		},
+	};
+
+	const maybeRenderUpgradeChip = () => {
+		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
+		if ( ! needsUpgradeChip ) {
+			return;
+		}
+		return <UpgradeChip
+			hasSubscription={ hasSubscription }
+			usagePercentage={ usagePercentage }
+		/>;
+	};
 
 	if ( isLoading ) {
 		return (
-			<PromptDialog onClose={ onClose }>
+			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
 				<PromptDialog.Header onClose={ onClose } />
 
 				<PromptDialog.Content>
@@ -64,11 +90,25 @@ const PageContent = (
 		);
 	}
 
+	if ( 'media' === type ) {
+		return (
+			<MediaDialog
+				onClose={ onClose }
+				getControlValue={ getControlValue }
+				controlView={ controlView }
+				additionalOptions={ additionalOptions }
+				credits={ credits }
+				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
+				DialogProps={ promptDialogStyleProps }
+			/>
+		);
+	}
+
 	if ( 'code' === type ) {
 		return (
-			<PromptDialog onClose={ onClose }>
+			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
-					{ ! hasSubscription && <UpgradeChip /> }
+					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
 				<PromptDialog.Content>
@@ -85,31 +125,10 @@ const PageContent = (
 		);
 	}
 
-	if ( 'media' === type ) {
-		return (
-			<PromptDialog onClose={ onClose } maxWidth={ 'lg' } scroll="paper">
-				<PromptDialog.Header onClose={ onClose }>
-					{ ! hasSubscription && <UpgradeChip /> }
-				</PromptDialog.Header>
-
-				<FormMedia
-					type={ type }
-					controlType={ controlType }
-					onClose={ onClose }
-					getControlValue={ getControlValue }
-					setControlValue={ setControlValue }
-					controlView={ controlView }
-					additionalOptions={ additionalOptions }
-					credits={ credits }
-				/>
-			</PromptDialog>
-		);
-	}
-
 	return (
-		<PromptDialog onClose={ onClose }>
+		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
-				{ ! hasSubscription && <UpgradeChip /> }
+				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 
 			<PromptDialog.Content>
