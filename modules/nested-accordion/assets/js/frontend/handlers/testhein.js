@@ -51,24 +51,11 @@ export default class NestedAccordion extends Base {
 	}
 
 	bindEvents() {
-		// This.bindAnimationListeners.bind( this );
-		this.elements.$accordion.on( 'click', `.e-n-accordion-item-title`, this.bindAnimationListeners.bind( this ) );
+		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
 	}
 
 	unbindEvents() {
-		this.removeAnimationListeners();
-	}
-
-	bindAnimationListeners( event ) {
-		const { $accordionTitles, $accordionContent } = this.getDefaultElements();
-
-		// $accordionTitles.each( ( index, title ) => {
-		// 	const clickListener = this.clickListener.bind( this, $accordionItems, $accordionContent, index, title );
-		// 	title.addEventListener( 'click', clickListener );
-		// 	title.clickListener = clickListener; // Save reference for later removal
-		// } );
-
-		this.clickListener( event );
+		this.elements.$accordionTitles.off();
 	}
 
 	clickListener( event ) {
@@ -122,13 +109,5 @@ export default class NestedAccordion extends Base {
 		item.open = isOpen;
 		this.animations.set( item, null );
 		item.style.height = item.style.overflow = '';
-	}
-
-	removeAnimationListeners() {
-		const { $accordionTitles } = this.getDefaultElements();
-
-		$accordionTitles.each( ( _, title ) => {
-			title.removeEventListener( 'click', title.clickListener );
-		} );
 	}
 }
