@@ -2,8 +2,10 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
@@ -257,6 +259,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	private function add_style_tab() {
 		$this->add_accordion_style_section();
+		$this->add_header_style_section();
 	}
 
 	private function add_accordion_style_section() {
@@ -346,7 +349,124 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	/**
+	private function add_header_style_section() {
+		$this->start_controls_section(
+			'section_header_style',
+			[
+				'label' => esc_html__( 'Header', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'heading_header_style_title',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Title', 'elementor' ),
+
+			]
+		);
+		$this->add_group_control( Group_Control_Typography::get_type(), [
+			'name' => 'title_typography',
+			'global' => [
+				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
+			],
+			'selector' => '{{WRAPPER}} .e-n-accordion-item-title-text',
+			'fields_options' => [
+				'font_size' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--n-accordion-title-font-size: {{SIZE}}{{UNIT}}',
+					],
+				],
+			],
+		] );
+
+		$this->start_controls_tabs( 'header_title_color_style' );
+
+		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
+			$this->add_header_color_style( $state, 'icon' );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'heading_icon_style_title',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Icon', 'elementor' ),
+
+			]
+		);
+
+		$this->add_responsive_control( 'icon_size', [
+			'label' => esc_html__( 'Size', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'em' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+				'rem' => [
+					'min' => 0,
+					'max' => 10,
+					'step' => 0.1,
+				],
+			],
+			'default' => [
+				'unit' => 'px',
+				'size' => 20,
+			],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-icon-size: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->add_responsive_control( 'icon_spacing', [
+			'label' => esc_html__( 'Spacing', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 400,
+				],
+				'vw' => [
+					'min' => 0,
+					'max' => 50,
+					'step' => 0.1,
+				],
+			],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'selectors' => [
+				'{{WRAPPER}}' => '--n-accordion-icon-gap: {{SIZE}}{{UNIT}}',
+			],
+		] );
+
+		$this->start_controls_tabs( 'header_icon_color_style' );
+
+		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
+			$this->add_header_color_style( $state, 'icon' );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+	}
+
+	private function add_header_color_style( $state, $context ) {
+
+//		$this->start_controls_tab(
+//			'accordion_' . $state . '_' . $context . '_color',
+//			[
+//				'label' => 'color',
+//			]
+//		);
+//		$this->end_controls_tab();
+	}
+
+		/**
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
@@ -449,7 +569,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			?>
 				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo wp_kses_post( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
+						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 						<?php echo wp_kses_post( $icons_content ); ?>
 					</summary>
 					<?php echo wp_kses_post( $item_content ); ?>
@@ -502,8 +622,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
-					<span class="e-n-accordion-item-title-text">
-						<{{{ titleHTMLTag }}}>
+					<span class="e-n-accordion-item-title-header">
+						<{{{ titleHTMLTag }}} class="e-n-accordion-item-title-text">
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>
