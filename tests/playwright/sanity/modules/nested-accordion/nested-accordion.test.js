@@ -326,6 +326,28 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
+		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
+			// Act
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost(),
+				frame = editor.getPreviewFrame();
+
+			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+
+			await editor.closeNavigatorIfOpen();
+
+			await test.step( 'Widget Editor Screenshot matches intended design', async () => {
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
+			} );
+
+			await editor.publishAndViewPage();
+
+			await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
+				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
+			} );
+		} );
+
 		test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
