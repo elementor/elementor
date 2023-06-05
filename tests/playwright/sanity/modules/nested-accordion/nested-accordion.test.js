@@ -489,6 +489,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'open accordion', async () => {
 				for ( let i = 0; i < await nestedAccordionItemContent.count(); i++ ) {
 					await nestedAccordionItemTitle.nth( i ).click();
+					await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
 				}
 			} );
 
