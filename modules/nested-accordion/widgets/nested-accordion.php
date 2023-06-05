@@ -260,7 +260,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'label'              => esc_html__( 'Default State', 'elementor' ),
 			'type'               => Controls_Manager::SELECT,
 			'options'            => [
-				'expanded' => esc_html__( 'First expended', 'elementor' ),
+				'expanded' => esc_html__( 'First expanded', 'elementor' ),
 				'all_collapsed'  => esc_html__( 'All collapsed', 'elementor' ),
 			],
 			'default'            => 'expanded',
@@ -442,7 +442,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
-		$tag = Utils::validate_html_tag( $settings['title_tag'] );
 		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 

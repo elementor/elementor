@@ -28,8 +28,8 @@ export default class NestedAccordion extends Base {
 		return {
 			$accordion: this.findElement( selectors.accordion ),
 			$contentContainers: this.findElement( selectors.accordionContentContainers ),
-			$items: this.findElement( selectors.accordionItems ),
-			$titles: this.findElement( selectors.accordionItemTitles ),
+			$accordionItems: this.findElement( selectors.accordionItems ),
+			$accordionTitles: this.findElement( selectors.accordionItemTitles ),
 			$accordionContent: this.findElement( selectors.accordionContent ),
 		};
 	}
@@ -43,10 +43,10 @@ export default class NestedAccordion extends Base {
 	}
 
 	interlaceContainers() {
-		const { $contentContainers, $items } = this.getDefaultElements();
+		const { $contentContainers, $accordionItems } = this.getDefaultElements();
 
 		$contentContainers.each( ( index, element ) => {
-			$items[ index ].appendChild( element );
+			$accordionItems[ index ].appendChild( element );
 		} );
 	}
 
@@ -59,25 +59,25 @@ export default class NestedAccordion extends Base {
 	}
 
 	bindAnimationListeners() {
-		const { $titles, $items, $accordionContent } = this.getDefaultElements();
+		const { $accordionTitles, $accordionItems, $accordionContent } = this.getDefaultElements();
 
-		$titles.each( ( index, title ) => {
-			const clickListener = this.clickListener.bind( this, $items, $accordionContent, index, title );
+		$accordionTitles.each( ( index, title ) => {
+			const clickListener = this.clickListener.bind( this, $accordionItems, $accordionContent, index, title );
 			title.addEventListener( 'click', clickListener );
 			title.clickListener = clickListener; // Save reference for later removal
 		} );
 	}
 
-	clickListener( $items, $accordionContent, index, title, e ) {
+	clickListener( $accordionItems, $accordionContent, index, title, e ) {
 		e.preventDefault();
 
-		const item = $items[ index ],
+		const item = $accordionItems[ index ],
 			content = $accordionContent[ index ];
 
 		if ( ! item.open ) {
-			this.open( item, title, content );
+			this.prepareOpenAnimation( item, title, content );
 		} else {
-			this.shrink( item, title );
+			this.closeAccordionItem( item, title );
 		}
 	}
 
@@ -94,21 +94,21 @@ export default class NestedAccordion extends Base {
 		this.animations.set( item, animation );
 	}
 
-	shrink( item, itemTitle ) {
+	closeAccordionItem( item, itemTitle ) {
 		const startHeight = `${ item.offsetHeight }px`,
 			endHeight = `${ itemTitle.offsetHeight }px`;
 
 		this.animateItem( item, startHeight, endHeight, false );
 	}
 
-	open( item, title, content ) {
+	prepareOpenAnimation( item, title, content ) {
 		item.style.overflow = 'hidden';
 		item.style.height = `${ item.offsetHeight }px`;
 		item.open = true;
-		window.requestAnimationFrame( () => this.expand( item, title, content ) );
+		window.requestAnimationFrame( () => this.openAccordionItem( item, title, content ) );
 	}
 
-	expand( item, title, content ) {
+	openAccordionItem( item, title, content ) {
 		const startHeight = `${ item.offsetHeight }px`,
 			endHeight = `${ title.offsetHeight + content.offsetHeight }px`;
 
@@ -122,9 +122,9 @@ export default class NestedAccordion extends Base {
 	}
 
 	removeAnimationListeners() {
-		const { $titles } = this.getDefaultElements();
+		const { $accordionTitles } = this.getDefaultElements();
 
-		$titles.each( ( _, title ) => {
+		$accordionTitles.each( ( _, title ) => {
 			title.removeEventListener( 'click', title.clickListener );
 		} );
 	}

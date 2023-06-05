@@ -156,13 +156,13 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				const allItems = await nestedAccordionItemTitle.all(),
-					allItemExceptFirst = allItems.slice( 1 );
+					allItemsExceptFirst = allItems.slice( 1 );
 
-				for ( const item of allItemExceptFirst ) {
+				for ( const item of allItemsExceptFirst ) {
 					await expect( item ).not.toHaveAttribute( 'open', '' );
 				}
 
-				// Check all collapsed state -> all items are closed
+				//  Verify that all items are closed.
 				await editor.openSection( 'section_interactions' );
 				await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
 
@@ -174,7 +174,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.setSelectControlValue( 'default_state', 'expanded' );
 				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
-				for ( const item of allItemExceptFirst ) {
+				for ( const item of allItemsExceptFirst ) {
 					await expect( item ).not.toHaveAttribute( 'open', 'true' );
 				}
 			} );
