@@ -1,7 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
-import EditorSelectors from '../../../selectors/editor-selectors.js';
-import Content from '../../../pages/elementor-panel-tabs/content.js';
 
 test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	// Arrange.
@@ -62,21 +60,5 @@ test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo 
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 	} );
-} );
-
-test( 'Verify image link control', async ( { page }, testInfo ) => {
-	const link = 'https://elementor.com/';
-	const customAttributes = { key: 'mykey', value: 'myValue' };
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.openNewPage();
-	const contentTab = new Content( page, testInfo );
-
-	await editor.addWidget( 'image' );
-	await contentTab.setLink( link, { targetBlank: true, noFollow: true, customAttributes, linkTo: true } );
-	const imageInEditor = editor.getPreviewFrame().locator( EditorSelectors.image.link );
-	await contentTab.verifyLink( imageInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
-	await editor.publishAndViewPage();
-	const publishedImage = page.locator( EditorSelectors.image.link );
-	await contentTab.verifyLink( publishedImage, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
 } );
 

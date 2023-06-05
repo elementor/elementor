@@ -1,7 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
-import EditorSelectors from '../../../selectors/editor-selectors.js';
-import Content from '../../../pages/elementor-panel-tabs/content.js';
 
 test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
@@ -54,20 +52,3 @@ test( 'Enable SVG fit-to-size', async ( { page }, testInfo ) => {
 
 	await wpAdmin.disableAdvancedUploads();
 } );
-
-test( 'Verify icon link control', async ( { page }, testInfo ) => {
-	const link = 'https://elementor.com/';
-	const customAttributes = { key: 'mykey', value: 'myValue' };
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.openNewPage();
-	const contentTab = new Content( page, testInfo );
-
-	await editor.addWidget( 'icon' );
-	await contentTab.setLink( link, { targetBlank: true, noFollow: true, customAttributes } );
-	const iconInEditor = await editor.getPreviewFrame().locator( EditorSelectors.icon.link );
-	await contentTab.verifyLink( iconInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
-	await editor.publishAndViewPage();
-	const publishedIcon = page.locator( EditorSelectors.icon.link );
-	await contentTab.verifyLink( publishedIcon, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
-} );
-

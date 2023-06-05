@@ -55,19 +55,3 @@ test( 'Verify button Id control', async ( { page }, testInfo ) => {
 	await editor.publishAndViewPage();
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
-
-test( 'Verify button link control', async ( { page }, testInfo ) => {
-	const link = 'https://elementor.com/';
-	const customAttributes = { key: 'mykey', value: 'myValue' };
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	const buttonWidget = new ButtonWidget( page, testInfo );
-	const editor = await wpAdmin.openNewPage();
-
-	await buttonWidget.addWidget( defaultBtnName );
-	await buttonWidget.setLink( link, { targetBlank: true, noFollow: true, customAttributes } );
-	const buttonInEditor = editor.getPreviewFrame().locator( EditorSelectors.button.getByName( defaultBtnName ) );
-	await buttonWidget.verifyLink( buttonInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
-	await editor.publishAndViewPage();
-	const publishedButton = page.locator( EditorSelectors.button.getByName( defaultBtnName ) );
-	await buttonWidget.verifyLink( publishedButton, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
-} );

@@ -47,6 +47,18 @@ const EditorSelectors = {
 			return `${ this.widget } a`;
 		},
 	},
+	imageBox: {
+		widget: '[data-widget_type="image-box.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+	},
+	textPath: {
+		widget: '[data-widget_type="text-path.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+	},
 
 };
 
