@@ -36,7 +36,7 @@ const PromptGallery = ( {
 
 		// Some categories don't have images, so we TEMPORARLY fallback to the shuffled images.
 		return categoryImages.length ? categoryImages : shuffledImages;
-	}, [ selectedCategory ] );
+	}, [ selectedCategory, data ] );
 
 	const fetchJson = () => {
 		fetch( 'https://my.elementor.com/ai/images-prompt-gallery/ai-gallery.json' )
