@@ -794,7 +794,7 @@ class Widget_Icon_List extends Widget_Base {
 		#>
 		<# if ( settings.icon_list ) { #>
 			<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
-			<# _.each( settings.icon_list, function( item, index ) {
+			<# Object.entries( settings.icon_list ).forEach( function( item, index ) {
 
 					var iconTextKey = view.getRepeaterSettingKey( 'text', 'icon_list', index );
 

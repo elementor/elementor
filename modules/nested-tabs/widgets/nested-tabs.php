@@ -1110,7 +1110,7 @@ class NestedTabs extends Widget_Nested_Base {
 			<# if ( settings['tabs'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="e-n-tabs-heading" role="tablist">
-				<# _.each( settings['tabs'], function( item, index ) {
+				<# settings['tabs'].forEach( function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
 					tabWrapperKey = tabUid,

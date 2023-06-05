@@ -99,7 +99,7 @@ class Control_Slider extends Control_Base_Units {
 					<div class="elementor-slider__extra">
 						<# if ( data.labels.length ) { #>
 						<div class="elementor-slider__labels">
-							<# jQuery.each( data.labels, ( index, label ) => { #>
+							<# data.labels.forEach( ( index, label ) => { #>
 								<div class="elementor-slider__label">{{{ label }}}</div>
 							<# } ); #>
 						</div>

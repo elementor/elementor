@@ -157,7 +157,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# _.each( elementData.tabs_controls, function( tabTitle, tabSlug ) {
+		<# Object.entries( elementData.tabs_controls ).forEach( ( [ tabSlug, tabTitle ] ) => {
 			if ( 'content' !== tabSlug && ! elementor.userCan( 'design' ) ) {
 				return;
 			}
@@ -261,7 +261,7 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 
 			var devices = responsive.devices || devicesForDisplay;
 
-			_.each( devices, function( device ) {
+			devices.forEach( function( device ) {
 				// The 'Desktop' label is made accessible via the global config because it needs to be translated.
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
