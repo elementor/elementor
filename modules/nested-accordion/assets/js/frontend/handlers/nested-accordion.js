@@ -51,81 +51,67 @@ export default class NestedAccordion extends Base {
 	}
 
 	bindEvents() {
-		setTimeout( this.bindAnimationListeners.bind( this ), 200 ); // Wait for content to load before binding events.
+		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
 	}
 
 	unbindEvents() {
-		this.removeAnimationListeners();
+		this.elements.$accordionTitles.off();
 	}
 
-	bindAnimationListeners() {
-		const { $accordionTitles, $accordionItems, $accordionContent } = this.getDefaultElements();
+	clickListener( event ) {
+		event.preventDefault();
 
-		$accordionTitles.each( ( index, title ) => {
-			const clickListener = this.clickListener.bind( this, $accordionItems, $accordionContent, index, title );
-			title.addEventListener( 'click', clickListener );
-			title.clickListener = clickListener; // Save reference for later removal
-		} );
-	}
+		const accordionItem = event.currentTarget.parentElement,
+			accordionContent = accordionItem.querySelector( '.e-n-accordion-item > .e-con' );
 
-	clickListener( $accordionItems, $accordionContent, index, title, e ) {
-		e.preventDefault();
-
-		const item = $accordionItems[ index ],
-			content = $accordionContent[ index ];
-
-		if ( ! item.open ) {
-			this.prepareOpenAnimation( item, title, content );
+		if ( ! accordionItem.open ) {
+			this.prepareOpenAnimation( accordionItem, event.currentTarget, accordionContent );
 		} else {
-			this.closeAccordionItem( item, title );
+			this.closeAccordionItem( accordionItem, event.currentTarget );
 		}
 	}
 
-	animateItem( item, startHeight, endHeight, isOpen ) {
-		item.style.overflow = 'hidden';
-		let animation = this.animations.get( item );
+	animateItem( accordionItem, startHeight, endHeight, isOpen ) {
+		accordionItem.style.overflow = 'hidden';
+		let animation = this.animations.get( accordionItem );
 
 		if ( animation ) {
 			animation.cancel();
 		}
 
-		animation = item.animate( { height: [ startHeight, endHeight ] }, { duration: ANIMATION_DURATION } );
-		animation.onfinish = () => this.onAnimationFinish( item, isOpen );
-		this.animations.set( item, animation );
+		animation = accordionItem.animate(
+			{ height: [ startHeight, endHeight ] },
+			{ duration: ANIMATION_DURATION },
+		);
+
+		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
+		this.animations.set( accordionItem, animation );
 	}
 
-	closeAccordionItem( item, itemTitle ) {
-		const startHeight = `${ item.offsetHeight }px`,
-			endHeight = `${ itemTitle.offsetHeight }px`;
+	closeAccordionItem( accordionItem, accordionItemTitle ) {
+		const startHeight = `${ accordionItem.offsetHeight }px`,
+			endHeight = `${ accordionItemTitle.offsetHeight }px`;
 
-		this.animateItem( item, startHeight, endHeight, false );
+		this.animateItem( accordionItem, startHeight, endHeight, false );
 	}
 
-	prepareOpenAnimation( item, title, content ) {
-		item.style.overflow = 'hidden';
-		item.style.height = `${ item.offsetHeight }px`;
-		item.open = true;
-		window.requestAnimationFrame( () => this.openAccordionItem( item, title, content ) );
+	prepareOpenAnimation( accordionItem, accordionItemTitle, accordionItemContent ) {
+		accordionItem.style.overflow = 'hidden';
+		accordionItem.style.height = `${ accordionItem.offsetHeight }px`;
+		accordionItem.open = true;
+		window.requestAnimationFrame( () => this.openAccordionItem( accordionItem, accordionItemTitle, accordionItemContent ) );
 	}
 
-	openAccordionItem( item, title, content ) {
-		const startHeight = `${ item.offsetHeight }px`,
-			endHeight = `${ title.offsetHeight + content.offsetHeight }px`;
+	openAccordionItem( accordionItem, accordionItemTitle, accordionItemContent ) {
+		const startHeight = `${ accordionItem.offsetHeight }px`,
+			endHeight = `${ accordionItemTitle.offsetHeight + accordionItemContent.offsetHeight }px`;
 
-		this.animateItem( item, startHeight, endHeight, true );
+		this.animateItem( accordionItem, startHeight, endHeight, true );
 	}
 
-	onAnimationFinish( item, isOpen ) {
-		item.open = isOpen;
-		this.animations.set( item, null );
-		item.style.height = item.style.overflow = '';
-	}
-
-	removeAnimationListeners() {
-		const { $accordionTitles } = this.getDefaultElements();
-
-		$accordionTitles.each( ( _, title ) => {
-			title.removeEventListener( 'click', title.clickListener );
-		} );
+	onAnimationFinish( accordionItem, isOpen ) {
+		accordionItem.open = isOpen;
+		this.animations.set( accordionItem, null );
+		accordionItem.style.height = accordionItem.style.overflow = '';
 	}
 }
