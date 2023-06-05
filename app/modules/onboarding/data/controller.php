@@ -28,6 +28,9 @@ class Controller extends Base_Controller {
 		$this->register_endpoint( new Update_Onboarding_DB_Option( $this ) );
 	}
 
+	// Empty method implemented to neutralize index endpoint, since there is no need for one.
+	protected function register_index_endpoint() {}
+
 	public static function sanitize_input( $input ): string {
 		return htmlspecialchars( stripslashes( trim( $input ) ) );
 	}

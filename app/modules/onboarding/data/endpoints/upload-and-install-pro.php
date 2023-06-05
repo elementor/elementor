@@ -23,7 +23,7 @@ class Upload_And_Install_Pro extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
-	public function create_items( \WP_REST_Request $request ): array {
+	public function create_items( $request ): array {
 		$files = $request->get_file_params();
 
 		$file = $files['fileToUpload'];
@@ -71,7 +71,7 @@ class Upload_And_Install_Pro extends Endpoint {
 		return $result;
 	}
 
-	public function get_permission_callback( \WP_REST_Request $request ): bool {
+	public function get_permission_callback( $request ): bool {
 		$files = $request->get_file_params();
 
 		$file = $files['fileToUpload'];

@@ -21,7 +21,7 @@ class Activate_Hello_Theme extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE );
 	}
 
-	public function create_items( \WP_REST_Request $request ): array {
+	public function create_items( $request ): array {
 		switch_theme( 'hello-elementor' );
 
 		return [
@@ -32,7 +32,7 @@ class Activate_Hello_Theme extends Endpoint {
 		];
 	}
 
-	public function get_permission_callback(): bool {
+	public function get_permission_callback( $request ): bool {
 		return current_user_can( 'switch_themes' );
 	}
 }

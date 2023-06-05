@@ -29,7 +29,7 @@ class Upload_Site_Logo extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
 
-	public function create_item( \WP_REST_Request $request ): array {
+	public function create_items( $request ): array {
 		$files = $request->get_file_params();
 
 		$file_to_upload = $files['fileToUpload'];
@@ -82,7 +82,7 @@ class Upload_Site_Logo extends Endpoint {
 		return $result;
 	}
 
-	public function get_permission_callback( \WP_REST_Request $request ): bool {
+	public function get_permission_callback( $request ): bool {
 		$files = $request->get_file_params();
 
 		$file_to_upload = $files['fileToUpload'];

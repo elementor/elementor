@@ -36,7 +36,7 @@ class Update_Site_Logo extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
 
-	public function create_items( \WP_REST_Request $request ): array {
+	public function create_items( $request ): array {
 		$absint_attachment_id = absint( $request->get_param( 'attachmentId' ) );
 
 		set_theme_mod( 'custom_logo', $absint_attachment_id );
@@ -49,7 +49,7 @@ class Update_Site_Logo extends Endpoint {
 		];
 	}
 
-	public function get_permission_callback( \WP_REST_Request $request ): bool {
+	public function get_permission_callback( $request ): bool {
 		if ( ! current_user_can( 'edit_theme_options' ) ) {
 			return false;
 		}

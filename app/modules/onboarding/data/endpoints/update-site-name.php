@@ -36,7 +36,7 @@ class Update_Site_Name extends Endpoint {
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
 
-	public function create_items( \WP_REST_Request $request ): array {
+	public function create_items( $request ): array {
 		$site_name = $request->get_param( 'siteName' );
 
 		/**
@@ -62,7 +62,7 @@ class Update_Site_Name extends Endpoint {
 		];
 	}
 
-	public function get_permission_callback(): bool {
+	public function get_permission_callback( $request ): bool {
 		return current_user_can( 'manage_options' );
 	}
 }
