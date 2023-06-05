@@ -384,7 +384,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->start_controls_tabs( 'header_title_color_style' );
 
 		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
-			$this->add_header_color_style( $state, 'icon' );
+			$this->add_header_color_style( $state, 'title' );
 		}
 
 		$this->end_controls_tabs();
@@ -457,13 +457,33 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	private function add_header_color_style( $state, $context ) {
 
-//		$this->start_controls_tab(
-//			'accordion_' . $state . '_' . $context . '_color',
-//			[
-//				'label' => 'color',
-//			]
-//		);
-//		$this->end_controls_tab();
+		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+
+		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
+		switch ( $state ) {
+			case 'hover':
+				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
+				break;
+			case 'active':
+				$translated_tab_text = esc_html__( 'Active', 'elementor' );
+				break;
+		}
+		$this->start_controls_tab(
+			'header_' . $state . '_' . $context,
+			[
+				'label' => $translated_tab_text,
+			]
+		);
+
+		$this->add_control( $state . '_' . $context . '_color', [
+			'label' => esc_html__( 'Color', 'elementor' ),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}}' => $variable . ': {{VALUE}};',
+			],
+		] );
+
+		$this->end_controls_tab();
 	}
 
 		/**

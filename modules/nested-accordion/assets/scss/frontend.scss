@@ -1,4 +1,5 @@
 .elementor-widget-n-accordion {
+  	--n-accordion-color-secondary-fallback: #54595F;
 	--n-accordion-title-font-size: 20px;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
@@ -13,8 +14,16 @@
   	--n-accordion-padding: 10px;
   	--n-accordion-border-radius: 0px;
   	--n-accordion-icon-size :20px;
+  	--n-accordion-title-normal-color:  : var( --e-global-color-secondary, var( --n-accordion-color-secondary-fallback ) );
+	--n-accordion-title-hover-color:  #{$white};
+	--n-accordion-title-active-color:  #{$white};
+	--n-accordion-icon-normal-color: var( --n-accordion-title-normal-color );
+  	--n-accordion-icon-hover-color: var( --n-accordion-title-hover-color );
+	--n-accordion-icon-active-color: var( --n-accordion-title-active-color );
 
-	.e-n-accordion {
+
+
+  .e-n-accordion {
 
 		&-item {
 			display: flex;
@@ -56,12 +65,12 @@
 					order: var( --n-accordion-title-icon-order );
 
 					span > i {
-						color: var(--n-accordion-icon-color);
+						color: var(--n-accordion-icon-normal-color);
 						font-size: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 					}
 
 					span > svg {
-						fill: var(--n-accordion-icon-color);
+					  	fill: var(--n-accordion-icon-normal-color);
 					  	height: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 					  	width: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 					}
@@ -74,27 +83,60 @@
 
 			&[open] {
 
-			  	.e-n-accordion-item-title {
-					margin-bottom: var(--n-accordion-item-title-distance-from-content);
-			  	}
+			  	.e-n-accordion-item {
+				  	&-title {
+						margin-bottom: var(--n-accordion-item-title-distance-from-content);
+						color: var(--n-accordion-title-active-color);
 
-				.e-n-accordion-item-title-icon-opened {
-					display: flex;
-				}
+						&-icon {
+						  	&-opened {
+								display: flex;
+						  	}
 
-				.e-n-accordion-item-title-icon-closed {
-					display: none;
+						  	&-closed {
+								display: none;
+						  	}
+
+						  	span > i {
+								color: var(--n-accordion-icon-active-color);
+						  	}
+
+						  	span > svg {
+								fill: var(--n-accordion-icon-active-color);
+						  	}
+
+						}
+					}
+
 				}
 			}
 
 			&:not([open]) {
 
-				.e-n-accordion-item-title-icon-opened {
-					display: none;
+			  	&:hover{
+				  	.e-n-accordion-item {
+						&-title {
+							color : var(--n-accordion-title-hover-color);
+							&-icon {
+								span > i {
+									color: var(--n-accordion-icon-hover-color);
+							  	}
+
+								span > svg {
+									fill: var(--n-accordion-icon-hover-color);
+								}
+							}
+						}
+					}
 				}
 
-				.e-n-accordion-item-title-icon-closed {
-					display: flex;
+				.e-n-accordion-item-title-icon{
+				  	&-opened {
+						display: none;
+				  	}
+				  	&-closed {
+						display: flex;
+				  	}
 				}
 			}
 		}
