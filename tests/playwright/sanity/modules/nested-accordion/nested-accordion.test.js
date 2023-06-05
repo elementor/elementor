@@ -328,6 +328,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Editor', async () => {
 				await test.step( 'Add Widget and navigate to Style Tab', async () => {
 					// Act
+					await editor.closeNavigatorIfOpen();
 					nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 					nestedAccordion = await editor.selectElement( nestedAccordionID );
 					nestedAccordionItem.first().click();
@@ -371,7 +372,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await editor.activatePanelTab( 'style' );
 			await editor.openSection( 'section_content_style' );
-			await editor.closeNavigatorIfOpen();
 
 			await test.step( 'open accordion', async () => {
 				for ( let i = 0; i < await nestedAccordionItemContent.count(); i++ ) {
