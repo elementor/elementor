@@ -18,14 +18,46 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
+	siteTitle: 'h1.site-title',
 	button: {
-		getByName: ( name ) => `.elementor-button:has-text("Click here")`,
+		getByName: ( name ) => `.elementor-button:has-text("${ name }")`,
 		id: '[data-setting="button_css_id"]',
 		url: 'input[data-setting="url"]',
 		linkOptions: 'button[data-tooltip="Link Options"]',
 		targetBlankChbox: 'input[data-setting="is_external"]',
 		noFollowChbox: 'input[data-setting="nofollow"]',
 		customAttributesInp: 'input[data-setting="custom_attributes"]',
+	},
+	heading: {
+		h2: 'h2.elementor-heading-title',
+		get link() {
+			return `${ this.h2 } a`;
+		},
+	},
+	image: {
+		widget: '[data-widget_type="image.default"]',
+		linkSelect: 'select[data-setting="link_to"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+	},
+	icon: {
+		widget: '[data-widget_type="icon.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+	},
+	imageBox: {
+		widget: '[data-widget_type="image-box.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+	},
+	textPath: {
+		widget: '[data-widget_type="text-path.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
 	},
 
 };
