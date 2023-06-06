@@ -544,7 +544,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await editor.openSection( 'section_content_style' );
 
 			await test.step( 'open accordion', async () => {
-				for ( let i = 0; i < await nestedAccordionItemContent.count(); i++ ) {
+				for ( let i = 1; i < await nestedAccordionItemContent.count(); i++ ) {
 					await nestedAccordionItemTitle.nth( i ).click();
 					await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
 				}
