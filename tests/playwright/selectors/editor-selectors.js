@@ -18,6 +18,9 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
+	media: {
+		preview: '.elementor-control-media__preview',
+	},
 	button: {
 		getByName: ( name ) => `.elementor-button:has-text("Click here")`,
 		id: '[data-setting="button_css_id"]',

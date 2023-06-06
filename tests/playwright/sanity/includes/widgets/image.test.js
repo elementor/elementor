@@ -1,38 +1,63 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
+import EditorSelectors from '../../../selectors/editor-selectors.js';
 
-test( 'Image widget sanity test', async ( { page }, testInfo ) => {
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
-
-	await editor.addWidget( 'image' );
-
-	// Act.
-	await page.click( '.elementor-control-media__preview' );
+async function chooseImage( page, imageTitle ) {
+	await page.click( EditorSelectors.media.preview );
 	await page.click( 'text=Media Library' );
 	await page.waitForSelector( 'text=Insert Media' );
-	await page.waitForTimeout( 1000 );
-
-	// Check if previous image is already uploaded.
-	const previousImage = await page.$( '[aria-label="mountain-image"]' );
-
-	if ( previousImage ) {
-		await page.click( '[aria-label="mountain-image"]' );
-	} else {
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-		await page.waitForSelector( 'text=Showing 1 of 1 media items' );
-	}
-
+	await page.click( `[aria-label="${ imageTitle }"]` );
 	await page.click( '.button.media-button' );
+}
 
-	// Assert.
+test( 'Image size test', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
+	await editor.addWidget( 'image' );
+	await chooseImage( page, 'mountain-image' );
 	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
-	expect( src ).not.toBeNull();
+	let regex = new RegExp( /mountain-image/ );
+	expect( regex.test( src ) ).toEqual( true );
+
+	const imageSize = [ 'thumbnail', 'large', 'full' ];
+	for ( const id in imageSize ) {
+		await wpAdmin.waitForPanel();
+		await editor.getPreviewFrame().locator( '[data-widget_type="image.default"] img' ).click();
+		await page.locator( 'select[data-setting="image_size"]' ).selectOption( imageSize[ id ] );
+		await editor.getPreviewFrame().locator( 'h1.entry-title' ).click();
+		regex = new RegExp( `size-${ imageSize[ id ] }` );
+		await expect( editor.getPreviewFrame().locator( '[data-widget_type="image.default"] img' ) ).toHaveClass( regex );
+		await editor.publishAndViewPage();
+		await page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
+	}
 } );
 
-test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
+test( 'Custom image size test', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
+	await editor.addWidget( 'image' );
+	await chooseImage( page, 'mountain-image' );
+	await editor.getPreviewFrame().locator( '[data-widget_type="image.default"] img' ).click();
+	await page.locator( 'select[data-setting="image_size"]' ).selectOption( 'custom' );
+	await page.locator( 'input[data-setting="width"]' ).type( '400' );
+	await page.locator( 'input[data-setting="height"]' ).type( '400' );
+	const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads\/elementor\/thumbs\/mountain-image(.*)/g );
+	await page.getByRole( 'button', { name: 'Apply' } ).click();
+	await response;
+
+	const imageSize = await editor.getPreviewFrame().locator( '[data-widget_type="image.default"] img' ).boundingBox();
+	expect( imageSize.width ).toEqual( 400 );
+	expect( imageSize.height ).toEqual( 400 );
+
+	await editor.publishAndViewPage();
+
+	const imageSizePublished = await page.locator( '[data-widget_type="image.default"] img' ).boundingBox();
+	expect( imageSizePublished.width ).toEqual( 400 );
+	expect( imageSizePublished.height ).toEqual( 400 );
+} );
+
+test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
 	const previewFrame = editor.getPreviewFrame();
@@ -40,7 +65,7 @@ test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo 
 	await test.step( 'Act', async () => {
 		await editor.addWidget( 'image' );
 
-		await page.locator( '.elementor-control-media__preview' ).click();
+		await page.locator( EditorSelectors.media.preview ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/elementor1.png' );
 		await page.locator( '#attachment-details-title' ).fill( 'Elementor Logo (title)' );
