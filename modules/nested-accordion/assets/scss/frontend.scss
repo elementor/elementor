@@ -1,14 +1,14 @@
 .elementor-widget-n-accordion {
   	--n-accordion-color-secondary-fallback: #54595F;
 	--n-accordion-title-font-size: 20px;
+	--n-accordion-title-flex-grow: initial;
+	--n-accordion-title-justify-content: initial;
+	--n-accordion-title-icon-order: -1;
+	--n-accordion-title-icon-padding-inline: 0 15px;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
 	--n-accordion-item-title-flex-grow: initial;
-	--n-accordion-item-title-justify-content: initial;
-	--n-accordion-item-title-justify-content-mobile: initial;
-	--n-accordion-title-icon-order: -1;
-	--n-accordion-title-icon-padding-inline: 0 15px;
   	--n-accordion-item-title-space-between: 0px;
   	--n-accordion-item-title-distance-from-content: 0px;
   	--n-accordion-padding: 10px;
@@ -34,12 +34,6 @@
 				margin-bottom: var(--n-accordion-item-title-space-between);
 			}
 
-			> .e-con {
-				border-width: var(--n-accordion-border-width);
-				border-color: var(--n-accordion-border-color);
-				border-style: var(--n-accordion-border-style);
-			}
-
 			&-title {
 				display: flex;
 				flex-direction: row;
@@ -48,13 +42,14 @@
 			  	border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
-				justify-content: var(--n-accordion-item-title-justify-content);
+				justify-content: var(--n-accordion-title-justify-content);
 				border-radius: var(--n-accordion-border-radius);
-			  	flex-grow: var(--n-menu-item-title-flex-grow);
+				flex-grow: var(--n-menu-title-flex-grow);
 			  	gap: var( --n-accordion-icon-gap );
 
-			  	&-text {
-			  		font-size: var(--n-accordion-title-font-size);
+				&-text h1,h2,h3,h4,h5,h6,p {
+					margin-block: 0;
+				  	font-size: var(--n-accordion-title-font-size);
 				}
 
 				&-icon {
@@ -63,6 +58,8 @@
 					align-items: center;
 					padding-inline: var( --n-accordion-title-icon-padding-inline );
 					order: var( --n-accordion-title-icon-order );
+					position: relative;
+					width: fit-content;
 
 				  	span {
 						& > i {
@@ -139,7 +136,14 @@
 						display: flex;
 				  	}
 				}
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
+				}
+
+				& > span {
+					cursor: pointer;
+				}
 			}
 		}
 	}
-}
