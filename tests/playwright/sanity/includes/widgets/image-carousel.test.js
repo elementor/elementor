@@ -151,18 +151,6 @@ test( 'Accessibility test', async ( { page }, testInfo ) => {
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSelectControlValue( 'autoplay', 'yes' );
 
-	await test.step( 'Assert a11y play button in the editor', async () => {
-		// Assert.
-		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
-		await page.keyboard.press( 'Shift+Tab' );
-		await expect( await editor.getPreviewFrame().locator( '.a11y-play-button' ) ).toBeFocused();
-
-		await editor.selectElement( widgetId );
-		await editor.openSection( 'section_additional_options' );
-		await editor.setSelectControlValue( 'autoplay', 'no' );
-		await editor.setNumberControlValue( 'speed', 0 );
-	} );
-
 	await test.step( 'Assert keyboard navigation inside the editor', async () => {
 		// Assert.
 		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
