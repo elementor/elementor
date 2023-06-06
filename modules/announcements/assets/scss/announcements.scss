@@ -25,7 +25,14 @@ $description-color: var(--e-a-color-txt);
 		background-color: var(--e-a-bg-default);
 		border-radius: var(--e-a-border-radius);
 		z-index: $element-overlay;
-
+		@media screen and (max-height: 740px) {
+			.announcements-container {
+				max-height: calc(100vh - 60px);
+				overflow-y: scroll;
+				margin-top: auto;
+				margin-bottom: auto;
+			}
+		}
 		.announcements-heading-container {
 			display: flex;
 			align-items: center;
