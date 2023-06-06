@@ -22,12 +22,13 @@ const FormMedia = (
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? { id: '', url: '' } : getControlValue();
 	const [ editImage, setEditImage ] = useState( initialValue );
 	const { screen, setScreen, panel, setPanel } = useImageScreenPanel(
-		initialValue?.id !== '' ? SCREENS.VARIATIONS : SCREENS.GALLERY,
-		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.IMAGE_TO_IMAGE,
+		initialValue?.id !== '' ? SCREENS.IMAGE_EDITOR : SCREENS.GALLERY,
+		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.TOOLS,
 	);
 	const [ prompt, setPrompt ] = useState( '' );
+	const [ maskImage, setMaskImage ] = useState( '' );
 	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
-		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
+		style: '' === initialValue.id ? ( additionalOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
 	} );
 	const [ images, setImages ] = useState( [] );
 	const [ insertToControl, setInsertToControl ] = useState( false );
@@ -39,6 +40,27 @@ const FormMedia = (
 	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
 
 	const panelActive = ! isLoading && ! isUploading;
+
+	const setTool = ( tool ) => {
+		let newPanel = tool || PANELS.TOOLS;
+		let newScreen = SCREENS.IMAGE_EDITOR;
+		switch ( tool ) {
+			case PANELS.IMAGE_TO_IMAGE:
+				newScreen = SCREENS.VARIATIONS;
+			break;
+			case PANELS.IN_PAINTING:
+				newScreen = SCREENS.IN_PAINTING;
+			break;
+			case PANELS.OUT_PAINTING:
+				newScreen = SCREENS.OUT_PAINTING;
+			break;
+			case PANELS.UPSCALE:
+				newScreen = SCREENS.IMAGE_EDITOR;
+			break;
+		}
+		setPanel( newPanel );
+		setScreen( newScreen );
+	};
 
 	const setAttachment = () => {
 		setHasUnsavedChanges( false );
@@ -99,7 +121,7 @@ const FormMedia = (
 		upload( { image: { ...imageToUpload }, prompt: prompt || imageToUpload.prompt } );
 	};
 
-	const submitPrompt = ( promptType, userPrompt ) => {
+	const submitPrompt = ( promptType, userPrompt, mask = null ) => {
 		reset();
 		resetUpload();
 		setHasUnsavedChanges( true );
@@ -107,12 +129,26 @@ const FormMedia = (
 		if ( PANELS.TEXT_TO_IMAGE === promptType ) {
 			return send( userPrompt, promptSettings );
 		}
+
+		if ( PANELS.IN_PAINTING === promptType ) {
+			return send( userPrompt, promptSettings, editImage, PANELS.IN_PAINTING, mask );
+		}
+
+		if ( PANELS.OUT_PAINTING === promptType ) {
+			return send( userPrompt, promptSettings, true, PANELS.OUT_PAINTING, maskImage );
+		}
+
+		if ( PANELS.UPSCALE === promptType ) {
+			return send( null, promptSettings, editImage, PANELS.UPSCALE );
+		}
+
 		return send( prompt, promptSettings, editImage );
 	};
 
 	const generateNewPrompt = () => {
 		setPrompt( '' );
 		setImages( [] );
+		setMaskImage( null );
 		setEditImage( { id: '', url: '' } );
 		resetPromptSettings();
 		setScreen( SCREENS.GALLERY );
@@ -138,6 +174,8 @@ const FormMedia = (
 						panel,
 						editImage,
 						images,
+						setTool,
+						maskImage,
 					} } />
 				</Panel>
 			</Box>
@@ -152,6 +190,8 @@ const FormMedia = (
 				generateNewPrompt,
 				maybeUploadImage,
 				setPrompt,
+				editImage,
+				setMaskImage,
 			} } />
 		</Box>
 	);

@@ -9,11 +9,18 @@ export const SCREENS = {
 	GENERATE_RESULTS: 'generate-results',
 	VARIATIONS: 'variations',
 	GALLERY: 'gallery',
+	IMAGE_EDITOR: 'image-editor',
+	IN_PAINTING: 'in-painting',
+	OUT_PAINTING: 'out-painting',
 };
 
 export const PANELS = {
 	TEXT_TO_IMAGE: 'text-to-image',
 	IMAGE_TO_IMAGE: 'image-to-image',
+	TOOLS: 'tools',
+	IN_PAINTING: 'in-painting',
+	OUT_PAINTING: 'out-painting',
+	UPSCALE: 'upscale',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
@@ -21,6 +28,8 @@ export const IMAGE_PROMPT_SETTINGS = {
 	STYLE_PRESET: 'style_preset',
 	IMAGE_STRENGTH: 'image_strength',
 	ASPECT_RATIO: 'ratio',
+	ZOOM: 'zoom',
+	UPSCALE_TO: 'upscale_to',
 };
 
 export const IMAGE_PROMPT_CATEGORIES = [
@@ -103,4 +112,35 @@ export const IMAGE_ASPECT_RATIOS = {
 	'2:3': __( 'Portrait', 'elementor' ) + ' (2:3)',
 	'3:4': __( 'Portrait', 'elementor' ) + ' (3:4)',
 	'9:16': __( 'Portrait', 'elementor' ) + ' (9:16)',
+};
+
+export const IMAGE_ASPECT_RATIO_DIMENSIONS = {
+	'1:1': {
+		width: 512,
+		height: 512,
+	},
+	'2:3': {
+		width: 448,
+		height: 640,
+	},
+	'3:4': {
+		width: 448,
+		height: 640,
+	},
+	'9:16': {
+		width: 384,
+		height: 704,
+	},
+	'3:2': {
+		width: 640,
+		height: 448,
+	},
+	'4:3': {
+		width: 640,
+		height: 448,
+	},
+	'16:9': {
+		width: 704,
+		height: 384,
+	},
 };
