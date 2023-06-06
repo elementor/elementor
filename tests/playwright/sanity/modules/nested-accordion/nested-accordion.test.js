@@ -609,7 +609,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 						nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' );
 
 					await test.step( 'open accordion', async () => {
-						for ( let i = 0; i < await nestedAccordionItemTitleFront.count(); i++ ) {
+						for ( let i = 1; i < await nestedAccordionItemTitleFront.count(); i++ ) {
 							await nestedAccordionItemTitleFront.nth( i ).click();
 						}
 					} );
