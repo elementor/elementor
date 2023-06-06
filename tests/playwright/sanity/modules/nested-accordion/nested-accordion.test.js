@@ -597,6 +597,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.publishAndViewPage();
 				nestedAccordionItemFront.first().click();
 				nestedAccordionItemFront.nth( 2 ).hover();
+				await page.waitForLoadState( 'networkidle' );
 
 				// Assert
 				await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'header-style-front.png' );
