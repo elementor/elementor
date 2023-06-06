@@ -139,7 +139,6 @@ class Deprecation {
 		if ( $version_explode_count > 3 ) {
 			$result['build'] = $version_explode[3];
 		}
-
 		return $result;
 	}
 
@@ -168,7 +167,6 @@ class Deprecation {
 
 			return $version1['total'] - $version2['total'];
 		}
-
 		return false;
 	}
 
@@ -204,7 +202,7 @@ class Deprecation {
 		if ( $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated() ) {
 			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
 
-			$external_sources = $this->find_third_party_sources( $backtrace );
+			$external_sources = $this->filter_third_party_sources( $backtrace );
 
 			$source_message = 'Elementor';
 			$plugin_name = 'Unknown';
@@ -274,10 +272,9 @@ class Deprecation {
 			return true;
 		}
 		return false;
-
 	}
 
-	private function find_third_party_sources( $stack_trace ) {
+	private function filter_third_party_sources( $stack_trace ) {
 		$sources = array_filter($stack_trace, function ( $elem ) {
 			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) );
 		} );
@@ -318,9 +315,7 @@ class Deprecation {
 				return true;
 			}
 		}
-
 		return false;
-
 	}
 
 	private function should_console_log_deprecated() {
@@ -423,7 +418,6 @@ class Deprecation {
 		}
 	}
 
-
 	/**
 	 * Deprecated Hook
 	 *
@@ -491,7 +485,6 @@ class Deprecation {
 
 		do_action_ref_array( $hook, $args );
 	}
-
 
 	/**
 	 * Apply Deprecated Filter
