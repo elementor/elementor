@@ -151,6 +151,82 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
 				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
+
+			await test.step( 'Check default state behaviour', async () => {
+				// Check default state -> first item is open
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+
+				const allItems = await nestedAccordionItemTitle.all(),
+					allItemsExceptFirst = allItems.slice( 1 );
+
+				for ( const item of allItemsExceptFirst ) {
+					await expect( item ).not.toHaveAttribute( 'open', '' );
+				}
+
+				//  Verify that all items are closed.
+				await editor.openSection( 'section_interactions' );
+				await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
+
+				for ( const item of allItems ) {
+					await expect( item ).not.toHaveAttribute( 'open', '' );
+				}
+
+				// Check manual select of first expand -> first item is open
+				await editor.setSelectControlValue( 'default_state', 'expanded' );
+				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+
+				for ( const item of allItemsExceptFirst ) {
+					await expect( item ).not.toHaveAttribute( 'open', 'true' );
+				}
+			} );
+		} );
+
+		test( 'Nested Accordion animation', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				frame = editor.getPreviewFrame(),
+				nestedAccordionID = await editor.addWidget( 'nested-accordion', container ),
+				animationDuration = 500;
+
+			await editor.closeNavigatorIfOpen();
+			await editor.selectElement( nestedAccordionID );
+
+			await test.step( 'Check closing animation', async () => {
+				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
+
+				expect( itemVisibilityBeforeAnimation ).toEqual( true );
+
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
+
+				// Wait for the closing animation to complete
+				await page.waitForTimeout( animationDuration );
+
+				// Check the computed height
+				const maxHeightAfterClose = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
+					window.getComputedStyle( element ).getPropertyValue( 'height' ),
+				);
+
+				expect( maxHeightAfterClose ).toEqual( '0px' );
+			} );
+
+			await test.step( 'Check open animation', async () => {
+				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
+
+				expect( itemVisibilityBeforeAnimation ).toEqual( false );
+
+				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
+
+				// Wait for the open animation to complete
+				await page.waitForTimeout( animationDuration );
+
+				// Check the computed height
+				const maxHeightAfterOpen = await frame.locator( '.e-n-accordion-item:first-child > .e-con' ).evaluate( ( element ) =>
+					window.getComputedStyle( element ).getPropertyValue( 'height' ),
+				);
+
+				expect( maxHeightAfterOpen ).not.toEqual( '0px' );
+			} );
 		} );
 
 		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
@@ -169,7 +245,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
 				await editor.publishAndViewPage();
-				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
+				await screenshotWidget( `nested-accordion-title-and-icons-fe.jpg`, page.locator( '.e-n-accordion' ).first() );
 			} );
 		} );
 
@@ -190,9 +266,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Check that the title icon is displayed', async () => {
 				// Assert
-				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeVisible();
+				await expect( await nestedAccordion.locator( 'i' ).nth( 0 ) ).toBeVisible();
 				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 0 ) ).toBeHidden();
+				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 1 ) ).toBeHidden();
 			} );
 
 			await test.step( 'Check that icon changes when Accordion is opened', async () => {
@@ -447,7 +523,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.publishAndViewPage();
 
 				// Act
-				nestedAccordionItemFront.first().click();
 				nestedAccordionItemTitleFront.nth( 2 ).hover();
 				await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'accordion-style-front.png' );
 			} );
@@ -468,7 +543,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await editor.openSection( 'section_content_style' );
 
 			await test.step( 'open accordion', async () => {
-				for ( let i = 0; i < await nestedAccordionItemContent.count(); i++ ) {
+				for ( let i = 1; i < await nestedAccordionItemContent.count(); i++ ) {
 					await nestedAccordionItemTitle.nth( i ).click();
 					await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
 				}
@@ -534,7 +609,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 						nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' );
 
 					await test.step( 'open accordion', async () => {
-						for ( let i = 0; i < await nestedAccordionItemTitleFront.count(); i++ ) {
+						for ( let i = 1; i < await nestedAccordionItemTitleFront.count(); i++ ) {
 							await nestedAccordionItemTitleFront.nth( i ).click();
 						}
 					} );
