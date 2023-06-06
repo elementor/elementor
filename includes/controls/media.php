@@ -332,6 +332,7 @@ class Control_Media extends Control_Base_Multiple {
 			'ai' => [
 				'active' => true,
 				'type' => 'media',
+				'category' => 'photographic',
 			],
 			'media_types' => [
 				'image',
