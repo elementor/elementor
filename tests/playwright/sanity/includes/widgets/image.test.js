@@ -14,10 +14,10 @@ test( 'Image size test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 	await editor.addWidget( 'image' );
-	await chooseImage( page, 'mountain-image' );
+	await chooseImage( page, 'About-Pic-3-1.png' );
 	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
-	let regex = new RegExp( /mountain-image/ );
+	let regex = new RegExp( /About-Pic-3-1/ );
 	expect( regex.test( src ) ).toEqual( true );
 
 	const imageSize = [ 'thumbnail', 'large', 'full' ];
@@ -37,12 +37,12 @@ test( 'Custom image size test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 	await editor.addWidget( 'image' );
-	await chooseImage( page, 'mountain-image' );
+	await chooseImage( page, 'About-Pic-3-1.png' );
 	await editor.getPreviewFrame().locator( '[data-widget_type="image.default"] img' ).click();
 	await page.locator( 'select[data-setting="image_size"]' ).selectOption( 'custom' );
 	await page.locator( 'input[data-setting="width"]' ).type( '400' );
 	await page.locator( 'input[data-setting="height"]' ).type( '400' );
-	const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads\/elementor\/thumbs\/mountain-image(.*)/g );
+	const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads\/elementor\/thumbs\/About-Pic-3-1(.*)/g );
 	await page.getByRole( 'button', { name: 'Apply' } ).click();
 	await response;
 
