@@ -45,6 +45,8 @@
 				flex-grow: var(--n-menu-title-flex-grow);
 			  	gap: var( --n-accordion-icon-gap );
 			  	color: var(--n-accordion-title-normal-color);
+			  	align-items: center;
+
 			  	&-header{
 				  	display: flex;
 				}
