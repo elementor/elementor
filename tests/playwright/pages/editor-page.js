@@ -787,4 +787,16 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 		await this.page.locator( controlSelector ).click();
 	}
+
+	/**
+	 * Set Dimentions controls value
+	 *
+	 * @param {string} selector
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( selector, value ) {
+		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	}
 };
