@@ -795,4 +795,10 @@ module.exports = class EditorPage extends BasePage {
 	async setDimensionsValue( selector, value ) {
 		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
 	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size' , fontsize)
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+	}
 };

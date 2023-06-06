@@ -1,5 +1,4 @@
 .elementor-widget-n-accordion {
-  	--n-accordion-color-secondary-fallback: #54595F;
 	--n-accordion-title-font-size: 20px;
 	--n-accordion-title-flex-grow: initial;
 	--n-accordion-title-justify-content: initial;
@@ -14,14 +13,12 @@
   	--n-accordion-padding: 10px;
   	--n-accordion-border-radius: 0px;
   	--n-accordion-icon-size :20px;
-  	--n-accordion-title-normal-color: var( --e-global-color-secondary, var( --n-accordion-color-secondary-fallback ) );
-	--n-accordion-title-hover-color:  #{$white};
-	--n-accordion-title-active-color:  #{$white};
-	--n-accordion-icon-normal-color: var( --n-accordion-title-normal-color );
-  	--n-accordion-icon-hover-color: var( --n-accordion-title-hover-color );
-	--n-accordion-icon-active-color: var( --n-accordion-title-active-color );
-
-
+  	--n-accordion-title-normal-color: #{$editor-darker};
+	--n-accordion-title-hover-color: #{$editor-darker};
+	--n-accordion-title-active-color: #{$editor-darker};
+	--n-accordion-icon-normal-color: var(--n-accordion-title-normal-color);
+  	--n-accordion-icon-hover-color: var(--n-accordion-title-hover-color);
+	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
 
   .e-n-accordion {
 
@@ -46,10 +43,15 @@
 				border-radius: var(--n-accordion-border-radius);
 				flex-grow: var(--n-menu-title-flex-grow);
 			  	gap: var( --n-accordion-icon-gap );
+			  	color: var(--n-accordion-title-normal-color);
 
-				&-text h1,h2,h3,h4,h5,h6,p {
-					margin-block: 0;
-				  	font-size: var(--n-accordion-title-font-size);
+				&-text{
+				  font-size: var(--n-accordion-title-font-size);
+
+				  	h1,h2,h3,h4,h5,h6,p {
+						margin-block: 0;
+				  	}
+
 				}
 
 				&-icon {
@@ -62,15 +64,15 @@
 					width: fit-content;
 
 				  	span {
+					  height: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+					  width: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+					  font-size: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 						& > i {
 						  	color: var(--n-accordion-icon-normal-color);
-						  	font-size: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 						}
 
 						& > svg {
 						  	fill: var(--n-accordion-icon-normal-color);
-						  	height: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
-						  	width: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
 						}
 				  	}
 				}
@@ -86,11 +88,10 @@
 						color: var(--n-accordion-title-active-color);
 
 						&-icon {
-						  	&-opened {
+							.e-opened {
 								display: flex;
 						  	}
-
-						  	&-closed {
+						  	.e-closed {
 								display: none;
 						  	}
 
@@ -110,8 +111,7 @@
 			&:not([open]) {
 
 			  	&:hover{
-				  	.e-n-accordion-item {
-						&-title {
+				  	.e-n-accordion-item-title {
 							color : var(--n-accordion-title-hover-color);
 							&-icon {
 								span{
@@ -129,16 +129,18 @@
 				}
 
 				.e-n-accordion-item-title-icon{
-				  	&-opened {
+				  	.e-opened {
 						display: none;
 				  	}
-				  	&-closed {
+				  	.e-closed {
 						display: flex;
 				  	}
-				}
 					span > svg {
-						fill: var(--n-accordion-icon-color);
+						fill: var(--n-accordion-icon-normal-color);
 					}
+				  	span > i {
+						color: var(--n-accordion-icon-normal-color);
+				  	}
 				}
 
 				& > span {
