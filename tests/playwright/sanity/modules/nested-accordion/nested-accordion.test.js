@@ -266,9 +266,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Check that the title icon is displayed', async () => {
 				// Assert
-				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeVisible();
+				await expect( await nestedAccordion.locator( 'i' ).nth( 0 ) ).toBeVisible();
 				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 0 ) ).toBeHidden();
+				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 1 ) ).toBeHidden();
 			} );
 
 			await test.step( 'Check that icon changes when Accordion is opened', async () => {
@@ -523,7 +523,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.publishAndViewPage();
 
 				// Act
-				nestedAccordionItemFront.first().click();
 				nestedAccordionItemTitleFront.nth( 2 ).hover();
 				await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'accordion-style-front.png' );
 			} );
