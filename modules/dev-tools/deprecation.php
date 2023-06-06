@@ -123,7 +123,7 @@ class Deprecation {
 		$version_explode_count = count( $version_explode );
 
 		if ( $version_explode_count < 3 || $version_explode_count > 4 ) {
-			trigger_error( 'Invalid Semantic Version string provided: ' . var_export( $version, 1 ) );
+			trigger_error( 'Invalid Semantic Version string provided: ' . esc_html( var_export( $version, 1 ) ) );
 
 			return false;
 		}
@@ -442,7 +442,7 @@ class Deprecation {
 		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
 		if ( ! empty( $print_deprecated ) ) {
 			$message = sprintf( 'Caller plugin: %1$s. Called from: %2$s.', $print_deprecated['plugin'], $print_deprecated['source'] );
-			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ), $message );
+			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ), esc_html( $message ) );
 		}
 	}
 
