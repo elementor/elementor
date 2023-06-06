@@ -150,6 +150,7 @@ test( 'Accessibility test', async ( { page }, testInfo ) => {
 	await editor.populateImageCarousel();
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSelectControlValue( 'autoplay', 'yes' );
+	await editor.setNumberControlValue( 'speed', 0 );
 
 	await test.step( 'Assert keyboard navigation inside the editor', async () => {
 		// Assert.
