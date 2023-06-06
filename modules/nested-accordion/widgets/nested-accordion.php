@@ -441,9 +441,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'title_typography',
-			'global' => [
-				'default' => Global_Typography::TYPOGRAPHY_ACCENT,
-			],
 			'selector' => '{{WRAPPER}} .e-n-accordion-item-title-text',
 			'fields_options' => [
 				'font_size' => [

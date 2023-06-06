@@ -19,6 +19,7 @@
 	--n-accordion-icon-normal-color: var(--n-accordion-title-normal-color);
   	--n-accordion-icon-hover-color: var(--n-accordion-title-hover-color);
 	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
+	--n-accordion-icon-gap: var(--n-accordion-title-icon-padding-inline);
 
   .e-n-accordion {
 
@@ -44,13 +45,17 @@
 				flex-grow: var(--n-menu-title-flex-grow);
 			  	gap: var( --n-accordion-icon-gap );
 			  	color: var(--n-accordion-title-normal-color);
+			  	&-header{
+				  	display: flex;
+				}
 
 				&-text{
-				  font-size: var(--n-accordion-title-font-size);
+					font-size: var(--n-accordion-title-font-size);
+					align-items: center;
 
-				  	h1,h2,h3,h4,h5,h6,p {
-						margin-block: 0;
-				  	}
+					h1,h2,h3,h4,h5,h6,p {
+						  margin-block: 0;
+					}
 
 				}
 
@@ -58,21 +63,22 @@
 					display: flex;
 					flex-direction: row;
 					align-items: center;
-					padding-inline: var( --n-accordion-title-icon-padding-inline );
+
 					order: var( --n-accordion-title-icon-order );
 					position: relative;
 					width: fit-content;
 
 				  	span {
-					  height: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
-					  width: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
-					  font-size: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+						height: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+					  	width: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+					  	font-size: var( --n-accordion-icon-size, var( --n-accordion-title-font-size ) );
+
 						& > i {
-						  	color: var(--n-accordion-icon-normal-color);
+							color: var(--n-accordion-icon-normal-color);
 						}
 
 						& > svg {
-						  	fill: var(--n-accordion-icon-normal-color);
+							fill: var(--n-accordion-icon-normal-color);
 						}
 				  	}
 				}
@@ -84,28 +90,28 @@
 
 			&[open] {
 			  	.e-n-accordion-item-title {
-						margin-bottom: var(--n-accordion-item-title-distance-from-content);
-						color: var(--n-accordion-title-active-color);
+					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+					color: var(--n-accordion-title-active-color);
 
-						&-icon {
-							.e-opened {
-								display: flex;
+					&-icon {
+						.e-opened {
+							display: flex;
+					  	}
+					  	.e-closed {
+							display: none;
+					  	}
+
+					  	span {
+							& > i {
+								color: var(--n-accordion-icon-active-color);
 						  	}
-						  	.e-closed {
-								display: none;
+
+						  	& > svg {
+								fill: var(--n-accordion-icon-active-color);
 						  	}
-
-						  	span {
-								& > i {
-									color: var(--n-accordion-icon-active-color);
-							  	}
-
-							  	& > svg {
-									fill: var(--n-accordion-icon-active-color);
-							  	}
-							}
 						}
 					}
+				}
 			}
 
 			&:not([open]) {
@@ -113,6 +119,7 @@
 			  	&:hover{
 				  	.e-n-accordion-item-title {
 							color : var(--n-accordion-title-hover-color);
+
 							&-icon {
 								span{
 									& > i {
@@ -129,15 +136,18 @@
 				}
 
 				.e-n-accordion-item-title-icon{
-				  	.e-opened {
-						display: none;
+					.e-opened {
+					  display: none;
 				  	}
+
 				  	.e-closed {
 						display: flex;
 				  	}
+
 					span > svg {
 						fill: var(--n-accordion-icon-normal-color);
 					}
+
 				  	span > i {
 						color: var(--n-accordion-icon-normal-color);
 				  	}
