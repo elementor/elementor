@@ -26,4 +26,10 @@ export const getTextToImageGeneration = ( prompt, promptSettings ) => request( '
 
 export const getImageToImageGeneration = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image', { prompt, promptSettings, image } );
 
+export const getImageToImageMaskGeneration = ( prompt, promptSettings, image, mask ) => request( 'ai_get_image_to_image_mask', { prompt, promptSettings, image, mask } );
+
+export const getImageToImageOutPainting = ( prompt, promptSettings, image, mask ) => request( 'ai_get_image_to_image_outpainting', { prompt, promptSettings, mask } );
+
+export const getImageToImageUpscale = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image_upscale', { prompt, promptSettings, image } );
+
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
