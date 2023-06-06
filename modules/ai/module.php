@@ -56,7 +56,6 @@ class Module extends BaseModule {
 				'ElementorAiConfig',
 				[
 					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'is_images_enabled' => Plugin::$instance->experiments->is_feature_active( 'e_ai_images' ),
 				]
 			);
 		} );
