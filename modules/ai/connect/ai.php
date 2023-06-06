@@ -163,6 +163,24 @@ class Ai extends Library {
 		);
 	}
 
+	/**
+	 * get_image_prompt_enhanced
+	 * @param $prompt
+	 *
+	 * @return mixed|\WP_Error
+	 */
+	public function get_image_prompt_enhanced( $prompt ) {
+		return $this->ai_request(
+			'POST',
+			'text/enhance-image-prompt',
+			[
+				'prompt' => $prompt,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
 	public function get_edit_text( $input, $instruction ) {
 		return $this->ai_request(
 			'POST',

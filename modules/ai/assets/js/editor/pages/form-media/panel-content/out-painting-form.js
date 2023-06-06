@@ -1,4 +1,4 @@
-import { Stack, Box, Button, Typography, Slider, FormControl, Link } from '@elementor/ui';
+import { Stack, Box, Button, Typography, Slider, FormControl, Link, InputAdornment, IconButton } from '@elementor/ui';
 import GenerateButton from '../../../components/generate-button';
 import PromptForm from './form-controls/prompt-form';
 import PromptErrorMessage from '../../../components/prompt-error-message';
@@ -7,6 +7,9 @@ import { IMAGE_ASPECT_RATIOS, IMAGE_PROMPT_SETTINGS, PANELS } from '../consts/co
 import PromptActionSelection from '../../../components/prompt-action-selection';
 import Textarea from '../../../components/textarea';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+import WandIcon from '../../../icons/wand-icon';
+import useImagePromptEnhancer from '../../../hooks/use-image-prompt-enhancer';
+import { useEffect } from 'react';
 
 const OutPaintingForm = ( {
 	panelActive,
@@ -23,6 +26,23 @@ const OutPaintingForm = ( {
 } ) => {
 	const aspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
 	const zoom = promptSettings[ IMAGE_PROMPT_SETTINGS.ZOOM ];
+
+	const {
+		data: imagePromptData,
+		isLoading: imagePromptIsLoading,
+		error: imagePromptError,
+		send: imagePromptEnhancer,
+		sendUsageData: imagePromptSendUsageData,
+		reset: imagePromptReset,
+	} = useImagePromptEnhancer( prompt );
+
+	// Image Prompt Enhancer
+	useEffect( () => {
+		if ( ! imagePromptIsLoading && imagePromptData?.result ) {
+			setPrompt( imagePromptData?.result );
+		}
+	}, [ imagePromptIsLoading ] );
+
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		submitPrompt( PANELS.OUT_PAINTING, prompt, maskImage );
@@ -79,10 +99,19 @@ const OutPaintingForm = ( {
 				<Textarea
 					minRows={ 3 }
 					maxRows={ 6 }
-					disabled={ ! panelActive }
+					disabled={ ! panelActive || imagePromptIsLoading }
 					placeholder={ __( 'Describe what you want to generate in the expended area (English only)', 'elementor' ) }
 					onChange={ ( event ) => setPrompt( event.target.value ) }
 					value={ prompt }
+					InputProps={ {
+						endAdornment: (
+							<InputAdornment position="end">
+								<IconButton onClick={ () => imagePromptEnhancer( prompt ) }>
+									<WandIcon />
+								</IconButton>
+							</InputAdornment>
+						),
+					} }
 				/>
 			</Stack>
 

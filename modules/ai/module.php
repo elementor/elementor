@@ -31,6 +31,7 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_custom_css', [ $this, 'ajax_ai_get_custom_css' ] );
 			$ajax->register_ajax_action( 'ai_set_get_started', [ $this, 'ajax_ai_set_get_started' ] );
 			$ajax->register_ajax_action( 'ai_set_status_feedback', [ $this, 'ajax_ai_set_status_feedback' ] );
+			$ajax->register_ajax_action( 'ai_get_image_prompt_enhancer', [ $this, 'ajax_ai_get_image_prompt_enhancer' ] );
 			$ajax->register_ajax_action( 'ai_get_text_to_image', [ $this, 'ajax_ai_get_text_to_image' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image', [ $this, 'ajax_ai_get_image_to_image' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_mask', [ $this, 'ajax_ai_get_image_to_image_mask' ] );
@@ -112,6 +113,31 @@ class Module extends BaseModule {
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied' );
 		}
+	}
+
+	public function ajax_ai_get_image_prompt_enhancer( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->get_image_prompt_enhanced( $data['prompt'] );
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
 	}
 
 	public function ajax_ai_get_completion_text( $data ) {

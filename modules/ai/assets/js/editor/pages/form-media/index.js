@@ -70,6 +70,7 @@ const FormMedia = (
 		onClose();
 	};
 
+	// Image Generation
 	useEffect( () => {
 		if ( ! isLoading && data?.result && Array.isArray( data?.result ) ) {
 			setImages( data?.result );
@@ -77,6 +78,7 @@ const FormMedia = (
 		}
 	}, [ isLoading ] );
 
+	// Image Upload and set attachment
 	useEffect( () => {
 		if ( ! isUploading && attachmentData?.image?.id ) {
 			if ( insertToControl ) {

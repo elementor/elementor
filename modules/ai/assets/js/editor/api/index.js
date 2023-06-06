@@ -32,4 +32,6 @@ export const getImageToImageOutPainting = ( prompt, promptSettings, image, mask 
 
 export const getImageToImageUpscale = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image_upscale', { prompt, promptSettings, image } );
 
+export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
+
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );

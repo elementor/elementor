@@ -1,8 +1,11 @@
 import { IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIOS } from '../../consts/consts';
 import PromptActionSelection from '../../../../components/prompt-action-selection';
-import { FormControl, Slider, Stack, Box, Typography } from '@elementor/ui';
+import { FormControl, Slider, Stack, Box, Typography, Button, InputAdornment, IconButton } from '@elementor/ui';
 import useSessionStorage from '../../../../hooks/use-session-storage';
 import Textarea from '../../../../components/textarea';
+import WandIcon from '../../../../icons/wand-icon';
+import useImagePromptEnhancer from '../../../../hooks/use-image-prompt-enhancer';
+import { useEffect } from 'react';
 
 const getPromptPlaceholder = ( data ) => {
 	if ( ! data?.images?.length ) {
@@ -28,6 +31,22 @@ const PromptForm = ( {
 	const selectedCategory = IMAGE_PROMPT_CATEGORIES.find( ( category ) => category.key === promptSettings[ IMAGE_PROMPT_SETTINGS.IMAGE_TYPE ] ) || { subCategories: {} };
 
 	const { data } = useSessionStorage( 'ai-image-gallery' );
+
+	const {
+		data: imagePromptData,
+		isLoading: imagePromptIsLoading,
+		error: imagePromptError,
+		send: imagePromptEnhancer,
+		sendUsageData: imagePromptSendUsageData,
+		reset: imagePromptReset,
+	} = useImagePromptEnhancer( prompt );
+
+	// Image Prompt Enhancer
+	useEffect( () => {
+		if ( ! imagePromptIsLoading && imagePromptData?.result ) {
+			setPrompt( imagePromptData?.result );
+		}
+	}, [ imagePromptIsLoading ] );
 
 	const placeholderInitialValue = getPromptPlaceholder( data );
 
@@ -69,7 +88,7 @@ const PromptForm = ( {
 			<Textarea
 				minRows={ 3 }
 				maxRows={ 6 }
-				disabled={ ! panelActive }
+				disabled={ ! panelActive || imagePromptIsLoading }
 				placeholder={ placeholderInitialValue }
 				onChange={ ( event ) => setPrompt( event.target.value ) }
 				value={ prompt }
@@ -78,6 +97,15 @@ const PromptForm = ( {
 						event.preventDefault();
 						setPrompt( placeholderInitialValue );
 					}
+				} }
+				InputProps={ {
+					endAdornment: (
+						<InputAdornment position="end">
+							<IconButton onClick={ () => imagePromptEnhancer( prompt ) }>
+								<WandIcon />
+							</IconButton>
+						</InputAdornment>
+					),
 				} }
 			/>
 
