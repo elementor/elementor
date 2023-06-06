@@ -32,7 +32,7 @@ test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 	expect( src ).not.toBeNull();
 } );
 
-test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
+test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
 	const previewFrame = editor.getPreviewFrame();
@@ -50,6 +50,9 @@ test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo 
 		await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
 		await page.getByRole( 'combobox', { name: 'Link' } ).selectOption( 'file' );
 		await page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( 'yes' );
+
+		await page.waitForTimeout( 1000 );
+
 		await previewFrame.locator( '.elementor-widget-image' ).click();
 		await previewFrame.waitForSelector( '.swiper-zoom-container' );
 	} );
