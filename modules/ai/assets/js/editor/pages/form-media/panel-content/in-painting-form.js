@@ -3,9 +3,11 @@ import GenerateButton from '../../../components/generate-button';
 import PromptForm from './form-controls/prompt-form';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import RefreshIcon from '../../../icons/refresh-icon';
+import { PANELS } from '../consts/consts';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+import Textarea from '../../../components/textarea';
 
-const ImageVariationsForm = ( {
+const InPaintingForm = ( {
 	panelActive,
 	editImage,
 	prompt = '',
@@ -16,12 +18,12 @@ const ImageVariationsForm = ( {
 	submitPrompt,
 	error,
 	images,
-	disableAspectRatio = false,
+	maskImage,
 	backToTools,
 } ) => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-		submitPrompt();
+		submitPrompt( PANELS.IN_PAINTING, prompt, maskImage );
 	};
 
 	return (
@@ -38,67 +40,32 @@ const ImageVariationsForm = ( {
 				</Button>
 			</Box>
 			<Typography variant="h3" sx={ { mb: 3 } }>
-				{ __( 'Evolve Image', 'elementor' ) }
+				{ __( 'Generative Fill', 'elementor' ) }
 			</Typography>
 			<Typography variant="body1" sx={ { mb: 8 } }>
-				{ __( 'Explore different possibilities with auto-generated visual outcomes.', 'elementor' ) }
+				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
 			</Typography>
 
 			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } actionPosition="bottom" onRetry={ handleSubmit } /> }
 
-			<Box sx={ {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				bgcolor: 'secondary.background',
-				mb: 4,
-			} }>
-				<img src={ editImage?.image_url || editImage.url } alt={ prompt } style={ {
-					width: 'auto',
-					height: 'auto',
-					maxWidth: 160,
-					maxHeight: 160,
-					objectFit: 'contained',
-				} } />
-			</Box>
-
-			<PromptForm { ...{
-				prompt,
-				setPrompt,
-				panelActive,
-				promptSettings,
-				updatePromptSettings,
-				hasImage: true,
-				disableAspectRatio,
-			} } />
-
 			<Stack gap={ 5 } sx={ { my: 6 } }>
-				{
-					images.length
-						? (
-							<Button
-								fullWidth
-								type="submit"
-								variant="contained"
-								color="secondary"
-								startIcon={ <RefreshIcon /> }
-								disabled={ ( ! panelActive || '' === prompt ) }
-							>
-								{ __( 'Generate again', 'elementor' ) }
-							</Button>
-						)
-						: (
-							<GenerateButton size="medium" disabled={ ! panelActive || '' === prompt }>
-								{ __( 'Generate images', 'elementor' ) }
-							</GenerateButton>
-						)
-				}
+				<Textarea
+					minRows={ 3 }
+					maxRows={ 6 }
+					disabled={ ! panelActive }
+					placeholder={ __( 'Describe what you want to generate in the marked area (English only)', 'elementor' ) }
+					onChange={ ( event ) => setPrompt( event.target.value ) }
+					value={ prompt }
+				/>
+				<GenerateButton size="medium" disabled={ ! panelActive || '' === prompt }>
+					{ __( 'Apply', 'elementor' ) }
+				</GenerateButton>
 			</Stack>
 		</Box>
 	);
 };
 
-ImageVariationsForm.propTypes = {
+InPaintingForm.propTypes = {
 	panelActive: PropTypes.bool,
 	prompt: PropTypes.string,
 	setPrompt: PropTypes.func,
@@ -109,8 +76,8 @@ ImageVariationsForm.propTypes = {
 	submitPrompt: PropTypes.func,
 	error: PropTypes.string,
 	images: PropTypes.array,
-	disableAspectRatio: PropTypes.bool,
+	maskImage: PropTypes.string,
 	backToTools: PropTypes.func,
 };
 
-export default ImageVariationsForm;
+export default InPaintingForm;

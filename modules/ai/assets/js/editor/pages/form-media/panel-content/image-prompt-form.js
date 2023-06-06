@@ -89,6 +89,7 @@ ImagePromptForm.propTypes = {
 	updatePromptSettings: PropTypes.func,
 	submitPrompt: PropTypes.func,
 	error: PropTypes.string,
+	backToTools: PropTypes.func,
 };
 
 export default ImagePromptForm;

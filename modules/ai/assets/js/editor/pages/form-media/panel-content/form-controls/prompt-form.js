@@ -99,14 +99,14 @@ const PromptForm = ( {
 				disabled={ ! panelActive || ( ! imageType || false ) }
 			/>
 
-			<PromptActionSelection
+			{ ! disableAspectRatio && <PromptActionSelection
 				wrapperStyle={ { width: '100%' } }
 				label={ __( 'Aspect ratio', 'elementor' ) }
 				options={ Object.entries( IMAGE_ASPECT_RATIOS ).map( ( [ value, label ] ) => ( { label, value } ) ) }
 				onChange={ ( event ) => updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: event.target.value } ) }
 				value={ aspectRatio }
 				disabled={ ! panelActive || disableAspectRatio }
-			/>
+			/> }
 		</Stack>
 	</>;
 };
