@@ -214,7 +214,7 @@ class Deprecation {
 			$caller = $this->get_plugin_from_calling_source( $calling_source );
 			$plugin_name = $caller['name'];
 			$source_type = $caller['type'];
-			$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'] ?? '', $calling_source['line'] );
+			$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'] ?? '', $calling_source['file'] ?? '', $calling_source['line'] ?? '' );
 		}
 
 		$print_deprecated = [
