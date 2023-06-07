@@ -210,12 +210,11 @@ class Deprecation {
 		$plugin_name = 'Unknown';
 		$source_type = '';
 		if ( ! ( empty( $external_sources ) ) ) {
-			//$calling_source = $external_sources[ array_key_first( $external_sources ) ];
 			$calling_source = reset( $external_sources );
 			$caller = $this->get_plugin_from_calling_source( $calling_source );
 			$plugin_name = $caller['name'];
 			$source_type = $caller['type'];
-			$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
+			$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'] ?? '', $calling_source['line'] );
 		}
 
 		$print_deprecated = [
