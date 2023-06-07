@@ -191,8 +191,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-accordion-title-icon-order: -1; --n-accordion-title-icon-padding-inline: 0 15px;',
-				'end' => '--n-accordion-title-icon-order: initial; --n-accordion-title-icon-padding-inline: 15px 0;',
+				'start' => '--n-accordion-title-icon-order: -1;',
+				'end' => '--n-accordion-title-icon-order: initial;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',

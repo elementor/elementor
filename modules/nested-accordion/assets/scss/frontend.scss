@@ -3,7 +3,6 @@
 	--n-accordion-title-flex-grow: initial;
 	--n-accordion-title-justify-content: initial;
 	--n-accordion-title-icon-order: -1;
-	--n-accordion-title-icon-padding-inline: 0 15px;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
@@ -19,7 +18,7 @@
 	--n-accordion-icon-normal-color: var(--n-accordion-title-normal-color);
   	--n-accordion-icon-hover-color: var(--n-accordion-title-hover-color);
 	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
-	--n-accordion-icon-gap: var(--n-accordion-title-icon-padding-inline);
+	--n-accordion-icon-gap: 0 15px;
 
   .e-n-accordion {
 
@@ -49,16 +48,15 @@
 
 			  	&-header{
 				  	display: flex;
+
+					h1,h2,h3,h4,h5,h6,p {
+						margin-block: 0;
+					}
 				}
 
 				&-text{
 					font-size: var(--n-accordion-title-font-size);
 					align-items: center;
-
-					h1,h2,h3,h4,h5,h6,p {
-						  margin-block: 0;
-					}
-
 				}
 
 				&-icon {
