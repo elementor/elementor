@@ -29,8 +29,12 @@ $description-color: var(--e-a-color-txt);
 			.announcements-container {
 				max-height: calc(100vh - 60px);
 				overflow-y: scroll;
-				margin-top: auto;
+				margin-top: auto; 
 				margin-bottom: auto;
+			}
+			.announcements-container::-webkit-scrollbar {
+				width: 0px;
+				height: 5px
 			}
 		}
 		.announcements-heading-container {
