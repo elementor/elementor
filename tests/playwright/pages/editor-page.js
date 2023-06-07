@@ -344,6 +344,10 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
+	}
+
 	/**
 	 * Set a widget to `flew grow`.
 	 *
@@ -782,5 +786,17 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( controlSelector + ' .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set Dimentions controls value
+	 *
+	 * @param {string} selector
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( selector, value ) {
+		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
 	}
 };
