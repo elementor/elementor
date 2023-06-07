@@ -50,7 +50,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set tabs direction to 'stretch'.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 
@@ -275,7 +275,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Set tabs direction to 'stretch' for parent widget.
 		await editor.selectElement( parentWidgetId );
-		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .elementor-control-input-wrapper .eicon-align-stretch-h' ).click();
 		// Set align title to 'start'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 		await editor.activatePanelTab( 'style' );
@@ -379,7 +379,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Justify: Stretch.
-		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-h-align-stretch' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-align-stretch-h' ).click();
 		// Unset align title to 'right'.
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-right' ).click();
 
@@ -1085,6 +1085,69 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 			const nestedTabsCollapse = await frame.locator( '.e-n-tab-title.e-collapse' ).first();
 			await expect( nestedTabsCollapse ).not.toBeVisible();
+		} );
+	} );
+
+	test( 'Check that background video is loaded in nested elements item container', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'nested-tabs', container );
+
+		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
+			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			videoUrl = 'https://youtu.be/XNoaN8qu4fg',
+			videoContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
+			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
+			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
+
+		await editor.selectElement( contentContainerOneId );
+		await editor.activatePanelTab( 'style' );
+		await page.locator( '.eicon-video-camera' ).first().click();
+		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+
+		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
+		await expect( videoContainer ).toHaveCount( 1 );
+	} );
+
+	test( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		Array.from( { length: 7 }, async () => {
+			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > button:nth-child(2)' ).click();
+		} );
+
+		await test.step( 'Assert overflow x', async () => {
+			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
+			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await expect( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
+		} );
+
+		await test.step( 'Assert scrolling behaviour', async () => {
+			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 200, 0 );
+			}, await nestedTabsHeading.elementHandle() );
+			const lastTab = await frame.getByRole( 'tab', { name: 'Tab #3' } );
+			await expect( lastTab ).toBeVisible();
+
+			await frame.evaluate( ( element ) => {
+				element.scrollBy( 0, 200 );
+			}, await nestedTabsHeading.elementHandle() );
+			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
+			await expect( firstTab ).toBeVisible();
 		} );
 	} );
 } );

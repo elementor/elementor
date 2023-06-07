@@ -1,6 +1,8 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
+const _ = require( 'lodash' );
+import _path from 'path';
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -25,13 +27,14 @@ module.exports = class EditorPage extends BasePage {
 			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
 		};
 		templateData.content[ 0 ].elements.forEach( ( el ) => {
-			if ( 'image' in el.settings ) {
-				el.settings.image.url = replaceUrl( el.settings.image.url );
-			}
 			if ( 'carousel' in el.settings ) {
 				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
 					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
 				}
+			}
+			const key = _.findKey( el.settings, 'url' );
+			if ( key ) {
+				el.settings[ key ].url = replaceUrl( el.settings[ key ].url );
 			}
 		} );
 	}
@@ -147,6 +150,49 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
+	 *
+	 * @param {string}  dirName              - use __dirname to get the current directory
+	 * @param {string}  fileName             - without json extension
+	 * @param {string}  widgetSelector       - css selector
+	 * @param {boolean} updateDatesForImages - flag to update dates for images
+	 */
+	async loadJsonPageTemplate( dirName, fileName, widgetSelector, updateDatesForImages = false ) {
+		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
+		const templateData = require( filePath );
+		const pageTemplateData =
+		{
+			content: templateData,
+			page_settings: [],
+			version: '0.4',
+			title: 'Elementor Test',
+			type: 'page',
+		};
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, pageTemplateData );
+
+		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
+	}
+
+	/**
 	 * @typedef {import('@playwright/test').ElementHandle} ElementHandle
 	 */
 	/**
@@ -208,20 +254,17 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @param {string} elementId - Element ID;
 	 *
-	 * @return {Promise<void>}
+	 * @return {Object} element;
 	 */
 	async selectElement( elementId ) {
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
+		await this.page.evaluate( async ( { id } ) => {
+			$e.run( 'document/elements/select', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 
-		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
-			return;
-		}
-
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.hover();
-		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-		await elementEditButton.click();
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
+		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
 	}
 
 	async copyElement( elementId ) {
@@ -299,6 +342,10 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSliderControlValue( controlId, value ) {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
+	}
+
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
 	/**
@@ -717,5 +764,39 @@ module.exports = class EditorPage extends BasePage {
 				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
 			}
 		}
+	}
+
+	async waitForElement( isPublished, selector ) {
+		if ( selector === undefined ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			this.page.waitForSelector( selector );
+		} else {
+			const frame = this.getFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( selector );
+		}
+	}
+
+	async setColorControlValue( color, colorControlId ) {
+		const controlSelector = '.elementor-control-' + colorControlId;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set Dimentions controls value
+	 *
+	 * @param {string} selector
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( selector, value ) {
+		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
 	}
 };

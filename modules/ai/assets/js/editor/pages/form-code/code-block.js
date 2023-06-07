@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Box, Button } from '@elementor/ui';
-import TextArea from '../../components/text-area';
+import Textarea from '../../components/textarea';
 
 const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props } ) => {
 	const codeBlockInput = useRef( null );
@@ -11,7 +11,8 @@ const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props }
 
 	return (
 		<Box sx={ { position: 'relative' } }>
-			<TextArea
+			<Textarea
+				fullWidth
 				ref={ codeBlockInput }
 				defaultValue={ children[ 0 ] }
 				sx={ { mb: 3 } }

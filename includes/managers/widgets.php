@@ -5,6 +5,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
+use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,21 @@ class Widgets_Manager {
 	 * @var Widget_Base[]
 	 */
 	private $_widget_types = null;
+
+	/**
+	 * Promoted widget types.
+	 *
+	 * Holds the list of all the Promoted widget types.
+	 *
+	 * @since 3.15.0
+	 * @access private
+	 *
+	 * @var Widget_Base[]
+	 */
+	private $_promoted_widgets = [
+		'nested-elements' => NestedTabs::class,
+		'nested-accordion' => Nested_Accordion::class,
+	];
 
 	/**
 	 * Init widgets.
@@ -196,7 +212,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->register()` instead.
+	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
 	 * @param Widget_Base $widget Elementor widget.
 	 *
@@ -206,7 +222,7 @@ class Widgets_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'register'
+			'register()'
 		);
 
 		return $this->register( $widget );
@@ -240,9 +256,13 @@ class Widgets_Manager {
 	 * @return void
 	 */
 	private function register_promoted_widgets() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
-			$nested_tabs = new NestedTabs();
-			$this->_widget_types = [ $nested_tabs->get_name() => $nested_tabs ] + $this->_widget_types;
+
+		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
+
+			if ( Plugin::$instance->experiments->is_feature_active( $module_name ) ) {
+				$instance = new $class_name();
+				$this->_widget_types[ $instance->get_name() ] = $instance;
+			}
 		}
 	}
 
@@ -253,7 +273,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
+	 * @deprecated 3.5.0 Use `unregister()` method instead.
 	 *
 	 * @param string $name Widget name.
 	 *
@@ -263,7 +283,7 @@ class Widgets_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'unregister'
+			'unregister()'
 		);
 
 		return $this->unregister( $name );

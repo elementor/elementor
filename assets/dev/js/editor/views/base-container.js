@@ -131,6 +131,7 @@ module.exports = Marionette.CompositeView.extend( {
 				columns: Number( ! containerExperiment ),
 				options: {
 					at: options.at,
+					scrollIntoView: options.scrollIntoView,
 				},
 			} );
 
