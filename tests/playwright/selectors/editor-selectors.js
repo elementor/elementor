@@ -18,7 +18,13 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
+	media: {
+		preview: '.elementor-control-media__preview',
+		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
+		selectBtn: '.button.media-button',
+	},
 	siteTitle: 'h1.site-title',
+	pageTitle: 'h1.entry-title',
 	button: {
 		getByName: ( name ) => `.elementor-button:has-text("${ name }")`,
 		id: '[data-setting="button_css_id"]',
@@ -37,6 +43,12 @@ const EditorSelectors = {
 	image: {
 		widget: '[data-widget_type="image.default"]',
 		linkSelect: 'select[data-setting="link_to"]',
+		imageSizeSelect: 'select[data-setting="image_size"]',
+		widthInp: 'input[data-setting="width"]',
+		heightInp: 'input[data-setting="height"]',
+		get image() {
+			return `${ this.widget } img`;
+		},
 		get link() {
 			return `${ this.widget } a`;
 		},
