@@ -2,7 +2,6 @@ const { addElement, getElementSelector } = require( '../assets/elements-utils' )
 const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
-const _ = require( 'lodash' );
 const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
