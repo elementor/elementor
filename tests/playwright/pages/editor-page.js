@@ -1,8 +1,9 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 const _ = require( 'lodash' );
-import _path from 'path';
+const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -798,5 +799,22 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setDimensionsValue( selector, value ) {
 		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	}
+
+	async verifyClassInElement( args = { selector, className, isPublished } ) {
+		const regex = new RegExp( args.className );
+		if ( args.isPublished ) {
+			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
+		} else {
+			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+		}
+	}
+
+	async verifyImageSize( args = { selector, width, height, isPublished } ) {
+		const imageSize = args.isPublished
+			? await this.page.locator( args.selector ).boundingBox()
+			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
+		expect( imageSize.width ).toEqual( args.width );
+		expect( imageSize.height ).toEqual( args.height );
 	}
 };
