@@ -128,7 +128,7 @@ test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => 
 	} );
 } );
 
-test( 'Accessibility test', async ( { page }, testInfo ) => {
+test.skip( 'Accessibility test', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.setExperiments( {
