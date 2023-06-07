@@ -291,7 +291,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'max_items_expended',
 			[
-				'label' => esc_html__( 'Max Items Expended', 'elementor' ),
+				'label' => esc_html__( 'Max Items Expanded', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'one' => esc_html__( 'One', 'elementor' ),
