@@ -287,6 +287,21 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'frontend_available' => true,
 			]
 		);
+
+		$this->add_control(
+			'max_items_expended',
+			[
+				'label' => esc_html__( 'Max Items Expended', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'one' => esc_html__( 'One', 'elementor' ),
+					'multiple' => esc_html__( 'Multiple', 'elementor' ),
+				],
+				'default' => 'one',
+				'frontend_available' => true,
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->add_style_tab();

@@ -62,7 +62,14 @@ export default class NestedAccordion extends Base {
 		event.preventDefault();
 
 		const accordionItem = event.currentTarget.parentElement,
-			accordionContent = accordionItem.querySelector( '.e-n-accordion-item > .e-con' );
+			settings = this.getSettings(),
+			accordionContent = accordionItem.querySelector( settings.selectors.accordionContent ),
+			{ max_items_expended: maxItemsExpended } = this.getElementSettings(),
+			{ $accordionTitles, $accordionItems } = this.elements;
+
+		if ( 'one' === maxItemsExpended ) {
+			this.closeAllItems( $accordionItems, $accordionTitles );
+		}
 
 		if ( ! accordionItem.open ) {
 			this.prepareOpenAnimation( accordionItem, event.currentTarget, accordionContent );
@@ -113,5 +120,11 @@ export default class NestedAccordion extends Base {
 		accordionItem.open = isOpen;
 		this.animations.set( accordionItem, null );
 		accordionItem.style.height = accordionItem.style.overflow = '';
+	}
+
+	closeAllItems( $items, $titles ) {
+		$titles.each( ( index, title ) => {
+			this.closeAccordionItem( $items[ index ], title );
+		} );
 	}
 }
