@@ -188,7 +188,8 @@ class Tools extends Settings_Page {
 
 		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
 
-		$rollback_versions = apply_filters( 'elementor/settings/tools/rollback/versions', $rollback_versions );
+		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+		$rollback_versions = apply_filters( 'elementor/settings/tools/rollback/versions', $rollback_versions, $plugin_slug );
 
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
