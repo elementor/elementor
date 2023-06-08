@@ -305,7 +305,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'placeholder' => esc_html__( 'https://your-link.example.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
