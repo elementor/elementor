@@ -11,7 +11,7 @@
   	--n-accordion-item-title-distance-from-content: 0px;
   	--n-accordion-padding: 10px;
   	--n-accordion-border-radius: 0px;
-  	--n-accordion-icon-size :20px;
+  	--n-accordion-icon-size: 20px;
   	--n-accordion-title-normal-color: #{$editor-darker};
 	--n-accordion-title-hover-color: #{$editor-darker};
 	--n-accordion-title-active-color: #{$editor-darker};
@@ -48,7 +48,6 @@
 
 			  	&-header{
 				  	display: flex;
-
 					h1,h2,h3,h4,h5,h6,p {
 						margin-block: 0;
 					}
@@ -63,7 +62,6 @@
 					display: flex;
 					flex-direction: row;
 					align-items: center;
-
 					order: var( --n-accordion-title-icon-order );
 					position: relative;
 					width: fit-content;
