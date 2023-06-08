@@ -592,8 +592,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}' => $variable . ': {{VALUE}};',
-			],
-		] );
+				],
+			]
+		);
 
 		$this->end_controls_tab();
 	}
