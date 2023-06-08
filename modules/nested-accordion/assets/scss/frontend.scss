@@ -115,12 +115,12 @@
 
 			&:not([open]) {
 
-			  	&:hover{
+			  	&:hover {
 				  	.e-n-accordion-item-title {
 							color : var(--n-accordion-title-hover-color);
 
 							&-icon {
-								span{
+								span {
 									& > i {
 										color: var(--n-accordion-icon-hover-color);
 							  		}
