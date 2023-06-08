@@ -20,8 +20,15 @@ export const PanelContent = ( {
 	panelActive,
 	setTool,
 	maskImage,
+	reset,
+	viewData,
 } ) => {
 	const backToTools = () => {
+		// TODO: Temp solution for preventing the error message to follow to other screens.
+		if ( error ) {
+			reset();
+		}
+
 		setTool( false );
 	};
 
@@ -46,7 +53,7 @@ export const PanelContent = ( {
 		return <ImageVariationsForm { ...{
 			editImage,
 			...commonProps,
-		} } />
+		} } />;
 	}
 
 	if ( panel === PANELS.IN_PAINTING ) {
@@ -55,7 +62,7 @@ export const PanelContent = ( {
 			...commonProps,
 			disableAspectRatio: true,
 			maskImage,
-		} } />
+		} } />;
 	}
 
 	if ( panel === PANELS.OUT_PAINTING ) {
@@ -64,14 +71,15 @@ export const PanelContent = ( {
 			...commonProps,
 			disableAspectRatio: true,
 			maskImage,
-		} } />
+			viewData,
+		} } />;
 	}
 
 	if ( panel === PANELS.UPSCALE ) {
 		return <UpscaleForm { ...{
 			editImage,
 			...commonProps,
-		} } />
+		} } />;
 	}
 
 	return <ImageTools { ...{
@@ -94,4 +102,6 @@ PanelContent.propTypes = {
 	panelActive: PropTypes.bool,
 	setTool: PropTypes.func,
 	maskImage: PropTypes.string,
+	reset: PropTypes.func,
+	viewData: PropTypes.object,
 };

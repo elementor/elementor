@@ -1,36 +1,25 @@
-import { Stack, Box, Button, Typography, Link, InputAdornment, IconButton } from '@elementor/ui';
-import GenerateButton from '../../../components/generate-button';
-import PromptForm from './form-controls/prompt-form';
+import { useEffect } from 'react';
+import { Stack, Box, Button, Typography, InputAdornment, CircularProgress, Tooltip, IconButton } from '@elementor/ui';
 import PromptErrorMessage from '../../../components/prompt-error-message';
-import RefreshIcon from '../../../icons/refresh-icon';
 import { PANELS } from '../consts/consts';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+import WandIcon from '../../../icons/wand-icon';
 import Textarea from '../../../components/textarea';
 import useImagePromptEnhancer from '../../../hooks/use-image-prompt-enhancer';
-import { useEffect } from 'react';
-import WandIcon from '../../../icons/wand-icon';
 
 const InPaintingForm = ( {
 	panelActive,
-	editImage,
 	prompt = '',
 	setPrompt,
-	generateNewPrompt,
-	promptSettings,
-	updatePromptSettings,
 	submitPrompt,
 	error,
-	images,
 	maskImage,
 	backToTools,
 } ) => {
 	const {
 		data: imagePromptData,
 		isLoading: imagePromptIsLoading,
-		error: imagePromptError,
 		send: imagePromptEnhancer,
-		sendUsageData: imagePromptSendUsageData,
-		reset: imagePromptReset,
 	} = useImagePromptEnhancer( prompt );
 
 	// Image Prompt Enhancer
@@ -41,15 +30,22 @@ const InPaintingForm = ( {
 	}, [ imagePromptIsLoading ] );
 
 	const handleSubmit = ( event ) => {
+		// The fallback instruction should be hidden for the user.
 		event.preventDefault();
-		submitPrompt( PANELS.IN_PAINTING, prompt, maskImage );
+
+		const finalPrompt = prompt || 'Remove object and fill based on the surroundings';
+
+		submitPrompt( PANELS.IN_PAINTING, finalPrompt, maskImage );
 	};
 
 	return (
 		<Box component="form" onSubmit={ handleSubmit }>
 			<Box sx={ { mb: 3 } }>
 				<Button
+					size="small"
 					variant="text"
+					color="secondary"
+					startIcon={ <ChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
@@ -62,7 +58,7 @@ const InPaintingForm = ( {
 				{ __( 'Generative Fill', 'elementor' ) }
 			</Typography>
 			<Typography variant="body1" sx={ { mb: 8 } }>
-				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
+				{ __( 'Mark an area and edit it with a prompt.', 'elementor' ) }
 			</Typography>
 
 			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } actionPosition="bottom" onRetry={ handleSubmit } /> }
@@ -77,17 +73,44 @@ const InPaintingForm = ( {
 					value={ prompt }
 					InputProps={ {
 						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton onClick={ () => imagePromptEnhancer( prompt ) }>
-									<WandIcon />
-								</IconButton>
+							<InputAdornment
+								position="end"
+								sx={ {
+									position: 'absolute',
+									bottom: '24px',
+									right: '8px',
+								} }
+							>
+								{
+									imagePromptIsLoading
+										? <CircularProgress color="secondary" size={ 20 } sx={ { mr: 2 } } />
+										: <Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
+											<Box component="span" sx={ { cursor: 'pointer' } }>
+												<IconButton
+													size="small"
+													color="secondary"
+													onClick={ () => imagePromptEnhancer( prompt ) }
+													disabled={ ! panelActive || imagePromptIsLoading || ! prompt }
+												>
+													<WandIcon />
+												</IconButton>
+											</Box>
+										</Tooltip>
+								}
 							</InputAdornment>
 						),
 					} }
+					sx={ {
+						'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
+							pb: 9,
+							width: '89%',
+						},
+					} }
 				/>
-				<GenerateButton size="medium" disabled={ ! panelActive || '' === prompt }>
-					{ __( 'Apply', 'elementor' ) }
-				</GenerateButton>
+
+				<Button type="submit" variant="contained" disabled={ ! panelActive }>
+					{ __( 'Generate', 'elementor' ) }
+				</Button>
 			</Stack>
 		</Box>
 	);

@@ -54,6 +54,10 @@ const ImagePromptForm = (
 								color="secondary"
 								startIcon={ <RefreshIcon /> }
 								disabled={ ( ! panelActive || '' === prompt ) }
+								sx={ {
+									// TODO: Remove on @elementor/ui 1.4.51.
+									color: 'background.paper',
+								} }
 							>
 								{ __( 'Generate again', 'elementor' ) }
 							</Button>

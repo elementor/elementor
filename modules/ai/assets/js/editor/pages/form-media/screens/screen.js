@@ -20,6 +20,7 @@ export const Screen = ( {
 	updatePromptSettings,
 	editImage,
 	setMaskImage,
+	viewData,
 } ) => {
 	/**
 	 * The aspect ratio value should be changed only when getting a new instance of the images array.
@@ -37,6 +38,7 @@ export const Screen = ( {
 			generateNewPrompt,
 			maybeUploadImage,
 			aspectRatio: cachedAspectRation,
+			viewData,
 		} } />;
 	}
 
@@ -49,11 +51,11 @@ export const Screen = ( {
 	}
 
 	if ( screen === SCREENS.IN_PAINTING ) {
-		return <InPainting { ...{ editImage, setMaskImage } } />;
+		return <InPainting { ...{ editImage, setMaskImage, promptSettings, viewData } } />;
 	}
 
 	if ( screen === SCREENS.OUT_PAINTING ) {
-		return <OutPainting { ...{ editImage, setMaskImage, promptSettings } } />;
+		return <OutPainting { ...{ editImage, setMaskImage, promptSettings, viewData } } />;
 	}
 
 	return <PromptGallery { ...{
@@ -76,4 +78,5 @@ Screen.propTypes = {
 	updatePromptSettings: PropTypes.func,
 	editImage: PropTypes.object,
 	setMaskImage: PropTypes.func,
+	viewData: PropTypes.object,
 };

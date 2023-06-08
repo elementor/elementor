@@ -1,39 +1,30 @@
-import { Stack, Box, Button, Typography, Slider, FormControl, Link, InputAdornment, IconButton } from '@elementor/ui';
-import GenerateButton from '../../../components/generate-button';
-import PromptForm from './form-controls/prompt-form';
+import { useEffect, useMemo } from 'react';
+import { Stack, Box, Button, Typography, Slider, FormControl, CircularProgress, InputAdornment, IconButton, Tooltip } from '@elementor/ui';
 import PromptErrorMessage from '../../../components/prompt-error-message';
-import RefreshIcon from '../../../icons/refresh-icon';
 import { IMAGE_ASPECT_RATIOS, IMAGE_PROMPT_SETTINGS, PANELS } from '../consts/consts';
 import PromptActionSelection from '../../../components/prompt-action-selection';
 import Textarea from '../../../components/textarea';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
 import WandIcon from '../../../icons/wand-icon';
 import useImagePromptEnhancer from '../../../hooks/use-image-prompt-enhancer';
-import { useEffect } from 'react';
 
 const OutPaintingForm = ( {
 	panelActive,
-	editImage,
 	prompt = '',
 	setPrompt,
-	generateNewPrompt,
-	promptSettings,
 	updatePromptSettings,
 	submitPrompt,
 	error,
 	maskImage,
 	backToTools,
+	viewData,
 } ) => {
-	const aspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
-	const zoom = promptSettings[ IMAGE_PROMPT_SETTINGS.ZOOM ];
+	const initialAspectRatio = useMemo( () => viewData.ratio, [] );
 
 	const {
 		data: imagePromptData,
 		isLoading: imagePromptIsLoading,
-		error: imagePromptError,
 		send: imagePromptEnhancer,
-		sendUsageData: imagePromptSendUsageData,
-		reset: imagePromptReset,
 	} = useImagePromptEnhancer( prompt );
 
 	// Image Prompt Enhancer
@@ -45,17 +36,28 @@ const OutPaintingForm = ( {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-		submitPrompt( PANELS.OUT_PAINTING, prompt, maskImage );
+
+		const finalPrompt = prompt || 'Fill based on the surroundings';
+
+		submitPrompt( PANELS.OUT_PAINTING, finalPrompt, maskImage );
 	};
 
 	return (
 		<Box component="form" onSubmit={ handleSubmit }>
 			<Box sx={ { mb: 3 } }>
 				<Button
+					size="small"
 					variant="text"
+					color="secondary"
+					startIcon={ <ChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
+
+						// Restoring the initial aspect ratio for not affecting other views when the new aspect ratio is not saved.
+						if ( initialAspectRatio !== viewData.ratio ) {
+							updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: initialAspectRatio } );
+						}
 					} }
 				>
 					{ __( 'Back', 'elementor' ) }
@@ -65,7 +67,7 @@ const OutPaintingForm = ( {
 				{ __( 'Expand Image', 'elementor' ) }
 			</Typography>
 			<Typography variant="body1" sx={ { mb: 8 } }>
-				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
+				{ __( 'Position image in it’s new size to generate content around the edges.', 'elementor' ) }
 			</Typography>
 
 			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } actionPosition="bottom" onRetry={ handleSubmit } /> }
@@ -75,8 +77,10 @@ const OutPaintingForm = ( {
 					wrapperStyle={ { width: '100%' } }
 					label={ __( 'Aspect ratio', 'elementor' ) }
 					options={ Object.entries( IMAGE_ASPECT_RATIOS ).map( ( [ value, label ] ) => ( { label, value } ) ) }
-					onChange={ ( event ) => updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: event.target.value } ) }
-					value={ aspectRatio }
+					onChange={ ( event ) => {
+						updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: event.target.value } );
+					} }
+					value={ viewData.ratio }
 					disabled={ ! panelActive }
 				/>
 
@@ -93,7 +97,12 @@ const OutPaintingForm = ( {
 						min={ 0.1 }
 						max={ 2 }
 						color="secondary"
+						aria-labelledby="image-size-slider"
 					/>
+
+					<Typography id="image-size-slider" variant="caption" gutterBottom>
+						{ __( 'Original image size', 'elementor' ) }
+					</Typography>
 				</FormControl>
 
 				<Textarea
@@ -105,20 +114,46 @@ const OutPaintingForm = ( {
 					value={ prompt }
 					InputProps={ {
 						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton onClick={ () => imagePromptEnhancer( prompt ) }>
-									<WandIcon />
-								</IconButton>
+							<InputAdornment
+								position="end"
+								sx={ {
+									position: 'absolute',
+									bottom: '24px',
+									right: '8px',
+								} }
+							>
+								{
+									imagePromptIsLoading
+										? <CircularProgress color="secondary" size={ 20 } sx={ { mr: 2 } } />
+										: <Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
+											<Box component="span" sx={ { cursor: 'pointer' } }>
+												<IconButton
+													size="small"
+													color="secondary"
+													onClick={ () => imagePromptEnhancer( prompt ) }
+													disabled={ ! panelActive || imagePromptIsLoading || ! prompt }
+												>
+													<WandIcon />
+												</IconButton>
+											</Box>
+										</Tooltip>
+								}
 							</InputAdornment>
 						),
+					} }
+					sx={ {
+						'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
+							pb: 9,
+							width: '89%',
+						},
 					} }
 				/>
 			</Stack>
 
 			<Stack gap={ 5 } sx={ { my: 6 } }>
-				<GenerateButton size="medium" disabled={ ! panelActive || '' === prompt }>
-					{ __( 'Apply', 'elementor' ) }
-				</GenerateButton>
+				<Button type="submit" variant="contained" disabled={ ! panelActive }>
+					{ __( 'Generate', 'elementor' ) }
+				</Button>
 			</Stack>
 		</Box>
 	);
@@ -128,14 +163,13 @@ OutPaintingForm.propTypes = {
 	panelActive: PropTypes.bool,
 	prompt: PropTypes.string,
 	setPrompt: PropTypes.func,
-	generateNewPrompt: PropTypes.func,
-	editImage: PropTypes.object,
 	promptSettings: PropTypes.object,
 	updatePromptSettings: PropTypes.func,
 	submitPrompt: PropTypes.func,
 	error: PropTypes.string,
 	maskImage: PropTypes.string,
 	backToTools: PropTypes.func,
+	viewData: PropTypes.object,
 };
 
 export default OutPaintingForm;

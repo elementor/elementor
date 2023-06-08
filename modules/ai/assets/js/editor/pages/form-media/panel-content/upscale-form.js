@@ -1,27 +1,15 @@
 import { Stack, Box, Button, Typography, Slider, FormControl } from '@elementor/ui';
-import GenerateButton from '../../../components/generate-button';
-import PromptForm from './form-controls/prompt-form';
 import PromptErrorMessage from '../../../components/prompt-error-message';
-import RefreshIcon from '../../../icons/refresh-icon';
-import { IMAGE_ASPECT_RATIOS, IMAGE_PROMPT_SETTINGS, PANELS } from '../consts/consts';
-import PromptActionSelection from '../../../components/prompt-action-selection';
-import Textarea from '../../../components/textarea';
+import { IMAGE_PROMPT_SETTINGS, PANELS } from '../consts/consts';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
 
 const UpscaleForm = ( {
 	panelActive,
-	editImage,
-	prompt = '',
-	setPrompt,
-	generateNewPrompt,
-	promptSettings,
 	updatePromptSettings,
 	submitPrompt,
 	error,
-	maskImage,
 	backToTools,
 } ) => {
-	const upscale = promptSettings[ IMAGE_PROMPT_SETTINGS.UPSCALE_TO ];
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		submitPrompt( PANELS.UPSCALE );
@@ -31,7 +19,10 @@ const UpscaleForm = ( {
 		<Box component="form" onSubmit={ handleSubmit }>
 			<Box sx={ { mb: 3 } }>
 				<Button
+					size="small"
 					variant="text"
+					color="secondary"
+					startIcon={ <ChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
@@ -39,19 +30,18 @@ const UpscaleForm = ( {
 				>
 					{ __( 'Back', 'elementor' ) }
 				</Button>
-				<ChevronLeftIcon />
 			</Box>
 			<Typography variant="h3" sx={ { mb: 3 } }>
-				{ __( 'AI Enlarger', 'elementor' ) }
+				{ __( 'Resize', 'elementor' ) }
 			</Typography>
 			<Typography variant="body1" sx={ { mb: 8 } }>
-				{ __( 'Enhance you Image with AI.', 'elementor' ) }
+				{ __( 'Make an image larger and improve it’s resolution.', 'elementor' ) }
 			</Typography>
 
 			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } actionPosition="bottom" onRetry={ handleSubmit } /> }
 
 			<Stack gap={ 6 }>
-				<FormControl sx={ { width: '100%', mb: 6 } }>
+				<FormControl sx={ { width: '100%' } }>
 					<Box display="flex" justifyContent="space-between" alignItems="center">
 						<Typography variant="caption">512</Typography>
 
@@ -75,13 +65,11 @@ const UpscaleForm = ( {
 
 						<Typography variant="caption">{ __( 'Output', 'elementor' ) }</Typography>
 					</Box>
-				</FormControl>
-			</Stack>
 
-			<Stack gap={ 5 } sx={ { my: 6 } }>
-				<GenerateButton size="medium" disabled={ ! panelActive }>
-					{ __( 'Apply', 'elementor' ) }
-				</GenerateButton>
+					<Button type="submit" variant="contained" disabled={ ! panelActive } sx={ { mt: 6 } }>
+						{ __( 'Generate', 'elementor' ) }
+					</Button>
+				</FormControl>
 			</Stack>
 		</Box>
 	);

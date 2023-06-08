@@ -1,11 +1,11 @@
+import { useEffect } from 'react';
 import { IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIOS } from '../../consts/consts';
 import PromptActionSelection from '../../../../components/prompt-action-selection';
-import { FormControl, Slider, Stack, Box, Typography, Button, InputAdornment, IconButton } from '@elementor/ui';
+import { FormControl, Slider, Stack, Box, Typography, InputAdornment, IconButton, Tooltip, CircularProgress } from '@elementor/ui';
 import useSessionStorage from '../../../../hooks/use-session-storage';
 import Textarea from '../../../../components/textarea';
 import WandIcon from '../../../../icons/wand-icon';
 import useImagePromptEnhancer from '../../../../hooks/use-image-prompt-enhancer';
-import { useEffect } from 'react';
 
 const getPromptPlaceholder = ( data ) => {
 	if ( ! data?.images?.length ) {
@@ -100,12 +100,38 @@ const PromptForm = ( {
 				} }
 				InputProps={ {
 					endAdornment: (
-						<InputAdornment position="end">
-							<IconButton onClick={ () => imagePromptEnhancer( prompt ) }>
-								<WandIcon />
-							</IconButton>
+						<InputAdornment
+							position="end"
+							sx={ {
+								position: 'absolute',
+								bottom: '24px',
+								right: '8px',
+							} }
+						>
+							{
+								imagePromptIsLoading
+									? <CircularProgress color="secondary" size={ 20 } sx={ { mr: 2 } } />
+									: <Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
+										<Box component="span" sx={ { cursor: 'pointer' } }>
+											<IconButton
+												size="small"
+												color="secondary"
+												onClick={ () => imagePromptEnhancer( prompt ) }
+												disabled={ ! panelActive || imagePromptIsLoading || ! prompt }
+											>
+												<WandIcon />
+											</IconButton>
+										</Box>
+									</Tooltip>
+							}
 						</InputAdornment>
 					),
+				} }
+				sx={ {
+					'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
+						pb: 9,
+						width: '89%',
+					},
 				} }
 			/>
 

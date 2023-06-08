@@ -4,10 +4,11 @@ import useImagePrompt from '../../hooks/use-image-prompt';
 import useImageUpload from '../../hooks/use-image-upload';
 import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
 import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES } from './consts/consts';
+import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIO_DIMENSIONS } from './consts/consts';
 import { Screen } from './screens/screen';
 import { PanelContent } from './panel-content/panel-content';
 import Panel from '../../components/ui/panel';
+import { getAspectRatioSizes } from './utils';
 
 const FormMedia = (
 	{
@@ -28,7 +29,7 @@ const FormMedia = (
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ maskImage, setMaskImage ] = useState( '' );
 	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
-		style: '' === initialValue.id ? ( additionalOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
+		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
 	} );
 	const [ images, setImages ] = useState( [] );
 	const [ insertToControl, setInsertToControl ] = useState( false );
@@ -41,22 +42,30 @@ const FormMedia = (
 
 	const panelActive = ! isLoading && ! isUploading;
 
+	const currentAspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
+
+	const viewData = {
+		width: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].width,
+		height: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].height,
+		ratio: currentAspectRatio,
+	};
+
 	const setTool = ( tool ) => {
-		let newPanel = tool || PANELS.TOOLS;
+		const newPanel = tool || PANELS.TOOLS;
 		let newScreen = SCREENS.IMAGE_EDITOR;
 		switch ( tool ) {
 			case PANELS.IMAGE_TO_IMAGE:
 				newScreen = SCREENS.VARIATIONS;
-			break;
+				break;
 			case PANELS.IN_PAINTING:
 				newScreen = SCREENS.IN_PAINTING;
-			break;
+				break;
 			case PANELS.OUT_PAINTING:
 				newScreen = SCREENS.OUT_PAINTING;
-			break;
+				break;
 			case PANELS.UPSCALE:
 				newScreen = SCREENS.IMAGE_EDITOR;
-			break;
+				break;
 		}
 		setPanel( newPanel );
 		setScreen( newScreen );
@@ -69,6 +78,25 @@ const FormMedia = (
 		controlView.applySavedValue();
 		onClose();
 	};
+
+	// Get ratio from image
+	useEffect( () => {
+		const imageUrl = editImage?.image?.image_url || additionalOptions?.defaultValue?.url;
+
+		if ( ! imageUrl ) {
+			return;
+		}
+
+		const img = new Image();
+
+		img.src = imageUrl;
+
+		img.onload = () => {
+			const { ratio } = getAspectRatioSizes( img.width, img.height );
+
+			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: ratio } );
+		};
+	}, [ editImage ] );
 
 	// Image Generation
 	useEffect( () => {
@@ -85,8 +113,8 @@ const FormMedia = (
 				setAttachment( attachmentData.image );
 			} else {
 				setEditImage( attachmentData.image );
-				setPanel( PANELS.IMAGE_TO_IMAGE );
-				updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
+				setPanel( PANELS.TOOLS );
+				setScreen( SCREENS.IMAGE_EDITOR );
 			}
 		}
 	}, [ isUploading ] );
@@ -107,7 +135,7 @@ const FormMedia = (
 				const { image, ...attachment } = editImage;
 				return setAttachment( attachment );
 			}
-			setPanel( PANELS.IMAGE_TO_IMAGE );
+			setPanel( PANELS.TOOLS );
 			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
 		}
 
@@ -178,6 +206,8 @@ const FormMedia = (
 						images,
 						setTool,
 						maskImage,
+						reset,
+						viewData,
 					} } />
 				</Panel>
 			</Box>
@@ -194,6 +224,7 @@ const FormMedia = (
 				setPrompt,
 				editImage,
 				setMaskImage,
+				viewData,
 			} } />
 		</Box>
 	);

@@ -105,7 +105,7 @@ export const IMAGE_PROMPT_CATEGORIES = [
 ];
 
 export const IMAGE_ASPECT_RATIOS = {
-	'1:1': __( 'Sqaure', 'elementor' ) + ' (1:1)',
+	'1:1': __( 'Square', 'elementor' ) + ' (1:1)',
 	'3:2': __( 'Landscape', 'elementor' ) + ' (3:2)',
 	'4:3': __( 'Landscape', 'elementor' ) + ' (4:3)',
 	'16:9': __( 'Landscape', 'elementor' ) + ' (16:9)',
