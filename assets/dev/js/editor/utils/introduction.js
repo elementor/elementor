@@ -61,7 +61,7 @@ export default class extends elementorModules.Module {
 
 	set introductionViewed( isViewed ) {
 		const introductionKey = this.getSettings( 'introductionKey' );
-		elementor.config.user.introduction[ introductionKey ] = true;
+		elementor.config.user.introduction[ introductionKey ] = isViewed;
 	}
 
 	setViewed() {

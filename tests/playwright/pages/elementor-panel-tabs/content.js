@@ -35,4 +35,37 @@ export default class Content {
 		await expect( element ).toHaveAttribute( 'rel', options.rel );
 		await expect( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
 	}
+
+	async chooseImage( imageTitle ) {
+		await this.page.locator( EditorSelectors.media.preview ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( EditorSelectors.media.imageByTitle( imageTitle ) ).click();
+		await this.page.locator( EditorSelectors.media.selectBtn ).click();
+	}
+
+	async selectImageSize( widgetLocator, imageSize ) {
+		await this.editorPage.getPreviewFrame().locator( widgetLocator ).click();
+		await this.page.locator( EditorSelectors.image.imageSizeSelect ).selectOption( imageSize );
+		await this.editorPage.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
+	}
+
+	async verifyImageSrc( args = { selector, imageTitle, isPublished } ) {
+		const image = args.isPublished
+			? await this.page.locator( args.selector )
+			: await this.editorPage.getPreviewFrame().waitForSelector( args.selector );
+		const src = await image.getAttribute( 'src' );
+		const regex = new RegExp( args.imageTitle );
+		expect( regex.test( src ) ).toEqual( true );
+	}
+
+	async setCustomImageSize( args = { selector, imageTitle, width, height } ) {
+		await this.editorPage.getPreviewFrame().locator( args.selector ).click();
+		await this.page.locator( EditorSelectors.image.imageSizeSelect ).selectOption( 'custom' );
+		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
+		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
+		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );
+		const response = this.page.waitForResponse( regex );
+		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
+		await response;
+	}
 }
