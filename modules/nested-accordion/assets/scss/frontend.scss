@@ -46,7 +46,7 @@
 			  	color: var(--n-accordion-title-normal-color);
 			  	align-items: center;
 
-			  	&-header{
+			  	&-header {
 				  	display: flex;
 
 					h1, h2, h3, h4, h5, h6, p {
@@ -54,7 +54,7 @@
 					}
 				}
 
-				&-text{
+				&-text {
 					font-size: var(--n-accordion-title-font-size);
 					align-items: center;
 				}
