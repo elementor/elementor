@@ -505,16 +505,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
-				'em' => [
-					'min' => 0,
-					'max' => 10,
-					'step' => 0.1,
-				],
-				'rem' => [
-					'min' => 0,
-					'max' => 10,
-					'step' => 0.1,
-				],
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
 				],
 				'default' => [
 					'unit' => 'px',
@@ -528,27 +528,27 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 
 		$this->add_responsive_control(
-	        'icon_spacing',
-	        [
-	            'label' => esc_html__( 'Spacing', 'elementor' ),
-	            'type' => Controls_Manager::SLIDER,
-	            'range' => [
-	                'px' => [
-		                'min' => 0,
-		                'max' => 400,
-	                ],
-	                'vw' => [
-		                'min' => 0,
-		                'max' => 50,
-		                'step' => 0.1,
-	                ],
-	            ],
-	            'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-	            'selectors' => [
-	                '{{WRAPPER}}' => '--n-accordion-icon-gap: {{SIZE}}{{UNIT}}',
-	            ],
-	        ]
-	    );
+			'icon_spacing',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 400,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 50,
+						'step' => 0.1,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-icon-gap: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
 
 		$this->start_controls_tabs( 'header_icon_color_style' );
 
