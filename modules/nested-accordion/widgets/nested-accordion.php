@@ -91,7 +91,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$repeater = new Repeater();
 
-		$repeater->add_control( 'item_title',
+		$repeater->add_control(
+			'item_title',
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -118,7 +119,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( 'items',
+		$this->add_control(
+			'items',
 			[
 				'label' => esc_html__( 'Items', 'elementor' ),
 				'type' => Control_Nested_Repeater::CONTROL_TYPE,
@@ -139,7 +141,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'accordion_item_title_position_horizontal',
+		$this->add_responsive_control(
+			'accordion_item_title_position_horizontal',
 			[
 				'label' => esc_html__( 'Item Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -183,7 +186,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'accordion_item_title_icon_position',
+		$this->add_responsive_control(
+			'accordion_item_title_icon_position',
 			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -582,11 +586,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( $state . '_' . $context . '_color', [
-			'label' => esc_html__( 'Color', 'elementor' ),
-			'type' => Controls_Manager::COLOR,
-			'selectors' => [
-				'{{WRAPPER}}' => $variable . ': {{VALUE}};',
+		$this->add_control( $state . '_' . $context . '_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => $variable . ': {{VALUE}};',
 			],
 		] );
 
