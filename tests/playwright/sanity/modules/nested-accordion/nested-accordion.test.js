@@ -693,7 +693,7 @@ async function getIcon( nestedAccordionItem, iconIndex ) {
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
  *
  * @param {string} optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
- * @param {string} nestedAccordionWidgetId - - id of the nested accordion widget
+ * @param {string} nestedAccordionWidgetId - id of the nested accordion widget
  * @param {Object} editor
  * @param {Object} page
  * @return {Promise<void>}

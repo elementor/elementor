@@ -88,14 +88,17 @@
 			}
 
 			&[open] {
+
 			  	.e-n-accordion-item-title {
 					margin-bottom: var(--n-accordion-item-title-distance-from-content);
 					color: var(--n-accordion-title-active-color);
 
 					&-icon {
+
 						.e-opened {
 							display: flex;
 					  	}
+
 					  	.e-closed {
 							display: none;
 					  	}
@@ -120,7 +123,9 @@
 							color : var(--n-accordion-title-hover-color);
 
 							&-icon {
+
 								span {
+
 									& > i {
 										color: var(--n-accordion-icon-hover-color);
 							  		}

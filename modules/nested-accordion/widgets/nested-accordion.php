@@ -2,7 +2,6 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
@@ -11,7 +10,6 @@ use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use phpDocumentor\Reflection\Types\Boolean;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -488,7 +486,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			]
 		);
-		$this->add_group_control( Group_Control_Typography::get_type(),
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .e-n-accordion-item-title-text',
@@ -519,7 +519,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'icon_size',
+		$this->add_responsive_control(
+			'icon_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -576,7 +577,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		}
 
 		$this->end_controls_tabs();
-
 		$this->end_controls_section();
 
 	}
@@ -586,6 +586,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
 		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
+
 		switch ( $state ) {
 			case 'hover':
 				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
@@ -594,6 +595,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				$translated_tab_text = esc_html__( 'Active', 'elementor' );
 				break;
 		}
+
 		$this->start_controls_tab(
 			'header_' . $state . '_' . $context,
 			[
@@ -601,7 +603,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( $state . '_' . $context . '_color',
+		$this->add_control(
+			$state . '_' . $context . '_color',
 			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
