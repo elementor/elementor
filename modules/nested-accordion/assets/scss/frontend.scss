@@ -20,7 +20,7 @@
 	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
 	--n-accordion-icon-gap: 0 15px;
 
-  .e-n-accordion {
+.e-n-accordion {
 
 		&-item {
 			display: flex;
@@ -48,7 +48,7 @@
 
 			  	&-header{
 				  	display: flex;
-					h1,h2,h3,h4,h5,h6,p {
+					h1, h2, h3, h4, h5, h6, p {
 						margin-block: 0;
 					}
 				}
