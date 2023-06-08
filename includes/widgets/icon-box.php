@@ -174,7 +174,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'placeholder' => esc_html__( 'https://your-link.example.com', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
