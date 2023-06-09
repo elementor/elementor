@@ -66,7 +66,7 @@ const OutPaintingForm = ( {
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Expand Image', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Position image in it’s new size to generate content around the edges.', 'elementor' ) }
 			</Typography>
 

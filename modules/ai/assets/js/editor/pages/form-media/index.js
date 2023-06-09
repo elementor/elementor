@@ -40,7 +40,11 @@ const FormMedia = (
 	} );
 	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
 
-	const panelActive = ! isLoading && ! isUploading;
+	const initialImageUrl = editImage?.url || additionalOptions?.defaultValue?.url;
+
+	const [ shouldWaitForInitialImage, setShouldWaitForInitialImage ] = useState( () => !! initialImageUrl );
+
+	const panelActive = ! isLoading && ! isUploading && ! shouldWaitForInitialImage;
 
 	const currentAspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
 
@@ -81,20 +85,21 @@ const FormMedia = (
 
 	// Get ratio from image
 	useEffect( () => {
-		const imageUrl = editImage?.image?.image_url || additionalOptions?.defaultValue?.url;
-
-		if ( ! imageUrl ) {
+		if ( ! editImage ) {
 			return;
 		}
 
+		setShouldWaitForInitialImage( true );
+
 		const img = new Image();
 
-		img.src = imageUrl;
+		img.src = initialImageUrl;
 
 		img.onload = () => {
 			const { ratio } = getAspectRatioSizes( img.width, img.height );
 
 			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: ratio } );
+			setShouldWaitForInitialImage( false );
 		};
 	}, [ editImage ] );
 
@@ -225,6 +230,7 @@ const FormMedia = (
 				editImage,
 				setMaskImage,
 				viewData,
+				shouldWaitForInitialImage,
 			} } />
 		</Box>
 	);

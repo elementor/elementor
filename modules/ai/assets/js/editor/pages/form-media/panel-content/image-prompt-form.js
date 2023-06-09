@@ -27,7 +27,7 @@ const ImagePromptForm = (
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Imagine anything create everything', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
 			</Typography>
 

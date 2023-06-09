@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PromptDialog from './components/prompt-dialog';
 import FormMedia from './pages/form-media';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@elementor/ui';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Divider } from '@elementor/ui';
 
 const MediaDialog = ( {
 	onClose,
@@ -30,6 +30,8 @@ const MediaDialog = ( {
 				<PromptDialog.Header onClose={ onCloseIntent }>
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
+
+				<Divider />
 
 				<FormMedia
 					onClose={ onClose }

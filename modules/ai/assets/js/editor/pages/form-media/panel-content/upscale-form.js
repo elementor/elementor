@@ -34,7 +34,7 @@ const UpscaleForm = ( {
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Resize', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Make an image larger and improve it’s resolution.', 'elementor' ) }
 			</Typography>
 

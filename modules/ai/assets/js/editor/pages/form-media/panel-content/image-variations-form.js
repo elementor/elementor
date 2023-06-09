@@ -43,7 +43,7 @@ const ImageVariationsForm = ( {
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Variations', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Create new versions of the original image.', 'elementor' ) }
 			</Typography>
 

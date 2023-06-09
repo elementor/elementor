@@ -19,7 +19,7 @@ const FormGenerateResult = (
 			case IMAGE_ACTIONS.USE:
 				maybeUploadImage( imageForAction, true );
 				break;
-			case IMAGE_ACTIONS.REFERENCE:
+			case IMAGE_ACTIONS.REFERENCE: // TODO: currently the reference action is the edit action.
 				maybeUploadImage( imageForAction );
 				break;
 			case IMAGE_ACTIONS.ZOOM:

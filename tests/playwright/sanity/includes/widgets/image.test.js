@@ -1,38 +1,49 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
+const EditorPage = require( '../../../pages/editor-page.js' );
+import EditorSelectors from '../../../selectors/editor-selectors.js';
+import Content from '../../../pages/elementor-panel-tabs/content.js';
 
-test( 'Image widget sanity test', async ( { page }, testInfo ) => {
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
-		editor = await wpAdmin.useElementorCleanPost();
+test( 'Image size test', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = new EditorPage( page, testInfo );
+	const contentTab = new Content( page, testInfo );
+	const imageTitle = 'About-Pic-3-1';
 
+	await wpAdmin.openNewPage();
 	await editor.addWidget( 'image' );
+	await contentTab.chooseImage( `${ imageTitle }.png` );
 
-	// Act.
-	await page.click( '.elementor-control-media__preview' );
-	await page.click( 'text=Media Library' );
-	await page.waitForSelector( 'text=Insert Media' );
-	await page.waitForTimeout( 1000 );
-
-	// Check if previous image is already uploaded.
-	const previousImage = await page.$( '[aria-label="mountain-image"]' );
-
-	if ( previousImage ) {
-		await page.click( '[aria-label="mountain-image"]' );
-	} else {
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/mountain-image.jpeg' );
-		await page.waitForSelector( 'text=Showing 1 of 1 media items' );
+	const imageSize = [ 'thumbnail', 'large', 'full' ];
+	for ( const id in imageSize ) {
+		await wpAdmin.waitForPanel();
+		await contentTab.selectImageSize( EditorSelectors.image.widget, imageSize[ id ] );
+		await contentTab.verifyImageSrc( { selector: EditorSelectors.image.image, isPublished: false } );
+		await editor.verifyClassInElement( { selector: EditorSelectors.image.image, className: `size-${ imageSize[ id ] }`, isPublished: false } );
+		await editor.publishAndViewPage();
+		await wpAdmin.waitForPanel();
+		await contentTab.verifyImageSrc( { selector: EditorSelectors.image.image, isPublished: true } );
+		await editor.verifyClassInElement( { selector: EditorSelectors.image.image, className: `size-${ imageSize[ id ] }`, isPublished: true } );
+		await wpAdmin.editWithElementor();
 	}
-
-	await page.click( '.button.media-button' );
-
-	// Assert.
-	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
-	const src = await img.getAttribute( 'src' );
-	expect( src ).not.toBeNull();
 } );
 
-test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
+test( 'Custom image size test', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+	const editor = new EditorPage( page, testInfo );
+	const contentTab = new Content( page, testInfo );
+	const imageTitle = 'About-Pic-3-1';
+
+	await wpAdmin.openNewPage();
+	await editor.addWidget( 'image' );
+	await contentTab.chooseImage( `${ imageTitle }.png` );
+	await contentTab.setCustomImageSize( { selector: EditorSelectors.image.image, imageTitle, width: '400', height: '400' } );
+	await editor.verifyImageSize( { selector: EditorSelectors.image.image, width: 400, height: 400, isPublished: false } );
+	await editor.publishAndViewPage();
+	await editor.verifyImageSize( { selector: EditorSelectors.image.image, width: 400, height: 400, isPublished: true } );
+} );
+
+test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
 	const previewFrame = editor.getPreviewFrame();
@@ -40,7 +51,7 @@ test.skip( 'Lightbox image captions aligned center', async ( { page }, testInfo 
 	await test.step( 'Act', async () => {
 		await editor.addWidget( 'image' );
 
-		await page.locator( '.elementor-control-media__preview' ).click();
+		await page.locator( EditorSelectors.media.preview ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
 		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/elementor1.png' );
 		await page.locator( '#attachment-details-title' ).fill( 'Elementor Logo (title)' );

@@ -85,6 +85,7 @@ export const PanelContent = ( {
 	return <ImageTools { ...{
 		setTool,
 		generateNewPrompt,
+		panelActive,
 	} } />;
 };
 

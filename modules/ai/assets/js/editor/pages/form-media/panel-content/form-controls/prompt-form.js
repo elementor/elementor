@@ -35,10 +35,7 @@ const PromptForm = ( {
 	const {
 		data: imagePromptData,
 		isLoading: imagePromptIsLoading,
-		error: imagePromptError,
 		send: imagePromptEnhancer,
-		sendUsageData: imagePromptSendUsageData,
-		reset: imagePromptReset,
 	} = useImagePromptEnhancer( prompt );
 
 	// Image Prompt Enhancer

@@ -57,7 +57,7 @@ const InPaintingForm = ( {
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Generative Fill', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Mark an area and edit it with a prompt.', 'elementor' ) }
 			</Typography>
 

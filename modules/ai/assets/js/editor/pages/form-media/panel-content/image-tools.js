@@ -42,6 +42,7 @@ const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 const ImageTools = ( {
 	setTool,
 	generateNewPrompt,
+	panelActive,
 } ) => {
 	const tools = [
 		{
@@ -91,6 +92,7 @@ const ImageTools = ( {
 						key={ label }
 						variant="outlined"
 						color="secondary"
+						disabled={ ! panelActive }
 						sx={ {
 							py: 7,
 							fontSize: '12px',
@@ -125,6 +127,7 @@ const ImageTools = ( {
 ImageTools.propTypes = {
 	setTool: PropTypes.func.isRequired,
 	generateNewPrompt: PropTypes.func.isRequired,
+	panelActive: PropTypes.bool.isRequired,
 };
 
 export default ImageTools;

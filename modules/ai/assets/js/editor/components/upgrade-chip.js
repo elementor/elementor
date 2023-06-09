@@ -17,7 +17,7 @@ const popoverId = 'e-ai-upgrade-popover';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
-	marginTop: theme.spacing( 7 ),
+	marginTop: theme.spacing( 6 ),
 	padding: theme.spacing( 7 ),
 	backgroundColor: theme.palette.background.paper,
 	boxShadow: theme.shadows[ 4 ],
@@ -87,6 +87,8 @@ const UpgradeChip = ( {
 			onMouseEnter={ showPopover }
 			onMouseLeave={ hidePopover }
 			ref={ anchorEl }
+			display="flex"
+			alignItems="center"
 		>
 			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } />
 

@@ -21,6 +21,7 @@ export const Screen = ( {
 	editImage,
 	setMaskImage,
 	viewData,
+	shouldWaitForInitialImage,
 } ) => {
 	/**
 	 * The aspect ratio value should be changed only when getting a new instance of the images array.
@@ -28,7 +29,7 @@ export const Screen = ( {
 	 */
 	const cachedAspectRation = useMemo( () => promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ], [ images ] );
 
-	if ( isLoading || isUploading ) {
+	if ( isLoading || isUploading || shouldWaitForInitialImage ) {
 		return <ImageLoader />;
 	}
 
@@ -79,4 +80,5 @@ Screen.propTypes = {
 	editImage: PropTypes.object,
 	setMaskImage: PropTypes.func,
 	viewData: PropTypes.object,
+	shouldWaitForInitialImage: PropTypes.bool,
 };

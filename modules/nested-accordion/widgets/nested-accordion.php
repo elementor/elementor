@@ -267,6 +267,43 @@ class Nested_Accordion extends Widget_Nested_Base {
 		);
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_interactions',
+			[
+				'label' => esc_html__( 'Interactions section', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'default_state',
+			[
+				'label' => esc_html__( 'Default State', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'expanded' => esc_html__( 'First expanded', 'elementor' ),
+					'all_collapsed' => esc_html__( 'All collapsed', 'elementor' ),
+				],
+				'default' => 'expanded',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'max_items_expended',
+			[
+				'label' => esc_html__( 'Max Items Expanded', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'one' => esc_html__( 'One', 'elementor' ),
+					'multiple' => esc_html__( 'Multiple', 'elementor' ),
+				],
+				'default' => 'one',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->end_controls_section();
+
 		$this->add_style_tab();
 	}
 
@@ -498,6 +535,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
+		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
@@ -505,6 +543,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
+			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -512,6 +551,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
+			$title_render_attributes = $title_render_attributes . ' ' . $is_open;
 
 			// items content.
 			ob_start();
@@ -543,7 +583,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
-				titleHTMLTag = elementor.helpers.validateHTMLTag( settings['title_tag'] ),
+				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+				defaultState = settings.default_state,
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
@@ -562,10 +603,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 				itemId = 'e-n-accordion-item-' + itemUid;
 			}
 
-			view.addRenderAttribute( itemWrapperKey, {
+			const itemWrapperAttributes = {
 				'id': itemId,
 				'class': [ 'e-n-accordion-item','e-normal' ],
-			} );
+			};
+
+			if ( defaultState === 'expanded' && index === 0 ) {
+				itemWrapperAttributes['open'] = true;
+			}
+
+			view.addRenderAttribute( itemWrapperKey,  itemWrapperAttributes);
 
 			view.addRenderAttribute( itemTitleKey, {
 				'class': [ 'e-n-accordion-item-title' ],
