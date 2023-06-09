@@ -1,4 +1,5 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
+import runElementHandlers from '../../../../../../assets/dev/js/frontend/utils/run-element-handlers';
 
 export default class NestedTabs extends Base {
 	constructor( ...args ) {
@@ -194,6 +195,8 @@ export default class NestedTabs extends Base {
 			() => this.onShowTabContent( $requestedContent ),
 		);
 		$requestedContent.removeAttr( 'hidden' );
+
+		this.handleElementHandlers();
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -617,5 +620,12 @@ export default class NestedTabs extends Base {
 
 		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
 		slider.classList.add( 'e-scroll-active' );
+	}
+
+	handleElementHandlers() {
+		const activeContainerSelector = this.getSettings( 'selectors' ).activeTabContentContainers,
+			activeContainerElement = this.$element[ 0 ].querySelectorAll( `${ activeContainerSelector }` );
+
+		runElementHandlers( activeContainerElement );
 	}
 }
