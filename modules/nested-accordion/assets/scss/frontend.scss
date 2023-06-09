@@ -1,36 +1,99 @@
 .elementor-widget-n-accordion {
-	--n-accordion-title-font-size: 15px;
-	--n-accordion-title-padding: 10px 15px;
+	--n-accordion-title-flex-grow: initial;
+	--n-accordion-title-justify-content: initial;
+	--n-accordion-title-icon-order: -1;
+	--n-accordion-title-icon-padding-inline: 0 15px;
 	--n-accordion-border-width: 1px;
 	--n-accordion-border-color: #{$gray-light};
 	--n-accordion-border-style: solid;
+	--n-accordion-item-title-flex-grow: initial;
+  	--n-accordion-item-title-space-between: 0px;
+  	--n-accordion-item-title-distance-from-content: 0px;
+  	--n-accordion-padding: 10px;
+  	--n-accordion-border-radius: 0px;
 
 	.e-n-accordion {
 
 		&-item {
+			display: flex;
+			flex-direction: column;
+			position: relative;
 
-			> .e-con {
-				border-width: var(--n-accordion-border-width);
-				border-color: var(--n-accordion-border-color);
-				border-style: var(--n-accordion-border-style);
+			&:not(:last-child) {
+				margin-bottom: var(--n-accordion-item-title-space-between);
 			}
 
 			&-title {
+				display: flex;
+				flex-direction: row;
 				list-style: none;
-				font-size: var(--n-accordion-title-font-size);
-				padding: var(--n-accordion-title-padding);
-				border-width: var(--n-accordion-border-width);
+			  	padding: var(--n-accordion-padding);
+			  	border-width: var(--n-accordion-border-width);
 				border-color: var(--n-accordion-border-color);
 				border-style: var(--n-accordion-border-style);
+				justify-content: var(--n-accordion-title-justify-content);
+				border-radius: var(--n-accordion-border-radius);
+				flex-grow: var(--n-menu-title-flex-grow);
 
-				i {
-					color: var(--n-accordion-icon-color);
+				&-text h1,h2,h3,h4,h5,h6,p {
+					margin-block: 0;
 				}
 
-				svg {
-					fill: var(--n-accordion-icon-color);
+				&-icon {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					padding-inline: var( --n-accordion-title-icon-padding-inline );
+					order: var( --n-accordion-title-icon-order );
+					position: relative;
+					width: fit-content;
+
+					span > i {
+						color: var(--n-accordion-icon-color);
+					}
+
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
+				}
+
+				& > span {
+					cursor: pointer;
+				}
+			}
+
+			&[open] {
+
+			  	.e-n-accordion-item-title {
+					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+			  	}
+
+				.e-opened {
+					display: flex;
+				}
+
+				.e-closed {
+					display: none;
+				}
+			}
+
+			&:not([open]) {
+
+				.e-opened {
+					display: none;
+				}
+
+				.e-closed {
+					display: flex;
+				}
+					span > svg {
+						fill: var(--n-accordion-icon-color);
+					}
+				}
+
+				& > span {
+					cursor: pointer;
 				}
 			}
 		}
 	}
-}

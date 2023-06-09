@@ -317,10 +317,10 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @since 1.7.12
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `register_skins()` method instead.
 	 */
 	protected function _register_skins() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_skins()' );
 
 		$this->register_skins();
 	}
@@ -1023,6 +1023,20 @@ abstract class Widget_Base extends Element_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * Init controls.
+	 *
+	 * Reset the `is_first_section` flag to true, so when the Stacks are cleared
+	 * all the controls will be registered again with their skins and settings.
+	 *
+	 * @since 3.14.0
+	 * @access protected
+	 */
+	protected function init_controls() {
+		$this->is_first_section = true;
+		parent::init_controls();
 	}
 
 	public function register_runtime_widget( $widget_name ) {

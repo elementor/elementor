@@ -1393,6 +1393,12 @@ class Frontend extends App {
 				'previous' => esc_html__( 'Previous', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
 				'close' => esc_html__( 'Close', 'elementor' ),
+				'a11yCarouselWrapperAriaLabel' => __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ),
+				'a11yCarouselPrevSlideMessage' => __( 'Previous slide', 'elementor' ),
+				'a11yCarouselNextSlideMessage' => __( 'Next slide', 'elementor' ),
+				'a11yCarouselFirstSlideMessage' => __( 'This is the first slide', 'elementor' ),
+				'a11yCarouselLastSlideMessage' => __( 'This is the last slide', 'elementor' ),
+				'a11yCarouselPaginationBulletMessage' => __( 'Go to slide', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			// 'breakpoints' object is kept for BC.
