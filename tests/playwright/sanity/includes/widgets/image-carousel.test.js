@@ -128,31 +128,24 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	} );
 } );
 
-test.skip( 'Accessibility test', async ( { page }, testInfo ) => {
+test( 'Accessibility test', async( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
-
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
 	} );
-
 	const editor = await wpAdmin.useElementorCleanPost();
-
 	await editor.useDefaultTemplate();
-
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();
-
 	// Act.
 	const headingId = await editor.addWidget( 'heading' ),
-		widgetId = await editor.addWidget( 'image-carousel' );
-
+	widgetId = await editor.addWidget( 'image-carousel' );
 	// Populate the widget with images.
 	await editor.populateImageCarousel();
 	await editor.openSection( 'section_additional_options' );
-	await editor.setSelectControlValue( 'autoplay', 'yes' );
+	await editor.setSelectControlValue( 'autoplay', 'no' );
 	await editor.setNumberControlValue( 'speed', 0 );
-
-	await test.step( 'Assert keyboard navigation inside the editor', async () => {
+	await test.step( 'Assert keyboard navigation inside the editor', async() => {
 		// Assert.
 		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
 		await page.keyboard.press( 'Tab' );
@@ -160,13 +153,13 @@ test.skip( 'Accessibility test', async ( { page }, testInfo ) => {
 		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
 		await page.keyboard.press( 'Enter' );
 		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
-		await page.keyboard.press( 'ArrowLeft' );
-		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+		await page.keyboard.press( 'Shift+Tab' );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ) ).toBeFocused();
 		await page.keyboard.press( 'Enter' );
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
 		await page.keyboard.press( 'Tab' );
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
+		await page.keyboard.press( 'Tab' );
 		await expect( await editor.getPreviewFrame().locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
 	} );
 } );
