@@ -578,7 +578,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$this->end_controls_tabs();
 		$this->end_controls_section();
-
 	}
 
 	private function add_header_color_style( $state, $context ) {
@@ -617,7 +616,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tab();
 	}
 
-		/**
+	/**
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
