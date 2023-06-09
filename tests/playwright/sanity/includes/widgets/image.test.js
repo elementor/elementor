@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
 const EditorPage = require( '../../../pages/editor-page.js' );
+const path = require( 'path' );
 import EditorSelectors from '../../../selectors/editor-selectors.js';
 import Content from '../../../pages/elementor-panel-tabs/content.js';
 
@@ -84,15 +85,15 @@ for ( const i in data ) {
 
 test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
-	const previewFrame = editor.getPreviewFrame();
+	const editor = new EditorPage( page, testInfo );
+	const image = 'elementor1.png';
+	await wpAdmin.openNewPage();
 
 	await test.step( 'Act', async () => {
 		await editor.addWidget( 'image' );
-
 		await page.locator( EditorSelectors.media.preview ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/elementor1.png' );
+		await page.setInputFiles( 'input[type="file"]', path.resolve( `./resources/${ image }` ) );
 		await page.locator( '#attachment-details-title' ).fill( 'Elementor Logo (title)' );
 		await page.locator( '#attachment-details-description' ).fill( 'WP + Elementor = ❤️ (description)' );
 		await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
@@ -100,13 +101,14 @@ test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => 
 		await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
 		await page.getByRole( 'combobox', { name: 'Link' } ).selectOption( 'file' );
 		await page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( 'yes' );
-		await previewFrame.locator( '.elementor-widget-image' ).click();
-		await previewFrame.waitForSelector( '.swiper-zoom-container' );
+		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
+		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
+		await expect( editor.getPreviewFrame().locator( '.swiper-zoom-container' ) ).toBeVisible();
 	} );
 
 	await test.step( 'Assert', async () => {
-		const title = previewFrame.locator( '.elementor-slideshow__title' );
-		const description = previewFrame.locator( '.elementor-slideshow__description' );
+		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
+		const description = editor.getPreviewFrame().locator( '.elementor-slideshow__description' );
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 	} );
