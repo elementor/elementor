@@ -617,7 +617,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tab();
 	}
 
-		/**
+	/**
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
