@@ -25,9 +25,6 @@ $description-color: var(--e-a-color-txt);
 		background-color: var(--e-a-bg-default);
 		border-radius: var(--e-a-border-radius);
 		z-index: $element-overlay;
-		&::-webkit-scrollbar{
-			width: 0px;
-		}
 		@media screen and (max-height: 740px) {
 			.announcements-container {
 				max-height: calc(100vh - 60px);
