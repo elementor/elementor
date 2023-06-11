@@ -67,20 +67,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await breakpoints.addAllBreakpoints();
 
 	await editor.addWidget( 'image-carousel' );
-
-	await page.locator( '.eicon-plus-circle' ).first().click();
-
-	await page.click( 'text=Media Library' );
-
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-	await page.locator( 'text=Create a new gallery' ).click();
-
-	await page.locator( 'text=Insert gallery' ).click();
+	await addImagesToImageCarousel();
 
 	await editor.activatePanelTab( 'style' );
 	await page.locator( '.elementor-control-section_style_image' ).click();
@@ -111,3 +98,85 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 		additional_custom_breakpoints: 'inactive',
 	} );
 } );
+
+test( 'Test that Image Carousel navigation does not re-size with grid or flex container resize', async ( { page }, testInfo ) => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
+
+	await wpAdmin.setExperiments( {
+		container: true,
+		container_grid: true,
+		'nested-elements': true,
+	} );
+
+	const editor = await wpAdmin.useElementorCleanPost();
+
+	const container = await editor.addElement( { elType: 'container' }, 'document' );
+	const widget = await editor.addWidget( 'image-carousel', container );
+	await addImagesToImageCarousel( editor, page );
+
+	await editor.selectElement( container );
+	await page.getByRole( 'spinbutton', { name: 'Min Height' } ).fill( '1500' );
+	await editor.selectElement( widget );
+	await page.getByText( 'Additional Options' ).click();
+	await page.getByRole( 'combobox', { name: 'Autoplay' } ).selectOption( 'no' );
+
+	const widgetContainer = await editor.getPreviewFrame().locator( '.elementor-element > .elementor-widget-container' ).first();
+
+	await test.step( 'Image Carousel retains height in boxed flex Container', async () => {
+		await editor.togglePreviewMode();
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-flex-boxed.jpeg' );
+	} );
+
+	await test.step( 'Image Carousel retains height in full width flex container', async () => {
+		await editor.togglePreviewMode();
+		await editor.selectElement( container );
+		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'full' );
+		await editor.togglePreviewMode();
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-flex-full.jpeg' );
+	} );
+
+	await test.step( 'Image Carousel retains height in full width grid container', async () => {
+		await editor.togglePreviewMode();
+		await changeContainerType( editor, page, container, 'grid' );
+		await page.getByRole( 'spinbutton', { name: 'Columns' } ).fill( '1' );
+		await page.getByRole( 'spinbutton', { name: 'Rows' } ).fill( '1' );
+		await editor.togglePreviewMode();
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-grid-full.jpeg' );
+	} );
+
+	await test.step( 'Image Carousel retains height in boxed width grid container', async () => {
+		await editor.togglePreviewMode();
+		await editor.selectElement( container );
+		await page.getByRole( 'combobox', { name: 'Content Width' } ).selectOption( 'boxed' );
+		await editor.togglePreviewMode();
+		expect( await widgetContainer.screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'carousel-grid-boxed.jpeg' );
+	} );
+
+	await test.step( 'Clean up', async () => {
+		await wpAdmin.setExperiments( {
+			container: false,
+			container_grid: false,
+			'nested-elements': false,
+		} );
+	} );
+} );
+
+async function changeContainerType( editor, page, container, gridOrFlex ) {
+	await editor.selectElement( container );
+	await page.getByRole( 'combobox', { name: 'Container Layout' } ).selectOption( gridOrFlex );
+}
+async function addImagesToImageCarousel( editor, page ) {
+	await page.locator( '.eicon-plus-circle' ).first().click();
+
+	await page.click( 'text=Media Library' );
+
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
+	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
+
+	await page.locator( 'text=Create a new gallery' ).click();
+
+	await page.locator( 'text=Insert gallery' ).click();
+}

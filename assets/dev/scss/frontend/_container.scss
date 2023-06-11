@@ -136,7 +136,7 @@
 		max-width: var( --content-width );
 		margin: 0 auto;
 		padding-inline: 0;
-		height: 100%;
+		height: fit-content; // Fix container size with grid min height [ED-10504]
 	}
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
