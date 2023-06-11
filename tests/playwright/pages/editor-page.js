@@ -804,4 +804,10 @@ module.exports = class EditorPage extends BasePage {
 		expect( imageSize.width ).toEqual( args.width );
 		expect( imageSize.height ).toEqual( args.height );
 	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size', fontsize );
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+	}
 };

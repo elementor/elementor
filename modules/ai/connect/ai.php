@@ -49,7 +49,7 @@ class Ai extends Library {
 	private function get_file_payload( $filename, $file_type, $file_path, $boundary ) {
 		$name = $filename ?? basename( $file_path );
 		$mine_type = 'image' === $file_type ? image_type_to_mime_type( exif_imagetype( $file_path ) ) : $file_type;
-		$payload ='';
+		$payload = '';
 		// Upload the file
 		$payload .= '--' . $boundary;
 		$payload .= "\r\n";
@@ -315,7 +315,7 @@ class Ai extends Library {
 		$temp_file = tempnam( sys_get_temp_dir(), 'ai' ) . $file_ext;
 		file_put_contents( $temp_file, $file_content );
 		// make sure the temp file is deleted on shutdown
-		register_shutdown_function( function() use( $temp_file ) {
+		register_shutdown_function( function () use ( $temp_file ) {
 			@unlink( $temp_file );
 		} );
 		return $temp_file;
@@ -329,8 +329,8 @@ class Ai extends Library {
 	 * @throws \Exception
 	 */
 	public function get_image_to_image_out_painting( $image_data ) {
-		$img_content = str_replace(' ','+',$image_data['mask'] );
-		$img_content = substr( $img_content,strpos($img_content,',' ) + 1 );
+		$img_content = str_replace( ' ', '+', $image_data['mask'] );
+		$img_content = substr( $img_content, strpos( $img_content, ',' ) + 1 );
 		$img_content = base64_decode( $img_content );
 		$mask_file = $this->store_temp_file( $img_content, '.png' );
 
@@ -398,7 +398,7 @@ class Ai extends Library {
 					'name' => 'mask_image',
 					'type' => 'image/svg+xml',
 					'path' => $mask_file,
-				]
+				],
 			]
 		);
 
