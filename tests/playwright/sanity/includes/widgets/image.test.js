@@ -93,7 +93,7 @@ test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => 
 		await editor.addWidget( 'image' );
 		await page.locator( EditorSelectors.media.preview ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await page.setInputFiles( 'input[type="file"]', path.resolve( `./resources/${ image }` ) );
+		await page.setInputFiles( 'input[type="file"]', path.resolve( __dirname, `../../../resources/${ image }` ) );
 		await page.locator( '#attachment-details-title' ).fill( 'Elementor Logo (title)' );
 		await page.locator( '#attachment-details-description' ).fill( 'WP + Elementor = ❤️ (description)' );
 		await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
