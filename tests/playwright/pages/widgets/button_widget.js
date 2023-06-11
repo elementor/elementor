@@ -1,9 +1,11 @@
-import EditorPage from '../editor-page';
+const EditorPage = require( '../editor-page' );
 import EditorSelectors from '../../selectors/editor-selectors';
+import Content from '../elementor-panel-tabs/content';
 import { expect } from '@playwright/test';
 
-export default class ButtonWidget {
+export default class ButtonWidget extends Content {
 	constructor( page, testInfo ) {
+		super( page, testInfo );
 		this.page = page;
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
@@ -23,22 +25,5 @@ export default class ButtonWidget {
 			return await this.page.locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
 		}
 		return await this.editorPage.getPreviewFrame().locator( EditorSelectors.button.getByName( buttonName ) ).getAttribute( 'id' );
-	}
-
-	async setButtonLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined } ) {
-		const urlInput = this.page.locator( EditorSelectors.button.url );
-		await urlInput.clear();
-		await urlInput.type( link );
-		await this.page.locator( EditorSelectors.button.linkOptions ).click();
-		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
-		}
-		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.noFollowChbox ).check();
-		}
-		if ( options.customAttributes ) {
-			await this.page.locator( EditorSelectors.button.customAttributesInp ).type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
-		}
-		await this.editorPage.getPreviewFrame().getByRole( 'heading', { name: 'Hello world!' } ).nth( 0 ).click();
 	}
 }
