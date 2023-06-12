@@ -29,6 +29,7 @@ module.exports = class {
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
 		await this.page.reload();
+		await page.waitForLoadState( 'load' );
 
 		if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
 			await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
