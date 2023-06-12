@@ -61,8 +61,12 @@ const EditorSelectors = {
 	},
 	imageBox: {
 		widget: '[data-widget_type="image-box.default"]',
+		imageSizeSelect: 'select[data-setting="thumbnail_size"]',
 		get link() {
 			return `${ this.widget } a`;
+		},
+		get image() {
+			return `${ this.widget } img`;
 		},
 	},
 	textPath: {
