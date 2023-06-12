@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
-test.describe( 'Styleguide Preview tests @styleguide', () => {
+test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
