@@ -41,6 +41,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'html',
 		'alert',
 		'button_hover',
+		'image_hover',
+		'image_box_hover',
+		'icon_hover',
 	];
 
 	for ( const widgetType of testData ) {
@@ -48,6 +51,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',
+				image_hover: 'img',
+				image_box_hover: 'img',
+				icon_hover: '.elementor-icon.elementor-animation-rotate',
 			};
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );

@@ -3,7 +3,7 @@ import { IMAGE_ACTIONS } from '../../consts/consts';
 import ChevronLeftIcon from '../../../../icons/chevron-left-icon';
 import ChevronRightIcon from '../../../../icons/chevron-right-icon';
 import DownloadIcon from '../../../../icons/download-icon';
-import VariationsIcon from '../../../../icons/variations-icon';
+import EditIcon from '../../../../icons/edit-icon';
 
 const ZoomImage = (
 	{
@@ -11,9 +11,12 @@ const ZoomImage = (
 		zoomedImageIndex,
 		imageNavigation,
 		handleImageAction,
+		viewData,
 	},
 ) => {
 	const currentImage = images[ zoomedImageIndex ];
+
+	const { width, height } = viewData;
 
 	return (
 		<Stack alignItems="flex-start" spacing={ 2 }>
@@ -38,10 +41,10 @@ const ZoomImage = (
 							<Button
 								size="small"
 								color="secondary"
-								startIcon={ <VariationsIcon /> }
+								startIcon={ <EditIcon /> }
 								onClick={ () => handleImageAction( IMAGE_ACTIONS.REFERENCE, currentImage ) }
 							>
-								{ __( 'Use as Reference', 'elementor' ) }
+								{ __( 'Edit', 'elementor' ) }
 							</Button>
 
 							<Button
@@ -59,14 +62,8 @@ const ZoomImage = (
 						display="flex"
 						justifyContent="center"
 						alignItems="center"
-						sx={ {
-							bgcolor: 'secondary.background',
-							width: 512,
-							height: 512,
-							overflow: 'hidden',
-						} }
 					>
-						<img src={ currentImage.image_url } alt={ '' } />
+						<img src={ currentImage.image_url } alt={ '' } style={ { width, height } } />
 					</Box>
 				</Stack>
 
@@ -83,6 +80,7 @@ ZoomImage.propTypes = {
 	zoomedImageIndex: PropTypes.number,
 	handleImageAction: PropTypes.func,
 	imageNavigation: PropTypes.object,
+	viewData: PropTypes.object,
 };
 
 export default ZoomImage;

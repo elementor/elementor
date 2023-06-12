@@ -162,4 +162,8 @@ module.exports = class WpAdminPage extends BasePage {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
 	}
+
+	async editWithElementor() {
+		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
+	}
 };

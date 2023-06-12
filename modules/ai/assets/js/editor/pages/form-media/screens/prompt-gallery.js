@@ -8,6 +8,7 @@ import Overlay from '../../../components/ui/overlay';
 import OverlayBar from '../../../components/ui/overlay-bar';
 import CopyIcon from '../../../icons/copy-icon';
 import DownloadIcon from '../../../icons/download-icon';
+import EditIcon from '../../../icons/edit-icon';
 
 const shuffleImages = ( images ) => {
 	return images
@@ -105,6 +106,15 @@ const PromptGallery = ( {
 												} }>
 
 													<CopyIcon />
+												</IconButton>
+											</Tooltip>
+
+											<Tooltip title={ __( 'Edit', 'elementor' ) }>
+												<IconButton
+													sx={ { mr: -4, ml: 2, color: 'common.white', '&:hover': { color: 'common.white' } } }
+													onClick={ () => maybeUploadImage( suggestedPrompt ) }
+												>
+													<EditIcon />
 												</IconButton>
 											</Tooltip>
 										</Box>
