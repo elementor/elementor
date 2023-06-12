@@ -7,7 +7,7 @@ async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor,
 		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 	// Add images.
-	await imageCarousel.populateImageCarousel();
+	await imageCarousel.addImageGallery();
 	await imageCarousel.setAutoplay();
 
 	// Set direction right.

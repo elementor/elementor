@@ -18,7 +18,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.useCanvasTemplate();
 		const widgetId = await imageCarousel.addWidget();
 		await imageCarousel.selectNavigation( 'none' );
-		await imageCarousel.populateImageCarousel();
+		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
 
 		await test.step( 'Verify image population', async () => {
@@ -138,7 +138,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Populate the widget with images.
-		await imageCarousel.populateImageCarousel();
+		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSelectControlValue( 'autoplay', 'yes' );
@@ -161,6 +161,36 @@ test.describe( 'Image carousel tests', () => {
 			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
 			await expect( await editor.getPreviewFrame().locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
 		} );
+	} );
+
+	test( 'Image caption test', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const imageCarousel = new ImageCarousel( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			e_swiper_latest: false,
+		} );
+
+		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
+		await editor.useCanvasTemplate();
+		await imageCarousel.addWidget();
+		await imageCarousel.selectNavigation( 'none' );
+		await imageCarousel.addImageGallery( [ 'A.jpg', 'B.jpg', 'C.jpg' ], true );
+		await imageCarousel.setAutoplay();
+		await editor.openSection( 'section_image_carousel' );
+
+		const caption = [ 'Test caption!', 'Test caption!', 'Test caption!' ];
+		const description = [ 'Test description!', 'Test description!', 'Test description!' ];
+		const title = [ 'A', 'B', 'C' ];
+
+		await imageCarousel.setCaption( 'caption' );
+		await imageCarousel.verifyCaption( caption );
+		await imageCarousel.setCaption( 'description' );
+		await imageCarousel.verifyCaption( description );
+		await imageCarousel.setCaption( 'title' );
+		await imageCarousel.verifyCaption( title );
 	} );
 } );
 

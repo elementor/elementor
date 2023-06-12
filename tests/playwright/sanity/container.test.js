@@ -319,7 +319,7 @@ test.describe( 'Container tests @container', () => {
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Add images.
-		await imageCarousel.populateImageCarousel();
+		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
 
 		// Duplicate carousel widget.

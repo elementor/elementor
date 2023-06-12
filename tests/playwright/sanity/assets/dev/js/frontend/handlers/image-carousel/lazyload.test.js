@@ -9,7 +9,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo )
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
 	await editor.addWidget( 'image-carousel' );
-	await imageCarousel.populateImageCarousel( images );
+	await imageCarousel.addImageGallery( images );
 	await imageCarousel.setAutoplay();
 	await page.click( '.elementor-control-lazyload >> span' );
 

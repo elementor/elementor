@@ -13,7 +13,7 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	await editor.addWidget( 'image-gallery' );
 
 	// Act.
-	await imageCarousel.populateImageCarousel();
+	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
 	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'gallery.jpeg' );
@@ -62,7 +62,7 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 
 async function testBasicSwiperGallery( editor, page, imageCarousel ) {
 	// Act.
-	await imageCarousel.populateImageCarousel();
+	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
 	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
