@@ -43,8 +43,20 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		};
 	}
 
-	changeVideoSize( $video = null ) {
-		$video = this.getVideoElement( $video );
+	changeVideoSize() {
+		if ( ! ( 'hosted' === this.videoType ) && ! this.player ) {
+			return;
+		}
+
+		let $video;
+
+		if ( 'youtube' === this.videoType ) {
+			$video = jQuery( this.player.getIframe() );
+		} else if ( 'vimeo' === this.videoType ) {
+			$video = jQuery( this.player.element );
+		} else if ( 'hosted' === this.videoType ) {
+			$video = this.elements.$backgroundVideoHosted;
+		}
 
 		if ( ! $video ) {
 			return;
@@ -53,26 +65,6 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		const size = this.calcVideosSize( $video );
 
 		$video.width( size.width ).height( size.height );
-	}
-
-	getVideoElement( $video = null ) {
-		if ( !! $video && $video instanceof jQuery ) {
-			return $video;
-		}
-
-		if ( ! ( 'hosted' === this.videoType ) && ! this.player ) {
-			return false;
-		}
-
-		if ( 'youtube' === this.videoType ) {
-			return jQuery( this.player.getIframe() );
-		} else if ( 'vimeo' === this.videoType ) {
-			return jQuery( this.player.element );
-		} else if ( 'hosted' === this.videoType ) {
-			return this.elements.$backgroundVideoHosted;
-		}
-
-		return false;
 	}
 
 	startVideoLoop( firstTime ) {
@@ -261,7 +253,6 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		}
 
 		elementorFrontend.elements.$window.on( 'resize', this.changeVideoSize );
-		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.onActivateNestedTab.bind( this ) );
 	}
 
 	deactivate() {
@@ -299,15 +290,6 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 	onElementChange( propertyName ) {
 		if ( 'background_background' === propertyName ) {
 			this.run();
-		}
-	}
-
-	onActivateNestedTab( event, $contentContainer ) {
-		const $video = this.getVideoElement(),
-			videoIsInsideTarget = $contentContainer?.contains( $video[ 0 ] );
-
-		if ( 'elementor/nested-tabs/activate' === event?.type && videoIsInsideTarget ) {
-			this.changeVideoSize( $video );
 		}
 	}
 }
