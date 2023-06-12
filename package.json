@@ -131,9 +131,11 @@
         "mime": "^3.0.0",
         "prop-types": "^15.8.1",
         "reach-router-hash-history": "0.0.3",
+        "react-avatar-editor": "^13.0.0",
         "react-draggable": "^4.4.5",
         "react-markdown": "^8.0.5",
         "react-redux": "^7.2.6",
+        "react-sketch-canvas": "^6.2.0",
         "write": "^2.0.0"
     },
     "overrides": {

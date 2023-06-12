@@ -4,10 +4,11 @@ import useImagePrompt from '../../hooks/use-image-prompt';
 import useImageUpload from '../../hooks/use-image-upload';
 import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
 import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES } from './consts/consts';
+import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIO_DIMENSIONS } from './consts/consts';
 import { Screen } from './screens/screen';
 import { PanelContent } from './panel-content/panel-content';
 import Panel from '../../components/ui/panel';
+import { getAspectRatioSizes } from './utils';
 
 const FormMedia = (
 	{
@@ -22,10 +23,11 @@ const FormMedia = (
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? { id: '', url: '' } : getControlValue();
 	const [ editImage, setEditImage ] = useState( initialValue );
 	const { screen, setScreen, panel, setPanel } = useImageScreenPanel(
-		initialValue?.id !== '' ? SCREENS.VARIATIONS : SCREENS.GALLERY,
-		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.IMAGE_TO_IMAGE,
+		initialValue?.id !== '' ? SCREENS.IMAGE_EDITOR : SCREENS.GALLERY,
+		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.TOOLS,
 	);
 	const [ prompt, setPrompt ] = useState( '' );
+	const [ maskImage, setMaskImage ] = useState( '' );
 	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
 		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
 	} );
@@ -38,7 +40,40 @@ const FormMedia = (
 	} );
 	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
 
-	const panelActive = ! isLoading && ! isUploading;
+	const initialImageUrl = editImage?.url || additionalOptions?.defaultValue?.url;
+
+	const [ shouldWaitForInitialImage, setShouldWaitForInitialImage ] = useState( () => !! initialImageUrl );
+
+	const panelActive = ! isLoading && ! isUploading && ! shouldWaitForInitialImage;
+
+	const currentAspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
+
+	const viewData = {
+		width: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].width,
+		height: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].height,
+		ratio: currentAspectRatio,
+	};
+
+	const setTool = ( tool ) => {
+		const newPanel = tool || PANELS.TOOLS;
+		let newScreen = SCREENS.IMAGE_EDITOR;
+		switch ( tool ) {
+			case PANELS.IMAGE_TO_IMAGE:
+				newScreen = SCREENS.VARIATIONS;
+				break;
+			case PANELS.IN_PAINTING:
+				newScreen = SCREENS.IN_PAINTING;
+				break;
+			case PANELS.OUT_PAINTING:
+				newScreen = SCREENS.OUT_PAINTING;
+				break;
+			case PANELS.UPSCALE:
+				newScreen = SCREENS.IMAGE_EDITOR;
+				break;
+		}
+		setPanel( newPanel );
+		setScreen( newScreen );
+	};
 
 	const setAttachment = () => {
 		setHasUnsavedChanges( false );
@@ -48,6 +83,27 @@ const FormMedia = (
 		onClose();
 	};
 
+	// Get ratio from image
+	useEffect( () => {
+		if ( ! editImage ) {
+			return;
+		}
+
+		setShouldWaitForInitialImage( true );
+
+		const img = new Image();
+
+		img.src = initialImageUrl;
+
+		img.onload = () => {
+			const { ratio } = getAspectRatioSizes( img.width, img.height );
+
+			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: ratio } );
+			setShouldWaitForInitialImage( false );
+		};
+	}, [ editImage ] );
+
+	// Image Generation
 	useEffect( () => {
 		if ( ! isLoading && data?.result && Array.isArray( data?.result ) ) {
 			setImages( data?.result );
@@ -55,14 +111,15 @@ const FormMedia = (
 		}
 	}, [ isLoading ] );
 
+	// Image Upload and set attachment
 	useEffect( () => {
 		if ( ! isUploading && attachmentData?.image?.id ) {
 			if ( insertToControl ) {
 				setAttachment( attachmentData.image );
 			} else {
 				setEditImage( attachmentData.image );
-				setPanel( PANELS.IMAGE_TO_IMAGE );
-				updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
+				setPanel( PANELS.TOOLS );
+				setScreen( SCREENS.IMAGE_EDITOR );
 			}
 		}
 	}, [ isUploading ] );
@@ -83,7 +140,7 @@ const FormMedia = (
 				const { image, ...attachment } = editImage;
 				return setAttachment( attachment );
 			}
-			setPanel( PANELS.IMAGE_TO_IMAGE );
+			setPanel( PANELS.TOOLS );
 			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
 		}
 
@@ -99,7 +156,7 @@ const FormMedia = (
 		upload( { image: { ...imageToUpload }, prompt: prompt || imageToUpload.prompt } );
 	};
 
-	const submitPrompt = ( promptType, userPrompt ) => {
+	const submitPrompt = ( promptType, userPrompt, mask = null ) => {
 		reset();
 		resetUpload();
 		setHasUnsavedChanges( true );
@@ -107,12 +164,26 @@ const FormMedia = (
 		if ( PANELS.TEXT_TO_IMAGE === promptType ) {
 			return send( userPrompt, promptSettings );
 		}
+
+		if ( PANELS.IN_PAINTING === promptType ) {
+			return send( userPrompt, promptSettings, editImage, PANELS.IN_PAINTING, mask );
+		}
+
+		if ( PANELS.OUT_PAINTING === promptType ) {
+			return send( userPrompt, promptSettings, true, PANELS.OUT_PAINTING, maskImage );
+		}
+
+		if ( PANELS.UPSCALE === promptType ) {
+			return send( null, promptSettings, editImage, PANELS.UPSCALE );
+		}
+
 		return send( prompt, promptSettings, editImage );
 	};
 
 	const generateNewPrompt = () => {
 		setPrompt( '' );
 		setImages( [] );
+		setMaskImage( null );
 		setEditImage( { id: '', url: '' } );
 		resetPromptSettings();
 		setScreen( SCREENS.GALLERY );
@@ -138,6 +209,10 @@ const FormMedia = (
 						panel,
 						editImage,
 						images,
+						setTool,
+						maskImage,
+						reset,
+						viewData,
 					} } />
 				</Panel>
 			</Box>
@@ -152,6 +227,10 @@ const FormMedia = (
 				generateNewPrompt,
 				maybeUploadImage,
 				setPrompt,
+				editImage,
+				setMaskImage,
+				viewData,
+				shouldWaitForInitialImage,
 			} } />
 		</Box>
 	);

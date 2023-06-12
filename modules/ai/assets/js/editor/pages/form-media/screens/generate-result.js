@@ -9,6 +9,7 @@ const FormGenerateResult = (
 		maybeUploadImage,
 		images,
 		aspectRatio,
+		viewData,
 	},
 ) => {
 	const { zoomedImageIndex, setZoomedImageIndex, imageNavigation } = useImageNavigation( images );
@@ -18,7 +19,7 @@ const FormGenerateResult = (
 			case IMAGE_ACTIONS.USE:
 				maybeUploadImage( imageForAction, true );
 				break;
-			case IMAGE_ACTIONS.REFERENCE:
+			case IMAGE_ACTIONS.REFERENCE: // TODO: currently the reference action is the edit action.
 				maybeUploadImage( imageForAction );
 				break;
 			case IMAGE_ACTIONS.ZOOM:
@@ -35,6 +36,7 @@ const FormGenerateResult = (
 					zoomedImageIndex,
 					handleImageAction,
 					imageNavigation,
+					viewData,
 				} } />
 				: <ResultsGrid { ...{
 					images,
@@ -50,6 +52,7 @@ FormGenerateResult.propTypes = {
 	maybeUploadImage: PropTypes.func.isRequired,
 	images: PropTypes.array,
 	aspectRatio: PropTypes.string,
+	viewData: PropTypes.object.isRequired,
 };
 
 export default FormGenerateResult;

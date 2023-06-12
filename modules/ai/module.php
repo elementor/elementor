@@ -31,8 +31,12 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_custom_css', [ $this, 'ajax_ai_get_custom_css' ] );
 			$ajax->register_ajax_action( 'ai_set_get_started', [ $this, 'ajax_ai_set_get_started' ] );
 			$ajax->register_ajax_action( 'ai_set_status_feedback', [ $this, 'ajax_ai_set_status_feedback' ] );
+			$ajax->register_ajax_action( 'ai_get_image_prompt_enhancer', [ $this, 'ajax_ai_get_image_prompt_enhancer' ] );
 			$ajax->register_ajax_action( 'ai_get_text_to_image', [ $this, 'ajax_ai_get_text_to_image' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image', [ $this, 'ajax_ai_get_image_to_image' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_mask', [ $this, 'ajax_ai_get_image_to_image_mask' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_outpainting', [ $this, 'ajax_ai_get_image_to_image_outpainting' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_upscale', [ $this, 'ajax_ai_get_image_to_image_upscale' ] );
 			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
 		} );
 
@@ -56,7 +60,6 @@ class Module extends BaseModule {
 				'ElementorAiConfig',
 				[
 					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'is_images_enabled' => Plugin::$instance->experiments->is_feature_active( 'e_ai_images' ),
 				]
 			);
 		} );
@@ -109,6 +112,31 @@ class Module extends BaseModule {
 		if ( ! $document->is_built_with_elementor() || ! $document->is_editable_by_current_user() ) {
 			throw new \Exception( 'Access denied' );
 		}
+	}
+
+	public function ajax_ai_get_image_prompt_enhancer( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->get_image_prompt_enhanced( $data['prompt'] );
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'text' => $result['text'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
 	}
 
 	public function ajax_ai_get_completion_text( $data ) {
@@ -319,6 +347,114 @@ class Module extends BaseModule {
 		];
 	}
 
+	public function ajax_ai_get_image_to_image_upscale( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['promptSettings'] ) ) {
+			throw new \Exception( 'Missing prompt settings' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->get_image_to_image_upscale( [
+			'promptSettings' => $data['promptSettings'],
+			'attachment_id' => $data['image']['id'],
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_image_to_image_mask( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['promptSettings'] ) ) {
+			throw new \Exception( 'Missing prompt settings' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		if ( empty( $data['mask'] ) ) {
+			throw new \Exception( 'Missing Mask' );
+		}
+
+		$result = $app->get_image_to_image_mask( [
+			'prompt' => $data['prompt'],
+			'promptSettings' => $data['promptSettings'],
+			'attachment_id' => $data['image']['id'],
+			'mask' => $data['mask'],
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+	public function ajax_ai_get_image_to_image_outpainting( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		if ( empty( $data['mask'] ) ) {
+			throw new \Exception( 'Missing Expended Image' );
+		}
+
+		$result = $app->get_image_to_image_out_painting( [
+			'prompt' => $data['prompt'],
+			'mask' => $data['mask'],
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
 	public function ajax_ai_upload_image( $data ) {
 		if ( empty( $data['image'] ) ) {
 			throw new \Exception( 'Missing image data' );
@@ -327,10 +463,6 @@ class Module extends BaseModule {
 
 		if ( empty( $image['image_url'] ) ) {
 			throw new \Exception( 'Missing image_url' );
-		}
-
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
 		}
 
 		$image_data = $this->upload_image( $image['image_url'], $data['prompt'], $data['editor_post_id'] );
