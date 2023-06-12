@@ -34,7 +34,7 @@ export default class ImageCarousel extends Content {
 		const _images = images === undefined ? defaultImages : images;
 
 		for ( const i in _images ) {
-			await this.page.setInputFiles( EditorSelectors.media.imageInp, resolve( `./resources/${ _images[ i ] }` ) );
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, resolve( __dirname, `../../resources/${ _images[ i ] }` ) );
 		}
 		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
 		await this.page.locator( 'text=Insert gallery' ).click();
