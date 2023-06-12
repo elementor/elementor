@@ -116,22 +116,25 @@ test( 'Accessibility test', async ( { page }, testInfo ) => {
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSelectControlValue( 'autoplay', 'no' );
 	await editor.setNumberControlValue( 'speed', 0 );
-	await test.step( 'Assert keyboard navigation inside the editor', async () => {
-		// Assert.
-		await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
+	// Assert.
+	await test.step( 'Assert keyboard navigation in the Frontend', async () => {
+		await editor.publishAndViewPage();
+
+		await page.locator( '.elementor-swiper-button-prev' ).focus();
+		await expect( await page.locator( '.elementor-swiper-button-prev' ) ).toBeFocused();
 		await page.keyboard.press( 'Tab' );
-		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+		await expect( await page.locator( '.elementor-swiper-button-next' ) ).toBeFocused();
+		await expect( await getActiveSlideDataValue( page ) ).toEqual( '0' );
 		await page.keyboard.press( 'Enter' );
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
 		await page.keyboard.press( 'ArrowLeft' );
-		await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+		await expect( await page.locator( '.elementor-swiper-button-next' ) ).toBeFocused();
+		await expect( await getActiveSlideDataValue( page ) ).toEqual( '0' );
 		await page.keyboard.press( 'Enter' );
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+		await expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
 		await page.keyboard.press( 'Tab' );
-		await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
-		await expect( await editor.getPreviewFrame().locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
+		await expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
+		await expect( await page.locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
 	} );
 } );
 
