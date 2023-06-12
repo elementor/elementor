@@ -37,7 +37,7 @@ module.exports = class {
 
 		if ( isExperimentBreakpoints ) {
 			const breakpoints = new Breakpoints( this.page, this.testInfo );
-			await breakpoints.addAllBreakpoints();
+			await breakpoints.addAllBreakpoints( this.editor.postId );
 		}
 
 		await this.open();
