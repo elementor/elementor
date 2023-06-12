@@ -13,7 +13,7 @@ const data = [
 ];
 
 for ( const widget in data ) {
-	test( `Verify ${ data[ widget ].title } link control`, async ( { page }, testInfo ) => {
+	test( `Verify ${ data[ widget ].title } link control: @styleguide_image_link`, async ( { page }, testInfo ) => {
 		const link = 'https://elementor.com/';
 		const customAttributes = { key: 'mykey', value: 'myValue' };
 		const wpAdmin = new WpAdminPage( page, testInfo );
