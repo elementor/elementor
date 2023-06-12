@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import { IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIOS } from '../../consts/consts';
 import PromptActionSelection from '../../../../components/prompt-action-selection';
-import { FormControl, Slider, Stack, Box, Typography } from '@elementor/ui';
+import { FormControl, Slider, Stack, Box, Typography, InputAdornment, IconButton, Tooltip, CircularProgress } from '@elementor/ui';
 import useSessionStorage from '../../../../hooks/use-session-storage';
 import Textarea from '../../../../components/textarea';
+import WandIcon from '../../../../icons/wand-icon';
+import useImagePromptEnhancer from '../../../../hooks/use-image-prompt-enhancer';
 
 const getPromptPlaceholder = ( data ) => {
 	if ( ! data?.images?.length ) {
@@ -28,6 +31,19 @@ const PromptForm = ( {
 	const selectedCategory = IMAGE_PROMPT_CATEGORIES.find( ( category ) => category.key === promptSettings[ IMAGE_PROMPT_SETTINGS.IMAGE_TYPE ] ) || { subCategories: {} };
 
 	const { data } = useSessionStorage( 'ai-image-gallery' );
+
+	const {
+		data: imagePromptData,
+		isLoading: imagePromptIsLoading,
+		send: imagePromptEnhancer,
+	} = useImagePromptEnhancer( prompt );
+
+	// Image Prompt Enhancer
+	useEffect( () => {
+		if ( ! imagePromptIsLoading && imagePromptData?.result ) {
+			setPrompt( imagePromptData?.result );
+		}
+	}, [ imagePromptIsLoading ] );
 
 	const placeholderInitialValue = getPromptPlaceholder( data );
 
@@ -69,7 +85,7 @@ const PromptForm = ( {
 			<Textarea
 				minRows={ 3 }
 				maxRows={ 6 }
-				disabled={ ! panelActive }
+				disabled={ ! panelActive || imagePromptIsLoading }
 				placeholder={ placeholderInitialValue }
 				onChange={ ( event ) => setPrompt( event.target.value ) }
 				value={ prompt }
@@ -78,6 +94,41 @@ const PromptForm = ( {
 						event.preventDefault();
 						setPrompt( placeholderInitialValue );
 					}
+				} }
+				InputProps={ {
+					endAdornment: (
+						<InputAdornment
+							position="end"
+							sx={ {
+								position: 'absolute',
+								bottom: '24px',
+								right: '8px',
+							} }
+						>
+							{
+								imagePromptIsLoading
+									? <CircularProgress color="secondary" size={ 20 } sx={ { mr: 2 } } />
+									: <Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
+										<Box component="span" sx={ { cursor: 'pointer' } }>
+											<IconButton
+												size="small"
+												color="secondary"
+												onClick={ () => imagePromptEnhancer( prompt ) }
+												disabled={ ! panelActive || imagePromptIsLoading || ! prompt }
+											>
+												<WandIcon />
+											</IconButton>
+										</Box>
+									</Tooltip>
+							}
+						</InputAdornment>
+					),
+				} }
+				sx={ {
+					'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
+						pb: 9,
+						width: '89%',
+					},
 				} }
 			/>
 
@@ -99,14 +150,14 @@ const PromptForm = ( {
 				disabled={ ! panelActive || ( ! imageType || false ) }
 			/>
 
-			<PromptActionSelection
+			{ ! disableAspectRatio && <PromptActionSelection
 				wrapperStyle={ { width: '100%' } }
 				label={ __( 'Aspect ratio', 'elementor' ) }
 				options={ Object.entries( IMAGE_ASPECT_RATIOS ).map( ( [ value, label ] ) => ( { label, value } ) ) }
 				onChange={ ( event ) => updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: event.target.value } ) }
 				value={ aspectRatio }
 				disabled={ ! panelActive || disableAspectRatio }
-			/>
+			/> }
 		</Stack>
 	</>;
 };
