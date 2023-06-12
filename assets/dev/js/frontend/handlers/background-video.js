@@ -261,7 +261,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		}
 
 		elementorFrontend.elements.$window.on( 'resize', this.changeVideoSize );
-		elementorFrontend.elements.$window.on( 'elementor/runElementHandlers', this.onRunElementHandlers.bind( this ) );
+		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.onActivateNestedTab.bind( this ) );
 	}
 
 	deactivate() {
@@ -302,11 +302,11 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		}
 	}
 
-	onRunElementHandlers( event, targetElement ) {
+	onActivateNestedTab( event, $contentContainer ) {
 		const $video = this.getVideoElement(),
-			videoIsInsideTarget = targetElement?.contains( $video[ 0 ] );
+			videoIsInsideTarget = $contentContainer?.contains( $video[ 0 ] );
 
-		if ( 'elementor/runElementHandlers' === event?.type && videoIsInsideTarget ) {
+		if ( 'elementor/nested-tabs/activate' === event?.type && videoIsInsideTarget ) {
 			this.changeVideoSize( $video );
 		}
 	}
