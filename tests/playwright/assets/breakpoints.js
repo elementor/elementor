@@ -30,13 +30,13 @@ module.exports = class {
 		await this.page.waitForSelector( '#elementor-toast' );
 
 		if ( experimentPostId ) {
-			await page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
+			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
 		} else {
 			await this.page.reload();
-		}
 
-		if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
-			await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
+			if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
+				await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
+			}
 		}
 
 		await this.page.waitForSelector( '#elementor-editor-wrapper' );
