@@ -22,6 +22,8 @@ const EditorSelectors = {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
 		selectBtn: '.button.media-button',
+		imageInp: 'input[type="file"]',
+		addGalleryButton: 'button.media-button-gallery',
 	},
 	siteTitle: 'h1.site-title',
 	pageTitle: 'h1.entry-title',
@@ -68,6 +70,15 @@ const EditorSelectors = {
 		get image() {
 			return `${ this.widget } img`;
 		},
+	},
+	imageCarousel: {
+		widget: '[data-widget_type="image-carousel.default"]',
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+		navigationSelect: '.elementor-control-navigation select',
+		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySpeedLabel: 'Autoplay Speed',
+		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
+		autoplayToggle: '.elementor-switch-handle',
 	},
 	textPath: {
 		widget: '[data-widget_type="text-path.default"]',

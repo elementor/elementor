@@ -7,6 +7,7 @@ const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
+import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -21,6 +22,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test( 'General test', async ( { page }, testInfo ) => {
+		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -33,7 +35,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Tests.
 		await testIconCount( page, editor );
-		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId, imageCarousel );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
