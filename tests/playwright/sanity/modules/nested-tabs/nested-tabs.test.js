@@ -6,7 +6,7 @@ const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
-const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
+const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -1108,20 +1108,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await editor.selectElement( contentContainerOneId );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.eicon-video-camera' ).first().click();
-		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
-
-		await editor.selectElement( contentContainerTwoId );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.eicon-video-camera' ).first().click();
-		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
-
-		await editor.selectElement( contentContainerThreeId );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.eicon-video-camera' ).first().click();
-		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+		await setBackgroundVideoUrl( contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( contentContainerThreeId, videoUrl );
 
 		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect( videoContainer ).toHaveCount( 1 );

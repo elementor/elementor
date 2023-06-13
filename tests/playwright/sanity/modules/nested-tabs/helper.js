@@ -104,6 +104,13 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
+async function setBackgroundVideoUrl( elementId, videoUrl ) {
+	await editor.selectElement( elementId );
+	await editor.activatePanelTab( 'style' );
+	await page.locator( '.eicon-video-camera' ).first().click();
+	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+}
+
 module.exports = {
 	tabIcons,
 	addIcon,
@@ -116,4 +123,5 @@ module.exports = {
 	setTabBorderColor,
 	setTabItemColor,
 	selectDropdownContainer,
+	setBackgroundVideoUrl,
 };
