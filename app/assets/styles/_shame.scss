@@ -6,20 +6,20 @@
 
 .video-wrapper {
 	position: relative;
-	padding-bottom: $eps-ratio-16-9;
+	padding-block-end: $eps-ratio-16-9;
 	height: 0;
 
 	iframe {
 		position: absolute;
 		top: 0;
-		left: 0;
+		@include start(0);
 		width: 100%;
 		height: 100%;
 	}
 }
 
 .#{$eps-prefix}separator {
-	margin-bottom: spacing(44);
+	margin-block-end: spacing(44);
 }
 
 
@@ -29,7 +29,7 @@
 
 .back-button, .e-app-back-button {
 	--button-background-color: var(--e-app-back-button-color, #{tints(500)});
-	margin-bottom: spacing(24);
+	margin-block-end: spacing(24);
 
 	.eps-icon {
 		margin-inline-end: spacing(5);

@@ -26,7 +26,7 @@ $root: eps-list;
 
 	&--separated {
 		.#{$root}__item:not(:last-child) {
-			border-bottom: 1px solid var(--eps-list-item-separated-border-color);
+			border-block-end: 1px solid var(--eps-list-item-separated-border-color);
 		}
 	}
 }

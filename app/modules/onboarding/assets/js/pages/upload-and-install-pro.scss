@@ -11,7 +11,7 @@
 	}
 
 	&-drop-zone {
-		margin-bottom: 24px;
+		margin-block-end: 24px;
 
 		h1 {
 			font-family: 'Source Serif Pro', 'Roboto', sans-serif;
@@ -24,7 +24,7 @@
 		.eps-display-3,
 		.e-app-drop-zone__text,
 		.e-app-drop-zone__secondary-text {
-			margin-bottom: 12px;
+			margin-block-end: 12px;
 		}
 
 		.e-app-upload-file__button {
@@ -37,7 +37,7 @@
 
 	&-get-file {
 		font-size: 12px;
-		margin-top: 24px;
+		margin-block-start: 24px;
 
 		a {
 			text-decoration: underline;
@@ -45,6 +45,6 @@
 	}
 
 	.e-onboarding__notice {
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 }
