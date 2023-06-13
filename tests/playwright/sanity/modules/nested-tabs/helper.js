@@ -104,7 +104,7 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
-async function setBackgroundVideoUrl( editor, elementId, videoUrl ) {
+async function setBackgroundVideoUrl( page, editor, elementId, videoUrl ) {
 	await editor.selectElement( elementId );
 	await editor.activatePanelTab( 'style' );
 	await page.locator( '.eicon-video-camera' ).first().click();
