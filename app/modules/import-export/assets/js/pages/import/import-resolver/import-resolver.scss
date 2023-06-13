@@ -15,10 +15,10 @@ $root: e-app-import-resolver;
 	--e-app-import-resolver-conflicts-asset-border-color: #{$e-app-import-resolver-conflicts-asset-border-color};
 	--e-app-import-resolver-conflicts-asset-inactive-color: #{$e-app-import-resolver-conflicts-asset-inactive-color};
 
-	padding-bottom: spacing(20);
+	padding-block-end: spacing(20);
 
 	&__notice {
-		margin-bottom: spacing(20);
+		margin-block-end: spacing(20);
 	}
 
 	&__panel {
