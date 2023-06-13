@@ -135,6 +135,45 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			},
 		};
 
+		if ( 'none' !== elementSettings.offset_slides ) {
+			const offset = elementSettings.offset_width.size,
+				fallbackSlideWidth = 200,
+				containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
+
+			let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
+
+			// If the slide width is not available, assume a default width
+			if ( ! slideWidth ) {
+				slideWidth = fallbackSlideWidth;
+			}
+
+			if ( 'right' === elementSettings.offset_slides ) {
+				const slidesInView = ( containerWidth + offset ) / slideWidth;
+
+				swiperOptions.slidesPerView = slidesInView;
+			}
+
+			if ( 'left' === elementSettings.offset_slides ) {
+				swiperOptions.slidesPerView = slidesToShow;
+				swiperOptions.centeredSlides = true;
+
+				// Add left padding to the Swiper container to show previous slide
+				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+			}
+
+			if ( 'both' === elementSettings.offset_slides ) {
+				const slidesCount = 2,
+					slidesInView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
+
+				swiperOptions.slidesPerView = slidesInView;
+				swiperOptions.centeredSlides = true;
+
+				// Add left and right padding to the Swiper container to show both previous and next slides
+				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
+			}
+		}
+
 		return swiperOptions;
 	}
 
