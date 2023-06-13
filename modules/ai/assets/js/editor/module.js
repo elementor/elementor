@@ -59,24 +59,18 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
-			if ( ! window.ElementorAiConfig.is_images_enabled ) {
-				behaviors.ai = {
-					behaviorClass: AiPromotionBehavior,
-				};
-			} else {
-				behaviors.ai = {
-					behaviorClass: AiBehavior,
-					type: aiOptions.type,
-					buttonLabel: __( 'Create with AI', 'elementor' ),
-					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: ( value ) => {},
-					controlView: view,
-					additionalOptions: {
-						defaultValue: view.options.model.get( 'default' ),
-						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
-					},
-				};
-			}
+			behaviors.ai = {
+				behaviorClass: AiBehavior,
+				type: aiOptions.type,
+				buttonLabel: __( 'Create with AI', 'elementor' ),
+				getControlValue: view.getControlValue.bind( view ),
+				setControlValue: ( value ) => {},
+				controlView: view,
+				additionalOptions: {
+					defaultValue: view.options.model.get( 'default' ),
+					defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
+				},
+			};
 		}
 
 		return behaviors;

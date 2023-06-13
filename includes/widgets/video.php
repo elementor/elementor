@@ -863,13 +863,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
-				],
-				'range' => [
-					'%' => [
-						'min' => 30,
-					],
 				],
 				'selectors' => [
 					'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
