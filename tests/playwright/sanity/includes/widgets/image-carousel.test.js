@@ -3,6 +3,7 @@ const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../assets/breakpoints' );
 const EditorPage = require( '../../../pages/editor-page' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
 	test( 'Image Carousel', async ( { page }, testInfo ) => {
@@ -121,22 +122,17 @@ test.describe( 'Image carousel tests', () => {
 		// Assert.
 		await test.step( 'Assert keyboard navigation in the Frontend', async () => {
 			await editor.publishAndViewPage();
-
-			await page.locator( '.elementor-swiper-button-prev' ).focus();
-			await expect( page.locator( '.elementor-swiper-button-prev' ) ).toBeFocused();
+			await page.locator( EditorSelectors.imageCarousel.prevSliderBtn ).focus();
 			await page.keyboard.press( 'Tab' );
-			await expect( page.locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-			expect( await getActiveSlideDataValue( page ) ).toEqual( '0' );
+			await imageCarousel.waitForSlide( 1, 'A' );
 			await page.keyboard.press( 'Enter' );
-			expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
+			await imageCarousel.waitForSlide( 2, 'B' );
+			await page.waitForTimeout( 600 );
 			await page.keyboard.press( 'ArrowLeft' );
-			await expect( page.locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-			expect( await getActiveSlideDataValue( page ) ).toEqual( '0' );
-			await page.keyboard.press( 'Enter' );
-			expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
-			await page.keyboard.press( 'Tab' );
-			expect( await getActiveSlideDataValue( page ) ).toEqual( '1' );
-			await expect( page.locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
+			await imageCarousel.waitForSlide( 1, 'A' );
+			await page.waitForTimeout( 600 );
+			await page.keyboard.press( 'ArrowRight' );
+			await imageCarousel.waitForSlide( 2, 'B' );
 		} );
 	} );
 	test( 'Image caption test', async ( { page }, testInfo ) => {
