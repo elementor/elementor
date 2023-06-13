@@ -135,7 +135,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			},
 		};
 
-		if ( 'none' !== elementSettings.offset_slides ) {
+		if ( 'none' !== elementSettings.offset_sides ) {
 			const offset = elementSettings.offset_width.size,
 				fallbackSlideWidth = 200,
 				containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
@@ -147,13 +147,13 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				slideWidth = fallbackSlideWidth;
 			}
 
-			if ( 'right' === elementSettings.offset_slides ) {
+			if ( 'right' === elementSettings.offset_sides ) {
 				const slidesInView = ( containerWidth + offset ) / slideWidth;
 
 				swiperOptions.slidesPerView = slidesInView;
 			}
 
-			if ( 'left' === elementSettings.offset_slides ) {
+			if ( 'left' === elementSettings.offset_sides ) {
 				swiperOptions.slidesPerView = slidesToShow;
 				swiperOptions.centeredSlides = true;
 
@@ -161,7 +161,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
 			}
 
-			if ( 'both' === elementSettings.offset_slides ) {
+			if ( 'both' === elementSettings.offset_sides ) {
 				const slidesCount = 2,
 					slidesInView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
 
