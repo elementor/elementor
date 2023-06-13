@@ -201,16 +201,13 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 				],
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 
 		$this->add_control(
 			'hosted_url',
 			[
-				'label' => esc_html__( 'Choose File', 'elementor' ),
+				'label' => esc_html__( 'Choose Video File', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'dynamic' => [
 					'active' => true,
@@ -218,13 +215,12 @@ class Widget_Video extends Widget_Base {
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
-				'media_type' => 'video',
+				'media_types' => [
+					'video',
+				],
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => '',
-				],
-				'ai' => [
-					'active' => false,
 				],
 			]
 		);
@@ -245,14 +241,10 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
-				'media_type' => 'video',
 				'placeholder' => esc_html__( 'Enter your URL', 'elementor' ),
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
-				],
-				'ai' => [
-					'active' => false,
 				],
 			]
 		);
@@ -264,6 +256,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => esc_html__( 'Specify a start time (in seconds)', 'elementor' ),
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -633,6 +626,9 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Play Icon', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'separator' => 'before',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'image_overlay[url]!' => '',
@@ -737,6 +733,20 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_image_overlay_style',
+			[
+				'label' => esc_html__( 'Image Overlay', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_image_overlay' => 'yes',
+					'show_play_icon' => 'yes',
+				],
+			]
+		);
+
 		$this->add_control(
 			'play_icon_title',
 			[
@@ -746,7 +756,6 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -771,6 +780,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 10,
@@ -898,6 +908,7 @@ class Widget_Video extends Widget_Base {
 				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
