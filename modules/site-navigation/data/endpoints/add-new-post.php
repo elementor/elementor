@@ -48,6 +48,9 @@ class Add_New_Post extends Endpoint {
 			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ), [ 'status' => 401 ] );
 		}
 
+		// Temporary solution for the fact that documents creation not using the actual registered post types.
+		$post_type = $this->map_post_type( $post_type );
+
 		$document = Plugin::$instance->documents->create( $post_type );
 
 		if ( is_wp_error( $document ) ) {
@@ -64,5 +67,21 @@ class Add_New_Post extends Endpoint {
 		$post_types = get_post_types();
 
 		return in_array( $post_type, $post_types );
+	}
+
+	/**
+	 * Map post type to Elementor document type.
+	 *
+	 * @param $post_type
+	 *
+	 * @return string
+	 */
+	private function map_post_type( $post_type ): string {
+		$post_type_map = [
+			'page' => 'wp-page',
+			'post' => 'wp-post',
+		];
+
+		return $post_type_map[ $post_type ] ?? $post_type;
 	}
 }

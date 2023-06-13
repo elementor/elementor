@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import PromptDialog from './components/prompt-dialog';
 import FormMedia from './pages/form-media';
-import UpgradeChip from './components/upgrade-chip';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@elementor/ui';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Divider } from '@elementor/ui';
 
 const MediaDialog = ( {
 	onClose,
-	hasSubscription,
 	DialogProps,
 	getControlValue,
 	controlView,
 	additionalOptions,
 	credits,
+	maybeRenderUpgradeChip,
 } ) => {
 	const [ hasUnsavedChanges, setHasUnsavedChanges ] = useState( false );
 	const [ showUnsavedChangeAlert, setShowUnsavedChangeAlert ] = useState( false );
@@ -27,10 +26,12 @@ const MediaDialog = ( {
 
 	return (
 		<>
-			<PromptDialog onClose={ onClose } maxWidth="lg" { ...DialogProps }>
+			<PromptDialog onClose={ onCloseIntent } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ onCloseIntent }>
-					{ ! hasSubscription && <UpgradeChip /> }
+					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
+
+				<Divider />
 
 				<FormMedia
 					onClose={ onClose }
@@ -78,13 +79,12 @@ const MediaDialog = ( {
 
 MediaDialog.propTypes = {
 	onClose: PropTypes.func.isRequired,
-	hasSubscription: PropTypes.bool.isRequired,
 	DialogProps: PropTypes.object,
 	getControlValue: PropTypes.func.isRequired,
 	controlView: PropTypes.object,
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
-
+	maybeRenderUpgradeChip: PropTypes.func,
 };
 
 export default MediaDialog;

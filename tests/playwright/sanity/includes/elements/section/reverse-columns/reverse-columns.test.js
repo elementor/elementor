@@ -17,7 +17,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 		} );
 	}
 
-	test.skip( 'Reverse columns:All - Experiment breakpoints:Off ', async ( { page }, testInfo ) => {
+	test( 'Reverse columns:All - Experiment breakpoints:Off ', async ( { page }, testInfo ) => {
 		const reverseColumns = new ReverseColumns( page, testInfo );
 		await reverseColumns.testReverseColumnsAllActivated();
 	} );
@@ -30,13 +30,13 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 			continue;
 		}
 
-		test.skip( `Reverse columns:${ testDevice } - Experiment breakpoints:On`, async ( { page }, testInfo ) => {
+		test( `Reverse columns:${ testDevice } - Experiment breakpoints:On`, async ( { page }, testInfo ) => {
 			const reverseColumns = new ReverseColumns( page, testInfo );
 			await reverseColumns.testReverseColumnsOneActivated( testDevice, true );
 		} );
 	}
 
-	test.skip( 'Reverse columns:All - Experiment breakpoints:On', async ( { page }, testInfo ) => {
+	test( 'Reverse columns:All - Experiment breakpoints:On', async ( { page }, testInfo ) => {
 		const reverseColumns = new ReverseColumns( page, testInfo );
 		await reverseColumns.testReverseColumnsAllActivated( true );
 	} );

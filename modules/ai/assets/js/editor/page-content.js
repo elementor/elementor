@@ -21,7 +21,6 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -38,12 +37,23 @@ const PageContent = (
 		},
 	};
 
+	const maybeRenderUpgradeChip = () => {
+		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
+		if ( ! needsUpgradeChip ) {
+			return;
+		}
+		return <UpgradeChip
+			hasSubscription={ hasSubscription }
+			usagePercentage={ usagePercentage }
+		/>;
+	};
+
 	if ( isLoading ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
 				<PromptDialog.Header onClose={ onClose } />
 
-				<PromptDialog.Content>
+				<PromptDialog.Content dividers>
 					<Loader />
 				</PromptDialog.Content>
 			</PromptDialog>
@@ -55,7 +65,7 @@ const PageContent = (
 			<WizardDialog onClose={ onClose }>
 				<WizardDialog.Header onClose={ onClose } />
 
-				<WizardDialog.Content>
+				<WizardDialog.Content dividers>
 					<Connect
 						connectUrl={ connectUrl }
 						onSuccess={ ( data ) => {
@@ -73,7 +83,7 @@ const PageContent = (
 			<WizardDialog onClose={ onClose }>
 				<WizardDialog.Header onClose={ onClose } />
 
-				<WizardDialog.Content>
+				<WizardDialog.Content dividers>
 					<GetStarted onSuccess={ fetchData } />
 				</WizardDialog.Content>
 			</WizardDialog>
@@ -88,7 +98,7 @@ const PageContent = (
 				controlView={ controlView }
 				additionalOptions={ additionalOptions }
 				credits={ credits }
-				hasSubscription={ hasSubscription }
+				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
 				DialogProps={ promptDialogStyleProps }
 			/>
 		);
@@ -98,10 +108,10 @@ const PageContent = (
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
-					{ ! hasSubscription && <UpgradeChip /> }
+					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
-				<PromptDialog.Content>
+				<PromptDialog.Content dividers>
 					<FormCode
 						onClose={ onClose }
 						getControlValue={ getControlValue }
@@ -118,10 +128,10 @@ const PageContent = (
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
-				{ ! hasSubscription && <UpgradeChip /> }
+				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 
-			<PromptDialog.Content>
+			<PromptDialog.Content dividers>
 				<FormText
 					type={ type }
 					controlType={ controlType }

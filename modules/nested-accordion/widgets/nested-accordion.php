@@ -2,14 +2,14 @@
 namespace Elementor\Modules\NestedAccordion\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Icons_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Typography;
+use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
 use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
-use phpDocumentor\Reflection\Types\Boolean;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,148 +46,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
-	}
-
-	private function add_accordion_style_section() {
-
-		$this->start_controls_section(
-			'section_accordion_style',
-			[
-				'label' => esc_html__( 'Accordion', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_responsive_control('accordion_item_title_space_between', [
-			'label' => esc_html__( 'Space between Items', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
-				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
-			],
-		]);
-
-		$this->add_responsive_control('accordion_item_title_distance_from_content', [
-			'label' => esc_html__( 'Distance from content', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 200,
-				],
-			],
-			'default' => [
-				'size' => 0,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
-			],
-		]);
-
-		$this->start_controls_tabs( 'accordion__border_and_background' );
-
-		foreach ( array( 'normal', 'hover', 'active' ) as &$state ) {
-			$this->add_border_and_radius_style( $state );
-		}
-
-		$this->end_controls_tabs();
-
-		$this->add_responsive_control(
-			'accordion_border_radius',
-			[
-				'label' => esc_html__( 'Border Radius', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_responsive_control(
-			'accordion_padding',
-			[
-				'label' => esc_html__( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}} ' => '--n-accordion-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
-	 * @string $state
-	 */
-	private function add_border_and_radius_style( $state ) {
-
-		$selector = '{{WRAPPER}}  .e-n-accordion-item';
-		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
-
-		switch ( $state ) {
-			case 'hover':
-				$selector .= ':hover';
-				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
-				break;
-			case 'active':
-				$selector .= '[open]';
-				$translated_tab_text = esc_html__( 'Active', 'elementor' );
-				break;
-		}
-
-		$this->start_controls_tab('accordion_' . $state . '_border_and_background', [
-			'label' => $translated_tab_text,
-		]);
-
-		$this->add_group_control(
-			Group_Control_Background::get_type(),
-			[
-				'name' => 'accordion_background_' . $state,
-				'types' => [ 'classic', 'gradient' ],
-				'exclude' => [ 'image' ],
-				'fields_options' => [
-					'color' => [
-						'label' => esc_html__( 'Border Color', 'elementor' ),
-					],
-					'width' => [
-						'label' => esc_html__( 'Border Width', 'elementor' ),
-					],
-				],
-				'selector' => $selector,
-
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			[
-				'name' => 'accordion_border_' . $state,
-				'selector' => $selector,
-			]
-		);
-
-		$this->end_controls_tab();
-
-	}
-
-	private function add_style_tab() {
-
-		$this->add_accordion_style_section();
-
 	}
 
 	protected function item_content_container( int $index ) {
@@ -231,16 +89,19 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$repeater = new Repeater();
 
-		$repeater->add_control( 'item_title', [
-			'label' => esc_html__( 'Title', 'elementor' ),
-			'type' => Controls_Manager::TEXT,
-			'default' => esc_html__( 'Item Title', 'elementor' ),
-			'placeholder' => esc_html__( 'Item Title', 'elementor' ),
-			'label_block' => true,
-			'dynamic' => [
-				'active' => true,
-			],
-		] );
+		$repeater->add_control(
+			'item_title',
+			[
+				'label' => esc_html__( 'Title', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Item Title', 'elementor' ),
+				'placeholder' => esc_html__( 'Item Title', 'elementor' ),
+				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
+			]
+		);
 
 		$repeater->add_control(
 			'element_css_id',
@@ -256,57 +117,63 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_control( 'items', [
-			'label' => esc_html__( 'Items', 'elementor' ),
-			'type' => Control_Nested_Repeater::CONTROL_TYPE,
-			'fields' => $repeater->get_controls(),
-			'default' => [
-				[
-					'item_title' => esc_html__( 'Item #1', 'elementor' ),
+		$this->add_control(
+			'items',
+			[
+				'label' => esc_html__( 'Items', 'elementor' ),
+				'type' => Control_Nested_Repeater::CONTROL_TYPE,
+				'fields' => $repeater->get_controls(),
+				'default' => [
+					[
+						'item_title' => esc_html__( 'Item #1', 'elementor' ),
+					],
+					[
+						'item_title' => esc_html__( 'Item #2', 'elementor' ),
+					],
+					[
+						'item_title' => esc_html__( 'Item #3', 'elementor' ),
+					],
 				],
-				[
-					'item_title' => esc_html__( 'Item #2', 'elementor' ),
-				],
-				[
-					'item_title' => esc_html__( 'Item #3', 'elementor' ),
-				],
-			],
-			'title_field' => '{{{ item_title }}}',
-			'button_text' => 'Add Item',
-		] );
+				'title_field' => '{{{ item_title }}}',
+				'button_text' => 'Add Item',
+			]
+		);
 
-		$this->add_responsive_control( 'accordion_item_title_position_horizontal', [
-			'label' => esc_html__( 'Item Position', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'separator' => 'before',
-			'options' => [
-				'start' => [
-					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-start-h',
+		$this->add_responsive_control(
+			'accordion_item_title_position_horizontal',
+			[
+				'label' => esc_html__( 'Item Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'separator' => 'before',
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-flex eicon-align-start-h',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-flex eicon-align-end-h',
+					],
+					'stretch' => [
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-h-align-stretch',
+					],
 				],
-				'center' => [
-					'title' => esc_html__( 'Center', 'elementor' ),
-					'icon' => 'eicon-h-align-center',
+				'selectors_dictionary' => [
+					'start' => '--n-accordion-title-justify-content: initial; --n-accordion-title-flex-grow: initial;',
+					'center' => '--n-accordion-title-justify-content: center; --n-accordion-title-flex-grow: initial;',
+					'end' => '--n-accordion-title-justify-content: flex-end; --n-accordion-title-flex-grow: initial;',
+					'stretch' => '--n-accordion-title-justify-content: space-between; --n-accordion-title-flex-grow: 1;',
 				],
-				'end' => [
-					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-flex eicon-align-end-h',
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
 				],
-				'stretch' => [
-					'title' => esc_html__( 'Stretch', 'elementor' ),
-					'icon' => 'eicon-h-align-stretch',
-				],
-			],
-			'selectors_dictionary' => [
-				'start' => '--n-accordion-item-title-justify-content: initial; --n-accordion-item-title-flex-grow: initial;',
-				'center' => '--n-accordion-item-title-justify-content: center; --n-accordion-item-title-flex-grow: initial;',
-				'end' => '--n-accordion-item-title-justify-content: flex-end; --n-accordion-item-title-flex-grow: initial;',
-				'stretch' => '--n-accordion-item-title-justify-content: space-between; --n-accordion-item-title-flex-grow: 1;',
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '{{VALUE}}',
-			],
-		] );
+			]
+		);
 
 		$this->add_control(
 			'heading_accordion_item_title_icon',
@@ -317,27 +184,30 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'accordion_item_title_icon_position', [
-			'label' => esc_html__( 'Position', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'options' => [
-				'start' => [
-					'title' => esc_html__( 'Start', 'elementor' ),
-					'icon' => 'eicon-h-align-left',
+		$this->add_responsive_control(
+			'accordion_item_title_icon_position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
 				],
-				'end' => [
-					'title' => esc_html__( 'End', 'elementor' ),
-					'icon' => 'eicon-h-align-right',
+				'selectors_dictionary' => [
+					'start' => '--n-accordion-title-icon-order: -1;',
+					'end' => '--n-accordion-title-icon-order: initial;',
 				],
-			],
-			'selectors_dictionary' => [
-				'start' => '--n-accordion-title-icon-order: -1; --n-accordion-title-icon-padding-inline: 0 15px;',
-				'end' => '--n-accordion-title-icon-order: initial; --n-accordion-title-icon-padding-inline: 15px 0;',
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '{{VALUE}}',
-			],
-		] );
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+			]
+		);
 
 		$this->add_control(
 			'accordion_item_title_icon',
@@ -387,18 +257,417 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'span' => 'span',
 					'p' => 'p',
 				],
-				'default' => 'h2',
+				'selectors_dictionary' => [
+					'h1' => '--n-accordion-title-font-size: 2.5rem;',
+					'h2' => '--n-accordion-title-font-size: 2rem;',
+					'h3' => '--n-accordion-title-font-size: 1,75rem;',
+					'h4' => '--n-accordion-title-font-size: 1.5rem;',
+					'h5' => '--n-accordion-title-font-size: 1rem;',
+					'h6' => '--n-accordion-title-font-size: 1rem; ',
+					'div' => '--n-accordion-title-font-size: 1rem;',
+					'span' => '--n-accordion-title-font-size: 1rem; ',
+					'p' => '--n-accordion-title-font-size: 1rem;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'default' => 'div',
 				'separator' => 'before',
+				'render_type' => 'template',
 
 			]
 		);
 		$this->end_controls_section();
 
-		$this->add_style_tab();
+		$this->start_controls_section(
+			'section_interactions',
+			[
+				'label' => esc_html__( 'Interactions section', 'elementor' ),
+			]
+		);
 
+		$this->add_control(
+			'default_state',
+			[
+				'label' => esc_html__( 'Default State', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'expanded' => esc_html__( 'First expanded', 'elementor' ),
+					'all_collapsed' => esc_html__( 'All collapsed', 'elementor' ),
+				],
+				'default' => 'expanded',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'max_items_expended',
+			[
+				'label' => esc_html__( 'Max Items Expanded', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'one' => esc_html__( 'One', 'elementor' ),
+					'multiple' => esc_html__( 'Multiple', 'elementor' ),
+				],
+				'default' => 'one',
+				'frontend_available' => true,
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->add_style_tab();
 	}
 
-	private function is_active_icon_exist( $settings ) :bool {
+	private function add_style_tab() {
+		$this->add_accordion_style_section();
+		$this->add_header_style_section();
+		$this->add_content_style_section();
+	}
+
+	private function add_accordion_style_section() {
+		$this->start_controls_section(
+			'section_accordion_style',
+			[
+				'label' => esc_html__( 'Accordion', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'accordion_item_title_space_between',
+			[
+				'label' => esc_html__( 'Space between Items', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => 0,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-item-title-space-between: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'accordion_item_title_distance_from_content',
+			[
+				'label' => esc_html__( 'Distance from content', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => 0,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-item-title-distance-from-content: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'accordion_border_and_background' );
+
+		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
+			$this->add_border_and_radius_style( $state );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'accordion_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'accordion_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} ' => '--n-accordion-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_content_style_section() {
+
+		$low_specificity_accordion_item_selector = ':where( {{WRAPPER}} .e-n-accordion-item ) > .e-con';
+
+		$this->start_controls_section(
+			'section_content_style',
+			[
+				'label' => esc_html__( 'Content', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'content_background',
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => $low_specificity_accordion_item_selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'content_border',
+				'selector' => $low_specificity_accordion_item_selector,
+			]
+		);
+
+		$this->add_responsive_control(
+			'content_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'content_padding',
+			[
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					$low_specificity_accordion_item_selector => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function add_header_style_section() {
+		$this->start_controls_section(
+			'section_header_style',
+			[
+				'label' => esc_html__( 'Header', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'heading_header_style_title',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Title', 'elementor' ),
+
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'title_typography',
+				'selector' => '{{WRAPPER}} .e-n-accordion-item-title-text',
+				'fields_options' => [
+					'font_size' => [
+						'selectors' => [
+							'{{WRAPPER}}' => '--n-accordion-title-font-size: {{SIZE}}{{UNIT}}',
+						],
+					],
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'header_title_color_style' );
+
+		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
+			$this->add_header_color_style( $state, 'title' );
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'heading_icon_style_title',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Icon', 'elementor' ),
+
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'default' => [
+					'unit' => 'px',
+					'size' => 20,
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-icon-size: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_spacing',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 400,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 50,
+						'step' => 0.1,
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--n-accordion-icon-gap: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->start_controls_tabs( 'header_icon_color_style' );
+
+		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
+			$this->add_header_color_style( $state, 'icon' );
+		}
+
+		$this->end_controls_tabs();
+		$this->end_controls_section();
+	}
+
+	private function add_header_color_style( $state, $context ) {
+
+		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+
+		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
+
+		switch ( $state ) {
+			case 'hover':
+				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
+				break;
+			case 'active':
+				$translated_tab_text = esc_html__( 'Active', 'elementor' );
+				break;
+		}
+
+		$this->start_controls_tab(
+			'header_' . $state . '_' . $context,
+			[
+				'label' => $translated_tab_text,
+			]
+		);
+
+		$this->add_control(
+			$state . '_' . $context . '_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => $variable . ': {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+	}
+
+	/**
+	 * @string $state
+	 */
+	private function add_border_and_radius_style( $state ) {
+		$selector = '{{WRAPPER}}  .e-n-accordion-item-title';
+		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+
+		switch ( $state ) {
+			case 'hover':
+				$selector .= ':hover';
+				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
+				break;
+			case 'active':
+				$selector = '{{WRAPPER}} .e-n-accordion-item[open] .e-n-accordion-item-title';
+				$translated_tab_text = esc_html__( 'Active', 'elementor' );
+				break;
+		}
+
+		$this->start_controls_tab(
+			'accordion_' . $state . '_border_and_background',
+			[
+				'label' => $translated_tab_text,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			[
+				'name' => 'accordion_background_' . $state,
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Color', 'elementor' ),
+					],
+				],
+				'selector' => $selector,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'accordion_border_' . $state,
+				'selector' => $selector,
+			]
+		);
+
+		$this->end_controls_tab();
+	}
+
+	private function is_active_icon_exist( $settings ):bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
@@ -411,8 +680,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-n-accordion-item-title-icon-opened' ><?php echo esc_html( $icon_active_html ); ?></span>
-			<span class='e-n-accordion-item-title-icon-closed'><?php echo esc_html( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
+			<span class='e-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
 		</span>
 
 		<?php
@@ -426,6 +695,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
+		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		foreach ( $items as $index => $item ) {
@@ -433,6 +703,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
 			$item_title = $item['item_title'];
+			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -440,6 +711,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
+			$title_render_attributes = $title_render_attributes . ' ' . $is_open;
 
 			// items content.
 			ob_start();
@@ -448,12 +720,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-				<details <?php echo esc_html( $title_render_attributes ); ?>>
+				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-text'><?php echo esc_html( "<$title_html_tag> $item_title </$title_html_tag>" ); ?></span>
-						<?php echo esc_html( $icons_content ); ?>
+						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
+						<?php echo wp_kses_post( $icons_content ); ?>
 					</summary>
-					<?php echo esc_html( $item_content ); ?>
+					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</details>
 			<?php
 			$items_title_html .= ob_get_clean();
@@ -461,7 +733,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
-			<?php echo esc_html( $items_title_html ); ?>
+			<?php echo $items_title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
 	}
@@ -471,7 +743,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
-				titleHTMLTag = elementor.helpers.validateHTMLTag( settings['title_tag'] ),
+				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+				defaultState = settings.default_state,
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
@@ -490,10 +763,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 				itemId = 'e-n-accordion-item-' + itemUid;
 			}
 
-			view.addRenderAttribute( itemWrapperKey, {
+			const itemWrapperAttributes = {
 				'id': itemId,
 				'class': [ 'e-n-accordion-item','e-normal' ],
-			} );
+			};
+
+			if ( defaultState === 'expanded' && index === 0 ) {
+				itemWrapperAttributes['open'] = true;
+			}
+
+			view.addRenderAttribute( itemWrapperKey,  itemWrapperAttributes);
 
 			view.addRenderAttribute( itemTitleKey, {
 				'class': [ 'e-n-accordion-item-title' ],
@@ -503,15 +782,15 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
-					<span class="e-n-accordion-item-title-text">
-						<{{{ titleHTMLTag }}}>
+					<span class="e-n-accordion-item-title-header">
+						<{{{ titleHTMLTag }}} class="e-n-accordion-item-title-text">
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>
 					<# if (settings.accordion_item_title_icon.value) { #>
 					<span class="e-n-accordion-item-title-icon">
-						<span class="e-n-accordion-item-title-icon-opened">{{{ itemTitleIconActive.value }}}</span>
-						<span class="e-n-accordion-item-title-icon-closed">{{{ itemTitleIcon.value }}}</span>
+						<span class="e-opened">{{{ itemTitleIconActive.value }}}</span>
+						<span class="e-closed">{{{ itemTitleIcon.value }}}</span>
 					</span>
 					<# } #>
 				</summary>
