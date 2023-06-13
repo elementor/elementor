@@ -12,18 +12,22 @@ export default class Content {
 		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
 	}
 
-	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
+	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false, linkInpSelector: EditorSelectors.button.url } ) {
 		if ( options.linkTo ) {
 			await this.setLinkTo( 'Custom URL' );
 		}
 
-		const urlInput = this.page.locator( EditorSelectors.button.url );
+		const urlInput = this.page.locator( options.linkInpSelector );
 		await urlInput.clear();
 		await urlInput.type( link );
-		await this.page.locator( EditorSelectors.button.linkOptions ).click();
+		const wheel = await this.page.locator( EditorSelectors.button.linkOptions );
+		if ( await wheel.isVisible() ) {
+			await wheel.click();
+		}
 		if ( options.targetBlank ) {
 			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
 		}
+
 		if ( options.targetBlank ) {
 			await this.page.locator( EditorSelectors.button.noFollowChbox ).check();
 		}
@@ -79,5 +83,11 @@ export default class Content {
 
 	async setLightBox( option ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
+	}
+
+	async toggleControl( controlSelector ) {
+		await this.page.locator( controlSelector )
+			.locator( '..' )
+			.locator( EditorSelectors.video.switch ).click();
 	}
 }

@@ -102,7 +102,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
 
 			await contentTab.setCaption( 'attachment' );
-			await contentTab.setLinkTo( 'file' );
+			await contentTab.setLink( 'file' );
 			await contentTab.setLightBox( 'yes' );
 			expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 			await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );

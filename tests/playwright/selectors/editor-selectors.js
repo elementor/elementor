@@ -94,6 +94,22 @@ const EditorSelectors = {
 			return `${ this.widget } a`;
 		},
 	},
+	video: {
+		widget: '[data-widget_type="video.default"]',
+		youtubeLinkInp: '[data-setting="youtube_url"]',
+		vimeoLinkInp: '[data-setting="vimeo_url"]',
+		dailymotionLinkInp: '[data-setting="dailymotion_url"]',
+		autoplayInp: 'input[data-setting="autoplay"]',
+		muteInp: 'input[data-setting="mute"]',
+		loopInp: 'input[data-setting="loop"]',
+		playerControlInp: 'input[data-setting="controls"]',
+		modestbrandingInp: 'input[data-setting="modestbranding"]',
+		privacyInp: 'input[data-setting="yt_privacy"]',
+		switch: '.elementor-switch-handle',
+		suggestedVideoSelect: '[data-setting="rel"]',
+		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
+		lazyLoadInp: 'input[data-setting="lazy_load"]',
+	},
 
 };
 
