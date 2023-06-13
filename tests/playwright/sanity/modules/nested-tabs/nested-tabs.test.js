@@ -1108,9 +1108,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await setBackgroundVideoUrl( contentContainerOneId, videoUrl );
-		await setBackgroundVideoUrl( contentContainerTwoId, videoUrl );
-		await setBackgroundVideoUrl( contentContainerThreeId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( editor, contentContainerThreeId, videoUrl );
 
 		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect( videoContainer ).toHaveCount( 1 );
