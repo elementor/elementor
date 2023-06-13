@@ -1,8 +1,6 @@
-const EditorPage = require( '../pages/editor-page' );
 module.exports = class {
-	constructor( page, testInfo ) {
+	constructor( page ) {
 		this.page = page;
-		this.editor = new EditorPage( this.page, testInfo );
 		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
@@ -15,11 +13,8 @@ module.exports = class {
 	}
 
 	async addAllBreakpoints( experimentPostId ) {
-		await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
-		await this.page.locator( '.elementor-panel-menu-item-global-settings' ).click();
-		await this.page.locator( '.elementor-panel-menu-item-settings-layout' ).click();
-		await this.page.locator( '#elementor-kit-panel-content-controls [data-collapse_id="section_breakpoints"]' ).click();
+		await this.page.click( '#elementor-panel-footer-responsive' );
+		await this.page.click( '#e-responsive-bar__settings-button' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
@@ -33,8 +28,17 @@ module.exports = class {
 
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
-		await this.page.reload( { timeout: 20000 } );
-		await this.editor.closeSiteSettingsPanel();
-		return devices;
+
+		if ( experimentPostId ) {
+			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
+		} else {
+			await this.page.reload();
+
+			if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
+				await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
+			}
+		}
+
+		await this.page.waitForSelector( '#elementor-editor-wrapper' );
 	}
 };
