@@ -114,7 +114,7 @@ test( 'Accessibility test', async ( { page }, testInfo ) => {
 	// Populate the widget with images.
 	await editor.populateImageCarousel();
 	await editor.openSection( 'section_additional_options' );
-	await editor.setSelectControlValue( 'autoplay', 'no' );
+	await editor.setSelectControlValue( 'autoplay', 'yes' );
 	await editor.setNumberControlValue( 'speed', 0 );
 	// Assert.
 	await test.step( 'Assert keyboard navigation in the Frontend', async () => {
