@@ -201,9 +201,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 				],
-				'ai' => [
-					'active' => false,
-				],
 			]
 		);
 
@@ -218,13 +215,12 @@ class Widget_Video extends Widget_Base {
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
-				'media_type' => 'video',
+				'media_types' => [
+					'video',
+				],
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => '',
-				],
-				'ai' => [
-					'active' => false,
 				],
 			]
 		);
@@ -250,9 +246,6 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => 'yes',
-				],
-				'ai' => [
-					'active' => false,
 				],
 			]
 		);
