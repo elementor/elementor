@@ -62,9 +62,7 @@ test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 	await editor.closeNavigatorIfOpen();
 	// Add breakpoints.
 	const breakpoints = new Breakpoints( page );
-	const pageUrl = new URL( this.page.url() );
-	const searchParams = pageUrl.searchParams;
-	await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
+	await breakpoints.addAllBreakpoints();
 	await editor.addWidget( 'image-carousel' );
 	await page.locator( '.eicon-plus-circle' ).first().click();
 	await page.click( 'text=Media Library' );
