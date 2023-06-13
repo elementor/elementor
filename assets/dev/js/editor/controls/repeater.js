@@ -131,6 +131,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			axis: 'y',
 			handle: '.elementor-repeater-row-tools',
 			items: ' > :not(.elementor-repeater-row--disable-sort)',
+			cancel: '', // Elements that do not allow sorting (by default it includs buttons).
 		};
 	},
 
