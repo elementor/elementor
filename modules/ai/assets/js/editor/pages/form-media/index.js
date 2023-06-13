@@ -85,7 +85,7 @@ const FormMedia = (
 
 	// Get ratio from image
 	useEffect( () => {
-		if ( ! editImage ) {
+		if ( ! editImage?.url ) {
 			return;
 		}
 
