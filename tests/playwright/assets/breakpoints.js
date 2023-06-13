@@ -31,16 +31,6 @@ module.exports = class {
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
 
-		// if ( experimentPostId ) {
-		// 	await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
-		// } else {
-		// 	await this.page.reload();
-		//
-		// 	if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
-		// 		await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
-		// 	}
-		// }
-
 		await this.page.reload( { timeout: 20000 } );
 		await this.editor.closeSiteSettingsPanel();
 
