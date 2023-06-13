@@ -1,6 +1,8 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
+const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -18,32 +20,21 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	updateImageDates( templateData ) {
-		const replaceUrl = ( url ) => {
-			const date = new Date();
-			const month = date.toLocaleString( 'default', { month: '2-digit' } );
-			const regex = /[0-9]{4}\/[0-9]{2}/g;
-			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
-		};
-		templateData.content[ 0 ].elements.forEach( ( el ) => {
-			if ( 'image' in el.settings ) {
-				el.settings.image.url = replaceUrl( el.settings.image.url );
-			}
-			if ( 'carousel' in el.settings ) {
-				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
-					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
-				}
-			}
-		} );
+		const date = new Date();
+		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const data = JSON.stringify( templateData );
+		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
+		return JSON.parse( updatedData );
 	}
 
 	async loadTemplate( filePath, updateDatesForImages = false ) {
-		const templateData = require( filePath );
+		let templateData = require( filePath );
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
 		// To update dates in template, use a flag updateDatesForImages = true
 		if ( updateDatesForImages ) {
-			this.updateImageDates( templateData );
+			templateData = this.updateImageDates( templateData );
 		}
 
 		await this.page.evaluate( ( data ) => {
@@ -144,6 +135,49 @@ module.exports = class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
 		return widgetId;
+	}
+
+	/**
+	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
+	 *
+	 * @param {string}  dirName              - use __dirname to get the current directory
+	 * @param {string}  fileName             - without json extension
+	 * @param {string}  widgetSelector       - css selector
+	 * @param {boolean} updateDatesForImages - flag to update dates for images
+	 */
+	async loadJsonPageTemplate( dirName, fileName, widgetSelector, updateDatesForImages = false ) {
+		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
+		const templateData = require( filePath );
+		const pageTemplateData =
+		{
+			content: templateData,
+			page_settings: [],
+			version: '0.4',
+			title: 'Elementor Test',
+			type: 'page',
+		};
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, pageTemplateData );
+
+		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
 	}
 
 	/**
@@ -296,6 +330,10 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSliderControlValue( controlId, value ) {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
+	}
+
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
 	/**
@@ -714,5 +752,62 @@ module.exports = class EditorPage extends BasePage {
 				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
 			}
 		}
+	}
+
+	async waitForElement( isPublished, selector ) {
+		if ( selector === undefined ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			this.page.waitForSelector( selector );
+		} else {
+			const frame = this.getFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( selector );
+		}
+	}
+
+	async setColorControlValue( color, colorControlId ) {
+		const controlSelector = '.elementor-control-' + colorControlId;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set Dimentions controls value
+	 *
+	 * @param {string} selector
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( selector, value ) {
+		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	}
+
+	async verifyClassInElement( args = { selector, className, isPublished } ) {
+		const regex = new RegExp( args.className );
+		if ( args.isPublished ) {
+			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
+		} else {
+			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+		}
+	}
+
+	async verifyImageSize( args = { selector, width, height, isPublished } ) {
+		const imageSize = args.isPublished
+			? await this.page.locator( args.selector ).boundingBox()
+			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
+		expect( imageSize.width ).toEqual( args.width );
+		expect( imageSize.height ).toEqual( args.height );
+	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size', fontsize );
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 };
