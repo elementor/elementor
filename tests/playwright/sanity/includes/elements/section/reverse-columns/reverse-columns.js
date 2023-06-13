@@ -39,7 +39,7 @@ module.exports = class {
 			const pageUrl = new URL( this.page.url() );
 			const searchParams = pageUrl.searchParams;
 
-			const breakpoints = new Breakpoints( this.page, this.testInfo );
+			const breakpoints = new Breakpoints( this.page );
 			await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
 		}
 
