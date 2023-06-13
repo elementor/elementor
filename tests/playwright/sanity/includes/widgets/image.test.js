@@ -90,6 +90,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		const contentTab = new Content( page, testInfo );
 		const image = 'elementor1.png';
 		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Act', async () => {
 			await editor.addWidget( 'image' );
