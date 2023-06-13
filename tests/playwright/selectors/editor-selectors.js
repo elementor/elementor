@@ -70,6 +70,9 @@ const EditorSelectors = {
 		get link() {
 			return `${ this.widget } a`;
 		},
+		get image() {
+			return `${ this.widget } img`;
+		},
 	},
 	imageCarousel: {
 		widget: '[data-widget_type="image-carousel.default"]',
