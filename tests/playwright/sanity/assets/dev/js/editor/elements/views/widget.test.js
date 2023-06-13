@@ -11,7 +11,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await editor.addWidget( 'image-carousel' );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).count();
+		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).length );
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -59,9 +59,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'image-gallery' );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).count();
+		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).length );
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
