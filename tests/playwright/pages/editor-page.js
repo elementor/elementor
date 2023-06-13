@@ -810,4 +810,12 @@ module.exports = class EditorPage extends BasePage {
 		await this.setSliderControlValue( selector + '_font_size', fontsize );
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
+
+	async closeSiteSettingsPanel() {
+		if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
+			await this.page.locator( '#elementor-panel-header-kit-close' ).click();
+		}
+
+		await this.page.waitForSelector( '#elementor-editor-wrapper' );
+	}
 };

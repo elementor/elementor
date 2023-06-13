@@ -1,6 +1,8 @@
+const EditorPage = require( '../pages/editor-page' );
 module.exports = class {
-	constructor( page ) {
+	constructor( page, testInfo ) {
 		this.page = page;
+		this.editor = new EditorPage( this.page, testInfo );
 		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
@@ -29,15 +31,18 @@ module.exports = class {
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
 
-		if ( experimentPostId ) {
-			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
-		} else {
-			await this.page.reload();
+		// if ( experimentPostId ) {
+		// 	await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
+		// } else {
+		// 	await this.page.reload();
+		//
+		// 	if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
+		// 		await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
+		// 	}
+		// }
 
-			if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
-				await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
-			}
-		}
+		await this.page.reload( { timeout: 20000 } );
+		await this.editor.closeSiteSettingsPanel();
 
 		await this.page.waitForSelector( '#elementor-editor-wrapper' );
 	}
