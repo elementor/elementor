@@ -8,13 +8,13 @@ export default class Content {
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
 
-	async setLinkTo( option ) {
+	async selectLinkSource( option ) {
 		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
 	}
 
 	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
 		if ( options.linkTo ) {
-			await this.setLinkTo( 'Custom URL' );
+			await this.selectLinkSource( 'Custom URL' );
 		}
 
 		const urlInput = this.page.locator( EditorSelectors.button.url );
