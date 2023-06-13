@@ -7263,9 +7263,9 @@
 			"section": "_section_masking",
 			"label": "Image",
 			"media_types": [
-				"image",
-				"svg"
+				"image"
 			],
+			"should_include_svg_inline_option": true,
 			"library_type": "image/svg+xml",
 			"dynamic": {
 				"active": true
