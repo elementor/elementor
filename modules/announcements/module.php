@@ -99,7 +99,7 @@ class Module extends BaseApp {
 				</ul>',
 				'media' => [
 					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
 				],
 				'cta' => [
 					[
