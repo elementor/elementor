@@ -15,8 +15,11 @@ module.exports = class {
 	}
 
 	async addAllBreakpoints( experimentPostId ) {
-		await this.page.click( '#elementor-panel-footer-responsive' );
-		await this.page.click( '#e-responsive-bar__settings-button' );
+		await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.locator( '.elementor-panel-menu-item-global-settings' ).click();
+		await this.page.locator( '.elementor-panel-menu-item-settings-layout' ).click();
+		await this.page.locator( '#elementor-kit-panel-content-controls [data-collapse_id="section_breakpoints"]' ).click();
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const devices = [ 'Mobile Landscape', 'Tablet Landscape', 'Laptop', 'Widescreen' ];
@@ -30,10 +33,8 @@ module.exports = class {
 
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
-
 		await this.page.reload( { timeout: 20000 } );
 		await this.editor.closeSiteSettingsPanel();
-
-		await this.page.waitForSelector( '#elementor-editor-wrapper' );
+		return devices;
 	}
 };
