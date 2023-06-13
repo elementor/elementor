@@ -199,6 +199,7 @@ export default class NestedTabs extends Base {
 	onShowTabContent( $requestedContent ) {
 		elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
 		elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
+		elementorFrontend.elements.$window.trigger( 'resize' );
 	}
 
 	isActiveTab( tabIndex ) {
