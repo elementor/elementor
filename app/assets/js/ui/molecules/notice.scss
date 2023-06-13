@@ -56,7 +56,7 @@ $root: eps-notice;
 
 	&__button-container {
 		flex-shrink: 0;
-		margin-left: spacing(20);
+		margin-inline-start: spacing(20);
 		width: auto;
 	}
 }
