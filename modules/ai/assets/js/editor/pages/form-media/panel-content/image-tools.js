@@ -1,10 +1,12 @@
-import { Box, Button, Typography, SvgIcon, styled } from '@elementor/ui';
+import { Box, Button, Typography, SvgIcon, styled, withDirection } from '@elementor/ui';
 import ExpandIcon from '../../../icons/expand-icon';
 import BrushIcon from '../../../icons/brush-icon';
 import EvolveIcon from '../../../icons/evolve-icon';
 import EnlargerIcon from '../../../icons/enlarger-icon';
 import { PANELS } from '../consts/consts';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
 
 const TeaserDrawing = () => (
 	<SvgIcon viewBox="0 0 184 80" sx={ { width: 184, height: 80 } }>
@@ -73,7 +75,7 @@ const ImageTools = ( {
 					size="small"
 					variant="text"
 					color="secondary"
-					startIcon={ <ChevronLeftIcon /> }
+					startIcon={ <StyledChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						generateNewPrompt();
