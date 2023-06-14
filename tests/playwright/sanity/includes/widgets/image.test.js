@@ -106,7 +106,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await editor.addWidget( 'image' );
 		await contentTab.chooseImage( `${ image }.png` );
 		await contentTab.setCaption( 'attachment' );
-		await contentTab.setLinkTo( 'file' );
+		await contentTab.selectLinkSource( 'file' );
 		await contentTab.setLightBox( 'yes' );
 		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
 			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );

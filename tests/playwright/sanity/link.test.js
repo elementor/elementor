@@ -30,7 +30,8 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 				await imageCarousel.setAutoplay( 'no' );
 				await editor.openSection( 'section_image_carousel' );
 			}
-			await contentTab.setLink( link, { targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo } );
+			await contentTab.setLink( link,
+				{ targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo, linkInpSelector: EditorSelectors.button.url } );
 			const widgetInEditor = editor.getPreviewFrame().locator( data[ widget ].selector ).first();
 			await contentTab.verifyLink( widgetInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
 			await editor.publishAndViewPage();

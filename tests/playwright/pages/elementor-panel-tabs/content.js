@@ -12,7 +12,8 @@ export default class Content {
 		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
 	}
 
-	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
+	async setLink( link,
+		options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false, linkInpSelector } ) {
 		if ( options.linkTo ) {
 			await this.selectLinkSource( 'Custom URL' );
 		}
