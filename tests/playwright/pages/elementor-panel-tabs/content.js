@@ -43,9 +43,9 @@ export default class Content {
 		await this.page.locator( EditorSelectors.media.selectBtn ).click();
 	}
 
-	async selectImageSize( widgetLocator, imageSize ) {
-		await this.editorPage.getPreviewFrame().locator( widgetLocator ).click();
-		await this.page.locator( EditorSelectors.image.imageSizeSelect ).selectOption( imageSize );
+	async selectImageSize( args = { widget, select, imageSize } ) {
+		await this.editorPage.getPreviewFrame().locator( args.widget ).click();
+		await this.page.locator( args.select ).selectOption( args.imageSize );
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
 	}
 
@@ -58,9 +58,9 @@ export default class Content {
 		expect( regex.test( src ) ).toEqual( true );
 	}
 
-	async setCustomImageSize( args = { selector, imageTitle, width, height } ) {
+	async setCustomImageSize( args = { selector, select, imageTitle, width, height } ) {
 		await this.editorPage.getPreviewFrame().locator( args.selector ).click();
-		await this.page.locator( EditorSelectors.image.imageSizeSelect ).selectOption( 'custom' );
+		await this.page.locator( args.select ).selectOption( 'custom' );
 		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
 		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );

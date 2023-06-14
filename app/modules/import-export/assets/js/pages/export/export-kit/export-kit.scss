@@ -1,13 +1,13 @@
 $root: e-app-export-kit;
 
 .#{$root} {
-	padding-bottom: spacing(20);
+	padding-block-end: spacing(20);
 
 	&-information {
-		margin-top: spacing(20);
+		margin-block-start: spacing(20);
 
 		&__field-header {
-			margin-bottom: spacing(10);
+			margin-block-end: spacing(10);
 		}
 
 		&__label {
@@ -25,7 +25,7 @@ $root: e-app-export-kit;
 		}
 
 		&__heading {
-			margin-bottom: spacing(20);
+			margin-block-end: spacing(20);
 		}
 	}
 }

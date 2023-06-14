@@ -27,7 +27,7 @@ const ImagePromptForm = (
 			<Typography variant="h3" sx={ { mb: 3 } }>
 				{ __( 'Imagine anything create everything', 'elementor' ) }
 			</Typography>
-			<Typography variant="body1" sx={ { mb: 8 } }>
+			<Typography variant="body1" color="secondary" sx={ { mb: 8 } }>
 				{ __( 'Generate images by selecting the desired type and style, and entering a prompt.', 'elementor' ) }
 			</Typography>
 
@@ -54,6 +54,10 @@ const ImagePromptForm = (
 								color="secondary"
 								startIcon={ <RefreshIcon /> }
 								disabled={ ( ! panelActive || '' === prompt ) }
+								sx={ {
+									// TODO: Remove on @elementor/ui 1.4.51.
+									color: 'background.paper',
+								} }
 							>
 								{ __( 'Generate again', 'elementor' ) }
 							</Button>
@@ -89,6 +93,7 @@ ImagePromptForm.propTypes = {
 	updatePromptSettings: PropTypes.func,
 	submitPrompt: PropTypes.func,
 	error: PropTypes.string,
+	backToTools: PropTypes.func,
 };
 
 export default ImagePromptForm;

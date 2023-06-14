@@ -90,16 +90,16 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		return [
 			[
-				'title' => 'Create smarter with Elementor AI',
-				'description' => '<p>Instantly turn your ideas into original text and custom code with a free trial of Elementor AI installed on the newest versions of Elementor.</p>
+				'title' => 'Picture perfect: Introducing the AI image generator',
+				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
 				<ul>
-					<li>Effortlessly write professional copy about any topic, in any tone. Then instantly translate it to twenty-five languages.</li>
-					<li>No code? No problem. Generate Custom Code, CSS, and HTML with a prompt</li>
-					<li>Coming soon:  A picture might be worth a thousand words, but all you need is a short description to generate the perfect image for your site.</li>
+					<li>Use generative fill to edit, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Choose from twenty-nine preset styles that will supercharge your prompts and check out the image-prompt gallery for inspiration. </li>
+					<li>Create custom code, write content, and generate images with Elementor’s comprehensive AI toolbox.</li>
 				</ul>',
 				'media' => [
 					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
 				],
 				'cta' => [
 					[

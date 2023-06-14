@@ -582,6 +582,8 @@ export default class EditorBase extends Marionette.Application {
 	initPanel() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
+		window.dispatchEvent( new CustomEvent( 'elementor/panel/init' ) );
+
 		this.trigger( 'panel:init' );
 	}
 

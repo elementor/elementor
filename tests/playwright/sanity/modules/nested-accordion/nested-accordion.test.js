@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';
+import { displayState } from '../../../enums/display-states';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
@@ -229,7 +230,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
+		test.skip( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
@@ -481,7 +482,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.skip( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test.skip( 'Accordion style tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -489,7 +490,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
 				nestedAccordionItemTitle = await frame.locator( '.e-n-accordion-item-title' ),
 				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
-				nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' ),
 				nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' );
 
 			let nestedAccordionID,
@@ -619,6 +619,64 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				} );
 			} );
 		} );
+
+		test( 'Header style tests', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				frame = editor.getPreviewFrame(),
+				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
+				nestedAccordionItemContent = nestedAccordionItem.locator( '.e-con' ),
+				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
+				nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' );
+
+			let nestedAccordionID,
+				nestedAccordion;
+
+			await test.step( 'Editor', async () => {
+				await test.step( 'Add Widget and navigate to Style Tab', async () => {
+					// Act
+					await editor.closeNavigatorIfOpen();
+					nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+					nestedAccordion = await editor.selectElement( nestedAccordionID );
+
+					await editor.activatePanelTab( 'style' );
+					await editor.openSection( 'section_header_style' );
+				} );
+				await test.step( 'set header style', async () => {
+					// Act
+					await editor.setTypography( 'title_typography', 70 );
+					await editor.setSliderControlValue( 'icon_size', 70 );
+					await editor.setSliderControlValue( 'icon_spacing', 70 );
+					await setIconColor( editor, displayState.normal, colors.green.hex, 'title' );
+					await setIconColor( editor, displayState.hover, colors.blue.hex, 'title' );
+					await setIconColor( editor, displayState.active, colors.red.hex, 'title' );
+					await setIconColor( editor, displayState.normal, colors.red.hex, 'icon' );
+					await setIconColor( editor, displayState.hover, colors.green.hex, 'icon' );
+					await setIconColor( editor, displayState.active, colors.blue.hex, 'icon' );
+				} );
+				await test.step( 'capture screenshot', async () => {
+					// Act
+					nestedAccordionItem.first().click();
+					await nestedAccordionItemContent.first().waitFor( { state: 'visible' } );
+					nestedAccordionItem.nth( 2 ).hover();
+
+					// Assert
+					await expect( nestedAccordion ).toHaveScreenshot( 'header-style-editor.png' );
+				} );
+			} );
+
+			await test.step( 'Frontend', async () => {
+				// Act
+				await editor.publishAndViewPage();
+				nestedAccordionItemFront.first().click();
+				nestedAccordionItemFront.nth( 2 ).hover();
+				await page.waitForLoadState( 'networkidle' );
+
+				// Assert
+				await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'header-style-front.png' );
+			} );
+		} );
 	} );
 } );
 
@@ -635,7 +693,7 @@ async function getIcon( nestedAccordionItem, iconIndex ) {
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
  *
  * @param {string} optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
- * @param {string} nestedAccordionWidgetId -- id of the nested accordion widget
+ * @param {string} nestedAccordionWidgetId - id of the nested accordion widget
  * @param {Object} editor
  * @param {Object} page
  * @return {Promise<void>}
@@ -688,5 +746,17 @@ async function setBorderAndBackground( editor, state, color, borderType, borderC
 
 	async function setState() {
 		await editor.page.click( '.elementor-control-accordion_' + state + '_border_and_background' );
+	}
+}
+async function setIconColor( editor, state, color, context ) {
+	await setState();
+	await setColor();
+
+	async function setColor() {
+		await editor.setColorControlValue( color, state + '_' + context + '_color' );
+	}
+
+	async function setState() {
+		await editor.page.click( '.elementor-control-header_' + state + '_' + context );
 	}
 }

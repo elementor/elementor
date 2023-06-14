@@ -1,8 +1,8 @@
 // BTN API
 $button-font-weight: $eps-font-weight-medium;
 $button-line-height: 16px;
-$button-padding-y: 0.5em;
-$button-padding-x: 1.5em;
+$button-padding-block: 0.5em;
+$button-padding-inline: 1.5em;
 $button-border-radius: $eps-radius;
 $button-hover-constant: 10%;
 $button-active-constant: 20%;
@@ -75,8 +75,8 @@ $button-dark-disabled-color: dark-theme-colors(light);
 // using mixing to transfer custom properties
 @mixin button-custom-properties() {
 	--button-line-height: #{$button-line-height};
-	--button-padding-y: #{$button-padding-y};
-	--button-padding-x: #{$button-padding-x};
+	--button-padding-y: #{$button-padding-block};
+	--button-padding-x: #{$button-padding-inline};
 	// primary
 	--button-primary-background-color: #{$button-primary-background-color};
 	--button-primary-hover-background-color: #{$button-primary-hover-background-color};
