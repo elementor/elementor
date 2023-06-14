@@ -1,9 +1,12 @@
-import { Stack, IconButton, Button, Box } from '@elementor/ui';
+import { Stack, IconButton, Button, Box, withDirection } from '@elementor/ui';
 import { IMAGE_ACTIONS } from '../../consts/consts';
-import ChevronLeftIcon from '../../../../icons/chevron-left-icon';
-import ChevronRightIcon from '../../../../icons/chevron-right-icon';
 import DownloadIcon from '../../../../icons/download-icon';
 import EditIcon from '../../../../icons/edit-icon';
+import ChevronRightIcon from '../../../../icons/chevron-right-icon';
+import ChevronLeftIcon from '../../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
+const StyledChevronRightIcon = withDirection( ChevronRightIcon );
 
 const ZoomImage = (
 	{
@@ -22,7 +25,7 @@ const ZoomImage = (
 		<Stack alignItems="flex-start" spacing={ 2 }>
 			<Stack direction="row" spacing={ 6 } alignSelf="center" alignItems="center">
 				<IconButton onClick={ () => imageNavigation.navigatePrevImage() } size="large" color="secondary">
-					<ChevronLeftIcon />
+					<StyledChevronLeftIcon />
 				</IconButton>
 
 				<Stack spacing={ 2 } justifyContent="space-around" alignItems="center">
@@ -31,7 +34,7 @@ const ZoomImage = (
 							size="small"
 							variant="text"
 							color="secondary"
-							startIcon={ <ChevronLeftIcon /> }
+							startIcon={ <StyledChevronLeftIcon /> }
 							onClick={ () => imageNavigation.backToResults() }
 						>
 							{ __( 'Back', 'elementor' ) }
@@ -68,7 +71,7 @@ const ZoomImage = (
 				</Stack>
 
 				<IconButton onClick={ () => imageNavigation.navigateNextImage() } size="large" color="secondary">
-					<ChevronRightIcon />
+					<StyledChevronRightIcon />
 				</IconButton>
 			</Stack>
 		</Stack>

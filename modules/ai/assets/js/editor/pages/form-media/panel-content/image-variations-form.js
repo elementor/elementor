@@ -1,9 +1,11 @@
-import { Stack, Box, Button, Typography } from '@elementor/ui';
+import { Stack, Box, Button, Typography, withDirection } from '@elementor/ui';
 import GenerateButton from '../../../components/generate-button';
 import PromptForm from './form-controls/prompt-form';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import RefreshIcon from '../../../icons/refresh-icon';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
 
 const ImageVariationsForm = ( {
 	panelActive,
@@ -31,7 +33,7 @@ const ImageVariationsForm = ( {
 					size="small"
 					variant="text"
 					color="secondary"
-					startIcon={ <ChevronLeftIcon /> }
+					startIcon={ <StyledChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
