@@ -156,32 +156,35 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				slideWidth = fallbackSlideWidth;
 			}
 
-			if ( 'right' === offsetSide ) {
-				const slidesInView = ( containerWidth + offset ) / slideWidth;
+			switch ( offsetSide ) {
+				case 'right':
+					swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
+					break;
+				case 'left':
+					swiperOptions.slidesPerView = slidesToShow;
+					swiperOptions.centeredSlides = true;
 
-				swiperOptions.slidesPerView = slidesInView;
-			}
+					this.addLeftPaddingToShowPreviousSlide( offset );
+					break;
+				case 'both':
+					const slidesCount = 2;
 
-			if ( 'left' === offsetSide ) {
-				swiperOptions.slidesPerView = slidesToShow;
-				swiperOptions.centeredSlides = true;
+					swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
+					swiperOptions.centeredSlides = true;
 
-				// Add left padding to the Swiper container to show previous slide
-				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
-			}
-
-			if ( 'both' === offsetSide ) {
-				const slidesCount = 2,
-					slidesInView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
-
-				swiperOptions.slidesPerView = slidesInView;
-				swiperOptions.centeredSlides = true;
-
-				// Add left and right padding to the Swiper container to show both previous and next slides
-				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
-				this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
+					this.addLeftPaddingToShowPreviousSlide( offset );
+					this.addRightPaddingToShowNextSlide( offset );
+					break;
 			}
 		}
+	}
+
+	addLeftPaddingToShowPreviousSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+	}
+
+	addRightPaddingToShowNextSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
 	}
 
 	async onInit( ...args ) {
