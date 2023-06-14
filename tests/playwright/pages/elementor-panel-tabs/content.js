@@ -21,7 +21,7 @@ export default class Content {
 		const urlInput = this.page.locator( options.linkInpSelector );
 		await urlInput.clear();
 		await urlInput.type( link );
-		const wheel = await this.page.locator( EditorSelectors.button.linkOptions );
+		const wheel = this.page.locator( EditorSelectors.button.linkOptions );
 		if ( await wheel.isVisible() ) {
 			await wheel.click();
 		}

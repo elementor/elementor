@@ -27,12 +27,17 @@ test.describe( 'Video tests inside a container', () => {
 		} );
 	} );
 
-	test( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
+	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			videoId = await editor.addWidget( widgets.video, containerId );
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
+		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
+
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const videoId = await editor.addWidget( widgets.video, containerId );
 
 		// Act.
 		// Set container padding to 0.
@@ -40,9 +45,9 @@ test.describe( 'Video tests inside a container', () => {
 		await editor.activatePanelTab( 'advanced' );
 		await page.locator( '.elementor-control-padding .elementor-control-dimension input' ).first().fill( '0' );
 
-		const container = await editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` ),
-			containerHeight = await container.boundingBox().height,
-			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox().height;
+		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
+		const containerHeight = await container.boundingBox().height;
+		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox().height;
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
@@ -71,10 +76,8 @@ test.describe( 'Video tests inside a container', () => {
 				await videoWidget.selectSuggestedVideos( 'Any Video' );
 			}
 
-			const controls = await new Promise( ( resolved ) => {
-				resolved( player.controls.map( ( control ) => {
-					return EditorSelectors.video[ control ];
-				} ) );
+			const controls = player.controls.map( ( control ) => {
+				return EditorSelectors.video[ control ];
 			} );
 
 			await videoWidget.toggleControls( controls );
