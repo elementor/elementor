@@ -142,8 +142,9 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
 		const offsetSide = elementSettings.offset_sides;
+		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
 
-		if ( offsetSide && 'none' !== offsetSide ) {
+		if ( ! isNestedCarouselInEditMode && offsetSide && 'none' !== offsetSide ) {
 			const offset = elementSettings.offset_width.size,
 				fallbackSlideWidth = 200,
 				containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
