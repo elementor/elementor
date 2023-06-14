@@ -35,6 +35,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			if ( 'social-icons' === data[ widget ].title ) {
 				await page.locator( EditorSelectors.socialIcons.item ).first().click();
 			}
+
 			await contentTab.setLink( link,
 				{ targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo, linkInpSelector: EditorSelectors.button.url } );
 			const widgetInEditor = editor.getPreviewFrame().locator( data[ widget ].selector ).first();

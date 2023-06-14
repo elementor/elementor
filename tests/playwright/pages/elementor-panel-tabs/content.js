@@ -22,10 +22,16 @@ export default class Content {
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
 		await urlInput.clear();
 		await urlInput.type( link );
+
 		const wheel = this.page.locator( EditorSelectors.button.linkOptions ).first();
 		if ( await wheel.isVisible() ) {
 			await wheel.click();
 		}
+
+		if ( options.targetBlank ) {
+			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
+		}
+
 		if ( options.targetBlank ) {
 			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
 		}

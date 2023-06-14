@@ -135,7 +135,6 @@ const EditorSelectors = {
 			return `${ this.widget } svg path`;
 		},
 	},
-
 };
 
 export default EditorSelectors;
