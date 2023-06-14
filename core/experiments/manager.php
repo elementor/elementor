@@ -82,8 +82,8 @@ function register_feature_routes() {
         'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
     ) );
 }
-register_feature_routes();
-add_action( 'rest_api_init', 'register_feature_routes' );
+// register_feature_routes();
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_feature_routes' );
 
 class Manager extends Base_Object {
 
