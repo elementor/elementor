@@ -1354,7 +1354,7 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Get Responsive Control Device Suffix
 	 *
-	 * @deprecated 3.7.6
+	 * @deprecated 3.7.6 Use `Elementor\Controls_Manager::get_responsive_control_device_suffix()` instead.
 	 * @param array $control
 	 * @return string $device suffix
 	 */
@@ -2114,10 +2114,10 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access protected
-	 * @deprecated 3.1.0 Use `Controls_Stack::register_controls()` instead
+	 * @deprecated 3.1.0 Use `register_controls()` method instead.
 	 */
 	protected function _register_controls() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_controls()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_controls()' );
 
 		$this->register_controls();
 	}
@@ -2201,13 +2201,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 use `get_initial_config()` instead
+	 * @deprecated 2.9.0 Use `get_initial_config()` method instead.
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::get_initial_config()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'get_initial_config()' );
 
 		return $this->get_initial_config();
 	}
@@ -2299,11 +2299,11 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
 	 * @since 2.0.0
-	 * @deprecated 2.9.0 use `content_template()` instead
+	 * @deprecated 2.9.0 Use `content_template()` method instead.
 	 * @access protected
 	 */
 	protected function _content_template() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::content_template()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'content_template()' );
 
 		$this->content_template();
 	}
@@ -2386,13 +2386,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * Set the raw data, the ID and the parsed settings.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 use `init()` instead
+	 * @deprecated 2.9.0 Use `init()` method instead.
 	 * @access protected
 	 *
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::init()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'init()' );
 
 		$this->init( $data );
 	}

@@ -1,0 +1,43 @@
+{
+    "content": [
+        {
+            "id": "5d65d24d",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "4b50805d",
+                    "settings": {
+                        "_column_size": 100,
+                        "_inline_size": null
+                    },
+                    "elements": [
+                        {
+                            "id": "4eea0e23",
+                            "settings": {
+                                "hover_primary_color": "#D10A0A",
+                                "hover_animation": "rotate",
+                                "size": {
+                                    "unit": "px",
+                                    "size": 138,
+                                    "sizes": []
+                                }
+                            },
+                            "elements": [],
+                            "isInner": false,
+                            "widgetType": "icon",
+                            "elType": "widget"
+                        }
+                    ],
+                    "isInner": false,
+                    "elType": "column"
+                }
+            ],
+            "isInner": false,
+            "elType": "section"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "icon_hover",
+    "type": "page"
+}

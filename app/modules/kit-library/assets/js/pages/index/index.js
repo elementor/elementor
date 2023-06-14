@@ -204,8 +204,8 @@ export default function Index( props ) {
 			}
 		>
 			<div className="e-kit-library__index-layout-container">
-				<Grid container className="e-kit-library__index-layout-top-area">
-					<Grid item className="e-kit-library__index-layout-top-area-search">
+				<Grid container className="e-kit-library__index-layout-heading">
+					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
 							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
@@ -224,7 +224,7 @@ export default function Index( props ) {
 					</Grid>
 					<Grid
 						item
-						className="e-kit-library__index-layout-top-area-sort"
+						className="e-kit-library__index-layout-heading-sort"
 					>
 						<SortSelect
 							options={ [
@@ -264,10 +264,10 @@ export default function Index( props ) {
 						{
 							isError && <ErrorScreen
 								title={ __( 'Something went wrong.', 'elementor' ) }
-								description={ __( 'Nothing to worry about, use 🔄 on the top right to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+								description={ __( 'Nothing to worry about, use 🔄 on the top corner to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 								button={ {
 									text: __( 'Learn More', 'elementor' ),
-									url: 'http://go.elementor.com/app-kit-library-error/',
+									url: 'https://go.elementor.com/app-kit-library-error/',
 									target: '_blank',
 								} }
 							/>
