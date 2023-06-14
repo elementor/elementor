@@ -29,7 +29,7 @@ export default class Content {
 		}
 
 		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
+			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
 		}
 
 		if ( options.targetBlank ) {
