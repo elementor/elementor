@@ -144,38 +144,40 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const offsetSide = elementSettings.offset_sides;
 		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
 
-		if ( ! isNestedCarouselInEditMode && offsetSide && 'none' !== offsetSide ) {
-			const offset = elementSettings.offset_width.size,
-				fallbackSlideWidth = 200,
-				containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
+		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
+			return;
+		}
 
-			let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
+		const offset = elementSettings.offset_width.size,
+			fallbackSlideWidth = 200,
+			containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
 
-			// If the slide width is not available, assume a default width
-			if ( ! slideWidth ) {
-				slideWidth = fallbackSlideWidth;
-			}
+		let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
 
-			switch ( offsetSide ) {
-				case 'right':
-					swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
-					break;
-				case 'left':
-					swiperOptions.slidesPerView = slidesToShow;
-					swiperOptions.centeredSlides = true;
+		// If the slide width is not available, assume a default width
+		if ( ! slideWidth ) {
+			slideWidth = fallbackSlideWidth;
+		}
 
-					this.addLeftPaddingToShowPreviousSlide( offset );
-					break;
-				case 'both':
-					const slidesCount = 2;
+		switch ( offsetSide ) {
+			case 'right':
+				swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
+				break;
+			case 'left':
+				swiperOptions.slidesPerView = slidesToShow;
+				swiperOptions.centeredSlides = true;
 
-					swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
-					swiperOptions.centeredSlides = true;
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				break;
+			case 'both':
+				const slidesCount = 2;
 
-					this.addLeftPaddingToShowPreviousSlide( offset );
-					this.addRightPaddingToShowNextSlide( offset );
-					break;
-			}
+				swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
+				swiperOptions.centeredSlides = true;
+
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addRightPaddingToShowNextSlide( offset );
+				break;
 		}
 	}
 
