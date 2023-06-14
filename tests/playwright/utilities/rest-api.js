@@ -34,8 +34,25 @@ async function deletePage( pageId, apiContext = null ) {
 	} );
 }
 
+/**
+ * @param {string}                                      feature
+ * @param {boolean}                                     isActive
+ * @param {import('playwright-core').APIRequestContext} apiContext
+ */
+async function setExperiment( feature, isActive, apiContext = null ) {
+	apiContext = apiContext || ( await createWpRestContext() );
+
+	await apiContext.put( `/index.php`, {
+		params: { rest_route: `/elementor/v1/features/${ isActive ? 'set_active' : 'set_inactive' }` },
+		data: {
+			feature,
+		},
+	} );
+}
+
 module.exports = {
 	createWpRestContext,
 	createPage,
 	deletePage,
+	setExperiment,
 };

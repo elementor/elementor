@@ -9,10 +9,81 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\Utils;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
+/**
+ * This is our callback function that embeds our phrase in a WP_REST_Response
+ */
+function is_active_endpoint( $request ) {
+    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	$is_feature_active = '';
+	if ( isset( $request['feature'] ) ) {
+		$experiments_manager = Plugin::$instance->experiments;
+		$is_feature_active = $experiments_manager->is_feature_active( $request['feature'] ) ? true : false;
+	}
+    return rest_ensure_response( [ is_active => $is_feature_active ] );
+}
+
+/**
+ * This is our callback function that embeds our phrase in a WP_REST_Response
+ */
+function set_active_endpoint( $request ) {
+    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	set_activation_status( $request->get_param( 'feature' ), Experiments_Manager::STATE_ACTIVE );
+    return rest_ensure_response( 'activated ' . $request->get_param( 'feature' ) );
+}
+
+/**
+ * This is our callback function that embeds our phrase in a WP_REST_Response
+ */
+function set_inactive_endpoint( $request ) {
+    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	set_activation_status( $request->get_param( 'feature' ), Experiments_Manager::STATE_INACTIVE );
+    return rest_ensure_response( 'deactivated ' . $request->get_param( 'feature' ) );
+}
+
+/**
+ * This is our callback function that embeds our phrase in a WP_REST_Response
+ */
+function set_activation_status( $feature, $state ) {
+    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	$experiments_manager = Plugin::instance()->experiments;
+	$option = $experiments_manager->get_feature_option_key( $feature );
+	update_option( $option, $state );
+}
+
+/**
+ * This function is where we register our routes for our example endpoint.
+ */
+function register_feature_routes() {
+    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
+    register_rest_route( 'elementor/v1/features', '/is_active', array(
+        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+        'methods'  => 'GET',
+        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+        'callback' => __NAMESPACE__ . '\is_active_endpoint',
+    ) );
+    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
+    register_rest_route( 'elementor/v1/features', '/set_active', array(
+        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+        'methods'  => 'PUT',
+        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+        'callback' => __NAMESPACE__ . '\set_active_endpoint',
+    ) );
+    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
+    register_rest_route( 'elementor/v1/features', '/set_inactive', array(
+        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+        'methods'  => 'PUT',
+        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+        'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
+    ) );
+}
+register_feature_routes();
+add_action( 'rest_api_init', 'register_feature_routes' );
 
 class Manager extends Base_Object {
 
