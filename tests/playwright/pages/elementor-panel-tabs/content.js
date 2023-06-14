@@ -8,9 +8,13 @@ export default class Content {
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
 
+	async selectLinkSource( option ) {
+		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
+	}
+
 	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
 		if ( options.linkTo ) {
-			await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( 'Custom URL' );
+			await this.selectLinkSource( 'Custom URL' );
 		}
 
 		const urlInput = this.page.locator( EditorSelectors.button.url );
@@ -67,5 +71,14 @@ export default class Content {
 		const response = this.page.waitForResponse( regex );
 		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
 		await response;
+	}
+
+	async setCaption( option ) {
+		await this.page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( option );
+	}
+
+	async setLightBox( option ) {
+		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
+		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 }
