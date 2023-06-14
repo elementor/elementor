@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
-import { Stack, Box, Button, Typography, InputAdornment, CircularProgress, Tooltip, IconButton } from '@elementor/ui';
+import { Stack, Box, Button, Typography, InputAdornment, CircularProgress, Tooltip, IconButton, withDirection } from '@elementor/ui';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import { PANELS } from '../consts/consts';
-import ChevronLeftIcon from '../../../icons/chevron-left-icon';
 import WandIcon from '../../../icons/wand-icon';
 import Textarea from '../../../components/textarea';
 import useImagePromptEnhancer from '../../../hooks/use-image-prompt-enhancer';
+import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
 
 const InPaintingForm = ( {
 	panelActive,
@@ -45,7 +47,7 @@ const InPaintingForm = ( {
 					size="small"
 					variant="text"
 					color="secondary"
-					startIcon={ <ChevronLeftIcon /> }
+					startIcon={ <StyledChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
