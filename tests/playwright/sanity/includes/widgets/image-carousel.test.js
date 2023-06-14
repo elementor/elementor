@@ -135,6 +135,7 @@ test.describe( 'Image carousel tests', () => {
 			await imageCarousel.waitForSlide( 2, 'B' );
 		} );
 	} );
+
 	test( 'Image caption test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );

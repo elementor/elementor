@@ -12,18 +12,23 @@ export default class Content {
 		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
 	}
 
-	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
+	async setLink( link,
+		options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false, linkInpSelector } ) {
 		if ( options.linkTo ) {
 			await this.selectLinkSource( 'Custom URL' );
 		}
 
-		const urlInput = this.page.locator( EditorSelectors.button.url );
+		const urlInput = this.page.locator( options.linkInpSelector );
 		await urlInput.clear();
 		await urlInput.type( link );
-		await this.page.locator( EditorSelectors.button.linkOptions ).click();
+		const wheel = this.page.locator( EditorSelectors.button.linkOptions );
+		if ( await wheel.isVisible() ) {
+			await wheel.click();
+		}
 		if ( options.targetBlank ) {
 			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
 		}
+
 		if ( options.targetBlank ) {
 			await this.page.locator( EditorSelectors.button.noFollowChbox ).check();
 		}
@@ -53,11 +58,12 @@ export default class Content {
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
 	}
 
-	async verifyImageSrc( args = { selector, imageTitle, isPublished } ) {
+	async verifyImageSrc( args = { selector, imageTitle, isPublished, isVideo } ) {
 		const image = args.isPublished
 			? await this.page.locator( args.selector )
 			: await this.editorPage.getPreviewFrame().waitForSelector( args.selector );
-		const src = await image.getAttribute( 'src' );
+		const attribute = args.isVideo ? 'style' : 'src';
+		const src = await image.getAttribute( attribute );
 		const regex = new RegExp( args.imageTitle );
 		expect( regex.test( src ) ).toEqual( true );
 	}
@@ -80,5 +86,13 @@ export default class Content {
 	async setLightBox( option ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
+	}
+
+	async toggleControls( controlSelectors ) {
+		for ( const i in controlSelectors ) {
+			await this.page.locator( controlSelectors[ i ] )
+				.locator( '..' )
+				.locator( EditorSelectors.video.switch ).click();
+		}
 	}
 }
