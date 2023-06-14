@@ -10,16 +10,11 @@ export default class VideoWidget extends Content {
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
 
-	async setStartTime( value ) {
-		await this.page.getByLabel( 'Start Time' ).click();
-		await this.page.getByLabel( 'Start Time' ).clear( { force: true } );
-		await this.page.getByLabel( 'Start Time' ).type( value );
-	}
-
-	async setEndTime( value ) {
-		await this.page.getByLabel( 'End Time' ).click();
-		await this.page.getByLabel( 'End Time' ).clear( { force: true } );
-		await this.page.getByLabel( 'End Time' ).type( value );
+	async setTime( startOrEnd, value ) {
+		const label = `${ String( startOrEnd ).toUpperCase() } Time`;
+		await this.page.getByLabel( label ).click();
+		await this.page.getByLabel( label ).clear( { force: true } );
+		await this.page.getByLabel( label ).type( value );
 	}
 
 	async selectSuggestedVideos( option ) {

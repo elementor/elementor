@@ -61,10 +61,7 @@ export default class Content {
 		const image = args.isPublished
 			? await this.page.locator( args.selector )
 			: await this.editorPage.getPreviewFrame().waitForSelector( args.selector );
-		let attribute = 'src';
-		if ( args.isVideo ) {
-			attribute = 'style';
-		}
+		const attribute = args.isVideo ? 'style' : 'src';
 		const src = await image.getAttribute( attribute );
 		const regex = new RegExp( args.imageTitle );
 		expect( regex.test( src ) ).toEqual( true );

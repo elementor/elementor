@@ -42,7 +42,12 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						select: data[ i ].select,
 						imageSize: imageSize[ id ],
 					} );
-				await contentTab.verifyImageSrc( { selector: data[ i ].image, isPublished: false, isVideo: data[ i ].isVideo } );
+				await contentTab.verifyImageSrc(
+					{
+						selector: data[ i ].image,
+						isPublished: false,
+						isVideo: data[ i ].isVideo,
+					} );
 				await editor.verifyClassInElement(
 					{
 						selector: data[ i ].image,
@@ -51,7 +56,12 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 					} );
 				await editor.publishAndViewPage();
 				await wpAdmin.waitForPanel();
-				await contentTab.verifyImageSrc( { selector: data[ i ].image, isPublished: true, isVideo: data[ i ].isVideo } );
+				await contentTab.verifyImageSrc(
+					{
+						selector: data[ i ].image,
+						isPublished: true,
+						isVideo: data[ i ].isVideo,
+					} );
 				await editor.verifyClassInElement(
 					{
 						selector: data[ i ].image,
@@ -98,7 +108,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await contentTab.setCaption( 'attachment' );
 		await contentTab.setLinkTo( 'file' );
 		await contentTab.setLightBox( 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
+		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
+			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 

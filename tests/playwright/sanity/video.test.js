@@ -65,9 +65,9 @@ test.describe( 'Video tests inside a container', () => {
 			await editor.addWidget( 'video' );
 			await videoWidget.selectVideoSource( video );
 
-			await videoWidget.setStartTime( startTime );
+			await videoWidget.setTime( 'Start', startTime );
 			if ( 'youtube' === video ) {
-				await videoWidget.setEndTime( endTime );
+				await videoWidget.setTime( 'End', endTime );
 				await videoWidget.selectSuggestedVideos( 'Any Video' );
 			}
 
