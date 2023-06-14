@@ -135,7 +135,58 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			},
 		};
 
+		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
+
 		return swiperOptions;
+	}
+
+	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
+		const offsetSide = elementSettings.offset_sides;
+		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+
+		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
+			return;
+		}
+
+		const offset = elementSettings.offset_width.size,
+			fallbackSlideWidth = 200,
+			containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
+
+		let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
+
+		// If the slide width is not available, assume a default width
+		if ( ! slideWidth ) {
+			slideWidth = fallbackSlideWidth;
+		}
+
+		switch ( offsetSide ) {
+			case 'right':
+				swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
+				break;
+			case 'left':
+				swiperOptions.slidesPerView = slidesToShow;
+				swiperOptions.centeredSlides = true;
+
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				break;
+			case 'both':
+				const slidesCount = 2;
+
+				swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
+				swiperOptions.centeredSlides = true;
+
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addRightPaddingToShowNextSlide( offset );
+				break;
+		}
+	}
+
+	addLeftPaddingToShowPreviousSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+	}
+
+	addRightPaddingToShowNextSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
 	}
 
 	async onInit( ...args ) {
