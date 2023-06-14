@@ -125,6 +125,16 @@ const EditorSelectors = {
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
 	},
+	socialIcons: {
+		widget: '[data-widget_type="social-icons.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+		item: '.elementor-repeater-row-item-title',
+		get svgIcon() {
+			return `${ this.widget } svg path`;
+		},
+	},
 
 };
 
