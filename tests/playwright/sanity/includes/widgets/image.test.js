@@ -87,8 +87,10 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
+		const contentTab = new Content( page, testInfo );
 		const image = 'elementor1.png';
 		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Act', async () => {
 			await editor.addWidget( 'image' );
@@ -99,9 +101,9 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			await page.locator( '#attachment-details-description' ).fill( 'WP + Elementor = ❤️ (description)' );
 			await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
 
-			await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
-			await page.getByRole( 'combobox', { name: 'Link' } ).selectOption( 'file' );
-			await page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( 'yes' );
+			await contentTab.setCaption( 'attachment' );
+			await contentTab.selectLinkSource( 'file' );
+			await contentTab.setLightBox( 'yes' );
 			expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
 			await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
 			await expect( editor.getPreviewFrame().locator( '.swiper-zoom-container' ) ).toBeVisible();

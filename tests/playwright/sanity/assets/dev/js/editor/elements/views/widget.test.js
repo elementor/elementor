@@ -20,10 +20,11 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addWidget( 'sidebar' );
+		await editor.closeNavigatorIfOpen();
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-sidebar .elementor-widget-empty-icon' ).count();

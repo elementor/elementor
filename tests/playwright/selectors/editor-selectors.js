@@ -22,6 +22,11 @@ const EditorSelectors = {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
 		selectBtn: '.button.media-button',
+		imageInp: 'input[type="file"]',
+		addGalleryButton: 'button.media-button-gallery',
+		images: '.attachments-wrapper li',
+		imgCaption: '#attachment-details-caption',
+		imgDescription: '#attachment-details-description',
 	},
 	siteTitle: 'h1.site-title',
 	pageTitle: 'h1.entry-title',
@@ -68,6 +73,24 @@ const EditorSelectors = {
 		get image() {
 			return `${ this.widget } img`;
 		},
+	},
+	imageCarousel: {
+		widget: '[data-widget_type="image-carousel.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+		navigationSelect: '.elementor-control-navigation select',
+		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySpeedLabel: 'Autoplay Speed',
+		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
+		autoplayToggle: '.elementor-switch-handle',
+		captionSelect: 'select[data-setting="caption_type"]',
+		imgCaption: 'figcaption.elementor-image-carousel-caption',
+		prevSliderBtn: '.elementor-swiper-button-prev',
+		nextSliderBtn: '.elementor-swiper-button-next',
+		activeSlide: ( id ) => `.swiper-pagination-bullet-active[aria-label="Go to slide ${ id }"]`,
+		activeSlideImg: ( name ) => `.swiper-slide-active img[alt="${ name }"]`,
 	},
 	textPath: {
 		widget: '[data-widget_type="text-path.default"]',

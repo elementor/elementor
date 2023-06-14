@@ -2,6 +2,7 @@ import { test } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page.js';
 import EditorSelectors from '../selectors/editor-selectors.js';
 import Content from '../pages/elementor-panel-tabs/content.js';
+import ImageCarousel from '../pages/widgets/image-carousel.js';
 
 test.describe( 'Testing link control for widgets: @styleguide_image_link', () => {
 	const data = [
@@ -10,6 +11,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 		{ title: 'icon', selector: EditorSelectors.icon.link, linkTo: false },
 		{ title: 'image', selector: EditorSelectors.image.link, linkTo: true },
 		{ title: 'image-box', selector: EditorSelectors.imageBox.link, linkTo: false },
+		{ title: 'image-carousel', selector: EditorSelectors.imageCarousel.link, linkTo: true },
 	// BUG here !{ title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
 	];
 
@@ -18,10 +20,16 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			const link = 'https://elementor.com/';
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo );
+			const imageCarousel = new ImageCarousel( page, testInfo );
 			const editor = await wpAdmin.openNewPage();
 			const contentTab = new Content( page, testInfo );
 
 			await editor.addWidget( data[ widget ].title );
+			if ( 'image-carousel' === data[ widget ].title ) {
+				await imageCarousel.addImageGallery();
+				await imageCarousel.setAutoplay( 'no' );
+				await editor.openSection( 'section_image_carousel' );
+			}
 			await contentTab.setLink( link, { targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo } );
 			const widgetInEditor = editor.getPreviewFrame().locator( data[ widget ].selector ).first();
 			await contentTab.verifyLink( widgetInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
