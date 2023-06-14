@@ -2,30 +2,30 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const EditorPage = require( '../pages/editor-page' );
-import Content from '../pages/elementor-panel-tabs/content';
+const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
 test.describe( 'Video tests inside a container', () => {
-	// Test.beforeAll( async ( { browser }, testInfo ) => {
-	// 	const context = await browser.newContext(),
-	// 		page = await context.newPage(),
-	// 		wpAdmin = new WpAdminPage( page, testInfo );
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
 
-	// 	await wpAdmin.setExperiments( {
-	// 		container: true,
-	// 	} );
-	// } );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
+	} );
 
-	// test.afterAll( async ( { browser }, testInfo ) => {
-	// 	const context = await browser.newContext(),
-	// 		page = await context.newPage(),
-	// 		wpAdmin = new WpAdminPage( page, testInfo );
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
 
-	// 	await wpAdmin.setExperiments( {
-	// 		container: false,
-	// 	} );
-	// } );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
 
 	test( 'Verify that there is no gap between the video widget and the container', async ( { page }, testInfo ) => {
 		// Arrange.
@@ -49,39 +49,83 @@ test.describe( 'Video tests inside a container', () => {
 		expect( containerHeight ).toEqual( videoIframeHeight );
 	} );
 
-	test( 'Video link test', async ( { page }, testInfo ) => {
-		const link = 'https://youtu.be/6KNISw9RPTc';
+	const videos = require( _path.resolve( __dirname, `../testData/video.json` ) );
+
+	for ( const video in videos ) {
+		test( `${ video } controls and link test`, async ( { page }, testInfo ) => {
+			const player = videos[ video ];
+			const wpAdmin = new WpAdminPage( page, testInfo );
+			const editor = new EditorPage( page, testInfo );
+			const videoWidget = new VideoWidget( page, testInfo );
+			const startTime = '10';
+			const endTime = '20';
+
+			await wpAdmin.openNewPage();
+			await editor.closeNavigatorIfOpen();
+			await editor.addWidget( 'video' );
+			await videoWidget.selectVideoSource( video );
+
+			await videoWidget.setStartTime( startTime );
+			if ( 'youtube' === video ) {
+				await videoWidget.setEndTime( endTime );
+				await videoWidget.selectSuggestedVideos( 'Any Video' );
+			}
+
+			const controls = await new Promise( ( resolved ) => {
+				resolved( player.controls.map( ( control ) => {
+					return EditorSelectors.video[ control ];
+				} ) );
+			} );
+
+			await videoWidget.toggleControls( controls );
+			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
+			let src = await videoWidget.getVideoSrc( false );
+			videoWidget.verifyVideoParams( src, player.expected, video );
+			await editor.publishAndViewPage();
+			src = await videoWidget.getVideoSrc( true );
+			videoWidget.verifyVideoParams( src, player.expected, video );
+		} );
+	}
+
+	test( 'Choose image test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
-		const startTime = '10';
-		const endTime = '20';
+		const imageTitle = 'About-Pic-3-1';
+
+		await wpAdmin.openNewPage();
+		await editor.addWidget( 'video' );
+		await editor.openSection( 'section_image_overlay' );
+		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
+		await videoWidget.chooseImage( `${ imageTitle }.png` );
+		await wpAdmin.waitForPanel();
+		await videoWidget.selectImageSize(
+			{
+				widget: EditorSelectors.video.widget,
+				select: EditorSelectors.video.imageSizeSelect,
+				imageSize: 'thumbnail',
+			} );
+		await videoWidget.verifyImageSrc( { selector: EditorSelectors.video.image, isPublished: false, isVideo: true } );
+		await editor.publishAndViewPage();
+		await wpAdmin.waitForPanel();
+		await videoWidget.verifyImageSrc( { selector: EditorSelectors.video.image, isPublished: true, isVideo: true } );
+	} );
+
+	test( 'Lightbox video test', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
+		const videoWidget = new VideoWidget( page, testInfo );
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'video' );
-		await videoWidget.setStartTime( startTime );
-		await videoWidget.setEndTime( endTime );
-		await videoWidget.toggleControl( EditorSelectors.video.autoplayInp );
-		await videoWidget.toggleControl( EditorSelectors.video.playOnMobileInp );
-		await videoWidget.toggleControl( EditorSelectors.video.muteInp );
-		await videoWidget.toggleControl( EditorSelectors.video.loopInp );
-		await videoWidget.toggleControl( EditorSelectors.video.modestbrandingInp );
-		await videoWidget.toggleControl( EditorSelectors.video.privacyInp );
-		await videoWidget.toggleControl( EditorSelectors.video.lazyLoadInp );
-		await videoWidget.selectSuggestedVideos( 'Any Video' );
-		await videoWidget.setLink( link, { linkInpSelector: EditorSelectors.video.youtubeLinkInp } );
-
-		const src = await editor.getPreviewFrame().locator( 'iframe.elementor-video' ).getAttribute( 'src' );
-
-		const videoOptions = await videoWidget.parseSrc( src );
-
-		expect( videoOptions.autoplay ).toEqual( 'true' );
-		expect( videoOptions.controls ).toEqual( 'true' );
-		expect( videoOptions.start ).toEqual( startTime );
-		expect( videoOptions.end ).toEqual( endTime );
-		expect( videoOptions.modestbranding ).toEqual( 'true' );
-		expect( videoOptions.playsinline ).toEqual( 'true' );
+		await editor.openSection( 'section_image_overlay' );
+		await videoWidget.toggleControls( [ EditorSelectors.video.showImageOverlay ] );
+		await videoWidget.chooseImage( 'About-Pic-3-1.png' );
+		await videoWidget.toggleControls( [ EditorSelectors.video.lightBoxControlInp ] );
+		await videoWidget.verifyVideoLightBox( false );
+		await editor.publishAndViewPage();
+		await videoWidget.verifyVideoLightBox( true );
 	} );
 } );
 

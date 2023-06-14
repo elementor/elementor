@@ -37,4 +37,31 @@ export default class VideoWidget extends Content {
 		}, {} );
 		return options;
 	}
+
+	async getVideoSrc( isPublished ) {
+		const page = true === isPublished ? this.page : this.editorPage.getPreviewFrame();
+		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
+		return src;
+	}
+
+	async selectVideoSource( option ) {
+		await this.page.locator( EditorSelectors.video.videoSourceSelect ).selectOption( option );
+	}
+
+	async verifyVideoParams( src, expectedValues, player ) {
+		const videoOptions = await this.parseSrc( src );
+		if ( 'vimeo' === player ) {
+			videoOptions.start = src.split( '#' )[ 1 ];
+		}
+		for ( const key in expectedValues ) {
+			expect( videoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( expectedValues[ key ] ) );
+		}
+	}
+
+	async verifyVideoLightBox( isPublished ) {
+		const page = true === isPublished ? this.page : this.editorPage.getPreviewFrame();
+		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
+		await page.locator( EditorSelectors.video.image ).click( );
+		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
+	}
 }

@@ -57,6 +57,7 @@ const EditorSelectors = {
 		get link() {
 			return `${ this.widget } a`;
 		},
+		lightBox: '.swiper-zoom-container',
 	},
 	icon: {
 		widget: '[data-widget_type="icon.default"]',
@@ -96,9 +97,9 @@ const EditorSelectors = {
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
-		youtubeLinkInp: '[data-setting="youtube_url"]',
-		vimeoLinkInp: '[data-setting="vimeo_url"]',
-		dailymotionLinkInp: '[data-setting="dailymotion_url"]',
+		youtube: { linkInp: '[data-setting="youtube_url"]' },
+		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
+		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
 		autoplayInp: 'input[data-setting="autoplay"]',
 		muteInp: 'input[data-setting="mute"]',
 		loopInp: 'input[data-setting="loop"]',
@@ -109,6 +110,16 @@ const EditorSelectors = {
 		suggestedVideoSelect: '[data-setting="rel"]',
 		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
 		lazyLoadInp: 'input[data-setting="lazy_load"]',
+		videoSourceSelect: '[data-setting="video_type"]',
+		showImageOverlay: '[data-setting="show_image_overlay"]',
+		get image() {
+			return `${ this.widget } .elementor-custom-embed-image-overlay`;
+		},
+		imageSizeSelect: '[data-setting="image_overlay_size"]',
+		lightBoxControlInp: '[data-setting="lightbox"]',
+		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
+		lightBoxDialog: '.elementor-lightbox',
+		iframe: 'iframe[class*="elementor-video"]',
 	},
 
 };

@@ -57,11 +57,15 @@ export default class Content {
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
 	}
 
-	async verifyImageSrc( args = { selector, imageTitle, isPublished } ) {
+	async verifyImageSrc( args = { selector, imageTitle, isPublished, isVideo } ) {
 		const image = args.isPublished
 			? await this.page.locator( args.selector )
 			: await this.editorPage.getPreviewFrame().waitForSelector( args.selector );
-		const src = await image.getAttribute( 'src' );
+		let attribute = 'src';
+		if ( args.isVideo ) {
+			attribute = 'style';
+		}
+		const src = await image.getAttribute( attribute );
 		const regex = new RegExp( args.imageTitle );
 		expect( regex.test( src ) ).toEqual( true );
 	}
@@ -85,9 +89,11 @@ export default class Content {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
 	}
 
-	async toggleControl( controlSelector ) {
-		await this.page.locator( controlSelector )
-			.locator( '..' )
-			.locator( EditorSelectors.video.switch ).click();
+	async toggleControls( controlSelectors ) {
+		for ( const i in controlSelectors ) {
+			await this.page.locator( controlSelectors[ i ] )
+				.locator( '..' )
+				.locator( EditorSelectors.video.switch ).click();
+		}
 	}
 }
