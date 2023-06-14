@@ -90,6 +90,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		const editor = new EditorPage( page, testInfo );
 		const contentTab = new Content( page, testInfo );
 		const image = 'About-Pic-3-1';
+
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		await editor.addWidget( 'image' );

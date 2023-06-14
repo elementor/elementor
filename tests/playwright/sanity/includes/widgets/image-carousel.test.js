@@ -3,6 +3,7 @@ const WpAdminPage = require( '../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../assets/breakpoints' );
 const EditorPage = require( '../../../pages/editor-page' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
 	test( 'Image Carousel', async ( { page }, testInfo ) => {
@@ -36,7 +37,6 @@ test.describe( 'Image carousel tests', () => {
 			await page.locator( '.elementor-control-section_image_carousel' ).click();
 			await imageCarousel.selectNavigation( 'both' );
 			await page.selectOption( '.elementor-control-image_stretch >> select', 'yes' );
-
 			await editor.activatePanelTab( 'style' );
 			await page.locator( '.elementor-control-section_style_image' ).click();
 			await page.selectOption( '.elementor-control-image_border_border >> select', 'solid' );
@@ -61,37 +61,21 @@ test.describe( 'Image carousel tests', () => {
 		await editor.useDefaultTemplate();
 	} );
 
-	test.skip( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+	test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
-
+		const imageCarousel = new ImageCarousel( page, testInfo );
+		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: true,
 		} );
-
-		const editor = await wpAdmin.useElementorCleanPost();
-
+		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
-
 		// Add breakpoints.
 		const breakpoints = new Breakpoints( page );
 		await breakpoints.addAllBreakpoints();
-
 		await editor.addWidget( 'image-carousel' );
-
-		await page.locator( '.eicon-plus-circle' ).first().click();
-
-		await page.click( 'text=Media Library' );
-
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-		await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-		await page.locator( 'text=Create a new gallery' ).click();
-
-		await page.locator( 'text=Insert gallery' ).click();
-
+		await imageCarousel.addImageGallery();
+		await imageCarousel.setAutoplay();
 		await editor.activatePanelTab( 'style' );
 		await page.locator( '.elementor-control-section_style_image' ).click();
 		await page.selectOption( '.elementor-control-image_spacing >> select', { value: 'custom' } );
@@ -122,44 +106,36 @@ test.describe( 'Image carousel tests', () => {
 		} );
 	} );
 
-	test.skip( 'Accessibility test', async ( { page }, testInfo ) => {
+	test( 'Accessibility test', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
-
+		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
 		} );
-
-		const editor = await wpAdmin.useElementorCleanPost();
-
+		await wpAdmin.openNewPage();
 		await editor.useDefaultTemplate();
-
-		// Close Navigator
 		await editor.closeNavigatorIfOpen();
-
-		// Populate the widget with images.
+		await editor.addWidget( 'heading' );
+		await editor.addWidget( 'image-carousel' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
 		await editor.openSection( 'section_additional_options' );
-		await editor.setSelectControlValue( 'autoplay', 'yes' );
-		await editor.setNumberControlValue( 'speed', 0 );
 
-		await test.step( 'Assert keyboard navigation inside the editor', async () => {
 		// Assert.
-			await editor.getPreviewFrame().locator( '.elementor-swiper-button-prev' ).focus();
+		await test.step( 'Assert keyboard navigation in the Frontend', async () => {
+			await editor.publishAndViewPage();
+			await page.locator( EditorSelectors.imageCarousel.prevSliderBtn ).focus();
 			await page.keyboard.press( 'Tab' );
-			await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
+			await imageCarousel.waitForSlide( 1, 'A' );
 			await page.keyboard.press( 'Enter' );
-			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
+			await imageCarousel.waitForSlide( 2, 'B' );
+			await page.waitForTimeout( 600 );
 			await page.keyboard.press( 'ArrowLeft' );
-			await expect( await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ) ).toBeFocused();
-			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '0' );
-			await page.keyboard.press( 'Enter' );
-			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
-			await page.keyboard.press( 'Tab' );
-			await expect( await getActiveSlideDataValue( editor.getPreviewFrame() ) ).toEqual( '1' );
-			await expect( await editor.getPreviewFrame().locator( '.swiper-pagination-bullet-active' ) ).toBeFocused();
+			await imageCarousel.waitForSlide( 1, 'A' );
+			await page.waitForTimeout( 600 );
+			await page.keyboard.press( 'ArrowRight' );
+			await imageCarousel.waitForSlide( 2, 'B' );
 		} );
 	} );
 
@@ -193,8 +169,3 @@ test.describe( 'Image carousel tests', () => {
 		await imageCarousel.verifyCaption( title );
 	} );
 } );
-
-async function getActiveSlideDataValue( context ) {
-	await context.waitForSelector( '.swiper-slide-active' );
-	return await context.locator( '.swiper-slide-active' ).getAttribute( 'data-swiper-slide-index' );
-}

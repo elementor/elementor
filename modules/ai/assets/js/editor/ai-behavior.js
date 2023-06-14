@@ -84,7 +84,12 @@ export default class AiBehavior extends Marionette.Behavior {
 			} );
 		}
 
-		this.$el.find( '.elementor-control-title' ).after(
+		let $wrap = this.$el.find( '.elementor-control-responsive-switchers' );
+		if ( ! $wrap.length ) {
+			$wrap = this.$el.find( '.elementor-control-title' );
+		}
+
+		$wrap.after(
 			$button,
 		);
 	}

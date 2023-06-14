@@ -88,6 +88,10 @@ const EditorSelectors = {
 		autoplayToggle: '.elementor-switch-handle',
 		captionSelect: 'select[data-setting="caption_type"]',
 		imgCaption: 'figcaption.elementor-image-carousel-caption',
+		prevSliderBtn: '.elementor-swiper-button-prev',
+		nextSliderBtn: '.elementor-swiper-button-next',
+		activeSlide: ( id ) => `.swiper-pagination-bullet-active[aria-label="Go to slide ${ id }"]`,
+		activeSlideImg: ( name ) => `.swiper-slide-active img[alt="${ name }"]`,
 	},
 	textPath: {
 		widget: '[data-widget_type="text-path.default"]',

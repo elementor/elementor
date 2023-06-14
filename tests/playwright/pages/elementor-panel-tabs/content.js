@@ -8,13 +8,13 @@ export default class Content {
 		this.editorPage = new EditorPage( this.page, testInfo );
 	}
 
-	async setLinkTo( option ) {
+	async selectLinkSource( option ) {
 		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
 	}
 
-	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false, linkInpSelector: EditorSelectors.button.url } ) {
+	async setLink( link, options = { targetBlank: false, noFollow: false, customAttributes: undefined, linkTo: false } ) {
 		if ( options.linkTo ) {
-			await this.setLinkTo( 'Custom URL' );
+			await this.selectLinkSource( 'Custom URL' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector );
@@ -87,6 +87,7 @@ export default class Content {
 
 	async setLightBox( option ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
+		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 
 	async toggleControls( controlSelectors ) {

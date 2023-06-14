@@ -61,4 +61,9 @@ export default class ImageCarousel extends Content {
 				.locator( EditorSelectors.imageCarousel.imgCaption ).nth( i ) ).toHaveText( expectedData[ i ] );
 		}
 	}
+
+	async waitForSlide( id, imageName ) {
+		await this.page.locator( EditorSelectors.imageCarousel.activeSlide( id ) ).waitFor();
+		await this.page.locator( EditorSelectors.imageCarousel.activeSlideImg( imageName ) ).waitFor();
+	}
 }
