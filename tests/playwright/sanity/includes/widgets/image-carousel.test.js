@@ -165,8 +165,3 @@ test.describe( 'Image carousel tests', () => {
 		await imageCarousel.verifyCaption( title );
 	} );
 } );
-
-async function getActiveSlideDataValue( context ) {
-	await context.waitForSelector( '.swiper-slide-active' );
-	return await context.locator( '.swiper-slide-active' ).getAttribute( 'data-swiper-slide-index' );
-}

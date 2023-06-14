@@ -79,5 +79,6 @@ export default class Content {
 
 	async setLightBox( option ) {
 		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
+		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 }
