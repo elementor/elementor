@@ -1,7 +1,9 @@
-import { Stack, Box, Button, Typography, Slider, FormControl } from '@elementor/ui';
+import { Stack, Box, Button, Typography, Slider, FormControl, withDirection } from '@elementor/ui';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import { IMAGE_PROMPT_SETTINGS, PANELS } from '../consts/consts';
 import ChevronLeftIcon from '../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
 
 const UpscaleForm = ( {
 	panelActive,
@@ -22,7 +24,7 @@ const UpscaleForm = ( {
 					size="small"
 					variant="text"
 					color="secondary"
-					startIcon={ <ChevronLeftIcon /> }
+					startIcon={ <StyledChevronLeftIcon /> }
 					onClick={ ( e ) => {
 						e.preventDefault();
 						backToTools();
