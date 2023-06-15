@@ -68,5 +68,7 @@ test( 'Social icons: upload svg', async ( { page }, testInfo ) => {
 	await page.locator( EditorSelectors.item ).first().click();
 	await contentTab.uploadSVG();
 	await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
+	await editor.publishAndViewPage();
+	await expect( page.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 } );
 
