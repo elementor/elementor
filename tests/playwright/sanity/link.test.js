@@ -33,7 +33,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			}
 
 			if ( 'social-icons' === data[ widget ].title ) {
-				await page.locator( EditorSelectors.socialIcons.item ).first().click();
+				await page.locator( EditorSelectors.item ).first().click();
 			}
 
 			await contentTab.setLink( link,
