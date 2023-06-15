@@ -63,7 +63,6 @@ test( 'Social icons: upload svg', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = new EditorPage( page, testInfo );
 	const contentTab = new Content( page, testInfo );
-	await wpAdmin.enableAdvancedUploads();
 	await wpAdmin.openNewPage();
 	await editor.addWidget( 'social-icons' );
 	await page.locator( EditorSelectors.item ).first().click();

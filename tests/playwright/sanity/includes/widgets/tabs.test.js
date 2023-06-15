@@ -37,5 +37,7 @@ test( 'Tabs widget sanity test', async ( { page }, testInfo ) => {
 	await editor.addWidget( 'tabs' );
 	await contentTab.addNewTab( tabTitle, tabText );
 	await editor.getPreviewFrame().getByRole( 'tab', { name: 'Tab #1' } ).click();
+	await editor.getPreviewFrame().getByRole( 'tab', { name: 'Tab #1' } ).click();
+	await editor.getPreviewFrame().getByRole( 'tab', { name: tabTitle } ).click();
 	await expect( editor.getPreviewFrame().getByText( 'Super tab content test' ) ).toBeVisible();
 } );
