@@ -66,7 +66,7 @@ test( 'Social icons: upload svg', async ( { page }, testInfo ) => {
 	await wpAdmin.enableAdvancedUploads();
 	await wpAdmin.openNewPage();
 	await editor.addWidget( 'social-icons' );
-	await page.locator( EditorSelectors.socialIcons.item ).first().click();
+	await page.locator( EditorSelectors.item ).first().click();
 	await contentTab.uploadSVG();
 	await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 } );

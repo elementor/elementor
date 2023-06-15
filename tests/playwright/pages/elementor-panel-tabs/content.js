@@ -113,4 +113,15 @@ export default class Content {
 		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
 		await this.page.getByRole( 'button', { name: 'Insert Media' } ).click();
 	}
+
+	async addNewTab( tabName, text ) {
+		const itemCount = await this.page.locator( EditorSelectors.item ).count();
+		await this.page.getByRole( 'button', { name: 'Add Item' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).fill( tabName );
+		const textEditor = this.page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
+		await textEditor.locator( 'html' ).click();
+		await textEditor.getByText( 'Tab Content' ).click();
+		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
+	}
 }
