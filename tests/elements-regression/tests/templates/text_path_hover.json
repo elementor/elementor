@@ -1,17 +1,26 @@
 {
     "content": [
         {
-            "id": "44a997ff",
+            "id": "39fa47f0",
             "settings": [],
             "elements": [
                 {
-                    "id": "462d24ee",
+                    "id": "4a81eace",
                     "settings": {
                         "text": "Add Your Curvy Text Here",
-                        "hover_transition": {
-                            "unit": "s",
-                            "size": 0,
+                        "align": "left",
+                        "size": {
+                            "unit": "px",
+                            "size": 200,
                             "sizes": []
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "21",
+                            "right": "21",
+                            "bottom": "21",
+                            "left": "21",
+                            "isLinked": true
                         },
                         "__globals__": {
                             "text_color_hover": "globals\/colors?id=accent"
