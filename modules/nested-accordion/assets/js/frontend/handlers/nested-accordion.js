@@ -1,7 +1,5 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
-const ANIMATION_DURATION = 500;
-
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
@@ -88,7 +86,7 @@ export default class NestedAccordion extends Base {
 
 		animation = accordionItem.animate(
 			{ height: [ startHeight, endHeight ] },
-			{ duration: ANIMATION_DURATION },
+			{ duration: this.getAnimationDuration() },
 		);
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
@@ -126,5 +124,10 @@ export default class NestedAccordion extends Base {
 		$titles.each( ( index, title ) => {
 			this.closeAccordionItem( $items[ index ], title );
 		} );
+	}
+
+	getAnimationDuration() {
+		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
+		return size * ( 'ms' === unit ? 1 : 1000 );
 	}
 }
