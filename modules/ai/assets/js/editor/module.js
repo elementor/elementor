@@ -59,11 +59,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
-			if ( ! window.ElementorAiConfig.is_images_enabled ) {
-				behaviors.ai = {
-					behaviorClass: AiPromotionBehavior,
-				};
-			} else {
+			const mediaTypes = view.options.model.get( 'media_types' );
+
+			if ( mediaTypes.length && mediaTypes.includes( 'image' ) ) {
 				behaviors.ai = {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,

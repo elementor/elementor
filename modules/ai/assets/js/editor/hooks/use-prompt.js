@@ -4,7 +4,7 @@ import { setStatusFeedback } from '../api';
 const normalizeResponse = ( { text, response_id: responseId, usage, images } ) => {
 	const creditsData = usage ? ( usage.quota - usage.usedQuota ) : 0;
 	const credits = Math.max( creditsData, 0 );
-	let result = text || images;
+	const result = text || images;
 
 	return {
 		result,
