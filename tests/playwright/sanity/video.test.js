@@ -8,12 +8,24 @@ import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
 test.describe( 'Video tests inside a container', () => {
-	test.beforeAll( async () => {
-		await setExperiment( 'container', true );
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 	} );
 
-	test.afterAll( async () => {
-		await setExperiment( 'container', false );
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
@@ -122,8 +134,24 @@ test.describe( 'Video tests inside a container', () => {
 } );
 
 test.describe( 'Video tests inside a section', () => {
-	test.beforeAll( async () => {
-		await setExperiment( 'container', false );
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
+	} );
+
+	test.afterAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
