@@ -314,6 +314,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$this->add_control(
+			'n_accordion_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 'ms',
+					'size' => 400,
+				],
+				'frontend_available' => true,
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->add_style_tab();
