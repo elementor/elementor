@@ -1,5 +1,5 @@
 const { expect } = require( '@playwright/test' );
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../../../assets/breakpoints' );
 

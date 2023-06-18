@@ -1,6 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../utilities/rest-api' );
 const Breakpoints = require( '../../../assets/breakpoints' );
 const EditorPage = require( '../../../pages/editor-page' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';

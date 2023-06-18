@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../utilities/rest-api' );
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';

@@ -1,6 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page.js' );
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../utilities/rest-api.js' );
 
 test.describe( 'Tabs tests', () => {
 	test.beforeAll( async () => {
