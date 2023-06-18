@@ -1,5 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
