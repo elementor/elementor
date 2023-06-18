@@ -1,7 +1,5 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
-const ANIMATION_DURATION = 500;
-
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
