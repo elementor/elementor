@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
+const { setExperiment } = require( '../utilities/rest-api' );
 import ImageCarousel from '../pages/widgets/image-carousel.js';
 
 test( 'Basic Gallery', async ( { page }, testInfo ) => {
@@ -24,9 +25,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: true,
-	} );
+	await setExperiment( 'e_swiper_latest', true );
 
 	const editor = await wpAdmin.useElementorCleanPost();
 
@@ -36,9 +35,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	// Act.
 	await testBasicSwiperGallery( editor, page, imageCarousel );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
-	} );
+	await setExperiment( 'e_swiper_latest', false );
 } );
 
 test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInfo ) => {
@@ -46,9 +43,7 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
-	} );
+	await setExperiment( 'e_swiper_latest', false );
 
 	const editor = await wpAdmin.useElementorCleanPost();
 

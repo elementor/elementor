@@ -1,12 +1,12 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const { setExperiment } = require( '../utilities/rest-api' );
 
 test.describe( 'Widget tests', () => {
 	test( 'Widget Transform controls', async ( { page }, testInfo ) => {
+		await setExperiment( 'container', true );
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),

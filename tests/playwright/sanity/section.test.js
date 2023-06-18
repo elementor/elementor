@@ -1,21 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const { setExperiment } = require( '../utilities/rest-api' );
 const widgets = require( '../enums/widgets.js' );
 
 test.describe( 'Section tests', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		new WpAdminPage( page, testInfo );
+	test.beforeAll( async () => {
+		await setExperiment( 'container', false );
 	} );
 
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page }, testInfo ) => {

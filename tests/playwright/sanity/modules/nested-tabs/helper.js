@@ -1,3 +1,5 @@
+const { setExperiment } = require( '../utilities/rest-api' );
+
 const tabIcons = [
 	{
 		icon: 'fa-arrow-alt-circle-right',
@@ -50,24 +52,28 @@ async function clickMobileTab( context, tabPosition ) {
 	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition }` ).first().click();
 }
 
-async function setup( wpAdmin, customExperiment = '' ) {
+async function setup( customExperiments = {} ) {
 	let experiments = {
-		container: 'active',
-		'nested-elements': 'active',
+		container: true,
+		'nested-elements': true,
 	};
 
-	experiments = { ...experiments, ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
+	experiments = { ...experiments, ...customExperiments };
+	for ( const experiment in experiments ) {
+		await setExperiment( experiment, experiments[ experiment ] );
+	}
 }
 
-async function cleanup( wpAdmin, customExperiment = '' ) {
+async function cleanup( customExperiments = {} ) {
 	let experiments = {
-		'nested-elements': 'inactive',
-		container: 'inactive',
+		container: false,
+		'nested-elements': false,
 	};
 
-	experiments = { ...experiments, ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
+	experiments = { ...experiments, ...customExperiments };
+	for ( const experiment in experiments ) {
+		await setExperiment( experiment, experiments[ experiment ] );
+	}
 }
 
 async function setTabItemColor( page, editor, panelClass, tabState, colorPickerClass, color ) {

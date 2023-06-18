@@ -1,17 +1,13 @@
 import { expect, test } from '@playwright/test';
+import { setExperiment } from '../../playwright/utilities/rest-api';
 import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import EditorSelectors from '../../playwright/selectors/editor-selectors';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: 'active',
-		} );
+	test.beforeAll( async () => {
+		await setExperiment( 'container', true );
 	} );
 
 	const testData = [

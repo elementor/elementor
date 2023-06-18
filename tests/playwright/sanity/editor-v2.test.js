@@ -1,28 +1,17 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
+const { setExperiment } = require( '../utilities/rest-api' );
 
 // Skipped until building packages as part of the root build process.
 test.describe.skip( 'Editor v2', () => {
-	const updateExperiment = async ( { browser, testInfo }, experimentState ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-
-		const wpAdminPage = new WpAdminPage( page, testInfo );
-
-		await wpAdminPage.setExperiments( { editor_v2: experimentState } );
-
-		await page.close();
-		await context.close();
-	};
-
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async () => {
 		// Make sure the experiment of editor v2 is enabled during all the tests.
-		await updateExperiment( { browser, testInfo }, true );
+		await setExperiment( 'editor_v2', true );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async () => {
 		// Disable the experiment of editor v2 after all the tests.
-		await updateExperiment( { browser, testInfo }, false );
+		await setExperiment( 'editor_v2', false );
 	} );
 
 	test( 'validate the top bar appears', async ( { page }, testInfo ) => {
