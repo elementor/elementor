@@ -19,29 +19,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
 function is_active_endpoint( $request ) {
-    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	$is_feature_active = '';
 	if ( isset( $request['feature'] ) ) {
 		$experiments_manager = Plugin::$instance->experiments;
 		$is_feature_active = $experiments_manager->is_feature_active( $request['feature'] ) ? true : false;
 	}
-    return rest_ensure_response( [ is_active => $is_feature_active ] );
+	return rest_ensure_response( [ is_active => $is_feature_active ] );
 }
 
 /**
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
 function set_active_endpoint( $request ) {
-    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	set_activation_status( $request->get_param( 'feature' ), Experiments_Manager::STATE_ACTIVE );
-    return rest_ensure_response( 'activated ' . $request->get_param( 'feature' ) );
+	return rest_ensure_response( 'activated ' . $request->get_param( 'feature' ) );
 }
 
 /**
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
 function set_inactive_endpoint( $request ) {
-    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	set_activation_status( $request->get_param( 'feature' ), Experiments_Manager::STATE_INACTIVE );
     return rest_ensure_response( 'deactivated ' . $request->get_param( 'feature' ) );
 }
@@ -50,7 +50,7 @@ function set_inactive_endpoint( $request ) {
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
 function set_activation_status( $feature, $state ) {
-    // rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	$experiments_manager = Plugin::instance()->experiments;
 	$option = $experiments_manager->get_feature_option_key( $feature );
 	update_option( $option, $state );
@@ -62,11 +62,11 @@ function can_user_modify_features( $request ) {
 
 // function can_user_view_features( $request ) {
 	// // Restrict endpoint to only users who have the edit_posts capability.
-    // if ( ! current_user_can( 'manage_options' ) ) {
-    //     return new WP_Error( 'rest_forbidden', esc_html__( 'OMG you can not view private data.', 'elementor' ), array( 'status' => 401 ) );
-    // }
+	// if ( ! current_user_can( 'manage_options' ) ) {
+	//     return new WP_Error( 'rest_forbidden', esc_html__( 'OMG you can not view private data.', 'elementor' ), array( 'status' => 401 ) );
+	// }
 
-    // This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
+	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
 //     return true;
 // }
 
@@ -74,30 +74,30 @@ function can_user_modify_features( $request ) {
  * This function is where we register our routes for our example endpoint.
  */
 function register_feature_routes() {
-    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
-    register_rest_route( 'elementor/v1/features', '/is_active', array(
-        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
-        'methods'  => 'GET',
-        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        'callback' => __NAMESPACE__ . '\is_active_endpoint',
+	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
+	register_rest_route( 'elementor/v1/features', '/is_active', array(
+		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+		'methods'  => 'GET',
+		// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+		'callback' => __NAMESPACE__ . '\is_active_endpoint',
 		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
-    ) );
-    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
-    register_rest_route( 'elementor/v1/features', '/set_active', array(
-        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
-        'methods'  => 'PUT',
-        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        'callback' => __NAMESPACE__ . '\set_active_endpoint',
+	) );
+	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
+	register_rest_route( 'elementor/v1/features', '/set_active', array(
+		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+		'methods'  => 'PUT',
+		// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+		'callback' => __NAMESPACE__ . '\set_active_endpoint',
 		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
-    ) );
-    // register_rest_route() handles more arguments but we are going to stick to the basics for now.
-    register_rest_route( 'elementor/v1/features', '/set_inactive', array(
-        // By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
-        'methods'  => 'PUT',
-        // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
+	) );
+	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
+	register_rest_route( 'elementor/v1/features', '/set_inactive', array(
+		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+		'methods'  => 'PUT',
+		// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+		'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
 		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
-    ) );
+	) );
 }
 // register_feature_routes();
 add_action( 'rest_api_init', __NAMESPACE__ . '\register_feature_routes' );

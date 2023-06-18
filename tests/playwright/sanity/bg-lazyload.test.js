@@ -5,11 +5,11 @@ const EditorPage = require( '../pages/editor-page' );
 test.describe( 'Background Lazy Load', () => {
 	let pageId;
 
-	test.beforeAll( async ( ) => {
+	test.beforeAll( async () => {
 		await setExperiment( 'e_lazyload', true );
 	} );
 
-	test.afterAll( async ( ) => {
+	test.afterAll( async () => {
 		await setExperiment( 'e_lazyload', false );
 	} );
 
