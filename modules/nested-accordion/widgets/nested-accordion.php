@@ -439,6 +439,23 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'name' => 'content_border',
 				'selector' => $low_specificity_accordion_item_selector,
+				'fields_options' => [
+					'color' => [
+						'default' => '#D5D8DC',
+					],
+					'width' => [
+						'default' => [
+							'top' => 1,
+							'right' => 1,
+							'bottom' => 1,
+							'left' => 1,
+							'unit' => 'px',
+						],
+					],
+					'border' => [
+						'default' => 'solid',
+					],
+				],
 			]
 		);
 
@@ -538,7 +555,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 				'default' => [
 					'unit' => 'px',
-					'size' => 20,
+					'size' => 15,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
