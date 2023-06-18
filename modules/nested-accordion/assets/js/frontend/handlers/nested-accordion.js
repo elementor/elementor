@@ -86,7 +86,7 @@ export default class NestedAccordion extends Base {
 
 		animation = accordionItem.animate(
 			{ height: [ startHeight, endHeight ] },
-			{ duration: this.animationDuration() },
+			{ duration: this.getAnimationDuration() },
 		);
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
@@ -126,7 +126,7 @@ export default class NestedAccordion extends Base {
 		} );
 	}
 
-	animationDuration() {
+	getAnimationDuration() {
 		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
 		return size * ( 'ms' === unit ? 1 : 1000 );
 	}

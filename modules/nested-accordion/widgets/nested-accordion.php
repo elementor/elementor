@@ -324,12 +324,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'unit' => 'ms',
 					'size' => 400,
 				],
-				'range' => [
-					'ms' => [
-						'min' => 0,
-						'max' => 3000,
-					],
-				],
 				'frontend_available' => true,
 			]
 		);
