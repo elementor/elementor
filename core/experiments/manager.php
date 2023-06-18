@@ -43,7 +43,7 @@ function set_active_endpoint( $request ) {
 function set_inactive_endpoint( $request ) {
 	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	set_activation_status( $request->get_param( 'feature' ), Experiments_Manager::STATE_INACTIVE );
-    return rest_ensure_response( 'deactivated ' . $request->get_param( 'feature' ) );
+	return rest_ensure_response( 'deactivated ' . $request->get_param( 'feature' ) );
 }
 
 /**
