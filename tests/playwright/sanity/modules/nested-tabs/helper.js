@@ -1,4 +1,4 @@
-const { setExperiment } = require( '../utilities/rest-api' );
+const { setExperiment } = require( '../../../utilities/rest-api' );
 
 const tabIcons = [
 	{
