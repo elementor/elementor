@@ -56,6 +56,20 @@ function set_activation_status( $feature, $state ) {
 	update_option( $option, $state );
 }
 
+function can_user_modify_features( $request ) {
+	return current_user_can( 'manage_options' );
+}
+
+// function can_user_view_features( $request ) {
+	// // Restrict endpoint to only users who have the edit_posts capability.
+    // if ( ! current_user_can( 'manage_options' ) ) {
+    //     return new WP_Error( 'rest_forbidden', esc_html__( 'OMG you can not view private data.', 'elementor' ), array( 'status' => 401 ) );
+    // }
+
+    // This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
+//     return true;
+// }
+
 /**
  * This function is where we register our routes for our example endpoint.
  */
@@ -66,6 +80,7 @@ function register_feature_routes() {
         'methods'  => 'GET',
         // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         'callback' => __NAMESPACE__ . '\is_active_endpoint',
+		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
     ) );
     // register_rest_route() handles more arguments but we are going to stick to the basics for now.
     register_rest_route( 'elementor/v1/features', '/set_active', array(
@@ -73,6 +88,7 @@ function register_feature_routes() {
         'methods'  => 'PUT',
         // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         'callback' => __NAMESPACE__ . '\set_active_endpoint',
+		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
     ) );
     // register_rest_route() handles more arguments but we are going to stick to the basics for now.
     register_rest_route( 'elementor/v1/features', '/set_inactive', array(
@@ -80,6 +96,7 @@ function register_feature_routes() {
         'methods'  => 'PUT',
         // Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
+		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
     ) );
 }
 // register_feature_routes();
