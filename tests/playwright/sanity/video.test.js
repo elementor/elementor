@@ -6,8 +6,10 @@ const { setExperiment } = require( '../utilities/rest-api' );
 const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
+import { mkdirSync, writeFileSync } from 'fs';
 
-test.describe( 'Video tests inside a container', () => {
+let experimentsJSON = '';
+test.describe.only( 'Video tests inside a container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
@@ -28,12 +30,19 @@ test.describe( 'Video tests inside a container', () => {
 		} );
 	} );
 
+	test.afterEach( async () => {
+		if ( experimentsJSON !== '' ) {
+			// mkdirSync( `${ __dirname }/../../../test-results` );
+			writeFileSync( `${ __dirname }/../../../test-results/experiments.json`, experimentsJSON );
+		}
+	} );
+
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		page.goto( 'http://localhost:8888/wp-json/elementor/v1/features/all' );
-		// const experimentsJSON = await page.textContent( 'body' );
+		experimentsJSON = await page.textContent( 'body' );
 		await expect( page ).toHaveScreenshot( 'experiments.png' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo );
