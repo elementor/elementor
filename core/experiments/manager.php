@@ -18,6 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
+function all_features_endpoint( $request ) {
+	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
+	$experiments_manager = Plugin::$instance->experiments;
+	$features = $experiments_manager->get_features();
+
+
+	return rest_ensure_response( $features );
+}
+
+/**
+ * This is our callback function that embeds our phrase in a WP_REST_Response
+ */
 function is_active_endpoint( $request ) {
 	// rest_ensure_response() wraps the data we want to return into a WP_REST_Response, and ensures it will be properly returned.
 	$is_feature_active = '';
@@ -60,20 +72,28 @@ function can_user_modify_features( $request ) {
 	return current_user_can( 'manage_options' );
 }
 
-// function can_user_view_features( $request ) {
+function can_user_view_features( $request ) {
 	// // Restrict endpoint to only users who have the edit_posts capability.
 	// if ( ! current_user_can( 'manage_options' ) ) {
 	//     return new WP_Error( 'rest_forbidden', esc_html__( 'OMG you can not view private data.', 'elementor' ), array( 'status' => 401 ) );
 	// }
 
 	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
-//     return true;
-// }
+    return true;
+}
 
 /**
  * This function is where we register our routes for our example endpoint.
  */
 function register_feature_routes() {
+	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
+	register_rest_route( 'elementor/v1/features', '/all', array(
+		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
+		'methods'  => 'GET',
+		// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
+		'callback' => __NAMESPACE__ . '\all_features_endpoint',
+		'permission_callback' => __NAMESPACE__ . '\can_user_view_features',
+	) );
 	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
 	register_rest_route( 'elementor/v1/features', '/is_active', array(
 		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
