@@ -9,7 +9,7 @@ import VideoWidget from '../pages/widgets/video';
 import { mkdirSync, writeFileSync } from 'fs';
 
 let experimentsJSON = '';
-test.describe.only( 'Video tests inside a container', () => {
+test.describe( 'Video tests inside a container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
