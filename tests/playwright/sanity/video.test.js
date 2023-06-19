@@ -11,23 +11,25 @@ import { mkdirSync, writeFileSync } from 'fs';
 let experimentsJSON = '';
 test.describe( 'Video tests inside a container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+		await setExperiment( 'container', true );
+		// const context = await browser.newContext(),
+		// 	page = await context.newPage(),
+		// 	wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
+		// await wpAdmin.setExperiments( {
+		// 	container: true,
+		// } );
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+		await setExperiment( 'container', false );
+		// const context = await browser.newContext(),
+		// 	page = await context.newPage(),
+		// 	wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		// await wpAdmin.setExperiments( {
+		// 	container: false,
+		// } );
 	} );
 
 	test.afterEach( async () => {
@@ -148,23 +150,25 @@ test.describe( 'Video tests inside a container', () => {
 
 test.describe( 'Video tests inside a section', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+		await setExperiment( 'container', false );
+		// const context = await browser.newContext(),
+		// 	page = await context.newPage(),
+		// 	wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		// await wpAdmin.setExperiments( {
+		// 	container: false,
+		// } );
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo );
+		await setExperiment( 'container', false );
+		// const context = await browser.newContext(),
+		// 	page = await context.newPage(),
+		// 	wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		// await wpAdmin.setExperiments( {
+		// 	container: false,
+		// } );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
