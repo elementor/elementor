@@ -305,7 +305,6 @@ class Deprecation {
 	 * @return bool
 	 */
 	private function should_print_deprecated( $version, $base_version ) {
-
 		$is_elementor_debug = ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG );
 		$is_wp_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
 		$user_is_admin = current_user_can( 'manage_options' );
