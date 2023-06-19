@@ -33,6 +33,7 @@ test.describe( 'Video tests inside a container', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		page.goto( 'http://localhost:8888/wp-json/elementor/v1/features/all' );
+		// const experimentsJSON = await page.textContent( 'body' );
 		await expect( page ).toHaveScreenshot( 'experiments.png' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo );
