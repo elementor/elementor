@@ -209,7 +209,7 @@ class Deprecation {
 		$source_message = 'Elementor';
 		$plugin_name = 'Unknown';
 		$source_type = '';
-		if ( ! ( empty( $external_sources ) ) ) {
+		if ( ! empty( $external_sources ) ) {
 			$calling_source = reset( $external_sources );
 			$caller = $this->get_plugin_from_calling_source( $calling_source );
 			$plugin_name = $caller['name'];
