@@ -36,6 +36,12 @@
 }
 
 .elementor-widget-progress {
+	.elementor-title {
+		display: block;
+		margin: 0;
+		padding: 0;
+	}
+	
 	.elementor-progress-wrapper {
 
 		&.progress-info {
@@ -66,10 +72,6 @@
 			}
 		}
 	}
-}
-
-.elementor-progress .elementor-title {
-	display: block;
 }
 
 // Responsive mode
