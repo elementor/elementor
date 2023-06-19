@@ -32,11 +32,7 @@ export default class Content {
 			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
 		}
 
-		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
-		}
-
-		if ( options.targetBlank ) {
+		if ( options.noFollow ) {
 			await this.page.locator( EditorSelectors.button.noFollowChbox ).first().check();
 		}
 		if ( options.customAttributes ) {
@@ -116,7 +112,10 @@ export default class Content {
 			await mediaUploadControl.waitFor();
 			await this.page.getByText( 'Upload SVG' ).first().click();
 		}
+		const regex = new RegExp( _icon );
+		const response = this.page.waitForResponse( regex );
 		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
+		await response;
 		await this.page.getByRole( 'button', { name: 'Insert Media' } )
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
