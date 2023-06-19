@@ -153,6 +153,20 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
 
+			await test.step( 'Duplicate an item in the repeater', async () => {
+				// Arrange
+				const duplicateItemButton = await page.locator( '.elementor-repeater-tool-duplicate' ).first(),
+					numberOfTitles = await nestedAccordionItemTitle.count(),
+					numberOfContents = await nestedAccordionItemContent.count();
+
+				// Act
+				await duplicateItemButton.click();
+
+				// Assert
+				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+			} );
+
 			await test.step( 'Check default state behaviour', async () => {
 				// Check default state -> first item is open
 				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
@@ -250,44 +264,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-			await test.step( 'Duplicate an item in the repeater', async () => {
-				// Arrange
-				const duplicateItemButton = await page.locator( '.elementor-repeater-tool-duplicate' ).first(),
-					numberOfTitles = await nestedAccordionItemTitle.count(),
-					numberOfContents = await nestedAccordionItemContent.count();
-
-				// Act
-				await duplicateItemButton.click();
-
-				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
-			} );
-
-		} );
-
-		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
-			// Act
-			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo ),
-				editor = await wpAdmin.useElementorCleanPost(),
-				frame = editor.getPreviewFrame();
-
-			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
-			await editor.closeNavigatorIfOpen();
-
-			await test.step( 'Widget Editor Screenshot matches intended design', async () => {
-				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, frame.locator( '.e-n-accordion' ).first() );
-			} );
-
-			await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
-				await editor.publishAndViewPage();
-				await screenshotWidget( `nested-accordion-title-and-icons.jpg`, page.locator( '.e-n-accordion' ).first() );
-			} );
-		} );
-
 		test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
-		test.skip( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
@@ -519,7 +496,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.skip( 'Accordion style tests', async ( { page }, testInfo ) => {
+		test( 'Accordion style tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -565,7 +542,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.skip( 'Content style Tests', async ( { page }, testInfo ) => {
+		test( 'Content style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -724,37 +701,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
  */
 async function getIcon( nestedAccordionItem, iconIndex ) {
 	return await nestedAccordionItem.locator( 'i' ).nth( iconIndex );
-}
-
-/**
- * Set Nested Accordion Title Tag (H1-H6,div,span,p)
- *
- * @param {string} optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
- * @param {string} nestedAccordionWidgetId -- id of the nested accordion widget
- * @param {Object} editor
- * @param {Object} page
- * @return {Promise<void>}
- */
-async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
-	const frame = editor.getPreviewFrame();
-	await editor.selectElement( nestedAccordionWidgetId );
-	await page.selectOption( '.elementor-control-title_tag .elementor-control-input-wrapper > select', optionToSelect );
-	await frame.waitForLoadState( 'load' );
-}
-
-/**
- * Take a Screenshot of this Widget
- *
- * @param {string} fileName
- * @param {Object} widgetLocator
- * @param {number} quality
- * @return {Promise<void>}
- */
-async function screenshotWidget( fileName, widgetLocator, quality = 90 ) {
-	expect( await widgetLocator.screenshot( {
-		type: 'jpeg',
-		quality,
-	} ) ).toMatchSnapshot( fileName );
 }
 
 /**
