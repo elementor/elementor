@@ -22,6 +22,11 @@ const EditorSelectors = {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
 		selectBtn: '.button.media-button',
+		imageInp: 'input[type="file"]',
+		addGalleryButton: 'button.media-button-gallery',
+		images: '.attachments-wrapper li',
+		imgCaption: '#attachment-details-caption',
+		imgDescription: '#attachment-details-description',
 	},
 	siteTitle: 'h1.site-title',
 	pageTitle: 'h1.entry-title',
@@ -52,6 +57,7 @@ const EditorSelectors = {
 		get link() {
 			return `${ this.widget } a`;
 		},
+		lightBox: '.swiper-zoom-container',
 	},
 	icon: {
 		widget: '[data-widget_type="icon.default"]',
@@ -61,15 +67,63 @@ const EditorSelectors = {
 	},
 	imageBox: {
 		widget: '[data-widget_type="image-box.default"]',
+		imageSizeSelect: 'select[data-setting="thumbnail_size"]',
 		get link() {
 			return `${ this.widget } a`;
 		},
+		get image() {
+			return `${ this.widget } img`;
+		},
+	},
+	imageCarousel: {
+		widget: '[data-widget_type="image-carousel.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+		navigationSelect: '.elementor-control-navigation select',
+		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySpeedLabel: 'Autoplay Speed',
+		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
+		autoplayToggle: '.elementor-switch-handle',
+		captionSelect: 'select[data-setting="caption_type"]',
+		imgCaption: 'figcaption.elementor-image-carousel-caption',
+		prevSliderBtn: '.elementor-swiper-button-prev',
+		nextSliderBtn: '.elementor-swiper-button-next',
+		activeSlide: ( id ) => `.swiper-pagination-bullet-active[aria-label="Go to slide ${ id }"]`,
+		activeSlideImg: ( name ) => `.swiper-slide-active img[alt="${ name }"]`,
 	},
 	textPath: {
 		widget: '[data-widget_type="text-path.default"]',
 		get link() {
 			return `${ this.widget } a`;
 		},
+	},
+	video: {
+		widget: '[data-widget_type="video.default"]',
+		youtube: { linkInp: '[data-setting="youtube_url"]' },
+		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
+		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
+		autoplayInp: 'input[data-setting="autoplay"]',
+		muteInp: 'input[data-setting="mute"]',
+		loopInp: 'input[data-setting="loop"]',
+		playerControlInp: 'input[data-setting="controls"]',
+		modestbrandingInp: 'input[data-setting="modestbranding"]',
+		privacyInp: 'input[data-setting="yt_privacy"]',
+		switch: '.elementor-switch-handle',
+		suggestedVideoSelect: '[data-setting="rel"]',
+		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
+		lazyLoadInp: 'input[data-setting="lazy_load"]',
+		videoSourceSelect: '[data-setting="video_type"]',
+		showImageOverlay: '[data-setting="show_image_overlay"]',
+		get image() {
+			return `${ this.widget } .elementor-custom-embed-image-overlay`;
+		},
+		imageSizeSelect: '[data-setting="image_overlay_size"]',
+		lightBoxControlInp: '[data-setting="lightbox"]',
+		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
+		lightBoxDialog: '.elementor-lightbox',
+		iframe: 'iframe[class*="elementor-video"]',
 	},
 
 };

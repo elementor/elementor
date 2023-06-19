@@ -53,7 +53,7 @@ const PageContent = (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
 				<PromptDialog.Header onClose={ onClose } />
 
-				<PromptDialog.Content>
+				<PromptDialog.Content dividers>
 					<Loader />
 				</PromptDialog.Content>
 			</PromptDialog>
@@ -65,7 +65,7 @@ const PageContent = (
 			<WizardDialog onClose={ onClose }>
 				<WizardDialog.Header onClose={ onClose } />
 
-				<WizardDialog.Content>
+				<WizardDialog.Content dividers>
 					<Connect
 						connectUrl={ connectUrl }
 						onSuccess={ ( data ) => {
@@ -83,7 +83,7 @@ const PageContent = (
 			<WizardDialog onClose={ onClose }>
 				<WizardDialog.Header onClose={ onClose } />
 
-				<WizardDialog.Content>
+				<WizardDialog.Content dividers>
 					<GetStarted onSuccess={ fetchData } />
 				</WizardDialog.Content>
 			</WizardDialog>
@@ -111,7 +111,7 @@ const PageContent = (
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
-				<PromptDialog.Content>
+				<PromptDialog.Content dividers>
 					<FormCode
 						onClose={ onClose }
 						getControlValue={ getControlValue }
@@ -131,7 +131,7 @@ const PageContent = (
 				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 
-			<PromptDialog.Content>
+			<PromptDialog.Content dividers>
 				<FormText
 					type={ type }
 					controlType={ controlType }

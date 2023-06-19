@@ -1,9 +1,12 @@
-import { Stack, IconButton, Button, Box } from '@elementor/ui';
+import { Stack, IconButton, Button, Box, withDirection } from '@elementor/ui';
 import { IMAGE_ACTIONS } from '../../consts/consts';
-import ChevronLeftIcon from '../../../../icons/chevron-left-icon';
-import ChevronRightIcon from '../../../../icons/chevron-right-icon';
 import DownloadIcon from '../../../../icons/download-icon';
-import VariationsIcon from '../../../../icons/variations-icon';
+import EditIcon from '../../../../icons/edit-icon';
+import ChevronRightIcon from '../../../../icons/chevron-right-icon';
+import ChevronLeftIcon from '../../../../icons/chevron-left-icon';
+
+const StyledChevronLeftIcon = withDirection( ChevronLeftIcon );
+const StyledChevronRightIcon = withDirection( ChevronRightIcon );
 
 const ZoomImage = (
 	{
@@ -11,15 +14,18 @@ const ZoomImage = (
 		zoomedImageIndex,
 		imageNavigation,
 		handleImageAction,
+		viewData,
 	},
 ) => {
 	const currentImage = images[ zoomedImageIndex ];
+
+	const { width, height } = viewData;
 
 	return (
 		<Stack alignItems="flex-start" spacing={ 2 }>
 			<Stack direction="row" spacing={ 6 } alignSelf="center" alignItems="center">
 				<IconButton onClick={ () => imageNavigation.navigatePrevImage() } size="large" color="secondary">
-					<ChevronLeftIcon />
+					<StyledChevronLeftIcon />
 				</IconButton>
 
 				<Stack spacing={ 2 } justifyContent="space-around" alignItems="center">
@@ -28,7 +34,7 @@ const ZoomImage = (
 							size="small"
 							variant="text"
 							color="secondary"
-							startIcon={ <ChevronLeftIcon /> }
+							startIcon={ <StyledChevronLeftIcon /> }
 							onClick={ () => imageNavigation.backToResults() }
 						>
 							{ __( 'Back', 'elementor' ) }
@@ -38,10 +44,10 @@ const ZoomImage = (
 							<Button
 								size="small"
 								color="secondary"
-								startIcon={ <VariationsIcon /> }
+								startIcon={ <EditIcon /> }
 								onClick={ () => handleImageAction( IMAGE_ACTIONS.REFERENCE, currentImage ) }
 							>
-								{ __( 'Use as Reference', 'elementor' ) }
+								{ __( 'Edit', 'elementor' ) }
 							</Button>
 
 							<Button
@@ -59,19 +65,13 @@ const ZoomImage = (
 						display="flex"
 						justifyContent="center"
 						alignItems="center"
-						sx={ {
-							bgcolor: 'secondary.background',
-							width: 512,
-							height: 512,
-							overflow: 'hidden',
-						} }
 					>
-						<img src={ currentImage.image_url } alt={ '' } />
+						<img src={ currentImage.image_url } alt={ '' } style={ { width, height } } />
 					</Box>
 				</Stack>
 
 				<IconButton onClick={ () => imageNavigation.navigateNextImage() } size="large" color="secondary">
-					<ChevronRightIcon />
+					<StyledChevronRightIcon />
 				</IconButton>
 			</Stack>
 		</Stack>
@@ -83,6 +83,7 @@ ZoomImage.propTypes = {
 	zoomedImageIndex: PropTypes.number,
 	handleImageAction: PropTypes.func,
 	imageNavigation: PropTypes.object,
+	viewData: PropTypes.object,
 };
 
 export default ZoomImage;

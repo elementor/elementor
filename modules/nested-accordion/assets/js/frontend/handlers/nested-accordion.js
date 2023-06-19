@@ -1,7 +1,5 @@
 import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 
-const ANIMATION_DURATION = 500;
-
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
@@ -62,7 +60,14 @@ export default class NestedAccordion extends Base {
 		event.preventDefault();
 
 		const accordionItem = event.currentTarget.parentElement,
-			accordionContent = accordionItem.querySelector( '.e-n-accordion-item > .e-con' );
+			settings = this.getSettings(),
+			accordionContent = accordionItem.querySelector( settings.selectors.accordionContent ),
+			{ max_items_expended: maxItemsExpended } = this.getElementSettings(),
+			{ $accordionTitles, $accordionItems } = this.elements;
+
+		if ( 'one' === maxItemsExpended ) {
+			this.closeAllItems( $accordionItems, $accordionTitles );
+		}
 
 		if ( ! accordionItem.open ) {
 			this.prepareOpenAnimation( accordionItem, event.currentTarget, accordionContent );
@@ -81,7 +86,7 @@ export default class NestedAccordion extends Base {
 
 		animation = accordionItem.animate(
 			{ height: [ startHeight, endHeight ] },
-			{ duration: ANIMATION_DURATION },
+			{ duration: this.getAnimationDuration() },
 		);
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
@@ -113,5 +118,16 @@ export default class NestedAccordion extends Base {
 		accordionItem.open = isOpen;
 		this.animations.set( accordionItem, null );
 		accordionItem.style.height = accordionItem.style.overflow = '';
+	}
+
+	closeAllItems( $items, $titles ) {
+		$titles.each( ( index, title ) => {
+			this.closeAccordionItem( $items[ index ], title );
+		} );
+	}
+
+	getAnimationDuration() {
+		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
+		return size * ( 'ms' === unit ? 1 : 1000 );
 	}
 }
