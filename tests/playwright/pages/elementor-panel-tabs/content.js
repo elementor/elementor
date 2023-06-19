@@ -1,6 +1,7 @@
 import EditorSelectors from '../../selectors/editor-selectors';
 import { expect } from '@playwright/test';
 const EditorPage = require( '../editor-page' );
+const path = require( 'path' );
 
 export default class Content {
 	constructor( page, testInfo ) {
@@ -18,22 +19,24 @@ export default class Content {
 			await this.selectLinkSource( 'Custom URL' );
 		}
 
-		const urlInput = this.page.locator( options.linkInpSelector );
+		const urlInput = this.page.locator( options.linkInpSelector ).first();
 		await urlInput.clear();
 		await urlInput.type( link );
-		const wheel = this.page.locator( EditorSelectors.button.linkOptions );
+
+		const wheel = this.page.locator( EditorSelectors.button.linkOptions ).first();
 		if ( await wheel.isVisible() ) {
 			await wheel.click();
 		}
-		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.targetBlankChbox ).check();
-		}
 
 		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.noFollowChbox ).check();
+			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
+		}
+
+		if ( options.noFollow ) {
+			await this.page.locator( EditorSelectors.button.noFollowChbox ).first().check();
 		}
 		if ( options.customAttributes ) {
-			await this.page.locator( EditorSelectors.button.customAttributesInp ).type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
+			await this.page.locator( EditorSelectors.button.customAttributesInp ).first().type( `${ options.customAttributes.key }|${ options.customAttributes.value }` );
 		}
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
@@ -94,5 +97,32 @@ export default class Content {
 				.locator( '..' )
 				.locator( EditorSelectors.video.switch ).click();
 		}
+	}
+
+	async uploadSVG( icon ) {
+		const _icon = icon === undefined ? 'test-svg-wide' : icon;
+		await this.page.getByRole( 'button', { name: 'Content' } ).click();
+		const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
+		await mediaUploadControl.hover();
+		await mediaUploadControl.waitFor();
+		await this.page.getByText( 'Upload SVG' ).first().click();
+		await this.page.getByRole( 'tab', { name: 'Upload files' } ).waitFor( { state: 'visible' } );
+		const regex = new RegExp( _icon );
+		const response = this.page.waitForResponse( regex );
+		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
+		await response;
+		await this.page.getByRole( 'heading', { name: 'Attachment Details' } ).waitFor();
+		await this.page.getByRole( 'button', { name: 'Insert Media' } ).click();
+	}
+
+	async addNewTab( tabName, text ) {
+		const itemCount = await this.page.locator( EditorSelectors.item ).count();
+		await this.page.getByRole( 'button', { name: 'Add Item' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).click();
+		await this.page.getByRole( 'textbox', { name: 'Title' } ).fill( tabName );
+		const textEditor = this.page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
+		await textEditor.locator( 'html' ).click();
+		await textEditor.getByText( 'Tab Content' ).click();
+		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
 	}
 }
