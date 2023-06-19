@@ -41,11 +41,23 @@ export default class Content {
 		await this.editorPage.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 
-	async verifyLink( element, options = { target, href, rel, customAttributes } ) {
+	/**
+	 * @description Function verifies link ("a" HTML tag) attributes with expected values
+	 * @param {*}      element                  "a" HTML tag that contains link attributes
+	 * @param {Object} options
+	 * @param {*}      options.target           link target attribute
+	 * @param {string} options.href             link href attribute
+	 * @param {string} options.rel              link rel attribute
+	 * @param {string} options.customAttributes link custom attribute: key|value
+	 * @param {string} options.widget           widget name where we test link attributes
+	 */
+	async verifyLink( element, options = { target, href, rel, customAttributes, widget } ) {
 		await expect( element ).toHaveAttribute( 'target', options.target );
 		await expect( element ).toHaveAttribute( 'href', options.href );
 		await expect( element ).toHaveAttribute( 'rel', options.rel );
-		await expect( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
+		if ( options.widget !== 'text-path' ) {
+			await expect( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
+		}
 	}
 
 	async chooseImage( imageTitle ) {
@@ -99,20 +111,23 @@ export default class Content {
 		}
 	}
 
-	async uploadSVG( icon ) {
-		const _icon = icon === undefined ? 'test-svg-wide' : icon;
-		await this.page.getByRole( 'button', { name: 'Content' } ).click();
-		const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
-		await mediaUploadControl.hover();
-		await mediaUploadControl.waitFor();
-		await this.page.getByText( 'Upload SVG' ).first().click();
-		await this.page.getByRole( 'tab', { name: 'Upload files' } ).waitFor( { state: 'visible' } );
+	async uploadSVG( options = { icon: undefined, widget: undefined } ) {
+		const _icon = options.icon === undefined ? 'test-svg-wide' : options.icon;
+		if ( 'text-path' === options.widget ) {
+			await this.page.locator( EditorSelectors.plusIcon ).click();
+		} else {
+			await this.page.getByRole( 'button', { name: 'Content' } ).click();
+			const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
+			await mediaUploadControl.hover();
+			await mediaUploadControl.waitFor();
+			await this.page.getByText( 'Upload SVG' ).first().click();
+		}
 		const regex = new RegExp( _icon );
 		const response = this.page.waitForResponse( regex );
 		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
 		await response;
-		await this.page.getByRole( 'heading', { name: 'Attachment Details' } ).waitFor();
-		await this.page.getByRole( 'button', { name: 'Insert Media' } ).click();
+		await this.page.getByRole( 'button', { name: 'Insert Media' } )
+			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
 	async addNewTab( tabName, text ) {
@@ -124,5 +139,30 @@ export default class Content {
 		await textEditor.locator( 'html' ).click();
 		await textEditor.getByText( 'Tab Content' ).click();
 		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
+	}
+
+	/**
+	 * @description This function parses link ("a" tag) src attribute and gets Query Params and their values.
+	 * The same as you copy src attribute value and put in Postman
+	 * @param {string} src
+	 * @return {Object} options: parsed query params with key|value
+	 */
+	parseSrc( src ) {
+		const options = src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
+			const [ key, value ] = cur.split( '=' );
+			acc[ key ] = value;
+			return acc;
+		}, {} );
+		return options;
+	}
+
+	async verifySrcParams( src, expectedValues, player ) {
+		const videoOptions = this.parseSrc( src );
+		if ( 'vimeo' === player ) {
+			videoOptions.start = src.split( '#' )[ 1 ];
+		}
+		for ( const key in expectedValues ) {
+			expect( videoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( expectedValues[ key ] ) );
+		}
 	}
 }

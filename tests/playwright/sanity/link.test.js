@@ -13,7 +13,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 		{ title: 'image-box', selector: EditorSelectors.imageBox.link, linkTo: false },
 		{ title: 'image-carousel', selector: EditorSelectors.imageCarousel.link, linkTo: true },
 		{ title: 'social-icons', selector: EditorSelectors.socialIcons.link, linkTo: false },
-	// BUG here !{ title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
+		{ title: 'text-path', selector: EditorSelectors.textPath.link, linkTo: false },
 	];
 
 	for ( const widget in data ) {
@@ -39,10 +39,12 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			await contentTab.setLink( link,
 				{ targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo, linkInpSelector: EditorSelectors.button.url } );
 			const widgetInEditor = editor.getPreviewFrame().locator( data[ widget ].selector ).first();
-			await contentTab.verifyLink( widgetInEditor, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
+			await contentTab.verifyLink( widgetInEditor,
+				{ target: '_blank', href: link, rel: 'nofollow', customAttributes, widget: data[ widget ].title } );
 			await editor.publishAndViewPage();
 			const publishedWidget = page.locator( data[ widget ].selector ).first();
-			await contentTab.verifyLink( publishedWidget, { target: '_blank', href: link, rel: 'nofollow', customAttributes } );
+			await contentTab.verifyLink( publishedWidget,
+				{ target: '_blank', href: link, rel: 'nofollow', customAttributes, widget: data[ widget ].title } );
 		} );
 	}
 } );
