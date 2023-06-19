@@ -32,11 +32,7 @@ export default class Content {
 			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
 		}
 
-		if ( options.targetBlank ) {
-			await this.page.locator( EditorSelectors.button.targetBlankChbox ).first().check();
-		}
-
-		if ( options.targetBlank ) {
+		if ( options.noFollow ) {
 			await this.page.locator( EditorSelectors.button.noFollowChbox ).first().check();
 		}
 		if ( options.customAttributes ) {
