@@ -78,7 +78,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await page.close();
 		} );
 
-		test( 'General Test', async ( { page }, testInfo ) => {
+		test( 'NA General Test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -151,6 +151,21 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
 				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
+
+			await test.step( 'Duplicate an item in the repeater', async () => {
+				// Arrange
+				const duplicateItemButton = await page.locator( '.elementor-repeater-tool-duplicate' ).first(),
+					numberOfTitles = await nestedAccordionItemTitle.count(),
+					numberOfContents = await nestedAccordionItemContent.count();
+
+				// Act
+				await duplicateItemButton.click();
+
+				// Assert
+				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+			} );
+
 		} );
 
 		test( 'Nested Accordion Visual Regression Test', async ( { browser }, testInfo ) => {
@@ -405,7 +420,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.skip( 'Accordion style Tests', async ( { page }, testInfo ) => {
+		test( 'Accordion style Tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
