@@ -257,8 +257,14 @@ export default class NestedTabs extends Base {
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
 
 		const navigationWrapper = this.elements.$headingContainer[ 0 ];
+		const settingsObject = {
+			element: navigationWrapper,
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
 
-		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
@@ -308,7 +314,14 @@ export default class NestedTabs extends Base {
 
 		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
-		setHorizontalScrollAlignment( navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+		const settingsObject = {
+			element: navigationWrapper,
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
+
+		setHorizontalScrollAlignment( settingsObject );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -320,7 +333,14 @@ export default class NestedTabs extends Base {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
-			setHorizontalScrollAlignment( navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+			const settingsObject = {
+				element: navigationWrapper,
+				direction: this.getTabsDirection(),
+				justifyCSSVariable: '--n-tabs-heading-justify-content',
+				horizontalScrollStatus: this.getHorizontalScrollSetting(),
+			};
+
+			setHorizontalScrollAlignment( settingsObject );
 		}
 	}
 

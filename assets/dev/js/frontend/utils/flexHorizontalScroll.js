@@ -40,7 +40,7 @@ export function setHorizontalTitleScrollValues( element, horizontalScrollStatus,
 	element.classList.add( 'e-scroll-active' );
 }
 
-export function setHorizontalScrollAlignment( element, direction, justifyCSSVariable, horizontalScrollStatus ) {
+export function setHorizontalScrollAlignment( { element, direction, justifyCSSVariable, horizontalScrollStatus } ) {
 	if ( ! element ) {
 		return;
 	}
