@@ -42,12 +42,12 @@ async function editTab( editor, tabIndex ) {
 
 // Click on tab by position.
 async function clickTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition } ` ).first().click();
 }
 
 // Click on tab by position.
 async function clickMobileTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition }` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition } ` ).first().click();
 }
 
 async function setup( wpAdmin, customExperiment = '' ) {
@@ -104,13 +104,6 @@ async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
 	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
 }
 
-async function setBackgroundVideoUrl( page, editor, elementId, videoUrl ) {
-	await editor.selectElement( elementId );
-	await editor.activatePanelTab( 'style' );
-	await page.locator( '.eicon-video-camera' ).first().click();
-	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
-}
-
 module.exports = {
 	tabIcons,
 	addIcon,
@@ -123,5 +116,4 @@ module.exports = {
 	setTabBorderColor,
 	setTabItemColor,
 	selectDropdownContainer,
-	setBackgroundVideoUrl,
 };
