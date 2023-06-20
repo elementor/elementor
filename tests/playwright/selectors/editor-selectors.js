@@ -18,6 +18,8 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
+	item: '.elementor-repeater-row-item-title',
+	addNewItem: 'button.elementor-button elementor-repeater-add',
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
@@ -125,7 +127,19 @@ const EditorSelectors = {
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
 	},
-
+	socialIcons: {
+		widget: '[data-widget_type="social-icons.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+		get svgIcon() {
+			return `${ this.widget } svg path`;
+		},
+	},
+	tabs: {
+		textEditorIframe: 'iframe[id*="elementorwpeditorview"]',
+		body: '#tinymce',
+	},
 };
 
 export default EditorSelectors;

@@ -44,6 +44,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_hover',
 		'image_box_hover',
 		'icon_hover',
+		'social_icons_hover',
 	];
 
 	for ( const widgetType of testData ) {
@@ -54,6 +55,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				image_hover: 'img',
 				image_box_hover: 'img',
 				icon_hover: '.elementor-icon.elementor-animation-rotate',
+				social_icons_hover: '.elementor-social-icon-facebook',
 			};
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
