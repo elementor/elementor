@@ -23,7 +23,6 @@ function all_features_endpoint( $request ) {
 	$experiments_manager = Plugin::$instance->experiments;
 	$features = $experiments_manager->get_features();
 
-
 	return rest_ensure_response( $features );
 }
 
@@ -79,7 +78,7 @@ function can_user_view_features( $request ) {
 	// }
 
 	// This is a black-listing approach. You could alternatively do this via white-listing, by returning false here and changing the permissions check.
-    return true;
+	return true;
 }
 
 /**

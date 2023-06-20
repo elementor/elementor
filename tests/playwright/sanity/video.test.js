@@ -6,9 +6,7 @@ const { setExperiment } = require( '../utilities/rest-api' );
 const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
-import { mkdirSync, writeFileSync } from 'fs';
 
-let experimentsJSON = '';
 test.describe( 'Video tests inside a container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		// await setExperiment( 'container', true );
@@ -32,20 +30,10 @@ test.describe( 'Video tests inside a container', () => {
 		// } );
 	} );
 
-	test.afterEach( async () => {
-		if ( experimentsJSON !== '' ) {
-			// mkdirSync( `${ __dirname }/../../../test-results` );
-			writeFileSync( `${ __dirname }/../../../test-results/experiments.json`, experimentsJSON );
-		}
-	} );
-
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		// page.goto( 'http://localhost:8888/wp-json/elementor/v1/features/all' );
-		// experimentsJSON = await page.textContent( 'body' );
-		// await expect( page ).toHaveScreenshot( 'experiments.png' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
@@ -150,14 +138,14 @@ test.describe( 'Video tests inside a container', () => {
 
 test.describe( 'Video tests inside a section', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		await setExperiment( 'container', false );
-		// const context = await browser.newContext(),
-		// 	page = await context.newPage(),
-		// 	wpAdmin = new WpAdminPage( page, testInfo );
+		// await setExperiment( 'container', false );
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
 
-		// await wpAdmin.setExperiments( {
-		// 	container: false,
-		// } );
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
