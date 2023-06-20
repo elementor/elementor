@@ -419,7 +419,7 @@ class Deprecation {
 	 * @param string $base_version Optional. Default is `null`
 	 * @throws \Exception
 	 */
-	public function deprecated_function( $function, $version, $replacement = '', $base_version = null, $debug_mode = false ) {
+	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
 		}
