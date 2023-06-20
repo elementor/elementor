@@ -2,7 +2,7 @@ import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
-	setHorizontalTabTitleScrollValues,
+	setHorizontalTitleScrollValues,
 } from './../../../../../../core/utils/js/FlexContainerHorizontalScroll';
 
 export default class NestedTabs extends Base {
@@ -248,7 +248,7 @@ export default class NestedTabs extends Base {
 			mousedown: changeScrollStatus.bind( this, slider ),
 			mouseup: changeScrollStatus.bind( this, slider ),
 			mouseleave: changeScrollStatus.bind( this, slider ),
-			mousemove: setHorizontalTabTitleScrollValues.bind( this, slider, this.getHorizontalScrollSetting() ),
+			mousemove: setHorizontalTitleScrollValues.bind( this, slider, this.getHorizontalScrollSetting() ),
 		};
 	}
 

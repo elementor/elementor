@@ -10,7 +10,7 @@ export function changeScrollStatus( element, event ) {
 }
 
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
-export function setHorizontalTabTitleScrollValues( element, horizontalScrollStatus, event ) {
+export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
 	const isActiveScroll = element.classList.contains( 'e-scroll' ),
 		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
 		headingContentIsWiderThanWrapper = element.scrollWidth > element.clientWidth;
