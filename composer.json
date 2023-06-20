@@ -22,8 +22,6 @@
 	  "lint:help": "phpcs --version",
 	  "test": "phpunit",
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
-	  "test:m": "phpunit  tests/phpunit/elementor/modules/dev-tools/test-deprecation.php",
-	  "test:m2": "phpunit 'Elementor\\Tests\\Phpunit\\Elementor\\Core\\Common\\DevTools'",
 	  "coverage": "composer run coverage:test && composer run coverage:check",
 	  "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 	  "coverage:check": "phpunit-coverage-check -t 54 coverage-report/clover.xml"
