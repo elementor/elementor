@@ -333,7 +333,7 @@ class Deprecation {
 		return defined( 'WP_DEBUG' ) && WP_DEBUG;
 	}
 
-	private function notify_deprecated_function( $function_name, $version, $replacement = '', $calling_plugin = '', $call_location = '', $type = 'plugin' ) {
+	private function notify_deprecated_function( $function_name, $version, $replacement = '', $plugin = '', $source = '', $type = 'plugin' ) {
 
 		/**
 		 * Fires when a deprecated function is called.
@@ -363,8 +363,8 @@ class Deprecation {
 				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller %3$s: %4$s. Called from: %5$s.', 'elementor' );
 			}
 			$error_message_args[] = $type;
-			$error_message_args[] = $calling_plugin;
-			$error_message_args[] = $call_location;
+			$error_message_args[] = $plugin;
+			$error_message_args[] = $source;
 			trigger_error(
 				vsprintf(
 					// PHPCS - $message_string is already escaped above.
