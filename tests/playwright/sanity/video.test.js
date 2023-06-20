@@ -7,7 +7,7 @@ const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
-test.describe.only( 'Video tests inside a container', () => {
+test.describe( 'Video tests inside a container', () => {
 	test.beforeAll( async () => {
 		await setExperiment( 'container', true );
 		// const context = await browser.newContext(),
