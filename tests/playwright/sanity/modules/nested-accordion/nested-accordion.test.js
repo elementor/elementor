@@ -500,6 +500,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 					await editor.activatePanelTab( 'style' );
+					await page.locator( '.elementor-control-section_accordion_style' ).waitFor();
 				} );
 
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
