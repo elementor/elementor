@@ -27,7 +27,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveCount(1 );
+			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );

@@ -10,29 +10,29 @@ test.describe( 'AI @ai', () => {
 		await test.step( 'Textarea control', async () => {
 			await editor.addWidget( 'heading' );
 
-			await expect( page.locator( '.elementor-control-title.elementor-control-type-textarea .e-ai-button' ) ).toHaveCount(1 );
+			await expect( page.locator( '.elementor-control-title.elementor-control-type-textarea .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'Wysiwyg control', async () => {
 			await editor.addWidget( 'text-editor' );
 
-			await expect( page.locator( '.elementor-control-editor.elementor-control-type-wysiwyg .e-ai-button' ) ).toHaveCount(1 );
+			await expect( page.locator( '.elementor-control-editor.elementor-control-type-wysiwyg .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'Media control', async () => {
 			await editor.addWidget( 'image' );
 
-			await expect( page.locator( '.elementor-control-image.elementor-control-type-media .e-ai-button' ) ).toHaveCount(1 );
+			await expect( page.locator( '.elementor-control-image.elementor-control-type-media .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'Media control', async () => {
 			await editor.addWidget( 'image' );
 
-			await page.click( '.elementor-panel-navigation-tab.elementor-tab-control-advanced' );
-			await page.click( '.elementor-control-_section_background.elementor-control-type-section' );
+			await editor.activatePanelTab( 'advanced' );
+			await editor.openSection( '_section_background' );
 			await page.locator( '.elementor-control-_background_background.elementor-control-type-choose label[data-tooltip="Classic"]' ).click();
 
-			await expect( page.locator( '.elementor-control-_background_image.elementor-control-type-media .e-ai-button' ) ).toHaveCount(1 );
+			await expect( page.locator( '.elementor-control-_background_image.elementor-control-type-media .e-ai-button' ) ).toHaveCount( 1 );
 		} );
 	} );
 } );

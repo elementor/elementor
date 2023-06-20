@@ -4,10 +4,10 @@ const getJsonMock = ( data ) => {
 		data: {
 			responses: {
 				ai_get_user_information: data,
-			}
-		}
-	}
-}
+			},
+		},
+	};
+};
 
 export const userInformationMock = getJsonMock( {
 	success: true,
@@ -18,9 +18,9 @@ export const userInformationMock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 2,
-			quota: 100
-		}
-	}
+			quota: 100,
+		},
+	},
 } );
 
 export const userInformationExceededQuotaMock = getJsonMock( {
@@ -32,9 +32,9 @@ export const userInformationExceededQuotaMock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 100,
-			quota: 100
-		}
-	}
+			quota: 100,
+		},
+	},
 } );
 
 export const userInformationNoConnectedMock = getJsonMock( {
@@ -46,9 +46,9 @@ export const userInformationNoConnectedMock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 0,
-			quota: 100
-		}
-	}
+			quota: 100,
+		},
+	},
 } );
 
 export const userInformationConnectedNoGetStartedMock = getJsonMock( {
@@ -60,11 +60,8 @@ export const userInformationConnectedNoGetStartedMock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 0,
-			quota: 100
-		}
-	}
+			quota: 100,
+		},
+	},
 } );
-
-
-
 
