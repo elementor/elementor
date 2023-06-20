@@ -256,9 +256,8 @@ export default class NestedTabs extends Base {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
 
-		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 		const settingsObject = {
-			element: navigationWrapper,
+			element: this.elements.$headingContainer[ 0 ],
 			direction: this.getTabsDirection(),
 			justifyCSSVariable: '--n-tabs-heading-justify-content',
 			horizontalScrollStatus: this.getHorizontalScrollSetting(),
@@ -312,10 +311,8 @@ export default class NestedTabs extends Base {
 			this.activateDefaultTab();
 		}
 
-		const navigationWrapper = this.elements.$headingContainer[ 0 ];
-
 		const settingsObject = {
-			element: navigationWrapper,
+			element: this.elements.$headingContainer[ 0 ],
 			direction: this.getTabsDirection(),
 			justifyCSSVariable: '--n-tabs-heading-justify-content',
 			horizontalScrollStatus: this.getHorizontalScrollSetting(),
@@ -331,10 +328,8 @@ export default class NestedTabs extends Base {
 	}
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
-			const navigationWrapper = this.elements.$headingContainer[ 0 ];
-
 			const settingsObject = {
-				element: navigationWrapper,
+				element: this.elements.$headingContainer[ 0 ],
 				direction: this.getTabsDirection(),
 				justifyCSSVariable: '--n-tabs-heading-justify-content',
 				horizontalScrollStatus: this.getHorizontalScrollSetting(),
