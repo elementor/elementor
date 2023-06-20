@@ -24,7 +24,7 @@
 		&-label {
 			display: flex;
 			line-height: 18px;
-			margin-bottom: 27px;
+			margin-block-end: 27px;
 		}
 
 		&-input {
@@ -38,7 +38,7 @@
 				background-color: $platform-dark-gray;
 
 				&::after {
-					margin-bottom: 15%;
+					margin-block-end: 15%;
 					width: 6px;
 					height: 9px;
 					border-width: 0 2px 2px 0;
@@ -48,7 +48,7 @@
 	}
 
 	&__feature-list {
-		margin-bottom: 40px;
+		margin-block-end: 40px;
 	}
 
 	&__text-input {
@@ -69,7 +69,7 @@
 	}
 
 	&__footnote {
-		margin-top: 24px;
+		margin-block-start: 24px;
 		width: 325px;
 		text-align: center;
 

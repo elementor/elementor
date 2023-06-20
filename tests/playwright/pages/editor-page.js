@@ -1,8 +1,8 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
-const _ = require( 'lodash' );
-import _path from 'path';
+const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -20,33 +20,21 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	updateImageDates( templateData ) {
-		const replaceUrl = ( url ) => {
-			const date = new Date();
-			const month = date.toLocaleString( 'default', { month: '2-digit' } );
-			const regex = /[0-9]{4}\/[0-9]{2}/g;
-			return url.replace( regex, `${ date.getFullYear() }/${ month }` );
-		};
-		templateData.content[ 0 ].elements.forEach( ( el ) => {
-			if ( 'carousel' in el.settings ) {
-				for ( let i = 0; i < el.settings.carousel.length; i++ ) {
-					el.settings.carousel[ i ].url = replaceUrl( el.settings.carousel[ i ].url );
-				}
-			}
-			const key = _.findKey( el.settings, 'url' );
-			if ( key ) {
-				el.settings[ key ].url = replaceUrl( el.settings[ key ].url );
-			}
-		} );
+		const date = new Date();
+		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const data = JSON.stringify( templateData );
+		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
+		return JSON.parse( updatedData );
 	}
 
 	async loadTemplate( filePath, updateDatesForImages = false ) {
-		const templateData = require( filePath );
+		let templateData = require( filePath );
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
 		// To update dates in template, use a flag updateDatesForImages = true
 		if ( updateDatesForImages ) {
-			this.updateImageDates( templateData );
+			templateData = this.updateImageDates( templateData );
 		}
 
 		await this.page.evaluate( ( data ) => {
@@ -344,6 +332,10 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
 	}
 
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
+	}
+
 	/**
 	 * Set a widget to `flew grow`.
 	 *
@@ -364,38 +356,6 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.selectOption( '.elementor-control-_mask_size >> select', 'custom' );
 		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '30' );
 		await this.page.selectOption( '.elementor-control-_mask_position >> select', 'top right' );
-	}
-
-	/**
-	 * Autopopulate the Image Carousel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async populateImageCarousel() {
-		await this.activatePanelTab( 'content' );
-		await this.page.locator( '.elementor-control-gallery-add' ).click();
-
-		// Open Media Library
-		await this.page.click( 'text=Media Library' );
-
-		// Upload the images to WP media library
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-		// Create a new gallery
-		await this.page.locator( 'text=Create a new gallery' ).click();
-
-		// Insert gallery
-		await this.page.locator( 'text=Insert gallery' ).click();
-
-		// Open The Additional options Section
-		await this.page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-
-		// Disable AutoPlay
-		await this.page.selectOption( 'select', 'no' );
 	}
 
 	/**
@@ -794,5 +754,28 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setDimensionsValue( selector, value ) {
 		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	}
+
+	async verifyClassInElement( args = { selector, className, isPublished } ) {
+		const regex = new RegExp( args.className );
+		if ( args.isPublished ) {
+			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
+		} else {
+			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+		}
+	}
+
+	async verifyImageSize( args = { selector, width, height, isPublished } ) {
+		const imageSize = args.isPublished
+			? await this.page.locator( args.selector ).boundingBox()
+			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
+		expect( imageSize.width ).toEqual( args.width );
+		expect( imageSize.height ).toEqual( args.height );
+	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size', fontsize );
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 };

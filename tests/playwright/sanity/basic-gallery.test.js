@@ -1,16 +1,19 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
+import ImageCarousel from '../pages/widgets/image-carousel.js';
 
 test( 'Basic Gallery', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
+	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();
+	await editor.addWidget( 'image-gallery' );
 
 	// Act.
-	await insertImageGalleryWidget( editor, page );
+	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
 	expect( await editor.getPreviewFrame().locator( 'div#gallery-1' ).screenshot( { type: 'jpeg', quality: 90 } ) ).toMatchSnapshot( 'gallery.jpeg' );
@@ -19,6 +22,7 @@ test( 'Basic Gallery', async ( { page }, testInfo ) => {
 test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
+	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: true,
@@ -28,9 +32,9 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();
-
+	await editor.addWidget( 'image-gallery' );
 	// Act.
-	await testBasicSwiperGallery( editor, page );
+	await testBasicSwiperGallery( editor, page, imageCarousel );
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
@@ -40,6 +44,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
+	const imageCarousel = new ImageCarousel( page, testInfo );
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
@@ -49,36 +54,15 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 
 	// Close Navigator
 	await editor.closeNavigatorIfOpen();
-
-	// Act.
-	await testBasicSwiperGallery( editor, page );
-} );
-
-async function insertImageGalleryWidget( editor, page ) {
 	await editor.addWidget( 'image-gallery' );
 
-	await page.locator( '.elementor-control-gallery-add' ).click();
-
-	// Open Media Library
-	await page.click( 'text=Media Library' );
-
-	// Upload the images to WP media library
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-	await page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-	// Create a new gallery
-	await page.locator( 'text=Create a new gallery' ).click();
-
-	// Insert gallery
-	await page.locator( 'text=Insert gallery' ).click();
-}
-
-async function testBasicSwiperGallery( editor, page ) {
 	// Act.
-	await insertImageGalleryWidget( editor, page );
+	await testBasicSwiperGallery( editor, page, imageCarousel );
+} );
+
+async function testBasicSwiperGallery( editor, page, imageCarousel ) {
+	// Act.
+	await imageCarousel.addImageGallery();
 
 	await editor.togglePreviewMode();
 	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
