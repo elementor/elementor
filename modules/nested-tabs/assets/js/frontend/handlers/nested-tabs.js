@@ -1,4 +1,9 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
+import {
+	changeScrollStatus,
+	setHorizontalScrollAlignment,
+	setHorizontalTabTitleScrollValues,
+} from './../../../../../../core/utils/js/FlexContainerHorizontalScroll';
 
 export default class NestedTabs extends Base {
 	constructor( ...args ) {
@@ -237,11 +242,13 @@ export default class NestedTabs extends Base {
 	}
 
 	getHeadingEvents() {
+		const slider = this.elements.$headingContainer[ 0 ];
+
 		return {
-			mousedown: this.changeScrollStatus.bind( this ),
-			mouseup: this.changeScrollStatus.bind( this ),
-			mouseleave: this.changeScrollStatus.bind( this ),
-			mousemove: this.setHorizontalTabTitleScrollValues.bind( this ),
+			mousedown: changeScrollStatus.bind( this, slider ),
+			mouseup: changeScrollStatus.bind( this, slider ),
+			mouseleave: changeScrollStatus.bind( this, slider ),
+			mousemove: setHorizontalTabTitleScrollValues.bind( this, slider, this.getHorizontalScrollSetting() ),
 		};
 	}
 
@@ -249,7 +256,9 @@ export default class NestedTabs extends Base {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
 
-		this.resizeListenerNestedTabs = this.setHorizontalScrollAlignment.bind( this );
+		const slider = this.elements.$headingContainer[ 0 ];
+
+		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
@@ -297,7 +306,9 @@ export default class NestedTabs extends Base {
 			this.activateDefaultTab();
 		}
 
-		this.setHorizontalScrollAlignment();
+		const slider = this.elements.$headingContainer[ 0 ];
+
+		setHorizontalScrollAlignment( slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -307,7 +318,9 @@ export default class NestedTabs extends Base {
 	}
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
-			this.setHorizontalScrollAlignment();
+			const slider = this.elements.$headingContainer[ 0 ];
+
+			setHorizontalScrollAlignment( slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 		}
 	}
 
@@ -511,111 +524,13 @@ export default class NestedTabs extends Base {
 		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
 	}
 
-	// This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
-	changeScrollStatus( event ) {
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		if ( 'mousedown' === event.type ) {
-			slider.classList.add( 'e-scroll' );
-			slider.dataset.pageX = event.pageX;
-		} else {
-			slider.classList.remove( 'e-scroll' );
-			slider.classList.remove( 'e-scroll-active' );
-			slider.dataset.pageX = '';
-		}
-	}
-
-	isHorizontalScroll() {
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		return slider.clientWidth < this.getChildrenWidth( slider.children ) && 'enable' === this.getHorizontalScrollSetting();
-	}
-
-	getChildrenWidth( children ) {
-		let totalWidth = 0;
-
-		const parentContainer = children[ 0 ].parentNode,
-			computedStyles = getComputedStyle( parentContainer ),
-			gap = parseFloat( computedStyles.gap ) || 0; // Get the gap value or default to 0 if it's not specified
-
-		for ( let i = 0; i < children.length; i++ ) {
-			totalWidth += children[ i ].offsetWidth + gap;
-		}
-
-		return totalWidth;
-	}
-
-	setHorizontalScrollAlignment( event = {} ) {
-		if ( ! this.elements ) {
-			return;
-		}
-
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		if ( this.isHorizontalScroll() ) {
-			const tabsDirection = this.getTabsDirection();
-
-			this.initialScrollPosition( slider, tabsDirection );
-		} else {
-			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
-		}
-	}
-
 	getTabsDirection() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			tabsDirection = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
-
-		return tabsDirection;
-	}
-
-	initialScrollPosition( slider, tabsDirection ) {
-		const isRTL = elementorCommon.config.isRTL;
-		switch ( tabsDirection ) {
-			case 'end':
-				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = isRTL ? -1 * this.getChildrenWidth( slider.children ) : this.getChildrenWidth( slider.children );
-				break;
-			default:
-				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = 0;
-		}
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
 	}
 
 	getHorizontalScrollSetting() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			horizontalScrollSetting = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
-
-		return horizontalScrollSetting;
-	}
-
-	setHorizontalTabTitleScrollValues( event ) {
-		const slider = this.elements.$headingContainer[ 0 ],
-			isActiveScroll = slider.classList.contains( 'e-scroll' ),
-			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting(),
-			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
-
-		if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
-			return;
-		}
-
-		event.preventDefault();
-
-		const previousPositionX = parseFloat( slider.dataset.pageX ),
-			mouseMoveX = event.pageX - previousPositionX,
-			maximumScrollValue = 5,
-			stepLimit = 20;
-
-		let toScrollDistanceX = 0;
-
-		if ( stepLimit < mouseMoveX ) {
-			toScrollDistanceX = maximumScrollValue;
-		} else if ( stepLimit * -1 > mouseMoveX ) {
-			toScrollDistanceX = -1 * maximumScrollValue;
-		} else {
-			toScrollDistanceX = mouseMoveX;
-		}
-
-		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
-		slider.classList.add( 'e-scroll-active' );
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
 	}
 }
