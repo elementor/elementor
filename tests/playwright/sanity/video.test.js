@@ -20,7 +20,7 @@ test.describe( 'Video tests inside a container', () => {
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
-		await setExperiment( 'container', false );
+		// await setExperiment( 'container', false );
 		const context = await browser.newContext(),
 			page = await context.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
