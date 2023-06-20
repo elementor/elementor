@@ -262,21 +262,21 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			const nestedAccordionWidgetId = '48f02ad',
 				frame = editor.getPreviewFrame(),
-				nestedAccordion = frame.locator( '.e-n-accordion' ).filter( { hasText: 'One' } ),
-				nestedAccordionTitle = frame.locator( 'summary' ).first().filter( { hasText: 'One' } );
+				nestedAccordionTitle = frame.locator( '.e-n-accordion .e-n-accordion-item-title' ).first();
 
-			await test.step( 'Check that the title and icon is displayed', async () => {
+			await test.step( 'If Accordion is open fa-minus is displayed', async () => {
 				// Assert
-				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeVisible();
-				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 1 ) ).toBeHidden();
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 			} );
 
-			await test.step( 'Check that icon changes when Accordion is open', async () => {
+			await test.step( 'If Accordion is closed fa-plus is displayed & fa-minus icon is hidden', async () => {
+				await nestedAccordionTitle.click();
 				await frame.waitForLoadState( 'load', { timeout: 7000 } );
-				await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
-				await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await nestedAccordion.locator( 'i' ).nth( 1 ) ).toBeHidden();
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 				await nestedAccordionTitle.click( { timeout: 5000 } );
 			} );
 
@@ -342,18 +342,17 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Mobile -Check that the title icon is displayed', async () => {
 				// Assert
-				await expect( await getIcon( nestedAccordion, 1 ) ).toBeVisible();
-				await expect( await getIcon( nestedAccordion, 1 ) ).toHaveClass( 'fas fa-plus' );
-
-				await expect( await frame.getByRole( 'group' ).filter( { hasText: 'One' } ).locator( 'i' ).nth( 0 ) ).toBeHidden();
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 			} );
 
 			await test.step( 'Mobile - Check that icon changes when the mobile Accordion is opened', async () => {
 				await frame.waitForLoadState( 'load' );
 				await nestedAccordionTitle.click();
-				await expect( await getIcon( nestedAccordion, 0 ) ).toBeVisible();
-				await expect( await getIcon( nestedAccordion, 0 ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await getIcon( nestedAccordion, 1 ) ).toBeHidden();
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 				await nestedAccordionTitle.click();
 			} );
 
@@ -675,15 +674,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		} );
 	} );
 } );
-
-/*
- * Returns the Icon from Nested Accordion Item.
- * @param nestedAccordionItem - Nested Accordion Item
- * @param iconIndex - index of the icon 0 or 1
- */
-async function getIcon( nestedAccordionItem, iconIndex ) {
-	return await nestedAccordionItem.locator( 'i' ).nth( iconIndex );
-}
 
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
