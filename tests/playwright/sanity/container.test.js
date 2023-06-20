@@ -3,6 +3,7 @@ const { getElementSelector } = require( '../assets/elements-utils' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
+import ImageCarousel from '../pages/widgets/image-carousel';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -271,6 +272,7 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
+		const imageCarousel = new ImageCarousel( page, testInfo );
 
 		// Arrange.
 		const editor = await wpAdmin.useElementorCleanPost(),
@@ -313,11 +315,13 @@ test.describe( 'Container tests @container', () => {
 
 		// Hide carousel navigation.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
-		await page.selectOption( '.elementor-control-navigation >> select', 'none' );
+		await imageCarousel.selectNavigation( 'none' );
 		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Add images.
-		await editor.populateImageCarousel();
+		await imageCarousel.addImageGallery();
+		await imageCarousel.setAutoplay();
+
 		// Duplicate carousel widget.
 		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
 		await expect( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
