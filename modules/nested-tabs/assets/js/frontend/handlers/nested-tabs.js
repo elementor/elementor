@@ -1,9 +1,9 @@
-import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
+import Base from 'elementor/assets/dev/js/frontend/handlers/base';
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
-} from './../../../../../../core/utils/js/FlexContainerHorizontalScroll';
+} from 'elementor/assets/dev/js/frontend/utils/flexHorizontalScroll';
 
 export default class NestedTabs extends Base {
 	constructor( ...args ) {
@@ -242,13 +242,13 @@ export default class NestedTabs extends Base {
 	}
 
 	getHeadingEvents() {
-		const slider = this.elements.$headingContainer[ 0 ];
+		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
 		return {
-			mousedown: changeScrollStatus.bind( this, slider ),
-			mouseup: changeScrollStatus.bind( this, slider ),
-			mouseleave: changeScrollStatus.bind( this, slider ),
-			mousemove: setHorizontalTitleScrollValues.bind( this, slider, this.getHorizontalScrollSetting() ),
+			mousedown: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseup: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseleave: changeScrollStatus.bind( this, navigationWrapper ),
+			mousemove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
 		};
 	}
 
@@ -256,9 +256,9 @@ export default class NestedTabs extends Base {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
 
-		const slider = this.elements.$headingContainer[ 0 ];
+		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
-		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
@@ -306,9 +306,9 @@ export default class NestedTabs extends Base {
 			this.activateDefaultTab();
 		}
 
-		const slider = this.elements.$headingContainer[ 0 ];
+		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
-		setHorizontalScrollAlignment( slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+		setHorizontalScrollAlignment( navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -318,9 +318,9 @@ export default class NestedTabs extends Base {
 	}
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
-			const slider = this.elements.$headingContainer[ 0 ];
+			const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
-			setHorizontalScrollAlignment( slider, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
+			setHorizontalScrollAlignment( navigationWrapper, this.getTabsDirection(), '--n-tabs-heading-justify-content', this.getHorizontalScrollSetting() );
 		}
 	}
 
