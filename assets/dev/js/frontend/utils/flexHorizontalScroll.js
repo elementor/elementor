@@ -3,8 +3,7 @@ export function changeScrollStatus( element, event ) {
 		element.classList.add( 'e-scroll' );
 		element.dataset.pageX = event.pageX;
 	} else {
-		element.classList.remove( 'e-scroll' );
-		element.classList.remove( 'e-scroll-active' );
+		element.classList.remove( 'e-scroll', 'e-scroll-active' );
 		element.dataset.pageX = '';
 	}
 }
