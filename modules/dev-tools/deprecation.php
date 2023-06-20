@@ -288,7 +288,7 @@ class Deprecation {
 
 	private function filter_third_party_sources( $stack_trace ) {
 		$sources = array_filter( $stack_trace, function( $elem ) {
-			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) );
+			return ! $this->is_elementor_file( $elem );
 		} );
 		return $sources;
 	}
