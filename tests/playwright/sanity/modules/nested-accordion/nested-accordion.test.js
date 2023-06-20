@@ -535,6 +535,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await editor.closeNavigatorIfOpen();
 			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
+
+			await editor.openSection( 'section_interactions' );
+			await editor.page.selectOption( '.elementor-control-max_items_expended >> select', { value: 'multiple' } );
+
 			await editor.activatePanelTab( 'style' );
 			await editor.openSection( 'section_content_style' );
 
@@ -612,6 +616,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					// Assert.
 					await expect( nestedAccordionWidgetFront ).toHaveScreenshot( 'nested-Accordion-content-style-front.png' );
+				} );
+
+				await test.step( 'Reset Accordion Items open', async () => {
+					await editor.page.selectOption( '.elementor-control-max_items_expended >> select', { value: 'one' } );
 				} );
 			} );
 		} );
