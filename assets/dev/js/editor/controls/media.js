@@ -99,8 +99,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		if ( source !== 'filter-popup' ) {
 			await showJsonWarningMessageIfNeeded( {
-				introductionMap: elementor.config.user.introduction,
-				Introduction: elementorModules.editor.utils.Introduction,
+				introductionMap: window.elementor.config.user.introduction,
+				Introduction: window.elementorModules.editor.utils.Introduction,
 			} );
 		}
 

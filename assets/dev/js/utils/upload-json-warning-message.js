@@ -1,11 +1,15 @@
 const genericMessageIntroductionKey = 'upload_json_warning_generic_message';
+/**
+ * @type {import('../utils/introduction').default | null}
+ */
 let genericWarningModal = null;
 
 export function showJsonWarningMessageIfNeeded( { introductionMap, Introduction, waitForSetViewed = false } ) {
 	if ( ! genericWarningModal ) {
 		genericWarningModal = createGenericWarningModal( Introduction );
-		genericWarningModal.setIntroductionMap( introductionMap );
 	}
+
+	genericWarningModal.setIntroductionMap( introductionMap );
 
 	if ( genericWarningModal.introductionViewed ) {
 		return Promise.resolve();
