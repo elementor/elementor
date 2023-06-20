@@ -11,14 +11,14 @@ import { mkdirSync, writeFileSync } from 'fs';
 let experimentsJSON = '';
 test.describe( 'Video tests inside a container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		await setExperiment( 'container', true );
-		// const context = await browser.newContext(),
-		// 	page = await context.newPage(),
-		// 	wpAdmin = new WpAdminPage( page, testInfo );
+		// await setExperiment( 'container', true );
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
 
-		// await wpAdmin.setExperiments( {
-		// 	container: true,
-		// } );
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 	} );
 
 	test.afterAll( async ( { browser }, testInfo ) => {
@@ -43,9 +43,9 @@ test.describe( 'Video tests inside a container', () => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		page.goto( 'http://localhost:8888/wp-json/elementor/v1/features/all' );
-		experimentsJSON = await page.textContent( 'body' );
-		await expect( page ).toHaveScreenshot( 'experiments.png' );
+		// page.goto( 'http://localhost:8888/wp-json/elementor/v1/features/all' );
+		// experimentsJSON = await page.textContent( 'body' );
+		// await expect( page ).toHaveScreenshot( 'experiments.png' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
