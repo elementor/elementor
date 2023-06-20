@@ -287,8 +287,8 @@ class Deprecation {
 	}
 
 	private function filter_third_party_sources( $stack_trace ) {
-		$sources = array_filter($stack_trace, function ( $elem ) {
-			return ( ! ( $this->is_elementor_file( ( $elem ) ) ) );
+		$sources = array_filter( $stack_trace, function( $elem ) {
+			return ! $this->is_elementor_file( $elem );
 		} );
 		return $sources;
 	}
@@ -306,7 +306,7 @@ class Deprecation {
 	 */
 	private function should_print_deprecated( $version, $base_version ) {
 		$is_elementor_debug = defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
-		$is_wp_debug = ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+		$is_wp_debug = defined( 'WP_DEBUG' ) && WP_DEBUG;
 		$user_is_admin = current_user_can( 'manage_options' );
 		$user_is_logged_in = is_user_logged_in();
 
