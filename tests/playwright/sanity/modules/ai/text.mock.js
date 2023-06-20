@@ -18,9 +18,9 @@ export const completionTextMock = getJsonMock( {
 				hasAiSubscription: false,
 				usedQuota: 2,
 				quota: 100,
-			}
-		}
-	}
+			},
+		},
+	},
 } );
 
 export const editTextMock = getJsonMock( {
@@ -34,7 +34,7 @@ export const editTextMock = getJsonMock( {
 				hasAiSubscription: false,
 				usedQuota: 2,
 				quota: 100,
-			}
-		}
+			},
+		},
 	},
 } );
