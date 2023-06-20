@@ -1,8 +1,18 @@
 export default class extends elementorModules.Module {
+	introductionMap = null;
+
 	constructor( ...args ) {
 		super( ...args );
 
 		this.initDialog();
+	}
+
+	setIntroductionMap( source ) {
+		this.introductionMap = source;
+	}
+
+	getIntroductionMap() {
+		return this.introductionMap || elementor.config.user.introduction;
 	}
 
 	getDefaultSettings() {
@@ -56,21 +66,27 @@ export default class extends elementorModules.Module {
 
 	get introductionViewed() {
 		const introductionKey = this.getSettings( 'introductionKey' );
-		return elementor.config.user.introduction[ introductionKey ];
+
+		return this.getIntroductionMap()[ introductionKey ];
 	}
 
 	set introductionViewed( isViewed ) {
 		const introductionKey = this.getSettings( 'introductionKey' );
-		elementor.config.user.introduction[ introductionKey ] = isViewed;
+
+		this.getIntroductionMap()[ introductionKey ] = isViewed;
 	}
 
-	setViewed() {
+	async setViewed() {
 		this.introductionViewed = true;
 
-		elementorCommon.ajax.addRequest( 'introduction_viewed', {
-			data: {
-				introductionKey: this.getSettings( 'introductionKey' ),
-			},
+		return new Promise( ( resolve, reject ) => {
+			elementorCommon.ajax.addRequest( 'introduction_viewed', {
+				data: {
+					introductionKey: this.getSettings( 'introductionKey' ),
+				},
+				success: resolve,
+				error: reject,
+			} );
 		} );
 	}
 }
