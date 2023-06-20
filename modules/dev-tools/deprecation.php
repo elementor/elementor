@@ -330,7 +330,7 @@ class Deprecation {
 	}
 
 	private function should_console_log_deprecated() {
-		return ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+		return defined( 'WP_DEBUG' ) && WP_DEBUG;
 	}
 
 	private function notify_deprecated_function( $function_name, $version, $replacement = '', $calling_plugin = '', $call_location = '', $type = 'plugin' ) {
