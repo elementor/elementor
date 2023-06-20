@@ -314,6 +314,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$this->add_control(
+			'n_accordion_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 'ms',
+					'size' => 400,
+				],
+				'frontend_available' => true,
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->add_style_tab();
@@ -439,6 +453,23 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'name' => 'content_border',
 				'selector' => $low_specificity_accordion_item_selector,
+				'fields_options' => [
+					'color' => [
+						'default' => '#D5D8DC',
+					],
+					'width' => [
+						'default' => [
+							'top' => 1,
+							'right' => 1,
+							'bottom' => 1,
+							'left' => 1,
+							'unit' => 'px',
+						],
+					],
+					'border' => [
+						'default' => 'solid',
+					],
+				],
 			]
 		);
 
@@ -538,7 +569,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 				'default' => [
 					'unit' => 'px',
-					'size' => 20,
+					'size' => 15,
 				],
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [

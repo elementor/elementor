@@ -1,44 +1,21 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../../../pages/wp-admin-page' );
+import ImageCarousel from '../../../../../../../pages/widgets/image-carousel';
 
 test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo ) => {
-	const resourcesBaseDir = './tests/playwright/resources/';
-
 	const wpAdmin = new WpAdminPage( page, testInfo ),
 		editor = await wpAdmin.useElementorCleanPost();
+	const imageCarousel = new ImageCarousel( page, testInfo );
+	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
 	await editor.addWidget( 'image-carousel' );
+	await imageCarousel.addImageGallery( images );
+	await imageCarousel.setAutoplay();
+	await page.click( '.elementor-control-lazyload >> span' );
 
 	// Set Image carousel settings
-	await page.selectOption( '.elementor-control-slides_to_show >> select', '1' );
-
-	await page.click( '.elementor-control-section_additional_options' );
-	await page.click( '.elementor-control-lazyload >> span' );
-	await page.selectOption( '.elementor-control-autoplay >> select', 'no' );
-
-	// Add images
-	const images = [ 'elementor1', 'elementor2', 'elementor3', 'elementor4' ];
-	const imageFileType = '.png';
-
 	await page.click( '#elementor-controls >> text=Image Carousel' );
-	await page.locator( '.elementor-control-gallery-add' ).click();
-	await page.waitForSelector( '.media-modal >> .has-load-more >> .spinner:visible', { state: 'hidden' } );
-	await page.waitForTimeout( 500 );
-
-	for ( const image of images ) {
-		const alreadyLoaded = await page.$( '[aria-label="' + image + '"]' );
-
-		if ( alreadyLoaded ) {
-			await page.click( '[aria-label="' + image + '"]' );
-		} else {
-			await page.click( 'text=Upload files' );
-
-			await page.setInputFiles( 'input[type="file"]', resourcesBaseDir + image + imageFileType );
-		}
-	}
-
-	await page.click( 'text=Create a new gallery' );
-	await page.click( 'text=Insert gallery' );
+	await page.selectOption( '.elementor-control-slides_to_show >> select', '1' );
 
 	const widget = await editor.getPreviewFrame().waitForSelector( '.elementor-image-carousel' );
 	const widgetImages = await widget.$$( '.swiper-slide >> img' );
