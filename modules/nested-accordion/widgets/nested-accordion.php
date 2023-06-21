@@ -732,7 +732,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
-			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
+			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
