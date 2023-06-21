@@ -48,7 +48,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		invalid_prompts: {
 			text: <AlertTitle>{ __( 'We were unable to generate that prompt.', 'elementor' ) }</AlertTitle>,
 			description: __( 'Seems like the prompt contains words that could generate harmful content. Write a different prompt to continue.', 'elementor' ),
-		}
+		},
 	};
 
 	const message = messages[ error ] || messages.default;
