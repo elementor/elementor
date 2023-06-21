@@ -22,10 +22,14 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 					{ ' ' }<a href="https://elementor.com/help/disconnecting-reconnecting-your-elementor-account/" target="_blank" rel="noreferrer">{ __( 'Show me how', 'elementor' ) }</a>
 				</>
 			),
+			buttonText: __( 'Reconnect', 'elementor' ),
+			buttonAction: () => window.open( window.ElementorAiConfig.connect_url ),
 		},
 		not_connected: {
 			text: <AlertTitle>{ __( 'You aren\'t connected to Elementor AI.', 'elementor' ) }</AlertTitle>,
 			description: __( 'Elementor AI is just a few clicks away. Connect your account to instantly create texts and custom code.', 'elementor' ),
+			buttonText: __( 'Connect', 'elementor' ),
+			buttonAction: () => window.open( window.ElementorAiConfig.connect_url ),
 		},
 		quota_reached_trail: {
 			severity: 'info',
