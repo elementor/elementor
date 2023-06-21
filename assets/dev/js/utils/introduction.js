@@ -7,8 +7,8 @@ export default class extends elementorModules.Module {
 		this.initDialog();
 	}
 
-	setIntroductionMap( source ) {
-		this.introductionMap = source;
+	setIntroductionMap( map ) {
+		this.introductionMap = map;
 	}
 
 	getIntroductionMap() {

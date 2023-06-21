@@ -4,9 +4,9 @@ const genericMessageIntroductionKey = 'upload_json_warning_generic_message';
  */
 let genericWarningModal = null;
 
-export function showJsonWarningMessageIfNeeded( { introductionMap, Introduction, waitForSetViewed = false } ) {
+export function showJsonUploadWarningMessageIfNeeded( { introductionMap, IntroductionClass, waitForSetViewed = false } ) {
 	if ( ! genericWarningModal ) {
-		genericWarningModal = createGenericWarningModal( Introduction );
+		genericWarningModal = createGenericWarningModal( IntroductionClass );
 	}
 
 	genericWarningModal.setIntroductionMap( introductionMap );
@@ -48,20 +48,19 @@ export function showJsonWarningMessageIfNeeded( { introductionMap, Introduction,
 }
 
 /**
- * @param {import('../utils/introduction').default.prototype.constructor} Introduction
+ * @param {import('../utils/introduction').default.prototype.constructor} IntroductionClass
  *
  * @return {import('../utils/introduction').default}
  */
-function createGenericWarningModal( Introduction ) {
+function createGenericWarningModal( IntroductionClass ) {
 	const dialogId = 'e-generic-warning-modal-for-json-upload';
 
-	const introduction = new Introduction( {
+	const introduction = new IntroductionClass( {
 		introductionKey: genericMessageIntroductionKey,
 		dialogType: 'confirm',
 		dialogOptions: {
 			id: dialogId,
 			headerMessage: __( 'Warning: JSON files may be unsafe', 'elementor' ),
-			// Translators: %1$s: Opening strong tag, %2$s: Closing strong tag.
 			message: __( 'Uploading JSON files from unknown sources can be harmful and put your site at risk. For maximum safety, only install JSON files from trusted sources.', 'elementor' ),
 			effects: {
 				show: 'fadeIn',

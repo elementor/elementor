@@ -4,7 +4,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
-import { showJsonWarningMessageIfNeeded } from '../utils/upload-json-warning-message';
+import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -416,8 +416,8 @@ import { showJsonWarningMessageIfNeeded } from '../utils/upload-json-warning-mes
 					event.preventDefault();
 
 					try {
-						await showJsonWarningMessageIfNeeded( {
-							Introduction: window.elementorModules.admin.utils.Introduction,
+						await showJsonUploadWarningMessageIfNeeded( {
+							IntroductionClass: window.elementorModules.admin.utils.Introduction,
 							introductionMap: window.elementorAdmin.config.user.introduction,
 							waitForSetViewed: true,
 						} );

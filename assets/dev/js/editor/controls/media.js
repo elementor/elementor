@@ -1,5 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
-import { showJsonWarningMessageIfNeeded } from '../../utils/upload-json-warning-message';
+import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
@@ -98,9 +98,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( source !== 'filter-popup' ) {
-			await showJsonWarningMessageIfNeeded( {
+			await showJsonUploadWarningMessageIfNeeded( {
 				introductionMap: window.elementor.config.user.introduction,
-				Introduction: window.elementorModules.editor.utils.Introduction,
+				IntroductionClass: window.elementorModules.editor.utils.Introduction,
 			} );
 		}
 
