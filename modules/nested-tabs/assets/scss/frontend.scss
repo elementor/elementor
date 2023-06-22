@@ -16,7 +16,7 @@
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
 	--n-tabs-heading-overflow-x: initial;
-	--n-tabs-heading-wrap: wrap;
+	--n-tabs-heading-wrap: nowrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -111,8 +111,6 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
-			flex-basis: content;
-			flex-shrink: 0;
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
