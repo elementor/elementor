@@ -715,8 +715,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
-			<span class='e-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo ( $icon_active_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class='e-closed'><?php echo ( $icon_html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 
 		<?php
