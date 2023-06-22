@@ -163,8 +163,8 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => esc_html__( 'Display Percentage', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Show', 'textdomain' ),
-				'label_off' => esc_html__( 'Hide', 'textdomain' ),
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'show',
 				'default' => 'show',
 			]
