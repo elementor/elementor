@@ -355,6 +355,13 @@ class NestedTabs extends Widget_Nested_Base {
 					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 				'frontend_available' => true,
+				'condition' => [
+					'tabs_direction' => [
+						'',
+						'top',
+						'bottom',
+					],
+				],
 			]
 		);
 
