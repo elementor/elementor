@@ -703,6 +703,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	private function render_accordion_icons( $settings ) {
+		if ('' === $settings['accordion_item_title_icon']['value']){
+			return '';
+		}
+
 		$icon_html = Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon'], [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $this->is_active_icon_exist( $settings )
 			? Icons_Manager::try_get_icon_html( $settings['accordion_item_title_icon_active'], [ 'aria-hidden' => 'true' ] )
@@ -754,7 +758,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
-						<?php echo wp_kses_post( $icons_content ); ?>
+						<?php if( '' !== $icons_content ){ echo( $icons_content ); } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</summary>
 					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</details>
