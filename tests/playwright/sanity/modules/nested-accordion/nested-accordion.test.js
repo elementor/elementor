@@ -3,6 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
+import Content from '../../../pages/elementor-panel-tabs/content';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
@@ -46,8 +47,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.addWidget( 'toggle', container );
 
 				// Assert
-				await expect( await accordionWrapper ).toHaveCount( 1 );
-				await expect( await toggleWrapper ).toHaveCount( 1 );
+				await expect.soft( await accordionWrapper ).toHaveCount( 1 );
+				await expect.soft( await toggleWrapper ).toHaveCount( 1 );
 			} );
 		} );
 	} );
@@ -103,7 +104,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( widgetSearchBar ).fill( 'toggle' );
 
 				// Assert
-				await expect( toggleWidgetInPanel ).toBeHidden();
+				await expect.soft( toggleWidgetInPanel ).toBeHidden();
 			} );
 
 			await test.step( 'Check that Nested accordion replaces old accordion widget', async () => {
@@ -112,17 +113,17 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 				// Assert
-				await expect( await nestedAccordion ).toHaveCount( 1 );
-				await expect( accordionWrapper ).toHaveCount( 0 );
+				await expect.soft( await nestedAccordion ).toHaveCount( 1 );
+				await expect.soft( accordionWrapper ).toHaveCount( 0 );
 			} );
 
 			await test.step( 'Count number of items in initial state', async () => {
 				// Act
-				await expect( nestedAccordionItemTitle ).toHaveCount( 3 );
-				await expect( nestedAccordionItemContent ).toHaveCount( 3 );
+				await expect.soft( nestedAccordionItemTitle ).toHaveCount( 3 );
+				await expect.soft( nestedAccordionItemContent ).toHaveCount( 3 );
 
 				// Assert
-				await expect( toggleWidgetInPanel ).toBeHidden();
+				await expect.soft( toggleWidgetInPanel ).toBeHidden();
 			} );
 
 			await test.step( 'Add an item to the repeater', async () => {
@@ -135,8 +136,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await addItemButton.click();
 
 				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+				await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+				await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 			} );
 
 			await test.step( 'Remove an item from the repeater', async () => {
@@ -149,8 +150,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await deleteItemButton.last().click();
 
 				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
+				await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles - 1 );
+				await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 			} );
 
 			await test.step( 'Duplicate an item to the repeater', async () => {
@@ -163,19 +164,19 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await duplicateButton.click();
 
 				// Assert
-				await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
-				await expect( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
+				await expect.soft( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+				await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 			} );
 
 			await test.step( 'Check default state behaviour', async () => {
 				// Check default state -> first item is open
-				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+				await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				const allItems = await nestedAccordionItemTitle.all(),
 					allItemsExceptFirst = allItems.slice( 1 );
 
 				for ( const item of allItemsExceptFirst ) {
-					await expect( item ).not.toHaveAttribute( 'open', '' );
+					await expect.soft( item ).not.toHaveAttribute( 'open', '' );
 				}
 
 				//  Verify that all items are closed.
@@ -183,15 +184,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
 
 				for ( const item of allItems ) {
-					await expect( item ).not.toHaveAttribute( 'open', '' );
+					await expect.soft( item ).not.toHaveAttribute( 'open', '' );
 				}
 
 				// Check manual select of first expand -> first item is open
 				await editor.setSelectControlValue( 'default_state', 'expanded' );
-				await expect( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+				await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 				for ( const item of allItemsExceptFirst ) {
-					await expect( item ).not.toHaveAttribute( 'open', 'true' );
+					await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
 				}
 
 				// Check that multiple items can be open
@@ -202,7 +203,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				}
 
 				for ( const item of allItemsExceptFirst ) {
-					await expect( item ).not.toHaveAttribute( 'open', 'true' );
+					await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
 				}
 
 				// Reset max_items_expanded to default state
@@ -224,7 +225,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check closing animation', async () => {
 				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
-				expect( itemVisibilityBeforeAnimation ).toEqual( true );
+				expect.soft( itemVisibilityBeforeAnimation ).toEqual( true );
 
 				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
@@ -236,13 +237,13 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					window.getComputedStyle( element ).getPropertyValue( 'height' ),
 				);
 
-				expect( maxHeightAfterClose ).toEqual( '0px' );
+				expect.soft( maxHeightAfterClose ).toEqual( '0px' );
 			} );
 
 			await test.step( 'Check open animation', async () => {
 				const itemVisibilityBeforeAnimation = await frame.isVisible( '.e-n-accordion-item:first-child > .e-con' );
 
-				expect( itemVisibilityBeforeAnimation ).toEqual( false );
+				expect.soft( itemVisibilityBeforeAnimation ).toEqual( false );
 
 				await frame.locator( '.e-n-accordion-item:first-child > .e-n-accordion-item-title' ).click();
 
@@ -254,7 +255,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					window.getComputedStyle( element ).getPropertyValue( 'height' ),
 				);
 
-				expect( maxHeightAfterOpen ).not.toEqual( '0px' );
+				expect.soft( maxHeightAfterOpen ).not.toEqual( '0px' );
 			} );
 		} );
 
@@ -278,6 +279,58 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
+		test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
+			const page = await browser.newPage(),
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.useElementorCleanPost();
+
+			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+
+			await editor.closeNavigatorIfOpen();
+
+			const nestedAccordionWidgetId = '48f02ad',
+				frame = editor.getPreviewFrame();
+
+			await test.step( 'Check that an SVG title icon is displayed', async () => {
+				// Select nestedAccordionWidget
+				await editor.selectElement( nestedAccordionWidgetId );
+				await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
+				const contentTab = new Content( page, testInfo ),
+					editorTitleIcons = frame.locator( '.e-n-accordion-item-title-icon' );
+
+				await contentTab.uploadSVG();
+
+				// Default icon is tested in Element Regression Screenshot Test
+				// Expect default icon to be displayed in preview frame & front end
+				await expect.soft( editorTitleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+
+				// Expect svg to be displayed in the front end
+				await editor.publishAndViewPage();
+				const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
+				await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+
+				await expectScreenshotToMatchLocator( 'nested-accordion-title-svg-icon-fe.png', titleIcons.nth( 1 ) );
+			} );
+
+			await test.step( 'Check that No Icon container is displayed with Title Icons disabled', async () => {
+				// Todo test that edit with elementor works
+				await editor.gotoPostId( 1 ); // EditPage
+				await editor.selectElement( nestedAccordionWidgetId );
+				// Todo sort out the locator here, somehow it's not selecting.
+				await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
+
+				const editorFirstItem = frame.locator( 'e-n-accordion-item' ).first();
+
+				// Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame
+				await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
+
+				await editor.publishAndViewPage();
+				const firstItem = page.locator( '.e-n-accordion-item' ).first();
+
+				await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
+			} );
+		} );
+
 		test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 			// Act
 			const page = await browser.newPage(),
@@ -294,17 +347,17 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'If Accordion is open fa-minus is displayed', async () => {
 				// Assert
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 			} );
 
 			await test.step( 'If Accordion is closed fa-plus is displayed & fa-minus icon is hidden', async () => {
 				await nestedAccordionTitle.click();
 				await frame.waitForLoadState( 'load', { timeout: 7000 } );
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 				await nestedAccordionTitle.click( { timeout: 5000 } );
 			} );
 
@@ -314,10 +367,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.selectElement( nestedAccordionWidgetId );
 				// Assert
 				// Normal = Flex-start
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-start-h' ).click();
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
 			} );
 
 			await test.step( 'Check title position end', async () => {
@@ -326,7 +379,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-end-h' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
 			} );
 
 			await test.step( 'Check title position center', async () => {
@@ -335,7 +388,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-center' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
 			} );
 
 			await test.step( 'Check title position justify', async () => {
@@ -344,12 +397,12 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
 			} );
 
 			await test.step( 'Check title icon position left', async () => {
 				// Assert
-				await expect( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
+				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
 			} );
 
 			await test.step( 'Check title icon position right', async () => {
@@ -358,7 +411,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_icon_position .elementor-control-input-wrapper .eicon-h-align-right' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
+				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
 			} );
 
 			await test.step( 'Change to mobile mode', async () => {
@@ -370,23 +423,23 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'Mobile -Check that the title icon is displayed', async () => {
 				// Assert
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeHidden();
 			} );
 
 			await test.step( 'Mobile - Check that icon changes when the mobile Accordion is opened', async () => {
 				await frame.waitForLoadState( 'load' );
 				await nestedAccordionTitle.click();
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
-				await expect( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
-				await expect( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
+				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
+				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
 				await nestedAccordionTitle.click();
 			} );
 
 			await test.step( 'Mobile - Check title position mobile is default start', async () => {
 				// Assert
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
 			} );
 
 			await test.step( 'Mobile - Check title position mobile is flex-end', async () => {
@@ -395,7 +448,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-align-end-h' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
 			} );
 
 			await test.step( 'Mobile - Check title position mobile is center', async () => {
@@ -404,7 +457,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-center' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
 			} );
 
 			await test.step( 'Mobile - Check title position mobile is justify', async () => {
@@ -413,12 +466,12 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
+				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
 			} );
 
 			await test.step( 'Mobile - Check title icon position right', async () => {
 				// Assert
-				await expect( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
+				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
 			} );
 
 			await test.step( 'Mobile - Check title icon position left', async () => {
@@ -427,12 +480,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.locator( '.elementor-control-accordion_item_title_icon_position_mobile .elementor-control-input-wrapper .eicon-h-align-left' ).click();
 				// Assert
 				await frame.waitForLoadState( 'load' );
-				await expect( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
+				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
 			} );
 		} );
 
 		test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),
+				frame = editor.getPreviewFrame(),
+			    nestedAccordionWidgetId = '48f02ad',
+				nestedAccordion = frame.locator( '.e-n-accordion' ).first(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost();
 
@@ -440,71 +496,68 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await editor.closeNavigatorIfOpen();
 
-			const nestedAccordionWidgetId = '48f02ad',
-				frame = editor.getPreviewFrame();
-
 			await test.step( 'Check title <h1> text and icon  alignment', async () => {
 				const tag = 'h1';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <h2> text and icon alignment', async () => {
 				const tag = 'h2';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <h3> text and icon alignment', async () => {
 				const tag = 'h3';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <h4> text and icon alignment', async () => {
 				const tag = 'h4';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <h5> text and icon alignment', async () => {
 				const tag = 'h5';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <h6> text and icon alignment', async () => {
 				const tag = 'h6';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <p> text and icon alignment', async () => {
 				const tag = 'p';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <span> text and icon alignment', async () => {
 				const tag = 'span';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 			await test.step( 'Check title <div> text and icon alignment', async () => {
 				const tag = 'div';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, frame.locator( '.e-n-accordion' ).first() );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
 			} );
 		} );
 
@@ -688,7 +741,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await nestedAccordionItem.nth( 2 ).hover();
 
 					// Assert
-					await expectScreenshotToMatchLocator( 'header-style-editor.png', editor.nestedAccordion );
+					await expectScreenshotToMatchLocator( 'header-style-editor.png', nestedAccordion );
 				} );
 			} );
 
@@ -700,7 +753,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await page.waitForLoadState( 'networkidle' );
 
 				// Assert
-				await expectScreenshotToMatchLocator( 'header-style-front.png', editor.nestedAccordionWidgetFront );
+				await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );
 			} );
 		} );
 	} );
@@ -730,7 +783,7 @@ async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor,
  * @return {Promise<void>}
  */
 async function expectScreenshotToMatchLocator( fileName, locator ) {
-	expect( await locator.screenshot( {
+	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
 }
