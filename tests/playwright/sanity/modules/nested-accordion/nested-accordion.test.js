@@ -313,10 +313,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'Check that No Icon container is displayed with Title Icons disabled', async () => {
-				// Todo test that edit with elementor works
 				await editor.gotoPostId( 1 ); // EditPage
 				await editor.selectElement( nestedAccordionWidgetId );
-				// Todo sort out the locator here, somehow it's not selecting.
 				await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
 
 				const editorFirstItem = frame.locator( 'e-n-accordion-item' ).first();
@@ -343,7 +341,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			const nestedAccordionWidgetId = '48f02ad',
 				frame = editor.getPreviewFrame(),
-				nestedAccordionTitle = frame.locator( '.e-n-accordion .e-n-accordion-item-title' ).first();
+				nestedAccordionTitle = frame.locator( '.e-n-accordion-item-title' ).first();
 
 			await test.step( 'If Accordion is open fa-minus is displayed', async () => {
 				// Assert
@@ -486,11 +484,11 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),
-				frame = editor.getPreviewFrame(),
-			    nestedAccordionWidgetId = '48f02ad',
-				nestedAccordion = frame.locator( '.e-n-accordion' ).first(),
 				wpAdmin = new WpAdminPage( page, testInfo ),
-				editor = await wpAdmin.useElementorCleanPost();
+				editor = await wpAdmin.useElementorCleanPost(),
+				frame = editor.getPreviewFrame(),
+				nestedAccordionWidgetId = '48f02ad',
+				nestedAccordionTitle = frame.locator( '.e-n-accordion-item-title' ).first();
 
 			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 
@@ -501,63 +499,63 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <h2> text and icon alignment', async () => {
 				const tag = 'h2';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <h3> text and icon alignment', async () => {
 				const tag = 'h3';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <h4> text and icon alignment', async () => {
 				const tag = 'h4';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <h5> text and icon alignment', async () => {
 				const tag = 'h5';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <h6> text and icon alignment', async () => {
 				const tag = 'h6';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <p> text and icon alignment', async () => {
 				const tag = 'p';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <span> text and icon alignment', async () => {
 				const tag = 'span';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 			await test.step( 'Check title <div> text and icon alignment', async () => {
 				const tag = 'div';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
 				// Assert
-				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordion );
+				await expectScreenshotToMatchLocator( `nested-accordion-title-${ tag }-alignment.png`, nestedAccordionTitle );
 			} );
 		} );
 
@@ -594,7 +592,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.setDimensionsValue( 'accordion_border_radius', '25' );
 				await editor.setDimensionsValue( 'accordion_padding', '10' );
 				await nestedAccordionItemTitle.nth( 2 ).hover();
-				await expectScreenshotToMatchLocator( 'accordion-style-editor.jpeg', nestedAccordion );
+				await expectScreenshotToMatchLocator( 'accordion-style-editor.png', nestedAccordion );
 			} );
 
 			await test.step( 'Frontend', async () => {
