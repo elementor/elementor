@@ -281,8 +281,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo ),
-				editor = await wpAdmin.useElementorCleanPost();
+				wpAdmin = new WpAdminPage( page, testInfo );
+
+			await wpAdmin.enableAdvancedUploads();
+			const editor = await wpAdmin.useElementorCleanPost();
 
 			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 
@@ -292,7 +294,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				frame = editor.getPreviewFrame();
 
 			await test.step( 'Check that an SVG title icon is displayed', async () => {
-				// Select nestedAccordionWidget
 				await editor.selectElement( nestedAccordionWidgetId );
 				await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
 				const contentTab = new Content( page, testInfo ),
@@ -300,16 +301,20 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				await contentTab.uploadSVG();
 
-				// Default icon is tested in Element Regression Screenshot Test
-				// Expect default icon to be displayed in preview frame & front end
-				await expect.soft( editorTitleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+				test.step( 'Check that SVG icon is displayed in the editor', async () => {
+					// Default icon is tested in Element Regression Screenshot Test
+					// Expect default icon to be displayed in preview frame & front end
+					await expect.soft( editorTitleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+				} );
 
-				// Expect svg to be displayed in the front end
-				await editor.publishAndViewPage();
-				const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
-				await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+				test.step( 'Check that SVG icon is displayed in the front end', async () => {
+					await editor.publishAndViewPage();
+					const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
 
-				await expectScreenshotToMatchLocator( 'nested-accordion-title-svg-icon-fe.png', titleIcons.nth( 1 ) );
+					await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+
+					await expectScreenshotToMatchLocator( 'nested-accordion-title-svg-icon-fe.png', titleIcons.nth( 1 ) );
+				} );
 			} );
 
 			await test.step( 'Check that No Icon container is displayed with Title Icons disabled', async () => {
@@ -319,13 +324,20 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				const editorFirstItem = frame.locator( 'e-n-accordion-item' ).first();
 
-				// Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame
-				await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
+				test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
+					await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
+				} );
 
-				await editor.publishAndViewPage();
-				const firstItem = page.locator( '.e-n-accordion-item' ).first();
+				test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in front end', async () => {
+					await editor.publishAndViewPage();
+					const firstItem = page.locator( '.e-n-accordion-item' ).first();
 
-				await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
+					await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
+				} );
+			} );
+
+			await test.step( 'Disable Advanced Uploads', async () => {
+				await wpAdmin.disableAdvancedUploads();
 			} );
 		} );
 
@@ -616,8 +628,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await editor.closeNavigatorIfOpen();
 			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
-			await editor.activatePanelTab( 'style' );
-			await editor.openSection( 'section_content_style' );
+
+			await editor.openSection( 'section_interactions' );
+			await editor.setSelectControlValue( 'max_items_expended', 'multiple' );
 
 			await test.step( 'open accordion', async () => {
 				for ( let i = 1; i < await nestedAccordionItemContent.count(); i++ ) {
@@ -625,6 +638,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await nestedAccordionItemContent.nth( i ).waitFor( { state: 'visible' } );
 				}
 			} );
+
+			await editor.activatePanelTab( 'style' );
+			await editor.openSection( 'section_content_style' );
 
 			await test.step( 'set background', async () => {
 				// Act
