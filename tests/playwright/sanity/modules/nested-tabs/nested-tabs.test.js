@@ -1165,7 +1165,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
-		
+
 		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
 		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
 
