@@ -281,17 +281,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 		test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo );
+				wpAdmin = new WpAdminPage( page, testInfo ),
+				nestedAccordionWidgetId = '48f02ad';
 
 			await wpAdmin.enableAdvancedUploads();
-			const editor = await wpAdmin.useElementorCleanPost();
+			const editor = await wpAdmin.useElementorCleanPost(),
+				frame = editor.getPreviewFrame();
 
 			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
-
 			await editor.closeNavigatorIfOpen();
-
-			const nestedAccordionWidgetId = '48f02ad',
-				frame = editor.getPreviewFrame();
 
 			await test.step( 'Check that an SVG title icon is displayed', async () => {
 				await editor.selectElement( nestedAccordionWidgetId );
@@ -378,7 +376,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				// Assert
 				// Normal = Flex-start
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-start-h' ).click();
+				await setTitleHorizontalAlignment( 'start', editor );
+
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
 			} );
@@ -386,7 +385,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check title position end', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-align-end-h' ).click();
+				await setTitleHorizontalAlignment( 'end', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
@@ -395,7 +394,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check title position center', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-center' ).click();
+				await setTitleHorizontalAlignment( 'center', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
@@ -404,7 +403,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check title position justify', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+				await setTitleHorizontalAlignment( 'stretch', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
@@ -418,7 +417,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check title icon position right', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_icon_position .elementor-control-input-wrapper .eicon-h-align-right' ).click();
+				await setTitleIconPosition( 'right', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
@@ -456,6 +455,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
 				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-align-end-h' ).click();
+				await setTitleHorizontalAlignment( 'end', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
@@ -464,7 +464,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Mobile - Check title position mobile is center', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-center' ).click();
+				await setTitleHorizontalAlignment( 'center', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
@@ -473,7 +473,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Mobile - Check title position mobile is justify', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-h-align-stretch' ).click();
+				await setTitleHorizontalAlignment( 'stretch', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
@@ -487,7 +487,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Mobile - Check title icon position left', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_icon_position_mobile .elementor-control-input-wrapper .eicon-h-align-left' ).click();
+				await setTitleIconPosition( 'left', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
 				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
@@ -581,8 +581,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
 				nestedAccordionItemTitleFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item-title' );
 
-			let nestedAccordionID,
-				nestedAccordion;
+			let nestedAccordionID;
 
 			await test.step( 'Editor', async () => {
 				await test.step( 'Add Widget and navigate to Style Tab', async () => {
@@ -590,7 +589,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await editor.closeNavigatorIfOpen();
 					nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 					await nestedAccordionItem.first().click();
-					nestedAccordion = await editor.selectElement( nestedAccordionID );
+					const nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 					await editor.activatePanelTab( 'style' );
 					await editor.openSection( 'section_accordion_style' );
@@ -706,9 +705,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 							await nestedAccordionItemTitleFront.nth( i ).click();
 						}
 					} );
+					await page.waitForTimeout( 1000 );
 
 					// Assert.
-					await expectScreenshotToMatchLocator( 'nested-Accordion-content-style-front.png', nestedAccordion );
+					await expectScreenshotToMatchLocator( 'nested-Accordion-content-style-front.png', nestedAccordionWidgetFront );
 				} );
 			} );
 		} );
@@ -800,6 +800,36 @@ async function expectScreenshotToMatchLocator( fileName, locator ) {
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
+}
+
+async function getChoicesButtonSelector( choicesControlId, icon ) {
+	return '.elementor-control-accordion_' + choicesControlId + ' ' + icon;
+}
+
+async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' ) {
+	const icon = Object.freeze( {
+		left: '.eicon-h-align-right',
+		right: '.eicon-h-align-left',
+	} );
+
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
+	const locator = await getChoicesButtonSelector( 'item_title_icon_position' + controlBreakpoint, icon[ direction ] );
+	console.log( locator );
+	await editor.page.locator( locator ).click();
+}
+async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
+	const icon = Object.freeze( {
+		start: '.eicon-align-start-h',
+		end: '.eicon-align-end-h',
+		center: '.eicon-h-align-center',
+		stretch: '.eicon-h-align-stretch',
+		justify: '.eicon-h-align-stretch',
+	} );
+
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
+	const locator = await getChoicesButtonSelector( 'item_title_position_horizontal' + controlBreakpoint, icon[ direction ] );
+	console.log( locator );
+	await editor.page.locator( locator ).click();
 }
 
 async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
