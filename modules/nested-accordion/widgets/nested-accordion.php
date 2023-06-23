@@ -759,7 +759,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 						<?php if ( '' !== $icons_content ) {
-							echo( $icons_content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						} ?>
 					</summary>
 					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
