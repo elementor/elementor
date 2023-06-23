@@ -260,7 +260,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'start' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
 				'center' => '--n-tabs-heading-justify-content: center; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
 				'end' => '--n-tabs-heading-justify-content: flex-end; --n-tabs-title-width: initial; --n-tabs-title-height: initial; --n-tabs-title-align-items: initial;',
-				'stretch' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center;',
+				'stretch' => '--n-tabs-heading-justify-content: flex-start; --n-tabs-title-width: initial; --n-tabs-title-height: 100%; --n-tabs-title-align-items: center; --n-tabs-heading-wrap: nowrap; --n-tabs-title-flex-basis: auto',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -347,7 +347,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'default' => 'disable',
 				'selectors_dictionary' => [
 					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial;',
-					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll;',
+					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll; --n-tabs-title-flex-basis: content;',
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '{{VALUE}}',

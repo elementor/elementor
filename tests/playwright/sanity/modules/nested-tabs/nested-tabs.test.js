@@ -377,7 +377,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tabs styling scenario 3: Direction: Top, Align Title: Default, Icon Position: Top, Justify: Stretch.
 		// Unset Direction: Left.
 		await editor.activatePanelTab( 'content' );
-		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		// Justify: Stretch.
 		await page.locator( '.elementor-control-tabs_justify_horizontal .eicon-h-align-stretch' ).click();
 		// Unset align title to 'right'.
