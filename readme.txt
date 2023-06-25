@@ -152,7 +152,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = We recommend your host supports: =
 
-* PHP version 7.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
