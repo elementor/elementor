@@ -21,6 +21,8 @@
 		"test:playwright:nested-tabs": "npx cross-env TEST_SUITE=@nested-tabs playwright test -c tests/playwright/playwright.config.js",
 		"test:playwright:container": "npx cross-env TEST_SUITE=@container playwright test -c tests/playwright/playwright.config.js",
 		"test:playwright:nested-accordion": "npx cross-env TEST_SUITE=@nested-accordion playwright test -c tests/playwright/playwright.config.js",
+		"test:playwright:video": "npx cross-env TEST_SUITE=@video playwright test -c tests/playwright/playwright.config.js",
+		"test:playwright:onBoarding": "npx cross-env TEST_SUITE=@onBoarding playwright test -c tests/playwright/playwright.config.js",
 		"test:playwright:ai": "npx cross-env TEST_SUITE=@ai playwright test -c tests/playwright/playwright.config.js",
 		"test:playwright:styleguide_image_link": "npx cross-env TEST_SUITE=@styleguide_image_link playwright test -c tests/playwright/playwright.config.js",
 		"test:playwright:debug": "npm run test:playwright -- --debug",
