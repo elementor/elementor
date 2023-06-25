@@ -72,42 +72,6 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
-	/**
-	 * Determine which experiments are active / inactive.
-	 *
-	 * TODO: The testing environment isn't clean between tests - Use with caution!
-	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setExperiments( experiments = {} ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
-
-		const prefix = 'e-experiment';
-
-		for ( const [ id, state ] of Object.entries( experiments ) ) {
-			const selector = `#${ prefix }-${ id }`;
-
-			// Try to make the element visible - Since some experiments may be hidden for the user,
-			// but actually exist and need to be tested.
-			await this.page.evaluate( ( el ) => {
-				const element = document.querySelector( el );
-
-				if ( element ) {
-					element.style.display = 'block';
-				}
-			}, `.elementor_experiment-${ id }` );
-
-			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
-
-			// Click to confirm any experiment that has dependencies.
-			await this.confirmExperimentModalIfOpen();
-		}
-
-		await this.page.click( '#submit' );
-	}
-
 	async setLanguage( language ) {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
