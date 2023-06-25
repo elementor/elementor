@@ -97,7 +97,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return false;
 		}
 
-		if ( source !== 'filter-popup' ) {
+		if ( source !== 'filter-popup' && [ 'application/json', 'json' ].includes( mediaType ) ) {
 			await showJsonUploadWarningMessageIfNeeded( {
 				introductionMap: window.elementor.config.user.introduction,
 				IntroductionClass: window.elementorModules.editor.utils.Introduction,
