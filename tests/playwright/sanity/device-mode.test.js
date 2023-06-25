@@ -2,7 +2,7 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
 test.describe( 'Device mode', () => {
-    test( 'Correct device mode is returned on Desktop', async ( { page }, testInfo ) => {
+	test( 'Correct device mode is returned on Desktop', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );

@@ -57,12 +57,12 @@
 
 #elementor-panel-footer-saver-publish {
 	width: 30%;
-	@include margin-start(auto);
+	margin-inline-start: auto;
 
 	.elementor-button-state {
 
 		i {
-			@include margin-end(0);
+			margin-inline-end: 0;
 		}
 
 		#elementor-panel-saver-button-publish-label {
@@ -87,12 +87,12 @@
 		}
 
 		time {
-			border-bottom: 1px dotted transparent;
+			border-block-end: 1px dotted transparent;
 			transition: all ease-in-out .3s;
 			cursor: pointer;
 
 			&:hover {
-				border-bottom-color: inherit;
+				border-block-end-color: inherit;
 			}
 		}
 	}
@@ -171,7 +171,7 @@
 	}
 
 	&:not(:last-child) {
-		border-bottom: 1px solid $e-gray-700;
+		border-block-end: 1px solid $e-gray-700;
 	}
 
 	&:hover {

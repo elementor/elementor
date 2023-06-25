@@ -16,6 +16,6 @@
 		top: -$triangle-size * 2;
 		@include end(var(--popover-arrow-offset-end, 22px));
 		border: $triangle-size solid transparent;
-		border-bottom-color: #fff;
+		border-block-end-color: #fff;
 	}
 }

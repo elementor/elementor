@@ -20,10 +20,10 @@
 	}
 
 	&--multiple {
-		padding-bottom: 40px;
+		padding-block-end: 40px;
 
 		.elementor-slider {
-			margin-top: 12px;
+			margin-block-start: 12px;
 			width: 98%;
 		}
 	}
@@ -81,7 +81,7 @@
 	}
 
 	.elementor-dynamic-cover {
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	&.e-units-custom {
@@ -109,7 +109,7 @@
 	&-input {
 		width: 21%;
 		min-width: 54px;
-		@include margin-start(12px);
+		margin-inline-start: 12px;
 		transition: width .3s ease-in-out;
 	}
 
@@ -132,7 +132,7 @@
 		display: flex;
 		justify-content: space-evenly;
 		width: 100%;
-		margin-top: 4px;
+		margin-block-start: 4px;
 	}
 
 	&__scale {

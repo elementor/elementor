@@ -12,13 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This class is deprecated, use Plugin::$instance->kits_manager->get_active_kit_for_frontend() instead.
  * it changed to support call like this: Manager::get_settings_managers( 'general' )->get_model()->get_settings( 'elementor_default_generic_fonts' )
- * @deprecated since 3.0.0
+ *
+ * @deprecated 3.0.0 Use `Plugin::$instance->kits_manager->get_active_kit_for_frontend()` instead.
  */
 
 class Manager extends CSS_Manager {
 
 	/**
 	 * Meta key for the general settings.
+	 *
+	 * @deprecated 3.0.0
 	 */
 	const META_KEY = '_elementor_general_settings';
 
@@ -28,6 +31,7 @@ class Manager extends CSS_Manager {
 	 * Initializing Elementor general settings manager.
 	 *
 	 * @since 1.6.0
+	 * @deprecated 3.0.0
 	 * @access public
 	 */
 	public function __construct() {
@@ -46,6 +50,7 @@ class Manager extends CSS_Manager {
 	 * Retrieve general settings manager name.
 	 *
 	 * @since 1.6.0
+	 * @deprecated 3.0.0
 	 * @access public
 	 *
 	 * @return string Manager name.
@@ -60,6 +65,7 @@ class Manager extends CSS_Manager {
 	 * Retrieve the model for settings configuration.
 	 *
 	 * @since 1.6.0
+	 * @deprecated 3.0.0
 	 * @access public
 	 *
 	 * @return BaseModel The model object.
@@ -69,7 +75,7 @@ class Manager extends CSS_Manager {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated 3.0.0
 	 */
 	protected function get_saved_settings( $id ) {
 		return [];
@@ -81,6 +87,7 @@ class Manager extends CSS_Manager {
 	 * Retrieve CSS file name for the general settings manager.
 	 *
 	 * @since 1.6.0
+	 * @deprecated 3.0.0
 	 * @access protected
 	 * @return string
 	 *
@@ -91,21 +98,21 @@ class Manager extends CSS_Manager {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated 3.0.0
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
 		throw new \Exception( __CLASS__ . ' is deprecated. Use Plugin::$instance->kits_manager->get_active_kit_for_frontend() instead.' );
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated 3.0.0
 	 */
 	protected function get_model_for_css_file( Base $css_file ) {
 		return false;
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated 3.0.0
 	 */
 	protected function get_css_file_for_update( $id ) {
 		return false;

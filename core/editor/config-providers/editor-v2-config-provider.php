@@ -31,6 +31,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			} )
 			->values();
 
+		$environment_script_config = [
+			'handle' => 'elementor-editor-environment-v2',
+			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js',
+			'deps' => [
+				'elementor-packages-env',
+			],
+		];
+
 		$loader_script_config = [
 			'handle' => 'elementor-editor-loader-v2',
 			'src' => '{{ELEMENTOR_ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js',
@@ -43,7 +51,10 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
 			$packages_data->values(),
-			[ $loader_script_config ]
+			[
+				$environment_script_config,
+				$loader_script_config,
+			]
 		);
 	}
 
@@ -57,25 +68,26 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			->map( function ( $package_data ) {
 				return $package_data['handle'];
 			} )
+			// Must be first.
+			->prepend( 'elementor-editor-environment-v2' )
 			// Must be last.
 			->push( 'elementor-editor-loader-v2' )
 			->values();
 	}
 
-	public function get_client_settings() {
-		$common_configs = Editor_Common_Configs::get_client_settings();
+	public function get_client_env() {
+		$client_env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
-		$v2_config = [
-			'handle' => 'elementor-editor-loader-v2',
-			'name' => 'elementorEditorV2Settings',
-			'settings' => [
-				'urls' => [
-					'admin' => admin_url(),
-				],
-			],
+		$v2_env = [
+			'handle' => 'elementor-editor-environment-v2',
+			'name' => 'elementorEditorV2Env',
+			'env' => $client_env,
 		];
 
-		return array_merge( $common_configs, [ $v2_config ] );
+		return array_merge(
+			Editor_Common_Configs::get_client_env(),
+			[ $v2_env ]
+		);
 	}
 
 	public function get_style_configs() {
@@ -118,17 +130,14 @@ class Editor_V2_Config_Provider implements Config_Provider_Interface {
 			$packages_data = apply_filters( 'elementor/editor-v2/packages/config', [] );
 
 			$this->packages_data = Collection::make( $packages_data )
+				->filter( function ( $package_data ) {
+					return ! empty( $package_data['handle'] );
+				} )
 				->map_with_keys( function ( $data, $name ) {
-					$type = $data['type'] ?? static::PACKAGE_TYPE_UTIL;
-
 					return [
-						$name => [
-							'handle' => $data['handle'],
-							'src' => $data['src'],
-							'deps' => $data['deps'],
-							'i18n' => $data['i18n'],
-							'type' => $type,
-						],
+						$name => array_replace( [
+							'type' => static::PACKAGE_TYPE_UTIL,
+						], $data ),
 					];
 				} );
 		}

@@ -1,6 +1,6 @@
 //Hotkyes modal (Keyboard shortcuts)
 #elementor-hotkeys {
-	text-align: $start;
+	text-align: start;
 
 	&__modal {
 
@@ -85,12 +85,12 @@
 				position: relative;
 				background-color: var(--e-a-bg-active);
 				padding: 5px 12px;
-				margin-right: 27px;
+				margin-inline-end: 27px;
 				border-radius: 3px;
 
 				@media (max-width: $editor-screen-xs-max) {
 					padding: 4px 9px;
-					margin-right: 23px;
+					margin-inline-end: 23px;
 				}
 
 				&:after {
@@ -106,7 +106,7 @@
 				}
 
 				&:last-child {
-					margin-right: 0;
+					margin-inline-end: 0;
 
 					&:after {
 						display: none;

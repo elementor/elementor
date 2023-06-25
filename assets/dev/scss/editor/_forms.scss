@@ -11,6 +11,7 @@ textarea,
 	font-size: 12px;
 	width: 100%;
 	background: none;
+	background-color: var(--e-a-bg-default);
 	box-shadow: none;
 	border: var(--e-a-border-bold);
 	outline: none;
@@ -60,7 +61,7 @@ input[type="checkbox"] {
 	content: none;
 	height: 15px;
 	border-radius: var(--e-a-border-radius);
-	@include margin-end(5px);
+	margin-inline-end: 5px;
 	width: 15px;
 	border: var(--e-a-border-bold);
 	display: inline-flex;
