@@ -40,9 +40,7 @@ const FormMedia = (
 	} );
 	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
 
-	const initialImageUrl = editImage?.url || additionalOptions?.defaultValue?.url;
-
-	const [ shouldWaitForInitialImage, setShouldWaitForInitialImage ] = useState( () => !! initialImageUrl );
+	const [ shouldWaitForInitialImage, setShouldWaitForInitialImage ] = useState( () => !! editImage?.url );
 
 	const panelActive = ! isLoading && ! isUploading && ! shouldWaitForInitialImage;
 
@@ -93,7 +91,7 @@ const FormMedia = (
 
 		const img = new Image();
 
-		img.src = initialImageUrl;
+		img.src = editImage.url;
 
 		img.onload = () => {
 			const { ratio } = getAspectRatioSizes( img.width, img.height );

@@ -24,11 +24,11 @@
 	text-align: center;
 
 	&:first-child {
-		text-align: $start;
+		text-align: start;
 	}
 
 	&:last-child {
-		text-align: $end;
+		text-align: end;
 	}
 }
 

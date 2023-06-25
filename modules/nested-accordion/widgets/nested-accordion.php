@@ -314,6 +314,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$this->add_control(
+			'n_accordion_animation_duration',
+			[
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms' ],
+				'default' => [
+					'unit' => 'ms',
+					'size' => 400,
+				],
+				'frontend_available' => true,
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->add_style_tab();
@@ -697,8 +711,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
-			<span class='e-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class='e-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 
 		<?php
@@ -718,7 +732,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
-			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
+			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
@@ -740,7 +754,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
-						<?php echo wp_kses_post( $icons_content ); ?>
+						<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
+							echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						} ?>
 					</summary>
 					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</details>
