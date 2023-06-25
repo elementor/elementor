@@ -60,6 +60,7 @@ class Module extends BaseModule {
 				'ElementorAiConfig',
 				[
 					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+					'connect_url' => $this->get_ai_connect_url(),
 				]
 			);
 		} );
@@ -74,18 +75,24 @@ class Module extends BaseModule {
 		} );
 	}
 
+	private function get_ai_connect_url() {
+		$app = $this->get_ai_app();
+
+		return $app->get_admin_url( 'authorize', [
+			'utm_source' => 'ai-popup',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'source' => 'generic',
+		] );
+	}
+
 	public function ajax_ai_get_user_information( $data ) {
 		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
 			return [
 				'is_connected' => false,
-				'connect_url' => $app->get_admin_url( 'authorize', [
-					'utm_source' => 'ai-popup',
-					'utm_campaign' => 'connect-account',
-					'utm_medium' => 'wp-dash',
-					'source' => 'generic',
-				] ),
+				'connect_url' => $this->get_ai_connect_url(),
 			];
 		}
 
