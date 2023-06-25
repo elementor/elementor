@@ -53,7 +53,7 @@ class Ai extends Library {
 		// Upload the file
 		$payload .= '--' . $boundary;
 		$payload .= "\r\n";
-		$payload .= 'Content-Disposition: form-data; name="' . $name . '"; filename="' . $name . '"' . "\r\n";
+		$payload .= 'Content-Disposition: form-data; name="' . esc_attr( $name ) . '"; filename="' . esc_attr( $name ) . '"' . "\r\n";
 		$payload .= 'Content-Type: ' . $mine_type . "\r\n";
 		$payload .= "\r\n";
 		$payload .= file_get_contents( $file_path );
@@ -68,7 +68,7 @@ class Ai extends Library {
 		foreach ( $body as $name => $value ) {
 			$payload .= '--' . $boundary;
 			$payload .= "\r\n";
-			$payload .= 'Content-Disposition: form-data; name="' . $name . '"' . "\r\n\r\n";
+			$payload .= 'Content-Disposition: form-data; name="' . esc_attr( $name ) . '"' . "\r\n\r\n";
 			$payload .= $value;
 			$payload .= "\r\n";
 		}
@@ -312,11 +312,13 @@ class Ai extends Library {
 	 * @return string
 	 */
 	private function store_temp_file( $file_content, $file_ext = '' ) {
-		$temp_file = tempnam( sys_get_temp_dir(), 'ai' ) . $file_ext;
+		$temp_file = str_replace( '.tmp', '', wp_tempnam() . $file_ext );
 		file_put_contents( $temp_file, $file_content );
 		// make sure the temp file is deleted on shutdown
 		register_shutdown_function( function () use ( $temp_file ) {
-			@unlink( $temp_file );
+			if ( file_exists( $temp_file ) ) {
+				unlink( $temp_file );
+			}
 		} );
 		return $temp_file;
 	}
