@@ -470,8 +470,6 @@ class Widget_Tabs extends Widget_Base {
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
-		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
-
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
 
 		?>
@@ -481,7 +479,7 @@ class Widget_Tabs extends Widget_Base {
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-					$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+					$tab_title = $item['tab_title'];
 
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
