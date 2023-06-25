@@ -428,10 +428,7 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.1.0-beta',
-			],
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
@@ -443,10 +440,7 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.2.0-beta',
-			],
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
