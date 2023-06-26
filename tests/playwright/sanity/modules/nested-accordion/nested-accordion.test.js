@@ -3,7 +3,8 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
-import Content from '../../../pages/elementor-panel-tabs/content';
+import EditorSelectors from '../../../selectors/editor-selectors';
+import path from 'path';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
@@ -294,10 +295,9 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check that an SVG title icon is displayed', async () => {
 				await editor.selectElement( nestedAccordionWidgetId );
 				await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
-				const contentTab = new Content( page, testInfo ),
-					editorTitleIcons = frame.locator( '.e-n-accordion-item-title-icon' );
+				const editorTitleIcons = frame.locator( '.e-n-accordion-item-title-icon' );
 
-				await contentTab.uploadSVG();
+				await uploadSVG( page );
 
 				test.step( 'Check that SVG icon is displayed in the editor', async () => {
 					// Default icon is tested in Element Regression Screenshot Test
@@ -800,6 +800,17 @@ async function expectScreenshotToMatchLocator( fileName, locator ) {
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
+}
+
+async function uploadSVG( page, icon = undefined ) {
+	const _icon = icon === undefined ? 'test-svg-wide' : icon;
+	const mediaUploadControl = page.locator( '#menu-item-upload' );
+	const regex = new RegExp( _icon );
+	const response = page.waitForResponse( regex );
+	await page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../../resources/${ _icon }.svg` ) );
+	await response;
+	await page.getByRole( 'button', { name: 'Insert Media' } )
+		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 }
 
 async function getChoicesButtonSelector( choicesControlId, icon ) {
