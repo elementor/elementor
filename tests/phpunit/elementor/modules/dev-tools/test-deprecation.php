@@ -193,11 +193,20 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 		$settings = $this->deprecation->get_settings();
 
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+
 		$this->assertEquals( [
 			'0.0.0',
 			'',
-			'Elementor',
-		], $settings['soft_notices']['test_deprecated_function_soft'] );
+			$message
+		], $settings['soft_notices'][__FUNCTION__] );
+
+		// $this->assertEquals( [
+		// 	'0.0.0',
+		// 	'',
+		// 	'Elementor',
+		// ], $settings['soft_notices']['test_deprecated_function_soft'] );
 	}
 
 
@@ -241,10 +250,13 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 		$settings = $this->deprecation->get_settings();
 
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+
 		$this->assertEquals( [
 			'0.0.0',
 			'',
-			'Elementor',
+			$message
 		], $settings['soft_notices']['$testarg'] );
 	}
 
@@ -276,11 +288,14 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 		$settings = $this->deprecation->get_settings();
 
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+
 		$this->assertEquals( [
 			'0.0.0',
 			'',
-			'Elementor',
-		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
+			$message
+		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );		
 	}
 
 	public function test_apply_deprecated_filter__without_filter() {
