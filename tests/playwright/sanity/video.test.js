@@ -8,8 +8,14 @@ import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
 test.describe( 'Video tests inside a container @video', () => {
-	test.beforeAll( async () => {
-		await setExperiment( 'container', true );
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: true,
+		} );
 	} );
 
 	test.afterAll( async () => {
