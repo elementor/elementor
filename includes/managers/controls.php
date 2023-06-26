@@ -301,7 +301,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	private $has_stacks_cache_been_cleared = false;
+	private $has_stacks_cache_been_cleared = [];
 
 	/**
 	 * Init tabs.
@@ -881,8 +881,12 @@ class Controls_Manager {
 	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function has_stacks_cache_been_cleared() {
-		return $this->has_stacks_cache_been_cleared;
+	public function has_stacks_cache_been_cleared( $post_id = null ) {
+		if ( ! $post_id || ! isset( $this->has_stacks_cache_been_cleared[ $post_id ] ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -891,9 +895,12 @@ class Controls_Manager {
 	 * @since 3.13.0
 	 * @access public
 	 */
-	public function clear_stack_cache() {
+	public function clear_stack_cache( $post_id = null ) {
+		if ( ! $post_id ) {
+			return false;
+		}
 		$this->stacks = [];
-		$this->has_stacks_cache_been_cleared = true;
+		$this->has_stacks_cache_been_cleared[ $post_id ] = true;
 	}
 
 	/**
