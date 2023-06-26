@@ -804,7 +804,6 @@ async function expectScreenshotToMatchLocator( fileName, locator ) {
 
 async function uploadSVG( page, icon = undefined ) {
 	const _icon = icon === undefined ? 'test-svg-wide' : icon;
-	const mediaUploadControl = page.locator( '#menu-item-upload' );
 	const regex = new RegExp( _icon );
 	const response = page.waitForResponse( regex );
 	await page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../../resources/${ _icon }.svg` ) );
@@ -825,7 +824,6 @@ async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' )
 
 	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
 	const locator = await getChoicesButtonSelector( 'item_title_icon_position' + controlBreakpoint, icon[ direction ] );
-	console.log( locator );
 	await editor.page.locator( locator ).click();
 }
 async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
@@ -839,7 +837,6 @@ async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'des
 
 	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
 	const locator = await getChoicesButtonSelector( 'item_title_position_horizontal' + controlBreakpoint, icon[ direction ] );
-	console.log( locator );
 	await editor.page.locator( locator ).click();
 }
 
