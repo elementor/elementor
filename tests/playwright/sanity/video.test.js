@@ -18,7 +18,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	} );
 
-	test.afterAll( async () => {
+	test.afterAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
@@ -145,7 +145,7 @@ test.describe( 'Video tests inside a section @video', () => {
 		} );
 	} );
 
-	test.afterAll( async () => {
+	test.afterAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
