@@ -595,16 +595,13 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			let nestedAccordionID;
 
 			await test.step( 'Editor', async () => {
-				await test.step( 'Add Widget and navigate to Style Tab', async () => {
-					// Act
-					await editor.closeNavigatorIfOpen();
-					nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
-					await nestedAccordionItem.first().click();
-					const nestedAccordion = await editor.selectElement( nestedAccordionID );
-
-					await editor.activatePanelTab( 'style' );
-					await editor.openSection( 'section_accordion_style' );
-				} );
+				// Add Widget and navigate to Style Tab
+				await editor.closeNavigatorIfOpen();
+				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+				await nestedAccordionItem.first().click();
+				const nestedAccordion = await editor.selectElement( nestedAccordionID );
+				await editor.activatePanelTab( 'style' );
+				await editor.openSection( 'section_accordion_style' );
 
 				await editor.setSliderControlValue( 'accordion_item_title_space_between', '15' );
 				await editor.setSliderControlValue( 'accordion_item_title_distance_from_content', '5' );
