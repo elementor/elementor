@@ -284,8 +284,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				nestedAccordionWidgetId = '48f02ad';
 
 			await wpAdmin.enableAdvancedUploads();
-			const editor = await wpAdmin.useElementorCleanPost(),
-				frame = editor.getPreviewFrame();
+			const editor = await wpAdmin.useElementorCleanPost();
+			let	frame = editor.getPreviewFrame();
 
 			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 			await editor.closeNavigatorIfOpen();
@@ -301,6 +301,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					// Default icon is tested in Element Regression Screenshot Test
 					// Expect default icon to be displayed in preview frame & front end
 					await expect.soft( editorTitleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+					await expect.soft( editorTitleIcons.locator( '.e-closed svg' ) ).toHaveCount( 3 ); // SVG Icon
 				} );
 
 				await test.step( 'Check that SVG icon is displayed in the front end', async () => {
@@ -308,9 +309,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
 
 					await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
-
-					await editor.isScreenShottable( titleIcons.nth( 1 ), 3, 700 );
-					await expectScreenshotToMatchLocator( 'nested-accordion-title-svg-icon-fe.png', titleIcons.nth( 1 ) );
+					await expect.soft( page.locator( '.e-n-accordion-item-title-icon .e-closed svg' ) ).toHaveCount( 3 ); // SVG Icon
 				} );
 			} );
 
@@ -319,7 +318,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await editor.selectElement( nestedAccordionWidgetId );
 				await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
 
-				const editorFirstItem = frame.locator( 'e-n-accordion-item' ).first();
+				frame = editor.getPreviewFrame();
+				const editorFirstItem = frame.locator( '.e-n-accordion-item' ).first();
 
 				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
 					await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
