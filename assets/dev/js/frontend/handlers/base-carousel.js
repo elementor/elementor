@@ -169,7 +169,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				break;
 			case 'both':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
-
 				this.addLeftPaddingToShowPreviousSlide( offset );
 				this.addRightPaddingToShowNextSlide( offset );
 				break;
