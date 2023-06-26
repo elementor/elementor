@@ -44,6 +44,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_hover',
 		'image_box_hover',
 		'icon_hover',
+		'social_icons_hover',
+		'text_path_hover',
 	];
 
 	for ( const widgetType of testData ) {
@@ -54,6 +56,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				image_hover: 'img',
 				image_box_hover: 'img',
 				icon_hover: '.elementor-icon.elementor-animation-rotate',
+				social_icons_hover: '.elementor-social-icon-facebook',
+				text_path_hover: 'textPath',
 			};
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
@@ -70,7 +74,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 				if ( widgetType.includes( 'hover' ) ) {
 					await widget.locator( hoverSelector[ widgetType ] ).hover();
-					await expect( widget.locator( hoverSelector[ widgetType ] ) )
+					await expect( widget )
 						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
 				} else {
 					await expect( widget )
@@ -84,7 +88,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			if ( widgetType.includes( 'hover' ) ) {
 				for ( let i = 0; i < widgetCount; i++ ) {
 					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
-					await expect( page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ) ).
+					await expect( page.locator( EditorSelectors.widget ).nth( i ) ).
 						toHaveScreenshot( `${ widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
 				}
 			} else {

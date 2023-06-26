@@ -7,6 +7,7 @@ const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } = require( './helper' );
+import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
@@ -21,6 +22,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test( 'General test', async ( { page }, testInfo ) => {
+		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -33,7 +35,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Tests.
 		await testIconCount( page, editor );
-		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId, imageCarousel );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
@@ -1169,6 +1171,50 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
 			await expect( firstTab ).toBeVisible();
 		} );
+	} );
+
+	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'nowrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'auto' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '1' );
+	} );
+
+	test( 'Nested tabs stretch for top direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal i.eicon-align-stretch-h' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 } );
 
