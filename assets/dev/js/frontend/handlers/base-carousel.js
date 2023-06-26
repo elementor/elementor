@@ -148,16 +148,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			return;
 		}
 
-		const offset = elementSettings.offset_width.size,
-			fallbackSlideWidth = 200,
-			containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
-
-		let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
-
-		// If the slide width is not available, assume a default width
-		if ( ! slideWidth ) {
-			slideWidth = fallbackSlideWidth;
-		}
+		const offset = elementSettings.offset_width.size;
 
 		switch ( offsetSide ) {
 			case 'right':
