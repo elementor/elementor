@@ -186,7 +186,7 @@ class Deprecation {
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function check_deprecation( $version, $base_version = null ) {
+	private function check_deprecation( $version, $base_version = null, $stack_depth = 3 ) {
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
 		}
@@ -196,37 +196,41 @@ class Deprecation {
 			throw new \Exception( 'Invalid deprecation diff.' );
 		}
 
-		$should_collect_info = $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated();
-		if ( ! $should_collect_info ) {
-			return [];
-		}
-
 		$print_deprecated = [];
+		$calling_source = $this->find_who_called_me( $stack_depth );
 
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
-		$external_sources = $this->filter_third_party_sources( $backtrace );
-
-		$source_message = 'Elementor';
-		$plugin_name = 'Unknown';
-		$source_type = '';
-		if ( ! empty( $external_sources ) ) {
-			$calling_source = reset( $external_sources );
-			$caller = $this->get_plugin_from_calling_source( $calling_source );
-			$plugin_name = $caller['name'];
-			$source_type = $caller['type'];
-			if ( array_key_exists( 'file', $calling_source ) ) {
-				$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
-			}
-		}
+		$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 
 		$print_deprecated = [
 			'source' => $source_message,
-			'plugin' => $plugin_name,
-			'source_type' => $source_type,
+			'plugin' => $calling_source['name'],
+			'source_type' => $calling_source['type'],
 		];
 
 		return $print_deprecated;
 	}
+
+	private function find_who_called_me( $stack_depth ) {
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+
+		$caller = $backtrace[ $stack_depth ];
+		$caller_function = $caller['function'];
+		$caller_class = $caller['class'];
+		$caller_file = $caller['file'];
+		$caller_line = $caller['line'];
+		$source = $this->get_source( $caller_file );
+
+		$res = array(
+			'function' => $caller_function,
+			'class' => $caller_class,
+			'file' => $caller_file,
+			'line' => $caller_line,
+			'type' => $source['type'],
+			'name' => $source['name'],
+		);
+		return $res;
+	}
+
 
 	private function log_deprecation( $entity, $version, $replacement, $source_message ) {
 		if ( $this->should_console_log_deprecated() ) {
@@ -241,20 +245,6 @@ class Deprecation {
 
 	}
 
-	private function get_plugin_from_calling_source( $calling_source ) {
-		$plugin_name = 'Unknown';
-		$source_type = '';
-		if ( array_key_exists( 'file', $calling_source ) ) {
-			$plugin_name = $this->get_source( $calling_source['file'] )['name'];
-			$source_type = $this->get_source( $calling_source['file'] )['type'];
-		}
-		return [
-			'name' => $plugin_name,
-			'type' => $source_type,
-		];
-	}
-
-
 	private function get_source( $filename ) {
 		$file = str_replace( WP_CONTENT_DIR, '', $filename, $is_in_content );
 		$name = 'Unknown';
@@ -268,29 +258,6 @@ class Deprecation {
 			'name' => $name,
 			'type' => $type,
 		];
-	}
-
-	private function is_elementor_file( $stack_element ) {
-		if ( ! array_key_exists( 'file', $stack_element ) ) {
-			return false;
-		}
-		$filename = $stack_element['file'];
-		return ( strpos( $filename, '/elementor/' ) !== false || strpos( $filename, '/elementor-pro/' ) !== false );
-	}
-
-	private function is_plugin( $stack_element ) {
-		$filename = $stack_element['file'];
-		if ( strpos( $filename, WP_PLUGIN_DIR ) !== false ) {
-			return true;
-		}
-		return false;
-	}
-
-	private function filter_third_party_sources( $stack_trace ) {
-		$sources = array_filter( $stack_trace, function( $elem ) {
-			return ! $this->is_elementor_file( $elem );
-		} );
-		return $sources;
 	}
 
 	/**
@@ -331,6 +298,10 @@ class Deprecation {
 
 	private function should_console_log_deprecated() {
 		return defined( 'WP_DEBUG' ) && WP_DEBUG;
+	}
+
+	private function should_collect_deprication_info( $version, $base_version ) {
+		return $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated();
 	}
 
 	private function notify_deprecated_function( $function_name, $version, $replacement = '', $plugin = '', $source = '', $type = 'plugin' ) {
@@ -419,9 +390,13 @@ class Deprecation {
 	 * @param string $base_version Optional. Default is `null`
 	 * @throws \Exception
 	 */
-	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
+	public function deprecated_function( $function, $version, $replacement = '', $base_version = null, $searched_criteria = 'elementor' ) {
+
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
+		}
+		if ( ! $this->should_collect_deprication_info( $version, $base_version ) ) {
+			return;
 		}
 
 		$print_deprecated = $this->check_deprecation( $version, $base_version );
@@ -435,6 +410,7 @@ class Deprecation {
 			}
 		}
 	}
+
 
 	/**
 	 * Deprecated Hook
@@ -452,6 +428,10 @@ class Deprecation {
 	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
+		}
+
+		if ( ! $this->should_collect_deprication_info( $version, $base_version ) ) {
+			return;
 		}
 
 		$print_deprecated = $this->check_deprecation( $version, $base_version );
@@ -479,6 +459,11 @@ class Deprecation {
 	 */
 	public function deprecated_argument( $argument, $version, $replacement = '', $message = '' ) {
 		$base_version = $this->current_version;
+
+		if ( ! $this->should_collect_deprication_info( $version, $base_version ) ) {
+			return;
+		}
+
 		$print_deprecated = $this->check_deprecation( $version, $base_version );
 
 		if ( ! empty( $print_deprecated ) ) {
