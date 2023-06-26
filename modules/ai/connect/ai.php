@@ -151,7 +151,7 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_completion_text( $prompt ) {
+	public function get_completion_text( $prompt, $context = [] ) {
 		return $this->ai_request(
 			'POST',
 			'text/completion',

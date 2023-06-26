@@ -35,6 +35,14 @@ export default class Module extends elementorModules.editor.utils.Module {
 				additionalOptions: {
 					defaultValue: view.options.model.get( 'default' ),
 				},
+				context: {
+					documentType: view.options.container.document.config.type,
+					elementType: '',
+					elementId: view.options.container.id,
+					widgetType: '',
+					controlName: view.options.model.get( 'name' ),
+					controlType,
+				},
 			};
 		}
 
