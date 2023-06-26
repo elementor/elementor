@@ -7,7 +7,7 @@ const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
-test.describe( 'Video tests inside a container @video', () => {
+test.describe.only( 'Video tests inside a container @video', () => {
 	test.beforeAll( async () => {
 		await setExperiment( 'container', true );
 	} );
@@ -16,7 +16,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await setExperiment( 'container', false );
 	} );
 
-	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
+	test.only( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -123,8 +123,14 @@ test.describe( 'Video tests inside a container @video', () => {
 } );
 
 test.describe( 'Video tests inside a section @video', () => {
-	test.beforeAll( async () => {
-		await setExperiment( 'container', false );
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test.afterAll( async () => {
