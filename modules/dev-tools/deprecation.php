@@ -494,8 +494,22 @@ class Deprecation {
 		if ( ! has_action( $hook ) ) {
 			return;
 		}
+		if ( null === $base_version ) {
+			$base_version = $this->current_version;
+		}
 
-		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
+		if ( ! $this->should_collect_deprication_info( $version, $base_version ) ) {
+			return;
+		}
+
+		$print_deprecated = $this->check_deprecation( $version, $base_version );
+		if ( ! empty( $print_deprecated ) ) {
+			$this->log_deprecation( $hook, $version, $replacement, $print_deprecated['source'] );
+			if ( $this->should_print_deprecated( $version, $base_version ) ) {
+				$message = sprintf( 'Caller plugin: %1$s. Called from: %2$s.', $print_deprecated['plugin'], $print_deprecated['source'] );
+				_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ), esc_html( $message ) );
+			}
+		}
 
 		do_action_ref_array( $hook, $args );
 	}
