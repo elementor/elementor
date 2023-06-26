@@ -240,6 +240,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.14.1 - 2023-06-26 =
+
+* Fix: Video background added on the parent tab container only works on the first tab in Tabs widget
+* Fix: AI Image screen is not loading when there is no image in the control
+
 = 3.14.0 - 2023-06-19 =
 
 * New: Introducing Elementor AI for Image Creation – Unleash your creativity, improve and accelerate your workflow by instantly generating any type of image
