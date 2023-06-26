@@ -30,7 +30,7 @@ function register_feature_routes() {
 				$experiments = [];
 
 				foreach ( $feature as $experiment_id => $experiment ) {
-					if ( !empty( $experiment['hidden'] ) || $experiment['mutable'] === false ) {
+					if ( ! empty( $experiment['hidden'] ) || false === $experiment['mutable'] ) {
 						continue;
 					}
 
@@ -60,7 +60,7 @@ function register_feature_routes() {
 				return sanitize_key( $param );
 			},
 			'validate_callback' => function ( $request ) {
-				return in_array( $request->get_param( 'status' ), [Experiments_Manager::STATE_ACTIVE, Experiments_Manager::STATE_INACTIVE], true );
+				return in_array( $request->get_param( 'status' ), [ Experiments_Manager::STATE_ACTIVE, Experiments_Manager::STATE_INACTIVE ], true );
 			},
 			'callback' => function ( $request ) {
 				$experiment_id = $request->get_param( 'experimentId' );
@@ -70,7 +70,7 @@ function register_feature_routes() {
 
 				if ( ! $feature ) {
 					wp_send_json_error( [
-						'errorMessage' => 'Invalid experiment: ' . $experiment_id
+						'errorMessage' => 'Invalid experiment: ' . $experiment_id,
 					] );
 				}
 
@@ -88,7 +88,7 @@ function register_feature_routes() {
 					wp_send_json_success();
 				} else {
 					wp_send_json_error( [
-						'errorMessage' => 'Failed to set experiment status.'
+						'errorMessage' => 'Failed to set experiment status.',
 					] );
 				}
 			},
