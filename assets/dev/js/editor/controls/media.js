@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
+import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 	ControlMediaItemView;
@@ -82,7 +83,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 	},
 
-	openFrame( e ) {
+	async openFrame( e, source = null ) {
 		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
 		this.mediaType = mediaType;
 
@@ -91,9 +92,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
-			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e, 'filter-popup' ) ).show();
 
 			return false;
+		}
+
+		if ( source !== 'filter-popup' && [ 'application/json', 'json' ].includes( mediaType ) ) {
+			await showJsonUploadWarningMessageIfNeeded( {
+				introductionMap: window.elementor.config.user.introduction,
+				IntroductionClass: window.elementorModules.editor.utils.Introduction,
+			} );
 		}
 
 		// If there is no frame, or the current initialized frame contains a different library than
