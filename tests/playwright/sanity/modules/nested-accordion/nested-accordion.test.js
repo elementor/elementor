@@ -309,7 +309,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
 
-					await editor.isScreenShottable( titleIcons.nth( 1 ) );
+					await editor.isScreenShottable( titleIcons.nth( 1 ), 3, 700 );
 					await expectScreenshotToMatchLocator( 'nested-accordion-title-svg-icon-fe.png', titleIcons.nth( 1 ) );
 				} );
 			} );
