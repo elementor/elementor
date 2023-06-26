@@ -654,16 +654,16 @@ abstract class Base extends Base_File {
 	protected function parse_content() {
 
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		if ( ! $is_edit_mode && method_exists( Plugin::$instance->controls_manager, 'clear_stack_cache' ) ) {
+			$currnet_post_id = null;
+			if ( method_exists( $this, 'get_post_id' ) ) {
+				$currnet_post_id = $this->get_post_id();
+			}
 
-		if ( $is_edit_mode || ! method_exists( Plugin::$instance->controls_manager, 'clear_stack_cache' ) ) {
-			return parent::parse_content();
-		}
-
-		$currnet_post_id = $this->get_post_id();
-
-		$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $currnet_post_id );
-		if ( ! $stack_cache_has_been_cleared ) {
-			Plugin::$instance->controls_manager->clear_stack_cache( $currnet_post_id );
+			$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $currnet_post_id );
+			if ( ! $stack_cache_has_been_cleared ) {
+				Plugin::$instance->controls_manager->clear_stack_cache( $currnet_post_id );
+			}
 		}
 
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
