@@ -161,24 +161,23 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		switch ( offsetSide ) {
 			case 'right':
-				swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addRightPaddingToShowNextSlide( offset );
 				break;
 			case 'left':
-				swiperOptions.slidesPerView = slidesToShow;
-				swiperOptions.centeredSlides = true;
-
 				this.addLeftPaddingToShowPreviousSlide( offset );
 				break;
 			case 'both':
-				const slidesCount = 2;
-
-				swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
-				swiperOptions.centeredSlides = true;
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
 
 				this.addLeftPaddingToShowPreviousSlide( offset );
 				this.addRightPaddingToShowNextSlide( offset );
 				break;
 		}
+	}
+
+	forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow ) {
+		swiperOptions.slidesPerView = slidesToShow + 0.001;
 	}
 
 	addLeftPaddingToShowPreviousSlide( offset ) {
