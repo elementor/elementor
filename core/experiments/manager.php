@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+require __DIR__ . '/experiments-controller.php';
 /**
  * This is our callback function that embeds our phrase in a WP_REST_Response
  */
@@ -84,7 +85,7 @@ function can_user_view_features( $request ) {
 /**
  * This function is where we register our routes for our example endpoint.
  */
-function register_feature_routes() {
+/*function register_feature_routes() {
 	// register_rest_route() handles more arguments but we are going to stick to the basics for now.
 	register_rest_route( 'elementor/v1/features', '/all', array(
 		// By using this constant we ensure that when the WP_REST_Server changes our readable endpoints will work as intended.
@@ -117,9 +118,9 @@ function register_feature_routes() {
 		'callback' => __NAMESPACE__ . '\set_inactive_endpoint',
 		'permission_callback' => __NAMESPACE__ . '\can_user_modify_features',
 	) );
-}
+}*/
 // register_feature_routes();
-add_action( 'rest_api_init', __NAMESPACE__ . '\register_feature_routes' );
+// add_action( 'rest_api_init', __NAMESPACE__ . '\register_feature_routes' );
 
 class Manager extends Base_Object {
 

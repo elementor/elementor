@@ -122,7 +122,7 @@ test.describe( 'Video tests inside a container @video', () => {
 	} );
 } );
 
-test.describe( 'Video tests inside a section', () => {
+test.describe( 'Video tests inside a section @video', () => {
 	test.beforeAll( async () => {
 		await setExperiment( 'container', false );
 	} );
