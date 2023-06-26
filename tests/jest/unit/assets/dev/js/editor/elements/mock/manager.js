@@ -80,11 +80,9 @@ export async function setupMock() {
 		},
 	};
 
-	global.navigator = {
-		userAgent: 'jest',
-	};
-
-	global.window = {};
+	if ( ! global.window ) {
+		global.window = {};
+	}
 
 	global.jQuery = {};
 

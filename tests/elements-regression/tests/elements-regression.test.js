@@ -1,127 +1,100 @@
-const { expect } = require( '@playwright/test' );
-const test = require( '../src/test' );
-const elementsConfig = require( '../elements-config.json' );
-const testConfig = require( '../test.config' );
-const ConfigProvider = require( '../src/config-provider' );
-const controlHandlers = require( '../src/controls' );
-const { summary } = require( '../src/utils' );
+import { expect, test } from '@playwright/test';
+import _path from 'path';
+import WpAdminPage from '../../playwright/pages/wp-admin-page';
+import EditorPage from '../../playwright/pages/editor-page';
+import EditorSelectors from '../../playwright/selectors/editor-selectors';
 
-const configMediator = ConfigProvider.make( { elementsConfig, testConfig } );
-
-test.describe( 'Elements regression', () => {
-	const testedElements = {};
-
-	test.afterAll( async ( {}, testInfo ) => {
-		// eslint-disable-next-line no-console
-		console.log( 'summaryData', summary( testedElements, elementsConfig ) );
-
-		// TODO: Need to find a better solution for now this is not working well.
-
-		if ( 'on' === testInfo.project.use.validateAllPreviousCasesChecked ) {
-			expect( JSON.stringify( testedElements, null, '\t' ) ).toMatchSnapshot( [ 'elements-regression.json' ] );
-		}
+test.describe( 'Elementor regression tests with templates for CORE', () => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: 'active',
+		} );
 	} );
 
-	for ( const { widgetType } of configMediator.getWidgetsTypes() ) {
-		// Dynamic widget test creation.
-		test( widgetType, async ( { editorPage } ) => {
-			testedElements[ widgetType ] = {};
+	const testData = [
+		'divider',
+		'heading',
+		'text_editor',
+		'button',
+		'image',
+		'icon',
+		'image_box',
+		'image_carousel',
+		'tabs',
+		'video',
+		'spacer',
+		'text_path',
+		'social_icons',
+		'accordion',
+		'icon_box',
+		'icon_list',
+		'star_rating',
+		'basic_gallery',
+		'counter',
+		'progress_bar',
+		'testimonial',
+		'toggle',
+		'sound_cloud',
+		'html',
+		'alert',
+		'button_hover',
+		'image_hover',
+		'image_box_hover',
+		'icon_hover',
+		'social_icons_hover',
+		'text_path_hover',
+	];
 
-			const elementId = await editorPage.addWidget( widgetType );
+	for ( const widgetType of testData ) {
+		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
+			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
+			const hoverSelector = {
+				button_hover: 'a',
+				image_hover: 'img',
+				image_box_hover: 'img',
+				icon_hover: '.elementor-icon.elementor-animation-rotate',
+				social_icons_hover: '.elementor-social-icon-facebook',
+				text_path_hover: 'textPath',
+			};
 
-			await editorPage.page.waitForTimeout( 500 );
+			const wpAdminPage = new WpAdminPage( page, testInfo );
+			const editorPage = new EditorPage( page, testInfo );
+			await wpAdminPage.openNewPage();
+			await editorPage.closeNavigatorIfOpen();
+			await editorPage.loadTemplate( filePath, true );
+			await editorPage.waitForIframeToLoaded( widgetType );
 
-			await test.step( `default values`, async () => {
-				await assignValuesToControlDependencies( editorPage, widgetType, '*' );
+			const widgetCount = await editorPage.getWidgetCount();
+			for ( let i = 0; i < widgetCount; i++ ) {
+				const widget = editorPage.getWidget().nth( i );
+				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
 
-				expect( await editorPage.screenshotElement( elementId ) )
-					.toMatchSnapshot( [ widgetType, 'default.jpeg' ] );
-
-				await editorPage.resetElementSettings( elementId );
-			} );
-
-			for ( const {
-				controlId,
-				controlConfig,
-				sectionConfig,
-			} of configMediator.getControlsForTests( widgetType ) ) {
-				// Dynamic control test step creation.
-				const control = createControlHandler(
-					editorPage.page,
-					{ config: controlConfig, sectionConfig },
-				);
-
-				if ( ! control || ! control.canTestControl() ) {
-					continue;
+				if ( widgetType.includes( 'hover' ) ) {
+					await widget.locator( hoverSelector[ widgetType ] ).hover();
+					await expect( widget )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
+				} else {
+					await expect( widget )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 				}
+			}
 
-				await test.step( controlId, async () => {
-					const testedValues = [];
+			await editorPage.publishAndViewPage();
+			await editorPage.waitForIframeToLoaded( widgetType, true );
 
-					await assignValuesToControlDependencies( editorPage, widgetType, controlId );
-
-					await control.setup();
-
-					const initialValue = control.hasConditions() || control.hasSectionConditions()
-						? undefined
-						: await control.getValue();
-
-					for ( const value of await control.getTestValues( initialValue ) ) {
-						const valueLabel = control.generateSnapshotLabel( value );
-
-						await test.step( valueLabel, async () => {
-							testedValues.push( valueLabel );
-
-							await control.setValue( value );
-
-							expect( await editorPage.screenshotElement( elementId ) )
-								.toMatchSnapshot( [ widgetType, controlId, `${ valueLabel }.jpeg` ] );
-						} );
-					}
-
-					testedElements[ widgetType ][ controlId ] = testedValues.join( ', ' );
-
-					await control.teardown();
-
-					await editorPage.resetElementSettings( elementId );
-				} );
+			if ( widgetType.includes( 'hover' ) ) {
+				for ( let i = 0; i < widgetCount; i++ ) {
+					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
+					await expect( page.locator( EditorSelectors.widget ).nth( i ) ).
+						toHaveScreenshot( `${ widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
+				}
+			} else {
+				await expect( page.locator( EditorSelectors.container ) )
+					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 			}
 		} );
 	}
 } );
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {Object}                          options
- * @param {Object}                          options.config
- * @param {Object}                          options.sectionConfig
- * @return {null|import('../src/controls/control-base').ControlBase}
- */
-function createControlHandler( page, { config, sectionConfig } ) {
-	const ControlClass = controlHandlers[ config.type ];
-
-	if ( ! ControlClass ) {
-		return null;
-	}
-
-	return new ControlClass( page, { config, sectionConfig } );
-}
-
-async function assignValuesToControlDependencies( editorPage, widgetType, controlId ) {
-	const controlDependencies = configMediator.getControlDependencies( widgetType, controlId );
-
-	for ( const {
-		controlConfig,
-		sectionConfig,
-		value,
-	} of controlDependencies ) {
-		const control = createControlHandler(
-			editorPage.page,
-			{ config: controlConfig, sectionConfig },
-		);
-
-		await control.setup();
-		await control.setValue( value );
-		await control.teardown();
-	}
-}

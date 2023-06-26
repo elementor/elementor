@@ -1000,6 +1000,29 @@
 													]
 												}
 											]
+										},
+										"tags": {
+											"$id": "#/usages/settings/experiments/$experiment/tags",
+											"title": "Tags of the experiment",
+											"type": "array",
+											"items": {
+												"$id": "#/usages/settings/experiments/$experiment/tags/tag",
+												"title": "The tag schema",
+												"type": "object",
+												"properties": {
+													"type": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/type",
+														"type": "string",
+														"title": "The tag type"
+													},
+													"label": {
+														"$id": "#/usages/settings/experiments/$experiment/tags/tag/label",
+														"type": "string",
+														"title": "The tag label"
+													}
+												},
+												"additionalProperties": false
+											}
 										}
 									},
 									"additionalProperties": false
@@ -1028,19 +1051,33 @@
 							"experiments": {
 								"e_dom_optimization": {
 									"default": "active",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"e_optimized_assets_loading": {
 									"default": "inactive",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"e_optimized_css_loading": {
 									"default": "inactive",
-									"state": "default"
-								},
-								"a11y_improvements": {
-									"default": "active",
-									"state": "default"
+									"state": "default",
+									"tags": [
+										{
+											"type": "default",
+											"label": "Performance"
+										}
+									]
 								},
 								"landing-pages": {
 									"default": "active",

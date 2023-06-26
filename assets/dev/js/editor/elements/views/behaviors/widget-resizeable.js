@@ -49,13 +49,9 @@ export default class extends Marionette.Behavior {
 	}
 
 	toggle() {
-		const editModel = this.view.getEditModel(),
-			isAbsolute = editModel.getSetting( '_position' ),
-			isInline = 'initial' === editModel.getSetting( '_element_width' );
-
 		this.deactivate();
 
-		if ( ( ( isAbsolute || isInline ) && this.view.container.isDesignable() ) || this.isContainerItem() ) {
+		if ( this.view.container.isDesignable() && ! this.view.container.isGridContainer() ) {
 			this.activate();
 		}
 	}

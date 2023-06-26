@@ -1,0 +1,97 @@
+//
+// Section - Preview Settings
+//
+
+// Section & Container - Overlay Settings
+.elementor-editor-section-settings,
+.elementor-editor-container-settings {
+	height: 24px;
+	top: 1px;
+	left: 50%;
+	transform: translateX( -50% ) translateY( -100% );
+	background-color: var(--e-p-border-section);
+	border-radius: 5px 5px 0 0;
+
+	i.eicon-handle {
+		font-size: 16px;
+	}
+
+	.elementor-editor-element-setting {
+
+		&:hover {
+			background-color: var(--e-p-border-section-hover);
+		}
+
+		&:first-child {
+			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
+
+			&:before {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-end-property(color, var(--e-p-border-section));
+				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
+				@include end(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:before {
+					@include border-end-property(color, var(--e-p-border-section-hover));
+				}
+			}
+		}
+
+		&:last-child {
+			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
+
+			&:after {
+				content: '';
+				position: absolute;
+				border: solid transparent;
+				top: 2px;
+				@include border-start-property(color, var(--e-p-border-section));
+				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
+				@include start(calc(100% - 1px));
+			}
+
+			&:hover {
+
+				&:after {
+					@include border-start-property(color, var(--e-p-border-section-hover));
+				}
+			}
+		}
+	}
+}
+
+// Top Section / Container (Handles inside)
+.e-handles-inside,
+.elementor-section--handles-inside {
+
+	> .elementor-element-overlay > .elementor-editor-element-settings {
+		transform: translateX(-50%);
+		border-radius: 0 0 5px 5px;
+
+		.elementor-editor-element-setting {
+			&:first-child {
+				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+
+				&:before {
+					top: 0;
+					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
+				}
+			}
+
+			&:last-child {
+				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+
+				&:after {
+					top: 0;
+					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+				}
+			}
+		}
+	}
+}

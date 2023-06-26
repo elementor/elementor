@@ -41,6 +41,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			'data-id': this.getID(),
 			'data-element_type': this.model.get( 'elType' ),
+			'data-model-cid': this.model.cid,
 		};
 	},
 
@@ -374,6 +375,11 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+		// Don't allow adding inner-sections inside inner-sections.
+		if ( 'section' === model.elType && this.isInner() ) {
+			return;
+		}
+
 		const customData = elementView.model.get( 'custom' );
 
 		if ( customData ) {
@@ -548,7 +554,9 @@ BaseElementView = BaseContainer.extend( {
 	renderCustomElementID() {
 		const customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
-		this.$el.attr( 'id', customElementID );
+		if ( customElementID ) {
+			this.$el.attr( 'id', customElementID );
+		}
 	},
 
 	renderUI() {
@@ -738,12 +746,12 @@ BaseElementView = BaseContainer.extend( {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
-				break;
+					break;
 
 				case 'content': {
 					changed = renderDataBinding( dataBinding );
 				}
-				break;
+					break;
 			}
 
 			if ( changed ) {
@@ -833,7 +841,27 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		// Defer to wait for all of the children to render.
-		setTimeout( () => this.initDraggable(), 0 );
+		setTimeout( () => {
+			this.initDraggable();
+			this.dispatchElementLifeCycleEvent( 'rendered' );
+		} );
+	},
+
+	dispatchElementLifeCycleEvent( eventType ) {
+		let event;
+
+		// Event name set like this for maintainability.
+		switch ( eventType ) {
+			case 'rendered':
+				event = 'elementor/editor/element-rendered';
+				break;
+			case 'destroyed':
+				event = 'elementor/editor/element-destroyed';
+				break;
+		}
+
+		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
+		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -913,6 +941,9 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+
+		// Defer so the event is fired after the element is removed from the DOM.
+		setTimeout( () => this.dispatchElementLifeCycleEvent( 'destroyed' ) );
 	},
 
 	// eslint-disable-next-line jsdoc/require-returns-check
@@ -948,7 +979,7 @@ BaseElementView = BaseContainer.extend( {
 			<div class="icon">
 				<i class="${ model.getIcon() }"></i>
 			</div>
-			<div class="elementor-element-title-wrapper">
+			<div class="title-wrapper">
 				<div class="title">${ model.getTitle() }</div>
 			</div>
 		`;

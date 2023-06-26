@@ -18,6 +18,10 @@ class Elementor_3_Re_Migrate_Globals {
 	}
 
 	public function ajax_re_migrate_globals() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'permission denied' );
+		}
+
 		$this->run();
 
 		return true;

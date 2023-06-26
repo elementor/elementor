@@ -48,7 +48,28 @@ const sass = {
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
 				ext: '.css',
-			}
+			},
+			{
+				expand: true,
+				cwd: 'modules/announcements/assets/scss',
+				src: 'announcements.scss',
+				dest: 'assets/css/modules/announcements',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/styleguide/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/styleguide',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/ai/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/ai',
+				ext: '.css',
+			},
 		]
 	}
 };

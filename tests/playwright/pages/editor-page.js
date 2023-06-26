@@ -1,15 +1,60 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
+const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
-	isPanelLoaded = false;
-
 	constructor( page, testInfo, cleanPostId = null ) {
 		super( page, testInfo );
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 
 		this.postId = cleanPostId;
+	}
+
+	async gotoPostId( id = this.postId ) {
+		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+
+		await this.ensurePanelLoaded();
+	}
+
+	updateImageDates( templateData ) {
+		const date = new Date();
+		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const data = JSON.stringify( templateData );
+		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
+		return JSON.parse( updatedData );
+	}
+
+	async loadTemplate( filePath, updateDatesForImages = false ) {
+		let templateData = require( filePath );
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			templateData = this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, templateData );
+	}
+
+	async cleanContent() {
+		await this.page.evaluate( () => {
+			$e.run( 'document/elements/empty', { force: true } );
+		} );
 	}
 
 	async openNavigator() {
@@ -28,7 +73,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.previewFrame.evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( isOpen ) {
 			await this.page.click( '#elementor-navigator__close' );
@@ -43,12 +88,8 @@ module.exports = class EditorPage extends BasePage {
 	async reload() {
 		await this.page.reload();
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		this.previewFrame = this.getPreviewFrame();
 	}
-
-    getFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
-    }
 
 	/**
 	 * Make sure that the elements panel is loaded.
@@ -56,36 +97,87 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async ensurePanelLoaded() {
-		if ( this.isPanelLoaded ) {
-			return;
-		}
-
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
-		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-
-		this.isPanelLoaded = true;
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
 
 	/**
 	 * Add element to the page using a model.
 	 *
-	 * @param {Object} model     - Model definition.
-	 * @param {string} container - Optional Container to create the element in.
+	 * @param {Object}  model               - Model definition.
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
 	 *
 	 * @return {Promise<*>} Element ID
 	 */
-	async addElement( model, container = null ) {
-		return await this.page.evaluate( addElement, { model, container } );
+	async addElement( model, container = null, isContainerASection = false ) {
+		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
+	}
+
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 	}
 
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string} widgetType
-	 * @param {string} container  - Optional Container to create the element in.
+	 * @param {string}  widgetType
+	 * @param {string}  container           - Optional Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Is the container a section.
+	 * @return {Promise<string>}			- widget ID
 	 */
-	async addWidget( widgetType, container = null ) {
-		return await this.addElement( { widgetType, elType: 'widget' }, container );
+	async addWidget( widgetType, container = null, isContainerASection = false ) {
+		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+
+		return widgetId;
+	}
+
+	/**
+	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
+	 *
+	 * @param {string}  dirName              - use __dirname to get the current directory
+	 * @param {string}  fileName             - without json extension
+	 * @param {string}  widgetSelector       - css selector
+	 * @param {boolean} updateDatesForImages - flag to update dates for images
+	 */
+	async loadJsonPageTemplate( dirName, fileName, widgetSelector, updateDatesForImages = false ) {
+		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
+		const templateData = require( filePath );
+		const pageTemplateData =
+		{
+			content: templateData,
+			page_settings: [],
+			version: '0.4',
+			title: 'Elementor Test',
+			type: 'page',
+		};
+
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, pageTemplateData );
+
+		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
 	}
 
 	/**
@@ -102,8 +194,17 @@ module.exports = class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	/**
+	 * @return {import('@playwright/test').Frame|null}
+	 */
 	getPreviewFrame() {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+		const previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		if ( ! this.previewFrame ) {
+			this.previewFrame = previewFrame;
+		}
+
+		return previewFrame;
 	}
 
 	/**
@@ -141,20 +242,17 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @param {string} elementId - Element ID;
 	 *
-	 * @return {Promise<void>}
+	 * @return {Object} element;
 	 */
 	async selectElement( elementId ) {
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
+		await this.page.evaluate( async ( { id } ) => {
+			$e.run( 'document/elements/select', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 
-		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
-			return;
-		}
-
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.hover();
-		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
-		await elementEditButton.click();
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
+		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
 	}
 
 	async copyElement( elementId ) {
@@ -164,6 +262,21 @@ module.exports = class EditorPage extends BasePage {
 		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
 		await this.page.waitForSelector( copyListItemSelector );
 		await this.page.locator( copyListItemSelector ).click();
+	}
+
+	async pasteElement( selector ) {
+		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
+
+		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
+		await this.page.locator( pasteSelector ).click();
+	}
+
+	async openAddElementSection( elementId ) {
+		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
+		await element.hover();
+		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
+		await elementAddButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
 	}
 
 	async pasteStyleElement( elementId ) {
@@ -183,14 +296,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -205,6 +318,22 @@ module.exports = class EditorPage extends BasePage {
 		await this.activatePanelTab( 'advanced' );
 		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
 		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+	}
+
+	/**
+	 * Set a custom width value to a widget.
+	 *
+	 * @param {string}        controlId - The control to set the value to;
+	 * @param {string|number} value     - The value to set;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSliderControlValue( controlId, value ) {
+		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
+	}
+
+	async setNumberControlValue( controlId, value ) {
+		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
 	/**
@@ -230,38 +359,6 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Autopopulate the Image Carousel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async populateImageCarousel() {
-		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
-
-		// Open Media Library
-		await this.page.click( 'text=Media Library' );
-
-		// Upload the images to WP media library
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-		// Create a new gallery
-		await this.page.locator( 'text=Create a new gallery' ).click();
-
-		// Insert gallery
-		await this.page.locator( 'text=Insert gallery' ).click();
-
-		// Open The Additional options Section
-		await this.page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-
-		// Disable AutoPlay
-		await this.page.selectOption( 'select', 'no' );
-	}
-
-	/**
 	 * Set a background color to an element.
 	 *
 	 * @param {string}  color     - The background color code;
@@ -284,6 +381,22 @@ module.exports = class EditorPage extends BasePage {
 
 		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
 		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
+
+	/**
+	 * Set a border color to a container.
+	 *
+	 * @param {string} color       - The background color code;
+	 * @param {string} containerId - The ID of targeted container;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setContainerBorderColor( color, containerId ) {
+		await this.selectElement( containerId );
+		await this.activatePanelTab( 'style' );
+		await this.openSection( 'section_border' );
+		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 	}
 
@@ -399,17 +512,270 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.elementor-button-success.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
+	}
+
+	async saveAndReloadPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
+		await this.page.reload();
+	}
+
+	async previewChanges( context ) {
+		const previewPagePromise = context.waitForEvent( 'page' );
+
+		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
 		await this.page.waitForLoadState( 'networkidle' );
+
+		const previewPage = await previewPagePromise;
+		await previewPage.waitForLoadState();
+
+		return previewPage;
+	}
+
+	/**
+	 * Apply Element Settings
+	 *
+	 * Apply settings to a widget without having to navigate through its Panels and Sections to set each individual
+	 * control value.
+	 *
+	 * You can get the Element settings by right-clicking an existing widget or element in the Editor, choose "Copy",
+	 * then paste the content into a text editor and filter out just the settings you want to apply to your element.
+	 *
+	 * Example usage:
+	 * ```
+	 * await editor.applyElementSettings( 'cdefd82', {
+	 *     background_background: 'classic',
+	 *     background_color: 'rgb(255, 10, 10)',
+	 * } );
+	 * ```
+	 *
+	 * @param {string} elementId - Id of the element you intend to apply the settings to.
+	 * @param {Object} settings  - Object settings from the Editor > choose element > right-click > "Copy".
+	 *
+	 * @return {Promise<void>}
+	 */
+	async applyElementSettings( elementId, settings ) {
+		await this.page.evaluate(
+			( args ) => $e.run( 'document/elements/settings', {
+				container: elementor.getContainer( args.elementId ),
+				settings: args.settings,
+			} ),
+			{ elementId, settings },
+		);
+	}
+
+	/**
+	 * Check if an item is in the viewport.
+	 *
+	 * @param {string} itemSelector
+	 * @return {Promise<void>}
+	 */
+	async isItemInViewport( itemSelector ) {
+		// eslint-disable-next-line no-shadow
+		return this.page.evaluate( ( itemSelector ) => {
+			let isVisible = false;
+
+			const element = document.querySelector( itemSelector );
+
+			if ( element ) {
+				const rect = element.getBoundingClientRect();
+
+				if ( rect.top >= 0 && rect.left >= 0 ) {
+					const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 ),
+						vh = Math.max( document.documentElement.clientHeight || 0, window.innerHeight || 0 );
+
+					if ( rect.right <= vw && rect.bottom <= vh ) {
+						isVisible = true;
+					}
+				}
+			}
+			return isVisible;
+		}, itemSelector );
+	}
+
+	/**
+	 * Open a section of the active widget.
+	 *
+	 * @param {string} sectionId
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId ) {
+		const sectionSelector = '.elementor-control-' + sectionId,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a control of the active widget.
+	 *
+	 * @param {string} controlId
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelectControlValue( controlId, value ) {
+		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getPreviewFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getPreviewFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
+		}
+	}
+
+	async waitForIframeToLoaded( widgetType, isPublished = false ) {
+		const frames = {
+			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
+			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
+		};
+
+		if ( ! ( widgetType in frames ) ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			await this.page.locator( frames[ widgetType ][ 0 ] ).first().waitFor();
+			const count = await this.page.locator( frames[ widgetType ][ 0 ] ).count();
+			for ( let i = 1; i < count; i++ ) {
+				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
+		} else {
+			const frame = this.getPreviewFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
+			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
+			const iframeCount = await new Promise( ( resolved ) => {
+				resolved( frame.childFrames().length );
+			} );
+			for ( let i = 1; i < iframeCount; i++ ) {
+				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
+			}
+		}
+	}
+
+	async waitForElement( isPublished, selector ) {
+		if ( selector === undefined ) {
+			return;
+		}
+
+		if ( isPublished ) {
+			this.page.waitForSelector( selector );
+		} else {
+			const frame = this.getFrame();
+			await frame.waitForLoadState();
+			await frame.waitForSelector( selector );
+		}
+	}
+
+	async setColorControlValue( color, colorControlId ) {
+		const controlSelector = '.elementor-control-' + colorControlId;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set Dimentions controls value
+	 *
+	 * @param {string} selector
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( selector, value ) {
+		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
+	}
+
+	async verifyClassInElement( args = { selector, className, isPublished } ) {
+		const regex = new RegExp( args.className );
+		if ( args.isPublished ) {
+			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
+		} else {
+			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+		}
+	}
+
+	async verifyImageSize( args = { selector, width, height, isPublished } ) {
+		const imageSize = args.isPublished
+			? await this.page.locator( args.selector ).boundingBox()
+			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
+		expect( imageSize.width ).toEqual( args.width );
+		expect( imageSize.height ).toEqual( args.height );
+	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size', fontsize );
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 };

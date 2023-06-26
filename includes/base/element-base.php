@@ -647,10 +647,10 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.3.0
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `add_render_attribute()` method instead.
 	 */
 	protected function _add_render_attributes() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::add_render_attributes()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'add_render_attributes()' );
 
 		return $this->add_render_attributes();
 	}
@@ -923,7 +923,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -949,7 +949,7 @@ abstract class Element_Base extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ '%', 'px' ],
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
 					'range' => [
 						'%' => [
 							'min' => -100,
@@ -1166,7 +1166,7 @@ abstract class Element_Base extends Controls_Stack {
 				$this->add_control(
 					'_transform_transition_hover',
 					[
-						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 						'type' => Controls_Manager::SLIDER,
 						'device_args' => $default_unit_values_ms,
 						'range' => [
@@ -1333,10 +1333,10 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access protected
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `print_content()` method instead.
 	 */
 	protected function _print_content() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'print_content()' );
 
 		$this->print_content();
 	}

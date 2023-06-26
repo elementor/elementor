@@ -1,0 +1,157 @@
+//
+// Column - Preview Settings
+//
+
+.elementor-column {
+
+	> .elementor-element-overlay {
+		@include start(0);
+		bottom: 0;
+
+		&:after {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			outline: 1px dashed var(--e-p-border-column);
+		}
+	}
+
+	&:hover {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+			}
+		}
+	}
+
+	&.elementor-element-editable {
+
+		> .elementor-element-overlay {
+
+			&:after {
+				content: '';
+				outline: 2px solid var(--e-p-border-column);
+			}
+		}
+	}
+
+	&.elementor-dragging-on-child {
+
+		> .elementor-element-overlay {
+			border: 1px solid var(--e-p-draggable-color);
+
+			&:after {
+				display: none;
+			}
+		}
+	}
+
+	> .ui-resizable-e, > .ui-resizable-w {
+		cursor: col-resize;
+		width: 7px;
+		position: absolute;
+		@include end(-5px);
+		top: 0;
+		height: 100%;
+	}
+
+	&:last-of-type {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+
+	@media (max-width: $editor-screen-md-max) {
+		> .ui-resizable-e, > .ui-resizable-w {
+			display: none !important;
+		}
+	}
+}
+
+.elementor-editor-column-settings {
+	top: -1px;
+	@include start(-1px);
+	border-radius: getValueByDirection(0 0 3px 0, 0 0 0 3px);
+	overflow: hidden;
+
+	.elementor-editor-element-setting {
+		background-color: var(--e-p-border-column);
+
+		&:hover {
+			background-color: var(--e-p-border-column-hover);
+		}
+	}
+}
+
+.elementor-column-placeholder {
+	position: relative;
+
+	&:before,
+	&:after {
+		content: '';
+		position: absolute;
+		top: 10px;
+		bottom: 10px;
+		right: 10px;
+		left: 10px;
+	}
+
+	&:before {
+		border: 1px solid var(--e-p-border-column);
+	}
+
+	&:after {
+		border: 1px dashed var(--e-a-color-white);
+	}
+}
+
+.elementor-column-percents-tooltip {
+	position: absolute;
+	display: none;
+	pointer-events: none;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #fff;
+	font-size: 10px;
+	background-color: var(--e-p-border-column);
+	width: 40px;
+	padding: 3.5px 0;
+	text-align: center;
+	z-index: 1;
+	line-height: 1;
+
+	&:after {
+		content: '';
+		position: absolute;
+		width: 0;
+		height: 0;
+		border: 8.5px solid transparent;
+		top: 0;
+	}
+
+	&[data-side="left"] {
+		border-radius: 3px 0 0 3px;
+		right: 15px;
+
+		&:after {
+			left: 100%;
+			border-left-color: var(--e-p-border-column);
+			border-right-width: 0;
+		}
+	}
+
+	&[data-side="right"] {
+		border-radius: 0 3px 3px 0;
+		left: 15px;
+
+		&:after {
+			right: 100%;
+			border-right-color: var(--e-p-border-column);
+			border-left-width: 0;
+		}
+	}
+}

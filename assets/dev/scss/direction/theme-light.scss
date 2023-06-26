@@ -1,0 +1,91 @@
+@import "../helpers/variables";
+
+// Theme Light - CSS Vars
+// Prefix e = elementor
+// Prefix a = admin (Only wp-admin/editor facing)
+
+:root {
+
+	//Colors
+	--e-a-color-white: 			#{$white};
+	--e-a-color-black: 			#{$black};
+	--e-a-color-logo: 			#{$white};
+	--e-a-color-primary: 		#{$e-primary};
+	--e-a-color-primary-bold: 	#{$e-primary-bold};
+	--e-a-color-secondary: 		#{$e-gray-600};
+	--e-a-color-success: 		#{$e-success};
+	--e-a-color-danger: 		#{$e-danger};
+	--e-a-color-info: 			#{$e-info};
+	--e-a-color-warning: 		#{$e-warning};
+	--e-a-color-accent: 		#{$e-accent};
+	--e-a-color-global: 		#{$e-teal-400};
+
+	//Backgrounds
+	--e-a-bg-default: 			#{$white};
+	--e-a-bg-invert: 			#{$e-gray-900};
+	--e-a-bg-hover: 			#{$e-gray-50};
+	--e-a-bg-active: 			#{$e-gray-75};
+	--e-a-bg-active-bold: 		#{$e-gray-100};
+	--e-a-bg-loading: 			#{$e-gray-25};
+	--e-a-bg-logo: 				#{$black};
+	--e-a-bg-primary: 			#{$e-primary-bg};
+	--e-a-bg-secondary: 		#{$e-gray-600};
+	--e-a-bg-success: 			#{$e-success-bg};
+	--e-a-bg-info: 				#{$e-info-bg};
+	--e-a-bg-danger: 			#{$e-danger-bg};
+	--e-a-bg-warning: 			#{$e-warning-bg};
+
+	//Text & Icons
+	--e-a-color-txt: 			#{$e-gray-600};
+	--e-a-color-txt-muted: 		#{$e-gray-400};
+	--e-a-color-txt-disabled: 	#{$e-gray-200};
+	--e-a-color-txt-invert: 	#{$white};
+	--e-a-color-txt-accent: 	#{$e-gray-900};
+	--e-a-color-txt-hover: 		#{$e-gray-700};
+	--e-a-color-txt-active: 	#{$e-gray-900}; //TODO: Check if needed
+
+	//Borders
+	--e-a-border-color: 		#{$e-gray-75};
+	--e-a-border-color-bold: 	#{$e-gray-100};
+	--e-a-border-color-focus: 	#{$e-gray-200};
+	--e-a-border-color-accent: 	#{$e-gray-900};
+	--e-a-border:				1px solid var(--e-a-border-color);
+	--e-a-border-bold:			1px solid var(--e-a-border-color-bold);
+	--e-a-border-radius: 		#{$default-border-radius};
+
+	//Buttons
+	--e-a-btn-color: 			#{$e-gray-900};
+	--e-a-btn-color-invert: 	var(--e-a-color-txt-invert);
+	--e-a-btn-color-disabled:	var(--e-a-color-txt-disabled);
+	--e-a-btn-bg: 				#{$e-gray-600};
+	--e-a-btn-bg-hover: 		#{darken($e-gray-600, 10%)};
+	--e-a-btn-bg-active: 		#{darken($e-gray-600, 20%)};
+	--e-a-btn-bg-disabled:		#{$e-gray-100};
+	--e-a-btn-bg-primary: 		#{$e-primary};
+	--e-a-btn-bg-primary-hover: #{$e-pink-100};
+	--e-a-btn-bg-primary-active:#{$e-pink-300};
+	--e-a-btn-bg-accent: 		#{$e-accent};
+	--e-a-btn-bg-accent-hover:	#{$e-indigo-700};
+	--e-a-btn-bg-accent-active:	#{$e-indigo-800};
+	--e-a-btn-bg-success: 		#{$e-success};
+	--e-a-btn-bg-success-hover:	#{darken($e-success, 10%)};
+	--e-a-btn-bg-success-active:#{darken($e-success, 20%)};
+	--e-a-btn-bg-danger: 		#{$e-danger};
+	--e-a-btn-bg-danger-hover:	#{darken($e-danger, 10%)};
+	--e-a-btn-bg-danger-active:	#{darken($e-danger, 20%)};
+
+	//Dark Panel
+	--e-a-dark-bg:				#{$e-gray-900};
+	--e-a-dark-color-txt:		#{$e-gray-300};
+	--e-a-dark-color-txt-hover:	#{$e-gray-100};
+
+	//Fonts
+	--e-a-font-family:			#{$admin-font-family};
+
+	//Animation
+	--e-a-transition-hover:		all .3s;
+
+	//Shadow
+	--e-a-popover-shadow:		0 2px 15px rgba(0, 0, 0, 0.3);
+	--e-a-dropdown-shadow:		0 0 3px rgba(0, 0, 0, 0.2);
+}

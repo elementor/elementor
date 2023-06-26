@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -248,6 +249,13 @@ class Preview extends App {
 			[
 				'elementor-select2',
 			],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			$this->get_css_assets_url( 'theme-light' ),
+			[],
 			ELEMENTOR_VERSION
 		);
 
