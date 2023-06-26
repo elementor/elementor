@@ -5,6 +5,7 @@ import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import path from 'path';
+import { getComparator } from 'playwright-core/lib/utils';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
 	test.describe( 'Nested Accordion experiment inactive', () => {
@@ -299,13 +300,13 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				await uploadSVG( page );
 
-				test.step( 'Check that SVG icon is displayed in the editor', async () => {
+				await test.step( 'Check that SVG icon is displayed in the editor', async () => {
 					// Default icon is tested in Element Regression Screenshot Test
 					// Expect default icon to be displayed in preview frame & front end
 					await expect.soft( editorTitleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
 				} );
 
-				test.step( 'Check that SVG icon is displayed in the front end', async () => {
+				await test.step( 'Check that SVG icon is displayed in the front end', async () => {
 					await editor.publishAndViewPage();
 					const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
 
@@ -322,11 +323,11 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 				const editorFirstItem = frame.locator( 'e-n-accordion-item' ).first();
 
-				test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
+				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
 					await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
 				} );
 
-				test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in front end', async () => {
+				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in front end', async () => {
 					await editor.publishAndViewPage();
 					const firstItem = page.locator( '.e-n-accordion-item' ).first();
 
@@ -362,11 +363,12 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await test.step( 'If Accordion is closed fa-plus is displayed & fa-minus icon is hidden', async () => {
 				await nestedAccordionTitle.click();
-				await frame.waitForLoadState( 'load', { timeout: 7000 } );
+				await isScreenShotable( nestedAccordionTitle, 3, 1000 );
 				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ).locator( 'i' ) ).toHaveClass( 'fas fa-plus' );
 				await expect.soft( await nestedAccordionTitle.locator( '.e-closed' ) ).toBeVisible();
 				await expect.soft( await nestedAccordionTitle.locator( '.e-opened' ) ).toBeHidden();
-				await nestedAccordionTitle.click( { timeout: 5000 } );
+				await isScreenShotable( nestedAccordionTitle, 3, 1500 );
+				await nestedAccordionTitle.click();
 			} );
 
 			await editor.selectElement( nestedAccordionWidgetId );
@@ -374,11 +376,12 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Check title position default start', async () => {
 				await editor.selectElement( nestedAccordionWidgetId );
 				// Assert
-				// Normal = Flex-start
+				// normal = Flex-start
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
-				await setTitleHorizontalAlignment( 'start', editor );
 
+				await setTitleHorizontalAlignment( 'start', editor );
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'normal' );
 			} );
 
@@ -388,6 +391,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleHorizontalAlignment( 'end', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
 			} );
 
@@ -397,6 +401,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleHorizontalAlignment( 'center', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
 			} );
 
@@ -406,6 +411,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleHorizontalAlignment( 'stretch', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
 			} );
 
@@ -420,6 +426,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleIconPosition( 'right', editor );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '0' );
 			} );
 
@@ -454,10 +461,10 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await test.step( 'Mobile - Check title position mobile is flex-end', async () => {
 				// Act
 				await editor.selectElement( nestedAccordionWidgetId );
-				await page.locator( '.elementor-control-accordion_item_title_position_horizontal_mobile .elementor-control-input-wrapper .eicon-align-end-h' ).click();
 				await setTitleHorizontalAlignment( 'end', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'flex-end' );
 			} );
 
@@ -467,6 +474,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleHorizontalAlignment( 'center', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'center' );
 			} );
 
@@ -476,6 +484,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleHorizontalAlignment( 'stretch', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle ).toHaveCSS( 'justify-content', 'space-between' );
 			} );
 
@@ -490,6 +499,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await setTitleIconPosition( 'left', editor, 'mobile' );
 				// Assert
 				await frame.waitForLoadState( 'load' );
+				await isScreenShotable( nestedAccordionTitle, 3 );
 				await expect.soft( nestedAccordionTitle.locator( '.e-n-accordion-item-title-icon' ) ).toHaveCSS( 'order', '-1' );
 			} );
 		} );
@@ -802,6 +812,30 @@ async function expectScreenshotToMatchLocator( fileName, locator ) {
 	} ) ).toMatchSnapshot( fileName );
 }
 
+async function isScreenShotable( locator, retries = 3, timeout = 500 ) {
+	const comparator = getComparator( 'image/png' );
+	let retry = 0;
+
+	let beforeImage, afterImage;
+
+	do {
+		if ( retry === retries ) {
+			break;
+		}
+
+		beforeImage = await locator.screenshot( {
+			path: `./before.png`,
+		} );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
+
+		afterImage = await locator.screenshot( {
+			path: `./after.png`,
+		} );
+		retry = retry++;
+	} while ( null !== comparator( beforeImage, afterImage ) );
+}
+
 async function uploadSVG( page, icon = undefined ) {
 	const _icon = icon === undefined ? 'test-svg-wide' : icon;
 	const regex = new RegExp( _icon );
@@ -818,8 +852,8 @@ async function getChoicesButtonSelector( choicesControlId, icon ) {
 
 async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' ) {
 	const icon = Object.freeze( {
-		left: '.eicon-h-align-right',
-		right: '.eicon-h-align-left',
+		right: '.eicon-h-align-right',
+		left: '.eicon-h-align-left',
 	} );
 
 	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
