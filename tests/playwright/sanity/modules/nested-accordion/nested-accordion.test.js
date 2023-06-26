@@ -657,6 +657,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'compare editor images', async () => {
+				await editor.isScreenShottable( nestedAccordion );
 				await expectScreenshotToMatchLocator( 'nested-Accordion-content-style.png', nestedAccordion );
 			} );
 
@@ -687,6 +688,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				} );
 
 				await test.step( 'compare container override', async () => {
+					await editor.isScreenShottable( nestedAccordion );
 					await expectScreenshotToMatchLocator( 'nested-Accordion-content-style-override.png', nestedAccordion );
 				} );
 
@@ -704,6 +706,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await page.waitForTimeout( 1000 );
 
 					// Assert.
+					await editor.isScreenShottable( nestedAccordionWidgetFront );
 					await expectScreenshotToMatchLocator( 'nested-Accordion-content-style-front.png', nestedAccordionWidgetFront );
 				} );
 			} );
