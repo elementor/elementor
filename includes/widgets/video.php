@@ -720,7 +720,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'default' => '169',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
+					'{{WRAPPER}} .elementor-wrapper:not(.elementor-open-lightbox)' => '--video-aspect-ratio: {{VALUE}}',
 				],
 			]
 		);
