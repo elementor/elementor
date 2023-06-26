@@ -9,7 +9,6 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\Utils;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
