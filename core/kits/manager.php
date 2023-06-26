@@ -2,6 +2,8 @@
 namespace Elementor\Core\Kits;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Kits\Config\Site_Active_Kit_Id;
+use Elementor\Core\Kits\Config\Site_Previous_Kit_Id;
 use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
@@ -19,8 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager {
 
+	/**
+	 * @deprcated 3.14.0 Use Site_Active_Kit_Id instead
+	 */
 	const OPTION_ACTIVE = 'elementor_active_kit';
 
+	/**
+	 * @deprcated 3.14.0 Use Site_Previous_Kit_Id instead
+	 */
 	const OPTION_PREVIOUS = 'elementor_previous_kit';
 
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
@@ -28,11 +36,11 @@ class Manager {
 	private $should_skip_trash_kit_confirmation = false;
 
 	public function get_active_id() {
-		return get_option( self::OPTION_ACTIVE );
+		return Site_Active_Kit_Id::get_value();
 	}
 
 	public function get_previous_id() {
-		return get_option( self::OPTION_PREVIOUS );
+		return Site_Previous_Kit_Id::get_value();
 	}
 
 	public function get_kit( $kit_id ) {
@@ -144,8 +152,8 @@ class Manager {
 		] );
 
 		if ( $active ) {
-			update_option( self::OPTION_PREVIOUS, $this->get_active_id() );
-			update_option( self::OPTION_ACTIVE, $id );
+			Site_Previous_Kit_Id::set( $this->get_active_id() );
+			Site_Active_Kit_Id::set( $id );
 		}
 
 		return $id;
@@ -166,7 +174,7 @@ class Manager {
 	 * @return int|void|\WP_Error
 	 */
 	public static function create_default_kit() {
-		if ( get_option( self::OPTION_ACTIVE ) ) {
+		if ( Site_Active_Kit_Id::get_value() ) {
 			return;
 		}
 
@@ -180,7 +188,7 @@ class Manager {
 			],
 		] );
 
-		update_option( self::OPTION_ACTIVE, $id );
+		Site_Active_Kit_Id::set( $id );
 
 		return $id;
 	}
@@ -205,10 +213,10 @@ class Manager {
 
 		$this->should_skip_trash_kit_confirmation = false;
 
-		update_option( self::OPTION_ACTIVE, $active_kit_id );
+		Site_Active_Kit_Id::set( $active_kit_id );
 
 		if ( $this->is_kit( $previous_kit_id ) ) {
-			update_option( self::OPTION_PREVIOUS, $previous_kit_id );
+			Site_Previous_Kit_Id::set( $previous_kit_id );
 		}
 	}
 

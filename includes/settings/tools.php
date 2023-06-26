@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Kits\Config\Site_Active_Kit_Id;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 
@@ -79,7 +80,7 @@ class Tools extends Settings_Page {
 			wp_send_json_error( [ 'message' => esc_html__( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
 		}
 
-		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
+		Site_Active_Kit_Id::set( $created_default_kit );
 
 		wp_send_json_success( esc_html__( 'New kit have been created successfully', 'elementor' ) );
 	}
