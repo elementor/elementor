@@ -19,7 +19,13 @@ test.describe( 'Video tests inside a container @video', () => {
 	} );
 
 	test.afterAll( async () => {
-		await setExperiment( 'container', false );
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser }, testInfo ) => {
@@ -140,7 +146,13 @@ test.describe( 'Video tests inside a section @video', () => {
 	} );
 
 	test.afterAll( async () => {
-		await setExperiment( 'container', false );
+		const context = await browser.newContext(),
+			page = await context.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.setExperiments( {
+			container: false,
+		} );
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page }, testInfo ) => {
