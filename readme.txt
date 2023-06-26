@@ -152,7 +152,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = We recommend your host supports: =
 
-* PHP version 7.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -239,6 +239,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.14.1 - 2023-06-26 =
+
+* Fix: Video background added on the parent tab container only works on the first tab in Tabs widget
+* Fix: AI Image screen is not loading when there is no image in the control
 
 = 3.14.0 - 2023-06-19 =
 
