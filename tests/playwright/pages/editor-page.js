@@ -36,7 +36,7 @@ module.exports = class EditorPage extends BasePage {
 	async uploadSVG( svgFileName = undefined ) {
 		const _svgFileName = svgFileName === undefined ? 'test-svg-wide' : svgFileName;
 		const regex = new RegExp( _svgFileName );
-		const response = page.waitForResponse( regex );
+		const response = this.page.waitForResponse( regex );
 		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../../resources/${ _svgFileName }.svg` ) );
 		await response;
 		await this.page.getByRole( 'button', { name: 'Insert Media' } )
