@@ -3,7 +3,9 @@
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 
-defined('ABSPATH') || die;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 register_rest_route('elementor/v1', '/experiments', [
     [
