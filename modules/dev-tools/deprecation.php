@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\DevTools;
 
-use Elementor\Modules\DevTools\BacktraceHelper;
+use Elementor\Modules\DevTools\Backtrace_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -199,7 +199,7 @@ class Deprecation {
 		}
 
 		$print_deprecated = [];
-		$calling_source = BacktraceHelper::find_who_called_me( $stack_depth );
+		$calling_source = Backtrace_Helper::find_who_called_me( $stack_depth );
 
 		$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 

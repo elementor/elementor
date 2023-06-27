@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class BacktraceHelper {
+class Backtrace_Helper {
 	/**
 	 * find_who_called_me
 	 * Retrieves the function, class, file, line, type and name of the function that called the function that called this function.
