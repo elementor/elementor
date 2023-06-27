@@ -656,7 +656,6 @@ abstract class Base extends Base_File {
 	 * @access private
 	 */
 	private function clear_stacks_on_additional_breakpoints_active() {
-		// Issue: #19394 - responsive setting won't update unless 'Regenerate CSS' is used
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 		if ( ! $is_edit_mode && method_exists( Plugin::$instance->controls_manager, 'clear_stack_cache' ) ) {
 			$currnet_post_id = null;
