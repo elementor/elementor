@@ -194,19 +194,21 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
-		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
 
-		$this->assertEquals( [
-			'0.0.0',
-			'',
-			$message
-		], $settings['soft_notices'][__FUNCTION__] );
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices'][ __FUNCTION__ ] );
+		} else { // to support PHP 7.0
 
-		// $this->assertEquals( [
-		// 	'0.0.0',
-		// 	'',
-		// 	'Elementor',
-		// ], $settings['soft_notices']['test_deprecated_function_soft'] );
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice( $settings['soft_notices'][ __FUNCTION__ ], 2, true ));
+		}
 	}
 
 
@@ -227,21 +229,21 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_deprecated_function_not_as_admin_does_not_show_message() {
 		$this->run_function_deprecated_test();
-		$this->assertTrue(true); // hack because phpunit demands assert
+		$this->assertTrue( true ); // hack because phpunit demands assert
 	}
 
-	private function run_function_deprecated_test($function_name = 'test'){
+	private function run_function_deprecated_test( $function_name = 'test' ) {
 		$this->deprecation->deprecated_function( $function_name, '2.5.0', 'test2', '6.5.0' );
 	}
 
-	private function run_argument_deprecated_test( $argument_name = 'test' ){
+	private function run_argument_deprecated_test( $argument_name = 'test' ) {
 		$this->deprecation->deprecated_argument( $argument_name, '2.5.0', 'test2', '6.5.0' );
 
 	}
 
 	public function test_deprecated_argument_not_as_admin_does_not_show_message() {
 		$this->run_argument_deprecated_test();
-		$this->assertTrue(true); // hack because phpunit demands assert
+		$this->assertTrue( true ); // hack because phpunit demands assert
 	}
 
 
@@ -251,13 +253,21 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
-		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+		$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
 
-		$this->assertEquals( [
-			'0.0.0',
-			'',
-			$message
-		], $settings['soft_notices']['$testarg'] );
+		if ( array_key_exists( 'file', $caller ) ) {
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices']['$testarg'] );
+		} else { // to support PHP 7.0
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice( $settings['soft_notices']['$testarg'], 2, true ));
+		}
 	}
 
 
@@ -289,13 +299,22 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
-		$message = sprintf('%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line']);
+		$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
 
-		$this->assertEquals( [
-			'0.0.0',
-			'',
-			$message
-		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );		
+		if ( array_key_exists( 'file', $caller ) ) {
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
+		}else { // to support PHP 7.0
+			
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice ($settings['soft_notices']['elementor/test/deprecated_action_soft'], 2, true ));
+		}
 	}
 
 	public function test_apply_deprecated_filter__without_filter() {
