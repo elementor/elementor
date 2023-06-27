@@ -1,3 +1,41 @@
-.someClass {
+@import "assets/dev/scss/helpers/variables.scss";
 
+body.elementor_page_elementor-marketplace {
+
+	& {
+		background: var(--e-a-color-white);
+	}
 }
+
+.e-a-marketplace {
+
+	.e-a-list {
+		display: grid;
+		grid-gap: 30px;
+		grid-template-columns: repeat( auto-fill, minmax(380px, 3fr) );
+	}
+
+	.e-a-item {
+		border: var(--e-a-border);
+		border-radius: var(--e-a-border-radius);
+		display: flex;
+		padding: 24px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.e-a-img {
+		border: var(--e-a-border);
+		border-radius: var(--e-a-border-radius);
+		width: 70px;
+	}
+
+	.e-a-actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		width: 100%;
+	}
+}
+
+

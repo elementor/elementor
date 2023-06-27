@@ -44,11 +44,13 @@ class Module extends BaseModule {
 		);
 
 		?>
-		<div class="wrap">
+		<div class="wrap e-a-marketplace">
 			<h2><?php echo esc_html__( 'Elementor\'s Marketplace', 'elementor' ); ?></h2>
 			<p><?php echo esc_html__( 'Elementor Marketplace is coming soon!', 'elementor' ); ?></p>
 
-			<?php self::render_plugins_list(); ?>
+			<div class="e-a-list">
+				<?php self::render_plugins_list(); ?>
+			</div>
 		</div>
 		<?php
 	}
@@ -116,12 +118,14 @@ class Module extends BaseModule {
 
 	private static function render_plugin_item( $plugin ) {
 		?>
-		<div>
-			<img src="<?php echo esc_url( $plugin['image'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>">
-			<h3><?php echo esc_html( $plugin['name'] ); ?></h3>
-			<p><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
-			<p><?php echo esc_html( $plugin['description'] ); ?></p>
-			<p>
+		<div class="e-a-item">
+			<div class="e-a-heading">
+				<img class="e-a-img" src="<?php echo esc_url( $plugin['image'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>">
+			</div>
+			<h3 class="e-a-title"><?php echo esc_html( $plugin['name'] ); ?></h3>
+			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
+			<p class="e-a-desc"><?php echo esc_html( $plugin['description'] ); ?></p>
+			<p class="e-a-actions">
 				<a href="<?php echo esc_url( $plugin['plugin_url'] ); ?>" class="button button-primary" target="_blank"><?php echo esc_html__( 'Install', 'elementor' ); ?></a>
 			</p>
 		</div>
