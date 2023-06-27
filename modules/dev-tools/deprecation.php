@@ -216,8 +216,8 @@ class Deprecation {
 		$caller = $backtrace[ $stack_depth ];
 		$caller_function = $caller['function'];
 		$caller_class = $caller['class'];
-		$caller_file = array_key_exists( 'file', $caller ) ? $caller['file'] : '';
-		$caller_line = array_key_exists( 'line', $caller ) ? $caller['line'] : '';
+		$caller_file = $caller['file'] ?? '';
+		$caller_line = $caller['line'] ?? '';
 		$source = $this->get_source( $caller_file );
 
 		$res = array(
