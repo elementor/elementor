@@ -45,8 +45,11 @@ class Module extends BaseModule {
 
 		?>
 		<div class="wrap e-a-marketplace">
-			<h2><?php echo esc_html__( 'Elementor\'s Marketplace', 'elementor' ); ?></h2>
-			<p><?php echo esc_html__( 'Elementor Marketplace is coming soon!', 'elementor' ); ?></p>
+
+			<div class="e-a-page-title">
+				<h2><?php echo esc_html__( 'Elementor\'s Marketplace', 'elementor' ); ?></h2>
+				<p><?php echo esc_html__( 'Elementor Marketplace is coming soon!', 'elementor' ); ?></p>
+			</div>
 
 			<div class="e-a-list">
 				<?php self::render_plugins_list(); ?>
