@@ -70,6 +70,13 @@ const sass = {
 				dest: 'assets/css/modules/ai',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/marketplace/assets/scss',
+				src: 'admin.scss',
+				dest: 'assets/css/modules/marketplace',
+				ext: '.css',
+			},
 		]
 	}
 };
