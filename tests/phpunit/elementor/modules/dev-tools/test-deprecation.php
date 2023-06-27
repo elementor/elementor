@@ -207,7 +207,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 			$this->assertEquals( [
 				'0.0.0',
 				'',
-			], array_slice( $settings['soft_notices'][ __FUNCTION__ ], 2, true ));
+			], array_slice( $settings['soft_notices'][ __FUNCTION__ ], 0, 2, true ));
 		}
 	}
 
@@ -266,7 +266,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 			$this->assertEquals( [
 				'0.0.0',
 				'',
-			], array_slice( $settings['soft_notices']['$testarg'], 2, true ));
+			], array_slice( $settings['soft_notices']['$testarg'], 0, 2, true ));
 		}
 	}
 
@@ -313,7 +313,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 			$this->assertEquals( [
 				'0.0.0',
 				'',
-			], array_slice ($settings['soft_notices']['elementor/test/deprecated_action_soft'], 2, true ));
+			], array_slice ($settings['soft_notices']['elementor/test/deprecated_action_soft'], 0, 2, true ));
 		}
 	}
 
