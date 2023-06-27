@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\DevTools;
 
+use Elementor\Modules\DevTools\BacktraceHelper;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -197,7 +199,7 @@ class Deprecation {
 		}
 
 		$print_deprecated = [];
-		$calling_source = $this->find_who_called_me( $stack_depth );
+		$calling_source = BacktraceHelper::find_who_called_me( $stack_depth );
 
 		$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 
@@ -210,28 +212,6 @@ class Deprecation {
 		return $print_deprecated;
 	}
 
-	private function find_who_called_me( $stack_depth ) {
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
-
-		$caller = $backtrace[ $stack_depth ];
-		$caller_function = $caller['function'];
-		$caller_class = $caller['class'];
-		$caller_file = $caller['file'] ?? '';
-		$caller_line = $caller['line'] ?? '';
-		$source = $this->get_source( $caller_file );
-
-		$res = array(
-			'function' => $caller_function,
-			'class' => $caller_class,
-			'file' => $caller_file,
-			'line' => $caller_line,
-			'type' => $source['type'],
-			'name' => $source['name'],
-		);
-		return $res;
-	}
-
-
 	private function log_deprecation( $entity, $version, $replacement, $source_message ) {
 		if ( $this->should_console_log_deprecated() ) {
 			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
@@ -243,21 +223,6 @@ class Deprecation {
 			}
 		}
 
-	}
-
-	private function get_source( $filename ) {
-		$file = str_replace( WP_CONTENT_DIR, '', $filename, $is_in_content );
-		$name = 'Unknown';
-		$type = '';
-		if ( 1 === $is_in_content ) {
-			$root_folder = explode( '/', $file );
-			$type = $root_folder[1];
-			$name = $root_folder[2];
-		}
-		return [
-			'name' => $name,
-			'type' => $type,
-		];
 	}
 
 	/**
