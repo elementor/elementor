@@ -190,7 +190,6 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_deprecated_function_soft() {
 		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.4.0' );
-
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
@@ -253,9 +252,9 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
-		$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
-
+		
 		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
 			$this->assertEquals( [
 				'0.0.0',
 				'',
@@ -299,9 +298,9 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$settings = $this->deprecation->get_settings();
 
 		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
-		$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
-
+		
 		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
 
 			$this->assertEquals( [
 				'0.0.0',
