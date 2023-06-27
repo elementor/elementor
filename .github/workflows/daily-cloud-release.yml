@@ -1,18 +1,14 @@
-name: Daily Release to Cloud
+name: Daily Cloud Release
 
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
+  ELEMENTOR_CORE_BRANCH: main
 
 on:
 #  schedule:
 #    - cron: '0 0 * * *'
   workflow_dispatch:
-    inputs:
-      pre_release:
-        description: 'Release'
-        required: true
-        default: false
 
 jobs:
   release:
@@ -41,7 +37,7 @@ jobs:
       - name: Env Vars Configure
         uses: ./.github/workflows/env-vars-configure
         with:
-          CHANNEL: ${{ github.event.inputs.channel }}
+          CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
