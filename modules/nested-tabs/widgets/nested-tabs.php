@@ -252,8 +252,8 @@ class NestedTabs extends Widget_Nested_Base {
 					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
-					'title' => esc_html__( 'Justified', 'elementor' ),
-					'icon' => 'eicon-v-align-stretch',
+					'title' => esc_html__( 'Stretch', 'elementor' ),
+					'icon' => 'eicon-align-stretch-v',
 				],
 			],
 			'selectors_dictionary' => [
