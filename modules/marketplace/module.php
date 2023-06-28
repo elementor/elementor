@@ -73,7 +73,7 @@ class Module extends BaseModule {
 				'author' => __( 'Team Yoast', 'elementor' ),
 				'author_url' => 'https://yoast.com/',
 				'description' => __( 'Yoast SEO is the most complete WordPress SEO plugin. It handles the technical optimization of your site & assists with optimizing your content.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/wordpress-seo/',
+				'action_url' => 'https://wordpress.org/plugins/wordpress-seo/',
 				'image' => 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
 			],
 			[
@@ -81,7 +81,7 @@ class Module extends BaseModule {
 				'author' => __( 'Automattic', 'elementor' ),
 				'author_url' => 'https://woocommerce.com/',
 				'description' => __( 'WooCommerce is a flexible, open-source eCommerce solution built on WordPress. Sell anything, anywhere and make your way.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/woocommerce/',
+				'action_url' => 'https://wordpress.org/plugins/woocommerce/',
 				'image' => 'https://ps.w.org/woocommerce/assets/icon-256x256.png',
 			],
 			[
@@ -89,7 +89,7 @@ class Module extends BaseModule {
 				'author' => __( 'Automattic', 'elementor' ),
 				'author_url' => 'https://akismet.com/',
 				'description' => __( 'Akismet checks your comments and contact form submissions against our global database of spam to prevent your site from publishing malicious content. You can review the comment spam it catches on your blog’s “Comments” admin screen.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/akismet/',
+				'action_url' => 'https://wordpress.org/plugins/akismet/',
 				'image' => 'https://ps.w.org/akismet/assets/icon-256x256.png',
 			],
 			[
@@ -97,7 +97,7 @@ class Module extends BaseModule {
 				'author' => __( 'WPForms', 'elementor' ),
 				'author_url' => 'https://wpforms.com/',
 				'description' => __( 'WPForms is the best WordPress contact form plugin. Here are the features that makes WPForms the most powerful and user-friendly WordPress form builder in the market.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/wpforms-lite/',
+				'action_url' => 'https://wordpress.org/plugins/wpforms-lite/',
 				'image' => 'https://ps.w.org/wpforms-lite/assets/icon-256x256.png',
 			],
 			[
@@ -105,7 +105,7 @@ class Module extends BaseModule {
 				'author' => __( 'Google', 'elementor' ),
 				'author_url' => 'https://google.com/',
 				'description' => __( 'Site Kit is the official WordPress plugin from Google for insights about how people find and use your site. Site Kit is the one-stop solution to deploy, manage, and get insights from critical Google tools to make the site successful on the web. It provides authoritative, up-to-date insights from multiple Google products directly on the WordPress dashboard for easy access, all for free.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/google-site-kit/',
+				'action_url' => 'https://wordpress.org/plugins/google-site-kit/',
 				'image' => 'https://ps.w.org/google-site-kit/assets/icon-256x256.png',
 			],
 			[
@@ -113,7 +113,7 @@ class Module extends BaseModule {
 				'author' => __( 'Alex Mills (Viper007Bond)', 'elementor' ),
 				'author_url' => 'https://alex.blog/',
 				'description' => __( 'Regenerate the thumbnails for one or more of your image uploads. Useful when changing their sizes or your theme.', 'elementor' ),
-				'plugin_url' => 'https://wordpress.org/plugins/regenerate-thumbnails/',
+				'action_url' => 'https://wordpress.org/plugins/regenerate-thumbnails/',
 				'image' => 'https://ps.w.org/regenerate-thumbnails/assets/icon-128x128.png',
 			],
 		];
@@ -129,7 +129,7 @@ class Module extends BaseModule {
 			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
 			<p class="e-a-desc"><?php echo esc_html( $plugin['description'] ); ?></p>
 			<p class="e-a-actions">
-				<a href="<?php echo esc_url( $plugin['plugin_url'] ); ?>" class="button button-primary" target="_blank"><?php echo esc_html__( 'Install', 'elementor' ); ?></a>
+				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="button button-primary" target="_blank"><?php echo esc_html__( 'Install', 'elementor' ); ?></a>
 			</p>
 		</div>
 		<?php
