@@ -19,13 +19,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_menu', [ $this, 'register_page' ], 10500 );
+		add_action( 'elementor/admin/menu/register', [ $this, 'register_page' ] );
 	}
 
 	public function register_page() {
 		$menu_text = esc_html__( 'Marketplace', 'elementor' );
 
-		add_submenu_page(
+		$menu_hook = add_submenu_page(
 			Settings::PAGE_ID,
 			$menu_text,
 			$menu_text,
@@ -33,16 +33,28 @@ class Module extends BaseModule {
 			self::PAGE_ID,
 			[ $this, 'display_page' ]
 		);
+
+		add_action( "admin_print_scripts-{$menu_hook}", [ $this, 'enqueue_assets' ] );
 	}
 
-	public function display_page() {
+	public function enqueue_assets() {
+		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
+
 		wp_enqueue_style(
 			'elementor-marketplace',
 			$this->get_css_assets_url( 'modules/marketplace/admin' ),
 			[],
 			ELEMENTOR_VERSION
 		);
+	}
 
+	public function body_status_classes( $admin_body_classes ) {
+		$admin_body_classes .= ' elementor-marketplace-page';
+
+		return $admin_body_classes;
+	}
+
+	public function display_page() {
 		?>
 		<div class="wrap e-a-marketplace">
 
@@ -72,7 +84,9 @@ class Module extends BaseModule {
 				'name' => __( 'Yoast SEO', 'elementor' ),
 				'author' => __( 'Team Yoast', 'elementor' ),
 				'author_url' => 'https://yoast.com/',
+				'badge' => __( 'Pro', 'elementor' ),
 				'description' => __( 'Yoast SEO is the most complete WordPress SEO plugin. It handles the technical optimization of your site & assists with optimizing your content.', 'elementor' ),
+				'learn_more_url' => 'https://elementor.com/',
 				'action_url' => 'https://wordpress.org/plugins/wordpress-seo/',
 				'image' => 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png',
 			],
@@ -96,6 +110,7 @@ class Module extends BaseModule {
 				'name' => __( 'Contact Form by WPForms – Drag & Drop Form Builder for WordPress', 'elementor' ),
 				'author' => __( 'WPForms', 'elementor' ),
 				'author_url' => 'https://wpforms.com/',
+				'badge' => __( 'Pro', 'elementor' ),
 				'description' => __( 'WPForms is the best WordPress contact form plugin. Here are the features that makes WPForms the most powerful and user-friendly WordPress form builder in the market.', 'elementor' ),
 				'action_url' => 'https://wordpress.org/plugins/wpforms-lite/',
 				'image' => 'https://ps.w.org/wpforms-lite/assets/icon-256x256.png',
@@ -126,8 +141,16 @@ class Module extends BaseModule {
 				<img class="e-a-img" src="<?php echo esc_url( $plugin['image'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>">
 			</div>
 			<h3 class="e-a-title"><?php echo esc_html( $plugin['name'] ); ?></h3>
+			<?php if ( ! empty( $plugin['badge'] ) ) : ?>
+				<span class="e-a-badge"><?php echo esc_html( $plugin['badge'] ); ?></span>
+			<?php endif; ?>
 			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
 			<p class="e-a-desc"><?php echo esc_html( $plugin['description'] ); ?></p>
+			<?php if ( ! empty( $plugin['learn_more_url'] ) ) : ?>
+				<p class="e-a-learn-more">
+					<a href="<?php echo esc_url( $plugin['learn_more_url'] ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
+				</p>
+			<?php endif; ?>
 			<p class="e-a-actions">
 				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="button button-primary" target="_blank"><?php echo esc_html__( 'Install', 'elementor' ); ?></a>
 			</p>
