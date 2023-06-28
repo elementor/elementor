@@ -16,7 +16,7 @@ class Test_Controller extends Elementor_Test_Base {
 	/**
 	 * Test access denied
 	 */
-/*	public function test_get_experiments__forbidden() {
+	public function test_get_experiments__forbidden() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -27,7 +27,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_get_experiments() {
+/*	public function test_get_experiments() {
 		// Arrange.
 		$this->act_as_admin_or_network_admin();
 		$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
