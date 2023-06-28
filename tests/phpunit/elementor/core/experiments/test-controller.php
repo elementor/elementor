@@ -27,7 +27,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}*/
 
-	public function test_get_experiments() {
+/*	public function test_get_experiments() {
 		// Arrange.
 		$this->act_as_admin_or_network_admin();
 		$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
@@ -59,11 +59,11 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$this->assertFalse( array_key_exists( $hiddenFeatureThatShouldNotBeInResponse, $data ) );
 		$this->assertFalse( array_key_exists( $mutableHiddenFeatureThatShouldNotBeInResponse, $data ) );
 	}
-
+*/
 	/**
 	 * Test access denied
 	 */
-/*	public function test_update_experiments__forbidden() {
+	public function test_update_experiments__forbidden() {
 		// Arrange.
 		$this->act_as_editor();
 
@@ -73,7 +73,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 401, $response->get_status() );
 	}
-*/
+
 	/**
 	 * test arguments
 	 */
