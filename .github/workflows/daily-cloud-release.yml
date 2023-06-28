@@ -36,9 +36,12 @@ jobs:
         with:
           node-version: 18.x
       - name: Env Vars Configure
+        env:
+          CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
+          CHANNEL: ${{ env.CHANNEL }}
         run: |
           CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${env.CHANNEL}" >> $GITHUB_ENV
+          echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${CHANNEL}" >> $GITHUB_ENV
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
