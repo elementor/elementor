@@ -27,15 +27,14 @@ function register_feature_routes() {
 			'callback' => function () {
 				$experiments_manager = Plugin::instance()->experiments;
 				$feature = $experiments_manager->get_features();
-				$experiments = [];
+				$experiments = array();
 
 				foreach ( $feature as $experiment_id => $experiment ) {
 					if ( ! empty( $experiment['hidden'] ) || false === $experiment['mutable'] ) {
 						continue;
 					}
 
-					$experiments[] = [
-						'id' => $experiment_id,
+					$experiments[$experiment_id] = [
 						'title' => $experiment['title'],
 						'status' => $experiments_manager->is_feature_active( $experiment_id )
 							? Experiments_Manager::STATE_ACTIVE
@@ -43,9 +42,7 @@ function register_feature_routes() {
 					];
 				}
 
-				wp_send_json_success([
-					'experiments' => $experiments,
-				]);
+				wp_send_json_success( $experiments );
 			},
 		],
 	]);
