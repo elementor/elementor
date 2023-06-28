@@ -41,7 +41,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$experiments_manager = Plugin::instance()->experiments;
 		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
-			\WP_CLI::error( 'Experiments do not exist' . $args[0] );
+			\WP_CLI::error( 'Experiments do not exist ' . $args[0] );
 		}
 
 		if ( $is_network ) {
@@ -76,7 +76,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$experiments_manager = Plugin::instance()->experiments;
 		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
-			\WP_CLI::error( 'Experiments do not exist' );
+			\WP_CLI::error( 'Experiments do not exist ' . $args[0] );
 		}
 
 		if ( $is_network ) {
@@ -182,6 +182,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$experiments_manager = Plugin::instance()->experiments;
 		foreach ( $experiments as $experiment ) {
+
 			$option = $experiments_manager->get_feature_option_key( $experiment );
 			update_option( $option, $state );
 		}
