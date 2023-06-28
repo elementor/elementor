@@ -5,7 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
-class Test_Controller extends Elementor_Test_Base {
+class Test_Experiments_Controller extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
