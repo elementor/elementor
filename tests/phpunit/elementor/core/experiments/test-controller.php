@@ -18,7 +18,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	public function test_get_experiments__forbidden() {
 		// Arrange.
-		$this->act_as_subscriber();
+		$this->act_as_editor();
 
 		// Act.
 		$response = $this->get_experiments();
@@ -29,7 +29,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	public function test_get_experiments() {
 		// Arrange.
-		$this->act_as_editor();
+		$this->act_as_admin_or_network_admin();
 		$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
 		$inactiveFeatureThatShouldBeInResponse = 'inactiveFeatureThatShouldBeInResponse';
 		$mutableFeatureThatShouldNotBeInResponse = 'mutableFeatureThatShouldNotBeInResponse';
@@ -65,10 +65,10 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	public function test_update_experiments__forbidden() {
 		// Arrange.
-		$this->act_as_subscriber();
+		$this->act_as_editor();
 
 		// Act.
-		$response = update_experiment( 'some_experiment_id', Experiments_Manager::STATE_ACTIVE );
+		$response = $this->update_experiment( 'some_experiment_id', Experiments_Manager::STATE_ACTIVE );
 
 		// Assert.
 		$this->assertEquals( 401, $response->get_status() );
@@ -79,14 +79,14 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	public function test_update_experiments__invalid_args() {
 		// Arrange.
-		$this->act_as_editor();
+		$this->act_as_admin_or_network_admin();
 
 		// Act.
 		$no_params_request = new \WP_REST_Request( 'POST', "/elementor/v1/experiments" );
 		$no_params_response = rest_do_request( $no_params_request );
 		$no_experimentId_request = new \WP_REST_Request( 'POST', "/elementor/v1/experiments" );
 		$no_experimentId_request->set_param( 'status', Experiments_Manager::STATE_ACTIVE );
-		$bad_status_request = update_experiment( 'some_experiment_id', 'bad_status' );
+		$bad_status_request = $this->update_experiment( 'some_experiment_id', 'bad_status' );
 
 		// Assert.
 		$this->assertEquals( 500, $no_params_request->get_status() );
@@ -96,24 +96,24 @@ class Test_Controller extends Elementor_Test_Base {
 
 	public function test_update_experiments() {
 		// Arrange.
-		$this->act_as_editor();
+		$this->act_as_admin_or_network_admin();
 		$experimentId = 'some_experiment_id';
 		$this->add_test_feature( $experimentId, $experimentId . 'Title', Experiments_Manager::STATE_ACTIVE, false, false);
 
 		// Set experiment as "Active" when its already "Active"
-		$response = update_experiment( $experimentId, Experiments_Manager::STATE_ACTIVE );
+		$response = $this->update_experiment( $experimentId, Experiments_Manager::STATE_ACTIVE );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertTrue( $this->experiments->is_feature_active( $experimentId ) );
 		// Set experiment as "Inactive" when its "Active"
-		$response = update_experiment( $experimentId, Experiments_Manager::STATE_INACTIVE );
+		$response = $this->update_experiment( $experimentId, Experiments_Manager::STATE_INACTIVE );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertFalse( $this->experiments->is_feature_active( $experimentId ) );
 		// Set experiment as "Inactive" when its already "Inactive"
-		$response = update_experiment( $experimentId, Experiments_Manager::STATE_INACTIVE );
+		$response = $this->update_experiment( $experimentId, Experiments_Manager::STATE_INACTIVE );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertFalse( $this->experiments->is_feature_active( $experimentId ) );
 		// Set experiment as "Active" when its "Inactive"
-		$response = update_experiment( $experimentId, Experiments_Manager::STATE_ACTIVE );
+		$response = $this->update_experiment( $experimentId, Experiments_Manager::STATE_ACTIVE );
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertTrue( $this->experiments->is_feature_active( $experimentId ) );
 	}
