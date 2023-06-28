@@ -123,21 +123,6 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           PRE_RELEASE: ${{ github.event.inputs.pre_release }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-      - name: Merge to master
-        if: env.CHANNEL == 'ga' && github.event.inputs.pre_release == 'false' # Only for GA releases
-        uses: devmasx/merge-branch@854d3ac71ed1e9deb668e0074781b81fdd6e771f # v1.4.0
-        with:
-          type: now
-          from_branch: ${{ github.ref }}
-          target_branch: master
-          github_token: ${{ secrets.MAINTAIN_TOKEN }}
-      # TODO: Remove comment after we will be sure that the release is working. ( We want to create for the first time a release without deleting the tag)
-      # - name: Remove git tag
-      #   uses: dev-drprasad/delete-tag-and-release@085c6969f18bad0de1b9f3fe6692a3cd01f64fe5 # v0.2.0
-      #   with:
-      #     tag_name: v${{ env.CLEAN_PACKAGE_NAME }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Release
         if: github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/post-to-slack
