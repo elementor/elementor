@@ -71,7 +71,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$response = $this->update_experiment( 'some_experiment_id', Experiments_Manager::STATE_ACTIVE );
 
 		// Assert.
-		$this->assertEquals( 401, $response->get_status() );
+		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	/**
