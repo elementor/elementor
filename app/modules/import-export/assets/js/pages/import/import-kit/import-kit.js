@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useReducer } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -12,10 +12,13 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import Dialog from 'elementor-app/ui/dialog/dialog';
+import { useIntroduction } from '@elementor/hooks';
 
 import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
+import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function ImportKit() {
 	const sharedContext = useContext( SharedContext ),
@@ -63,7 +66,14 @@ export default function ImportKit() {
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic onClick={ () => eventTracking( 'kit-library/seek-more-info', null, 'click' ) } >
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
-		);
+		),
+		{ doAction, dialog, checkbox } = useVerifyUploadingJson( {
+			action: ( file, e ) => {
+				setIsLoading( true );
+				importContext.dispatch( { type: 'SET_FILE', payload: file } );
+				eventTracking( 'kit-library/file-upload', null, 'feedback', null, null, e.type );
+			},
+		} );
 
 	// On load.
 	useEffect( () => {
@@ -129,9 +139,7 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
 					onFileSelect={ ( file, e ) => {
-						setIsLoading( true );
-						importContext.dispatch( { type: 'SET_FILE', payload: file } );
-						eventTracking( 'kit-library/file-upload', null, 'feedback', null, null, e.type );
+						doAction( file, e );
 					} }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
@@ -144,7 +152,96 @@ export default function ImportKit() {
 					onError={ () => eventTracking( 'kit-library/modal-open', null, 'load', errorType, 'error' ) }
 					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', null, 'click', null, 'error' ) }
 				/> }
+
+				{ dialog.isOpen &&
+					<Dialog
+						title={ __( 'Warning: JSON files may be unsafe', 'elementor' ) }
+						text={ __( 'Uploading JSON files from unknown sources can be harmful and put your site at risk. For maximum safety, only install JSON files from trusted sources.', 'elementor' ) }
+						approveButtonColor="link"
+						approveButtonText={ __( 'Continue', 'elementor' ) }
+						approveButtonOnClick={ dialog.approve }
+						dismissButtonText={ __( 'Cancel', 'elementor' ) }
+						dismissButtonOnClick={ dialog.dismiss }
+						onClose={ dialog.dismiss }
+					>
+						<label htmlFor="do-not-show-upload-json-warning-again" style={ { display: 'flex', alignItems: 'center', gap: '5px' } }>
+							<Checkbox
+								id="do-not-show-upload-json-warning-again"
+								type="checkbox"
+								value={ checkbox.isChecked }
+								onChange={ ( e ) => checkbox.setIsChecked( e.target.checked ) }
+							/>
+							{ __( 'Do not show this message again', 'elementor' ) }
+						</label>
+					</Dialog>
+				}
 			</section>
 		</Layout>
 	);
+}
+
+function useVerifyUploadingJson( { action } ) {
+	const { isViewed: isIntroductionViewed, markAsViewed: markIntroductionAsViewed } = useIntroduction( 'upload_json_warning_generic_message' );
+	const [ isChecked, setIsChecked ] = useState( false );
+
+	const [ state, dispatch ] = useReducer( ( state, action ) => {
+		switch ( action.type ) {
+			case 'OPEN':
+				return {
+					...state,
+					isOpen: true,
+					data: action.payload,
+				};
+			case 'APPROVE':
+				return {
+					...state,
+					isOpen: false,
+					isApproved: true,
+					data: [],
+				};
+			case 'DISMISS':
+				return {
+					...state,
+					isOpen: false,
+					isApproved: false,
+					data: [],
+				};
+		}
+	}, {
+		isOpen: false,
+		isApproved: isIntroductionViewed,
+		data: [],
+	} );
+
+	return {
+		isDialogOpen: state.isOpen,
+		checkbox: {
+			isChecked,
+			setIsChecked,
+		},
+		dialog: {
+			isOpen: state.isOpen,
+			approve: () => {
+				action( ...state.data );
+
+				if ( isChecked ) {
+					markIntroductionAsViewed();
+				}
+
+				dispatch( { type: 'APPROVE' } );
+			},
+			dismiss: () => {
+				dispatch( { type: 'DISMISS' } );
+			},
+		},
+		doAction: ( ...data ) => {
+			if ( state.isApproved ) {
+				action( ...data );
+
+				return;
+			}
+
+			dispatch( { type: 'OPEN', payload: data } );
+		},
+	};
 }

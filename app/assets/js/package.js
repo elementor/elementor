@@ -42,6 +42,7 @@ import useAjax from './hooks/use-ajax';
 import useAction from './hooks/use-action';
 import usePageTitle from './hooks/use-page-title';
 import useQueryParams from './hooks/use-query-params';
+import useIntroduction from './hooks/use-introduction';
 
 export const appUi = {
 	AddNewButton,
@@ -89,4 +90,5 @@ export const hooks = {
 	useAction,
 	usePageTitle,
 	useQueryParams,
+	useIntroduction,
 };
