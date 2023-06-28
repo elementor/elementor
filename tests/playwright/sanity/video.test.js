@@ -2,7 +2,6 @@ const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const EditorPage = require( '../pages/editor-page' );
-const { setExperiment } = require( '../utilities/rest-api' );
 const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
