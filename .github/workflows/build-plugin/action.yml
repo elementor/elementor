@@ -18,6 +18,7 @@ runs:
   steps:
     - shell: bash
       run: |
+            echo "PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}" >> $GITHUB_ENV
             if [ "${{ inputs.PACKAGE_VERSION }}" == "" ] || [ "${{ inputs.PACKAGE_VERSION }}" == "undefined" ];
               then
                 echo "PACKAGE_VERSION is empty string or undefined"
@@ -30,7 +31,7 @@ runs:
                 echo "Running update version script"
                 bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
             fi
-            
+
             bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
