@@ -39,9 +39,6 @@ jobs:
         run: |
           CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${env.CHANNEL}" >> $GITHUB_ENV
-        with:
-          CHANNEL: ${{ env.CHANNEL }}
-          REF: ${{ github.ref }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
