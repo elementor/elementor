@@ -42,6 +42,8 @@ jobs:
         run: |
           CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -66,7 +68,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.PACKAGE_VERSION }}
+          tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
           files: |
             elementor-*.zip
