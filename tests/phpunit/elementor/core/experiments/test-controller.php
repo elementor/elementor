@@ -14,8 +14,17 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
+		global $wp_rest_server;
+		$this->server = $wp_rest_server = new WP_REST_Server;
+		do_action( 'rest_api_init' );
 
 		$this->experiments = new Experiments_Manager();
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		global $wp_rest_server;
+		$wp_rest_server = null;
 	}
 
 	/**
@@ -50,6 +59,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$response = $this->get_experiments();
 /*
 		// Assert.
+		$this->assertResponseStatus( 200, $response );
 		$this->assertEquals( 200, $response->get_status() );
 
 		$data = $response->get_data();
@@ -141,7 +151,9 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 	private function get_experiments(): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'GET', "/elementor/v1/experiments" );
 
-		return rest_do_request( $request );
+		// return rest_do_request( $request );
+		return $this->server->dispatch( $request );
+		
 	}
 
 	/**
