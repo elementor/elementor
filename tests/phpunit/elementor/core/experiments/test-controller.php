@@ -7,6 +7,11 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 class Test_Experiments_Controller extends Elementor_Test_Base {
 
+	/**
+	 * @var \Elementor\Core\Experiments\Manager
+	 */
+	private $experiments;
+
 	public function setUp() {
 		parent::setUp();
 
