@@ -1,6 +1,7 @@
 <?php
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
