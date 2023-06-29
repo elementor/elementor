@@ -15,7 +15,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 		global $wp_rest_server;
-		$this->server = $wp_rest_server = new WP_REST_Server;
+		$this->server = $wp_rest_server = new \WP_REST_Server;
 		do_action( 'rest_api_init' );
 
 		$this->experiments = new Experiments_Manager();
