@@ -4,6 +4,10 @@ namespace Elementor\Modules\Marketplace;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\User;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class Admin_Pointer {
 
 	const RELEASE_VERSION = '3.14.0';
