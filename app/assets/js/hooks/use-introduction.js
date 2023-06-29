@@ -4,6 +4,10 @@ export default function useIntroduction( key ) {
 	const [ isViewed, setIsViewed ] = useState( !! window.elementorAppConfig?.user?.introduction?.[ key ] );
 
 	function markAsViewed() {
+		if ( ! key ) {
+			return Promise.reject();
+		}
+
 		return new Promise( ( resolve, reject ) => {
 			if ( isViewed ) {
 				reject();

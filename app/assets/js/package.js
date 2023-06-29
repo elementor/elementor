@@ -43,6 +43,7 @@ import useAction from './hooks/use-action';
 import usePageTitle from './hooks/use-page-title';
 import useQueryParams from './hooks/use-query-params';
 import useIntroduction from './hooks/use-introduction';
+import useWrapActionWithVerifyDialog from './hooks/use-wrap-action-with-verify-dialog';
 
 export const appUi = {
 	AddNewButton,
@@ -91,4 +92,5 @@ export const hooks = {
 	usePageTitle,
 	useQueryParams,
 	useIntroduction,
+	useWrapActionWithVerifyDialog,
 };

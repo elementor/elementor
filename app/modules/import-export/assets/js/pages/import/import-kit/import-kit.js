@@ -1,5 +1,6 @@
-import { useState, useEffect, useContext, useReducer } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
+import { useWrapActionWithVerifyDialog } from '@elementor/hooks';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
@@ -13,7 +14,6 @@ import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import Dialog from 'elementor-app/ui/dialog/dialog';
-import { useIntroduction } from '@elementor/hooks';
 
 import useKit from '../../../hooks/use-kit';
 
@@ -67,7 +67,8 @@ export default function ImportKit() {
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		),
-		{ doAction, dialog, checkbox } = useVerifyUploadingJson( {
+		{ runAction, dialog, checkbox } = useWrapActionWithVerifyDialog( {
+			doNotShowAgainKey: 'upload_json_warning_generic_message',
 			action: ( file, e ) => {
 				setIsLoading( true );
 				importContext.dispatch( { type: 'SET_FILE', payload: file } );
@@ -138,9 +139,7 @@ export default function ImportKit() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
-					onFileSelect={ ( file, e ) => {
-						doAction( file, e );
-					} }
+					onFileSelect={ ( file, e ) => runAction( file, e ) }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
@@ -169,7 +168,7 @@ export default function ImportKit() {
 								id="do-not-show-upload-json-warning-again"
 								type="checkbox"
 								value={ checkbox.isChecked }
-								onChange={ ( e ) => checkbox.setIsChecked( e.target.checked ) }
+								onChange={ ( event ) => checkbox.setIsChecked( !! event.target.checked ) }
 							/>
 							{ __( 'Do not show this message again', 'elementor' ) }
 						</label>
@@ -180,68 +179,3 @@ export default function ImportKit() {
 	);
 }
 
-function useVerifyUploadingJson( { action } ) {
-	const { isViewed: isIntroductionViewed, markAsViewed: markIntroductionAsViewed } = useIntroduction( 'upload_json_warning_generic_message' );
-	const [ isChecked, setIsChecked ] = useState( false );
-
-	const [ state, dispatch ] = useReducer( ( state, action ) => {
-		switch ( action.type ) {
-			case 'OPEN':
-				return {
-					...state,
-					isOpen: true,
-					data: action.payload,
-				};
-			case 'APPROVE':
-				return {
-					...state,
-					isOpen: false,
-					isApproved: true,
-					data: [],
-				};
-			case 'DISMISS':
-				return {
-					...state,
-					isOpen: false,
-					isApproved: false,
-					data: [],
-				};
-		}
-	}, {
-		isOpen: false,
-		isApproved: isIntroductionViewed,
-		data: [],
-	} );
-
-	return {
-		isDialogOpen: state.isOpen,
-		checkbox: {
-			isChecked,
-			setIsChecked,
-		},
-		dialog: {
-			isOpen: state.isOpen,
-			approve: () => {
-				action( ...state.data );
-
-				if ( isChecked ) {
-					markIntroductionAsViewed();
-				}
-
-				dispatch( { type: 'APPROVE' } );
-			},
-			dismiss: () => {
-				dispatch( { type: 'DISMISS' } );
-			},
-		},
-		doAction: ( ...data ) => {
-			if ( state.isApproved ) {
-				action( ...data );
-
-				return;
-			}
-
-			dispatch( { type: 'OPEN', payload: data } );
-		},
-	};
-}
