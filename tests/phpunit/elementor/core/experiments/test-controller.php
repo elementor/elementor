@@ -40,10 +40,10 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$this->add_test_feature( $mutableFeatureThatShouldNotBeInResponse, $mutableFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, true, false);
 		$this->add_test_feature( $hiddenFeatureThatShouldNotBeInResponse, $hiddenFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, false, true);
 		$this->add_test_feature( $mutableHiddenFeatureThatShouldNotBeInResponse, $mutableHiddenFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, true, true);
-/*
+
 		// Act.
 		$response = $this->get_experiments();
-
+/*
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
