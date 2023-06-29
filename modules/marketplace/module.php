@@ -19,6 +19,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		Admin_Pointer::add_hooks();
+
 		add_action( 'elementor/admin/menu/register', [ $this, 'register_page' ] );
 	}
 
