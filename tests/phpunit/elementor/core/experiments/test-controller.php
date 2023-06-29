@@ -29,8 +29,8 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 
 	public function test_get_experiments() {
 		// Arrange.
-		/*$this->act_as_admin_or_network_admin();
-		$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
+		$this->act_as_admin_or_network_admin();
+		/*$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
 		$inactiveFeatureThatShouldBeInResponse = 'inactiveFeatureThatShouldBeInResponse';
 		$mutableFeatureThatShouldNotBeInResponse = 'mutableFeatureThatShouldNotBeInResponse';
 		$hiddenFeatureThatShouldNotBeInResponse = 'hiddenFeatureThatShouldNotBeInResponse';
