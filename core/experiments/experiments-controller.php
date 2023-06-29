@@ -25,7 +25,7 @@ function register_feature_routes() {
 				return empty( $params );
 			},
 			'callback' => function () {
-				$experiments_manager = Plugin::instance()->experiments;
+/*				$experiments_manager = Plugin::instance()->experiments;
 				$feature = $experiments_manager->get_features();
 				$experiments = array();
 
@@ -42,7 +42,8 @@ function register_feature_routes() {
 					];
 				}
 
-				wp_send_json_success( $experiments );
+				wp_send_json_success( $experiments );*/
+				wp_send_json_success();
 			},
 		],
 	]);
