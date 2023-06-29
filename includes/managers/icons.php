@@ -548,6 +548,10 @@ class Icons_Manager {
 	public function ajax_upgrade_to_fa5() {
 		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
 		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
