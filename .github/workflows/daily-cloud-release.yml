@@ -59,7 +59,7 @@ jobs:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: ${{ github.ref }}
-          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }} || "d7785ee85448fbdcf894e8679c628253a7aea7ee"
+          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
           GENERATE_EMPTY_CHANGELOG: true
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
