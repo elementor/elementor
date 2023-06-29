@@ -1,7 +1,7 @@
 name: Daily Cloud Release
 
 env:
-  CHANNEL: 'daily-cloud'
+  CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
 
 on:
