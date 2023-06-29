@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-require __DIR__ . '/experiments-controller.php';
+include __DIR__ . '/experiments-controller.php';
 
 class Manager extends Base_Object {
 
