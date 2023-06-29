@@ -168,44 +168,47 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'Check default state behaviour', async () => {
-				// Check default state -> first item is open
-				await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+				test.step( 'Check default state -> first item is open', async () => {
+					await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
-				const allItems = await nestedAccordionItemTitle.all(),
-					allItemsExceptFirst = allItems.slice( 1 );
+					const allItems = await nestedAccordionItemTitle.all(),
+						allItemsExceptFirst = allItems.slice( 1 );
 
-				for ( const item of allItemsExceptFirst ) {
-					await expect.soft( item ).not.toHaveAttribute( 'open', '' );
-				}
+					for ( const item of allItemsExceptFirst ) {
+						await expect.soft( item ).not.toHaveAttribute( 'open', '' );
+					}
+				} );
 
-				//  Verify that all items are closed.
-				await editor.openSection( 'section_interactions' );
-				await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
+				test.step( 'Verify that all items are closed.', async () => {
+					await editor.openSection( 'section_interactions' );
+					await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
 
-				for ( const item of allItems ) {
-					await expect.soft( item ).not.toHaveAttribute( 'open', '' );
-				}
+					for ( const item of allItems ) {
+						await expect.soft( item ).not.toHaveAttribute( 'open', '' );
+					}
+				} );
 
-				// Check manual select of first expand -> first item is open
-				await editor.setSelectControlValue( 'default_state', 'expanded' );
-				await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+				test.step( 'Check manual select of first expand -> first item is open', async () => {
+					await editor.setSelectControlValue( 'default_state', 'expanded' );
+					await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
-				for ( const item of allItemsExceptFirst ) {
-					await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
-				}
+					for ( const item of allItemsExceptFirst ) {
+						await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
+					}
+				} );
 
-				// Check that multiple items can be open
-				await editor.setSelectControlValue( 'max_items_expended', 'multiple' );
+				test.step( 'Check that multiple items can be open', async () => {
+					await editor.setSelectControlValue( 'max_items_expended', 'multiple' );
 
-				for ( const item of allItemsExceptFirst ) {
-					await item.click();
-				}
+					for ( const item of allItemsExceptFirst ) {
+						await item.click();
+					}
 
-				for ( const item of allItemsExceptFirst ) {
-					await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
-				}
+					for ( const item of allItemsExceptFirst ) {
+						await expect.soft( item ).not.toHaveAttribute( 'open', 'true' );
+					}
+				} );
 
-				// Reset max_items_expanded to default state
 				await editor.setSelectControlValue( 'max_items_expended', 'one' );
 			} );
 		} );
