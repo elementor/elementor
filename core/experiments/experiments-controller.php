@@ -34,7 +34,7 @@ function register_feature_routes() {
 						continue;
 					}
 
-					$experiments[$experiment_id] = [
+					$experiments[ $experiment_id ] = [
 						'title' => $experiment['title'],
 						'status' => $experiments_manager->is_feature_active( $experiment_id )
 							? Experiments_Manager::STATE_ACTIVE
