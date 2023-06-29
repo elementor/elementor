@@ -30,7 +30,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 	public function test_get_experiments() {
 		// Arrange.
 		$this->act_as_admin_or_network_admin();
-		/*$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
+		$featureThatShouldBeInResponse = 'featureThatShouldBeInResponse';
 		$inactiveFeatureThatShouldBeInResponse = 'inactiveFeatureThatShouldBeInResponse';
 		$mutableFeatureThatShouldNotBeInResponse = 'mutableFeatureThatShouldNotBeInResponse';
 		$hiddenFeatureThatShouldNotBeInResponse = 'hiddenFeatureThatShouldNotBeInResponse';
@@ -40,7 +40,7 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 		$this->add_test_feature( $mutableFeatureThatShouldNotBeInResponse, $mutableFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, true, false);
 		$this->add_test_feature( $hiddenFeatureThatShouldNotBeInResponse, $hiddenFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, false, true);
 		$this->add_test_feature( $mutableHiddenFeatureThatShouldNotBeInResponse, $mutableHiddenFeatureThatShouldNotBeInResponse . 'Title', Experiments_Manager::STATE_ACTIVE, true, true);
-
+/*
 		// Act.
 		$response = $this->get_experiments();
 
