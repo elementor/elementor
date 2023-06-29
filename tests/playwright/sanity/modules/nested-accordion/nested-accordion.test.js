@@ -168,18 +168,18 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 
 			await test.step( 'Check default state behaviour', async () => {
-				test.step( 'Check default state -> first item is open', async () => {
-					await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
+				const allItems = await nestedAccordionItemTitle.all(),
+					allItemsExceptFirst = allItems.slice( 1 );
 
-					const allItems = await nestedAccordionItemTitle.all(),
-						allItemsExceptFirst = allItems.slice( 1 );
+				await test.step( 'Check default state -> first item is open', async () => {
+					await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
 					for ( const item of allItemsExceptFirst ) {
 						await expect.soft( item ).not.toHaveAttribute( 'open', '' );
 					}
 				} );
 
-				test.step( 'Verify that all items are closed.', async () => {
+				await test.step( 'Verify that all items are closed.', async () => {
 					await editor.openSection( 'section_interactions' );
 					await editor.setSelectControlValue( 'default_state', 'all_collapsed' );
 
@@ -188,7 +188,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					}
 				} );
 
-				test.step( 'Check manual select of first expand -> first item is open', async () => {
+				await test.step( 'Check manual select of first expand -> first item is open', async () => {
 					await editor.setSelectControlValue( 'default_state', 'expanded' );
 					await expect.soft( nestedAccordionItemTitle.first() ).toHaveAttribute( 'open', 'true' );
 
@@ -197,7 +197,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					}
 				} );
 
-				test.step( 'Check that multiple items can be open', async () => {
+				await test.step( 'Check that multiple items can be open', async () => {
 					await editor.setSelectControlValue( 'max_items_expended', 'multiple' );
 
 					for ( const item of allItemsExceptFirst ) {
@@ -331,7 +331,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in front end', async () => {
 					await editor.publishAndViewPage();
 					const firstItem = page.locator( '.e-n-accordion-item' ).first();
-					await editor.isScreenShottable();
+					await editor.isScreenShottable( firstItem );
 					await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
 				} );
 			} );
