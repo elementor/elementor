@@ -154,8 +154,8 @@ export default function ImportKit() {
 
 				{ dialog.isOpen &&
 					<Dialog
-						title={ __( 'Warning: JSON files may be unsafe', 'elementor' ) }
-						text={ __( 'Uploading JSON files from unknown sources can be harmful and put your site at risk. For maximum safety, only install JSON files from trusted sources.', 'elementor' ) }
+						title={ __( 'Warning: JSON or ZIP files may be unsafe', 'elementor' ) }
+						text={ __( 'Uploading JSON or ZIP files from unknown sources can be harmful and put your site at risk. For maximum safety, upload only JSON or ZIP files from trusted sources.', 'elementor' ) }
 						approveButtonColor="link"
 						approveButtonText={ __( 'Continue', 'elementor' ) }
 						approveButtonOnClick={ dialog.approve }
