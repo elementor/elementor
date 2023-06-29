@@ -331,7 +331,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in front end', async () => {
 					await editor.publishAndViewPage();
 					const firstItem = page.locator( '.e-n-accordion-item' ).first();
-
+					await editor.isScreenShottable();
 					await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
 				} );
 			} );
