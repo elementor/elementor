@@ -325,6 +325,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				const editorFirstItem = frame.locator( '.e-n-accordion-item' ).first();
 
 				await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
+					await editor.isScreenShottable( editorFirstItem );
 					await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
 				} );
 
