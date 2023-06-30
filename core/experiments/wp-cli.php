@@ -103,6 +103,41 @@ class Wp_Cli extends \WP_CLI_Command {
 		\WP_CLI::line( $experiments_status );
 	}
 
+    /**
+     * Set Default Experiments status
+     *
+     * ## Examples
+     * wp elementor experiments default
+     *
+     * @param array|null $assoc_args - Arguments from WP CLI command.
+     */
+    public function default( $assoc_args ) {
+        $experiments_manager = Plugin::$instance->experiments;
+        $features = $experiments_manager->get_features();
+        $activate = '';
+        $deactivate = '';
+
+        foreach ( $features as $feature ) {
+            switch (true) {
+                case ( $feature['default'] === $experiments_manager::STATE_ACTIVE ):
+                    $activate .= ( ! empty($activate))
+                        ? ",{$feature['name']}"
+                        : $feature['name']
+                    ;
+                    break;
+                case ( $feature['default'] === $experiments_manager::STATE_INACTIVE ):
+                    $deactivate .= ( ! empty($deactivate))
+                        ? ",{$feature['name']}"
+                        : $feature['name']
+                    ;
+                    break;
+            }
+        }
+
+        $this->activate([$activate], $assoc_args);
+        $this->deactivate([$deactivate], $assoc_args);
+    }
+
 	/**
 	 * Determine if the current website is a multisite.
 	 *
