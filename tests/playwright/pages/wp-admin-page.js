@@ -118,10 +118,10 @@ module.exports = class WpAdminPage extends BasePage {
 			for ( const [ id, state ] of Object.entries( experiments ) ) {
 				switch ( true ) {
 					case 'inactive' === state || 'false' === state:
-						experimentsToDisable = [ ...experimentsToDisable, `'${ id }'` ];
+						experimentsToDisable = [ ...experimentsToDisable, id ];
 						break;
 					case 'active' === state || 'true' === state:
-						experimentsToEnable = [ ...experimentsToEnable, `'${ id }'` ];
+						experimentsToEnable = [ ...experimentsToEnable, id ];
 						break;
 				}
 
