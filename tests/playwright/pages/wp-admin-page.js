@@ -1,6 +1,7 @@
 const { execSync } = require( 'child_process' );
 const BasePage = require( './base-page.js' );
 const EditorPage = require( './editor-page.js' );
+const Terminal = require( '../utilities/terminal' );
 
 /**
  * This post is used for any tests that need a post, with empty elements.
@@ -31,6 +32,7 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async openNewPage() {
+		// http:// Localhost:8383/wp-admin/post-new.php?post_type=page
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
@@ -73,15 +75,67 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 * Determine which experiments are active / inactive.
+	 * Activate / Deactivate Experiments.
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {string} mode        - cli (default) or ui
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments = {} ) {
+	async setExperiments( experiments = {}, mode = 'cli' ) {
+		if ( 'ui' === mode.toLowerCase() ) {
+			await this._setExperimentsInUI( experiments );
+			return;
+		}
+
+		await this._setExperimentsInCLI( experiments );
+	}
+
+	/**
+	 * Set experiments using the CLI.
+	 *
+	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 */
+	async _setExperimentsInCLI( experiments = {} ) {
+		let experimentsToEnable = [],
+			experimentsToEnableString,
+			experimentsToDisable = [],
+			experimentToDisableString;
+
+		await parseExperiments();
+		const cli = new Terminal;
+
+		if ( experimentsToEnableString ) {
+			await cli.experiments( 'activate', experimentsToEnableString );
+		}
+		if ( experimentToDisableString ) {
+			await cli.experiments( 'deactivate', experimentToDisableString );
+		}
+
+		async function parseExperiments() {
+			for ( const [ id, state ] of Object.entries( experiments ) ) {
+				switch ( true ) {
+					case 'inactive' === state || 'false' === state:
+						experimentsToDisable = [ ...experimentsToDisable, `'${ id }'` ];
+						break;
+					case 'active' === state || 'true' === state:
+						experimentsToEnable = [ ...experimentsToEnable, `'${ id }'` ];
+						break;
+				}
+
+				experimentsToEnableString = experimentsToEnable.join( ',' );
+				experimentToDisableString = experimentsToDisable.join( ',' );
+			}
+		}
+	}
+
+	/*
+	 * Set experiments using PlayWright UI
+	 * @param experiments
+	 */
+	async _setExperimentsInUI( experiments = {} ) {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 
 		const prefix = 'e-experiment';
