@@ -7,7 +7,7 @@ const EditorPage = require( '../pages/editor-page' );
 test.describe( 'Responsive Controls Stack', () => {
 	const template = {
 		name: 'responsive-controls-stack',
-		path: '../page-templates/responsive-controls-stack.json',
+		path: '../templates/responsive-controls-stack.json',
 	};
 	let templatePageId;
 	let testPageId;
@@ -39,6 +39,7 @@ test.describe( 'Responsive Controls Stack', () => {
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( templatePageId );
+		await editor.loadTemplate( template.path );
 
 		await page.locator( 'button#elementor-panel-saver-button-save-options' ).click();
 
