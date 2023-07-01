@@ -7,7 +7,7 @@ const EditorPage = require( '../pages/editor-page' );
 test.describe( 'Responsive Controls Stack', () => {
 	const template = {
 		name: 'responsive-controls-stack',
-		path: '../templates/responsive-controls-stack.json',
+		path: '../page-templates/responsive-controls-stack.json',
 	};
 	let templatePageId;
 	let testPageId;
