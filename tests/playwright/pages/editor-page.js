@@ -780,6 +780,15 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 
+	/**
+	 * Set Select2 control value.
+	 *
+	 * @param {string}  controlId  - The control to set the value to;
+	 * @param {string}  value      - The value to set;
+	 * @param {boolean} exactMatch - Optional. Whether to match the value exactly or not.
+	 *
+	 * @return {Promise<void>} - A Promise that resolves when the select2 control value is set.
+	 */
 	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
 		await this.page.locator( '.elementor-control-' + controlId + ' .select2:not( .select2-container--disabled )' ).click();
 		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
@@ -800,7 +809,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {Editor} editor        - The editor to use for importing the template.
 	 * @return {Promise<void>} - A Promise that resolves when the import is completed.
 	 */
-	async importJsonTemplate( template = { }, editor ) {
+	async importJsonTemplate( template, editor ) {
 		const initialUrl = this.page.url();
 
 		const pageId = await createPage();
