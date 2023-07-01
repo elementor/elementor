@@ -15,8 +15,17 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
+		global $wp_rest_server;
+		$this->server = $wp_rest_server = new \WP_REST_Server;
+		do_action( 'rest_api_init' );
 
 		$this->experiments = Plugin::instance()->experiments;
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		global $wp_rest_server;
+		$wp_rest_server = null;
 	}
 
 	public function test_get_experiments__forbidden() {
@@ -139,7 +148,14 @@ class Test_Experiments_Controller extends Elementor_Test_Base {
 	private function get_experiments(): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'GET', "/elementor/v1/experiments" );
 
-		return rest_do_request( $request );		
+		// $response = null;
+		// try {
+		// 	$response = rest_do_request( $request );
+		// } catch ( WPAjaxDieStopException $e ) {}
+		// return null;
+		// return $response;
+		return $this->server->dispatch( $request );
+		
 	}
 
 	/**
