@@ -50,7 +50,7 @@ export default {
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL || 'http://localhost:8888',
+		baseURL: process.env.BASE_URL || 'http://localhost:10005',
 		viewport: { width: 1920, height: 1080 },
 		storageState: resolve( __dirname, 'storageState.json' ),
 		user: {
