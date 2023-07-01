@@ -304,7 +304,7 @@ class Controls_Manager {
 	// TODO: Remove in the future. - When Pro will remove the template class use in location manager.
 	private $has_stacks_cache_been_cleared = false;
 
-	private $has_post_stacks_cache_been_cleared = false;
+	private $has_post_stacks_cache_been_cleared = [];
 
 	/**
 	 * Init tabs.
