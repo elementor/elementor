@@ -3,6 +3,7 @@ const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 const _path = require( 'path' );
+const { createPage, deletePage } = require( '../utilities/rest-api' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -788,5 +789,40 @@ module.exports = class EditorPage extends BasePage {
 		} else {
 			await this.page.locator( '.select2-results__option:has-text("' + value + '")' ).first().click();
 		}
+	}
+
+	/**
+	 * Imports a JSON template.
+	 *
+	 * @param {Object} template      - The JSON template to import.
+	 * @param {string} template.path - The path of the template to load.
+	 * @param {string} template.name - The name to assign to the imported template.
+	 * @param {Editor} editor        - The editor to use for importing the template.
+	 * @return {Promise<void>} - A Promise that resolves when the import is completed.
+	 */
+	async importJsonTemplate( template = { }, editor ) {
+		const initialUrl = this.page.url();
+
+		const pageId = await createPage();
+
+		await editor.gotoPostId( pageId );
+
+		await editor.loadTemplate( template.path );
+
+		await this.page.locator( 'button#elementor-panel-saver-button-save-options' ).click();
+
+		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-template' ).click();
+
+		await this.page.locator( '#elementor-template-library-save-template-name' ).fill( template.name );
+
+		await this.page.locator( '#elementor-template-library-save-template-submit' ).click();
+
+		await this.page.waitForLoadState( 'networkidle' );
+
+		await deletePage( pageId );
+
+		await this.page.goto( initialUrl );
+
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 };

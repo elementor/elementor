@@ -9,7 +9,6 @@ test.describe( 'Responsive Controls Stack', () => {
 		name: 'responsive-controls-stack',
 		path: '../templates/responsive-controls-stack.json',
 	};
-	let templatePageId;
 	let testPageId;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -23,12 +22,10 @@ test.describe( 'Responsive Controls Stack', () => {
 	} );
 
 	test.beforeEach( async () => {
-		templatePageId = await createPage();
 		testPageId = await createPage();
 	} );
 
 	test.afterEach( async () => {
-		await deletePage( templatePageId );
 		await deletePage( testPageId );
 	} );
 
@@ -38,16 +35,8 @@ test.describe( 'Responsive Controls Stack', () => {
 	 */
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
-		await editor.gotoPostId( templatePageId );
-		await editor.loadTemplate( template.path );
 
-		await page.locator( 'button#elementor-panel-saver-button-save-options' ).click();
-
-		await page.locator( '#elementor-panel-footer-sub-menu-item-save-template' ).click();
-
-		await page.locator( '#elementor-template-library-save-template-name' ).fill( template.name );
-
-		await page.locator( '#elementor-template-library-save-template-submit' ).click();
+		await editor.importJsonTemplate( template, editor );
 
 		await editor.gotoPostId( testPageId );
 
