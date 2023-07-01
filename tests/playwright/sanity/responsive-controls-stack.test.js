@@ -39,7 +39,6 @@ test.describe( 'Responsive Controls Stack', () => {
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( templatePageId );
-		await editor.loadTemplate( template.path );
 
 		await page.locator( 'button#elementor-panel-saver-button-save-options' ).click();
 
