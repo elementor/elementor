@@ -32,10 +32,11 @@ test.describe( 'Responsive Controls Stack', () => {
 		await deletePage( testPageId );
 	} );
 
+	/**
+	  This test is checking that the CSS is updated when changing the template responsive controls.
+	  In case of Additional breakpoints enabled, while using the template widget.
+	 */
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
-		// This test is checking that the CSS is updated when changing the responsive controls.
-		// In case of Additional breakpoints enabled, it's
-
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( templatePageId );
 		await editor.loadTemplate( template.path );
