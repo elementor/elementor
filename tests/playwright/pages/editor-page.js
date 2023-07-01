@@ -806,7 +806,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @param {Object} template      - The JSON template to import.
 	 * @param {string} template.path - The path of the template to load.
 	 * @param {string} template.name - The name to assign to the imported template.
-	 * @param {Editor} editor        - The editor to use for importing the template.
+	 * @param {editor} editor        - The editor to use for importing the template.
 	 * @return {Promise<void>} - A Promise that resolves when the import is completed.
 	 */
 	async importJsonTemplate( template, editor ) {
