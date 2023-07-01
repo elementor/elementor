@@ -25,12 +25,12 @@ function register_feature_routes() {
 				return empty( $params );
 			},
 			'callback' => function () {
-/*				$experiments_manager = Plugin::instance()->experiments;
+				$experiments_manager = Plugin::instance()->experiments;
 				$feature = $experiments_manager->get_features();
 				$experiments = array();
 
 				foreach ( $feature as $experiment_id => $experiment ) {
-					if ( ! empty( $experiment['hidden'] ) || false === $experiment['mutable'] ) {
+					if ( ( ! empty( $experiment['hidden'] ) && true === $experiment['hidden'] ) || false === $experiment['mutable'] ) {
 						continue;
 					}
 
@@ -42,8 +42,7 @@ function register_feature_routes() {
 					];
 				}
 
-				wp_send_json_success( $experiments );*/
-				wp_send_json_success();
+				return $experiments;
 			},
 		],
 	]);
@@ -58,7 +57,8 @@ function register_feature_routes() {
 				return sanitize_key( $param );
 			},
 			'validate_callback' => function ( $request ) {
-				return in_array( $request->get_param( 'status' ), [ Experiments_Manager::STATE_ACTIVE, Experiments_Manager::STATE_INACTIVE ], true );
+				return in_array( $request->get_param( 'status' ), [ Experiments_Manager::STATE_ACTIVE, Experiments_Manager::STATE_INACTIVE ], true )
+					&& null != $request->get_param( 'experimentId' );
 			},
 			'callback' => function ( $request ) {
 				$experiment_id = $request->get_param( 'experimentId' );
@@ -82,9 +82,7 @@ function register_feature_routes() {
 					$success = update_option( $option_key, $new_status );
 				}
 
-				if ( $success ) {
-					wp_send_json_success();
-				} else {
+				if ( ! $success ) {
 					wp_send_json_error( [
 						'errorMessage' => 'Failed to set experiment status.',
 					] );
