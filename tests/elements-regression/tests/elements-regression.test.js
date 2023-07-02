@@ -98,3 +98,4 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 	}
 } );
+
