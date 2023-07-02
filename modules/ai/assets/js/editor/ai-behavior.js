@@ -8,6 +8,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.editButtonLabel = __( 'Edit with AI', 'elementor' );
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
+		this.context = {};
 
 		this.config = window.ElementorAiConfig;
 	}
@@ -33,6 +34,8 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
+
+		window.elementorAiCurrentContext = this.getOption( 'context' );
 
 		ReactDOM.render( <App
 			type={ this.getOption( 'type' ) }
