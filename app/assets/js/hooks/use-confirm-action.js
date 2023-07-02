@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useIntroduction from './use-introduction';
 
-export default function useWrapActionWithConfirmationDialog( {
+export default function useConfirmAction( {
 	action,
 	doNotShowAgainKey = null,
 } ) {

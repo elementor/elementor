@@ -43,7 +43,7 @@ import useAction from './hooks/use-action';
 import usePageTitle from './hooks/use-page-title';
 import useQueryParams from './hooks/use-query-params';
 import useIntroduction from './hooks/use-introduction';
-import useWrapActionWithConfirmationDialog from './hooks/use-wrap-action-with-confirmation-dialog';
+import useConfirmAction from './hooks/use-confirm-action';
 
 export const appUi = {
 	AddNewButton,
@@ -92,5 +92,5 @@ export const hooks = {
 	usePageTitle,
 	useQueryParams,
 	useIntroduction,
-	useWrapActionWithConfirmationDialog,
+	useConfirmAction,
 };

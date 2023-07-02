@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
-import { useWrapActionWithConfirmationDialog } from '@elementor/hooks';
+import { useConfirmAction } from '@elementor/hooks';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
@@ -67,7 +67,11 @@ export default function ImportKit() {
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		),
-		{ runAction, dialog, checkbox } = useWrapActionWithConfirmationDialog( {
+		{
+			runAction: uploadFile,
+			dialog,
+			checkbox,
+		} = useConfirmAction( {
 			doNotShowAgainKey: 'upload_json_warning_generic_message',
 			action: ( file, e ) => {
 				setIsLoading( true );
@@ -139,7 +143,7 @@ export default function ImportKit() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
-					onFileSelect={ ( file, e ) => runAction( file, e ) }
+					onFileSelect={ uploadFile }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
