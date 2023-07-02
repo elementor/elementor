@@ -72,6 +72,11 @@ class App extends BaseApp {
 	public function admin_init() {
 		do_action( 'elementor/app/init', $this );
 
+		// Add the introduction and user settings only when it is needed (when loading the app and not in the editor or admin pages)
+		$this->set_settings( 'user', [
+			'introduction' => (object) User::get_introduction_meta(),
+		] );
+
 		$this->enqueue_assets();
 
 		// Setup default heartbeat options
@@ -212,11 +217,6 @@ class App extends BaseApp {
 
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
-
-		// Add the introduction and user settings only when it is needed (when loading the app and not in the editor or admin pages)
-		$this->set_settings( 'user', [
-			'introduction' => (object) User::get_introduction_meta(),
-		] );
 
 		$this->print_config();
 	}

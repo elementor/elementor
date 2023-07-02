@@ -10,7 +10,7 @@ export default function useIntroduction( key ) {
 
 		return new Promise( ( resolve, reject ) => {
 			if ( isViewed ) {
-				reject();
+				resolve();
 			}
 
 			elementorCommon.ajax.addRequest( 'introduction_viewed', {
