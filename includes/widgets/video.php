@@ -720,7 +720,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'default' => '169',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
+					'{{WRAPPER}} .elementor-wrapper:not(.elementor-open-lightbox)' => '--video-aspect-ratio: {{VALUE}}',
 				],
 			]
 		);
@@ -742,65 +742,7 @@ class Widget_Video extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'show_image_overlay' => 'yes',
-				],
-			]
-		);
-
-		$this->add_control(
-			'image_overlay_title',
-			[
-				'label' => esc_html__( 'Image', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'condition' => [
-					'show_image_overlay' => 'yes',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'image_overlay_object_fit',
-			[
-				'label' => esc_html__( 'Object Fit', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'contain' => esc_html__( 'Contain', 'elementor' ),
-					'fill' => esc_html__( 'Fill', 'elementor' ),
-					'cover' => esc_html__( 'Cover', 'elementor' ),
-				],
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-custom-embed-image-overlay img' => 'object-fit: {{VALUE}}; aspect-ratio: var( --video-aspect-ratio )',
-				],
-				'condition' => [
-					'show_image_overlay' => 'yes',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'image_overlay_object_position',
-			[
-				'label' => esc_html__( 'Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'center center' => esc_html__( 'Center Center', 'elementor' ),
-					'center left' => esc_html__( 'Center Left', 'elementor' ),
-					'center right' => esc_html__( 'Center Right', 'elementor' ),
-					'top center' => esc_html__( 'Top Center', 'elementor' ),
-					'top left' => esc_html__( 'Top Left', 'elementor' ),
-					'top right' => esc_html__( 'Top Right', 'elementor' ),
-					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
-					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
-					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
-				],
-				'default' => 'center center',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-custom-embed-image-overlay img' => 'object-position: {{VALUE}};',
-				],
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'image_overlay_object_fit' => 'cover',
+					'show_play_icon' => 'yes',
 				],
 			]
 		);
@@ -810,7 +752,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Play Icon', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
 				'condition' => [
 					'show_image_overlay' => 'yes',
 					'show_play_icon' => 'yes',
