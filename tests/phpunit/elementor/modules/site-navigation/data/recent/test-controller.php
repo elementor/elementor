@@ -12,6 +12,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	const RECENTLY_EDITED_ENDPOINT = '/site-navigation/recent-posts';
 	const ADD_NEW_POST_ENDPOINT = '/site-navigation/add-new-post';
+	const DUPLICATE_POST_ENDPOINT = '/site-navigation/duplicate-post';
 
 	public function setUp() {
 		parent::setUp();
@@ -232,6 +233,43 @@ class Test_Controller extends Elementor_Test_Base {
 		$expected_edit_url = 'wp-admin/post.php?post=' . $post_id . '&action=elementor';
 		$this->assertStringContainsString( $expected_edit_url, $edit_url );
 	}
+
+
+	/**
+	 * Test invalid post id - duplicate post
+	 */
+	public function test_create_items__invalid_post_id() {
+		// Arrange.
+		$this->act_as_editor();
+
+		// Act.
+		$params = [
+			'post_id' => 'test',
+		];
+		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_create_items_duplicate_post() {
+		// Arrange.
+		$this->act_as_editor();
+
+		// Act.
+		$params = [
+			'post_id' => 555,
+		];
+
+		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
+
+		// Assert.
+		$this->assertEquals( 200, $response->get_status() );
+
+		$post_id = $response->get_data()['post_id'];
+
+		$this->assertEquals( 556, $post_id );
+	}
+
 
 	/**
 	 * @param string $method
