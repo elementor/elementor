@@ -873,6 +873,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'description' => esc_html__( 'This control was deprecated.', 'elementor' ),
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'unit' => '%',
@@ -888,6 +889,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => esc_html__( 'Content Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'This control was deprecated.', 'elementor' ),
 				'frontend_available' => true,
 				'options' => [
 					'' => esc_html__( 'Center', 'elementor' ),
