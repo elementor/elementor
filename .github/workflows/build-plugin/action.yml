@@ -30,7 +30,7 @@ runs:
                 echo "Running update version script"
                 bash ${{ inputs.UPDATE_VERSIONS_SCRIPT_PATH }}
             fi
-            
+
             bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
