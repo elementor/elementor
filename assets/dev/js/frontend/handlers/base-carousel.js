@@ -135,7 +135,47 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			},
 		};
 
+		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
+
 		return swiperOptions;
+	}
+
+	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
+		const offsetSide = elementSettings.offset_sides;
+		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+
+		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
+			return;
+		}
+
+		const offset = elementSettings.offset_width.size;
+
+		switch ( offsetSide ) {
+			case 'right':
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addRightPaddingToShowNextSlide( offset );
+				break;
+			case 'left':
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				break;
+			case 'both':
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addRightPaddingToShowNextSlide( offset );
+				break;
+		}
+	}
+
+	forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow ) {
+		swiperOptions.slidesPerView = slidesToShow + 0.001;
+	}
+
+	addLeftPaddingToShowPreviousSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+	}
+
+	addRightPaddingToShowNextSlide( offset ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
 	}
 
 	async onInit( ...args ) {

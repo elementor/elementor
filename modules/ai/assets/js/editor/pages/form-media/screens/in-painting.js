@@ -13,7 +13,7 @@ const BrushCursor = styled( Box, { shouldForwardProp: ( prop ) => 'size' === pro
 	borderRadius: '50%',
 	backgroundColor: theme.palette.common.black,
 	pointerEvents: 'none',
-	transform: 'translate(-50%, -50%)',
+	transform: `translate(${ 'rtl' === theme.direction ? '50%' : '-50%' }, -50%)`,
 } ) );
 
 const BrishSizeIcon = styled( Box, { shouldForwardProp: ( prop ) => 'size' === prop } )( ( { theme, size } ) => ( {
