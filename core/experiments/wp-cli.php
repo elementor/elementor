@@ -113,22 +113,22 @@ class Wp_Cli extends \WP_CLI_Command {
      */
     public function default( $assoc_args ) {
         $experiments_manager = Plugin::$instance->experiments;
-        $features = $experiments_manager->get_features();
+        $experiments = $experiments_manager->get_features();
         $activate = '';
         $deactivate = '';
 
-        foreach ( $features as $feature ) {
+        foreach ( $experiments as $experiment) {
             switch (true) {
-                case ( $feature['default'] === $experiments_manager::STATE_ACTIVE ):
+                case ( $experiment['default'] === $experiments_manager::STATE_ACTIVE ):
                     $activate .= ( ! empty( $activate ) )
-                        ? ",{$feature['name']}"
-                        : $feature['name']
+                        ? ",{$experiment['name']}"
+                        : $experiment['name']
                     ;
                     break;
-                case ( $feature['default'] === $experiments_manager::STATE_INACTIVE ):
+                case ( $experiment['default'] === $experiments_manager::STATE_INACTIVE ):
                     $deactivate .= ( ! empty( $deactivate ) )
-                        ? ",{$feature['name']}"
-                        : $feature['name']
+                        ? ",{$experiment['name']}"
+                        : $experiment['name']
                     ;
                     break;
             }
