@@ -3,10 +3,10 @@ import path from 'path';
 
 export default class Terminal {
 	/*
-     * Activate or Deactivate experiments
-     * @param action {string} - activate | deactivate
-     * @param experiments {string} - comma separated list of experiments. e.g. container,nested-elements,'grid container'
-     */
+	* Activate or Deactivate experiments
+	* @param action {string} - activate | deactivate
+	* @param experiments {string} - comma separated list of experiments. e.g. container,nested-elements,'grid container'
+	*/
 	async experiments( action, experiments ) {
 		const wpPath = await this.getWordpressInstallPath();
 
@@ -14,7 +14,7 @@ export default class Terminal {
 		const local = `bash -c "wp elementor experiments ${ action } ${ experiments } --path=${ wpPath }"`;
 
 		const result = await this.executeTerminal( process.env.CI ? wpEnv : local );
-		console.log( result );
+		await this.logErrors( result );
 	}
 
 	/*
@@ -39,6 +39,13 @@ export default class Terminal {
      */
 	async getWordpressInstallPath( ) {
 		return path.join( __dirname, '..', '..', '..', '..', '..', '..' );
+	}
+
+	/*
+	 * Log the results of cmd execution to Playwright and CI output
+	 */
+	async logErrors( result ) {
+		console.log( result );
 	}
 }
 
