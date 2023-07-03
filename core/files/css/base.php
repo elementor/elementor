@@ -643,9 +643,23 @@ abstract class Base extends Base_File {
 		return false;
 	}
 
+	/**
+	 * Get post ID.
+	 *
+	 * Retrieve the post ID.
+	 *
+	 * @since 3.14.2
+	 * @access protected
+	 *
+	 * @return int Post ID.
+	 */
+	protected function get_post_id() {
+		return false;
+	}
+
 
 	/**
-	 * Clear stacks on additional breakpoints active.
+	 * Clear stacks
 	 *
 	 * If a page contains templates, such as loop items, shortcodes, kits, or template widgets,
 	 * the templates responsive setting will not be updated unless the 'Regenerate CSS' option is used.
@@ -655,17 +669,14 @@ abstract class Base extends Base_File {
 	 *
 	 * @access private
 	 */
-	private function clear_stacks_on_additional_breakpoints_active() {
+	private function clear_stacks() {
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		if ( ! $is_edit_mode && method_exists( Plugin::$instance->controls_manager, 'clear_stack_cache' ) ) {
-			$currnet_post_id = null;
-			if ( method_exists( $this, 'get_post_id' ) ) {
-				$currnet_post_id = $this->get_post_id();
-				if ( $currnet_post_id ) {
-					$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $currnet_post_id );
-					if ( ! $stack_cache_has_been_cleared ) {
-						Plugin::$instance->controls_manager->clear_stack_cache( $currnet_post_id );
-					}
+		$post_id = $this->get_post_id();
+		if ( ! $is_edit_mode && $post_id ) {
+			if ( $post_id ) {
+				$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $post_id );
+				if ( ! $stack_cache_has_been_cleared ) {
+					Plugin::$instance->controls_manager->clear_stack_cache( $post_id );
 				}
 			}
 		}
@@ -683,7 +694,7 @@ abstract class Base extends Base_File {
 
 		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
 		if ( $additional_breakpoints_active ) {
-			$this->clear_stacks_on_additional_breakpoints_active();
+			$this->clear_stacks();
 		}
 
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
