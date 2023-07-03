@@ -311,7 +311,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await editor.publishAndViewPage();
 					const titleIcons = page.locator( '.e-n-accordion-item-title-icon' );
 
-					await expect.soft( titleIcons ).toHaveCount( 3 ); //  Item Title Icon wrapper is displayed in Editor when SVG icon is selected
+					await expect.soft( titleIcons ).toHaveCount( 3 ); // Item Title Icon wrapper is displayed in Editor when SVG icon is selected
 					await expect.soft( page.locator( '.e-n-accordion-item-title-icon .e-closed svg' ) ).toHaveCount( 3 ); // SVG Icon
 				} );
 			} );
