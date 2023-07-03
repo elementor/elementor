@@ -120,13 +120,13 @@ class Wp_Cli extends \WP_CLI_Command {
         foreach ( $features as $feature ) {
             switch (true) {
                 case ( $feature['default'] === $experiments_manager::STATE_ACTIVE ):
-                    $activate .= ( ! empty($activate))
+                    $activate .= ( ! empty( $activate ) )
                         ? ",{$feature['name']}"
                         : $feature['name']
                     ;
                     break;
                 case ( $feature['default'] === $experiments_manager::STATE_INACTIVE ):
-                    $deactivate .= ( ! empty($deactivate))
+                    $deactivate .= ( ! empty( $deactivate ) )
                         ? ",{$feature['name']}"
                         : $feature['name']
                     ;
@@ -134,8 +134,8 @@ class Wp_Cli extends \WP_CLI_Command {
             }
         }
 
-        $this->activate([$activate], $assoc_args);
-        $this->deactivate([$deactivate], $assoc_args);
+        $this->activate( [$activate], $assoc_args );
+        $this->deactivate( [$deactivate], $assoc_args) ;
     }
 
 	/**
@@ -215,7 +215,6 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$experiments_manager = Plugin::instance()->experiments;
 		foreach ( $experiments as $experiment ) {
-
 			$option = $experiments_manager->get_feature_option_key( $experiment );
 			update_option( $option, $state );
 		}

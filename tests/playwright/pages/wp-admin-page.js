@@ -32,7 +32,6 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	async openNewPage() {
-		// http:// Localhost:8383/wp-admin/post-new.php?post_type=page
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
@@ -102,7 +101,7 @@ module.exports = class WpAdminPage extends BasePage {
 		let experimentsToEnable = [],
 			experimentsToEnableString,
 			experimentsToDisable = [],
-			experimentToDisableString;
+			experimentsToDisableString;
 
 		await parseExperiments();
 		const cli = new Terminal;
@@ -110,8 +109,8 @@ module.exports = class WpAdminPage extends BasePage {
 		if ( experimentsToEnableString ) {
 			await cli.experiments( 'activate', experimentsToEnableString );
 		}
-		if ( experimentToDisableString ) {
-			await cli.experiments( 'deactivate', experimentToDisableString );
+		if ( experimentsToDisableString ) {
+			await cli.experiments( 'deactivate', experimentsToDisableString );
 		}
 
 		async function parseExperiments() {
@@ -126,7 +125,7 @@ module.exports = class WpAdminPage extends BasePage {
 				}
 
 				experimentsToEnableString = experimentsToEnable.join( ',' );
-				experimentToDisableString = experimentsToDisable.join( ',' );
+				experimentsToDisableString = experimentsToDisable.join( ',' );
 			}
 		}
 	}

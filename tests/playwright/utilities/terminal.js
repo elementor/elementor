@@ -4,8 +4,8 @@ import path from 'path';
 export default class Terminal {
 	/*
      * Activate or Deactivate experiments
-     * @param action activate | deactivate
-     * @param experiments comma separated list of experiments. e.g. container,nested-elements,'grid container'
+     * @param action {string} - activate | deactivate
+     * @param experiments {string} - comma separated list of experiments. e.g. container,nested-elements,'grid container'
      */
 	async experiments( action, experiments ) {
 		const wpPath = await this.getWordpressInstallPath();
@@ -16,6 +16,13 @@ export default class Terminal {
 		const result = await this.executeTerminal( process.env.CI ? wpEnv : local );
 		console.log( result );
 	}
+
+	/*
+	 * Executes a command in the terminal
+	 * @param {string} cmd the command to execute
+	 *
+	 * @return {string} the output of the command
+	 */
 	async executeTerminal( cmd ) {
 		try {
 			const stdout = execSync( cmd );
@@ -27,6 +34,8 @@ export default class Terminal {
 
 	/*
      * Get the path to the WordPress installation from this Script Directory in the Elementor plugin
+     *
+     * @return {string} the path to the WordPress installation
      */
 	async getWordpressInstallPath( ) {
 		return path.join( __dirname, '..', '..', '..', '..', '..', '..' );
