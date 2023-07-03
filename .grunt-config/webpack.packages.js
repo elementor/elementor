@@ -4,28 +4,34 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const { dependencies } = require( '../package.json' );
+const elementorPackages = [
+	'editor',
+	'editor-app-bar',
+	'editor-documents',
+	'editor-panels',
+	'editor-responsive',
+	'editor-site-navigation',
+	'editor-v1-adapters',
+	'env',
+	'icons',
+	'locations',
+	'store',
+	'ui',
+]
 
-const packages = Object.keys( dependencies )
-	.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
-	.map( ( packageName ) => {
-	   const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
+const packages = elementorPackages
+	.map( ( name ) => {
+	   const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/@elementor/${name}/package.json` ) );
 
-	   const { main, module, elementor } = JSON.parse( pkgJSON );
+	   const { main, module } = JSON.parse( pkgJSON );
 
-	   return {
-	       mainFile: module || main,
-	       packageName,
-	       type: elementor?.type || 'util',
-	   }
+	   return { name, mainFile: module || main }
 	} )
 	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, packageName, type } ) => {
+	.map( ( { mainFile, name } ) => {
 	   return {
-	       packageName,
-	       type,
-	       name: packageName.replace( '@elementor/', '' ),
-	       path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+	       name,
+	       path: path.resolve( __dirname, `../node_modules/@elementor/${ name }`, mainFile ),
 	   }
 	} );
 
@@ -35,15 +41,7 @@ const common = {
 		packages.map( ( { name, path } ) => [ name, path ] )
 	),
 	plugins: [
-		new GenerateWordPressAssetFileWebpackPlugin( {
-			handlePrefix: 'elementor-packages-',
-			apps: packages.filter( ( entry ) => 'app' === entry.type ).map( ( entry ) => entry.name ),
-			extensions: packages.filter( ( entry ) => 'extension' === entry.type ).map( ( entry ) => entry.name ),
-			i18n: {
-				domain: 'elementor',
-
-			},
-		} ),
+		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
 		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
 	],
 	output: {
@@ -58,7 +56,7 @@ const devConfig = {
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	output: {
 		...( common.output || {} ),
-		filename: '[name].js',
+		filename: '[name]/[name].js',
 	}
 }
 
@@ -76,7 +74,7 @@ const prodConfig = {
 	],
 	output: {
 		...( common.output || {} ),
-		filename: '[name].min.js',
+		filename: '[name]/[name].min.js',
 	}
 }
 
