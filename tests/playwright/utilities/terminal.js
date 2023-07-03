@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process';
 import path from 'path';
 
-class Terminal {
+export default class Terminal {
 	/*
      * Activate or Deactivate experiments
      * @param action activate | deactivate
