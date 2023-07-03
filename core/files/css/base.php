@@ -653,10 +653,9 @@ abstract class Base extends Base_File {
 	 *
 	 * @return int Post ID.
 	 */
-	protected function get_post_id() {
+	public function get_post_id() {
 		return false;
 	}
-
 
 	/**
 	 * Clear stacks
@@ -673,11 +672,9 @@ abstract class Base extends Base_File {
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 		$post_id = $this->get_post_id();
 		if ( ! $is_edit_mode && $post_id ) {
-			if ( $post_id ) {
-				$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $post_id );
-				if ( ! $stack_cache_has_been_cleared ) {
-					Plugin::$instance->controls_manager->clear_stack_cache( $post_id );
-				}
+			$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $post_id );
+			if ( ! $stack_cache_has_been_cleared ) {
+				Plugin::$instance->controls_manager->clear_stack_cache( $post_id );
 			}
 		}
 	}
