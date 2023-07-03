@@ -891,6 +891,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		// Deprecated control. Visible only if it was previously in use.
 		$this->add_control(
 			'lightbox_video_width',
 			[
@@ -910,6 +911,7 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
+		// Deprecated control. Visible only if it was previously in use.
 		$this->add_control(
 			'lightbox_content_position',
 			[
