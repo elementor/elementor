@@ -6,11 +6,12 @@ const EditorPage = require( '../pages/editor-page' );
 
 test.describe( 'Responsive Controls Stack', () => {
 	let testPageId;
+	let wpAdmin;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			editor_v2: false,
 			additional_custom_breakpoints: true,
@@ -40,6 +41,8 @@ test.describe( 'Responsive Controls Stack', () => {
 		await editor.importJsonTemplate( template.path );
 
 		await editor.gotoPostId( testPageId );
+
+		await wpAdmin.waitForPanel();
 
 		await editor.addWidget( 'template' );
 
@@ -79,6 +82,8 @@ test.describe( 'Responsive Controls Stack', () => {
 		await editor.importJsonTemplate( template.path );
 
 		await editor.gotoPostId( testPageId );
+
+		await wpAdmin.waitForPanel();
 
 		await editor.addWidget( 'loop-grid' );
 
