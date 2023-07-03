@@ -787,6 +787,12 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_5_0_remove_old_elementor_scheme() {
+		global $wpdb;
+
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'elementor_scheme_%';" );
+	}
+
 	public static function _v_3_8_0_fix_php8_image_custom_size() {
 		global $wpdb;
 
