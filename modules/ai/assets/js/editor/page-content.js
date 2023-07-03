@@ -38,7 +38,7 @@ const PageContent = (
 	};
 
 	const maybeRenderUpgradeChip = () => {
-		const needsUpgradeChip = ! hasSubscription || usagePercentage <= 80;
+		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
 
 		if ( ! needsUpgradeChip ) {
 			return;
