@@ -316,7 +316,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				} );
 			} );
 
-			await test.step( 'Check that No Icon container is displayed with Title Icons disabled', async () => {
+			await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
 				await editor.gotoPostId( 1 ); // EditPage
 				await editor.selectElement( nestedAccordionWidgetId );
 				await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
