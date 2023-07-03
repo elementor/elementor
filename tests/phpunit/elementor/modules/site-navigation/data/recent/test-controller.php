@@ -256,8 +256,14 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_editor();
 
 		// Act.
+		$post = self::factory()->post->create( [
+			'post_type' => 'post',
+			'post_title' => 'Test Post',
+			'post_status' => 'publish',
+		] );
+
 		$params = [
-			'post_id' => 555,
+			'post_id' => $post,
 		];
 
 		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
@@ -267,7 +273,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$post_id = $response->get_data()['post_id'];
 
-		$this->assertEquals( 556, $post_id );
+		$this->assertEquals( $post + 1, $post );
 	}
 
 
