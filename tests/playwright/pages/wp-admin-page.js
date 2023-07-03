@@ -98,36 +98,37 @@ module.exports = class WpAdminPage extends BasePage {
 	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 */
 	async _setExperimentsInCLI( experiments = {} ) {
+		const experimentString = await this._parseExperiments( experiments ),
+			cli = new Terminal();
+
+		if ( experimentString.toActivate ) {
+			await cli.experiments( 'activate', experimentString.toActivate );
+		}
+		if ( experimentString.toDeactivate ) {
+			await cli.experiments( 'deactivate', experimentString.toDeactivate );
+		}
+	}
+
+	/*
+	 * Parse experiments to activate / deactivate
+	 * @param { object } experiments
+	 * @return {Promise<{toActivate: string, toDeactivate: string}>}
+	 */
+	async _parseExperiments( experiments = {} ) {
 		let experimentsToEnable = [],
-			experimentsToEnableString,
-			experimentsToDisable = [],
-			experimentsToDisableString;
+			experimentsToDisable = [];
 
-		await parseExperiments();
-		const cli = new Terminal;
-
-		if ( experimentsToEnableString ) {
-			await cli.experiments( 'activate', experimentsToEnableString );
-		}
-		if ( experimentsToDisableString ) {
-			await cli.experiments( 'deactivate', experimentsToDisableString );
-		}
-
-		async function parseExperiments() {
-			for ( const [ id, state ] of Object.entries( experiments ) ) {
-				switch ( true ) {
-					case 'inactive' === state || 'false' === state:
-						experimentsToDisable = [ ...experimentsToDisable, id ];
-						break;
-					case 'active' === state || 'true' === state:
-						experimentsToEnable = [ ...experimentsToEnable, id ];
-						break;
-				}
-
-				experimentsToEnableString = experimentsToEnable.join( ',' );
-				experimentsToDisableString = experimentsToDisable.join( ',' );
+		for ( const [ id, state ] of Object.entries( experiments ) ) {
+			switch ( true ) {
+				case 'inactive' === state || 'false' === state:
+					experimentsToDisable = [ ...experimentsToDisable, id ];
+					break;
+				case 'active' === state || 'true' === state:
+					experimentsToEnable = [ ...experimentsToEnable, id ];
+					break;
 			}
 		}
+		return { toActivate: experimentsToEnable.join( ',' ), toDeactivate: experimentsToDisable.join( ',' ) };
 	}
 
 	/*
