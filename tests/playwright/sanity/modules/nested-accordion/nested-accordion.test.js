@@ -509,7 +509,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await editor.closeNavigatorIfOpen();
 
-			await test.step( 'Check title <h1> text and icon  alignment', async () => {
+			await test.step( 'Check title <h1> text and icon alignment', async () => {
 				const tag = 'h1';
 				await frame.waitForLoadState( 'load' );
 				await setTitleTextTag( tag, nestedAccordionWidgetId, editor, page );
