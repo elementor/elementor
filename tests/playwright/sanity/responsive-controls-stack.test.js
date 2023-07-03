@@ -42,7 +42,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await wpAdmin.waitForPanel();
+		await page.waitForSelector( '#elementor-panel-page-elements' );
 
 		await editor.addWidget( 'template' );
 
@@ -83,7 +83,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await wpAdmin.waitForPanel();
+		await page.waitForSelector( '#elementor-panel-page-elements' );
 
 		await editor.addWidget( 'loop-grid' );
 
