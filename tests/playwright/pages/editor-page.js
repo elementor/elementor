@@ -157,25 +157,25 @@ module.exports = class EditorPage extends BasePage {
 			type: 'page',
 		};
 
-		// // For templates that use images, date when image is uploaded is hardcoded in template.
-		// // Element regression tests upload images before each test.
-		// // To update dates in template, use a flag updateDatesForImages = true
-		// if ( updateDatesForImages ) {
-		// 	this.updateImageDates( templateData );
-		// }
-		//
-		// await this.page.evaluate( ( data ) => {
-		// 	const model = new Backbone.Model( { title: 'test' } );
-		//
-		// 	window.$e.run( 'document/elements/import', {
-		// 		data,
-		// 		model,
-		// 		options: {
-		// 			at: 0,
-		// 			withPageSettings: false,
-		// 		},
-		// 	} );
-		// }, pageTemplateData );
+		// For templates that use images, date when image is uploaded is hardcoded in template.
+		// Element regression tests upload images before each test.
+		// To update dates in template, use a flag updateDatesForImages = true
+		if ( updateDatesForImages ) {
+			this.updateImageDates( templateData );
+		}
+
+		await this.page.evaluate( ( data ) => {
+			const model = new Backbone.Model( { title: 'test' } );
+
+			window.$e.run( 'document/elements/import', {
+				data,
+				model,
+				options: {
+					at: 0,
+					withPageSettings: false,
+				},
+			} );
+		}, pageTemplateData );
 
 		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
 	}
