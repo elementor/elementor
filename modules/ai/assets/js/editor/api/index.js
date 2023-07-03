@@ -1,4 +1,8 @@
 const request = ( endpoint, data = {} ) => {
+	if ( Object.keys( data ).length ) {
+		data.context = window.elementorAiCurrentContext;
+	}
+
 	return new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest(
 		endpoint, {
 			success: resolve,
