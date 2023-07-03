@@ -288,7 +288,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 			await wpAdmin.enableAdvancedUploads();
 			const editor = await wpAdmin.useElementorCleanPost();
-			let	frame = editor.getPreviewFrame();
+			let frame = editor.getPreviewFrame();
 
 			await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 			await editor.closeNavigatorIfOpen();
