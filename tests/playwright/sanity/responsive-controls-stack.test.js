@@ -14,7 +14,6 @@ test.describe( 'Responsive Controls Stack', () => {
 		await wpAdmin.setExperiments( {
 			editor_v2: false,
 			additional_custom_breakpoints: true,
-			loop: true,
 		} );
 	} );
 
