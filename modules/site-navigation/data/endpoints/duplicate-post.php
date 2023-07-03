@@ -119,7 +119,7 @@ class Duplicate_Post extends Endpoint {
 	 * @param int $post_id
 	 * @param int $new_post_id
 	 */
-	private function duplicate_post_taxonomies( $post_id, $new_post_id ): void {
+	private function duplicate_post_taxonomies( $post_id, $new_post_id ) {
 		$taxonomies = array_map( 'sanitize_text_field', get_object_taxonomies( get_post_type( $post_id ) ) );
 
 		if ( empty( $taxonomies ) || ! is_array( $taxonomies ) ) {
