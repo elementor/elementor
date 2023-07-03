@@ -271,9 +271,9 @@ class Test_Controller extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
 
-		$post_id = $response->get_data()['post_id'];
+		$duplicated_post_id = $response->get_data()['post_id'];
 
-		$this->assertEquals( $post + 2, $post );
+		$this->assertTrue( $duplicated_post_id > $post );
 	}
 
 
