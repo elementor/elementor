@@ -33,4 +33,3 @@ class Terminal {
 	}
 }
 
-module.exports = Terminal;
