@@ -45,6 +45,7 @@ const WidgetView = BaseWidget.extend( {
 			actions: [
 				{
 					name: 'save',
+					icon: 'eicon-globe',
 					title: __( 'Save as a global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&

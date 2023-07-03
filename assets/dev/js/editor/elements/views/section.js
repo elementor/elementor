@@ -116,6 +116,7 @@ const SectionView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
+					icon: 'eicon-library-upload',
 					title: __( 'Save as Template', 'elementor' ),
 					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),

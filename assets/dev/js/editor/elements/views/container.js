@@ -264,6 +264,7 @@ const ContainerView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
+					icon: 'eicon-library-upload',
 					title: __( 'Save as Template', 'elementor' ),
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),

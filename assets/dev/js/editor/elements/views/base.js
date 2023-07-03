@@ -166,6 +166,7 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'copy',
+						icon: 'eicon-copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
 						isEnabled: () => elementor.selection.isSameType() && ! this.getContainer().isLocked(),
@@ -174,6 +175,7 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'paste',
+						icon: 'eicon-header',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
@@ -183,6 +185,7 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'pasteStyle',
+						icon: 'eicon-paint-brush',
 						title: __( 'Paste style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
@@ -196,6 +199,7 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'resetStyle',
+						icon: 'eicon-undo',
 						title: __( 'Reset style', 'elementor' ),
 						callback: () => $e.run( 'document/elements/reset-style', {
 							containers: elementor.selection.getElements( this.getContainer() ),
