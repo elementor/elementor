@@ -273,7 +273,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$post_id = $response->get_data()['post_id'];
 
-		$this->assertEquals( $post + 1, $post );
+		$this->assertEquals( $post + 2, $post );
 	}
 
 
