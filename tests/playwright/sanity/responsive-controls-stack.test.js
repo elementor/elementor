@@ -5,10 +5,6 @@ const WpAdminPage = require( '../pages/wp-admin-page.js' );
 const EditorPage = require( '../pages/editor-page' );
 
 test.describe( 'Responsive Controls Stack', () => {
-	const template = {
-		name: 'responsive-controls-stack',
-		path: '../page-templates/responsive-controls-stack.json',
-	};
 	let testPageId;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -18,6 +14,7 @@ test.describe( 'Responsive Controls Stack', () => {
 		await wpAdmin.setExperiments( {
 			editor_v2: false,
 			additional_custom_breakpoints: true,
+			loop: true,
 		} );
 	} );
 
@@ -36,7 +33,12 @@ test.describe( 'Responsive Controls Stack', () => {
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 
-		await editor.importJsonTemplate( template, editor );
+		const template = {
+			name: 'responsive-controls-stack-widget-template',
+			path: '../page-templates/responsive-controls-stack-widget-template.json',
+		};
+
+		await editor.importJsonTemplate( template.path );
 
 		await editor.gotoPostId( testPageId );
 
@@ -46,12 +48,12 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.publishAndViewPage();
 
-		await page.setViewportSize( viewportSize.mobile );
-
 		// Remove transition to avoid flakiness
 		await page.addStyleTag( {
 			content: '.elementor-element .elementor-widget-container { transition: none !important; }',
 		} );
+
+		await page.setViewportSize( viewportSize.mobile );
 
 		// Common CSS
 		const borderCSS = await page.$eval( '.elementor-widget-heading .elementor-widget-container', ( el ) => {
@@ -61,6 +63,45 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		// Typography CSS
 		const typographyCSS = await page.$eval( 'h2.elementor-heading-title', ( el ) => {
+			return window.getComputedStyle( el ).getPropertyValue( 'font-size' );
+		} );
+		expect( typographyCSS ).toBe( '65px' );
+	},
+	);
+
+	test( 'Loop Item widget responsive controls', async ( { context, page }, testInfo ) => {
+		const editor = new EditorPage( page, testInfo );
+
+		const template = {
+			name: 'responsive-controls-stack-loop-item-widget',
+			path: '../page-templates/responsive-controls-stack-loop-item-widget.json',
+		};
+
+		await editor.importJsonTemplate( template.path );
+
+		await editor.gotoPostId( testPageId );
+
+		await editor.addWidget( 'loop-grid' );
+
+		await editor.setSelect2ControlValue( 'template_id', template.name, false );
+
+		await editor.publishAndViewPage();
+
+		// Remove transition to avoid flakiness
+		await page.addStyleTag( {
+			content: '.elementor-element .elementor-widget-container { transition: none !important; }',
+		} );
+
+		await page.setViewportSize( viewportSize.mobile );
+
+		// Common CSS
+		const borderCSS = await page.$eval( '.elementor-loop-container [data-widget_type="theme-post-title.default"] .elementor-widget-container', ( el ) => {
+			return window.getComputedStyle( el ).getPropertyValue( 'border' );
+		} );
+		expect( borderCSS ).toBe( '15px dashed rgb(0, 0, 0)' );
+
+		// Typography CSS
+		const typographyCSS = await page.$eval( 'h4.elementor-heading-title', ( el ) => {
 			return window.getComputedStyle( el ).getPropertyValue( 'font-size' );
 		} );
 		expect( typographyCSS ).toBe( '65px' );

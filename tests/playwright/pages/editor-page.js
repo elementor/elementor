@@ -790,7 +790,7 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>} - A Promise that resolves when the select2 control value is set.
 	 */
 	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
-		await this.page.locator( '.elementor-control-' + controlId + ' .select2:not( .select2-container--disabled )' ).click();
+		await this.page.locator( '.elementor-control-' + controlId + ' .select2:not( .select2-container--disabled )' ).first().click();
 		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
 
 		if ( exactMatch ) {
@@ -803,34 +803,23 @@ module.exports = class EditorPage extends BasePage {
 	/**
 	 * Imports a JSON template.
 	 *
-	 * @param {Object} template      - The JSON template to import.
-	 * @param {string} template.path - The path of the template to load.
-	 * @param {string} template.name - The name to assign to the imported template.
-	 * @param {editor} editor        - The editor to use for importing the template.
+	 * @param {string} templatePath - The path of the template to load.
 	 * @return {Promise<void>} - A Promise that resolves when the import is completed.
 	 */
-	async importJsonTemplate( template, editor ) {
-		const initialUrl = this.page.url();
+	async importJsonTemplate( templatePath ) {
+		const filePath = _path.resolve( __dirname, templatePath );
 
-		const pageId = await createPage();
+		await this.page.goto( '/wp-admin/edit.php?post_type=elementor_library&tabs_group=library' );
 
-		await editor.gotoPostId( pageId );
+		await this.page.click( '#elementor-import-template-trigger' );
 
-		await editor.loadTemplate( template.path );
+		await this.page.setInputFiles( '#elementor-import-template-form-inputs input[type=file]', filePath );
 
-		await this.page.locator( 'button#elementor-panel-saver-button-save-options' ).click();
+		await this.page.click( '#elementor-import-template-form-inputs input[type=submit]' );
 
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-template' ).click();
+		await this.page.waitForSelector( '.dialog-confirm-ok' );
 
-		await this.page.locator( '#elementor-template-library-save-template-name' ).fill( template.name );
-
-		await this.page.locator( '#elementor-template-library-save-template-submit' ).click();
-
-		await this.page.waitForLoadState( 'networkidle' );
-
-		await deletePage( pageId );
-
-		await this.page.goto( initialUrl );
+		await this.page.click( '.dialog-confirm-ok' );
 
 		await this.page.waitForLoadState( 'networkidle' );
 	}
