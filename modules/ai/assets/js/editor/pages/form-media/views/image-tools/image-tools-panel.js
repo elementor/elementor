@@ -63,6 +63,21 @@ const ImageToolsPanel = () => {
 			Icon: EvolveIcon,
 			onClick: () => navigate( LOCATIONS.VARIATIONS ),
 		},
+		{
+			label: __( 'Remove Background', 'elementor' ),
+			Icon: EvolveIcon,
+			onClick: () => navigate( LOCATIONS.REMOVE_BACKGROUND ),
+		},
+		{
+			label: __( 'Remove Text', 'elementor' ),
+			Icon: EvolveIcon,
+			onClick: () => navigate( LOCATIONS.REMOVE_TEXT ),
+		},
+		{
+			label: __( 'Replace Background', 'elementor' ),
+			Icon: EvolveIcon,
+			onClick: () => navigate( LOCATIONS.REPLACE_BACKGROUND ),
+		},
 	];
 	return (
 		<ImageToolsContainer>
