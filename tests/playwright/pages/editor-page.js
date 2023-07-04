@@ -802,9 +802,9 @@ module.exports = class EditorPage extends BasePage {
 	*/
 	async isUiStable( locator, retries = 3, timeout = 500 ) {
 		const comparator = getComparator( 'image/png' );
-		let retry = 0;
-
-		let beforeImage, afterImage;
+		let retry = 0,
+			beforeImage,
+			afterImage;
 
 		do {
 			if ( retry === retries ) {
