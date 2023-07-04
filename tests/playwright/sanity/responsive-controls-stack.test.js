@@ -38,8 +38,6 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		waitForNewPage( page, wpAdmin );
-
 		await editor.addWidget( 'template' );
 
 		await editor.setSelect2ControlValue( 'template_id', template.name, false );
@@ -78,8 +76,6 @@ test.describe( 'Responsive Controls Stack', () => {
 		await editor.importJsonTemplate( template.path );
 
 		await editor.gotoPostId( testPageId );
-
-		waitForNewPage( page, wpAdmin );
 
 		await editor.addWidget( 'loop-grid' );
 
@@ -126,8 +122,6 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		waitForNewPage( page, wpAdmin );
-
 		await editor.addWidget( 'shortcode' );
 
 		await page.waitForSelector( '[data-setting="shortcode"]' );
@@ -158,8 +152,3 @@ test.describe( 'Responsive Controls Stack', () => {
 	);
 } );
 
-const waitForNewPage = async ( page, wpAdmin ) => {
-	await page.waitForLoadState( 'load', { timeout: 20000 } );
-	await wpAdmin.waitForPanel();
-	await wpAdmin.closeAnnouncementsIfVisible();
-};

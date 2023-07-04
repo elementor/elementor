@@ -16,8 +16,8 @@ module.exports = class EditorPage extends BasePage {
 
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
-
 		await this.ensurePanelLoaded();
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	updateImageDates( templateData ) {
