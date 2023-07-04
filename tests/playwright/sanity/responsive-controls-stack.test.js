@@ -42,7 +42,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await editor.waitForIframeToLoaded();
+		await editor.waitForElement( '#elementor-panel-header-add-button' );
 
 		await editor.addWidget( 'template' );
 
@@ -83,7 +83,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await editor.waitForIframeToLoaded();
+		await editor.waitForElement( '#elementor-panel-header-add-button' );
 
 		await editor.addWidget( 'loop-grid' );
 
