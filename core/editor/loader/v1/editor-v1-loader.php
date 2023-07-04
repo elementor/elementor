@@ -14,10 +14,12 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		$packages_to_register = [ 'ui', 'icons' ];
 
+		$assets_path = $this->config->get( 'assets-path' );
+
 		foreach ( $packages_to_register as $package ) {
 			$this->assets_config_provider->load(
 				$package,
-				$this->placeholder_replacer->replace( "{{ASSETS_PATH}}js/packages/{$package}/{$package}.asset.php" )
+				"{$assets_path}js/packages/{$package}/{$package}.asset.php"
 			);
 		}
 	}
@@ -28,10 +30,13 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	public function register_scripts() {
 		parent::register_scripts();
 
+		$assets_url = $this->config->get( 'assets-url' );
+		$min_suffix = $this->config->get( 'min-suffix' );
+
 		foreach ( $this->assets_config_provider->all() as $package => $config ) {
 			wp_register_script(
 				$config['handle'],
-				$this->placeholder_replacer->replace( "{{ASSETS_URL}}js/packages/{$package}/{$package}{{MIN_SUFFIX}}.js" ),
+				"{$assets_url}js/packages/{$package}/{$package}{$min_suffix}.js",
 				$config['deps'],
 				ELEMENTOR_VERSION,
 				true
@@ -40,7 +45,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		wp_register_script(
 			'elementor-responsive-bar',
-			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js' ),
+			"{$assets_url}js/responsive-bar{$min_suffix}.js",
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -48,7 +53,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		wp_register_script(
 			'elementor-editor-loader-v1',
-			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-loader-v1{{MIN_SUFFIX}}.js' ),
+			"{$assets_url}js/editor-loader-v1{$min_suffix}.js",
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -82,9 +87,12 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	public function register_styles() {
 		parent::register_styles();
 
+		$assets_url = $this->config->get( 'assets-url' );
+		$min_suffix = $this->config->get( 'min-suffix' );
+
 		wp_register_style(
 			'elementor-responsive-bar',
-			$this->placeholder_replacer->replace( '{{ASSETS_URL}}css/responsive-bar{{MIN_SUFFIX}}.css' ),
+			"{$assets_url}css/responsive-bar{$min_suffix}.css",
 			[],
 			ELEMENTOR_VERSION
 		);

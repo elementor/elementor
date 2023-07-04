@@ -39,10 +39,12 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::PACKAGES_TO_NOT_ENQUEUE );
 
+		$assets_path = $this->config->get( 'assets-path' );
+
 		foreach ( $packages as $package ) {
 			$this->assets_config_provider->load(
 				$package,
-				$this->placeholder_replacer->replace( "{{ASSETS_PATH}}js/packages/{$package}/{$package}.asset.php" )
+				"{$assets_path}js/packages/{$package}/{$package}.asset.php"
 			);
 		}
 
@@ -52,11 +54,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function register_scripts() {
 		parent::register_scripts();
 
+		$assets_url = $this->config->get( 'assets-url' );
+		$min_suffix = $this->config->get( 'min-suffix' );
+
 		foreach ( $this->assets_config_provider->all() as $package => $config ) {
 			if ( self::ENV === $package ) {
 				wp_register_script(
 					'elementor-editor-environment-v2',
-					$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js' ),
+					"{$assets_url}/editor-environment-v2{$min_suffix}.js",
 					[ $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
@@ -66,7 +71,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			if ( static::APP === $package ) {
 				wp_register_script(
 					'elementor-editor-loader-v2',
-					$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js' ),
+					"{$assets_url}js/editor-loader-v2{$min_suffix}.js",
 					[ 'elementor-editor', $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
@@ -75,7 +80,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 			wp_register_script(
 				$config['handle'],
-				$this->placeholder_replacer->replace( "{{ASSETS_URL}}js/packages/{$package}/{$package}{{MIN_SUFFIX}}.js" ),
+				"{$assets_url}js/packages/{$package}/{$package}{$min_suffix}.js",
 				$config['deps'],
 				ELEMENTOR_VERSION,
 				true
@@ -134,9 +139,12 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function register_styles() {
 		parent::register_styles();
 
+		$assets_url = $this->config->get( 'assets-url' );
+		$min_suffix = $this->config->get( 'min-suffix' );
+
 		wp_register_style(
 			'elementor-editor-v2-overrides',
-			$this->placeholder_replacer->replace( '{{ASSETS_URL}}css/editor-v2-overrides{{MIN_SUFFIX}}.css' ),
+			"{$assets_url}css/editor-v2-overrides{$min_suffix}.css",
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION
 		);
