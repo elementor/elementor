@@ -38,7 +38,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await editor.waitForElement( '#elementor-panel-header-add-button' );
+		waitForNewPage( page, wpAdmin );
 
 		await editor.addWidget( 'template' );
 
@@ -79,7 +79,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await editor.waitForElement( '#elementor-panel-header-add-button' );
+		waitForNewPage( page, wpAdmin );
 
 		await editor.addWidget( 'loop-grid' );
 
@@ -126,7 +126,7 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.gotoPostId( testPageId );
 
-		await editor.waitForElement( '#elementor-panel-header-add-button' );
+		waitForNewPage( page, wpAdmin );
 
 		await editor.addWidget( 'shortcode' );
 
@@ -158,3 +158,7 @@ test.describe( 'Responsive Controls Stack', () => {
 	);
 } );
 
+const waitForNewPage = async ( page, wpAdmin ) => {
+	await page.waitForSelector( '#elementor-panel-header-title', { timeout: 25000 } );
+	await wpAdmin.closeAnnouncementsIfVisible();
+};
