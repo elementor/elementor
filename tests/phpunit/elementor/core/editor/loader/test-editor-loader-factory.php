@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Config_Providers;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Loader;
 
-use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
-use Elementor\Core\Editor\Config_Providers\Editor_V1_Config_Provider;
-use Elementor\Core\Editor\Config_Providers\Editor_V2_Config_Provider;
 use Elementor\Core\Editor\Editor;
+use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
+use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
+use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Test_Config_Provider_Factory extends Elementor_Test_Base {
+class Test_Editor_Loader_Factory extends Elementor_Test_Base {
 	private $original_experiment_default_state;
 
 	public function setUp() {
@@ -45,7 +45,7 @@ class Test_Config_Provider_Factory extends Elementor_Test_Base {
 		}
 
 		// Act
-		$config_provider = Config_Provider_Factory::create();
+		$config_provider = Editor_Loader_Factory::create();
 
 		// Assert
 		$this->assertInstanceOf( $expected_class, $config_provider );
@@ -53,10 +53,10 @@ class Test_Config_Provider_Factory extends Elementor_Test_Base {
 
 	public function create_data_provider() {
 		return [
-			[ Experiments_Manager::STATE_INACTIVE, [], Editor_V1_Config_Provider::class ],
-			[ Experiments_Manager::STATE_ACTIVE, [], Editor_V2_Config_Provider::class ],
-			[ Experiments_Manager::STATE_INACTIVE, [ 'v' => '2' ], Editor_V2_Config_Provider::class ],
-			[ Experiments_Manager::STATE_ACTIVE, [ 'v' => '1' ], Editor_V1_Config_Provider::class ],
+			[ Experiments_Manager::STATE_INACTIVE, [], Editor_V1_Loader::class ],
+			[ Experiments_Manager::STATE_ACTIVE, [], Editor_V2_Loader::class ],
+			[ Experiments_Manager::STATE_INACTIVE, [ 'v' => '2' ], Editor_V2_Loader::class ],
+			[ Experiments_Manager::STATE_ACTIVE, [ 'v' => '1' ], Editor_V1_Loader::class ],
 		];
 	}
 }
