@@ -720,7 +720,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'default' => '169',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-wrapper:not(.elementor-open-lightbox)' => '--video-aspect-ratio: {{VALUE}}',
+					'{{WRAPPER}} .elementor-wrapper' => '--video-aspect-ratio: {{VALUE}}',
 				],
 			]
 		);
@@ -864,41 +864,6 @@ class Widget_Video extends Widget_Base {
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover' => 'color: {{VALUE}}',
 					'#elementor-lightbox-{{ID}} .dialog-lightbox-close-button:hover svg' => 'fill: {{VALUE}}',
 				],
-				'separator' => 'after',
-			]
-		);
-
-		$this->add_control(
-			'lightbox_video_width',
-			[
-				'label' => esc_html__( 'Content Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'default' => [
-					'unit' => '%',
-				],
-				'selectors' => [
-					'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'lightbox_content_position',
-			[
-				'label' => esc_html__( 'Content Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'frontend_available' => true,
-				'options' => [
-					'' => esc_html__( 'Center', 'elementor' ),
-					'top' => esc_html__( 'Top', 'elementor' ),
-				],
-				'selectors' => [
-					'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
-				],
-				'selectors_dictionary' => [
-					'top' => 'top: 60px',
-				],
 			]
 		);
 
@@ -909,6 +874,64 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'deprecation_warning',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => esc_html__( 'Note: These controls have been deprecated and are only visible if they were previously in use. The video’s width and position are now set based on its aspect ratio.', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
+				'separator' => 'before',
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
+				],
+			]
+		);
+
+		// Deprecated control. Visible only if it was previously in use.
+		$this->add_control(
+			'lightbox_video_width',
+			[
+				'label' => esc_html__( 'Content Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'default' => [
+					'unit' => '%',
+				],
+				// 'selectors' => [
+				// 	'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// ],
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
+				],
+			]
+		);
+
+		// Deprecated control. Visible only if it was previously in use.
+		$this->add_control(
+			'lightbox_content_position',
+			[
+				'label' => esc_html__( 'Content Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'frontend_available' => true,
+				'options' => [
+					'' => esc_html__( 'Center', 'elementor' ),
+					'top' => esc_html__( 'Top', 'elementor' ),
+				],
+				// 'selectors' => [
+				// 	'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
+				// ],
+				'selectors_dictionary' => [
+					'top' => 'top: 60px',
+				],
+				'condition' => [
+					'lightbox_video_width!' => '',
+					'lightbox_content_position!' => '',
+				],
 			]
 		);
 
