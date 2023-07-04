@@ -26,10 +26,6 @@ test.describe( 'Responsive Controls Stack', () => {
 		await deletePage( testPageId );
 	} );
 
-	/**
-	  This test is checking that the CSS is updated when changing the template responsive controls.
-	  In case of Additional breakpoints enabled, while using the template widget.
-	 */
 	test( 'Template widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 
@@ -106,6 +102,55 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		// Typography CSS
 		const typographyCSS = await page.$eval( 'h4.elementor-heading-title', ( el ) => {
+			return window.getComputedStyle( el ).getPropertyValue( 'font-size' );
+		} );
+		expect( typographyCSS ).toBe( '65px' );
+	},
+	);
+
+	test( 'ShortCode widget responsive controls', async ( { context, page }, testInfo ) => {
+		const editor = new EditorPage( page, testInfo );
+		const shortCodeSelector = 'tr.type-elementor_library [data-colname="Shortcode"] input';
+
+		const template = {
+			name: 'responsive-controls-stack-widget-template',
+			path: '../page-templates/responsive-controls-stack-widget-template.json',
+		};
+
+		await editor.importJsonTemplate( template.path );
+
+		await page.goto( `/wp-admin/edit.php?s=${ template.name }&post_status=all&post_type=elementor_library` );
+
+		await page.waitForSelector( shortCodeSelector );
+		const shortCodeValue = await page.locator( shortCodeSelector ).first().inputValue();
+
+		await editor.gotoPostId( testPageId );
+
+		await editor.waitForElement( '#elementor-panel-header-add-button' );
+
+		await editor.addWidget( 'shortcode' );
+
+		await page.waitForSelector( '[data-setting="shortcode"]' );
+
+		await page.locator( '[data-setting="shortcode"]' ).fill( shortCodeValue );
+
+		await editor.publishAndViewPage();
+
+		// Remove transition to avoid flakiness
+		await page.addStyleTag( {
+			content: '.elementor-element .elementor-widget-container { transition: none !important; }',
+		} );
+
+		await page.setViewportSize( viewportSize.mobile );
+
+		// Common CSS
+		const borderCSS = await page.$eval( '.elementor-widget-heading .elementor-widget-container', ( el ) => {
+			return window.getComputedStyle( el ).getPropertyValue( 'border' );
+		} );
+		expect( borderCSS ).toBe( '23px dotted rgb(51, 51, 51)' );
+
+		// Typography CSS
+		const typographyCSS = await page.$eval( 'h2.elementor-heading-title', ( el ) => {
 			return window.getComputedStyle( el ).getPropertyValue( 'font-size' );
 		} );
 		expect( typographyCSS ).toBe( '65px' );
