@@ -1,246 +1,129 @@
-import { useEffect, useState } from 'react';
-import { Box } from '@elementor/ui';
-import useImagePrompt from '../../hooks/use-image-prompt';
-import useImageUpload from '../../hooks/use-image-upload';
-import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
-import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES, IMAGE_ASPECT_RATIO_DIMENSIONS } from './consts/consts';
-import { Screen } from './screens/screen';
-import { PanelContent } from './panel-content/panel-content';
-import Panel from '../../components/ui/panel';
-import { getAspectRatioSizes } from './utils';
+import { useEffect, useState, useReducer } from 'react';
+import { LocationProvider } from './context/location-context';
+import { Divider } from '@elementor/ui';
+import PromptDialog from '../../components/prompt-dialog';
+import MediaOutlet from './media-outlet';
+import UnsavedChangesAlert from './components/unsaved-changes-alert';
+import { EditImageProvider } from './context/edit-image-context';
+import { GlobalActionsProvider } from './context/global-actions-context';
+import { GlobalSettingsProvider } from './context/global-settings-context';
 
-const FormMedia = (
-	{
-		onClose,
-		getControlValue,
-		additionalOptions,
-		controlView,
-		credits,
-		setHasUnsavedChanges,
-	},
-) => {
-	const initialValue = getControlValue() === additionalOptions?.defaultValue ? { id: '', url: '' } : getControlValue();
-	const [ editImage, setEditImage ] = useState( initialValue );
-	const { screen, setScreen, panel, setPanel } = useImageScreenPanel(
-		initialValue?.id !== '' ? SCREENS.IMAGE_EDITOR : SCREENS.GALLERY,
-		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.TOOLS,
-	);
-	const [ prompt, setPrompt ] = useState( '' );
-	const [ maskImage, setMaskImage ] = useState( '' );
-	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
-		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
-	} );
-	const [ images, setImages ] = useState( [] );
-	const [ insertToControl, setInsertToControl ] = useState( false );
-	const { data, isLoading, error, send, sendUsageData, reset } = useImagePrompt( {
-		result: initialValue,
-		credits,
-		responseId: false,
-	} );
-	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
+const initialData = {
+	isAllSaved: false,
+	hasUnsavedChanges: false,
+};
 
-	const [ shouldWaitForInitialImage, setShouldWaitForInitialImage ] = useState( () => !! editImage?.url );
+const SET_UNSAVED_CHANGES = 'SET_UNSAVED_CHANGES';
+const SAVE_AND_CLOSE = 'SAVE_AND_CLOSE';
 
-	const panelActive = ! isLoading && ! isUploading && ! shouldWaitForInitialImage;
+const reducer = ( state, { type, payload } ) => {
+	switch ( type ) {
+		case SET_UNSAVED_CHANGES:
+			return {
+				...state,
+				hasUnsavedChanges: payload,
+				isAllSaved: payload ? false : state.isAllSaved,
+			};
+		case SAVE_AND_CLOSE:
+			return {
+				...state,
+				isAllSaved: true,
+				hasUnsavedChanges: false,
+			};
+		case RESET:
+			return initialValue;
+		default:
+			throw Error( 'Unknown action.' );
+	}
+};
 
-	const currentAspectRatio = promptSettings[ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ];
+const FormMedia = ( {
+	onClose,
+	DialogProps,
+	getControlValue,
+	controlView,
+	additionalOptions,
+	maybeRenderUpgradeChip,
+} ) => {
+	const [ state, dispatch ] = useReducer( reducer, initialData );
 
-	const viewData = {
-		width: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].width,
-		height: IMAGE_ASPECT_RATIO_DIMENSIONS[ currentAspectRatio ].height,
-		ratio: currentAspectRatio,
-	};
+	const [ showUnsavedChangeAlert, setShowUnsavedChangeAlert ] = useState( false );
 
-	const setTool = ( tool ) => {
-		const newPanel = tool || PANELS.TOOLS;
-		let newScreen = SCREENS.IMAGE_EDITOR;
-		switch ( tool ) {
-			case PANELS.IMAGE_TO_IMAGE:
-				newScreen = SCREENS.VARIATIONS;
-				break;
-			case PANELS.IN_PAINTING:
-				newScreen = SCREENS.IN_PAINTING;
-				break;
-			case PANELS.OUT_PAINTING:
-				newScreen = SCREENS.OUT_PAINTING;
-				break;
-			case PANELS.UPSCALE:
-				newScreen = SCREENS.IMAGE_EDITOR;
-				break;
+	const setHasUnsavedChanges = ( payload ) => dispatch( { type: SET_UNSAVED_CHANGES, payload } );
+
+	const saveAndClose = () => dispatch( { type: SAVE_AND_CLOSE } );
+
+	const onCloseIntent = () => {
+		if ( state.hasUnsavedChanges ) {
+			setShowUnsavedChangeAlert( true );
+			return;
 		}
-		setPanel( newPanel );
-		setScreen( newScreen );
-	};
 
-	const setAttachment = () => {
-		setHasUnsavedChanges( false );
-		sendUsageData();
-		controlView.setSettingsModel( attachmentData.image );
-		controlView.applySavedValue();
 		onClose();
 	};
 
-	// Get ratio from image
-	useEffect( () => {
-		if ( ! editImage?.url ) {
-			return;
-		}
+	const editImageInitialData = getControlValue() === additionalOptions?.defaultValue ? {} : getControlValue();
 
-		setShouldWaitForInitialImage( true );
-
-		const img = new Image();
-
-		img.src = editImage.url;
-
-		img.onload = () => {
-			const { ratio } = getAspectRatioSizes( img.width, img.height );
-
-			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: ratio } );
-			setShouldWaitForInitialImage( false );
-		};
-	}, [ editImage ] );
-
-	// Image Generation
-	useEffect( () => {
-		if ( ! isLoading && data?.result && Array.isArray( data?.result ) ) {
-			setImages( data?.result );
-			setScreen( SCREENS.GENERATE_RESULTS );
-		}
-	}, [ isLoading ] );
-
-	// Image Upload and set attachment
-	useEffect( () => {
-		if ( ! isUploading && attachmentData?.image?.id ) {
-			if ( insertToControl ) {
-				setAttachment( attachmentData.image );
-			} else {
-				setEditImage( attachmentData.image );
-				setPanel( PANELS.TOOLS );
-				setScreen( SCREENS.IMAGE_EDITOR );
-			}
-		}
-	}, [ isUploading ] );
-
-	const maybeUploadImage = ( imageToUpload, setAsAttachment = false ) => {
-		if ( ! imageToUpload ) {
-			return;
-		}
-
-		if ( setAsAttachment ) {
-			setInsertToControl( true );
-		}
-
-		// Image already uploaded
-		if ( editImage?.image?.seed && editImage?.image?.seed === imageToUpload?.seed ) {
-			if ( setAsAttachment ) {
-				// Remove inner image property used to avoid duplicate uploads
-				const { image, ...attachment } = editImage;
-				return setAttachment( attachment );
-			}
-			setPanel( PANELS.TOOLS );
-			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
-		}
-
-		// Normalize object to match the upload function
-		if ( imageToUpload?.imageUrl ) {
-			imageToUpload = {
-				...imageToUpload,
-				image_url: imageToUpload.imageUrl,
-				use_gallery_image: true,
-			};
-		}
-
-		upload( { image: { ...imageToUpload }, prompt: prompt || imageToUpload.prompt } );
+	const globalSettings = {
+		initialImageType: additionalOptions?.defaultImageType || '',
 	};
 
-	const submitPrompt = ( promptType, userPrompt, mask = null ) => {
-		reset();
-		resetUpload();
-		setHasUnsavedChanges( true );
-
-		if ( PANELS.TEXT_TO_IMAGE === promptType ) {
-			return send( userPrompt, promptSettings );
-		}
-
-		if ( PANELS.IN_PAINTING === promptType ) {
-			return send( userPrompt, promptSettings, editImage, PANELS.IN_PAINTING, mask );
-		}
-
-		if ( PANELS.OUT_PAINTING === promptType ) {
-			return send( userPrompt, promptSettings, true, PANELS.OUT_PAINTING, maskImage );
-		}
-
-		if ( PANELS.UPSCALE === promptType ) {
-			return send( null, promptSettings, editImage, PANELS.UPSCALE );
-		}
-
-		return send( prompt, promptSettings, editImage );
+	const globalActions = {
+		state,
+		getControlValue,
+		saveAndClose,
+		close: onCloseIntent,
+		setHasUnsavedChanges,
+		setControlImage: ( image ) => {
+			controlView.setSettingsModel( image );
+			controlView.applySavedValue();
+		},
 	};
 
-	const generateNewPrompt = () => {
-		setPrompt( '' );
-		setImages( [] );
-		setMaskImage( null );
-		setEditImage( { id: '', url: '' } );
-		resetPromptSettings();
-		setScreen( SCREENS.GALLERY );
-		setPanel( PANELS.TEXT_TO_IMAGE );
-		setHasUnsavedChanges( false );
-		reset();
-		resetUpload();
-	};
+	useEffect( () => {
+		if ( state.isAllSaved ) {
+			// Closing the app only once the state was updated, to allow registered effects to take place before closing.
+			onClose();
+		}
+	}, [ state.isAllSaved ] );
 
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%">
-			<Box position="relative">
-				<Panel>
-					<PanelContent { ...{
-						error: error || uploadError,
-						prompt,
-						setPrompt,
-						panelActive,
-						generateNewPrompt,
-						promptSettings,
-						updatePromptSettings,
-						submitPrompt,
-						panel,
-						editImage,
-						images,
-						setTool,
-						maskImage,
-						reset,
-						viewData,
-					} } />
-				</Panel>
-			</Box>
+		<>
+			<PromptDialog onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
+				<PromptDialog.Header onClose={ () => onCloseIntent() }>
+					{ maybeRenderUpgradeChip() }
+				</PromptDialog.Header>
 
-			<Screen { ...{
-				isUploading,
-				isLoading,
-				screen,
-				images,
-				promptSettings,
-				updatePromptSettings,
-				generateNewPrompt,
-				maybeUploadImage,
-				setPrompt,
-				editImage,
-				setMaskImage,
-				viewData,
-				shouldWaitForInitialImage,
-			} } />
-		</Box>
+				<Divider />
+
+				<GlobalSettingsProvider settings={ globalSettings }>
+					<GlobalActionsProvider actions={ globalActions }>
+						<LocationProvider>
+							<EditImageProvider imageData={ editImageInitialData }>
+								<MediaOutlet />
+							</EditImageProvider>
+						</LocationProvider>
+					</GlobalActionsProvider>
+				</GlobalSettingsProvider>
+			</PromptDialog>
+
+			{
+				showUnsavedChangeAlert && (
+					<UnsavedChangesAlert onClose={ onClose } onCancel={ () => setShowUnsavedChangeAlert( false ) } open={ true } />
+				)
+			}
+		</>
 	);
 };
 
 FormMedia.propTypes = {
-	getControlValue: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
-	additionalOptions: PropTypes.object,
+	DialogProps: PropTypes.object,
+	getControlValue: PropTypes.func.isRequired,
 	controlView: PropTypes.object,
+	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
-	setHasUnsavedChanges: PropTypes.func.isRequired,
+	maybeRenderUpgradeChip: PropTypes.func,
 };
 
 export default FormMedia;
