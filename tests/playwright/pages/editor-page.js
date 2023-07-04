@@ -15,15 +15,7 @@ module.exports = class EditorPage extends BasePage {
 
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
-		await this.page.waitForLoadState( 'load', { timeout: 25000 } );
 		await this.ensurePanelLoaded();
-		await this.closeAnnouncementsIfVisible();
-	}
-
-	async closeAnnouncementsIfVisible() {
-		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
-			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
-		}
 	}
 
 	updateImageDates( templateData ) {
@@ -784,49 +776,5 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 		await this.setSliderControlValue( selector + '_font_size', fontsize );
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
-	}
-
-	/**
-	 * Set Select2 control value.
-	 *
-	 * @param {string}  controlId  - The control to set the value to;
-	 * @param {string}  value      - The value to set;
-	 * @param {boolean} exactMatch - Optional. Whether to match the value exactly or not.
-	 *
-	 * @return {Promise<void>} - A Promise that resolves when the select2 control value is set.
-	 */
-	async setSelect2ControlValue( controlId, value, exactMatch = true ) {
-		await this.page.locator( '.elementor-control-' + controlId + ' .select2:not( .select2-container--disabled )' ).first().click();
-		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
-
-		if ( exactMatch ) {
-			await this.page.locator( '.select2-results__option:text-is("' + value + '")' ).first().click();
-		} else {
-			await this.page.locator( '.select2-results__option:has-text("' + value + '")' ).first().click();
-		}
-	}
-
-	/**
-	 * Imports a JSON template.
-	 *
-	 * @param {string} templatePath - The path of the template to load.
-	 * @return {Promise<void>} - A Promise that resolves when the import is completed.
-	 */
-	async importJsonTemplate( templatePath ) {
-		const filePath = _path.resolve( __dirname, templatePath );
-
-		await this.page.goto( '/wp-admin/edit.php?post_type=elementor_library&tabs_group=library' );
-
-		await this.page.click( '#elementor-import-template-trigger' );
-
-		await this.page.setInputFiles( '#elementor-import-template-form-inputs input[type=file]', filePath );
-
-		await this.page.click( '#elementor-import-template-form-inputs input[type=submit]' );
-
-		await this.page.waitForSelector( '.dialog-confirm-ok' );
-
-		await this.page.click( '.dialog-confirm-ok' );
-
-		await this.page.waitForLoadState( 'networkidle' );
 	}
 };
