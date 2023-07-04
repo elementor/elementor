@@ -6676,32 +6676,17 @@
 			"label": "Custom CSS",
 			"name": "section_custom_css"
 		},
-		"custom_css_title": {
-			"type": "raw_html",
-			"tab": "advanced",
-			"section": "section_custom_css",
-			"raw": "Add your own custom CSS here",
-			"name": "custom_css_title"
-		},
 		"custom_css": {
 			"type": "code",
 			"tab": "advanced",
 			"section": "section_custom_css",
-			"label": "Custom CSS",
+			"label": "Add your own custom CSS",
 			"language": "css",
 			"render_type": "ui",
 			"show_label": false,
 			"separator": "none",
 			"name": "custom_css",
 			"default": ""
-		},
-		"custom_css_description": {
-			"type": "raw_html",
-			"tab": "advanced",
-			"section": "section_custom_css",
-			"raw": "Use \"selector\" to target wrapper element. Examples:<br>selector {color: red;} // For main element<br>selector .child-element {margin: 10px;} // For child element<br>.my-class {text-align: center;} // Or use any custom selector",
-			"content_classes": "elementor-descriptor",
-			"name": "custom_css_description"
 		}
 	},
 	"tabs_controls": {
