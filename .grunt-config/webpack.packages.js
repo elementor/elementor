@@ -17,7 +17,7 @@ const elementorPackages = [
 	'locations',
 	'store',
 	'ui',
-]
+];
 
 const packages = elementorPackages
 	.map( ( name ) => {

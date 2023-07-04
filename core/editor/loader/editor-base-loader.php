@@ -34,13 +34,17 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$this->assets_config_provider = $assets_config_provider;
 	}
 
+	public function init() {
+		// Nothing to do.
+	}
+
 	/**
 	 * @return void
 	 */
 	public function register_scripts() {
 		wp_register_script(
-			'elementor-common-modules',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor-modules{{MIN_SUFFIX}}.js' ),
+			'elementor-editor-modules',
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-modules{{MIN_SUFFIX}}.js' ),
 			[ 'elementor-common-modules' ],
 			ELEMENTOR_VERSION,
 			true
@@ -48,7 +52,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'elementor-editor-document',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor-document{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-document{{MIN_SUFFIX}}.js' ),
 			[ 'elementor-common-modules' ],
 			ELEMENTOR_VERSION,
 			true
@@ -57,7 +61,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		// Hack for waypoint with editor mode.
 		wp_register_script(
 			'elementor-waypoints',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/waypoints/waypoints-for-editor.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/waypoints/waypoints-for-editor.js' ),
 			[ 'jquery' ],
 			'4.0.2',
 			true
@@ -65,15 +69,15 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'perfect-scrollbar',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/perfect-scrollbar/js/perfect-scrollbar{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/perfect-scrollbar/js/perfect-scrollbar{{MIN_SUFFIX}}.js' ),
+			[],
 			'1.4.0',
-			ELEMENTOR_VERSION,
 			true
 		);
 
 		wp_register_script(
 			'jquery-easing',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/jquery-easing/jquery-easing{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/jquery-easing/jquery-easing{{MIN_SUFFIX}}.js' ),
 			[ 'jquery' ],
 			'1.3.2',
 			true
@@ -81,7 +85,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'nprogress',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/nprogress/nprogress{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/nprogress/nprogress{{MIN_SUFFIX}}.js' ),
 			[],
 			'0.2.0',
 			true
@@ -89,7 +93,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'tipsy',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/tipsy/tipsy{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/tipsy/tipsy{{MIN_SUFFIX}}.js' ),
 			[ 'jquery' ],
 			'1.0.0',
 			true
@@ -97,7 +101,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'jquery-elementor-select2',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/e-select2/js/e-select2.full{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/e-select2/js/e-select2.full{{MIN_SUFFIX}}.js' ),
 			[ 'jquery' ],
 			'4.0.6-rc.1',
 			true
@@ -105,7 +109,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'flatpickr',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.js' ),
 			[ 'jquery' ],
 			'1.12.0',
 			true
@@ -129,7 +133,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'jquery-hover-intent',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/jquery-hover-intent/jquery-hover-intent{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/jquery-hover-intent/jquery-hover-intent{{MIN_SUFFIX}}.js' ),
 			[],
 			'1.0.0',
 			true
@@ -137,7 +141,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'nouislider',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/nouislider/nouislider{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/nouislider/nouislider{{MIN_SUFFIX}}.js' ),
 			[],
 			'13.0.0',
 			true
@@ -145,7 +149,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'pickr',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/pickr/pickr.min.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/pickr/pickr.min.js' ),
 			[],
 			'1.5.0',
 			true
@@ -153,7 +157,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'elementor-editor',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor{{MIN_SUFFIX}}.js' ),
 			[
 				'elementor-common',
 				'elementor-editor-modules',
@@ -206,14 +210,14 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	public function register_styles() {
 		wp_register_style(
 			'font-awesome',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/font-awesome/css/font-awesome{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/font-awesome/css/font-awesome{{MIN_SUFFIX}}.css' ),
 			[],
 			'4.7.0'
 		);
 
 		wp_register_style(
 			'elementor-select2',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/e-select2/css/e-select2{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/e-select2/css/e-select2{{MIN_SUFFIX}}.css' ),
 			[],
 			'4.0.6-rc.1'
 		);
@@ -227,21 +231,21 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_style(
 			'flatpickr',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/flatpickr/flatpickr{{MIN_SUFFIX}}.css' ),
 			[],
 			'1.12.0'
 		);
 
 		wp_register_style(
 			'pickr',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}lib/pickr/themes/monolith.min.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}lib/pickr/themes/monolith.min.css' ),
 			[],
 			'1.5.0'
 		);
 
 		wp_register_style(
 			'elementor-editor',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}css/editor{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}css/editor{{DIRECTION_SUFFIX}}{{MIN_SUFFIX}}.css' ),
 			[
 				'elementor-common',
 				'elementor-select2',

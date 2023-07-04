@@ -9,24 +9,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V1_Loader extends Editor_Base_Loader {
+	public function init() {
+		parent::init();
+
+		$packages_to_register = [ 'ui', 'icons' ];
+
+		foreach ( $packages_to_register as $package ) {
+			$this->assets_config_provider->load(
+				$package,
+				$this->placeholder_replacer->replace( "{{ASSETS_PATH}}js/packages/{$package}/{$package}.asset.php" )
+			);
+		}
+	}
+
 	/**
 	 * @return void
 	 */
 	public function register_scripts() {
 		parent::register_scripts();
 
-		$packages_names = [ 'ui', 'icons' ];
-
-		foreach ( $packages_names as $package_name ) {
-			$config = $this->assets_config_provider->get( $package_name );
-
-			if ( ! $config ) {
-				return;
-			}
-
+		foreach ( $this->assets_config_provider->all() as $package => $config ) {
 			wp_register_script(
 				$config['handle'],
-				$this->placeholder_replacer->replace( "{{BASE_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js" ),
+				$this->placeholder_replacer->replace( "{{ASSETS_URL}}js/packages/{$package}/{$package}{{MIN_SUFFIX}}.js" ),
 				$config['deps'],
 				ELEMENTOR_VERSION,
 				true
@@ -35,7 +40,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		wp_register_script(
 			'elementor-responsive-bar',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}js/responsive-bar{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -43,7 +48,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		wp_register_script(
 			'elementor-editor-loader-v1',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor-loader-v1{{MIN_SUFFIX}}.js' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-loader-v1{{MIN_SUFFIX}}.js' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
@@ -79,7 +84,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 
 		wp_register_style(
 			'elementor-responsive-bar',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}css/responsive-bar{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}css/responsive-bar{{MIN_SUFFIX}}.css' ),
 			[],
 			ELEMENTOR_VERSION
 		);

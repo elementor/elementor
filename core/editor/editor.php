@@ -595,6 +595,8 @@ class Editor {
 	private function get_loader() {
 		if ( ! $this->loader ) {
 			$this->loader = Editor_Loader_Factory::create();
+
+			$this->loader->init();
 		}
 
 		return $this->loader;

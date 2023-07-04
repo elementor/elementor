@@ -34,32 +34,39 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 	];
 
+	public function init() {
+		parent::init();
+
+		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::PACKAGES_TO_NOT_ENQUEUE );
+
+		foreach ( $packages as $package ) {
+			$this->assets_config_provider->load(
+				$package,
+				$this->placeholder_replacer->replace( "{{ASSETS_PATH}}js/packages/{$package}/{$package}.asset.php" )
+			);
+		}
+
+		do_action( 'elementor/editor/v2/init' );
+	}
+
 	public function register_scripts() {
 		parent::register_scripts();
 
-		$packages_names = array_merge( self::PACKAGES_TO_ENQUEUE, self::PACKAGES_TO_NOT_ENQUEUE );
-
-		foreach ( $packages_names as $package_name ) {
-			$config = $this->assets_config_provider->get( $package_name );
-
-			if ( ! $config ) {
-				return;
-			}
-
-			if ( self::ENV === $package_name ) {
+		foreach ( $this->assets_config_provider->all() as $package => $config ) {
+			if ( self::ENV === $package ) {
 				wp_register_script(
 					'elementor-editor-environment-v2',
-					$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js' ),
+					$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-environment-v2{{MIN_SUFFIX}}.js' ),
 					[ $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
 				);
 			}
 
-			if ( static::APP === $package_name ) {
+			if ( static::APP === $package ) {
 				wp_register_script(
 					'elementor-editor-loader-v2',
-					$this->placeholder_replacer->replace( '{{BASE_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js' ),
+					$this->placeholder_replacer->replace( '{{ASSETS_URL}}js/editor-loader-v2{{MIN_SUFFIX}}.js' ),
 					[ 'elementor-editor', $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
@@ -68,7 +75,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 			wp_register_script(
 				$config['handle'],
-				$this->placeholder_replacer->replace( "{{BASE_URL}}js/packages/{$package_name}{{MIN_SUFFIX}}.js" ),
+				$this->placeholder_replacer->replace( "{{ASSETS_URL}}js/packages/{$package}/{$package}{{MIN_SUFFIX}}.js" ),
 				$config['deps'],
 				ELEMENTOR_VERSION,
 				true
@@ -85,13 +92,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
-		foreach ( self::PACKAGES_TO_ENQUEUE as $package_name ) {
-			$config = $this->assets_config_provider->get( $package_name );
-
-			if ( ! $config ) {
-				return;
-			}
-
+		foreach ( $this->assets_config_provider->only( self::PACKAGES_TO_ENQUEUE ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
 
@@ -105,15 +106,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function load_scripts_translations() {
 		parent::load_scripts_translations();
 
-		$packages_names = array_merge( self::PACKAGES_TO_ENQUEUE, self::PACKAGES_TO_NOT_ENQUEUE );
-
-		foreach ( $packages_names as $package_name ) {
-			$config = $this->assets_config_provider->get( $package_name );
-
-			if ( ! $config ) {
-				return;
-			}
-
+		foreach ( $this->assets_config_provider->all() as $config ) {
 			wp_set_script_translations( $config['handle'], 'elementor' );
 		}
 
@@ -125,17 +118,15 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		$env_config = $this->assets_config_provider->get( self::ENV );
 
-		if ( ! $env_config ) {
-			return;
+		if ( $env_config ) {
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+
+			Utils::print_js_config(
+				$env_config['handle'],
+				'elementorEditorV2Env',
+				$client_env
+			);
 		}
-
-		$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-
-		Utils::print_js_config(
-			$env_config['handle'],
-			'elementorEditorV2Env',
-			$client_env
-		);
 
 		do_action( 'elementor/editor/v2/scripts/settings' );
 	}
@@ -145,7 +136,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		wp_register_style(
 			'elementor-editor-v2-overrides',
-			$this->placeholder_replacer->replace( '{{BASE_URL}}css/editor-v2-overrides{{MIN_SUFFIX}}.css' ),
+			$this->placeholder_replacer->replace( '{{ASSETS_URL}}css/editor-v2-overrides{{MIN_SUFFIX}}.css' ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION
 		);

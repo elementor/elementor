@@ -9,6 +9,11 @@ interface Editor_Loader_Interface {
 	/**
 	 * @return void
 	 */
+	public function init();
+
+	/**
+	 * @return void
+	 */
 	public function register_scripts();
 
 	/**

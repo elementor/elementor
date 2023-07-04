@@ -5,46 +5,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Assets_Config_Provider {
+class Assets_Config_Provider extends Collection {
 	/**
-	 * @var array
+	 * Load asset config from a file into the collection.
+	 *
+	 * @param $key
+	 * @param $path
+	 *
+	 * @return $this
 	 */
-	private $cache = [];
-
-	/**
-	 * @var string|null
-	 */
-	private $base_path;
-
-	/**
-	 * @param string $base_path
-	 */
-	public function __construct( $base_path = null ) {
-		$this->base_path = $base_path;
-	}
-
-	public function get( $id, $base_path = null ) {
-		if ( array_key_exists( $id, $this->cache ) ) {
-			return $this->cache[ $id ];
-		}
-
-		$base_path = $base_path ? $base_path : $this->base_path;
-
-		$path = "{$base_path}{$id}.assets.php";
-
+	public function load( $key, $path ) {
 		if ( ! file_exists( $path ) ) {
-			$this->cache[ $id ] = null;
-
-			return null;
+			return $this;
 		}
 
 		$config = require $path;
 
-		$this->cache[ $id ] = [
+		if ( ! isset( $config['handle'] ) ) {
+			return $this;
+		}
+
+		$this->items[ $key ] = [
 			'handle' => $config['handle'],
-			'deps' => $config['deps'],
+			'deps' => $config['deps'] ?? [],
 		];
 
-		return $this->cache[ $id ];
+		return $this;
 	}
 }
