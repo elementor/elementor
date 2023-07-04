@@ -3,7 +3,6 @@ const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 const _path = require( 'path' );
-const { createPage, deletePage } = require( '../utilities/rest-api' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +15,15 @@ module.exports = class EditorPage extends BasePage {
 
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+		await this.page.waitForLoadState( 'load', { timeout: 25000 } );
 		await this.ensurePanelLoaded();
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.closeAnnouncementsIfVisible();
+	}
+
+	async closeAnnouncementsIfVisible() {
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		}
 	}
 
 	updateImageDates( templateData ) {

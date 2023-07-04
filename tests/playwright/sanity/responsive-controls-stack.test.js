@@ -107,6 +107,7 @@ test.describe( 'Responsive Controls Stack', () => {
 	test( 'ShortCode widget responsive controls', async ( { context, page }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 		const shortCodeSelector = 'tr.type-elementor_library [data-colname="Shortcode"] input';
+		const dataSettingShortCodeSelector = '[data-setting="shortcode"]';
 
 		const template = {
 			name: 'responsive-controls-stack-widget-template',
@@ -124,9 +125,9 @@ test.describe( 'Responsive Controls Stack', () => {
 
 		await editor.addWidget( 'shortcode' );
 
-		await page.waitForSelector( '[data-setting="shortcode"]' );
+		await page.waitForSelector( dataSettingShortCodeSelector );
 
-		await page.locator( '[data-setting="shortcode"]' ).fill( shortCodeValue );
+		await page.locator( dataSettingShortCodeSelector ).fill( shortCodeValue );
 
 		await editor.publishAndViewPage();
 
