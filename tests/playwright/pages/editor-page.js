@@ -800,7 +800,7 @@ module.exports = class EditorPage extends BasePage {
 	* Can be used to check for completed rendering. Useful to wait out animations before screenshots and expects.
 	* Should be less flaky than waitForLoadState( 'load' ) in editor where Ajax re-rendering is triggered.
 	*/
-	async isScreenShottable( locator, retries = 3, timeout = 500 ) {
+	async isUiStable( locator, retries = 3, timeout = 500 ) {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0;
 
