@@ -1,25 +1,16 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
+const { setExperiment } = require( '../utilities/rest-api' );
 
 test.describe( 'Container Grid tests @container', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: true,
-			container_grid: true,
-		} );
+	test.beforeAll( async () => {
+		await setExperiment( 'container', true );
+		await setExperiment( 'container_grid', true );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: false,
-			container_grid: false,
-		} );
+	test.afterAll( async () => {
+		await setExperiment( 'container', false );
+		await setExperiment( 'container_grid', false );
 	} );
 
 	test( 'Test grid container', async ( { page }, testInfo ) => {

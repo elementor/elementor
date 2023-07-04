@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
+const { setExperiment } = require( '../../../utilities/rest-api' );
 const Breakpoints = require( '../../../assets/breakpoints' );
 const EditorPage = require( '../../../pages/editor-page' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';
@@ -7,13 +8,11 @@ import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
 	test( 'Image Carousel', async ( { page }, testInfo ) => {
+		await setExperiment( 'e_swiper_latest', false );
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 
 		await wpAdmin.openNewPage();
 		await editor.useCanvasTemplate();
@@ -63,12 +62,11 @@ test.describe( 'Image carousel tests', () => {
 	} );
 
 	test( 'Image Carousel Responsive Spacing', async ( { page }, testInfo ) => {
+		await setExperiment( 'additional_custom_breakpoints', true );
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			additional_custom_breakpoints: true,
-		} );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 		// Add breakpoints.
@@ -98,18 +96,15 @@ test.describe( 'Image carousel tests', () => {
 		await page.fill( '.elementor-control-image_spacing_custom_tablet input[type="number"]', '10' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
-		await wpAdmin.setExperiments( {
-			additional_custom_breakpoints: 'inactive',
-		} );
+		await setExperiment( 'additional_custom_breakpoints', false );
 	} );
 
 	test( 'Accessibility test', async ( { page }, testInfo ) => {
+		await setExperiment( 'e_swiper_latest', false );
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 		await wpAdmin.openNewPage();
 		await editor.useDefaultTemplate();
 		await editor.closeNavigatorIfOpen();
@@ -137,13 +132,11 @@ test.describe( 'Image carousel tests', () => {
 	} );
 
 	test( 'Image caption test', async ( { page }, testInfo ) => {
+		await setExperiment( 'e_swiper_latest', false );
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();

@@ -1,27 +1,16 @@
 const { test, expect } = require( '@playwright/test' );
-const { createPage, deletePage } = require( '../utilities/rest-api' );
-const WpAdminPage = require( '../pages/wp-admin-page.js' );
+const { createPage, deletePage, setExperiment } = require( '../utilities/rest-api' );
 const EditorPage = require( '../pages/editor-page' );
 
 test.describe( 'Background Lazy Load', () => {
 	let pageId;
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_lazyload: true,
-		} );
+	test.beforeAll( async () => {
+		await setExperiment( 'e_lazyload', true );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_lazyload: false,
-		} );
+	test.afterAll( async () => {
+		await setExperiment( 'e_lazyload', false );
 	} );
 
 	test.beforeEach( async () => {

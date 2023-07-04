@@ -1,12 +1,11 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page.js' );
+const { setExperiment } = require( '../utilities/rest-api' );
 
 test( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.setExperiments( {
-		container: true,
-	} );
+	await setExperiment( 'container', true );
 
 	const editor = await wpAdmin.useElementorCleanPost();
 

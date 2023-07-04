@@ -1,4 +1,5 @@
 const { expect } = require( '@playwright/test' );
+const { setExperiment } = require( '../../../../../utilities/rest-api' );
 const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 const Breakpoints = require( '../../../../../assets/breakpoints' );
 
@@ -26,13 +27,10 @@ module.exports = class {
 	}
 
 	async init( isExperimentBreakpoints ) {
+		await setExperiment( 'container', false );
+		await setExperiment( 'additional_custom_breakpoints', isExperimentBreakpoints );
+
 		this.wpAdminPage = new WpAdminPage( this.page, this.testInfo );
-
-		await this.wpAdminPage.setExperiments( {
-			additional_custom_breakpoints: isExperimentBreakpoints,
-			container: false,
-		} );
-
 		this.editor = await this.wpAdminPage.openNewPage();
 
 		if ( isExperimentBreakpoints ) {

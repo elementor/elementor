@@ -31,9 +31,10 @@ test.describe( 'Video tests inside a container @video', () => {
 		// Arrange.
 		const context = await browser.newContext();
 		const page = await context.newPage();
+
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
+		const editor = new EditorPage( page, testInfo );
 		await editor.closeNavigatorIfOpen();
 
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
@@ -132,7 +133,7 @@ test.describe( 'Video tests inside a container @video', () => {
 	} );
 } );
 
-test.describe( 'Video tests inside a section', () => {
+test.describe( 'Video tests inside a section @video', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),

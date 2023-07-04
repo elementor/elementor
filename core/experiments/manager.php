@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+require_once __DIR__ . '/experiments-controller.php';
+
 class Manager extends Base_Object {
 
 	const RELEASE_STATUS_DEV = 'dev';

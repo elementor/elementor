@@ -1,16 +1,23 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page.js';
+const { setExperiment } = require( '../../../utilities/rest-api.js' );
 const EditorPage = require( '../../../pages/editor-page.js' );
 import Content from '../../../pages/elementor-panel-tabs/content.js';
 
 test.describe( 'Tabs widget tests', () => {
+	test.beforeAll( async () => {
+		await setExperiment( 'container', true );
+		await setExperiment( 'nested-elements', true );
+	} );
+
+	test.afterAll( async () => {
+		await setExperiment( 'container', false );
+		await setExperiment( 'nested-elements', false );
+	} );
+
 	test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page }, testInfo ) => {
 	// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
 		const editor = await wpAdmin.useElementorCleanPost();
 
 		// Act.
@@ -19,11 +26,6 @@ test.describe( 'Tabs widget tests', () => {
 		// Assert.
 		await expect( editor.page.locator( '.elementor-control-raw-html.elementor-panel-alert.elementor-panel-alert-info' ) )
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
-
-		await wpAdmin.setExperiments( {
-			container: 'inactive',
-			'nested-elements': 'inactive',
-		} );
 	} );
 
 	test( 'Tabs widget sanity test', async ( { page }, testInfo ) => {
