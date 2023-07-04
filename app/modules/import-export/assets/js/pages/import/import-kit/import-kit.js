@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
+import { useConfirmAction } from '@elementor/hooks';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
@@ -12,10 +13,12 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import Dialog from 'elementor-app/ui/dialog/dialog';
 
 import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
+import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function ImportKit() {
 	const sharedContext = useContext( SharedContext ),
@@ -63,7 +66,19 @@ export default function ImportKit() {
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic onClick={ () => eventTracking( 'kit-library/seek-more-info', null, 'click' ) } >
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
-		);
+		),
+		{
+			runAction: uploadFile,
+			dialog,
+			checkbox,
+		} = useConfirmAction( {
+			doNotShowAgainKey: 'upload_json_warning_generic_message',
+			action: ( file, e ) => {
+				setIsLoading( true );
+				importContext.dispatch( { type: 'SET_FILE', payload: file } );
+				eventTracking( 'kit-library/file-upload', null, 'feedback', null, null, e.type );
+			},
+		} );
 
 	// On load.
 	useEffect( () => {
@@ -128,11 +143,7 @@ export default function ImportKit() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
-					onFileSelect={ ( file, e ) => {
-						setIsLoading( true );
-						importContext.dispatch( { type: 'SET_FILE', payload: file } );
-						eventTracking( 'kit-library/file-upload', null, 'feedback', null, null, e.type );
-					} }
+					onFileSelect={ uploadFile }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
@@ -144,6 +155,29 @@ export default function ImportKit() {
 					onError={ () => eventTracking( 'kit-library/modal-open', null, 'load', errorType, 'error' ) }
 					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', null, 'click', null, 'error' ) }
 				/> }
+
+				{ dialog.isOpen &&
+					<Dialog
+						title={ __( 'Warning: JSON or ZIP files may be unsafe', 'elementor' ) }
+						text={ __( 'Uploading JSON or ZIP files from unknown sources can be harmful and put your site at risk. For maximum safety, upload only JSON or ZIP files from trusted sources.', 'elementor' ) }
+						approveButtonColor="link"
+						approveButtonText={ __( 'Continue', 'elementor' ) }
+						approveButtonOnClick={ dialog.approve }
+						dismissButtonText={ __( 'Cancel', 'elementor' ) }
+						dismissButtonOnClick={ dialog.dismiss }
+						onClose={ dialog.dismiss }
+					>
+						<label htmlFor="do-not-show-upload-json-warning-again" style={ { display: 'flex', alignItems: 'center', gap: '5px' } }>
+							<Checkbox
+								id="do-not-show-upload-json-warning-again"
+								type="checkbox"
+								value={ checkbox.isChecked }
+								onChange={ ( event ) => checkbox.setIsChecked( !! event.target.checked ) }
+							/>
+							{ __( 'Do not show this message again', 'elementor' ) }
+						</label>
+					</Dialog>
+				}
 			</section>
 		</Layout>
 	);
