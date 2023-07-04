@@ -159,6 +159,7 @@ test.describe( 'Responsive Controls Stack', () => {
 } );
 
 const waitForNewPage = async ( page, wpAdmin ) => {
-	await page.waitForSelector( '#elementor-panel-header-title', { timeout: 25000 } );
+	await page.waitForLoadState( 'load', { timeout: 20000 } );
+	await wpAdmin.waitForPanel();
 	await wpAdmin.closeAnnouncementsIfVisible();
 };
