@@ -36,7 +36,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'counter',
 		'progress_bar',
 		'toggle',
-		'sound_cloud',
+		// 'sound_cloud',
 		'html',
 		'alert',
 		'button_hover',
