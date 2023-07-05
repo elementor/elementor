@@ -31,12 +31,10 @@ class Editor_Loader_Factory {
 			'direction-suffix' => is_rtl() ? '-rtl' : '',
 		] );
 
-		$assets_config_provider = new Assets_Config_Provider( [] );
-
 		if ( '2' === $editor_version ) {
-			return new Editor_V2_Loader( $config, $assets_config_provider );
+			return new Editor_V2_Loader( $config );
 		}
 
-		return new Editor_V1_Loader( $config, $assets_config_provider );
+		return new Editor_V1_Loader( $config );
 	}
 }

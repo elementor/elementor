@@ -355,9 +355,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$this->get_loader()->print_scripts_settings();
 		$this->get_loader()->enqueue_scripts();
-		$this->get_loader()->load_scripts_translations();
 
 		Plugin::$instance->controls_manager->enqueue_control_scripts();
 

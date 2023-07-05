@@ -24,16 +24,6 @@ interface Editor_Loader_Interface {
 	/**
 	 * @return void
 	 */
-	public function load_scripts_translations();
-
-	/**
-	 * @return void
-	 */
-	public function print_scripts_settings();
-
-	/**
-	 * @return void
-	 */
 	public function register_styles();
 
 	/**

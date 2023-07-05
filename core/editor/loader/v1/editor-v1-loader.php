@@ -1,14 +1,30 @@
 <?php
 namespace Elementor\Core\Editor\Loader\V1;
 
+use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Editor_V1_Loader extends Editor_Base_Loader {
+
+	/**
+	 * @var Assets_Config_Provider
+	 */
+	protected $assets_config_provider;
+
+	public function __construct( Collection $config ) {
+		parent::__construct( $config );
+
+		$this->assets_config_provider = new Assets_Config_Provider( [] );
+	}
+
 	public function init() {
 		parent::init();
 
@@ -67,18 +83,18 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'elementor-responsive-bar' );
+		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
 
 		// Must be last.
 		wp_enqueue_script( 'elementor-editor-loader-v1' );
-	}
 
-	/**
-	 * @return void
-	 */
-	public function load_scripts_translations() {
-		parent::load_scripts_translations();
+		wp_set_script_translations( 'elementor-editor', 'elementor' );
 
-		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
+		Utils::print_js_config(
+			'elementor-editor',
+			'ElementorConfig',
+			Editor_Common_Scripts_Settings::get()
+		);
 	}
 
 	/**

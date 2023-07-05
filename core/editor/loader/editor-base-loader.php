@@ -17,17 +17,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 */
 	protected $config;
 
-	/**
-	 * @var Assets_Config_Provider
-	 */
-	protected $assets_config_provider;
-
-	public function __construct(
-		Collection $config,
-		Assets_Config_Provider $assets_config_provider
-	) {
+	public function __construct( Collection $config ) {
 		$this->config = $config;
-		$this->assets_config_provider = $assets_config_provider;
 	}
 
 	public function init() {
@@ -186,21 +177,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 	public function enqueue_scripts() {
 		//
-	}
-
-	public function load_scripts_translations() {
-		wp_set_script_translations( 'elementor-editor', 'elementor' );
-	}
-
-	/**
-	 * @return void
-	 */
-	public function print_scripts_settings() {
-		Utils::print_js_config(
-			'elementor-editor',
-			'ElementorConfig',
-			Editor_Common_Scripts_Settings::get()
-		);
 	}
 
 	/**
