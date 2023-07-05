@@ -133,7 +133,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		for ( const key in replacementObj ) {
 			if ( replacementObj.hasOwnProperty( key ) ) {
 				if ( 'object' === typeof replacementObj[ key ] && replacementObj[ key ] !== null && originalObj.hasOwnProperty( key ) && 'object' === typeof originalObj[ key ] && originalObj[ key ] !== null ) {
-					mergedObj[ key ] = this.deepMerge( originalObj[key], replacementObj[ key ] );
+					mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
 				} else {
 					mergedObj[ key ] = replacementObj[ key ];
 				}
