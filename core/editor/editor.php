@@ -641,7 +641,7 @@ class Editor {
 							'container_type' => 'grid',
 						],
 					],
-				]
+				],
 			],
 		];
 	}

@@ -72,8 +72,8 @@ ElementModel = BaseElementModel.extend( {
 
 		const newSettings = {
 			...settings, // Copy existing properties
-			elType: elType, // Update elType property
-			isInner: this.get('isInner'),
+			elType, // Update elType property
+			isInner: this.get( 'isInner' ),
 		};
 
 		// Allow passing custom `_title` from model.
