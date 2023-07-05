@@ -57,7 +57,7 @@ const RemoveBackground = () => {
 							backgroundImage: 'linear-gradient(45deg, #bbb 25%, transparent 25%), linear-gradient(-45deg, #bbb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bbb 75%), linear-gradient(-45deg, transparent 75%, #bbb 75%)',
 							backgroundSize: '20px 20px',
 							backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-						} } >
+						} }>
 							<ImagesDisplay
 								onUseImage={ use }
 								onEditImage={ edit }

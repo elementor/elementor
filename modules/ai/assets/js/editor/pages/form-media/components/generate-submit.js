@@ -9,5 +9,5 @@ const GenerateSubmit = ( props ) => {
 };
 GenerateSubmit.propTypes = {
 	children: PropTypes.any,
-}
+};
 export default GenerateSubmit;
