@@ -12,7 +12,7 @@ import PromptField from '../../components/prompt-field';
 const RemoveBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const { editImage, width: initialEditImageWidth } = useEditImage();
+	const { editImage } = useEditImage();
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 

@@ -1,3 +1,4 @@
+import { Box } from '@elementor/ui';
 import View from '../../components/view';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';
@@ -11,7 +12,7 @@ import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
 
 const RemoveBackground = () => {
-	const { editImage, width: initialEditImageWidth } = useEditImage();
+	const { editImage } = useEditImage();
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
@@ -52,10 +53,10 @@ const RemoveBackground = () => {
 			<View.Content isGenerating={ isLoading }>
 				{
 					data?.result ? (
-						<div style={ {
-								backgroundImage: 'linear-gradient(45deg, #bbb 25%, transparent 25%), linear-gradient(-45deg, #bbb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bbb 75%), linear-gradient(-45deg, transparent 75%, #bbb 75%)',
-								backgroundSize: '20px 20px',
-								backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+						<Box sx={ {
+							backgroundImage: 'linear-gradient(45deg, #bbb 25%, transparent 25%), linear-gradient(-45deg, #bbb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bbb 75%), linear-gradient(-45deg, transparent 75%, #bbb 75%)',
+							backgroundSize: '20px 20px',
+							backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
 						} } >
 							<ImagesDisplay
 								onUseImage={ use }
@@ -63,7 +64,7 @@ const RemoveBackground = () => {
 								images={ data.result }
 								aspectRatio={ editImage.aspectRatio }
 							/>
-						</div>
+						</Box>
 					) : (
 						<SingleImagePreview>
 							<SingleImagePreview.Image

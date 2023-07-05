@@ -1,14 +1,13 @@
 import { Button } from '@elementor/ui';
 
-const GenerateImagesSubmit = ( props ) => {
-	const label = props.children ?? __( 'Generate', 'elementor' );
+const GenerateSubmit = ( props ) => {
 	return (
 		<Button fullWidth size="medium" type="submit" variant="contained" { ...props }>
-			{ label }
+			{ props.children || __( 'Generate', 'elementor' ) }
 		</Button>
 	);
 };
-GenerateImagesSubmit.propTypes = {
+GenerateSubmit.propTypes = {
 	children: PropTypes.any,
 }
-export default GenerateImagesSubmit;
+export default GenerateSubmit;
