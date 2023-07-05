@@ -38,7 +38,6 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_image_to_image_outpainting', [ $this, 'ajax_ai_get_image_to_image_outpainting' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_upscale', [ $this, 'ajax_ai_get_image_to_image_upscale' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_remove_background', [ $this, 'ajax_ai_get_image_to_image_remove_background' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_remove_text', [ $this, 'ajax_ai_get_image_to_image_remove_text' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_replace_background', [ $this, 'ajax_ai_get_image_to_image_replace_background' ] );
 			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
 		} );
@@ -463,36 +462,6 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 
 		$result = $app->get_image_to_image_remove_background( [
-			'attachment_id' => $data['image']['id'],
-		], $context );
-
-		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
-		}
-
-		return [
-			'images' => $result['images'],
-			'response_id' => $result['responseId'],
-			'usage' => $result['usage'],
-		];
-	}
-
-	public function ajax_ai_get_image_to_image_remove_text( $data ) {
-		$this->verify_permissions( $data['editor_post_id'] );
-
-		$app = $this->get_ai_app();
-
-		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
-			throw new \Exception( 'Missing Image' );
-		}
-
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
-		$context = $this->get_request_context( $data );
-
-		$result = $app->get_image_to_image_remove_text( [
 			'attachment_id' => $data['image']['id'],
 		], $context );
 

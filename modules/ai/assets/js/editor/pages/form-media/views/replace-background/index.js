@@ -33,7 +33,7 @@ const RemoveBackground = () => {
 
 				<View.PanelHeading
 					primary={ __( 'Replace Background', 'elementor' ) }
-					secondary={ __( 'Replace image background', 'elementor' ) }
+					secondary={ __( 'Generate a new background with a prompt.', 'elementor' ) }
 				/>
 
 				{ error && <View.ErrorMessage error={ error } onRetry={ handleSubmit } /> }

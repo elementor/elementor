@@ -3,6 +3,8 @@ import ExpandIcon from '../../../../icons/expand-icon';
 import BrushIcon from '../../../../icons/brush-icon';
 import EvolveIcon from '../../../../icons/evolve-icon';
 import EnlargerIcon from '../../../../icons/enlarger-icon';
+import RemoveBackgroundIcon from '../../../../icons/remove-bg';
+import ReplaceBackgroundIcon from '../../../../icons/replace-bg';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
 
@@ -65,17 +67,12 @@ const ImageToolsPanel = () => {
 		},
 		{
 			label: __( 'Remove Background', 'elementor' ),
-			Icon: EvolveIcon,
+			Icon: RemoveBackgroundIcon,
 			onClick: () => navigate( LOCATIONS.REMOVE_BACKGROUND ),
 		},
 		{
-			label: __( 'Remove Text', 'elementor' ),
-			Icon: EvolveIcon,
-			onClick: () => navigate( LOCATIONS.REMOVE_TEXT ),
-		},
-		{
 			label: __( 'Replace Background', 'elementor' ),
-			Icon: EvolveIcon,
+			Icon: ReplaceBackgroundIcon,
 			onClick: () => navigate( LOCATIONS.REPLACE_BACKGROUND ),
 		},
 	];

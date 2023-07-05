@@ -10,7 +10,6 @@ import OutPainting from './views/out-painting';
 import Variations from './views/variations';
 import ReplaceBackground from './views/replace-background';
 import RemoveBackground from './views/remove-background';
-import RemoveText from './views/remove-text';
 import { useLocation } from './context/location-context';
 import { useEditImage } from './context/edit-image-context';
 
@@ -45,7 +44,6 @@ const MediaOutlet = () => {
 			{ current === LOCATIONS.RESIZE && <Resize /> }
 			{ current === LOCATIONS.REPLACE_BACKGROUND && <ReplaceBackground /> }
 			{ current === LOCATIONS.REMOVE_BACKGROUND && <RemoveBackground /> }
-			{ current === LOCATIONS.REMOVE_TEXT && <RemoveText /> }
 		</>
 	);
 };
