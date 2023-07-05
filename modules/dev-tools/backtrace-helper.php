@@ -38,11 +38,7 @@ class Backtrace_Helper {
 		$file = str_replace( WP_CONTENT_DIR, '', $filename, $is_in_content );
 		$name = 'Unknown';
 		$type = '';
-		if ( 1 === $is_in_content ) {
-			$root_folder = explode( '/', $file );
-			$type = $root_folder[1];
-			$name = $root_folder[2];
-		}
+			[,$type, $name] = explode( '/', $file );
 		return [
 			'name' => $name,
 			'type' => $type,
