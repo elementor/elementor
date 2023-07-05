@@ -70,17 +70,19 @@ ElementModel = BaseElementModel.extend( {
 			settings.widgetType = this.get( 'widgetType' );
 		}
 
-		settings.elType = elType;
-		settings.isInner = this.get( 'isInner' );
+		const newSettings = {
+			...settings, // Copy existing properties
+			elType: elType, // Update elType property
+			isInner: this.get('isInner'),
+		};
 
 		// Allow passing custom `_title` from model.
 		const customTitle = this.get( '_title' );
-
 		if ( customTitle ) {
-			settings._title = customTitle;
+			newSettings._title = customTitle;
 		}
 
-		settings = new SettingsModel( settings, {
+		settings = new SettingsModel( newSettings, {
 			controls: elementor.getElementControls( this ),
 		} );
 

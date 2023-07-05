@@ -65,7 +65,7 @@ class Container extends Element_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return esc_html__( 'Container', 'elementor' );
+		return esc_html__( 'Flexbox', 'elementor' );
 	}
 
 	/**

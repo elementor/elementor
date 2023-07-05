@@ -621,4 +621,28 @@ class Editor {
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
 	}
+
+	public function get_widget_presets() {
+		// TODO: This should come from the widgets.
+		return [
+			'container_grid' => [
+				'replacements' => [
+					'name' => 'container_grid',
+					'controls' => [
+						'container_type' => [ 'default' => 'grid' ],
+					],
+					'title' => 'Grid',
+					'icon' => 'eicon-gallery-grid',
+					'custom' => [
+						'isPreset' => true,
+						'originalWidget' => 'container',
+						'presetWidget' => 'container_grid',
+						'preset_settings' => [
+							'container_type' => 'grid',
+						],
+					],
+				]
+			],
+		];
+	}
 }

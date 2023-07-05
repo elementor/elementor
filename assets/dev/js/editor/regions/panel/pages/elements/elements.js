@@ -78,6 +78,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			}
 		} );
 
+		jQuery.each( elementor.config.widgetPresets, ( index, widget ) => {
+			const originalObject = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+			const replacements = widget.replacements;
+			const newObject = this.deepMerge(originalObject, replacements);
+
+			elementor.widgetsCache[ index ] = newObject;
+		} );
+
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
@@ -117,6 +125,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.elementsCollection = elementsCollection;
+	},
+
+	deepMerge( originalObj, replacementObj ) {
+		const mergedObj = { ...originalObj };
+	  
+		for ( const key in replacementObj ) {
+		  if ( replacementObj.hasOwnProperty( key ) ) {
+			if ( typeof replacementObj[ key ] === "object" && replacementObj[ key ] !== null && originalObj.hasOwnProperty( key ) && typeof originalObj[ key ] === "object" && originalObj[ key ] !== null ) {
+			  mergedObj[ key ] = this.deepMerge( originalObj[key], replacementObj[ key ] );
+			} else {
+			  mergedObj[ key ] = replacementObj[ key ];
+			}
+		  }
+		}
+	  
+		return mergedObj;
 	},
 
 	initCategoriesCollection() {

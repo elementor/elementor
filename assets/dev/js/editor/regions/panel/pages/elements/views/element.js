@@ -151,14 +151,20 @@ module.exports = Marionette.ItemView.extend( {
 			throw new Error( "View doesn't support adding from panel", view );
 		}
 
-		$e.run( 'preview/drop', {
+		if ( this.model?.attributes?.custom?.isPreset ?? false ) {
+			this.model.settings = this.model.attributes.custom.preset_settings;
+		}
+
+		const dropSettings = {
 			container,
 			options: {
 				...options,
 				scrollIntoView: true,
 			},
 			model: this.model.toJSON(),
-		} );
+		};
+
+		$e.run( 'preview/drop', dropSettings );
 	},
 
 	getSelectedElements() {

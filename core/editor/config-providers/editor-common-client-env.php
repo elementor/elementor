@@ -100,6 +100,7 @@ class Editor_Common_Client_Env {
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
+			'widgetPresets' => Plugin::$instance->editor->get_widget_presets(),
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
