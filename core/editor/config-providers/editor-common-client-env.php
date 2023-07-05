@@ -3,7 +3,6 @@ namespace Elementor\Core\Editor\Config_Providers;
 
 use Elementor\Api;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
@@ -40,10 +39,6 @@ class Editor_Common_Client_Env {
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),
 			'elements' => Plugin::$instance->elements_manager->get_element_types_config(),
-			'schemes' => [
-				'items' => Plugin::$instance->schemes_manager->get_registered_schemes_data(),
-				'enabled_schemes' => Schemes_Manager::get_enabled_schemes(),
-			],
 			'globals' => [
 				'defaults_enabled' => [
 					'colors' => $kits_manager->is_custom_colors_enabled(),
@@ -55,9 +50,7 @@ class Editor_Common_Client_Env {
 				'goProURL' => 'https://go.elementor.com/go-pro-icon-library/',
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
-			'default_schemes' => Plugin::$instance->schemes_manager->get_schemes_defaults(),
 			'settings' => $settings,
-			'system_schemes' => Plugin::$instance->schemes_manager->get_system_schemes(),
 			'wp_editor' => static::get_wp_editor_config(),
 			'settings_page_link' => Settings::get_url(),
 			'tools_page_link' => Tools::get_url(),
