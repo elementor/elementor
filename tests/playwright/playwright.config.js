@@ -10,6 +10,8 @@ function getGrepInvert() {
 			/@styleguide_image_link/,
 			/@elements-regression/,
 			/@ai/,
+			/@onBoarding/,
+			/@video/,
 		];
 	}
 	return [];
