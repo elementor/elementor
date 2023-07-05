@@ -4,7 +4,6 @@ namespace Elementor\Core\Editor\Loader;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
-use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Utils;

@@ -1,11 +1,8 @@
 <?php
 namespace Elementor\Core\Editor\Loader;
 
-use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
-use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
