@@ -37,12 +37,23 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 	];
 
+	/**
+	 * @var Assets_Config_Provider
+	 */
+	protected $assets_config_provider;
+
+	/**
+	 * @param Collection $config
+	 */
 	public function __construct( Collection $config ) {
 		parent::__construct( $config );
 
-		$this->assets_config_provider = new Assets_Config_Provider( [] );
+		$this->assets_config_provider = new Assets_Config_Provider();
 	}
 
+	/**
+	 * @return void
+	 */
 	public function init() {
 		parent::init();
 
@@ -60,6 +71,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		do_action( 'elementor/editor/v2/init' );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function register_scripts() {
 		parent::register_scripts();
 
@@ -70,7 +84,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			if ( self::ENV === $package ) {
 				wp_register_script(
 					'elementor-editor-environment-v2',
-					"{$assets_url}/editor-environment-v2{$min_suffix}.js",
+					"{$assets_url}js/editor-environment-v2{$min_suffix}.js",
 					[ $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
@@ -99,6 +113,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		do_action( 'elementor/editor/v2/scripts/register' );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function enqueue_scripts() {
 		parent::enqueue_scripts();
 
@@ -136,6 +153,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		do_action( 'elementor/editor/v2/scripts/enqueue/after-loader' );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function register_styles() {
 		parent::register_styles();
 
@@ -152,6 +172,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		do_action( 'elementor/editor/v2/styles/register' );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function enqueue_styles() {
 		parent::enqueue_styles();
 
@@ -160,6 +183,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		do_action( 'elementor/editor/v2/styles/enqueue' );
 	}
 
+	/**
+	 * @return void
+	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
 		$body_file_path = __DIR__ . '/templates/editor-body-v2.view.php';

@@ -13,18 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V1_Loader extends Editor_Base_Loader {
-
 	/**
 	 * @var Assets_Config_Provider
 	 */
 	protected $assets_config_provider;
 
+	/**
+	 * @param Collection $config
+	 */
 	public function __construct( Collection $config ) {
 		parent::__construct( $config );
 
-		$this->assets_config_provider = new Assets_Config_Provider( [] );
+		$this->assets_config_provider = new Assets_Config_Provider();
 	}
 
+	/**
+	 * @return void
+	 */
 	public function init() {
 		parent::init();
 

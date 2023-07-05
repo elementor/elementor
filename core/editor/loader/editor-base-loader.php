@@ -14,10 +14,16 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 */
 	protected $config;
 
+	/**
+	 * @param Collection $config
+	 */
 	public function __construct( Collection $config ) {
 		$this->config = $config;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function init() {
 		// Nothing to do.
 	}
@@ -172,8 +178,11 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function enqueue_scripts() {
-		//
+		// Nothing to do.
 	}
 
 	/**
@@ -235,6 +244,9 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( 'elementor-editor' );
 	}
