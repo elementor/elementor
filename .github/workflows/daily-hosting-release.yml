@@ -43,6 +43,7 @@ jobs:
       - name: Check if two weeks have passed since last release
         run: |
           echo "PREVIOUS_TAG_SHA=${{ env.PREVIOUS_TAG_SHA }}"
+          echo "PREVIOUS_RELEASE_DATE=${{ env.PREVIOUS_RELEASE_DATE }}"
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
