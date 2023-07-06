@@ -136,10 +136,6 @@
 			}
 		}
 	}
-
-	&.elementor-control-custom_css_title {
-		font-size: 12px;
-	}
 }
 
 .elementor-control,
@@ -315,7 +311,7 @@
 
 .elementor-update-preview-button-wrapper {
 	flex-grow: 1;
-	text-align: $end;
+	text-align: end;
 }
 
 .elementor-update-preview-button {

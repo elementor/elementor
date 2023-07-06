@@ -1,169 +1,129 @@
-import { useEffect, useState } from 'react';
-import { Box } from '@elementor/ui';
-import useImagePrompt from '../../hooks/use-image-prompt';
-import useImageUpload from '../../hooks/use-image-upload';
-import useImagePromptSettings from '../../hooks/use-image-prompt-settings';
-import useImageScreenPanel from '../../hooks/use-image-screen-panel';
-import { SCREENS, PANELS, IMAGE_PROMPT_SETTINGS, IMAGE_PROMPT_CATEGORIES } from './consts/consts';
-import { Screen } from './screens/screen';
-import { PanelContent } from './panel-content/panel-content';
-import Panel from '../../components/ui/panel';
+import { useEffect, useState, useReducer } from 'react';
+import { LocationProvider } from './context/location-context';
+import { Divider } from '@elementor/ui';
+import PromptDialog from '../../components/prompt-dialog';
+import MediaOutlet from './media-outlet';
+import UnsavedChangesAlert from './components/unsaved-changes-alert';
+import { EditImageProvider } from './context/edit-image-context';
+import { GlobalActionsProvider } from './context/global-actions-context';
+import { GlobalSettingsProvider } from './context/global-settings-context';
 
-const FormMedia = (
-	{
-		onClose,
-		getControlValue,
-		additionalOptions,
-		controlView,
-		credits,
-		setHasUnsavedChanges,
-	},
-) => {
-	const initialValue = getControlValue() === additionalOptions?.defaultValue ? { id: '', url: '' } : getControlValue();
-	const [ editImage, setEditImage ] = useState( initialValue );
-	const { screen, setScreen, panel, setPanel } = useImageScreenPanel(
-		initialValue?.id !== '' ? SCREENS.VARIATIONS : SCREENS.GALLERY,
-		'' === initialValue.id && '' === editImage.id ? PANELS.TEXT_TO_IMAGE : PANELS.IMAGE_TO_IMAGE,
-	);
-	const [ prompt, setPrompt ] = useState( '' );
-	const { promptSettings, updatePromptSettings, resetPromptSettings } = useImagePromptSettings( {
-		style: '' === initialValue.id ? ( additionalOptions?.defaultImageType || IMAGE_PROMPT_CATEGORIES[ 1 ].key ) : '',
-	} );
-	const [ images, setImages ] = useState( [] );
-	const [ insertToControl, setInsertToControl ] = useState( false );
-	const { data, isLoading, error, send, sendUsageData, reset } = useImagePrompt( {
-		result: initialValue,
-		credits,
-		responseId: false,
-	} );
-	const { attachmentData, isUploading, uploadError, upload, resetUpload } = useImageUpload();
+const initialData = {
+	isAllSaved: false,
+	hasUnsavedChanges: false,
+};
 
-	const panelActive = ! isLoading && ! isUploading;
+const SET_UNSAVED_CHANGES = 'SET_UNSAVED_CHANGES';
+const SAVE_AND_CLOSE = 'SAVE_AND_CLOSE';
 
-	const setAttachment = () => {
-		setHasUnsavedChanges( false );
-		sendUsageData();
-		controlView.setSettingsModel( attachmentData.image );
-		controlView.applySavedValue();
-		onClose();
-	};
+const reducer = ( state, { type, payload } ) => {
+	switch ( type ) {
+		case SET_UNSAVED_CHANGES:
+			return {
+				...state,
+				hasUnsavedChanges: payload,
+				isAllSaved: payload ? false : state.isAllSaved,
+			};
+		case SAVE_AND_CLOSE:
+			return {
+				...state,
+				isAllSaved: true,
+				hasUnsavedChanges: false,
+			};
+		case RESET:
+			return initialValue;
+		default:
+			throw Error( 'Unknown action.' );
+	}
+};
 
-	useEffect( () => {
-		if ( ! isLoading && data?.result && Array.isArray( data?.result ) ) {
-			setImages( data?.result );
-			setScreen( SCREENS.GENERATE_RESULTS );
-		}
-	}, [ isLoading ] );
+const FormMedia = ( {
+	onClose,
+	DialogProps,
+	getControlValue,
+	controlView,
+	additionalOptions,
+	maybeRenderUpgradeChip,
+} ) => {
+	const [ state, dispatch ] = useReducer( reducer, initialData );
 
-	useEffect( () => {
-		if ( ! isUploading && attachmentData?.image?.id ) {
-			if ( insertToControl ) {
-				setAttachment( attachmentData.image );
-			} else {
-				setEditImage( attachmentData.image );
-				setPanel( PANELS.IMAGE_TO_IMAGE );
-				updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
-			}
-		}
-	}, [ isUploading ] );
+	const [ showUnsavedChangeAlert, setShowUnsavedChangeAlert ] = useState( false );
 
-	const maybeUploadImage = ( imageToUpload, setAsAttachment = false ) => {
-		if ( ! imageToUpload ) {
+	const setHasUnsavedChanges = ( payload ) => dispatch( { type: SET_UNSAVED_CHANGES, payload } );
+
+	const saveAndClose = () => dispatch( { type: SAVE_AND_CLOSE } );
+
+	const onCloseIntent = () => {
+		if ( state.hasUnsavedChanges ) {
+			setShowUnsavedChangeAlert( true );
 			return;
 		}
 
-		if ( setAsAttachment ) {
-			setInsertToControl( true );
-		}
-
-		// Image already uploaded
-		if ( editImage?.image?.seed && editImage?.image?.seed === imageToUpload?.seed ) {
-			if ( setAsAttachment ) {
-				// Remove inner image property used to avoid duplicate uploads
-				const { image, ...attachment } = editImage;
-				return setAttachment( attachment );
-			}
-			setPanel( PANELS.IMAGE_TO_IMAGE );
-			updatePromptSettings( { [ IMAGE_PROMPT_SETTINGS.ASPECT_RATIO ]: '1:1' } );
-		}
-
-		// Normalize object to match the upload function
-		if ( imageToUpload?.imageUrl ) {
-			imageToUpload = {
-				...imageToUpload,
-				image_url: imageToUpload.imageUrl,
-				use_gallery_image: true,
-			};
-		}
-
-		upload( { image: { ...imageToUpload }, prompt: prompt || imageToUpload.prompt } );
+		onClose();
 	};
 
-	const submitPrompt = ( promptType, userPrompt ) => {
-		reset();
-		resetUpload();
-		setHasUnsavedChanges( true );
+	const editImageInitialData = getControlValue() === additionalOptions?.defaultValue ? {} : getControlValue();
 
-		if ( PANELS.TEXT_TO_IMAGE === promptType ) {
-			return send( userPrompt, promptSettings );
+	const globalSettings = {
+		initialImageType: additionalOptions?.defaultImageType || '',
+	};
+
+	const globalActions = {
+		state,
+		getControlValue,
+		saveAndClose,
+		close: onCloseIntent,
+		setHasUnsavedChanges,
+		setControlImage: ( image ) => {
+			controlView.setSettingsModel( image );
+			controlView.applySavedValue();
+		},
+	};
+
+	useEffect( () => {
+		if ( state.isAllSaved ) {
+			// Closing the app only once the state was updated, to allow registered effects to take place before closing.
+			onClose();
 		}
-		return send( prompt, promptSettings, editImage );
-	};
-
-	const generateNewPrompt = () => {
-		setPrompt( '' );
-		setImages( [] );
-		setEditImage( { id: '', url: '' } );
-		resetPromptSettings();
-		setScreen( SCREENS.GALLERY );
-		setPanel( PANELS.TEXT_TO_IMAGE );
-		setHasUnsavedChanges( false );
-		reset();
-		resetUpload();
-	};
+	}, [ state.isAllSaved ] );
 
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%">
-			<Box position="relative">
-				<Panel>
-					<PanelContent { ...{
-						error: error || uploadError,
-						prompt,
-						setPrompt,
-						panelActive,
-						generateNewPrompt,
-						promptSettings,
-						updatePromptSettings,
-						submitPrompt,
-						panel,
-						editImage,
-						images,
-					} } />
-				</Panel>
-			</Box>
+		<>
+			<PromptDialog onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
+				<PromptDialog.Header onClose={ () => onCloseIntent() }>
+					{ maybeRenderUpgradeChip() }
+				</PromptDialog.Header>
 
-			<Screen { ...{
-				isUploading,
-				isLoading,
-				screen,
-				images,
-				promptSettings,
-				updatePromptSettings,
-				generateNewPrompt,
-				maybeUploadImage,
-				setPrompt,
-			} } />
-		</Box>
+				<Divider />
+
+				<GlobalSettingsProvider settings={ globalSettings }>
+					<GlobalActionsProvider actions={ globalActions }>
+						<LocationProvider>
+							<EditImageProvider imageData={ editImageInitialData }>
+								<MediaOutlet />
+							</EditImageProvider>
+						</LocationProvider>
+					</GlobalActionsProvider>
+				</GlobalSettingsProvider>
+			</PromptDialog>
+
+			{
+				showUnsavedChangeAlert && (
+					<UnsavedChangesAlert onClose={ onClose } onCancel={ () => setShowUnsavedChangeAlert( false ) } open={ true } />
+				)
+			}
+		</>
 	);
 };
 
 FormMedia.propTypes = {
-	getControlValue: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
-	additionalOptions: PropTypes.object,
+	DialogProps: PropTypes.object,
+	getControlValue: PropTypes.func.isRequired,
 	controlView: PropTypes.object,
+	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
-	setHasUnsavedChanges: PropTypes.func.isRequired,
+	maybeRenderUpgradeChip: PropTypes.func,
 };
 
 export default FormMedia;

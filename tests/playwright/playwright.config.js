@@ -2,7 +2,17 @@ import { resolve } from 'path';
 
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
-		return [ /@reverse-columns/, /@nested-tabs/, /@container/, /@nested-accordion/ ];
+		return [
+			/@reverse-columns/,
+			/@nested-tabs/,
+			/@container/,
+			/@nested-accordion/,
+			/@styleguide_image_link/,
+			/@elements-regression/,
+			/@ai/,
+			/@onBoarding/,
+			/@video/,
+		];
 	}
 	return [];
 }

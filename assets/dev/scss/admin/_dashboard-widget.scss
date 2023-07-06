@@ -17,7 +17,7 @@
 		.e-divider_top {
 			border-block-start: 1px solid #eee;
 			margin: 0 -12px;
-			padding: 6px 12px;
+			padding: 12px 12px 0;
 		}
 
 		.e-quick-actions-wrap,
@@ -89,7 +89,7 @@
 		}
 
 		&__create {
-			text-align: $end;
+			text-align: end;
 		}
 
 		&__feed {
@@ -151,7 +151,8 @@
 			}
 		}
 
-		&__go-pro {
+		&__go-pro,
+		&__ai {
 
 			a {
 				color: $editor-accent;

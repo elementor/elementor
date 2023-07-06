@@ -29,7 +29,7 @@ $root: eps-text-field;
 	color: var(--eps-text-field-color);
 	background-color: var(--eps-text-field-background-color);
 	border: 0;
-	margin-bottom: 5px;
+	margin-block-end: 5px;
 	outline: none;
 	@include font-style;
 

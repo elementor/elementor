@@ -359,38 +359,6 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Autopopulate the Image Carousel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async populateImageCarousel() {
-		await this.activatePanelTab( 'content' );
-		await this.page.locator( '.elementor-control-gallery-add' ).click();
-
-		// Open Media Library
-		await this.page.click( 'text=Media Library' );
-
-		// Upload the images to WP media library
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/A.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/B.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/C.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/D.jpg' );
-		await this.page.setInputFiles( 'input[type="file"]', './tests/playwright/resources/E.jpg' );
-
-		// Create a new gallery
-		await this.page.locator( 'text=Create a new gallery' ).click();
-
-		// Insert gallery
-		await this.page.locator( 'text=Insert gallery' ).click();
-
-		// Open The Additional options Section
-		await this.page.click( '#elementor-controls >> :nth-match(div:has-text("Additional Options"), 3)' );
-
-		// Disable AutoPlay
-		await this.page.selectOption( 'select', 'no' );
-	}
-
-	/**
 	 * Set a background color to an element.
 	 *
 	 * @param {string}  color     - The background color code;
@@ -803,5 +771,11 @@ module.exports = class EditorPage extends BasePage {
 			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
 		expect( imageSize.width ).toEqual( args.width );
 		expect( imageSize.height ).toEqual( args.height );
+	}
+
+	async setTypography( selector, fontsize ) {
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+		await this.setSliderControlValue( selector + '_font_size', fontsize );
+		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 };
