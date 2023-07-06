@@ -4,27 +4,33 @@ inputs:
   CHANNEL:
     required: true
     description: "The channel to get the version to (cloud, CCU)."
-  EVENT_NAME:
-    required: true
-    description: "The event name to get the version to (release)."
-  EVENT_ACTION:
-    required: true
-    description: "The event action to get the version to (published)."
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        echo "event EVENT_NAME is:" ${{ inputs.EVENT_NAME }}
-        echo "event EVENT_ACTION is:" ${{ inputs.EVENT_ACTION }}
-        echo "event CHANNEL is:" ${{ inputs.CHANNEL }}
-        echo "event EVENT_NAME is:" ${{ github.event_name }}
-        echo "event EVENT_ACTION is:" ${{ github.event_action }}
-    - shell: bash
-      run: |
-        # Set first release date
-        FIRST_RELEASE_DATE="2021-01-01"
-        DAYS_SINCE_LAST_RELEASE=$(echo $(( ($(date +%s) - $(date -d $FIRST_RELEASE_DATE +%s)) / 86400 )))
-        echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}"
-        echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}" >> $GITHUB_ENV
+        EVENT_NAME=${github.event_name}
+
+        if [[ FIRST_RELEASE_DATE == "null" ]]; then
+            FIRST_RELEASE_DATE=date +"%D"
+        fi
+
+        echo FIRST_RELEASE_DATE=${FIRST_RELEASE_DATE} >> $GITHUB_ENV
+
+        # add this condition in before releasing to production // github.event_name == "schedule"
+        # So thats thi action will run only on automated runs.
+        # In order to release to production every 2 weeks, we need to check if the last release was 14 days ago.
+        # If it was, we will set the FIRST_RELEASE_DATE to today's date and release to production.
+        # If it wasn't, we will exit the action and not release to production.
+
+        if [[ ${{ inputs.CHANNEL }} == "cloud" ]]; then
+          DAYS_SINCE_LAST_RELEASE=$(echo $(( ($(date +%s) - $(date -d $FIRST_RELEASE_DATE +%s)) / 86400 )))
+          echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}" >> $GITHUB_ENV
+
+          if [[ $DAYS_SINCE_LAST_RELEASE % 14 == 0 ]]; then
+             echo "FIRST_RELEASE_DATE=date +"%D" >> $GITHUB_ENV
+          else
+            exit 0
+          fi
+        fi
