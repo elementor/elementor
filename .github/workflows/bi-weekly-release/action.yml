@@ -19,6 +19,8 @@ runs:
         echo "event EVENT_NAME is:" ${{ inputs.EVENT_NAME }}
         echo "event EVENT_ACTION is:" ${{ inputs.EVENT_ACTION }}
         echo "event CHANNEL is:" ${{ inputs.CHANNEL }}
+        echo "event EVENT_NAME is:" ${{ github.event_name }}
+        echo "event EVENT_ACTION is:" ${{ github.event_action }}
     - shell: bash
       run: |
         # Set first release date
