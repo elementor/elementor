@@ -5,8 +5,8 @@ env:
   CHANGELOG_FILE: 'temp-changelog.txt'
 
 on:
-  #  schedule:
-  #    - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 10 * * *'
   workflow_dispatch:
 
 jobs:
@@ -40,6 +40,9 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
+      - name: Check if two weeks have passed since last release
+        run: |
+          echo "PREVIOUS_TAG_SHA=${{ env.PREVIOUS_TAG_SHA }}"
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
