@@ -10,7 +10,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        echo EVENT_NAME=${github.event_name}
+        # echo EVENT_NAME=${github.event_name}
 
         if [[ LAST_RELEASE_DATE == "null" ]]; then
             LAST_RELEASE_DATE=date +"%D"
