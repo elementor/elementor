@@ -1,0 +1,27 @@
+name: Bi Weekley Release
+description: Count the number of days since the last automatic release and set it as an environment variable.
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (cloud, CCU)."
+  EVENT_NAME:
+    required: true
+    description: "The event name to get the version to (release)."
+  EVENT_ACTION:
+    required: true
+    description: "The event action to get the version to (published)."
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: echo "event name is:" ${{ github.event_name }}
+    - shell: bash
+      run: echo "event type is:" ${{ github.event.action }}
+    - shell: bash
+      run: |
+        # Set first release date
+        FIRST_RELEASE_DATE="2021-01-01"
+        DAYS_SINCE_LAST_RELEASE=$(echo $(( ($(date +%s) - $(date -d $FIRST_RELEASE_DATE +%s)) / 86400 )))
+        echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}"
+        echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}" >> $GITHUB_ENV
