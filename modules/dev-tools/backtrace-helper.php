@@ -52,8 +52,8 @@ class Backtrace_Helper {
 			}
 		}
 		return [
-			'name' => $name,
-			'type' => $type,
+			'name' => $name, // plugin/theme name.
+			'type' => $type, // is it a plugin or a theme.
 		];
 	}
 }
