@@ -19,12 +19,10 @@ packages = Object.keys( dependencies )
 		}
 	} )
 	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, packageName } ) => {
-		return {
-		   name: packageName.replace( '@elementor/', '' ),
-		   path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
-		}
-	} );
+	.map( ( { mainFile, packageName } ) => ( {
+		name: packageName.replace( '@elementor/', '' ),
+		path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+	} ) );
 
 const common = {
 	name: 'packages',
