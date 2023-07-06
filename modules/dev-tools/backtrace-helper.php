@@ -16,9 +16,13 @@ class Backtrace_Helper {
 	public static function find_who_called_me( $stack_depth ) {
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
 
-		$caller = $backtrace[ $stack_depth ];
-		$caller_function = $caller['function'];
-		$caller_class = $caller['class'];
+		$caller = [];
+		if ( array_key_exists( $stack_depth, $backtrace ) ) {
+			$caller = $backtrace[ $stack_depth ];
+		}
+
+		$caller_function = $caller['function'] ?? '';
+		$caller_class = $caller['class'] ?? '';
 		$caller_file = $caller['file'] ?? '';
 		$caller_line = $caller['line'] ?? '';
 		$source = self::get_source( $caller_file );
@@ -35,10 +39,14 @@ class Backtrace_Helper {
 	}
 
 	private static function get_source( $filename ) {
-		$file = str_replace( WP_CONTENT_DIR, '', $filename, $is_in_content );
+
 		$name = 'Unknown';
 		$type = '';
+
+		if ( str_contains( $filename, WP_CONTENT_DIR ) ) {
+			$file = str_replace( WP_CONTENT_DIR, '', $filename );
 			[,$type, $name] = explode( '/', $file );
+		}
 		return [
 			'name' => $name,
 			'type' => $type,
