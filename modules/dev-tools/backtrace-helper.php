@@ -11,7 +11,13 @@ class Backtrace_Helper {
 	 * Retrieves the function, class, file, line, type and name of the function that called the function that called this function.
 	 *
 	 * @param  int $stack_depth The depth of the stack to look for.
-	 * @return array
+	 * @return array with the following keys:
+	 * function - calling function
+	 * class - calling class
+	 * file - the file that contains the calling function
+	 * line - location
+	 * type - plugin or theme
+	 * name - plugin/theme name
 	 */
 	public static function find_who_called_me( $stack_depth ) {
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
