@@ -4,35 +4,26 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const elementorPackages = [
-	'editor',
-	'editor-app-bar',
-	'editor-documents',
-	'editor-panels',
-	'editor-responsive',
-	'editor-site-navigation',
-	'editor-v1-adapters',
-	'env',
-	'icons',
-	'locations',
-	'store',
-	'ui',
-];
+const { dependencies } = require( '../package.json' );
 
-const packages = elementorPackages
-	.map( ( name ) => {
-	   const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/@elementor/${name}/package.json` ) );
+packages = Object.keys( dependencies )
+	.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
+	.map( ( packageName ) => {
+		const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
 
-	   const { main, module } = JSON.parse( pkgJSON );
+		const { main, module } = JSON.parse( pkgJSON );
 
-	   return { name, mainFile: module || main }
+		return {
+		   mainFile: module || main,
+		   packageName,
+		}
 	} )
 	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, name } ) => {
-	   return {
-	       name,
-	       path: path.resolve( __dirname, `../node_modules/@elementor/${ name }`, mainFile ),
-	   }
+	.map( ( { mainFile, packageName } ) => {
+		return {
+		   name: packageName.replace( '@elementor/', '' ),
+		   path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+		}
 	} );
 
 const common = {
