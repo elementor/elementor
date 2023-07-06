@@ -45,7 +45,11 @@ class Backtrace_Helper {
 
 		if ( str_contains( $filename, WP_CONTENT_DIR ) ) {
 			$file = str_replace( WP_CONTENT_DIR, '', $filename );
-			[,$type, $name] = explode( '/', $file );
+			$short_path = explode( '/', $file );
+			if ( count( $short_path ) >= 3 ) {
+				$type = $short_path[1];
+				$name = $short_path[2];
+			}
 		}
 		return [
 			'name' => $name,
