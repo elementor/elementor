@@ -52,7 +52,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await page.close();
 		} );
 
-		test.only( 'General Test', async ( { page }, testInfo ) => {
+		test( 'General Test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
