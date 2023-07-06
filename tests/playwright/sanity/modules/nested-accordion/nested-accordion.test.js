@@ -5,26 +5,14 @@ import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
-	test.describe( 'Nested Accordion experiment inactive', () => {
+	test.describe( 'Nested Elements experiment inactive', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const page = await browser.newPage();
 			const wpAdmin = await new WpAdminPage( page, testInfo );
 
 			await wpAdmin.setExperiments( {
 				container: 'active',
-				'nested-elements': 'active',
-			} );
-
-			await page.close();
-		} );
-
-		test.afterAll( async ( { browser }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
 				'nested-elements': 'inactive',
-				container: 'inactive',
 			} );
 
 			await page.close();
@@ -51,7 +39,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		} );
 	} );
 
-	test.describe( 'Nested Accordion experiment is active', () => {
+	test.describe( 'Nested Elements experiment is active', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const page = await browser.newPage();
 			const wpAdmin = await new WpAdminPage( page, testInfo );
@@ -64,19 +52,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await page.close();
 		} );
 
-		test.afterAll( async ( { browser }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				'nested-elements': 'inactive',
-				container: 'inactive',
-			} );
-
-			await page.close();
-		} );
-
-		test( 'General Test', async ( { page }, testInfo ) => {
+		test.only( 'General Test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.useElementorCleanPost(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
