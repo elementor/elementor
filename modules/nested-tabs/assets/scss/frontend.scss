@@ -16,7 +16,7 @@
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
 	--n-tabs-heading-overflow-x: initial;
-	--n-tabs-heading-wrap: wrap;
+	--n-tabs-heading-wrap: nowrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -37,6 +37,8 @@
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
 	--n-tabs-title-flex-grow: 0;
+	--n-tabs-title-flex-basis: content;
+	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
@@ -111,8 +113,8 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
-			flex-basis: content;
-			flex-shrink: 0;
+			flex-basis: var( --n-tabs-title-flex-basis );
+			flex-shrink: var( --n-tabs-title-flex-shrink );
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );

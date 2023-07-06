@@ -18,15 +18,25 @@ const usePrompt = ( fetchData, initialState ) => {
 	const [ error, setError ] = useState( '' );
 	const [ data, setData ] = useState( initialState );
 
-	const send = async ( ...args ) => {
+	const send = async ( ...args ) => new Promise( ( resolve, reject ) => {
 		setError( '' );
 		setIsLoading( true );
 
 		fetchData( ...args )
-			.then( ( result ) => setData( normalizeResponse( result ) ) )
-			.catch( ( err ) => setError( err?.responseText || err ) )
+			.then( ( result ) => {
+				const normalizedData = normalizeResponse( result );
+
+				setData( normalizedData );
+				resolve( normalizedData );
+			} )
+			.catch( ( err ) => {
+				const finalError = err?.responseText || err;
+
+				setError( finalError );
+				reject( finalError );
+			} )
 			.finally( () => setIsLoading( false ) );
-	};
+	} );
 
 	const sendUsageData = () => data.responseId && setStatusFeedback( data.responseId );
 

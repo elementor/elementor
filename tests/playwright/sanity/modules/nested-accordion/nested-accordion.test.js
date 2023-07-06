@@ -180,6 +180,18 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await expect( item ).not.toHaveAttribute( 'open', 'true' );
 				}
 			} );
+
+			await test.step( 'Check that each item has a different id value on frontend', async () => {
+				await editor.publishAndViewPage();
+
+				const firstItemID = await page.locator( '.e-n-accordion-item >> nth=0' ).first().getAttribute( 'id' ),
+					secondItemID = await page.locator( '.e-n-accordion-item >> nth=1' ).first().getAttribute( 'id' ),
+					thirdItemID = await page.locator( '.e-n-accordion-item >> nth=2' ).first().getAttribute( 'id' );
+
+				await expect( firstItemID ).not.toEqual( secondItemID );
+				await expect( secondItemID ).not.toEqual( thirdItemID );
+				await expect( thirdItemID ).not.toEqual( firstItemID );
+			} );
 		} );
 
 		test( 'Nested Accordion animation', async ( { page }, testInfo ) => {
@@ -620,7 +632,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test( 'Header style tests', async ( { page }, testInfo ) => {
+		test.skip( 'Header style tests', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),

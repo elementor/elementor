@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../../../pages/wp-admin-page' );
 
-test.describe( 'On boarding', async () => {
+test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme;
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
