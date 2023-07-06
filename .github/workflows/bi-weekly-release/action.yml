@@ -12,7 +12,7 @@ runs:
       run: |
         # echo EVENT_NAME=${github.event_name}
 
-        if [[ LAST_RELEASE_DATE == "null" ]]; then
+        if [[ ! LAST_RELEASE_DATE ]]; then
             LAST_RELEASE_DATE=date +"%D"
         fi
 
