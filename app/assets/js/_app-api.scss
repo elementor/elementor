@@ -30,7 +30,7 @@ $app-logo-font-size: calc(0.4 * #{$app-logo-size});
 $app-logo-radius: 50%;
 $app-logo-color: theme-colors(light);
 $app-logo-background-color:tints(900);
-$app-logo-margin-end: spacing(10);
+$app-logo-margin-inline-end: spacing(10);
 
 $app-header-buttons-separator-color: tints(300);
 $app-header-buttons-color: tints(600);
