@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Debug in JS" type="JavascriptDebugType" uri="http://localhost:8383/wp-admin/post.php?post=3297&amp;action=elementor" useFirstLineBreakpoints="true">
+    <method v="2" />
+  </configuration>
+</component>
