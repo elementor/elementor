@@ -82,7 +82,7 @@
 			color: var(--e-a-color-txt);
 			font-size: 16px;
 			font-weight: 500;
-			text-align: $start;
+			text-align: start;
 
 			@media (max-width: $editor-screen-xs-max) {
 				display: none;
@@ -139,9 +139,10 @@
 .elementor-icons-manager {
 
 	&__tab-link {
-		@include padding(15px, 0, 15px, 45px);
+		padding-block: 15px;
+		padding-inline: 45px 0;
 		font-size: 12px;
-		text-align: $start;
+		text-align: start;
 		cursor: pointer;
 		position: relative;
 

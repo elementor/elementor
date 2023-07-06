@@ -55,7 +55,8 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
-	@include padding(16.5px, 16.5px, 15px, 0);
+	padding-block: 16.5px 15px;
+	padding-inline: 0 16.5px;
 	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
@@ -198,7 +199,7 @@ label.elementor-template-library-order-label {
 #elementor-template-library-filter {
 
 	.select2 {
-		text-align: $start;
+		text-align: start;
 		width: calc(#{$control-unit} * 5) !important;
 	}
 
@@ -211,14 +212,14 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
-		text-align: $start;
+		text-align: start;
 		padding-inline-start: 5px;
 	}
 }
 
 #elementor-template-library-my-favorites {
 	flex-grow: 1;
-	text-align: $start;
+	text-align: start;
 	padding-inline-start: 20px;
 }
 
@@ -415,7 +416,7 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-name {
-		text-align: $start;
+		text-align: start;
 		flex-grow: 1;
 		@include ellipsis;
 		padding-inline-end: 5px;
@@ -477,7 +478,7 @@ label.elementor-template-library-order-label {
 	display: flex;
 	align-items: center;
 	padding: 0 25px;
-	text-align: $start;
+	text-align: start;
 }
 
 #elementor-template-library-order-toolbar-local {
@@ -589,7 +590,7 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-more-toggle {
 		flex-grow: 1;
-		text-align: $end;
+		text-align: end;
 
 		i {
 			font-size: 16px;
