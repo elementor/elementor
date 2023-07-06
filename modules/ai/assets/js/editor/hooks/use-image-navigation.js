@@ -1,29 +1,35 @@
 import { useState } from 'react';
 
-const useImageNavigation = ( images ) => {
-	const [ zoomedImageIndex, setZoomedImageIndex ] = useState( -1 );
+const initialIndex = -1;
 
-	const imageNavigation = {
-		backToResults: () => setZoomedImageIndex( -1 ),
-		navigatePrevImage: () => {
-			let prevImage = zoomedImageIndex + 1;
+const useImageNavigation = ( images ) => {
+	const [ zoomIndex, setZoomIndex ] = useState( initialIndex );
+
+	const actions = {
+		reset: () => setZoomIndex( initialIndex ),
+		prev: () => {
+			let prevImage = zoomIndex + 1;
+
 			if ( prevImage >= images.length ) {
 				prevImage = 0;
 			}
-			setZoomedImageIndex( prevImage );
+
+			setZoomIndex( prevImage );
 		},
-		navigateNextImage: () => {
-			let nextImage = zoomedImageIndex - 1;
+		next: () => {
+			let nextImage = zoomIndex - 1;
+
 			if ( nextImage < 0 ) {
 				nextImage = images.length - 1;
 			}
-			setZoomedImageIndex( nextImage );
+
+			setZoomIndex( nextImage );
 		},
 	};
 	return {
-		zoomedImageIndex,
-		setZoomedImageIndex,
-		imageNavigation,
+		zoomIndex,
+		setZoomIndex,
+		actions,
 	};
 };
 
