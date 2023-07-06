@@ -44,8 +44,6 @@ jobs:
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
-          EVENT: ${{ github.event_name }}
-          EVENT_ACTION: ${{ github.event_action }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
