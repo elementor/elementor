@@ -46,7 +46,7 @@ const RemoveBackground = () => {
 						placeholder={ __( 'Describe what you want to generate in the background (English only)', 'elementor' ) }
 					/>
 
-					<GenerateSubmit disabled={ ! isLoading && '' !== prompt } >
+					<GenerateSubmit disabled={ isLoading || '' === prompt } >
 						{ __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
 				</ImageForm>
