@@ -36,6 +36,12 @@ export const getImageToImageOutPainting = ( prompt, promptSettings, image, mask 
 
 export const getImageToImageUpscale = ( prompt, promptSettings, image ) => request( 'ai_get_image_to_image_upscale', { prompt, promptSettings, image } );
 
+export const getImageToImageRemoveBackground = ( image ) => request( 'ai_get_image_to_image_remove_background', { image } );
+
+export const getImageToImageReplaceBackground = ( prompt, image ) => request( 'ai_get_image_to_image_replace_background', { prompt, image } );
+
+export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_image_remove_text', { image } );
+
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
