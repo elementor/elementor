@@ -43,4 +43,3 @@ runs:
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
         echo "PREVIOUS_RELEASE_DATE=${PREVIOUS_RELEASE_DATE} \n date=${latest_date}"
         echo "PREVIOUS_RELEASE_DATE=${PREVIOUS_RELEASE_DATE}" >> $GITHUB_ENV
-        echo date --date='${PREVIOUS_RELEASE_DATE}' +"%s"
