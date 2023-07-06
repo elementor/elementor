@@ -41,9 +41,11 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
       - name: Check if two weeks have passed since last release
-        run: |
-          echo "PREVIOUS_TAG_SHA=${{ env.PREVIOUS_TAG_SHA }}"
-          echo "PREVIOUS_RELEASE_DATE=${{ env.PREVIOUS_RELEASE_DATE }}"
+        uses: ./.github/workflows/bi-weekly-release
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          EVENT: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event_action }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
