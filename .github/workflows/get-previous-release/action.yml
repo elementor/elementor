@@ -38,7 +38,8 @@ runs:
         done
 
         PREVIOUS_TAG_SHA=$(git rev-parse $latest_tag)
+        PREVIOUS_RELEASE_DATE=$(git rev-parse $latest_date)
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA} \n tag=${latest_tag}"
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
-        echo "PREVIOUS_RELEASE_DATE=${PREVIOUS_RELEASE_DATE} \n tag=${latest_date}"
+        echo "PREVIOUS_RELEASE_DATE=${PREVIOUS_RELEASE_DATE} \n date=${latest_date}"
         echo "PREVIOUS_RELEASE_DATE=${PREVIOUS_RELEASE_DATE}" >> $GITHUB_ENV
