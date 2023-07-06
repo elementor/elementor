@@ -15,9 +15,10 @@ runs:
   using: "composite"
   steps:
     - shell: bash
-      run: echo "event name is:" ${{ github.event_name }}
-    - shell: bash
-      run: echo "event type is:" ${{ github.event.action }}
+      run: |
+        echo "event EVENT_NAME is:" ${{ inputs.EVENT_NAME }}
+        echo "event EVENT_ACTION is:" ${{ inputs.EVENT_ACTION }}
+        echo "event CHANNEL is:" ${{ inputs.CHANNEL }}
     - shell: bash
       run: |
         # Set first release date
