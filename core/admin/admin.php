@@ -633,11 +633,12 @@ class Admin extends App {
 			],
 		];
 
-		// Visible to all core users when Elementor Pro is not installed.
-		$additions_actions['find_an_expert'] = [
-			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
-		];
+		if ( ! User::get_introduction_meta( 'ai_get_started' ) ) {
+			$additions_actions['ai'] = [
+				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-ai/',
+			];
+		}
 
 		/**
 		 * Dashboard widget footer actions.

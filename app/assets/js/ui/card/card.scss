@@ -3,9 +3,7 @@
 // this should emulate external packages consumption
 @import "./card-api";
 
-$root: $eps-prefix + card;
-
-.#{$root} {
+.#{$eps-prefix}card {
 	border: var(--card-border);
 	border-radius: $card-border-radius;
 	transition: $card-transition;
@@ -86,4 +84,3 @@ $root: $eps-prefix + card;
 		}
 	}
 }
-
