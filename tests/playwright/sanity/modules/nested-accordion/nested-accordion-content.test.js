@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
-const { expectScreenshotToMatchLocator, setTitleTextTag } = require( './helper' );
+const { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } = require( './helper' );
 
 test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {

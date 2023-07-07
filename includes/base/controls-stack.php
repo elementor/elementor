@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -705,30 +704,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$group->add_controls( $this, $args, $options );
-	}
-
-	/**
-	 * Get scheme controls.
-	 *
-	 * Retrieve all the controls that use schemes.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 * @deprecated 3.0.0
-	 *
-	 * @return array Scheme controls.
-	 */
-	final public function get_scheme_controls() {
-
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
-		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
-
-		return array_filter(
-			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-			}
-		);
 	}
 
 	/**
