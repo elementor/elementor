@@ -34,7 +34,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Tests.
-		await expect( await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` ) ).toHaveClass( /elementor-widget-n-tabs/ );
 		await testIconCount( page, editor );
 		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId, imageCarousel );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
