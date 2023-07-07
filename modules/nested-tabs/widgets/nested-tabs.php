@@ -73,10 +73,10 @@ class NestedTabs extends Widget_Nested_Base {
 
 	protected function get_html_wrapper_class() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
-			return 'elementor-widget-n-tabs';
+			return 'elementor-widget-n-tabs-new';
 		}
 
-		return 'elementor-widget-n-tabs-old';
+		return 'elementor-widget-n-tabs';
 	}
 
 	protected function register_controls() {
