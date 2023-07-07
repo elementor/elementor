@@ -64,6 +64,7 @@ async function cleanup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
 		'nested-elements': 'inactive',
 		container: 'inactive',
+		'nested-elements-html': 'inactive',
 	};
 
 	experiments = { ...experiments, ...customExperiment };

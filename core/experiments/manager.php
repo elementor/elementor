@@ -428,6 +428,14 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'nested-elements-html',
+			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**

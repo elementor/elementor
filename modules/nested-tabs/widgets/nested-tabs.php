@@ -72,7 +72,11 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_html_wrapper_class() {
-		return 'elementor-widget-n-tabs';
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
+			return 'elementor-widget-n-tabs';
+		}
+
+		return 'elementor-widget-n-tabs-old';
 	}
 
 	protected function register_controls() {
@@ -1044,6 +1048,20 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function render() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
+			$this->render_new();
+		} else {
+			$this->render_old();
+		}
+	}
+
+	protected function render_new() {
+		?>
+			New Nested Tabs Markup
+		<?php
+	}
+
+	protected function render_old() {
 		// Copied from tabs.php
 		$settings = $this->get_settings_for_display();
 		$tabs = $settings['tabs'];
@@ -1079,25 +1097,25 @@ class NestedTabs extends Widget_Nested_Base {
 			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
-				'id' => $tab_id,
-				'class' => $tab_title_classes,
-				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
-				'data-tab' => $tab_count,
-				'role' => 'tab',
-				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
-				'aria-expanded' => 'false',
+					'id' => $tab_id,
+					'class' => $tab_title_classes,
+					'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+					'data-tab' => $tab_count,
+					'role' => 'tab',
+					'tabindex' => 1 === $tab_count ? '0' : '-1',
+					'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
+					'aria-expanded' => 'false',
 			] );
 
 			$this->add_render_attribute( $tab_title_mobile_setting_key, [
-				'class' => $tab_title_mobile_classes,
-				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
-				'data-tab' => $tab_count,
-				'role' => 'tab',
-				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
-				'aria-expanded' => 'false',
-				'id' => $tab_id . '-accordion',
+					'class' => $tab_title_mobile_classes,
+					'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+					'data-tab' => $tab_count,
+					'role' => 'tab',
+					'tabindex' => 1 === $tab_count ? '0' : '-1',
+					'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
+					'aria-expanded' => 'false',
+					'id' => $tab_id . '-accordion',
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
