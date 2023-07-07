@@ -11,6 +11,7 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
+	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
 	test.beforeEach( async () => {
 		pageId = await createPage();
@@ -18,21 +19,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 	test.afterEach( async () => {
 		await deletePage( pageId );
-	} );
-
-	test( 'Nested Elements HTML Experiment test', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await setup( wpAdmin, { 'nested-elements-html': 'active' } );
-		const editor = await wpAdmin.useElementorCleanPost(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		// Add widgets.
-		const widgetId = await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
-
-		// Tests.
-		await expect( await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` ) ).toHaveClass( /elementor-widget-n-tabs-new/ );
 	} );
 
 	test.skip( 'General test', async ( { page }, testInfo ) => {
@@ -1230,6 +1216,21 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
 		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
+	} );
+
+	test( 'Nested Elements HTML Experiment test', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin, { 'nested-elements-html': 'active' } );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Add widgets.
+		const widgetId = await editor.addWidget( 'nested-tabs', container );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+
+		// Tests.
+		await expect( await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` ) ).toHaveClass( /elementor-widget-n-tabs-new/ );
 	} );
 } );
 
