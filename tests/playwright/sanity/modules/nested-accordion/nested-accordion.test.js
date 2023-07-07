@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 const { expectScreenshotToMatchLocator } = require( './helper' );
 
+test.describe.configure( { mode: 'parallel' } ); // Enable Parallel execution of this test file.
+
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();

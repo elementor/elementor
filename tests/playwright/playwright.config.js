@@ -45,6 +45,7 @@ export default {
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
 		headless: process.env.CI ? true : false,
+		workers: process.env.CI ? 2 : undefined,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
