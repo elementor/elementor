@@ -2,7 +2,7 @@
 
 // checkbox label
 .#{$eps-prefix}popover {
-	padding: $eps-popover-padding-y 0;
+	padding: $eps-popover-padding-block 0;
 	background-color: var(--popover-background-color);
 	box-shadow: var(--popover-box-shadow-size) var(--popover-box-shadow-color);
 	list-style: none;
