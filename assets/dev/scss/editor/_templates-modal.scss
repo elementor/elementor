@@ -55,7 +55,8 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
-	@include padding(16.5px, 16.5px, 15px, 0);
+	padding-block: 16.5px 15px;
+	padding-inline: 0 16.5px;
 	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
