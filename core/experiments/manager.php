@@ -314,7 +314,7 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
-			'name' => 'html_nested_elements',
+			'name' => 'nested_elements_new_markup',
 			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
