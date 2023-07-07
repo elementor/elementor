@@ -59,6 +59,12 @@ async function setup( wpAdmin, customExperiment = '' ) {
 
 	experiments = { ...experiments, ...customExperiment };
 	await wpAdmin.setExperiments( experiments );
+
+	experiments = {
+		html_nested_elements: 'inactive',
+	};
+
+	await wpAdmin.setExperiments( experiments );
 }
 
 async function cleanup( wpAdmin, customExperiment = '' ) {
