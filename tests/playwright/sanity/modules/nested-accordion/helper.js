@@ -1,3 +1,5 @@
+const { expect } = require( '@playwright/test' );
+
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
  *
@@ -95,3 +97,13 @@ async function setIconColor( editor, state, color, context ) {
 		await editor.page.click( '.elementor-control-header_' + state + '_' + context );
 	}
 }
+
+module.exports = {
+	setTitleTextTag,
+	expectScreenshotToMatchLocator,
+	getChoicesButtonSelector,
+	setTitleIconPosition,
+	setTitleHorizontalAlignment,
+	setBorderAndBackground,
+	setIconColor,
+};
