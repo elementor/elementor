@@ -314,6 +314,15 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
+			'name' => 'nested_elements_html',
+			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
+			'default' => self::STATE_INACTIVE,
+			'generator_tag' => true,
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_dom_optimization',
 			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -427,14 +436,6 @@ class Manager extends Base_Object {
 			'dependencies' => [
 				'container',
 			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'nested-elements-html',
-			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'hidden' => true,
-			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
