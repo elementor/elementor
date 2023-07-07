@@ -1217,7 +1217,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 
-	test( 'Nested Elements HTML Experiment test', async ( { page }, testInfo ) => {
+	test.skip( 'Nested Elements HTML Experiment test', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );

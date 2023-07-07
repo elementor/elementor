@@ -52,7 +52,6 @@ async function clickMobileTab( context, tabPosition ) {
 
 async function setup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
-		html_nested_elements: 'active',
 		container: 'active',
 		'nested-elements': 'active',
 	};
@@ -63,7 +62,6 @@ async function setup( wpAdmin, customExperiment = '' ) {
 
 async function cleanup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
-		html_nested_elements: 'inactive',
 		'nested-elements': 'inactive',
 		container: 'inactive',
 	};
