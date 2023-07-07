@@ -68,7 +68,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_default_children_placeholder_selector() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_new_markup' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_markup' ) ) {
 			return '.e-n-tabs';
 		}
 
@@ -76,7 +76,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_html_wrapper_class() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_new_markup' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_markup' ) ) {
 			return 'elementor-widget-n-tabs-new';
 		}
 
@@ -84,7 +84,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function register_controls() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_new_markup' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_markup' ) ) {
 			$this->register_controls_new();
 		} else {
 			$this->register_controls_old();
@@ -2028,7 +2028,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function render() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_new_markup' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_markup' ) ) {
 			$this->render_new();
 		} else {
 			$this->render_old();
@@ -2138,7 +2138,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function content_template() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_new_markup' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested_elements_markup' ) ) {
 			$this->content_template_new();
 		} else {
 			$this->content_template_old();

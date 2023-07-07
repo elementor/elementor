@@ -52,24 +52,16 @@ async function clickMobileTab( context, tabPosition ) {
 
 async function setup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
-		nested_elements_new_markup: 'inactive',
 		container: 'active',
 		'nested-elements': 'active',
 	};
 
 	experiments = { ...experiments, ...customExperiment };
 	await wpAdmin.setExperiments( experiments );
-
-	experiments = {
-		nested_elements_new_markup: 'inactive',
-	};
-
-	await wpAdmin.setExperiments( experiments );
 }
 
 async function cleanup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
-		nested_elements_new_markup: 'inactive',
 		'nested-elements': 'inactive',
 		container: 'inactive',
 	};

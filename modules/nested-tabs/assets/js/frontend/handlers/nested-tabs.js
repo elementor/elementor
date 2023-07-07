@@ -9,7 +9,7 @@ export default class NestedTabs extends NestedTabsNew {
 	__construct( settings ) {
 		super.__construct( settings );
 
-		this.isHtmlExperimentActive = elementorFrontendConfig.experimentalFeatures.nested_elements_new_markup;
+		this.isHtmlExperimentActive = elementorFrontendConfig.experimentalFeatures.nested_elements_markup;
 	}
 
 	constructor( ...args ) {
