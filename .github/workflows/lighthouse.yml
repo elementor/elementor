@@ -2,6 +2,7 @@ name: Lighthouse
 
 on:
   pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
