@@ -749,6 +749,10 @@ class Controls_Manager {
 		];
 	}
 
+	public function set_stack( $id, $stack ) {
+		$this->stacks[ $id ] = $stack;
+	}
+
 	/**
 	 * Remove existing stack from the stacks cache
 	 *

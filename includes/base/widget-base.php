@@ -173,19 +173,27 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @return array Widget stack of controls.
 	 */
-	public function get_stack( $with_common_controls = true ) {
-		$stack = parent::get_stack();
+//	public function get_stack( $with_common_controls = true ) {
+//		$stack = parent::get_stack();
+//
+//		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
+//			/** @var Widget_Common $common_widget */
+//			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+//
+//			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
+//
+//			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
+//		}
+//
+//		return $stack;
+//	}
 
-		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
-			/** @var Widget_Common $common_widget */
-			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
-
-			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
-
-			$stack['tabs'] = array_merge( $stack['tabs'], $common_widget->get_tabs_controls() );
+	private function merge($array1, $array2) {
+		foreach($array2 as $key => $i) {
+			$array1[$key] = $i;
 		}
 
-		return $stack;
+		return $array1;
 	}
 
 	/**
@@ -1037,6 +1045,16 @@ abstract class Widget_Base extends Element_Base {
 	protected function init_controls() {
 		$this->is_first_section = true;
 		parent::init_controls();
+
+		$stack = Plugin::$instance->controls_manager->get_stacks( $this->get_unique_name() );
+
+		/** @var Widget_Common $common_widget */
+		$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+
+		$stack['controls'] = $this->merge( $stack['controls'], $common_widget->get_controls() );
+		$stack['tabs'] = $this->merge( $stack['tabs'], $common_widget->get_tabs_controls() );
+
+		Plugin::$instance->controls_manager->set_stack( $this->get_unique_name(), $stack );
 	}
 
 	public function register_runtime_widget( $widget_name ) {
