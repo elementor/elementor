@@ -136,16 +136,18 @@ class Tools extends Settings_Page {
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
-		$rollback = new Rollback(
-			[
-				'version' => $version,
-				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
-				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
-			]
-		);
-
-		$rollback = apply_filters( 'elementor/settings/tools/rollback/post', $version, $plugin_slug );
+		if ( $is_cloud ) {
+			$rollback = apply_filters( 'elementor/settings/tools/rollback/cloud', $version, $plugin_slug, ELEMENTOR_PLUGIN_BASE );
+		} else {
+			$rollback = new Rollback(
+				[
+					'version' => $version,
+					'plugin_name' => ELEMENTOR_PLUGIN_BASE,
+					'plugin_slug' => $plugin_slug,
+					'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
+				]
+			);
+		}
 
 		$rollback->run();
 
