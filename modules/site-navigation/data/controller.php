@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\SiteNavigation\Data;
 
+use Elementor\Plugin;
 use Elementor\Data\V2\Base\Controller as Base_Controller;
 use Elementor\Modules\SiteNavigation\Data\Endpoints\Add_New_Post;
 use Elementor\Modules\SiteNavigation\Data\Endpoints\Duplicate_Post;

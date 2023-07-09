@@ -17,7 +17,7 @@ class Module extends Module_Base {
 
 	/**
 	 * Initialize the Container-Converter module.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function __construct() {
