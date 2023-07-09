@@ -14,6 +14,8 @@ runs:
     - shell: bash
       run: |
         # echo EVENT_NAME=${github.event_name}
+        echo CHANNEL=${{ inputs.CHANNEL }} >> $GITHUB_ENV
+        echo LAST_RELEASE_DATE=${{ inputs.LAST_RELEASE_DATE }} >> $GITHUB_ENV
 
         if [[ -z ${{ inputs.LAST_RELEASE_DATE }} ]]; then
           LAST_RELEASE_DATE=date +"%D"
