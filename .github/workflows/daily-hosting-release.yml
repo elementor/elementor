@@ -44,6 +44,7 @@ jobs:
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
+          LAST_RELEASE_DATE: ${{ env.LAST_RELEASE_DATE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
