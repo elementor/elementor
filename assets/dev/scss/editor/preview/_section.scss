@@ -30,7 +30,7 @@
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-end-property(color, var(--e-p-border-section));
+				border-inline-end-color: var(--e-p-border-section);
 				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 				@include end(calc(100% - 1px));
 			}
@@ -38,7 +38,7 @@
 			&:hover {
 
 				&:before {
-					@include border-end-property(color, var(--e-p-border-section-hover));
+					border-inline-end-color: var(--e-p-border-section-hover);
 				}
 			}
 		}
@@ -51,7 +51,7 @@
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-start-property(color, var(--e-p-border-section));
+				border-inline-start-color: var(--e-p-border-section);
 				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 				@include start(calc(100% - 1px));
 			}
@@ -59,7 +59,7 @@
 			&:hover {
 
 				&:after {
-					@include border-start-property(color, var(--e-p-border-section-hover));
+					border-inline-start-color: var(--e-p-border-section-hover);
 				}
 			}
 		}

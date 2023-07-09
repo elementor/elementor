@@ -5,27 +5,14 @@ import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
 
 test.describe( 'Nested Accordion @nested-accordion', () => {
-	test.describe( 'Nested Accordion experiment inactive', () => {
+	test.describe( 'Nested Elements experiment inactive', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const page = await browser.newPage();
 			const wpAdmin = await new WpAdminPage( page, testInfo );
 
 			await wpAdmin.setExperiments( {
 				container: 'active',
-				'nested-elements': 'active',
-				'nested-accordion': 'inactive',
-			} );
-
-			await page.close();
-		} );
-
-		test.afterAll( async ( { browser }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
 				'nested-elements': 'inactive',
-				container: 'inactive',
 			} );
 
 			await page.close();
@@ -52,7 +39,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		} );
 	} );
 
-	test.describe( 'Nested Accordion experiment is active', () => {
+	test.describe( 'Nested Elements experiment is active', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			const page = await browser.newPage();
 			const wpAdmin = await new WpAdminPage( page, testInfo );
@@ -60,20 +47,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			await wpAdmin.setExperiments( {
 				container: 'active',
 				'nested-elements': 'active',
-				'nested-accordion': 'active',
-			} );
-
-			await page.close();
-		} );
-
-		test.afterAll( async ( { browser }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				'nested-elements': 'inactive',
-				container: 'inactive',
-				'nested-accordion': 'inactive',
 			} );
 
 			await page.close();
