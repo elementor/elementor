@@ -21,4 +21,8 @@ jobs:
       - name: Install Dependencies
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
+        run: |
+          echo "${{ github.head_ref }}"
+          echo "${{ github.ref }}"
+          echo "${{ github.head_ref }}"
+          echo "${{ github.event.pull_request.title }}" | npx commitlint
