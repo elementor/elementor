@@ -301,7 +301,6 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	// TODO: Remove in the future. - When Pro will remove the template class use in location manager.
 	private $has_stacks_cache_been_cleared = false;
 
 	private $has_post_stacks_cache_been_cleared = [];
@@ -884,13 +883,13 @@ class Controls_Manager {
 	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function has_stacks_cache_been_cleared( $post_id = null ) {
+	public function has_stacks_cache_been_cleared( $handle_id = null ) {
 
-		if ( ! $post_id ) {
+		if ( ! $handle_id ) {
 			return $this->has_stacks_cache_been_cleared;
 		}
 
-		if ( ! isset( $this->has_post_stacks_cache_been_cleared[ $post_id ] ) ) {
+		if ( ! isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] ) ) {
 			return false;
 		}
 
@@ -903,11 +902,11 @@ class Controls_Manager {
 	 * @since 3.13.0
 	 * @access public
 	 */
-	public function clear_stack_cache( $post_id = null ) {
+	public function clear_stack_cache( $handle_id = null ) {
 		$this->stacks = [];
 
-		if ( $post_id ) {
-			$this->has_post_stacks_cache_been_cleared[ $post_id ] = true;
+		if ( $handle_id ) {
+			$this->has_post_stacks_cache_been_cleared[ $handle_id ] = true;
 		} else {
 			$this->has_stacks_cache_been_cleared = true;
 		}

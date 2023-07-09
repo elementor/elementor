@@ -644,20 +644,6 @@ abstract class Base extends Base_File {
 	}
 
 	/**
-	 * Get post ID.
-	 *
-	 * Retrieve the post ID.
-	 *
-	 * @since 3.14.2
-	 * @access protected
-	 *
-	 * @return int Post ID.
-	 */
-	public function get_post_id() {
-		return false;
-	}
-
-	/**
 	 * Clear stacks
 	 *
 	 * If a page contains templates, such as loop items, shortcodes, kits, or template widgets,
@@ -670,11 +656,11 @@ abstract class Base extends Base_File {
 	 */
 	private function clear_stacks() {
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$post_id = $this->get_post_id();
-		if ( ! $is_edit_mode && $post_id ) {
-			$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $post_id );
+		$handle_id = $this->get_file_handle_id();
+		if ( ! $is_edit_mode && $handle_id ) {
+			$stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( $handle_id );
 			if ( ! $stack_cache_has_been_cleared ) {
-				Plugin::$instance->controls_manager->clear_stack_cache( $post_id );
+				Plugin::$instance->controls_manager->clear_stack_cache( $handle_id );
 			}
 		}
 	}
