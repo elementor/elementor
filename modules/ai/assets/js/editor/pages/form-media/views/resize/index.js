@@ -41,16 +41,16 @@ const Resize = () => {
 				<ImageForm onSubmit={ handleSubmit }>
 					<Stack spacing={ 2 }>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
-							<Typography variant="caption">512</Typography>
+							<Typography variant="caption">512px</Typography>
 
-							<Typography variant="caption">1024</Typography>
+							<Typography variant="caption">2048px</Typography>
 						</Box>
 
 						<Slider
 							marks
 							step={ 64 }
 							min={ 512 }
-							max={ 1024 }
+							max={ 2048 }
 							id="upscale_to"
 							color="secondary"
 							name="upscale_to"

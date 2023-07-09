@@ -56,7 +56,8 @@
 	}
 
 	&__button.button {
-		@include margin(18px, 14px, 22px, 0);
+		margin-block: 18px 22px;
+		margin-inline: 0 14px;	
 	}
 
 	&__dependency {
