@@ -2,7 +2,6 @@ name: PR Linter
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
-  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
