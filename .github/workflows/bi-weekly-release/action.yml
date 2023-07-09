@@ -4,6 +4,9 @@ inputs:
   CHANNEL:
     required: true
     description: "The channel to get the version to (cloud, CCU)."
+  LAST_RELEASE_DATE:
+    required: false
+    description: "The date of the last release."
 
 runs:
   using: "composite"
@@ -12,8 +15,9 @@ runs:
       run: |
         # echo EVENT_NAME=${github.event_name}
 
-        if [[ ! LAST_RELEASE_DATE ]]; then
-            LAST_RELEASE_DATE=date +"%D"
+        if [[ -z ${{ inputs.LAST_RELEASE_DATE }} ]]; then
+          LAST_RELEASE_DATE=date +"%D"
+          echo LAST_RELEASE_DATE=${LAST_RELEASE_DATE} >> $GITHUB_ENV
         fi
 
         echo LAST_RELEASE_DATE=${LAST_RELEASE_DATE} >> $GITHUB_ENV
