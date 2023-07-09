@@ -6,7 +6,6 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\ElementsV2\Provider;
-use Elementor\ElementsV2\Widgets\Heading;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
@@ -23,10 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Widgets_Manager {
-
-	const NEW_WIDGETS = [
-		'heading' => Heading::class,
-	];
 
 	/**
 	 * Widget types.
