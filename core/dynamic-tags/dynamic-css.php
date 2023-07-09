@@ -25,7 +25,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 		return false;
 	}
 
-	protected function render_styles( Element_Base $element ) {
+	protected function render_styles( $element ) {
 		$id = $element->get_id();
 
 		if ( in_array( $id, $this->post_dynamic_elements_ids ) ) {

@@ -1176,7 +1176,11 @@ class Frontend extends App {
 			$css_file->print_css();
 		}
 
+		do_action( 'qm/start', 'print' );
+
 		$document->print_elements_with_wrapper( $data );
+
+		do_action( 'qm/stop', 'print' );
 
 		$content = ob_get_clean();
 
