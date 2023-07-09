@@ -154,7 +154,7 @@ class Module extends BaseModule {
 
 		add_filter('elementor/files/css/selectors', function( $control, $value, $css_instance ) {
 
-			$post_id = $css_instance->get_post_id();
+			$post_id = method_exists( $css_instance, 'get_post_id' ) ? $css_instance->get_post_id() : false;
 
 			if ( ! $post_id ) {
 				return $control;
