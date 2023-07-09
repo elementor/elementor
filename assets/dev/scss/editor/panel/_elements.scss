@@ -52,7 +52,8 @@
 
 #elementor-panel-elements-search-input {
 	font-size: 11px;
-	@include padding(10px, 10px, 10px, 29px);
+	padding-block: 10px;
+	padding-inline: 29px 10px;
 	font-style: italic;
 	border: var(--e-a-border-bold);
 	border-radius: 0;
@@ -146,7 +147,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-a-bg-default));
+		border-inline-end-color: var(--e-a-bg-default);
 	}
 
 	&__title {
@@ -208,7 +209,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, $editor-background);
+		border-inline-end-color: $editor-background;
 	}
 
 	&__title {

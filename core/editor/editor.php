@@ -490,8 +490,6 @@ class Editor {
 		$plugin->widgets_manager->render_widgets_content();
 		$plugin->elements_manager->render_elements_content();
 
-		$plugin->schemes_manager->print_schemes_templates();
-
 		$plugin->dynamic_tags->print_templates();
 
 		$this->get_loader()->register_additional_templates();
