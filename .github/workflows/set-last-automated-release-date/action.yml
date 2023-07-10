@@ -21,11 +21,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: set-last-automated-release-date
-      uses: ./.github/scripts/set-last-release-date
+    - name: Set last automated release date
+      run: node ./.github/scripts/set-last-release-date.js
+      shell: bash
       with:
         environment_name: 'elementor'
-        token: ${{ inputs.MAINTAIN_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.MAINTAIN_TOKEN }}
         channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ github.event.repository.name }}
         name: ${{ inputs.NAME }}
