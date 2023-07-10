@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Assets_Config_Provider extends Collection {
+
 	/**
 	 * Load asset config from a file into the collection.
 	 *
@@ -21,15 +22,37 @@ class Assets_Config_Provider extends Collection {
 
 		$config = require $path;
 
-		if ( ! isset( $config['handle'] ) ) {
+		if ( ! $this->is_valid_handle( $config ) ) {
 			return $this;
 		}
 
 		$this->items[ $key ] = [
 			'handle' => $config['handle'],
-			'deps' => $config['deps'] ?? [],
+			'deps' => $this->is_valid_deps( $config ) ? $config['deps'] : [],
 		];
 
 		return $this;
+	}
+
+	/**
+	 * Check that the handle property in the config is a valid.
+	 *
+	 * @param $config
+	 *
+	 * @return bool
+	 */
+	private function is_valid_handle( $config ) {
+		return ! empty( $config['handle'] ) && is_string( $config['handle'] );
+	}
+
+	/**
+	 * Check that the deps property in the config is a valid.
+	 *
+	 * @param $config
+	 *
+	 * @return bool
+	 */
+	private function is_valid_deps( $config ) {
+		return isset( $config['deps'] ) && is_array( $config['deps'] );
 	}
 }

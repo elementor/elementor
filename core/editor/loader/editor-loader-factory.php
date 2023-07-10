@@ -24,10 +24,10 @@ class Editor_Loader_Factory {
 		$editor_version = Utils::get_super_global_value( $_GET, 'v' ) ?? ( $is_editor_v2_active ? '2' : '1' );
 
 		$config = new Collection( [
-			'assets-url' => ELEMENTOR_ASSETS_URL,
-			'assets-path' => ELEMENTOR_ASSETS_PATH,
-			'min-suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
-			'direction-suffix' => is_rtl() ? '-rtl' : '',
+			'assets_url' => ELEMENTOR_ASSETS_URL,
+			'assets_path' => ELEMENTOR_ASSETS_PATH,
+			'min_suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+			'direction_suffix' => is_rtl() ? '-rtl' : '',
 		] );
 
 		if ( '2' === $editor_version ) {

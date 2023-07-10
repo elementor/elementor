@@ -24,16 +24,9 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	/**
 	 * @return void
 	 */
-	public function init() {
-		// Nothing to do.
-	}
-
-	/**
-	 * @return void
-	 */
 	public function register_scripts() {
-		$assets_url = $this->config->get( 'assets-url' );
-		$min_suffix = $this->config->get( 'min-suffix' );
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
 
 		wp_register_script(
 			'elementor-editor-modules',
@@ -176,22 +169,17 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			ELEMENTOR_VERSION,
 			true
 		);
-	}
 
-	/**
-	 * @return void
-	 */
-	public function enqueue_scripts() {
-		// Nothing to do.
+		wp_set_script_translations( 'elementor-editor', 'elementor' );
 	}
 
 	/**
 	 * @return void
 	 */
 	public function register_styles() {
-		$assets_url = $this->config->get( 'assets-url' );
-		$min_suffix = $this->config->get( 'min-suffix' );
-		$direction_suffix = $this->config->get( 'direction-suffix' );
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
+		$direction_suffix = $this->config->get( 'direction_suffix' );
 
 		wp_register_style(
 			'font-awesome',

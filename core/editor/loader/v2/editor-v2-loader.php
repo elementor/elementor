@@ -12,12 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor_V2_Loader extends Editor_Base_Loader {
-	const APP = 'editor';
-	const ENV = 'env';
+	const APP_PACKAGE = 'editor';
+	const ENV_PACKAGE = 'env';
 
+	/**
+	 * Packages that should be enqueued (the main app and the extensions of the app).
+	 */
 	const PACKAGES_TO_ENQUEUE = [
 		// App
-		self::APP,
+		self::APP_PACKAGE,
 
 		// Extensions
 		'editor-app-bar',
@@ -28,9 +31,12 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'editor-v1-adapters',
 	];
 
-	const PACKAGES_TO_NOT_ENQUEUE = [
+	/**
+	 * Packages that should only be register, unless some other asset depends on them.
+	 */
+	const LIBS = [
 		// Libs
-		self::ENV,
+		self::ENV_PACKAGE,
 		'icons',
 		'locations',
 		'store',
@@ -55,11 +61,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * @return void
 	 */
 	public function init() {
-		parent::init();
+		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::LIBS );
 
-		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::PACKAGES_TO_NOT_ENQUEUE );
-
-		$assets_path = $this->config->get( 'assets-path' );
+		$assets_path = $this->config->get( 'assets_path' );
 
 		foreach ( $packages as $package ) {
 			$this->assets_config_provider->load(
@@ -77,11 +81,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function register_scripts() {
 		parent::register_scripts();
 
-		$assets_url = $this->config->get( 'assets-url' );
-		$min_suffix = $this->config->get( 'min-suffix' );
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
 
 		foreach ( $this->assets_config_provider->all() as $package => $config ) {
-			if ( self::ENV === $package ) {
+			if ( self::ENV_PACKAGE === $package ) {
 				wp_register_script(
 					'elementor-editor-environment-v2',
 					"{$assets_url}js/editor-environment-v2{$min_suffix}.js",
@@ -91,7 +95,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				);
 			}
 
-			if ( static::APP === $package ) {
+			if ( static::APP_PACKAGE === $package ) {
 				wp_register_script(
 					'elementor-editor-loader-v2',
 					"{$assets_url}js/editor-loader-v2{$min_suffix}.js",
@@ -108,6 +112,8 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				ELEMENTOR_VERSION,
 				true
 			);
+
+			wp_set_script_translations( $config['handle'], 'elementor' );
 		}
 
 		do_action( 'elementor/editor/v2/scripts/register' );
@@ -117,14 +123,12 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		parent::enqueue_scripts();
-
-		do_action( 'elementor/editor/v2/scripts/enqueue/before-env' );
+		do_action( 'elementor/editor/v2/scripts/enqueue/before' );
 
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
 		foreach ( $this->assets_config_provider->only( self::PACKAGES_TO_ENQUEUE ) as $config ) {
-			if ( self::ENV === $config['handle'] ) {
+			if ( self::ENV_PACKAGE === $config['handle'] ) {
 				$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 
 				Utils::print_js_config(
@@ -135,7 +139,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			}
 
 			wp_enqueue_script( $config['handle'] );
-			wp_set_script_translations( $config['handle'], 'elementor' );
 		}
 
 		do_action( 'elementor/editor/v2/scripts/enqueue' );
@@ -146,11 +149,10 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			Editor_Common_Scripts_Settings::get()
 		);
 
+		// Must be last.
 		wp_enqueue_script( 'elementor-editor-loader-v2' );
 
-		wp_set_script_translations( 'elementor-editor', 'elementor' );
-
-		do_action( 'elementor/editor/v2/scripts/enqueue/after-loader' );
+		do_action( 'elementor/editor/v2/scripts/enqueue/after' );
 	}
 
 	/**
@@ -159,8 +161,8 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	public function register_styles() {
 		parent::register_styles();
 
-		$assets_url = $this->config->get( 'assets-url' );
-		$min_suffix = $this->config->get( 'min-suffix' );
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
 
 		wp_register_style(
 			'elementor-editor-v2-overrides',

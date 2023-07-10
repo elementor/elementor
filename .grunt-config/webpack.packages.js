@@ -6,7 +6,7 @@ const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externa
 
 const { dependencies } = require( '../package.json' );
 
-packages = Object.keys( dependencies )
+const packages = Object.keys( dependencies )
 	.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
 	.map( ( packageName ) => {
 		const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );

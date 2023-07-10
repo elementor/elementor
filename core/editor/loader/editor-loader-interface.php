@@ -43,14 +43,14 @@ interface Editor_Loader_Interface {
 	public function enqueue_styles();
 
 	/**
-	 * Print the actual initial html for editor, later on the scripts takeover and renders the JS apps.
+	 * Print the actual initial html for the editor, later on, the scripts takeover and renders the JS apps.
 	 *
 	 * @return void
 	 */
 	public function print_root_template();
 
 	/**
-	 * Register additional templates that requires for the marionette part of the application
+	 * Register additional templates that are required for the marionette part of the application
 	 *
 	 * @return void
 	 */
