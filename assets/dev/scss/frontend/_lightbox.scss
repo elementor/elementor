@@ -28,10 +28,7 @@
 
 		&-message {
 			animation-duration: .3s; // Open lightbox transition
-
-			&:not(.elementor-fit-aspect-ratio) {
-				height: 100%;
-			}
+			height: 100%;
 
 			&.dialog-lightbox-message {
 				padding: 0;
@@ -107,27 +104,103 @@
 		}
 	}
 
-	.elementor-lightbox-image, .elementor-video-container {
+	.elementor-lightbox-image {
 		box-shadow: 0 0 30px rgba( 0,0,0,0.3 ), 0 0 8px -5px rgba( 0,0,0,0.3 );
 		border-radius: 2px;
 	}
 
 	.elementor-video-container {
+		width: 100%;
 		@include absolute-center;
 
+		.elementor-video-square,
+		.elementor-video-landscape,
+		.elementor-video-portrait {
+			width: 100%;
+			height: 100%;
+			margin: auto;
+
+			iframe {
+				border: 0;
+				background-color: #000;
+			}
+
+			iframe,
+			video {
+				aspect-ratio: var( --video-aspect-ratio, 1.77777 ); // Default value 1.77777 = 16/9
+			}
+
+			// BC for browsers that don't support `aspect-ratio` (like Safari 14.1)
+			@supports not ( aspect-ratio: 1 / 1 ) {
+
+				& {
+					position: relative;
+					overflow: hidden;
+					height: 0;
+					padding-bottom: calc( 100% / var( --video-aspect-ratio, 1.77777 ) );
+
+					iframe,
+					video {
+						position: absolute;
+						top: 0;
+						right: 0;
+						bottom: 0;
+						left: 0;
+					}
+				}
+			}
+		}
+
+		.elementor-video-square {
+
+			iframe,
+			video {
+				width: min( 90vh, 90vw );
+				height: min( 90vh, 90vw );
+			}
+		}
+
+		.elementor-video-landscape {
+
+			iframe,
+			video {
+				width: 100%;
+				max-height: 90vh;
+			}
+		}
+
+		.elementor-video-portrait {
+
+			iframe,
+			video {
+				height: 100%;
+				max-width: 90vw;
+			}
+		}
+
 		@media (min-width: $screen-tablet-next) {
-			width: 75%;
+
+			.elementor-video-landscape {
+				width: 85vw;
+				max-height: 85vh;
+			}
+
+			.elementor-video-portrait {
+				height: 85vh;
+				max-width: 85vw;
+			}
 		}
 
 		@media (max-width: $screen-tablet-max) {
-			width: 100%;
-		}
-	}
 
-	@media (min-width: $editor-screen-md-min) and (max-width: $editor-screen-md-max) {
-		.elementor-aspect-ratio-916 {
-			.elementor-video-container {
-				width: 70%;
+			.elementor-video-landscape {
+				width: 95vw;
+				max-height: 95vh;
+			}
+
+			.elementor-video-portrait {
+				height: 95vh;
+				max-width: 95vw;
 			}
 		}
 	}

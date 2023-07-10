@@ -16,8 +16,6 @@ import {
 } from '@elementor/e-icons';
 
 module.exports = elementorModules.ViewModule.extend( {
-	oldAspectRatio: null,
-
 	oldAnimation: null,
 
 	swiper: null,
@@ -29,11 +27,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			classes: {
-				aspectRatio: 'elementor-aspect-ratio-%s',
 				item: 'elementor-lightbox-item',
 				image: 'elementor-lightbox-image',
 				videoContainer: 'elementor-video-container',
-				videoWrapper: 'elementor-fit-aspect-ratio',
+				videoWrapper: 'elementor-video-wrapper',
 				playButton: 'elementor-custom-embed-play',
 				playButtonIcon: 'fa',
 				playing: 'elementor-playing',
@@ -270,16 +267,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
+			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = $( '<div>', { class: `${ classes.videoContainer } ${ classes.preventClose }` } ),
-			$videoWrapper = $( '<div>', { class: classes.videoWrapper } );
+			$videoWrapper = $( '<div>', {
+				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
+				style: '--video-aspect-ratio: ' + aspectRatio },
+			);
 
 		$videoWrapper.append( $videoElement );
 		$videoContainer.append( $videoWrapper );
 
 		const modal = this.getModal();
 		modal.setMessage( $videoContainer );
-
-		this.setVideoAspectRatio();
 
 		const onHideMethod = modal.onHide;
 
@@ -289,8 +288,33 @@ module.exports = elementorModules.ViewModule.extend( {
 			this.$buttons = jQuery();
 			this.focusedButton = null;
 
-			modal.getElements( 'message' ).removeClass( 'elementor-fit-aspect-ratio' );
+			modal.getElements( 'message' ).removeClass( 'elementor-video-wrapper' );
 		};
+	},
+
+	getRatioDictionry( ratio ) {
+		const aspectRatiosDictionary = {
+			219: 2.33333, // 21/9
+			169: 1.77777, // 16/9
+			43: 1.33333, // 4/3
+			32: 1.5, // 3/2
+			11: 1, // 1/1
+			916: 0.5625, // 9/16
+		};
+
+		return aspectRatiosDictionary[ ratio ] || ratio;
+	},
+
+	getRatioType( ratio ) {
+		let type = '';
+
+		if ( 1 === ratio ) {
+			type = 'square';
+		} else {
+			type = ( ratio < 1 ) ? 'portrait' : 'landscape';
+		}
+
+		return type;
 	},
 
 	getShareLinks() {
@@ -765,8 +789,6 @@ module.exports = elementorModules.ViewModule.extend( {
 			// Expose the swiper instance in the frontend
 			$container.data( 'swiper', this.swiper );
 
-			this.setVideoAspectRatio();
-
 			this.playSlideVideo();
 
 			if ( showFooter ) {
@@ -851,24 +873,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 	},
 
-	setVideoAspectRatio( aspectRatio ) {
-		aspectRatio = aspectRatio || this.getSettings( 'modalOptions.videoAspectRatio' );
-
-		const $widgetContent = this.getModal().getElements( 'widgetContent' ),
-			oldAspectRatio = this.oldAspectRatio,
-			aspectRatioClass = this.getSettings( 'classes.aspectRatio' );
-
-		this.oldAspectRatio = aspectRatio;
-
-		if ( oldAspectRatio ) {
-			$widgetContent.removeClass( aspectRatioClass.replace( '%s', oldAspectRatio ) );
-		}
-
-		if ( aspectRatio ) {
-			$widgetContent.addClass( aspectRatioClass.replace( '%s', aspectRatio ) );
-		}
-	},
-
 	getSlide( slideState ) {
 		return jQuery( this.swiper.slides ).filter( this.getSettings( 'selectors.slideshow.' + slideState + 'Slide' ) );
 	},
@@ -899,8 +903,12 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		const classes = this.getSettings( 'classes' ),
+			aspectRatio = this.getRatioDictionry( this.getSettings( 'modalOptions.videoAspectRatio' ) ),
 			$videoContainer = jQuery( '<div>', { class: classes.videoContainer + ' ' + classes.invisible } ),
-			$videoWrapper = jQuery( '<div>', { class: classes.videoWrapper } ),
+			$videoWrapper = jQuery( '<div>', {
+				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
+				style: '--video-aspect-ratio: ' + aspectRatio },
+			),
 			$playIcon = $activeSlide.children( '.' + classes.playButton );
 
 		let videoType, apiProvider;
