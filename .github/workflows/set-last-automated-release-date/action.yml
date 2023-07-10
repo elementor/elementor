@@ -24,7 +24,7 @@ runs:
     - name: Set last automated release date
       env:
         environment_name: 'elementor'
-        GITHUB_TOKEN: ${{ inputs.MAINTAIN_TOKEN }}
+        token: ${{ inputs.MAINTAIN_TOKEN }}
         channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ github.event.repository.name }}
         name: ${{ inputs.NAME }}
