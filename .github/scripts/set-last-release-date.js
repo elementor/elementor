@@ -1,10 +1,9 @@
 const { Octokit } = require( 'octokit' );
 const octokit = new Octokit( {
-	auth: process.env.GITHUB_TOKEN
+	auth: process.env.token,
 } )
 
-console.log( process )
-const { repository_id, environment_name, name, value } = process.env
+const { repository_id, environment_name, name, value } = process.env;
 
 (async () => {
 	octokit.rest.actions.createEnvironmentVariable( {
