@@ -23,9 +23,9 @@ class Module extends \Elementor\Core\Base\Module {
 		];
 	}
 
-	 public static function is_active() {
-	 	return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
-	 }
+	public static function is_active() {
+		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
+	}
 
 	public function get_name() {
 		return 'nested-tabs-html';
