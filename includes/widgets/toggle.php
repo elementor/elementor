@@ -590,6 +590,7 @@ class Widget_Toggle extends Widget_Base {
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
 					'role' => 'button',
+					'tabindex' => '0',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -618,7 +619,7 @@ class Widget_Toggle extends Widget_Base {
 							<?php } ?>
 						</span>
 						<?php endif; ?>
-						<a class="elementor-toggle-title" tabindex="0"><?php $this->print_unescaped_setting( 'tab_title', 'tabs', $index ); ?></a>
+						<a class="elementor-toggle-title"><?php $this->print_unescaped_setting( 'tab_title', 'tabs', $index ); ?></a>
 					</<?php Utils::print_validated_html_tag( $settings['title_html_tag'] ); ?>>
 
 					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php Utils::print_unescaped_internal_string( $this->parse_text_editor( $item['tab_content'] ) ); ?></div>
@@ -678,6 +679,7 @@ class Widget_Toggle extends Widget_Base {
 						'class': [ 'elementor-tab-title' ],
 						'data-tab': tabCount,
 						'role': 'button',
+						'tabindex': '0',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );
@@ -705,7 +707,7 @@ class Widget_Toggle extends Widget_Base {
 								<# } #>
 							</span>
 							<# } #>
-							<a class="elementor-toggle-title" tabindex="0">{{{ item.tab_title }}}</a>
+							<a class="elementor-toggle-title">{{{ item.tab_title }}}</a>
 						</{{{ titleHTMLTag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

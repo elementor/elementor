@@ -570,6 +570,7 @@ class Widget_Accordion extends Widget_Base {
 					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
 					'role' => 'button',
+					'tabindex' => '0',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
 				] );
@@ -598,7 +599,7 @@ class Widget_Accordion extends Widget_Base {
 							<?php } ?>
 							</span>
 						<?php endif; ?>
-						<a class="elementor-accordion-title" tabindex="0"><?php
+						<a class="elementor-accordion-title"><?php
 							$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
 						?></a>
 					</<?php Utils::print_validated_html_tag( $settings['title_html_tag'] ); ?>>
@@ -658,9 +659,9 @@ class Widget_Accordion extends Widget_Base {
 					view.addRenderAttribute( tabTitleKey, {
 						'id': 'elementor-tab-title-' + tabindex + tabCount,
 						'class': [ 'elementor-tab-title' ],
-						'tabindex': tabindex + tabCount,
 						'data-tab': tabCount,
 						'role': 'button',
+						'tabindex': '0',
 						'aria-controls': 'elementor-tab-content-' + tabindex + tabCount,
 						'aria-expanded': 'false',
 					} );
@@ -690,7 +691,7 @@ class Widget_Accordion extends Widget_Base {
 								<# } #>
 							</span>
 							<# } #>
-							<a class="elementor-accordion-title" tabindex="0">{{{ item.tab_title }}}</a>
+							<a class="elementor-accordion-title">{{{ item.tab_title }}}</a>
 						</{{{ titleHTMLTag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>

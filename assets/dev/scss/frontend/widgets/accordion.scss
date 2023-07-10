@@ -60,6 +60,10 @@
 				display: block;
 			}
 		}
+
+		&:focus-visible	 {
+			border: 1px solid $black;
+		}
 	}
 
 	.elementor-tab-content {
