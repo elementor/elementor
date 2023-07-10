@@ -28,7 +28,7 @@ runs:
         channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ github.event.repository.name }}
         name: ${{ inputs.NAME }}
-        value: date +'%d/%m/%Y'
+        value: echo (date +'%d/%m/%Y')
       shell: bash
       run: node ./.github/scripts/set-last-release-date.js
 
