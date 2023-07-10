@@ -78,13 +78,14 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Install Octokit
+        run: npm install octokit@2.0.19
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
         with:
-          REPOSITORY: ${{ github.repository }}
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          REPOSITORY_ID: ${{ github.repository }}
+          ENVIRONMENT_NAME: ${{ env.config_deployment_environment }}
           CHANNEL: ${{ env.CHANNEL }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Cloud daily Release
         uses : ./.github/workflows/post-to-slack
