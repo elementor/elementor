@@ -84,7 +84,7 @@ jobs:
         uses: ./.github/workflows/set-last-automated-release-date
         with:
           REPOSITORY_ID: ${{ github.repository }}
-          ENVIRONMENT_NAME: ${{ env.config_deployment_environment }}
+          ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE_DATE'
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
