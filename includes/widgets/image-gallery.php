@@ -346,6 +346,9 @@ class Widget_Image_Gallery extends Widget_Base {
 			[
 				'name' => 'caption_shadow',
 				'selector' => '{{WRAPPER}} .gallery-item .gallery-caption',
+				'condition' => [
+					'gallery_display_caption' => '',
+				],
 			]
 		);
 
@@ -370,6 +373,9 @@ class Widget_Image_Gallery extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .gallery-item .gallery-caption' => 'margin-top: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gallery_display_caption' => '',
 				],
 			]
 		);
