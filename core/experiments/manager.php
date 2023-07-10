@@ -313,6 +313,7 @@ class Manager extends Base_Object {
 	}
 
 	private function add_default_features() {
+
 		$this->add_feature( [
 			'name' => 'e_dom_optimization',
 			'title' => esc_html__( 'Optimized DOM Output', 'elementor' ),
