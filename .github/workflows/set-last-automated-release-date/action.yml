@@ -14,6 +14,9 @@ inputs:
   NAME:
     required: true
     description: "The name of the environment variable."
+  MAINTAIN_TOKEN:
+    required: true
+    description: "The maintain token."
 
 runs:
   using: "composite"
@@ -22,8 +25,8 @@ runs:
       uses: ./.github/scripts/set-last-release-date
       with:
         environment_name: 'elementor'
-        token: ${{ secrets.MAINTAIN_TOKEN }}
-        CHANNEL: ${{ inputs.CHANNEL }}
+        token: ${{ inputs.MAINTAIN_TOKEN }}
+        channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ github.event.repository.name }}
         name: ${{ inputs.NAME }}
         value: date +'%d/%m/%Y'
