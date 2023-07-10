@@ -26,7 +26,7 @@ runs:
         environment_name: 'SCHEDULE_RELEASES'
         token: ${{ inputs.MAINTAIN_TOKEN }}
         channel: ${{ inputs.CHANNEL }}
-        repository_id: ${{ github.event.repository.name }}
+        repository_id: 'davseve/elementor'
         name: ${{ inputs.NAME }}
         value: echo (date +'%d/%m/%Y')
       shell: bash
