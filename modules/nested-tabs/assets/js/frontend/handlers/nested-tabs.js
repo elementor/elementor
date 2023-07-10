@@ -1,17 +1,11 @@
-import NestedTabsNew from './nested-tabs-new';
+import Base from 'elementor-frontend/handlers/base';
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
-export default class NestedTabs extends NestedTabsNew {
-	__construct( settings ) {
-		super.__construct( settings );
-
-		this.isHtmlExperimentActive = elementorFrontendConfig.experimentalFeatures.nested_elements_markup;
-	}
-
+export default class NestedTabs extends Base {
 	constructor( ...args ) {
 		super( ...args );
 

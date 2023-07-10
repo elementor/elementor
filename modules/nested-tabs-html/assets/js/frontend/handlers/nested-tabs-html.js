@@ -5,7 +5,7 @@ import {
 	setHorizontalTitleScrollValues,
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
-export default class NestedTabsNew extends Base {
+export default class NestedTabsHtml extends Base {
 	constructor( ...args ) {
 		super( ...args );
 

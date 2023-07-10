@@ -313,11 +313,6 @@ class Manager extends Base_Object {
 	}
 
 	private function add_default_features() {
-		$this->add_feature( [
-			'name' => 'nested_elements_markup',
-			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
-			'hidden' => true,
-		] );
 
 		$this->add_feature( [
 			'name' => 'e_dom_optimization',
