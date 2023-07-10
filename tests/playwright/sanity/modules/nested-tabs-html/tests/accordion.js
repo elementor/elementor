@@ -1,6 +1,6 @@
 const { viewportSize } = require( '../../../../enums/viewport-sizes' );
 const { expect } = require( '@playwright/test' );
-const { selectDropdownContainer, clickMobileTab } = require( '../helper-old' );
+const { selectDropdownContainer, clickMobileTab } = require( '../helper' );
 
 async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	// Act.

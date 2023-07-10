@@ -1,5 +1,5 @@
 const { expect } = require( '@playwright/test' );
-const { selectDropdownContainer, clickTab } = require( '../helper-old' );
+const { selectDropdownContainer, clickTab } = require( '../helper' );
 
 async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId, imageCarousel ) {
 	// Act.

@@ -42,12 +42,12 @@ async function editTab( editor, tabIndex ) {
 
 // Click on tab by position.
 async function clickTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs-html .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
 }
 
 // Click on tab by position.
 async function clickMobileTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs .e-collapse >> nth=${ tabPosition }` ).first().click();
+	await context.locator( `.elementor-widget-n-tabs-html .e-collapse >> nth=${ tabPosition }` ).first().click();
 }
 
 async function setup( wpAdmin, customExperiment = '' ) {

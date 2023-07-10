@@ -18,7 +18,7 @@ class Module extends \Elementor\Core\Base\Module {
 			'title' => esc_html__( 'Nested Elements HTML', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
-			'hidden' => false,
+			'hidden' => true,
 		];
 	}
 
