@@ -40,11 +40,11 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-      - name: Check if two weeks have passed since last release
-        uses: ./.github/workflows/bi-weekly-release
-        with:
-          CHANNEL: ${{ env.CHANNEL }}
-          LAST_RELEASE_DATE: ${{ env.LAST_RELEASE_DATE }}
+#      - name: Check if two weeks have passed since last release
+#        uses: ./.github/workflows/bi-weekly-release
+#        with:
+#          CHANNEL: ${{ env.CHANNEL }}
+#          LAST_RELEASE_DATE: ${{ env.LAST_RELEASE_DATE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -78,6 +78,13 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Set release date env variable
+        uses: ./.github/workflows/set-last-automated-release-date
+        with:
+          REPOSITORY: ${{ github.repository }}
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          CHANNEL: ${{ env.CHANNEL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Post To Slack Created Cloud daily Release
         uses : ./.github/workflows/post-to-slack
         with:

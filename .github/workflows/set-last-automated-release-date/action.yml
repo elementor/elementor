@@ -1,0 +1,30 @@
+name: Set last automated release date
+description: Set the last automated release date as an environment variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (cloud, CCU)."
+  REPOSITORY_ID:
+    required: true
+    description: "The repository ID."
+  ENVIRONMENT_NAME:
+    required: true
+    description: "The environment name."
+  NAME:
+    required: true
+    description: "The name of the environment variable."
+
+runs:
+  using: "composite"
+  steps:
+    - name: set-last-automated-release-date
+      uses: ./.github/scripts/set-last-release-date
+      with:
+        environment_name: 'elementor'
+        token: ${{ secrets.MAINTAIN_TOKEN }}
+        CHANNEL: ${{ inputs.CHANNEL }}
+        repository_id: ${{ github.event.repository.name }}
+        name: ${{ inputs.NAME }}
+        value: date +'%d/%m/%Y'
+
