@@ -360,6 +360,7 @@ class Widget_Image_Gallery extends Widget_Base {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => 'px',
+					'size' => 12,
 				],
 				'range' => [
 					'px' => [
