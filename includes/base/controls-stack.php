@@ -2148,26 +2148,12 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			$control = $this->merge_recursive( $control_obj->get_settings(), $control );
+			$control = array_merge_recursive( $control_obj->get_settings(), $control );
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
 
 		return $settings;
-	}
-
-	public function merge_recursive($array1, $array2) {
-		$merged = $array1;
-
-		foreach ($array2 as $key => &$value) {
-			if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-				$merged[$key] = $this->merge_recursive($merged[$key], $value);
-			} else {
-				$merged[$key] = $value;
-			}
-		}
-
-		return $merged;
 	}
 
 	/**
