@@ -13,31 +13,13 @@ runs:
   steps:
     - shell: bash
       run: |
-        # echo EVENT_NAME=${github.event_name}
-        echo "CHANNEL_T=${{ inputs.CHANNEL }}" >> $GITHUB_ENV
-        echo "LAST_RELEASE_DATE_T=${{ inputs.LAST_RELEASE_DATE }}" >> $GITHUB_ENV
-
-        if [[ -z ${{ inputs.LAST_RELEASE_DATE }} ]]; then
-          LAST_RELEASE_DATE=date +"%D"
-          echo LAST_RELEASE_DATE=${LAST_RELEASE_DATE} >> $GITHUB_ENV
-        fi
-
-        echo LAST_RELEASE_DATE=${LAST_RELEASE_DATE} >> $GITHUB_ENV
-
-        # add this condition in before releasing to production // github.event_name == "schedule"
-        # So thats thi action will run only on automated runs.
-        # In order to release to production every 2 weeks, we need to check if the last release was 14 days ago.
-        # If it was, we will set the LAST_RELEASE_DATE to today's date and release to production.
-        # If it wasn't, we will exit the action and not release to production.
-
-        if [[ ${{ inputs.CHANNEL }} == "cloud" ]]; then
-          DAYS_SINCE_LAST_RELEASE=$(echo $(( ($(date +%s) - $(date -d $LAST_RELEASE_DATE +%s)) / 86400 )))
-          echo "DAYS_SINCE_LAST_RELEASE=${DAYS_SINCE_LAST_RELEASE}" >> $GITHUB_ENV
-
-          if [[ $DAYS_SINCE_LAST_RELEASE % 14 == 0 ]]; then
-             echo "LAST_RELEASE_DATE=date +"%D" >> $GITHUB_ENV
-
-          else
-            exit 0
-          fi
+        last_release=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep "cloud" | tail -n1 | awk ‘{print $2}’)
+        current_date=$(date +%s)
+        release_date=$(git log -1 --format=%ct $last_release)
+        time_diff=$(( (current_date - release_date) / (60*60*24) ))
+        if [ "$time_diff" -ge 14 ]; then
+          echo "14 days have passed since the release."
+          # Perform additional actions here
+        else
+          echo "Less than 14 days have passed since the release."
         fi
