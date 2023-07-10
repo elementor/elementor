@@ -35,6 +35,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      - name: Install Octokit
+        run: npm install octokit@2.0.19
       - name: Env Vars Configure
         uses: ./.github/workflows/env-vars-configure
         with:
