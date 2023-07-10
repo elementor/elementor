@@ -1226,7 +1226,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		const widgetId = await editor.addWidget( 'nested-tabs-html', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
 		// Tests.
 		await expect( await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` ) ).toHaveClass( /elementor-widget-n-tabs-html/ );
