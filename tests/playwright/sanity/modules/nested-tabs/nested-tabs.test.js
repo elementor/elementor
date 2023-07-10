@@ -58,7 +58,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Check if title's are aligned on the left.
-		await expect( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html .e-n-tabs-heading .e-n-tab-title.e-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
+		await expect( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tabs-heading .e-n-tab-title.e-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
 
 		await cleanup( wpAdmin );
 	} );
@@ -105,11 +105,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.gotoPostId( pageId );
 		await editor.loadTemplate( templatePath );
 		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs-html' );
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Set published page variables
-		const icon = await page.locator( '.elementor-widget-n-tabs-html .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs-html .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
 			currentContext = page;
 
 		// Assert
@@ -133,16 +133,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Set icon size.
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html' ).hover();
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html .elementor-editor-element-edit' ).first().click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await page.locator( '.elementor-tab-control-style' ).click();
 		await page.locator( '.elementor-control-icon_section_style' ).click();
 		await page.locator( '.elementor-control-icon_size [data-setting="size"]' ).first().fill( '50' );
 		await editor.publishAndViewPage();
 
 		// Set published page variables
-		const icon = await page.locator( '.elementor-widget-n-tabs-html .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
-			activeTabIcon = await page.locator( '.elementor-widget-n-tabs-html .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
+		const icon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:first-child' ).first(),
+			activeTabIcon = await page.locator( '.elementor-widget-n-tabs .e-n-tab-title .e-n-tab-icon svg:last-child' ).first(),
 			currentContext = page;
 
 		// Assert
@@ -240,8 +240,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Set icon hover color.
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html' ).hover();
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html .elementor-editor-element-edit' ).first().click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		await setTabItemColor( page, editor, 'icon_section_style', 'icon_section_hover', 'icon_color_hover', '#ff0000' );
 
 		const redColor = 'rgb(255, 0, 0)',
@@ -310,8 +310,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html' ).hover();
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html .elementor-editor-element-edit' ).first().click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		const activeTabSpanCount = await editor.getPreviewFrame().locator( '.e-normal.e-active span' ).count();
 
 		// Update active tab title.
@@ -364,8 +364,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.togglePreviewMode();
 
 		// Tabs styling scenario 2: Direction: Left, Align Title: Right, Icon Position: Top.
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html' ).hover();
-		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs-html .elementor-editor-element-edit' ).first().click();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs' ).hover();
+		await editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 		// Set Direction: Left.
 		await editor.activatePanelTab( 'content' );
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
@@ -482,7 +482,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Open front end.
 		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs-html' );
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Assert
 		await page.setViewportSize( viewportSize.mobile );
@@ -503,7 +503,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Open front end.
 		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs-html' );
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
 		// Assert
 		await page.setViewportSize( viewportSize.mobile );
@@ -712,7 +712,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Test on the front end.
 		// Open the front end.
 		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs-html' );
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
 		// Test on desktop.
 		await expect( page.locator( '.e-normal.e-active' ) ).toHaveClass( 'e-n-tab-title e-normal elementor-animation-grow e-active' );
 		// Test the hover animation.
@@ -1016,7 +1016,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Test.
 		for ( const widgetIdentifier in widgetsToTest ) {
 			const widgetToTest = widgetsToTest[ widgetIdentifier ],
-				widgetSelector = `.elementor-widget-n-tabs-html.elementor-element-${ widgetToTest.widgetId }`,
+				widgetSelector = `.elementor-widget-n-tabs.elementor-element-${ widgetToTest.widgetId }`,
 				activeContainer = editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tabs-content > .e-con.e-active` );
 
 			for ( const valueToTest in widgetToTest ) {
