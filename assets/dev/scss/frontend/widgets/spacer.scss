@@ -13,6 +13,9 @@
 .e-con-inner {
 
 	& > .elementor-widget-spacer {
+		display: flex;
+		justify-items: center;
+		align-items: center;
 		width: var( --container-widget-width, var( --spacer-size ) );
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
@@ -27,6 +30,10 @@
 					height: var( --container-widget-height, var( --spacer-size ) );
 				}
 			}
+		}
+
+		.elementor-widget-empty-icon {
+			flex-grow: 1;
 		}
 	}
 }

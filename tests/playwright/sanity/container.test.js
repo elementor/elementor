@@ -711,6 +711,81 @@ test.describe( 'Container tests @container', () => {
 
 		expect( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
+
+	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost(),
+			frame = await editor.getPreviewFrame(),
+			spacerValue = 200;
+
+		await test.step( 'Spacer added and container set to column', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' ),
+				spacer = await editor.addWidget( widgets.spacer, container );
+
+			await editor.addWidget( widgets.image, container );
+			await editor.selectElement( spacer );
+			await editor.setSliderControlValue( 'space', spacerValue );
+
+			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
+
+			await expect( spacerElementHeight ).toBe( spacerValue );
+			await editor.removeElement( container );
+		} );
+
+		await test.step( 'Container set to column and then Spacer added', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.selectElement( container );
+
+			// Set column direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-down' );
+
+			const spacer = await editor.addWidget( widgets.spacer, container );
+
+			await editor.addWidget( widgets.image, container );
+			await editor.selectElement( spacer );
+			await editor.setSliderControlValue( 'space', spacerValue );
+
+			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
+
+			await expect( spacerElementHeight ).toBe( spacerValue );
+			await editor.removeElement( container );
+		} );
+
+		await test.step( 'Spacer added and container set to row', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' ),
+				spacer = await editor.addWidget( widgets.spacer, container );
+
+			await editor.addWidget( widgets.image, container );
+			await editor.selectElement( spacer );
+			await editor.setSliderControlValue( 'space', spacerValue );
+
+			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
+
+			await expect( spacerElementHeight ).toBe( spacerValue );
+			await editor.removeElement( container );
+		} );
+
+		await test.step( 'Container set to row and then Spacer added', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.selectElement( container );
+
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+			const spacer = await editor.addWidget( widgets.spacer, container );
+
+			await editor.addWidget( widgets.image, container );
+			await editor.selectElement( spacer );
+			await editor.setSliderControlValue( 'space', spacerValue );
+
+			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
+
+			await expect( spacerElementHeight ).toBe( spacerValue );
+			await editor.removeElement( container );
+		} );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin ) {
