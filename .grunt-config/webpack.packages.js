@@ -30,8 +30,24 @@ const common = {
 		packages.map( ( { name, path } ) => [ name, path ] )
 	),
 	plugins: [
-		new GenerateWordPressAssetFileWebpackPlugin( { handlePrefix: 'elementor-packages-' } ),
-		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
+		new GenerateWordPressAssetFileWebpackPlugin( {
+			handle: (entryName) => `elementor-packages-${entryName}`,
+			map: [
+				{ request: /^@elementor\/(.+)$/, handle: 'elementor-packages-$1' },
+				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
+				{ request: 'react', handle: 'react' },
+				{ request: 'react-dom', handle: 'react-dom' },
+			]
+		} ),
+		new ExternalizeWordPressAssetsWebpackPlugin( {
+			global: (entryName) => [ `__UNSTABLE__elementorPackages`, entryName ],
+			map: [
+				{ request: /^@elementor\/(.+)$/, global: [ '__UNSTABLE__elementorPackages', '$1' ] },
+				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+				{ request: 'react', global: 'React' },
+				{ request: 'react-dom', global: 'ReactDOM' },
+			]
+		} ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
