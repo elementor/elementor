@@ -90,15 +90,45 @@ class Module extends BaseApp {
 	private function get_raw_announcements(): array {
 		return [
 			[
+				'title' => 'Picture perfect: Introducing the AI image generator',
+				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
+				<ul>
+					<li>Use generative fill to edit, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Choose from twenty-nine preset styles that will supercharge your prompts and check out the image-prompt gallery for inspiration. </li>
+					<li>Create custom code, write content, and generate images with Elementor’s comprehensive AI toolbox.</li>
+				</ul>',
+				'media' => [
+					'type' => 'image',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
+				],
+				'cta' => [
+					[
+						'label' => 'Continue',
+						'variant' => 'primary',
+						'target' => '_blank',
+					],
+					[
+						'label' => 'Learn More',
+						'target' => '_blank',
+						'url' => 'https://go.elementor.com/whats-new-popup-learn-elementor-ai/',
+					],
+				],
+				'triggers' => [
+					[
+						'action' => 'aiStared',
+					],
+				],
+			],
+			[
 				'title' => 'Activate Containers for Brilliant Layouts',
 				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
 				'media' => [
 					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/containers-announcement.png',
 				],
 				'cta' => [
 					[
-						'label' => 'Activate Containers',
+						'label' => 'Activate Container',
 						'variant' => 'primary',
 						'target' => '_blank',
 						'url' => ElementorSettings::get_url() . '#tab-experiments',

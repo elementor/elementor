@@ -214,9 +214,13 @@
 			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
 
 			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
+			if ( isGridRowContainer ) {
+				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
+			}
+
 			if ( isGridRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
-					gridPlaceHolder = elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' ).addClass( 'e-dragging-' + currentSide );
+					gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
 				gridPlaceHolder[ insertMethod ]( currentElement );
 
 				return;

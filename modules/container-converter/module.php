@@ -102,7 +102,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	protected function add_page_convert_button( Controls_Stack $controls_stack ) {
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+		if ( ! Plugin::$instance->editor->is_edit_mode() || ! $this->page_contains_sections( $controls_stack ) ) {
 			return;
 		}
 
@@ -125,6 +125,29 @@ class Module extends \Elementor\Core\Base\Module {
 		);
 
 		$controls_stack->end_injection();
+	}
+
+	/**
+	 * Checks if document has any Section elements.
+	 *
+	 * @param \Elementor\Controls_Stack $controls_stack
+	 *
+	 * @return bool
+	 */
+	protected function page_contains_sections( $controls_stack ) {
+		$data = $controls_stack->get_elements_data();
+
+		if ( ! is_array( $data ) ) {
+			return false;
+		}
+
+		foreach ( $data as $element ) {
+			if ( isset( $element['elType'] ) && 'section' === $element['elType'] ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

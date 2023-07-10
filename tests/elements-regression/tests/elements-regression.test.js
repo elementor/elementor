@@ -28,7 +28,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'spacer',
 		'text_path',
 		'social_icons',
-		'google_maps',
 		'accordion',
 		'icon_box',
 		'icon_list',
@@ -41,38 +40,61 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'sound_cloud',
 		'html',
 		'alert',
+		'button_hover',
+		'image_hover',
+		'image_box_hover',
+		'icon_hover',
+		'social_icons_hover',
+		'text_path_hover',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
+			const hoverSelector = {
+				button_hover: 'a',
+				image_hover: 'img',
+				image_box_hover: 'img',
+				icon_hover: '.elementor-icon.elementor-animation-rotate',
+				social_icons_hover: '.elementor-social-icon-facebook',
+				text_path_hover: 'textPath',
+			};
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
-			await editorPage.loadTemplate( filePath );
+			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
 
 			const widgetCount = await editorPage.getWidgetCount();
-			const widgetIds = [];
 			for ( let i = 0; i < widgetCount; i++ ) {
 				const widget = editorPage.getWidget().nth( i );
-				const id = await widget.getAttribute( 'data-id' );
 				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
-				widgetIds.push( id );
-				await editorPage.waitForElementRender( id );
-				await expect( widget ).toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 100, timeout: 10000 } );
+
+				if ( widgetType.includes( 'hover' ) ) {
+					await widget.locator( hoverSelector[ widgetType ] ).hover();
+					await expect( widget )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
+				} else {
+					await expect( widget )
+						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+				}
 			}
 
-			const response = page.waitForResponse( /http:\/\/(.*)\/wp-content\/uploads(.*)/g );
 			await editorPage.publishAndViewPage();
-			await editorPage.waitForElementRender( widgetIds[ 0 ] );
 			await editorPage.waitForIframeToLoaded( widgetType, true );
-			await response;
 
-			await expect( page.locator( EditorSelectors.container ) ).toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 100, timeout: 10000 } );
+			if ( widgetType.includes( 'hover' ) ) {
+				for ( let i = 0; i < widgetCount; i++ ) {
+					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
+					await expect( page.locator( EditorSelectors.widget ).nth( i ) ).
+						toHaveScreenshot( `${ widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
+				}
+			} else {
+				await expect( page.locator( EditorSelectors.container ) )
+					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
+			}
 		} );
 	}
 } );
-

@@ -4,6 +4,8 @@
  */
 const path = require( 'path' );
 
+const packagesConfigs = require( './webpack.packages.js' );
+
 // Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
@@ -109,6 +111,7 @@ const entry = {
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
+	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
@@ -116,6 +119,7 @@ const entry = {
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-loader-v2.js' ),
+	'editor-environment-v2': path.resolve( __dirname, '../core/editor/assets/js/editor-environment-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
 	// Temporary solution for the AI App in the Admin.
@@ -204,6 +208,7 @@ const webpackConfig = [
 		},
 		entry: frontendEntries,
 	},
+	packagesConfigs.dev,
 ];
 
 const prodSharedOptimization = {
@@ -287,6 +292,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 		config.entry[ entryPoint + '.min' ] = entryValue;
 	}
 } );
+
+// The 'packages' config doesn't need a `.min` suffix (it has its own config).
+webpackProductionConfig.push( packagesConfigs.prod );
 
 const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };

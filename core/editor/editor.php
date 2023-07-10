@@ -354,7 +354,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$this->get_loader()->print_client_settings();
+		$this->get_loader()->print_client_env();
 		$this->get_loader()->enqueue_scripts();
 		$this->get_loader()->load_scripts_translations();
 
@@ -490,8 +490,6 @@ class Editor {
 		$plugin->controls_manager->render_controls();
 		$plugin->widgets_manager->render_widgets_content();
 		$plugin->elements_manager->render_elements_content();
-
-		$plugin->schemes_manager->print_schemes_templates();
 
 		$plugin->dynamic_tags->print_templates();
 

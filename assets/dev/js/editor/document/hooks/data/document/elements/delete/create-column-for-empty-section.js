@@ -3,7 +3,7 @@ import After from 'elementor-api/modules/hooks/data/after';
 /**
  * @typedef {import('../../../../../../container/container')} Container
  */
- export class CreateColumnForEmptySection extends After {
+export class CreateColumnForEmptySection extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}

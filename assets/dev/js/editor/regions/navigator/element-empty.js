@@ -8,6 +8,6 @@ export default class extends Marionette.ItemView {
 	}
 
 	onRendr() {
-		this.$el.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getOption( 'indent' ) );
+		this.$el.css( 'padding-inline-start', this.getOption( 'indent' ) );
 	}
 }

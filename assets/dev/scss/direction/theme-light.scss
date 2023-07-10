@@ -51,7 +51,7 @@
 	--e-a-border-color-accent: 	#{$e-gray-900};
 	--e-a-border:				1px solid var(--e-a-border-color);
 	--e-a-border-bold:			1px solid var(--e-a-border-color-bold);
-	--e-a-border-radius: 		3px;
+	--e-a-border-radius: 		#{$default-border-radius};
 
 	//Buttons
 	--e-a-btn-color: 			#{$e-gray-900};

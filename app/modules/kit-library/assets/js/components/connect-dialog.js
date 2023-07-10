@@ -24,7 +24,7 @@ export default function ConnectDialog( props ) {
 			approveButtonOnClick={ () => props.onClose() }
 			approveButtonColor="primary"
 			approveButtonRef={ approveButtonRef }
-			dismissButtonText={ __( 'Cancel', 'elementor-pro' ) }
+			dismissButtonText={ __( 'Cancel', 'elementor' ) }
 			dismissButtonOnClick={ () => props.onClose() }
 			onClose={ () => props.onClose() }
 		/>

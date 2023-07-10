@@ -36,24 +36,24 @@
 
 	&-icon {
 		width: 100px;
-		margin-right: 10px;
+		margin-inline-end: 10px;
 	}
 
 	&-title {
-		margin-top: 20px;
+		margin-block-start: 20px;
 		font-size: 16px;
 		font-weight: bold;
 		line-height: 1.4;
 	}
 
 	&-message {
-		margin-top: 5px;
+		margin-block-start: 5px;
 		line-height: 1.8;
 		font-size: 11px;
 	}
 
 	.elementor-button {
-		margin-top: 20px;
+		margin-block-start: 20px;
 	}
 }
 
@@ -83,7 +83,7 @@
 	font-size: 12px;
 	padding: 10px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	margin-bottom: 15px;
+	margin-block-end: 15px;
 }
 
 .e-control-tools {

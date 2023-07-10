@@ -35,6 +35,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 						{
 							name: 'save-as-default',
 							title: __( 'Save as default', 'elementor' ),
+							isEnabled: () => ! view.getContainer().isLocked(),
 							callback: () => {
 								$e.run( 'kit-elements-defaults/confirm-creation', { container: view.getContainer() } );
 							},

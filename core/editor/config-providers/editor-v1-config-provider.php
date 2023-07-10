@@ -42,8 +42,8 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 		];
 	}
 
-	public function get_client_settings() {
-		return Editor_Common_Configs::get_client_settings();
+	public function get_client_env() {
+		return Editor_Common_Configs::get_client_env();
 	}
 
 	public function get_style_configs() {

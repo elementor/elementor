@@ -10,7 +10,7 @@
                         "testimonial_content": "This is my custom text!",
                         "testimonial_image": {
                             "id": 8,
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/Video.png",
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Video.png",
                             "alt": "",
                             "source": "library",
                             "size": ""
@@ -82,7 +82,7 @@
                         "testimonial_content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
                         "testimonial_image": {
                             "id": 8,
-                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/04\/Video.png",
+                            "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/05\/Video.png",
                             "alt": "",
                             "source": "library",
                             "size": ""

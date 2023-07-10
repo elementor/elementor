@@ -131,6 +131,8 @@ $wp-warning: #ffb900;
 $wp-warning-text: #f56e28;
 $wp-success: #46b450;
 $wp-success-text: #79ba49;
+//BC for wp-admin (previous version)
+$wp-admin-brand-color: #93003c;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -139,6 +141,7 @@ $panel-bottom-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 $slides_gui: rgba(238, 238, 238, .9);
 
 $transition-hover: all .3s;
+$default-border-radius: 3px;
 $control-unit: 27px;
 $panel-width: 280px;
 $panel-xl-width: 300px;

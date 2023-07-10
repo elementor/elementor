@@ -4,11 +4,11 @@
 
 .elementor-admin-alert {
 	padding: 15px;
-	border-left: 3px solid transparent;
+	border-inline-start: 3px solid transparent;
 	position: relative;
 	font-size: 12px;
 	line-height: 1.5;
-	text-align: $start;
+	text-align: start;
 
 	a {
 		color: inherit;

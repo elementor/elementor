@@ -130,8 +130,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	 * Set the control value for the current device.
 	 * Distinguish between grid custom values and slider controls.
 	 *
-	 * @param {string} control - The control name.
-	 * @param {string} device - The device mode.
+	 * @param {string} control  - The control name.
+	 * @param {string} device   - The device mode.
 	 * @param {string} property - The CSS property name we need to copy from the parent container.
 	 *
 	 * @return {Object} - E,g. {value: repeat(2, 1fr), length: 2}.
@@ -162,7 +162,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'grid_rows_grid' ) ) {
+		if ( this.isControlThatMayAffectEmptyViewHeight( propertyName ) ) {
 			this.updateEmptyViewHeight();
 		}
 
@@ -177,6 +177,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			'height',
 			'min_height',
 			'padding',
+			'grid_auto_flow',
 		];
 
 		// Add responsive control names to the list of controls that trigger re-rendering.
@@ -185,6 +186,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		if ( propsThatTriggerGridLayoutRender.includes( propertyName ) ) {
 			this.initLayoutOverlay();
 		}
+	}
+
+	isControlThatMayAffectEmptyViewHeight( propertyName ) {
+		return 0 === propertyName.indexOf( 'grid_rows_grid' ) || 0 === propertyName.indexOf( 'grid_columns_grid' ) || 0 === propertyName.indexOf( 'grid_auto_flow' );
 	}
 
 	/**
@@ -242,6 +247,11 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 			if ( this.hasCustomUnit( gridRows ) && this.isNotOnlyANumber( gridRows ) && this.sizeNotEmpty( gridRows ) ) {
 				emptyView.style.minHeight = 'auto';
+			}
+
+			// This is to handle cases where `minHeight: auto` computes to `0`.
+			if ( emptyView?.offsetHeight <= 0 ) {
+				emptyView.style.minHeight = '100px';
 			}
 		}
 	}

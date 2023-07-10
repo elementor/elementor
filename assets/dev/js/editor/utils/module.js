@@ -33,8 +33,8 @@ const EditorModule = elementorModules.Module.extend( {
 		this.onElementorInit();
 
 		elementor
-		.on( 'frontend:init', this.onElementorFrontendInit.bind( this ) )
-		.on( 'preview:loaded', this.onElementorPreviewLoaded.bind( this ) );
+			.on( 'frontend:init', this.onElementorFrontendInit.bind( this ) )
+			.on( 'preview:loaded', this.onElementorPreviewLoaded.bind( this ) );
 	},
 } );
 

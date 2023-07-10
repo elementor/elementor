@@ -66,9 +66,6 @@
     // Categories
     @import "categories";
 
-    // Schemes
-    //@import "schemes"; //TODO: deprecated v3.0.0
-
 	// Menu
 	@import "menu";
 
@@ -102,18 +99,18 @@
 
 .elementor-panel-container {
 	clear: both;
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-inline-start: 15px;
+	padding-inline-end: 15px;
 }
 
 #elementor-panel-get-pro-elements {
 
 	.elementor-nerd-box-message {
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
 	}
 }
 

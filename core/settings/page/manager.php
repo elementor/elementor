@@ -114,9 +114,17 @@ class Manager extends CSS_Manager {
 			$post->post_excerpt = $data['post_excerpt'];
 		}
 
+		if ( isset( $data['menu_order'] ) && is_post_type_hierarchical( $post->post_type ) ) {
+			$post->menu_order = $data['menu_order'];
+		}
+
 		if ( isset( $data['post_status'] ) ) {
 			$this->save_post_status( $id, $data['post_status'] );
 			unset( $post->post_status );
+		}
+
+		if ( isset( $data['comment_status'] ) && post_type_supports( $post->post_type, 'comments' ) ) {
+			$post->comment_status = $data['comment_status'];
 		}
 
 		wp_update_post( $post );
@@ -168,7 +176,8 @@ class Manager extends CSS_Manager {
 			<# _.each( tabs, function( tabTitle, tabSlug ) {
 			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<span>{{{ tabTitle }}}</span>
+				<?php /* TODO: raplace `<a>` tag with `<span>` tag in Elementor 3.14.0 */ ?>
+				<a>{{{ tabTitle }}}</a>
 			</button>
 			<# } ); #>
 		</div>
@@ -308,6 +317,8 @@ class Manager extends CSS_Manager {
 			'template',
 			'post_excerpt',
 			'post_featured_image',
+			'menu_order',
+			'comment_status',
 		];
 	}
 

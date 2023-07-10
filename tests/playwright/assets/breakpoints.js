@@ -12,7 +12,7 @@ module.exports = class {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
-	async addAllBreakpoints() {
+	async addAllBreakpoints( experimentPostId ) {
 		await this.page.click( '#elementor-panel-footer-responsive' );
 		await this.page.click( '#e-responsive-bar__settings-button' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
@@ -28,10 +28,15 @@ module.exports = class {
 
 		await this.page.click( 'text=Update' );
 		await this.page.waitForSelector( '#elementor-toast' );
-		await this.page.reload();
 
-		if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
-			await this.page.locator( '#elementor-panel-header-kit-close' ).click();
+		if ( experimentPostId ) {
+			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
+		} else {
+			await this.page.reload();
+
+			if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
+				await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
+			}
 		}
 
 		await this.page.waitForSelector( '#elementor-editor-wrapper' );

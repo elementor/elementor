@@ -33,11 +33,14 @@ module.exports = class {
 			container: false,
 		} );
 
-		this.editor = await this.wpAdminPage.useElementorCleanPost();
+		this.editor = await this.wpAdminPage.openNewPage();
 
 		if ( isExperimentBreakpoints ) {
-			const breakpoints = new Breakpoints( this.page, this.testInfo );
-			await breakpoints.addAllBreakpoints();
+			const pageUrl = new URL( this.page.url() );
+			const searchParams = pageUrl.searchParams;
+
+			const breakpoints = new Breakpoints( this.page );
+			await breakpoints.addAllBreakpoints( searchParams.get( 'post' ) );
 		}
 
 		await this.open();

@@ -54,7 +54,7 @@
 	&__button {
 		padding: spacing(12) spacing(12);
 		background: var(--eps-sort-select-button-background-color);
-		@include border-start( var(--eps-sort-select-button-border) );
+		border-inline-start: var(--eps-sort-select-button-border);
 		line-height: type( line-height, 'flat' );
 		color: tints(500);
 	}

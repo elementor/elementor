@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../../../pages/wp-admin-page' );
 
-test.describe( 'Styleguide Preview tests @styleguide', () => {
+test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -75,10 +75,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
+		await styleguideSaveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -143,10 +140,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		// Global Typography.
 		// Act 1.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
+		await styleguideSaveChanges( page );
 
 		// Assert 1.
 		await expect( styleguidePreviewDialog ).toBeHidden();
@@ -389,10 +383,11 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await addButton.click();
 
 		// Assert
-		await expect( await editor.getPreviewFrame().getByText( 'New Item #1' + fontsContentText ).count() ).toEqual( 1 );
+		const customFontsCount = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).count();
+		await expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = await page.locator( '.elementor-repeater-fields' ).nth( 4 ).getByText( 'Edit Remove Reorder' );
+		const listItem = await page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
 		const remove = await listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
@@ -401,11 +396,9 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.getByRole( 'button', { name: 'Delete' } ).click();
 
 		// Assert 2
-		const number = await editor.getPreviewFrame().getByText( 'New Item #1' + fontsContentText ).count();
+		const number = await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count();
 		await expect( number ).toEqual( 0 );
 	} );
-
-	// TODO 21/03/2023 : Adding and removing new fonts!!!!!.
 
 	test( 'Changed color in picker to reflect in styleguide', async ( { page }, testInfo ) => {
 		// Arrange.
@@ -447,11 +440,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 		await page.waitForTimeout( 2000 );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
-
+		await styleguideSaveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		// Act.
@@ -462,11 +451,7 @@ test.describe( 'Styleguide Preview tests @styleguide', () => {
 
 		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
-
-		if ( await page.locator( '.dialog-header:has-text("Save Changes")' ).isVisible( 1000 ) ) {
-			await page.locator( '.dialog-button:has-text("Save")' ).click();
-		}
-
+		await styleguideSaveChanges( page );
 		await page.waitForTimeout( 2000 );
 
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
@@ -530,4 +515,20 @@ async function getInSettingsTab( page, testInfo, tabName, styleguideOpen ) {
 	await page.waitForTimeout( 1000 );
 
 	return { editor, wpAdmin };
+}
+
+async function styleguideSaveChanges( page ) {
+	for ( const dialog of await page.locator( '.dialog-confirm-widget-content' ).all() ) {
+		if ( ! await dialog.isVisible( 1000 ) ) {
+			continue;
+		}
+
+		const dialogHeader = await dialog.locator( '.dialog-header' );
+		if ( ! dialogHeader.count() || ! ( await dialogHeader.innerText() ).includes( 'Save Changes' ) ) {
+			continue;
+		}
+
+		const saveButton = await dialog.locator( '.dialog-button:has-text("Save")' );
+		await saveButton.click();
+	}
 }

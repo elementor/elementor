@@ -131,6 +131,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 			axis: 'y',
 			handle: '.elementor-repeater-row-tools',
 			items: ' > :not(.elementor-repeater-row--disable-sort)',
+			cancel: '', // Elements that do not allow sorting (by default it includs buttons).
 		};
 	},
 
@@ -188,7 +189,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		this.updateActiveRow();
 	},
 
-	// BC since 3.0.0, ensure a new child is appear in container children.
+	/**
+	 * Update container to ensure that new child elements appear in container children.
+	 *
+	 * @param {*} model - Container model.
+	 */
 	updateContainer( model ) {
 		const container = this.options.container.repeaters[ this.model.get( 'name' ) ],
 			isInChildren = container.children.filter( ( child ) => {
@@ -201,7 +206,11 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		}
 	},
 
-	// BC since 3.0.0, ensure a container children are reset on collection reset.
+	/**
+	 * Reset container to ensure that container children are reset on collection reset.
+	 *
+	 * @deprecated since 3.0.0, use `$e.run( 'document/repeater/remove' )` instead.
+	 */
 	resetContainer() {
 		elementorDevTools.deprecation.deprecated( 'Don\'t reset repeater collection directly.', '3.0.0', '$e.run( \'document/repeater/remove\' )' );
 		this.options.container.repeaters[ this.model.get( 'name' ) ].children = [];

@@ -37,7 +37,7 @@ export default class Component extends ComponentBase {
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) { // Prevent re-rendering the same tab with a different activeControl
+		if ( this.wasOutOfFocus() || this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) {
 			this.activeModelId = args.model.id;
 			this.activeTabs[ args.model.id ] = tab;
 
@@ -50,6 +50,14 @@ export default class Component extends ComponentBase {
 		}
 
 		this.activateControl( activeControl );
+	}
+
+	wasOutOfFocus() {
+		const history = $e.routes.getHistory( 'panel' );
+		const lastRoute = history[ history.length - 1 ].route;
+		const lastRouteParts = lastRoute.split( '/' );
+
+		return 'categories' === lastRouteParts[ lastRouteParts.length - 1 ];
 	}
 
 	setDefaultTab( args ) {

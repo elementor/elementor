@@ -131,11 +131,9 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'build', [
 		'default',
-		'shell:packages_build',
 		'usebanner',
 		'clean',
 		'copy',
-		'default', // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', ( releaseType ) => {
