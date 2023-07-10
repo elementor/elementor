@@ -295,7 +295,7 @@ body {
 			justify-content: center;
 			color: var(--e-a-color-txt-invert);
 			background-color: var(--e-a-color-white);
-			@include border-start(--e-a-border);
+			border-inline-start: var(--e-a-border);
 
 			&:first-child {
 				border-inline-start: 3px solid var(--e-a-border-color-accent);

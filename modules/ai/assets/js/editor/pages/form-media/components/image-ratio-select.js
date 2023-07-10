@@ -8,7 +8,7 @@ const ImageRatioSelect = ( props ) => {
 		<PromptActionSelection
 			options={ imageRatios }
 			wrapperStyle={ { width: '100%' } }
-			label={ __( 'Aspect ratio2', 'elementor' ) }
+			label={ __( 'Aspect ratio', 'elementor' ) }
 			{ ...props }
 		/>
 	);
