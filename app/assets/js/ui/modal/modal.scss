@@ -15,8 +15,8 @@ $eps-modal-close-button-spacing: spacing(16);
 $eps-modal-close-button-border: solid 1px theme-colors(light);
 $eps-modal-animation: $eps-pop-animation;
 $eps-tip-padding: spacing(8);
-$eps-tip-padding-start: spacing(12);
-$eps-tip-border-start: 3px solid theme-colors(info);
+$eps-tip-padding-inline-start: spacing(12);
+$eps-tip-border-inline-start: 3px solid theme-colors(info);
 $eps-tip-background-color: theme-colors(info-bg);
 $eps-tip-margin-block-end: spacing(30);
 $eps-tip-margin-block-start: spacing(30);
@@ -85,8 +85,8 @@ $eps-dark-tip-background-color: dark-theme-colors(info-bg);
 
 	&__tip, .#{$eps-prefix}tip {
 		padding: $eps-tip-padding;
-		padding-inline-start: $eps-tip-padding-start;
-		border-inline-start: $eps-tip-border-start;
+		padding-inline-start: $eps-tip-padding-inline-start;
+		border-inline-start: $eps-tip-border-inline-start;
 		background-color: var(--eps-tip-background-color);
 		&:not(:last-child) {
 			margin-block-end: $eps-tip-margin-block-end;

@@ -37,7 +37,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'progress_bar',
 		'testimonial',
 		'toggle',
-		// 'sound_cloud',
+		'sound_cloud',
 		'html',
 		'alert',
 		'button_hover',
@@ -98,4 +98,3 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 	}
 } );
-
