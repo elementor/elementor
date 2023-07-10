@@ -26,7 +26,7 @@ class Module extends Module_Base {
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor-v2/packages/client-env', function ( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
-					'is_panel_active' => true,
+					'is_pages_panel_active' => true,
 				];
 
 				return $env;
@@ -59,8 +59,6 @@ class Module extends Module_Base {
 	/**
 	 * Get Experimental Data
 	 *
-	 * Implementation of this method makes the module an experiment.
-	 *
 	 * @since 3.16.0
 	 *
 	 * @return array
@@ -71,6 +69,7 @@ class Module extends Module_Base {
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
 			'dependencies' => [
 				'editor_v2',
 			],
