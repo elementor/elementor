@@ -86,6 +86,7 @@ jobs:
           REPOSITORY_ID: ${{ github.repository }}
           ENVIRONMENT_NAME: ${{ env.config_deployment_environment }}
           CHANNEL: ${{ env.CHANNEL }}
+          NAME: 'LAST_AUTOMATED_RELEASE_DATE'
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Post To Slack Created Cloud daily Release
         uses : ./.github/workflows/post-to-slack
