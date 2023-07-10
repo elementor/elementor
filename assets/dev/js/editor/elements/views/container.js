@@ -426,6 +426,26 @@ const ContainerView = BaseElementView.extend( {
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
+
+		if ( settings.changed.container_type ) {
+			this.updatePanelTitles();
+		}
+	},
+
+	updatePanelTitles() {
+		// Navigator.
+		this.model.get( 'settings' ).set( '_title', this.getPanelTitle() );
+		// Panel.
+		// TODO: make it less hacky.
+		jQuery( '#elementor-panel-header-title' ).html( this.getPanelTitle() );
+	},
+
+	getPanelTitle() {
+		if ( 'flex' === this.getContainer().settings.get( 'container_type' ) ) {
+			return 'Flexbox';
+		} 
+
+		return 'Grid';
 	},
 
 	onDragStart() {
