@@ -8,6 +8,13 @@ use ElementorEditorTesting\Traits\Auth_Helpers;
 class Test_Api extends Elementor_Test_AJAX {
 	use Auth_Helpers;
 
+	public function setUp() {
+		parent::setUp();
+
+		// TODO: HACK - Avoid register reports to make sure the 'tests/phpunit/elementor/schemas/test-usage.php' not fail.
+		remove_all_actions( 'admin_init' );
+	}
+
 	public function test_ajax_reset_api_data__without_nonce() {
 		// Arrange
 		$this->act_as_admin();
