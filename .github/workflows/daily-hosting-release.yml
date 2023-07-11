@@ -3,6 +3,8 @@ name: Daily Hosting Release
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
+  # Setting an environment variable with the value of a configuration variable
+  env_var: ${{ vars.ENV_CONTEXT_VAR }}
 
 on:
   schedule:
@@ -40,6 +42,10 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
+      - name: env_var DELETE LATER
+        run: |
+          echo "env_var: $env_var"
+          echo "env_var: ${{ env.env_var }}"
       - name: Check if two weeks have passed since last release
         uses: ./.github/workflows/bi-weekly-release
         with:
