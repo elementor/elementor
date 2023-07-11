@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
-          LAST_AUTOMATED_RELEASE: ${{ env.LAST_AUTOMATED_RELEASE }}
+          LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
