@@ -1172,6 +1172,50 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await expect( firstTab ).toBeVisible();
 		} );
 	} );
+
+	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'nowrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'auto' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '1' );
+	} );
+
+	test( 'Nested tabs stretch for top direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal i.eicon-align-stretch-h' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
+	} );
 } );
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {

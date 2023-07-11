@@ -364,19 +364,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'a11y_improvements',
-			'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
-				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements/" target="_blank">'
-				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'additional_custom_breakpoints',
 			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),

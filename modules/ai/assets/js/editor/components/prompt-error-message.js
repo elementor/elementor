@@ -32,14 +32,12 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 			buttonAction: () => window.open( window.ElementorAiConfig.connect_url ),
 		},
 		quota_reached_trail: {
-			severity: 'info',
 			text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
 			description: __( 'Enjoy the free trial? Upgrade now for unlimited access to built-in image, text and custom code generators.', 'elementor' ),
 			buttonText: __( 'Upgrade', 'elementor' ),
 			buttonAction: () => window.open( 'https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank' ),
 		},
 		quota_reached_subscription: {
-			severity: 'info',
 			text: <AlertTitle>{ __( 'It\'s time to upgrade.', 'elementor' ) }</AlertTitle>,
 			description: __( 'Love Elementor AI? Upgrade to continue creating with built-in image, text and custom code generators.', 'elementor' ),
 			buttonText: __( 'Upgrade', 'elementor' ),

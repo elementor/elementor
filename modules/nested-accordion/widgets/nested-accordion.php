@@ -26,10 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Nested_Accordion extends Widget_Nested_Base {
 
-	const NESTED_ACCORDION = 'nested-accordion';
-
 	public function get_name() {
-		return static::NESTED_ACCORDION;
+		return 'nested-accordion';
 	}
 
 	public function get_title() {
@@ -45,7 +43,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	protected function item_content_container( int $index ) {
@@ -84,7 +82,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	protected function register_controls() {
 		$this->start_controls_section( 'section_items', [
-			'label' => esc_html__( 'Accordion', 'elementor' ),
+			'label' => esc_html__( 'Layout', 'elementor' ),
 		] );
 
 		$repeater = new Repeater();
@@ -282,7 +280,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->start_controls_section(
 			'section_interactions',
 			[
-				'label' => esc_html__( 'Interactions section', 'elementor' ),
+				'label' => esc_html__( 'Interactions', 'elementor' ),
 			]
 		);
 
@@ -455,19 +453,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'selector' => $low_specificity_accordion_item_selector,
 				'fields_options' => [
 					'color' => [
-						'default' => '#D5D8DC',
+						'label' => esc_html__( 'Border Color', 'elementor' ),
 					],
 					'width' => [
-						'default' => [
-							'top' => 1,
-							'right' => 1,
-							'bottom' => 1,
-							'left' => 1,
-							'unit' => 'px',
-						],
-					],
-					'border' => [
-						'default' => 'solid',
+						'label' => esc_html__( 'Border Width', 'elementor' ),
 					],
 				],
 			]

@@ -2,6 +2,7 @@ name: Playwright
 
 on:
   pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -59,13 +60,13 @@ jobs:
           key: playwright-build-${{ github.sha }}
 
   Playwright:
-    name: Playwright test (Performance on) - ${{ matrix.testSuite }} on PHP 7.4
+    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin]
     if: ${{ needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
-        testSuite: ['ai','elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link']
+        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -102,7 +103,7 @@ jobs:
           npx wp-env run cli "wp --info"
       - name: Activate performance experiments
         run: |
-          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,a11y_improvements,additional_custom_breakpoints"
+          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints"
       - name: Install playwright/test
         run: |
           npx playwright install chromium

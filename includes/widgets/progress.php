@@ -162,12 +162,11 @@ class Widget_Progress extends Widget_Base {
 			'display_percentage',
 			[
 				'label' => esc_html__( 'Display Percentage', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'return_value' => 'show',
 				'default' => 'show',
-				'options' => [
-					'show' => esc_html__( 'Show', 'elementor' ),
-					'hide' => esc_html__( 'Hide', 'elementor' ),
-				],
 			]
 		);
 
@@ -398,7 +397,7 @@ class Widget_Progress extends Widget_Base {
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'progress-bar' ); ?>>
 				<span <?php $this->print_render_attribute_string( 'inner_text' ); ?>><?php $this->print_unescaped_setting( 'inner_text' ); ?></span>
-				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
+				<?php if ( 'show' === $settings['display_percentage'] ) { ?>
 					<span class="elementor-progress-percentage"><?php echo $progress_percentage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>%</span>
 				<?php } ?>
 			</div>
@@ -453,7 +452,7 @@ class Widget_Progress extends Widget_Base {
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
 			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
-				<# if ( 'hide' !== settings.display_percentage ) { #>
+				<# if ( 'show' === settings.display_percentage ) { #>
 					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
 				<# } #>
 			</div>
