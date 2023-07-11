@@ -6,7 +6,7 @@ const octokit = new Octokit( {
 const { repository_id, environment_name, name, value } = process.env;
 
 (async () => {
-	octokit.rest.actions.createEnvironmentVariable( {
+	octokit.rest.actions.updateEnvironmentVariable( {
 		repository_id,
 		environment_name,
 		name,
