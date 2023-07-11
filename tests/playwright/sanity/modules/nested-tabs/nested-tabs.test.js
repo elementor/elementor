@@ -5,10 +5,12 @@ const EditorPage = require( '../../../pages/editor-page' );
 const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
+const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
 const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	let pageId;
+	const templatePath = `../templates/nested-tabs-with-icons.json`;
 
 	test.beforeEach( async () => {
 		pageId = await createPage();
@@ -29,7 +31,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const widgetId = await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
 
+		// Tests.
 		await testIconCount( page, editor );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId );
 		await testTabIsVisibleInAccordionView( page, editor, widgetId );
 	} );
 
@@ -97,7 +101,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -122,7 +126,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -228,7 +232,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -299,7 +303,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -326,7 +330,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		await editor.closeNavigatorIfOpen();
 
@@ -396,7 +400,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		const firstTab = editor.getPreviewFrame().locator( '.e-normal:first-child' );
@@ -471,7 +475,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -492,7 +496,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 
 		// Act.
 		// Open front end.
@@ -558,7 +562,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		await editor.getPreviewFrame().locator( '.e-normal:not( .e-active ):last-child' ).click();
 
@@ -649,7 +653,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = new EditorPage( page, testInfo );
 		await editor.gotoPostId( pageId );
-		await editor.loadTemplate( 'nested-tabs-with-icons' );
+		await editor.loadTemplate( templatePath );
 		await editor.getPreviewFrame().locator( '.e-n-tab-title.e-normal.e-active' ).click();
 		const activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ),
 			activeContentContainerId = await activeContentContainer.getAttribute( 'data-id' );
@@ -794,7 +798,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Verify that the tab activation works correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Verify that the tab activation works correctly', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -832,7 +836,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Test the nested tabs behaviour when using container flex row @latest', async ( { page }, testInfo ) => {
+	test( 'Test the nested tabs behaviour when using container flex row', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -902,12 +906,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Tabs and containers are duplicated correctly @latest', async ( { page }, testInfo ) => {
+	test( 'Tabs and containers are duplicated correctly', async ( { page }, testInfo ) => {
 		/**
 		 * This test checks that when duplicating a tab that's not the last tab, the duplicated container
 		 * receives the correct index.
 		 */
-			// Arrange.
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost();
@@ -1040,6 +1044,22 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		}
 
 		await cleanup( wpAdmin );
+	} );
+
+	test( 'Nested tabs check flex wrap', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+
+		// Assert
+		const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+		await expect( nestedTabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 	} );
 } );
 

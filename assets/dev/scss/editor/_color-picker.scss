@@ -11,6 +11,7 @@
 }
 
 .e-color-picker {
+
 	&__tools {
 		display: flex;
 	}
@@ -22,7 +23,26 @@
 		background-image: linear-gradient(135deg, transparent 46%, #ff3030 50%, transparent 54%);
 		background-size: cover;
 		background-color: transparent;
-		border: var(--e-a-border);
+	}
+}
+
+.pickr {
+	border: var(--e-a-border);
+	height: 27px;
+
+	.pcr-button {
+		height: 100%;
+		width: 100%;
+		border-radius: var(--e-a-border-radius);
+
+		&:before,
+		&:after {
+			height: 12px;
+			width: 12px;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	}
 }
 
@@ -36,21 +56,59 @@
 
 		&[data-theme=monolith] {
 			padding: 0;
+			width: 270px;
+
+			.pcr-selection {
+
+				.pcr-color-opacity,
+				.pcr-color-chooser {
+					height: 8px;
+				}
+
+				.pcr-color-palette {
+					height: 150px;
+				}
+			}
+		}
+
+		.pcr-interaction {
+			padding-bottom: 20px;
+
+			input.pcr-result {
+				border: var(--e-a-border);
+				color: var(--e-a-color-txt);
+				border-radius: var(--e-a-border-radius);
+				margin: 0;
+				background-color: transparent;
+
+				&:focus {
+					box-shadow: none;
+					border-color: var(--e-a-border-color-bold);
+				}
+			}
+
+			input.pcr-type {
+				all: unset;
+				font-size: 10px;
+				color: var(--e-a-color-txt-muted);
+				padding-inline-start: 5px;
+				cursor: pointer;
+
+				&.active {
+					background-color: transparent;
+					color: var(--e-a-color-txt-accent);
+				}
+			}
 		}
 	}
 
-	&-result {
-		color: var(--e-a-color-txt);
-		border-right-width: 1px;
-		border-radius: var(--e-a-border-radius);
-	}
-
-	&-selection, &-interaction {
+	&-selection,
+	&-interaction {
 		padding: 0 20px;
 	}
 
-	&-interaction {
-		padding-bottom: 20px;
+	&-selection {
+		padding-top: 20px;
 	}
 
 	.elementor-control-dynamic-switcher {

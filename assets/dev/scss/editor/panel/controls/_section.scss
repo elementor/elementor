@@ -18,4 +18,8 @@
 			}
 		}
 	}
+
+	&:not(:first-child):not(.elementor-control-type-section + .elementor-control-type-section) {
+		margin-top: 25px;
+	}
 }

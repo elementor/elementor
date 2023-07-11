@@ -18,6 +18,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area',
+		notice: '#elementor-panel-elements-notice-area',
 	},
 
 	regionViews: {},
@@ -58,8 +59,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			},
 		};
 
-		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
-	},
+		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews, {
+			notice: this.notice,
+			elements: this.elements,
+			search: this.search,
+		} );
+},
 
 	initElementsCollection() {
 		const elementsCollection = new PanelElementsElementsCollection(),

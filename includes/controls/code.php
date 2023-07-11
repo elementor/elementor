@@ -47,6 +47,10 @@ class Control_Code extends Base_Data_Control {
 			'label_block' => true,
 			'language' => 'html', // html/css
 			'rows' => 10,
+			'ai' => [
+				'active' => true,
+				'type' => 'code',
+			],
 			'dynamic' => [
 				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],

@@ -143,10 +143,10 @@ export default function ItemHeader( props ) {
 				error && (
 					<Dialog
 						title={ error.message }
-						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
-						approveButtonText={ __( 'Learn More', 'elementor' ) }
-						approveButtonColor="link"
-						approveButtonUrl="http://go.elementor.com/app-kit-library-error/"
+						text={ __( 'Go to the pages screen to make sure your kit pages have been imported successfully. If not, try again.', 'elementor' ) }
+						approveButtonText={ __( 'Go to pages', 'elementor' ) }
+						approveButtonColor="primary"
+						approveButtonUrl={ elementorAppConfig.admin_url + 'edit.php?post_type=page' }
 						approveButtonOnClick={ () => setError( false ) }
 						dismissButtonText={ __( 'Got it', 'elementor' ) }
 						dismissButtonOnClick={ () => setError( false ) }

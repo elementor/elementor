@@ -206,6 +206,41 @@ class Documents_Manager {
 	}
 
 	/**
+	 * Retrieve a document after checking it exist and allowed to edit.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param int $post_id The post ID of the document.
+	 *
+	 * @return Document
+	 * @throws \Exception
+	 */
+	public function get_with_permissions( $id ): Document {
+		$document = $this->get( $id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Not found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		return $document;
+	}
+
+	/**
+	 * A `void` version for `get_with_permissions`.
+	 *
+	 * @param $id
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function check_permissions( $id ) {
+		$this->get_with_permissions( $id );
+	}
+
+	/**
 	 * Get document or autosave.
 	 *
 	 * Retrieve either the document or the autosave.
@@ -556,15 +591,17 @@ class Documents_Manager {
 	 *
 	 * Load the document data from an autosave, deleting unsaved changes.
 	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
 	 * @param $request
 	 *
 	 * @return bool True if changes discarded, False otherwise.
+	 * @throws \Exception
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
 	 */
 	public function ajax_discard_changes( $request ) {
-		$document = $this->get( $request['editor_post_id'] );
+		$document = $this->get_with_permissions( $request['editor_post_id'] );
 
 		$autosave = $document->get_autosave();
 

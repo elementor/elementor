@@ -153,6 +153,9 @@ class Test_Admin extends Elementor_Test_Base {
 			'title' => 'Experiment 1',
 			'state' => Experiments_Manager::STATE_ACTIVE,
 			'other-prop' => 'some-value',
+			'messages' => [
+				'on_deactivate' => 'test-message',
+			],
 		];
 
 		$experiment2 = [
@@ -181,6 +184,10 @@ class Test_Admin extends Elementor_Test_Base {
 				'title' => 'Experiment 1',
 				'state' => Experiments_Manager::STATE_ACTIVE,
 				'dependencies' => [],
+				'messages' => [
+					'on_deactivate' => 'test-message',
+				],
+
 			],
 			[
 				'name' => 'experiment-2',
@@ -190,6 +197,7 @@ class Test_Admin extends Elementor_Test_Base {
 				'dependencies' => [
 					'experiment-1',
 				],
+				'messages' => [],
 			],
 		], $settings['experiments'] );
 

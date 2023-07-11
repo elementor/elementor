@@ -32,20 +32,36 @@ body {
 
 	&__header {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 10px;
+		align-items: stretch;
 		border-bottom: var(--e-a-border);
-		cursor: move;
+		color: var(--e-a-color-txt-accent);
+
+		&__title {
+			flex: 1;
+			text-align: center;
+			font-size: 13px;
+			font-weight: 400;
+			padding: 10px 0;
+			cursor: move;
+		}
 	}
 
 	&__close,
 	&__toggle-all {
-		transition: color .5s;
+		color: var(--e-a-color-txt);
+		background-color: transparent;
+		border: none;
+		outline: 0;
+		padding: 10px;
 		cursor: pointer;
+		transition: color .5s;
 
-		&:not(:hover) {
+		&:hover {
 			color: var(--e-a-color-txt-hover);
+		}
+
+		&:focus {
+			color: var(--e-a-color-txt-active);
 		}
 	}
 

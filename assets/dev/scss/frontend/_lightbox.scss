@@ -5,6 +5,13 @@
 	--lightbox-header-icons-size: 20px;
 	--lightbox-navigation-icons-size: 25px;
 
+	&:not(.elementor-popup-modal) {
+
+		.dialog-header,
+		.dialog-message {
+			text-align: center;
+		}
+	}
 
 	.dialog {
 

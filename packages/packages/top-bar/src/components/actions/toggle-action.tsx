@@ -8,12 +8,17 @@ export type Props = {
 	icon: ElementType;
 	selected?: boolean;
 	disabled?: boolean;
+	visible?: boolean;
 	onClick?: () => void;
 	value?: string;
 };
 
-export default function ToggleAction( { icon: Icon, title, value, ...props }: Props ) {
+export default function ToggleAction( { icon: Icon, title, value, visible = true, ...props }: Props ) {
 	const { type } = useMenuContext();
+
+	if ( ! visible ) {
+		return null;
+	}
 
 	return type === 'toolbar' ? (
 		<ToolbarMenuToggleItem value={ value || title } title={ title } { ...props }>

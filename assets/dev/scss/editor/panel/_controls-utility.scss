@@ -204,3 +204,110 @@ $font-family-monospace: monospace;
 }
 
 //End control unit switcher
+
+// Dimensions base css
+@mixin dimensions($control-name) {
+	.elementor-control-type-#{$control-name}s {
+
+		.elementor-control-#{$control-name}s {
+			display: flex;
+		}
+
+		li {
+			flex: 1;
+			transition: flex-grow .3s ease-in-out;
+
+			input,
+			.elementor-link-#{$control-name}s {
+				display: block;
+				text-align: center;
+				width: 100%;
+				height: $control-unit;
+			}
+
+			input {
+				@include border-start(none);
+				border-radius: 0;
+				padding: var(--e-a-border-radius);
+
+				&:focus {
+					@include border-start(var(--e-a-border-bold));
+					@include margin-start(-1px);
+					width: calc(100% + 1px);
+
+					+ .elementor-control-#{$control-name}-label {
+						color: var(--e-a-color-txt);
+					}
+				}
+			}
+
+			.elementor-link-#{$control-name}s {
+				border: var(--e-a-border-bold);
+				@include border-start(none);
+				background-color: var(--e-a-bg-default);
+				padding: 0;
+				outline: none;
+				border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+				cursor: pointer;
+			}
+
+			&:first-child {
+
+				input {
+					@include border-start(1px solid var(--e-a-border-color-bold));
+					border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
+
+					&:focus {
+						border-color: var(--e-a-border-color-focus);
+						@include margin-start(0);
+						width: 100%;
+					}
+				}
+			}
+
+			&:last-child {
+				max-width: $control-unit;
+			}
+		}
+
+		&.e-units-custom {
+
+			li {
+
+				&.elementor-control-#{$control-name}:focus-within {
+					flex: 2.5;
+				}
+			}
+		}
+
+		.elementor-control-#{$control-name}-label {
+			color: var(--e-a-color-txt-muted);
+			display: block;
+			text-align: center;
+			font-size: 9px;
+			padding-top: 5px;
+		}
+
+		.elementor-link-#{$control-name}s {
+
+			&.unlinked {
+				background-color: var(--e-a-bg-default);
+
+				.elementor-linked {
+					display: none;
+				}
+			}
+
+			&:not(.unlinked) {
+				background-color: var(--e-a-bg-active-bold);
+				color: var(--e-a-color-txt-accent);
+				border-color: var(--e-a-border-color-bold);
+
+				.elementor-unlinked {
+					display: none;
+				}
+			}
+		}
+	}
+}
+// End Dimensions base css

@@ -11,15 +11,18 @@ export default class extends Marionette.LayoutView {
 
 	ui() {
 		return {
-			toggleAll: '#elementor-navigator__toggle-all',
-			close: '#elementor-navigator__close',
+			toggleButton: '#elementor-navigator__toggle-all',
+			toggleButtonIcon: '#elementor-navigator__toggle-all i',
+			toggleButtonA11yText: '#elementor-navigator__toggle-all span',
+			closeButton: '#elementor-navigator__close',
 		};
 	}
 
 	events() {
 		return {
-			'click @ui.toggleAll': 'toggleAll',
-			'click @ui.close': 'onCloseClick',
+			'click @ui.toggleButton': 'toggleElements',
+			'click @ui.closeButton': 'onCloseButtonClick',
+			'keyup @ui.closeButton': 'onCloseButtonKeyPress',
 		};
 	}
 
@@ -29,14 +32,19 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
-	toggleAll() {
-		const state = 'expand' === this.ui.toggleAll.data( 'elementor-action' ),
+	toggleElements() {
+		const state = 'expand' === this.ui.toggleButton.data( 'elementor-action' ),
+			a11yText = state ? __( 'Collapse all elements', 'elementor' ) : __( 'Expand all elements', 'elementor' ),
 			classes = [ 'eicon-collapse', 'eicon-expand' ];
 
-		this.ui.toggleAll
-			.data( 'elementor-action', state ? 'collapse' : 'expand' )
+		this.ui.toggleButton
+			.data( 'elementor-action', state ? 'collapse' : 'expand' );
+
+		this.ui.toggleButtonIcon
 			.removeClass( classes[ +state ] )
 			.addClass( classes[ +! state ] );
+
+		this.ui.toggleButtonA11yText.text( a11yText );
 
 		this.elements.currentView.recursiveChildInvoke( 'toggleList', state );
 	}
@@ -62,7 +70,15 @@ export default class extends Marionette.LayoutView {
 		} ) );
 	}
 
-	onCloseClick() {
+	onCloseButtonClick() {
 		$e.components.get( 'navigator' ).close();
+	}
+
+	onCloseButtonKeyPress( event ) {
+		const ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.keyCode ) {
+			this.onCloseButtonClick();
+		}
 	}
 }

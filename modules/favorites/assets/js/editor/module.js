@@ -1,10 +1,11 @@
 import Component from './component';
 import Widgets from './types/widgets/widgets';
+import { registerHooks } from './notice';
 
 /**
  * @typedef {import('./favorite-type')} FavoriteType
  */
- class FavoritesModule extends elementorModules.editor.utils.Module {
+class FavoritesModule extends elementorModules.editor.utils.Module {
 	types = {};
 
 	constructor() {
@@ -15,6 +16,15 @@ import Widgets from './types/widgets/widgets';
 		];
 
 		types.forEach( ( classRef ) => this.register( classRef ) );
+	}
+
+	onElementorInit() {
+		const hasSeenNotice = elementor.config.user.introduction[ 'favorites-notice' ];
+		if ( hasSeenNotice ) {
+			return;
+		}
+
+		registerHooks();
 	}
 
 	onElementorLoaded() {

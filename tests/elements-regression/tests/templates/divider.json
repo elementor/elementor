@@ -1,0 +1,110 @@
+{
+    "content": [
+        {
+            "id": "520891d0",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "1dfafb42",
+                    "settings": {
+                        "style": "dashed",
+                        "text": "Divider"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "6a32c71d",
+                    "settings": {
+                        "width": {
+                            "unit": "%",
+                            "size": 49,
+                            "sizes": []
+                        },
+                        "text": "Divider"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "27480ff3",
+                    "settings": {
+                        "width": {
+                            "unit": "%",
+                            "size": 71,
+                            "sizes": []
+                        },
+                        "align": "right",
+                        "text": "Divider"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "5112c8b6",
+                    "settings": {
+                        "look": "line_icon",
+                        "text": "Divider"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "4822125f",
+                    "settings": {
+                        "text": "Divider",
+                        "color": "#D21717"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "510ae794",
+                    "settings": {
+                        "text": "Divider",
+                        "weight": {
+                            "unit": "px",
+                            "size": 4.2,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                },
+                {
+                    "id": "9bb934c",
+                    "settings": {
+                        "text": "Divider",
+                        "gap": {
+                            "unit": "px",
+                            "size": 37,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "divider",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "divider",
+    "type": "page"
+}

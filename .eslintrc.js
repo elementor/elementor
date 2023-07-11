@@ -55,7 +55,7 @@ module.exports = {
 		'no-mixed-operators': 'error',
 		'no-nested-ternary': 'error',
 		'no-cond-assign': 'error',
-		indent: [ 'off', 'tab', { SwitchCase: 1 } ],
+		indent: [ 1, 'tab', { SwitchCase: 1 } ],
 		'padded-blocks': [ 'error', 'never' ],
 		'one-var-declaration-per-line': 'error',
 		'array-bracket-spacing': [ 'error', 'always' ],
@@ -106,9 +106,9 @@ module.exports = {
 		],
 		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
 	},
-    settings: {
-        jsdoc: {
-            mode: 'typescript',
-        },
-    },
+	settings: {
+		jsdoc: {
+			mode: 'typescript',
+		},
+	},
 };

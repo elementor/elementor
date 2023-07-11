@@ -1,0 +1,155 @@
+{
+    "content": [
+        {
+            "id": "74b68c2b",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "4b8dc232",
+                    "settings": {
+                        "button_type": "success",
+                        "text": "Type Success, alignment left, size extra small",
+                        "align": "left",
+                        "size": "xs"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "4c2c3e75",
+                    "settings": {
+                        "text": "Type default, size medium, alignment Center",
+                        "align": "center",
+                        "size": "md"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "489abb6d",
+                    "settings": {
+                        "button_type": "warning",
+                        "text": "Type warning, size large, alignment justified",
+                        "align": "justify",
+                        "size": "lg"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "785a60cd",
+                    "settings": {
+                        "text": "Icon, spacing 20, position after",
+                        "selected_icon": {
+                            "value": "far fa-arrow-alt-circle-right",
+                            "library": "fa-regular"
+                        },
+                        "icon_align": "right",
+                        "icon_indent": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "14d5438c",
+                    "settings": {
+                        "text": "Text G fonts - sec, g colour - primary, border Type - solid, width all 10, border radius all 10",
+                        "border_border": "solid",
+                        "border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "border_radius": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "__globals__": {
+                            "typography_typography": "globals\/typography?id=primary",
+                            "button_text_color": "globals\/colors?id=secondary",
+                            "background_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2f75d8f6",
+                    "settings": {
+                        "text": "Text color custom #030303, color custom - #E1D626, border type -groove, padding all 10",
+                        "button_text_color": "#030303",
+                        "background_color": "#E1D626",
+                        "border_border": "groove",
+                        "text_padding": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "417b4834",
+                    "settings": {
+                        "text": "Gradient location 40, radial, position top left, boarder type double, width all 10, colour cusom #010102",
+                        "background_background": "gradient",
+                        "background_color_stop": {
+                            "unit": "%",
+                            "size": 40,
+                            "sizes": []
+                        },
+                        "background_gradient_type": "radial",
+                        "background_gradient_position": "top left",
+                        "border_border": "double",
+                        "border_width": {
+                            "unit": "px",
+                            "top": "10",
+                            "right": "10",
+                            "bottom": "10",
+                            "left": "10",
+                            "isLinked": true
+                        },
+                        "border_color": "#010102"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "button",
+    "type": "page"
+}

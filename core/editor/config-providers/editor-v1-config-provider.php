@@ -7,9 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_V1_Config_Provider implements Config_Provider_Interface {
 	public function get_script_configs() {
+		$ui_package = $this->get_package_config( 'ui' );
+		$icons_package = $this->get_package_config( 'icons' );
+
 		return array_merge(
 			Editor_Common_Configs::get_script_configs(),
 			[
+				$ui_package,
+				$icons_package,
 				[
 					'handle' => 'elementor-responsive-bar',
 					'src' => '{{ELEMENTOR_ASSETS_URL}}js/responsive-bar{{MIN_SUFFIX}}.js',
@@ -69,5 +74,21 @@ class Editor_V1_Config_Provider implements Config_Provider_Interface {
 			Editor_Common_Configs::get_additional_template_paths(),
 			[ ELEMENTOR_PATH . 'includes/editor-templates/responsive-bar.php' ]
 		);
+	}
+
+	private function get_package_config( $package_name ) {
+		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
+
+		if ( ! file_exists( $asset_file ) ) {
+			return [];
+		}
+
+		$data = require $asset_file;
+
+		return [
+			'handle' => $data['handle'],
+			'src' => $data['src'],
+			'deps' => $data['deps'],
+		];
 	}
 }

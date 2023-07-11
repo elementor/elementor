@@ -18,7 +18,7 @@ describe( '@elementor/documents-ui - useDocumentPreviewProps', () => {
 		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument() );
 
 		const command = 'editor/documents/preview';
-		const args = { id: 1 };
+		const args = { id: 1, force: true };
 
 		// Act.
 		const { result } = renderHook( () => useDocumentPreviewProps() );

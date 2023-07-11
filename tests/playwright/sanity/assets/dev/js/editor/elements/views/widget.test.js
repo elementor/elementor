@@ -9,7 +9,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 
 		// Act.
 		await editor.addWidget( 'image-carousel' );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon' );
 
 		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).count();
 

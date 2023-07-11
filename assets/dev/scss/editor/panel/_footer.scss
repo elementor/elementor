@@ -22,6 +22,9 @@
 	width: 15%;
 	cursor: pointer;
 	transition: var(--e-a-transition-hover);
+	border: 0;
+	color: currentColor;
+	background-color: transparent;
 
 	i {
 		font-size: 15px;
@@ -41,7 +44,8 @@
 
 	&:not(.e-open) {
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-dark-color-txt-hover);
 		}
 

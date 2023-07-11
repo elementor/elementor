@@ -3,8 +3,11 @@ import { __ } from '@wordpress/i18n';
 import { WordpressIcon } from '@elementor/icons';
 import TopBar from './components/top-bar';
 import { injectIntoTop, useSettings } from '@elementor/editor';
+import { sync } from './sync';
 
 export default function init() {
+	sync();
+
 	injectIntoTop( {
 		name: 'top-bar',
 		filler: TopBar,

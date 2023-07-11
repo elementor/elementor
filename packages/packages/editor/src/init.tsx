@@ -1,10 +1,11 @@
 import * as ReactDOM from 'react-dom';
 import { isRTL } from '@wordpress/i18n';
 import Shell from './components/shell';
-import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import { DirectionProvider } from '@elementor/ui';
 import { StoreProvider, createStore } from '@elementor/store';
 import { dispatchReadyEvent } from '@elementor/v1-adapters';
 import { SettingsProvider, Settings } from './contexts/settings-context';
+import ThemeProvider from './components/theme-provider';
 
 export default function init( domElement: HTMLElement, settings: Settings ): void {
 	const store = createStore();

@@ -24,6 +24,7 @@ class Test_Import extends Elementor_Test_Base {
 	// Elementor content, WP content ( including CPTs - tests, sectests ).
 	public function test_run__import_all() {
 		// Arrange
+		$this->act_as_admin();
 		register_post_type( 'tests' );
 		register_post_type( 'sectests' );
 		register_taxonomy( 'tests_tax', [ 'tests' ], [] );
@@ -67,7 +68,14 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins']);
+
 		$this->assertTrue( $result['site-settings'] );
+
+		// Assert that site settings imported without changes.
+		$site_settings = $this->get_site_settings();
+		$expected_settings = $this->get_mock_site_settings();
+		$this->assert_array_included_in_array( $expected_settings, $site_settings );
+
 		$this->assert_valid_taxonomies( $result );
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
@@ -642,5 +650,142 @@ class Test_Import extends Elementor_Test_Base {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Assert that every key in the first array is also in the second array and has the same values.
+	 *
+	 * @param array $array
+	 * @param array $array_with_extra_keys
+	 *
+	 * @return void
+	 */
+	private function assert_array_included_in_array( array $array, array $array_with_extra_keys ) {
+		$array_with_extra_keys = $this->normalize_array( $array, $array_with_extra_keys );
+
+		$this->assertSameSetsWithIndex( $array, $array_with_extra_keys );
+	}
+
+	/**
+	 * Remove keys from the second array that are not in the first array.
+	 *
+	 * @param array $array
+	 * @param array $array_with_extra_keys
+	 *
+	 * @return array
+	 */
+	private function normalize_array( array $array, array $array_with_extra_keys ): array {
+		foreach ( $array_with_extra_keys as $key => $value ) {
+			if ( ! isset( $array[ $key ] ) ) {
+				unset( $array_with_extra_keys[ $key ] );
+			} else if ( is_array( $value ) ) {
+				$array_with_extra_keys[ $key ] = $this->normalize_array( $array[ $key ], $value );
+			}
+		}
+
+		return $array_with_extra_keys;
+	}
+
+	private function get_mock_site_settings(): array {
+		// Site settings from ../mock/example-kit.zip
+
+		return [
+			"template" => "default",
+			"system_colors" => [
+				[
+					"_id" => "primary",
+					"title" => "Primary",
+					"color" => "#6EC1E4",
+				],
+				[
+					"_id" => "secondary",
+					"title" => "Secondary",
+					"color" => "#54595F",
+				],
+				[
+					"_id" => "text",
+					"title" => "Text",
+					"color" => "#7A7A7A",
+				],
+				[
+					"_id" => "accent",
+					"title" => "Accent",
+					"color" => "#61CE70",
+				],
+			],
+			"custom_colors" => [
+				[
+					"_id" => "1d3dc5d",
+					"title" => "test",
+					"color" => "#FFFFFF",
+				],
+			],
+			"system_typography" => [
+				[
+					"_id" => "primary",
+					"title" => "Primary",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "600",
+				],
+				[
+					"_id" => "secondary",
+					"title" => "Secondary",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto Slab",
+					"typography_font_weight" => "400",
+				],
+				[
+					"_id" => "text",
+					"title" => "Text",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "400",
+				],
+				[
+					"_id" => "accent",
+					"title" => "Accent",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Roboto",
+					"typography_font_weight" => "500",
+				],
+			],
+			"custom_typography" => [
+				[
+					"_id" => "e993289",
+					"title" => "test",
+					"typography_typography" => "custom",
+					"typography_font_family" => "Arial",
+				],
+			],
+			"default_generic_fonts" => "Sans-serif",
+			"page_title_selector" => "h1.entry-title",
+			"hello_footer_copyright_text" => "All rights reserved",
+			"activeItemIndex" => 1,
+			"viewport_md" => 768,
+			"viewport_lg" => 1025,
+		];
+	}
+
+	/**
+	 * Get site settings from active kit.
+	 *
+	 * @return array
+	 */
+	private function get_site_settings(): array {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		if ( ! $kit ) {
+			return [];
+		}
+
+		$site_settings = $kit->get_settings();
+
+		if (! $site_settings) {
+			return [];
+		}
+
+		return $site_settings;
 	}
 }

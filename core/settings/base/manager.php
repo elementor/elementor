@@ -280,9 +280,9 @@ abstract class Manager {
 						// PHPCS - the variable $name does not contain a user input value.
 						echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>-settings', tabSlug ); #>
-					<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-						<a href="#">{{{ tabTitle }}}</a>
-					</div>
+					<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+						<span>{{{ tabTitle }}}</span>
+					</button>
 				<# } ); #>
 			</div>
 		<# } #>

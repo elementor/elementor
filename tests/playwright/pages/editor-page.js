@@ -1,5 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const BasePage = require( './base-page.js' );
+const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -16,8 +17,8 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	async loadTemplate( template ) {
-		const templateData = require( `../templates/${ template }.json` );
+	async loadTemplate( filePath ) {
+		const templateData = require( filePath );
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -94,6 +95,14 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async addElement( model, container = null, isContainerASection = false ) {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
+	}
+
+	async removeElement( elementId ) {
+		await this.page.evaluate( ( { id } ) => {
+			$e.run( 'document/elements/delete', {
+				container: elementor.getContainer( id ),
+			} );
+		}, { id: elementId } );
 	}
 
 	/**
@@ -198,6 +207,21 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( copyListItemSelector ).click();
 	}
 
+	async pasteElement( selector ) {
+		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
+
+		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
+		await this.page.locator( pasteSelector ).click();
+	}
+
+	async openAddElementSection( elementId ) {
+		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
+		await element.hover();
+		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
+		await elementAddButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+	}
+
 	async pasteStyleElement( elementId ) {
 		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.click( { button: 'right' } );
@@ -215,14 +239,14 @@ module.exports = class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async activatePanelTab( panelName ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' a' );
+		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
 
 		// Check if panel has been activated already.
 		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' a' ).click();
+		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
 		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
 	}
 
@@ -280,7 +304,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async populateImageCarousel() {
 		await this.activatePanelTab( 'content' );
-		await this.page.locator( '[aria-label="Add Images"]' ).click();
+		await this.page.locator( '.elementor-control-gallery-add' ).click();
 
 		// Open Media Library
 		await this.page.click( 'text=Media Library' );
@@ -328,6 +352,22 @@ module.exports = class EditorPage extends BasePage {
 
 		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
 		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
+	}
+
+	/**
+	 * Set a border color to a container.
+	 *
+	 * @param {string} color       - The background color code;
+	 * @param {string} containerId - The ID of targeted container;
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setContainerBorderColor( color, containerId ) {
+		await this.selectElement( containerId );
+		await this.activatePanelTab( 'style' );
+		await this.openSection( 'section_border' );
+		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
 	}
 
@@ -443,18 +483,24 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
 	}
 
-	async publishAndViewPage() {
+	async publishPage() {
 		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 		await this.page.waitForLoadState();
-		await Promise.all( [
-			this.page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			this.page.locator( '#elementor-panel-header-menu-button i' ).click(),
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForSelector( '#elementor-panel-footer-saver-publish .elementor-button.e-primary.elementor-disabled' ),
-		] );
+		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+	}
 
-		await this.page.locator( '.elementor-panel-menu-item-view-page > a' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
+	async publishAndViewPage() {
+		await this.publishPage();
+		await this.page.locator( '#elementor-panel-header-menu-button i' ).click();
+		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
+		await this.page.waitForLoadState();
+	}
+
+	async saveAndReloadPage() {
+		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+		await this.page.waitForLoadState();
+		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
+		await this.page.reload();
 	}
 
 	async previewChanges( context ) {
@@ -528,5 +574,91 @@ module.exports = class EditorPage extends BasePage {
 			}
 			return isVisible;
 		}, itemSelector );
+	}
+
+	/**
+	 * Open a section of the active widget.
+	 *
+	 * @param {string} sectionId
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId ) {
+		const sectionSelector = '.elementor-control-' + sectionId,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a control of the active widget.
+	 *
+	 * @param {string} controlId
+	 * @param {string} value
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelectControlValue( controlId, value ) {
+		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
+	}
+
+	/**
+	 * Change switcher control value.
+	 *
+	 * @param {string}  controlId
+	 * @param {boolean} setState  [true|false]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId, setState = true ) {
+		const controlSelector = '.elementor-control-' + controlId,
+			controlLabel = await this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( setState ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	async getWidgetCount() {
+		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+	}
+
+	getWidget() {
+		return this.getPreviewFrame().locator( EditorSelectors.widget );
+	}
+
+	async waitForElementRender( id ) {
+		if ( null === id ) {
+			throw new Error( 'Id is null' );
+		}
+		let isLoading;
+
+		try {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ timeout: 500 },
+			);
+
+			isLoading = true;
+		} catch ( e ) {
+			isLoading = false;
+		}
+
+		if ( isLoading ) {
+			await this.getFrame().waitForSelector(
+				EditorSelectors.loadingElement( id ),
+				{ state: 'detached' },
+			);
+		}
 	}
 };

@@ -1,6 +1,6 @@
 name: Lint
 
-on: [push, pull_request]
+on: [pull_request]
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:

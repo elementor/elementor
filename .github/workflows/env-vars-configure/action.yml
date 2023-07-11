@@ -20,7 +20,7 @@ runs:
         run: |
             # This command retrieves the latest tag that matches the specified channel and package version, 
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
-            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
 
             # If value is not a number (e.g. empty string) then set it to 0
             if ! [[ $CURRENT_CHANNEL_VERSION =~ ^[0-9]+$ ]]; then

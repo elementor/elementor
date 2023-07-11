@@ -39,6 +39,8 @@
 			justify-content: center;
 			flex-shrink: 0;
 			border: var(--e-a-border-bold);
+			color: currentColor;
+			background-color: transparent;
 			border-inline-start-width: 0;
 			cursor: pointer;
 
@@ -53,6 +55,15 @@
 				.elementor-control-field-description {
 					margin-top: 10px;
 				}
+			}
+
+			&:hover {
+				color: var(--e-a-color-txt-hover);
+			}
+
+			&:focus {
+				color: var(--e-a-color-txt-active);
+				border-color: var(--e-a-border-color-focus);
 			}
 		}
 

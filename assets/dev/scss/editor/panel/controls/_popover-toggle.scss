@@ -18,7 +18,7 @@
 
 			+ .elementor-control-popover-toggle-toggle-label {
 				color: var(--e-a-color-txt-active);
-				background-color: var(--e-a-bg-active);
+				background-color: var(--e-a-bg-active-bold);
 			}
 		}
 
@@ -30,22 +30,27 @@
 		}
 	}
 
-	.elementor-control-popover-toggle-reset-label {
-		color: var(--e-a-color-txt-muted);
-		@include margin-end(5px);
-
-		&:hover {
-			color: var(--e-a-color-txt);
-		}
-	}
-
 	.elementor-control-popover-toggle-toggle-label {
 		height: $control-unit;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 3px;
+		border-radius: var(--e-a-border-radius);
 		border: var(--e-a-border-bold);
+		transition: var(--e-a-transition-hover);
+
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+	}
+
+	.elementor-control-popover-toggle-reset-label {
+		color: var(--e-a-color-txt-muted);
+		margin-inline-start: 5px; //Considering the direction hack
+
+		&:hover {
+			color: var(--e-a-color-txt);
+		}
 	}
 }
 

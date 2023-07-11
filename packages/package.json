@@ -41,7 +41,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@elementor/ui": "^1.4.42",
+    "@elementor/ui": "^1.4.47",
     "@wordpress/i18n": "^4.24.0"
   }
 }

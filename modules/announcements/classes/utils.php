@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Announcements\Classes;
 
-use Elementor\Modules\Announcements\Triggers\IsFlexContainerInactive;
+use Elementor\Modules\Announcements\Triggers\{
+	IsFlexContainerInactive, AiStarted
+};
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,6 +23,8 @@ class Utils {
 		switch ( $trigger['action'] ) {
 			case 'isFlexContainerInactive':
 				return new IsFlexContainerInactive();
+			case 'aiStared':
+				return new AiStarted();
 			default:
 				return false;
 		}

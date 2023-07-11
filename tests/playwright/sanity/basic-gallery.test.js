@@ -57,7 +57,7 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 async function insertImageGalleryWidget( editor, page ) {
 	await editor.addWidget( 'image-gallery' );
 
-	await page.locator( '[aria-label="Add Images"]' ).click();
+	await page.locator( '.elementor-control-gallery-add' ).click();
 
 	// Open Media Library
 	await page.click( 'text=Media Library' );

@@ -327,11 +327,6 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
-		$this->categories['pojo'] = [
-			'title' => esc_html__( 'Pojo Themes', 'elementor' ),
-			'icon' => 'eicon-pojome',
-		];
-
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',

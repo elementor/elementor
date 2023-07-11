@@ -1,0 +1,19 @@
+{
+	"name": "@elementor/recently-edited",
+	"dependencies": {
+		"@elementor/documents": "*",
+		"@elementor/icons": "*",
+		"@elementor/top-bar": "*",
+		"@elementor/v1-adapters": "*",
+		"@elementor/ui": "*",
+		"@wordpress/i18n": "*",
+		"@wordpress/api-fetch": "^6.27.0",
+		"@wordpress/url": "^3.31.0"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	},
+	"elementor": {
+		"type": "extension"
+	}
+}

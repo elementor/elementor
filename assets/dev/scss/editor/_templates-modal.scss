@@ -14,6 +14,10 @@ $remote-templates-items-space: 30px;
 	.select2-container {
 		z-index: 0;
 	}
+
+	.dialog-message {
+		overflow-y: scroll;
+	}
 }
 
 #elementor-template-library-header-menu {

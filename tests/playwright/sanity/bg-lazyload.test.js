@@ -34,8 +34,9 @@ test.describe( 'Background Lazy Load', () => {
 
 	test( 'Background lazy load sanity test', async ( { context, page }, testInfo ) => {
 		const editorPage = new EditorPage( page, testInfo );
+		const templatePath = `../templates/law-firm-about.json`;
 		await editorPage.gotoPostId( pageId );
-		await editorPage.loadTemplate( 'law-firm-about' );
+		await editorPage.loadTemplate( templatePath );
 
 		const previewPage = await editorPage.previewChanges( context );
 

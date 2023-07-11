@@ -110,6 +110,9 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'ai' => [
+					'type' => 'text',
+				],
 				'dynamic' => [
 					'active' => true,
 				],

@@ -10,7 +10,7 @@ const EditorPage = require( './editor-page.js' );
 const CLEAN_POST_ID = 1;
 
 module.exports = class WpAdminPage extends BasePage {
-    async gotoDashboard() {
+	async gotoDashboard() {
 		await this.page.goto( '/wp-admin' );
 	}
 
@@ -36,7 +36,7 @@ module.exports = class WpAdminPage extends BasePage {
 		}
 
 		await this.page.click( '.e-overview__create > a' );
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		return new EditorPage( this.page, this.testInfo );
@@ -85,7 +85,7 @@ module.exports = class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some of the experiments are may be hidden for the user,
+			// Try to make the element visible - Since some experiments may be hidden for the user,
 			// but actually exist and need to be tested.
 			await this.page.evaluate( ( el ) => {
 				const element = document.querySelector( el );
@@ -96,6 +96,9 @@ module.exports = class WpAdminPage extends BasePage {
 			}, `.elementor_experiment-${ id }` );
 
 			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
+
+			// Click to confirm any experiment that has dependencies.
+			await this.confirmExperimentModalIfOpen();
 		}
 
 		await this.page.click( '#submit' );
@@ -105,6 +108,18 @@ module.exports = class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
+	}
+
+	async confirmExperimentModalIfOpen() {
+		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
+
+		if ( await dialogButton.isVisible() ) {
+			await dialogButton.click();
+
+			// Clicking the confirm button - "Activate" or "Deactivate" - will immediately save the existing experiments,
+			// so we need to wait for the page to save and reload before we continue on to set any more experiments.
+			await this.page.waitForLoadState( 'load' );
+		}
 	}
 
 	getActiveTheme() {

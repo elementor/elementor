@@ -1,3 +1,5 @@
+import environment from 'elementor-common/utils/environment';
+
 var EditModeItemView;
 
 EditModeItemView = Marionette.ItemView.extend( {
@@ -8,11 +10,13 @@ EditModeItemView = Marionette.ItemView.extend( {
 	ui: {
 		previewButton: '#elementor-mode-switcher-preview-input',
 		previewLabel: '#elementor-mode-switcher-preview',
-		previewLabelA11y: '#elementor-mode-switcher-preview .elementor-screen-only',
+		previewLabelIcon: '#elementor-mode-switcher-preview i',
+		previewLabelA11yText: '#elementor-mode-switcher-preview .elementor-screen-only',
 	},
 
 	events: {
 		'change @ui.previewButton': 'onPreviewButtonChange',
+		'keyup @ui.previewLabelIcon': 'onPreviewButtonKeyUp',
 	},
 
 	initialize() {
@@ -37,6 +41,15 @@ EditModeItemView = Marionette.ItemView.extend( {
 		this.onEditModeChanged();
 	},
 
+	onPreviewButtonKeyUp( event ) {
+		const ENTER_KEY = 13;
+
+		if ( ENTER_KEY === event.keyCode ) {
+			this.toggleMode();
+			this.onPreviewButtonChange();
+		}
+	},
+
 	onPreviewButtonChange() {
 		const mode = this.getCurrentMode();
 
@@ -50,10 +63,13 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChanged( activeMode ) {
-		const title = 'preview' === activeMode ? __( 'Back to Editor', 'elementor' ) : __( 'Preview', 'elementor' );
+		const ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl';
 
-		this.ui.previewLabel.attr( 'title', title );
-		this.ui.previewLabelA11y.text( title );
+		let text = 'preview' === activeMode ? __( 'Show Panel', 'elementor' ) : __( 'Hide Panel', 'elementor' );
+		text += ` (${ ctrlLabel } + P)`;
+
+		this.ui.previewLabel.attr( 'title', text );
+		this.ui.previewLabelA11yText.text( text );
 	},
 } );
 

@@ -21,7 +21,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page }, testInfo )
     const imageFileType = '.png';
 
     await page.click( '#elementor-controls >> text=Image Carousel' );
-    await page.click( '[aria-label="Add\\ Images"]' );
+    await page.locator( '.elementor-control-gallery-add' ).click();
     await page.waitForSelector( '.media-modal >> .has-load-more >> .spinner:visible', { state: 'hidden' } );
     await page.waitForTimeout( 500 );
 

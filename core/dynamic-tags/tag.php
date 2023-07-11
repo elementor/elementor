@@ -93,6 +93,9 @@ abstract class Tag extends Base_Tag {
 			'before',
 			[
 				'label' => esc_html__( 'Before', 'elementor' ),
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -100,6 +103,9 @@ abstract class Tag extends Base_Tag {
 			'after',
 			[
 				'label' => esc_html__( 'After', 'elementor' ),
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -107,6 +113,9 @@ abstract class Tag extends Base_Tag {
 			'fallback',
 			[
 				'label' => esc_html__( 'Fallback', 'elementor' ),
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 

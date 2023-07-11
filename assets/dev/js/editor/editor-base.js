@@ -5,6 +5,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import ElementsManager from './elements/manager';
+import IntroductionTooltipsManager from './introduction-tooltips/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -76,9 +77,13 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	backgroundClickListeners = {
+		tooltip: {
+			element: '.dialog-tooltip-widget',
+			ignore: '.dialog-widget, .elementor-controls-popover, .pcr-selection',
+		},
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .dialog-tooltip-widget',
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
@@ -170,6 +175,7 @@ export default class EditorBase extends Marionette.Application {
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
+			Gaps: require( 'elementor-controls/gaps' ),
 			Gallery: require( 'elementor-controls/gallery' ),
 			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
@@ -383,6 +389,8 @@ export default class EditorBase extends Marionette.Application {
 		this.promotion = new Promotion();
 
 		this.browserImport = new BrowserImport();
+
+		this.introductionTooltips = new IntroductionTooltipsManager();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 

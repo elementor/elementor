@@ -178,10 +178,11 @@
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	height: 40px;
-	padding: 0 20px;
+	height: 48px;
+	padding-inline: 20px;
 	width: 100%;
 	border-top: var(--e-a-border); //todo: remove
+	border-top-width: 2px;
 	color: var(--e-a-color-txt-accent);
 	cursor: pointer;
 
@@ -353,6 +354,8 @@
 @import "controls/control-group-css-filters";
 
 @import "controls/dimensions";
+
+@import "controls/gaps";
 
 @import "controls/icons";
 

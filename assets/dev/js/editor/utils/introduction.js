@@ -54,6 +54,16 @@ export default class extends elementorModules.Module {
 		dialog.show();
 	}
 
+	get introductionViewed() {
+		const introductionKey = this.getSettings( 'introductionKey' );
+		return elementor.config.user.introduction[ introductionKey ];
+	}
+
+	set introductionViewed( isViewed ) {
+		const introductionKey = this.getSettings( 'introductionKey' );
+		elementor.config.user.introduction[ introductionKey ] = true;
+	}
+
 	setViewed() {
 		this.introductionViewed = true;
 

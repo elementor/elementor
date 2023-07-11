@@ -8,23 +8,35 @@
 	border-bottom: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
+		all: unset;
 		flex: auto;
 		transition: var(--e-a-transition-hover);
+		border-bottom: 3px solid transparent;
+		cursor: pointer;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-bg-hover);
 		}
 
+		&:focus {
+			outline: 0;
+		}
+
 		&.elementor-active {
-			border-bottom: 3px solid var(--e-a-border-color-accent);
+			border-color: var(--e-a-border-color-accent);
 			color: var(--e-a-color-txt-accent);
 
-			a {
+			// TODO: Remove `a` in Elementor 3.14.0
+			a,
+			span {
 				color: var(--e-a-color-txt-accent);
 			}
 		}
 
-		a {
+		// TODO: Remove `a` in Elementor 3.14.0
+		a,
+		span {
 			color: inherit;
 			display: block;
 			text-align: center;
@@ -42,13 +54,17 @@
 }
 
 .elementor-tab-control-content {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e92c';
 	}
 }
 
 .elementor-tab-control-style {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e921';
 	}
 }
@@ -56,20 +72,26 @@
 .elementor-tab-control-advanced,
 .elementor-tab-control-settings,
 .elementor-tab-control-general_style {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e916';
 	}
 }
 
 //TODO: Remove
 .elementor-tab-control-responsive {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e885';
 	}
 }
 
 .elementor-tab-control-lightbox {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e922';
 	}
 }
@@ -77,7 +99,9 @@
 
 .elementor-tab-control-layout,
 .elementor-tab-control-column {
-	a:before {
+	// TODO: Remove `a` in Elementor 3.14.0
+	a:before,
+	span:before {
 		content: '\e899';
 	}
 }
@@ -93,11 +117,14 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 85%;
+		line-height: 2;
+		padding-inline-start: 5px;
 		color: inherit;
 		font-weight: 500;
 		transition: var(--e-a-transition-hover);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--e-a-color-info);
 		}
 
