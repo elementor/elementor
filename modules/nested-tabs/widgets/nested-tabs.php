@@ -332,8 +332,37 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_tabs_responsive', [
-			'label' => esc_html__( 'Responsive Settings', 'elementor' ),
+			'label' => esc_html__( 'Additional Settings', 'elementor' ),
 		] );
+
+		$this->add_responsive_control(
+			'horizontal_scroll',
+			[
+				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'description' => esc_html__( 'Note: Scroll tabs if they don’t fit into their parent container.', 'elementor' ),
+				'options' => [
+					'disable' => esc_html__( 'Disable', 'elementor' ),
+					'enable' => esc_html__( 'Enable', 'elementor' ),
+				],
+				'default' => 'disable',
+				'selectors_dictionary' => [
+					'disable' => '--n-tabs-heading-wrap: wrap; --n-tabs-heading-overflow-x: initial;',
+					'enable' => '--n-tabs-heading-wrap: nowrap; --n-tabs-heading-overflow-x: scroll;',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'frontend_available' => true,
+				'condition' => [
+					'tabs_direction' => [
+						'',
+						'top',
+						'bottom',
+					],
+				],
+			]
+		);
 
 		$dropdown_options = [
 			'none' => esc_html__( 'None', 'elementor' ),
@@ -1070,7 +1099,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'data-tab' => $tab_count,
 				'role' => 'tab',
 				'aria-label' => esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ),
-				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+//				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
 				'aria-label' => esc_html__( 'To be updated', 'elementor' ),
 			] );
@@ -1187,7 +1216,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'data-tab': tabCount,
 					'role': 'tab',
 					'aria-label': "<php esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ); ?>",
-					'aria-selected': 1 === tabCount ? 'true' : 'false',
+<!--					'aria-selected': 1 === tabCount ? 'true' : 'false',-->
 					'aria-label': '<?php echo esc_html__( 'To be updated', 'elementor' ); ?>',
 					'style': 'grid-area: tab' + index + ';',
 				} );

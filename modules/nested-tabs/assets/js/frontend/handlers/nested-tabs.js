@@ -1,6 +1,18 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 
+import {
+	changeScrollStatus,
+	setHorizontalScrollAlignment,
+	setHorizontalTitleScrollValues,
+} from 'elementor/assets/dev/js/frontend/utils/flex-horizontal-scroll';
+
 export default class NestedTabs extends Base {
+	constructor( ...args ) {
+		super( ...args );
+
+		this.resizeListenerNestedTabs = null;
+	}
+
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -183,6 +195,36 @@ export default class NestedTabs extends Base {
 			() => this.onShowTabContent( $requestedContent ),
 		);
 		$requestedContent.removeAttr( 'hidden' ); // I am not sure what this is used for.
+
+		this.setContentContainerPositionAndHeight( $requestedContent );
+	}
+
+	setContentContainerPositionAndHeight( $contentContainer ) {
+		const $wrapper = this.elements.$tabList;
+
+		$wrapper.css( 'min-height', '' );
+
+		this.elements.$tabContents.css( {
+			top: '',
+			left: '',
+			width: '',
+			height: '',
+			position: '',
+		} );
+
+		$wrapper.addClass( 'set-container' );
+
+		$wrapper.css( 'min-height', $wrapper.height() + 'px' );
+
+		$contentContainer.css( {
+			top: $contentContainer.position().top + 'px',
+			left: $contentContainer.position().left + 'px',
+			width: $wrapper.width() + 'px',
+			height: $contentContainer + 'px',
+			position: 'absolute',
+		} );
+
+		$wrapper.removeClass( 'set-container' );
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -228,15 +270,36 @@ export default class NestedTabs extends Base {
 		};
 	}
 
+	getHeadingEvents() {
+		const navigationWrapper = this.elements.$tabList[ 0 ];
+
+		return {
+			mousedown: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseup: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseleave: changeScrollStatus.bind( this, navigationWrapper ),
+			mousemove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
+		};
+	}
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
+		this.elements.$tabList.on( this.getHeadingEvents() );
+
+		const settingsObject = {
+			element: this.elements.$tabList[ 0 ],
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
+
+		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
+		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 		this.elements.$tabList.find( '.e-con' ).children().on( 'keydown', this.onEscapeContentContainer.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
 	unbindEvents() {
 		this.elements.$tabTitles.off();
-		this.elements.$tabList.find( '.e-con' ).children().off();
+		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
 
@@ -289,12 +352,40 @@ export default class NestedTabs extends Base {
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
 		}
+
+		const settingsObject = {
+			element: this.elements.$tabList[ 0 ],
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
+
+		setHorizontalScrollAlignment( settingsObject );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
 		if ( 'activeItemIndex' === propertyName ) {
 			this.changeActiveTab( value, false );
 		}
+	}
+
+	onElementChange( propertyName ) {
+		if ( this.checkSliderPropsToWatch( propertyName ) ) {
+			const settingsObject = {
+				element: this.elements.$tabList[ 0 ],
+				direction: this.getTabsDirection(),
+				justifyCSSVariable: '--n-tabs-heading-justify-content',
+				horizontalScrollStatus: this.getHorizontalScrollSetting(),
+			};
+
+			setHorizontalScrollAlignment( settingsObject );
+		}
+	}
+
+	checkSliderPropsToWatch( propertyName ) {
+		return 0 === propertyName.indexOf( 'horizontal_scroll' ) ||
+			0 === propertyName.indexOf( 'tabs_justify_horizontal' ) ||
+			0 === propertyName.indexOf( 'tabs_title_space_between' );
 	}
 
 	/**
@@ -384,5 +475,15 @@ export default class NestedTabs extends Base {
 			currentDeviceModeIndex = activeBreakpointsList.indexOf( elementorFrontend.getCurrentDeviceMode() );
 
 		return currentDeviceModeIndex <= breakpointIndex;
+	}
+
+	getTabsDirection() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
+	}
+
+	getHorizontalScrollSetting() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
 	}
 }
