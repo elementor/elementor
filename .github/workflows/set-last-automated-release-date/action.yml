@@ -17,6 +17,9 @@ inputs:
   MAINTAIN_TOKEN:
     required: true
     description: "The maintain token."
+  VALUE:
+    required: true
+    description: "Current date."
 
 runs:
   using: "composite"
@@ -28,7 +31,7 @@ runs:
         channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ inputs.REPOSITORY_ID }}
         name: ${{ inputs.NAME }}
-        value: echo (date +'%d/%m/%Y')
+        value: ${{ inputs.VALUE }}
       shell: bash
       run: node ./.github/scripts/set-last-release-date.js
 

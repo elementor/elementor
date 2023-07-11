@@ -59,7 +59,9 @@ jobs:
       - name: Set Oktokit env variables
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
+          CURRENT_DATE=$(date -u +"%Y-%m-%d")
           echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
+          echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
         with:
@@ -68,6 +70,7 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE_DATE'
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          VALUE: ${{ env.CURRENT_DATE }}
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
