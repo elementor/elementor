@@ -69,7 +69,7 @@ jobs:
           ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE'
-          MAINTAIN_TOKEN: ${{ secrets.LOCAL_MANTAIN_TOKEN }}
+          MAINTAIN_TOKEN: ${{ secrets.LOCAL_MANTAIN_TOKEN }} #Replace with ${{ secrets.MAINTAIN_TOKEN }}
           VALUE: ${{ env.CURRENT_DATE }}
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
