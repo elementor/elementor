@@ -80,11 +80,15 @@ jobs:
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Install Octokit
         run: npm install octokit@2.0.19
+      - name: Set Oktokit env variables
+        run: |
+          REPOSITORY_ID=$(node -e "console.log(process.env.GITHUB_REPOSITORY_ID)")
+          echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
         with:
           REPOSITORY_ID: ${{ github.repository }}
-          ENVIRONMENT_NAME: ${{ env.config_deployment_environment }}
+          ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE_DATE'
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

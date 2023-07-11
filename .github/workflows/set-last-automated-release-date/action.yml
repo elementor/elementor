@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Set last automated release date
       env:
-        environment_name: 'SCHEDULE_RELEASES'
+        environment_name: ${{ inputs.ENVIRONMENT_NAME }}
         token: ${{ inputs.MAINTAIN_TOKEN }}
         channel: ${{ inputs.CHANNEL }}
         repository_id: ${{ inputs.REPOSITORY_ID }}
