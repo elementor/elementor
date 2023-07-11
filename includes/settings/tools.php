@@ -137,7 +137,7 @@ class Tools extends Settings_Page {
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
 		if ( $is_cloud ) {
-			$rollback = apply_filters( 'elementor/settings/tools/rollback/cloud', $version, $plugin_slug, ELEMENTOR_PLUGIN_BASE );
+			$rollback = apply_filters( 'elementor/settings/tools/rollback', $version, $plugin_slug, ELEMENTOR_PLUGIN_BASE );
 		} else {
 			$rollback = new Rollback(
 				[
