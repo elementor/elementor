@@ -55,12 +55,15 @@ jobs:
         run: |
           npm ci
       - name: Install Octokit
+#        if: ${{ env.CHANNEL == 'cloud' &&  }}
         run: npm install octokit@2.0.19
       - name: Set Oktokit env variables
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
-          CURRENT_DATE=$(date -u +"%Y-%m-%d")
+          EVENT_NAME=${{ github.event_name }}
+          CURRENT_DATE=$(date -u +"%Y-%m-%d %H:%M:%S")
           echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
+          echo "EVENT_NAME=$EVENT_NAME" >> $GITHUB_ENV
           echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
