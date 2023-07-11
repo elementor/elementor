@@ -61,7 +61,7 @@ jobs:
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
           EVENT_NAME=${{ github.event_name }}
-          CURRENT_DATE=$(date -u +"%Y-%m-%d %H:%M:%S")
+          CURRENT_DATE=$(date -u +"%Y-%m-%d  %H:%M:%S")
           echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
           echo "EVENT_NAME=$EVENT_NAME" >> $GITHUB_ENV
           echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
