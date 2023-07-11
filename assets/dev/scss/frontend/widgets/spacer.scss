@@ -13,15 +13,18 @@
 .e-con-inner {
 
 	& > .elementor-widget-spacer {
-		display: flex;
-		justify-items: center;
-		align-items: center;
+		position: relative;
 		width: var( --container-widget-width, var( --spacer-size ) );
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
+		overflow: hidden;
 
 		& > .elementor-widget-container {
 			height: 100%;
+			width: 100%;
+			display: flex;
+			justify-items: center;
+			align-items: center;
 
 			& > .elementor-spacer {
 				height: 100%;
@@ -33,7 +36,12 @@
 		}
 
 		.elementor-widget-empty-icon {
-			flex-grow: 1;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
 		}
 	}
 }
