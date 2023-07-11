@@ -63,7 +63,7 @@ jobs:
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
         with:
-          REPOSITORY_ID: ${{ github.repository }}
+          REPOSITORY_ID: ${{ env.REPOSITORY_ID }}
           ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE_DATE'
