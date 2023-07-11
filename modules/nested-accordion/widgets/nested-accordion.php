@@ -26,10 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Nested_Accordion extends Widget_Nested_Base {
 
-	const NESTED_ACCORDION = 'nested-accordion';
-
 	public function get_name() {
-		return static::NESTED_ACCORDION;
+		return 'nested-accordion';
 	}
 
 	public function get_title() {
@@ -45,7 +43,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	protected function item_content_container( int $index ) {

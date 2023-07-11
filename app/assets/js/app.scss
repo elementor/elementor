@@ -83,7 +83,7 @@
 		background-color: var(--app-logo-background-color);
 
 		&:not(:last-child) {
-			margin-inline-end: $app-logo-margin-end;
+			margin-inline-end: $app-logo-margin-inline-end;
 		}
 	}
 
