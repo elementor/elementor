@@ -19,7 +19,11 @@ jobs:
     steps:
       - name: Display Variables
         run: |
-          echo "vars.LAST_AUTOMATED_RELEASE ${{ vars.LAST_AUTOMATED_RELEASE }}"
+          echo "vars.LAST_AUTOMATED_RELEASE $LAST_AUTOMATED_RELEASE"
+          echo "vars.TEST_123 $TEST_123"
+        env:
+          LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
+          TEST_123: ${{ vars.TEST_123 }}
   release:
     runs-on: ubuntu-22.04
     steps:
