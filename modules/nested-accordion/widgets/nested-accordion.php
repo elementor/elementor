@@ -686,7 +686,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tab();
 	}
 
-	private function is_active_icon_exist( $settings ): bool {
+	private function is_active_icon_exist( $settings ):bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
@@ -739,100 +739,100 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-            <details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-                <summary class='e-n-accordion-item-title'>
-                    <span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
-					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
-						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					} ?>
-                </summary>
-				<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-            </details>
+				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
+					<summary class='e-n-accordion-item-title'>
+						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
+						<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
+							echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						} ?>
+					</summary>
+					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</details>
 			<?php
 			$items_title_html .= ob_get_clean();
 		}
 
 		?>
-        <div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
 			<?php echo $items_title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-        </div>
+		</div>
 		<?php
 	}
 
 	protected function content_template() {
 		?>
-        <div class="e-n-accordion" role="tablist" aria-orientation="vertical">
-            <# if ( settings['items'] ) {
-			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
-				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
-				itemTitleText = 'e-n-accordion-item-title-text' + elementUid,
-				defaultState = settings.default_state,
-				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
-				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
-					? itemTitleIcon
-					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
-			#>
+		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
+			<# if ( settings['items'] ) {
+            const elementUid = view.getIDInt().toString().substring( 0, 3 ),
+                titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+                itemTitleText = 'e-n-accordion-item-title-text' + elementUid,
+                defaultState = settings.default_state,
+                itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
+                itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
+                    ? itemTitleIcon
+                    : elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
+            #>
 
-		<# _.each( settings['items'], function( item, index ) {
-		const itemCount = index + 1,
-			itemUid = elementUid + itemCount,
-			itemWrapperKey = itemUid,
-			itemTitleKey = 'item-' + itemUid;
+        <# _.each( settings['items'], function( item, index ) {
+        const itemCount = index + 1,
+            itemUid = elementUid + itemCount,
+            itemWrapperKey = itemUid,
+            itemTitleKey = 'item-' + itemUid;
 
-			view.addRenderAttribute( itemTitleKey, {
-				'class': ['e-n-accordion-item-title'],
-			});
+            view.addRenderAttribute( itemTitleKey, {
+                'class': ['e-n-accordion-item-title'],
+            });
 
-			view.addRenderAttribute( itemTitleText, {
-				'class': ['e-n-accordion-item-title-text'],
-				'data-binding-type': 'repeater-item',
-				'data-binding-repeater-name': 'items',
-				'data-binding-setting': ['item_title'],
-				'data-binding-index': itemCount,
-			});
+            view.addRenderAttribute( itemTitleText, {
+                'class': ['e-n-accordion-item-title-text'],
+                'data-binding-type': 'repeater-item',
+                'data-binding-repeater-name': 'items',
+                'data-binding-setting': ['item_title'],
+                'data-binding-index': itemCount,
+            });
 
 
-			if ( '' !== item.element_css_id ) {
-				itemId = item.element_css_id;
-			} else {
-				itemId = 'e-n-accordion-item-' + itemUid;
-			}
+            if ( '' !== item.element_css_id ) {
+                itemId = item.element_css_id;
+            } else {
+                itemId = 'e-n-accordion-item-' + itemUid;
+            }
 
-			const itemWrapperAttributes = {
-				'id': itemId,
-				'class': [ 'e-n-accordion-item', 'e-normal' ],
-			};
+            const itemWrapperAttributes = {
+                'id': itemId,
+                'class': [ 'e-n-accordion-item', 'e-normal' ],
+            };
 
-			if ( defaultState === 'expanded' && index === 0) {
-				itemWrapperAttributes['open'] = true;
-			}
+            if ( defaultState === 'expanded' && index === 0) {
+                itemWrapperAttributes['open'] = true;
+            }
 
-			view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
+            view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
 
-			view.addRenderAttribute( itemTitleKey, {
-				'class': [ 'e-n-accordion-item-title' ],
-			} );
+            view.addRenderAttribute( itemTitleKey, {
+                'class': [ 'e-n-accordion-item-title' ],
+            } );
 
-			#>
+            #>
 
-            <details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
-                <summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
+			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
+				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
 					<span class="e-n-accordion-item-title-header">
 						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleText ) }}}>
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
-                    </span>
-                    <# if (settings.accordion_item_title_icon.value) { #>
-                    <span class="e-n-accordion-item-title-icon">
+					</span>
+					<# if (settings.accordion_item_title_icon.value) { #>
+					<span class="e-n-accordion-item-title-icon">
 						<span class="e-opened">{{{ itemTitleIconActive.value }}}</span>
 						<span class="e-closed">{{{ itemTitleIcon.value }}}</span>
 					</span>
-                    <# } #>
-                </summary>
-            </details>
-            <# } ); #>
-            <# } #>
-		</div>
+					<# } #>
+				</summary>
+			</details>
+			<# } ); #>
+		<# } #>
+	    </div>
 		<?php
 	}
 }
