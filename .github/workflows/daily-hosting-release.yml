@@ -45,7 +45,8 @@ jobs:
       - name: env_var DELETE LATER
         run: |
           echo "variable from shell environment : $last_automated_release"
-          echo "env_var: ${{ env.env_var }}"
+          echo "variable from shell1 environment : ${{ env.last_automated_release }}"
+
       - name: Check if two weeks have passed since last release
         uses: ./.github/workflows/bi-weekly-release
         with:
