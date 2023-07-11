@@ -68,7 +68,7 @@ jobs:
           REPOSITORY_ID: ${{ env.REPOSITORY_ID }}
           ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
           CHANNEL: ${{ env.CHANNEL }}
-          NAME: 'LAST_AUTOMATED_RELEASE_DATE'
+          NAME: 'LAST_AUTOMATED_RELEASE'
           MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           VALUE: ${{ env.CURRENT_DATE }}
       - name: Build plugin
