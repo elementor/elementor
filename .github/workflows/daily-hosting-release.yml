@@ -54,6 +54,20 @@ jobs:
       - name: Install Dependencies
         run: |
           npm ci
+      - name: Install Octokit
+        run: npm install octokit@2.0.19
+      - name: Set Oktokit env variables
+        run: |
+          REPOSITORY_ID=${{ github.repository }}
+          echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
+      - name: Set release date env variable
+        uses: ./.github/workflows/set-last-automated-release-date
+        with:
+          REPOSITORY_ID: ${{ github.repository }}
+          ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
+          CHANNEL: ${{ env.CHANNEL }}
+          NAME: 'LAST_AUTOMATED_RELEASE_DATE'
+          MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -78,20 +92,7 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Install Octokit
-        run: npm install octokit@2.0.19
-      - name: Set Oktokit env variables
-        run: |
-          REPOSITORY_ID=$(node -e "console.log(process.env.GITHUB_REPOSITORY_ID)")
-          echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
-      - name: Set release date env variable
-        uses: ./.github/workflows/set-last-automated-release-date
-        with:
-          REPOSITORY_ID: ${{ github.repository }}
-          ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
-          CHANNEL: ${{ env.CHANNEL }}
-          NAME: 'LAST_AUTOMATED_RELEASE_DATE'
-          MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      # Place Oktokit execution here
       - name: Post To Slack Created Cloud daily Release
         uses : ./.github/workflows/post-to-slack
         with:
