@@ -767,7 +767,6 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Container set to row and then Spacer added', async () => {
-			await page.pause();
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			await editor.selectElement( container );
