@@ -4,7 +4,7 @@ env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
   # Setting an environment variable with the value of a configuration variable
-  env_var: ${{ vars.ENV_CONTEXT_VAR }}
+  last_automated_release: ${{ vars.LAST_AUTOMATED_RELEASE }}
 
 on:
   schedule:
@@ -44,8 +44,9 @@ jobs:
           REF: ${{ github.ref }}
       - name: env_var DELETE LATER
         run: |
-          echo "env_var: $env_var"
-          echo "env_var: ${{ env.env_var }}"
+          echo "variable from shell environment : $last_automated_release"
+          echo "variable from shell1 environment : ${{ env.last_automated_release }}"
+
       - name: Check if two weeks have passed since last release
         uses: ./.github/workflows/bi-weekly-release
         with:
