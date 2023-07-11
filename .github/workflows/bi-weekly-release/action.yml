@@ -4,7 +4,7 @@ inputs:
   CHANNEL:
     required: true
     description: "The channel to get the version to (cloud, CCU)."
-  LAST_RELEASE_DATE:
+  LAST_AUTOMATED_RELEASE:
     required: false
     description: "The date of the last release."
 
@@ -13,6 +13,8 @@ runs:
   steps:
     - shell: bash
       run: |
+        echo ${{ inputs.LAST_AUTOMATED_RELEASE }}
+        bash ${{ inputs.LAST_AUTOMATED_RELEASE }}
         last_release=$(git ls-remote --tags | grep -v "\-rc” | grep -v "refs/tags/v” | grep "cloud” | tail -n1 | awk ‘{print $2}’)
         current_date=$(date +%s)
         release_date=$(git log -1 --format=%ct $last_release)
