@@ -60,12 +60,6 @@ jobs:
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
           echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
-          # get the value of the octolytics-dimension-repository_id meta key value from a page using bash script
-          html=$(curl -s "$url")
-          # Extract the value of the meta key
-          value=$(echo "$html" | grep -Po '(?<=<meta name="octolytics-dimension-repository_id" content=")\d+(?=")')
-          # Print the extracted value
-          echo "The value of 'octolytics-dimension-repository_id' is: $value"
       - name: Set release date env variable
         uses: ./.github/workflows/set-last-automated-release-date
         with:
