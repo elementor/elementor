@@ -1,7 +1,6 @@
 const { Octokit } = require( 'octokit' );
 const octokit = new Octokit( {
-	// auth: process.env.token,
-	auth: "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",
+	auth: process.env.token,
 } )
 
 const { repository_id, environment_name, name, value } = process.env;
