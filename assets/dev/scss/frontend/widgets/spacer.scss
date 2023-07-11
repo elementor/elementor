@@ -11,9 +11,8 @@
 
 .e-con,
 .e-con-inner {
-
 	& > .elementor-widget-spacer {
-		position: relative;
+		display: flex;
 		width: var( --container-widget-width, var( --spacer-size ) );
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
@@ -21,9 +20,6 @@
 		& > .elementor-widget-container {
 			height: 100%;
 			width: 100%;
-			display: flex;
-			justify-items: center;
-			align-items: center;
 
 			& > .elementor-spacer {
 				height: 100%;
@@ -46,7 +42,10 @@
 		}
 	}
 
-	& > .ui-resizable {
+	& > .elementor-widget-empty {
+		position: relative;
 		overflow: hidden;
+		min-height: 22px;
+		min-width: 22px;
 	}
 }
