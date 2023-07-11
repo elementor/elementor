@@ -834,7 +834,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			</details>
 			<# } ); #>
 		<# } #>
-	</div>
+	    </div>
 		<?php
 	}
 }
