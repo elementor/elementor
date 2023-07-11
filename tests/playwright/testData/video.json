@@ -11,12 +11,12 @@
         ],
         "source": "youtube",
         "expected": {
-            "autoplay": true,
-            "controls": true,
+            "autoplay": "1",
+            "controls": "1",
             "start": 10,
             "end": 20,
-            "modestbranding": true,
-            "playsinline": true
+            "modestbranding": "1",
+            "playsinline": "1"
         },
         "link": "https://youtu.be/6KNISw9RPTc"
     },
@@ -30,15 +30,15 @@
         ],
         "source": "vimeo",
         "expected": {
-            "autoplay": true,
-            "autopause": false,
-            "loop": true,
-            "muted": true,
-            "title": true,
-            "portrait": true,
+            "autoplay": "1",
+            "autopause": "0",
+            "loop": "1",
+            "muted": "1",
+            "title": "1",
+            "portrait": "1",
             "byline": "1#t",
             "start": "t=00h00m10s",
-            "playsinline": "true"
+            "playsinline": "1"
         },
         "link": "https://vimeo.com/347119375"
     },
@@ -50,14 +50,14 @@
         ],
         "source": "vimeo",
         "expected": {
-            "autoplay": true,
-            "endscreen-enable": "false",
-            "mute": "true",
+            "autoplay": "1",
+            "endscreen-enable": "0",
+            "mute": "1",
             "start": "10",
-            "playsinline": "true",
-            "controls": "true",
-            "ui-start-screen-info": true,
-            "ui-logo": true
+            "playsinline": "1",
+            "controls": "1",
+            "ui-start-screen-info": "1",
+            "ui-logo": "1"
         },
         "link": "https://www.dailymotion.com/video/x8lmstg"
     }

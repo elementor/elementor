@@ -18,6 +18,9 @@ const EditorSelectors = {
 	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
 	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
 	soundWaveForm: 'div.waveform.loaded',
+	item: '.elementor-repeater-row-item-title',
+	addNewItem: 'button.elementor-button elementor-repeater-add',
+	plusIcon: '.eicon-plus-circle',
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle ) => `[aria-label="${ imageTitle }"]`,
@@ -98,6 +101,9 @@ const EditorSelectors = {
 		get link() {
 			return `${ this.widget } a`;
 		},
+		get svgIcon() {
+			return `${ this.widget } svg path.st0`;
+		},
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
@@ -125,7 +131,22 @@ const EditorSelectors = {
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
 	},
-
+	socialIcons: {
+		widget: '[data-widget_type="social-icons.default"]',
+		get link() {
+			return `${ this.widget } a`;
+		},
+		get svgIcon() {
+			return `${ this.widget } svg path.st0`;
+		},
+	},
+	tabs: {
+		textEditorIframe: 'iframe[id*="elementorwpeditorview"]',
+		body: '#tinymce',
+	},
+	googleMaps: {
+		location: '[data-setting="address"]',
+	},
 };
 
 export default EditorSelectors;

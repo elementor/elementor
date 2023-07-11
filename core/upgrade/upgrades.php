@@ -4,14 +4,12 @@ namespace Elementor\Core\Upgrade;
 use Elementor\Api;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Schemes\Base;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -729,162 +727,6 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater );
 	}
 
-	/**
-	 * Move default colors settings to active kit and all it's revisions.
-	 *
-	 * @param Updater $updater
-	 *
-	 * @return bool
-	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
-		$callback = function( $kit_id ) {
-			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
-				self::notice( 'System colors are disabled. nothing to do.' );
-				return;
-			}
-
-			$kit = Plugin::$instance->documents->get( $kit_id );
-
-			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = SettingsPageManager::META_KEY;
-			$kit_raw_settings = $kit->get_meta( $meta_key );
-			if ( isset( $kit_raw_settings['system_colors'] ) ) {
-				self::notice( 'System colors already exist. nothing to do.' );
-				return;
-			}
-
-			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color' );
-
-			$default_colors = $scheme_obj->get_scheme();
-
-			$new_ids = [
-				'primary',
-				'secondary',
-				'text',
-				'accent',
-			];
-
-			foreach ( $default_colors as $index => $color ) {
-				$kit->add_repeater_row( 'system_colors', [
-					'_id' => $new_ids[ $index - 1 ], // $default_colors starts from 1.
-					'title' => $color['title'],
-					'color' => strtoupper( $color['value'] ),
-				] );
-			}
-		};
-
-		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
-	}
-
-	/**
-	 * Move saved colors settings to active kit and all it's revisions.
-	 *
-	 * @param Updater $updater
-	 *
-	 * @return bool
-	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
-		$callback = function( $kit_id ) {
-			$kit = Plugin::$instance->documents->get( $kit_id );
-
-			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = SettingsPageManager::META_KEY;
-			$kit_raw_settings = $kit->get_meta( $meta_key );
-			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
-				self::notice( 'Custom colors already exist. nothing to do.' );
-				return;
-			}
-
-			$system_colors_rows = $kit->get_settings( 'system_colors' );
-
-			if ( ! $system_colors_rows ) {
-				$system_colors_rows = [];
-			}
-
-			$system_colors = [];
-
-			foreach ( $system_colors_rows as $color_row ) {
-				$system_colors[] = strtoupper( $color_row['color'] );
-			}
-
-			$saved_scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'color-picker' );
-
-			$current_saved_colors_rows = $saved_scheme_obj->get_scheme();
-
-			$current_saved_colors = [];
-
-			foreach ( $current_saved_colors_rows as $color_row ) {
-				$current_saved_colors[] = strtoupper( $color_row['value'] );
-			}
-
-			$colors_to_save = array_diff( $current_saved_colors, $system_colors );
-
-			if ( empty( $colors_to_save ) ) {
-				self::notice( 'Saved colors not found. nothing to do.' );
-				return;
-			}
-
-			foreach ( $colors_to_save as $index => $color ) {
-				$kit->add_repeater_row( 'custom_colors', [
-					'_id' => Utils::generate_random_string(),
-					'title' => esc_html__( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
-					'color' => $color,
-				] );
-			}
-		};
-
-		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
-	}
-
-	/**
-	 * Move default typography settings to active kit and all it's revisions.
-	 *
-	 * @param Updater $updater
-	 *
-	 * @return bool
-	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
-		$callback = function( $kit_id ) {
-			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
-				self::notice( 'System typography is disabled. nothing to do.' );
-				return;
-			}
-
-			$kit = Plugin::$instance->documents->get( $kit_id );
-
-			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = SettingsPageManager::META_KEY;
-			$kit_raw_settings = $kit->get_meta( $meta_key );
-			if ( isset( $kit_raw_settings['system_typography'] ) ) {
-				self::notice( 'System typography already exist. nothing to do.' );
-				return;
-			}
-
-			$scheme_obj = Plugin::$instance->schemes_manager->get_scheme( 'typography' );
-
-			$default_typography = $scheme_obj->get_scheme();
-
-			$new_ids = [
-				'primary',
-				'secondary',
-				'text',
-				'accent',
-			];
-
-			foreach ( $default_typography as $index => $typography ) {
-				$kit->add_repeater_row( 'system_typography', [
-					'_id' => $new_ids[ $index - 1 ], // $default_typography starts from 1.
-					'title' => $typography['title'],
-					'typography_typography' => 'custom',
-					'typography_font_family' => $typography['value']['font_family'],
-					'typography_font_weight' => $typography['value']['font_weight'],
-				] );
-			}
-		};
-
-		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
-	}
-
 	public static function v_3_1_0_move_optimized_dom_output_to_experiments() {
 		$saved_option = get_option( 'elementor_optimized_dom_output' );
 
@@ -948,9 +790,7 @@ class Upgrades {
 	public static function _v_3_5_0_remove_old_elementor_scheme() {
 		global $wpdb;
 
-		$key = Base::SCHEME_OPTION_PREFIX;
-
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'elementor_scheme_%';" );
 	}
 
 	public static function _v_3_8_0_fix_php8_image_custom_size() {

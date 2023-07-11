@@ -31,6 +31,10 @@
 				margin-bottom: var(--n-accordion-item-title-space-between);
 			}
 
+			:where( & > .e-con ) {
+				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
+			}
+
 			&-title {
 				display: flex;
 				flex-direction: row;
@@ -45,6 +49,7 @@
 				gap: var(--n-accordion-icon-gap);
 				color: var(--n-accordion-title-normal-color);
 				align-items: center;
+				cursor: pointer;
 
 				&-header {
 					display: flex;

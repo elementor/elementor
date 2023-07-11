@@ -6,7 +6,7 @@ const _path = require( 'path' );
 import EditorSelectors from '../selectors/editor-selectors';
 import VideoWidget from '../pages/widgets/video';
 
-test.describe( 'Video tests inside a container', () => {
+test.describe( 'Video tests inside a container @video', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
@@ -83,10 +83,10 @@ test.describe( 'Video tests inside a container', () => {
 			await videoWidget.toggleControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
 			let src = await videoWidget.getVideoSrc( false );
-			videoWidget.verifyVideoParams( src, player.expected, video );
+			videoWidget.verifySrcParams( src, player.expected, video );
 			await editor.publishAndViewPage();
 			src = await videoWidget.getVideoSrc( true );
-			videoWidget.verifyVideoParams( src, player.expected, video );
+			videoWidget.verifySrcParams( src, player.expected, video );
 		} );
 	}
 

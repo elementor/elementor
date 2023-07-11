@@ -37,6 +37,8 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_image_to_image_mask', [ $this, 'ajax_ai_get_image_to_image_mask' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_outpainting', [ $this, 'ajax_ai_get_image_to_image_outpainting' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_upscale', [ $this, 'ajax_ai_get_image_to_image_upscale' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_remove_background', [ $this, 'ajax_ai_get_image_to_image_remove_background' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_replace_background', [ $this, 'ajax_ai_get_image_to_image_replace_background' ] );
 			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
 		} );
 
@@ -60,6 +62,7 @@ class Module extends BaseModule {
 				'ElementorAiConfig',
 				[
 					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+					'connect_url' => $this->get_ai_connect_url(),
 				]
 			);
 		} );
@@ -74,18 +77,24 @@ class Module extends BaseModule {
 		} );
 	}
 
+	private function get_ai_connect_url() {
+		$app = $this->get_ai_app();
+
+		return $app->get_admin_url( 'authorize', [
+			'utm_source' => 'ai-popup',
+			'utm_campaign' => 'connect-account',
+			'utm_medium' => 'wp-dash',
+			'source' => 'generic',
+		] );
+	}
+
 	public function ajax_ai_get_user_information( $data ) {
 		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
 			return [
 				'is_connected' => false,
-				'connect_url' => $app->get_admin_url( 'authorize', [
-					'utm_source' => 'ai-popup',
-					'utm_campaign' => 'connect-account',
-					'utm_medium' => 'wp-dash',
-					'source' => 'generic',
-				] ),
+				'connect_url' => $this->get_ai_connect_url(),
 			];
 		}
 
@@ -152,7 +161,9 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_completion_text( $data['prompt'] );
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_completion_text( $data['prompt'], $context );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -166,6 +177,14 @@ class Module extends BaseModule {
 
 	private function get_ai_app() : Ai {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'ai' );
+	}
+
+	private function get_request_context( $data ) {
+		if ( empty( $data['context'] ) ) {
+			return [];
+		}
+
+		return $data['context'];
 	}
 
 	public function ajax_ai_get_edit_text( $data ) {
@@ -185,7 +204,9 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_edit_text( $data['input'], $data['instruction'] );
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_edit_text( $data['input'], $data['instruction'], $context );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -212,7 +233,9 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_custom_code( $data['prompt'], $data['language'] );
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_custom_code( $data['prompt'], $data['language'], $context );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -245,7 +268,9 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_custom_css( $data['prompt'], $data['html_markup'], $data['element_id'] );
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_custom_css( $data['prompt'], $data['html_markup'], $data['element_id'], $context );
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
 		}
@@ -286,17 +311,19 @@ class Module extends BaseModule {
 	public function ajax_ai_get_text_to_image( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
 
-		$app = $this->get_ai_app();
-
 		if ( empty( $data['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
+
+		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_text_to_image( $data['prompt'], $data['promptSettings'] );
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_text_to_image( $data['prompt'], $data['promptSettings'], $context );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -330,11 +357,13 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
+		$context = $this->get_request_context( $data );
+
 		$result = $app->get_image_to_image( [
 			'prompt' => $data['prompt'],
 			'promptSettings' => $data['promptSettings'],
 			'attachment_id' => $data['image']['id'],
-		] );
+		], $context );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -364,10 +393,77 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
+		$context = $this->get_request_context( $data );
+
 		$result = $app->get_image_to_image_upscale( [
 			'promptSettings' => $data['promptSettings'],
 			'attachment_id' => $data['image']['id'],
-		] );
+		], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_image_to_image_replace_background( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Prompt Missing' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_image_to_image_replace_background( [
+			'attachment_id' => $data['image']['id'],
+			'prompt' => $data['prompt'],
+		], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_image_to_image_remove_background( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_image_to_image_remove_background( [
+			'attachment_id' => $data['image']['id'],
+		], $context );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -405,12 +501,14 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing Mask' );
 		}
 
+		$context = $this->get_request_context( $data );
+
 		$result = $app->get_image_to_image_mask( [
 			'prompt' => $data['prompt'],
 			'promptSettings' => $data['promptSettings'],
 			'attachment_id' => $data['image']['id'],
 			'mask' => $data['mask'],
-		] );
+		], $context );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -439,10 +537,12 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing Expended Image' );
 		}
 
+		$context = $this->get_request_context( $data );
+
 		$result = $app->get_image_to_image_out_painting( [
 			'prompt' => $data['prompt'],
 			'mask' => $data['mask'],
-		] );
+		], $context );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -459,6 +559,7 @@ class Module extends BaseModule {
 		if ( empty( $data['image'] ) ) {
 			throw new \Exception( 'Missing image data' );
 		}
+
 		$image = $data['image'];
 
 		if ( empty( $image['image_url'] ) ) {
@@ -471,11 +572,10 @@ class Module extends BaseModule {
 			throw new \Exception( $image_data->get_error_message() );
 		}
 
-		/*if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			// todo: uncomment once endpoint is ready send checkpoint
-			// $app = $this->get_ai_app();
-			// $app->set_used_gallery_image( $image['id'] );
-		}*/
+		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
+			 $app = $this->get_ai_app();
+			 $app->set_used_gallery_image( $image['id'] );
+		}
 
 		return [
 			'image' => array_merge( $image_data, $data ),

@@ -6,7 +6,7 @@ const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
-const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor } = require( './helper' );
+const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } = require( './helper' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -1090,7 +1090,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Check that background video is loaded in nested elements item container', async ( { page }, testInfo ) => {
+	test( 'Check that background video is loaded in multiple content containers', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -1101,18 +1101,38 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
 			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
+			contentContainerTwo = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=1` ),
+			contentContainerTwoId = await contentContainerTwo.getAttribute( 'data-id' ),
+			contentContainerThree = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=2` ),
+			contentContainerThreeId = await contentContainerThree.getAttribute( 'data-id' ),
 			videoUrl = 'https://youtu.be/XNoaN8qu4fg',
 			videoContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId + ' .elementor-background-video-container iframe' ),
 			firstTabContainer = await editor.getPreviewFrame().locator( '.elementor-element-' + contentContainerOneId ),
 			firstTabContainerModelCId = await firstTabContainer.getAttribute( 'data-model-cid' );
 
-		await editor.selectElement( contentContainerOneId );
-		await editor.activatePanelTab( 'style' );
-		await page.locator( '.eicon-video-camera' ).first().click();
-		await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+		await setBackgroundVideoUrl( page, editor, contentContainerOneId, videoUrl );
+		await setBackgroundVideoUrl( page, editor, contentContainerTwoId, videoUrl );
+		await setBackgroundVideoUrl( page, editor, contentContainerThreeId, videoUrl );
 
 		await expect( contentContainerOne ).toHaveAttribute( 'data-model-cid', firstTabContainerModelCId );
 		await expect( videoContainer ).toHaveCount( 1 );
+
+		await page.waitForTimeout( 3000 );
+		await expect( contentContainerThree.locator( '.elementor-background-video-container iframe' ) ).not.toHaveCSS( 'width', '0px' );
+		await expect( contentContainerThree.locator( '.elementor-background-video-container' ) ).toBeVisible();
+		await expect( contentContainerTwo.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
+
+		await clickTab( editor.getPreviewFrame(), '1' );
+		await page.waitForTimeout( 3000 );
+		await expect( contentContainerTwo.locator( '.elementor-background-video-container iframe' ) ).not.toHaveCSS( 'width', '0px' );
+		await expect( contentContainerTwo.locator( '.elementor-background-video-container' ) ).toBeVisible();
+		await expect( contentContainerOne.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
+
+		await clickTab( editor.getPreviewFrame(), '0' );
+		await page.waitForTimeout( 3000 );
+		await expect( contentContainerOne.locator( '.elementor-background-video-container iframe' ) ).not.toHaveCSS( 'width', '0px' );
+		await expect( contentContainerOne.locator( '.elementor-background-video-container' ) ).toBeVisible();
+		await expect( contentContainerThree.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
 	} );
 
 	test( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
@@ -1151,6 +1171,50 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
 			await expect( firstTab ).toBeVisible();
 		} );
+	} );
+
+	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
+		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'nowrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'auto' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '1' );
+	} );
+
+	test( 'Nested tabs stretch for top direction', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.useElementorCleanPost(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+		// Act
+		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
+		await page.locator( '.elementor-control-tabs_justify_horizontal i.eicon-align-stretch-h' ).click();
+
+		const tabsHeading = frame.locator( '.e-n-tabs-heading' );
+		const tabTitle = frame.locator( '.e-n-tab-title' ).first();
+
+		// Assert
+		await expect( await tabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
+		await expect( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 } );
 

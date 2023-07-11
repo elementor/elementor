@@ -26,10 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Nested_Accordion extends Widget_Nested_Base {
 
-	const NESTED_ACCORDION = 'nested-accordion';
-
 	public function get_name() {
-		return static::NESTED_ACCORDION;
+		return 'nested-accordion';
 	}
 
 	public function get_title() {
@@ -45,7 +43,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( static::NESTED_ACCORDION );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	protected function item_content_container( int $index ) {
@@ -84,7 +82,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	protected function register_controls() {
 		$this->start_controls_section( 'section_items', [
-			'label' => esc_html__( 'Accordion', 'elementor' ),
+			'label' => esc_html__( 'Layout', 'elementor' ),
 		] );
 
 		$repeater = new Repeater();
@@ -282,7 +280,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->start_controls_section(
 			'section_interactions',
 			[
-				'label' => esc_html__( 'Interactions section', 'elementor' ),
+				'label' => esc_html__( 'Interactions', 'elementor' ),
 			]
 		);
 
@@ -455,19 +453,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'selector' => $low_specificity_accordion_item_selector,
 				'fields_options' => [
 					'color' => [
-						'default' => '#D5D8DC',
+						'label' => esc_html__( 'Border Color', 'elementor' ),
 					],
 					'width' => [
-						'default' => [
-							'top' => 1,
-							'right' => 1,
-							'bottom' => 1,
-							'left' => 1,
-							'unit' => 'px',
-						],
-					],
-					'border' => [
-						'default' => 'solid',
+						'label' => esc_html__( 'Border Width', 'elementor' ),
 					],
 				],
 			]
@@ -711,8 +700,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-opened' ><?php echo wp_kses_post( $icon_active_html ); ?></span>
-			<span class='e-closed'><?php echo wp_kses_post( $icon_html ); ?></span>
+			<span class='e-opened' ><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class='e-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 
 		<?php
@@ -732,7 +721,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
-			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int : $item['element_css_id'];
+			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
 
@@ -754,7 +743,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
 					<summary class='e-n-accordion-item-title'>
 						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
-						<?php echo wp_kses_post( $icons_content ); ?>
+						<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
+							echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						} ?>
 					</summary>
 					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</details>
