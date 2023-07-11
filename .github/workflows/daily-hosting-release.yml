@@ -1,17 +1,25 @@
 name: Daily Hosting Release
 
+
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
   # Setting an environment variable with the value of a configuration variable
   last_automated_release: ${{ vars.LAST_AUTOMATED_RELEASE }}
 
-on:
-  schedule:
-    - cron: '0 10 * * *'
-  workflow_dispatch:
-
 jobs:
+  display-variables:
+    name: Display Variables
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Display Variables
+        run: |
+          echo "vars.LAST_AUTOMATED_RELEASE ${{ vars.LAST_AUTOMATED_RELEASE }}"
   release:
     runs-on: ubuntu-22.04
     steps:
@@ -46,7 +54,8 @@ jobs:
         run: |
           echo "variable from shell environment : $last_automated_release"
           echo "variable from shell1 environment : ${{ env.last_automated_release }}"
-
+        env:
+          last_automated_release: ${{ vars.last_automated_release }}
       - name: Check if two weeks have passed since last release
         uses: ./.github/workflows/bi-weekly-release
         with:
