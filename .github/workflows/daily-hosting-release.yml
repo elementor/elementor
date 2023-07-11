@@ -40,11 +40,11 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-#      - name: Check if two weeks have passed since last release
-#        uses: ./.github/workflows/bi-weekly-release
-#        with:
-#          CHANNEL: ${{ env.CHANNEL }}
-#          LAST_RELEASE_DATE: ${{ env.LAST_RELEASE_DATE }}
+      - name: Check if two weeks have passed since last release
+        uses: ./.github/workflows/bi-weekly-release
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          LAST_AUTOMATED_RELEASE: ${{ env.LAST_AUTOMATED_RELEASE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -55,7 +55,7 @@ jobs:
         run: |
           npm ci
       - name: Install Octokit
-#        if: ${{ env.CHANNEL == 'cloud' &&  }}
+        if: ${{ env.CHANNEL }} == 'cloud' &&  ${{ github.EVENT_NAME }} == 'schedule'
         run: npm install octokit@2.0.19
       - name: Set Oktokit env variables
         run: |
