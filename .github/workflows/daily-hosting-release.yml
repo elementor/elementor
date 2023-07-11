@@ -55,7 +55,7 @@ jobs:
         run: |
           npm ci
       - name: Install Octokit
-        run: npm install octokit@2.0.19
+        run: npm install octokit/rest@v19.0.0
       - name: Set Oktokit env variables
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
