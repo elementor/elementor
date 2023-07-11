@@ -3,8 +3,6 @@ namespace Elementor\Core\Editor\Loader\V2;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
-use Elementor\Core\Utils\Assets_Config_Provider;
-use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,10 +30,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	];
 
 	/**
-	 * Packages that should only be register, unless some other asset depends on them.
+	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
-		// Libs
 		self::ENV_PACKAGE,
 		'icons',
 		'locations',
@@ -44,32 +41,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	];
 
 	/**
-	 * @var Assets_Config_Provider
-	 */
-	protected $assets_config_provider;
-
-	/**
-	 * @param Collection $config
-	 */
-	public function __construct( Collection $config ) {
-		parent::__construct( $config );
-
-		$this->assets_config_provider = new Assets_Config_Provider();
-	}
-
-	/**
 	 * @return void
 	 */
 	public function init() {
 		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::LIBS );
 
-		$assets_path = $this->config->get( 'assets_path' );
-
 		foreach ( $packages as $package ) {
-			$this->assets_config_provider->load(
-				$package,
-				"{$assets_path}js/packages/{$package}/{$package}.asset.php"
-			);
+			$this->assets_config_provider->load( $package );
 		}
 
 		do_action( 'elementor/editor/v2/init' );

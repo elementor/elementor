@@ -6,6 +6,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Assets_Config_Provider extends Collection {
+	/**
+	 * @var callable|null
+	 */
+	private $path_resolver = null;
+
+	/**
+	 * @param callable $path_resolver
+	 *
+	 * @return $this
+	 */
+	public function set_path_resolver( callable $path_resolver ) {
+		$this->path_resolver = $path_resolver;
+
+		return $this;
+	}
 
 	/**
 	 * Load asset config from a file into the collection.
@@ -15,8 +30,14 @@ class Assets_Config_Provider extends Collection {
 	 *
 	 * @return $this
 	 */
-	public function load( $key, $path ) {
-		if ( ! file_exists( $path ) ) {
+	public function load( $key, $path = null ) {
+		if ( ! $path && $this->path_resolver ) {
+			$path_resolver_callback = $this->path_resolver;
+
+			$path = $path_resolver_callback( $key );
+		}
+
+		if ( ! $path || ! file_exists( $path ) ) {
 			return $this;
 		}
 

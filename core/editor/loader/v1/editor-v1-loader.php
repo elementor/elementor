@@ -3,8 +3,6 @@ namespace Elementor\Core\Editor\Loader\V1;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
-use Elementor\Core\Utils\Assets_Config_Provider;
-use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -14,33 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_V1_Loader extends Editor_Base_Loader {
 	/**
-	 * @var Assets_Config_Provider
-	 */
-	protected $assets_config_provider;
-
-	/**
-	 * @param Collection $config
-	 */
-	public function __construct( Collection $config ) {
-		parent::__construct( $config );
-
-		$this->assets_config_provider = new Assets_Config_Provider();
-	}
-
-	/**
 	 * @return void
 	 */
 	public function init() {
 		// Loading UI and Icons v2 scrips for the use of new features that should live in V1.
 		$packages_to_register = [ 'ui', 'icons' ];
 
-		$assets_path = $this->config->get( 'assets_path' );
-
 		foreach ( $packages_to_register as $package ) {
-			$this->assets_config_provider->load(
-				$package,
-				"{$assets_path}js/packages/{$package}/{$package}.asset.php"
-			);
+			$this->assets_config_provider->load( $package );
 		}
 	}
 

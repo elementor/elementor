@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Editor\Loader;
 
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 
@@ -15,10 +16,17 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	protected $config;
 
 	/**
-	 * @param Collection $config
+	 * @var Assets_Config_Provider
 	 */
-	public function __construct( Collection $config ) {
+	protected $assets_config_provider;
+
+	/**
+	 * @param Collection $config
+	 * @param Assets_Config_Provider $assets_config_provider\
+	 */
+	public function __construct( Collection $config, Assets_Config_Provider $assets_config_provider ) {
 		$this->config = $config;
+		$this->assets_config_provider = $assets_config_provider;
 	}
 
 	/**
