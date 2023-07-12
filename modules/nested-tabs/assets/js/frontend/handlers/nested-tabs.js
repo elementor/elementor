@@ -92,9 +92,7 @@ export default class NestedTabs extends Base {
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
 
-		if ( 'enable' === this.getHorizontalScrollSetting() ) {
-			setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
-		}
+		setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
 	}
 
 	handleKeyboardNavigation( event ) {
@@ -200,9 +198,6 @@ export default class NestedTabs extends Base {
 		);
 
 		$requestedContent.removeAttr( 'hidden' ); // I am not sure what this is used for.
-
-		// this.setContentContainerPositionAndHeight( $requestedContent );
-		// setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
 	}
 
 	setContentContainerPositionAndHeight( $contentContainer = this.elements.$tabContents.first() ) {
@@ -378,9 +373,7 @@ export default class NestedTabs extends Base {
 	}
 
 	onElementChange( propertyName ) {
-		if ( 'enable' === this.getHorizontalScrollSetting() ) {
-			setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
-		}
+		setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
 
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			const settingsObject = {
@@ -404,8 +397,8 @@ export default class NestedTabs extends Base {
 			if ( !! currentWidth && currentWidth !== previousWidth ) {
 				previousWidth = currentWidth;
 
-				if ( 0 !== previousWidth && 'enable' === this.getHorizontalScrollSetting() ) {
-					setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
+				if ( 0 !== previousWidth ) {
+					setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
 				}
 			}
 		} );

@@ -1,6 +1,4 @@
 export function changeScrollStatus( element, event ) {
-	console.log( 'change' + element );
-
 	if ( 'mousedown' === event.type ) {
 		element.classList.add( 'e-scroll' );
 		element.dataset.pageX = event.pageX;
@@ -10,7 +8,7 @@ export function changeScrollStatus( element, event ) {
 	}
 }
 
-export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
+export function setTabsPositionAbsolute( $wrapper, $tabTitles, horizontalScrollSetting ) {
 	const wrapper = $wrapper[ 0 ];
 
 	$tabTitles.each( ( index, tabTitle ) => {
@@ -26,7 +24,7 @@ export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
 
 	const headingContentIsWiderThanWrapper = $wrapper[ 0 ].scrollWidth > $wrapper[ 0 ].clientWidth;
 
-	if ( ! headingContentIsWiderThanWrapper ) {
+	if ( ! headingContentIsWiderThanWrapper || 'enable' !== horizontalScrollSetting ) {
 		wrapper.style.removeProperty( '--n-tabs-title-position' );
 		wrapper.classList.remove( 'set-tab-scrolling' );
 		return;
@@ -35,6 +33,7 @@ export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
 	const referenceInlineStart = $tabTitles[ 0 ].offsetLeft,
 		referenceBlockStart = $tabTitles[ 0 ].offsetTop,
 		referenceHeight = $tabTitles[ 0 ].getBoundingClientRect().height;
+
 	wrapper.style.setProperty( '--n-tabs-title-position-inline-start-reference', referenceInlineStart );
 
 	$tabTitles.each( ( index, tabTitle ) => {
@@ -50,11 +49,6 @@ export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
 		widgetStyle = window.getComputedStyle( widget ),
 		gapValue = parseFloat( widgetStyle.getPropertyValue( '--n-tabs-title-gap' ).replace( 'px', '' ) );
 
-	console.log( widget );
-	console.log( gapValue );
-	console.log( referenceBlockStart );
-	console.log( referenceHeight );
-
 	wrapper.style.setProperty( '--n-tabs-content-margin-gap', ( referenceBlockStart + referenceHeight + gapValue ) + 'px' );
 	wrapper.style.setProperty( '--n-tabs-title-position', 'absolute' );
 	wrapper.classList.remove( 'set-tab-scrolling' );
@@ -62,8 +56,6 @@ export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
 
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
 export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
-	console.log( 'hor ' + element );
-
 	const isActiveScroll = element.classList.contains( 'e-scroll' ),
 		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
 		headingContentIsWiderThanWrapper = 'absolute' === element.style?.getPropertyValue( '--n-tabs-title-position' );
@@ -90,8 +82,6 @@ export function setHorizontalTitleScrollValues( element, horizontalScrollStatus,
 	}
 
 	const newInlineReferenceValue = parseFloat( element.style.getPropertyValue( '--n-tabs-title-position-inline-start-reference' ) ) + toScrollDistanceX;
-	console.log( 'new' + newInlineReferenceValue );
-	console.log( 'existing ' + element.style.getPropertyValue( '--n-tabs-title-position-inline-start-reference' ) );
 
 	element.style.setProperty( '--n-tabs-title-position-inline-start-reference', newInlineReferenceValue );
 	element.classList.add( 'e-scroll-active' );
