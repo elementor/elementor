@@ -21,9 +21,10 @@ jobs:
         run: |
           echo "last_automated_release $last_automated_release"
           echo "vars.TEST_123 $TEST_123"
+          echo "vars.SCHEDULE_RELEASES $SCHEDULE_RELEASES"
         env:
-          LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
           TEST_123: ${{ vars.TEST_123 }}
+          SCHEDULE_RELEASES: ${{ vars.SCHEDULE_RELEASES }}
   release:
     runs-on: ubuntu-22.04
     steps:
