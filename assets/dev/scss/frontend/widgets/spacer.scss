@@ -13,7 +13,6 @@
 .e-con-inner {
 
 	& > .elementor-widget-spacer {
-		display: flex;
 		width: var( --container-widget-width, var( --spacer-size ) );
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
