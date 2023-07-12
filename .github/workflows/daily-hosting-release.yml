@@ -13,7 +13,7 @@ env:
 jobs:
   release:
     runs-on: ubuntu-22.04
-    environment: ${{ env.SCHEDULE_RELEASES }}
+    environment: SCHEDULE_RELEASES
     steps:
       - name: checkout branch
         uses: actions/checkout@v3
