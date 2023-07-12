@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Tools extends Settings_Page {
 
+	const CAPABILITY = 'manage_options';
+
 	/**
 	 * Settings page ID for Elementor tools.
 	 */
@@ -49,6 +51,10 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
@@ -66,6 +72,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -97,6 +107,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$from = Utils::get_super_global_value( $_POST, 'from' ) ?? '';
 		$to = Utils::get_super_global_value( $_POST, 'to' ) ?? '';
