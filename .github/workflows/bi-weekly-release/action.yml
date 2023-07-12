@@ -17,12 +17,12 @@ runs:
         current_date=$(date +%s)
         echo "Current date is $current_date"
         echo "Last automated release date is $last_automated_release_date"
-#        release_date=$(git log -1 --format=%ct $last_release)
-        time_diff=$(( (current_date - last_automated_release_date) / (60*60*24) ))
-        echo "Time difference is $time_diff days"
-        if [ "$time_diff” -ge 14 ]; then
-          echo "14 days have passed since the release.”
-          # Perform additional actions here
-        else
-          echo "Less than 14 days have passed since the release.”
-        fi
+##        release_date=$(git log -1 --format=%ct $last_release)
+#        time_diff=$(( (current_date - last_automated_release_date) / (60*60*24) ))
+#        echo "Time difference is $time_diff days"
+#        if [ "$time_diff” -ge 14 ]; then
+#          echo "14 days have passed since the release.”
+#          # Perform additional actions here
+#        else
+#          echo "Less than 14 days have passed since the release.”
+#        fi
