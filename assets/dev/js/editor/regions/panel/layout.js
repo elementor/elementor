@@ -61,24 +61,7 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
 				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
 			},
-			colorScheme: {
-				view: require( 'elementor-panel/pages/schemes/colors' ),
-			},
-			typographyScheme: {
-				view: require( 'elementor-panel/pages/schemes/typography' ),
-			},
 		};
-
-		var schemesTypes = Object.keys( elementor.schemes.getSchemes() ),
-			disabledSchemes = _.difference( schemesTypes, elementor.schemes.getEnabledSchemesTypes() );
-
-		_.each( disabledSchemes, function( schemeType ) {
-			var scheme = elementor.schemes.getScheme( schemeType );
-
-			pages[ schemeType + 'Scheme' ].view = require( 'elementor-panel/pages/schemes/disabled' ).extend( {
-				disabledTitle: scheme.disabled_title,
-			} );
-		} );
 
 		return pages;
 	},
