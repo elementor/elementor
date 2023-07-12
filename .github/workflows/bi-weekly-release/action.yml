@@ -18,12 +18,14 @@ runs:
         echo "Current date is $current_date"
         echo "Last automated release date is $last_automated_release_date"
         # Calculate the time difference
-
         time_diff=$(( ($current_date - $last_automated_release_date) / (60*60*24) ))
         echo "Time difference is $time_diff days"
-#        if [ "$time_diff” -ge 14 ]; then
-#          echo "14 days have passed since the release.”
-#          # Perform additional actions here
-#        else
-#          echo "Less than 14 days have passed since the release.”
-#        fi
+        # check if the time difference is more than 14 days
+        if [ $time_diff -gt 14 ]; then
+          echo "Time difference is more than 14 days"
+          echo "Set the last automated release date as an environment variable"
+          echo "LAST_AUTOMATED_RELEASE_DATE=$current_date" >> $GITHUB_ENV
+        else
+          echo "Time difference is less than 14 days"
+          echo "Do not set the last automated release date as an environment variable"
+        fi
