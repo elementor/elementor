@@ -105,15 +105,14 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 	} );
 	test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
 		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo ),
-			nestedAccordionWidgetId = '48f02ad';
+			wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
 		let frame = editor.getPreviewFrame();
 
-		await page.waitForTimeout( 3000 );
-		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
+		const container = await editor.addElement( { elType: 'container' }, 'document' ),
+			nestedAccordionWidgetId = await editor.addWidget( 'nested-accordion', container );
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Check that an SVG title icon is displayed', async () => {
