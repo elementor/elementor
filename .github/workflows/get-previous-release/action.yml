@@ -1,0 +1,42 @@
+name: Get Previous Release
+description: Get the previous release name from the current tag and set it as an environment variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (ga, cloud, beta)."
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
+        # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
+        if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
+           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
+        fi
+
+        # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
+        # and store them in the 'tags' variable. e.g. "refs/tags/v3.11.1 , refs/tags/v3.11.2"
+        if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+           tags=$(git ls-remote --tags | grep "refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$")
+        fi
+
+        # Get the last release of a specific channel (ga, cloud, beta) by datetime descending order
+        # This parameter PREVIOUS_TAG_SHA will be used in the next action ./.github/workflows/generate-changelog
+        # as BASE_TAG_NAME while the HEAD_BRANCH_NAME is the current ${{ github.ref }}
+        git fetch --tags
+        latest_date=""
+        latest_tag=""
+        for tag in $tags; do
+          date=$(git log -1 --pretty=format:"%ai" $tag)
+          if [ -z "$latest_date" ] || [ "$date" \> "$latest_date" ]; then
+            latest_date="$date"
+            latest_tag="$tag"
+          fi
+        done
+
+        PREVIOUS_TAG_SHA=$(git rev-parse $latest_tag)
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA} \n tag=${latest_tag}"
+        echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA}" >> $GITHUB_ENV
