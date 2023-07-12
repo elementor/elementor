@@ -3,7 +3,7 @@ import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
-	setAbsolutePositionToTabs,
+	setTabsPositionAbsolute,
 } from 'elementor/assets/dev/js/frontend/utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
@@ -93,7 +93,7 @@ export default class NestedTabs extends Base {
 		this.setSettings( originalToggleMethods );
 
 		if ( 'enable' === this.getHorizontalScrollSetting() ) {
-			setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+			setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
 		}
 	}
 
@@ -202,7 +202,7 @@ export default class NestedTabs extends Base {
 		$requestedContent.removeAttr( 'hidden' ); // I am not sure what this is used for.
 
 		// this.setContentContainerPositionAndHeight( $requestedContent );
-		// setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+		// setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
 	}
 
 	setContentContainerPositionAndHeight( $contentContainer = this.elements.$tabContents.first() ) {
@@ -379,7 +379,7 @@ export default class NestedTabs extends Base {
 
 	onElementChange( propertyName ) {
 		if ( 'enable' === this.getHorizontalScrollSetting() ) {
-			setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+			setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
 		}
 
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
@@ -405,7 +405,7 @@ export default class NestedTabs extends Base {
 				previousWidth = currentWidth;
 
 				if ( 0 !== previousWidth && 'enable' === this.getHorizontalScrollSetting() ) {
-					setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+					setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles );
 				}
 			}
 		} );

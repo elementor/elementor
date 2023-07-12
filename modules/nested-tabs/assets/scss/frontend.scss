@@ -19,6 +19,7 @@
 	--n-tabs-content-border-radius: initial;
 	--n-tabs-content-margin-gap: calc( var( --n-tabs-gap ) - var( --n-tabs-title-gap ) );
 	--n-tabs-content-margin-block: var( --n-tabs-content-margin-gap ) 0px;
+	--n-tabs-content-offset-block-start: 0px;
 	--n-tabs-title-order: -1;
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
@@ -338,7 +339,8 @@
 		margin: 0;
 
 		+ .e-con {
-			margin-block: var( --n-tabs-content-margin-block );
+			//margin-block: var( --n-tabs-content-margin-block );
+			//margin-top: var( --n-tabs-content-offset-block-start );
 		}
 	}
 }

@@ -10,8 +10,8 @@ export function changeScrollStatus( element, event ) {
 	}
 }
 
-export function setAbsolutePositionToTabs( $wrapper, $tabTitles ) {
-	const widget = $wrapper[ 0 ];
+export function setTabsPositionAbsolute( $wrapper, $tabTitles ) {
+	const wrapper = $wrapper[ 0 ];
 
 	$tabTitles.each( ( index, tabTitle ) => {
 		tabTitle.style.removeProperty( '--n-tabs-title-position-block-start' );
@@ -20,19 +20,22 @@ export function setAbsolutePositionToTabs( $wrapper, $tabTitles ) {
 		tabTitle.style.removeProperty( '--n-tabs-title-height' );
 	} );
 
-	widget.style.removeProperty( '--n-tabs-title-position-inline-start-reference' );
-	widget.classList.add( 'set-tab-scrolling' );
+	wrapper.style.removeProperty( '--n-tabs-title-position-inline-start-reference' );
+	wrapper.style.removeProperty( '--n-tabs-content-offset-block-start' );
+	wrapper.classList.add( 'set-tab-scrolling' );
 
 	const headingContentIsWiderThanWrapper = $wrapper[ 0 ].scrollWidth > $wrapper[ 0 ].clientWidth;
 
 	if ( ! headingContentIsWiderThanWrapper ) {
-		widget.style.removeProperty( '--n-tabs-title-position' );
-		widget.classList.remove( 'set-tab-scrolling' );
+		wrapper.style.removeProperty( '--n-tabs-title-position' );
+		wrapper.classList.remove( 'set-tab-scrolling' );
 		return;
 	}
 
-	const referenceInlineStart = $tabTitles[ 0 ].offsetLeft;
-	widget.style.setProperty( '--n-tabs-title-position-inline-start-reference', referenceInlineStart );
+	const referenceInlineStart = $tabTitles[ 0 ].offsetLeft,
+		referenceBlockStart = $tabTitles[ 0 ].offsetTop,
+		referenceHeight = $tabTitles[ 0 ].getBoundingClientRect().height;
+	wrapper.style.setProperty( '--n-tabs-title-position-inline-start-reference', referenceInlineStart );
 
 	$tabTitles.each( ( index, tabTitle ) => {
 		const tabTitleBox = tabTitle.getBoundingClientRect();
@@ -43,8 +46,18 @@ export function setAbsolutePositionToTabs( $wrapper, $tabTitles ) {
 		tabTitle.style.setProperty( '--n-tabs-title-height', tabTitleBox.height + 'px' );
 	} );
 
-	widget.style.setProperty( '--n-tabs-title-position', 'absolute' );
-	widget.classList.remove( 'set-tab-scrolling' );
+	const widget = $wrapper.closest( '.elementor-widget-n-tabs' )[ 0 ],
+		widgetStyle = window.getComputedStyle( widget ),
+		gapValue = parseFloat( widgetStyle.getPropertyValue( '--n-tabs-title-gap' ).replace( 'px', '' ) );
+
+	console.log( widget );
+	console.log( gapValue );
+	console.log( referenceBlockStart );
+	console.log( referenceHeight );
+
+	wrapper.style.setProperty( '--n-tabs-content-margin-gap', ( referenceBlockStart + referenceHeight + gapValue ) + 'px' );
+	wrapper.style.setProperty( '--n-tabs-title-position', 'absolute' );
+	wrapper.classList.remove( 'set-tab-scrolling' );
 }
 
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
