@@ -1190,4 +1190,24 @@ class Controls_Manager {
 
 		$controls_stack->end_controls_section();
 	}
+
+	/**
+	 * Clear stacks
+	 *
+	 * If a page contains templates, such as loop items, shortcodes, kits, or template widgets,
+	 * the templates responsive setting will not be updated unless the 'Regenerate CSS' option is used.
+	 * Reproduce only when additional breakpoints are active.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @access private
+	 */
+	public function clear_stacks( $handle_id ) {
+		if ( $handle_id ) {
+			$stack_cache_has_been_cleared = $this->has_stacks_cache_been_cleared( $handle_id );
+			if ( ! $stack_cache_has_been_cleared ) {
+				$this->clear_stack_cache( $handle_id );
+			}
+		}
+	}
 }

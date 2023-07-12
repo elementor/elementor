@@ -534,4 +534,36 @@ class Manager extends Module {
 
 		return apply_filters( $replacement_hook, $templates );
 	}
+
+	/**
+	 * Get file handle ID.
+	 *
+	 * Retrieve the handle ID for the post CSS file.
+	 *
+	 * @since 3.15.0
+	 * @access protected
+	 *
+	 * @return string CSS file handle ID.
+	 */
+	protected function get_file_handle_id() {
+		$current_document = Plugin::$instance->documents->get_current();
+		if ( $current_document ) {
+			$post_id = $current_document->get_main_id();
+			return 'elementor-post-' . $post_id;
+		}
+
+		return false;
+	}
+
+	public function __construct() {
+		add_action( 'elementor/css_file/parse_content', function() {
+			$handle_id = $this->get_file_handle_id();
+			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+			$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
+
+			if ( ! $is_edit_mode && $handle_id && $additional_breakpoints_active ) {
+				Plugin::$instance->controls_manager->clear_stacks( $handle_id );
+			}
+		});
+	}
 }
