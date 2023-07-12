@@ -116,7 +116,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Check that an SVG title icon is displayed', async () => {
-			await editor.selectElement( nestedAccordionWidgetId );
+			await frame.locator( '.elementor-element-' + nestedAccordionWidgetId ).click();
 			await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
 			const editorTitleIcons = frame.locator( '.e-n-accordion-item-title-icon' );
 
