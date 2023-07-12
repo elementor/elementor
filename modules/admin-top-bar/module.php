@@ -48,7 +48,7 @@ class Module extends BaseApp {
 			'tipsy',
 		], ELEMENTOR_VERSION, true );
 
-		wp_set_script_translations('elementor-admin-top-bar', 'elementor');
+		wp_set_script_translations( 'elementor-admin-top-bar', 'elementor' );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
