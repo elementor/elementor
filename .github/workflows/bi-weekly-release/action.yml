@@ -7,9 +7,6 @@ inputs:
   LAST_AUTOMATED_RELEASE:
     required: false
     description: "The date of the last release."
-  RELEASE_TYPE:
-    required: false
-    description: "The type of the release."
 
 runs:
   using: "composite"

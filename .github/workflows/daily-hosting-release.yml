@@ -48,7 +48,6 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
-          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
