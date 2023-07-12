@@ -8,6 +8,7 @@ env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
   SCHEDULE_RELEASES: 'SCHEDULE_RELEASES'
+  RELEASE_TYPE: 'Manual'
 
 jobs:
   release:
@@ -47,6 +48,7 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
+          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -81,10 +83,10 @@ jobs:
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Install Octokit
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
+        if: ${{ env.AUTOMATED_RELEASE }} == true
         run: npm install octokit@2.0.19
       - name: Set Oktokit env variables
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
+        if: ${{ env.AUTOMATED_RELEASE }} == true
         run: |
           REPOSITORY_ID=${{ github.repository_id }}
           EVENT_NAME=${{ github.event_name }}
@@ -93,7 +95,7 @@ jobs:
           echo "EVENT_NAME=$EVENT_NAME" >> $GITHUB_ENV
           echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
       - name: Set release date env variable
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
+        if: ${{ env.AUTOMATED_RELEASE }} == true
         uses: ./.github/workflows/set-last-automated-release-date
         with:
           REPOSITORY_ID: ${{ env.REPOSITORY_ID }}
@@ -102,7 +104,8 @@ jobs:
           NAME: 'LAST_AUTOMATED_RELEASE'
           MAINTAIN_TOKEN: ${{ secrets.LOCAL_MANTAIN_TOKEN }} #Replace with ${{ secrets.MAINTAIN_TOKEN }}
           VALUE: ${{ env.CURRENT_DATE }}
-      - name: Post To Slack Created Cloud daily Release
+      - name: Post To Slack Created Cloud daily automated Release
+        if: ${{ env.AUTOMATED_RELEASE }} == true
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -114,7 +117,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could daily release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published Could daily `${{ env.RELEASE_TYPE }}`release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {
@@ -124,7 +127,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                    "text": "GitHub Release *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                   },
                   "accessory": {
                     "type": "button",
