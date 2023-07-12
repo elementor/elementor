@@ -586,6 +586,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--n-accordion-icon-gap: {{SIZE}}{{UNIT}}',
 				],
+				'condition' => [
+					'accordion_item_title_position_horizontal!' => 'stretch',
+				],
 			]
 		);
 
