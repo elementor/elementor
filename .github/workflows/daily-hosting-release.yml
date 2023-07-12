@@ -7,7 +7,6 @@ on:
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
-  # Setting an environment variable with the value of a configuration variable
   last_automated_release: ${{ vars.LAST_AUTOMATED_RELEASE }}
 
 jobs:
@@ -43,6 +42,7 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
       - name: Check if two weeks have passed since last release
+        if: ${{ env.CHANNEL }} == 'cloud' && ${{ vars.LAST_AUTOMATED_RELEASE }} != '' && ${{ env.LAST_AUTOMATED_RELEASE }} != 'null'
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
