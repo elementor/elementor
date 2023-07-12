@@ -16,6 +16,7 @@ jobs:
   display-variables:
     name: Display Variables
     runs-on: ubuntu-22.04
+
     steps:
       - name: Display Variables
         run: |
@@ -27,6 +28,7 @@ jobs:
           SCHEDULE_RELEASES: ${{ vars.SCHEDULE_RELEASES }}
   release:
     runs-on: ubuntu-22.04
+    environment: SCHEDULE_RELEASES
     steps:
       - name: checkout branch
         uses: actions/checkout@v3
