@@ -15,6 +15,8 @@ runs:
       run: |
         last_automated_release_date=${{ inputs.LAST_AUTOMATED_RELEASE}}
         current_date=$(date +%s)
+        echo "Current date is $current_date"
+        echo "Last automated release date is $last_automated_release_date"
 #        release_date=$(git log -1 --format=%ct $last_release)
         time_diff=$(( (current_date - last_automated_release_date) / (60*60*24) ))
         echo "Time difference is $time_diff days"
