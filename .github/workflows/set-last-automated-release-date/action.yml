@@ -20,6 +20,9 @@ inputs:
   VALUE:
     required: true
     description: "Current date."
+  VARS:
+    required: false
+    description: "Vars."
 
 runs:
   using: "composite"
@@ -32,6 +35,7 @@ runs:
         repository_id: ${{ inputs.REPOSITORY_ID }}
         name: ${{ inputs.NAME }}
         value: ${{ inputs.VALUE }}
+        vars: ${{ inputs.VARS }}
       shell: bash
       run: node ./.github/scripts/update-git-env-variable.js
 
