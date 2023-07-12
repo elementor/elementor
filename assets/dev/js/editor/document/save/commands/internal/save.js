@@ -9,7 +9,7 @@ export class Save extends $e.modules.CommandInternalBase {
 		const container = document.container;
 		let settings;
 
-		if ( this.checkIfValueWasWoocommerceSetting( args.document.container.oldValues ) ) {
+		if ( this.checkIfValueWasWoocommerceSetting( container.oldValues ) ) {
 			settings = container.settings.toJSON();
 		} else {
 			settings = container.settings.toJSON( { remove: [ 'default' ] } );
