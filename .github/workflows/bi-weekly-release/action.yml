@@ -24,8 +24,10 @@ runs:
         if [ $time_diff -ge 14 ]; then
           echo "Time difference is more than 14 days"
           echo "Set the last automated release date as an environment variable"
-          update_last_automated_release_date=true
-          echo "UPDATE_LAST_AUTOMATED_RELEASE_DATE=$update_last_automated_release_date" >> $GITHUB_ENV
+          RELEASE_TYPE="Automated"
+          automated_release=true
+          echo "AUTOMATED_RELEASE=$automated_release" >> $GITHUB_ENV
+          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
         else
           echo "Time difference is less than 14 days"
           exit 1

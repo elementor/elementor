@@ -7,12 +7,13 @@ on:
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
-  last_automated_release: ${{ vars.LAST_AUTOMATED_RELEASE }}
+  SCHEDULE_RELEASES: 'SCHEDULE_RELEASES'
+  RELEASE_TYPE: 'Manual'
 
 jobs:
   release:
     runs-on: ubuntu-22.04
-    environment: SCHEDULE_RELEASES
+    environment: ${{ env.SCHEDULE_RELEASES }}
     steps:
       - name: checkout branch
         uses: actions/checkout@v3
@@ -41,12 +42,13 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-      - name: Check if two weeks have passed since last release
-        if: ${{ env.CHANNEL }} == 'cloud' && ${{ vars.LAST_AUTOMATED_RELEASE }} != '' && ${{ env.LAST_AUTOMATED_RELEASE }} != 'null'
+      - name: Check if two weeks have passed since last automated release
+        if: ${{ env.CHANNEL }} == 'cloud' && ${{ github.event_name }} == 'schedule' &&  ${{ vars.LAST_AUTOMATED_RELEASE }} != '' && ${{ vars.LAST_AUTOMATED_RELEASE }} != 'null'
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
           LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
+          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -56,28 +58,6 @@ jobs:
       - name: Install Dependencies
         run: |
           npm ci
-      - name: Install Octokit
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
-        run: npm install octokit@2.0.19
-      - name: Set Oktokit env variables
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
-        run: |
-          REPOSITORY_ID=${{ github.repository_id }}
-          EVENT_NAME=${{ github.event_name }}
-          CURRENT_DATE=$(date +%s)
-          echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
-          echo "EVENT_NAME=$EVENT_NAME" >> $GITHUB_ENV
-          echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
-      - name: Set release date env variable
-        if: ${{ env.UPDATE_LAST_AUTOMATED_RELEASE_DATE }} == true
-        uses: ./.github/workflows/set-last-automated-release-date
-        with:
-          REPOSITORY_ID: ${{ env.REPOSITORY_ID }}
-          ENVIRONMENT_NAME: 'SCHEDULE_RELEASES'
-          CHANNEL: ${{ env.CHANNEL }}
-          NAME: 'LAST_AUTOMATED_RELEASE'
-          MAINTAIN_TOKEN: ${{ secrets.LOCAL_MANTAIN_TOKEN }} #Replace with ${{ secrets.MAINTAIN_TOKEN }}
-          VALUE: ${{ env.CURRENT_DATE }}
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
@@ -102,8 +82,30 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      # Place Oktokit execution here
-      - name: Post To Slack Created Cloud daily Release
+      - name: Install Octokit
+        if: ${{ env.AUTOMATED_RELEASE }} == true
+        run: npm install octokit@2.0.19
+      - name: Set Oktokit env variables
+        if: ${{ env.AUTOMATED_RELEASE }} == true
+        run: |
+          REPOSITORY_ID=${{ github.repository_id }}
+          EVENT_NAME=${{ github.event_name }}
+          CURRENT_DATE=$(date +%s)
+          echo "REPOSITORY_ID=$REPOSITORY_ID" >> $GITHUB_ENV
+          echo "EVENT_NAME=$EVENT_NAME" >> $GITHUB_ENV
+          echo "CURRENT_DATE=$CURRENT_DATE" >> $GITHUB_ENV
+      - name: Set release date env variable
+        if: ${{ env.AUTOMATED_RELEASE }} == true
+        uses: ./.github/workflows/set-last-automated-release-date
+        with:
+          REPOSITORY_ID: ${{ env.REPOSITORY_ID }}
+          ENVIRONMENT_NAME: ${{ env.SCHEDULE_RELEASES }}
+          CHANNEL: ${{ env.CHANNEL }}
+          NAME: 'LAST_AUTOMATED_RELEASE'
+          MAINTAIN_TOKEN: ${{ secrets.LOCAL_MANTAIN_TOKEN }} #Replace with ${{ secrets.MAINTAIN_TOKEN }}
+          VALUE: ${{ env.CURRENT_DATE }}
+      - name: Post To Slack Created Cloud daily automated Release
+        if: ${{ env.AUTOMATED_RELEASE }} == true
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -115,7 +117,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could daily release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published Could daily `${{ env.RELEASE_TYPE }}`release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {
@@ -125,7 +127,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                    "text": "GitHub Release *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                   },
                   "accessory": {
                     "type": "button",
