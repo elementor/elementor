@@ -112,7 +112,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		const editor = await wpAdmin.openNewPage();
 		let frame = editor.getPreviewFrame();
 
-		await editor.isUiStable( frame );
+		await page.waitForLoadState( 'load' );
 		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-title-and-icons', '.elementor-widget-n-accordion' );
 		await editor.closeNavigatorIfOpen();
 
