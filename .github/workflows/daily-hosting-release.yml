@@ -1,7 +1,5 @@
 name: Daily Hosting Release
 
-
-
 on:
   schedule:
     - cron: '0 10 * * *'
@@ -16,16 +14,11 @@ jobs:
   display-variables:
     name: Display Variables
     runs-on: ubuntu-22.04
-
+    environment: SCHEDULE_RELEASES
     steps:
-      - name: Display Variables
+      - name: Dump all data types
         run: |
-          echo "last_automated_release $last_automated_release"
-          echo "vars.TEST_123 $TEST_123"
-          echo "vars.SCHEDULE_RELEASES $SCHEDULE_RELEASES"
-        env:
-          TEST_123: ${{ vars.TEST_123 }}
-          SCHEDULE_RELEASES: ${{ vars.SCHEDULE_RELEASES }}
+          echo "vars ${{ toJson(vars) }}"
   release:
     runs-on: ubuntu-22.04
     environment: SCHEDULE_RELEASES
