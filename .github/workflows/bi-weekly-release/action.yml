@@ -7,12 +7,16 @@ inputs:
   LAST_AUTOMATED_RELEASE:
     required: false
     description: "The date of the last release."
+  RELEASE_TYPE:
+    required: false
+    description: "The type of the release."
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
+        echo "event_name is ${{ github.event_name }}"
         last_automated_release_date=${{ inputs.LAST_AUTOMATED_RELEASE}}
         current_date=$(date +%s)
         echo "Current date is $current_date"
