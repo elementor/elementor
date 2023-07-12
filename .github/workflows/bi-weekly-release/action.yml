@@ -21,7 +21,7 @@ runs:
         time_diff=$(( ($current_date - $last_automated_release_date) / (60*60*24) ))
         echo "Time difference is $time_diff days"
         # check if the time difference is more than 14 days
-        if [ $time_diff -gt 14 ]; then
+        if [ $time_diff -ge 14 ]; then
           echo "Time difference is more than 14 days"
           echo "Set the last automated release date as an environment variable"
           update_last_automated_release_date=true
