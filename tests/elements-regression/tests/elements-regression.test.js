@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
+import ElementRegressionHelper from '../helper';
 import EditorSelectors from '../../playwright/selectors/editor-selectors';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
@@ -62,39 +63,34 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 			const wpAdminPage = new WpAdminPage( page, testInfo );
 			const editorPage = new EditorPage( page, testInfo );
+			const helper = new ElementRegressionHelper( page, testInfo );
 			await wpAdminPage.openNewPage();
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
-
-			const widgetCount = await editorPage.getWidgetCount();
-			for ( let i = 0; i < widgetCount; i++ ) {
-				const widget = editorPage.getWidget().nth( i );
-				await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
-
-				if ( widgetType.includes( 'hover' ) ) {
-					await widget.locator( hoverSelector[ widgetType ] ).hover();
-					await expect( widget )
-						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
-				} else {
-					await expect( widget )
-						.toHaveScreenshot( `${ widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000 } );
-				}
-			}
-
+			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
+			await helper.setResponsiveMode( 'mobile' );
+			await expect( editorPage.getPreviewFrame().locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ widgetType }_mobile.png`, { maxDiffPixels: 200, timeout: 10000 } );
+			await helper.setResponsiveMode( 'tablet' );
+			await expect( editorPage.getPreviewFrame().locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ widgetType }_tablet.png`, { maxDiffPixels: 200, timeout: 10000 } );
 			await editorPage.publishAndViewPage();
 			await editorPage.waitForIframeToLoaded( widgetType, true );
+			await helper.doScreenshotComparisonPublished( { widgetType, hoverSelector } );
 
-			if ( widgetType.includes( 'hover' ) ) {
-				for ( let i = 0; i < widgetCount; i++ ) {
-					await page.locator( `${ EditorSelectors.widget } ${ hoverSelector[ widgetType ] }` ).nth( i ).hover();
-					await expect( page.locator( EditorSelectors.widget ).nth( i ) ).
-						toHaveScreenshot( `${ widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
-				}
-			} else {
-				await expect( page.locator( EditorSelectors.container ) )
-					.toHaveScreenshot( `${ widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
-			}
+			await page.setViewportSize( {
+				width: 768,
+				height: 787,
+			} );
+			await expect( page.locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ widgetType }_tablet_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
+			await page.setViewportSize( {
+				width: 360,
+				height: 736,
+			} );
+			await expect( page.locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ widgetType }_mobile_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} );
 	}
 } );
