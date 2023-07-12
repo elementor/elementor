@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Display Variables
         run: |
-          echo "vars.LAST_AUTOMATED_RELEASE $LAST_AUTOMATED_RELEASE"
+          echo "last_automated_release $last_automated_release"
           echo "vars.TEST_123 $TEST_123"
         env:
           LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
