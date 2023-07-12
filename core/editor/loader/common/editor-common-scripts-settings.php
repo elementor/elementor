@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Editor\Config_Providers;
+namespace Elementor\Core\Editor\Loader\Common;
 
 use Elementor\Api;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Editor_Common_Client_Env {
-	public static function get_client_env() {
+class Editor_Common_Scripts_Settings {
+	public static function get() {
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
