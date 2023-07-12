@@ -716,7 +716,35 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			frame = await editor.getPreviewFrame(),
-			spacerValue = 200;
+			spacerSize = 200,
+			defaultSpacerSize = 50;
+
+		await test.step( 'Column container, spacer default size', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.image, container );
+
+			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
+
+			await expect( spacerElementHeight ).toBe( defaultSpacerSize );
+			await editor.removeElement( container );
+		} );
+
+		await test.step( 'Row container, spacer default size', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.image, container );
+
+			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
+
+			await expect( spacerElementWidth ).toBe( defaultSpacerSize );
+			await editor.removeElement( container );
+		} );
 
 		await test.step( 'Spacer added and container set to column', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -724,11 +752,11 @@ test.describe( 'Container tests @container', () => {
 
 			await editor.addWidget( widgets.image, container );
 			await editor.selectElement( spacer );
-			await editor.setSliderControlValue( 'space', spacerValue );
+			await editor.setSliderControlValue( 'space', spacerSize );
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( spacerElementHeight ).toBe( spacerValue );
+			await expect( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -744,11 +772,11 @@ test.describe( 'Container tests @container', () => {
 
 			await editor.addWidget( widgets.image, container );
 			await editor.selectElement( spacer );
-			await editor.setSliderControlValue( 'space', spacerValue );
+			await editor.setSliderControlValue( 'space', spacerSize );
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( spacerElementHeight ).toBe( spacerValue );
+			await expect( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -758,11 +786,16 @@ test.describe( 'Container tests @container', () => {
 
 			await editor.addWidget( widgets.image, container );
 			await editor.selectElement( spacer );
-			await editor.setSliderControlValue( 'space', spacerValue );
+			await editor.setSliderControlValue( 'space', spacerSize );
 
-			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
+			await editor.selectElement( container );
 
-			await expect( spacerElementHeight ).toBe( spacerValue );
+			// Set row direction.
+			await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
+
+			await expect( spacerElementWidth ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -778,11 +811,11 @@ test.describe( 'Container tests @container', () => {
 
 			await editor.addWidget( widgets.image, container );
 			await editor.selectElement( spacer );
-			await editor.setSliderControlValue( 'space', spacerValue );
+			await editor.setSliderControlValue( 'space', spacerSize );
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( spacerElementHeight ).toBe( spacerValue );
+			await expect( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 	} );
