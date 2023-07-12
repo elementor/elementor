@@ -11,14 +11,6 @@ env:
   last_automated_release: ${{ vars.LAST_AUTOMATED_RELEASE }}
 
 jobs:
-  display-variables:
-    name: Display Variables
-    runs-on: ubuntu-22.04
-    environment: SCHEDULE_RELEASES
-    steps:
-      - name: Dump all data types
-        run: |
-          echo "vars ${{ toJson(vars) }}"
   release:
     runs-on: ubuntu-22.04
     environment: SCHEDULE_RELEASES
@@ -50,22 +42,11 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-      - name: env_var DELETE LATER
-        run: |
-          echo "variable from shell environment : $last_automated_release"
-          echo "variable from shell1 environment : ${{ env.last_automated_release }}"
-        env:
-          last_automated_release: ${{ vars.last_automated_release }}
       - name: Check if two weeks have passed since last release
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
           LAST_AUTOMATED_RELEASE: ${{ vars.LAST_AUTOMATED_RELEASE }}
-      - name: Dump all data types
-        run: |
-          echo "vars ${{ toJson(vars) }}"
-          echo "env ${{ toJson(env) }}"
-          echo "env: ${{ toJson(env) }}\n\nvars: ${{ toJson(vars) }}\n\nsteps: ${{ toJson(steps) }}\n\ngithub: ${{ toJson(github) }}"
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
