@@ -1,4 +1,6 @@
 export function changeScrollStatus( element, event ) {
+	console.log( 'change' + element );
+
 	if ( 'mousedown' === event.type ) {
 		element.classList.add( 'e-scroll' );
 		element.dataset.pageX = event.pageX;
@@ -8,8 +10,82 @@ export function changeScrollStatus( element, event ) {
 	}
 }
 
+export function setAbsolutePositionToTabs( $wrapper, $tabTitles ) {
+	const widget = $wrapper[ 0 ];
+
+	$tabTitles.each( ( index, tabTitle ) => {
+		tabTitle.style.removeProperty( '--n-tabs-title-position-block-start' );
+		tabTitle.style.removeProperty( '--n-tabs-title-position-inline-start' );
+		tabTitle.style.removeProperty( '--n-tabs-title-width' );
+		tabTitle.style.removeProperty( '--n-tabs-title-height' );
+	} );
+
+	widget.style.removeProperty( '--n-tabs-title-position-inline-start-reference' );
+	widget.classList.add( 'set-tab-scrolling' );
+
+	const headingContentIsWiderThanWrapper = $wrapper[ 0 ].scrollWidth > $wrapper[ 0 ].clientWidth;
+
+	if ( ! headingContentIsWiderThanWrapper ) {
+		widget.style.removeProperty( '--n-tabs-title-position' );
+		widget.classList.remove( 'set-tab-scrolling' );
+		return;
+	}
+
+	const referenceInlineStart = $tabTitles[ 0 ].offsetLeft;
+	widget.style.setProperty( '--n-tabs-title-position-inline-start-reference', referenceInlineStart );
+
+	$tabTitles.each( ( index, tabTitle ) => {
+		const tabTitleBox = tabTitle.getBoundingClientRect();
+
+		tabTitle.style.setProperty( '--n-tabs-title-position-block-start', tabTitle.offsetTop + 'px' );
+		tabTitle.style.setProperty( '--n-tabs-title-position-inline-start', ( tabTitle.offsetLeft - referenceInlineStart ) + 'px' );
+		tabTitle.style.setProperty( '--n-tabs-title-width', tabTitleBox.width + 'px' );
+		tabTitle.style.setProperty( '--n-tabs-title-height', tabTitleBox.height + 'px' );
+	} );
+
+	widget.style.setProperty( '--n-tabs-title-position', 'absolute' );
+	widget.classList.remove( 'set-tab-scrolling' );
+}
+
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
 export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
+	console.log( 'hor ' + element );
+
+	const isActiveScroll = element.classList.contains( 'e-scroll' ),
+		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
+		headingContentIsWiderThanWrapper = 'absolute' === element.style?.getPropertyValue( '--n-tabs-title-position' );
+
+	if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
+		return;
+	}
+
+	event.preventDefault();
+
+	const previousPositionX = parseFloat( element.dataset.pageX ),
+		mouseMoveX = event.pageX - previousPositionX,
+		maximumScrollValue = 5,
+		stepLimit = 20;
+
+	let toScrollDistanceX = 0;
+
+	if ( stepLimit < mouseMoveX ) {
+		toScrollDistanceX = maximumScrollValue;
+	} else if ( stepLimit * -1 > mouseMoveX ) {
+		toScrollDistanceX = -1 * maximumScrollValue;
+	} else {
+		toScrollDistanceX = mouseMoveX;
+	}
+
+	const newInlineReferenceValue = parseFloat( element.style.getPropertyValue( '--n-tabs-title-position-inline-start-reference' ) ) + toScrollDistanceX;
+	console.log( 'new' + newInlineReferenceValue );
+	console.log( 'existing ' + element.style.getPropertyValue( '--n-tabs-title-position-inline-start-reference' ) );
+
+	element.style.setProperty( '--n-tabs-title-position-inline-start-reference', newInlineReferenceValue );
+	element.classList.add( 'e-scroll-active' );
+}
+
+// This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
+export function setHorizontalTitleScrollValuesBackup( element, horizontalScrollStatus, event ) {
 	const isActiveScroll = element.classList.contains( 'e-scroll' ),
 		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
 		headingContentIsWiderThanWrapper = element.scrollWidth > element.clientWidth;
@@ -52,7 +128,10 @@ export function setHorizontalScrollAlignment( { element, direction, justifyCSSVa
 }
 
 function isHorizontalScroll( element, horizontalScrollStatus ) {
-	return element.clientWidth < getChildrenWidth( element.children ) && 'enable' === horizontalScrollStatus;
+	// Check element width.
+	// Compare original
+
+	return 'absolute' === element.style.getPropertyValue( '--n-tabs-title-position' ) && 'enable' === horizontalScrollStatus;
 }
 
 function getChildrenWidth( children ) {
@@ -75,7 +154,8 @@ function initialScrollPosition( element, direction, justifyCSSVariable ) {
 	switch ( direction ) {
 		case 'end':
 			element.style.setProperty( justifyCSSVariable, 'start' );
-			element.scrollLeft = isRTL ? -1 * getChildrenWidth( element.children ) : getChildrenWidth( element.children );
+			// Element.scrollLeft = isRTL ? -1 * getChildrenWidth( element.children ) : getChildrenWidth( element.children );
+
 			break;
 		default:
 			element.style.setProperty( justifyCSSVariable, 'start' );

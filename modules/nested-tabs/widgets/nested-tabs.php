@@ -1099,7 +1099,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'data-tab' => $tab_count,
 				'role' => 'tab',
 				'aria-label' => esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ),
-//				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
 				'aria-label' => esc_html__( 'To be updated', 'elementor' ),
 			] );
@@ -1216,7 +1216,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'data-tab': tabCount,
 					'role': 'tab',
 					'aria-label': "<php esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ); ?>",
-<!--					'aria-selected': 1 === tabCount ? 'true' : 'false',-->
+					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'aria-label': '<?php echo esc_html__( 'To be updated', 'elementor' ); ?>',
 					'style': 'grid-area: tab' + index + ';',
 				} );

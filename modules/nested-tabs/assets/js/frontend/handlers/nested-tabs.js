@@ -1,9 +1,9 @@
 import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
-
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
+	setAbsolutePositionToTabs,
 } from 'elementor/assets/dev/js/frontend/utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
@@ -91,6 +91,10 @@ export default class NestedTabs extends Base {
 
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
+
+		if ( 'enable' === this.getHorizontalScrollSetting() ) {
+			setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+		}
 	}
 
 	handleKeyboardNavigation( event ) {
@@ -194,12 +198,14 @@ export default class NestedTabs extends Base {
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
+
 		$requestedContent.removeAttr( 'hidden' ); // I am not sure what this is used for.
 
-		this.setContentContainerPositionAndHeight( $requestedContent );
+		// this.setContentContainerPositionAndHeight( $requestedContent );
+		// setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
 	}
 
-	setContentContainerPositionAndHeight( $contentContainer ) {
+	setContentContainerPositionAndHeight( $contentContainer = this.elements.$tabContents.first() ) {
 		const $wrapper = this.elements.$tabList;
 
 		$wrapper.css( 'min-height', '' );
@@ -220,7 +226,7 @@ export default class NestedTabs extends Base {
 			top: $contentContainer.position().top + 'px',
 			left: $contentContainer.position().left + 'px',
 			width: $wrapper.width() + 'px',
-			height: $contentContainer + 'px',
+			height: $contentContainer.height() + 'px',
 			position: 'absolute',
 		} );
 
@@ -349,10 +355,6 @@ export default class NestedTabs extends Base {
 
 		super.onInit( ...args );
 
-		if ( this.getSettings( 'autoExpand' ) ) {
-			this.activateDefaultTab();
-		}
-
 		const settingsObject = {
 			element: this.elements.$tabList[ 0 ],
 			direction: this.getTabsDirection(),
@@ -361,6 +363,12 @@ export default class NestedTabs extends Base {
 		};
 
 		setHorizontalScrollAlignment( settingsObject );
+
+		if ( this.getSettings( 'autoExpand' ) ) {
+			this.activateDefaultTab();
+		}
+
+		this.widgetWidthChangeListener();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -370,6 +378,10 @@ export default class NestedTabs extends Base {
 	}
 
 	onElementChange( propertyName ) {
+		if ( 'enable' === this.getHorizontalScrollSetting() ) {
+			setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+		}
+
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			const settingsObject = {
 				element: this.elements.$tabList[ 0 ],
@@ -380,6 +392,25 @@ export default class NestedTabs extends Base {
 
 			setHorizontalScrollAlignment( settingsObject );
 		}
+	}
+
+	widgetWidthChangeListener() {
+		const widget = this.elements.$tabList[ 0 ];
+		let previousWidth = 0;
+
+		this.observedContainer = new ResizeObserver( ( widgetElement ) => {
+			const currentWidth = widgetElement[ 0 ].borderBoxSize?.[ 0 ].inlineSize;
+
+			if ( !! currentWidth && currentWidth !== previousWidth ) {
+				previousWidth = currentWidth;
+
+				if ( 0 !== previousWidth && 'enable' === this.getHorizontalScrollSetting() ) {
+					setAbsolutePositionToTabs( this.elements.$tabList, this.elements.$tabTitles );
+				}
+			}
+		} );
+
+		this.observedContainer.observe( widget );
 	}
 
 	checkSliderPropsToWatch( propertyName ) {
