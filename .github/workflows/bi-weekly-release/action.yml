@@ -17,7 +17,7 @@ runs:
         last_automated_release_date=${{ inputs.LAST_AUTOMATED_RELEASE}}
         current_date=$(date +%s)
         echo "Current date is $current_date"
-        echo "Last automated release date was at date -d @$last_automated_release_date"
+        echo "Last automated release date was at $last_automated_release_date"
         # Calculate the time difference
 #        time_diff=$(( ($current_date - $last_automated_release_date) / (60*60*24) ))
         time_diff=$(( ($current_date - $last_automated_release_date) / 60 ))
