@@ -50,8 +50,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return [
 			'elType' => 'container',
 			'settings' => [
-                '_title' => sprintf( __( 'item #%s', 'elementor' ), $index ),
-                'content_width' => 'full',
+				'_title' => sprintf( __( 'item #%s', 'elementor' ), $index ),
+				'content_width' => 'full',
 			],
 		];
 	}
@@ -701,7 +701,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-        <span class='e-n-accordion-item-title-icon'>
+		<span class='e-n-accordion-item-title-icon'>
 			<span class='e-opened'><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<span class='e-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
