@@ -6,9 +6,16 @@ export class Save extends $e.modules.CommandInternalBase {
 			return jQuery.Deferred().reject( 'Document already in save progress' );
 		}
 
-		const container = document.container,
-			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
-			oldStatus = container.settings.get( 'post_status' );
+		const container = document.container;
+		let settings;
+
+		if ( this.checkIfValueWasWoocommerceSetting( args.document.container.oldValues ) ) {
+			settings = container.settings.toJSON();
+		} else {
+			settings = container.settings.toJSON( { remove: [ 'default' ] } );
+		}
+
+		const oldStatus = container.settings.get( 'post_status' );
 
 		// TODO: Remove - Backwards compatibility.
 		elementor.saver.trigger( 'before:save', args )
@@ -152,6 +159,15 @@ export class Save extends $e.modules.CommandInternalBase {
 
 	onAfterAjax( document ) {
 		document.editor.isSaving = false;
+	}
+
+	checkIfValueWasWoocommerceSetting( settings ) {
+		try {
+			const value = Object.keys( settings )[ 0 ];
+			return 'string' === typeof value && value.startsWith( 'woocommerce' );
+		} catch {
+			return false;
+		}
 	}
 }
 
