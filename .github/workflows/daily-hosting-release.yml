@@ -43,7 +43,7 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
       - name: Check if two weeks have passed since last automated release
-        if: ${{ env.CHANNEL == 'cloud' && github.event_name == 'schedule' &&  vars.LAST_AUTOMATED_RELEASE != '' && vars.LAST_AUTOMATED_RELEASE != 'null' }}
+        if: ${{ env.CHANNEL == 'cloud' &&  vars.LAST_AUTOMATED_RELEASE != '' && vars.LAST_AUTOMATED_RELEASE != 'null' }}
         uses: ./.github/workflows/bi-weekly-release
         with:
           CHANNEL: ${{ env.CHANNEL }}
