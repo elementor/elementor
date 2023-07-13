@@ -51,4 +51,15 @@ class Container extends Library_Document {
 	public static function get_title() {
 		return esc_html__( 'Container', 'elementor' );
 	}
+
+	/**
+	 * Get Type
+	 *
+	 * Return the container document type.
+	 *
+	 * @return string
+	 */
+	public static function get_type() {
+		return 'container';
+	}
 }
