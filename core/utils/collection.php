@@ -22,7 +22,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @param array $items
 	 */
-	public function __construct( array $items ) {
+	public function __construct( array $items = [] ) {
 		$this->items = $items;
 	}
 
@@ -31,7 +31,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return static
 	 */
-	public static function make( array $items ) {
+	public static function make( array $items = [] ) {
 		return new static( $items );
 	}
 
@@ -131,7 +131,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Run a callback over each of the items.
 	 *
 	 * @param callable $callback
-	 * @return void
+	 * @return $this
 	 */
 	public function each( callable $callback ) {
 		foreach ( $this->items as $key => $value ) {
