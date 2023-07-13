@@ -6,16 +6,11 @@ export class Save extends $e.modules.CommandInternalBase {
 			return jQuery.Deferred().reject( 'Document already in save progress' );
 		}
 
-		const container = document.container;
-		let settings;
+		const container = document.container,
+			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
+			oldStatus = container.settings.get( 'post_status' );
 
-		if ( this.checkIfValueWasWoocommerceSetting( container.oldValues ) ) {
-			settings = container.settings.toJSON();
-		} else {
-			settings = container.settings.toJSON( { remove: [ 'default' ] } );
-		}
-
-		const oldStatus = container.settings.get( 'post_status' );
+		this.checkIfPersistentSettingsAddedToPayload( settings, container );
 
 		// TODO: Remove - Backwards compatibility.
 		elementor.saver.trigger( 'before:save', args )
@@ -161,13 +156,12 @@ export class Save extends $e.modules.CommandInternalBase {
 		document.editor.isSaving = false;
 	}
 
-	checkIfValueWasWoocommerceSetting( settings ) {
-		try {
-			const value = Object.keys( settings )[ 0 ];
-			return 'string' === typeof value && value.startsWith( 'woocommerce' );
-		} catch {
-			return false;
-		}
+	checkIfPersistentSettingsAddedToPayload( settings, container ) {
+		elementor.config.persistent_keys.forEach( ( setting ) => {
+			if ( container.settings.defaults.hasOwnProperty( setting ) && ! settings.hasOwnProperty( setting ) ) {
+				settings[ setting ] = container.settings.defaults[ setting ];
+			}
+		} );
 	}
 }
 

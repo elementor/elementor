@@ -2,25 +2,49 @@ import { Save } from 'elementor-document/save/commands/internal/save.js';
 
 describe( 'Save', () => {
 	let save;
+	let settings;
+	let container;
+	let elementor;
 
 	beforeEach( () => {
+		elementor = global.elementor = {};
+		elementor.config = {};
 		save = new Save();
+		settings = {};
+		container = {
+			settings: {
+				defaults: {
+					key1: 'value1',
+					key2: 'value2',
+				},
+			},
+		};
 	} );
 
-	describe( 'checkIfValueWasWoocommerceSetting', () => {
-		it( 'should return true when the first key of settings starts with "woocommerce"', () => {
-			const settings = { woocommerce_key: 'value' };
-			expect( save.checkIfValueWasWoocommerceSetting( settings ) ).toBe( true );
+	it( 'adds missing persistent settings to payload', () => {
+		elementor.config.persistent_keys = [ 'key1', 'key3' ];
+		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		expect( settings ).toEqual( {
+			key1: 'value1',
 		} );
+	} );
 
-		it( 'should return false when the first key of settings does not start with "woocommerce"', () => {
-			const settings = { other_key: 'value' };
-			expect( save.checkIfValueWasWoocommerceSetting( settings ) ).toBe( false );
+	it( 'does not modify payload if all persistent settings are present', () => {
+		elementor.config.persistent_keys = [ 'key1' ];
+		settings.key1 = 'value';
+		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		expect( settings ).toEqual( {
+			key1: 'value',
 		} );
+	} );
 
-		it( 'should return false when settings is not an object', () => {
-			const settings = 'not_an_object';
-			expect( save.checkIfValueWasWoocommerceSetting( settings ) ).toBe( false );
+	it( 'does not add non-persistent settings to payload', () => {
+		elementor.config.persistent_keys = [ 'key1', 'key3' ];
+		settings.key2 = 'value';
+		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		expect( settings ).toEqual( {
+			key1: 'value1',
+			key2: 'value',
 		} );
 	} );
 } );
