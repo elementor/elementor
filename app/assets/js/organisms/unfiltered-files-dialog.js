@@ -58,7 +58,7 @@ export default function UnfilteredFilesDialog( props ) {
 		<>
 			{
 				isEnableError
-				? <Dialog
+					? <Dialog
 						title={ __( 'Something went wrong.', 'elementor' ) }
 						text={ props.errorModalText }
 						approveButtonColor="link"
@@ -67,8 +67,8 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Go Back', 'elementor' ) }
 						dismissButtonOnClick={ onCancel }
 						onClose={ onCancel }
-				/>
-				: <Dialog
+					/>
+					: <Dialog
 						title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
 						text={ props.confirmModalText }
 						approveButtonColor="link"
@@ -77,7 +77,7 @@ export default function UnfilteredFilesDialog( props ) {
 						dismissButtonText={ __( 'Skip', 'elementor' ) }
 						dismissButtonOnClick={ onDismiss || onReady }
 						onClose={ onClose || onDismiss || onReady }
-				/>
+					/>
 			}
 		</>
 	);
