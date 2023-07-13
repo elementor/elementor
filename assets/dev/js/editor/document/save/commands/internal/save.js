@@ -157,7 +157,7 @@ export class Save extends $e.modules.CommandInternalBase {
 	}
 
 	addPersistentSettingsToPayload( settings, container ) {
-		elementor?.config?.persistent_keys.forEach( ( setting ) => {
+		elementor?.config?.persistent_keys?.forEach( ( setting ) => {
 			if ( container.settings.defaults.hasOwnProperty( setting ) && ! settings.hasOwnProperty( setting ) ) {
 				settings[ setting ] = container.settings.defaults[ setting ];
 			}
