@@ -1,5 +1,6 @@
 name: Bi Weekley Release
 description: Count the number of days since the last automatic release and set it as an environment variable.
+
 inputs:
   CHANNEL:
     required: true

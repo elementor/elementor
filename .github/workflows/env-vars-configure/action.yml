@@ -8,6 +8,9 @@ inputs:
   REF:
     required: true
     description: 'The ref to get the version from.'
+  REMOVE_RC_TAG:
+    required: false
+    description: 'Should `-rc` tag needs to be removed from the package version.'
 
 runs:
   using: "composite"
@@ -16,12 +19,13 @@ runs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
+          REMOVE_RC_TAG: ${{ inputs.REMOVE_RC_TAG }}
       - name: Increment Patch Version
         if: inputs.CHANNEL == 'ga'
         uses: ./.github/workflows/increment-patch-version
       - shell: bash
         run: |
-            # This command retrieves the latest tag that matches the specified channel and package version, 
+            # This command retrieves the latest tag that matches the specified channel and package version,
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
             CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
 
@@ -38,9 +42,9 @@ runs:
             CLEAN_REF=${{ inputs.REF }}
             # e.g. refs/heads/main -> main
             CLEAN_REF=${CLEAN_REF#refs/heads/}
-            
+
             echo "CLEAN_REF=${CLEAN_REF}" >> $GITHUB_ENV
-            
+
             echo "PLUGIN_ZIP_PATH=./elementor/**/*"
             echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}"
 

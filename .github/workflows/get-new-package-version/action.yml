@@ -5,6 +5,9 @@ inputs:
   CHANNEL:
     required: true
     description: 'The channel to get the version to (ga, cloud, beta).'
+  REMOVE_RC_TAG:
+    required: false
+    description: 'Should `-rc` tag needs to be removed from the package version.'
 
 runs:
   using: "composite"
@@ -12,8 +15,8 @@ runs:
     - shell: bash
       run: |
             CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-            # If the channel is not `daily-cloud`, than add `-rc` to the the package version
-            if [[ ${{ inputs.CHANNEL }} != "daily-cloud" ]]; then
+            # This condition is set in order to meet the one click releases requirements.
+            if [[ ${{ inputs.REMOVE_RC_TAG }} != true ]]; then
                 PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
             else
                 PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}
