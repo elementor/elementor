@@ -560,6 +560,17 @@ module.exports = class EditorPage extends BasePage {
 		return previewPage;
 	}
 
+	async editCurrentPage() {
+		await this.gotoPostId( await this.getPageID() );
+	}
+
+	async getPageID() {
+		const url = this.page.url(),
+			pageId = await url.match( /page_id=([^&]*)/ );
+
+		return pageId[ 1 ];
+	}
+
 	/**
 	 * Apply Element Settings
 	 *
