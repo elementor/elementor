@@ -12,8 +12,11 @@ runs:
     - shell: bash
       run: |
             CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-            PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
-
+            # If the channel is not `daily-cloud`, than add `-rc` to the the package version
+            if [[ ${{ inputs.CHANNEL }} != "daily-cloud" ]]; then
+                PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
+            else
+                PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}
+            fi
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_ENV
-  

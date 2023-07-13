@@ -1,0 +1,37 @@
+name: Set last automated release date
+description: Set the last automated release date as an environment variable.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (cloud, CCU)."
+  REPOSITORY_ID:
+    required: true
+    description: "The repository ID."
+  ENVIRONMENT_NAME:
+    required: true
+    description: "The environment name."
+  NAME:
+    required: true
+    description: "The name of the environment variable."
+  MAINTAIN_TOKEN:
+    required: true
+    description: "The maintain token."
+  VALUE:
+    required: true
+    description: "Current date."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set last automated release date
+      env:
+        environment_name: ${{ inputs.ENVIRONMENT_NAME }}
+        token: ${{ inputs.MAINTAIN_TOKEN }}
+        channel: ${{ inputs.CHANNEL }}
+        repository_id: ${{ inputs.REPOSITORY_ID }}
+        name: ${{ inputs.NAME }}
+        value: ${{ inputs.VALUE }}
+      shell: bash
+      run: node ./.github/scripts/update-git-env-variable.js
+

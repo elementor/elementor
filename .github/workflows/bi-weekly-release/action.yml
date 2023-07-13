@@ -1,0 +1,42 @@
+name: Bi Weekley Release
+description: Count the number of days since the last automatic release and set it as an environment variable.
+inputs:
+  CHANNEL:
+    required: true
+    description: "The channel to get the version to (cloud, CCU)."
+  LAST_AUTOMATED_RELEASE:
+    required: false
+    description: "The date of the last release."
+  RELEASE_TYPE:
+    required: false
+    description: "The type of the release."
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        echo "event_name is ${{ github.event_name }}"
+        last_automated_release_date=${{ inputs.LAST_AUTOMATED_RELEASE}}
+        current_date=$(date +%s)
+        echo "Current date is $current_date"
+        echo "Last automated release date is $last_automated_release_date"
+
+        # Calculate the time difference
+        time_diff=$(( ($current_date - $last_automated_release_date) / (60*60) ))
+        echo "Time difference is $time_diff days"
+
+        # check if the time difference is more than 14 days
+        if [ $time_diff == '14' ]; then
+          echo "14 have passed since the last ${{ inputs.CHANNEL}} automated release"
+          echo "Set the last automated release date as an environment variable"
+
+          release_type=Automated
+          automated_release=true
+          echo "AUTOMATED_RELEASE=$automated_release" >> $GITHUB_ENV
+          echo "RELEASE_TYPE=$release_type" >> $GITHUB_ENV
+        else
+          echo "Less than 14 have passed since the last ${{ inputs.CHANNEL}} automated release"
+          echo "This process will be terminated"
+          exit 1
+        fi
