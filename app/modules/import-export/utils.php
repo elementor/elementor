@@ -103,9 +103,11 @@ class Utils {
 
 		if ( $should_run_cleanup ) {
 			foreach ( $import_sessions as $session_id => $import_session ) {
-				$import_sessions[ $session_id ]['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
+				if ( ! isset( $import_session['runners'] ) && isset( $import_session['instance_data'] ) ) {
+					$import_sessions[ $session_id ]['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
 
-				unset( $import_sessions[ $session_id ]['instance_data'] );
+					unset( $import_sessions[ $session_id ]['instance_data'] );
+				}
 			}
 
 			update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions );
