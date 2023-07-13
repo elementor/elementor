@@ -10,7 +10,7 @@ export class Save extends $e.modules.CommandInternalBase {
 			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
 			oldStatus = container.settings.get( 'post_status' );
 
-		this.checkIfPersistentSettingsAddedToPayload( settings, container );
+		this.addPersistentSettingsToPayload( settings, container );
 
 		// TODO: Remove - Backwards compatibility.
 		elementor.saver.trigger( 'before:save', args )
@@ -156,8 +156,8 @@ export class Save extends $e.modules.CommandInternalBase {
 		document.editor.isSaving = false;
 	}
 
-	checkIfPersistentSettingsAddedToPayload( settings, container ) {
-		elementor.config.persistent_keys.forEach( ( setting ) => {
+	addPersistentSettingsToPayload( settings, container ) {
+		elementor?.config?.persistent_keys.forEach( ( setting ) => {
 			if ( container.settings.defaults.hasOwnProperty( setting ) && ! settings.hasOwnProperty( setting ) ) {
 				settings[ setting ] = container.settings.defaults[ setting ];
 			}
