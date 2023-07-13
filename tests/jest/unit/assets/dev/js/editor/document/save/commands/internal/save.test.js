@@ -23,7 +23,7 @@ describe( 'Save', () => {
 
 	it( 'adds missing persistent settings to payload', () => {
 		elementor.config.persistent_keys = [ 'key1', 'key3' ];
-		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		save.addPersistentSettingsToPayload( settings, container );
 		expect( settings ).toEqual( {
 			key1: 'value1',
 		} );
@@ -32,7 +32,7 @@ describe( 'Save', () => {
 	it( 'does not modify payload if all persistent settings are present', () => {
 		elementor.config.persistent_keys = [ 'key1' ];
 		settings.key1 = 'value';
-		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		save.addPersistentSettingsToPayload( settings, container );
 		expect( settings ).toEqual( {
 			key1: 'value',
 		} );
@@ -41,7 +41,7 @@ describe( 'Save', () => {
 	it( 'does not add non-persistent settings to payload', () => {
 		elementor.config.persistent_keys = [ 'key1', 'key3' ];
 		settings.key2 = 'value';
-		save.checkIfPersistentSettingsAddedToPayload( settings, container );
+		save.addPersistentSettingsToPayload( settings, container );
 		expect( settings ).toEqual( {
 			key1: 'value1',
 			key2: 'value',
