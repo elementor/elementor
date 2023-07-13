@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+
 /**
  * Elementor accordion widget.
  *
@@ -82,7 +83,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @return bool
 	 */
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	/**
