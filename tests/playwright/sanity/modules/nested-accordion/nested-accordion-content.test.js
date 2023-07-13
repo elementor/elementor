@@ -107,6 +107,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
 
+		await wpAdmin.setPermalinks();
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
 		let frame = editor.getPreviewFrame();

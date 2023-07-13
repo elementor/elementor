@@ -562,17 +562,27 @@ module.exports = class EditorPage extends BasePage {
 
 	async editCurrentPage() {
 		const postId = await this.getPageID();
+		expect( postId, 'No Post/Page ID returned when calling getPageId(). This may indicate unexpected permalink settings - try using wpAdmin.setPermalink()' ).toBeTruthy();
+
 		if ( null !== postId ) {
 			await this.gotoPostId( postId );
 		}
 	}
 
 	async getPageID() {
-		const url = this.page.url(),
-			pageId = await url.match( /page_id=([^&]*)/ );
+		const url = this.page.url();
+		// Permalink Plain
+		const plainPermalink = await url.match( /page_id=([^&]*)/ );
+		// Expecting default page name like '/elementor-24/'
+		const postNamePermalink = await url.match( /elementor-([^&]*)/ );
 
-		if ( Array.isArray( pageId ) && pageId.hasOwnProperty( 1 ) ) {
-			return pageId[ 1 ];
+		if ( Array.isArray( plainPermalink ) && plainPermalink.hasOwnProperty( 1 ) ) {
+			return plainPermalink[ 1 ];
+		}
+
+		if ( Array.isArray( postNamePermalink ) && postNamePermalink.hasOwnProperty( 1 ) ) {
+			postNamePermalink[ 1 ].replace( /\/+$/, '' );
+			return postNamePermalink[ 1 ];
 		}
 
 		return null;
