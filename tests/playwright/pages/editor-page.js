@@ -561,14 +561,21 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async editCurrentPage() {
-		await this.gotoPostId( await this.getPageID() );
+		const postId = await this.getPageID();
+		if ( null !== postId ) {
+			await this.gotoPostId( postId );
+		}
 	}
 
 	async getPageID() {
 		const url = this.page.url(),
 			pageId = await url.match( /page_id=([^&]*)/ );
 
-		return pageId[ 1 ];
+		if ( Array.isArray( pageId ) && pageId.hasOwnProperty( 1 ) ) {
+			return pageId[ 1 ];
+		}
+
+		return null;
 	}
 
 	/**
@@ -755,7 +762,7 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isPublished ) {
-			this.page.waitForSelector( selector );
+			await this.page.waitForSelector( selector );
 		} else {
 			const frame = this.getFrame();
 			await frame.waitForLoadState();

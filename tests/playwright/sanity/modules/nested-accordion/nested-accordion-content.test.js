@@ -140,7 +140,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
 			await editor.editCurrentPage();
-			frame = editor.getPreviewFrame();
+			frame = await editor.getPreviewFrame();
 
 			await frame.locator( '.e-n-accordion-item-title' ).first().click();
 			await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
