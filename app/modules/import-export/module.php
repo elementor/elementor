@@ -540,10 +540,9 @@ class Module extends BaseModule {
 					break;
 			}
 		} catch ( \Error $e ) {
-            if ( isset( $this->import ) ) {
-                $this->import->finalize_import_session_option();
-            }
-
+			if ( isset( $this->import ) ) {
+				$this->import->finalize_import_session_option();
+			}
 
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
