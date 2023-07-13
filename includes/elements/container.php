@@ -616,7 +616,7 @@ class Container extends Element_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.example.com', 'elementor' ),
+				'placeholder' => get_home_url(),
 				'condition' => [
 					'html_tag' => 'a',
 				],
