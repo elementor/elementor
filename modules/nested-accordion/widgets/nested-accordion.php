@@ -271,6 +271,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
+				'render_type' => 'template',
 
 			]
 		);
@@ -468,7 +469,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -702,7 +703,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		ob_start();
 		?>
 		<span class='e-n-accordion-item-title-icon'>
-			<span class='e-opened'><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<span class='e-opened' ><?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<span class='e-closed'><?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 
@@ -766,34 +767,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 		?>
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
-			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
+			const elementUid = view.getIDInt().toString().substr( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
-				itemTitleText = 'e-n-accordion-item-title-text' + elementUid,
 				defaultState = settings.default_state,
-				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
+				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i' , 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
-					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
+					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i' , 'object' );
 			#>
 
-		<# _.each( settings['items'], function( item, index ) {
-		const itemCount = index + 1,
-			itemUid = elementUid + itemCount,
-			itemWrapperKey = itemUid,
-			itemTitleKey = 'item-' + itemUid;
-
-			view.addRenderAttribute( itemTitleKey, {
-				'class': ['e-n-accordion-item-title'],
-			});
-
-			view.addRenderAttribute( itemTitleText, {
-				'class': ['e-n-accordion-item-title-text'],
-				'data-binding-type': 'repeater-item',
-				'data-binding-repeater-name': 'items',
-				'data-binding-setting': ['item_title'],
-				'data-binding-index': itemCount,
-			});
-
+			<# _.each( settings['items'], function( item, index ) {
+			const itemCount = index + 1,
+				itemUid = elementUid + itemCount,
+				itemWrapperKey = itemUid,
+				itemTitleKey = 'item-' + itemUid;
 
 			if ( '' !== item.element_css_id ) {
 				itemId = item.element_css_id;
@@ -803,14 +790,14 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			const itemWrapperAttributes = {
 				'id': itemId,
-				'class': [ 'e-n-accordion-item', 'e-normal' ],
+				'class': [ 'e-n-accordion-item','e-normal' ],
 			};
 
-			if ( defaultState === 'expanded' && index === 0) {
+			if ( defaultState === 'expanded' && index === 0 ) {
 				itemWrapperAttributes['open'] = true;
 			}
 
-			view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
+			view.addRenderAttribute( itemWrapperKey,  itemWrapperAttributes);
 
 			view.addRenderAttribute( itemTitleKey, {
 				'class': [ 'e-n-accordion-item-title' ],
@@ -821,7 +808,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
 					<span class="e-n-accordion-item-title-header">
-						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleText ) }}}>
+						<{{{ titleHTMLTag }}} class="e-n-accordion-item-title-text">
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>
@@ -835,7 +822,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			</details>
 			<# } ); #>
 		<# } #>
-		</div>
+	</div>
 		<?php
 	}
 }
