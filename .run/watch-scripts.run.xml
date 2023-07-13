@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Elementor - Scripts" type="js.build_tools.grunt">
     <node-interpreter value="project" />
-    <gruntfile value="$PROJECT_DIR$/Gruntfile.js" />
+    <gruntfile value="$PROJECT_DIR$/public/wp-content/plugins/elementor/Gruntfile.js" />
     <tasks>
       <task value="watch_scripts" />
     </tasks>
