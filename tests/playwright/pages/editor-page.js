@@ -5,7 +5,6 @@ const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
 const _path = require( 'path' );
-import { getComparator } from 'playwright-core/lib/utils';
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
