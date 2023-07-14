@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useOnboardingAjax from '../hooks/use-onboarding-ajax';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
 
@@ -17,8 +17,8 @@ export default function SiteLogo() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ fileSource, setFileSource ] = useState(),
 		[ noticeState, setNoticeState ] = useState( null ),
-		{ ajaxState: updateLogoAjaxState, setAjax: setUpdateLogoAjax } = useAjax(),
-		{ ajaxState: uploadImageAjaxState, setAjax: setUploadImageAjax } = useAjax(),
+		{ ajaxState: updateLogoAjaxState, setAjax: setUpdateLogoAjax } = useOnboardingAjax(),
+		{ ajaxState: uploadImageAjaxState, setAjax: setUploadImageAjax } = useOnboardingAjax(),
 		pageId = 'siteLogo',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
@@ -75,11 +75,9 @@ export default function SiteLogo() {
 		setIsUploading( true );
 
 		setUpdateLogoAjax( {
+			endpoint: 'update-site-logo',
 			data: {
-				action: 'elementor_update_site_logo',
-				data: JSON.stringify( {
-					attachmentId: file.id,
-				} ),
+				attachmentId: file.id,
 			},
 		} );
 	}, [ file ] );
@@ -88,8 +86,8 @@ export default function SiteLogo() {
 		setIsUploading( true );
 
 		setUploadImageAjax( {
+			endpoint: 'upload-site-logo',
 			data: {
-				action: 'elementor_upload_site_logo',
 				fileToUpload,
 			},
 		} );

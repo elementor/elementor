@@ -291,6 +291,12 @@ class Test_Manager extends Data_Test_Base {
 			'kit-elements-defaults/index' => 'kit-elements-defaults/{id}',
 			'site-navigation/recent-posts' => 'site-navigation/recent-posts',
 			'site-navigation/add-new-post' => 'site-navigation/add-new-post',
+			'onboarding/update-site-name' => 'onboarding/update-site-name',
+			'onboarding/update-site-logo' => 'onboarding/update-site-logo',
+			'onboarding/upload-site-logo' => 'onboarding/upload-site-logo',
+			'onboarding/activate-hello-theme' => 'onboarding/activate-hello-theme',
+			'onboarding/upload-and-install-pro' => 'onboarding/upload-and-install-pro',
+			'onboarding/update-onboarding-db-option' => 'onboarding/update-onboarding-db-option',
 		], $this->manager->command_formats );
 	}
 }

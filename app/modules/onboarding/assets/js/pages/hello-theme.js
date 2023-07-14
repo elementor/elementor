@@ -3,12 +3,13 @@ import { useContext, useEffect, useState, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
+import useOnboardingAjax from '../hooks/use-onboarding-ajax';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function HelloTheme() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
-		{ ajaxState: activateHelloThemeAjaxState, setAjax: setActivateHelloThemeAjaxState } = useAjax(),
+		{ ajaxState: activateHelloThemeAjaxState, setAjax: setActivateHelloThemeAjaxState } = useOnboardingAjax(),
 		// Allow navigating back to this screen if it was completed in the onboarding.
 		[ helloInstalledInOnboarding, setHelloInstalledInOnboarding ] = useState( false ),
 		[ isInstalling, setIsInstalling ] = useState( false ),
@@ -112,7 +113,7 @@ export default function HelloTheme() {
 		updateState( { isHelloThemeInstalled: true } );
 
 		setActivateHelloThemeAjaxState( {
-			data: { action: 'elementor_activate_hello_theme' },
+			endpoint: 'activate-hello-theme',
 		} );
 	};
 

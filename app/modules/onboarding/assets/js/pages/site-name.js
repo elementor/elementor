@@ -1,14 +1,14 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useOnboardingAjax from '../hooks/use-onboarding-ajax';
 
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function SiteName() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
-		{ ajaxState, setAjax } = useAjax(),
+		{ ajaxState, setAjax } = useOnboardingAjax(),
 		[ noticeState, setNoticeState ] = useState( null ),
 		[ siteNameInputValue, setSiteNameInputValue ] = useState( state.siteName ),
 		pageId = 'siteName',
@@ -30,11 +30,9 @@ export default function SiteName() {
 				// Only run the site name update AJAX if the new name is different than the existing one and it isn't empty.
 				if ( nameInputRef.current.value !== state.siteName && '' !== nameInputRef.current.value ) {
 					setAjax( {
+						endpoint: 'update-site-name',
 						data: {
-							action: 'elementor_update_site_name',
-							data: JSON.stringify( {
-								siteName: nameInputRef.current.value,
-							} ),
+							siteName: nameInputRef.current.value,
 						},
 					} );
 				} else if ( nameInputRef.current.value === state.siteName ) {
