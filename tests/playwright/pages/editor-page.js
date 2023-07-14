@@ -564,12 +564,9 @@ module.exports = class EditorPage extends BasePage {
 	 * @Description edit current page from the Front End.
 	 */
 	async editCurrentPage() {
-		const postId = await this.getPageIdFromURL();
-		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromURL(). If you have not supplied a pageId, This may indicate unexpected permalink settings - try using wpAdmin.setPermalink() before this.' ).toBeTruthy();
-
-		if ( null !== postId ) {
-			await this.gotoPostId( postId );
-		}
+		const postId = await this.getPageIdFromFrontEnd();
+		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
+		await this.gotoPostId( postId );
 	}
 
 	async getPageId() {
@@ -577,23 +574,8 @@ module.exports = class EditorPage extends BasePage {
 		return pageId;
 	}
 
-	async getPageIdFromURL() {
-		const url = this.page.url();
-		// Permalink Plain
-		const plainPermalink = await url.match( /page_id=([^&]*)/ );
-		// Expecting default page name like '/elementor-24/'
-		const postNamePermalink = await url.match( /elementor-([^&]*)/ );
-
-		if ( Array.isArray( plainPermalink ) && plainPermalink.hasOwnProperty( 1 ) ) {
-			return plainPermalink[ 1 ];
-		}
-
-		if ( Array.isArray( postNamePermalink ) && postNamePermalink.hasOwnProperty( 1 ) ) {
-			postNamePermalink[ 1 ].replace( /\/+$/, '' );
-			return postNamePermalink[ 1 ];
-		}
-
-		return null;
+	async getPageIdFromFrontEnd() {
+		const pageId = await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
