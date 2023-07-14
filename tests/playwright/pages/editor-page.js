@@ -1,4 +1,4 @@
-import * as path from 'path';
+import { getComparator } from 'playwright-core/lib/utils';
 
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const { expect } = require( '@playwright/test' );
@@ -560,16 +560,24 @@ module.exports = class EditorPage extends BasePage {
 		return previewPage;
 	}
 
+	/*
+	 * @Description edit current page from the Front End.
+	 */
 	async editCurrentPage() {
-		const postId = await this.getPageID();
-		expect( postId, 'No Post/Page ID returned when calling getPageId(). This may indicate unexpected permalink settings - try using wpAdmin.setPermalink()' ).toBeTruthy();
+		const postId = await this.getPageIdFromURL();
+		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromURL(). If you have not supplied a pageId, This may indicate unexpected permalink settings - try using wpAdmin.setPermalink() before this.' ).toBeTruthy();
 
 		if ( null !== postId ) {
 			await this.gotoPostId( postId );
 		}
 	}
 
-	async getPageID() {
+	async getPageId() {
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		return pageId;
+	}
+
+	async getPageIdFromURL() {
 		const url = this.page.url();
 		// Permalink Plain
 		const plainPermalink = await url.match( /page_id=([^&]*)/ );

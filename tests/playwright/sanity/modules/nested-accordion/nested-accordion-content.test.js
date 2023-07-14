@@ -107,9 +107,9 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
 
-		await wpAdmin.setPermalinks();
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
+		editor.postId = await editor.getPageId();
 		let frame = editor.getPreviewFrame();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -140,13 +140,12 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
-			await editor.editCurrentPage();
-			frame = await editor.getPreviewFrame();
+			await editor.gotoPostId();
+			frame = editor.getPreviewFrame();
 
 			await frame.locator( '.e-n-accordion-item-title' ).first().click();
 			await page.locator( '.elementor-control-inline-icon .elementor-control-icons--inline__none' ).first().click();
 
-			frame = editor.getPreviewFrame();
 			const editorFirstItem = frame.locator( '.e-n-accordion-item' ).first();
 
 			await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
