@@ -24,7 +24,7 @@ export default class ElementRegressionHelper {
 		}
 	}
 
-	async doScreenshotComparisonPublished( args = { widgetType, hoverSelector } ) {
+	async doScreenshotPublished( args = { widgetType, hoverSelector } ) {
 		const widgetCount = await this.page.locator( EditorSelectors.widget ).length;
 		if ( args.widgetType.includes( 'hover' ) ) {
 			for ( let i = 0; i < widgetCount; i++ ) {
@@ -44,5 +44,32 @@ export default class ElementRegressionHelper {
 			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
 		}
 		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
+		await this.editorPage.getPreviewFrame().locator( '#site-header' ).click();
+	}
+
+	async doResponsiveScreenshot( args = { device, isPublished: false, widgetType } ) {
+		let page;
+		let label = '';
+		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
+
+		if ( args.widgetType.includes( 'hover' ) ) {
+			return;
+		}
+		if ( args.isPublished ) {
+			page = this.page;
+			await page.setViewportSize( deviceParams[ args.device ] );
+			label = '_published';
+			await expect( page.locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+		} else {
+			page = this.editorPage.getPreviewFrame();
+			await this.setResponsiveMode( args.device );
+			await this.page.evaluate( () => {
+				const iframe = document.getElementById( 'elementor-preview-iframe' );
+				iframe.style.height = '2000px';
+			} );
+			await expect( page.locator( EditorSelectors.container ) )
+				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+		}
 	}
 }

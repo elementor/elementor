@@ -1,9 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
-import EditorSelectors from '../../playwright/selectors/editor-selectors';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -69,28 +68,15 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
 			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
-			await helper.setResponsiveMode( 'mobile' );
-			await expect( editorPage.getPreviewFrame().locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ widgetType }_mobile.png`, { maxDiffPixels: 200, timeout: 10000 } );
-			await helper.setResponsiveMode( 'tablet' );
-			await expect( editorPage.getPreviewFrame().locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ widgetType }_tablet.png`, { maxDiffPixels: 200, timeout: 10000 } );
-			await editorPage.publishAndViewPage();
-			await editorPage.waitForIframeToLoaded( widgetType, true );
-			await helper.doScreenshotComparisonPublished( { widgetType, hoverSelector } );
+			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
+			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
 
-			await page.setViewportSize( {
-				width: 768,
-				height: 787,
-			} );
-			await expect( page.locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ widgetType }_tablet_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
-			await page.setViewportSize( {
-				width: 360,
-				height: 736,
-			} );
-			await expect( page.locator( EditorSelectors.container ) )
-				.toHaveScreenshot( `${ widgetType }_mobile_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
+			await editorPage.publishAndViewPage();
+
+			await editorPage.waitForIframeToLoaded( widgetType, true );
+			await helper.doScreenshotPublished( { widgetType, hoverSelector } );
+			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
+			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
 		} );
 	}
 } );
