@@ -666,11 +666,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 		test( 'Header style tests new', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
-				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				frame = editor.getPreviewFrame(),
-				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
-				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
-				nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' );
+				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' );
 
 			await editor.closeNavigatorIfOpen();
 			await editor.activatePanelTab( 'style' );
@@ -707,7 +704,6 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					// Assert
 					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow-front.png' );
-
 				} );
 			} );
 		} );
