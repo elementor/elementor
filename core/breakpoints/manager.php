@@ -544,6 +544,6 @@ class Manager extends Module {
 			if ( ! $is_edit_mode && $handle_id && $additional_breakpoints_active ) {
 				Plugin::$instance->controls_manager->clear_stacks( $handle_id );
 			}
-		});
+		} );
 	}
 }

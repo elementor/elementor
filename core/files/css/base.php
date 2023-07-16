@@ -97,6 +97,16 @@ abstract class Base extends Base_File {
 	 */
 	abstract public function get_name();
 
+	/**
+	 * Get file handle ID.
+	 *
+	 * Retrieve the handle ID for the CSS file.
+	 *
+	 * @since 3.15.0
+	 * @access public
+	 *
+	 * @return string CSS file handle ID.
+	 */
 	public function get_id() {
 		return $this->get_file_handle_id();
 	}

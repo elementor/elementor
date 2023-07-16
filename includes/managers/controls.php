@@ -293,7 +293,7 @@ class Controls_Manager {
 	/**
 	 * Has stacks cache been cleared.
 	 *
-	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
+	 * Holds the list of all the control stacks that have been cleared.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -301,8 +301,6 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	private $has_stacks_cache_been_cleared = false;
-
 	private $has_post_stacks_cache_been_cleared = [];
 
 	/**
@@ -883,12 +881,7 @@ class Controls_Manager {
 	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function has_stacks_cache_been_cleared( $handle_id = null ) {
-
-		if ( ! $handle_id ) {
-			return $this->has_stacks_cache_been_cleared;
-		}
-
+	public function has_stacks_cache_been_cleared( $handle_id = 'default' ) {
 		if ( ! isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] ) ) {
 			return false;
 		}
@@ -902,14 +895,10 @@ class Controls_Manager {
 	 * @since 3.13.0
 	 * @access public
 	 */
-	public function clear_stack_cache( $handle_id = null ) {
+	public function clear_stack_cache( $handle_id = 'default' ) {
 		$this->stacks = [];
 
-		if ( $handle_id ) {
-			$this->has_post_stacks_cache_been_cleared[ $handle_id ] = true;
-		} else {
-			$this->has_stacks_cache_been_cleared = true;
-		}
+		$this->has_post_stacks_cache_been_cleared[ $handle_id ] = true;
 	}
 
 	/**
