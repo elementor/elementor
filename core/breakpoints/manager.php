@@ -535,26 +535,6 @@ class Manager extends Module {
 		return apply_filters( $replacement_hook, $templates );
 	}
 
-	/**
-	 * Get file handle ID.
-	 *
-	 * Retrieve the handle ID for the post CSS file.
-	 *
-	 * @since 3.15.0
-	 * @access protected
-	 *
-	 * @return string CSS file handle ID.
-	 */
-	protected function get_file_handle_id() {
-		$current_document = Plugin::$instance->documents->get_current();
-		if ( $current_document ) {
-			$post_id = $current_document->get_main_id();
-			return 'elementor-post-' . $post_id;
-		}
-
-		return false;
-	}
-
 	public function __construct() {
 		add_action( 'elementor/css_file/parse_content', function( $css_file ) {
 			$handle_id = $css_file->get_file_handle_id();
