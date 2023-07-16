@@ -1,11 +1,11 @@
 {
     "content": [
         {
-            "id": "5c2f6971",
+            "id": "7367b36a",
             "settings": [],
             "elements": [
                 {
-                    "id": "d1f611b",
+                    "id": "556bceb8",
                     "settings": {
                         "__globals__": {
                             "sc_color": "globals\/colors?id=accent"
@@ -18,7 +18,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "220fc93c",
+                    "id": "3ea87799",
                     "settings": {
                         "sc_buying": "",
                         "sc_liking": "",
@@ -38,7 +38,7 @@
                     "elType": "widget"
                 },
                 {
-                    "id": "15c0e97f",
+                    "id": "3de46401",
                     "settings": {
                         "visual": "yes",
                         "sc_show_comments": ""

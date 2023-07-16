@@ -110,7 +110,7 @@ class Modules_Manager {
 			'announcements',
 			'site-navigation',
 			'styleguide',
-			'marketplace',
+			//'marketplace',
 		];
 	}
 
