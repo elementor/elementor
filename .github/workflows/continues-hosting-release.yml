@@ -55,7 +55,7 @@ jobs:
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
-          TOKEN: ${{ secrets.LOCAL_MAINTAIN_TOKEN }}
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
