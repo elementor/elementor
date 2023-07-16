@@ -138,7 +138,7 @@ class Admin_Apps_Page {
 				<?php if ( ! empty( $plugin['learn_more_url'] ) ) : ?>
 					<a class="e-a-learn-more" href="<?php echo esc_url( $plugin['learn_more_url'] ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 				<?php endif; ?>
-				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="e-button e-accent" target="_blank"><?php echo esc_html( $plugin['action_label'] ); ?></a>
+				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="e-btn e-accent" target="_blank"><?php echo esc_html( $plugin['action_label'] ); ?></a>
 			</p>
 		</div>
 		<?php

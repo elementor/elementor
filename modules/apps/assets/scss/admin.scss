@@ -91,12 +91,17 @@ body.elementor_page_elementor-apps {
 	.e-a-actions {
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-start;
+		align-items: center;
 		width: 100%;
 		margin-top: 20px;
-	}
 
-	.e-button {
-		@include e-button;
+		a {
+			text-decoration: none;
+		}
+
+		.e-a-learn-more {
+			color: $e-indigo-800;
+			font-weight: 500;
+		}
 	}
 }
