@@ -537,7 +537,7 @@ class Manager extends Module {
 
 	public function __construct() {
 		add_action( 'elementor/css_file/parse_content', function( $css_file ) {
-			$handle_id = $css_file->get_file_handle_id();
+			$handle_id = $css_file->get_id();
 			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 			$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
 

@@ -97,6 +97,10 @@ abstract class Base extends Base_File {
 	 */
 	abstract public function get_name();
 
+	public function get_id() {
+		return $this->get_file_handle_id();
+	}
+
 	protected function is_global_parsing_supported() {
 		return false;
 	}
