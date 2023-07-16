@@ -778,4 +778,47 @@ module.exports = class EditorPage extends BasePage {
 		await this.setSliderControlValue( selector + '_font_size', fontsize );
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type [text|box]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setShadowControl( controlID, type ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type [text]
+	 * @param {string} value [number]
+	 * @param {string} color [hex color]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextStokeControl( controlID, type, value, color ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlID }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} tab [normal|hover|active]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async selectStateTab( controlID, tab ) {
+		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+	}
 };

@@ -4,6 +4,7 @@ namespace Elementor\Modules\NestedAccordion\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\NestedElements\Base\Widget_Nested_Base;
@@ -11,6 +12,7 @@ use Elementor\Modules\NestedElements\Controls\Control_Nested_Repeater;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
+use Elementor\Group_Control_Text_Stroke;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -525,10 +527,17 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->start_controls_tabs( 'header_title_color_style' );
 
 		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
-			$this->add_header_color_style( $state, 'title' );
+			$this->add_header_style( $state, 'title' );
 		}
 
 		$this->end_controls_tabs();
+
+		$this->add_control(
+			'header_section_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
 
 		$this->add_control(
 			'heading_icon_style_title',
@@ -596,25 +605,28 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->start_controls_tabs( 'header_icon_color_style' );
 
 		foreach ( [ 'normal', 'hover', 'active' ] as $state ) {
-			$this->add_header_color_style( $state, 'icon' );
+			$this->add_header_style( $state, 'icon' );
 		}
 
 		$this->end_controls_tabs();
 		$this->end_controls_section();
 	}
 
-	private function add_header_color_style( $state, $context ) {
-
-		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
-
+	private function add_header_style( $state, $context ) {
 		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
 
 		switch ( $state ) {
 			case 'hover':
 				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
+				$translated_tab_css_selector = '.e-n-accordion-item:not([open]) .e-n-accordion-item-title:hover:not(.e-n-accordion-item-title-icon) .e-n-accordion-item-title-text';
 				break;
 			case 'active':
 				$translated_tab_text = esc_html__( 'Active', 'elementor' );
+				$translated_tab_css_selector = '.e-n-accordion-item[open] .e-n-accordion-item-title .e-n-accordion-item-title-text';
+				break;
+			default:
+				$translated_tab_text = esc_html__( 'Normal', 'elementor' );
+				$translated_tab_css_selector = '.e-n-accordion-item:not([open]) .e-n-accordion-item-title:not(:hover) .e-n-accordion-item-title-text';
 				break;
 		}
 
@@ -635,6 +647,30 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 			]
 		);
+
+
+		if ( 'title' === $context ) {
+			$this->add_group_control(
+				Group_Control_Text_Shadow::get_type(),
+				[
+					'name' => $context . '-' . $state . '-text-shadow',
+					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
+					'fields_options' => [
+						'text_shadow_type' => [
+							'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						],
+					],
+				]
+			);
+
+			$this->add_group_control(
+				Group_Control_Text_Stroke::get_type(),
+				[
+					'name' => $context . '-' . $state . '-stroke',
+					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
+				]
+			);
+		}
 
 		$this->end_controls_tab();
 	}
