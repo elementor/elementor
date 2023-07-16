@@ -71,8 +71,6 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.LOCAL_MAINTAIN_TOKEN }}
       - name: Post To Slack Created Cloud daily automated Release
         uses : ./.github/workflows/post-to-slack
         with:
