@@ -188,15 +188,7 @@ class Deprecation {
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function check_deprecation( $version, $base_version = null, $stack_depth = 3 ) {
-		if ( null === $base_version ) {
-			$base_version = $this->current_version;
-		}
-		$diff = $this->compare_version( $base_version, $version );
-
-		if ( false === $diff ) {
-			throw new \Exception( 'Invalid deprecation diff.' );
-		}
+	private function check_deprecation( $stack_depth = 3 ) {
 
 		$print_deprecated = [];
 		$calling_source = Backtrace_Helper::find_who_called_me( $stack_depth );
@@ -207,6 +199,14 @@ class Deprecation {
 			'source' => $source_message,
 			'plugin' => $calling_source['name'],
 			'source_type' => $calling_source['type'],
+		];
+
+		$print_deprecated2 = [
+			'calling_function' => $calling_source['function'],
+			'calling_file' => $calling_source['file'],
+			'calling_line' => $calling_source['line'],
+			'calling_plugin' => $calling_source['name'],
+			'calling_type' => $calling_source['type'],
 		];
 
 		return $print_deprecated;
@@ -242,11 +242,6 @@ class Deprecation {
 		$user_is_admin = current_user_can( 'manage_options' );
 		$user_is_logged_in = is_user_logged_in();
 
-		if ( null === $base_version ) {
-			$base_version = $this->current_version;
-		}
-		$first_deprecation_stage = $this->compare_version( $base_version, $version ) <= self::SOFT_VERSIONS_COUNT;
-
 		if ( $is_wp_debug ) {
 			if ( $is_elementor_debug ) {
 				return true;
@@ -254,11 +249,23 @@ class Deprecation {
 			if ( $user_is_admin ) {
 				return true;
 			}
-			if ( $user_is_logged_in && ! $first_deprecation_stage ) {
+			if ( $user_is_logged_in && ! $this->is_first_deprecation_stage( $version, $base_version ) ) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private function is_first_deprecation_stage( $version, $base_version ) {
+		if ( null === $base_version ) {
+			$base_version = $this->current_version;
+		}
+		$diff = $this->compare_version( $base_version, $version );
+		if ( false === $diff ) {
+			throw new \Exception( 'Invalid deprecation diff.' );
+		}
+		$first_deprecation_stage = $diff <= self::SOFT_VERSIONS_COUNT;
+		return $first_deprecation_stage;
 	}
 
 	private function should_console_log_deprecated() {
@@ -291,24 +298,25 @@ class Deprecation {
 		 */
 		if ( apply_filters( 'deprecated_function_trigger_error', true ) ) {
 			$message_string = '';
-			$error_message_args = [ esc_html( $function_name ), esc_html( $version ) ];
 			if ( $replacement ) {
-				$error_message_args[] = $replacement;
-				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' );
+				$message_string = sprintf( __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' ),
+					$function_name,
+					$version,
+					$replacement,
+					$type,
+					$plugin,
+					$source
+				);
 			} else {
-				$message_string = __( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller %3$s: %4$s. Called from: %5$s.', 'elementor' );
+				$message_string = sprintf(__( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller %3$s: %4$s. Called from: %5$s.', 'elementor' ),
+					$function_name,
+					$version,
+					$type,
+					$plugin,
+					$source
+				);
 			}
-			$error_message_args[] = $type;
-			$error_message_args[] = $plugin;
-			$error_message_args[] = $source;
-			trigger_error(
-				vsprintf(
-					// PHPCS - $message_string is already escaped above.
-					$message_string, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					$error_message_args // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				),
-				E_USER_DEPRECATED
-			);
+			trigger_error( $message_string, E_USER_DEPRECATED );
 		}
 	}
 	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin = '', $source = '', $type = 'plugin' ) {
@@ -316,28 +324,29 @@ class Deprecation {
 		do_action( 'deprecated_argument_run', $argument, $message, $version );
 
 		$message = empty( $message ) ? '' : ' ' . $message;
-		// These arguments are escaped because they are printed later, and are not escaped when printed.
-		$error_message_args = [ esc_html( $argument ), esc_html( $version ) ];
 
 		if ( $replacement ) {
 			/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
-			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' );
-			$error_message_args[] = $replacement;
+			$translation_string = sprintf(__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' ),
+				$argument,
+				$version,
+				$replacement,
+				$type,
+				$plugin,
+				$source
+			) . $message;
+
 		} else {
 			/* translators: 1: Function argument, 2: Elementor version number. */
-			$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller %3$s: %4$s. Called from: %5$s.', 'elementor' );
+			$translation_string = sprintf(__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller %3$s: %4$s. Called from: %5$s.', 'elementor' ),
+				$argument,
+				$version,
+				$type,
+				$plugin,
+				$source
+			) . $message;
 		}
-		$error_message_args[] = $type;
-		$error_message_args[] = $plugin;
-		$error_message_args[] = $source;
-
-		trigger_error(
-			vsprintf(
-				// PHPCS - $translation_string is already escaped above.
-				$translation_string,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				// PHPCS - $error_message_args is an array.
-				$error_message_args  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			) . esc_html( $message ),
+		trigger_error( $translation_string ,
 			E_USER_DEPRECATED
 		);
 	}
@@ -364,7 +373,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation( $version, $base_version );
+		$print_deprecated = $this->check_deprecation();
 
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $function, $version, $replacement, $print_deprecated['source'] );
@@ -399,7 +408,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation( $version, $base_version );
+		$print_deprecated = $this->check_deprecation();
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $hook, $version, $replacement, $print_deprecated['source'] );
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
@@ -429,7 +438,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation( $version, $base_version );
+		$print_deprecated = $this->check_deprecation();
 
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $argument, $version, $replacement, $print_deprecated['source'] );
@@ -467,7 +476,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation( $version, $base_version );
+		$print_deprecated = $this->check_deprecation();
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $hook, $version, $replacement, $print_deprecated['source'] );
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
