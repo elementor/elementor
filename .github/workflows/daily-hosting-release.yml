@@ -66,7 +66,7 @@ jobs:
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
         with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          TOKEN: ${{ secrets.LOCAL_MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
@@ -102,7 +102,7 @@ jobs:
           ENVIRONMENT_NAME: ${{ env.SCHEDULE_RELEASES }}
           CHANNEL: ${{ env.CHANNEL }}
           NAME: 'LAST_AUTOMATED_RELEASE'
-          MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          MAINTAIN_TOKEN: ${{ secrets.LOCAL_MAINTAIN_TOKEN }}
           VALUE: ${{ env.CURRENT_DATE }}
       - name: Post To Slack Created Cloud daily automated Release
         uses : ./.github/workflows/post-to-slack
