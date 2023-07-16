@@ -275,7 +275,7 @@ abstract class Base extends Base_File {
 		/**
 		 * Enqueue CSS file.
 		 *
-		 * Fires when CSS file is enqueued on Elementor.
+		 * Fires after enqueuing a CSS file.
 		 *
 		 * @param Base $this The current CSS file.
 		 */
