@@ -1,9 +1,7 @@
 <?php
 namespace Elementor\Modules\NestedAccordion;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
-use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Core\Base\Module as BaseModule;
 
 
@@ -13,43 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'nested-accordion';
-
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	public function get_name() {
-		return static::EXPERIMENT_NAME;
+		return 'nested-accordion';
 	}
 
 	public function get_widgets() {
 		return [
 			'Nested_Accordion',
-		];
-	}
-
-	/**
-	 * Add to the experiments
-	 *
-	 * @return array
-	 */
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Nested Accordion', 'elementor' ),
-			'description' => sprintf(
-			/* translators: 1: Link opening tag, 2: Link closing tag. */
-				esc_html__( 'Create a rich user experience by layering widgets together inside “Nested” Accordion, etc. %1$sLearn More%2$s', 'elementor' ),
-				'<a href="https://go.elementor.com/widget-nested-accordion" target="_blank">',
-				'</a>'
-			),
-			'hidden' => true,
-			'release_status' => Manager::RELEASE_STATUS_ALPHA,
-			'default' => Manager::STATE_INACTIVE,
-			'dependencies' => [
-				'nested-elements',
-			],
 		];
 	}
 
