@@ -106,6 +106,14 @@ class Test_Controls extends Elementor_Test_Base {
 		$this->assertTrue( $stack_cache_has_been_cleared );
 
 		// Assert
+		$has_default_stack_cache_has_been_cleared = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( 'default' );
+		$this->assertTrue( $has_default_stack_cache_has_been_cleared );
+
+		// Assert
+		$stack_cache_has_been_cleared_none_existing_handle_id = Plugin::$instance->controls_manager->has_stacks_cache_been_cleared( 'none_existing_handle_id' );
+		$this->assertFalse( $stack_cache_has_been_cleared_none_existing_handle_id );
+
+		// Assert
 		$stacks = Plugin::$instance->controls_manager->get_stacks();
 		$this->assertEmpty( $stacks );
 	}
