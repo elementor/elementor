@@ -279,7 +279,7 @@ abstract class Base extends Base_File {
 		 *
 		 * @param Base $this The current CSS file.
 		 */
-		do_action( 'elementor/css-file/enqueue', $this );
+		do_action( 'elementor/css-file/after_enqueue', $this );
 	}
 
 	/**
