@@ -653,7 +653,7 @@ abstract class Base extends Base_File {
 	 */
 	protected function parse_content() {
 
-		do_action( 'elementor/css_file/parse_content' );
+		do_action( 'elementor/css_file/parse_content', $this );
 
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
