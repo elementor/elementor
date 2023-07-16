@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\Marketplace;
+namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin_Menu_Marketplace implements Admin_Menu_Item_With_Page {
+class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
 
 	public function is_visible() {
 		return true;
@@ -19,11 +19,11 @@ class Admin_Menu_Marketplace implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Marketplace', 'elementor' );
+		return esc_html__( 'Apps', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Marketplace', 'elementor' );
+		return esc_html__( 'Apps', 'elementor' );
 	}
 
 	public function get_capability() {
@@ -31,6 +31,6 @@ class Admin_Menu_Marketplace implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
-		Admin_Marketplace_Page::render();
+		Admin_Apps_Page::render();
 	}
 }

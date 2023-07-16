@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\Marketplace;
+namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\User;
@@ -12,7 +12,7 @@ class Admin_Pointer {
 
 	const RELEASE_VERSION = '3.14.0';
 
-	const CURRENT_POINTER_SLUG = 'e-marketplace';
+	const CURRENT_POINTER_SLUG = 'e-apps';
 
 	public static function add_hooks() {
 		add_action( 'admin_print_footer_scripts-index.php', [ __CLASS__, 'admin_print_script' ] );
@@ -29,7 +29,7 @@ class Admin_Pointer {
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				$( '#toplevel_page_elementor' ).pointer( {
-					content: '<h3><?php echo esc_html__( 'Elementor Marketplace', 'elementor' ); ?></h3><p><?php echo esc_html__( 'Elementor Marketplace is coming soon!', 'elementor' ); ?></p>',
+					content: '<h3><?php echo esc_html__( 'New! Popular Apps', 'elementor' ); ?></h3><p><?php echo esc_html__( 'Discover our collection of plugins and add-ons carefully selected to to enhance your Elementor website and unleash your creativity.', 'elementor' ); ?></p>',
 					position: {
 						edge: 'left',
 						align: 'center'

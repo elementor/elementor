@@ -61,8 +61,8 @@ class Module extends BaseApp {
 		$settings = [];
 		$settings['is_administrator'] = current_user_can( 'manage_options' );
 
-		// TODO: Find a better way to add marketplace url to the admin top bar.
-		$settings['marketplace_url'] = admin_url( 'admin.php?page=elementor-marketplace' );
+		// TODO: Find a better way to add apps page url to the admin top bar.
+		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
 
 		$current_screen = get_current_screen();
 

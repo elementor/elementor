@@ -72,9 +72,9 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'modules/marketplace/assets/scss',
+				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
-				dest: 'assets/css/modules/marketplace',
+				dest: 'assets/css/modules/apps',
 				ext: '.css',
 			},
 		]
