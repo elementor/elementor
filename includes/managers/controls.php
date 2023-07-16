@@ -1189,8 +1189,7 @@ class Controls_Manager {
 	 */
 	public function clear_stacks( $handle_id ) {
 		if ( $handle_id ) {
-			$stack_cache_has_been_cleared = $this->has_stacks_cache_been_cleared( $handle_id );
-			if ( ! $stack_cache_has_been_cleared ) {
+			if ( ! $this->has_stacks_cache_been_cleared( $handle_id ) ) {
 				$this->clear_stack_cache( $handle_id );
 			}
 		}
