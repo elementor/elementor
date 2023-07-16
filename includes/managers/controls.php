@@ -882,11 +882,7 @@ class Controls_Manager {
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
 	public function has_stacks_cache_been_cleared( $handle_id = 'default' ) {
-		if ( ! isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] ) ) {
-			return false;
-		}
-
-		return true;
+		return isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] );
 	}
 
 	/**
