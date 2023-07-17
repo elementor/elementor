@@ -125,7 +125,9 @@ class Deprecation {
 		$version_explode_count = count( $version_explode );
 
 		if ( $version_explode_count < 3 || $version_explode_count > 4 ) {
+			// phpcs:disable WordPress.PHP.DevelopmentFunctions		
 			trigger_error( 'Invalid Semantic Version string provided: ' . esc_html( var_export( $version, 1 ) ) );
+			// phpcs:enable
 
 			return false;
 		}
@@ -313,8 +315,14 @@ class Deprecation {
 					$source
 				);
 			}
-			trigger_error( $message_string, E_USER_DEPRECATED );
+			$this->trigger_wp_error( $message_string );
 		}
+	}
+
+	private function trigger_wp_error( $message ) {
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions
+		trigger_error( wp_kses_post( $message ), E_USER_DEPRECATED );
+		// phpcs:enable
 	}
 	private function notify_deprecated_argument( $deprecation_object, $message = '' ) {
 		do_action( 'deprecated_argument_run', $deprecation_object['entity'], $message, $deprecation_object['version'] );
@@ -342,10 +350,10 @@ class Deprecation {
 				$deprecation_object['calling_plugin'],
 				$caller_location_message
 			) . $message;
+
 		}
-		trigger_error( $translation_string,
-			E_USER_DEPRECATED
-		);
+		$this->trigger_wp_error( $translation_string );
+
 	}
 
 	private function create_location_message( $function, $file, $line ) {
@@ -373,17 +381,8 @@ class Deprecation {
 		if ( ! $this->should_collect_deprication_info( $version, $base_version ) ) {
 			return;
 		}
-
 		$deprecation_info = $this->get_deprecation_info( $function, $version, $replacement );
 
-		// if ( ! empty( $print_deprecated ) ) {
-		// 	$this->log_deprecation( $function, $version, $replacement, $print_deprecated['source'] );
-		// 	if ( $this->should_print_deprecated( $version, $base_version ) ) {
-		// 		// PHPCS - We need to echo special characters because they can exist in function calls.
-		// 		$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
-
-		// 	}
-		// }
 		if ( ! empty( $deprecation_info ) ) {
 			$this->log_deprecation( $deprecation_info );
 
@@ -391,7 +390,6 @@ class Deprecation {
 				$this->notify_deprecated_function( $deprecation_info );
 			}
 		}
-
 	}
 
 
