@@ -842,3 +842,4 @@ module.exports = class EditorPage extends BasePage {
 		} while ( null !== comparator( beforeImage, afterImage ) );
 	}
 };
+
