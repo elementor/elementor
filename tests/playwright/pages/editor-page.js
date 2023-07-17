@@ -569,6 +569,10 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async getPageId() {
+		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
+		return pageId;
+	}
+	async getPageIdFromFrontEnd() {
 		const pageId = await this.page.evaluate( () => elementorFrontendConfig.post.id );
 		return pageId;
 	}
