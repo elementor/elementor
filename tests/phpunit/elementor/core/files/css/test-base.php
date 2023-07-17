@@ -255,6 +255,17 @@ class Test_Base extends Elementor_Test_Base {
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_duplication_mode );
 	}
 
+	public function test_get_id() {
+		//css instance
+		$css_instance = new \Elementor\Core\Files\CSS\Post( 5 );
+
+		// Act
+		$css_id = $css_instance->get_id();
+
+		// Assert
+		$this->assertEquals( "elementor-post-5" , $css_id );
+	}
+
 	private function add_and_return_rules( $element_instance, $selector ) {
 		$this->css_generator_class->add_controls_stack_style_rules(
 			$element_instance,
@@ -288,4 +299,5 @@ class Test_Base extends Elementor_Test_Base {
 			'SIZE'
 		);
 	}
+	
 }
