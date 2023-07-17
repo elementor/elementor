@@ -86,6 +86,7 @@ async function setBorderAndBackground( editor, state, color, borderType, borderC
 		await editor.page.click( '.elementor-control-accordion_' + state + '_border_and_background' );
 	}
 }
+
 async function setIconColor( editor, state, color, context ) {
 	await setState();
 	await setColor();
