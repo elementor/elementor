@@ -61,11 +61,10 @@ body.elementor_page_elementor-apps {
 		}
 
 		.e-a-badge {
-			background: var(--e-a-bg-success);
-			color: var(--e-a-color-success);
-			border-radius: var(--e-a-border-radius);
-			padding-inline: 6px;
-			font-weight: 500;
+			background: $e-teal-50;
+			color: $e-teal-700;
+			border-radius: 100px;
+			padding: 3px 8px;
 		}
 	}
 
