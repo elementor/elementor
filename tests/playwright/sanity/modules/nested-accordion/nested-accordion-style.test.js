@@ -234,6 +234,10 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
+			// Remove and add a new widget to reset the style
+			await editor.removeElement( nestedAccordionID );
+			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+
 			await test.step( 'Add stroke and text-shadow styling to header - Editor', async () => {
 				// Act
 				await editor.setShadowControl( 'title-normal-text-shadow', 'text' );
