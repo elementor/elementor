@@ -695,7 +695,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 
 					// Assert
 					await editor.waitForSelector( '.elementor-widget-n-accordion' );
-					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
+					await expect.soft( await frame.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
 				} );
 			} );
 
