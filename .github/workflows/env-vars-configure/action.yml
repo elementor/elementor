@@ -8,9 +8,10 @@ inputs:
   REF:
     required: true
     description: 'The ref to get the version from.'
-  REMOVE_RC_TAG:
+  ADDITION_NAME:
     required: false
-    description: 'Should `-rc` tag needs to be removed from the package version.'
+    default: "-rc"
+    description: 'The addition name to add to the package version.'
 
 runs:
   using: "composite"
@@ -19,7 +20,7 @@ runs:
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
-          REMOVE_RC_TAG: ${{ inputs.REMOVE_RC_TAG }}
+          ADDITION_NAME: ${{ inputs.ADDITION_NAME }}
       - name: Increment Patch Version
         if: inputs.CHANNEL == 'ga'
         uses: ./.github/workflows/increment-patch-version

@@ -1,7 +1,9 @@
-name: Continues Hosting Release
+name: One Click Hosting Release
 
 on:
   workflow_dispatch:
+    branches:
+      - main
 env:
   CHANNEL: 'cloud'
   CHANGELOG_FILE: 'temp-changelog.txt'
@@ -12,8 +14,6 @@ jobs:
     steps:
       - name: checkout branch
         uses: actions/checkout@v3
-        # Only run on main branch
-        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           ref: ${{ github.ref }}
       - name: Get Configuration
@@ -37,7 +37,7 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          REMOVE_RC_TAG: true
+          ADDITION_NAME: ""
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -59,7 +59,6 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           HEAD_BRANCH_NAME: ${{ github.ref }}
           BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
-          GENERATE_EMPTY_CHANGELOG: true
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
