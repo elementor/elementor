@@ -6,3 +6,8 @@ global.ReactDOM = require( 'react-dom' );
 global.react = global.React;
 global[ 'react-dom' ] = global.ReactDOM;
 global.__ = ( text ) => text;
+global.$e = {
+	modules: {
+		CommandInternalBase: class CommandInternalBase {},
+	},
+};
