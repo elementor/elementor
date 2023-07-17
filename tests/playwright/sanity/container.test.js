@@ -459,7 +459,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Wrap is of in preset c100-c50-50', async () => {
 			await expect( await page.locator( '.elementor-control-flex_wrap.elementor-group-control-flex-container' ).screenshot( {
 				type: 'jpeg',
-				quality: 90,
+				quality: 100,
 			} ) ).toMatchSnapshot( 'wrap-control-is-not-selected.jpeg' );
 		} );
 	} );
