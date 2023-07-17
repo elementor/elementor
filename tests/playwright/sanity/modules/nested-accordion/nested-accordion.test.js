@@ -663,14 +663,14 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			} );
 		} );
 
-		test.only( 'Header style tests new', async ( { page }, testInfo ) => {
+		test( 'Header style tests new', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				frame = editor.getPreviewFrame(),
 				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
-				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
-				nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' );
+				nestedAccordionItemText = await frame.locator( '.e-n-accordion-item-title-text' ),
+				nestedAccordionItemFrontText = await page.locator( '.e-n-accordion-item-title-text' );
 
 			await editor.closeNavigatorIfOpen();
 			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
@@ -694,10 +694,15 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await editor.setShadowControl( 'title-active-text-shadow', 'text' );
 					await editor.setTextStokeControl( 'title-active-stroke', 'text', 1, colors.orange.hex );
 
-					await nestedAccordionItem.nth( 1 ).hover();
-
 					// Assert
 					await expect.soft( await nestedAccordion.screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
+				} );
+
+				await test.step( 'Test stroke and text-shadow Hover styling', async () => {
+					nestedAccordionItem.nth( 1 ).hover();
+					await expect.soft( nestedAccordionItemText.nth( 1 ) ).toHaveCSS( 'text-shadow', 'rgba(0, 0, 0, 0.3) 0px 0px 10px' );
+					await expect.soft( nestedAccordionItemText.nth( 1 ) ).toHaveCSS( 'stroke', colors.blue.rgb );
+					await expect.soft( nestedAccordionItemText.nth( 1 ) ).toHaveCSS( 'stroke-width', '5px' );
 				} );
 			} );
 
@@ -705,10 +710,18 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await test.step( 'Test stroke and text-shadow styling', async () => {
 					// Act
 					await editor.publishAndViewPage();
-					await nestedAccordionItemFront.nth( 1 ).hover();
-
 					// Assert
 					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow-front.png' );
+				} );
+
+				await test.step( 'Test stroke and text-shadow Hover styling', async () => {
+					// Act
+					await page.locator( '.e-n-accordion-item' ).nth( 1 ).hover();
+
+					// Assert
+					await expect.soft( nestedAccordionItemFrontText.nth( 1 ) ).toHaveCSS( 'text-shadow', 'rgba(0, 0, 0, 0.3) 0px 0px 10px' );
+					await expect.soft( nestedAccordionItemFrontText.nth( 1 ) ).toHaveCSS( 'stroke', colors.blue.rgb );
+					await expect.soft( nestedAccordionItemFrontText.nth( 1 ) ).toHaveCSS( 'stroke-width', '5px' );
 				} );
 			} );
 		} );
