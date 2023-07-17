@@ -171,22 +171,4 @@ module.exports = class WpAdminPage extends BasePage {
 	async editWithElementor() {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
 	}
-
-	async setPermalinks( structure = 'plain' ) {
-		let permalinkStructure;
-
-		await this.page.goto( '/wp-admin/options-permalink.php' );
-
-		switch ( true ) {
-			case 'plain' === structure :
-				permalinkStructure = '#permalink-input-plain';
-				break;
-			case 'post-name' === structure:
-				permalinkStructure = '#permalink-input-post-name';
-				break;
-		}
-
-		await this.page.click( permalinkStructure );
-		await this.page.click( '#submit' );
-	}
 };
