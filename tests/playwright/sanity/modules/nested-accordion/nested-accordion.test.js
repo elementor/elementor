@@ -667,6 +667,8 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				frame = editor.getPreviewFrame(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				nestedAccordionID = await editor.addWidget( 'nested-accordion', container ),
 				nestedAccordionItem = await frame.locator( '.e-n-accordion-item' );
 
 			await editor.closeNavigatorIfOpen();
