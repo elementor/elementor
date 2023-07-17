@@ -180,15 +180,14 @@ class Deprecation {
 	 * Checks whether the given entity is valid. If valid, this method checks whether the deprecation
 	 * should be soft (browser console notice) or hard (use WordPress' native deprecation methods).
 	 *
-	 * @since 3.1.0
+	 * @since 3.15.0
 	 *
 	 * @param string $entity - The Deprecated entity (the function/hook itself)
 	 * @param string $version
 	 * @param string $replacement Optional
-	 * @param string $base_version Optional. Default is `null`
+	 * @param string $stack_depth Optional. Default is 3. Change if calling functions depth changes.
 	 *
 	 * @return array
-	 * @throws \Exception
 	 */
 	private function get_deprecation_info( $entity, $version, $replacement, $stack_depth = 3 ) {
 
@@ -319,11 +318,6 @@ class Deprecation {
 		}
 	}
 
-	private function trigger_wp_error( $message ) {
-		// phpcs:disable WordPress.PHP.DevelopmentFunctions
-		trigger_error( wp_kses_post( $message ), E_USER_DEPRECATED );
-		// phpcs:enable
-	}
 	private function notify_deprecated_argument( $deprecation_object, $message = '' ) {
 		do_action( 'deprecated_argument_run', $deprecation_object['entity'], $message, $deprecation_object['version'] );
 
@@ -359,6 +353,13 @@ class Deprecation {
 	private function create_location_message( $function, $file, $line ) {
 		return sprintf( '%s on file %s:%d.', $function, $file, $line );
 	}
+
+	private function trigger_wp_error( $message ) {
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions
+		trigger_error( wp_kses_post( $message ), E_USER_DEPRECATED );
+		// phpcs:enable
+	}
+
 
 	/**
 	 * Deprecated Function
