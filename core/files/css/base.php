@@ -97,6 +97,20 @@ abstract class Base extends Base_File {
 	 */
 	abstract public function get_name();
 
+	/**
+	 * Get file handle ID.
+	 *
+	 * Retrieve the handle ID for the CSS file.
+	 *
+	 * @since 3.15.0
+	 * @access public
+	 *
+	 * @return string CSS file handle ID.
+	 */
+	public function get_id() {
+		return $this->get_file_handle_id();
+	}
+
 	protected function is_global_parsing_supported() {
 		return false;
 	}
@@ -652,6 +666,8 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		do_action( 'elementor/css_file/parse_content', $this );
+
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
