@@ -694,6 +694,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await nestedAccordionItem.nth( 0 ).hover();
 
 					// Assert
+					await editor.waitForSelector( 'elementor-widget-n-accordion' );
 					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
 				} );
 			} );
@@ -705,6 +706,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 					await page.hover( page.locator( '.e-n-accordion-item' ).nth( 1 ) );
 
 					// Assert
+					await editor.waitForSelector( 'elementor-widget-n-accordion' );
 					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow-front.png' );
 				} );
 			} );
