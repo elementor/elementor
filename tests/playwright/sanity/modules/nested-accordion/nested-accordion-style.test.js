@@ -71,6 +71,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await expectScreenshotToMatchLocator( 'accordion-style-front.png', nestedAccordionWidgetFront );
 		} );
 	} );
+
 	test( 'Content style tests', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
@@ -194,6 +195,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await editor.activatePanelTab( 'style' );
 				await editor.openSection( 'section_header_style' );
 			} );
+
 			await test.step( 'Set header style', async () => {
 				// Act
 				await editor.setTypography( 'title_typography', 70 );
@@ -206,6 +208,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await setIconColor( editor, displayState.hover, colors.green.hex, 'icon' );
 				await setIconColor( editor, displayState.active, colors.blue.hex, 'icon' );
 			} );
+
 			await test.step( 'Capture screenshot', async () => {
 				// Act
 				await nestedAccordionItem.first().click();

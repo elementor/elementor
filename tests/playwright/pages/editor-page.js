@@ -572,8 +572,6 @@ module.exports = class EditorPage extends BasePage {
 		const pageId = await this.page.evaluate( () => elementorFrontendConfig.post.id );
 		return pageId;
 	}
-		
-	}
 
 	/**
 	 * Apply Element Settings
