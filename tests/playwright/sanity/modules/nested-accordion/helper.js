@@ -43,6 +43,7 @@ async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' )
 	const locator = await getChoicesButtonSelector( 'item_title_icon_position' + controlBreakpoint, icon[ direction ] );
 	await editor.page.locator( locator ).click();
 }
+
 async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
 	const icon = Object.freeze( {
 		start: '.eicon-align-start-h',
