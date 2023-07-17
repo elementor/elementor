@@ -182,7 +182,8 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionItemContent = nestedAccordionItem.locator( '.e-con' ),
 			nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
 			nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' ),
-			nestedAccordionItemFrontText = await page.locator( '.e-n-accordion-item-title-text' );
+			nestedAccordionItemFrontText = await page.locator( '.e-n-accordion-item-title-text' ),
+			pageId = await page.evaluate( () => elementor.config.initial_document.id );
 
 		let nestedAccordionID,
 			nestedAccordion;
@@ -231,6 +232,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );
+			await editor.gotoPostId( pageId );
 		} );
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
