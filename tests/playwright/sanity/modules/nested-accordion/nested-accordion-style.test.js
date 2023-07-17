@@ -81,7 +81,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
 
 		await editor.closeNavigatorIfOpen();
-		const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+		let nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 		const nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 		await editor.openSection( 'section_interactions' );
