@@ -19,6 +19,9 @@ class Admin_Apps_Page {
 			<div class="e-a-list">
 				<?php self::render_plugins_list(); ?>
 			</div>
+			<div class="e-a-page-footer">
+				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on the their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
+			</div>
 		</div>
 		<?php
 	}
@@ -44,7 +47,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://elementor.com/',
 				'action_label' => 'Try Now',
 				'action_url' => 'https://elementor.com/',
-				'image' => 'https://ps.w.org/elementor/assets/icon-256x256.png',
+				'image' => $images_url . 'elementor.svg',
 			],
 			[
 				'name' => 'Activity Log',
@@ -55,18 +58,18 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://activitylog.io/',
 				'action_label' => 'Install',
 				'action_url' => 'https://activitylog.io/',
-				'image' => $images_url . 'ea.svg',
+				'image' => $images_url . 'activity-log.png',
 			],
 			[
 				'name' => 'One Click Accessibility',
-				'author' => 'Activity Log Team',
+				'author' => 'One Click Accessibility',
 				'author_url' => 'https://wpaccessibility.io/',
 				'badge' => 'Free',
 				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
 				'learn_more_url' => 'https://activitylog.io/',
 				'action_label' => 'Install',
 				'action_url' => 'https://wpaccessibility.io/',
-				'image' => 'https://ps.w.org/pojo-accessibility/assets/icon-256x256.png',
+				'image' => $images_url . 'one-click-accessibility.png',
 			],
 			[
 				'name' => 'JetPlugins Add-ons',
@@ -77,7 +80,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://crocoblock.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://crocoblock.com/',
-				'image' => 'https://ps.w.org/jetwidgets-for-elementor/assets/icon-256x256.png',
+				'image' => $images_url . 'crocoblock.png',
 			],
 			[
 				'name' => 'Unlimited Elements',
@@ -88,7 +91,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://crocoblock.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://unlimited-elements.com/elementor-partners',
-				'image' => 'https://ps.w.org/unlimited-elements-for-elementor/assets/icon-256x256.gif',
+				'image' => $images_url . 'unlimited-elements.gif',
 			],
 			[
 				'name' => 'Essential Addons',
@@ -98,7 +101,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://essential-addons.com/elementor/core-demo',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://wpdeveloper.com/plugins/essential-addons-elementor/?via=3908&campaign=Partner%20Page',
-				'image' => 'https://ps.w.org/essential-addons-for-elementor-lite/assets/icon-256x256.png',
+				'image' => $images_url . 'essential-addons.svg',
 			],
 			[
 				'name' => 'Element Pack Pro addon',
@@ -108,7 +111,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://bdthemes.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://www.elementpack.pro/',
-				'image' => 'https://ps.w.org/bdthemes-element-pack-lite/assets/icon-256x256.gif',
+				'image' => $images_url . 'element-pack.gif',
 			],
 		];
 
@@ -119,10 +122,10 @@ class Admin_Apps_Page {
 				'author_url' => 'https://elementor.com/',
 				'badge' => 'Official',
 				'description' => 'Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.',
-				'learn_more_url' => 'https://elementor.com/',
+				'learn_more_url' => 'https://elementor.com/pro/',
 				'action_label' => 'Upgrade Now',
-				'action_url' => 'https://elementor.com/',
-				'image' => 'https://ps.w.org/elementor/assets/icon-256x256.png',
+				'action_url' => 'https://elementor.com/pro/',
+				'image' => $images_url . 'elementor.svg',
 			] );
 		}
 
