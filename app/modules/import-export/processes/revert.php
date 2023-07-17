@@ -65,7 +65,9 @@ class Revert {
 		}
 
 		// fallback if the import session failed and doesn't have the runners metadata
-		$import_session['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
+		if ( ! isset( $import_session['runners'] ) && isset( $import_session['instance_data'] ) ) {
+			$import_session['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
+		}
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_revert( $import_session ) ) {
