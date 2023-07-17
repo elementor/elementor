@@ -40,9 +40,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 
 		$experiments_manager = Plugin::instance()->experiments;
-		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
-			\WP_CLI::error( 'Experiments do not exist' . $args[0] );
-		}
+        $this->check_experiments_exist( $experiments_manager, $experiments );
 
 		if ( $is_network ) {
 			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
@@ -75,9 +73,7 @@ class Wp_Cli extends \WP_CLI_Command {
 		$error = 'Cannot deactivate experiment' . $plural;
 
 		$experiments_manager = Plugin::instance()->experiments;
-		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
-			\WP_CLI::error( 'Experiments do not exist' );
-		}
+		$this->check_experiments_exist( $experiments_manager, $experiments );
 
 		if ( $is_network ) {
 			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
@@ -165,13 +161,15 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return bool true when all experiments exist, otherwise false
 	 */
 	private function check_experiments_exist( $experiments_manager, $experiments ) {
+        $allExperimentsExist = true;
 		foreach ( $experiments as $experiment ) {
 			$feature = $experiments_manager->get_features( $experiment );
 			if ( ! $feature ) {
-				return false;
+                \WP_CLI::error( "Experiment '$experiment' do not exist" );
+                $allExperimentsExist = false;
 			}
 		}
-		return true;
+		return $allExperimentsExist;
 	}
 
 	private function update_experiment_state( $experiments, $state, $is_network, $success_message, $error_message, $site_id = '' ) {
@@ -182,6 +180,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$experiments_manager = Plugin::instance()->experiments;
 		foreach ( $experiments as $experiment ) {
+
 			$option = $experiments_manager->get_feature_option_key( $experiment );
 			update_option( $option, $state );
 		}
