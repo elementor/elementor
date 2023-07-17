@@ -455,6 +455,13 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
+
+		await test.step( 'Wrap is of in preset c100-c50-50', async () => {
+			await expect( await page.locator( '.elementor-control-flex_wrap.elementor-group-control-flex-container' ).screenshot( {
+				type: 'jpeg',
+				quality: 90,
+			} ) ).toMatchSnapshot( 'wrap-control-is-not-selected.jpeg' );
+		} );
 	} );
 
 	test( 'Container handle should be centered', async ( { page }, testInfo ) => {
