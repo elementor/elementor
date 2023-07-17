@@ -242,7 +242,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Add stroke and text-shadow styling to header - Editor', async () => {
 				// Act
-				await page.pause();
 				await editor.activatePanelTab( 'style' );
 				await editor.openSection( 'section_header_style' );
 
@@ -260,7 +259,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await editor.setTextStokeControl( 'title-active-stroke', 'text', 1, colors.orange.hex );
 
 				// Assert
-				await expect.soft( await nestedAccordion.screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
+				await expect.soft( await frame.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow.png' );
 			} );
 
 			await test.step( 'Check stroke and text-shadow Hover styling - Editor', async () => {
