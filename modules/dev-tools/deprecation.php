@@ -188,7 +188,7 @@ class Deprecation {
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function check_deprecation( $stack_depth = 3 ) {
+	private function check_deprecation( $entity, $version, $replacement, $stack_depth = 3 ) {
 
 		$print_deprecated = [];
 		$calling_source = Backtrace_Helper::find_who_called_me( $stack_depth );
@@ -196,25 +196,49 @@ class Deprecation {
 		$source_message = sprintf( '%s on file %s:%d.', $calling_source['function'], $calling_source['file'], $calling_source['line'] );
 
 		$print_deprecated = [
+			'entity' => $entity,
+			'version' => $version,
+			'replacement' => $replacement,
 			'source' => $source_message,
-			'plugin' => $calling_source['name'],
-			'source_type' => $calling_source['type'],
-		];
-
-		$print_deprecated2 = [
-			'calling_function' => $calling_source['function'],
-			'calling_file' => $calling_source['file'],
-			'calling_line' => $calling_source['line'],
-			'calling_plugin' => $calling_source['name'],
-			'calling_type' => $calling_source['type'],
+			'plugin' => $calling_source['name'] ?? '',
+			'source_type' => $calling_source['type'] ?? '',
 		];
 
 		return $print_deprecated;
+	}
+	private function check_deprecation2( $entity, $version, $replacement, $stack_depth = 3 ) {
+
+		$calling_source = Backtrace_Helper::find_who_called_me( $stack_depth );
+
+		$print_deprecated2 = [
+			'entity' => $entity,
+			'version' => $version,
+			'replacement' => $replacement,
+			'calling_function' => $calling_source['function'] ?? '',
+			'calling_file' => $calling_source['file'] ?? '',
+			'calling_line' => $calling_source['line'] ?? '',
+			'calling_plugin' => $calling_source['name'] ?? '',
+			'calling_type' => $calling_source['type'] ?? '',
+		];
+		return $print_deprecated2;
 	}
 
 	private function log_deprecation( $entity, $version, $replacement, $source_message ) {
 		if ( $this->should_console_log_deprecated() ) {
 			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
+				$this->soft_deprecated_notices[ $entity ] = [
+					$version,
+					$replacement,
+					$source_message,
+				];
+			}
+		}
+
+	}
+	private function log_deprecation2( $entity, $version, $replacement, $deprecation_object ) {
+		if ( $this->should_console_log_deprecated() ) {
+			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
+				$source_message = $this->create_location_message( $deprecation_object['calling_function'], $deprecation_object['calling_file'], $deprecation_object['calling_line'] );
 				$this->soft_deprecated_notices[ $entity ] = [
 					$version,
 					$replacement,
@@ -276,8 +300,7 @@ class Deprecation {
 		return $this->should_print_deprecated( $version, $base_version ) || $this->should_console_log_deprecated();
 	}
 
-	private function notify_deprecated_function( $function_name, $version, $replacement = '', $plugin = '', $source = '', $type = 'plugin' ) {
-
+	private function notify_deprecated_function( $deprecation_object ) {
 		/**
 		 * Fires when a deprecated function is called.
 		 *
@@ -287,7 +310,9 @@ class Deprecation {
 		 * @param string $replacement   The function that should have been called.
 		 * @param string $version       The version of WordPress that deprecated the function.
 		 */
-		do_action( 'deprecated_function_run', $function_name, $replacement, $version );
+		do_action( 'deprecated_function_run', $deprecation_object['entity'], $deprecation_object['replacement'], $deprecation_object['version'] );
+
+		$source = $this->create_location_message( $deprecation_object['calling_function'], $deprecation_object['calling_file'], $deprecation_object['calling_line'] );
 
 		/**
 		 * Filters whether to trigger an error for deprecated functions.
@@ -298,57 +323,61 @@ class Deprecation {
 		 */
 		if ( apply_filters( 'deprecated_function_trigger_error', true ) ) {
 			$message_string = '';
-			if ( $replacement ) {
+			if ( ! empty( $deprecation_object['replacement'] ) ) {
 				$message_string = sprintf( __( 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' ),
-					$function_name,
-					$version,
-					$replacement,
-					$type,
-					$plugin,
+					$deprecation_object['entity'],
+					$deprecation_object['version'],
+					$deprecation_object['replacement'],
+					$deprecation_object['calling_type'],
+					$deprecation_object['calling_plugin'],
 					$source
 				);
 			} else {
 				$message_string = sprintf(__( 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available. Caller %3$s: %4$s. Called from: %5$s.', 'elementor' ),
-					$function_name,
-					$version,
-					$type,
-					$plugin,
+					$deprecation_object['entity'],
+					$deprecation_object['version'],
+					$deprecation_object['calling_type'],
+					$deprecation_object['calling_plugin'],
 					$source
 				);
 			}
 			trigger_error( $message_string, E_USER_DEPRECATED );
 		}
 	}
-	private function notify_deprecated_argument( $argument, $version, $replacement = '', $message = '', $plugin = '', $source = '', $type = 'plugin' ) {
-
-		do_action( 'deprecated_argument_run', $argument, $message, $version );
+	private function notify_deprecated_argument( $deprecation_object, $message = '' ) {
+		do_action( 'deprecated_argument_run', $deprecation_object['entity'], $message, $deprecation_object['version'] );
 
 		$message = empty( $message ) ? '' : ' ' . $message;
+		$caller_location_message = $this->create_location_message( $deprecation_object['calling_function'], $deprecation_object['calling_file'], $deprecation_object['calling_line'] );
 
-		if ( $replacement ) {
+		if ( ! empty( $deprecation_object['replacement'] ) ) {
 			/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
 			$translation_string = sprintf(__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead. Caller %4$s: %5$s. Called from: %6$s.', 'elementor' ),
-				$argument,
-				$version,
-				$replacement,
-				$type,
-				$plugin,
-				$source
+				$deprecation_object['entity'],
+				$deprecation_object['version'],
+				$deprecation_object['replacement'],
+				$deprecation_object['calling_type'],
+				$deprecation_object['calling_plugin'],
+				$caller_location_message
 			) . $message;
 
 		} else {
 			/* translators: 1: Function argument, 2: Elementor version number. */
 			$translation_string = sprintf(__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Caller %3$s: %4$s. Called from: %5$s.', 'elementor' ),
-				$argument,
-				$version,
-				$type,
-				$plugin,
-				$source
+				$deprecation_object['entity'],
+				$deprecation_object['version'],
+				$deprecation_object['calling_type'],
+				$deprecation_object['calling_plugin'],
+				$caller_location_message
 			) . $message;
 		}
-		trigger_error( $translation_string ,
+		trigger_error( $translation_string,
 			E_USER_DEPRECATED
 		);
+	}
+
+	private function create_location_message( $function, $file, $line ) {
+		return sprintf( '%s on file %s:%d.', $function, $file, $line );
 	}
 
 	/**
@@ -373,16 +402,24 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation();
+		$print_deprecated = $this->check_deprecation2( $function, $version, $replacement );
 
+		// if ( ! empty( $print_deprecated ) ) {
+		// 	$this->log_deprecation( $function, $version, $replacement, $print_deprecated['source'] );
+		// 	if ( $this->should_print_deprecated( $version, $base_version ) ) {
+		// 		// PHPCS - We need to echo special characters because they can exist in function calls.
+		// 		$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
+
+		// 	}
+		// }
 		if ( ! empty( $print_deprecated ) ) {
-			$this->log_deprecation( $function, $version, $replacement, $print_deprecated['source'] );
-			if ( $this->should_print_deprecated( $version, $base_version ) ) {
-				// PHPCS - We need to echo special characters because they can exist in function calls.
-				$this->notify_deprecated_function( $function, esc_html( $version ), $replacement, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
+			$this->log_deprecation2( $function, $version, $replacement, $print_deprecated );
 
+			if ( $this->should_print_deprecated( $version, $base_version ) ) {
+				$this->notify_deprecated_function( $print_deprecated );
 			}
 		}
+
 	}
 
 
@@ -408,7 +445,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation();
+		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement );
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $hook, $version, $replacement, $print_deprecated['source'] );
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
@@ -438,13 +475,13 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation();
+		$print_deprecated = $this->check_deprecation2( $argument, $version, $replacement );
 
 		if ( ! empty( $print_deprecated ) ) {
-			$this->log_deprecation( $argument, $version, $replacement, $print_deprecated['source'] );
+			$this->log_deprecation2( $argument, $version, $replacement, $print_deprecated );
 
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
-				$this->notify_deprecated_argument( $argument, $version, $replacement, $message, $print_deprecated['plugin'], $print_deprecated['source'], $print_deprecated['source_type'] );
+				$this->notify_deprecated_argument( $print_deprecated, $message );
 			}
 		}
 	}
@@ -476,7 +513,7 @@ class Deprecation {
 			return;
 		}
 
-		$print_deprecated = $this->check_deprecation();
+		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement );
 		if ( ! empty( $print_deprecated ) ) {
 			$this->log_deprecation( $hook, $version, $replacement, $print_deprecated['source'] );
 			if ( $this->should_print_deprecated( $version, $base_version ) ) {
