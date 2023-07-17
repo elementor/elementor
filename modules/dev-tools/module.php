@@ -18,8 +18,8 @@ class Module extends App {
 	 */
 	public $deprecation;
 
-	public function __construct() {
-		$this->deprecation = new Deprecation( ELEMENTOR_VERSION );
+	public function __construct( $version = ELEMENTOR_VERSION ) {
+		$this->deprecation = new Deprecation( $version );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
