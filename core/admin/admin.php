@@ -749,6 +749,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
