@@ -240,7 +240,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await editor.removeElement( nestedAccordionID );
 			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
 
-
 			await test.step( 'Add stroke and text-shadow styling to header - Editor', async () => {
 				// Act
 				await page.pause();
