@@ -648,7 +648,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
-
 		if ( 'title' === $context ) {
 			$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
