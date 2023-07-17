@@ -28,11 +28,12 @@
 			&:before {
 				content: '';
 				position: absolute;
-				border: solid transparent;
 				top: 2px;
-				border-inline-end-color: var(--e-p-border-section);
-				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 				@include end(calc(100% - 1px));
+				border-block-start: 22px solid transparent;
+				border-block-end: 0 none transparent;
+				border-inline-start: 0 none transparent;
+				border-inline-end: 12px solid var(--e-p-border-section);
 			}
 
 			&:hover {
@@ -49,11 +50,12 @@
 			&:after {
 				content: '';
 				position: absolute;
-				border: solid transparent;
 				top: 2px;
-				border-inline-start-color: var(--e-p-border-section);
-				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 				@include start(calc(100% - 1px));
+				border-block-start: 22px solid transparent;
+				border-block-end: 0 none transparent;
+				border-inline-start: 12px solid var(--e-p-border-section);
+				border-inline-end: 0 none transparent;
 			}
 
 			&:hover {
@@ -80,7 +82,10 @@
 
 				&:before {
 					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
+					border-block-start: 0 none transparent;
+					border-block-end: 22px solid transparent;
+					border-inline-start: 0 none transparent;
+					border-inline-end: 12px solid var(--e-p-border-section);
 				}
 			}
 
@@ -89,7 +94,10 @@
 
 				&:after {
 					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+					border-block-start: 0 none transparent;
+					border-block-end: 22px solid transparent;
+					border-inline-start: 12px solid var(--e-p-border-section);
+					border-inline-end: 0 none transparent;
 				}
 			}
 		}
