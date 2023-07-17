@@ -38,6 +38,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'locations',
 		'store',
 		'ui',
+		'query',
 	];
 
 	/**
