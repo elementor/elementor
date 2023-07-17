@@ -32,94 +32,109 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		return [
+		$images_url = static::get_images_url();
+
+		$plugins = [
 			[
-				'name' => __( 'Elementor Pro', 'elementor' ),
-				'author' => __( 'Elementor', 'elementor' ),
+				'name' => 'Elementor AI',
+				'author' => 'Elementor',
 				'author_url' => 'https://elementor.com/',
-				'badge' => __( 'Official', 'elementor' ),
-				'description' => __( 'Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.', 'elementor' ),
-				'learn_more_url' => 'https://elementor.com/',
-				'action_label' => 'Upgrade Now',
-				'action_url' => 'https://elementor.com/',
-				'image' => 'https://ps.w.org/elementor/assets/icon-256x256.png',
-			],
-			[
-				'name' => __( 'Elementor AI', 'elementor' ),
-				'author' => __( 'Elementor', 'elementor' ),
-				'author_url' => 'https://elementor.com/',
-				'badge' => __( 'Official', 'elementor' ),
-				'description' => __( 'Revolutionize your Web Creation with AI. Available as a free trial with any Elementor website.', 'elementor' ),
+				'badge' => 'Official',
+				'description' => 'Revolutionize your Web Creation with AI. Available as a free trial with any Elementor website.',
 				'learn_more_url' => 'https://elementor.com/',
 				'action_label' => 'Try Now',
 				'action_url' => 'https://elementor.com/',
 				'image' => 'https://ps.w.org/elementor/assets/icon-256x256.png',
 			],
 			[
-				'name' => __( 'Activity Log', 'elementor' ),
-				'author' => __( 'Activity Log Team', 'elementor' ),
+				'name' => 'Activity Log',
+				'author' => 'Activity Log Team',
 				'author_url' => 'https://activitylog.io/',
-				'badge' => __( 'Free', 'elementor' ),
-				'description' => __( 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.', 'elementor' ),
+				'badge' => 'Free',
+				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
 				'learn_more_url' => 'https://activitylog.io/',
 				'action_label' => 'Install',
 				'action_url' => 'https://activitylog.io/',
-				'image' => 'https://ps.w.org/aryo-activity-log/assets/icon-256x256.png',
+				'image' => $images_url . 'ea.svg',
 			],
 			[
-				'name' => __( 'One Click Accessibility', 'elementor' ),
-				'author' => __( 'Activity Log Team', 'elementor' ),
+				'name' => 'One Click Accessibility',
+				'author' => 'Activity Log Team',
 				'author_url' => 'https://wpaccessibility.io/',
-				'badge' => __( 'Free', 'elementor' ),
-				'description' => __( 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.', 'elementor' ),
+				'badge' => 'Free',
+				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
 				'learn_more_url' => 'https://activitylog.io/',
 				'action_label' => 'Install',
 				'action_url' => 'https://wpaccessibility.io/',
 				'image' => 'https://ps.w.org/pojo-accessibility/assets/icon-256x256.png',
 			],
 			[
-				'name' => __( 'JetPlugins Add-ons', 'elementor' ),
-				'author' => __( 'Crocoblock', 'elementor' ),
+				'name' => 'JetPlugins Add-ons',
+				'author' => 'Crocoblock',
 				'author_url' => 'https://crocoblock.com/',
-				'badge' => __( '10% Off', 'elementor' ),
-				'description' => __( 'Unlock dynamic widgets, e-commerce features, and a powerful filtering system for enhanced website capabilities.', 'elementor' ),
+				'badge' => '10% Off',
+				'description' => 'Unlock dynamic widgets, e-commerce features, and a powerful filtering system for enhanced website capabilities.',
 				'learn_more_url' => 'https://crocoblock.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://crocoblock.com/',
 				'image' => 'https://ps.w.org/jetwidgets-for-elementor/assets/icon-256x256.png',
 			],
 			[
-				'name' => __( 'Unlimited Elements', 'elementor' ),
-				'author' => __( 'Unlimited Group', 'elementor' ),
+				'name' => 'Unlimited Elements',
+				'author' => 'Unlimited Group',
 				'author_url' => 'https://unlimited-elements.com/',
-				'badge' => __( '10% Off', 'elementor' ),
-				'description' => __( 'An all-in-one plugin that instantly gives you the most advanced tools to make better Elementor websites faster.', 'elementor' ),
+				'badge' => '10% Off',
+				'description' => 'An all-in-one plugin that instantly gives you the most advanced tools to make better Elementor websites faster.',
 				'learn_more_url' => 'https://crocoblock.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://unlimited-elements.com/elementor-partners',
 				'image' => 'https://ps.w.org/unlimited-elements-for-elementor/assets/icon-256x256.gif',
 			],
 			[
-				'name' => __( 'Essential Addons', 'elementor' ),
-				'author' => __( 'WP Developer', 'elementor' ),
+				'name' => 'Essential Addons',
+				'author' => 'WP Developer',
 				'author_url' => 'https://essential-addons.com/',
-				'description' => __( 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.', 'elementor' ),
+				'description' => 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.',
 				'learn_more_url' => 'https://essential-addons.com/elementor/core-demo',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://wpdeveloper.com/plugins/essential-addons-elementor/?via=3908&campaign=Partner%20Page',
 				'image' => 'https://ps.w.org/essential-addons-for-elementor-lite/assets/icon-256x256.png',
 			],
 			[
-				'name' => __( 'Element Pack Pro addon', 'elementor' ),
-				'author' => __( 'BdThemes Ltd', 'elementor' ),
+				'name' => 'Element Pack Pro addon',
+				'author' => 'BdThemes Ltd',
 				'author_url' => 'https://bdthemes.com/',
-				'description' => __( 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!', 'elementor' ),
+				'description' => 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!',
 				'learn_more_url' => 'https://bdthemes.com/',
 				'action_label' => 'Buy Now',
 				'action_url' => 'https://www.elementpack.pro/',
 				'image' => 'https://ps.w.org/bdthemes-element-pack-lite/assets/icon-256x256.gif',
 			],
 		];
+
+		if ( ! static::is_elementor_pro_installed() ) {
+			array_unshift( $plugins, [
+				'name' => 'Elementor Pro',
+				'author' => 'Elementor',
+				'author_url' => 'https://elementor.com/',
+				'badge' => 'Official',
+				'description' => 'Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.',
+				'learn_more_url' => 'https://elementor.com/',
+				'action_label' => 'Upgrade Now',
+				'action_url' => 'https://elementor.com/',
+				'image' => 'https://ps.w.org/elementor/assets/icon-256x256.png',
+			] );
+		}
+
+		return $plugins;
+	}
+
+	private static function get_images_url() {
+		return ELEMENTOR_URL . 'modules/apps/assets/images/';
+	}
+
+	private static function is_elementor_pro_installed() {
+		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
 	private static function render_plugin_item( $plugin ) {
