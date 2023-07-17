@@ -1,7 +1,20 @@
+export function getMoveX( event ) {
+	const touchEvents = [ 'touchstart', 'touchmove' ];
+
+	if ( -1 !== touchEvents.indexOf( event.type ) ) {
+		const touch = event.touches[ 0 ] || event.changedTouches[ 0 ];
+		return touch.pageX;
+	}
+
+	return event.pageX;
+}
+
 export function changeScrollStatus( element, event ) {
-	if ( 'mousedown' === event.type ) {
+	const moveEvents = [ 'mousedown', 'pointerdown', 'touchstart' ];
+
+	if ( -1 !== moveEvents.indexOf( event.type ) ) {
 		element.classList.add( 'e-scroll' );
-		element.dataset.pageX = event.pageX;
+		element.dataset.pageX = getMoveX( event );
 	} else {
 		element.classList.remove( 'e-scroll', 'e-scroll-active' );
 		element.dataset.pageX = '';
@@ -9,6 +22,8 @@ export function changeScrollStatus( element, event ) {
 }
 
 export function setTabsPositionAbsolute( $wrapper, $tabTitles, horizontalScrollSetting ) {
+	return;
+
 	const wrapper = $wrapper[ 0 ];
 
 	$tabTitles.each( ( index, tabTitle ) => {
@@ -55,7 +70,9 @@ export function setTabsPositionAbsolute( $wrapper, $tabTitles, horizontalScrollS
 }
 
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
-export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
+export function setHorizontalTitleScrollValuesNew( element, horizontalScrollStatus, event ) {
+	return;
+
 	const isActiveScroll = element.classList.contains( 'e-scroll' ),
 		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
 		headingContentIsWiderThanWrapper = 'absolute' === element.style?.getPropertyValue( '--n-tabs-title-position' );
@@ -66,10 +83,12 @@ export function setHorizontalTitleScrollValues( element, horizontalScrollStatus,
 
 	event.preventDefault();
 
+	const elementSettings = this.getElementSettings();
+
 	const previousPositionX = parseFloat( element.dataset.pageX ),
-		mouseMoveX = event.pageX - previousPositionX,
-		maximumScrollValue = 5,
-		stepLimit = 20;
+		mouseMoveX = getMoveX( event ) - previousPositionX,
+		maximumScrollValue = elementSettings.scroll_max, // Original: 5.
+		stepLimit = elementSettings.step_limit; // Original: 20.
 
 	let toScrollDistanceX = 0;
 
@@ -80,6 +99,8 @@ export function setHorizontalTitleScrollValues( element, horizontalScrollStatus,
 	} else {
 		toScrollDistanceX = mouseMoveX;
 	}
+
+	toScrollDistanceX = mouseMoveX * elementSettings.scroll_speed;
 
 	const newInlineReferenceValue = parseFloat( element.style.getPropertyValue( '--n-tabs-title-position-inline-start-reference' ) ) + toScrollDistanceX;
 
@@ -115,6 +136,41 @@ export function setHorizontalTitleScrollValuesBackup( element, horizontalScrollS
 	}
 
 	element.scrollLeft = element.scrollLeft - toScrollDistanceX;
+	element.classList.add( 'e-scroll-active' );
+}
+
+export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
+	const isActiveScroll = element.classList.contains( 'e-scroll' ),
+		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
+		headingContentIsWiderThanWrapper = 'absolute' === element.style?.getPropertyValue( '--n-tabs-title-position' );
+
+	if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
+		return;
+	}
+
+	event.preventDefault();
+
+	const previousPositionX = parseFloat( element.dataset.pageX ),
+		mouseMoveX = getMoveX( event ) - previousPositionX,
+		maximumScrollValue = 5,
+		stepLimit = 20;
+
+	let toScrollDistanceX = 0;
+
+	if ( stepLimit < mouseMoveX ) {
+		toScrollDistanceX = maximumScrollValue;
+	} else if ( stepLimit * -1 > mouseMoveX ) {
+		toScrollDistanceX = -1 * maximumScrollValue;
+	} else {
+		toScrollDistanceX = mouseMoveX;
+	}
+
+	const tabTitles = element.querySelectorAll( '.e-n-tab-title' );
+
+	tabTitles.each( ( index, tabTitle ) => {
+		tabTitle.scrollLeft = tabTitle.scrollLeft - toScrollDistanceX;
+	} );
+	// Element.scrollLeft = element.scrollLeft - toScrollDistanceX;
 	element.classList.add( 'e-scroll-active' );
 }
 

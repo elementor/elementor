@@ -77,6 +77,12 @@
 		//&::-webkit-scrollbar {
 		//	display: none; /* Hide scrollbar for Chrome, Safari and Opera */
 		//}
+		position: relative;
+		overflow-x: scroll;
+		max-width: 100%;
+		flex-direction: column !important;
+		flex-wrap: wrap !important;
+
 
 		&.e-scroll {
 
@@ -104,6 +110,7 @@
 				left: initial;
 				width: fit-content;
 				height: fit-content;
+				opacity: 0;
 			}
 		}
 	}
@@ -117,7 +124,8 @@
 		&-title {
 			display: flex;
 			width: 100%;
-			height: fit-content;
+			height: fit-content !important;
+			width: fit-content !important;
 			flex-direction: var( --n-tabs-title-direction );
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );

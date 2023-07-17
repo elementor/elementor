@@ -364,6 +364,36 @@ class NestedTabs extends Widget_Nested_Base {
 			]
 		);
 
+		$this->add_control(
+			'scroll_max',
+			[
+				'label' => esc_html__( 'Maximum Scroll Value (originally 5)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 5,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'step_limit',
+			[
+				'label' => esc_html__( 'Step Limit (originally 20)', 'elementor' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 20,
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+				'scroll_speed',
+				[
+						'label' => esc_html__( 'Scroll speed', 'elementor' ),
+						'type' => Controls_Manager::NUMBER,
+						'default' => 1,
+						'frontend_available' => true,
+				]
+		);
+
 		$dropdown_options = [
 			'none' => esc_html__( 'None', 'elementor' ),
 		];
@@ -1071,7 +1101,7 @@ class NestedTabs extends Widget_Nested_Base {
 			$tab_count = $index + 1;
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 			$tab_title = $item['tab_title'];
-			$tab_title_classes = [ 'e-n-tab-title' ];
+			$tab_title_classes = [ 'e-n-tab-title', 'swiper-slide' ];
 
 			if ( $settings['hover_animation'] ) {
 				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
@@ -1098,7 +1128,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'class' => $tab_title_classes,
 				'data-tab' => $tab_count,
 				'role' => 'tab',
-				'aria-label' => esc_html__( 'Open (Enter or Space) | Return (Escape)', 'elementor' ),
+				'aria-label' => esc_html__( 'Open (Enter or Space) | Return (Escape) MMM', 'elementor' ),
 				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 				'style' => 'grid-area: tab' . $index,
 				'aria-label' => esc_html__( 'To be updated', 'elementor' ),
@@ -1173,13 +1203,14 @@ class NestedTabs extends Widget_Nested_Base {
 			gridTemplateRowsValues = 'var( --n-tabs-spacer-top-height ) ' + gridTemplateRowsTabs + '	var( --n-tabs-spacer-bottom-height )';
 
 		view.addRenderAttribute( widgetWrapperKey, {
-			'class': 'e-n-tabs',
+			'class': 'e-n-tabs swiper',
 			'role': 'tablist',
 			'aria-label': "<php esc_html__( 'Nested Tabs', 'elementor' ); ?>",
 			'style': '--grid-template-areas-start: ' + gridTemplateAreasValuesStart + '; --grid-template-areas-end: ' + gridTemplateAreasValuesEnd + '; grid-template-rows: ' + gridTemplateRowsValues + ';',
 		} );
 		#>
 		<div {{{ view.getRenderAttributeString( widgetWrapperKey ) }}}>
+		<div class="swiper-wrapper">
 			<# if ( settings['tabs'] ) { #>
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
@@ -1192,7 +1223,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 				let tabActiveIcon = tabIcon,
 					tabId = 'e-n-tab-title-' + tabUid,
-					tabTitleClassArray = [ 'e-n-tab-title' ];
+					tabTitleClassArray = [ 'e-n-tab-title', 'swiper-slide' ];
 
 				if ( !! hoverAnimationClass ) {
 					tabTitleClassArray.push( hoverAnimationClass );
@@ -1243,6 +1274,7 @@ class NestedTabs extends Widget_Nested_Base {
 				</button>
 				<# } ); #>
 			<# } #>
+		</div>
 		</div>
 		<?php
 	}

@@ -11,6 +11,7 @@ export default class NestedTabs extends Base {
 		super( ...args );
 
 		this.resizeListenerNestedTabs = null;
+		this.pageX = 0;
 	}
 
 	/**
@@ -92,7 +93,7 @@ export default class NestedTabs extends Base {
 		// Return back original toggle effects
 		this.setSettings( originalToggleMethods );
 
-		setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
+		// SetTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
 	}
 
 	handleKeyboardNavigation( event ) {
@@ -275,10 +276,16 @@ export default class NestedTabs extends Base {
 		const navigationWrapper = this.elements.$tabList[ 0 ];
 
 		return {
+			touchstart: changeScrollStatus.bind( this, navigationWrapper ),
+			touchend: changeScrollStatus.bind( this, navigationWrapper ),
+			touchcancel: changeScrollStatus.bind( this, navigationWrapper ),
+			pointerup: changeScrollStatus.bind( this, navigationWrapper ),
+			pointerdown: changeScrollStatus.bind( this, navigationWrapper ),
 			mousedown: changeScrollStatus.bind( this, navigationWrapper ),
 			mouseup: changeScrollStatus.bind( this, navigationWrapper ),
 			mouseleave: changeScrollStatus.bind( this, navigationWrapper ),
 			mousemove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
+			touchmove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
 		};
 	}
 	bindEvents() {
@@ -363,7 +370,18 @@ export default class NestedTabs extends Base {
 			this.activateDefaultTab();
 		}
 
-		this.widgetWidthChangeListener();
+		this.initSwiper();
+		// This.widgetWidthChangeListener();
+	}
+
+	initSwiper() {
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = new Swiper( this.elements.$tabList, {
+			// CssMode: true,
+		} );
+
+		console.log( 'swiper' );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -373,7 +391,7 @@ export default class NestedTabs extends Base {
 	}
 
 	onElementChange( propertyName ) {
-		setTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
+		// SetTabsPositionAbsolute( this.elements.$tabList, this.elements.$tabTitles, this.getHorizontalScrollSetting() );
 
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			const settingsObject = {
