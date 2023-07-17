@@ -273,6 +273,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
+				'render_type' => 'template',
 
 			]
 		);
