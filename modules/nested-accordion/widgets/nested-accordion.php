@@ -26,10 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Nested_Accordion extends Widget_Nested_Base {
 
-	const NESTED_ACCORDION = 'nested-accordion';
-
 	public function get_name() {
-		return static::NESTED_ACCORDION;
+		return 'nested-accordion';
 	}
 
 	public function get_title() {
@@ -783,14 +781,6 @@ class Nested_Accordion extends Widget_Nested_Base {
                     itemUid = elementUid + itemCount,
                     itemWrapperKey = itemUid,
                     itemTitleKey = 'item-' + itemUid;
-
-                    view.addRenderAttribute( itemTitleKey, {
-                        'class': ['e-n-accordion-item-title'],
-                        'data-binding-type': 'repeater-item',
-                        'data-binding-repeater-name': 'items',
-                        'data-binding-setting': ['item_title'],
-                        'data-binding-index': itemCount,
-                    });
 
                     view.addRenderAttribute( itemTitleKey, {
                         'class': ['e-n-accordion-item-title'],
