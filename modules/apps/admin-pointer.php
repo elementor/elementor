@@ -25,11 +25,21 @@ class Admin_Pointer {
 
 		wp_enqueue_script( 'wp-pointer' );
 		wp_enqueue_style( 'wp-pointer' );
+
+		$pointer_content = '<h3>' . esc_html__( 'New! Popular Apps', 'elementor' ) . '</h3>';
+		$pointer_content .= '<p>' . esc_html__( 'Discover our collection of plugins and add-ons carefully selected to to enhance your Elementor website and unleash your creativity.', 'elementor' ) . '</p>';
+
+		$pointer_content .= sprintf(
+			'<p><a href="%s">%s</a></p>',
+			admin_url( 'admin.php?page=' . Module::PAGE_ID ),
+			esc_html__( 'Explore Apps', 'elementor' )
+		)
+
 		?>
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				$( '#toplevel_page_elementor' ).pointer( {
-					content: '<h3><?php echo esc_html__( 'New! Popular Apps', 'elementor' ); ?></h3><p><?php echo esc_html__( 'Discover our collection of plugins and add-ons carefully selected to to enhance your Elementor website and unleash your creativity.', 'elementor' ); ?></p>',
+					content: '<?php echo $pointer_content; ?>',
 					position: {
 						edge: 'left',
 						align: 'center'
