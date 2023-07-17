@@ -702,7 +702,7 @@ test.describe( 'Nested Accordion @nested-accordion', () => {
 				await test.step( 'Test stroke and text-shadow styling', async () => {
 					// Act
 					await editor.publishAndViewPage();
-					await page.hover( page.locator( '.e-n-accordion-item' ).nth( 1 ) );
+					await page.locator( '.e-n-accordion-item' ).nth( 1 ).hover();
 
 					// Assert
 					await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow-front.png' );
