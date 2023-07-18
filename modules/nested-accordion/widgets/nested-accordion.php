@@ -652,7 +652,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-					'name' => $context . '-' . $state . '-text-shadow',
+					'name' => $context . '_' . $state . '-text-shadow',
 					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
 					'fields_options' => [
 						'text_shadow_type' => [
@@ -665,7 +665,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->add_group_control(
 				Group_Control_Text_Stroke::get_type(),
 				[
-					'name' => $context . '-' . $state . '-stroke',
+					'name' => $context . '_' . $state . '-stroke',
 					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
 				]
 			);
