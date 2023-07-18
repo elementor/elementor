@@ -4,7 +4,7 @@ import environment from 'elementor-common/utils/environment';
 /**
  * @typedef {import('../../container/container')} Container
  */
- class AddSectionBase extends Marionette.ItemView {
+class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
 	static IS_CONTAINER_GRID_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container_grid;
 
@@ -258,35 +258,7 @@ import environment from 'elementor-common/utils/environment';
 	}
 
 	onDropping() {
-		if ( elementor.helpers.maybeDisableWidget() ) {
-			return;
-		}
-
-		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
-			historyId = $e.internal( 'document/history/start-log', {
-				type: 'add',
-				title: elementor.helpers.getModelLabel( selectedElement.model ),
-			} ),
-			containingElement = $e.run( 'document/elements/create', {
-				model: {
-					elType: AddSectionBase.IS_CONTAINER_ACTIVE ? 'container' : 'section',
-				},
-				container: elementor.getPreviewContainer(),
-				columns: 1,
-				options: {
-					at: this.getOption( 'at' ),
-				},
-			} );
-
-		if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
-			// Create the element in column.
-			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
-		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
-			// Create the element in a Container, only if the dragged element is not a Container already.
-			containingElement.view.addElementFromPanel();
-		}
-
-		$e.internal( 'document/history/end-log', { id: historyId } );
+		elementor.getPreviewView().addElementFromPanel();
 	}
 
 	onAfterPaste() {}

@@ -31,27 +31,34 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	</div>
 	<div id="elementor-navigator__elements"></div>
 	<div id="elementor-navigator__footer">
-		<i class="eicon-ellipsis-h"></i>
+		<i class="eicon-ellipsis-h" aria-hidden="true"></i>
+		<span class="elementor-screen-only"><?php
+			echo $is_editor_v2_active
+				? esc_html__( 'Resize structure', 'elementor' )
+				: esc_html__( 'Resize navigator', 'elementor' );
+		?></span>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-navigator__elements">
 	<# if ( obj.elType ) { #>
-		<div class="elementor-navigator__item" data-locked="{{ obj.isLocked ? 'true' : 'false' }}">
+		<div class="elementor-navigator__item" data-locked="{{ obj.isLocked ? 'true' : 'false' }}" tabindex="0">
 			<div class="elementor-navigator__element__list-toggle">
-				<i class="eicon-sort-down"></i>
+				<i class="eicon-sort-down" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide inner elements', 'elementor' ); ?></span>
 			</div>
 			<#
 			if ( icon ) { #>
 				<div class="elementor-navigator__element__element-type">
-					<i class="{{{ icon }}}"></i>
+					<i class="{{{ icon }}}" aria-hidden="true"></i>
 				</div>
 			<# } #>
 			<div class="elementor-navigator__element__title">
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
 			</div>
 			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-preview-medium"></i>
+				<i class="eicon-preview-medium" aria-hidden="true"></i>
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide Element', 'elementor' ); ?></span>
 			</div>
 			<div class="elementor-navigator__element__indicators"></div>
 		</div>

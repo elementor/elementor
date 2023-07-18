@@ -35,10 +35,10 @@ export class KitRemovePreviewDeletedVariables extends $e.modules.hookUI.Before {
 		containers.forEach( ( container ) => {
 			const item = container.repeaters[ args.name ].children[ args.index ],
 				stylesheets = Object.values( elementor.$previewContents[ 0 ].styleSheets )
-				.filter( ( stylesheet ) => {
+					.filter( ( stylesheet ) => {
 					// Don't touch the kit CSS itself.
-					return kitCSSId !== stylesheet.ownerNode.id && stylesheet.ownerNode.innerHTML.includes( item.id );
-				} );
+						return kitCSSId !== stylesheet.ownerNode.id && stylesheet.ownerNode.innerHTML.includes( item.id );
+					} );
 
 			stylesheets.forEach( ( stylesheet ) => {
 				this.component.tempStyle[ item.id ] = this.extractVariables( stylesheet.cssRules, item.id );

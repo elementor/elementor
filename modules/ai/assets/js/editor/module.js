@@ -1,5 +1,6 @@
 import AiBehavior from './ai-behavior';
 import AiPromotionBehavior from './ai-promotion-behavior';
+import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/consts/consts';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
@@ -58,9 +59,22 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
-			behaviors.ai = {
-				behaviorClass: AiPromotionBehavior,
-			};
+			const mediaTypes = view.options.model.get( 'media_types' );
+
+			if ( mediaTypes.length && mediaTypes.includes( 'image' ) ) {
+				behaviors.ai = {
+					behaviorClass: AiBehavior,
+					type: aiOptions.type,
+					buttonLabel: __( 'Create with AI', 'elementor' ),
+					getControlValue: view.getControlValue.bind( view ),
+					setControlValue: ( value ) => {},
+					controlView: view,
+					additionalOptions: {
+						defaultValue: view.options.model.get( 'default' ),
+						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
+					},
+				};
+			}
 		}
 
 		return behaviors;

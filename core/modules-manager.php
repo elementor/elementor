@@ -99,6 +99,7 @@ class Modules_Manager {
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
+			'nested-accordion',
 			'container-converter',
 			'web-cli',
 			'promotions',
@@ -108,6 +109,7 @@ class Modules_Manager {
 			'kit-elements-defaults',
 			'announcements',
 			'site-navigation',
+			'styleguide',
 		];
 	}
 

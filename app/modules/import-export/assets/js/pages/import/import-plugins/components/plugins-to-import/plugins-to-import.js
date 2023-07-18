@@ -44,8 +44,8 @@ export default function PluginsToImport( { plugins } ) {
 			<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
 				{
 					isAllRequiredPluginsSelected
-					? __( 'Plugins to add:', 'elementor' )
-					: __( 'Missing Required Plugins:', 'elementor' )
+						? __( 'Plugins to add:', 'elementor' )
+						: __( 'Missing Required Plugins:', 'elementor' )
 				}
 			</Heading>
 

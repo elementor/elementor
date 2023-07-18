@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const WpAdminPage = require( '../pages/wp-admin-page' );
 
-test.describe( 'Container Grid tests @container-grid', () => {
+test.describe( 'Container Grid tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

@@ -35,7 +35,7 @@ test( 'Image widget sanity test', async ( { page }, testInfo ) => {
 test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = await wpAdmin.useElementorCleanPost();
-	const frame = page.frameLocator( '#elementor-preview-iframe' );
+	const previewFrame = editor.getPreviewFrame();
 
 	await test.step( 'Act', async () => {
 		await editor.addWidget( 'image' );
@@ -50,12 +50,16 @@ test( 'Lightbox image captions aligned center', async ( { page }, testInfo ) => 
 		await page.getByRole( 'combobox', { name: 'Caption' } ).selectOption( 'attachment' );
 		await page.getByRole( 'combobox', { name: 'Link' } ).selectOption( 'file' );
 		await page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( 'yes' );
-		await frame.locator( '.elementor-widget-image' ).click();
+
+		await page.waitForTimeout( 1000 );
+
+		await previewFrame.locator( '.elementor-widget-image' ).click();
+		await previewFrame.waitForSelector( '.swiper-zoom-container' );
 	} );
 
 	await test.step( 'Assert', async () => {
-		const title = frame.locator( '.elementor-slideshow__title' );
-		const description = frame.locator( '.elementor-slideshow__description' );
+		const title = previewFrame.locator( '.elementor-slideshow__title' );
+		const description = previewFrame.locator( '.elementor-slideshow__description' );
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 	} );

@@ -45,6 +45,18 @@ module.exports = Marionette.CompositeView.extend( {
 		return elementor.getControlView( controlType );
 	},
 
+	getChildControlView( name ) {
+		return this.getControlViewByModel( this.getControlModel( name ) );
+	},
+
+	getControlViewByModel( model ) {
+		return this.children.findByModelCid( model.cid );
+	},
+
+	getControlModel( name ) {
+		return this.collection.findWhere( { name } );
+	},
+
 	childViewOptions() {
 		return {
 			container: this.options.container,

@@ -45,11 +45,14 @@ export default class extends ControlBaseDataView {
 			addButton: this.model.get( 'global' )?.active,
 			onChange: () => this.onPickerChange(),
 			onClear: () => this.onPickerClear(),
-			onShow: () => this.onPickerShow(),
 			onAddButtonClick: () => this.onAddGlobalButtonClick(),
+			onPickerShow: () => this.reRoute( true ),
+			onPickerHide: () => this.reRoute( false ),
 		};
 
 		this.colorPicker = new ColorPicker( options );
+
+		this.hidePickerOnPreviewClick();
 
 		this.$pickerButton = jQuery( this.colorPicker.picker.getRoot().button );
 
@@ -60,6 +63,20 @@ export default class extends ControlBaseDataView {
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
+	}
+
+	hidePickerOnPreviewClick() {
+		const picker = this.colorPicker.picker;
+		const pickerUtils = picker.constructor.utils;
+
+		// Adding to the eventBindings to unbind in the picker's destroy
+		picker._eventBindings.push(
+			pickerUtils.on( elementorFrontend.elements.window.document, [ 'touchstart', 'pointerdown' ], () => {
+				if ( picker.isOpen() ) {
+					picker.hide();
+				}
+			} ),
+		);
 	}
 
 	addTipsyToPickerButton() {
@@ -238,15 +255,6 @@ export default class extends ControlBaseDataView {
 
 		this.colorPicker.toggleClearButtonState( false );
 	}
-
-	onPickerShow() {
-		window.dispatchEvent( new CustomEvent( 'elementor/color-picker/show', {
-			detail: {
-				el: this.$el,
-			},
-		} ) );
-	}
-
 	onPickerButtonClick() {
 		if ( this.getGlobalKey() ) {
 			this.triggerMethod( 'unset:global:value' );
@@ -264,6 +272,10 @@ export default class extends ControlBaseDataView {
 
 			this.triggerMethod( 'add:global:to:list', this.getAddGlobalConfirmMessage( globalsList ) );
 		} );
+	}
+
+	activate() {
+		this.colorPicker.picker.show();
 	}
 
 	onBeforeDestroy() {

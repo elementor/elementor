@@ -336,6 +336,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Container Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'flex',
+				'prefix_class' => 'e-',
 				'options' => [
 					'flex' => esc_html__( 'Flexbox', 'elementor' ),
 					'grid' => esc_html__( 'Grid', 'elementor' ),
@@ -343,7 +344,7 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
-				'prefix_class' => 'e-',
+				'separator' => 'after',
 			];
 		}
 
@@ -352,11 +353,12 @@ class Container extends Element_Base {
 			'label' => esc_html__( 'Container Layout', 'elementor' ),
 			'type' => Controls_Manager::HIDDEN,
 			'render_type' => 'none',
-			'prefix_class' => 'e-',
 			'default' => 'flex',
+			'prefix_class' => 'e-',
 			'selectors' => [
 				'{{WRAPPER}}' => '--display: {{VALUE}}',
 			],
+			'separator' => 'after',
 		];
 	}
 
@@ -381,6 +383,13 @@ class Container extends Element_Base {
 		} else {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 		}
+
+		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
+
+		$this->add_control(
+			'container_type',
+			$this->get_container_type_control_options( $is_container_grid_active )
+		);
 
 		$this->add_control(
 			'content_width',
@@ -508,13 +517,6 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
 				],
 			]
-		);
-
-		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
-
-		$this->add_control(
-			'container_type',
-			$this->get_container_type_control_options( $is_container_grid_active )
 		);
 
 		$this->add_group_control(

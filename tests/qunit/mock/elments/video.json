@@ -124,7 +124,9 @@
 					"media"
 				]
 			},
-			"media_type": "video",
+			"media_types": [
+				"video"
+			],
 			"condition": {
 				"video_type": "hosted",
 				"insert_url": ""
@@ -151,7 +153,6 @@
 					"url"
 				]
 			},
-			"media_type": "video",
 			"placeholder": "Enter your URL",
 			"condition": {
 				"video_type": "hosted",
@@ -7261,7 +7262,9 @@
 			"tab": "advanced",
 			"section": "_section_masking",
 			"label": "Image",
-			"media_type": "image",
+			"media_types": [
+				"image"
+			],
 			"should_include_svg_inline_option": true,
 			"library_type": "image/svg+xml",
 			"dynamic": {

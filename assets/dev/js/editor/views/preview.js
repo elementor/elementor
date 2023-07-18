@@ -78,6 +78,41 @@ const Preview = BaseSectionsContainerView.extend( {
 		);
 	},
 
+	addElementFromPanel( options ) {
+		if ( elementor.helpers.maybeDisableWidget() ) {
+			return;
+		}
+
+		const isContainerActive = ! ! elementorCommon.config.experimentalFeatures.container;
+
+		const selectedElement = elementor.channels.panelElements.request( 'element:selected' ),
+			historyId = $e.internal( 'document/history/start-log', {
+				type: 'add',
+				title: elementor.helpers.getModelLabel( selectedElement.model ),
+			} ),
+			containingElement = $e.run( 'document/elements/create', {
+				model: {
+					elType: isContainerActive ? 'container' : 'section',
+				},
+				container: elementor.getPreviewContainer(),
+				columns: 1,
+				options: {
+					at: this.getOption( 'at' ),
+					...options,
+				},
+			} );
+
+		if ( ! isContainerActive ) {
+			// Create the element in column.
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel( options );
+		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
+			// Create the element in a Container, only if the dragged element is not a Container already.
+			containingElement.view.addElementFromPanel( options );
+		}
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
+	},
+
 	onRender() {
 		let $contentContainer;
 

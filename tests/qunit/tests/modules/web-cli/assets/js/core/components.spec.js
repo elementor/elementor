@@ -47,17 +47,17 @@ jQuery( () => {
 		QUnit.test( 'Register routes via tabs', ( assert ) => {
 			const namespace = 'register-via-tabs',
 				Component = class extends ComponentBase {
-				getNamespace() {
-					return namespace;
-				}
+					getNamespace() {
+						return namespace;
+					}
 
-				defaultTabs() {
-					return {
-						tabA: { title: 'tabA' },
-						tabB: { title: 'tabB' },
-					};
-				}
-			};
+					defaultTabs() {
+						return {
+							tabA: { title: 'tabA' },
+							tabB: { title: 'tabB' },
+						};
+					}
+				};
 
 			$e.components.register( new Component() );
 

@@ -1025,6 +1025,20 @@ abstract class Widget_Base extends Element_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Init controls.
+	 *
+	 * Reset the `is_first_section` flag to true, so when the Stacks are cleared
+	 * all the controls will be registered again with their skins and settings.
+	 *
+	 * @since 3.14.0
+	 * @access protected
+	 */
+	protected function init_controls() {
+		$this->is_first_section = true;
+		parent::init_controls();
+	}
+
 	public function register_runtime_widget( $widget_name ) {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}

@@ -13,7 +13,7 @@
 		max-width: 800px;
 
 		input {
-			margin-bottom: 6px;
+			margin-block-end: 6px;
 		}
 	}
 }
@@ -25,7 +25,7 @@
 
 		input,
 		select {
-			@include margin-end(6px);
+			margin-inline-end: 6px;
 		}
 	}
 }
@@ -44,7 +44,7 @@
 		padding: 30px;
 
 		&:not(:first-child) {
-			margin-top: 5px;
+			margin-block-start: 5px;
 		}
 
 		p {
@@ -88,11 +88,11 @@
 		background-color: rgba(255, 255, 255, 0.5);
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 		border-radius: 0.1875rem;
-		margin-bottom: 15px;
+		margin-block-end: 15px;
 		display: inline-block;
 
 		header {
-			border-bottom: 1px solid $editor-background-light;
+			border-block-end: 1px solid $editor-background-light;
 			padding: 0.625rem;
 		}
 

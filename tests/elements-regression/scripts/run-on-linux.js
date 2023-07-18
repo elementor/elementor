@@ -6,7 +6,7 @@ function isDockerExist() {
 		exec( 'docker -v', ( error ) => {
 			resolve( ! error );
 		} );
-  } );
+	} );
 }
 
 async function run( args ) {

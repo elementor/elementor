@@ -296,6 +296,19 @@ class Test_Collection extends Elementor_Test_Base {
 		], $collection->all() );
 	}
 
+	public function test_prepend() {
+		// Arrange
+		$collection = new Collection( [ '1', '2', '3' ] );
+
+		// Act
+		$collection->prepend( '4', '5', '6' );
+
+		// Assert
+		$this->assertEqualSets( [
+			'4', '5', '6', '1', '2', '3'
+		], $collection->all() );
+	}
+
 	public function test_get() {
 		// Arrange
 		$collection = new Collection( ['a' => 1, 'b' => 2] );

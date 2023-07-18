@@ -6,11 +6,11 @@
 	padding: 15px;
 
 	.elementor-system-info-section {
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 
 		& > .elementor-system-info-report-name {
-			padding-left: 10px;
-			border-bottom: 1px solid #e1e1e1;
+			padding-inline-start: 10px;
+			border-block-end: 1px solid #e1e1e1;
 		}
 
 		.widefat {
@@ -41,18 +41,18 @@
 		padding: 5px 0;
 
 		> * {
-			float: left;
+			float: $start;
 		}
 	}
 
 	.elementor-system-info-report-field,
 	.elementor-system-info-field-recommendation {
-		padding-left: 10px;
+		padding-inline-start: 10px;
 		color: #7F7F7F;
 	}
 
 	.elementor-system-info-report-fields {
-		padding-left: 20px;
+		padding-inline-start: 20px;
 	}
 
 	.elementor-system-info-plugin-name {
@@ -76,13 +76,13 @@
 	.elementor-warning {
 
 		td:first-child {
-			@include border-start(3px solid $editor-orange);
+			border-inline-start: 3px solid $editor-orange;
 		}
 	}
 
 	a.box-title-tool {
 		font-size: 80%;
-		@include margin-start(15px);
+		margin-inline-start: 15px;
 		color: $gray;
 
 		&:hover {

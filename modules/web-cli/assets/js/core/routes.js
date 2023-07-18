@@ -109,19 +109,21 @@ export default class Routes extends Commands {
 		}
 	}
 
-	to( route, args ) {
+	to( route, args, options = { history: true } ) {
 		this.run( route, args );
 
 		const namespaceRoot = this.getComponent( route ).getServiceName();
 
-		if ( ! this.historyPerComponent[ namespaceRoot ] ) {
-			this.historyPerComponent[ namespaceRoot ] = [];
-		}
+		if ( options.history ) {
+			if ( ! this.historyPerComponent[ namespaceRoot ] ) {
+				this.historyPerComponent[ namespaceRoot ] = [];
+			}
 
-		this.historyPerComponent[ namespaceRoot ].push( {
-			route,
-			args,
-		} );
+			this.historyPerComponent[ namespaceRoot ].push( {
+				route,
+				args,
+			} );
+		}
 	}
 
 	back( namespaceRoot ) {

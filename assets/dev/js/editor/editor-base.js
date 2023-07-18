@@ -66,6 +66,9 @@ export default class EditorBase extends Marionette.Application {
 		responsivePreview: Backbone.Radio.channel( 'ELEMENTOR:responsivePreview' ),
 	};
 
+	/**
+	 * @deprecated since 3.0.0, use `elementorCommon.debug` instead.
+	 */
 	get debug() {
 		elementorDevTools.deprecation.deprecated(
 			'elementor.debug',
@@ -129,7 +132,9 @@ export default class EditorBase extends Marionette.Application {
 	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
 	modules = {
-		// TODO: Deprecated alias since 2.3.0
+		/**
+		 * @deprecated since 2.3.0, use `elementorModules.Module` instead.
+		 */
 		get Module() {
 			elementorDevTools.deprecation.deprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
@@ -138,7 +143,9 @@ export default class EditorBase extends Marionette.Application {
 		components: {
 			templateLibrary: {
 				views: {
-					// TODO: Deprecated alias since 2.4.0
+					/**
+					 * @deprecated since 2.4.0, use `lementorModules.common.views.modal.Layout` instead.
+					 */
 					get BaseModalLayout() {
 						elementorDevTools.deprecation.deprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
@@ -153,6 +160,9 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		saver: {
+			/**
+			 * @deprecated since 2.9.0, use `elementor.modules.components.saver.behaviors.FooterSaver` instead.
+			 */
 			get footerBehavior() {
 				elementorDevTools.deprecation.deprecated( 'elementor.modules.saver.footerBehavior.',
 					'2.9.0',
@@ -205,7 +215,9 @@ export default class EditorBase extends Marionette.Application {
 				... elementTypes,
 			},
 			models: {
-				// TODO: Deprecated alias since 2.4.0
+				/**
+				 * @deprecated since 2.4.0, use `elementorModules.editor.elements.models.BaseSettings` instead.
+				 */
 				get BaseSettings() {
 					elementorDevTools.deprecation.deprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
@@ -235,7 +247,9 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		views: {
-			// TODO: Deprecated alias since 2.4.0
+			/**
+			 * @deprecated since 2.4.0, use `elementorModules.editor.views.ControlsStack` instead.
+			 */
 			get ControlsStack() {
 				elementorDevTools.deprecation.deprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
@@ -963,7 +977,7 @@ export default class EditorBase extends Marionette.Application {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
 
-		this.$preview[ 0 ].contentWindow.location.reload( true );
+		this.$preview[ 0 ].src = this.config.initial_document.urls.preview;
 	}
 
 	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
@@ -1318,7 +1332,16 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			$elementsToHide.hide();
+			$elementsToHide.each( ( elementIndex, element ) => {
+				const $element = jQuery( element );
+				const isVisible = $element.is( ':visible' );
+
+				$element.hide();
+
+				if ( isVisible ) {
+					$element.trigger( 'hide' );
+				}
+			} );
 		} );
 	}
 
@@ -1589,9 +1612,9 @@ export default class EditorBase extends Marionette.Application {
 
 	toggleDocumentCssFiles( document, state ) {
 		const selectors = [
-			`#elementor-post-${ document.config.id }-css`,
-			`#elementor-preview-${ document.config.revisions.current_id }`,
-		],
+				`#elementor-post-${ document.config.id }-css`,
+				`#elementor-preview-${ document.config.revisions.current_id }`,
+			],
 			$files = this.$previewContents.find( selectors.join( ',' ) ),
 			type = state ? 'text/css' : 'elementor/disabled-css';
 

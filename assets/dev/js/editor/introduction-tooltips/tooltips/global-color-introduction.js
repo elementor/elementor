@@ -6,17 +6,31 @@ export default class GlobalColorIntroduction {
 	}
 
 	bindEvent() {
-		window.addEventListener( 'elementor/color-picker/show', ( e ) => {
-			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
-			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
+		$e.routes.on( 'run:after', ( component, route, args ) => {
+			// Prevent the Tooltip from appearing when the event is triggered from site-settings.
+			if ( ! $e.routes.isPartOf( 'panel/editor' ) ) {
 				return;
 			}
 
-			if ( e?.detail?.el ) {
-				this.tooltip.show( e.detail.el );
-				this.tooltip.setViewed();
+			const controlView = this.getControlView( args.activeControl );
+			if ( 'color' !== controlView?.model?.attributes?.type ) {
+				return;
 			}
+
+			this.tooltip.show( controlView.el );
+			this.tooltip.setViewed();
 		} );
+	}
+
+	getControlView( control ) {
+		if ( ! control ) {
+			return null;
+		}
+
+		const editor = elementor.getPanelView().getCurrentPageView();
+		const currentView = editor.content ? editor.content.currentView : editor;
+
+		return $e.components.get( 'panel' ).getControlViewByPath( currentView, control );
 	}
 
 	initTooltip() {
@@ -45,7 +59,7 @@ export default class GlobalColorIntroduction {
 		this.tooltip.getDialog().addButton( {
 			name: 'action',
 			text: __( 'Got it!', 'elementor' ),
-			classes: 'elementor-button e-brand',
+			classes: 'elementor-button e-primary',
 			callback: () => this.tooltip.getDialog().hide(),
 		} );
 	}

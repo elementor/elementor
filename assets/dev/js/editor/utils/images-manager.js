@@ -104,14 +104,14 @@ ImagesManager = function() {
 
 	self.getRemoteItems = function() {
 		var requestedItems = [],
-		registeredItemsLength = Object.keys( registeredItems ).length,
+			registeredItemsLength = Object.keys( registeredItems ).length,
 			image,
 			index;
 
 		// It's one item, so we can render it from remote server
 		if ( 0 === registeredItemsLength ) {
 			return;
-			}
+		}
 
 		for ( index in registeredItems ) {
 			image = registeredItems[ index ];

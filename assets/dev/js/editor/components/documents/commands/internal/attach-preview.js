@@ -30,7 +30,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-		} );
+			} );
 	}
 
 	attachDocumentToPreview( document, args ) {

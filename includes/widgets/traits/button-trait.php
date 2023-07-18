@@ -439,13 +439,14 @@ trait Button_Trait {
 
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
+		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
+
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$instance->add_link_attributes( 'button', $settings['link'] );
 			$instance->add_render_attribute( 'button', 'class', 'elementor-button-link' );
+		} else {
+			$instance->add_render_attribute( 'button', 'role', 'button' );
 		}
-
-		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
-		$instance->add_render_attribute( 'button', 'role', 'button' );
 
 		if ( ! empty( $settings['button_css_id'] ) ) {
 			$instance->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
@@ -478,13 +479,36 @@ trait Button_Trait {
 	protected function content_template() {
 		?>
 		<#
+		view.addRenderAttribute( 'wrapper', 'class', 'elementor-button-wrapper' );
+
+		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
+
+		if ( '' !== settings.link.url ) {
+			view.addRenderAttribute( 'button', 'href', settings.link.url );
+			view.addRenderAttribute( 'button', 'class', 'elementor-button-link' );
+		} else {
+			view.addRenderAttribute( 'button', 'role', 'button' );
+		}
+
+		if ( '' !== settings.button_css_id ) {
+			view.addRenderAttribute( 'button', 'id', settings.button_css_id );
+		}
+
+		if ( '' !== settings.size ) {
+			view.addRenderAttribute( 'button', 'class', 'elementor-size-' + settings.size );
+		}
+
+		if ( '' !== settings.hover_animation ) {
+			view.addRenderAttribute( 'button', 'class', 'elementor-animation-' + settings.hover_animation );
+		}
+
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 		view.addInlineEditingAttributes( 'text', 'none' );
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 		#>
-		<div class="elementor-button-wrapper">
-			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
+		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+			<a {{{ view.getRenderAttributeString( 'button' ) }}}>
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
@@ -550,7 +574,7 @@ trait Button_Trait {
 		?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-				<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
+			<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>

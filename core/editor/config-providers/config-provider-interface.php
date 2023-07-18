@@ -25,7 +25,7 @@ interface Config_Provider_Interface {
 	 *
 	 * @return array
 	 */
-	public function get_client_settings();
+	public function get_client_env();
 
 	/**
 	 * Return a list of the styles to register.

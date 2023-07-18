@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 
 export const PLUGINS_RESPONSE_MAP = Object.freeze( {
-		INITIAL: 'initial',
-		SUCCESS: 'success',
-		ERROR: 'error',
-	} );
+	INITIAL: 'initial',
+	SUCCESS: 'success',
+	ERROR: 'error',
+} );
 
 export const PLUGIN_STATUS_MAP = Object.freeze( {
 	ACTIVE: 'active',
@@ -28,6 +28,8 @@ export default function usePlugins() {
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8',
 					'X-WP-Nonce': wpApiSettings.nonce,
+					// TODO 18/04/2023 : This needs to be removed after https://elementor.atlassian.net/browse/HTS-434 is done.
+					'X-Elementor-Action': 'import-plugins',
 				},
 			};
 

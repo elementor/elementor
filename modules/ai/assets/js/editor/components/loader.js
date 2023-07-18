@@ -1,8 +1,8 @@
 import { Box, LinearProgress } from '@elementor/ui';
 
-const Loader = () => (
+const Loader = ( props ) => (
 	<Box sx={ { px: 4, py: 6 } }>
-		<LinearProgress color="secondary" />
+		<LinearProgress color="secondary" { ...props } />
 	</Box>
 );
 

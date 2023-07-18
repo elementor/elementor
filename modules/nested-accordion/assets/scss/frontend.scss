@@ -1,0 +1,36 @@
+.elementor-widget-n-accordion {
+	--n-accordion-title-font-size: 15px;
+	--n-accordion-title-padding: 10px 15px;
+	--n-accordion-border-width: 1px;
+	--n-accordion-border-color: #{$gray-light};
+	--n-accordion-border-style: solid;
+
+	.e-n-accordion {
+
+		&-item {
+
+			> .e-con {
+				border-width: var(--n-accordion-border-width);
+				border-color: var(--n-accordion-border-color);
+				border-style: var(--n-accordion-border-style);
+			}
+
+			&-title {
+				list-style: none;
+				font-size: var(--n-accordion-title-font-size);
+				padding: var(--n-accordion-title-padding);
+				border-width: var(--n-accordion-border-width);
+				border-color: var(--n-accordion-border-color);
+				border-style: var(--n-accordion-border-style);
+
+				i {
+					color: var(--n-accordion-icon-color);
+				}
+
+				svg {
+					fill: var(--n-accordion-icon-color);
+				}
+			}
+		}
+	}
+}
