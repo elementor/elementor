@@ -226,4 +226,21 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			await expectScreenshotToMatchLocator( `nested-accordion-title-and-icons-fe.png`, page.locator( '.e-n-accordion' ).first() );
 		} );
 	} );
+
+	test( 'Nested Accordion stays full width in container Direction Row', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		const frame = editor.getPreviewFrame(),
+			nestedAccordionId = await editor.addWidget( 'nested-accordion', containerId ),
+			containerElement = frame.locator( `.elementor-element-${ containerId } .e-con-inner` ),
+			nestedAccordionElement = frame.locator( `.elementor-element-${ nestedAccordionId }.elementor-widget-n-accordion` ),
+			containerWidth = ( await containerElement.boundingBox() ).width,
+			nestedAccordionWidth = ( await nestedAccordionElement.boundingBox() ).width;
+
+		expect( nestedAccordionWidth ).toEqual( containerWidth );
+	} );
 } );
