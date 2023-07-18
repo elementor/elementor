@@ -41,54 +41,54 @@ class Admin_Apps_Page {
 			[
 				'name' => 'Elementor AI',
 				'author' => 'Elementor',
-				'author_url' => 'https://elementor.com/',
-				'badge' => 'Official',
-				'description' => 'Revolutionize your Web Creation with AI. Available as a free trial with any Elementor website.',
-				'learn_more_url' => 'https://elementor.com/',
-				'action_label' => 'Try Now',
-				'action_url' => 'https://elementor.com/',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-elementor-ai/',
+				'badge' => 'Premium',
+				'description' => 'Boost creativity with Elementor AI. Craft & enhance copy, create custom CSS & Code, and generate images to elevate your website.',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-elementor-ai/',
 				'image' => $images_url . 'elementor.svg',
 			],
 			[
 				'name' => 'JetPlugins Add-ons',
 				'author' => 'Crocoblock',
-				'author_url' => 'https://crocoblock.com/',
-				'badge' => '10% Off',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-crocoblock/',
+				'badge' => 'Special Offer',
 				'description' => 'Unlock dynamic widgets, e-commerce features, and a powerful filtering system for enhanced website capabilities.',
-				'learn_more_url' => 'https://crocoblock.com/',
-				'action_label' => 'Buy Now',
-				'action_url' => 'https://crocoblock.com/',
+				'offering' => 'Get 10% off with coupon code onlyforelementor',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-crocoblock/',
 				'image' => $images_url . 'crocoblock.png',
 			],
 			[
 				'name' => 'Unlimited Elements',
 				'author' => 'Unlimited Group',
-				'author_url' => 'https://unlimited-elements.com/',
-				'badge' => '10% Off',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-unlimited-elements/',
+				'badge' => 'Special Offer',
 				'description' => 'An all-in-one plugin that instantly gives you the most advanced tools to make better Elementor websites faster.',
-				'learn_more_url' => 'https://crocoblock.com/',
-				'action_label' => 'Buy Now',
-				'action_url' => 'https://unlimited-elements.com/elementor-partners',
+				'offering' => 'Get 20% off with coupon code elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-unlimited-elements/',
 				'image' => $images_url . 'unlimited-elements.gif',
 			],
 			[
 				'name' => 'Essential Addons',
 				'author' => 'WP Developer',
-				'author_url' => 'https://essential-addons.com/',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper/',
+				'badge' => 'Special Offer',
 				'description' => 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.',
-				'learn_more_url' => 'https://essential-addons.com/elementor/core-demo',
-				'action_label' => 'Buy Now',
-				'action_url' => 'https://wpdeveloper.com/plugins/essential-addons-elementor/?via=3908&campaign=Partner%20Page',
+				'offering' => 'Get 10% off with coupon code Elementor10',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper/',
 				'image' => $images_url . 'essential-addons.svg',
 			],
 			[
 				'name' => 'Element Pack Pro addon',
 				'author' => 'BdThemes Ltd',
-				'author_url' => 'https://bdthemes.com/',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-element-pack-pro/',
 				'description' => 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!',
-				'learn_more_url' => 'https://bdthemes.com/',
-				'action_label' => 'Buy Now',
-				'action_url' => 'https://www.elementpack.pro/',
+				'offering' => 'Special 10% discount when clicking here!',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-element-pack-pro/',
 				'image' => $images_url . 'element-pack.gif',
 			],
 		];
@@ -98,13 +98,13 @@ class Admin_Apps_Page {
 				'file_path' => 'aryo-activity-log/aryo-activity-log.php',
 				'name' => 'Activity Log',
 				'author' => 'Activity Log Team',
-				'author_url' => 'https://activitylog.io/',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-activity-log/',
 				'badge' => 'Free',
-				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
-				'learn_more_url' => 'https://activitylog.io/',
+				'description' => 'Track user activity easily. Discover who does what on your website and perform a comprehensive security audit for peace of mind.',
+				'learn_more_url' => 'https://go.elementor.com/wp-dash-apps-learn-more-activity-log/',
 				'action_label' => 'Install',
 				'action_url' => '#',
-				'image' => $images_url . 'ea.svg',
+				'image' => $images_url . 'activity-log.png',
 				'target' => '_self',
 			],
 			[
@@ -117,7 +117,7 @@ class Admin_Apps_Page {
 				'learn_more_url' => 'https://activitylog.io/',
 				'action_label' => 'Install',
 				'action_url' => '#',
-				'image' => 'https://ps.w.org/pojo-accessibility/assets/icon-256x256.png',
+				'image' => $images_url . 'one-click-accessibility.png',
 				'target' => '_self',
 			],
 		];
@@ -152,12 +152,11 @@ class Admin_Apps_Page {
 			array_unshift( $plugins, [
 				'name' => 'Elementor Pro',
 				'author' => 'Elementor',
-				'author_url' => 'https://elementor.com/',
-				'badge' => 'Official',
-				'description' => 'Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.',
-				'learn_more_url' => 'https://elementor.com/pro/',
-				'action_label' => 'Upgrade Now',
-				'action_url' => 'https://elementor.com/pro/',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-elementor-pro/',
+				'badge' => 'Premium',
+				'description' => 'Unlock Elementor Pro and build any website with advanced design capabilities, marketing tools, WooCommerce features, Dynamic Content, and more.',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-elementor-pro/',
 				'image' => $images_url . 'elementor.svg',
 			] );
 		}
@@ -204,7 +203,13 @@ class Admin_Apps_Page {
 			</div>
 			<h3 class="e-a-title"><?php echo esc_html( $plugin['name'] ); ?></h3>
 			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
-			<p class="e-a-desc"><?php echo esc_html( $plugin['description'] ); ?></p>
+			<div class="e-a-desc">
+				<p><?php echo esc_html( $plugin['description'] ); ?></p>
+				<?php if ( ! empty( $plugin['offering'] ) ) : ?>
+					<p class="e-a-offering"><?php echo esc_html( $plugin['offering'] ); ?></p>
+				<?php endif; ?>
+			</div>
+
 			<p class="e-a-actions">
 				<?php if ( ! empty( $plugin['learn_more_url'] ) ) : ?>
 					<a class="e-a-learn-more" href="<?php echo esc_url( $plugin['learn_more_url'] ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>

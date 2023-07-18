@@ -89,7 +89,11 @@ body.elementor_page_elementor-apps {
 
 	.e-a-desc {
 		flex-grow: 1;
-		margin: 10px 0;
+	}
+
+	.e-a-offering {
+		font-size: 0.95em;
+		font-style: italic;
 	}
 
 	.e-a-actions {
@@ -101,6 +105,10 @@ body.elementor_page_elementor-apps {
 
 		a {
 			text-decoration: none;
+		}
+
+		.e-accent {
+			margin-inline-start: auto;
 		}
 
 		.e-a-learn-more {
