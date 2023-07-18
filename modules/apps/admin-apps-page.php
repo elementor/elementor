@@ -50,28 +50,6 @@ class Admin_Apps_Page {
 				'image' => $images_url . 'elementor.svg',
 			],
 			[
-				'name' => 'Activity Log',
-				'author' => 'Activity Log Team',
-				'author_url' => 'https://activitylog.io/',
-				'badge' => 'Free',
-				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
-				'learn_more_url' => 'https://activitylog.io/',
-				'action_label' => 'Install',
-				'action_url' => 'https://activitylog.io/',
-				'image' => $images_url . 'activity-log.png',
-			],
-			[
-				'name' => 'One Click Accessibility',
-				'author' => 'One Click Accessibility',
-				'author_url' => 'https://wpaccessibility.io/',
-				'badge' => 'Free',
-				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
-				'learn_more_url' => 'https://activitylog.io/',
-				'action_label' => 'Install',
-				'action_url' => 'https://wpaccessibility.io/',
-				'image' => $images_url . 'one-click-accessibility.png',
-			],
-			[
 				'name' => 'JetPlugins Add-ons',
 				'author' => 'Crocoblock',
 				'author_url' => 'https://crocoblock.com/',
@@ -115,6 +93,61 @@ class Admin_Apps_Page {
 			],
 		];
 
+		$wporg_plugins = [
+			[
+				'file_path' => 'aryo-activity-log/aryo-activity-log.php',
+				'name' => 'Activity Log',
+				'author' => 'Activity Log Team',
+				'author_url' => 'https://activitylog.io/',
+				'badge' => 'Free',
+				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
+				'learn_more_url' => 'https://activitylog.io/',
+				'action_label' => 'Install',
+				'action_url' => '#',
+				'image' => $images_url . 'ea.svg',
+				'target' => '_self',
+			],
+			[
+				'file_path' => 'pojo-accessibility/pojo-accessibility.php',
+				'name' => 'One Click Accessibility',
+				'author' => 'Activity Log Team',
+				'author_url' => 'https://wpaccessibility.io/',
+				'badge' => 'Free',
+				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
+				'learn_more_url' => 'https://activitylog.io/',
+				'action_label' => 'Install',
+				'action_url' => '#',
+				'image' => 'https://ps.w.org/pojo-accessibility/assets/icon-256x256.png',
+				'target' => '_self',
+			],
+		];
+
+		foreach ( $wporg_plugins as $wporg_plugin_data ) {
+			if ( static::is_plugin_activated( $wporg_plugin_data['file_path'] ) ) {
+				continue;
+			}
+
+			if ( static::is_plugin_installed( $wporg_plugin_data['file_path'] ) ) {
+				if ( current_user_can( 'activate_plugins' ) ) {
+					$wporg_plugin_data['action_label'] = 'Activate';
+					$wporg_plugin_data['action_url'] = static::get_activate_plugin_url( $wporg_plugin_data['file_path'] );
+				} else {
+					$wporg_plugin_data['action_label'] = 'Cannot Activate';
+					$wporg_plugin_data['action_url'] = '#';
+				}
+			} else {
+				if ( current_user_can( 'install_plugins' ) ) {
+					$wporg_plugin_data['action_label'] = 'Install';
+					$wporg_plugin_data['action_url'] = static::get_install_plugin_url( $wporg_plugin_data['file_path'] );
+				} else {
+					$wporg_plugin_data['action_label'] = 'Cannot Install';
+					$wporg_plugin_data['action_url'] = '#';
+				}
+			}
+
+			array_unshift( $plugins, $wporg_plugin_data );
+		}
+
 		if ( ! static::is_elementor_pro_installed() ) {
 			array_unshift( $plugins, [
 				'name' => 'Elementor Pro',
@@ -140,6 +173,26 @@ class Admin_Apps_Page {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
+	private static function is_plugin_installed( $file_path ) {
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
+	}
+
+	private static function is_plugin_activated( $file_path ) {
+		return is_plugin_active( $file_path );
+	}
+
+	private static function get_activate_plugin_url( $file_path ) {
+		return wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $file_path );
+	}
+
+	private static function get_install_plugin_url( $file_path ) {
+		$slug = dirname( $file_path );
+
+		return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . esc_attr( $slug ), 'install-plugin_' . $slug ) );
+	}
+
 	private static function render_plugin_item( $plugin ) {
 		?>
 		<div class="e-a-item">
@@ -156,7 +209,7 @@ class Admin_Apps_Page {
 				<?php if ( ! empty( $plugin['learn_more_url'] ) ) : ?>
 					<a class="e-a-learn-more" href="<?php echo esc_url( $plugin['learn_more_url'] ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 				<?php endif; ?>
-				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="e-btn e-accent" target="_blank"><?php echo esc_html( $plugin['action_label'] ); ?></a>
+				<a href="<?php echo esc_url( $plugin['action_url'] ); ?>" class="e-btn e-accent" target="<?php echo isset( $plugin['target'] ) ? esc_attr( $plugin['target'] ) : '_blank'; ?>"><?php echo esc_html( $plugin['action_label'] ); ?></a>
 			</p>
 		</div>
 		<?php
