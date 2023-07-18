@@ -569,13 +569,11 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async getPageId() {
-		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
-		return pageId;
+		return await this.page.evaluate( () => elementor.config.initial_document.id );
 	}
 
 	async getPageIdFromFrontEnd() {
-		const pageId = await this.page.evaluate( () => elementorFrontendConfig.post.id );
-		return pageId;
+		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
@@ -841,5 +839,47 @@ module.exports = class EditorPage extends BasePage {
 			retry = retry++;
 		} while ( null !== comparator( beforeImage, afterImage ) );
 	}
-};
 
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type      [text|box]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setShadowControl( controlID, type ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type      [text]
+	 * @param {number} value     [number]
+	 * @param {string} color     [hex color]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextStokeControl( controlID, type, value, color ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlID }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} tab       [normal|hover|active]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async selectStateTab( controlID, tab ) {
+		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+	}
+};
