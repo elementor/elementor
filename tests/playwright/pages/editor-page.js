@@ -858,7 +858,7 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @param {string} controlID
 	 * @param {string} type      [text]
-	 * @param {string} value     [number]
+	 * @param {number} value     [number]
 	 * @param {string} color     [hex color]
 	 *
 	 * @return {Promise<void>}
