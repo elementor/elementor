@@ -534,4 +534,16 @@ class Manager extends Module {
 
 		return apply_filters( $replacement_hook, $templates );
 	}
+
+	public function __construct() {
+		add_action( 'elementor/css_file/parse_content', function( $css_file ) {
+			$handle_id = $css_file->get_id();
+			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+			$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
+
+			if ( ! $is_edit_mode && $handle_id && $additional_breakpoints_active ) {
+				Plugin::$instance->controls_manager->clear_stacks( $handle_id );
+			}
+		} );
+	}
 }

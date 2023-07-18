@@ -45,7 +45,7 @@ module.exports = class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 *  @deprecated - use openNewPage() instead to allow parallel tests in the near future.
+	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
 	 *
 	 * @return {Promise<EditorPage>}
 	 */

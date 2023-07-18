@@ -10,9 +10,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const wpAdmin = await new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-			'nested-accordion': 'inactive',
+			container: 'inactive',
+			'nested-elements': 'inactive',
 		} );
 
 		await page.close();
@@ -23,8 +22,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
+			'nested-elements': 'active',
+			container: 'active',
 		} );
 
 		await page.close();
@@ -59,7 +58,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
-			'nested-accordion': 'active',
 		} );
 
 		await page.close();
@@ -72,7 +70,6 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
-			'nested-accordion': 'inactive',
 		} );
 
 		await page.close();
@@ -230,5 +227,22 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			await editor.publishAndViewPage();
 			await expectScreenshotToMatchLocator( `nested-accordion-title-and-icons-fe.png`, page.locator( '.e-n-accordion' ).first() );
 		} );
+	} );
+
+	test( 'Nested Accordion stays full width in container Direction Row', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await page.click( '.elementor-control-flex_direction i.eicon-arrow-right' );
+
+		const frame = editor.getPreviewFrame(),
+			nestedAccordionId = await editor.addWidget( 'nested-accordion', containerId ),
+			containerElement = frame.locator( `.elementor-element-${ containerId } .e-con-inner` ),
+			nestedAccordionElement = frame.locator( `.elementor-element-${ nestedAccordionId }.elementor-widget-n-accordion` ),
+			containerWidth = ( await containerElement.boundingBox() ).width,
+			nestedAccordionWidth = ( await nestedAccordionElement.boundingBox() ).width;
+
+		expect( nestedAccordionWidth ).toEqual( containerWidth );
 	} );
 } );

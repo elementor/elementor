@@ -4,7 +4,8 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Config_Providers\Config_Provider_Factory;
+use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
+use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -68,7 +69,7 @@ class Editor {
 	public $promotion;
 
 	/**
-	 * @var Editor_Loader
+	 * @var Editor_Loader_Interface
 	 */
 	private $loader;
 
@@ -354,9 +355,7 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$this->get_loader()->print_client_env();
 		$this->get_loader()->enqueue_scripts();
-		$this->get_loader()->load_scripts_translations();
 
 		Plugin::$instance->controls_manager->enqueue_control_scripts();
 
@@ -587,12 +586,13 @@ class Editor {
 	/**
 	 * Get loader.
 	 *
-	 * @return Editor_Loader
+	 * @return Editor_Loader_Interface
 	 */
 	private function get_loader() {
 		if ( ! $this->loader ) {
-			$this->loader = new Editor_Loader( Config_Provider_Factory::create() );
-			$this->loader->register_hooks();
+			$this->loader = Editor_Loader_Factory::create();
+
+			$this->loader->init();
 		}
 
 		return $this->loader;
