@@ -31,18 +31,18 @@ const common = {
 	),
 	plugins: [
 		new GenerateWordPressAssetFileWebpackPlugin( {
-			handle: ( entryName ) => `elementor-packages-${entryName}`,
+			handle: ( entryName ) => `elementor-v2-${entryName}`,
 			map: [
-				{ request: /^@elementor\/(.+)$/, handle: 'elementor-packages-$1' },
+				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
 				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
 			]
 		} ),
 		new ExternalizeWordPressAssetsWebpackPlugin( {
-			global: ( entryName ) => [ '__UNSTABLE__elementorPackages', entryName ],
+			global: ( entryName ) => [ 'elementorV2', entryName ],
 			map: [
-				{ request: /^@elementor\/(.+)$/, global: [ '__UNSTABLE__elementorPackages', '$1' ] },
+				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
 				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
 				{ request: 'react', global: 'React' },
 				{ request: 'react-dom', global: 'ReactDOM' },
