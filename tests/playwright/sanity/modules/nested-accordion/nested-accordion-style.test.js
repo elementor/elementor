@@ -249,18 +249,18 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				await editor.activatePanelTab( 'style' );
 				await editor.openSection( 'section_header_style' );
 
-				await editor.setShadowControl( 'title-normal-text-shadow', 'text' );
-				await editor.setTextStokeControl( 'title-normal-stroke', 'text', 2, colors.red.hex );
+				await editor.setShadowControl( 'title_normal_text_shadow', 'text' );
+				await editor.setTextStokeControl( 'title_normal_stroke', 'text', 2, colors.red.hex );
 
 				await editor.selectStateTab( 'header_title_color_style', 'hover' );
 
-				await editor.setShadowControl( 'title-hover-text-shadow', 'text' );
-				await editor.setTextStokeControl( 'title-hover-stroke', 'text', 5, colors.blue.hex );
+				await editor.setShadowControl( 'title_hover_text_shadow', 'text' );
+				await editor.setTextStokeControl( 'title_hover_stroke', 'text', 5, colors.blue.hex );
 
 				await editor.selectStateTab( 'header_title_color_style', 'active' );
 
-				await editor.setShadowControl( 'title-active-text-shadow', 'text' );
-				await editor.setTextStokeControl( 'title-active-stroke', 'text', 1, colors.orange.hex );
+				await editor.setShadowControl( 'title_active_text_shadow', 'text' );
+				await editor.setTextStokeControl( 'title_active_stroke', 'text', 1, colors.orange.hex );
 
 				// Assert
 				await editor.isUiStable( nestedAccordion );
