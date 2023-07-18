@@ -1,3 +1,5 @@
+import { getComparator } from 'playwright-core/lib/utils';
+
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
@@ -25,6 +27,19 @@ module.exports = class EditorPage extends BasePage {
 		const data = JSON.stringify( templateData );
 		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
 		return JSON.parse( updatedData );
+	}
+
+	/*
+	 * Upload SVG in the Media Library. Expects media library to be open.
+	 */
+	async uploadSVG( svgFileName = undefined ) {
+		const _svgFileName = svgFileName === undefined ? 'test-svg-wide' : svgFileName;
+		const regex = new RegExp( _svgFileName );
+		const response = this.page.waitForResponse( regex );
+		await this.page.setInputFiles( EditorSelectors.media.imageInp, _path.resolve( __dirname, `../resources/${ _svgFileName }.svg` ) );
+		await response;
+		await this.page.getByRole( 'button', { name: 'Insert Media' } )
+			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
 	async loadTemplate( filePath, updateDatesForImages = false ) {
@@ -544,6 +559,23 @@ module.exports = class EditorPage extends BasePage {
 		return previewPage;
 	}
 
+	/*
+	 * @Description edit current page from the Front End.
+	 */
+	async editCurrentPage() {
+		const postId = await this.getPageIdFromFrontEnd();
+		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
+		await this.gotoPostId( postId );
+	}
+
+	async getPageId() {
+		return await this.page.evaluate( () => elementor.config.initial_document.id );
+	}
+
+	async getPageIdFromFrontEnd() {
+		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
+	}
+
 	/**
 	 * Apply Element Settings
 	 *
@@ -728,7 +760,7 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isPublished ) {
-			this.page.waitForSelector( selector );
+			await this.page.waitForSelector( selector );
 		} else {
 			const frame = this.getFrame();
 			await frame.waitForLoadState();
@@ -777,5 +809,77 @@ module.exports = class EditorPage extends BasePage {
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 		await this.setSliderControlValue( selector + '_font_size', fontsize );
 		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
+	}
+
+	/*
+	* Checks for a stable UI state by comparing screenshots at intervals and expecting a match.
+	* Can be used to check for completed rendering. Useful to wait out animations before screenshots and expects.
+	* Should be less flaky than waitForLoadState( 'load' ) in editor where Ajax re-rendering is triggered.
+	*/
+	async isUiStable( locator, retries = 3, timeout = 500 ) {
+		const comparator = getComparator( 'image/png' );
+		let retry = 0,
+			beforeImage,
+			afterImage;
+
+		do {
+			if ( retry === retries ) {
+				break;
+			}
+
+			beforeImage = await locator.screenshot( {
+				path: `./before.png`,
+			} );
+
+			await new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
+
+			afterImage = await locator.screenshot( {
+				path: `./after.png`,
+			} );
+			retry = retry++;
+		} while ( null !== comparator( beforeImage, afterImage ) );
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type      [text|box]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setShadowControl( controlID, type ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} type      [text]
+	 * @param {number} value     [number]
+	 * @param {string} color     [hex color]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextStokeControl( controlID, type, value, color ) {
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlID }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
+		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type  label` ).first().click();
+	}
+
+	/**
+	 * Set Slider control value.
+	 *
+	 * @param {string} controlID
+	 * @param {string} tab       [normal|hover|active]
+	 *
+	 * @return {Promise<void>}
+	 */
+	async selectStateTab( controlID, tab ) {
+		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
 	}
 };

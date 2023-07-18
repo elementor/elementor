@@ -9,25 +9,20 @@ const { dependencies } = require( '../package.json' );
 const packages = Object.keys( dependencies )
 	.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
 	.map( ( packageName ) => {
-	   const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
+		const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
 
-	   const { main, module, elementor } = JSON.parse( pkgJSON );
+		const { main, module } = JSON.parse( pkgJSON );
 
-	   return {
-	       mainFile: module || main,
-	       packageName,
-	       type: elementor?.type || 'util',
-	   }
+		return {
+		   mainFile: module || main,
+		   packageName,
+		}
 	} )
 	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, packageName, type } ) => {
-	   return {
-	       packageName,
-	       type,
-	       name: packageName.replace( '@elementor/', '' ),
-	       path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
-	   }
-	} );
+	.map( ( { mainFile, packageName } ) => ( {
+		name: packageName.replace( '@elementor/', '' ),
+		path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+	} ) );
 
 const common = {
 	name: 'packages',
@@ -36,15 +31,23 @@ const common = {
 	),
 	plugins: [
 		new GenerateWordPressAssetFileWebpackPlugin( {
-			handlePrefix: 'elementor-packages-',
-			apps: packages.filter( ( entry ) => 'app' === entry.type ).map( ( entry ) => entry.name ),
-			extensions: packages.filter( ( entry ) => 'extension' === entry.type ).map( ( entry ) => entry.name ),
-			i18n: {
-				domain: 'elementor',
-
-			},
+			handle: ( entryName ) => `elementor-v2-${entryName}`,
+			map: [
+				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
+				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
+				{ request: 'react', handle: 'react' },
+				{ request: 'react-dom', handle: 'react-dom' },
+			]
 		} ),
-		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
+		new ExternalizeWordPressAssetsWebpackPlugin( {
+			global: ( entryName ) => [ 'elementorV2', entryName ],
+			map: [
+				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
+				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+				{ request: 'react', global: 'React' },
+				{ request: 'react-dom', global: 'ReactDOM' },
+			]
+		} ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
@@ -58,7 +61,7 @@ const devConfig = {
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	output: {
 		...( common.output || {} ),
-		filename: '[name].js',
+		filename: '[name]/[name].js',
 	}
 }
 
@@ -76,7 +79,7 @@ const prodConfig = {
 	],
 	output: {
 		...( common.output || {} ),
-		filename: '[name].min.js',
+		filename: '[name]/[name].min.js',
 	}
 }
 
