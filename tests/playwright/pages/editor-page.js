@@ -852,6 +852,7 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async selectStateTab( controlID, tab ) {
 		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+	}
 
 	/*
 	* Checks for a stable UI state by comparing screenshots at intervals and expecting a match.
