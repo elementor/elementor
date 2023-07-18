@@ -1,0 +1,26 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "plugins": [
+    "stylelint-use-logical"
+  ],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "at-rule-empty-line-before": "always",
+    "scss/at-rule-no-unknown": true,
+    "rule-empty-line-before": "always",
+    "declaration-empty-line-before": null,
+    "no-descending-specificity": true,
+    "no-duplicate-selectors": true,
+    "no-dollar-variables": true,
+    "declaration-no-important": true,
+    "comment-no-empty": true,
+    "comment-empty-line-before": "always",
+    "comment-no-loud": true,
+    "comment-word-disallowed-list": [
+      "TODO",
+      "FIXME"
+    ],
+    "scss/selector-no-redundant-nesting-selector": true,
+    "csstools/use-logical": "('always' || true) || ('ignore' || false || null)"
+  }
+}
