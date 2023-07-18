@@ -569,13 +569,11 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	async getPageId() {
-		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
-		return pageId;
+		return await this.page.evaluate( () => elementor.config.initial_document.id );
 	}
 
 	async getPageIdFromFrontEnd() {
-		const pageId = await this.page.evaluate( () => elementorFrontendConfig.post.id );
-		return pageId;
+		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
@@ -846,7 +844,7 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} type [text|box]
+	 * @param {string} type      [text|box]
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -859,9 +857,9 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} type [text]
-	 * @param {string} value [number]
-	 * @param {string} color [hex color]
+	 * @param {string} type      [text]
+	 * @param {string} value     [number]
+	 * @param {string} color     [hex color]
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -877,7 +875,7 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} tab [normal|hover|active]
+	 * @param {string} tab       [normal|hover|active]
 	 *
 	 * @return {Promise<void>}
 	 */
