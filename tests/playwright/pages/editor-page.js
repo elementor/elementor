@@ -544,6 +544,23 @@ module.exports = class EditorPage extends BasePage {
 		return previewPage;
 	}
 
+	/*
+	 * @Description edit current page from the Front End.
+	 */
+	async editCurrentPage() {
+		const postId = await this.getPageIdFromFrontEnd();
+		await expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
+		await this.gotoPostId( postId );
+	}
+
+	async getPageId() {
+		return await this.page.evaluate( () => elementor.config.initial_document.id );
+	}
+
+	async getPageIdFromFrontEnd() {
+		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
+	}
+
 	/**
 	 * Apply Element Settings
 	 *
@@ -728,7 +745,7 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isPublished ) {
-			this.page.waitForSelector( selector );
+			await this.page.waitForSelector( selector );
 		} else {
 			const frame = this.getFrame();
 			await frame.waitForLoadState();
@@ -783,7 +800,7 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} type [text|box]
+	 * @param {string} type      [text|box]
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -796,9 +813,9 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} type [text]
-	 * @param {string} value [number]
-	 * @param {string} color [hex color]
+	 * @param {string} type      [text]
+	 * @param {string} value     [number]
+	 * @param {string} color     [hex color]
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -814,7 +831,7 @@ module.exports = class EditorPage extends BasePage {
 	 * Set Slider control value.
 	 *
 	 * @param {string} controlID
-	 * @param {string} tab [normal|hover|active]
+	 * @param {string} tab       [normal|hover|active]
 	 *
 	 * @return {Promise<void>}
 	 */
