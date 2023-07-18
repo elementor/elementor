@@ -6,15 +6,9 @@ module.exports = async ( config ) => {
 
 	const browser = await chromium.launch( { headless: config.headless } );
 	const page = await browser.newPage();
-	console.time( 'Script Duration' ); // Debug on CI
 	await page.route( '/analytics/fonts/images/woocommerce/elementor/', ( route ) => route.abort() );
 
-	await page.on( 'request', ( req ) => { // Debug on CI
-		console.log( req.url() );
-	} );
-
 	await page.goto( `${ config.baseURL }/wp-admin` );
-	console.timeEnd( 'Script Duration' ); // Debug on CI
 
 	await page.waitForSelector( 'text=Log In' );
 	await page.fill( 'input[name="log"]', config.user.username );
