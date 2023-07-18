@@ -665,7 +665,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->add_group_control(
 				Group_Control_Text_Stroke::get_type(),
 				[
-					'name' => $context . '_' . $state . '-stroke',
+					'name' => $context . '_' . $state . '_stroke',
 					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
 				]
 			);
