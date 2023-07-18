@@ -783,18 +783,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 					itemWrapperKey = itemUid,
 					itemTitleKey = 'item-' + itemUid;
 
-					view.addRenderAttribute( itemTitleKey, {
-						'class': ['e-n-accordion-item-title'],
-					});
-
-					view.addRenderAttribute( itemTitleText, {
-						'class': ['e-n-accordion-item-title-text'],
-						'data-binding-type': 'repeater-item',
-						'data-binding-repeater-name': 'items',
-						'data-binding-setting': ['item_title'],
-						'data-binding-index': itemCount,
-					});
-
 					if ( '' !== item.element_css_id ) {
 						itemId = item.element_css_id;
 					} else {
@@ -813,8 +801,16 @@ class Nested_Accordion extends Widget_Nested_Base {
 					view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
 
 					view.addRenderAttribute( itemTitleKey, {
-						'class': [ 'e-n-accordion-item-title' ],
-					} );
+						'class': ['e-n-accordion-item-title'],
+					});
+
+					view.addRenderAttribute( itemTitleText, {
+						'class': ['e-n-accordion-item-title-text'],
+						'data-binding-type': 'repeater-item',
+						'data-binding-repeater-name': 'items',
+						'data-binding-setting': ['item_title'],
+						'data-binding-index': itemCount,
+					});
 				#>
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
