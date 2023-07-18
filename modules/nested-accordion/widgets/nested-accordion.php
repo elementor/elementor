@@ -769,6 +769,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+				itemTitleText = 'item-title-text-' + elementUid,
 				defaultState = settings.default_state,
 				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
@@ -819,7 +820,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
 					<span class="e-n-accordion-item-title-header">
-						<{{{ titleHTMLTag }}} class="e-n-accordion-item-title-text">
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( itemTitleText ) }}}>
 							{{{ item.item_title }}}
 						</{{{ titleHTMLTag }}}>
 					</span>
