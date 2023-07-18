@@ -28,9 +28,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.config = elementorFrontendConfig;
 
 		this.config.legacyMode = {
-			/**
-			 * @deprecated since 3.1.0, use `elementorFrontend.config.experimentalFeatures.e_dom_optimization` instead.
-			 */
 			get elementWrappers() {
 				if ( elementorFrontend.isEditMode() ) {
 					window.top.elementorDevTools.deprecation.deprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
@@ -43,9 +40,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.populateActiveBreakpointsConfig();
 	}
 
-	/**
-	 * @deprecated since 2.5.0, use `elementorModules.frontend.handlers.Base` instead.
-	 */
+	// TODO: BC since 2.5.0
 	get Module() {
 		if ( this.isEditMode() ) {
 			parent.elementorDevTools.deprecation.deprecated( 'elementorFrontend.Module', '2.5.0', 'elementorModules.frontend.handlers.Base' );
@@ -83,7 +78,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	/**
 	 * @param {string} elementName
-	 * @deprecated since 2.4.0, use `this.elements` instead.
+	 * @deprecated 2.4.0 Use just `this.elements` instead
 	 */
 	getElements( elementName ) {
 		return this.getItems( this.elements, elementName );
@@ -91,7 +86,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	/**
 	 * @param {string} settingName
-	 * @deprecated since 2.4.0, this method was never in use.
+	 * @deprecated 2.4.0 This method was never in use
 	 */
 	getPageSettings( settingName ) {
 		const settingsObject = this.isEditMode() ? elementor.settings.page.model.attributes : this.config.settings.page;
@@ -99,13 +94,9 @@ export default class Frontend extends elementorModules.ViewModule {
 		return this.getItems( settingsObject, settingName );
 	}
 
-	/**
-	 * @param {string} settingName
-	 * @deprecated since 3.0.0, use `getKitSettings()` instead and remove the `elementor_` prefix.
-	 */
 	getGeneralSettings( settingName ) {
 		if ( this.isEditMode() ) {
-			parent.elementorDevTools.deprecation.deprecated( 'getGeneralSettings()', '3.0.0', 'getKitSettings() and remove the `elementor_` prefix' );
+			parent.elementorDevTools.deprecation.deprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
 		}
 
 		return this.getKitSettings( `elementor_${ settingName }` );

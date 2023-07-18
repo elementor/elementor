@@ -7,7 +7,7 @@
  * @param {boolean}     options.isContainerASection - If `container` is a section. Optional.
  * @return {Promise<*>} element id
  */
-const addElement = async ( { model, container = null, isContainerASection = false } ) => {
+ const addElement = async ( { model, container = null, isContainerASection = false } ) => {
 	let parent;
 
 	if ( container ) {
@@ -48,7 +48,7 @@ const addElement = async ( { model, container = null, isContainerASection = fals
  *
  * @return {string} css selector
  */
-const getElementSelector = ( id ) => {
+ const getElementSelector = ( id ) => {
 	return `[data-id = "${ id }"]`;
 };
 

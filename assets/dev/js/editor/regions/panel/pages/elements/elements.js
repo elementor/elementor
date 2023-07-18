@@ -64,7 +64,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			elements: this.elements,
 			search: this.search,
 		} );
-	},
+},
 
 	initElementsCollection() {
 		const elementsCollection = new PanelElementsElementsCollection(),

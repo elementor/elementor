@@ -45,15 +45,3 @@ export async function deleteDefaultMedia( request, ids ) {
 	}
 	await Promise.all( requests );
 }
-
-export async function createApiContext( request, { storageStateObject, wpRESTNonce, baseURL } ) {
-	const context = await request.newContext( {
-		baseURL,
-		storageState: storageStateObject,
-		extraHTTPHeaders: {
-			'X-WP-Nonce': wpRESTNonce,
-		},
-	} );
-
-	return context;
-}

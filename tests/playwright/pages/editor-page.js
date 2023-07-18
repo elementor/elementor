@@ -1,8 +1,6 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
-const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
 const EditorSelectors = require( '../selectors/editor-selectors' ).default;
-const _path = require( 'path' );
 
 module.exports = class EditorPage extends BasePage {
 	constructor( page, testInfo, cleanPostId = null ) {
@@ -19,23 +17,8 @@ module.exports = class EditorPage extends BasePage {
 		await this.ensurePanelLoaded();
 	}
 
-	updateImageDates( templateData ) {
-		const date = new Date();
-		const month = date.toLocaleString( 'default', { month: '2-digit' } );
-		const data = JSON.stringify( templateData );
-		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
-		return JSON.parse( updatedData );
-	}
-
-	async loadTemplate( filePath, updateDatesForImages = false ) {
-		let templateData = require( filePath );
-
-		// For templates that use images, date when image is uploaded is hardcoded in template.
-		// Element regression tests upload images before each test.
-		// To update dates in template, use a flag updateDatesForImages = true
-		if ( updateDatesForImages ) {
-			templateData = this.updateImageDates( templateData );
-		}
+	async loadTemplate( filePath ) {
+		const templateData = require( filePath );
 
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
@@ -138,49 +121,6 @@ module.exports = class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
-	 *
-	 * @param {string}  dirName              - use __dirname to get the current directory
-	 * @param {string}  fileName             - without json extension
-	 * @param {string}  widgetSelector       - css selector
-	 * @param {boolean} updateDatesForImages - flag to update dates for images
-	 */
-	async loadJsonPageTemplate( dirName, fileName, widgetSelector, updateDatesForImages = false ) {
-		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
-		const templateData = require( filePath );
-		const pageTemplateData =
-		{
-			content: templateData,
-			page_settings: [],
-			version: '0.4',
-			title: 'Elementor Test',
-			type: 'page',
-		};
-
-		// For templates that use images, date when image is uploaded is hardcoded in template.
-		// Element regression tests upload images before each test.
-		// To update dates in template, use a flag updateDatesForImages = true
-		if ( updateDatesForImages ) {
-			this.updateImageDates( templateData );
-		}
-
-		await this.page.evaluate( ( data ) => {
-			const model = new Backbone.Model( { title: 'test' } );
-
-			window.$e.run( 'document/elements/import', {
-				data,
-				model,
-				options: {
-					at: 0,
-					withPageSettings: false,
-				},
-			} );
-		}, pageTemplateData );
-
-		await this.waitForElement( { isPublished: false, selector: widgetSelector } );
-	}
-
-	/**
 	 * @typedef {import('@playwright/test').ElementHandle} ElementHandle
 	 */
 	/**
@@ -242,17 +182,20 @@ module.exports = class EditorPage extends BasePage {
 	 *
 	 * @param {string} elementId - Element ID;
 	 *
-	 * @return {Object} element;
+	 * @return {Promise<void>}
 	 */
 	async selectElement( elementId ) {
-		await this.page.evaluate( async ( { id } ) => {
-			$e.run( 'document/elements/select', {
-				container: elementor.getContainer( id ),
-			} );
-		}, { id: elementId } );
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId );
 
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
-		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+		if ( await this.getPreviewFrame().$( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' ) ) {
+			return;
+		}
+
+		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
+		await element.hover();
+		const elementEditButton = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId + ' > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		await elementEditButton.click();
+		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + ':not( .elementor-sticky__spacer ).elementor-element-editable' );
 	}
 
 	async copyElement( elementId ) {
@@ -330,10 +273,6 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async setSliderControlValue( controlId, value ) {
 		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
-	}
-
-	async setNumberControlValue( controlId, value ) {
-		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
 	/**
@@ -705,7 +644,7 @@ module.exports = class EditorPage extends BasePage {
 		let isLoading;
 
 		try {
-			await this.getPreviewFrame().waitForSelector(
+			await this.getFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ timeout: 500 },
 			);
@@ -716,98 +655,10 @@ module.exports = class EditorPage extends BasePage {
 		}
 
 		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector(
+			await this.getFrame().waitForSelector(
 				EditorSelectors.loadingElement( id ),
 				{ state: 'detached' },
 			);
 		}
-	}
-
-	async waitForIframeToLoaded( widgetType, isPublished = false ) {
-		const frames = {
-			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
-			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
-			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
-		};
-
-		if ( ! ( widgetType in frames ) ) {
-			return;
-		}
-
-		if ( isPublished ) {
-			await this.page.locator( frames[ widgetType ][ 0 ] ).first().waitFor();
-			const count = await this.page.locator( frames[ widgetType ][ 0 ] ).count();
-			for ( let i = 1; i < count; i++ ) {
-				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
-			}
-		} else {
-			const frame = this.getPreviewFrame();
-			await frame.waitForLoadState();
-			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
-			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
-			const iframeCount = await new Promise( ( resolved ) => {
-				resolved( frame.childFrames().length );
-			} );
-			for ( let i = 1; i < iframeCount; i++ ) {
-				await frame.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
-			}
-		}
-	}
-
-	async waitForElement( isPublished, selector ) {
-		if ( selector === undefined ) {
-			return;
-		}
-
-		if ( isPublished ) {
-			this.page.waitForSelector( selector );
-		} else {
-			const frame = this.getFrame();
-			await frame.waitForLoadState();
-			await frame.waitForSelector( selector );
-		}
-	}
-
-	async setColorControlValue( color, colorControlId ) {
-		const controlSelector = '.elementor-control-' + colorControlId;
-
-		await this.page.locator( controlSelector + ' .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
-		await this.page.locator( controlSelector ).click();
-	}
-
-	/**
-	 * Set Dimentions controls value
-	 *
-	 * @param {string} selector
-	 * @param {string} value
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setDimensionsValue( selector, value ) {
-		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
-	}
-
-	async verifyClassInElement( args = { selector, className, isPublished } ) {
-		const regex = new RegExp( args.className );
-		if ( args.isPublished ) {
-			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
-		} else {
-			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
-		}
-	}
-
-	async verifyImageSize( args = { selector, width, height, isPublished } ) {
-		const imageSize = args.isPublished
-			? await this.page.locator( args.selector ).boundingBox()
-			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
-		expect( imageSize.width ).toEqual( args.width );
-		expect( imageSize.height ).toEqual( args.height );
-	}
-
-	async setTypography( selector, fontsize ) {
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
-		await this.setSliderControlValue( selector + '_font_size', fontsize );
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
 	}
 };

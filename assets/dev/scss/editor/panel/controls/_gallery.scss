@@ -27,6 +27,13 @@
 		&-gallery-content {
 			position: relative;
 			overflow: hidden;
+
+			&:not(:hover) {
+
+				.elementor-control-gallery-edit {
+					opacity: 0;
+				}
+			}
 		}
 
 		&-gallery-thumbnails {
@@ -35,14 +42,6 @@
 			grid-gap: 10px;
 			cursor: pointer;
 			padding: 10px;
-
-			&:hover,
-			&:focus {
-
-				+ .elementor-control-gallery-edit {
-					opacity: 1;
-				}
-			}
 		}
 
 		&-gallery-thumbnail {
@@ -65,7 +64,7 @@
 			transition: all .3s ease-in-out;
 			pointer-events: none;
 			cursor: pointer;
-			opacity: 0;
+			opacity: 1;
 
 			span {
 				position: absolute;
@@ -128,14 +127,10 @@
 	}
 
 	.elementor-control-gallery-clear {
-		color: currentColor;
-		background-color: transparent;
-		border: none;
 		cursor: pointer;
 		justify-content: center;
 
-		&:hover,
-		&:focus {
+		&:hover {
 			color: var(--e-a-color-danger);
 		}
 	}

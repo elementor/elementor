@@ -1,4 +1,4 @@
-import ComponentBase from 'elementor-editor/component-base';
+import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import { SetDirectionMode } from 'elementor-document/hooks';
 
@@ -8,7 +8,6 @@ export default class Component extends ComponentBase {
 
 		// Remember last used tab.
 		this.activeTabs = {};
-		this.activeModelId = null;
 	}
 
 	getNamespace() {
@@ -33,31 +32,22 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { model, view, activeControl } = args,
+		const { model, view } = args,
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( this.wasOutOfFocus() || this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) {
-			this.activeModelId = args.model.id;
-			this.activeTabs[ args.model.id ] = tab;
-
-			elementor.getPanelView().setPage( 'editor', title, {
-				tab,
-				model,
-				controls: elementor.getElementControls( model ),
-				editedElementView: view,
-			} );
-		}
-
-		this.activateControl( activeControl );
+		elementor.getPanelView().setPage( 'editor', title, {
+			tab,
+			model,
+			controls: elementor.getElementControls( model ),
+			editedElementView: view,
+		} );
 	}
 
-	wasOutOfFocus() {
-		const history = $e.routes.getHistory( 'panel' );
-		const lastRoute = history[ history.length - 1 ].route;
-		const lastRouteParts = lastRoute.split( '/' );
+	activateTab( tab, args ) {
+		this.activeTabs[ args.model.id ] = tab;
 
-		return 'categories' === lastRouteParts[ lastRouteParts.length - 1 ];
+		super.activateTab( tab, args );
 	}
 
 	setDefaultTab( args ) {

@@ -10,8 +10,9 @@ export default function useKit( id ) {
 	const placeholderDataCallback = usePlaceholderDataCallback( id );
 
 	return useQuery( [ KEY, id ], fetchKitItem, {
-		placeholderData: placeholderDataCallback,
-	} );
+			placeholderData: placeholderDataCallback,
+		},
+	);
 }
 
 /**

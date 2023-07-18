@@ -4,7 +4,7 @@ const WpAdminPage = require( '../pages/wp-admin-page' );
 const widgets = require( '../enums/widgets.js' );
 const Breakpoints = require( '../assets/breakpoints' );
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -688,24 +688,6 @@ test.describe( 'Container tests @container', () => {
 
 		// Check for no horizontal scroll.
 		expect( hasNoHorizontalScroll ).toBe( true );
-	} );
-
-	test( 'Convert to container does not show when only containers are on the page', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editor = await wpAdmin.useElementorCleanPost();
-
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( widgets.button, containerId );
-
-		await page.click( '#elementor-panel-saver-button-publish-label' );
-		await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
-
-		await page.reload();
-		await editor.ensurePanelLoaded();
-
-		await page.locator( '#elementor-panel-footer-settings' ).click();
-
-		expect( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
 } );
 

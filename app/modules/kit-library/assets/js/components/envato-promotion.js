@@ -31,6 +31,6 @@ export default function EnvatoPromotion( props ) {
 		</Text>
 	);
 }
-EnvatoPromotion.propTypes = {
+ EnvatoPromotion.propTypes = {
 	category: PropTypes.string,
-};
+ };

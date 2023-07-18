@@ -22,7 +22,14 @@
 
 			@at-root body:not(.e-routes-has-history) #elementor-panel-header-kit-back {
 				pointer-events: none;
-				visibility: hidden;
+				opacity: 0.4;
+
+				&:hover {
+					.elementor-icon {
+						cursor: inherit;
+						color: inherit;
+					}
+				}
 			}
 		}
 

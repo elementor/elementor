@@ -4,7 +4,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
-import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -405,32 +404,9 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 				$( '#elementor-import-template-area' ).toggle();
 			} );
 
-			let messageShown = false;
-			const originalButtonValue = $importNowButton[ 0 ].value;
-
-			$importForm.on( 'submit', async ( event ) => {
+			$importForm.on( 'submit', ( event ) => {
 				$importNowButton[ 0 ].disabled = true;
 				$importNowButton[ 0 ].value = __( 'Importing...', 'elementor' );
-
-				if ( ! messageShown ) {
-					event.preventDefault();
-
-					try {
-						await showJsonUploadWarningMessageIfNeeded( {
-							IntroductionClass: window.elementorModules.admin.utils.Introduction,
-							introductionMap: window.elementorAdmin.config.user.introduction,
-							waitForSetViewed: true,
-						} );
-
-						messageShown = true;
-						$importForm.trigger( 'submit' );
-					} catch ( e ) {
-						$importNowButton[ 0 ].disabled = false;
-						$importNowButton[ 0 ].value = originalButtonValue;
-					}
-
-					return;
-				}
 
 				if ( $importFormFileInput[ 0 ].files.length && ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 					event.preventDefault();
@@ -440,11 +416,7 @@ import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-uploa
 					} );
 
 					enableUnfilteredFilesModal.show();
-
-					return;
 				}
-
-				messageShown = false;
 			} );
 		},
 

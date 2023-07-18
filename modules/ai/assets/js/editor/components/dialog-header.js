@@ -1,4 +1,4 @@
-import { DialogTitle, Stack, SvgIcon, IconButton, styled } from '@elementor/ui';
+import { DialogTitle, Stack, SvgIcon, Typography, IconButton, styled } from '@elementor/ui';
 import { XIcon } from '@elementor/icons';
 import StyledChip from './ui/styled-chip';
 
@@ -20,24 +20,25 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 
 const DialogHeader = ( props ) => {
 	return (
-		<DialogTitle sx={ { fontWeight: 'normal' } }>
-			<StyledElementorLogo sx={ { mr: 3 } } />
+		<DialogTitle component="div" sx={ { fontWeight: 'normal' } }>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Stack direction="row" spacing={ 3 } alignItems="center">
+					<StyledElementorLogo />
 
-			{ __( 'AI', 'elementor' ) }
+					<Typography variant="h6" sx={ { color: 'text.primary' } }>
+						{ __( 'AI', 'elementor' ) }
+					</Typography>
 
-			<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
+					<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" />
+				</Stack>
 
-			<Stack direction="row" spacing={ 3 } alignItems="center" sx={ { ml: 'auto' } }>
-				{ props.children }
+				<Stack direction="row" spacing={ 3 } alignItems="center">
+					{ props.children }
 
-				<IconButton
-					size="small"
-					aria-label="close"
-					onClick={ props.onClose }
-					sx={ { '&.MuiButtonBase-root': { mr: -4 } } }
-				>
-					<XIcon />
-				</IconButton>
+					<IconButton aria-label="close" onClick={ props.onClose } sx={ { '&.MuiButtonBase-root': { mr: -4 } } }>
+						<XIcon />
+					</IconButton>
+				</Stack>
 			</Stack>
 		</DialogTitle>
 	);

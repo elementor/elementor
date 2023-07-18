@@ -101,7 +101,7 @@ ColumnView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'addNew',
-					icon: 'eicon-plus',
+                    icon: 'eicon-plus',
 					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
 					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementor.selection.isMultiple(),

@@ -4,7 +4,7 @@ import Document from './document';
 /**
  * @typedef {import('./content-type')} ContentType
  */
-export default class Kit extends BaseModel {
+ export default class Kit extends BaseModel {
 	id = '';
 	title = '';
 	description = '';

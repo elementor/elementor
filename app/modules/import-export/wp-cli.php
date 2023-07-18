@@ -187,12 +187,6 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
-			Plugin::$instance->logger->get_logger()->error( $error->getMessage(), [
-				'meta' => [
-					'trace' => $error->getTraceAsString(),
-				],
-			] );
-
 			if ( $url ) {
 				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );
 			}
@@ -278,4 +272,14 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		return $file;
 	}
+
+	/**
+	 * Handle the import process of plugins.
+	 *
+	 * Returns a string contains the successfully installed and activated plugins.
+	 *
+	 * @param array $plugins
+	 * @return string
+	 */
+
 }

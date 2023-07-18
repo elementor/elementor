@@ -6,31 +6,22 @@ export default class GlobalFontIntroduction {
 	}
 
 	bindEvent() {
-		$e.routes.on( 'run:after', ( component, route, args ) => {
-			// Prevent the Tooltip from appearing when the event is triggered from site-settings.
-			if ( ! $e.routes.isPartOf( 'panel/editor' ) ) {
+		window.addEventListener( 'elementor/popover/show', ( e ) => {
+			// Prevent from the tooltip to appear when the event is being triggerred from the site-settings.
+			if ( 'kit' === elementor.documents.getCurrent().config.type ) {
 				return;
 			}
+			let $popoverElement = null;
 
-			const controlView = this.getControlView( args.activeControl );
-			if ( 'popover_toggle' !== controlView?.model?.attributes?.type ) {
-				return;
+			if ( e.detail.el.hasClass( 'elementor-control-typography_typography' ) ) {
+				$popoverElement = e.detail.el;
 			}
 
-			this.tooltip.show( controlView.el );
-			this.tooltip.setViewed();
+			if ( $popoverElement ) {
+				this.tooltip.show( e.detail.el );
+				this.tooltip.setViewed();
+			}
 		} );
-	}
-
-	getControlView( control ) {
-		if ( ! control ) {
-			return null;
-		}
-
-		const editor = elementor.getPanelView().getCurrentPageView();
-		const currentView = editor.content ? editor.content.currentView : editor;
-
-		return $e.components.get( 'panel' ).getControlViewByPath( currentView, control );
 	}
 
 	initTooltip() {
@@ -59,7 +50,7 @@ export default class GlobalFontIntroduction {
 		this.tooltip.getDialog().addButton( {
 			name: 'action',
 			text: __( 'Got it!', 'elementor' ),
-			classes: 'elementor-button e-primary',
+			classes: 'elementor-button e-brand',
 			callback: () => this.tooltip.getDialog().hide(),
 		} );
 	}

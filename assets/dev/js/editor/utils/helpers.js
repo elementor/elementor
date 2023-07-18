@@ -74,7 +74,7 @@ module.exports = {
 
 	/**
 	 * @param {string} url
-	 * @deprecated since 2.6.0, use `elementor.helpers.enqueuePreviewStylesheet()` instead.
+	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
 		elementorDevTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
@@ -264,10 +264,10 @@ module.exports = {
 				break;
 
 			case 'earlyaccess': {
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
-			}
+					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+					break;
+				}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
@@ -323,9 +323,6 @@ module.exports = {
 		return result;
 	},
 
-	/**
-	 * @deprecated since 3.0.0, use `elementorCommon.helpers.getUniqueId()` instead.
-	 */
 	getUniqueID() {
 		elementorDevTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
 
@@ -424,14 +421,10 @@ module.exports = {
 		return false;
 	},
 
-	/**
-	 * @param {string} string
-	 * @param {string} replaces
-	 * @deprecated since 2.0.0, use native JS `.replace()` method.
-	 */
+	/*
+	* @deprecated 2.0.0
+	*/
 	stringReplaceAll( string, replaces ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.stringReplaceAll()', '2.0.0', 'Use native JS `.replace()` method.' );
-
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 
 		return string.replace( re, function( matched ) {
@@ -462,12 +455,8 @@ module.exports = {
 		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
-	/**
-	 * @param {Object} object - An object to clone.
-	 * @deprecated since 2.3.0, use `elementorCommon.helpers.cloneObject()` instead.
-	 */
 	cloneObject( object ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject( object )', '2.3.0', 'elementorCommon.helpers.cloneObject( object )' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -501,12 +490,8 @@ module.exports = {
 		} );
 	},
 
-	/**
-	 * @param {*} $element
-	 * @deprecated since 2.8.0, use `new ColorPicker( { picker: { el: $element } } )` instead.
-	 */
 	wpColorPicker( $element ) {
-		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker( $element )', '2.8.0', 'new ColorPicker( { picker: { el: $element } } )' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},

@@ -1,10 +1,10 @@
-=== Elementor Website Builder - More than Just a Page Builder ===
+=== Elementor Website Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.9
 Tested up to: 6.2
 Requires PHP: 7.0
-Stable tag: 3.12.1
+Stable tag: 3.12.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -239,60 +239,6 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
-
-= 3.14.1 - 2023-06-26 =
-
-* Fix: Video background added on the parent tab container only works on the first tab in Tabs widget
-* Fix: AI Image screen is not loading when there is no image in the control
-
-= 3.14.0 - 2023-06-19 =
-
-* New: Introducing Elementor AI for Image Creation – Unleash your creativity, improve and accelerate your workflow by instantly generating any type of image
-* New: Add widgets to the Editor with a click - streamline and accelerate your workflow ([#20142](https://github.com/elementor/elementor/issues/20142), [#21965](https://github.com/elementor/elementor/issues/21965))
-* New: Global Styles Preview - Showcase your global colors and fonts for better insight of your website's design system
-* Tweak: Added a None option to the breakpoint options in Tabs widget ([#7742](https://github.com/elementor/elementor/issues/7742))
-* Tweak: Updated "Manage Website" button functionality and name in Editor Top Bar ([#22359](https://github.com/elementor/elementor/issues/22359), [#22464](https://github.com/elementor/elementor/issues/22464))
-* Tweak: Added a horizontal scrolling option in Tabs widget
-* Tweak: Implemented "Add new page" option in recently edited documents dropdown in Editor Top Bar
-* Tweak: Allow loading a document without reloading when using recently edited documents dropdown in Editor Top Bar
-* Tweak: Changed document name simultaneously when changing it in the document settings panel and the Editor Top Bar
-* Tweak: Moved the 'Container Type' dropdown to the top of the container widget in Grid Container experiment
-* Tweak: Added Fit to Size control to SVG file in Icon widget
-* Tweak: Added "Object Position" control to Image widget
-* Tweak: Added "Order" control to page settings panel
-* Tweak: Added "Comments" control to page settings panel
-* Tweak: Updated the layout of Keyboard Shortcuts panel
-* Tweak: Added "Page Settings" hotkey to the Keyboard Shortcuts panel
-* Tweak: Added "User Preferences" hotkey to the Keyboard Shortcuts panel
-* Tweak: Added "Notes" feature hotkey to the Keyboard Shortcuts panel
-* Tweak: Use CSS Logical Properties in Elementor Admin SCSS files
-* Tweak: Move the "Elementor Loading" HTML block from the preview area
-* Tweak: Use `media_types` array in Media controls
-* Tweak: Added keyboard accessibility to Navigator items
-* Tweak: Added keyboard accessibility to Basic Gallery widget
-* Tweak: Added keyboard accessibility to Image Carousel widget
-* Tweak: Improved accessibility to Button widget
-* Tweak: Added focus state to Editor buttons
-* Tweak: Replaced select control with choose control for Vertical Alignment control in Icon Box widget
-* Tweak: Replaced select control with choose control for Vertical Alignment control in Image Box widget
-* Fix: Not-crawlable link error in Accordion widget ([#14371](https://github.com/elementor/elementor/issues/14371), [#20214](https://github.com/elementor/elementor/issues/20214), [#20477](https://github.com/elementor/elementor/issues/20477), [#8943](https://github.com/elementor/elementor/issues/8943), [#11611](https://github.com/elementor/elementor/issues/11611))
-* Fix: Not-crawlable link error in Toggle widget ([#14371](https://github.com/elementor/elementor/issues/14371), [#20214](https://github.com/elementor/elementor/issues/20214), [#20477](https://github.com/elementor/elementor/issues/20477), [#8943](https://github.com/elementor/elementor/issues/8943), [#11611](https://github.com/elementor/elementor/issues/11611))
-* Fix: "Convert to Containers" functionality appears on a page without Sections ([#19361](https://github.com/elementor/elementor/issues/19361))
-* Fix: Responsive settings for templates don't work as expected when Additional Custom Breakpoints feature is active ([#16819](https://github.com/elementor/elementor/issues/16819), [#19394](https://github.com/elementor/elementor/issues/19394))
-* Fix: ARIA `role` attributes in Accordion widget
-* Fix: ARIA `role` attributes in Toggle widget
-* Fix: Background video is not working as expected inside the editor on container level in Nested Elements
-* Fix: Dropdown select control UI background color glitch on dark mode in the Editor
-* Fix: Special characters are not displaying as expected when using recently edited documents dropdown in Editor Top Bar
-
-= 3.13.4 - 2023-05-28 =
-
-* Fix: Unable to save a new Global Widget ([#22544](https://github.com/elementor/elementor/issues/22544))
-
-= 3.13.3 - 2023-05-22 =
-
-* Security Fix: Addressed security weaknesses in template creation mechanism
-* Tweak: Improved error messages when a kit is not downloaded successfully in Kit Library
 
 = 3.13.2 - 2023-05-11 =
 

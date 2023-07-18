@@ -289,11 +289,9 @@ export default IconsManager;
 const renderIconManager = function( props ) {
 	const containerElement = document.querySelector( '#elementor-icons-manager-modal .dialog-content' );
 
-	return render(
-		<IconsManager
-			{ ... props }
-			containerElement={ containerElement }
-		/>,
+	return render( <IconsManager
+		{ ... props }
+		containerElement={ containerElement } />,
 		containerElement,
 	);
 };

@@ -30,7 +30,7 @@
 	&__description {
 		width: 35%;
 		max-width: 300px;
-		padding-inline-end: 100px;
+		@include padding-end(100px);
 
 		&__title {
 			font-size: 30px;
@@ -57,7 +57,7 @@
 		}
 
 		a {
-			padding-inline-start: 10px;
+			@include padding-start(10px);
 			font-weight: 500;
 		}
 	}
@@ -92,7 +92,7 @@
 			font-weight: 500;
 			line-height: 1;
 			text-transform: uppercase;
-			inset-block-start: 50%;
+			top: 50%;
 			inset-inline-end: 28px;
 			transform: translateY( -50% );
 		}
@@ -134,8 +134,8 @@
 						font-family: eicons;
 						content: '\e8ad';
 						position: absolute;
-						inset-block-start: 50%;
-						inset-inline-end: 10px;
+						top: 50%;
+						@include end(10px);
 						transform: translateY(-50%);
 					}
 				}
@@ -147,7 +147,7 @@
 			display: block;
 			width: 100%;
 			height: 50px;
-			margin-block-start: 24px;
+			margin-top: 24px;
 			box-sizing: border-box;
 			text-align: center;
 		}
@@ -160,7 +160,7 @@
 
 		&__description {
 			max-width: 250px;
-			padding-inline-end: 30px;
+			@include padding-end(30px);
 		}
 	}
 }

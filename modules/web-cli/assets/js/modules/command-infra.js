@@ -42,9 +42,7 @@ export default class CommandInfra extends ArgsObject {
 		this.registerConfig = Object.freeze( config );
 	}
 
-	/**
-	 * @deprecated since 3.7.0, use `this.command` instead.
-	 */
+	// TODO - Remove backwards compatibility.
 	get currentCommand() {
 		Deprecation.deprecated( 'this.currentCommand', '3.7.0', 'this.command' );
 

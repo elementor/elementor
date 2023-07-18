@@ -1,0 +1,82 @@
+name: Packages
+
+on: [pull_request]
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  file-diff:
+    name: File Diff
+    runs-on: ubuntu-20.04
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      packages_diff_files: ${{ steps.packages_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Check if packages has been changed
+        id: packages_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            packages/**/*
+            .github/**/*.yml
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-20.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.packages_diff_files || github.ref == 'refs/heads/developer-edition' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Cache node modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-packages-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-packages-${{ env.cache-name }}-${{ hashFiles('packages/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-packages-${{ env.cache-name }}-
+            ${{ runner.os }}-packages-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        run: npm run packages:install
+      - name: Run Lint
+        run: npm run packages:lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.packages_diff_files || github.ref == 'refs/heads/developer-edition' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Cache node modules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-packages-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-packages-${{ env.cache-name }}-${{ hashFiles('packages/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-packages-${{ env.cache-name }}-
+            ${{ runner.os }}-packages-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        run: npm run packages:install
+      - name: Run Test
+        run: npm run packages:test:coverage

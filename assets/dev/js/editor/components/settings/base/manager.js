@@ -40,11 +40,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		return this.getSettings( 'name' ) + '_settings';
 	},
 
-	/**
-	 * @deprecated since 3.7.0, use `getContainerType()` instead.
-	 */
 	getContainerId() {
-		elementorDevTools.deprecation.deprecated( 'getContainerId()', '3.7.0', 'getContainerType()' );
+		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
 
 		return this.getContainerType();
 	},
@@ -58,7 +55,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				id: type,
 				elType: type,
 				settings: this.model,
-			} );
+		} );
 
 		const container = new elementorModules.editor.Container( {
 			type,
@@ -195,12 +192,12 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		const namespace = 'panel/' + this.getSettings( 'name' ) + '-settings',
 			menuItemOptions = {
-				icon: menuSettings.icon,
-				title: this.getSettings( 'panelPage.title' ),
-				type: 'page',
-				pageName: this.getSettings( 'name' ) + '_settings',
-				callback: () => $e.route( `${ namespace }/settings` ),
-			};
+			icon: menuSettings.icon,
+			title: this.getSettings( 'panelPage.title' ),
+			type: 'page',
+			pageName: this.getSettings( 'name' ) + '_settings',
+			callback: () => $e.route( `${ namespace }/settings` ),
+		};
 
 		$e.bc.ensureTab( namespace, 'settings', menuItemOptions.pageName );
 

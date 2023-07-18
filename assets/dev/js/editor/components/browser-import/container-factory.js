@@ -3,7 +3,7 @@ import ElementModel from '../../elements/models/element';
 /**
  * @typedef {import('../../container/container')} Container
  */
-export default class ContainerFactory {
+ export default class ContainerFactory {
 	/**
 	 * Create an element container.
 	 *

@@ -446,7 +446,7 @@ class Icons_Manager {
 			/**
 			 * Is icon migration allowed.
 			 *
-			 * Filters whether the icons migration allowed.
+			 * Filters whther the icons migration allowed.
 			 *
 			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */
@@ -547,10 +547,6 @@ class Icons_Manager {
 	 */
 	public function ajax_upgrade_to_fa5() {
 		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( 'Permission denied' );
-		}
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 

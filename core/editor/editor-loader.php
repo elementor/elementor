@@ -53,23 +53,23 @@ class Editor_Loader {
 		}
 	}
 
-	public function print_client_env() {
-		$client_env = $this->config_provider->get_client_env();
+	public function print_client_settings() {
+		$client_settings = $this->config_provider->get_client_settings();
 
-		$client_env = Collection::make( $client_env )
+		$client_settings = Collection::make( $client_settings )
 			->filter( function ( $config ) {
 				return (
 					! empty( $config['handle'] ) &&
 					! empty( $config['name'] ) &&
-					! empty( $config['env'] )
+					! empty( $config['settings'] )
 				);
 			} );
 
-		foreach ( $client_env as $env ) {
+		foreach ( $client_settings as $client_setting ) {
 			Utils::print_js_config(
-				$env['handle'],
-				$env['name'],
-				$env['env']
+				$client_setting['handle'],
+				$client_setting['name'],
+				$client_setting['settings']
 			);
 		}
 	}

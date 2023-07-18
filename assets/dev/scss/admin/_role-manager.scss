@@ -1,7 +1,7 @@
 
 #elementor-role-manager {
 	max-width: 500px;
-	margin-block-start: 50px;
+	margin-top: 50px;
 	
 	h3 {
 		color: $editor-dark;
@@ -16,7 +16,7 @@
 	.elementor-role-row {
 		background: #ffffff;
 		color: $editor-dark;
-		margin-block-end: 2px;
+		margin-bottom: 2px;
 
 		.elementor-role-label {
 			display: flex;
@@ -25,7 +25,7 @@
 			cursor: pointer;
 
 			span.elementor-role-name {
-				padding-inline-end: 20px;
+				@include padding-end(20px);
 			}
 
 			span.elementor-role-toggle {
@@ -43,7 +43,7 @@
 			padding: 20px 20px 5px;
 
 			> div {
-				margin-block-end: 15px;
+				margin-bottom: 15px;
 			}
 
 			.elementor-role-go-pro {

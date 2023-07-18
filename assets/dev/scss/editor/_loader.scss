@@ -2,9 +2,8 @@
 	@include absolute-center;
 	width: 300px;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 30px;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .elementor-loader {
@@ -64,6 +63,7 @@
 	color: var(--e-a-color-txt);
 	text-align: center;
 	text-transform: uppercase;
+	margin-top: 30px;
 	letter-spacing: $spacing;
 	text-indent: $spacing;
 	font-size: 10px;

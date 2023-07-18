@@ -61,9 +61,6 @@ export default function Tooltip( props ) {
 
 				// Cleanup of existing tipsy element in case of re-render.
 				const nodes = document.querySelectorAll( '.tipsy' );
-				if ( ! nodes.length ) {
-					return;
-				}
 				nodes[ nodes.length - 1 ].remove();
 			}
 		};

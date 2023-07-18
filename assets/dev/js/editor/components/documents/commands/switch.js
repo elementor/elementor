@@ -4,12 +4,7 @@ export class Switch extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose, shouldScroll = true, setAsInitial = false } = args;
-
-		if ( setAsInitial ) {
-			// Will be removed by the attach-preview after the iframe has loaded.
-			jQuery( '#elementor-preview-loading' ).show();
-		}
+		const { id, mode, onClose, shouldScroll = true } = args;
 
 		return $e.run( 'editor/documents/close', {
 			id: elementor.documents.getCurrentId(),
@@ -17,12 +12,12 @@ export class Switch extends $e.modules.CommandBase {
 			onClose,
 			selector: args.selector,
 		} )
-			.then( () => {
-				return $e.run( 'editor/documents/open', { id, shouldScroll, selector: args.selector, setAsInitial } );
-			} )
-			.then( () => {
-				elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
-			} );
+		.then( () => {
+			return $e.run( 'editor/documents/open', { id, shouldScroll, selector: args.selector } );
+		} )
+		.then( () => {
+			elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
+		} );
 	}
 }
 

@@ -77,7 +77,9 @@ const kitsPipeFunctions = {
 			.reduce( ( current, taxonomies ) => current.filter( ( item ) =>
 				taxonomies.some( ( taxonomy ) =>
 					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy ),
-				) ), data );
+				) ),
+				data,
+			);
 	},
 
 	/**

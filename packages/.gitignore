@@ -1,0 +1,13 @@
+coverage/
+node_modules/
+log/
+*.log
+*.map
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# other
+Thumbs.db
+*.DS_Store

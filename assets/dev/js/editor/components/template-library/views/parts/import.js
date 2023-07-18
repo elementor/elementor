@@ -1,5 +1,4 @@
 import FilesUploadHandler from '../../../../utils/files-upload-handler';
-import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 var TemplateLibraryImportView;
 
@@ -39,7 +38,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 		fileReader.readAsDataURL( file );
 	},
 
-	async importTemplate( fileName, fileData ) {
+	importTemplate( fileName, fileData ) {
 		const layout = elementor.templates.layout;
 
 		this.options = {
@@ -61,11 +60,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				layout.hideLoadingView();
 			},
 		};
-
-		await showJsonUploadWarningMessageIfNeeded( {
-			introductionMap: window.elementor.config.user.introduction,
-			IntroductionClass: window.elementorModules.editor.utils.Introduction,
-		} );
 
 		if ( ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 			const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => this.sendImportRequest() );

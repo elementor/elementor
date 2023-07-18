@@ -115,8 +115,7 @@ body {
 		transition: padding .5s linear;
 		overflow: hidden;
 
-		&:hover,
-		&:focus {
+		&:hover {
 			background-color: var(--e-a-bg-hover);
 		}
 

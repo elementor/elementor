@@ -5,7 +5,6 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.type = 'text';
 		this.controlType = 'text';
 		this.buttonLabel = __( 'Write with AI', 'elementor' );
-		this.editButtonLabel = __( 'Edit with AI', 'elementor' );
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
 
@@ -40,7 +39,6 @@ export default class AiBehavior extends Marionette.Behavior {
 			getControlValue={ this.getOption( 'getControlValue' ) }
 			setControlValue={ this.getOption( 'setControlValue' ) }
 			additionalOptions={ this.getOption( 'additionalOptions' ) }
-			controlView={ this.getOption( 'controlView' ) }
 			onClose={ () => {
 				ReactDOM.unmountComponentAtNode( rootElement );
 				rootElement.remove();
@@ -50,18 +48,9 @@ export default class AiBehavior extends Marionette.Behavior {
 		/>, rootElement );
 	}
 
-	getAiButtonLabel() {
-		const defaultValue = this.getOption( 'additionalOptions' )?.defaultValue;
-		const currentValue = this.getOption( 'getControlValue' )();
-		const isMedia = 'media' === this.getOption( 'type' );
-		const isDefaultValue = ( ! isMedia && defaultValue === currentValue ) || ( isMedia && currentValue?.url === defaultValue?.url );
-
-		return isDefaultValue ? this.getOption( 'buttonLabel' ) : this.getOption( 'editButtonLabel' );
-	}
-
 	onRender() {
 		const isPromotion = ! this.config.is_get_started;
-		const buttonLabel = this.getAiButtonLabel();
+		const buttonLabel = this.getOption( 'buttonLabel' );
 
 		const $button = jQuery( '<button>', {
 			class: 'e-ai-button',
@@ -84,12 +73,7 @@ export default class AiBehavior extends Marionette.Behavior {
 			} );
 		}
 
-		let $wrap = this.$el.find( '.elementor-control-responsive-switchers' );
-		if ( ! $wrap.length ) {
-			$wrap = this.$el.find( '.elementor-control-title' );
-		}
-
-		$wrap.after(
+		this.$el.find( '.elementor-control-title' ).after(
 			$button,
 		);
 	}

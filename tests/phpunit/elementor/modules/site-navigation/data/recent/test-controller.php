@@ -10,8 +10,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Controller extends Elementor_Test_Base {
 
-	const RECENTLY_EDITED_ENDPOINT = '/site-navigation/recent-posts';
-	const ADD_NEW_POST_ENDPOINT = '/site-navigation/add-new-post';
+	const ENDPOINT = '/site-navigation/recent-posts';
 
 	public function setUp() {
 		parent::setUp();
@@ -25,7 +24,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_subscriber();
 
 		// Act.
-		$response = $this->send_request( 'GET', self::RECENTLY_EDITED_ENDPOINT, [
+		$response = $this->send_request( 'GET', self::ENDPOINT, [
 			'posts_per_page' => 10,
 		] );
 
@@ -35,6 +34,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 	/**
 	 * @dataProvider get_items_provider
+	 *
 	 * @return void
 	 */
 	public function test_get_items__invalid_args( $posts_per_page, $post_type, $post__not_in ) {
@@ -48,7 +48,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'post__not_in' => $post__not_in,
 		];
 
-		$response = $this->send_request( 'GET', self::RECENTLY_EDITED_ENDPOINT, $params );
+		$response = $this->send_request( 'GET', self::ENDPOINT, $params );
 
 		// Assert.
 		$this->assertEquals( 400, $response->get_status() );
@@ -57,14 +57,10 @@ class Test_Controller extends Elementor_Test_Base {
 	public function get_items_provider() {
 		return [
 			'no params' => [
-				'posts_per_page' => '',
-				'post_type' => '',
-				'post__not_in' => '',
+				'', '', '',
 			],
 			'invalid posts_per_page' => [
-				'posts_per_page' => 'invalid',
-				'post_type' => '',
-				'post__not_in' => '',
+				'invalid', '', '',
 			],
 		];
 	}
@@ -113,7 +109,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'post_type' => [ Source_Local::CPT, 'post', 'page' ],
 		];
 
-		$response = $this->send_request( 'GET', self::RECENTLY_EDITED_ENDPOINT, $params );
+		$response = $this->send_request( 'GET', self::ENDPOINT, $params );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
@@ -169,7 +165,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'post__not_in' => [ $posts[1]->ID, $posts[3]->ID ],
 		];
 
-		$response = $this->send_request( 'GET', self::RECENTLY_EDITED_ENDPOINT, $params );
+		$response = $this->send_request( 'GET', self::ENDPOINT, $params );
 
 		// Assert.
 		$this->assertEquals( 200, $response->get_status() );
@@ -185,52 +181,6 @@ class Test_Controller extends Elementor_Test_Base {
 			wp_list_pluck( $response->get_data(), 'id' ),
 			'Expected to get posts excluding the specified posts'
 		);
-	}
-
-	/**
-	 * Test access denied
-	 */
-	public function test_create_items__forbidden() {
-		// Arrange.
-		$this->act_as_subscriber();
-
-		// Act.
-		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
-
-		// Assert.
-		$this->assertEquals( 401, $response->get_status() );
-	}
-
-
-	/**
-	 * Test invalid post type
-	 */
-	public function test_create_items__invalid_post_type() {
-		// Arrange.
-		$this->act_as_editor();
-
-		// Act.
-		$params = [
-			'post_type' => 'test',
-		];
-		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT, $params );
-		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
-	}
-
-	public function test_create_items() {
-		// Arrange.
-		$this->act_as_editor();
-
-		$response = $this->send_request( 'POST', self::ADD_NEW_POST_ENDPOINT );
-
-		// Assert.
-		$this->assertEquals( 200, $response->get_status() );
-
-		$edit_url = $response->get_data()['edit_url'];
-		$post_id = $response->get_data()['id'];
-		$expected_edit_url = 'wp-admin/post.php?post=' . $post_id . '&action=elementor';
-		$this->assertStringContainsString( $expected_edit_url, $edit_url );
 	}
 
 	/**

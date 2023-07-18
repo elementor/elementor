@@ -1,4 +1,4 @@
-@import "../global/dialog-confirm";
+@import "../editor/dialog-confirm";
 //Elementor Feedback
 
 @keyframes elementor-rotation {
@@ -111,7 +111,7 @@
 		font-size: 15px;
 		text-transform: uppercase;
 		font-weight: bold;
-		padding-inline-start: 5px;
+		@include padding-start(5px);
 	}
 
 	&-form-caption {
@@ -121,12 +121,12 @@
 	}
 
 	&-form-body {
-		padding-block-start: 30px;
+		padding-top: 30px;
 	}
 }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
 	line-height: 1;
 	overflow: hidden;
-	margin-block-end: 15px;
+	margin-bottom: 15px;
 }

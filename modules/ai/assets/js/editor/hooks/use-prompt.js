@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { setStatusFeedback } from '../api';
 
-const normalizeResponse = ( { text, response_id: responseId, usage, images } ) => {
+const normalizeResponse = ( { text, response_id: responseId, usage } ) => {
 	const creditsData = usage ? ( usage.quota - usage.usedQuota ) : 0;
 	const credits = Math.max( creditsData, 0 );
-	const result = text || images;
 
 	return {
-		result,
+		result: text,
 		responseId,
 		credits,
 	};

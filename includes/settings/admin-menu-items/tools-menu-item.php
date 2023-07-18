@@ -34,7 +34,7 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_capability() {
-		return Tools::CAPABILITY;
+		return 'manage_options';
 	}
 
 	public function render() {

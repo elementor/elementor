@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Box, Button } from '@elementor/ui';
-import Textarea from '../../components/textarea';
+import TextArea from '../../components/text-area';
 
 const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props } ) => {
 	const codeBlockInput = useRef( null );
@@ -10,9 +10,8 @@ const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props }
 	}
 
 	return (
-		<Box sx={ { position: 'relative' } } dir="ltr">
-			<Textarea
-				fullWidth
+		<Box sx={ { position: 'relative' } }>
+			<TextArea
 				ref={ codeBlockInput }
 				defaultValue={ children[ 0 ] }
 				sx={ { mb: 3 } }
@@ -24,7 +23,7 @@ const CodeBlock = ( { node, inline, children, defaultValue, onInsert, ...props }
 				size="small"
 				variant="contained"
 				onClick={ () => onInsert( defaultValue + '\n' + codeBlockInput.current.value ) }
-				sx={ { position: 'absolute', right: '11px /* @noflip */', bottom: '44px' } }
+				sx={ { position: 'absolute', right: '11px', bottom: '44px' } }
 			>
 				{ __( 'Insert', 'elementor' ) }
 			</Button>

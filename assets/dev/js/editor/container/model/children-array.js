@@ -1,7 +1,7 @@
 /**
  * @typedef {import('../container')} Container
  */
-export default class ChildrenArray extends Array {
+ export default class ChildrenArray extends Array {
 	clear() {
 		this.length = 0;
 	}

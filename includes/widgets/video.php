@@ -218,9 +218,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::MEDIA_CATEGORY,
 					],
 				],
-				'media_types' => [
-					'video',
-				],
+				'media_type' => 'video',
 				'condition' => [
 					'video_type' => 'hosted',
 					'insert_url' => '',
@@ -247,6 +245,7 @@ class Widget_Video extends Widget_Base {
 						TagsModule::URL_CATEGORY,
 					],
 				],
+				'media_type' => 'video',
 				'placeholder' => esc_html__( 'Enter your URL', 'elementor' ),
 				'condition' => [
 					'video_type' => 'hosted',

@@ -16,25 +16,21 @@ const WizardDialog = ( props ) => {
 			} }
 			sx={ { zIndex: 9999 } }
 		>
-			{ props.children }
+			<DialogHeader onClose={ props.onClose }>
+				{ props.headerAction }
+			</DialogHeader>
+
+			<DialogContent sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'center' } }>
+				{ props.children }
+			</DialogContent>
 		</Dialog>
 	);
 };
 
 WizardDialog.propTypes = {
+	headerAction: PropTypes.node,
 	onClose: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
 };
-
-const WizardDialogContent = ( { sx = {}, ...props } ) => (
-	<DialogContent { ...props } sx={ { display: 'flex', flexDirection: 'column', justifyContent: 'center', ...sx } } />
-);
-
-WizardDialogContent.propTypes = {
-	sx: PropTypes.object,
-};
-
-WizardDialog.Header = DialogHeader;
-WizardDialog.Content = WizardDialogContent;
 
 export default WizardDialog;

@@ -1,6 +1,4 @@
 export { ChangeDeviceMode } from './change-device-mode';
-export { PageSettings } from './page-settings';
-export { EditorPreferences } from './editor-preferences';
 export { Close } from './close';
 export { Exit } from './exit';
 export { Open } from './open';

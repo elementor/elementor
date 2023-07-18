@@ -36,9 +36,7 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 		if ( storageData.siteurl !== elementorCommon.config.urls.rest ) {
 			try {
-				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest(
-					'import_from_json',
-					{
+				storageDataElements = await new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest( 'import_from_json', {
 						data: {
 							elements: JSON.stringify( storageDataElements ),
 						},

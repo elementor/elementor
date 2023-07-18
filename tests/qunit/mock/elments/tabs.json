@@ -33,7 +33,7 @@
 				"tab_title": {
 					"type": "text",
 					"tab": "content",
-					"label": "Title",
+					"label": "Title & Description",
 					"default": "Tab Title",
 					"placeholder": "Tab Title",
 					"label_block": true,
@@ -45,6 +45,7 @@
 					"label": "Content",
 					"default": "Tab Content",
 					"placeholder": "Tab Content",
+					"show_label": false,
 					"name": "tab_content"
 				}
 			},

@@ -909,7 +909,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'media_types' => [ 'image' ],
+				'media_type' => 'image',
 				'should_include_svg_inline_option' => true,
 				'library_type' => 'image/svg+xml',
 				'dynamic' => [
