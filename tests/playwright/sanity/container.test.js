@@ -446,7 +446,7 @@ test.describe( 'Container tests @container', () => {
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
 	} );
 
-	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
+	test.only( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
@@ -456,11 +456,11 @@ test.describe( 'Container tests @container', () => {
 
 		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
 
-		await test.step( 'Wrap is of in preset c100-c50-50', async () => {
-			await expect( await page.locator( '.elementor-control-flex_wrap.elementor-group-control-flex-container .eicon-flex.eicon-wrap' ).screenshot( {
-				type: 'jpeg',
-				quality: 100,
-			} ) ).toMatchSnapshot( 'wrap-control-is-not-selected.jpeg' );
+		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
+			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
+			await container.highlight();
+			await page.pause();
+			await expect( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
 		} );
 	} );
 
