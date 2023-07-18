@@ -1,3 +1,5 @@
+import { getComparator } from 'playwright-core/lib/utils';
+
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 const { expect } = require( '@playwright/test' );
 const BasePage = require( './base-page.js' );
@@ -25,6 +27,19 @@ module.exports = class EditorPage extends BasePage {
 		const data = JSON.stringify( templateData );
 		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
 		return JSON.parse( updatedData );
+	}
+
+	/*
+	 * Upload SVG in the Media Library. Expects media library to be open.
+	 */
+	async uploadSVG( svgFileName = undefined ) {
+		const _svgFileName = svgFileName === undefined ? 'test-svg-wide' : svgFileName;
+		const regex = new RegExp( _svgFileName );
+		const response = this.page.waitForResponse( regex );
+		await this.page.setInputFiles( EditorSelectors.media.imageInp, _path.resolve( __dirname, `../resources/${ _svgFileName }.svg` ) );
+		await response;
+		await this.page.getByRole( 'button', { name: 'Insert Media' } )
+			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
 	async loadTemplate( filePath, updateDatesForImages = false ) {
@@ -837,5 +852,34 @@ module.exports = class EditorPage extends BasePage {
 	 */
 	async selectStateTab( controlID, tab ) {
 		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+
+	/*
+	* Checks for a stable UI state by comparing screenshots at intervals and expecting a match.
+	* Can be used to check for completed rendering. Useful to wait out animations before screenshots and expects.
+	* Should be less flaky than waitForLoadState( 'load' ) in editor where Ajax re-rendering is triggered.
+	*/
+	async isUiStable( locator, retries = 3, timeout = 500 ) {
+		const comparator = getComparator( 'image/png' );
+		let retry = 0,
+			beforeImage,
+			afterImage;
+
+		do {
+			if ( retry === retries ) {
+				break;
+			}
+
+			beforeImage = await locator.screenshot( {
+				path: `./before.png`,
+			} );
+
+			await new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
+
+			afterImage = await locator.screenshot( {
+				path: `./after.png`,
+			} );
+			retry = retry++;
+		} while ( null !== comparator( beforeImage, afterImage ) );
 	}
 };
+
