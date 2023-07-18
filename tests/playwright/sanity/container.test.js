@@ -446,7 +446,7 @@ test.describe( 'Container tests @container', () => {
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
 	} );
 
-	test.only( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
+	test( 'Right container padding for preset c100-c50-50', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost();
 
@@ -458,8 +458,6 @@ test.describe( 'Container tests @container', () => {
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
 			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
-			await container.highlight();
-			await page.pause();
 			await expect( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
 		} );
 	} );
