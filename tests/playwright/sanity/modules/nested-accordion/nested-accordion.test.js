@@ -8,8 +8,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const wpAdmin = await new WpAdminPage( page, testInfo );
 
 		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
+			container: 'inactive',
+			'nested-elements': 'inactive',
 		} );
 
 		await page.close();
@@ -20,8 +20,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
+			'nested-elements': 'active',
+			container: 'active',
 		} );
 
 		await page.close();
