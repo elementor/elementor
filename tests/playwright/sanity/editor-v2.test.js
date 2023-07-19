@@ -24,15 +24,15 @@ test.describe( 'Editor v2', () => {
 
 	test( 'check that app-bar exists', async () => {
 		// Act
-		await editor.page.getByRole( 'button', { name: 'Post Settings' } ).click();
+		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
+
+		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
 
 		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Test page' );
 
-		await editor.page.getByRole( 'button', { name: 'Test page' } ).waitFor();
+		await wrapper.getByRole( 'button', { name: 'Test page' } ).waitFor();
 
 		// Assert
-		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
-
 		await expect( await wrapper.screenshot( {
 			type: 'jpeg',
 			quality: 70,
