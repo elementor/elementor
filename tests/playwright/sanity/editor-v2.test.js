@@ -22,7 +22,7 @@ test.describe( 'Editor v2', () => {
 		await wpAdminPage.setExperiments( { editor_v2: false } );
 	} );
 
-	test.only( 'check that app-bar exists', async () => {
+	test( 'check that app-bar exists', async () => {
 		// Act
 		await editor.page.getByRole( 'button', { name: 'Post Settings' } ).click();
 
