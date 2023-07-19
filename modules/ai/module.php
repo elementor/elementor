@@ -50,8 +50,8 @@ class Module extends BaseModule {
 					'elementor-common',
 					'elementor-editor-modules',
 					'elementor-editor-document',
-					'elementor-packages-ui',
-					'elementor-packages-icons',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
 				],
 				ELEMENTOR_VERSION,
 				true
