@@ -9,6 +9,8 @@ updates:
       - dependency-name: "@elementor/*"
     reviewers:
       - "Nevoss"
+    commit-message:
+      prefix: "Internal: "
     groups:
       elementor-packages:
         patterns:
