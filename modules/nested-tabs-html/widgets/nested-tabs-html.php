@@ -26,11 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NestedTabsHtml extends Widget_Nested_Base {
 
 	public function get_name() {
-		return 'nested-tabs-html';
+		return 'nested-tabs';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Tabs HTML', 'elementor' );
+		return esc_html__( 'Tabs', 'elementor' );
 	}
 
 	public function get_icon() {
