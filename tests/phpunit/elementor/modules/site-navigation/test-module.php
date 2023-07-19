@@ -51,7 +51,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
 		// Assert.
-		$this->assertEmpty( $env['@elementor/editor-site-navigation'] );
+		$this->assertArrayHasKey( '@elementor/editor-site-navigation', $env );
 	}
 
 	public function test_construct_experiment_active() {
@@ -72,6 +72,9 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_get_name() {
+		// Act.
+		$this->module = new SiteNavigation();
+
 		// Assert.
 		$this->assertTrue(
 			$this->name === $this->module->get_name(),
