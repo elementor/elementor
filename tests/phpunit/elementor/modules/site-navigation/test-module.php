@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\SiteNavigation;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\SiteNavigation\Module as SiteNavigation;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 
 class Elementor_Test_Module extends Elementor_Test_Base {
 	/**
@@ -90,7 +91,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 				'editor_v2',
 			],
 		];
-		
+
 		// Assert.
 		$this->assertEquals( $experimental_data, SiteNavigation::get_experimental_data() );
 	}
