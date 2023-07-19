@@ -190,7 +190,7 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast .elementor-toast-content hr {
 				margin: 15px auto;
 				border: 0 none;
-				border-top: var(--e-a-border);
+				border-block-start: var(--e-a-border);
 			}
 
 			.elementor-safe-mode-toast header {
@@ -198,11 +198,11 @@ class Module extends \Elementor\Core\Base\Module {
 				align-items: center;
 				justify-content: space-between;
 				flex-wrap: wrap;
-				margin-bottom: 20px;
+				margin-block-end: 20px;
 			}
 
 			.elementor-safe-mode-toast header > * {
-				margin-top: 10px;
+				margin-block-start: 10px;
 			}
 
 			.elementor-safe-mode-toast header i {
@@ -210,12 +210,8 @@ class Module extends \Elementor\Core\Base\Module {
 				color: var(--e-a-color-warning);
 			}
 
-			body:not(.rtl) .elementor-safe-mode-toast header i {
-				margin-right: 10px;
-			}
-
-			body.rtl .elementor-safe-mode-toast header i {
-				margin-left: 10px;
+			.elementor-safe-mode-toast header i {
+				margin-inline-end: 10px;
 			}
 
 			.elementor-safe-mode-toast header h2 {
@@ -224,16 +220,12 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-list-item {
-				margin-top: 10px;
+				margin-block-start: 10px;
 				list-style: outside;
 			}
 
-			body:not(.rtl) .elementor-safe-mode-list-item {
-				margin-left: 15px;
-			}
-
-			body.rtl .elementor-safe-mode-list-item {
-				margin-right: 15px;
+			.elementor-safe-mode-list-item {
+				margin-inline-start: 15px;
 			}
 
 			.elementor-safe-mode-list-item b {
@@ -252,7 +244,7 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-mu-plugins {
 				background-color: var(--e-a-bg-hover);
 				color: var(--e-a-color-txt-hover);
-				margin-top: 20px;
+				margin-block-start: 20px;
 				padding: 10px 15px;
 			}
 		</style>
