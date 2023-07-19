@@ -40,6 +40,12 @@
 				svg {
 					width: 100%;
 					height: auto;
+
+					&:not(.exclude-rtl-scale) {
+						@if 'rtl' == $direction {
+							transform: scaleX(-1);
+						}
+					}
 				}
 
 				path {
