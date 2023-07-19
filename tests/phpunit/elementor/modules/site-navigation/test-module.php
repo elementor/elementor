@@ -51,7 +51,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
 
 		// Assert.
-		$this->assertArrayHasKey( '@elementor/editor-site-navigation', $env );
+		$this->assertArrayNotHasKey( '@elementor/editor-site-navigation', $env );
 	}
 
 	public function test_construct_experiment_active() {
