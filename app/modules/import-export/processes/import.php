@@ -224,7 +224,7 @@ class Import {
 	 * @throws \Exception
 	 */
 	public static function from_session( string $session_id ): Import {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions();
 
 		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
 			throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
@@ -397,7 +397,7 @@ class Import {
 	 * @return void
 	 */
 	public function init_import_session( $save_instance_data = false ) {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions( true );
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
@@ -765,7 +765,7 @@ class Import {
 	}
 
 	private function update_instance_data_in_import_session_option() {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions = Utils::get_import_sessions();
 
 		$import_sessions[ $this->session_id ]['instance_data']['documents_data'] = $this->documents_data;
 		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
@@ -774,8 +774,12 @@ class Import {
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}
 
-	private function finalize_import_session_option() {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+	public function finalize_import_session_option() {
+		$import_sessions = Utils::get_import_sessions();
+
+		if ( ! isset( $import_sessions[ $this->session_id ] ) ) {
+			return;
+		}
 
 		unset( $import_sessions[ $this->session_id ]['instance_data'] );
 
