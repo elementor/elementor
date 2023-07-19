@@ -165,7 +165,7 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_images_url() {
-		return ELEMENTOR_URL . 'modules/apps/assets/images/';
+		return ELEMENTOR_URL . 'modules/apps/images/';
 	}
 
 	private static function is_elementor_pro_installed() {

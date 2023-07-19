@@ -71,7 +71,7 @@
 	}
 
 	.elementor-control-dynamic-switcher {
-		@include border-start-property(width, 0);
+		border-inline-start-width: 0;
 		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 	}
 

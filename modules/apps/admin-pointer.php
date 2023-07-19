@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Pointer {
 
-	const RELEASE_VERSION = '3.14.0';
+	const RELEASE_VERSION = '3.15.0';
 
 	const CURRENT_POINTER_SLUG = 'e-apps';
 

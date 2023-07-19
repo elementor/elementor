@@ -8,6 +8,6 @@ const GenerateSubmit = ( props ) => {
 	);
 };
 GenerateSubmit.propTypes = {
-	children: PropTypes.any,
+	children: PropTypes.node,
 };
 export default GenerateSubmit;
