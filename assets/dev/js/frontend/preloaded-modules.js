@@ -7,8 +7,8 @@ import Toggle from './handlers/toggle';
 import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
-
 import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
+import NestedTabsHtml from 'elementor/modules/nested-tabs-html/assets/js/frontend/handlers/nested-tabs-html';
 import NestedAccordion from 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion';
 
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
@@ -21,6 +21,7 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'progress.default': Progress,
 		'tabs.default': Tabs,
 		'nested-tabs.default': NestedTabs,
+		'nested-tabs-html.default': NestedTabsHtml,
 		'nested-accordion.default': NestedAccordion,
 		'toggle.default': Toggle,
 		'video.default': Video,

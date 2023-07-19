@@ -3,6 +3,7 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -49,11 +50,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
+			currentDirection = this.container.settings.get( directionSettingKey );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	onDeviceModeChange() {
+		SetDirectionMode.set( this.getContainer() );
 	},
 
 	getDirectionSettingKey() {
@@ -86,6 +94,8 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
 	},
 
 	/**

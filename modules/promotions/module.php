@@ -20,6 +20,8 @@ class Module extends Base_Module {
 
 	const ADMIN_MENU_PRIORITY = 100;
 
+	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
+
 	public static function is_active() {
 		return ! Utils::has_pro();
 	}
@@ -38,6 +40,10 @@ class Module extends Base_Module {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
 		}, static::ADMIN_MENU_PRIORITY );
+
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_promotion_menu_item( $admin_menu );
+		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 	}
 
 	private function handle_external_redirects() {
@@ -56,7 +62,10 @@ class Module extends Base_Module {
 		$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_custom_code', new Custom_Code_Promotion_Item() );
-		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
 		$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+	}
+
+	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
 	}
 }
