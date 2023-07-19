@@ -11,6 +11,8 @@ updates:
       - "Nevoss"
     commit-message:
       prefix: "Internal: "
+    labels:
+      - "dependencies"
     groups:
       elementor-packages:
         patterns:
