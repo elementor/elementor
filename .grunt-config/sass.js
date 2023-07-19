@@ -16,7 +16,7 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'core/editor/assets/scss',
+				cwd: 'core/editor/loader/v2/scss',
 				src: '*.scss',
 				dest: 'assets/css',
 				ext: '.css'
