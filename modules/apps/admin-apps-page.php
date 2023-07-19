@@ -214,7 +214,7 @@ class Admin_Apps_Page {
 				<?php endif; ?>
 			</div>
 			<h3 class="e-a-title"><?php echo esc_html( $plugin['name'] ); ?></h3>
-			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php esc_html_e( $plugin['author'], 'elementor' ); ?></a></p>
+			<p class="e-a-author"><?php esc_html_e( 'By', 'elementor' ); ?> <a href="<?php echo esc_url( $plugin['author_url'] ); ?>" target="_blank"><?php echo esc_html( $plugin['author'] ); ?></a></p>
 			<div class="e-a-desc">
 				<p><?php echo esc_html( $plugin['description'] ); ?></p>
 				<?php if ( ! empty( $plugin['offering'] ) ) : ?>

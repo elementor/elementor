@@ -39,7 +39,7 @@ class Admin_Pointer {
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				$( '#toplevel_page_elementor' ).pointer( {
-					content: '<?php echo $pointer_content; ?>',
+					content: '<?php echo $pointer_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
 					position: {
 						edge: 'left',
 						align: 'center'
