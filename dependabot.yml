@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "master"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@elementor/*"
+    reviewers:
+      - "Nevoss"
+    groups:
+      elementor-packages:
+        patterns:
+          - "@elementor/*"
