@@ -201,7 +201,7 @@ class Admin_Apps_Page {
 	private static function get_install_plugin_url( $file_path ) {
 		$slug = dirname( $file_path );
 
-		return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . esc_attr( $slug ), 'install-plugin_' . $slug ) );
+		return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $slug ), 'install-plugin_' . $slug );
 	}
 
 	private static function render_plugin_item( $plugin ) {
