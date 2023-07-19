@@ -110,6 +110,7 @@ class Modules_Manager {
 			'announcements',
 			'site-navigation',
 			'styleguide',
+			'apps',
 		];
 	}
 
