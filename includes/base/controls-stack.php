@@ -1365,9 +1365,9 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
-        if ( ! $controls ) {
-		    $controls = $this->get_controls();
-        }
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
