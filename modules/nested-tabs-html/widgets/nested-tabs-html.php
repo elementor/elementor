@@ -1056,6 +1056,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'id' => $data['tab_id'],
 			'class' => $css_classes,
 			'aria-selected' => 1 === $data['tab_count'] ? 'true' : 'false',
+			'data-tab' => $data['tab_count'],
 			'role' => 'tab',
 			'tabindex' => 1 === $data['tab_count'] ? '0' : '-1',
 			'aria-controls' => $data['container_id'],
@@ -1135,6 +1136,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'tab_id' => $tab_id,
 				'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
 				'widget_number' => $widget_number,
+				'item' => $item,
 				'settings' => $settings,
 			];
 

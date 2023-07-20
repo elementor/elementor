@@ -145,8 +145,8 @@ export default class NestedTabsHtml extends Base {
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = !! tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeContentFilter = !! tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
@@ -154,14 +154,13 @@ export default class NestedTabsHtml extends Base {
 		$activeTitle.attr( this.getTitleDeactivationAttributes() );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+		$activeContent.attr( 'hidden', 'hidden' ); // Can we remove this?
 	}
 
 	getTitleDeactivationAttributes() {
 		return {
 			tabindex: '-1',
 			'aria-selected': 'false',
-			'aria-expanded': 'false',
 		};
 	}
 
@@ -188,7 +187,6 @@ export default class NestedTabsHtml extends Base {
 		$requestedTitle.attr( {
 			tabindex: '0',
 			'aria-selected': 'true',
-			'aria-expanded': 'true',
 		} );
 
 		$requestedContent[ settings.showTabFn ](
@@ -303,8 +301,6 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	onInit( ...args ) {
-		this.createMobileTabs( args );
-
 		super.onInit( ...args );
 
 		if ( this.getSettings( 'autoExpand' ) ) {
