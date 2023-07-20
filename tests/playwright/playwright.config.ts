@@ -31,7 +31,7 @@ export default {
 	testDir: './sanity',
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
-	globalSetup: resolve( __dirname, './global-setup.js' ),
+	globalSetup: resolve( __dirname, './global-setup.ts' ),
 	grepInvert: getGrepInvert(),
 	grep: getGrep(),
 	expect: {
