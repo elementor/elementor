@@ -92,6 +92,7 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
+			'playing-cards',
 		];
 
 		$this->_widget_types = [];

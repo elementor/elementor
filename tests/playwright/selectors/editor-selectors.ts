@@ -147,6 +147,12 @@ const EditorSelectors = {
 	googleMaps: {
 		location: '[data-setting="address"]',
 	},
+	playingCards: {
+		container: '.elementor-playing-cards',
+		card: '.elementor-playing-card',
+		cardHeader: '.elementor-playing-card-header',
+		cardBody: '.elementor-playing-card-body',
+	},
 };
 
 export default EditorSelectors;

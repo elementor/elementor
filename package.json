@@ -25,6 +25,7 @@
 		"test:playwright:video": "npx cross-env TEST_SUITE=@video playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:onBoarding": "npx cross-env TEST_SUITE=@onBoarding playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:ai": "npx cross-env TEST_SUITE=@ai playwright test -c tests/playwright/playwright.config.ts",
+		"test:playwright:playing-cards": "npx cross-env TEST_SUITE=@playing-cards playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:styleguide_image_link": "npx cross-env TEST_SUITE=@styleguide_image_link playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:debug": "npm run test:playwright -- --debug",
 		"test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",

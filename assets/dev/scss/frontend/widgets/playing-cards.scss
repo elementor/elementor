@@ -1,0 +1,48 @@
+//
+// Playing cards
+//
+.elementor-playing-cards {
+	display: flex;
+	flex-wrap: wrap;
+
+	.elementor-playing-card {
+		padding: 5px;
+		width: 100px;
+		height: 150px;
+		background-color: $white;
+		margin: 10px;
+		border: 1px solid $black;
+		border-radius: 5px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		font-family: 'Arial', 'Helvetica', sans-serif;
+		font-size: 20px;
+		user-select: none;
+
+		&-diamond, &-heart {
+			color: $red;
+		}
+
+		&-spade, .club {
+			color: $black;
+		}
+
+		&-body {
+			text-align: center;
+			font-size: 40px;
+		}
+
+		&-footer {
+			text-align: $end;
+		}
+	}
+
+	&-pulse .elementor-playing-card:hover {
+		animation: pulse 300ms;
+	}
+
+	&-bounce .elementor-playing-card:hover {
+		animation: bounce 300ms;
+	}
+}
