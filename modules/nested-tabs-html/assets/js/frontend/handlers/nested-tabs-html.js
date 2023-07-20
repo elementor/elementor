@@ -27,8 +27,7 @@ export default class NestedTabsHtml extends Base {
 	 * @return {string}
 	 */
 	getTabContentFilterSelector( tabIndex ) {
-		// Double by 2, since each `e-con` should have 'e-collapse'.
-		return `*:nth-child(${ tabIndex * 2 })`;
+		return `*:nth-child(${ tabIndex })`;
 	}
 
 	/**
@@ -45,10 +44,9 @@ export default class NestedTabsHtml extends Base {
 			selectors: {
 				tablist: '[role="tablist"]',
 				tabTitle: '.e-n-tab-title',
-				tabContent: '.e-con',
+				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
-				mobileTabTitle: '.e-collapse',
 			},
 			classes: {
 				active: 'e-active',
@@ -73,7 +71,6 @@ export default class NestedTabsHtml extends Base {
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
-			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
 		};
 	}
@@ -168,7 +165,7 @@ export default class NestedTabsHtml extends Base {
 		};
 	}
 
-	onHideTabContent( $activeContent ) {}
+	onHideTabContent() {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
@@ -198,7 +195,7 @@ export default class NestedTabsHtml extends Base {
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
-		$requestedContent.removeAttr( 'hidden' );
+		$requestedContent.removeAttr( 'hidden' ); // Can we remove this?
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -294,10 +291,12 @@ export default class NestedTabsHtml extends Base {
 	 */
 	reInitSwipers( event, content ) {
 		const swiperElements = content.querySelectorAll( `.${ elementorFrontend.config.swiperClass }` );
+
 		for ( const element of swiperElements ) {
 			if ( ! element.swiper ) {
 				return;
 			}
+
 			element.swiper.initialized = false;
 			element.swiper.init();
 		}
@@ -327,6 +326,7 @@ export default class NestedTabsHtml extends Base {
 			this.changeActiveTab( value, false );
 		}
 	}
+
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
 			const settingsObject = {
@@ -372,7 +372,7 @@ export default class NestedTabsHtml extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
+			const isMobileVersion = 'contents' === this.elements.$headingContainer.css( 'display' );
 
 			if ( isMobileVersion ) {
 				this.activateMobileTab( tabIndex );
@@ -396,35 +396,10 @@ export default class NestedTabsHtml extends Base {
 			return;
 		}
 
-		const $activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
+		const $activeTabTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
 
 		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
 			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
-		}
-	}
-
-	createMobileTabs( args ) {
-		const settings = this.getSettings();
-		if ( elementorFrontend.isEditMode() ) {
-			const $widget = this.$element,
-				$removed = this.findElement( '.e-collapse' ).remove();
-
-			let index = 1;
-
-			this.findElement( '.e-con' ).each( function() {
-				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `${ settings.selectors.headingContainer } > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="${ settings.selectors.tabTitle.replace( '.', '' ) } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
-
-				$current.before( mobileTitleHTML );
-
-				++index;
-			} );
-
-			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-			if ( $removed.length ) {
-				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-			}
 		}
 	}
 
