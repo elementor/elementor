@@ -78,6 +78,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			}
 		} );
 
+		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
+			const originalObject = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+			const replacements = widget.replacements;
+			const newObject = this.deepMerge( originalObject, replacements );
+
+			elementor.widgetsCache[ index ] = newObject;
+		} );
+
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {

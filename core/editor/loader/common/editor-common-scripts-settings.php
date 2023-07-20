@@ -93,6 +93,7 @@ class Editor_Common_Scripts_Settings {
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
+			'elementsPresets' => Plugin::$instance->editor->get_elements_presets(),
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

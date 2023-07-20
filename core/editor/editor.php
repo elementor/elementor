@@ -619,4 +619,19 @@ class Editor {
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
 	}
+
+	public function get_elements_presets() {
+		$element_types = Plugin::$instance->elements_manager->get_element_types();
+		$presets = [];
+
+		foreach ( $element_types as $element ) {
+			$element_preset = $element->get_panel_presets();
+
+			if ( ! empty( $element_preset ) ) {
+				$presets += $element_preset;
+			}			
+		}
+
+		return $presets;
+	}
 }
