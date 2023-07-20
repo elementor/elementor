@@ -10,7 +10,7 @@ export default {
 	testDir: './tests/',
 
 	timeout: 3 * 60_000,
-	globalSetup: resolve( __dirname, '../playwright/global-setup.js' ),
+	globalSetup: resolve( __dirname, '../playwright/global-setup.ts' ),
 	expect: {
 		timeout: 8_000,
 	},
