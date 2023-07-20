@@ -197,7 +197,7 @@
 			}
 		}
 
-		&:not( .e-active ).e-normal:hover {
+		&:not( .e-active ):hover {
 
 			&,
 			& a {
@@ -259,7 +259,7 @@
 
 .e-n-tabs-content {
 
-	.e-collapse {
+	.e-n-tab-title {
 		// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
 		-webkit-tap-highlight-color: transparent;
 		-webkit-touch-callout: none;
@@ -285,7 +285,7 @@
 }
 
 
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-normal:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title:hover {
 	background-color: var( --n-tabs-title-background-color-hover );
 	background-image: initial;
 }
@@ -301,73 +301,73 @@
 }
 
 // Responsive mode
-@mixin hide-normal-tabs-($device) {
+@mixin tabs-view-($device) {
 	.e-n-tabs-#{$device} {
 
 		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
-			display: none;
+			display: contents;
 		}
 	}
 }
 
-@mixin hide-collapse-tabs-($device) {
+@mixin accordion-view-($device) {
 	.e-n-tabs-#{$device} {
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-			display: none;
-		}
+		//> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
+		//	display: none;
+		//}
 	}
 }
 
 // Mobile.
 @media (min-width: $screen-mobile-next) {
-	@include hide-collapse-tabs-(mobile);
+	@include accordion-view-(mobile);
 }
 
 @media (max-width: $screen-mobile-max) {
-	@include hide-normal-tabs-(mobile);
+	@include tabs-view-(mobile);
 }
 
 // Mobile Extra.
 @media (min-width: $screen-mobile-extra-next) {
-	@include hide-collapse-tabs-(mobile_extra);
+	@include accordion-view-(mobile_extra);
 }
 
 @media (max-width: $screen-mobile-extra-max) {
-	@include hide-normal-tabs-(mobile_extra);
+	@include tabs-view-(mobile_extra);
 }
 
 // Tablet.
 @media (min-width: $screen-tablet-next) {
-	@include hide-collapse-tabs-(tablet);
+	@include accordion-view-(tablet);
 }
 
 @media (max-width: $screen-tablet-max) {
-	@include hide-normal-tabs-(tablet);
+	@include tabs-view-(tablet);
 }
 
 // Tablet Extra.
 @media (min-width: $screen-tablet-extra-next) {
-	@include hide-collapse-tabs-(tablet_extra);
+	@include accordion-view-(tablet_extra);
 }
 
 @media (max-width: $screen-tablet-extra-max) {
-	@include hide-normal-tabs-(tablet_extra);
+	@include tabs-view-(tablet_extra);
 }
 
 // Laptop.
 @media (min-width: $screen-desktop-min) {
-	@include hide-collapse-tabs-(laptop);
+	@include accordion-view-(laptop);
 }
 
 @media (max-width: $screen-laptop-max) {
-	@include hide-normal-tabs-(laptop);
+	@include tabs-view-(laptop);
 }
 
 
 // Breakpoint - none.
 .e-n-tabs-none {
-	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-collapse {
-		display: none;
+	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-n-tab-title {
+		//display: none;
 	}
 }

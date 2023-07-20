@@ -1060,23 +1060,21 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
 
 		$tabs_title_html = '';
-		$mobile_tabs_title_html = '';
 
 		foreach ( $tabs as $index => $item ) {
 			// Tabs title.
 			$tab_count = $index + 1;
 			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 			$tab_title = $item['tab_title'];
-			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
-			$tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
-			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];
+			$tab_title_classes = [ 'e-n-tab-title' ];
 
 			if ( $settings['hover_animation'] ) {
 				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
-				array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
-			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
+			$tab_id = empty( $item['element_id'] )
+					? 'e-n-tabs-title-' . $id_int . $tab_count
+					: $item['element_id'];
 
 			$this->add_render_attribute( $tab_title_setting_key, [
 				'id' => $tab_id,
@@ -1089,19 +1087,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'aria-expanded' => 'false',
 			] );
 
-			$this->add_render_attribute( $tab_title_mobile_setting_key, [
-				'class' => $tab_title_mobile_classes,
-				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
-				'data-tab' => $tab_count,
-				'role' => 'tab',
-				'tabindex' => 1 === $tab_count ? '0' : '-1',
-				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
-				'aria-expanded' => 'false',
-				'id' => $tab_id . '-accordion',
-			] );
-
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
-			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
 			$tab_title_text_class = $this->get_render_attribute_string( 'tab-title-text' );
 			$tab_icon_class = $this->get_render_attribute_string( 'tab-icon' );
 
@@ -1116,25 +1102,13 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			$tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
 			$tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
 			$tabs_title_html .= '</div>';
-
-			// Tabs content.
-			ob_start();
-			$this->print_child( $index );
-			$tab_content = ob_get_clean();
-
-			$mobile_tabs_title_html .= "<div $mobile_title_attributes>";
-			$mobile_tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
-			$mobile_tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
-			$mobile_tabs_title_html .= "</div>$tab_content";
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-			<div class="e-n-tabs-content" role="tablist" aria-orientation="vertical">
-				<?php echo $mobile_tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
+			<div class="e-n-tabs-content"></div>
 		</div>
 		<?php
 	}
