@@ -109,8 +109,11 @@ module.exports = {
 		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
 	},
 	settings: {
-		jsdoc: {
-			mode: 'typescript',
+		'import/resolver': {
+			node: {
+				extensions: [ '.js', '.jsx', '.ts', '.tsx', '.json' ],
+			},
 		},
+		jsdoc: { mode: 'typescript' },
 	},
 };
