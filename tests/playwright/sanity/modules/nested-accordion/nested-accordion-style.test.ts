@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { colors } from '../../../enums/colors';
 import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
-const { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } = require( './helper' );
+import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
 test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {

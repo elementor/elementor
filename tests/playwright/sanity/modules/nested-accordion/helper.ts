@@ -58,7 +58,7 @@ export async function setTitleHorizontalAlignment( direction, editor, breakpoint
 	await editor.page.locator( locator ).click();
 }
 
-async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
+export async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
 	await setState();
 	await setBackgroundColor();
 	await setBorderType();
@@ -87,7 +87,7 @@ async function setBorderAndBackground( editor, state, color, borderType, borderC
 	}
 }
 
-async function setIconColor( editor, state, color, context ) {
+export async function setIconColor( editor, state, color, context ) {
 	await setState();
 	await setColor();
 
@@ -99,13 +99,3 @@ async function setIconColor( editor, state, color, context ) {
 		await editor.page.click( '.elementor-control-header_' + state + '_' + context );
 	}
 }
-
-module.exports = {
-	setTitleTextTag,
-	expectScreenshotToMatchLocator,
-	getChoicesButtonSelector,
-	setTitleIconPosition,
-	setTitleHorizontalAlignment,
-	setBorderAndBackground,
-	setIconColor,
-};
