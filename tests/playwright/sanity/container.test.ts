@@ -751,7 +751,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( spacerElementHeight ).toBe( defaultSpacerSize );
+			await expect( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -766,7 +766,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( spacerElementWidth ).toBe( defaultSpacerSize );
+			await expect( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -780,7 +780,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( spacerElementHeight ).toBe( spacerSize );
+			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -800,7 +800,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( spacerElementHeight ).toBe( spacerSize );
+			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -819,7 +819,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( spacerElementWidth ).toBe( spacerSize );
+			await expect( String( spacerElementWidth ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -839,7 +839,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( spacerElementHeight ).toBe( spacerSize );
+			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 	} );
