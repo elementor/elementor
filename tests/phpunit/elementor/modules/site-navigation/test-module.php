@@ -30,6 +30,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 
 	public function test_construct_experiment_inactive() {
+		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
 			SiteNavigation::PAGES_PANEL_EXPERIMENT_NAME,
 			Experiments_Manager::STATE_INACTIVE
@@ -45,8 +46,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_construct_experiment_active() {
-		remove_all_filters( 'elementor/editor-v2/packages/client-env' );
-
+		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
 			SiteNavigation::PAGES_PANEL_EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
