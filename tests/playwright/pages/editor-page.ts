@@ -7,7 +7,7 @@ import { getComparator } from 'playwright-core/lib/utils';
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
-	readonly postId: string;
+	postId: string;
 	constructor( page: Page, testInfo: TestInfo, cleanPostId = null ) {
 		super( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();

@@ -201,9 +201,9 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			await test.step( 'Set header style', async () => {
 				// Act
-				await editor.setTypography( 'title_typography', 70 );
-				await editor.setSliderControlValue( 'icon_size', 70 );
-				await editor.setSliderControlValue( 'icon_spacing', 70 );
+				await editor.setTypography( 'title_typography', '70' );
+				await editor.setSliderControlValue( 'icon_size', '70' );
+				await editor.setSliderControlValue( 'icon_spacing', '70' );
 				await setIconColor( editor, displayState.normal, colors.green.hex, 'title' );
 				await setIconColor( editor, displayState.hover, colors.blue.hex, 'title' );
 				await setIconColor( editor, displayState.active, colors.red.hex, 'title' );

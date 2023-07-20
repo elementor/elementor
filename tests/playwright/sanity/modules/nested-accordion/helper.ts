@@ -1,4 +1,4 @@
-const { expect } = require( '@playwright/test' );
+import { expect } from '@playwright/test';
 
 /**
  * Set Nested Accordion Title Tag (H1-H6,div,span,p)
@@ -9,7 +9,7 @@ const { expect } = require( '@playwright/test' );
  * @param {Object} page
  * @return {Promise<void>}
  */
-async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
+export async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
 	const frame = editor.getPreviewFrame();
 	await editor.selectElement( nestedAccordionWidgetId );
 	await page.selectOption( '.elementor-control-title_tag .elementor-control-input-wrapper > select', optionToSelect );
@@ -23,7 +23,7 @@ async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor,
  * @param {Object} locator
  * @return {Promise<void>}
  */
-async function expectScreenshotToMatchLocator( fileName, locator ) {
+export async function expectScreenshotToMatchLocator( fileName, locator ) {
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
@@ -33,7 +33,7 @@ async function getChoicesButtonSelector( choicesControlId, icon ) {
 	return '.elementor-control-accordion_' + choicesControlId + ' ' + icon;
 }
 
-async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' ) {
+export async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' ) {
 	const icon = Object.freeze( {
 		right: '.eicon-h-align-right',
 		left: '.eicon-h-align-left',
@@ -44,7 +44,7 @@ async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' )
 	await editor.page.locator( locator ).click();
 }
 
-async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
+export async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
 	const icon = Object.freeze( {
 		start: '.eicon-align-start-h',
 		end: '.eicon-align-end-h',
