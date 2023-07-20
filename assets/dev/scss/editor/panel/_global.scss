@@ -21,7 +21,10 @@
 	font-style: italic;
 	line-height: 1.5;
 	text-align: start;
-	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	border-start-start-radius: 0;
+	border-start-end-radius: 3px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 
 	a {
 		color: inherit;
