@@ -402,6 +402,7 @@ class Settings extends Settings_Page {
 			'elementor-license',
 			'elementor_custom_custom_code',
 			'popup_templates',
+			'elementor-apps',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
