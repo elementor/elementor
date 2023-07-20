@@ -144,8 +144,8 @@ const externals = {
 	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
-	'@elementor/ui': '__UNSTABLE__elementorPackages.ui',
-	'@elementor/icons': '__UNSTABLE__elementorPackages.icons',
+	'@elementor/ui': 'elementorV2.ui',
+	'@elementor/icons': 'elementorV2.icons',
 };
 
 const plugins = [

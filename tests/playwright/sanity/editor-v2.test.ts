@@ -1,43 +1,52 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
 
-// Skipped until building packages as part of the root build process.
-test.describe.skip( 'Editor v2', () => {
-	const updateExperiment = async ( { browser, testInfo }, experimentState ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-
-		const wpAdminPage = new WpAdminPage( page, testInfo );
-
-		await wpAdminPage.setExperiments( { editor_v2: experimentState } );
-
-		await page.close();
-		await context.close();
-	};
+test.describe( 'Editor v2', () => {
+	let editor;
+	let wpAdminPage;
+	let context;
 
 	test.beforeAll( async ( { browser }, testInfo ) => {
-		// Make sure the experiment of editor v2 is enabled during all the tests.
-		await updateExperiment( { browser, testInfo }, true );
+		context = await browser.newContext();
+
+		const page = await context.newPage();
+
+		wpAdminPage = new WpAdminPage( page, testInfo );
+
+		await wpAdminPage.setExperiments( { editor_v2: true } );
+
+		editor = await wpAdminPage.openNewPage();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		// Disable the experiment of editor v2 after all the tests.
-		await updateExperiment( { browser, testInfo }, false );
+	test.afterAll( async () => {
+		await wpAdminPage.setExperiments( { editor_v2: false } );
 	} );
 
-	test( 'validate the top bar appears', async ( { page }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'check that app-bar exists', async () => {
+		// Act
+		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
-		// Act.
-		const editor = await wpAdmin.useElementorCleanPost();
+		await wrapper.getByRole( 'button', { name: 'Post Settings' } ).click();
+
+		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Test page' );
+
+		await wrapper.getByRole( 'button', { name: 'Test page' } ).waitFor();
 
 		// Assert
-		const wrapper = editor.page.locator( '#elementor-editor-v2-top-bar' );
-
-		expect( await wrapper.screenshot( {
+		await expect( await wrapper.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'editor-v2-wrapper.jpg' );
+		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
+	} );
+
+	test( 'check panel styles', async () => {
+		// Act
+		await editor.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
+
+		// Assert
+		await expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
