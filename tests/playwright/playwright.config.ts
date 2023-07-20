@@ -52,7 +52,7 @@ export default {
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL || 'http://localhost:8888',
 		viewport: { width: 1920, height: 1080 },
-		storageState: resolve( __dirname, 'storageState.json' ),
+		storageState: './storageState.json',
 		user: {
 			username: process.env.USERNAME || 'admin',
 			password: process.env.PASSWORD || 'password',
