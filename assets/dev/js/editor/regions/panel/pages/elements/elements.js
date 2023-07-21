@@ -67,8 +67,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initElementsCollection() {
-		const elementsCollection = new PanelElementsElementsCollection(),
-			isContainerActive = elementorCommon.config.experimentalFeatures.container;
+		const elementsCollection = new PanelElementsElementsCollection();
 
 		// Deprecated widget handling.
 		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
@@ -84,12 +83,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
 			}
 
-			if ( ! widget.show_in_panel ) {
-				return;
-			}
-
-			// Don't register the `Inner Section` if the Container experiment is enabled.
-			if ( 'inner-section' === widget.name && isContainerActive ) {
+			if ( this.shouldNotAddWidget( widget ) ) {
 				return;
 			}
 
@@ -106,33 +100,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-			const originalObject = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
-			const replacements = widget.replacements;
-			const newObject = this.deepMerge( originalObject, replacements );
-
-			if ( ! newObject.show_in_panel ) {
-				return;
-			}
-
-			// Don't register the `Inner Section` if the Container experiment is enabled.
-			if ( 'inner-section' === newObject.name && isContainerActive ) {
-				return;
-			}
-
-			elementsCollection.add( {
-				title: newObject.title,
-				elType: newObject.elType,
-				categories: newObject.categories,
-				keywords: newObject.keywords,
-				icon: newObject.icon,
-				widgetType: newObject.widget_type,
-				custom: newObject.custom,
-				editable: newObject.editable,
-				hideOnSearch: newObject.hide_on_search,
-			} );
-		} );
-
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
 			elementsCollection.add( {
 				name: widget.name,
@@ -140,6 +107,28 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: widget.icon,
 				categories: JSON.parse( widget.categories ),
 				editable: false,
+			} );
+		} );
+
+		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
+			const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+			const replacements = widget.replacements;
+			const presetWidget = this.deepMerge( originalWidget, replacements );
+
+			if ( this.shouldNotAddWidget( presetWidget ) ) {
+				return;
+			}
+
+			elementsCollection.add( {
+				title: presetWidget.title,
+				elType: presetWidget.elType,
+				categories: presetWidget.categories,
+				keywords: presetWidget.keywords,
+				icon: presetWidget.icon,
+				widgetType: presetWidget.widget_type,
+				custom: presetWidget.custom,
+				editable: presetWidget.editable,
+				hideOnSearch: presetWidget.hide_on_search,
 			} );
 		} );
 
@@ -185,6 +174,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.categoriesCollection = categoriesCollection;
+	},
+
+	shouldNotAddWidget( widget ) {
+		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
+		const { show_in_panel, name } = widget;
+	  
+		return ! show_in_panel || ( 'inner-section' === name && isContainerActive );
 	},
 
 	deepMerge( originalObj, replacementObj ) {
