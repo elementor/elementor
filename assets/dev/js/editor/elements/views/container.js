@@ -396,6 +396,7 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
+			this.updatePanelTitles();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
@@ -443,15 +444,16 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	updatePanelTitles() {
-		// Navigator.
-		this.model.get( 'settings' ).set( '_title', this.getPanelTitle() );
-		// Panel.
-		// TODO: make it less hacky.
-		jQuery( '#elementor-panel-header-title' ).html( this.getPanelTitle() );
+		const title = this.getPanelTitle();
+
+		this.model.get( 'settings' ).set( '_title', title ); // Navigator.
+		jQuery( '#elementor-panel-header-title' ).html( __( 'Edit', 'elementor' ) + ' ' + title ); // Panel.
 	},
 
 	getPanelTitle() {
-		return 'flex' === this.getContainer().settings.get( 'container_type' ) ? 'Flexbox' : 'Grid';
+		return this.isFlexContainer()
+			? __( 'Container', 'elementor' )
+			: __( 'Grid', 'elementor' );
 	},
 
 	onDragStart() {

@@ -70,7 +70,7 @@ ElementModel = BaseElementModel.extend( {
 			settings.widgetType = this.get( 'widgetType' );
 		}
 
-		settings = { ...settings, elType };
+		settings = { ...settings, elType }; // Create a shallow copy as elType is sometimes readonly when trying to drop a widget preset.
 		settings.isInner = this.get( 'isInner' );
 
 		// Allow passing custom `_title` from model.
