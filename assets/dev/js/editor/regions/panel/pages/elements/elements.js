@@ -78,14 +78,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			}
 		} );
 
-		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-			const originalObject = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
-			const replacements = widget.replacements;
-			const newObject = this.deepMerge( originalObject, replacements );
-
-			elementor.widgetsCache[ index ] = newObject;
-		} );
-
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
@@ -111,6 +103,33 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				custom: widget.custom,
 				editable: widget.editable,
 				hideOnSearch: widget.hide_on_search,
+			} );
+		} );
+
+		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
+			const originalObject = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+			const replacements = widget.replacements;
+			const newObject = this.deepMerge( originalObject, replacements );
+
+			if ( ! newObject.show_in_panel ) {
+				return;
+			}
+
+			// Don't register the `Inner Section` if the Container experiment is enabled.
+			if ( 'inner-section' === newObject.name && isContainerActive ) {
+				return;
+			}
+
+			elementsCollection.add( {
+				title: newObject.title,
+				elType: newObject.elType,
+				categories: newObject.categories,
+				keywords: newObject.keywords,
+				icon: newObject.icon,
+				widgetType: newObject.widget_type,
+				custom: newObject.custom,
+				editable: newObject.editable,
+				hideOnSearch: newObject.hide_on_search,
 			} );
 		} );
 
@@ -166,6 +185,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.categoriesCollection = categoriesCollection;
+	},
+
+	deepMerge( originalObj, replacementObj ) {
+		const mergedObj = { ...originalObj };
+
+		for ( const key in replacementObj ) {
+			if ( replacementObj.hasOwnProperty( key ) ) {
+				if ( 'object' === typeof replacementObj[ key ] && replacementObj[ key ] !== null && originalObj.hasOwnProperty( key ) && 'object' === typeof originalObj[ key ] && originalObj[ key ] !== null ) {
+					mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
+				} else {
+					mergedObj[ key ] = replacementObj[ key ];
+				}
+			}
+		}
+
+		return mergedObj;
 	},
 
 	showView( viewName ) {

@@ -70,7 +70,7 @@ ElementModel = BaseElementModel.extend( {
 			settings.widgetType = this.get( 'widgetType' );
 		}
 
-		settings.elType = elType;
+		settings = { ...settings, elType: elType };
 		settings.isInner = this.get( 'isInner' );
 
 		// Allow passing custom `_title` from model.
