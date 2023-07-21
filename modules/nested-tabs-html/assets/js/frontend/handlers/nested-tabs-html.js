@@ -69,6 +69,7 @@ export default class NestedTabsHtml extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
+			$tablist: this.findElement( selectors.tabList ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -145,16 +146,22 @@ export default class NestedTabsHtml extends Base {
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = !! tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = !! tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]',
 			activeContentFilter = !! tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
 		$activeTitle.attr( this.getTitleDeactivationAttributes() );
+		$activeContent.removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' ); // Can we remove this?
+	}
+
+	getTitleActivationAttributes() {
+		return {
+			tabindex: '0',
+			'aria-selected': 'true',
+		};
 	}
 
 	getTitleDeactivationAttributes() {
@@ -183,17 +190,13 @@ export default class NestedTabsHtml extends Base {
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		$requestedTitle.attr( {
-			tabindex: '0',
-			'aria-selected': 'true',
-		} );
+		$requestedTitle.attr( this.getTitleActivationAttributes() );
+		$requestedContent.addClass( activeClass );
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
-		$requestedContent.removeAttr( 'hidden' ); // Can we remove this?
 	}
 
 	onShowTabContent( $requestedContent ) {
@@ -203,7 +206,9 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
+		const $tabTitles = this.elements.$tabTitles;
+
+		return 'true' === $tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( 'aria-selected' );
 	}
 
 	onTabClick( event ) {
@@ -261,6 +266,8 @@ export default class NestedTabsHtml extends Base {
 
 		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
+
+		elementorFrontend.elements.$window.on( 'resize', this.setTabViewAttribute.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -304,7 +311,7 @@ export default class NestedTabsHtml extends Base {
 		super.onInit( ...args );
 
 		if ( elementorFrontend.isEditMode() ) {
-			this.updateContentContainers( args );
+			this.setContainerAttributes( args );
 		}
 
 		if ( this.getSettings( 'autoExpand' ) ) {
@@ -319,6 +326,7 @@ export default class NestedTabsHtml extends Base {
 		};
 
 		setHorizontalScrollAlignment( settingsObject );
+		this.setTabViewAttribute();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -337,11 +345,13 @@ export default class NestedTabsHtml extends Base {
 			};
 
 			setHorizontalScrollAlignment( settingsObject );
+			this.setTabViewAttribute();
 		}
 	}
 
 	checkSliderPropsToWatch( propertyName ) {
 		return 0 === propertyName.indexOf( 'horizontal_scroll' ) ||
+			'breakpoint_selector' === propertyName ||
 			0 === propertyName.indexOf( 'tabs_justify_horizontal' ) ||
 			0 === propertyName.indexOf( 'tabs_title_space_between' );
 	}
@@ -372,9 +382,7 @@ export default class NestedTabsHtml extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = 'contents' === this.elements.$headingContainer.css( 'display' );
-
-			if ( isMobileVersion ) {
+			if ( this.isAccordionVersion() ) {
 				this.activateMobileTab( tabIndex );
 				return;
 			}
@@ -403,7 +411,7 @@ export default class NestedTabsHtml extends Base {
 		}
 	}
 
-	updateContentContainers( args ) {
+	setContainerAttributes( args ) {
 		const settings = this.getSettings(),
 			$widget = this.$element;
 
@@ -547,5 +555,16 @@ export default class NestedTabsHtml extends Base {
 	getHorizontalScrollSetting() {
 		const currentDevice = elementorFrontend.getCurrentDeviceMode();
 		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
+	}
+
+	isAccordionVersion() {
+		return 'contents' === this.elements.$headingContainer.css( 'display' );
+	}
+
+	setTabViewAttribute() {
+		const $tabsWrapper = this.$element.find( '.e-n-tabs' ),
+			viewType = this.isAccordionVersion() ? 'accordion' : 'normal';
+
+		$tabsWrapper.attr( 'data-view', viewType );
 	}
 }
