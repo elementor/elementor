@@ -78,7 +78,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.widgetsCache, function( widget ) {
+		_.each( elementor.widgetsCache, ( widget ) => {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
 				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
 			}
