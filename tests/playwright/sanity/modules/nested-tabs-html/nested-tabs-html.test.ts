@@ -3,10 +3,10 @@ import { createPage, deletePage } from '../../../utilities/rest-api';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { testTabIsVisibleInAccordionView } from '.././nested-tabs/tests/accordion';
-import { testIconCount } from '.././nested-tabs/tests/icons';
-import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from '.././nested-tabs/tests/carousel';
-import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } from '.././nested-tabs/helper';
+import { testTabIsVisibleInAccordionView } from './tests/accordion';
+import { testIconCount } from './tests/icons';
+import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
+import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -114,9 +114,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert
 		await expect( activeTabIcon ).toBeVisible();
-		await clickTab( currentContext, '1' );
+		await clickTab( currentContext, 1 );
 		await expect( icon ).toBeVisible();
-		await clickTab( currentContext, '0' );
+		await clickTab( currentContext, 0 );
 
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
 	} );
@@ -148,10 +148,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert
 		await expect( activeTabIcon ).toBeVisible();
 		await expect( activeTabIcon ).toHaveCSS( 'width', '50px' );
-		await clickTab( currentContext, '1' );
+		await clickTab( currentContext, 1 );
 		await expect( icon ).toBeVisible();
 		await expect( icon ).toHaveCSS( 'width', '50px' );
-		await clickTab( currentContext, '0' );
+		await clickTab( currentContext, 0 );
 
 		// Set experiments.
 		await cleanup( wpAdmin, { e_font_icon_svg: 'inactive' } );
@@ -925,7 +925,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
 
-		await clickTab( editor.getPreviewFrame(), '2' );
+		await clickTab( editor.getPreviewFrame(), 2 );
 
 		// Assert.
 		await expect( editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active' ) ).toHaveCount( 1 );
@@ -1125,13 +1125,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect( contentContainerThree.locator( '.elementor-background-video-container' ) ).toBeVisible();
 		await expect( contentContainerTwo.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
 
-		await clickTab( editor.getPreviewFrame(), '1' );
+		await clickTab( editor.getPreviewFrame(), 1 );
 		await page.waitForTimeout( 3000 );
 		await expect( contentContainerTwo.locator( '.elementor-background-video-container iframe' ) ).not.toHaveCSS( 'width', '0px' );
 		await expect( contentContainerTwo.locator( '.elementor-background-video-container' ) ).toBeVisible();
 		await expect( contentContainerOne.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
 
-		await clickTab( editor.getPreviewFrame(), '0' );
+		await clickTab( editor.getPreviewFrame(), 0 );
 		await page.waitForTimeout( 3000 );
 		await expect( contentContainerOne.locator( '.elementor-background-video-container iframe' ) ).not.toHaveCSS( 'width', '0px' );
 		await expect( contentContainerOne.locator( '.elementor-background-video-container' ) ).toBeVisible();
