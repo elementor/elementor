@@ -178,9 +178,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	shouldNotAddWidget( widget ) {
 		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
-		const { show_in_panel, name } = widget;
-	  
-		return ! show_in_panel || ( 'inner-section' === name && isContainerActive );
+
+		return ! widget.show_in_panel || ( 'inner-section' === widget.name && isContainerActive );
 	},
 
 	deepMerge( originalObj, replacementObj ) {
