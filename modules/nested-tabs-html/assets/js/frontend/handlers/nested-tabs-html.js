@@ -18,7 +18,7 @@ export default class NestedTabsHtml extends Base {
 	 * @return {string}
 	 */
 	getTabTitleFilterSelector( tabIndex ) {
-		return `[data-tab="${ tabIndex }"]`;
+		return `[data-tab-index="${ tabIndex }"]`;
 	}
 
 	/**
@@ -36,7 +36,7 @@ export default class NestedTabsHtml extends Base {
 	 * @return {string}
 	 */
 	getTabIndex( tabTitleElement ) {
-		return tabTitleElement.getAttribute( 'data-tab' );
+		return tabTitleElement.getAttribute( 'data-tab-index' );
 	}
 
 	getDefaultSettings() {
@@ -129,7 +129,7 @@ export default class NestedTabsHtml extends Base {
 				return;
 		}
 
-		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
+		const tabIndex = tab.getAttribute( 'data-tab-index' ) - 1,
 			direction = this.getSettings( 'keyDirection' )[ event.key ],
 			nextTab = $tabs[ tabIndex + direction ];
 
@@ -203,12 +203,12 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
+		return this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
 	}
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab-index' ), true );
 	}
 
 	onTabKeyDown( event ) {
@@ -224,7 +224,7 @@ export default class NestedTabsHtml extends Base {
 			case 'Enter':
 			case 'Space':
 				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
+				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab-index' ), true );
 				break;
 		}
 	}
@@ -302,6 +302,10 @@ export default class NestedTabsHtml extends Base {
 
 	onInit( ...args ) {
 		super.onInit( ...args );
+
+		if ( elementorFrontend.isEditMode() ) {
+			this.updateContentContainers( args );
+		}
 
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
@@ -399,6 +403,30 @@ export default class NestedTabsHtml extends Base {
 		}
 	}
 
+	updateContentContainers( args ) {
+		const settings = this.getSettings(),
+			$widget = this.$element;
+
+		let index = 1;
+
+		this.findElement( '.e-con' ).each( function() {
+			const $current = jQuery( this ),
+				$tabTitle = $widget.find( `${ settings.selectors.headingContainer } > *:nth-child(${ index })` ),
+				widgetNumber = $widget.find( '.e-n-tabs' ).attr( 'data-widget-number' ),
+				tabId = $tabTitle.attr( 'id' );
+
+			$current.attr( {
+				id: 'e-n-tab-content-' + widgetNumber + index,
+				role: 'tabpanel',
+				'aria-labelledby': tabId,
+				'data-tab-index': index,
+				style: '--n-tabs-title-order: ' + index + ';',
+			} );
+
+			++index;
+		} );
+	}
+
 	getActiveClass() {
 		const settings = this.getSettings();
 
@@ -442,7 +470,7 @@ export default class NestedTabsHtml extends Base {
 			lastItemIsInFocus = this.itemInsideContentContainerHasFocus( 'last' ),
 			activeTabTitleFilter = `.${ this.getActiveClass() }`,
 			activeTabTitleVisible = this.getVisibleTabTitle( activeTabTitleFilter ),
-			activeTabTitleIndex = parseInt( activeTabTitleVisible?.getAttribute( 'data-tab' ) ),
+			activeTabTitleIndex = parseInt( activeTabTitleVisible?.getAttribute( 'data-tab-index' ) ),
 			nextTabTitleFilter = this.getTabTitleFilterSelector( activeTabTitleIndex + 1 ),
 			nextTabTitleVisible = this.getVisibleTabTitle( nextTabTitleFilter ),
 			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! activeTabTitleVisible,
@@ -466,7 +494,7 @@ export default class NestedTabsHtml extends Base {
 			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
 			$firstFocusableItem = $focusableItems[ 0 ],
 			currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab' ) );
+			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab-index' ) );
 
 		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
 			event.preventDefault();
@@ -496,7 +524,7 @@ export default class NestedTabsHtml extends Base {
 
 	setActiveCurrentContainerItemsToFocusable() {
 		const currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle?.getAttribute( 'data-tab' ) );
+			currentTabTitleIndex = parseInt( currentTabTitle?.getAttribute( 'data-tab-index' ) );
 
 		if ( this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) ) {
 			this.setTabindexOfActiveContainerItems( '0' );

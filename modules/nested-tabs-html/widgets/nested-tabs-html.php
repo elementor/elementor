@@ -1056,11 +1056,12 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'id' => $data['tab_id'],
 			'class' => $css_classes,
 			'aria-selected' => 1 === $data['tab_count'] ? 'true' : 'false',
-			'data-tab' => $data['tab_count'],
+			'data-tab-index' => $data['tab_count'],
 			'role' => 'tab',
 			'tabindex' => 1 === $data['tab_count'] ? '0' : '-1',
 			'aria-controls' => $data['container_id'],
 			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
+			'data-widget-number' => $data['widget_number'],
 		] );
 
 		$render_attributes = $this->get_render_attribute_string( $setting_key );
@@ -1093,7 +1094,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$this->add_render_attribute( $setting_key, [
 			'id' => $data['container_id'],
 			'role' => 'tabpanel',
-			'aria-labelledby' => $data['container_id'],
+			'aria-labelledby' => $data['tab_id'],
+			'data-tab-index' => $data['tab_count'],
 			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
 		] );
 
@@ -1104,7 +1106,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$tabs = $settings['tabs'];
 		$widget_number = substr( $this->get_id_int(), 0, 3 );
 
 		if ( ! empty( $settings['link'] ) ) {
@@ -1123,7 +1124,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$tab_titles_html = '';
 		$tab_containers_html = '';
 
-		foreach ( $tabs as $index => $item ) {
+		foreach ( $settings['tabs'] as $index => $item ) {
 			$tab_count = $index + 1;
 
 			$tab_id = empty( $item['element_id'] )
@@ -1157,10 +1158,10 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
-			<# if ( settings['tabs'] ) {
-			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-			<div class="e-n-tabs-heading" role="tablist">
+		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+		<div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
+			<# if ( settings['tabs'] ) { #>
+			<div class="e-n-tabs-heading">
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
@@ -1183,12 +1184,13 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
-					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass ],
-					'data-tab': tabCount,
+					'class': [ 'e-n-tab-title',hoverAnimationClass ],
+					'data-tab-index': tabCount,
 					'role': 'tab',
+					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-expanded': 'false',
+					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
 				view.addRenderAttribute( tabTitleKey, {
@@ -1207,10 +1209,10 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'data-binding-index': tabCount,
 				} );
 				#>
-				<div {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+				<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
 					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
 					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
-				</div>
+				</button>
 				<# } ); #>
 			</div>
 			<div class="e-n-tabs-content">

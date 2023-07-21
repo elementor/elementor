@@ -39,6 +39,7 @@
 	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
+	--n-tabs-title-order: initial;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
@@ -58,6 +59,7 @@
 	flex-direction: var( --n-tabs-direction );
 	gap: var( --n-tabs-gap );
 	text-align: $start;
+	min-width: 0;
 
 	&-heading {
 		display: var( --n-tabs-heading-display );
@@ -98,12 +100,17 @@
 		padding: var( --n-tabs-content-padding );
 		border-radius: var( --n-tabs-content-border-radius );
 		min-width: 0;
+
+		> .e-con:not(.e-active) {
+			display: none;
+		}
 	}
 }
 
 .e-n-tab {
 
 	&-title {
+		all: unset;
 		display: flex;
 		align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 		flex-direction: var( --n-tabs-title-direction );
@@ -257,42 +264,14 @@
 	}
 }
 
-.e-n-tabs-content {
-
-	.e-n-tab-title {
-		// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
-		-webkit-tap-highlight-color: transparent;
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-		width: 100%;
-
-		&:not(:first-child) {
-			margin-top: var( --n-tabs-title-gap );
-		}
-
-		&.e-active {
-			margin-bottom: var( --n-tabs-gap );
-		}
-	}
-
-	> .e-con:not(.e-active) {
-		display: none;
-	}
-}
-
-
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title:hover {
+.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title:hover {
 	background-color: var( --n-tabs-title-background-color-hover );
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
+:is( .elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
+	.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title ) {
 
 	&.e-active {
 		background-color: var( --n-tabs-title-background-color-active );
@@ -302,10 +281,41 @@
 
 // Responsive mode
 @mixin tabs-view-($device) {
-	.e-n-tabs-#{$device} {
+	.elementor.elementor .elementor-widget-n-tabs-html.e-n-tabs-#{$device} {
+		--n-tabs-direction: column;
 
-		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
+		> .elementor-widget-container > .e-n-tabs > :is( .e-n-tabs-heading, .e-n-tabs-content ) {
 			display: contents;
+		}
+
+		.e-n-tab-title {
+			order: var( --n-tabs-title-order );
+			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+
+			//width: 100%;
+
+			&:not(:first-child) {
+				margin-top: var( --n-tabs-title-gap );
+			}
+
+			&.e-active {
+				margin-bottom: var( --n-tabs-gap );
+			}
+		}
+
+		.e-n-tabs-content > .e-con {
+			order: var( --n-tabs-title-order );
+
+			&:not(.e-active) {
+				display: none;
+			}
 		}
 	}
 }
