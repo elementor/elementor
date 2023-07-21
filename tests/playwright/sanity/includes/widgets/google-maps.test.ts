@@ -7,8 +7,8 @@ test( 'Verify Google maps controls', async ( { page }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const editor = new EditorPage( page, testInfo );
 	const googleMapsWidget = new GoogleMaps( page, testInfo );
-	const height = '600';
-	const zoom = '12';
+	const height = 600;
+	const zoom = 12;
 	const location = 'New York';
 
 	await wpAdmin.openNewPage();

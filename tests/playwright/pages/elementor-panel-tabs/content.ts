@@ -118,8 +118,8 @@ export default class Content {
 	}
 
 	async uploadSVG( options? : { icon?: string, widget?: string} ) {
-		const _icon = options.icon === undefined ? 'test-svg-wide' : options.icon;
-		if ( 'text-path' === options.widget ) {
+		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
+		if ( 'text-path' === options?.widget ) {
 			await this.page.locator( EditorSelectors.plusIcon ).click();
 		} else {
 			await this.page.getByRole( 'button', { name: 'Content' } ).click();
@@ -163,7 +163,7 @@ export default class Content {
 	}
 
 	async verifySrcParams( src: string,
-		expectedValues: { q: string; t: string; z: string; output: string; iwloc: string; }, player: string ) {
+		expectedValues: { q: string; t: string; z: number; output: string; iwloc: string; }, player: string ) {
 		const videoOptions: any = this.parseSrc( src );
 		if ( 'vimeo' === player ) {
 			videoOptions.start = src.split( '#' )[ 1 ];
