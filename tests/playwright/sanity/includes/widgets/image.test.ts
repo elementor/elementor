@@ -91,9 +91,9 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 					select: data[ i ].select,
 					imageTitle, width: '300', height: '300',
 				} );
-			await editor.verifyImageSize( { selector: data[ i ].image, width: '300', height: '300', isPublished: false } );
+			await editor.verifyImageSize( { selector: data[ i ].image, width: 300, height: 300, isPublished: false } );
 			await editor.publishAndViewPage();
-			await editor.verifyImageSize( { selector: data[ i ].image, width: '300', height: '300', isPublished: true } );
+			await editor.verifyImageSize( { selector: data[ i ].image, width: 300, height: 300, isPublished: true } );
 		} );
 	}
 

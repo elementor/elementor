@@ -763,7 +763,7 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async verifyImageSize( args: { selector: string, width: string, height: string, isPublished: boolean } ) {
+	async verifyImageSize( args: { selector: string, width: number, height: number, isPublished: boolean } ) {
 		const imageSize = args.isPublished
 			? await this.page.locator( args.selector ).boundingBox()
 			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
