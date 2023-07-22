@@ -16,7 +16,7 @@ export default class NestedTabsHtml extends Base {
 	 * @param {string|number} tabIndex
 	 *
 	 * @return {string}
-	 */F;
+	 */
 	getTabTitleFilterSelector( tabIndex ) {
 		return `[data-tab-index="${ tabIndex }"]`;
 	}
