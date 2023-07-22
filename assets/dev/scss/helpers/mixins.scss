@@ -238,4 +238,16 @@
 		border-radius: $border-radius;
 	}
 }
+
+@mixin button-focus() {
+
+	&:focus {
+		background-color: initial;
+		outline: none;
+	}
+
+	&:focus-visible {
+		outline: 5px auto -webkit-focus-ring-color;
+	}
+}
 //End

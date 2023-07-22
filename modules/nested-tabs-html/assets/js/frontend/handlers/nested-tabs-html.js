@@ -69,7 +69,6 @@ export default class NestedTabsHtml extends Base {
 		const selectors = this.getSettings( 'selectors' );
 
 		return {
-			$tablist: this.findElement( selectors.tabList ),
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
@@ -267,7 +266,7 @@ export default class NestedTabsHtml extends Base {
 		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 
-		elementorFrontend.elements.$window.on( 'resize', this.setTabViewAttribute.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.setTabLayoutAttribute.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -326,7 +325,7 @@ export default class NestedTabsHtml extends Base {
 		};
 
 		setHorizontalScrollAlignment( settingsObject );
-		this.setTabViewAttribute();
+		this.setTabLayoutAttribute();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -345,7 +344,7 @@ export default class NestedTabsHtml extends Base {
 			};
 
 			setHorizontalScrollAlignment( settingsObject );
-			this.setTabViewAttribute();
+			this.setTabLayoutAttribute();
 		}
 	}
 
@@ -561,10 +560,8 @@ export default class NestedTabsHtml extends Base {
 		return 'contents' === this.elements.$headingContainer.css( 'display' );
 	}
 
-	setTabViewAttribute() {
-		const $tabsWrapper = this.$element.find( '.e-n-tabs' ),
-			viewType = this.isAccordionVersion() ? 'accordion' : 'normal';
-
-		$tabsWrapper.attr( 'data-view', viewType );
+	setTabLayoutAttribute() {
+		const layout = this.isAccordionVersion() ? 'accordion' : 'tabs';
+		this.$element.find( '.e-n-tabs' ).attr( 'data-layout', layout );
 	}
 }

@@ -83,7 +83,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
 
-		$normal_view_heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-view="normal" > .e-n-tabs-heading';
+		$heading_selector_tabs_layout = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-layout="tabs"] > .e-n-tabs-heading';
 		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
 		$content_selector = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
 
@@ -455,7 +455,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover ), {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-n-tab-title[aria-selected="false"] )',
+				'selector' => ':is( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-layout="tabs"] > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover ), {{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-layout="accordion"] > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"] )',
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -508,7 +508,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color_hover',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{$normal_view_heading_selector} > .e-n-tab-title[aria-selector=\"true\"]:hover",
+				'selector' => "{$heading_selector_tabs_layout} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -530,7 +530,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'tabs_title_border_hover',
-				'selector' => "{$normal_view_heading_selector} > .e-n-tab-title[aria-selector=\"true\"]:hover",
+				'selector' => "{$heading_selector_tabs_layout} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Border Color', 'elementor' ),
@@ -548,7 +548,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'name' => 'tabs_title_box_shadow_hover',
 				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
-				'selector' => "{$normal_view_heading_selector} > .e-n-tab-title[aria-selector=\"true\"]:hover",
+				'selector' => "{$heading_selector_tabs_layout} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 			]
 		);
 
@@ -747,7 +747,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}[data-view="normal"] .e-n-tab-title[aria-selector="true"]:hover' => '--n-tabs-title-color-hover: {{VALUE}}',
+					'{{WRAPPER}} [data-layout="tabs"] .e-n-tab-title[aria-selected="false"]:hover' => '--n-tabs-title-color-hover: {{VALUE}}',
 				],
 			]
 		);
@@ -756,7 +756,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'title_text_shadow_hover',
-				'selector' => "{$normal_view_heading_selector} > .e-n-tab-title[aria-selector=\"true\"]:hover",
+				'selector' => "{$heading_selector_tabs_layout} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
 						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
@@ -770,7 +770,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'title_text_stroke_hover',
-				'selector' => "{$normal_view_heading_selector} > .e-n-tab-title[aria-selector=\"true\"]:hover :is( span, a, i )",
+				'selector' => "{$heading_selector_tabs_layout} > .e-n-tab-title[aria-selected=\"false\"]:hover :is( span, a, i )",
 				'fields_options' => [
 					'text_stroke_type' => [
 						'label' => esc_html__( 'Stroke', 'elementor' ),
@@ -944,7 +944,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}[data-view="normal"] .e-n-tab-title[aria-selector="true"]:hover' => '--n-tabs-icon-color-hover: {{VALUE}};',
+				'{{WRAPPER}} [data-layout="tabs"] .e-n-tab-title[aria-selected="false"]:hover' => '--n-tabs-icon-color-hover: {{VALUE}};',
 			],
 		] );
 

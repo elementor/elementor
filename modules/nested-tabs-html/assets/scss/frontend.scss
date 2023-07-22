@@ -1,3 +1,5 @@
+@import "../../../../assets/dev/scss/helpers/mixins";
+
 //
 // Nested Tabs
 //
@@ -147,6 +149,8 @@
 			-ms-user-select: none;
 			user-select: none;
 
+			@include button-focus;
+
 			& span svg,
 			& span i {
 				transition: color var(--n-tabs-title-transition),
@@ -210,25 +214,6 @@
 				}
 			}
 
-			&[aria-selected="false"]:hover {
-
-				&,
-				& a {
-					color: var(--n-tabs-title-color-hover);
-				}
-
-				.e-n-tab-icon {
-
-					i {
-						color: var(--n-tabs-icon-color-hover);
-					}
-
-					svg {
-						fill: var(--n-tabs-icon-color-hover);
-					}
-				}
-			}
-
 			&[aria-selected="true"] {
 
 				&,
@@ -269,16 +254,37 @@
 			}
 		}
 	}
+
+	[data-layout="tabs"] {
+
+		.e-n-tab-title[aria-selected="false"]:hover {
+
+			&,
+			& a {
+				color: var(--n-tabs-title-color-hover);
+			}
+
+			.e-n-tab-icon {
+
+				i {
+					color: var(--n-tabs-icon-color-hover);
+				}
+
+				svg {
+					fill: var(--n-tabs-icon-color-hover);
+				}
+			}
+		}
+	}
 }
 
-.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs[data-view="normal"] > .e-n-tabs-heading .e-n-tab-title:hover {
+.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs[data-layout="tabs"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
 	background-color: var(--n-tabs-title-background-color-hover);
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
-:is( .elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title,
-	.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content .e-n-tab-title) {
+.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title {
 
 	&[aria-selected="true"] {
 		background-color: var(--n-tabs-title-background-color-active);
@@ -342,11 +348,4 @@
 // Laptop.
 @media (max-width: $screen-laptop-max) {
 	@include accordion-view-(laptop);
-}
-
-// Breakpoint - none.
-.e-n-tabs-none {
-	> .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-n-tab-title {
-		//display: none;
-	}
 }
