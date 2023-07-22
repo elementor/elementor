@@ -82,7 +82,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
-
 		$heading_selector_tabs_layout = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-layout="tabs"] > .e-n-tabs-heading';
 		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
 		$content_selector = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
@@ -1217,8 +1216,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				</button>
 				<# } ); #>
 			</div>
-			<div class="e-n-tabs-content">
-			</div>
+			<div class="e-n-tabs-content"></div>
 			<# } #>
 		</div>
 		<?php

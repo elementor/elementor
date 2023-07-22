@@ -16,7 +16,7 @@ export default class NestedTabsHtml extends Base {
 	 * @param {string|number} tabIndex
 	 *
 	 * @return {string}
-	 */
+	 */F;
 	getTabTitleFilterSelector( tabIndex ) {
 		return `[data-tab-index="${ tabIndex }"]`;
 	}
@@ -205,9 +205,7 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		const $tabTitles = this.elements.$tabTitles;
-
-		return 'true' === $tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( 'aria-selected' );
+		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( 'aria-selected' );
 	}
 
 	onTabClick( event ) {
@@ -266,7 +264,7 @@ export default class NestedTabsHtml extends Base {
 		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 
-		elementorFrontend.elements.$window.on( 'resize', this.setTabLayoutAttribute.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.setLayoutAttribute.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -307,11 +305,11 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	onInit( ...args ) {
-		super.onInit( ...args );
-
 		if ( elementorFrontend.isEditMode() ) {
 			this.setContainerAttributes( args );
 		}
+
+		super.onInit( ...args );
 
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
@@ -325,7 +323,7 @@ export default class NestedTabsHtml extends Base {
 		};
 
 		setHorizontalScrollAlignment( settingsObject );
-		this.setTabLayoutAttribute();
+		this.setLayoutAttribute();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -344,7 +342,7 @@ export default class NestedTabsHtml extends Base {
 			};
 
 			setHorizontalScrollAlignment( settingsObject );
-			this.setTabLayoutAttribute();
+			this.setLayoutAttribute();
 		}
 	}
 
@@ -560,7 +558,7 @@ export default class NestedTabsHtml extends Base {
 		return 'contents' === this.elements.$headingContainer.css( 'display' );
 	}
 
-	setTabLayoutAttribute() {
+	setLayoutAttribute() {
 		const layout = this.isAccordionVersion() ? 'accordion' : 'tabs';
 		this.$element.find( '.e-n-tabs' ).attr( 'data-layout', layout );
 	}
