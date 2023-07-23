@@ -83,7 +83,7 @@ jobs:
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
           # Will be removed once we see that the release is working
-          prerelease: github.event.inputs.pre_release
+          prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Post To Slack Created Cloud one click Release
         uses : ./.github/workflows/post-to-slack
