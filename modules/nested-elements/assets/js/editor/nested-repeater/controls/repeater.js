@@ -28,7 +28,6 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			container: this.options.container,
 			name: this.model.get( 'name' ),
 			index: childView._index,
-			renderAfterInsert: false,
 		} );
 
 		this.toggleMinRowsClass();
