@@ -57,7 +57,7 @@ class Admin_Apps_Page {
 				'offering' => 'Use coupon code: onlyforelementor',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-crocoblock/',
-				'image' => $images_url . 'crocoblock.png',
+				'image' => $images_url . 'crocoblock.svg',
 			],
 			[
 				'name' => 'Unlimited Elements',
@@ -76,7 +76,7 @@ class Admin_Apps_Page {
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper/',
 				'badge' => '10% Off',
 				'description' => 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.',
-				'offering' => 'Use coupon code: elementor20',
+				'offering' => 'Use coupon code: elementor10',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper/',
 				'image' => $images_url . 'essential-addons.svg',
