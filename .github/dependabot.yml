@@ -8,7 +8,7 @@ updates:
     allow:
       - dependency-name: "@elementor/*"
     reviewers:
-      - "Nevoss"
+      - "elementor/editor-core-team"
     commit-message:
       prefix: "Internal: "
     labels:
