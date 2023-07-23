@@ -10,6 +10,7 @@ inputs:
     description: 'The current package version, e.g. "3.11.7".'
   OVERRIDE_PACKAGE_VERSION:
     required: false
+    default: "false"
     description: 'The package version to use instead of the current package version, e.g. "3.11.7".'
 
 runs:
