@@ -37,12 +37,21 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      - name: Is pre-release?
+        id: is_pre_release
+        run: |
+          if [ "${{ github.event.inputs.pre_release }}" = "true" ]; then
+            PRE_RELEASE = '-prerelease'
+          else
+            PRE_RELEASE = ''
+          fi
+          echo "PRE_RELEASE=${PRE_RELEASE}" >> $GITHUB_ENV
       - name: Env Vars Configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          ADDITION_NAME: ${{ ( github.event.inputs.pre_release == true ) && '-prerelease' || '' }}
+          ADDITION_NAME: ${{ env.PRE_RELEASE }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
