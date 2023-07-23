@@ -40,7 +40,7 @@ jobs:
       - name: Is pre-release?
         id: is_pre_release
         run: |
-          if [ "${{ github.event.inputs.pre_release }}" = "true" ]; then
+          if [ "${{ github.event.inputs.pre_release }}" == "true" ]; then
             PRE_RELEASE = '-prerelease'
           else
             PRE_RELEASE = ''
