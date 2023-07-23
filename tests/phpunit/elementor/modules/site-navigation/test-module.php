@@ -13,7 +13,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		remove_all_filters( 'elementor/editor-v2/packages/client-env' );
+		remove_all_filters( 'elementor/editor/v2/scripts/env' );
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( SiteNavigation::PAGES_PANEL_EXPERIMENT_NAME )['default'];
@@ -39,7 +39,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$module = new SiteNavigation();
 
 		// Act.
-		$env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 
 		// Assert.
 		$this->assertArrayNotHasKey( '@elementor/editor-site-navigation', $env );
@@ -55,7 +55,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$module = new SiteNavigation();
 
 		// Act.
-		$env = apply_filters( 'elementor/editor-v2/packages/client-env', [] );
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 
 		// Assert.
 		$this->assertTrue( $env['@elementor/editor-site-navigation']['is_pages_panel_active'] );
