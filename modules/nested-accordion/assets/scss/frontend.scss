@@ -19,6 +19,7 @@
 	--n-accordion-icon-hover-color: var(--n-accordion-title-hover-color);
 	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
 	--n-accordion-icon-gap: 0 10px;
+	width: 100%;
 
 	.e-n-accordion {
 
@@ -29,6 +30,10 @@
 
 			&:not(:last-child) {
 				margin-bottom: var(--n-accordion-item-title-space-between);
+			}
+
+			:where( & > .e-con ) {
+				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
 			}
 
 			&-title {
@@ -45,6 +50,7 @@
 				gap: var(--n-accordion-icon-gap);
 				color: var(--n-accordion-title-normal-color);
 				align-items: center;
+				cursor: pointer;
 
 				&-header {
 					display: flex;

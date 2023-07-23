@@ -47,7 +47,6 @@ export default class EditorBase extends Marionette.Application {
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
-	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
 
@@ -1181,8 +1180,6 @@ export default class EditorBase extends Marionette.Application {
 		this.$previewContents = this.$preview.contents();
 
 		this.initFrontend();
-
-		this.schemes.init();
 
 		this.preventClicksInsideEditor();
 

@@ -683,7 +683,13 @@ abstract class Element_Base extends Controls_Stack {
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
-				$class_settings[ $setting_key ] = $setting;
+				if ( isset( $controls[ $setting_key ]['classes_dictionary'][ $setting ] ) ) {
+					$value = $controls[ $setting_key ]['classes_dictionary'][ $setting ];
+				} else {
+					$value = $setting;
+				}
+
+				$class_settings[ $setting_key ] = $value;
 			}
 		}
 

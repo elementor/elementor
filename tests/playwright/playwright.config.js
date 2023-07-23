@@ -9,6 +9,9 @@ function getGrepInvert() {
 			/@nested-accordion/,
 			/@styleguide_image_link/,
 			/@elements-regression/,
+			/@ai/,
+			/@onBoarding/,
+			/@video/,
 		];
 	}
 	return [];
