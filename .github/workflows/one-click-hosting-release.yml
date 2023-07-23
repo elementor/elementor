@@ -40,10 +40,10 @@ jobs:
       - name: Is pre-release?
         id: is_pre_release
         run: |
-          if [ "${{ github.event.inputs.pre_release }}" == "true" ]; then
-            PRE_RELEASE = '-prerelease'
+          if [ ${{ github.event.inputs.pre_release }} == true ]; then
+            PRE_RELEASE="-prerelease"
           else
-            PRE_RELEASE = ''
+            PRE_RELEASE=""
           fi
           echo "PRE_RELEASE=${PRE_RELEASE}" >> $GITHUB_ENV
       - name: Env Vars Configure
