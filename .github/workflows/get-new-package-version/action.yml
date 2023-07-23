@@ -18,12 +18,7 @@ runs:
             CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
             PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
 
-            # This condition is set in order to meet the one click releases requirements.
-            if [[ -z "${{ inputs.ADDITION_NAME }}" ]]; then
-              PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}
-            else
-              PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}{{ inputs.ADDITION_NAME}}
-            fi
+            PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}${{ inputs.ADDITION_NAME }}
 
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_ENV
