@@ -44,6 +44,11 @@ module.exports = class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
+	/**
+	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
+	 *
+	 * @return {Promise<EditorPage>}
+	 */
 	async useElementorCleanPost() {
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
