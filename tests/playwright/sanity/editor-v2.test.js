@@ -36,6 +36,17 @@ test.describe( 'Editor v2', () => {
 		await expect( await wrapper.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'editor-v2-wrapper.jpg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
+	} );
+
+	test( 'check panel styles', async () => {
+		// Act
+		await editor.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
+
+		// Assert
+		await expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
