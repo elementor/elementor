@@ -58,6 +58,7 @@ jobs:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
           OVERRIDE_PACKAGE_VERSION: true
+          ADDITION_NAME: ${{ env.PRE_RELEASE }}
       - name: Install Dependencies
         run: |
           npm ci
