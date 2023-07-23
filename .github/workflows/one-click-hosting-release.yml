@@ -2,10 +2,11 @@ name: One Click Hosting Release
 
 on:
   workflow_dispatch:
-    pre_release:
-      type: boolean
-      description: 'Pre-release?'
-      required: false
+    inputs:
+      pre_release:
+        type: boolean
+        description: 'Pre-release?'
+        required: false
     branches:
       - main
 env:
@@ -41,7 +42,7 @@ jobs:
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          ADDITION_NAME: if [ github.event.inputs.pre_release == true ]; then echo "-prerelease" ; else echo "" ; fi
+          ADDITION_NAME: ${{ ( github.event.inputs.pre_release == true ) && '-prerelease' || '' }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
