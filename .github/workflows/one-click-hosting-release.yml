@@ -69,9 +69,9 @@ jobs:
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
           # Will be removed once we see that the release is working
-          prerelease: true
+          # prerelease: true
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Post To Slack Created Cloud daily automated Release
+      - name: Post To Slack Created Cloud one click Release
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
