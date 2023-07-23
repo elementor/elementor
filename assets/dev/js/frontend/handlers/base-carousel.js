@@ -140,15 +140,20 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		return swiperOptions;
 	}
 
+	getOffsetWidth() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'offset_width', 'size', currentDevice ) || 0;
+	}
+
 	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
-		const offsetSide = elementSettings.offset_sides;
-		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+		const offsetSide = elementSettings.offset_sides,
+			isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
 
 		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
 			return;
 		}
 
-		const offset = elementSettings.offset_width.size;
+		const offset = this.getOffsetWidth();
 
 		switch ( offsetSide ) {
 			case 'right':
@@ -197,11 +202,9 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			this.togglePauseOnHover( true );
 		}
 
-		this.handleElementHandlers( 'initialization' );
-
 		this.a11ySetWidgetAriaDetails();
 		this.a11ySetPaginationTabindex();
-		this.a11ySetSlideAriaHidden( 'initialization' );
+		this.a11ySetSlideAriaHidden( 'initialisation' );
 	}
 
 	bindEvents() {
@@ -209,6 +212,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
 		this.$element.find( ':focusable' ).on( 'focus', this.onFocusDisableAutoplay.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.getSwiperSettings.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -216,6 +220,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.off();
 		this.elements.$swiperContainer.off();
 		this.$element.find( ':focusable' ).off();
+		elementorFrontend.elements.$window.off( 'resize' );
 	}
 
 	onDirectionArrowKeydown( event ) {
@@ -352,7 +357,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	a11ySetSlideAriaHidden( status = '' ) {
-		const currentIndex = 'initialization' === status ? 0 : this.swiper?.activeIndex;
+		const currentIndex = 'initialisation' === status ? 0 : this.swiper?.activeIndex;
 
 		if ( 'number' !== typeof currentIndex ) {
 			return;
