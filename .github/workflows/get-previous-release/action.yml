@@ -13,8 +13,12 @@ runs:
       run: |
         # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
         # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
-        if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ]]; then
+        if [[ ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" && ${{ env.ADDITION_NAME }} == "-prerelease" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
+        fi
+
+        if [[ ${{ inputs.CHANNEL }} == "cloud" && ${{ env.ADDITION_NAME }} == "-prerelease" ]]; then
+           tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep "\-prerelease" | awk '{print $2}')
         fi
 
         # If the channel is "ga", fetch all Git tags matching the semantic versioning pattern "vX.Y.Z"
