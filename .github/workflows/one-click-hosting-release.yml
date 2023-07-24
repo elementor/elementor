@@ -62,8 +62,7 @@ jobs:
           OVERRIDE_PACKAGE_VERSION: true
           ADDITION_NAME: ${{ env.PRE_RELEASE }}
       - name: Install Dependencies
-        run: |
-          npm ci
+        run: npm ci
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
