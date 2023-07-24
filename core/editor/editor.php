@@ -636,6 +636,9 @@ class Editor {
 		return $presets;
 	}
 
+	/**
+	 * @return void
+	 */
 	private function check_element_for_presets( $element, $el_type, &$presets ) {
 		$element_presets = $element->get_panel_presets();
 
@@ -648,12 +651,18 @@ class Editor {
 		}
 	}
 
+	/**
+	 * @return void
+	 */
 	private function maybe_add_preset( $el_type, $preset, $key, &$presets ) {
 		if ( $this->is_valid_preset( $el_type, $preset ) ) {
 			$presets[ $key ] = $preset;
 		}
 	}
 
+	/**
+	 * @return boolean
+	 */
 	private function is_valid_preset( $el_type, $preset ) {
 		return isset( $preset['replacements']['custom']['originalWidget'] )
 			&& $el_type === $preset['replacements']['custom']['originalWidget'];
