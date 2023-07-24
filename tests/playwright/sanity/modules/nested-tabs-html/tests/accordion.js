@@ -1,6 +1,6 @@
 const { viewportSize } = require( '../../../../enums/viewport-sizes' );
 const { expect } = require( '@playwright/test' );
-const { selectDropdownContainer, clickMobileTab } = require( '../helper' );
+const { selectDropdownContainer, clickTab } = require( '../helper' );
 
 async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	// Act.
@@ -14,25 +14,25 @@ async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	await editor.publishAndViewPage();
 	await page.setViewportSize( viewportSize.mobile );
 
-	const tabTitle1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
-		tabTitle2 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
-		tabTitle3 = await page.locator( '.e-n-tabs-content > div:nth-child( 5 )' ),
-		activeTabTitleSelector = '.e-collapse.e-active';
+	const tabContainer1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
+		tabContainer2 = await page.locator( '.e-n-tabs-content > div:nth-child( 2 )' ),
+		tabContainer3 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
+		activeTabTitleSelector = '.e-n-tab-title[aria-selected=true]';
 
-	await expect( tabTitle1 ).toHaveClass( /e-active/ );
-	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '1' );
-	await expect( tabTitle2 ).toHaveClass( /e-active/ );
-	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '2' );
-	await expect( tabTitle3 ).toHaveClass( /e-active/ );
-	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '1' );
-	await expect( tabTitle2 ).toHaveClass( /e-active/ );
-	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '0' );
-	await expect( tabTitle1 ).toHaveClass( /e-active/ );
-	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, '1' );
+	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, '2' );
+	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, '1' );
+	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
+	await clickTab( page, '0' );
+	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }
 
 module.exports = {
