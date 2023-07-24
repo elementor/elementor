@@ -88,17 +88,18 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 }
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
+	const activeContainerSelector = `.e-n-tabs-content > .e-con >> nth=${ itemNumber }`;
 	const isActiveTab = await editor.getPreviewFrame().locator( `.e-n-tab-title >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` ).hover();
-	const elementEditButton = editor.getPreviewFrame().locator( `.e-con[role="tabpanel"] >> nth=${ itemNumber }` ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await editor.getPreviewFrame().locator( activeContainerSelector ).hover();
+	const elementEditButton = editor.getPreviewFrame().locator( activeContainerSelector ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` );
-	return await editor.getPreviewFrame().locator( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` ).getAttribute( 'data-id' );
+	await editor.getPreviewFrame().waitForSelector( activeContainerSelector );
+	return await editor.getPreviewFrame().locator( activeContainerSelector ).getAttribute( 'data-id' );
 }
 
 async function setBackgroundVideoUrl( page, editor, elementId, videoUrl ) {

@@ -6,7 +6,7 @@ const { viewportSize } = require( '../../../enums/viewport-sizes' );
 const { testTabIsVisibleInAccordionView } = require( './tests/accordion' );
 const { testIconCount } = require( './tests/icons' );
 const { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } = require( './tests/carousel' );
-const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible } = require( './helper' );
+const { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } = require( './helper' );
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -1253,10 +1253,3 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( await editor.getPreviewFrame().locator( `.elementor-element-${ widgetId }` ) ).toHaveClass( /elementor-widget-n-tabs-html/ );
 	} );
 } );
-
-async function selectDropdownContainer( editor, widgetId, itemNumber = 1 ) {
-	const widgetSelector = `.elementor-widget.elementor-element-${ widgetId }`;
-	await editor.getPreviewFrame().waitForSelector( `${ widgetSelector }.elementor-element-editable` );
-	await editor.getPreviewFrame().locator( `${ widgetSelector } .e-n-tab-title:nth-child(${ itemNumber })` ).click();
-	return await editor.getPreviewFrame().locator( `${ widgetSelector } .e-con.e-active` ).getAttribute( 'data-id' );
-}
