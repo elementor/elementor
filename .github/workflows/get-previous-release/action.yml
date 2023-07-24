@@ -15,16 +15,17 @@ runs:
   steps:
     - shell: bash
       run: |
+        # DELETE THIS LINE
         ADDITION_NAME=${{ inputs.ADDITION_NAME }}
         echo "ADDITION_NAME=${ADDITION_NAME}" >> $GITHUB_ENV
 
         # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
         # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
-        if [[ ( ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ) && "${ADDITION_NAME}" != "-prerelease" ]]; then
+        if [[ ( ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ) && "${{ inputs.ADDITION_NAME }}" != "-prerelease" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | awk '{print $2}')
         fi
 
-        if [[ ${{ inputs.CHANNEL }} == "cloud" && "${ADDITION_NAME}" == "-prerelease" ]]; then
+        if [[ ${{ inputs.CHANNEL }} == "cloud" && "${{ inputs.ADDITION_NAME }}" == "-prerelease" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep "\-prerelease" | awk '{print $2}')
         fi
 
@@ -47,9 +48,6 @@ runs:
             latest_tag="$tag"
           fi
         done
-
-
-        echo "LATEST_TAG CHECK $latest_tag"
 
         PREVIOUS_TAG_SHA=$(git rev-parse $latest_tag)
         echo "PREVIOUS_TAG_SHA=${PREVIOUS_TAG_SHA} \n tag=${latest_tag}"
