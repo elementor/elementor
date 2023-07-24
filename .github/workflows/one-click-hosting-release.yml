@@ -42,8 +42,10 @@ jobs:
         run: |
           if [ ${{ github.event.inputs.pre_release }} == true ]; then
             PRE_RELEASE="-prerelease"
+            echo "This is a prerelease execution"
           else
             PRE_RELEASE=""
+            echo "This is a release execution"
           fi
           echo "PRE_RELEASE=${PRE_RELEASE}" >> $GITHUB_ENV
       - name: Env Vars Configure
@@ -87,6 +89,7 @@ jobs:
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Post To Slack Created Cloud one click Release
+        if: ${{ github.event.inputs.pre_release }} == false
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -98,7 +101,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could Continues release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published Could release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {
