@@ -18,20 +18,20 @@ export async function testTabIsVisibleInAccordionView( page: Page, editor: Edito
 	const tabContainer1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
 		tabContainer2 = await page.locator( '.e-n-tabs-content > div:nth-child( 2 )' ),
 		tabContainer3 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
-		activetabContainerSelector = '.e-n-tab-title[aria-selected="true"]';
+		activeTabTitleSelector = '.e-n-tab-title[aria-selected="true"]';
 
 	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
-	await expect.soft( await editor.isItemInViewport( activetabContainerSelector ) ).toBeTruthy();
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickTab( page, '1' );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
-	await expect.soft( await editor.isItemInViewport( activetabContainerSelector ) ).toBeTruthy();
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickTab( page, '2' );
 	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
-	await expect.soft( await editor.isItemInViewport( activetabContainerSelector ) ).toBeTruthy();
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickTab( page, '1' );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
-	await expect.soft( await editor.isItemInViewport( activetabContainerSelector ) ).toBeTruthy();
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 	await clickTab( page, '0' );
 	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
-	await expect.soft( await editor.isItemInViewport( activetabContainerSelector ) ).toBeTruthy();
+	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }
