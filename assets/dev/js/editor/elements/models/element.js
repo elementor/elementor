@@ -149,7 +149,12 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		let title = this.getSetting( '_title' );
+		let title = this.getSetting( '_title' ),
+			custom = this.get( 'custom' );
+
+		if ( ! title && ( custom?.isPreset ?? false ) ) {
+			return this.get( 'title' ) || title;
+		}
 
 		if ( ! title ) {
 			title = this.getDefaultTitle();
