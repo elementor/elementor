@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.9
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 7.0
 Stable tag: 3.12.1
 License: GPLv3
