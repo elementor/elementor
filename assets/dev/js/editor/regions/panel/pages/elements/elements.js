@@ -87,17 +87,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				return;
 			}
 
-			elementsCollection.add( {
-				title: widget.title,
-				elType: widget.elType,
-				categories: widget.categories,
-				keywords: widget.keywords,
-				icon: widget.icon,
-				widgetType: widget.widget_type,
-				custom: widget.custom,
-				editable: widget.editable,
-				hideOnSearch: widget.hide_on_search,
-			} );
+			elementsCollection.add( this.getCollectionItem( widget ) );
 		} );
 
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
@@ -110,29 +100,35 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-			const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
-			const replacements = widget.replacements;
-			const presetWidget = this.deepMerge( originalWidget, replacements );
-
-			if ( this.shouldNotAddWidget( presetWidget ) ) {
-				return;
-			}
-
-			elementsCollection.add( {
-				title: presetWidget.title,
-				elType: presetWidget.elType,
-				categories: presetWidget.categories,
-				keywords: presetWidget.keywords,
-				icon: presetWidget.icon,
-				widgetType: presetWidget.widget_type,
-				custom: presetWidget.custom,
-				editable: presetWidget.editable,
-				hideOnSearch: presetWidget.hide_on_search,
+		if ( elementorCommon.config.experimentalFeatures.grid_widget ) {
+			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
+					replacements = widget.replacements,
+					presetWidget = this.deepMerge( originalWidget, replacements );
+	
+				if ( this.shouldNotAddWidget( presetWidget ) ) {
+					return;
+				}
+	
+				elementsCollection.add( this.getCollectionItem( presetWidget ) );
 			} );
-		} );
+		}
 
 		this.elementsCollection = elementsCollection;
+	},
+
+	getCollectionItem( item ) {
+		return {
+			title: item.title,
+			elType: item.elType,
+			categories: item.categories,
+			keywords: item.keywords,
+			icon: item.icon,
+			widgetType: item.widget_type,
+			custom: item.custom,
+			editable: item.editable,
+			hideOnSearch: item.hide_on_search,
+		};
 	},
 
 	initCategoriesCollection() {

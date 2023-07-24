@@ -93,11 +93,14 @@ class Editor_Common_Scripts_Settings {
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
 			],
-			'elementsPresets' => Plugin::$instance->editor->get_elements_presets(),
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
 			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'grid_widget' ) ) {
+			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
 
 		static::bc_move_document_filters();
