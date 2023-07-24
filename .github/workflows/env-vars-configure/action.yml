@@ -61,3 +61,4 @@ runs:
         uses : ./.github/workflows/get-previous-release
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
+          ADDITION_NAME: ${{ inputs.ADDITION_NAME }}
