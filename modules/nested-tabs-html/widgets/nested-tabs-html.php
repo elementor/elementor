@@ -1101,7 +1101,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
 		] );
 
-		$render_attributes = $active_class. $this->get_render_attribute_string( $setting_key ) . $attribute_selector;
+		$render_attributes = $active_class . $this->get_render_attribute_string( $setting_key ) . $attribute_selector;
 
 		return str_replace( $attribute_selector, $render_attributes, $container_html );
 	}
