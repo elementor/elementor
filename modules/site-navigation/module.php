@@ -66,11 +66,11 @@ class Module extends Module_Base {
 	 * @return void
 	 * @throws \Exception
 	 */
-	private static function register_pages_panel_experiment() {
+	private function register_pages_panel_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::PAGES_PANEL_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 			'dependencies' => [

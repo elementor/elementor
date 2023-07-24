@@ -36,12 +36,11 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			Experiments_Manager::STATE_INACTIVE
 		);
 
+		// Act.
 		$module = new SiteNavigation();
 
-		// Act.
-		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-
 		// Assert.
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 		$this->assertArrayNotHasKey( '@elementor/editor-site-navigation', $env );
 	}
 
@@ -52,12 +51,11 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			Experiments_Manager::STATE_ACTIVE
 		);
 
+		// Act.
 		$module = new SiteNavigation();
 
-		// Act.
-		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-
 		// Assert.
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 		$this->assertTrue( $env['@elementor/editor-site-navigation']['is_pages_panel_active'] );
 	}
 }
