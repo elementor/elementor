@@ -30,7 +30,7 @@ runs:
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
             # If the channel is prerelease, then get the latest prerelease version
             if [[ "${{ inputs.ADDITION_NAME }}" == "-prerelease" ]]; then
-              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-prerelease" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-prerelease" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' | awk -F'${{ inputs.ADDITION_NAME }}' '{print $1}' || echo 0)
             else
               CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
             fi
