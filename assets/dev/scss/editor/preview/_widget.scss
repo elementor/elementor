@@ -8,7 +8,10 @@
 	top: -1px;
 	@include end(-1px);
 	flex-direction: row-reverse;
-	border-radius: getValueByDirection(0 0 0 3px, 0 0 3px 0);
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+	border-end-start-radius: 3px;
+	border-end-end-radius: 0;
 	overflow: hidden;
 
 	.elementor-editor-element-setting {

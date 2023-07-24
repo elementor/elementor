@@ -10,7 +10,10 @@
 	left: 50%;
 	transform: translateX( -50% ) translateY( -100% );
 	background-color: var(--e-p-border-section);
-	border-radius: 5px 5px 0 0;
+	border-start-start-radius: 5px;
+	border-start-end-radius: 5px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 0;
 
 	i.eicon-handle {
 		font-size: 16px;
@@ -23,7 +26,10 @@
 		}
 
 		&:first-child {
-			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
+			border-start-start-radius: 5px;
+			border-start-end-radius: 0;
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
 
 			&:before {
 				content: '';
@@ -45,7 +51,10 @@
 		}
 
 		&:last-child {
-			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
+			border-start-start-radius: 0;
+			border-start-end-radius: 5px;
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
 
 			&:after {
 				content: '';
@@ -74,11 +83,17 @@
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);
-		border-radius: 0 0 5px 5px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-start-radius: 5px;
+		border-end-end-radius: 5px;
 
 		.elementor-editor-element-setting {
 			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+				border-start-start-radius: 0;
+				border-start-end-radius: 0;
+				border-end-start-radius: 5px;
+				border-end-end-radius: 0;	
 
 				&:before {
 					top: 0;
@@ -90,7 +105,10 @@
 			}
 
 			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+				border-start-start-radius: 0;
+				border-start-end-radius: 0;
+				border-end-start-radius: 0;
+				border-end-end-radius: 5px;
 
 				&:after {
 					top: 0;
