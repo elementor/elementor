@@ -21,17 +21,20 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await deletePage( pageId );
 	} );
 
-	test.skip( 'General test', async ( { page }, testInfo ) => {
+	test.only( 'General test', async ( { page }, testInfo ) => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		const widgetId = await editor.addWidget( 'nested-tabs-html', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		const widgetId = await editor.addWidget( 'nested-tabs', container );
+
+		await page.pause();
+
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		// Tests.
 		await testIconCount( page, editor );
@@ -43,12 +46,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs-html', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		// Act.
 		// Set tabs direction to 'stretch'.
@@ -67,12 +70,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs-html', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		// Act.
 		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
@@ -162,7 +165,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -198,7 +201,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -263,7 +266,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			parentWidgetId = await editor.addWidget( 'nested-tabs-html', container ),
 			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
@@ -432,7 +435,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -519,7 +522,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await setup( wpAdmin );
 
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
@@ -742,7 +745,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
@@ -763,7 +766,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Act.
@@ -804,11 +807,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			tabsWidgetId = await editor.addWidget( 'nested-tabs-html', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		// Act.
 		// Click on last tab.
@@ -842,14 +845,14 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( 'heading', container );
 		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.addWidget( 'heading', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		const tabButtonOne = await editor.getPreviewFrame().locator( '.e-n-tabs .e-normal >> nth=0' ),
 			contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
@@ -916,11 +919,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs-html' );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-con.e-active' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
 
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
@@ -935,7 +938,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost();
+		const editor = await wpAdmin.openNewPage();
 
 		// Define Nested Tabs widget instances, and custom settings to apply to one of the dropdown Containers.
 		const defaultWidgetInstance = {
@@ -1052,7 +1055,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 
@@ -1068,7 +1071,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 
@@ -1094,7 +1097,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( 'nested-tabs-html', container );
@@ -1139,7 +1142,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 
@@ -1177,7 +1180,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 		// Add widget.
@@ -1199,7 +1202,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 		// Add widget.
@@ -1221,7 +1224,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.

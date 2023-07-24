@@ -410,7 +410,8 @@ export default class NestedTabsHtml extends Base {
 
 	setContainerAttributes( args ) {
 		const settings = this.getSettings(),
-			$widget = this.$element;
+			$widget = this.$element,
+			activeClass = this.getActiveClass();
 
 		let index = 1;
 
@@ -427,6 +428,10 @@ export default class NestedTabsHtml extends Base {
 				'data-tab-index': index,
 				style: '--n-tabs-title-order: ' + index + ';',
 			} );
+
+			if ( 1 === index ) {
+				$current.addClass( activeClass );
+			}
 
 			++index;
 		} );

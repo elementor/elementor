@@ -22,12 +22,12 @@
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-display: flex;
-	--n-tabs-title-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
+	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
 	--n-tabs-title-color-active: #{$white};
 	--n-tabs-title-background-color: #{$editor-background-light};
-	--n-tabs-title-background-color-hover: var(--e-global-color-accent, var(--n-tabs-color-accent-fallback));
-	--n-tabs-title-background-color-active: var(--e-global-color-accent, var(--n-tabs-color-accent-fallback));
+	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
 	--n-tabs-title-width: initial;
 	--n-tabs-title-height: initial;
 	--n-tabs-title-font-size: 1rem;
@@ -41,35 +41,35 @@
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-order: initial;
-	--n-tabs-title-padding-top: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-right: var(--n-tabs-default-padding-inline);
-	--n-tabs-title-padding-bottom: var(--n-tabs-default-padding-block);
-	--n-tabs-title-padding-left: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
-	--n-tabs-icon-color: var(--e-global-color-secondary, var(--n-tabs-color-secondary-fallback));
-	--n-tabs-icon-color-hover: var(--n-tabs-title-color-hover);
+	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
 	--n-tabs-icon-color-active: #{$white};
 	--n-tabs-icon-gap: 5px;
 	width: 100%;
 	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
 
 	.e-n-tabs {
-		display: var(--n-tabs-display);
-		flex-direction: var(--n-tabs-direction);
-		gap: var(--n-tabs-gap);
+		display: var( --n-tabs-display );
+		flex-direction: var( --n-tabs-direction );
+		gap: var( --n-tabs-gap );
 		text-align: $start;
 		min-width: 0;
 
 		&-heading {
-			display: var(--n-tabs-heading-display);
-			flex-basis: var(--n-tabs-heading-width);
-			flex-direction: var(--n-tabs-heading-direction);
+			display: var( --n-tabs-heading-display );
+			flex-basis: var( --n-tabs-heading-width );
+			flex-direction: var( --n-tabs-heading-direction );
 			flex-shrink: 0;
-			justify-content: var(--n-tabs-heading-justify-content);
-			gap: var(--n-tabs-title-gap);
-			overflow-x: var(--n-tabs-heading-overflow-x);
-			flex-wrap: var(--n-tabs-heading-wrap);
+			justify-content: var( --n-tabs-heading-justify-content );
+			gap: var( --n-tabs-title-gap );
+			overflow-x: var( --n-tabs-heading-overflow-x );
+			flex-wrap: var( --n-tabs-heading-wrap );
 			-ms-overflow-style: none; /* IE and Edge */
 			scrollbar-width: none; /* Firefox */
 
@@ -96,12 +96,15 @@
 		}
 
 		&-content {
-			display: var(--n-tabs-content-display);
+			display: var( --n-tabs-content-display );
 			flex-grow: 1;
 			min-width: 0;
 
-			> .e-con:not(.e-active) {
-				display: none;
+			> .e-con {
+
+				&:not( .e-active ) {
+					display: none;
+				}
 			}
 		}
 	}
@@ -111,34 +114,34 @@
 		&-title {
 			all: unset;
 			display: flex;
-			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
-			flex-direction: var(--n-tabs-title-direction);
-			justify-content: var(--n-tabs-title-justify-content-toggle, var(--n-tabs-title-justify-content));
-			gap: var(--n-tabs-icon-gap);
-			border-width: var(--n-tabs-border-width);
+			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
+			flex-direction: var( --n-tabs-title-direction );
+			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
+			gap: var( --n-tabs-icon-gap );
+			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
 			outline: none;
-			flex-grow: var(--n-tabs-title-flex-grow);
-			flex-basis: var(--n-tabs-title-flex-basis);
-			flex-shrink: var(--n-tabs-title-flex-shrink);
-			padding-top: var(--n-tabs-title-padding-top);
-			padding-right: var(--n-tabs-title-padding-right);
-			padding-bottom: var(--n-tabs-title-padding-bottom);
-			padding-left: var(--n-tabs-title-padding-left);
-			border-radius: var(--n-tabs-title-border-radius);
-			height: var(--n-tabs-title-height);
-			width: var(--n-tabs-title-width);
-			transition: background var(--n-tabs-title-transition),
-			color var(--n-tabs-title-transition),
-			border var(--n-tabs-title-transition),
-			box-shadow var(--n-tabs-title-transition),
-			text-shadow var(--n-tabs-title-transition),
-			stroke var(--n-tabs-title-transition),
-			stroke-width var(--n-tabs-title-transition),
-			-webkit-text-stroke-width var(--n-tabs-title-transition),
-			-webkit-text-stroke-color var(--n-tabs-title-transition),
-			transform var(--n-tabs-title-transition);
+			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-basis: var( --n-tabs-title-flex-basis );
+			flex-shrink: var( --n-tabs-title-flex-shrink );
+			padding-top: var( --n-tabs-title-padding-top );
+			padding-right: var( --n-tabs-title-padding-right );
+			padding-bottom: var( --n-tabs-title-padding-bottom );
+			padding-left: var( --n-tabs-title-padding-left );
+			border-radius: var( --n-tabs-title-border-radius );
+			height: var( --n-tabs-title-height );
+			width: var( --n-tabs-title-width );
+			transition: background var( --n-tabs-title-transition),
+			color var( --n-tabs-title-transition),
+			border var( --n-tabs-title-transition),
+			box-shadow var( --n-tabs-title-transition),
+			text-shadow var( --n-tabs-title-transition),
+			stroke var( --n-tabs-title-transition),
+			stroke-width var( --n-tabs-title-transition),
+			-webkit-text-stroke-width var( --n-tabs-title-transition),
+			-webkit-text-stroke-color var( --n-tabs-title-transition),
+			transform var( --n-tabs-title-transition );
 
 			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
 			-webkit-tap-highlight-color: transparent;
@@ -153,30 +156,30 @@
 
 			& span svg,
 			& span i {
-				transition: color var(--n-tabs-title-transition),
-				fill var(--n-tabs-title-transition);
+				transition: color var( --n-tabs-title-transition),
+				fill var( --n-tabs-title-transition );
 			}
 
 			&-text {
 				display: flex;
 				align-items: center;
-				font-size: var(--n-tabs-title-font-size);
+				font-size: var( --n-tabs-title-font-size );
 			}
 
 			.e-n-tab-icon {
 				display: flex;
 				align-items: center;
 				flex-direction: column;
-				order: var(--n-tabs-icon-order);
+				order: var( --n-tabs-icon-order );
 				overflow: hidden;
 
 				i {
-					font-size: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
+					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				svg {
-					width: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
-					height: var(--n-tabs-icon-size, var(--n-tabs-title-font-size));
+					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
 				}
 
 				&:empty {
@@ -185,21 +188,21 @@
 			}
 
 			&[aria-selected="false"] {
-				background-color: var(--n-tabs-title-background-color);
+				background-color: var( --n-tabs-title-background-color );
 
 				&,
 				& a {
-					color: var(--n-tabs-title-color);
+					color: var( --n-tabs-title-color );
 				}
 
 				.e-n-tab-icon {
 
 					i {
-						color: var(--n-tabs-icon-color);
+						color: var( --n-tabs-icon-color );
 					}
 
 					svg {
-						fill: var(--n-tabs-icon-color);
+						fill: var( --n-tabs-icon-color );
 					}
 
 					i,
@@ -218,17 +221,17 @@
 
 				&,
 				& a {
-					color: var(--n-tabs-title-color-active);
+					color: var( --n-tabs-title-color-active );
 				}
 
 				.e-n-tab-icon {
 
 					i {
-						color: var(--n-tabs-icon-color-active);
+						color: var( --n-tabs-icon-color-active );
 					}
 
 					svg {
-						fill: var(--n-tabs-icon-color-active);
+						fill: var( --n-tabs-icon-color-active );
 					}
 
 					i,
@@ -261,17 +264,17 @@
 
 			&,
 			& a {
-				color: var(--n-tabs-title-color-hover);
+				color: var( --n-tabs-title-color-hover );
 			}
 
 			.e-n-tab-icon {
 
 				i {
-					color: var(--n-tabs-icon-color-hover);
+					color: var( --n-tabs-icon-color-hover );
 				}
 
 				svg {
-					fill: var(--n-tabs-icon-color-hover);
+					fill: var( --n-tabs-icon-color-hover );
 				}
 			}
 		}
@@ -279,7 +282,7 @@
 }
 
 .elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs[data-layout="tabs"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
-	background-color: var(--n-tabs-title-background-color-hover);
+	background-color: var( --n-tabs-title-background-color-hover );
 	background-image: initial;
 }
 
@@ -287,7 +290,7 @@
 .elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title {
 
 	&[aria-selected="true"] {
-		background-color: var(--n-tabs-title-background-color-active);
+		background-color: var( --n-tabs-title-background-color-active );
 		background-image: initial;
 	}
 }
@@ -303,23 +306,23 @@
 			gap: 0;
 
 			&-content > .e-con {
-				order: var(--n-tabs-title-order);
+				order: var( --n-tabs-title-order );
 
-				&:not(.e-active) {
+				&:not( .e-active ) {
 					display: none;
 				}
 			}
 		}
 
 		.e-n-tab-title {
-			order: var(--n-tabs-title-order);
+			order: var( --n-tabs-title-order );
 
-			&:not(:first-child) {
-				margin-top: var(--n-tabs-title-gap);
+			&:not( :first-child ) {
+				margin-top: var( --n-tabs-title-gap );
 			}
 
 			&[aria-selected="true"] {
-				margin-bottom: var(--n-tabs-gap);
+				margin-bottom: var( --n-tabs-gap );
 			}
 		}
 	}
