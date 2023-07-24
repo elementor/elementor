@@ -33,7 +33,6 @@ export default class ReverseColumns {
 	async toggle( device: string ) {
 		const contentTab = new Content( this.page, this.testInfo );
 		await contentTab.toggleControls( [ `[data-setting="reverse_order_${ device }"]` ] );
-		// Await this.page.click( `.elementor-control.elementor-control-reverse_order_${ device } .elementor-control-content .elementor-control-field .elementor-control-input-wrapper .elementor-switch .elementor-switch-label` );
 	}
 
 	async init( isExperimentBreakpoints: boolean ) {

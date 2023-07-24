@@ -10,8 +10,8 @@ module.exports = async ( config: FullConfig ) => {
 	await page.goto( `${ baseURL }/wp-admin` );
 
 	await page.waitForSelector( 'text=Log In' );
-	await page.fill( 'input[name="log"]', process.env.UNAME || 'admin' );
-	await page.fill( 'input[name="pwd"]', process.env.UNAME || 'password' );
+	await page.fill( 'input[name="log"]', process.env.USERNAME || 'admin' );
+	await page.fill( 'input[name="pwd"]', process.env.PASSWORD || 'password' );
 	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 

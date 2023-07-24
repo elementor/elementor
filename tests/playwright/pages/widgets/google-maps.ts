@@ -2,10 +2,10 @@ import EditorSelectors from '../../selectors/editor-selectors';
 import Content from '../elementor-panel-tabs/content';
 
 export default class GoogleMaps extends Content {
-	async setGoogleMapsParams( args : { location: string, zoom: number, height: number } ) {
+	async setGoogleMapsParams( args : { location: string, zoom: string, height: string } ) {
 		await this.page.locator( EditorSelectors.googleMaps.location ).fill( args.location );
-		await this.page.getByLabel( 'Zoom' ).fill( String( args.zoom ) );
-		await this.page.getByRole( 'spinbutton', { name: 'Height' } ).fill( String( args.height ) );
+		await this.page.getByLabel( 'Zoom' ).fill( args.zoom );
+		await this.page.getByRole( 'spinbutton', { name: 'Height' } ).fill( args.height );
 		await this.editorPage.waitForIframeToLoaded( 'google_maps' );
 	}
 

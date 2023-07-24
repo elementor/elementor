@@ -18,7 +18,7 @@ export default class ImageCarousel extends Content {
 		await this.page.selectOption( EditorSelectors.imageCarousel.autoplaySelect, option );
 	}
 
-	async addImageGallery( args?: {images?: string[], metaData?: boolean | undefined} ) {
+	async addImageGallery( args?: {images?: string[], metaData?: boolean} ) {
 		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
 
 		await this.editorPage.activatePanelTab( 'content' );
