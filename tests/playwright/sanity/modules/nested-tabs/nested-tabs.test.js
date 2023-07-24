@@ -21,7 +21,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await deletePage( pageId );
 	} );
 
-	test.only( 'General test', async ( { page }, testInfo ) => {
+	test( 'General test', async ( { page }, testInfo ) => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );

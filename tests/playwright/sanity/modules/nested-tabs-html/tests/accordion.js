@@ -17,7 +17,7 @@ async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	const tabContainer1 = await page.locator( '.e-n-tabs-content > div:nth-child( 1 )' ),
 		tabContainer2 = await page.locator( '.e-n-tabs-content > div:nth-child( 2 )' ),
 		tabContainer3 = await page.locator( '.e-n-tabs-content > div:nth-child( 3 )' ),
-		activeTabTitleSelector = '.e-n-tab-title[aria-selected=true]';
+		activeTabTitleSelector = '.e-n-tab-title[aria-selected="true"]';
 
 	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();

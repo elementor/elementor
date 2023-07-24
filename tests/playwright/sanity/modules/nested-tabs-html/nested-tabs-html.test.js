@@ -32,7 +32,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Add widgets.
 		const widgetId = await editor.addWidget( 'nested-tabs', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Tests.
 		await testIconCount( page, editor );
@@ -49,7 +49,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
 		// Set tabs direction to 'stretch'.
@@ -73,7 +73,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
 		await page.locator( '.elementor-control-section_tabs_responsive' ).click();
@@ -806,7 +806,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
 		// Click on last tab.
@@ -847,7 +847,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.addWidget( 'heading', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		const tabButtonOne = await editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tab-title >> nth=0' ),
 			contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
@@ -918,7 +918,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs' );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected=true]' );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();
