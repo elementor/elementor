@@ -158,15 +158,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		switch ( offsetSide ) {
 			case 'right':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
-				this.addRightPaddingToShowNextSlide( offset );
+				this.addClassToSwiperContainer( 'offset-right' );
 				break;
 			case 'left':
-				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addClassToSwiperContainer( 'offset-left' );
 				break;
 			case 'both':
 				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
-				this.addLeftPaddingToShowPreviousSlide( offset );
-				this.addRightPaddingToShowNextSlide( offset );
+				this.addClassToSwiperContainer( 'offset-both' );
 				break;
 		}
 	}
@@ -175,12 +174,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		swiperOptions.slidesPerView = slidesToShow + 0.001;
 	}
 
-	addLeftPaddingToShowPreviousSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
-	}
-
-	addRightPaddingToShowNextSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
+	addClassToSwiperContainer( className ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].classList.add( className );
 	}
 
 	async onInit( ...args ) {
