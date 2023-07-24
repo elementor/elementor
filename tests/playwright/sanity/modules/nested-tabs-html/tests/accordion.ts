@@ -4,7 +4,6 @@ import { selectDropdownContainer, clickTab } from '../helper';
 import EditorPage from '../../../../pages/editor-page';
 
 export async function testTabIsVisibleInAccordionView( page: Page, editor: EditorPage ) {
-	await page.pause();
 	// Act.
 	await selectDropdownContainer( editor, 0 );
 	await page.locator( '.elementor-control-min_height .elementor-control-input-wrapper input' ).fill( '1000' );
