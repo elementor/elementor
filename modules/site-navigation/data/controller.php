@@ -19,7 +19,6 @@ class Controller extends Base_Controller {
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
 	}
-
 	public function create_items_permissions_check( $request ): bool {
 		// Permissions check is located in the endpoint
 		return true;
