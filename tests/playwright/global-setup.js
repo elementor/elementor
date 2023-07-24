@@ -6,6 +6,7 @@ module.exports = async ( config ) => {
 
 	const browser = await chromium.launch( { headless: config.headless } );
 	const page = await browser.newPage();
+	await page.route( '/analytics/fonts/images/woocommerce/elementor/', ( route ) => route.abort() );
 
 	await page.goto( `${ config.baseURL }/wp-admin` );
 
