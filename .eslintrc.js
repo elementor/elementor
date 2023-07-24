@@ -4,14 +4,16 @@ module.exports = {
 		'plugin:no-jquery/deprecated',
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
 		'plugin:@elementor/editor/recommended',
+		'plugin:import/typescript',
 	],
 	plugins: [
 		'babel',
 		'react',
 		'@elementor/editor',
 		'no-jquery',
+		'@typescript-eslint',
 	],
-	parser: '@babel/eslint-parser',
+	parser: '@typescript-eslint/parser',
 	globals: {
 		wp: true,
 		window: true,
@@ -107,8 +109,11 @@ module.exports = {
 		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
 	},
 	settings: {
-		jsdoc: {
-			mode: 'typescript',
+		'import/resolver': {
+			node: {
+				extensions: [ '.js', '.jsx', '.ts', '.tsx', '.json' ],
+			},
 		},
+		jsdoc: { mode: 'typescript' },
 	},
 };
