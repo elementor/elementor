@@ -58,6 +58,7 @@ class Test_Settings extends Elementor_Test_Base {
 			'elementor_custom_fonts' => 'Custom Fonts',
 			'elementor_custom_icons' => 'Custom Icons',
 			'elementor_custom_custom_code' => 'Custom Code',
+			'elementor-apps' => 'Apps',
 			'go_elementor_pro' => 'Upgrade',
 		];
 

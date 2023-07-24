@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
+use Elementor\Modules\NestedTabsHtml\Widgets\NestedTabsHtml;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,6 +48,7 @@ class Widgets_Manager {
 	private $_promoted_widgets = [
 		'nested-elements' => NestedTabs::class,
 		'nested-accordion' => Nested_Accordion::class,
+		'nested-elements-html' => NestedTabsHtml::class,
 	];
 
 	/**

@@ -11,7 +11,10 @@
 		&-toggle {
 			border: var(--e-a-border-bold);
 			border-inline-end: 0;
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			border-start-start-radius: 3px;
+			border-start-end-radius: 0;
+			border-end-start-radius: 3px;
+			border-end-end-radius: 0;
 			display: flex;
 			align-items: center;
 			justify-content: center;
