@@ -331,7 +331,6 @@ export default class extends Marionette.CompositeView {
 
 	onModelSettingsChange( settingsModel ) {
 		if ( undefined !== settingsModel.changed._title ) {
-			console.log( this );
 			this.ui.title.text( this.model.getTitle() );
 			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
 		}
