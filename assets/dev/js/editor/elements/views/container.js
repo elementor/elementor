@@ -396,7 +396,7 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
-			this.updatePanelTitles();
+			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
@@ -439,21 +439,28 @@ const ContainerView = BaseElementView.extend( {
 		}
 
 		if ( settings.changed.container_type ) {
-			this.updatePanelTitles();
+			this.updatePanelTitlesAndIcons();
 		}
 	},
 
-	updatePanelTitles() {
+	updatePanelTitlesAndIcons() {
 		const title = this.getPanelTitle();
 
-		this.model.get( 'settings' ).set( '_title', title ); // Navigator.
-		jQuery( '#elementor-panel-header-title' ).html( __( 'Edit', 'elementor' ) + ' ' + title ); // Panel.
+		this.model.set( 'icon', this.getPanelIcon() );
+		this.model.get( 'settings' ).set( '_title', title );
+		jQuery( '#elementor-panel-header-title' ).html( __( 'Edit', 'elementor' ) + ' ' + title );
 	},
 
 	getPanelTitle() {
 		return this.isFlexContainer()
 			? __( 'Container', 'elementor' )
 			: __( 'Grid', 'elementor' );
+	},
+
+	getPanelIcon() {
+		return this.isFlexContainer()
+			? 'eicon-container'
+			: 'eicon-container-grid';
 	},
 
 	onDragStart() {
