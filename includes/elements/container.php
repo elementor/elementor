@@ -99,7 +99,7 @@ class Container extends Element_Base {
 					'icon' => 'eicon-container-grid',
 					'custom' => [
 						'isPreset' => true,
-						'originalWidget' => 'container',
+						'originalWidget' => $this->get_name(),
 						'presetWidget' => 'container_grid',
 						'preset_settings' => [
 							'container_type' => 'grid',

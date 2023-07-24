@@ -620,18 +620,38 @@ class Editor {
 		] );
 	}
 
+	/**
+	 * Get elements presets.
+	 *
+	 * @return array
+	 */
 	public function get_elements_presets() {
 		$element_types = Plugin::$instance->elements_manager->get_element_types();
 		$presets = [];
 
-		foreach ( $element_types as $element ) {
-			$element_preset = $element->get_panel_presets();
-
-			if ( ! empty( $element_preset ) ) {
-				$presets += $element_preset;
-			}			
+		foreach ( $element_types as $el_type => $element ) {
+			$this->check_element_for_presets( $element, $el_type, $presets );
 		}
 
 		return $presets;
+	}
+
+	private function check_element_for_presets( $element, $el_type, &$presets ) {
+		$element_presets = $element->get_panel_presets();
+
+		if ( empty( $element_presets ) ) {
+			return;
+		}
+
+		foreach ( $element_presets as $key => $preset ) {
+			if ( $this->is_valid_preset( $el_type, $preset ) ) {
+				$presets[ $key ] = $preset;
+			}
+		}
+	}
+
+	private function is_valid_preset( $el_type, $preset ) {
+		return isset( $preset['replacements']['custom']['originalWidget'] )
+			&& $el_type === $preset['replacements']['custom']['originalWidget'];
 	}
 }

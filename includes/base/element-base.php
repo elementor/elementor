@@ -322,37 +322,37 @@ abstract class Element_Base extends Controls_Stack {
 
 	/**
 	 * Get panel presets.
-	 *
-	 * Used for displaying the widget in the panel multiple times, but with different defaults values,
-	 * icon, title etc.
-	 *
-	 * Sample format:
-	 *
-	 * [
-	 *		'container_grid' => [
-	 *			'replacements' => [
-	 *				'name' => 'container_grid', // Replace the original widget's name property.
-	 *				'controls' => [ // Replace some items in the original widget's controls object.
-	 *					'container_type' => [ 'default' => 'grid' ],
-	 *				],
-	 *				'title' => 'Grid', // Replace the original widget's title property.
-	 *				'icon' => 'eicon-container-grid', // Replace the original widget's icon property.
-	 *				'custom' => [ // Custom properties used to handle when widget is added to page.
-	 *					'isPreset' => true,
-	 *					'originalWidget' => 'container', // The original widget we are duplicating.
-	 *					'presetWidget' => 'container_grid',
-	 *					'preset_settings' => [ // Will pass this settings to the model.
-	 *						'container_type' => 'grid',
-	 *					],
-	 *				],
-	 *			],
-	 *		],
-	 *	];
-	 *
-	 * @since 3.16.0
-	 * @access protected
-	 *
-	 * @return array
+	*
+	* Used for displaying the widget in the panel multiple times, but with different defaults values,
+	* icon, title etc.
+	*
+	* Sample format:
+	*
+	*	[
+	*		'container_grid' => [
+	*			'replacements' => [
+	*				'name' => 'container_grid', // Replace the original widget's name property.
+	*				'controls' => [ // Replace some items in the original widget's controls object.
+	*					'container_type' => [ 'default' => 'grid' ],
+	*				],
+	*				'title' => 'Grid', // Replace the original widget's title property.
+	*				'icon' => 'eicon-container-grid', // Replace the original widget's icon property.
+	*				'custom' => [ // Custom properties used to handle when widget is added to page.
+	*					'isPreset' => true,
+	*					'originalWidget' => 'container', // The original widget we are duplicating.
+	*					'presetWidget' => 'container_grid',
+	*					'preset_settings' => [ // Will pass this settings to the model.
+	*						'container_type' => 'grid',
+	*					],
+	*				],
+	*			],
+	*		],
+	*	];
+	*
+	* @since 3.16.0
+	* @access protected
+	*
+	* @return array
 	 */
 	public function get_panel_presets() {
 		return [];
