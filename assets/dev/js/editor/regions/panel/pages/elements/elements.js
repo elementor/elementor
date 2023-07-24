@@ -105,11 +105,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
 					replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
-	
+
 				if ( this.shouldNotAddWidget( presetWidget ) ) {
 					return;
 				}
-	
+
 				elementsCollection.add( this.getCollectionItem( presetWidget ) );
 			} );
 		}
