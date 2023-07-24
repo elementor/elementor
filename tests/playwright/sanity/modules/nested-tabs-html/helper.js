@@ -33,7 +33,7 @@ async function setIconsToTabs( page, TabIcons ) {
 
 async function editTab( editor, tabIndex ) {
 	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }[aria-selected="true"]` );
 	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
 	await editor.page.waitForTimeout( 100 );
@@ -88,14 +88,14 @@ async function setTabBorderColor( page, editor, state, stateExtended, color, bor
 }
 
 async function selectDropdownContainer( editor, widgetId, itemNumber = 0 ) {
-	const isActiveTab = await editor.getPreviewFrame().locator( `.e-normal >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
+	const isActiveTab = await editor.getPreviewFrame().locator( `.e-n-tab-title >> nth=${ itemNumber }` ).evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
 	await editor.getPreviewFrame().locator( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` ).hover();
-	const elementEditButton = editor.getPreviewFrame().locator( `.e-con >> nth=${ itemNumber } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit` );
+	const elementEditButton = editor.getPreviewFrame().locator( `.e-con[role="tabpanel"] >> nth=${ itemNumber }` ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
 	await editor.getPreviewFrame().waitForSelector( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` );
 	return await editor.getPreviewFrame().locator( `.e-n-tabs-content > .e-con >> nth=${ itemNumber }` ).getAttribute( 'data-id' );
@@ -106,6 +106,28 @@ async function setBackgroundVideoUrl( page, editor, elementId, videoUrl ) {
 	await editor.activatePanelTab( 'style' );
 	await page.locator( '.eicon-video-camera' ).first().click();
 	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+}
+
+async function isTabTitleVisible( page, context, positionIndex = 0 ) {
+	// Await page.pause();
+
+	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( element ) => element.clientWidth ),
+		itemBox = await context.locator( `.e-n-tab-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
+			const elementBox = element.getBoundingClientRect();
+
+			return {
+				left: elementBox.left,
+			};
+		} );
+
+	const isItemPositionToTheRightOfTitleWrapper = titleWrapperWidth < itemBox.left,
+		isItemPositionToTheLeftOfTitleWrapper = 0 > ( itemBox.left );
+
+	if ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper ) {
+		return false;
+	}
+
+	return true;
 }
 
 module.exports = {
@@ -120,4 +142,5 @@ module.exports = {
 	setTabItemColor,
 	selectDropdownContainer,
 	setBackgroundVideoUrl,
+	isTabTitleVisible,
 };

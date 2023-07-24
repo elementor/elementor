@@ -1090,7 +1090,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$container_html = ob_get_clean();
 
 		$setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $data['index'] );
-		$attribute_selector = ' data-id=';
+		$attribute_selector = '" data-id=';
+		$active_class = 0 === $data['index'] ? ' e-active"' : '"';
 
 		$this->add_render_attribute( $setting_key, [
 			'id' => $data['container_id'],
@@ -1100,7 +1101,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
 		] );
 
-		$render_attributes = $this->get_render_attribute_string( $setting_key ) . $attribute_selector;
+		$render_attributes = $active_class. $this->get_render_attribute_string( $setting_key ) . $attribute_selector;
 
 		return str_replace( $attribute_selector, $render_attributes, $container_html );
 	}

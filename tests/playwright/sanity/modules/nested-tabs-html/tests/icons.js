@@ -7,8 +7,8 @@ async function testIconCount( page, editor ) {
 
 	// Assert.
 	// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
-	expect( iconCountForTabs ).toBe( 1 );
-	expect( iconCountForMainContainer ).toBe( 2 );
+	expect.soft( iconCountForTabs ).toBe( 1 );
+	expect.soft( iconCountForMainContainer ).toBe( 2 );
 }
 
 module.exports = {

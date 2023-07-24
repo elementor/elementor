@@ -16,7 +16,7 @@ async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor,
 	await editor.togglePreviewMode();
 
 	// Assert
-	expect( await activeContentContainer.screenshot( {
+	expect.soft( await activeContentContainer.screenshot( {
 		type: 'jpeg',
 		quality: 100,
 	} ) ).toMatchSnapshot( 'tabs-direction-right-carousel-visible.jpeg' );
