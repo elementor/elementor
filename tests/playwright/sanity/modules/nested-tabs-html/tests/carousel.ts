@@ -1,9 +1,14 @@
-const { expect } = require( '@playwright/test' );
-const { selectDropdownContainer, clickTab } = require( '../helper' );
+import { expect, type Page } from '@playwright/test';
+import { selectDropdownContainer, clickTab } from '../helper';
+import EditorPage from '../../../../pages/editor-page';
+import ImageCarousel from '../../../../pages/widgets/image-carousel';
 
-async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, widgetId, imageCarousel ) {
+export async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft(
+	page: Page,
+	editor: EditorPage,
+	imageCarousel: ImageCarousel ) {
 	// Act.
-	const contentContainerId = await selectDropdownContainer( editor, widgetId, 0 ),
+	const contentContainerId = await selectDropdownContainer( editor, 0 ),
 		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 	// Add images.
@@ -27,7 +32,3 @@ async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor,
 	await clickTab( editor.getPreviewFrame(), 0 );
 	await page.locator( '.elementor-control-tabs_direction .eicon-h-align-right' ).click();
 }
-
-module.exports = {
-	testCarouselIsVisibleWhenUsingDirectionRightOrLeft,
-};
