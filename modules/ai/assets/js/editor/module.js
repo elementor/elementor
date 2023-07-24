@@ -98,6 +98,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 			widgetType: view.options.container.args.model.get( 'widgetType' ),
 			controlName: view.options.model.get( 'name' ),
 			controlType,
-		}
+		};
 	}
 }
