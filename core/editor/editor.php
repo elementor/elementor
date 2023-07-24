@@ -644,9 +644,13 @@ class Editor {
 		}
 
 		foreach ( $element_presets as $key => $preset ) {
-			if ( $this->is_valid_preset( $el_type, $preset ) ) {
-				$presets[ $key ] = $preset;
-			}
+			$this->maybe_add_preset( $el_type, $preset, $key, $presets );
+		}
+	}
+
+	private function maybe_add_preset( $el_type, $preset, $key, &$presets ) {
+		if ( $this->is_valid_preset( $el_type, $preset ) ) {
+			$presets[ $key ] = $preset;
 		}
 	}
 
