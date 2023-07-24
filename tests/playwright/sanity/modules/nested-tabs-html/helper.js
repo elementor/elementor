@@ -45,11 +45,6 @@ async function clickTab( context, tabPosition ) {
 	await context.locator( `.elementor-widget-n-tabs-html .e-n-tab-title >> nth=${ tabPosition }` ).first().click();
 }
 
-// Click on tab by position.
-async function clickMobileTab( context, tabPosition ) {
-	await context.locator( `.elementor-widget-n-tabs-html .e-collapse >> nth=${ tabPosition }` ).first().click();
-}
-
 async function setup( wpAdmin, customExperiment = '' ) {
 	let experiments = {
 		'nested-elements-html': 'active',
@@ -119,7 +114,6 @@ module.exports = {
 	setIconsToTabs,
 	editTab,
 	clickTab,
-	clickMobileTab,
 	cleanup,
 	setup,
 	setTabBorderColor,

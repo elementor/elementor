@@ -1,6 +1,6 @@
 const { viewportSize } = require( '../../../../enums/viewport-sizes' );
 const { expect } = require( '@playwright/test' );
-const { selectDropdownContainer, clickMobileTab } = require( '../helper' );
+const { selectDropdownContainer, clickTab } = require( '../helper' );
 
 async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 	// Act.
@@ -21,16 +21,16 @@ async function testTabIsVisibleInAccordionView( page, editor, widgetId ) {
 
 	await expect( tabTitle1 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '1' );
+	await clickTab( page, '1' );
 	await expect( tabTitle2 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '2' );
+	await clickTab( page, '2' );
 	await expect( tabTitle3 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '1' );
+	await clickTab( page, '1' );
 	await expect( tabTitle2 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickMobileTab( page, '0' );
+	await clickTab( page, '0' );
 	await expect( tabTitle1 ).toHaveClass( /e-active/ );
 	await expect( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }
