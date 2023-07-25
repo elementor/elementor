@@ -152,7 +152,7 @@ module.exports = Marionette.ItemView.extend( {
 		}
 
 		if ( this.model?.attributes?.custom?.isPreset ?? false ) {
-			this.model.settings = this.model.attributes.custom.preset_settings;
+			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
 		$e.run( 'preview/drop', {
