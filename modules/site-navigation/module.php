@@ -17,14 +17,16 @@ class Module extends Module_Base {
 
 	/**
 	 * Initialize the Container-Converter module.
-	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
+		$this->register_pages_panel_experiment();
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor-v2/packages/client-env', function ( $env ) {
+			add_filter( 'elementor/editor/v2/scripts/env', function ( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
 					'is_pages_panel_active' => true,
 				];
@@ -57,23 +59,23 @@ class Module extends Module_Base {
 	}
 
 	/**
-	 * Get Experimental Data
+	 * Register Experiment
 	 *
 	 * @since 3.16.0
 	 *
-	 * @return array
+	 * @return void
+	 * @throws \Exception
 	 */
-	public static function get_experimental_data() {
-		return [
+	private function register_pages_panel_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::PAGES_PANEL_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 			'dependencies' => [
 				'editor_v2',
 			],
-		];
+		] );
 	}
-
 }
