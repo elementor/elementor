@@ -151,7 +151,7 @@ module.exports = Marionette.ItemView.extend( {
 			throw new Error( "View doesn't support adding from panel", view );
 		}
 
-		if ( this.model?.attributes?.custom?.isPreset ?? false ) {
+		if ( this.model.attributes?.custom?.isPreset ?? false ) {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 

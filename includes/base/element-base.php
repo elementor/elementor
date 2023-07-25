@@ -327,7 +327,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * icon, title etc.
 	 *
 	 * @since 3.16.0
-	 * @access protected
+	 * @access public
 	 *
 	 * @return array
 	 */
