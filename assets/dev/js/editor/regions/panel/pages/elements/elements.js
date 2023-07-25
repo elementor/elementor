@@ -83,7 +83,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
 			}
 
-			if ( this.shouldNotAddWidget( widget ) ) {
+			if ( ! this.shouldAddWidget( widget ) ) {
 				return;
 			}
 
@@ -106,7 +106,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
-				if ( this.shouldNotAddWidget( presetWidget ) ) {
+				if ( ! this.shouldAddWidget( presetWidget ) ) {
 					return;
 				}
 
@@ -172,10 +172,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.categoriesCollection = categoriesCollection;
 	},
 
-	shouldNotAddWidget( widget ) {
+	shouldAddWidget( widget ) {
 		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
-		return ! widget.show_in_panel || ( 'inner-section' === widget.name && isContainerActive );
+		return widget.show_in_panel && ( 'inner-section' !== widget.name || ! isContainerActive );
 	},
 
 	deepMerge( originalObj, replacementObj ) {
