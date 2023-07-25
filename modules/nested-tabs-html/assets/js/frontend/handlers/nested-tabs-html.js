@@ -305,10 +305,6 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	onInit( ...args ) {
-		if ( elementorFrontend.isEditMode() ) {
-			this.setContainerAttributes( args );
-		}
-
 		super.onInit( ...args );
 
 		if ( this.getSettings( 'autoExpand' ) ) {
@@ -406,35 +402,6 @@ export default class NestedTabsHtml extends Base {
 		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
 			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
 		}
-	}
-
-	setContainerAttributes( args ) {
-		const settings = this.getSettings(),
-			$widget = this.$element,
-			activeClass = this.getActiveClass();
-
-		let index = 1;
-
-		this.findElement( '.e-con' ).each( function() {
-			const $current = jQuery( this ),
-				$tabTitle = $widget.find( `${ settings.selectors.headingContainer } > *:nth-child(${ index })` ),
-				widgetNumber = $widget.find( '.e-n-tabs' ).attr( 'data-widget-number' ),
-				tabId = $tabTitle.attr( 'id' );
-
-			$current.attr( {
-				id: 'e-n-tab-content-' + widgetNumber + index,
-				role: 'tabpanel',
-				'aria-labelledby': tabId,
-				'data-tab-index': index,
-				style: '--n-tabs-title-order: ' + index + ';',
-			} );
-
-			if ( 1 === index ) {
-				$current.addClass( activeClass );
-			}
-
-			++index;
-		} );
 	}
 
 	getActiveClass() {
