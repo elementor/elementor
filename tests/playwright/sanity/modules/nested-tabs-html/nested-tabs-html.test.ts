@@ -30,7 +30,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Tests.
@@ -47,7 +47,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -71,7 +71,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -161,7 +161,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -197,7 +197,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -260,11 +260,11 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			parentWidgetId = await editor.addWidget( 'nested-tabs-html', container ),
 			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
 			tabsContainerId = await tabsContainer.getAttribute( 'data-id' );
 
-		await editor.addWidget( 'nested-tabs', tabsContainerId );
+		await editor.addWidget( 'nested-tabs-html', tabsContainerId );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
 
 		await editor.closeNavigatorIfOpen();
@@ -431,7 +431,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -518,7 +518,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		await editor.activatePanelTab( 'style' );
@@ -689,7 +689,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Act.
@@ -741,7 +741,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Assert.
@@ -763,7 +763,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 
 		// Act.
 		// Add nested-tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 		// Add image-carousel widget to tab #2.
 		const activeContainerId = await editTab( editor, '1' );
@@ -801,7 +801,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+			tabsWidgetId = await editor.addWidget( 'nested-tabs-html', container );
 
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
@@ -841,7 +841,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( 'heading', container );
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		await editor.addWidget( 'heading', container );
 
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
@@ -914,7 +914,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs' );
+		await editor.addWidget( 'nested-tabs-html' );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -1055,7 +1055,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			frame = await editor.getPreviewFrame();
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 
 		// Assert
 		const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
@@ -1071,7 +1071,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			frame = await editor.getPreviewFrame();
 
 		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
-			await editor.addWidget( 'nested-tabs', container );
+			await editor.addWidget( 'nested-tabs-html', container );
 
 			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
 			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
@@ -1094,7 +1094,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 
 		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
 			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
@@ -1141,7 +1141,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			frame = await editor.getPreviewFrame();
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
@@ -1200,7 +1200,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		// Act
 		await page.locator( '.elementor-control-tabs_direction i.eicon-h-align-left' ).click();
 		await page.locator( '.elementor-control-tabs_justify_vertical i.eicon-align-stretch-v' ).click();
@@ -1222,7 +1222,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( 'nested-tabs-html', container );
 		// Act
 		await page.locator( '.elementor-control-tabs_direction i.eicon-v-align-top' ).click();
 		await page.locator( '.elementor-control-tabs_justify_horizontal i.eicon-align-stretch-h' ).click();
