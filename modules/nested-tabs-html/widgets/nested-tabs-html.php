@@ -1045,36 +1045,36 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$this->end_controls_section();
 	}
 
-	protected function render_tab_titles_html( $data ): string {
-		$setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $data['index'] );
-		$title = $data['item']['tab_title'];
+	protected function render_tab_titles_html( $item_settings ): string {
+		$setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $item_settings['index'] );
+		$title = $item_settings['item']['tab_title'];
 		$css_classes = [ 'e-n-tab-title' ];
 
-		if ( $data['settings']['hover_animation'] ) {
-			$css_classes[] = 'elementor-animation-' . $data['settings']['hover_animation'];
+		if ( $item_settings['settings']['hover_animation'] ) {
+			$css_classes[] = 'elementor-animation-' . $item_settings['settings']['hover_animation'];
 		}
 
 		$this->add_render_attribute( $setting_key, [
-			'id' => $data['tab_id'],
+			'id' => $item_settings['tab_id'],
 			'class' => $css_classes,
-			'aria-selected' => 1 === $data['tab_count'] ? 'true' : 'false',
-			'data-tab-index' => $data['tab_count'],
+			'aria-selected' => 1 === $item_settings['tab_count'] ? 'true' : 'false',
+			'data-tab-index' => $item_settings['tab_count'],
 			'role' => 'tab',
-			'tabindex' => 1 === $data['tab_count'] ? '0' : '-1',
-			'aria-controls' => $data['container_id'],
-			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
-			'data-widget-number' => $data['widget_number'],
+			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
+			'aria-controls' => $item_settings['container_id'],
+			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
+			'data-widget-number' => $item_settings['widget_number'],
 		] );
 
 		$render_attributes = $this->get_render_attribute_string( $setting_key );
 		$text_class = $this->get_render_attribute_string( 'tab-title-text' );
 		$icon_class = $this->get_render_attribute_string( 'tab-icon' );
 
-		$icon_html = Icons_Manager::try_get_icon_html( $data['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
+		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
 		$icon_active_html = $icon_html;
 
-		if ( $this->is_active_icon_exist( $data['item'] ) ) {
-			$icon_active_html = Icons_Manager::try_get_icon_html( $data['item']['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
+		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
+			$icon_active_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
 		}
 
 		$output = "<button {$render_attributes}>";
@@ -1085,21 +1085,21 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		return $output;
 	}
 
-	protected function render_tab_containers_html( $data ): string {
+	protected function render_tab_containers_html( $item_settings ): string {
 		ob_start();
-		$this->print_child( $data['index'] );
+		$this->print_child( $item_settings['index'] );
 		$container_html = ob_get_clean();
 
-		$setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $data['index'] );
+		$setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $item_settings['index'] );
 		$attribute_selector = '" data-id=';
-		$active_class = 0 === $data['index'] ? ' e-active"' : '"';
+		$active_class = 0 === $item_settings['index'] ? ' e-active"' : '"';
 
 		$this->add_render_attribute( $setting_key, [
-			'id' => $data['container_id'],
+			'id' => $item_settings['container_id'],
 			'role' => 'tabpanel',
-			'aria-labelledby' => $data['tab_id'],
-			'data-tab-index' => $data['tab_count'],
-			'style' => '--n-tabs-title-order: ' . $data['tab_count'] . ';',
+			'aria-labelledby' => $item_settings['tab_id'],
+			'data-tab-index' => $item_settings['tab_count'],
+			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
 		$render_attributes = $active_class . $this->get_render_attribute_string( $setting_key ) . $attribute_selector;
@@ -1134,7 +1134,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				? 'e-n-tabs-title-' . $widget_number . $tab_count
 				: $item['element_id'];
 
-			$data = [
+			$item_settings = [
 				'index' => $index,
 				'tab_count' => $tab_count,
 				'tab_id' => $tab_id,
@@ -1144,8 +1144,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'settings' => $settings,
 			];
 
-			$tab_titles_html .= $this->render_tab_titles_html( $data );
-			$tab_containers_html .= $this->render_tab_containers_html( $data );
+			$tab_titles_html .= $this->render_tab_titles_html( $item_settings );
+			$tab_containers_html .= $this->render_tab_containers_html( $item_settings );
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>

@@ -167,6 +167,7 @@
 			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
+			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
 			flex-basis: var( --n-tabs-title-flex-basis );
 			flex-shrink: var( --n-tabs-title-flex-shrink );
@@ -189,12 +190,12 @@
 				-webkit-text-stroke-color var( --n-tabs-title-transition),
 				transform var( --n-tabs-title-transition );
 
-			@include button-focus;
+			@include button-focus-outline;
 
 			& span svg,
 			& span i {
 				transition: color var( --n-tabs-title-transition),
-				fill var( --n-tabs-title-transition );
+					fill var( --n-tabs-title-transition );
 			}
 
 			&-text {
@@ -287,6 +288,19 @@
 		.e-n-tab-title[aria-selected="false"]:hover {
 
 			@include active-tab-title;
+
+			.e-n-tab-icon {
+
+				i,
+				svg {
+
+					&:last-child {
+						transform: initial;
+						height: initial;
+						opacity: initial;
+					}
+				}
+			}
 		}
 	}
 }
@@ -306,7 +320,7 @@
 }
 
 // Responsive mode
-@mixin accordion-view-($device) {
+@mixin accordion-layout-($device) {
 	.elementor.elementor .elementor-widget-n-tabs-html.e-n-tabs-#{$device} {
 		--n-tabs-direction: column;
 		--n-tabs-heading-display: contents;
@@ -336,25 +350,25 @@
 
 // Mobile.
 @media (max-width: $screen-mobile-max) {
-	@include accordion-view-(mobile);
+	@include accordion-layout-(mobile);
 }
 
 // Mobile Extra.
 @media (max-width: $screen-mobile-extra-max) {
-	@include accordion-view-(mobile_extra);
+	@include accordion-layout-(mobile_extra);
 }
 
 // Tablet.
 @media (max-width: $screen-tablet-max) {
-	@include accordion-view-(tablet);
+	@include accordion-layout-(tablet);
 }
 
 // Tablet Extra.
 @media (max-width: $screen-tablet-extra-max) {
-	@include accordion-view-(tablet_extra);
+	@include accordion-layout-(tablet_extra);
 }
 
 // Laptop.
 @media (max-width: $screen-laptop-max) {
-	@include accordion-view-(laptop);
+	@include accordion-layout-(laptop);
 }
