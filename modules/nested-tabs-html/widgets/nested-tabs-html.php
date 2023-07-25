@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NestedTabsHtml extends Widget_Nested_Base {
 
 	public function get_name() {
-		return 'nested-tabs';
+		return 'nested-tabs-html';
 	}
 
 	public function get_title() {
