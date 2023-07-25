@@ -1093,12 +1093,19 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			$icon_active_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
 		}
 
-		$output = "<button {$render_attributes}>";
-		$output .= "\t<span {$icon_class}>{$icon_html}{$icon_active_html}</span>";
-		$output .= "\t<span {$text_class}>{$title}</span>";
-		$output .= '</button>';
-
-		return $output;
+		ob_start();
+		?>
+			<button <?php echo $render_attributes; ?>>
+				<span <?php echo $icon_class; ?>>
+					<?php echo $icon_html; ?>
+					<?php echo $icon_active_html; ?>
+				</span>
+				<span <?php echo $text_class; ?>>
+					<?php echo $title; ?>
+				</span>
+			</button>
+		<?php
+		return ob_get_clean();
 	}
 
 	protected function render_tab_containers_html( $item_settings ): string {

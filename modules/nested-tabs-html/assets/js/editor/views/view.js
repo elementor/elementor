@@ -6,7 +6,18 @@ export default class View extends $e.components.get( 'nested-elements' ).exports
 	}
 
 	onAddChild( childView ) {
-		childView.$el.attr( 'data-content', childView.model.attributes.dataIndex );
-		childView.$el.attr( 'data-content1', '123' );
+		// Const index = childView.model.attributes.dataIndex;
+		// const widgetNumber = '';
+		// const tabId = '';
+		//
+		// childview.$el.attr( {
+		// 	id: 'e-n-tab-content-' + widgetNumber + index,
+		// 	role: 'tabpanel',
+		// 	'aria-labelledby': tabId,
+		// 	'data-tab-index': index,
+		// 	style: '--n-tabs-title-order: ' + index + ';',
+		// } );
+
+		console.log( childView );
 	}
 }
