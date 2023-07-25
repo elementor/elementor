@@ -37,7 +37,7 @@ export default class Component extends ComponentBase {
 			elementTitle = model?.attributes?.custom?.isPreset
 				? model.attributes.title
 				: elementor.getElementData( model ).title,
-		 	/* Translators: %s: Element name. */
+			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementTitle );
 
 		if ( this.wasOutOfFocus() || this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) {
