@@ -82,10 +82,10 @@
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-order: initial;
-	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
-	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-block-start: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-end: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-block-end: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-start: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
@@ -171,30 +171,30 @@
 			flex-grow: var( --n-tabs-title-flex-grow );
 			flex-basis: var( --n-tabs-title-flex-basis );
 			flex-shrink: var( --n-tabs-title-flex-shrink );
-			padding-top: var( --n-tabs-title-padding-top );
-			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom );
-			padding-left: var( --n-tabs-title-padding-left );
+			padding-block-start: var( --n-tabs-title-padding-block-start );
+			padding-inline-end: var( --n-tabs-title-padding-inline-end );
+			padding-block-end: var( --n-tabs-title-padding-block-end );
+			padding-inline-start: var( --n-tabs-title-padding-inline-start );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
 			white-space: var( --n-tabs-title-white-space );
-			transition: background var( --n-tabs-title-transition),
-				color var( --n-tabs-title-transition),
-				border var( --n-tabs-title-transition),
-				box-shadow var( --n-tabs-title-transition),
-				text-shadow var( --n-tabs-title-transition),
-				stroke var( --n-tabs-title-transition),
-				stroke-width var( --n-tabs-title-transition),
-				-webkit-text-stroke-width var( --n-tabs-title-transition),
-				-webkit-text-stroke-color var( --n-tabs-title-transition),
+			transition: background var( --n-tabs-title-transition ),
+				color var( --n-tabs-title-transition ),
+				border var( --n-tabs-title-transition ),
+				box-shadow var( --n-tabs-title-transition ),
+				text-shadow var( --n-tabs-title-transition ),
+				stroke var( --n-tabs-title-transition ),
+				stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-color var( --n-tabs-title-transition ),
 				transform var( --n-tabs-title-transition );
 
 			@include button-focus-outline;
 
 			& span svg,
 			& span i {
-				transition: color var( --n-tabs-title-transition),
+				transition: color var( --n-tabs-title-transition ),
 					fill var( --n-tabs-title-transition );
 			}
 
@@ -338,11 +338,11 @@
 			order: var( --n-tabs-title-order );
 
 			&:not( :first-child ) {
-				margin-top: var( --n-tabs-title-gap );
+				margin-block-start: var( --n-tabs-title-gap );
 			}
 
 			&[aria-selected="true"] {
-				margin-bottom: var( --n-tabs-gap );
+				margin-block-end: var( --n-tabs-gap );
 			}
 		}
 	}

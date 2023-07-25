@@ -78,7 +78,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
-		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Before', 'elementor' );
 		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
@@ -182,11 +182,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'end' => [
-					'title' => $tooltip_end,
+					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'start' => [
-					'title' => $tooltip_start,
+					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
@@ -318,7 +318,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
-					'title' => is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' ),
+					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-text-align-left',
 				],
 				'center' => [
@@ -326,7 +326,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-text-align-center',
 				],
 				'end' => [
-					'title' => is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' ),
+					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-text-align-right',
 				],
 			],
@@ -669,7 +669,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -858,7 +858,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-top',
 				],
 				'end' => [
-					'title' => $tooltip_end,
+					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'block-end' => [
@@ -866,7 +866,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'start' => [
-					'title' => $tooltip_start,
+					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
@@ -1053,7 +1053,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
+					$content_selector => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
