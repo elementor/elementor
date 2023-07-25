@@ -444,11 +444,13 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	updatePanelTitlesAndIcons() {
-		const title = this.getPanelTitle();
+		const title = this.getPanelTitle(),
+			icon = this.getPanelIcon();
 
-		this.model.set( 'icon', this.getPanelIcon() );
+		this.model.set( 'icon', icon );
 		this.model.get( 'settings' ).set( '_title', title );
-		jQuery( '#elementor-panel-header-title' ).html( __( 'Edit', 'elementor' ) + ' ' + title );
+		this.model.get( 'settings' ).set( 'presetIcon', icon );
+		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
 	},
 
 	getPanelTitle() {

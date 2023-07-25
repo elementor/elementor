@@ -165,10 +165,15 @@ ElementModel = BaseElementModel.extend( {
 
 	getIcon() {
 		let mainIcon = elementor.getElementData( this ).icon,
-			custom = this.get( 'custom' );
+			custom = this.get( 'custom' ),
+			savedPresetIcon = this.getSetting( 'presetIcon' );
 
 		if ( custom?.isPreset ?? false ) {
 			return this.get( 'icon' ) || mainIcon;
+		}
+
+		if ( typeof savedPresetIcon === 'string' && '' !== savedPresetIcon.trim() ) {
+			return savedPresetIcon;
 		}
 
 		return mainIcon;
