@@ -1095,12 +1095,12 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo esc_attr( $render_attributes ); ?>>
-				<span <?php echo esc_attr( $icon_class ); ?>>
-					<?php echo esc_attr( $icon_html ); ?>
-					<?php echo esc_attr( $icon_active_html ); ?>
+			<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
-				<span <?php echo esc_attr( $text_class ); ?>>
+				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php echo esc_html( $title ); ?>
 				</span>
 			</button>
