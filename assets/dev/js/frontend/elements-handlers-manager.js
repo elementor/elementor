@@ -35,7 +35,7 @@ module.exports = function( $ ) {
 	}
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements-html' ] ) {
-		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs-html/assets/js/frontend/handlers/nested-tabs-html' );
+		this.elementsHandlers[ 'nested-tabs-html.default' ] = () => import( /* webpackChunkName: 'nested-tabs-html' */ 'elementor/modules/nested-tabs-html/assets/js/frontend/handlers/nested-tabs-html' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
