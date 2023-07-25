@@ -264,7 +264,7 @@ export default class NestedTabsHtml extends Base {
 		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
 
-		elementorFrontend.elements.$window.on( 'resize', this.setLayoutAttribute.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.setTouchMode.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
 	}
 
@@ -323,7 +323,8 @@ export default class NestedTabsHtml extends Base {
 		};
 
 		setHorizontalScrollAlignment( settingsObject );
-		this.setLayoutAttribute();
+
+		this.setTouchMode();
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -342,7 +343,6 @@ export default class NestedTabsHtml extends Base {
 			};
 
 			setHorizontalScrollAlignment( settingsObject );
-			this.setLayoutAttribute();
 		}
 	}
 
@@ -563,8 +563,22 @@ export default class NestedTabsHtml extends Base {
 		return 'contents' === this.elements.$headingContainer.css( 'display' );
 	}
 
-	setLayoutAttribute() {
-		const layout = this.isAccordionVersion() ? 'accordion' : 'tabs';
-		this.$element.find( '.e-n-tabs' ).attr( 'data-layout', layout );
+	setTouchMode() {
+		if ( elementorFrontend.isEditMode() ) {
+			const responsiveDevices = [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra' ],
+				currentDevice = elementorFrontend.getCurrentDeviceMode();
+
+			if ( -1 !== responsiveDevices.indexOf( currentDevice ) ) {
+				this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'true' );
+				return;
+			}
+		}
+
+		if ( 'ontouchstart' in document.documentElement ) {
+			this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'true' );
+			return;
+		}
+
+		this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'false' );
 	}
 }
