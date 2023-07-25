@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@elementor/*"
+        dependency-type: "production"
+    reviewers:
+      - "elementor/editor-core-team"
+    commit-message:
+      prefix: "Internal: "
+    labels:
+      - "dependencies"
+    groups:
+      elementor-packages:
+        patterns:
+          - "@elementor/*"
