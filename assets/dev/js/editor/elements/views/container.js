@@ -450,6 +450,8 @@ const ContainerView = BaseElementView.extend( {
 		this.model.set( 'icon', icon );
 		this.model.get( 'settings' ).set( '_title', title );
 		this.model.get( 'settings' ).set( 'presetIcon', icon );
+
+		/* Translators: %s: Element name. */
 		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
 	},
 
