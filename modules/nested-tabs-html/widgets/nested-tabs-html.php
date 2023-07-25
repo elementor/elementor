@@ -166,15 +166,18 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'button_text' => 'Add Tab',
 		] );
 
+		$styling_block_start = '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0;';
+		$styling_block_end = '--n-tabs-direction: column-reverse; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0';
+
 		$this->add_responsive_control( 'tabs_direction', [
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Top', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Bottom', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
@@ -189,10 +192,13 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'top' => '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0;',
-				'bottom' => '--n-tabs-direction: column-reverse; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0',
+				'block-start' => $styling_block_start,
+				'block-end' => $styling_block_end,
 				'end' => '--n-tabs-direction: row-reverse; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px; --n-tabs-title-flex-basis: initial; --n-tabs-title-flex-shrink: initial;',
 				'start' => '--n-tabs-direction: row; --n-tabs-heading-direction: column; --n-tabs-heading-width: 240px; --n-tabs-title-flex-basis: initial; --n-tabs-title-flex-shrink: initial;',
+				// Styling duplication for BC reasons.
+				'top' => $styling_block_start,
+				'bottom' => $styling_block_end,
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -232,6 +238,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'condition' => [
 				'tabs_direction' => [
 					'',
+					'block-start',
+					'block-end',
 					'top',
 					'bottom',
 				],
@@ -310,7 +318,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'start' => [
-					'title' => esc_html__( 'Left', 'elementor' ),
+					'title' => is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' ),
 					'icon' => 'eicon-text-align-left',
 				],
 				'center' => [
@@ -318,7 +326,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-text-align-center',
 				],
 				'end' => [
-					'title' => esc_html__( 'Right', 'elementor' ),
+					'title' => is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' ),
 					'icon' => 'eicon-text-align-right',
 				],
 			],
@@ -360,6 +368,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'condition' => [
 					'tabs_direction' => [
 						'',
+						'block-start',
+						'block-end',
 						'top',
 						'bottom',
 					],
@@ -836,11 +846,14 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'tab' => Controls_Manager::TAB_STYLE,
 		] );
 
+		$styling_block_start = '--n-tabs-title-direction: column; --n-tabs-icon-order: initial; --n-tabs-title-justify-content-toggle: center; --n-tabs-title-align-items-toggle: initial;';
+		$styling_block_end = '--n-tabs-title-direction: column; --n-tabs-icon-order: 1; --n-tabs-title-justify-content-toggle: center; --n-tabs-title-align-items-toggle: initial;';
+
 		$this->add_responsive_control( 'icon_position', [
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Top', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
@@ -848,7 +861,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'title' => $tooltip_end,
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Bottom', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
@@ -859,10 +872,13 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'selectors_dictionary' => [
 				// The toggle variables for 'align items' and 'justify content' have been added to separate the styling of the two 'flex direction' modes.
-				'top' => '--n-tabs-title-direction: column; --n-tabs-icon-order: initial; --n-tabs-title-justify-content-toggle: center; --n-tabs-title-align-items-toggle: initial;',
+				'block-start' => $styling_block_start,
 				'end' => '--n-tabs-title-direction: row; --n-tabs-icon-order: 1; --n-tabs-title-justify-content-toggle: initial; --n-tabs-title-align-items-toggle: center;',
-				'bottom' => '--n-tabs-title-direction: column; --n-tabs-icon-order: 1; --n-tabs-title-justify-content-toggle: center; --n-tabs-title-align-items-toggle: initial;',
+				'block-end' => $styling_block_end,
 				'start' => '--n-tabs-title-direction: row; --n-tabs-icon-order: initial; --n-tabs-title-justify-content-toggle: initial; --n-tabs-title-align-items-toggle: center;',
+				// Styling duplication for BC reasons.
+				'top' => $styling_block_start,
+				'bottom' => $styling_block_end,
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
