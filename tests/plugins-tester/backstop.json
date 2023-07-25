@@ -5,7 +5,7 @@
 			"label": "laptop",
 			"width": 1366,
 			"height": 700
-	}
+		}
 	],
 	"scenarios": [
 		{
@@ -19,9 +19,12 @@
 			"label": "law-firm-about-editor",
 			"url": "http://localhost:7777/law-firm-about/?elementor",
 			"readyEvent": "Elementor is ready!",
+			"removeSelectors": [
+				"#e-announcements-root"
+			],
 			"misMatchThreshold": 0,
 			"readyTimeout": 60000
-	    }
+		}
 	],
 	"paths": {
 		"bitmaps_reference": "backstop_data/bitmaps_reference",
@@ -30,10 +33,14 @@
 		"html_report": "backstop_data/html_report",
 		"ci_report": "backstop_data/ci_report"
 	},
-	"report": ["browser"],
+	"report": [
+		"browser"
+	],
 	"engine": "puppeteer",
 	"engineOptions": {
-		"args": ["--no-sandbox"]
+		"args": [
+			"--no-sandbox"
+		]
 	},
 	"asyncCaptureLimit": 5,
 	"asyncCompareLimit": 50,
