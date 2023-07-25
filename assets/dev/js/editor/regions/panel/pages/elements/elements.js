@@ -183,15 +183,27 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		for ( const key in replacementObj ) {
 			if ( replacementObj.hasOwnProperty( key ) ) {
-				if ( 'object' === typeof replacementObj[ key ] && replacementObj[ key ] !== null && originalObj.hasOwnProperty( key ) && 'object' === typeof originalObj[ key ] && originalObj[ key ] !== null ) {
-					mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
-				} else {
-					mergedObj[ key ] = replacementObj[ key ];
-				}
+				this.deepMergeKey( mergedObj, originalObj, replacementObj, key );
 			}
 		}
 
 		return mergedObj;
+	},
+
+	deepMergeKey( mergedObj, originalObj, replacementObj, key ) {
+		const isMergeableObject = (
+			'object' === typeof replacementObj[ key ] &&
+			null !== replacementObj[ key ] &&
+			originalObj.hasOwnProperty( key ) &&
+			'object' === typeof originalObj[ key ] &&
+			null !== originalObj[ key ]
+		);
+
+		if ( isMergeableObject ) {
+			mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
+		} else {
+			mergedObj[ key ] = replacementObj[ key ];
+		}
 	},
 
 	showView( viewName ) {
