@@ -56,9 +56,10 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: ${{!github.event.inputs.plugins}}
+    
     strategy:
       matrix:     
+        if: ${{!github.event.inputs.plugins}}
         testSuite: ['test:part1', 'test:part2']
     steps:
       - name: Checkout source code
