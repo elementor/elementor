@@ -148,6 +148,8 @@ class Admin extends App {
 
 		wp_enqueue_script( 'elementor-admin' );
 
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
+
 		$this->print_config();
 	}
 
