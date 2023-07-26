@@ -78,8 +78,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	protected function register_controls() {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
-		$tooltip_start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Before', 'elementor' );
-		$tooltip_end = is_rtl() ? esc_html__( 'Left', 'elementor' ) : esc_html__( 'Right', 'elementor' );
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
 		$heading_selector_non_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
@@ -285,6 +283,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'tabs_direction' => [
 					'start',
 					'end',
+					'inline-start',
+					'inline-end',
 				],
 			],
 		] );
@@ -313,6 +313,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'tabs_direction' => [
 					'start',
 					'end',
+					'inline-start',
+					'inline-end',
 				],
 			],
 		] );
