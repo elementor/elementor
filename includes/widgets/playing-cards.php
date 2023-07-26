@@ -99,6 +99,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			'section_cards',
 			[
 				'label' => esc_html__( 'Cards', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
@@ -171,6 +172,58 @@ class Widget_Playing_Cards extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_card_styles',
+			[
+				'label' => esc_html__( 'Card', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'card_background',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card' => 'background-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'card_border_color',
+			[
+				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card' => 'border-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'card_heart_diamond_color',
+			[
+				'label' => esc_html__( 'Hearts and Diamonds Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card-heart, {{WRAPPER}} .elementor-playing-card-diamond' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'card_spade_club_color',
+			[
+				'label' => esc_html__( 'Spades and Clubs Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card-spade, {{WRAPPER}} .elementor-playing-card-club' => 'color: {{VALUE}};',
+				],
+			]
+		);
 	}
 
 	/**

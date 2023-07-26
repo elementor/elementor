@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
-import { blackColour, cardTypes, redColour, setCardProps } from './helper';
+import { blackColour, cardTypes, purpleColour, redColour, setCardProps, whiteColour } from './helper';
 
 test.describe( 'Playing Cards @playing-cards', () => {
-	test( 'Playing Cards widget', async ( { page }, testInfo ) => {
+	test( 'Playing Cards widget functionality', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.openNewPage();
 
@@ -66,7 +66,63 @@ test.describe( 'Playing Cards @playing-cards', () => {
 			await addItemButton.click();
 			await addItemButton.click();
 
-			await expect( await editor.getPreviewFrame().locator( `${ EditorSelectors.playingCards.container } ${ EditorSelectors.playingCards.card }` ) ).toHaveCount( 3 );
+			const cards = await editor.getPreviewFrame().locator( `${ EditorSelectors.playingCards.container } ${ EditorSelectors.playingCards.card }` )
+
+			await expect( cards ).toHaveCount( 3 );
+		} );
+	} );
+
+	test( 'Playing Cards widget styling', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		const editor = await wpAdmin.openNewPage();
+		let card = null;
+
+		await test.step( 'Add the widget and a card', async () => {
+			await editor.addWidget( 'playing-cards' );
+			const addItemButton = await page.locator( '.elementor-repeater-add' );
+
+			await addItemButton.click();
+
+			card = await editor.getPreviewFrame().locator( EditorSelectors.playingCards.card );
+
+			await expect( card ).toBeVisible();
+		} );
+
+		await test.step( 'Select the styling tab', async () => {
+			await editor.activatePanelTab( 'style' );
+		} );
+
+		await test.step( 'Update background colour', async () => {
+			await editor.setColorControlValue( blackColour, 'card_background' );
+
+			await expect( card ).toHaveCSS( 'background-color', blackColour );
+		} );
+
+		await test.step( 'Update background colour', async () => {
+			await editor.setColorControlValue( redColour, 'card_border_color' );
+
+			await expect( card ).toHaveCSS( 'border', `1px solid ${ redColour }` );
+		} );
+
+		await test.step( 'Update spades and clubs colour', async () => {
+			await editor.setColorControlValue( purpleColour, 'card_spade_club_color' );
+
+			await expect( card ).toHaveCSS( 'color', purpleColour );
+		} );
+
+		await test.step( 'Change card type to hearts', async () => {
+			await editor.activatePanelTab( 'content' );
+			await page.locator( EditorSelectors.item ).first().click();
+
+			await setCardProps( editor, 'heart', '2' );
+
+			await editor.activatePanelTab( 'style' );
+		} );
+
+		await test.step( 'Update hearts and diamonds colour', async () => {
+			await editor.setColorControlValue( whiteColour, 'card_heart_diamond_color' );
+
+			await expect( card ).toHaveCSS( 'color', whiteColour );
 		} );
 	} );
 } );
