@@ -66,13 +66,15 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	behaviors() {
-		return {
+		const behaviors = {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
 				groups: this.getContextMenuGroups(),
 				eventTargets: [ '.elementor-add-section-inner' ],
 			},
 		};
+
+		return elementor.hooks.applyFilters( 'views/add-section/behaviors', behaviors, this );
 	}
 
 	className() {
