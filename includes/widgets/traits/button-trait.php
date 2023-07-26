@@ -104,7 +104,6 @@ trait Button_Trait {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => get_home_url(),
 				'default' => [
 					'url' => '#',
 				],
