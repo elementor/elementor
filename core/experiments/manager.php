@@ -428,6 +428,18 @@ class Manager extends Base_Object {
 				'container',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'grid_widget',
+			'title' => esc_html__( 'Grid Widget', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'hidden' => true,
+			'dependencies' => [
+				'container',
+				'container_grid',
+			],
+		] );
 	}
 
 	/**
