@@ -1,10 +1,10 @@
 import AiBehavior from './ai-behavior';
 import AiPromotionBehavior from './ai-promotion-behavior';
-import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/consts/consts';
+import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
+		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 	}
 
 	registerControlBehavior( behaviors, view ) {
@@ -35,6 +35,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				additionalOptions: {
 					defaultValue: view.options.model.get( 'default' ),
 				},
+				context: this.getContextData( view, controlType ),
 			};
 		}
 
@@ -54,6 +55,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				isLabelBlock: view.options.model.get( 'label_block' ),
 				getControlValue: view.getControlValue.bind( view ),
 				setControlValue: ( value ) => view.editor.setValue( value, -1 ),
+				context: this.getContextData( view, controlType ),
 			};
 		}
 
@@ -73,10 +75,29 @@ export default class Module extends elementorModules.editor.utils.Module {
 						defaultValue: view.options.model.get( 'default' ),
 						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
 					},
+					context: this.getContextData( view, controlType ),
 				};
 			}
 		}
 
 		return behaviors;
+	}
+
+	getContextData( view, controlType ) {
+		if ( ! view.options.container ) {
+			return {
+				controlName: view.options.model.get( 'name' ),
+				controlType,
+			};
+		}
+
+		return {
+			documentType: view.options.container.document.config.type,
+			elementType: view.options.container.args.model.get( 'elType' ),
+			elementId: view.options.container.id,
+			widgetType: view.options.container.args.model.get( 'widgetType' ),
+			controlName: view.options.model.get( 'name' ),
+			controlType,
+		};
 	}
 }

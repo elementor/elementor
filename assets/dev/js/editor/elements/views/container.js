@@ -3,6 +3,7 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -49,11 +50,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
+			currentDirection = this.container.settings.get( directionSettingKey );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	onDeviceModeChange() {
+		SetDirectionMode.set( this.getContainer() );
 	},
 
 	getDirectionSettingKey() {
@@ -86,6 +94,8 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
 	},
 
 	/**
@@ -386,6 +396,7 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
+			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
@@ -426,6 +437,34 @@ const ContainerView = BaseElementView.extend( {
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
+
+		if ( settings.changed.container_type ) {
+			this.updatePanelTitlesAndIcons();
+		}
+	},
+
+	updatePanelTitlesAndIcons() {
+		const title = this.getPanelTitle(),
+			icon = this.getPanelIcon();
+
+		this.model.set( 'icon', icon );
+		this.model.get( 'settings' ).set( '_title', title );
+		this.model.get( 'settings' ).set( 'presetIcon', icon );
+
+		/* Translators: %s: Element name. */
+		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+	},
+
+	getPanelTitle() {
+		return this.isFlexContainer()
+			? __( 'Container', 'elementor' )
+			: __( 'Grid', 'elementor' );
+	},
+
+	getPanelIcon() {
+		return this.isFlexContainer()
+			? 'eicon-container'
+			: 'eicon-container-grid';
 	},
 
 	onDragStart() {

@@ -367,8 +367,8 @@ class Utils {
 			define( 'DONOTCDN', true );
 		}
 
-		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
-			define( 'DONOTCACHCEOBJECT', true );
+		if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
+			define( 'DONOTCACHEOBJECT', true );
 		}
 
 		// Set the headers to prevent caching for the different browsers.

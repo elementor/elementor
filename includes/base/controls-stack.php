@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -333,7 +332,7 @@ abstract class Controls_Stack extends Base_Object {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $this->is_control_visible( $control, $settings ) ) {
+				if ( $this->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 
@@ -705,30 +704,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$group->add_controls( $this, $args, $options );
-	}
-
-	/**
-	 * Get scheme controls.
-	 *
-	 * Retrieve all the controls that use schemes.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 * @deprecated 3.0.0
-	 *
-	 * @return array Scheme controls.
-	 */
-	final public function get_scheme_controls() {
-
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
-		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
-
-		return array_filter(
-			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-			}
-		);
 	}
 
 	/**
@@ -1168,7 +1143,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = $controls[ $setting_key ];
 
-			if ( $this->is_control_visible( $control, $settings ) ) {
+			if ( $this->is_control_visible( $control, $settings, $controls ) ) {
 				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 				if ( $control_obj instanceof Control_Repeater ) {
@@ -1377,7 +1352,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool Whether the control is visible.
 	 */
-	public function is_control_visible( $control, $values = null ) {
+	public function is_control_visible( $control, $values = null, $controls = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
 		}
@@ -1390,7 +1365,9 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
-		$controls = $this->get_controls();
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );

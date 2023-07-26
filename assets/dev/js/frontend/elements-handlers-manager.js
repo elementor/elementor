@@ -28,10 +28,11 @@ module.exports = function( $ ) {
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
 	}
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-accordion' ] ) {
-		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements-html' ] ) {
+		this.elementsHandlers[ 'nested-tabs-html.default' ] = () => import( /* webpackChunkName: 'nested-tabs-html' */ 'elementor/modules/nested-tabs-html/assets/js/frontend/handlers/nested-tabs-html' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );

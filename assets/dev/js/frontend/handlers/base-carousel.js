@@ -140,53 +140,42 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		return swiperOptions;
 	}
 
+	getOffsetWidth() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'offset_width', 'size', currentDevice ) || 0;
+	}
+
 	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
-		const offsetSide = elementSettings.offset_sides;
-		const isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+		const offsetSide = elementSettings.offset_sides,
+			isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
 
 		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
 			return;
 		}
 
-		const offset = elementSettings.offset_width.size,
-			fallbackSlideWidth = 200,
-			containerWidth = this.getDefaultElements().$swiperContainer[ 0 ].offsetWidth;
-
-		let slideWidth = this.getDefaultElements().$slides[ 0 ].offsetWidth;
-
-		// If the slide width is not available, assume a default width
-		if ( ! slideWidth ) {
-			slideWidth = fallbackSlideWidth;
-		}
+		const offset = this.getOffsetWidth();
 
 		switch ( offsetSide ) {
 			case 'right':
-				swiperOptions.slidesPerView = ( containerWidth + offset ) / slideWidth;
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addClassToSwiperContainer( 'offset-right' );
 				break;
 			case 'left':
-				swiperOptions.slidesPerView = slidesToShow;
-				swiperOptions.centeredSlides = true;
-
-				this.addLeftPaddingToShowPreviousSlide( offset );
+				this.addClassToSwiperContainer( 'offset-left' );
 				break;
 			case 'both':
-				const slidesCount = 2;
-
-				swiperOptions.slidesPerView = ( containerWidth + ( slidesCount * offset ) ) / slideWidth;
-				swiperOptions.centeredSlides = true;
-
-				this.addLeftPaddingToShowPreviousSlide( offset );
-				this.addRightPaddingToShowNextSlide( offset );
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addClassToSwiperContainer( 'offset-both' );
 				break;
 		}
 	}
 
-	addLeftPaddingToShowPreviousSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingLeft = `${ offset }px`;
+	forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow ) {
+		swiperOptions.slidesPerView = slidesToShow + 0.001;
 	}
 
-	addRightPaddingToShowNextSlide( offset ) {
-		this.getDefaultElements().$swiperContainer[ 0 ].style.paddingRight = `${ offset }px`;
+	addClassToSwiperContainer( className ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].classList.add( className );
 	}
 
 	async onInit( ...args ) {
@@ -218,6 +207,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
 		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
 		this.$element.find( ':focusable' ).on( 'focus', this.onFocusDisableAutoplay.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.getSwiperSettings.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -225,6 +215,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		this.elements.$paginationWrapper.off();
 		this.elements.$swiperContainer.off();
 		this.$element.find( ':focusable' ).off();
+		elementorFrontend.elements.$window.off( 'resize' );
 	}
 
 	onDirectionArrowKeydown( event ) {

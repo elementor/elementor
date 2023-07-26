@@ -32,7 +32,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 
 		i {
 			font-size: 16px;
-			@include margin-end(15px);
+			margin-inline-end: 15px;
 		}
 
 		&__input {
@@ -137,7 +137,7 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		}
 
 		&__description {
-			@include margin-start(5px);
+			margin-inline-start: 5px;
 			font-style: italic;
 		}
 
