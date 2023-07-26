@@ -180,6 +180,22 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['gaps'] = [
+			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::GAPS,
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'selectors' => [
+				'{{SELECTOR}}' => '--gap:  {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+			],
+			'responsive' => true,
+			'old_format' => [
+				'name' => 'flex_gap',
+				'old_prop' => 'size',
+				'old_unit' => 'unit',
+				'new_props' => [ 'row', 'column' ],
+			],
+		];
+
 		$fields['wrap'] = [
 			'label' => esc_html_x( 'Wrap', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,

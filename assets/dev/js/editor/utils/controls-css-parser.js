@@ -112,6 +112,22 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						cssProperty = control.unit_selectors_dictionary[ value.unit ];
 					}
 
+					if( control.old_format ) {
+						// const oldControlName = 	control.name.replace( control.old_format.name, control.old_format.old_name ),
+						const oldControlName = control.old_format.old_name,
+							oldControl = controls[ oldControlName ],
+							oldControlValue = this.getStyleControlValue( oldControl, values ),
+							oldControlProperty = oldControlValue[control.old_format.old_prop];
+
+						if ( !! oldControlProperty ) {
+							// control.value = oldControlValue;
+							_.each( control.old_format.new_props, ( newProp ) => {
+								value[ newProp ] = oldControlProperty;
+							} );
+						}
+						console.log({control})
+					}
+
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
 						const externalControlMissing = controlName && ! controls[ controlName ];
 
