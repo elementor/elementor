@@ -1,10 +1,19 @@
 import AiBehavior from './ai-behavior';
-import AiPromotionBehavior from './ai-promotion-behavior';
+import AiLayoutBehavior from './ai-layout-behavior';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
+		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
+	}
+
+	registerAiLayoutBehavior( behaviors ) {
+		behaviors.ai = {
+			behaviorClass: AiLayoutBehavior,
+		};
+
+		return behaviors;
 	}
 
 	registerControlBehavior( behaviors, view ) {

@@ -69,8 +69,17 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
 			wp_enqueue_style(
-				'elementor-ai',
+				'elementor-ai-editor',
 				$this->get_css_assets_url( 'modules/ai/editor' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		} );
+
+		add_action( 'elementor/preview/enqueue_styles', function() {
+			wp_enqueue_style(
+				'elementor-ai-preview',
+				$this->get_css_assets_url( 'modules/ai/preview' ),
 				[],
 				ELEMENTOR_VERSION
 			);
