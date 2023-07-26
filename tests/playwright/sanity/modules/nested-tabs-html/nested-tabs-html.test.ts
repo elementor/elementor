@@ -935,11 +935,11 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		// Define Nested Tabs widget instances, and custom settings to apply to one of the dropdown Containers.
 		const defaultWidgetInstance = {
 			elType: 'widget',
-			widgetType: 'nested-tabs',
+			widgetType: 'nested-tabs-html',
 		};
 		const styledWidgetInstance = {
 			elType: 'widget',
-			widgetType: 'nested-tabs',
+			widgetType: 'nested-tabs-html',
 			settings: {
 				box_background_color_background: 'classic',
 				box_background_color_color: 'rgb(255, 199, 199)',
@@ -1148,9 +1148,12 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
 
 			await editor.openSection( 'section_tabs' );
-			Array.from( { length: 10 }, async () => {
+			Array.from( { length: 3 }, async () => {
 				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
 			} );
+
+			await editor.activatePanelTab( 'style' );
+			await editor.setSliderControlValue( 'tabs_title_space_between', '500' );
 		} );
 
 		await test.step( 'Assert overflow x', async () => {
