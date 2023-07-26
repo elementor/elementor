@@ -174,11 +174,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'block-start' => [
-					'title' => esc_html__( 'Top', 'elementor' ),
+					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
 				'block-end' => [
-					'title' => esc_html__( 'Bottom', 'elementor' ),
+					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'end' => [
@@ -854,7 +854,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'block-start' => [
-					'title' => esc_html__( 'Top', 'elementor' ),
+					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
 				'end' => [
@@ -862,11 +862,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'icon' => 'eicon-h-align-' . $end,
 				],
 				'block-end' => [
-					'title' => esc_html__( 'Bottom', 'elementor' ),
+					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
 				'start' => [
-					'title' => esc_html__( 'After', 'elementor' ),
+					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
