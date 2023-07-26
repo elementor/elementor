@@ -93,46 +93,4 @@ jobs:
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASEBOT }}
-          PAYLOAD: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub Release *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
-                  },
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "Open :point_left:",
-                      "emoji": true
-                    },
-                    "value": "open-release",
-                    "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
-                    "action_id": "button-action"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
-                  }
-                }
-              ]
-            }
+          PAYLOAD: "$(cat ./.github/scripts/slack-channel-cloud-message.json)"
