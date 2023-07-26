@@ -11,7 +11,7 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 	let pageId: string;
-	const templatePath = `../templates/nested-tabs-with-icons.json`;
+	const templatePath = `../templates/nested-tabs-html-with-icons.json`;
 
 	test.beforeEach( async () => {
 		pageId = await createPage();
