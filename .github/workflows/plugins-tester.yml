@@ -59,8 +59,12 @@ jobs:
     
     strategy:
       matrix:     
-        if: ${{!github.event.inputs.plugins}}
-        testSuite: ['test:part1', 'test:part2']
+        testSuite: 
+          - 'test:part1'
+          - 'test:part2' 
+          - 'test'
+        exclude:
+          - testSuit: ${{ !github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -86,7 +90,7 @@ jobs:
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite || 'test' }}
+        run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
