@@ -1065,26 +1065,39 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// TODO: Better coding to start template for editor
-		return [
+		$internal_elements = [
 			[
 				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $widget_type::get_type(),
-								'widgetType' => $widget_type->get_name(),
-								'settings' => $settings,
-							],
+				'elType' => $widget_type::get_type(),
+				'widgetType' => $widget_type->get_name(),
+				'settings' => $settings,
+			],
+		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
+			return [
+				[
+					'id' => Utils::generate_random_string(),
+					'elType' => 'container',
+					'elements' => $internal_elements,
+				],
+			];
+		} else {
+			return [
+				[
+					'id' => Utils::generate_random_string(),
+					'elType' => 'section',
+					'elements' => [
+						[
+							'id' => Utils::generate_random_string(),
+							'elType' => 'column',
+							'elements' => $internal_elements,
 						],
 					],
 				],
-			],
-		];
+			];
+		}
+
 	}
 
 	/**
