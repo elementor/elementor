@@ -66,6 +66,7 @@ jobs:
         exclude:
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part1' }}
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part2' }}
+          - testSuite: ${{ github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
