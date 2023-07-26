@@ -157,7 +157,6 @@ class Widget_Icon extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => get_home_url(),
 			]
 		);
 
