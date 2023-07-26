@@ -87,6 +87,29 @@ class Container extends Element_Base {
 		return $keywords;
 	}
 
+	public function get_panel_presets() {
+		return [
+			'container_grid' => [
+				'replacements' => [
+					'name' => 'container_grid',
+					'controls' => [
+						'container_type' => [ 'default' => 'grid' ],
+					],
+					'title' => 'Grid',
+					'icon' => 'eicon-container-grid',
+					'custom' => [
+						'isPreset' => true,
+						'originalWidget' => $this->get_name(),
+						'presetWidget' => 'container_grid',
+						'preset_settings' => [
+							'container_type' => 'grid',
+						],
+					],
+				],
+			],
+		];
+	}
+
 	/**
 	 * Override the render attributes to add a custom wrapper class.
 	 *
