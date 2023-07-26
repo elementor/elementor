@@ -56,9 +56,10 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
+    if: !github.event.inputs.plugins 
     strategy:
-      matrix: 
-        testSuite: ['part1', 'part2']
+      matrix:     
+        testSuite: ['test:part1', 'test:part2']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -84,7 +85,7 @@ jobs:
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm run test:${{ matrix.testSuite }}
+        run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite || 'test' }}
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
