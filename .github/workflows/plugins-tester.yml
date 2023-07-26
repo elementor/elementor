@@ -56,7 +56,7 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: !github.event.inputs.plugins 
+    if: ${{!github.event.inputs.plugins}}
     strategy:
       matrix:     
         testSuite: ['test:part1', 'test:part2']
