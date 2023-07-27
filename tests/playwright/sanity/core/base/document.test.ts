@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Document tests', async () => {
-	test( 'converting gutenberg page to sections columns',
+	test( 'Converting Gutenberg page to sections columns',
 		async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
