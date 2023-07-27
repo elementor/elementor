@@ -245,7 +245,9 @@ class Test_Controller extends Elementor_Test_Base {
 		// Act.
 		$params = [
 			'post_id' => 'test',
+			'title' => 'test page',
 		];
+
 		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
 		// Assert.
 		$this->assertEquals( 400, $response->get_status() );
@@ -274,6 +276,22 @@ class Test_Controller extends Elementor_Test_Base {
 		$duplicated_post_id = $response->get_data()['post_id'];
 
 		$this->assertTrue( $duplicated_post_id > $post );
+	}
+	
+	public function test_create_items_duplicate_post__forbidden() {
+		// Arrange.
+		$this->act_as_subscriber();
+
+		// Act.
+		$params = [
+			'post_id' => 'test',
+			'title' => 'test page',
+		];
+
+		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
+
+		// Assert.
+		$this->assertEquals( 403, $response->get_status() );
 	}
 
 
