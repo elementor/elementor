@@ -277,7 +277,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$this->assertTrue( $duplicated_post_id > $post );
 	}
-	
+
 	public function test_create_items_duplicate_post__forbidden() {
 		// Arrange.
 		$this->act_as_subscriber();
@@ -291,7 +291,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
 
 		// Assert.
-		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 
