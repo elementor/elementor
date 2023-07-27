@@ -42,6 +42,16 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
+	async convertFromGutenberg() {
+		await this.page.click( '#elementor-switch-mode' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20000 } );
+		await this.waitForPanel();
+
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
 	/**
 	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
 	 *
