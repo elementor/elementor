@@ -93,5 +93,5 @@ jobs:
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASEBOT }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
           PAYLOAD: "$(cat ./.github/scripts/slack-channel-cloud-message.json)"
