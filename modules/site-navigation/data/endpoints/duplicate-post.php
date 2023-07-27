@@ -49,10 +49,14 @@ class Duplicate_Post extends Endpoint {
 
 		$post = get_post( $post_id );
 
+		if ( ! $post ) {
+			return new \WP_Error( 500, printf( 'Error while duplicating post.' ) );
+		}
+
 		$new_post_id = $this->duplicate_post( $post, $post_title );
 
 		if ( is_wp_error( $new_post_id ) ) {
-			return new \WP_Error( 500, sprintf( 'Error while duplicating post.' ) );
+			return new \WP_Error( 500, printf( 'Error while duplicating post.' ) );
 		}
 
 		//Duplicate all post meta
@@ -74,7 +78,7 @@ class Duplicate_Post extends Endpoint {
 	 * @return int|\WP_Error
 	 */
 	private function duplicate_post( $post, $post_title ) {
-		$page_status = 'draft';
+		$post_status = 'draft';
 		$current_user = wp_get_current_user();
 		$new_page_author = $current_user->ID;
 
@@ -86,7 +90,7 @@ class Duplicate_Post extends Endpoint {
 			'post_excerpt' => $post->post_excerpt,
 			'post_parent' => $post->post_parent,
 			'post_password' => $post->post_password,
-			'post_status' => $page_status,
+			'post_status' => $post_status,
 			'post_title' => $post_title,
 			'post_type' => $post->post_type,
 			'to_ping' => $post->to_ping,
@@ -138,11 +142,9 @@ class Duplicate_Post extends Endpoint {
 		foreach ( $taxonomies as $taxonomy ) {
 			$post_terms = wp_get_object_terms( $post_id, $taxonomy, [ 'fields' => 'slugs' ] );
 
-			if ( is_wp_error( $post_terms ) ) {
-				continue;
+			if ( ! is_wp_error( $post_terms ) ) {
+				wp_set_object_terms( $new_post_id, $post_terms, $taxonomy, false );
 			}
-
-			wp_set_object_terms( $new_post_id, $post_terms, $taxonomy, false );
 		}
 	}
 }
