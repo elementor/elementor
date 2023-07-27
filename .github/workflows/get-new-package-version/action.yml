@@ -5,6 +5,10 @@ inputs:
   CHANNEL:
     required: true
     description: 'The channel to get the version to (ga, cloud, beta).'
+  ADDITION_NAME:
+    required: false
+    default: "-rc"
+    description: 'The addition name to add to the package version.'
 
 runs:
   using: "composite"
@@ -12,8 +16,8 @@ runs:
     - shell: bash
       run: |
             CLEAN_PACKAGE_VERSION=$(node -p "require('./package.json').version")
-            PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}-rc
+
+            PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}-${{ inputs.CHANNEL }}${{ inputs.ADDITION_NAME }}
 
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
             echo "CLEAN_PACKAGE_VERSION=${CLEAN_PACKAGE_VERSION}" >> $GITHUB_ENV
-  

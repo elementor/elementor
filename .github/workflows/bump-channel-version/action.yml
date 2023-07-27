@@ -8,6 +8,15 @@ inputs:
   CLEAN_PACKAGE_VERSION:
     required: true
     description: 'The current package version, e.g. "3.11.7".'
+  OVERRIDE_PACKAGE_VERSION:
+    required: false
+    default: "false"
+    description: 'Override the package version in the workflow environment variables.'
+  POSTFIX:
+    required: false
+    default: ""
+    description: 'The postfix that will be added to the package version -rc / -test'
+
 
 runs:
   using: "composite"
@@ -27,6 +36,10 @@ runs:
 
             echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
+
+            if [[ ${{ inputs.OVERRIDE_PACKAGE_VERSION }} == "true" ]]; then
+              echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{inputs.POSTFIX}}" >> $GITHUB_ENV
+            fi
 
             if [[ ${{ inputs.CHANNEL }} == "beta" ]]; then
                 BETA_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
