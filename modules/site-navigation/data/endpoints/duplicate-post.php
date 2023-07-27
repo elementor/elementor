@@ -21,6 +21,15 @@ class Duplicate_Post extends Endpoint {
 				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
+			'title' => [
+				'description' => 'Post title',
+				'type' => 'string',
+				'required' => false,
+				'sanitize_callback' => function ( $value ) {
+					return sanitize_text_field( $value );
+				},
+				'validate_callback' => 'rest_validate_request_arg',
+			],
 		];
 
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
@@ -36,10 +45,11 @@ class Duplicate_Post extends Endpoint {
 
 	public function create_items( $request ) {
 		$post_id = $request->get_param( 'post_id' );
+		$post_title = $request->get_param( 'title' );
 
 		$post = get_post( $post_id );
 
-		$new_post_id = $this->duplicate_post( $post );
+		$new_post_id = $this->duplicate_post( $post, $post_title );
 
 		if ( is_wp_error( $new_post_id ) ) {
 			return new \WP_Error( 500, sprintf( 'Error while duplicating post.' ) );
@@ -63,9 +73,8 @@ class Duplicate_Post extends Endpoint {
 	 *
 	 * @return int|\WP_Error
 	 */
-	private function duplicate_post( $post ) {
+	private function duplicate_post( $post, $post_title ) {
 		$page_status = 'draft';
-		$title_suffix = ' (copy)';
 		$current_user = wp_get_current_user();
 		$new_page_author = $current_user->ID;
 
@@ -78,7 +87,7 @@ class Duplicate_Post extends Endpoint {
 			'post_parent' => $post->post_parent,
 			'post_password' => $post->post_password,
 			'post_status' => $page_status,
-			'post_title' => $post->post_title . $title_suffix,
+			'post_title' => $post_title,
 			'post_type' => $post->post_type,
 			'to_ping' => $post->to_ping,
 			'menu_order' => $post->menu_order,
