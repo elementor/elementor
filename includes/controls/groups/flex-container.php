@@ -178,6 +178,9 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],
 			'responsive' => true,
+			'condition' => [
+				'flex_gaps!' => '',
+			],
 		];
 
 		$fields['gaps'] = [
@@ -191,7 +194,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'old_format' => [
 				'name' => 'flex_gap',
 				'old_prop' => 'size',
-				'old_unit' => 'unit',
 				'new_props' => [ 'row', 'column' ],
 			],
 		];

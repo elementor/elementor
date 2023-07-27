@@ -1,5 +1,6 @@
 var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
+import { areNewControlValuesEmpty, updateNewControlWithOldControlValues } from './control-replacement';
 
 ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
@@ -112,20 +113,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						cssProperty = control.unit_selectors_dictionary[ value.unit ];
 					}
 
-					if( control.old_format ) {
-						// const oldControlName = 	control.name.replace( control.old_format.name, control.old_format.old_name ),
-						const oldControlName = control.old_format.old_name,
+					//TODO: Handle responsive values
+					if( control.old_format && areNewControlValuesEmpty( control.old_format.new_props, value ) ) {
+						const oldControlName = control.old_format.name,
 							oldControl = controls[ oldControlName ],
-							oldControlValue = this.getStyleControlValue( oldControl, values ),
-							oldControlProperty = oldControlValue[control.old_format.old_prop];
+							oldControlValues = this.getStyleControlValue( oldControl, values );
 
-						if ( !! oldControlProperty ) {
-							// control.value = oldControlValue;
-							_.each( control.old_format.new_props, ( newProp ) => {
-								value[ newProp ] = oldControlProperty;
-							} );
-						}
-						console.log({control})
+							updateNewControlWithOldControlValues( oldControlValues, control, value );
 					}
 
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
@@ -232,6 +226,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			this.stylesheet.addRules( selector, outputCssProperty, query );
 		} );
 	},
+
+	// areNewControlValueEmpty( newProps, value ) {
+	// 	let isEmpty = false;
+	//
+	// 	_.each( newProps, ( newProp ) => {
+	// 		if ( value[ newProp ] === '' ) {
+	// 			isEmpty = true;
+	// 			return isEmpty;
+	// 		}
+	// 	} );
+	//
+	// 	return isEmpty;
+	// },
 
 	unitHasCustomSelector( control, value ) {
 		return control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ value.unit ];
