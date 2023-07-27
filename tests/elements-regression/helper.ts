@@ -1,15 +1,23 @@
 import EditorPage from '../playwright/pages/editor-page';
 import EditorSelectors from '../playwright/selectors/editor-selectors';
-import { expect } from '@playwright/test';
+import { expect, type Frame, type Page, type TestInfo } from '@playwright/test';
+type ScreenShot = {
+	device: string,
+	isPublished?: boolean,
+	widgetType: string
+}
 
 export default class ElementRegressionHelper {
-	constructor( page, testInfo ) {
+	readonly page: Page;
+	readonly editorPage: EditorPage;
+
+	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
 		this.editorPage = new EditorPage( page, testInfo );
 	}
 
-	async doScreenshotComparison( args = { widgetType, hoverSelector } ) {
-		let animation = 'disabled';
+	async doScreenshotComparison( args: { widgetType: string, hoverSelector: {[ key: string ]: string} } ) {
+		let animation: 'disabled' | 'allow' = 'disabled';
 		const widgetCount = await this.editorPage.getWidgetCount();
 		for ( let i = 0; i < widgetCount; i++ ) {
 			const widget = this.editorPage.getWidget().nth( i );
@@ -24,8 +32,8 @@ export default class ElementRegressionHelper {
 		}
 	}
 
-	async doScreenshotPublished( args = { widgetType, hoverSelector } ) {
-		const widgetCount = await this.page.locator( EditorSelectors.widget ).length;
+	async doScreenshotPublished( args: { widgetType: string, hoverSelector: {[ key: string ]: string} } ) {
+		const widgetCount = await this.page.locator( EditorSelectors.widget ).count();
 		if ( args.widgetType.includes( 'hover' ) ) {
 			for ( let i = 0; i < widgetCount; i++ ) {
 				await this.page.locator( `${ EditorSelectors.widget } ${ args.hoverSelector[ args.widgetType ] }` ).nth( i ).hover();
@@ -47,8 +55,8 @@ export default class ElementRegressionHelper {
 		await this.editorPage.getPreviewFrame().locator( '#site-header' ).click();
 	}
 
-	async doResponsiveScreenshot( args = { device, isPublished: false, widgetType } ) {
-		let page;
+	async doResponsiveScreenshot( args: ScreenShot = { isPublished: false, device: 'mobile', widgetType: '' } ) {
+		let page: Page | Frame;
 		let label = '';
 		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
 
