@@ -88,9 +88,6 @@ jobs:
           # Will be removed once we see that the release is working
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Get Json Slack message
-        run: |
-          "PAYLOAD=`echo $(cat ./.github/scripts/slack-channel-cloud-message.json)`" >> $GITHUB_ENV
       - name: Post To Slack Created Cloud one click Release
         if: ${{ github.event.inputs.pre_release }} == false
         uses : ./.github/workflows/post-to-slack
