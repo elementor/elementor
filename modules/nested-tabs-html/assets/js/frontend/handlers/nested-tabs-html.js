@@ -51,6 +51,9 @@ export default class NestedTabsHtml extends Base {
 			classes: {
 				active: 'e-active',
 			},
+			ariaAttributes: {
+				activeTitle: '[aria-selected="true"]',
+			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: false,
@@ -142,15 +145,15 @@ export default class NestedTabsHtml extends Base {
 		}
 	}
 
-	deactivateActiveTab( tabIndex ) {
+	deactivateActiveTab( tabIndex = 0, eventType ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = !! tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '[aria-selected="true"]',
-			activeContentFilter = !! tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = 0 < tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : settings.ariaAttributes.activeTitle,
+			activeContentFilter = 0 < tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.attr( this.getTitleDeactivationAttributes() );
+		$activeTitle.attr( this.getTitleDeactivationAttributes( eventType ) );
 		$activeContent.removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
