@@ -6,8 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"test": "node index.js",
-		"test:part1": "cross-env TEST_SUIT=part1 node index.js ",
-		"test:part2": "cross-env TEST_SUIT=part2 node index.js ",
+		"test:part1": "cross-env TEST_SUITE=part1 node index.js ",
+		"test:part2": "cross-env TEST_SUITE=part2 node index.js ",
 		"update-baseline": "node ./scripts/run-backstop.js --slug='elementor'"
 	},
 	"author": "Elementor Team",

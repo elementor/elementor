@@ -22,11 +22,11 @@ const getConfig = ( args ) => {
 	return args.default;
 };
 
-if ( 'part1' === process.env.TEST_SUIT ) {
+if ( 'part1' === process.env.TEST_SUITE ) {
 	_default = topPluginsConfig.slice( 0, topPluginsConfig.length / 2 );
 }
 
-if ( 'part2' === process.env.TEST_SUIT ) {
+if ( 'part2' === process.env.TEST_SUITE ) {
 	_default = topPluginsConfig.slice( topPluginsConfig.length / 2, topPluginsConfig.length );
 }
 
