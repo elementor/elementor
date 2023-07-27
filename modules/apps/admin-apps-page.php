@@ -74,7 +74,7 @@ class Admin_Apps_Page {
 			],
 			[
 				'name' => 'Essential Addons',
-				'author' => 'WP Developer',
+				'author' => 'WPDeveloper',
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper/',
 				'badge' => '20% Off',
 				'description' => 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.',
