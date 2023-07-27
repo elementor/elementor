@@ -24,7 +24,7 @@
 		  "emoji": true
 		},
 		"value": "open-release",
-		"url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
+		"url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
 		"action_id": "button-action"
 	  }
 	},

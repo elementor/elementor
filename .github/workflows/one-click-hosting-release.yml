@@ -94,4 +94,4 @@ jobs:
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-          PAYLOAD: "$(cat ./.github/scripts/slack-channel-cloud-message.json)"
+          PAYLOAD: echo "$(cat ./.github/scripts/slack-channel-cloud-message.json)"
