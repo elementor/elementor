@@ -34,8 +34,11 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view, activeControl } = args,
+			elementTitle = model?.attributes?.custom?.isPreset
+				? model.attributes.title
+				: elementor.getElementData( model ).title,
 			/* Translators: %s: Element name. */
-			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
+			title = sprintf( __( 'Edit %s', 'elementor' ), elementTitle );
 
 		if ( this.wasOutOfFocus() || this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) {
 			this.activeModelId = args.model.id;
