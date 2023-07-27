@@ -25,7 +25,7 @@ test.describe( 'Document tests', async () => {
 			} );
 		} );
 
-	test( 'converting gutenberg page to container',
+	test( 'Converting Gutenberg page to container',
 		async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
