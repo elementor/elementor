@@ -29,7 +29,7 @@ runs:
             # This command retrieves the latest tag that matches the specified channel and package version,
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
             # If the channel is tagged as a prerelease, than get the latest prerelease version
-            # If the channel is not tagged as a prerelease, than get the latest version which is not a prerelease or an rc
+            # If the channel is not tagged as a pre-release, than get the latest version which is not a pre-release or an rc
             if [[ "${{ inputs.POSTFIX }}" == "-test" ]]; then
               CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' | awk -F'${{ inputs.POSTFIX }}' '{print $1}' || echo 0)
             else
