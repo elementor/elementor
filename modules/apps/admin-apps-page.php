@@ -13,7 +13,9 @@ class Admin_Apps_Page {
 
 			<div class="e-a-page-title">
 				<h2><?php echo esc_html__( 'Popular Apps, New Possibilities.', 'elementor' ); ?></h2>
-				<p><?php echo esc_html__( 'Boost your web-creation process with add-ons, plugins, and more tools specially selected to unleash your creativity, increase productivity, and enhance your Elementor-powered website.', 'elementor' ); ?></p>
+				<p><?php echo esc_html__( 'Boost your web-creation process with add-ons, plugins, and more tools specially selected to unleash your creativity, increase productivity, and enhance your Elementor-powered website.', 'elementor' ); ?><br>
+					<a href="https://go.elementor.com/wp-dash-apps-about-apps-page/" target="_blank"><?php echo esc_html__( 'Learn more about this page.', 'elementor' ); ?></a>
+				</p>
 			</div>
 
 			<div class="e-a-list">
@@ -86,8 +88,7 @@ class Admin_Apps_Page {
 				'author' => 'BdThemes Ltd',
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-element-pack-pro/',
 				'description' => 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!',
-				'badge' => '10% Off',
-				'offering' => 'Discount is automatically applied',
+				'badge' => 'Premium',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-element-pack-pro/',
 				'image' => $images_url . 'element-pack.gif',
@@ -97,7 +98,7 @@ class Admin_Apps_Page {
 				'author' => 'Brainstorm Force',
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-ultimate-elementor/',
 				'description' => 'Ultimate Addons for Elementor is a powerful plugin with advanced widgets, templates, and features for designing stunning websites using Elementor.',
-				'badge' => 'Premium',
+				'badge' => '25% Off',
 				'offering' => 'Discount is automatically applied',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-ultimate-elementor/',
