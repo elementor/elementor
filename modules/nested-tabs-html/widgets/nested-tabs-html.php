@@ -1044,14 +1044,163 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	}
 
 	protected function render() {
+		// Copied from tabs.php
+		$settings = $this->get_settings_for_display();
+		$tabs = $settings['tabs'];
+
+		$id_int = substr( $this->get_id_int(), 0, 3 );
+
+		if ( ! empty( $settings['link'] ) ) {
+			$this->add_link_attributes( 'elementor-tabs', $settings['link'] );
+		}
+
+		$this->add_render_attribute( 'elementor-tabs', 'class', 'e-n-tabs' );
+		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
+		$this->add_render_attribute( 'tab-icon', 'class', 'e-n-tab-icon' );
+		$this->add_render_attribute( 'tab-icon-active', 'class', [ 'e-n-tab-icon', 'e-active' ] );
+
+		$tabs_title_html = '';
+		$mobile_tabs_title_html = '';
+
+		foreach ( $tabs as $index => $item ) {
+			// Tabs title.
+			$tab_count = $index + 1;
+			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+			$tab_title = $item['tab_title'];
+			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
+			$tab_title_classes = [ 'e-n-tab-title', 'e-normal' ];
+			$tab_title_mobile_classes = [ 'e-n-tab-title', 'e-collapse' ];
+
+			if ( $settings['hover_animation'] ) {
+				array_push( $tab_title_classes, 'elementor-animation-' . $settings['hover_animation'] );
+				array_push( $tab_title_mobile_classes, 'elementor-animation-' . $settings['hover_animation'] );
+			}
+
+			$tab_id = empty( $item['element_id'] ) ? 'e-n-tabs-title-' . $id_int . $tab_count : $item['element_id'];
+
+			$this->add_render_attribute( $tab_title_setting_key, [
+				'id' => $tab_id,
+				'class' => $tab_title_classes,
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+				'data-tab' => $tab_count,
+				'role' => 'tab',
+				'tabindex' => 1 === $tab_count ? '0' : '-1',
+				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
+				'aria-expanded' => 'false',
+			] );
+
+			$this->add_render_attribute( $tab_title_mobile_setting_key, [
+				'class' => $tab_title_mobile_classes,
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+				'data-tab' => $tab_count,
+				'role' => 'tab',
+				'tabindex' => 1 === $tab_count ? '0' : '-1',
+				'aria-controls' => 'e-n-tab-content-' . $id_int . $tab_count,
+				'aria-expanded' => 'false',
+				'id' => $tab_id . '-accordion',
+			] );
+
+			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
+			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+			$tab_title_text_class = $this->get_render_attribute_string( 'tab-title-text' );
+			$tab_icon_class = $this->get_render_attribute_string( 'tab-icon' );
+
+			$icon_html = Icons_Manager::try_get_icon_html( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
+			$icon_active_html = $icon_html;
+
+			if ( $this->is_active_icon_exist( $item ) ) {
+				$icon_active_html = Icons_Manager::try_get_icon_html( $item['tab_icon_active'], [ 'aria-hidden' => 'true' ] );
+			}
+
+			$tabs_title_html .= "<div {$title_render_attributes}>";
+			$tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
+			$tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
+			$tabs_title_html .= '</div>';
+
+			// Tabs content.
+			ob_start();
+			$this->print_child( $index );
+			$tab_content = ob_get_clean();
+
+			$mobile_tabs_title_html .= "<div $mobile_title_attributes>";
+			$mobile_tabs_title_html .= "\t<span {$tab_icon_class}>{$icon_html}{$icon_active_html}</span>";
+			$mobile_tabs_title_html .= "\t<span {$tab_title_text_class}>{$tab_title}</span>";
+			$mobile_tabs_title_html .= "</div>$tab_content";
+		}
 		?>
-			New Nested Tabs Markup
+		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+			<div class="e-n-tabs-heading" role="tablist">
+				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+			<div class="e-n-tabs-content" role="tablist" aria-orientation="vertical">
+				<?php echo $mobile_tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		</div>
 		<?php
 	}
 
 	protected function content_template() {
 		?>
-			New Nested Tabs Markup
+		<div class="e-n-tabs" role="tablist" aria-orientation="vertical">
+			<# if ( settings['tabs'] ) {
+			const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+			<div class="e-n-tabs-heading" role="tablist">
+				<# _.each( settings['tabs'], function( item, index ) {
+				const tabCount = index + 1,
+					tabUid = elementUid + tabCount,
+					tabWrapperKey = tabUid,
+					tabTitleKey = 'tab-title-' + tabUid,
+					tabIconKey = 'tab-icon-' + tabUid,
+					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
+
+				let tabActiveIcon = tabIcon,
+					tabId = 'e-n-tab-title-' + tabUid;
+
+				if ( '' !== item.tab_icon_active.value ) {
+					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+				}
+
+				if ( '' !== item.element_id ) {
+					tabId = item.element_id;
+				}
+
+				view.addRenderAttribute( tabWrapperKey, {
+					'id': tabId,
+					'class': [ 'e-n-tab-title','e-normal',hoverAnimationClass ],
+					'data-tab': tabCount,
+					'role': 'tab',
+					'tabindex': 1 === tabCount ? '0' : '-1',
+					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-expanded': 'false',
+				} );
+
+				view.addRenderAttribute( tabTitleKey, {
+					'class': [ 'e-n-tab-title-text' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_title' ],
+					'data-binding-index': tabCount,
+				} );
+
+				view.addRenderAttribute( tabIconKey, {
+					'class': [ 'e-n-tab-icon' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
+					'data-binding-index': tabCount,
+				} );
+				#>
+				<div {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
+					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
+				</div>
+				<# } ); #>
+			</div>
+			<div class="e-n-tabs-content">
+			</div>
+			<# } #>
+		</div>
 		<?php
 	}
 
