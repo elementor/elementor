@@ -50,13 +50,13 @@ class Duplicate_Post extends Endpoint {
 		$post = get_post( $post_id );
 
 		if ( ! $post ) {
-			return new \WP_Error( 500, printf( 'Error while duplicating post.' ) );
+			return new \WP_Error( 500, 'Post not found' );
 		}
 
 		$new_post_id = $this->duplicate_post( $post, $post_title );
 
 		if ( is_wp_error( $new_post_id ) ) {
-			return new \WP_Error( 500, printf( 'Error while duplicating post.' ) );
+			return new \WP_Error( 500, 'Error while duplicating post.' );
 		}
 
 		//Duplicate all post meta
@@ -80,12 +80,12 @@ class Duplicate_Post extends Endpoint {
 	private function duplicate_post( $post, $post_title ) {
 		$post_status = 'draft';
 		$current_user = wp_get_current_user();
-		$new_page_author = $current_user->ID;
+		$new_post_author = $current_user->ID;
 
 		$args = [
 			'comment_status' => $post->comment_status,
 			'ping_status' => $post->ping_status,
-			'post_author' => $new_page_author,
+			'post_author' => $new_post_author,
 			'post_content' => $post->post_content,
 			'post_excerpt' => $post->post_excerpt,
 			'post_parent' => $post->post_parent,
