@@ -57,7 +57,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await page.locator( '.elementor-control-title_alignment .elementor-control-input-wrapper .eicon-text-align-left' ).click();
 
 		// Assert.
-		// Check if title's are aligned on the left.
+		// Check if titles are aligned on the left.
 		await expect( editor.getPreviewFrame().locator( '.elementor-widget-n-tabs .e-n-tabs-heading .e-n-tab-title.e-active' ) ).toHaveCSS( 'justify-content', 'flex-start' );
 
 		await cleanup( wpAdmin );
@@ -1144,12 +1144,14 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await setup( wpAdmin );
 		const editor = await wpAdmin.useElementorCleanPost(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			frame = await editor.getPreviewFrame();
+			frame = await editor.getPreviewFrame(),
+			nestedTabsWidget = await frame.locator( 'e-n-tabs' ).first();
 
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
 		Array.from( { length: 7 }, async () => {
 			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > button:nth-child(2)' ).click();
+			await editor.isUiStable( nestedTabsWidget, 3, 200 );
 		} );
 
 		await test.step( 'Assert overflow x', async () => {
