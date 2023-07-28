@@ -12,6 +12,7 @@ on:
         description: 'Ignore mismatch threshold'
         required: false
         default: '0.2'
+  pull_request:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
