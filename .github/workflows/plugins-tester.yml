@@ -12,6 +12,7 @@ on:
         description: 'Ignore mismatch threshold'
         required: false
         default: '0.2'
+  pull_request:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -25,11 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v3
         env:
@@ -69,11 +70,11 @@ jobs:
           - testSuite: ${{ github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Restore build from cache
         uses: actions/cache@v3
         id: restore-build
@@ -93,7 +94,7 @@ jobs:
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: errors-reports
