@@ -1155,7 +1155,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		};
 
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
-		echo $children[ $index ]->print_element();
+		$children[ $index ]->print_element();
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
