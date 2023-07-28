@@ -42,7 +42,7 @@ export default class NestedTabsHtml extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				tablist: '[role="tablist"]',
+				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
 				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
@@ -52,7 +52,8 @@ export default class NestedTabsHtml extends Base {
 				active: 'e-active',
 			},
 			ariaAttributes: {
-				activeTitle: '[aria-selected="true"]',
+				titleStateAttribute: 'aria-selected',
+				activeTitleSelector: '[aria-selected="true"]',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
@@ -101,10 +102,10 @@ export default class NestedTabsHtml extends Base {
 
 	handleKeyboardNavigation( event ) {
 		const tab = event.currentTarget,
-			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
+			$widgetContainer = jQuery( tab.closest( this.getSettings( 'selectors' ).widgetContainer ) ),
 			// eslint-disable-next-line @wordpress/no-unused-vars-before-return
-			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
-			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
+			$tabs = $widgetContainer.find( this.getSettings( 'selectors' ).tabTitle ),
+			isVertical = 'vertical' === $widgetContainer.attr( 'aria-orientation' );
 
 		switch ( event.key ) {
 			case 'ArrowLeft':
@@ -148,12 +149,12 @@ export default class NestedTabsHtml extends Base {
 	deactivateActiveTab( tabIndex = 0, eventType ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = 0 < tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : settings.ariaAttributes.activeTitle,
+			activeTitleSelectorFilter = 0 < tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : settings.ariaAttributes.activeTitleSelector,
 			activeContentFilter = 0 < tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
+			$activeTitleSelector = this.elements.$tabTitles.filter( activeTitleSelectorFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.attr( this.getTitleDeactivationAttributes( eventType ) );
+		$activeTitleSelector.attr( this.getTitleDeactivationAttributes( eventType ) );
 		$activeContent.removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
@@ -208,7 +209,7 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	isActiveTab( tabIndex ) {
-		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( 'aria-selected' );
+		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute );
 	}
 
 	onTabClick( event ) {
@@ -534,21 +535,21 @@ export default class NestedTabsHtml extends Base {
 	}
 
 	setTouchMode() {
-		if ( elementorFrontend.isEditMode() ) {
+		const widgetSelector = this.getSettings( 'selectors' ).widgetContainer;
+
+		if ( elementorFrontend.isEditMode() || 'resize' === event?.type ) {
 			const responsiveDevices = [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra' ],
 				currentDevice = elementorFrontend.getCurrentDeviceMode();
 
 			if ( -1 !== responsiveDevices.indexOf( currentDevice ) ) {
-				this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'true' );
+				this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'true' );
 				return;
 			}
-		}
-
-		if ( 'ontouchstart' in document.documentElement ) {
-			this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'true' );
+		} else if ( 'ontouchstart' in window ) {
+			this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'true' );
 			return;
 		}
 
-		this.$element.find( '.e-n-tabs' ).attr( 'data-touch-mode', 'false' );
+		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
 	}
 }
