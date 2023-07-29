@@ -29,6 +29,20 @@ class Widget_Playing_Cards extends Widget_Base {
 	}
 
 	/**
+	 * Get widget script dependencies.
+	 *
+	 * Retrieve the list of script dependencies the playing cards widget requires.
+	 *
+	 * @since 3.12.1
+	 * @access public
+	 *
+	 * @return array Widget scripts dependencies.
+	 */
+	public function get_script_depends(): array {
+		return [ 'wp-i18n' ];
+	}
+
+	/**
 	 * Get widget title.
 	 *
 	 * Retrieve playing cards widget title.
@@ -187,7 +201,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-playing-card' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-playing-card' => '--e-playing-card-bg-color: {{VALUE}};',
 				],
 			]
 		);
@@ -198,7 +212,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-playing-card' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-playing-card' => '--e-playing-card-border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -209,7 +223,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Hearts and Diamonds Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-playing-card-heart, {{WRAPPER}} .elementor-playing-card-diamond' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-playing-card-heart, {{WRAPPER}} .elementor-playing-card-diamond' => '--e-playing-card-heart-diamond-color: {{VALUE}};',
 				],
 			]
 		);
@@ -220,10 +234,44 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Spades and Clubs Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-playing-card-spade, {{WRAPPER}} .elementor-playing-card-club' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-playing-card-spade, {{WRAPPER}} .elementor-playing-card-club' => '--e-playing-card-spade-club-color: {{VALUE}};',
 				],
 			]
 		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_card_cover_styles',
+			[
+				'label' => esc_html__( 'Card cover', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'card_cover_background',
+			[
+				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card-hidden::before' => '--e-playing-card-cover-bg-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'card_cover_icon_color',
+			[
+				'label' => esc_html__( 'Icon Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-playing-card-hidden::before' => '--e-playing-card-cover-icon-color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	/**
@@ -238,7 +286,8 @@ class Widget_Playing_Cards extends Widget_Base {
 		$cards = $this->get_settings_for_display( 'cards_list' );
 		$hover_animation = $this->get_settings_for_display( 'hover_animation' );
 
-		$this->add_render_attribute( 'wrapper', 'class', 'elementor-playing-cards elementor-playing-cards-' . $hover_animation );
+		$this->add_render_attribute( 'list', 'class', 'elementor-playing-cards elementor-playing-cards-' . $hover_animation );
+		$this->add_render_attribute( 'hiding-button', 'aria-label', esc_html__( 'Hide playing cards type and value', 'elementor' ) );
 
 		$types = [
 			'spade' => '♠',
@@ -247,29 +296,54 @@ class Widget_Playing_Cards extends Widget_Base {
 			'club' => '♣',
 		];
 		?>
-		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
+		<div class="elementor-playing-cards-wrapper" tabindex="0">
 			<span class="elementor-screen-only" role="heading">
 				<?php echo esc_html__( 'Playing Cards', 'elementor' ); ?>
 			</span>
 
-			<?php
-			foreach ( $cards as $card ) {
-				$id = $card['_id'];
-				$type = $card['card_type'];
-				$value = $card['card_value'];
+			<div <?php $this->print_render_attribute_string( 'list' ); ?>>
+				<?php
+				foreach ( $cards as $card ) {
+					$id = $card['_id'];
+					$type = $card['card_type'];
+					$value = $card['card_value'];
 
-				$this->add_render_attribute( 'card-' . $id, 'class', sprintf( 'elementor-playing-card elementor-playing-card-%s elementor-playing-card-%s', $id, $type ) );
-				?>
-				<div <?php $this->print_render_attribute_string( 'card-' . $id ); ?> tabindex="0">
-					<span class="elementor-screen-only" role="heading">
-						<?php printf( esc_html__( 'Playing card of type %1$s and value %2$s', 'elementor' ), esc_html( $type ), esc_html( $value ) ); ?>
-					</span>
+					$this->add_render_attribute( 'card-' . $id, [
+						'class' => sprintf( 'elementor-playing-card elementor-playing-card-%s elementor-playing-card-%s', $id, $type ),
+						'tabindex' => '0',
+					] );
 
-					<div class="elementor-playing-card-header"><?php echo esc_html( $value ); ?></div>
-					<div class="elementor-playing-card-body"><?php echo esc_html( $types[ $type ] ) ?? ''; ?></div>
-					<div class="elementor-playing-card-footer"><?php echo esc_html( $value ); ?></div>
-				</div>
-			<?php } ?>
+					$this->add_render_attribute( 'card-' . $id . '-heading', [
+						'data-type' => $type,
+						'data-value' => $value,
+					] );
+					?>
+					<div <?php $this->print_render_attribute_string( 'card-' . $id ); ?>>
+						<span class="elementor-screen-only elementor-playing-card-title"
+							  role="heading"
+							  <?php $this->print_render_attribute_string( 'card-' . $id . '-heading' ); ?>>
+							<?php printf( esc_html__( 'Playing card of type %1$s and value %2$s', 'elementor' ), esc_html( $type ), esc_html( $value ) ); ?>
+						</span>
+
+						<div class="elementor-playing-card-header"><?php echo esc_html( $value ); ?></div>
+						<div class="elementor-playing-card-body"><?php echo esc_html( $types[ $type ] ) ?? ''; ?></div>
+						<div class="elementor-playing-card-footer"><?php echo esc_html( $value ); ?></div>
+					</div>
+				<?php } ?>
+			</div>
+
+			<div role="region" class="elementor-screen-only" aria-live="polite">
+				<p class="elementor-playing-cards-visibility-status">
+					<?php esc_html_e( 'Cards visible', 'elementor' ); ?>
+				</p>
+			</div>
+
+			<div class="elementor-playing-cards-controls-wrapper">
+				<button type="button" class="elementor-button elementor-playing-cards-toggle-button"
+					<?php $this->print_render_attribute_string( 'hiding-button' ); ?>>
+					<?php esc_html_e( 'Hide', 'elementor' ); ?>
+				</button>
+			</div>
 		</div>
 		<?php
 	}
@@ -297,33 +371,55 @@ class Widget_Playing_Cards extends Widget_Base {
 		}
 
 		view.addRenderAttribute( {
-			wrapper: { class: 'elementor-playing-cards elementor-playing-cards-' + settings.hover_animation },
+			list: { class: 'elementor-playing-cards elementor-playing-cards-' + settings.hover_animation },
+			'hiding-button': { 'aria-label': '<?php esc_html_e( 'Hide playing cards type and value', 'elementor' ); ?>' }
 		} );
 		#>
-
-		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+		<div class="elementor-playing-cards-wrapper" tabindex="0">
 			<span class="elementor-screen-only" role="heading">
 				<?php echo esc_html__( 'Playing Cards', 'elementor' ); ?>
 			</span>
 
-			<#
-			_.each( settings.cards_list, ( card ) => {
-				view.addRenderAttribute( {
-					['card-' + card._id]: { class: 'elementor-playing-card elementor-playing-card-' + card._id + ' elementor-playing-card-' + card.card_type },
-				} );
-			#>
-			<div {{{ view.getRenderAttributeString( 'card-' + card._id ) }}} tabindex="0">
-				<span class="elementor-screen-only" role="heading">
-					<?php
-					printf( esc_html__( 'Playing card of type %1$s and value %2$s', 'elementor' ), '{{card.card_type}}', '{{card.card_value}}' );
-					?>
-				</span>
+			<div {{{ view.getRenderAttributeString( 'list' ) }}}>
+				<#
+				_.each( settings.cards_list, ( card ) => {
+					view.addRenderAttribute( {
+						['card-' + card._id]: {
+							class: 'elementor-playing-card elementor-playing-card-' + card._id + ' elementor-playing-card-' + card.card_type,
+							tabindex: '0',
+						},
+						['card-' + card._id + '-heading']: {
+							'data-type': card.card_type,
+							'data-value': card.card_value,
+						},
+					} );
+				#>
+				<div {{{ view.getRenderAttributeString( 'card-' + card._id ) }}}>
+					<span class="elementor-screen-only" role="heading" {{{ view.getRenderAttributeString( 'card-' + card._id + '-heading' ) }}}>
+						<?php
+						printf( esc_html__( 'Playing card of type %1$s and value %2$s', 'elementor' ), '{{card.card_type}}', '{{card.card_value}}' );
+						?>
+					</span>
 
-				<div class="elementor-playing-card-header">{{ card.card_value }}</div>
-				<div class="elementor-playing-card-body">{{ getCardSymbol( card.card_type ) }}</div>
-				<div class="elementor-playing-card-footer">{{ card.card_value }}</div>
+					<div class="elementor-playing-card-header">{{ card.card_value }}</div>
+					<div class="elementor-playing-card-body">{{ getCardSymbol( card.card_type ) }}</div>
+					<div class="elementor-playing-card-footer">{{ card.card_value }}</div>
+				</div>
+				<# } ); #>
 			</div>
-			<# } ); #>
+
+			<div role="region" class="elementor-screen-only" aria-live="polite">
+				<p class="elementor-playing-cards-visibility-status">
+					<?php esc_html_e( 'Cards visible', 'elementor' ); ?>
+				</p>
+			</div>
+
+			<div class="elementor-playing-cards-controls-wrapper">
+				<button type="button" class="elementor-button elementor-playing-cards-toggle-button"
+						{{{ view.getRenderAttributeString( 'hiding-button' ) }}}>
+					<?php esc_html_e( 'Hide', 'elementor' ); ?>
+				</button>
+			</div>
 		</div>
 		<?php
 	}

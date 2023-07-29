@@ -12,6 +12,7 @@ import NestedTabsHtml from 'elementor/modules/nested-tabs-html/assets/js/fronten
 import NestedAccordion from 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion';
 
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
+import PlayingCards from './handlers/playing-cards';
 
 elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 	elementorFrontend.elementsHandler.elementsHandlers = {
@@ -27,6 +28,7 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'video.default': Video,
 		'image-carousel.default': ImageCarousel,
 		'text-editor.default': TextEditor,
+		'playing-cards.default': PlayingCards,
 	};
 
 	elementorFrontend.on( 'components:init', () => {

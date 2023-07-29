@@ -1,5 +1,5 @@
 export const redColour = 'rgb(217, 83, 79)';
-export const blackColour = 'rgb(51, 51, 51)';
+export const blackColour = 'rgb(0, 0, 0)';
 export const whiteColour = 'rgb(255, 255, 255)';
 export const purpleColour = 'rgb(177, 0, 255)';
 

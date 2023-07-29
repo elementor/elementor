@@ -1,48 +1,79 @@
 //
 // Playing cards
 //
-.elementor-playing-cards {
+
+$e-playing-card-cover-bg-color: #d5d2d2;
+
+.elementor-playing-cards-wrapper {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 
-	.elementor-playing-card {
-		padding: 5px;
-		width: 100px;
-		height: 150px;
-		background-color: $white;
-		margin: 10px;
-		border: 1px solid $black;
-		border-radius: 5px;
+	.elementor-playing-cards {
 		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		font-family: 'Arial', 'Helvetica', sans-serif;
-		font-size: 20px;
-		user-select: none;
+		flex-wrap: wrap;
 
-		&-diamond, &-heart {
-			color: $red;
+		.elementor-playing-card {
+			--e-playing-card-cover-bg-color: #{$e-playing-card-cover-bg-color};
+
+			padding: 5px;
+			width: 100px;
+			height: 150px;
+			background-color: var(--e-playing-card-bg-color, $white);
+			margin: 10px;
+			border: 1px solid var(--e-playing-card-border-color, $black);
+			border-radius: 5px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			font-family: 'Arial', 'Helvetica', sans-serif;
+			font-size: 20px;
+			user-select: none;
+			position: relative;
+
+			&-diamond,
+			&-heart {
+				color: var(--e-playing-card-heart-diamond-color, $red);
+			}
+
+			&-spade,
+			&-club {
+				color: var(--e-playing-card-spade-club-color, $black);
+			}
+
+			&-body {
+				text-align: center;
+				font-size: 40px;
+			}
+
+			&-footer {
+				text-align: $end;
+			}
+
+			&-hidden::before {
+				content: '\e946';
+				font-family: 'eicons';
+				display: flex;
+				width: 100%;
+				height: 100%;
+				background-color: var(--e-playing-card-cover-bg-color);
+				position: absolute;
+				border-radius: 4px;
+				justify-content: center;
+				align-items: center;
+				color: var(--e-playing-card-cover-icon-color, $black);
+			}
 		}
 
-		&-spade, &-club {
-			color: $black;
+		&-pulse .elementor-playing-card:hover {
+			animation: pulse 300ms;
 		}
 
-		&-body {
-			text-align: center;
-			font-size: 40px;
+		&-bounce .elementor-playing-card:hover {
+			animation: bounce 300ms;
 		}
 
-		&-footer {
-			text-align: $end;
+		&-controls-wrapper {
+			align-self: center;
 		}
-	}
-
-	&-pulse .elementor-playing-card:hover {
-		animation: pulse 300ms;
-	}
-
-	&-bounce .elementor-playing-card:hover {
-		animation: bounce 300ms;
 	}
 }

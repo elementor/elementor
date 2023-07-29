@@ -66,7 +66,7 @@ test.describe( 'Playing Cards @playing-cards', () => {
 			await addItemButton.click();
 			await addItemButton.click();
 
-			const cards = await editor.getPreviewFrame().locator( `${ EditorSelectors.playingCards.container } ${ EditorSelectors.playingCards.card }` )
+			const cards = await editor.getPreviewFrame().locator( `${ EditorSelectors.playingCards.container } ${ EditorSelectors.playingCards.card }` );
 
 			await expect( cards ).toHaveCount( 3 );
 		} );
