@@ -43,8 +43,8 @@ export default class WpAdminPage extends BasePage {
 	}
 	async convertFromGutenberg() {
 		await Promise.all( [
+			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
 			this.page.click( '#elementor-switch-mode' ),
-			this.page.waitForResponse( async ( response ) => await ( response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ) && 200 === response.status() ) ),
 		] );
 
 		await this.page.waitForURL( '**/post.php?post=*&action=elementor' );
@@ -54,6 +54,12 @@ export default class WpAdminPage extends BasePage {
 		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async blockUrlResponse( response ) {
+		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
+		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
+		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
 	}
 
 	/**
