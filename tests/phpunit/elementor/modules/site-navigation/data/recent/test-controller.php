@@ -284,6 +284,21 @@ class Test_Controller extends Elementor_Test_Base {
 
 		// Act.
 		$params = [
+			'post_id' => 1,
+			'title' => 'test page',
+		];
+
+		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
+
+		// Assert.
+		$this->assertEquals( 400, $response->get_status() );
+	}
+	public function test_create_items_duplicate_post__invalid_post_id() {
+		// Arrange.
+		$this->act_as_editor();
+
+		// Act.
+		$params = [
 			'post_id' => 'test',
 			'title' => 'test page',
 		];
