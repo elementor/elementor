@@ -41,10 +41,14 @@ export default class WpAdminPage extends BasePage {
 
 		return new EditorPage( this.page, this.testInfo );
 	}
-
 	async convertFromGutenberg() {
-		await this.page.click( '#elementor-switch-mode' );
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20000 } );
+		await Promise.all( [
+			this.page.click( '#elementor-switch-mode' ),
+			this.page.waitForResponse( async ( response ) => await ( response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ) && 200 === response.status() ) ),
+		] );
+
+		await this.page.waitForURL( '**/post.php?post=*&action=elementor' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();
