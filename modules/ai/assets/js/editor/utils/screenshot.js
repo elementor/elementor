@@ -63,7 +63,7 @@ function waitForContainer( id, timeout = 2000 ) {
 	const timeoutPromise = sleep( timeout );
 
 	const waitPromise = new Promise( ( resolve ) => {
-		elementorFrontend.hooks.addAction( `frontend/element_ready/global`, ( $element ) => {
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', ( $element ) => {
 			if ( $element.data( 'id' ) === id ) {
 				resolve();
 			}
