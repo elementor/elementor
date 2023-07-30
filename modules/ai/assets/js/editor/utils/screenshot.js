@@ -80,7 +80,7 @@ function sleep( ms ) {
 	return new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 }
 
-// Ensure that all elements have unique IDs since the Editor requires every element to have an ID.
+// Create missing IDs for the elements.
 function generateIds( container ) {
 	container.id = elementorCommon.helpers.getUniqueId().toString();
 
