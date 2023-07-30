@@ -301,7 +301,7 @@
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
-	.e-n-tabs-#{$device} {
+	.elementor-widget-n-tabs.e-n-tabs-#{$device} {
 
 		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
 			display: none;
