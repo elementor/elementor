@@ -1,24 +1,28 @@
-const LayoutApp = ( props ) => {
+import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import LayoutContent from './layout-content';
+
+const LayoutApp = ( { isRTL, colorScheme, onClose, onConnect, onGenerated, onInsert } ) => {
 	return (
-		<div style={ {
-			position: 'fixed',
-			left: '50%',
-			bottom: '20px',
-			transform: 'translateX(-50%)',
-			background: '#F00',
-			color: '#FFF',
-			padding: '10px',
-			zIndex: 999999,
-			textAlign: 'center',
-		} }>
-			<h2>Layout App</h2>
-			<button onClick={ props.onClose }>Close</button>
-		</div>
+		<DirectionProvider rtl={ isRTL }>
+			<ThemeProvider colorScheme={ colorScheme }>
+				<LayoutContent
+					onClose={ onClose }
+					onConnect={ onConnect }
+					onGenerated={ onGenerated }
+					onInsert={ onInsert }
+				/>
+			</ThemeProvider>
+		</DirectionProvider>
 	);
 };
 
 LayoutApp.propTypes = {
+	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
+	isRTL: PropTypes.bool,
 	onClose: PropTypes.func.isRequired,
+	onConnect: PropTypes.func.isRequired,
+	onGenerated: PropTypes.func.isRequired,
+	onInsert: PropTypes.func.isRequired,
 };
 
 export default LayoutApp;

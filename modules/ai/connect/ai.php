@@ -476,5 +476,18 @@ class Ai extends Library {
 		return $result;
 	}
 
+	public function generate_layout( $prompt, $context = [] ) {
+		return $this->ai_request(
+			'POST',
+			'generate/layout',
+			[
+				'prompt' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
 	protected function init() {}
 }
