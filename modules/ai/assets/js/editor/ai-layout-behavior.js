@@ -1,5 +1,7 @@
 import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
+import { toggleHistory } from './utils/history';
+import { screenshot } from './utils/screenshot';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	ui() {
@@ -32,13 +34,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				isRTL={ isRTL }
 				colorScheme={ colorScheme }
 				onClose={ () => {
-					const isEmptySection = elementor.getContainer( emptySection.id ) === emptySection;
-
-					if ( isEmptySection ) {
-						$e.run( 'document/elements/delete', {
-							container: emptySection,
-						} );
-					}
+					this.deleteEmptySection( emptySection );
 
 					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
@@ -46,7 +42,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGenerated={ () => {} }
+				onGenerated={ this.onGenerated }
 				onInsert={ () => {} }
 			/>,
 			rootElement,
@@ -54,18 +50,18 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	}
 
 	closePanel() {
-		elementor.documents.getCurrent().history.setActive( false );
-		$e.components.get( 'panel' ).blockUserInteractions();
 		$e.run( 'panel/close' );
+		$e.components.get( 'panel' ).blockUserInteractions();
 	}
 
 	openPanel() {
 		$e.run( 'panel/open' );
 		$e.components.get( 'panel' ).unblockUserInteractions();
-		elementor.documents.getCurrent().history.setActive( true );
 	}
 
 	createEmptySection() {
+		toggleHistory( false );
+
 		// Creating an empty section and not a container in order to support sites without containers.
 		// This section is used for UI purposes only.
 		const emptySection = $e.run( 'document/elements/create', {
@@ -81,7 +77,32 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		emptySection.view.$el.addClass( 'e-ai-empty-container' );
 
+		toggleHistory( true );
+
 		return emptySection;
+	}
+
+	deleteEmptySection( emptySection ) {
+		toggleHistory( false );
+
+		const isEmptySection = elementor.getContainer( emptySection.id ) === emptySection;
+
+		if ( isEmptySection ) {
+			$e.run( 'document/elements/delete', {
+				container: emptySection,
+			} );
+		}
+
+		toggleHistory( true );
+	}
+
+	async onGenerated( models ) {
+		const screenshots = await screenshot( models );
+
+		return screenshots.map( ( src, index ) => ( {
+			screenshot: src,
+			template: models[ index ],
+		} ) );
 	}
 
 	onRender() {

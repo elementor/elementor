@@ -51,9 +51,22 @@ module.exports = {
 		},
 	},
 
-	enqueueCSS( url, $document ) {
-		const selector = 'link[href="' + url + '"]',
-			link = '<link href="' + url + '" rel="stylesheet" type="text/css">';
+	/**
+	 * @param {string}                   url
+	 * @param {jQuery}                   $document
+	 * @param {{ crossOrigin: boolean }} options
+	 */
+	enqueueCSS( url, $document, options = {} ) {
+		const selector = 'link[href="' + url + '"]';
+		const link = document.createElement( 'link' );
+
+		link.href = url;
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+
+		if ( options.crossOrigin ) {
+			link.crossOrigin = 'anonymous';
+		}
 
 		if ( ! $document ) {
 			return;
@@ -275,7 +288,7 @@ module.exports = {
 				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
 				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
 			} else {
-				this.enqueueCSS( fontUrl, elementor.$previewContents );
+				this.enqueueCSS( fontUrl, elementor.$previewContents, { crossOrigin: true } );
 			}
 		}
 

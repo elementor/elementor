@@ -46,7 +46,9 @@ const FormLayout = ( { onClose, onInsert, onGenerated } ) => {
 		if ( data?.result ) {
 			setIsCreatingScreenshots( true );
 
-			onGenerated( data.result ).then( ( newData ) => {
+			const models = data.result.map( JSON.parse );
+
+			onGenerated( models ).then( ( newData ) => {
 				setGeneratedData( newData );
 				setIsCreatingScreenshots( false );
 			} );
