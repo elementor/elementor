@@ -11,8 +11,7 @@ export const screenshot = async ( models = [] ) => {
 	wrapContainers( containers, wrapper );
 
 	// Wait for the containers to render.
-	// TODO: Find a better solution.
-	await sleep( 10 );
+	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
 	const promises = containers.map( ( { view } ) => toSvg( view.$el[ 0 ] ) );
 
@@ -30,8 +29,10 @@ export const screenshot = async ( models = [] ) => {
 function createHiddenWrapper() {
 	const wrapper = document.createElement( 'div' );
 
-	wrapper.style.position = 'absolute';
+	wrapper.style.position = 'fixed';
 	wrapper.style.opacity = '0';
+	wrapper.style.top = '0';
+	wrapper.style.left = '0';
 
 	elementor.getPreviewView().$childViewContainer[ 0 ].appendChild( wrapper );
 
@@ -56,6 +57,23 @@ function deleteContainers( containers ) {
 			container,
 		} );
 	} );
+}
+
+function waitForContainer( id, timeout = 2000 ) {
+	const timeoutPromise = sleep( timeout );
+
+	const waitPromise = new Promise( ( resolve ) => {
+		elementorFrontend.hooks.addAction( `frontend/element_ready/global`, ( $element ) => {
+			if ( $element.data( 'id' ) === id ) {
+				resolve();
+			}
+		} );
+	} );
+
+	return Promise.any( [
+		timeoutPromise,
+		waitPromise,
+	] );
 }
 
 function sleep( ms ) {

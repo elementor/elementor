@@ -264,6 +264,8 @@ module.exports = {
 				he_IL: 'hebrew',
 			};
 
+		const enqueueOptions = {};
+
 		let	fontUrl;
 
 		switch ( fontType ) {
@@ -274,11 +276,15 @@ module.exports = {
 					fontUrl += '&subset=' + subsets[ elementor.config.locale ];
 				}
 
+				enqueueOptions.crossOrigin = true;
+
 				break;
 
 			case 'earlyaccess': {
 				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
 				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+
+				enqueueOptions.crossOrigin = true;
 				break;
 			}
 		}
@@ -288,7 +294,7 @@ module.exports = {
 				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
 				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
 			} else {
-				this.enqueueCSS( fontUrl, elementor.$previewContents, { crossOrigin: true } );
+				this.enqueueCSS( fontUrl, elementor.$previewContents, enqueueOptions );
 			}
 		}
 
