@@ -10,6 +10,8 @@ export const takeScreenshots = async ( templates = [] ) => {
 
 	wrapContainers( containers, hiddenWrapper );
 
+	elementor.getPreviewView().$childViewContainer[ 0 ].appendChild( hiddenWrapper );
+
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
@@ -33,8 +35,6 @@ function createHiddenWrapper() {
 	wrapper.style.opacity = '0';
 	wrapper.style.top = '0';
 	wrapper.style.left = '0';
-
-	elementor.getPreviewView().$childViewContainer[ 0 ].appendChild( wrapper );
 
 	return wrapper;
 }
