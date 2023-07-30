@@ -70,8 +70,8 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'webpack:productionWatch' );
 	} );
 
-	grunt.registerTask( 'scripts:packages:local', () => {
-		grunt.task.run( 'webpack:packages_local' );
+	grunt.registerTask( 'scripts:packages', () => {
+		grunt.task.run( 'webpack:packages' );
 	} );
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {

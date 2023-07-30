@@ -310,7 +310,7 @@ const gruntWebpackConfig = {
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
-	packagesLocal: packagesConfigs.dev,
+	packages: packagesConfigs.dev,
 };
 
 module.exports = gruntWebpackConfig;

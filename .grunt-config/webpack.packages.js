@@ -116,8 +116,8 @@ function getPackagesBasedOnLocalRepo() {
 	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
 	const relevantDirs = [ 'packages/core', 'packages/libs' ]
 
-	if ( ! repoPath ) {
-		throw new Error('ELEMENTOR_PACKAGES_REPO_PATH is not defined' );
+	if ( ! repoPath && fs.existsSync( repoPath ) ) {
+		throw new Error( 'ELEMENTOR_PACKAGES_PATH is not defined, define it in your operating system environment variables' );
 	}
 
 	const packages = relevantDirs.flatMap( ( dir ) => {
@@ -135,7 +135,7 @@ function getPackagesBasedOnLocalRepo() {
 	packages.push( {
 		name: 'ui',
 		path: './node_modules/@elementor/ui/index.js'
-	} )
+	} );
 
 	return packages;
 }

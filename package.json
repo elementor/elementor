@@ -33,7 +33,8 @@
 		"test:jest": "jest --config='./tests/jest/jest.config.js'",
 		"scripts": "grunt scripts",
 		"scripts:watch": "grunt watch_scripts",
-		"scripts:packages:local": "export ELEMENTOR_PACKAGES_USE_LOCAL=1 && grunt scripts:packages:local",
+		"scripts:packages": "grunt scripts:packages",
+		"scripts:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 grunt scripts:packages",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
 		"lint:js": "eslint ."
