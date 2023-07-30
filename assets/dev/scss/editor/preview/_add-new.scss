@@ -93,10 +93,21 @@
 
 	&:hover {
 		background-color: var(--e-a-bg-active-bold);
+		color: var(--e-a-color-black);
 	}
 
 	i {
 		margin: 0;
+	}
+
+	&.e-button-primary {
+		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
+
+		&:hover {
+			background-color: var(--e-a-btn-bg-primary-hover);
+			color: var(--e-a-btn-color);
+		}
 	}
 }
 

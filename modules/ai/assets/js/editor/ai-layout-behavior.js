@@ -14,10 +14,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		};
 	}
 
-	onAiButtonClick( event ) {
-		event.stopPropagation();
+	onAiButtonClick( e ) {
+		e.stopPropagation();
 
-		$e.run( 'panel/close' );
+		this.closePanel();
 
 		const emptySection = this.createEmptySection();
 		const rootElement = document.createElement( 'div' );
@@ -38,11 +38,23 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
 
-					$e.run( 'panel/open' );
+					this.openPanel();
 				} }
 			/>,
 			rootElement,
 		);
+	}
+
+	closePanel() {
+		elementor.documents.getCurrent().history.setActive( false );
+		$e.components.get( 'panel' ).blockUserInteractions();
+		$e.run( 'panel/close' );
+	}
+
+	openPanel() {
+		$e.run( 'panel/open' );
+		$e.components.get( 'panel' ).unblockUserInteractions();
+		elementor.documents.getCurrent().history.setActive( true );
 	}
 
 	createEmptySection() {
@@ -55,7 +67,6 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			},
 			options: {
 				edit: false,
-				useHistory: false,
 				at: this.view.getOption( 'at' ),
 			},
 		} );
@@ -67,7 +78,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 	onRender() {
 		const $button = jQuery( '<button>', {
-			class: 'e-ai-layout-button elementor-add-section-area-button',
+			class: 'e-ai-layout-button elementor-add-section-area-button e-button-primary',
 			title: __( 'AI Builder', 'elementor' ),
 		} );
 
