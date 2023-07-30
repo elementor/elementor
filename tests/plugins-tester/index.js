@@ -6,6 +6,7 @@ import topPluginsConfig from './config/plugins.js';
 
 const __filename = fileURLToPath( import.meta.url );
 const __dirname = dirname( __filename );
+let _default = topPluginsConfig;
 
 const logger = new Logger( {
 	debug: true,
@@ -21,9 +22,17 @@ const getConfig = ( args ) => {
 	return args.default;
 };
 
+if ( 'part1' === process.env.TEST_SUITE ) {
+	_default = topPluginsConfig.slice( 0, topPluginsConfig.length / 2 );
+}
+
+if ( 'part2' === process.env.TEST_SUITE ) {
+	_default = topPluginsConfig.slice( topPluginsConfig.length / 2, topPluginsConfig.length );
+}
+
 const pluginsToTest = getConfig( {
 	envVar: 'PLUGINS_TESTER__PLUGINS_TO_TEST',
-	default: topPluginsConfig,
+	default: _default,
 	logger,
 } );
 
