@@ -116,7 +116,7 @@ function getPackagesBasedOnLocalRepo() {
 	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
 	const relevantDirs = [ 'packages/core', 'packages/libs' ]
 
-	if ( ! repoPath && fs.existsSync( repoPath ) ) {
+	if ( ! repoPath || ! fs.existsSync( repoPath ) ) {
 		throw new Error( 'ELEMENTOR_PACKAGES_PATH is not defined, define it in your operating system environment variables' );
 	}
 
