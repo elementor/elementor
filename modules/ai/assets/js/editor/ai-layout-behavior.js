@@ -1,7 +1,7 @@
 import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
 import { toggleHistory } from './utils/history';
-import { screenshot } from './utils/screenshot';
+import { takeScreenshots } from './utils/screenshot';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	ui() {
@@ -96,12 +96,12 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		toggleHistory( true );
 	}
 
-	async onGenerated( models ) {
-		const screenshots = await screenshot( models );
+	async onGenerated( templates ) {
+		const screenshots = await takeScreenshots( templates );
 
 		return screenshots.map( ( src, index ) => ( {
 			screenshot: src,
-			template: models[ index ],
+			template: templates[ index ],
 		} ) );
 	}
 

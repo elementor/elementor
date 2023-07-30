@@ -1,12 +1,12 @@
 import { toSvg } from 'html-to-image';
 import { toggleHistory } from './history';
 
-export const screenshot = async ( models = [] ) => {
+export const takeScreenshots = async ( templates = [] ) => {
 	// Disable history so the Editor won't show our hidden containers as user actions.
 	toggleHistory( false );
 
 	const wrapper = createHiddenWrapper();
-	const containers = createContainers( models );
+	const containers = createContainers( templates );
 
 	wrapContainers( containers, wrapper );
 
@@ -39,11 +39,11 @@ function createHiddenWrapper() {
 	return wrapper;
 }
 
-function createContainers( models ) {
-	return models.map( ( model ) => {
+function createContainers( templates ) {
+	return templates.map( ( template ) => {
 		return $e.run( 'document/elements/create', {
 			container: elementor.getPreviewContainer(),
-			model: generateIds( model ),
+			model: generateIds( template ),
 			options: {
 				edit: false,
 			},
