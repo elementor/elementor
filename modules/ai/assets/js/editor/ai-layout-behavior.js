@@ -14,10 +14,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		};
 	}
 
-	onAiButtonClick( event ) {
-		event.stopPropagation();
+	onAiButtonClick( e ) {
+		e.stopPropagation();
 
-		$e.run( 'panel/close' );
+		this.closePanel();
 
 		const emptySection = this.createEmptySection();
 		const rootElement = document.createElement( 'div' );
@@ -38,11 +38,21 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
 
-					$e.run( 'panel/open' );
+					this.openPanel();
 				} }
 			/>,
 			rootElement,
 		);
+	}
+
+	closePanel() {
+		$e.run( 'panel/close' );
+		$e.components.get( 'panel' ).blockUserInteractions();
+	}
+
+	openPanel() {
+		$e.run( 'panel/open' );
+		$e.components.get( 'panel' ).unblockUserInteractions();
 	}
 
 	createEmptySection() {
