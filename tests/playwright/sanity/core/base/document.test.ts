@@ -37,7 +37,7 @@ test.describe( 'Document tests', async () => {
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
 			const sections = await editor.getPreviewFrame().locator( '[data-element_type="container"]' ).count();
-			await expect( sections ).toEqual( 1 );
+			await expect( containers ).toEqual( 1 );
 			const textEditors = await editor.getPreviewFrame().locator( '.elementor-widget-text-editor ' ).count();
 			await expect( textEditors ).toEqual( 1 );
 
