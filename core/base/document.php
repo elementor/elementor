@@ -1101,7 +1101,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// TODO: Better coding to start template for editor
-		$internal_elements = [
+		$converted_blocks = [
 			[
 				'id' => Utils::generate_random_string(),
 				'elType' => $widget_type::get_type(),
@@ -1111,8 +1111,8 @@ abstract class Document extends Controls_Stack {
 		];
 
 		return Plugin::$instance->experiments->is_feature_active( 'container' )
-			? $this->get_container_elements_data( $internal_elements )
-			: $this->get_sections_elements_data( $internal_elements );
+			? $this->get_container_elements_data( $converted_blocks )
+			: $this->get_sections_elements_data( $converted_blocks );
 	}
 
 	/**

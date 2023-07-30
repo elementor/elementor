@@ -41,6 +41,7 @@ export default class WpAdminPage extends BasePage {
 
 		return new EditorPage( this.page, this.testInfo );
 	}
+
 	async convertFromGutenberg() {
 		await Promise.all( [
 			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
