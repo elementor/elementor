@@ -44,7 +44,7 @@ export default class WpAdminPage extends BasePage {
 
 	async convertFromGutenberg() {
 		await this.page.click( '#elementor-switch-mode' );
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20000 } );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();

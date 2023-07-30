@@ -13,11 +13,12 @@ test.describe( 'Document tests', async () => {
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
-			const sections = await editor.getPreviewFrame().locator( '[data-element_type="section"]' ).count();
+			const previewFrame = editor.getPreviewFrame();
+			const sections = await previewFrame.locator( '[data-element_type="section"]' ).count();
 			await expect( sections ).toEqual( 1 );
-			const columns = await editor.getPreviewFrame().locator( '[data-element_type="column"]' ).count();
+			const columns = await previewFrame.locator( '[data-element_type="column"]' ).count();
 			await expect( columns ).toEqual( 1 );
-			const textEditors = await editor.getPreviewFrame().locator( '.elementor-widget-text-editor' ).count();
+			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor' ).count();
 			await expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {
@@ -25,7 +26,7 @@ test.describe( 'Document tests', async () => {
 			} );
 		} );
 
-	test( 'Converting Gutenberg page to container',
+	test( 'converting gutenberg page to container',
 		async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
@@ -36,9 +37,10 @@ test.describe( 'Document tests', async () => {
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
-			const sections = await editor.getPreviewFrame().locator( '[data-element_type="container"]' ).count();
+			const previewFrame = editor.getPreviewFrame();
+			const containers = await previewFrame.locator( '[data-element_type="container"]' ).count();
 			await expect( containers ).toEqual( 1 );
-			const textEditors = await editor.getPreviewFrame().locator( '.elementor-widget-text-editor ' ).count();
+			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor ' ).count();
 			await expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {

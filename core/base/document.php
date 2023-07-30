@@ -95,6 +95,42 @@ abstract class Document extends Controls_Stack {
 	protected $post;
 
 	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_container_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'container',
+				'elements' => $internal_elements,
+			],
+		];
+	}
+
+	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_sections_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'section',
+				'elements' => [
+					[
+						'id' => Utils::generate_random_string(),
+						'elType' => 'column',
+						'elements' => $internal_elements,
+					],
+				],
+			],
+		];
+	}
+
+	/**
 	 * @since 2.1.0
 	 * @access protected
 	 * @static
@@ -1074,30 +1110,9 @@ abstract class Document extends Controls_Stack {
 			],
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
-			return [
-				[
-					'id' => Utils::generate_random_string(),
-					'elType' => 'container',
-					'elements' => $internal_elements,
-				],
-			];
-		} else {
-			return [
-				[
-					'id' => Utils::generate_random_string(),
-					'elType' => 'section',
-					'elements' => [
-						[
-							'id' => Utils::generate_random_string(),
-							'elType' => 'column',
-							'elements' => $internal_elements,
-						],
-					],
-				],
-			];
-		}
-
+		return Plugin::$instance->experiments->is_feature_active( 'container' )
+			? $this->get_container_elements_data( $internal_elements )
+			: $this->get_sections_elements_data( $internal_elements );
 	}
 
 	/**
