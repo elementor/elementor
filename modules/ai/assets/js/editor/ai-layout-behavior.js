@@ -1,4 +1,5 @@
 import LayoutApp from './layout-app';
+import { onConnect } from './helpers';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	ui() {
@@ -21,11 +22,15 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		const emptySection = this.createEmptySection();
 		const rootElement = document.createElement( 'div' );
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
+		const isRTL = elementorCommon.config.isRTL;
 
 		document.body.append( rootElement );
 
 		ReactDOM.render(
 			<LayoutApp
+				isRTL={ isRTL }
+				colorScheme={ colorScheme }
 				onClose={ () => {
 					const isEmptySection = elementor.getContainer( emptySection.id ) === emptySection;
 
@@ -40,6 +45,9 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 					this.openPanel();
 				} }
+				onConnect={ onConnect }
+				onGenerated={ () => {} }
+				onInsert={ () => {} }
 			/>,
 			rootElement,
 		);
