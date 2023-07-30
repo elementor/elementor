@@ -9,7 +9,7 @@ test.describe( 'Document tests', async () => {
 				container: 'inactive',
 			} );
 
-			await wpAdmin.page.goto( '/wp-admin/post-new.php?post_type=page' );
+			await wpAdmin.openNewWordpressPage();
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
@@ -33,7 +33,7 @@ test.describe( 'Document tests', async () => {
 				container: 'active',
 			} );
 
-			await wpAdmin.page.goto( '/wp-admin/post-new.php?post_type=page' );
+			await wpAdmin.openNewWordpressPage();
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();

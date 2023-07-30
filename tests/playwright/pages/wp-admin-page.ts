@@ -44,7 +44,7 @@ export default class WpAdminPage extends BasePage {
 
 	async convertFromGutenberg() {
 		await this.page.click( '#elementor-switch-mode' );
-		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20000 } );
 		await this.waitForPanel();
 
 		await this.closeAnnouncementsIfVisible();
@@ -176,5 +176,16 @@ export default class WpAdminPage extends BasePage {
 
 	async editWithElementor() {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
+	}
+
+	async closeBlockEditorPopupIfVisible() {
+		if ( await this.page.locator( '[aria-label="Close dialog"]' ).isVisible() ) {
+			await this.page.click( '[aria-label="Close dialog"]' );
+		}
+	}
+
+	async openNewWordpressPage() {
+		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
+		await this.closeBlockEditorPopupIfVisible();
 	}
 }
