@@ -53,6 +53,10 @@ class Duplicate_Post extends Endpoint {
 			return new \WP_Error( 500, 'Post not found' );
 		}
 
+		if ( ! User::is_current_user_can_edit_post_type( $post->post_type ) ) {
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post->post_type ), [ 'status' => 401 ] );
+		}
+
 		$new_post_id = $this->duplicate_post( $post, $post_title );
 
 		if ( is_wp_error( $new_post_id ) ) {

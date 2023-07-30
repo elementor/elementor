@@ -291,8 +291,9 @@ class Test_Controller extends Elementor_Test_Base {
 		$response = $this->send_request( 'POST', self::DUPLICATE_POST_ENDPOINT, $params );
 
 		// Assert.
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 401, $response->get_status() );
 	}
+
 	public function test_create_items_duplicate_post__invalid_post_id() {
 		// Arrange.
 		$this->act_as_editor();
