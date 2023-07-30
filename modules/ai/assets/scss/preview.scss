@@ -16,4 +16,9 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: 80px auto;
+
+	// Ensure nothing is visible when the container should be empty.
+	& > * {
+		display: none !important;
+	}
 }

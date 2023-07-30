@@ -65,7 +65,6 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			},
 			options: {
 				edit: false,
-				useHistory: false,
 				at: this.view.getOption( 'at' ),
 			},
 		} );
