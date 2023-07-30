@@ -36,6 +36,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		self::ENV_PACKAGE,
 		'icons',
 		'locations',
+		'query',
 		'store',
 		'ui',
 	];
@@ -105,17 +106,19 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		wp_enqueue_script( 'elementor-editor-environment-v2' );
 
+		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
+
+		if ( $env_config ) {
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+
+			Utils::print_js_config(
+				$env_config['handle'],
+				'elementorEditorV2Env',
+				$client_env
+			);
+		}
+
 		foreach ( $this->assets_config_provider->only( self::PACKAGES_TO_ENQUEUE ) as $config ) {
-			if ( self::ENV_PACKAGE === $config['handle'] ) {
-				$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-
-				Utils::print_js_config(
-					$config['handle'],
-					'elementorEditorV2Env',
-					$client_env
-				);
-			}
-
 			wp_enqueue_script( $config['handle'] );
 		}
 

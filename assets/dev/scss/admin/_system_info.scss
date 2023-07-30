@@ -8,11 +8,6 @@
 	.elementor-system-info-section {
 		margin-block-end: 10px;
 
-		& > .elementor-system-info-report-name {
-			padding-inline-start: 10px;
-			border-block-end: 1px solid #e1e1e1;
-		}
-
 		.widefat {
 			white-space: pre;
 		}
@@ -29,30 +24,9 @@
 		}
 	}
 
-	.elementor-system-info-report-name {
-		text-transform: uppercase;
-		font-size: 14px;
-		margin: 0;
-		line-height: 2;
-	}
-
-	.elementor-system-info-report-row {
-		overflow: hidden;
-		padding: 5px 0;
-
-		> * {
-			float: $start;
-		}
-	}
-
-	.elementor-system-info-report-field,
 	.elementor-system-info-field-recommendation {
 		padding-inline-start: 10px;
 		color: #7F7F7F;
-	}
-
-	.elementor-system-info-report-fields {
-		padding-inline-start: 20px;
 	}
 
 	.elementor-system-info-plugin-name {

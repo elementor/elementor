@@ -70,7 +70,7 @@ ElementModel = BaseElementModel.extend( {
 			settings.widgetType = this.get( 'widgetType' );
 		}
 
-		settings.elType = elType;
+		settings = { ...settings, elType }; // Create a shallow copy as elType is sometimes read only when trying to drop a widget preset.
 		settings.isInner = this.get( 'isInner' );
 
 		// Allow passing custom `_title` from model.
@@ -149,7 +149,12 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		let title = this.getSetting( '_title' );
+		let title = this.getSetting( '_title' ),
+			custom = this.get( 'custom' );
+
+		if ( ! title && ( custom?.isPreset ?? false ) ) {
+			return this.get( 'title' ) || title;
+		}
 
 		if ( ! title ) {
 			title = this.getDefaultTitle();
@@ -159,7 +164,20 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getIcon() {
-		return elementor.getElementData( this ).icon;
+		const mainIcon = elementor.getElementData( this ).icon,
+			custom = this.get( 'custom' );
+
+		if ( custom?.isPreset ?? false ) {
+			return this.get( 'icon' ) || mainIcon;
+		}
+
+		const savedPresetIcon = this.getSetting( 'presetIcon' );
+
+		if ( 'string' === typeof savedPresetIcon && '' !== savedPresetIcon.trim() ) {
+			return savedPresetIcon;
+		}
+
+		return mainIcon;
 	},
 
 	createRemoteRenderRequest() {
