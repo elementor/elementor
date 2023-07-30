@@ -5,10 +5,10 @@ export const takeScreenshots = async ( templates = [] ) => {
 	// Disable history so the Editor won't show our hidden containers as user actions.
 	toggleHistory( false );
 
-	const wrapper = createHiddenWrapper();
+	const hiddenWrapper = createHiddenWrapper();
 	const containers = createContainers( templates );
 
-	wrapContainers( containers, wrapper );
+	wrapContainers( containers, hiddenWrapper );
 
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
@@ -19,7 +19,7 @@ export const takeScreenshots = async ( templates = [] ) => {
 
 	deleteContainers( containers );
 
-	wrapper.remove();
+	hiddenWrapper.remove();
 
 	toggleHistory( true );
 
