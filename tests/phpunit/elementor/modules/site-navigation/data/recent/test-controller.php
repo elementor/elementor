@@ -5,17 +5,47 @@ namespace Elementor\Testing\Modules\SiteNavigation\Data\Recent;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
+use Elementor\Modules\SiteNavigation\Module;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 class Test_Controller extends Elementor_Test_Base {
+
+	/**
+	 * @var Module
+	 */
+	protected $module;
 
 	const RECENTLY_EDITED_ENDPOINT = '/site-navigation/recent-posts';
 	const ADD_NEW_POST_ENDPOINT = '/site-navigation/add-new-post';
 	const DUPLICATE_POST_ENDPOINT = '/site-navigation/duplicate-post';
 
+	private $original_experiment_default_state;
+
 	public function setUp() {
 		parent::setUp();
+
+		$this->module = new Module();
+
+		$this->original_experiment_default_state = Plugin::$instance->experiments
+			->get_features( $this->module::PAGES_PANEL_EXPERIMENT_NAME )['default'];
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			$this->module::PAGES_PANEL_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			$this->module::PAGES_PANEL_EXPERIMENT_NAME,
+			$this->original_experiment_default_state
+		);
 	}
 
 	/**
@@ -240,6 +270,7 @@ class Test_Controller extends Elementor_Test_Base {
 	 */
 	public function test_create_items__invalid_post_id() {
 		// Arrange.
+		$this->module = new Module();
 		$this->act_as_editor();
 
 		// Act.
@@ -299,8 +330,14 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->act_as_subscriber();
 
 		// Act.
+		$post = self::factory()->post->create( [
+			'post_type' => 'post',
+			'post_title' => 'Test Post',
+			'post_status' => 'publish',
+		] );
+
 		$params = [
-			'post_id' => 1,
+			'post_id' => $post,
 			'title' => 'test page',
 		];
 
