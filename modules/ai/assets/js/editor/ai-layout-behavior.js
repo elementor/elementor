@@ -46,13 +46,15 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	}
 
 	closePanel() {
-		$e.run( 'panel/close' );
+		elementor.documents.getCurrent().history.setActive( false );
 		$e.components.get( 'panel' ).blockUserInteractions();
+		$e.run( 'panel/close' );
 	}
 
 	openPanel() {
 		$e.run( 'panel/open' );
 		$e.components.get( 'panel' ).unblockUserInteractions();
+		elementor.documents.getCurrent().history.setActive( true );
 	}
 
 	createEmptySection() {
