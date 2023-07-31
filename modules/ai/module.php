@@ -44,28 +44,11 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
-			wp_enqueue_script(
-				'elementor-ai',
-				$this->get_js_assets_url( 'ai' ),
-				[
-					'elementor-common',
-					'elementor-editor-modules',
-					'elementor-editor-document',
-					'elementor-v2-ui',
-					'elementor-v2-icons',
-				],
-				ELEMENTOR_VERSION,
-				true
-			);
+			$this->enqueue_main_script();
 
-			wp_localize_script(
-				'elementor-ai',
-				'ElementorAiConfig',
-				[
-					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'connect_url' => $this->get_ai_connect_url(),
-				]
-			);
+			if ( $this->should_enqueue_layout() ) {
+				$this->enqueue_layout_script();
+			}
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
@@ -78,13 +61,68 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/preview/enqueue_styles', function() {
-			wp_enqueue_style(
-				'elementor-ai-preview',
-				$this->get_css_assets_url( 'modules/ai/preview' ),
-				[],
-				ELEMENTOR_VERSION
-			);
+			if ( $this->should_enqueue_layout() ) {
+				wp_enqueue_style(
+					'elementor-ai-layout-preview',
+					$this->get_css_assets_url( 'modules/ai/layout-preview' ),
+					[],
+					ELEMENTOR_VERSION
+				);
+			}
 		} );
+	}
+
+	private function enqueue_main_script() {
+		wp_enqueue_script(
+			'elementor-ai',
+			$this->get_js_assets_url( 'ai' ),
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-web-cli',
+				'elementor-common',
+				'elementor-editor-modules',
+				'elementor-editor-document',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai',
+			'ElementorAiConfig',
+			[
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+			]
+		);
+	}
+
+	private function enqueue_layout_script() {
+		wp_enqueue_script(
+			'elementor-ai-layout',
+			$this->get_js_assets_url( 'ai-layout' ),
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-common',
+				'elementor-web-cli',
+				'elementor-editor-modules',
+				'elementor-ai',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	private function should_enqueue_layout() {
+		return Plugin::$instance->experiments->is_feature_active( 'container' );
 	}
 
 	private function get_ai_connect_url() {
