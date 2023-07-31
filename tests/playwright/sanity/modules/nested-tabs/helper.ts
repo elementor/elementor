@@ -140,8 +140,8 @@ export async function setBackgroundVideoUrl( page: Page, editor: EditorPage, ele
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: Number = 0 ) {
-	const titleWrapperWidth = await context.locator( `.e-n-tabs-items-heading` ).evaluate( ( element ) => element.clientWidth ),
-		itemBox = await context.locator( `.e-n-tab-item-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
+	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( element ) => element.clientWidth ),
+		itemBox = await context.locator( `.e-n-tab-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
 			const elementBox = element.getBoundingClientRect();
 
 			return {
