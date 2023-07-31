@@ -10,7 +10,6 @@ inputs:
     description: 'The ref to get the version from.'
   POSTFIX:
     required: false
-    default: "-rc"
     description: 'The postfix that will be added to the package version -rc / -test'
 
 runs:

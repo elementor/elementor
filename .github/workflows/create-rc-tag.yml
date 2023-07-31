@@ -46,6 +46,7 @@ jobs:
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
           REF: ${{ github.ref }}
+          POSTFIX: '-rc'
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:

@@ -7,7 +7,6 @@ inputs:
     description: "The channel to get the version to (ga, cloud, beta)."
   POSTFIX:
     required: false
-    default: "-rc"
     description: "The postfix that will be added to the package version -rc / -test"
 
 runs:
