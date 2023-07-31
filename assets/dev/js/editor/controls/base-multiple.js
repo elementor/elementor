@@ -37,6 +37,27 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		return elementorCommon.helpers.cloneObject( values );
 	},
 
+	getControlValue( key, name ) {
+		const controlName = name || this.model.get( 'name' );
+		var values = this.container.settings.get( controlName );
+
+		if ( ! jQuery.isPlainObject( values ) ) {
+			return {};
+		}
+
+		if ( key ) {
+			var value = values[ key ];
+
+			if ( undefined === value ) {
+				value = '';
+			}
+
+			return value;
+		}
+
+		return elementorCommon.helpers.cloneObject( values );
+	},
+
 	/**
 	 * @inheritDoc
 	 */

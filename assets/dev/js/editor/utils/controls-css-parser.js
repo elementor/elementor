@@ -1,6 +1,10 @@
 var Stylesheet = require( 'elementor-editor-utils/stylesheet' ),
 	ControlsCSSParser;
-import { areNewControlValuesEmpty, updateNewControlWithOldControlValues } from './control-replacement';
+import {
+	areNewControlValuesEmpty,
+	getOldControlName,
+	updateNewControlWithOldControlValues
+} from './control-replacement';
 
 ControlsCSSParser = elementorModules.ViewModule.extend( {
 	stylesheet: null,
@@ -113,9 +117,8 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						cssProperty = control.unit_selectors_dictionary[ value.unit ];
 					}
 
-					//TODO: Handle responsive values
 					if( control.old_format && areNewControlValuesEmpty( control.old_format.new_props, value ) ) {
-						const oldControlName = control.old_format.name,
+						const oldControlName = getOldControlName( control ),
 							oldControl = controls[ oldControlName ],
 							oldControlValues = this.getStyleControlValue( oldControl, values );
 
@@ -226,19 +229,6 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			this.stylesheet.addRules( selector, outputCssProperty, query );
 		} );
 	},
-
-	// areNewControlValueEmpty( newProps, value ) {
-	// 	let isEmpty = false;
-	//
-	// 	_.each( newProps, ( newProp ) => {
-	// 		if ( value[ newProp ] === '' ) {
-	// 			isEmpty = true;
-	// 			return isEmpty;
-	// 		}
-	// 	} );
-	//
-	// 	return isEmpty;
-	// },
 
 	unitHasCustomSelector( control, value ) {
 		return control.unit_selectors_dictionary && undefined !== control.unit_selectors_dictionary[ value.unit ];
