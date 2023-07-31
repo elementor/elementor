@@ -40,6 +40,7 @@
 				border-block-end: 0 none transparent;
 				border-inline-start: 0 none transparent;
 				border-inline-end: 12px solid var(--e-p-border-section);
+				transition: var(--e-a-transition-hover);
 			}
 
 			&:hover {
@@ -65,6 +66,7 @@
 				border-block-end: 0 none transparent;
 				border-inline-start: 12px solid var(--e-p-border-section);
 				border-inline-end: 0 none transparent;
+				transition: var(--e-a-transition-hover);
 			}
 
 			&:hover {
@@ -93,7 +95,7 @@
 				border-start-start-radius: 0;
 				border-start-end-radius: 0;
 				border-end-start-radius: 5px;
-				border-end-end-radius: 0;	
+				border-end-end-radius: 0;
 
 				&:before {
 					top: 0;
@@ -101,6 +103,7 @@
 					border-block-end: 22px solid transparent;
 					border-inline-start: 0 none transparent;
 					border-inline-end: 12px solid var(--e-p-border-section);
+					transition: var(--e-a-transition-hover);
 				}
 			}
 
@@ -116,6 +119,7 @@
 					border-block-end: 22px solid transparent;
 					border-inline-start: 12px solid var(--e-p-border-section);
 					border-inline-end: 0 none transparent;
+					transition: var(--e-a-transition-hover);
 				}
 			}
 		}
