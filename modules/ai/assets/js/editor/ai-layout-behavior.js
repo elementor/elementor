@@ -1,6 +1,8 @@
 import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
 import { takeScreenshots } from './utils/screenshot';
+import { startHistoryLog } from './utils/history';
+import { generateIds } from './utils/genereate-ids';
 import {
 	createPreviewContainer,
 	deletePreviewContainer,
@@ -55,7 +57,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				onConnect={ onConnect }
 				onGenerated={ this.onGenerated }
 				onSelect={ this.onSelect }
-				onInsert={ () => {} }
+				onInsert={ this.onInsert.bind( this ) }
 			/>,
 			rootElement,
 		);
@@ -71,6 +73,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		$e.components.get( 'panel' ).unblockUserInteractions();
 	}
 
+	hideDropArea() {
+		this.view.onCloseButtonClick();
+	}
+
 	async onGenerated( templates ) {
 		const screenshots = await takeScreenshots( templates );
 
@@ -82,6 +88,27 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 	onSelect( template ) {
 		setPreviewContainerContent( template );
+	}
+
+	onInsert( template ) {
+		deletePreviewContainer();
+		this.hideDropArea();
+
+		const endHistoryLog = startHistoryLog( {
+			type: 'import',
+			title: __( 'AI Layout', 'elementor' ),
+		} );
+
+		$e.run( 'document/elements/create', {
+			container: elementor.getPreviewContainer(),
+			model: generateIds( template ),
+			options: {
+				at: this.view.getOption( 'at' ),
+				edit: true,
+			},
+		} );
+
+		endHistoryLog();
 	}
 
 	onRender() {
