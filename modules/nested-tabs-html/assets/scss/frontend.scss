@@ -158,6 +158,7 @@
 
 		&-title {
 			all: unset;
+			user-select: none;
 			display: flex;
 			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
 			flex-direction: var( --n-tabs-title-direction );
@@ -188,15 +189,6 @@
 				-webkit-text-stroke-width var( --n-tabs-title-transition ),
 				-webkit-text-stroke-color var( --n-tabs-title-transition ),
 				transform var( --n-tabs-title-transition );
-
-			// Remove tap highlight color on iOS: https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color.
-			-webkit-tap-highlight-color: transparent;
-			-webkit-touch-callout: none;
-			-webkit-user-select: none;
-			-khtml-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
 
 			@include button-focus-outline;
 

@@ -1125,10 +1125,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$this->print_child( $item_settings['index'], $item_settings );
 		$container_html = ob_get_clean();
 
-		$attribute_selector = 'class="';
-		$active_class = 0 === $item_settings['index'] ? $attribute_selector . 'e-active ' : $attribute_selector;
+		if ( 0 === $item_settings['index'] ) {
+			return str_replace( 'class="', 'class="e-active ', $container_html );
+		}
 
-		return str_replace( $attribute_selector, $active_class, $container_html );
+		return $container_html;
 	}
 
 
