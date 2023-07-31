@@ -12,6 +12,10 @@ import { AIIcon, XIcon } from '@elementor/icons';
 
 const promptDialogStyleProps = {
 	sx: {
+		pointerEvents: 'none',
+		'&.MuiDialog-root': {
+			top: 'initial',
+		},
 		'& .MuiDialog-container': {
 			alignItems: 'flex-end',
 		},
@@ -19,35 +23,51 @@ const promptDialogStyleProps = {
 	PaperProps: {
 		sx: {
 			m: 0,
-			mx: 0,
-			mb: '7vh',
-			maxHeight: '35vh',
+			top: 'initial',
+			bottom: ( { spacing } ) => spacing( 9 ),
+			maxHeight: '40vh',
+			pointerEvents: 'auto',
 		},
 	},
+};
+
+const DialogHeader = ( { onClose, children } ) => (
+	<DialogTitle sx={ { fontWeight: 'normal' } }>
+		<AIIcon fontSize="small" sx={ { mr: 3 } } />
+
+		<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+			{ __( 'AI Builder', 'elementor' ) }
+		</Typography>
+
+		<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
+
+		<Stack direction="row" spacing={ 3 } alignItems="center" sx={ { ml: 'auto' } }>
+			{ children }
+
+			<IconButton
+				size="small"
+				aria-label="close"
+				onClick={ onClose }
+				sx={ { '&.MuiButtonBase-root': { mr: -4 } } }
+			>
+				<XIcon />
+			</IconButton>
+		</Stack>
+	</DialogTitle>
+);
+
+DialogHeader.propTypes = {
+	children: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
 };
 
 const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 
-	const DialogUpgradeChip = () => {
-		const needsUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
-
-		if ( ! needsUpgradeChip ) {
-			return null;
-		}
-
-		return (
-			<UpgradeChip
-				hasSubscription={ hasSubscription }
-				usagePercentage={ usagePercentage }
-			/>
-		);
-	};
-
 	if ( isLoading ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth="md">
-				<PromptDialog.Header onClose={ onClose } />
+				<DialogHeader onClose={ onClose } />
 
 				<PromptDialog.Content dividers>
 					<Loader />
@@ -59,7 +79,7 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } 
 	if ( ! isConnected ) {
 		return (
 			<WizardDialog onClose={ onClose }>
-				<WizardDialog.Header onClose={ onClose } />
+				<DialogHeader onClose={ onClose } />
 
 				<WizardDialog.Content dividers>
 					<Connect
@@ -77,7 +97,7 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } 
 	if ( ! isGetStarted ) {
 		return (
 			<WizardDialog onClose={ onClose }>
-				<WizardDialog.Header onClose={ onClose } />
+				<DialogHeader onClose={ onClose } />
 
 				<WizardDialog.Content dividers>
 					<GetStarted onSuccess={ fetchData } />
@@ -86,30 +106,17 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } 
 		);
 	}
 
+	const showUpgradeChip = ! hasSubscription || 80 <= usagePercentage;
+
 	return (
-		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth="md">
-			<DialogTitle sx={ { fontWeight: 'normal' } }>
-				<AIIcon fontSize="small" sx={ { mr: 3 } } />
-
-				<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
-					{ __( 'AI Builder', 'elementor' ) }
-				</Typography>
-
-				<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
-
-				<Stack direction="row" spacing={ 3 } alignItems="center" sx={ { ml: 'auto' } }>
-					<DialogUpgradeChip />
-
-					<IconButton
-						size="small"
-						aria-label="close"
-						onClick={ onClose }
-						sx={ { '&.MuiButtonBase-root': { mr: -4 } } }
-					>
-						<XIcon />
-					</IconButton>
-				</Stack>
-			</DialogTitle>
+		<PromptDialog
+			maxWidth="md"
+			onClose={ onClose }
+			{ ...promptDialogStyleProps }
+		>
+			<DialogHeader onClose={ onClose }>
+				{ showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } /> }
+			</DialogHeader>
 
 			<PromptDialog.Content dividers>
 				<FormLayout
