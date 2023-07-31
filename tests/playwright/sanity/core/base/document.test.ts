@@ -6,7 +6,7 @@ test.describe( 'Document tests', async () => {
 		async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
-				container: 'inactive',
+				container: false,
 			} );
 
 			await wpAdmin.openNewWordpressPage();
@@ -22,7 +22,7 @@ test.describe( 'Document tests', async () => {
 			await expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {
-				container: 'active',
+				container: true,
 			} );
 		} );
 
@@ -30,7 +30,7 @@ test.describe( 'Document tests', async () => {
 		async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo );
 			await wpAdmin.setExperiments( {
-				container: 'active',
+				container: true,
 			} );
 
 			await wpAdmin.openNewWordpressPage();
@@ -44,7 +44,7 @@ test.describe( 'Document tests', async () => {
 			await expect( textEditors ).toEqual( 1 );
 
 			await wpAdmin.setExperiments( {
-				container: 'inactive',
+				container: false,
 			} );
 		} );
 } );
