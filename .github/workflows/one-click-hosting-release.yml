@@ -55,7 +55,7 @@ jobs:
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
-          PACKAGE_VERSION: ${{ env.BUILD_NAME }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
