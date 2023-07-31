@@ -177,5 +177,3 @@ export default class ControlConditions extends Conditions {
 	}
 }
 
-export class areNewControlValuesEmpty {
-}

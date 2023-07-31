@@ -2,17 +2,15 @@ import {areNewControlValuesEmpty, getOldControlName, updateNewControlWithOldCont
 // eslint-disable-next-line prefer-const
 let ControlDimensionsView = require( 'elementor-controls/dimensions' ),
 	ControlGapItemView;
-const ControlBaseUnitsItemView = require("elementor-controls/base-units");
 
 // eslint-disable-next-line prefer-const
 ControlGapItemView = ControlDimensionsView.extend( {
-	uiControls:'.elementor-control-gap > input:enabled',
 
 	ui() {
 		// eslint-disable-next-line prefer-const
 		const ui = ControlDimensionsView.prototype.ui.apply( this, arguments );
 
-		ui.controls = this.uiControls;
+		ui.controls = '.elementor-control-gap > input:enabled';
 		ui.link = 'button.elementor-link-gaps';
 
 		return ui;
