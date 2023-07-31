@@ -96,7 +96,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		const endHistoryLog = startHistoryLog( {
 			type: 'import',
-			title: __( 'AI Template', 'elementor' ),
+			title: __( 'AI Layout', 'elementor' ),
 		} );
 
 		$e.run( 'document/elements/create', {
