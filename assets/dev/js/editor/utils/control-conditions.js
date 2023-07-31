@@ -176,4 +176,3 @@ export default class ControlConditions extends Conditions {
 		return conditionSucceed;
 	}
 }
-
