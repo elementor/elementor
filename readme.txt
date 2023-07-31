@@ -240,6 +240,45 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.15.0 - 2023-07-31 =
+
+* New: Introducing Accordion widget - Unleash your design creativity with nesting capabilities and layout flexibility ([#2587](https://github.com/elementor/elementor/issues/2587))
+* New: Enhancements Elementor AI for Images - Seamlessly Remove and Replace Backgrounds
+* New: Introducing Apps Page - Discover a selection of tools, specifically tailored to enhance your Elementor-powered website
+* Tweak: Added a "Container" option to the 'Hover Area' dropdown in Lottie widget ([#20360](https://github.com/elementor/elementor/issues/20360))
+* Tweak: Updated several URLs from `http:` to `https` for enhanced compliance (props [@DAnn2012](https://github.com/DAnn2012))
+* Tweak: Added Image Size control to Gravatar image in Author Box widget
+* Tweak: Remove deprecated schemes area
+* Tweak: Accessibility Improvements feature merged to version
+* Tweak: Deleted `aspect-ratio` from SASS files
+* Tweak: Added keyboard accessibility to Repeater control
+* Tweak: Unified the appearance of `stretch` and `center` buttons in Tabs widgets
+* Tweak: Updated `eicons` library to v5.21.0
+* Tweak: Group together position controls in Icon Box widget
+* Tweak: Group together position controls in Image Box widget
+* Tweak: Added additional units to lightbox controls
+* Tweak: Implemented CSS logical properties in Elementor App
+* Tweak: Implemented CSS logical properties in Elementor Editor
+* Tweak: Enhanced `text-align` property by implementing CSS logical properties
+* Tweak: Improved panel UI in Video widget
+* Tweak: Replaced Display Percentage select control to toggle control in Progress Bar widget
+* Tweak: Added "Title HTML Tag" to Title in Progress Bar widget
+* Tweak: Updated recommended PHP version
+* Tweak: Added `classes_dictionary` support for editor controls
+* Tweak: Expanded AI resize option elevating the resolution limit to 2048px
+* Tweak: Landing Pages feature downgraded to BETA status
+* Tweak: Promoted "Global Style Preview" feature to BETA status
+* Fix: Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active ([#19394](https://github.com/elementor/elementor/issues/19394), [#19394](https://github.com/elementor/elementor/issues/19394))
+* Fix: Video lightbox incorrect aspect ratio when multiple video widgets are utilized on the same page ([#21649](https://github.com/elementor/elementor/issues/21649))
+* Fix: Disabling popup overlay does not disable it in the editor ([#22412](https://github.com/elementor/elementor/issues/22412))
+* Fix: Corrected typo in `DONOTCACHCEOBJECT` to `DONOTCACHEOBJECT` for accurate `do_not_cache` definition ([#22786](https://github.com/elementor/elementor/issues/22786))
+* Fix: Stretch option is not working as expected when items are set to the sides in Tabs widget ([#22774](https://github.com/elementor/elementor/issues/22774))
+* Fix: Color picker is not working as expected on document settings ([#22867](https://github.com/elementor/elementor/issues/22867))
+* Fix: Updated text domain of multiple strings to exclude 'elementor-pro' for better compatibility (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Video overlay image `aspect-ratio` fixes
+* Fix: Rectified template categories filter to reference the correct ID accurately
+* Fix: Lightbox overlay color was not visible when previewing the lightbox within the editor
+
 = 3.14.1 - 2023-06-26 =
 
 * Fix: Video background added on the parent tab container only works on the first tab in Tabs widget
