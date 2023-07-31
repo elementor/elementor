@@ -26,7 +26,7 @@ const promptDialogStyleProps = {
 	},
 };
 
-const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert } ) => {
+const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 
 	const DialogUpgradeChip = () => {
@@ -117,6 +117,7 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert } ) => {
 					onClose={ onClose }
 					onInsert={ onInsert }
 					onGenerated={ onGenerated }
+					onSelect={ onSelect }
 				/>
 			</PromptDialog.Content>
 		</PromptDialog>
@@ -128,6 +129,7 @@ LayoutContent.propTypes = {
 	onConnect: PropTypes.func.isRequired,
 	onGenerated: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
+	onSelect: PropTypes.func.isRequired,
 };
 
 export default LayoutContent;

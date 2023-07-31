@@ -1,5 +1,6 @@
 import { toSvg } from 'html-to-image';
 import { toggleHistory } from './history';
+import { generateIds } from './genereate-ids';
 
 export const takeScreenshots = async ( templates = [] ) => {
 	// Disable history so the Editor won't show our hidden containers as user actions.
@@ -78,17 +79,6 @@ function waitForContainer( id, timeout = 2000 ) {
 
 function sleep( ms ) {
 	return new Promise( ( resolve ) => setTimeout( resolve, ms ) );
-}
-
-// Create missing IDs for the elements.
-function generateIds( container ) {
-	container.id = elementorCommon.helpers.getUniqueId().toString();
-
-	if ( container.elements?.length ) {
-		container.elements.map( ( child ) => generateIds( child ) );
-	}
-
-	return container;
 }
 
 function wrapContainers( containers, wrapper ) {

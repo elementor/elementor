@@ -1,7 +1,12 @@
 import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
-import { toggleHistory } from './utils/history';
 import { takeScreenshots } from './utils/screenshot';
+import {
+	createPreviewContainer,
+	deletePreviewContainer,
+	setPreviewContainerContents,
+	setPreviewContainerEmpty,
+} from './utils/preview-container';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	ui() {
@@ -22,7 +27,13 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		this.closePanel();
 
-		const emptySection = this.createEmptySection();
+		createPreviewContainer( {
+			// Create the container at the "drag widget here" area position.
+			at: this.view.getOption( 'at' ),
+		} );
+
+		setPreviewContainerEmpty();
+
 		const rootElement = document.createElement( 'div' );
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 		const isRTL = elementorCommon.config.isRTL;
@@ -34,7 +45,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				isRTL={ isRTL }
 				colorScheme={ colorScheme }
 				onClose={ () => {
-					this.deleteEmptySection( emptySection );
+					deletePreviewContainer();
 
 					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
@@ -43,6 +54,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				} }
 				onConnect={ onConnect }
 				onGenerated={ this.onGenerated }
+				onSelect={ this.onSelect }
 				onInsert={ () => {} }
 			/>,
 			rootElement,
@@ -59,43 +71,6 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		$e.components.get( 'panel' ).unblockUserInteractions();
 	}
 
-	createEmptySection() {
-		toggleHistory( false );
-
-		// Creating an empty section and not a container in order to support sites without containers.
-		// This section is used for UI purposes only.
-		const emptySection = $e.run( 'document/elements/create', {
-			container: elementor.getPreviewContainer(),
-			model: {
-				elType: 'section',
-			},
-			options: {
-				edit: false,
-				at: this.view.getOption( 'at' ),
-			},
-		} );
-
-		emptySection.view.$el.addClass( 'e-ai-empty-container' );
-
-		toggleHistory( true );
-
-		return emptySection;
-	}
-
-	deleteEmptySection( emptySection ) {
-		toggleHistory( false );
-
-		const isEmptySection = elementor.getContainer( emptySection.id ) === emptySection;
-
-		if ( isEmptySection ) {
-			$e.run( 'document/elements/delete', {
-				container: emptySection,
-			} );
-		}
-
-		toggleHistory( true );
-	}
-
 	async onGenerated( templates ) {
 		const screenshots = await takeScreenshots( templates );
 
@@ -103,6 +78,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			screenshot: src,
 			template: templates[ index ],
 		} ) );
+	}
+
+	onSelect( template ) {
+		setPreviewContainerContents( template );
 	}
 
 	onRender() {
