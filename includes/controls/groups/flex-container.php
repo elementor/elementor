@@ -152,36 +152,36 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['gap'] = [
-			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 500,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'em' => [
-					'min' => 0,
-					'max' => 50,
-				],
-			],
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
-			],
-			'responsive' => true,
-			'condition' => [
-				'flex_gaps!' => '',
-			],
-		];
+//		$fields['gap'] = [
+//			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
+//			'type' => Controls_Manager::SLIDER,
+//			'range' => [
+//				'px' => [
+//					'min' => 0,
+//					'max' => 500,
+//				],
+//				'%' => [
+//					'min' => 0,
+//					'max' => 100,
+//				],
+//				'vw' => [
+//					'min' => 0,
+//					'max' => 100,
+//				],
+//				'em' => [
+//					'min' => 0,
+//					'max' => 50,
+//				],
+//			],
+//			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+//			'selectors' => [
+//				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
+//			],
+//			'responsive' => true,
+////			'condition' => [
+////				'flex_gaps!' => '',
+////			],
+//		];
 
 		$fields['gaps'] = [
 			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
