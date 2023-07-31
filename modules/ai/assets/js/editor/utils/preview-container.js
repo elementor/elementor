@@ -68,15 +68,15 @@ export function setPreviewContainerLoading() {
 }
 
 export function setPreviewContainerContents( template ) {
-	const { $el } = getPreviewContainer()?.view;
+	const view = getPreviewContainer()?.view;
 
-	if ( ! $el ) {
+	if ( ! view ) {
 		return;
 	}
 
-	deletePreviewContainer();
+	const currentContainerPosition = view._index;
 
-	const currentContainerPosition = $el.index();
+	deletePreviewContainer();
 
 	createPreviewContainer(
 		{ at: currentContainerPosition },
