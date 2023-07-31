@@ -4,7 +4,7 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getPackagesBasedOnLocalRepo() : getPackagesBasedOnProjectDeps()
+const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
 
 const common = {
 	name: 'packages',
@@ -90,7 +90,7 @@ module.exports = {
 	prod: prodConfig,
 };
 
-function getPackagesBasedOnProjectDeps() {
+function getNodeModulesPackagesEntries() {
 	const { dependencies } = require( '../package.json' );
 
 	return Object.keys( dependencies )
@@ -112,7 +112,7 @@ function getPackagesBasedOnProjectDeps() {
 		} ) );
 }
 
-function getPackagesBasedOnLocalRepo() {
+function getLocalRepoPackagesEntries() {
 	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
 	const relevantDirs = [ 'packages/core', 'packages/libs' ]
 
@@ -124,17 +124,13 @@ function getPackagesBasedOnLocalRepo() {
 		throw new Error( `ELEMENTOR_PACKAGES_PATH is defined but the path ${repoPath} does not exist.` );
 	}
 
-	const packages = relevantDirs.flatMap( ( dir ) => {
-		const dirPath = path.resolve( repoPath, dir );
-		const packages = fs.readdirSync( path.resolve( repoPath, dir ) )
-
-		return packages.map(( name ) => {
-			return {
+	const packages = relevantDirs.flatMap( ( dir ) =>
+		fs.readdirSync( path.resolve( repoPath, dir ) )
+			.map( ( name ) => ( {
 				name,
-				path: path.resolve( dirPath, `${name}/src/index.ts` ),
-			}
-		})
-	} );
+				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
+			} ) )
+	);
 
 	packages.push( {
 		name: 'ui',
