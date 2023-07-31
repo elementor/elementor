@@ -7,7 +7,7 @@ import PromptErrorMessage from '../../components/prompt-error-message';
 import useLayoutPrompt from './hooks/use-layout-prompt';
 import usePromptEnhancer from '../form-media/hooks/use-image-prompt-enhancer';
 
-const FormLayout = ( { onClose, onInsert, onGenerated } ) => {
+const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
 	const { data, isLoading: isGenerating, error, send, sendUsageData } = useLayoutPrompt();
 
 	const [ generatedData, setGeneratedData ] = useState( [] );
@@ -112,8 +112,7 @@ const FormLayout = ( { onClose, onInsert, onGenerated } ) => {
 								<Box
 									key={ screenshot }
 									onClick={ () => {
-										onInsert( template );
-										onClose();
+										onSelect( template );
 									} }
 									sx={ {
 										boxSizing: 'border-box',
@@ -140,6 +139,7 @@ FormLayout.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onGenerated: PropTypes.func.isRequired,
+	onSelect: PropTypes.func.isRequired,
 };
 
 export default FormLayout;
