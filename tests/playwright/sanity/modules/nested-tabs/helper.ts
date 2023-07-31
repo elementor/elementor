@@ -172,4 +172,5 @@ module.exports = {
 	setTabItemColor,
 	selectDropdownContainer,
 	setBackgroundVideoUrl,
+	isTabTitleVisible,
 };
