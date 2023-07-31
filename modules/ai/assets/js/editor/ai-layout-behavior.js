@@ -4,8 +4,8 @@ import { takeScreenshots } from './utils/screenshot';
 import {
 	createPreviewContainer,
 	deletePreviewContainer,
-	setPreviewContainerContents,
-	setPreviewContainerEmpty,
+	setPreviewContainerContent,
+	setPreviewContainerIdle,
 } from './utils/preview-container';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
@@ -32,7 +32,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			at: this.view.getOption( 'at' ),
 		} );
 
-		setPreviewContainerEmpty();
+		setPreviewContainerIdle();
 
 		const rootElement = document.createElement( 'div' );
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
@@ -81,7 +81,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	}
 
 	onSelect( template ) {
-		setPreviewContainerContents( template );
+		setPreviewContainerContent( template );
 	}
 
 	onRender() {
