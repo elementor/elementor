@@ -123,7 +123,7 @@
 		"@elementor/editor-documents": "0.8.3",
 		"@elementor/editor-panels": "0.1.5",
 		"@elementor/editor-responsive": "0.6.9",
-		"@elementor/editor-site-navigation": "0.16.0",
+		"@elementor/editor-site-navigation": "0.17.0",
 		"@elementor/editor-v1-adapters": "0.5.0",
 		"@elementor/env": "0.2.0",
 		"@elementor/icons": "0.6.1",
