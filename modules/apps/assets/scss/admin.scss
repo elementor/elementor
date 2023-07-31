@@ -12,7 +12,7 @@ body.elementor_page_elementor-apps {
 
 	.e-a-page-title {
 		margin: 30px auto 60px;
-		max-width: 650px;
+		max-width: 770px;
 		text-align: center;
 
 		h2 {
@@ -24,6 +24,10 @@ body.elementor_page_elementor-apps {
 		p {
 			margin-block-start: 0;
 			font-size: 16px;
+
+			a {
+				color: inherit;
+			}
 		}
 	}
 
