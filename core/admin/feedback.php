@@ -68,6 +68,8 @@ class Feedback extends Module {
 		);
 
 		wp_enqueue_script( 'elementor-admin-feedback' );
+
+		wp_set_script_translations( 'elementor-admin-feedback', 'elementor' );
 	}
 
 	/**
