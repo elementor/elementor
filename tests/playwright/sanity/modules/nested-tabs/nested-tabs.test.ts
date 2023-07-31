@@ -6,7 +6,7 @@ import { viewportSize } from '../../../enums/viewport-sizes';
 import { testTabIsVisibleInAccordionView } from './tests/accordion';
 import { testIconCount } from './tests/icons';
 import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
-import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl } from './helper';
+import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -1142,37 +1142,56 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
-		const editor = await wpAdmin.useElementorCleanPost(),
+		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
 
 		// Add widget.
 		await editor.addWidget( 'nested-tabs', container );
-		Array.from( { length: 7 }, async () => {
-			await page.locator( 'div:nth-child(2) > .elementor-repeater-row-tools > button:nth-child(2)' ).click();
+
+		await test.step( 'Set scrolling settings', async () => {
+			await editor.openSection( 'section_tabs_responsive' );
+			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+
+			await editor.activatePanelTab( 'style' );
+			await editor.setSliderControlValue( 'tabs_title_space_between', '500' );
 		} );
 
 		await test.step( 'Assert overflow x', async () => {
-			await page.locator( '.elementor-control-section_tabs_responsive' ).click();
-			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
 			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
-			await expect( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
+			await expect.soft( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
 		} );
 
 		await test.step( 'Assert scrolling behaviour', async () => {
-			const nestedTabsHeading = await frame.locator( '.e-n-tabs-heading' );
+			await page.waitForTimeout( 1000 );
 
-			await frame.evaluate( ( element ) => {
-				element.scrollBy( 200, 0 );
-			}, await nestedTabsHeading.elementHandle() );
-			const lastTab = await frame.getByRole( 'tab', { name: 'Tab #3' } );
-			await expect( lastTab ).toBeVisible();
+			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
 
-			await frame.evaluate( ( element ) => {
-				element.scrollBy( 0, 200 );
-			}, await nestedTabsHeading.elementHandle() );
-			const firstTab = await frame.getByRole( 'tab', { name: 'Tab #1' } );
-			await expect( firstTab ).toBeVisible();
+			let isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
+
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
+
+			await widgetHeading.hover();
+			await page.mouse.down();
+
+			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
+				element.scrollBy( 300, 0 );
+			} );
+
+			let isFirstItemVisible = await isTabTitleVisible( frame, 0 );
+
+			await expect.soft( isFirstItemVisible ).not.toBeTruthy();
+
+			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
+				element.scrollBy( -300, 0 );
+			} );
+
+			isFirstItemVisible = await isTabTitleVisible( frame, 0 );
+			isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
+
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
 		} );
 	} );
 

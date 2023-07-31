@@ -139,6 +139,26 @@ export async function setBackgroundVideoUrl( page: Page, editor: EditorPage, ele
 	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
 }
 
+export async function isTabTitleVisible( context: Page | Frame, positionIndex: Number = 0 ) {
+	const titleWrapperWidth = await context.locator( `.e-n-tabs-items-heading` ).evaluate( ( element ) => element.clientWidth ),
+		itemBox = await context.locator( `.e-n-tab-item-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
+			const elementBox = element.getBoundingClientRect();
+
+			return {
+				left: elementBox.left,
+			};
+		} );
+
+	const isItemPositionToTheRightOfTitleWrapper = titleWrapperWidth < itemBox.left,
+		isItemPositionToTheLeftOfTitleWrapper = 0 > ( itemBox.left );
+
+	if ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper ) {
+		return false;
+	}
+
+	return true;
+}
+
 module.exports = {
 	tabIcons,
 	addIcon,
