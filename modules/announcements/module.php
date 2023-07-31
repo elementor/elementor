@@ -47,6 +47,8 @@ class Module extends BaseApp {
 			true
 		);
 
+		wp_set_script_translations( 'announcements-app', 'elementor' );
+
 		$this->print_config( 'announcements-app' );
 	}
 
