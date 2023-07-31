@@ -1166,7 +1166,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await page.waitForTimeout( 1000 );
 
 			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
-				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-normal' ).length );
 
 			let isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
 
