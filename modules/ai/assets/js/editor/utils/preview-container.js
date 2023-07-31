@@ -51,11 +51,11 @@ export function deletePreviewContainer() {
 	toggleHistory( true );
 }
 
-export function setPreviewContainerEmpty() {
+export function setPreviewContainerIdle() {
 	const container = getPreviewContainer();
 
 	if ( container ) {
-		container.view.$el.addClass( 'e-ai-preview-container--empty' );
+		container.view.$el.addClass( 'e-ai-preview-container--idle' );
 	}
 }
 
@@ -67,7 +67,7 @@ export function setPreviewContainerLoading() {
 	}
 }
 
-export function setPreviewContainerContents( template ) {
+export function setPreviewContainerContent( template ) {
 	const view = getPreviewContainer()?.view;
 
 	if ( ! view ) {
