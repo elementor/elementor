@@ -92,9 +92,11 @@
 		}
 
 		.e-ai-layout-button:hover & {
+			--timing: cubic-bezier( 0, 1.18, .96, .75 );
+
 			animation:
-				var( --animation-name ) var( --animation-duration ) var( --animation-delay, 0s ) ease-in-out infinite both,
-				sparkle-opacity var( --animation-duration ) var( --animation-delay, 0s ) ease-in-out infinite both;
+				var( --animation-name ) var( --animation-duration ) var( --animation-delay, 0s ) var( --timing ) infinite both,
+				sparkle-opacity var( --animation-duration ) var( --animation-delay, 0s ) var( --timing ) infinite both;
 		}
 	}
 }
