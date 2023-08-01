@@ -2139,16 +2139,22 @@ abstract class Controls_Stack extends Base_Object {
 	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 
-		foreach ( $this->get_controls() as $control ) {
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
+		foreach ( $this->get_controls() as $raw_control ) {
+			$control_obj = $controls_objs[ $raw_control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
 			}
 
-			$control = array_merge_recursive( $control_obj->get_settings(), $control );
+			$control_settings = $control_obj->get_settings();
 
-			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
+			if ( isset( $control_settings['default'] ) && ! isset( $settings[ $raw_control['name'] ] ) ) {
+				$raw_control['default'] = $control_settings['default'];
+			}
+
+			$settings[ $raw_control['name'] ] = $control_obj->get_value( $raw_control, $settings );
 		}
 
 		return $settings;
