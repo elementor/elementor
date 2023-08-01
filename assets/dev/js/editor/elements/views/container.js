@@ -543,8 +543,8 @@ const ContainerView = BaseElementView.extend( {
 			emptyViewItem,
 		);
 
-		if ( 0 < emptyViewItem.length ) {
-			emptyViewItem.style.display = this.isDistortsPreview() ? 'none' : 'block';
+		if ( 0 < emptyViewItem.length && this.isDistortsPreview() ) {
+			emptyViewItem.style.display = 'none';
 		}
 	},
 
