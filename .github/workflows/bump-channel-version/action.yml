@@ -28,7 +28,7 @@ runs:
             echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
 
-            if [[ ${{ env.POSTFIX }} == "-test" ]]; then
+            if [[ "${{ env.POSTFIX }}" == "-test" ]]; then
               echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ env.POSTFIX }}" >> $GITHUB_ENV
             fi
 

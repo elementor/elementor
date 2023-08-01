@@ -23,9 +23,9 @@ runs:
             POSTFIX="-test"
             echo "This is a one click prerelease execution"
           elif [[ ${{ inputs.POSTFIX }} == '-rc' ]]; then
-              POSTFIX="-rc"
+            POSTFIX="-rc"
           else
-              POSTFIX=""
+            POSTFIX=""
           fi
 
           echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
