@@ -58,11 +58,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.createOverlayContainer();
 		this.createOverlayItems();
 
-		if ( this.shouldRemoveEmptyView() ) {
-			this.elements.emptyView.style.display = 'none';
-		} else {
-			this.elements.emptyView.style.display = 'block';
-		}
+		this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 	}
 
 	shouldDrawOutline() {
@@ -281,9 +277,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	shouldRemoveEmptyView() {
-		const elementSettings = this.getElementSettings();
+		const gridDimensions = this.getDeviceGridDimensions();
 		const childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
+		const maxNumOfItems = gridDimensions.columns.length * ( gridDimensions.rows.length - 1 );
 
-		return childrenLength === elementSettings.grid_columns_grid.size * elementSettings.grid_rows_grid.size;
+		return childrenLength === maxNumOfItems;
 	}
 }
