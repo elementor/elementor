@@ -21,7 +21,7 @@ runs:
         run: |
           if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]]; then
             POSTFIX="-test"
-            echo "This is a on click prerelease execution"
+            echo "This is a one click prerelease execution"
           fi
 
           if [[ ${{ inputs.POSTFIX }} == '-rc' ]]; then
