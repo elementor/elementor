@@ -19,7 +19,7 @@ runs:
         id: is_pre_release
         shell: bash
         run: |
-          if [ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]; then
+          if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]]; then
             POSTFIX="-test"
             echo "This is a prerelease execution"
           else
