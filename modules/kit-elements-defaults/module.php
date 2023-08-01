@@ -31,6 +31,7 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+		wp_set_script_translations( 'elementor-kit-elements-defaults-editor', 'elementor' );
 	}
 
 	public function __construct() {
