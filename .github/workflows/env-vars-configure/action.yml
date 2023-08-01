@@ -8,19 +8,31 @@ inputs:
   REF:
     required: true
     description: 'The ref to get the version from.'
-  ADDITION_NAME:
+  POSTFIX:
     required: false
-    default: "-rc"
-    description: 'The addition name to add to the package version.'
+    description: 'The postfix that will be added to the package version -rc / -test'
 
 runs:
   using: "composite"
   steps:
+      - name: Set POSTFIX value
+        id: is_pre_release
+        shell: bash
+        run: |
+          if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]]; then
+            POSTFIX="-test"
+            echo "This is a one click prerelease execution"
+          elif [[ ${{ inputs.POSTFIX }} == '-rc' ]]; then
+            POSTFIX="-rc"
+          else
+            POSTFIX=""
+          fi
+
+          echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
         with:
           CHANNEL: ${{ inputs.CHANNEL }}
-          ADDITION_NAME: ${{ inputs.ADDITION_NAME }}
       - name: Increment Patch Version
         if: inputs.CHANNEL == 'ga'
         uses: ./.github/workflows/increment-patch-version
@@ -28,7 +40,13 @@ runs:
         run: |
             # This command retrieves the latest tag that matches the specified channel and package version,
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
-            CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+            # If the channel is tagged as a prerelease, than get the latest prerelease version
+            # If the channel is not tagged as a pre-release, than get the latest version which is not a pre-release or an rc
+            if [[ "${{ env.POSTFIX }}" == "-test" ]]; then
+              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' | awk -F'${{ env.POSTFIX }}' '{print $1}' || echo 0)
+            else
+              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+            fi
 
             # If value is not a number (e.g. empty string) then set it to 0
             if ! [[ $CURRENT_CHANNEL_VERSION =~ ^[0-9]+$ ]]; then

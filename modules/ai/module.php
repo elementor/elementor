@@ -50,8 +50,8 @@ class Module extends BaseModule {
 					'elementor-common',
 					'elementor-editor-modules',
 					'elementor-editor-document',
-					'elementor-packages-ui',
-					'elementor-packages-icons',
+					'elementor-v2-ui',
+					'elementor-v2-icons',
 				],
 				ELEMENTOR_VERSION,
 				true
@@ -65,6 +65,8 @@ class Module extends BaseModule {
 					'connect_url' => $this->get_ai_connect_url(),
 				]
 			);
+
+			wp_set_script_translations( 'elementor-ai', 'elementor' );
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
