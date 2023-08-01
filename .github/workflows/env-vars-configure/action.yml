@@ -15,18 +15,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: Is pre-release?
-        id: is_pre_release
-        shell: bash
-        run: |
-          if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]]; then
-            POSTFIX="-test"
-            echo "This is a prerelease execution"
-          else
-            POSTFIX=""
-            echo "This is a release execution"
-          fi
-          echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
         with:
