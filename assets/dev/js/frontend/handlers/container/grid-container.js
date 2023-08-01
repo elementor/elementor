@@ -277,10 +277,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	shouldRemoveEmptyView() {
-		const gridDimensions = this.getDeviceGridDimensions();
 		const childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
-		const maxNumOfItems = gridDimensions.columns.length * ( gridDimensions.rows.length - 1 );
+		const gridDimensions = this.getDeviceGridDimensions();
 
-		return childrenLength === maxNumOfItems;
+		// Auto Flow = Row
+		return 0 === childrenLength % gridDimensions.columns.length;
 	}
 }
