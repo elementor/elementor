@@ -2148,7 +2148,11 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			$raw_control = array_merge_recursive( $control_obj->get_settings(), $raw_control );
+			$control_settings = $control_obj->get_settings();
+
+			if ( isset( $control_settings['default'] ) && ! isset( $settings[ $raw_control['default'] ] ) ) {
+				$raw_control['default'] = $control_settings['default'];
+			}
 
 			$settings[ $raw_control['name'] ] = $control_obj->get_value( $raw_control, $settings );
 		}
