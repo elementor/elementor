@@ -1,29 +1,39 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Stack, CircularProgress, Typography } from '@elementor/ui';
+import { Box, Stack, CircularProgress, Divider, Button } from '@elementor/ui';
 import PromptSearch from '../../components/prompt-search';
 import GenerateSubmit from '../form-media/components/generate-submit';
 import EnhanceButton from '../form-media/components/enhance-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useLayoutPrompt from './hooks/use-layout-prompt';
 import usePromptEnhancer from '../form-media/hooks/use-image-prompt-enhancer';
+import SkeletonPlaceholders from './components/skeleton-placeholders';
+import ScreenshotContainer from './components/screenshot-container';
 
-const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
-	const { data, isLoading: isGenerating, error, send, sendUsageData } = useLayoutPrompt();
+const SCREENSHOT_HEIGHT = '138px';
 
-	const [ generatedData, setGeneratedData ] = useState( [] );
+const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect } ) => {
+	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
 
 	const [ prompt, setPrompt ] = useState( '' );
 
 	const { isEnhancing, enhance } = usePromptEnhancer();
 
-	const [ isCreatingScreenshots, setIsCreatingScreenshots ] = useState( false );
+	const [ screenshotsData, setScreenshotsData ] = useState( [] );
+
+	const [ selectedScreenshotIndex, setSelectedScreenshotIndex ] = useState( -1 );
+
+	const [ isTakingScreenshots, setIsTakingScreenshots ] = useState( false );
 
 	const lastRun = useRef( () => {} );
 
-	const isLoading = isGenerating || isEnhancing || isCreatingScreenshots;
+	const isLoading = isGeneratingTemplates || isEnhancing || isTakingScreenshots;
+
+	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
+
+		onGenerationStart();
 
 		lastRun.current = () => send( prompt );
 
@@ -34,32 +44,46 @@ const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
 		enhance( prompt ).then( ( { result } ) => setPrompt( result ) );
 	};
 
-	const applyPrompt = () => {
+	const applyTemplate = () => {
 		sendUsageData();
 
-		console.log( 'Inserting the generated layout to the editor..' );
+		onInsert( selectedTemplate );
 
 		onClose();
 	};
 
 	useEffect( () => {
-		if ( data?.result ) {
-			setIsCreatingScreenshots( true );
+		if ( templatesData?.result ) {
+			setIsTakingScreenshots( true );
+			setSelectedScreenshotIndex( -1 );
 
-			const templates = data.result.map( JSON.parse );
+			const templates = Array( 3 ).fill( templatesData?.result.elements[ 0 ] );
 
-			onGenerated( templates ).then( ( newData ) => {
-				setGeneratedData( newData );
-				setIsCreatingScreenshots( false );
+			onGenerationEnd( templates ).then( ( generatedData ) => {
+				setScreenshotsData( generatedData );
+				setIsTakingScreenshots( false );
+				setSelectedScreenshotIndex( 0 );
 			} );
 		}
-	}, [ data ] );
+	}, [ templatesData ] );
+
+	useEffect( () => {
+		if ( -1 === selectedScreenshotIndex ) {
+			return;
+		}
+
+		onSelect( selectedTemplate );
+	}, [ selectedScreenshotIndex ] );
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 6 } } /> }
+			{ error && (
+				<Box sx={ { pt: 5, px: 5, pb: 0 } }>
+					<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
+				</Box>
+			) }
 
-			<Box component="form" onSubmit={ handleSubmit }>
+			<Box component="form" onSubmit={ handleSubmit } sx={ { p: 5 } }>
 				<Stack direction="row" alignItems="flex-start" gap={ 3 }>
 					<PromptSearch
 						name="prompt"
@@ -91,7 +115,8 @@ const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
 						disabled={ isLoading || '' === prompt }
 						sx={ {
 							minWidth: '100px',
-							borderRadius: '4px',
+							// TODO: remove once exist in the UI library.
+							borderRadius: ( { border } ) => border.size.md,
 						} }
 					>
 						{
@@ -103,32 +128,47 @@ const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
 			</Box>
 
 			{
-				generatedData.length > 0 && (
-					<Box sx={ { mt: 6 } }>
-						<Typography variant="h6" sx={ { mb: 1 } }>{ __( 'Suggested Images:', 'elementor' ) }</Typography>
+				( screenshotsData.length > 0 || isLoading ) && (
+					<>
+						<Divider />
 
-						<Stack direction="row" alignItems="center" gap={ 3 }>
-							{ generatedData.map( ( { screenshot, template } ) => (
-								<Box
-									key={ screenshot }
-									onClick={ () => {
-										onSelect( template );
-									} }
-									sx={ {
-										boxSizing: 'border-box',
-										'&:hover': { border: '1px solid black', cursor: 'pointer' },
-									} }
-								>
-									<img
-										src={ screenshot }
-										alt=""
-										width={ 280 }
-										height={ 100 }
-									/>
+						<Box sx={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, p: 5 } }>
+							{
+								isLoading ? (
+									<SkeletonPlaceholders height={ SCREENSHOT_HEIGHT } />
+								) : (
+									screenshotsData.map( ( { screenshot }, index ) => (
+										<ScreenshotContainer
+											key={ screenshot }
+											height={ SCREENSHOT_HEIGHT }
+											selected={ selectedScreenshotIndex === index }
+											onClick={ () => setSelectedScreenshotIndex( index ) }
+										>
+											<img width="100%" src={ screenshot } alt={ `Screenshot ${ index }` } />
+										</ScreenshotContainer>
+									) )
+								)
+							}
+						</Box>
+
+						{
+							( screenshotsData.length > 0 && ! isLoading ) && (
+								<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="flex-end">
+									<Button
+										size="small"
+										variant="contained"
+										onClick={ applyTemplate }
+										sx={ {
+											// TODO: remove once exist in the UI library.
+											borderRadius: ( { border } ) => border.size.md,
+										} }
+									>
+										{ __( 'Use Layout', 'elementor' ) }
+									</Button>
 								</Box>
-							) ) }
-						</Stack>
-					</Box>
+							)
+						}
+					</>
 				)
 			}
 		</>
@@ -138,7 +178,8 @@ const FormLayout = ( { onClose, onInsert, onGenerated, onSelect } ) => {
 FormLayout.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
-	onGenerated: PropTypes.func.isRequired,
+	onGenerationStart: PropTypes.func.isRequired,
+	onGenerationEnd: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };
 
