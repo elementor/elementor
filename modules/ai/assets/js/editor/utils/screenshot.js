@@ -64,8 +64,13 @@ function waitForContainer( id, timeout = 2000 ) {
 	const timeoutPromise = sleep( timeout );
 
 	const waitPromise = new Promise( ( resolve ) => {
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', ( $element ) => {
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', async ( $element ) => {
 			if ( $element.data( 'id' ) === id ) {
+				const images = [ ...$element[ 0 ].querySelectorAll( 'img' ) ];
+
+				// Wait for all images to load.
+				await Promise.all( images.map( waitForImage ) );
+
 				resolve();
 			}
 		} );
@@ -75,6 +80,17 @@ function waitForContainer( id, timeout = 2000 ) {
 		timeoutPromise,
 		waitPromise,
 	] );
+}
+
+function waitForImage( image ) {
+	if ( image.complete ) {
+		return Promise.resolve();
+	}
+
+	return new Promise( ( resolve ) => {
+		image.addEventListener( 'load', resolve );
+		image.addEventListener( 'error', resolve );
+	} );
 }
 
 function sleep( ms ) {
