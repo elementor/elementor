@@ -399,7 +399,6 @@ const ContainerView = BaseElementView.extend( {
 			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
@@ -537,11 +536,16 @@ const ContainerView = BaseElementView.extend( {
 
 	handleGridEmptyView() {
 		const currentContainer = this.getCorrectContainerElement();
+		const emptyViewItem = currentContainer.find( '> .elementor-empty-view' );
 
 		this.moveElementToLastChild(
 			currentContainer,
-			currentContainer.find( '> .elementor-empty-view' ),
+			emptyViewItem,
 		);
+
+		if ( 0 < emptyViewItem.length ) {
+			emptyViewItem.style.display = this.isDistortsPreview() ? 'none' : 'block';
+		}
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
@@ -599,6 +603,10 @@ const ContainerView = BaseElementView.extend( {
 			this.showEmptyView(); // Marionette function.
 			this.handleGridEmptyView();
 		}
+	},
+
+	isDistortsPreview() {
+		return this.container.children.length === this.container.settings.get( 'grid_columns_grid' ).size * this.container.settings.get( 'grid_rows_grid' ).size;
 	},
 } );
 
