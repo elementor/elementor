@@ -53,10 +53,10 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test.skip( 'Check if the empty placeholder is displayed inside the Basic Gallery widget', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Basic Gallery widget', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
-			editor = await wpAdmin.useElementorCleanPost();
+			editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addWidget( 'image-gallery' );
