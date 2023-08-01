@@ -542,10 +542,6 @@ const ContainerView = BaseElementView.extend( {
 			currentContainer,
 			emptyViewItem,
 		);
-
-		if ( 0 < emptyViewItem.length && this.isDistortsPreview() ) {
-			emptyViewItem.style.display = 'none';
-		}
 	},
 
 	moveElementToLastChild( parentWrapperElement, childElementToMove ) {
