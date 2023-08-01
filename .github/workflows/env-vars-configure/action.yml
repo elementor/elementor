@@ -22,10 +22,10 @@ runs:
           if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.POSTFIX }} == 'true' ]]; then
             POSTFIX="-test"
             echo "This is a one click prerelease execution"
-          fi
-
-          if [[ ${{ inputs.POSTFIX }} == '-rc' ]]; then
+          elif [[ ${{ inputs.POSTFIX }} == '-rc' ]]; then
               POSTFIX="-rc"
+          else
+              POSTFIX=""
           fi
 
           echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
