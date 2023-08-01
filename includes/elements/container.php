@@ -118,9 +118,12 @@ class Container extends Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
+		$isNestedClassName = $this->get_data('isInner') ? 'e-child': 'e-parent';
+
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
 				'e-con',
+				$isNestedClassName
 			],
 		] );
 	}

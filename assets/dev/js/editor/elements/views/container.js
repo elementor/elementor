@@ -415,6 +415,7 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
+		this.model.set( 'isInner', this.getNestingLevel() > 0 );
 
 		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();
