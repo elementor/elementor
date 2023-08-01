@@ -5,9 +5,6 @@ inputs:
   CHANNEL:
     required: true
     description: "The channel to get the version to (ga, cloud, beta)."
-  POSTFIX:
-    required: false
-    description: "The postfix that will be added to the package version -rc / -test"
 
 runs:
   using: "composite"
@@ -16,12 +13,12 @@ runs:
       run: |
         # If the channel is either "cloud" or "beta", fetch all Git tags matching the channel pattern,
         # excluding any "-rc" tags, and store them in the 'tags' variable. e.g. "refs/tags/v3.11.0-cloud1 , refs/tags/v3.11.0-cloud2"
-        if [[ ( ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ) && "${{ inputs.POSTFIX }}" != "-test" ]]; then
+        if [[ ( ${{ inputs.CHANNEL }} == "cloud" || ${{ inputs.CHANNEL }} == "beta" ) && "${{ env.POSTFIX }}" != "-test" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep -v "\-rc" | grep -v "\-test" | awk '{print $2}')
         fi
 
         # If the channel is "cloud" and the POSTFIX is "-test", fetch all Git tags matching the channel pattern,
-        if [[ ${{ inputs.CHANNEL }} == "cloud" && "${{ inputs.POSTFIX }}" == "-test" ]]; then
+        if [[ ${{ inputs.CHANNEL }} == "cloud" && "${{ env.POSTFIX }}" == "-test" ]]; then
            tags=$(git ls-remote --tags | grep ${{ inputs.CHANNEL }} | grep "\-test" | awk '{print $2}')
         fi
 
