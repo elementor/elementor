@@ -57,6 +57,12 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
+
+		if ( this.shouldRemoveEmptyView() ) {
+			this.elements.emptyView.style.display = 'none';
+		} else {
+			this.elements.emptyView.style.display = 'block';
+		}
 	}
 
 	shouldDrawOutline() {
@@ -272,5 +278,12 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const numberPattern = /^\d+$/;
 
 		return ! numberPattern.test( gridRows?.size );
+	}
+
+	shouldRemoveEmptyView() {
+		const elementSettings = this.getElementSettings();
+		const childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
+
+		return childrenLength === elementSettings.grid_columns_grid.size * elementSettings.grid_rows_grid.size;
 	}
 }

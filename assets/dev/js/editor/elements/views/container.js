@@ -401,7 +401,7 @@ const ContainerView = BaseElementView.extend( {
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
-			if ( this.isGridContainer() && !this.isDistortsPreview() ) {
+			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
 			}
 
@@ -425,7 +425,7 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		if ( settings.changed.flex_direction || settings.changed.content_width || settings.changed.grid_auto_flow || settings.changed.container_type ) {
-			if ( this.isGridContainer()  && !this.isDistortsPreview() ) {
+			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
 			}
 
@@ -587,10 +587,6 @@ const ContainerView = BaseElementView.extend( {
 
 	isBoxedWidth() {
 		return 'boxed' === this.getContainer().settings.get( 'content_width' );
-	},
-
-	isDistortsPreview() {
-		return this.container.children.length === this.container.settings.get( 'grid_columns_grid' ).size * this.container.settings.get( 'grid_rows_grid' ).size;
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
