@@ -8,6 +8,7 @@ import {
 	deletePreviewContainer,
 	setPreviewContainerContent,
 	setPreviewContainerIdle,
+	setPreviewContainerLoading,
 } from './utils/preview-container';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
@@ -55,8 +56,8 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGenerationStart={ () => {} }
-				onGenerationEnd={ this.onGenerated }
+				onGenerationStart={ this.onGenerationStart }
+				onGenerationEnd={ this.onGenerationEnd }
 				onSelect={ this.onSelect }
 				onInsert={ this.onInsert.bind( this ) }
 			/>,
@@ -78,7 +79,11 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.view.onCloseButtonClick();
 	}
 
-	async onGenerated( templates ) {
+	onGenerationStart() {
+		setPreviewContainerLoading();
+	}
+
+	async onGenerationEnd( templates ) {
 		const screenshots = await takeScreenshots( templates );
 
 		return screenshots.map( ( src, index ) => ( {

@@ -1,6 +1,8 @@
 [data-id="e-ai-preview-container"] {
-	outline: 2px solid var(--e-p-border-con);
-	outline-offset: -2px;
+	--outline-size: 2px;
+
+	outline: var( --outline-size ) solid var(--e-p-border-con);
+	outline-offset: calc( -1 * var( --outline-size ) );
 }
 
 .e-ai-preview-container {
@@ -28,9 +30,13 @@
 		&::after {
 			content: '';
 			position: absolute;
-			inset: 0;
-			background: linear-gradient( 90deg, transparent, rgba( 0, 0, 0, 0.03 ), transparent );
+			width: auto;
+			height: auto;
+			inset: var( --outline-size );
+			background-image: linear-gradient( 90deg, transparent, rgba( 0, 0, 0, 0.03 ), transparent );
+			background-color: #f2f2f2;
 			animation: e-ai-layout-skeleton 1.6s linear 0.5s infinite both;
+			z-index: 99999;
 		}
 	}
 }

@@ -54,6 +54,7 @@ export function setPreviewContainerIdle() {
 	const container = getPreviewContainer();
 
 	if ( container ) {
+		container.view.$el.removeClass( 'e-ai-preview-container--loading' );
 		container.view.$el.addClass( 'e-ai-preview-container--idle' );
 	}
 }
@@ -62,6 +63,7 @@ export function setPreviewContainerLoading() {
 	const container = getPreviewContainer();
 
 	if ( container ) {
+		container.view.$el.removeClass( 'e-ai-preview-container--idle' );
 		container.view.$el.addClass( 'e-ai-preview-container--loading' );
 	}
 }
