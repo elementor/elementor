@@ -11,6 +11,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
+	// Test.
+
 	getDefaultElements() {
 		return {
 			$element: jQuery( this.getSettings( 'element' ) ),
