@@ -38,7 +38,7 @@ class Usage_Reporter extends Base {
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
+			$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">' . esc_html__( 'Recalculate', 'elementor' ) . '</a>';
 		} else {
 			$title .= $this->get_remove_recalc_query_string_script();
 		}
@@ -74,6 +74,8 @@ class Usage_Reporter extends Base {
 
 			$usage .= '</td></tr>';
 		}
+
+		$usage .= '<tr><td colspan="2">' . $this->get_insights( $module->get_formatted_usage() ) . '</td></tr>';
 
 		return [
 			'value' => $usage,
@@ -121,6 +123,114 @@ class Usage_Reporter extends Base {
 		</script>
 		<?php
 
+		return ob_get_clean();
+	}
+
+	private function get_insights( $insights ) {
+		$documents = [];
+		$widgets = [];
+		$max_per_document = 0;
+		$max_per_widget = 0;
+
+		foreach ( $insights as $doc_type => $data ) {
+			$documents[ $data['title'] ] = $data['count'];
+			$max_per_document = max( $max_per_document, $data['count'] );
+
+			foreach ( $data['elements'] as $element => $count ) {
+				if ( isset( $widgets[ $element ] ) ) {
+					$widgets[ $element ] += $count;
+				} else {
+					$widgets[ $element ] = $count;
+				}
+				$max_per_widget = max( $max_per_widget, $widgets[ $element ] );
+			}
+		}
+
+		arsort( $documents );
+		arsort( $widgets );
+
+		ob_start();
+		?>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css@0.9.0/dist/charts.min.css">
+
+		<style>
+		.charts-css {
+			direction: ltr;
+			max-width: 100%;
+			height: unset;
+			--heading-size: 3rem;
+		}
+		.charts-css caption {
+			text-align: start;
+			padding-block-end: 40px !important;
+		}
+		.charts-css tbody tr {
+			transition-duration: 0.3s;
+			height: 1.75rem;
+		}
+		.charts-css tbody tr:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+		.charts-css tbody > tr:nth-child(odd) > td,
+		.charts-css tbody > tr:nth-child(odd) > th {
+			background-color: transparent;
+		}
+		.charts-css tbody tr th {
+			align-items: flex-start !important;
+			background-color: transparent;
+			font-size: smaller;
+		}
+		.charts-css tbody tr th span span {
+			font-weight: normal;
+			font-size: smaller;
+		}
+		#stats-by-documents {
+			--color: #192;
+			--labels-size: 150px;
+		}
+		#stats-by-elements {
+			--color: #36C;
+			--labels-size: 150px;
+		}
+		</style>
+
+		<table class="charts-css bar show-heading show-labels show-primary-axis show-3-secondary-axes data-spacing-2 hide-data" id="stats-by-documents">
+			<caption> <?php echo esc_html__( 'Elementor usage stats by documents', 'elementor' ); ?> </caption>
+			<thead>
+				<tr>
+					<th scope="col"> <?php echo esc_html__( 'Document', 'elementor' ); ?> </th>
+					<th scope="col"> <?php echo esc_html__( 'Count', 'elementor' ); ?> </th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $documents as $name => $count ) { ?>
+				<tr>
+					<th> <span> <?php echo $name; ?> <span>(<?php echo $count; ?>)</span></span> </th>
+					<td style="--size: calc( <?php echo $count; ?> / <?php echo $max_per_document; ?> );"><span class="data"><?php echo $count; ?></span></td>
+				</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+
+		<table class="charts-css bar show-heading show-labels show-primary-axis show-3-secondary-axes data-spacing-2 hide-data" id="stats-by-elements">
+			<caption> <?php echo esc_html__( 'Elementor usage stats by elements', 'elementor' ); ?> </caption>
+			<thead>
+				<tr>
+					<th scope="col"> <?php echo esc_html__( 'Element', 'elementor' ); ?> </th>
+					<th scope="col"> <?php echo esc_html__( 'Count', 'elementor' ); ?> </th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $widgets as $name => $count ) { ?>
+				<tr>
+					<th> <span> <?php echo $name; ?> <span>(<?php echo $count; ?>)</span></span> </th>
+					<td style="--size: calc( <?php echo $count; ?> / <?php echo $max_per_widget; ?> );"><span class="data"><?php echo $count; ?></span></td>
+				</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+
+		<?php
 		return ob_get_clean();
 	}
 }
