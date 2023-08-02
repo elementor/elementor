@@ -23,9 +23,13 @@
 
 	&--loading {
 		position: relative;
-		height: $height;
+		min-height: $height;
 		overflow: hidden;
 		background-color: rgba( 12, 13, 14, 0.05 );
+
+		& > * {
+			visibility: hidden;
+		}
 
 		&::after {
 			content: '';
@@ -33,7 +37,8 @@
 			width: auto;
 			height: auto;
 			inset: var( --outline-size );
-			background-image: linear-gradient( 90deg, transparent, rgba( 0, 0, 0, 0.03 ), transparent );
+			background-image: linear-gradient( 90deg, transparent 33.33%, rgba( 0, 0, 0, 0.03 ) 66.66%, transparent );
+			background-size: 300% 100%;
 			background-color: #f2f2f2;
 			animation: e-ai-layout-skeleton 1.6s linear 0.5s infinite both;
 			z-index: 99999;
@@ -43,11 +48,11 @@
 
 @keyframes e-ai-layout-skeleton {
 	0% {
-		transform: translateX( -100% );
+		background-position-x: 100%;
 	}
 
 	50%, 100% {
-		transform: translateX( 100% );
+		background-position-x: -100%;
 	}
 }
 
