@@ -81,7 +81,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css[ settings.direction ] = correctOffset + 'px';
 
-		if ( settings.cssOutput.variables ) {
+		if ( 'variables' === settings.cssOutput ) {
 			this.applyCssVariables( $element, css );
 			return;
 		}
