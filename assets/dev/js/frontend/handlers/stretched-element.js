@@ -40,10 +40,6 @@ export default class StretchedElement extends Base {
 		return elementorFrontend.isEditMode() || settings.$element.hasClass( this.getStretchedClass() );
 	}
 
-	usesCssVariables() {
-		return false;
-	}
-
 	getStretchElementForConfig( childSelector = null ) {
 		if ( childSelector ) {
 			return this.$element.find( childSelector );
@@ -81,7 +77,7 @@ export default class StretchedElement extends Base {
 			return;
 		}
 
-		this.stretchElement.stretch( this.usesCssVariables() );
+		this.stretchElement.stretch();
 	}
 
 	onInit( ...args ) {

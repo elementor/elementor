@@ -7,6 +7,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				container: window,
 			},
 			considerScrollbar: false,
+			cssOutput: 'inline',
 		};
 	},
 
@@ -16,7 +17,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	stretch( useCssVariables = false ) {
+	stretch() {
 		const settings = this.getSettings();
 
 		let $container;
@@ -80,7 +81,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css[ settings.direction ] = correctOffset + 'px';
 
-		if ( useCssVariables ) {
+		if ( settings.cssOutput.variables ) {
 			this.applyCssVariables( $element, css );
 			return;
 		}
