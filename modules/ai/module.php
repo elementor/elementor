@@ -65,6 +65,8 @@ class Module extends BaseModule {
 					'connect_url' => $this->get_ai_connect_url(),
 				]
 			);
+
+			wp_set_script_translations( 'elementor-ai', 'elementor' );
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {

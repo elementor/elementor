@@ -53,7 +53,7 @@ class Typography {
 	 * @return string Typography scheme type.
 	 */
 	public static function get_type() {
-		return '';
+		return 'typography';
 	}
 
 	/**

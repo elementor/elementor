@@ -8,7 +8,7 @@ export async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft(
 	editor: EditorPage,
 	imageCarousel: ImageCarousel ) {
 	// Act.
-	const contentContainerId = await selectDropdownContainer( editor, 0 ),
+	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
 		activeContentContainer = await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 	// Add images.
@@ -21,7 +21,7 @@ export async function testCarouselIsVisibleWhenUsingDirectionRightOrLeft(
 	await editor.togglePreviewMode();
 
 	// Assert
-	expect( await activeContentContainer.screenshot( {
+	expect.soft( await activeContentContainer.screenshot( {
 		type: 'jpeg',
 		quality: 100,
 	} ) ).toMatchSnapshot( 'tabs-direction-right-carousel-visible.jpeg' );
