@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Box, Stack, CircularProgress, Divider, Button, styled } from '@elementor/ui';
-import PromptSearch from '../../components/prompt-search';
 import GenerateSubmit from '../form-media/components/generate-submit';
 import EnhanceButton from '../form-media/components/enhance-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
@@ -8,6 +7,7 @@ import useLayoutPrompt from './hooks/use-layout-prompt';
 import usePromptEnhancer from '../form-media/hooks/use-image-prompt-enhancer';
 import SkeletonPlaceholders from './components/skeleton-placeholders';
 import ScreenshotContainer from './components/screenshot-container';
+import PromptAutocomplete from './components/prompt-autocomplete';
 
 const SCREENSHOT_HEIGHT = '138px';
 
@@ -37,6 +37,10 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
+
+		if ( '' === prompt ) {
+			return;
+		}
 
 		onGenerationStart();
 
@@ -90,26 +94,23 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 			<Box component="form" onSubmit={ handleSubmit } sx={ { p: 5 } }>
 				<Stack direction="row" alignItems="flex-start" gap={ 3 }>
-					<PromptSearch
-						name="prompt"
+					<PromptAutocomplete
 						value={ prompt }
 						disabled={ isLoading }
-						InputProps={ { autoComplete: 'off' } }
-						onChange={ ( event ) => setPrompt( event.target.value ) }
-						sx={ {
-							'& .MuiOutlinedInput-notchedOutline': { borderRadius: '4px' },
-							'& .MuiInputBase-root.MuiOutlinedInput-root, & .MuiInputBase-root.MuiOutlinedInput-root:focus': {
-								px: 4,
-								py: 0,
-							},
-						} }
-						placeholder={ __( 'Describe the desired layout you want to generate...', 'elementor' ) }
-						multiline
-						maxRows={ 3 }
+						onSubmit={ handleSubmit }
+						options={ [] }
+						onChange={ ( _, selectedValue ) => setPrompt( selectedValue ) }
+						renderInput={ ( params ) => (
+							<PromptAutocomplete.TextInput
+								{ ...params }
+								onChange={ ( e ) => setPrompt( e.target.value ) }
+								placeholder={ __( 'Press ‘/’ for suggested prompts or describe the layout you want to create', 'elementor' ) }
+							/>
+						) }
 					/>
 
 					<EnhanceButton
-						size="medium"
+						size="small"
 						disabled={ isLoading || '' === prompt }
 						isLoading={ isEnhancing }
 						onClick={ enhance }
@@ -117,6 +118,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 					<GenerateSubmit
 						fullWidth={ false }
+						size="small"
 						disabled={ isLoading || '' === prompt }
 						sx={ {
 							minWidth: '100px',
