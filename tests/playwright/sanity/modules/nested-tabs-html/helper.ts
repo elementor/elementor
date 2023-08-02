@@ -37,7 +37,7 @@ export async function setIconsToTabs( page: Page, TabIcons: Array<{ icon: string
 
 export async function editTab( editor: EditorPage, tabIndex: string ) {
 	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }.e-active` );
+	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }[aria-selected="true"]` );
 	const tabTitle = await editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
 	await tabTitle.click();
 	await editor.page.waitForTimeout( 100 );
@@ -47,11 +47,6 @@ export async function editTab( editor: EditorPage, tabIndex: string ) {
 // Click on tab by position.
 export async function clickTab( context: Page | Frame, tabPosition: number ) {
 	await context.locator( `.elementor-widget-n-tabs-html .e-n-tab-title >> nth=${ String( tabPosition ) }` ).first().click();
-}
-
-// Click on tab by position.
-export async function clickMobileTab( context: Page | Frame, tabPosition: string ) {
-	await context.locator( `.elementor-widget-n-tabs-html .e-collapse >> nth=${ tabPosition }` ).first().click();
 }
 
 export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: string ]: boolean | string } | '' = '' ) {
@@ -113,21 +108,23 @@ export async function setTabBorderColor(
 	await page.fill( '.pcr-app.visible .pcr-interaction input.pcr-result', color );
 }
 
-export async function selectDropdownContainer( editor: EditorPage, itemNumber = 0 ) {
-	const isActiveTab = await editor.getPreviewFrame()
-		.locator( `.e-normal >> nth=${ String( itemNumber ) }` )
-		.evaluate( ( element ) => element.classList.contains( 'e-active ' ) );
+export async function selectDropdownContainer( editor: EditorPage, widgetId = '', itemNumber = 0 ) {
+	const widgetSelector = !! widgetId ? `.elementor-element-${ widgetId } ` : '',
+		activeContainerSelector = `${ widgetSelector }.e-n-tabs-content > .e-con >> nth=${ itemNumber }`,
+		isActiveTab = await editor.getPreviewFrame()
+			.locator( `${ widgetSelector }.e-n-tab-title >> nth=${ String( itemNumber ) }` )
+			.evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
 		await clickTab( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).hover();
-	const elementEditButton = editor.getPreviewFrame()
-		.locator( '.e-con.e-active > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+	await editor.getPreviewFrame().locator( activeContainerSelector ).hover();
+	const elementEditButton = await editor.getPreviewFrame()
+		.locator( activeContainerSelector ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content > .e-con.e-active' );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ).getAttribute( 'data-id' );
+	await editor.getPreviewFrame().waitForSelector( activeContainerSelector );
+	return await editor.getPreviewFrame().locator( activeContainerSelector ).getAttribute( 'data-id' );
 }
 
 export async function setBackgroundVideoUrl( page: Page, editor:EditorPage, elementId: string, videoUrl: string ) {
@@ -135,4 +132,24 @@ export async function setBackgroundVideoUrl( page: Page, editor:EditorPage, elem
 	await editor.activatePanelTab( 'style' );
 	await page.locator( '.eicon-video-camera' ).first().click();
 	await page.locator( '.elementor-control-background_video_link input' ).fill( videoUrl );
+}
+
+export async function isTabTitleVisible( page: Page, context: Page | Frame, positionIndex: Number = 0 ) {
+	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( element ) => element.clientWidth ),
+		itemBox = await context.locator( `.e-n-tab-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
+			const elementBox = element.getBoundingClientRect();
+
+			return {
+				left: elementBox.left,
+			};
+		} );
+
+	const isItemPositionToTheRightOfTitleWrapper = titleWrapperWidth < itemBox.left,
+		isItemPositionToTheLeftOfTitleWrapper = 0 > ( itemBox.left );
+
+	if ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper ) {
+		return false;
+	}
+
+	return true;
 }
