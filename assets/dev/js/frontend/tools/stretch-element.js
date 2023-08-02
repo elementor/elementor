@@ -85,7 +85,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		this.applyInlineStyling( $element, css );
+		$element.css( css );
 	},
 
 	reset() {

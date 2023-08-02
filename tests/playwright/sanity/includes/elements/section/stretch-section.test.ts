@@ -52,6 +52,8 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 		quality: 90,
 	} ) ).toMatchSnapshot( `section-NOT-stretched${ directionSuffix }.jpeg` );
 
+	await page.pause();
+
 	// Act.
 	await editor.selectElement( sectionID );
 	await page.locator( '.elementor-control-stretch_section .elementor-switch' ).click();
