@@ -25,7 +25,7 @@ const promptDialogStyleProps = {
 			m: 0,
 			top: 'initial',
 			bottom: ( { spacing } ) => spacing( 9 ),
-			maxHeight: '40vh',
+			maxHeight: '42vh',
 			pointerEvents: 'auto',
 		},
 	},
@@ -61,7 +61,7 @@ DialogHeader.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } ) => {
+const LayoutContent = ( { onClose, onConnect, onGenerationStart, onGenerationEnd, onInsert, onSelect } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 
 	if ( isLoading ) {
@@ -118,12 +118,13 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } 
 				{ showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } /> }
 			</DialogHeader>
 
-			<PromptDialog.Content dividers>
+			<PromptDialog.Content dividers sx={ { '&.MuiDialogContent-root': { p: 0 } } }>
 				<FormLayout
 					credits={ credits }
 					onClose={ onClose }
 					onInsert={ onInsert }
-					onGenerated={ onGenerated }
+					onGenerationStart={ onGenerationStart }
+					onGenerationEnd={ onGenerationEnd }
 					onSelect={ onSelect }
 				/>
 			</PromptDialog.Content>
@@ -134,7 +135,8 @@ const LayoutContent = ( { onClose, onConnect, onGenerated, onInsert, onSelect } 
 LayoutContent.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
-	onGenerated: PropTypes.func.isRequired,
+	onGenerationStart: PropTypes.func.isRequired,
+	onGenerationEnd: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };

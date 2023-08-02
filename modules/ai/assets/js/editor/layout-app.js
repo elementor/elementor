@@ -1,14 +1,24 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import LayoutContent from './layout-content';
 
-const LayoutApp = ( { isRTL, colorScheme, onClose, onConnect, onGenerated, onInsert, onSelect } ) => {
+const LayoutApp = ( {
+	isRTL,
+	colorScheme,
+	onClose,
+	onConnect,
+	onGenerationStart,
+	onGenerationEnd,
+	onInsert,
+	onSelect,
+} ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<LayoutContent
 					onClose={ onClose }
 					onConnect={ onConnect }
-					onGenerated={ onGenerated }
+					onGenerationStart={ onGenerationStart }
+					onGenerationEnd={ onGenerationEnd }
 					onInsert={ onInsert }
 					onSelect={ onSelect }
 				/>
@@ -22,7 +32,8 @@ LayoutApp.propTypes = {
 	isRTL: PropTypes.bool,
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
-	onGenerated: PropTypes.func.isRequired,
+	onGenerationStart: PropTypes.func.isRequired,
+	onGenerationEnd: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };
