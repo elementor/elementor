@@ -205,8 +205,12 @@ class Usage_Reporter extends Base {
 			<tbody>
 			<?php foreach ( $documents as $name => $count ) { ?>
 				<tr>
-					<th> <span> <?php echo $name; ?> <span>(<?php echo $count; ?>)</span></span> </th>
-					<td style="--size: calc( <?php echo $count; ?> / <?php echo $max_per_document; ?> );"><span class="data"><?php echo $count; ?></span></td>
+					<th>
+						<span> <?php echo esc_html( $name ); ?> <span>(<?php echo esc_html( $count ); ?>)</span></span>
+					</th>
+					<td style="--size: calc( <?php echo esc_attr( $count ); ?> / <?php echo esc_attr( $max_per_document ); ?> );">
+						<span class="data"><?php echo esc_html( $count ); ?></span>
+					</td>
 				</tr>
 			<?php } ?>
 			</tbody>
@@ -223,8 +227,12 @@ class Usage_Reporter extends Base {
 			<tbody>
 			<?php foreach ( $widgets as $name => $count ) { ?>
 				<tr>
-					<th> <span> <?php echo $name; ?> <span>(<?php echo $count; ?>)</span></span> </th>
-					<td style="--size: calc( <?php echo $count; ?> / <?php echo $max_per_widget; ?> );"><span class="data"><?php echo $count; ?></span></td>
+					<th>
+						<span> <?php echo esc_html( $name ); ?> <span>(<?php echo esc_html( $count ); ?>)</span></span>
+					</th>
+					<td style="--size: calc( <?php echo esc_attr( $count ); ?> / <?php echo esc_attr( $max_per_document ); ?> );">
+						<span class="data"><?php echo esc_html( $count ); ?></span>
+					</td>
 				</tr>
 			<?php } ?>
 			</tbody>
