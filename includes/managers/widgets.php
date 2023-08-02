@@ -48,7 +48,6 @@ class Widgets_Manager {
 	private $_promoted_widgets = [
 		'nested-elements' => NestedTabs::class,
 		'nested-accordion' => Nested_Accordion::class,
-		'nested-elements-html' => NestedTabsHtml::class,
 	];
 
 	/**
@@ -258,6 +257,11 @@ class Widgets_Manager {
 	 * @return void
 	 */
 	private function register_promoted_widgets() {
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
+			$this->_promoted_widgets['nested-elements-html'] = NestedTabsHtml::class;
+			unset( $this->_promoted_widgets['nested-elements'] );
+		}
 
 		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
 

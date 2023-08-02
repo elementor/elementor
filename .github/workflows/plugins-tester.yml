@@ -12,6 +12,7 @@ on:
         description: 'Ignore mismatch threshold'
         required: false
         default: '0.2'
+  pull_request:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -23,13 +24,27 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-latest
+    outputs:
+      changelog_diff: ${{ steps.changelog_diff_files_PT.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Check if this is only a changelog PR
+        id: changelog_diff_files_PT
+        uses: technote-space/get-diff-action@v6
         with:
-          node-version: 16.x
+          # PATTERNS are:
+          # Everything: **/*
+          # Everything in directories starting with a period: .*/**/*
+          # Not readme.txt: !readme.txt
+          PATTERNS: |
+            **/*
+            .*/**/*
+            !readme.txt  
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
       - name: Cache node modules
         uses: actions/cache@v3
         env:
@@ -42,10 +57,13 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
+        if: github.event.pull_request.title == null || steps.changelog_diff_files_PT.outputs.diff
         run: npm ci
       - name: Build
+        if: github.event.pull_request.title == null || steps.changelog_diff_files_PT.outputs.diff
         run: npx grunt build
       - name: Save build to cache
+        if: github.event.pull_request.title == null || steps.changelog_diff_files_PT.outputs.diff
         uses: actions/cache@v3
         id: restore-build
         with:
@@ -56,13 +74,24 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    strategy:
+      matrix:     
+        testSuite: 
+          - 'test:part1'
+          - 'test:part2' 
+          - 'test'
+        exclude:
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part1' }}
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part2' }}
+          - testSuite: ${{ github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install Node.js 16.x
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - name: Restore build from cache
         uses: actions/cache@v3
         id: restore-build
@@ -81,8 +110,8 @@ jobs:
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm test
-      - uses: actions/upload-artifact@v2
+        run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: errors-reports

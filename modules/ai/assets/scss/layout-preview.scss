@@ -44,3 +44,138 @@
 		transform: translateX( 100% );
 	}
 }
+
+.e-ai-layout-button {
+	position: relative;
+
+	&--sparkle {
+		--animation-duration: 1.5s;
+		--opacity: .2;
+		--size: 6px;
+
+		position: absolute;
+		z-index: 99999;
+		display: block;
+		height: var( --size );
+		aspect-ratio: 1;
+		background-image: url( "data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 0.25C3.30335 0.25 3.57682 0.432732 3.69291 0.712987L4.15981 1.84019L5.28701 2.30709C5.56727 2.42318 5.75 2.69665 5.75 3C5.75 3.30335 5.56727 3.57682 5.28701 3.69291L4.15981 4.15981L3.69291 5.28701C3.57682 5.56727 3.30335 5.75 3 5.75C2.69665 5.75 2.42318 5.56727 2.30709 5.28701L1.84019 4.15981L0.712987 3.69291C0.432732 3.57682 0.25 3.30335 0.25 3C0.25 2.69665 0.432732 2.42318 0.712987 2.30709L1.84019 1.84019L2.30709 0.712987C2.42318 0.432732 2.69665 0.25 3 0.25Z' fill='%230c0d0e'/%3E%3C/svg%3E%0A" );
+		background-size: cover;
+		opacity: 0;
+
+		// Top sparkles.
+		&:nth-child( 1 ),
+		&:nth-child( 2 ),
+		&:nth-child( 3 ) {
+			right: 12px;
+			top: 12px;
+		}
+
+		// Bottom sparkles.
+		&:nth-child( 4 ),
+		&:nth-child( 5 ),
+		&:nth-child( 6 ),
+		&:nth-child( 7 ) {
+			right: 12px;
+			top: 22px;
+		}
+
+		&:nth-child( 1 ) {
+			--opacity: .3;
+			--size: 4px;
+			--animation-name: sparkle-1;
+		}
+
+		&:nth-child( 2 ) {
+			--opacity: .3;
+			--size: 4px;
+			--animation-delay: .7s;
+			--animation-name: sparkle-2;
+		}
+
+		&:nth-child( 3 ) {
+			--animation-delay: 3.5s;
+			--animation-name: sparkle-3;
+		}
+
+		&:nth-child( 4 ) {
+			--animation-delay: .5s;
+			--animation-name: sparkle-4;
+		}
+
+		&:nth-child( 5 ) {
+			--animation-delay: 1.5s;
+			--animation-name: sparkle-5;
+		}
+
+		&:nth-child( 6 ) {
+			--animation-delay: 2.5s;
+			--animation-name: sparkle-6;
+		}
+
+		&:nth-child( 7 ) {
+			--opacity: .3;
+			--animation-delay: .7s;
+			--animation-name: sparkle-7;
+		}
+
+		.e-ai-layout-button:hover & {
+			--timing: cubic-bezier( 0, 1.18, .96, .75 );
+
+			animation:
+				var( --animation-name ) var( --animation-duration ) var( --animation-delay, 0s ) var( --timing ) infinite both,
+				sparkle-opacity var( --animation-duration ) var( --animation-delay, 0s ) var( --timing ) infinite both;
+		}
+	}
+}
+
+@keyframes sparkle-opacity {
+	50% {
+		opacity: var( --opacity );
+	}
+
+	100% {
+		opacity: 0;
+	}
+}
+
+@keyframes sparkle-1 {
+	100% {
+		transform: translate( 16px, -12px );
+	}
+}
+
+@keyframes sparkle-2 {
+	100% {
+		transform: translate( 16px, 12px );
+	}
+}
+
+@keyframes sparkle-3 {
+	100% {
+		transform: translate( 12px, 8px );
+	}
+}
+
+@keyframes sparkle-4 {
+	100% {
+		transform: translate( 16px, 16px );
+	}
+}
+
+@keyframes sparkle-5 {
+	100% {
+		transform: translate( 12px, 16px );
+	}
+}
+
+@keyframes sparkle-6 {
+	100% {
+		transform: translate( -8px, -24px );
+	}
+}
+
+@keyframes sparkle-7 {
+	100% {
+		transform: translate( -20px, 16px );
+	}
+}
