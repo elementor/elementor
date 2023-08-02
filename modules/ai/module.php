@@ -99,6 +99,8 @@ class Module extends BaseModule {
 				'connect_url' => $this->get_ai_connect_url(),
 			]
 		);
+
+		wp_set_script_translations( 'elementor-ai', 'elementor' );
 	}
 
 	private function enqueue_layout_script() {
@@ -119,6 +121,8 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
 	}
 
 	private function should_enqueue_layout() {
