@@ -42,7 +42,7 @@ const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 			onKeyDown={ ( e ) => {
 				if ( 'Enter' === e.key && ! e.shiftKey && ! showSuggestions ) {
 					onSubmit( e );
-				} else if ( '/' === e.key ) {
+				} else if ( '/' === e.key && '' === e.target.value ) {
 					e.preventDefault();
 					setShowSuggestions( true );
 				}

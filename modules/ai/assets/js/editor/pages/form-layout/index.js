@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Stack, CircularProgress, Divider, Button, styled } from '@elementor/ui';
+import { Box, Stack, Divider, Button } from '@elementor/ui';
 import GenerateSubmit from '../form-media/components/generate-submit';
 import EnhanceButton from '../form-media/components/enhance-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
@@ -11,10 +11,14 @@ import PromptAutocomplete from './components/prompt-autocomplete';
 
 const SCREENSHOT_HEIGHT = '138px';
 
-const ScreenshotImage = styled( 'img' )( ( { theme } ) => ( {
-	width: '100%',
-	borderRadius: theme.border.size.md,
-} ) );
+const PROMPT_SUGGESTIONS = Object.freeze( [
+	{ text: __( 'Create a hero section with', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
+	{ text: __( 'I need a services section divided into three columns', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
+	{ text: __( 'Create a contact us section in one line that also includes a title and', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
+	{ text: __( 'Two columns divided into third and two-thirds', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
+	// eslint-disable-next-line @wordpress/i18n-translator-comments
+	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
+] );
 
 const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect } ) => {
 	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
@@ -38,7 +42,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		if ( '' === prompt ) {
+		if ( '' === prompt.trim() ) {
 			return;
 		}
 
@@ -66,7 +70,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 			setIsTakingScreenshots( true );
 			setSelectedScreenshotIndex( -1 );
 
-			const templates = Array( 3 ).fill( templatesData?.result.elements[ 0 ] );
+			const templates = templatesData?.result.elements;
 
 			onGenerationEnd( templates ).then( ( generatedData ) => {
 				setScreenshotsData( generatedData );
@@ -98,13 +102,15 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 						value={ prompt }
 						disabled={ isLoading }
 						onSubmit={ handleSubmit }
-						options={ [] }
-						onChange={ ( _, selectedValue ) => setPrompt( selectedValue ) }
+						options={ PROMPT_SUGGESTIONS }
+						groupBy={ ( option ) => option.group }
+						getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+						onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 						renderInput={ ( params ) => (
 							<PromptAutocomplete.TextInput
 								{ ...params }
 								onChange={ ( e ) => setPrompt( e.target.value ) }
-								placeholder={ __( 'Press ‘/’ for suggested prompts or describe the layout you want to create', 'elementor' ) }
+								placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
 							/>
 						) }
 					/>
@@ -126,10 +132,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 							borderRadius: ( { border } ) => border.size.md,
 						} }
 					>
-						{
-							isLoading && ! isEnhancing
-								? <CircularProgress color="secondary" size={ 16 } />
-								: __( 'Generate', 'elementor' ) }
+						{ __( 'Generate', 'elementor' ) }
 					</GenerateSubmit>
 				</Stack>
 			</Box>
@@ -146,24 +149,24 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 								) : (
 									screenshotsData.map( ( { screenshot }, index ) => (
 										<ScreenshotContainer
-											key={ screenshot }
+											key={ index }
 											height={ SCREENSHOT_HEIGHT }
 											selected={ selectedScreenshotIndex === index }
+											sx={ { backgroundImage: `url('${ screenshot }')` } }
 											onClick={ () => setSelectedScreenshotIndex( index ) }
-										>
-											<ScreenshotImage src={ screenshot } decoding="async" />
-										</ScreenshotContainer>
+										/>
 									) )
 								)
 							}
 						</Box>
 
 						{
-							( screenshotsData.length > 0 && ! isLoading ) && (
+							screenshotsData.length > 0 && (
 								<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="flex-end">
 									<Button
 										size="small"
 										variant="contained"
+										disabled={ isLoading }
 										onClick={ applyTemplate }
 										sx={ {
 											// TODO: remove once exist in the UI library.
