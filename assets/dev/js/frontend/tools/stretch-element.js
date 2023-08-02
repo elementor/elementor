@@ -16,7 +16,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	stretch() {
+	stretch( useCssVariables = false ) {
 		const settings = this.getSettings();
 
 		let $container;
@@ -80,7 +80,12 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css[ settings.direction ] = correctOffset + 'px';
 
-		$element.css( css );
+		if ( useCssVariables ) {
+			this.applyCssVariables( $element, css );
+			return;
+		}
+
+		this.applyInlineStyling( $element, css );
 	},
 
 	reset() {
@@ -91,5 +96,15 @@ module.exports = elementorModules.ViewModule.extend( {
 		css[ this.getSettings( 'direction' ) ] = '';
 
 		this.elements.$element.css( css );
+	},
+
+	applyCssVariables( $element, css ) {
+		$element.css( '--stretch-width', css.width );
+
+		if ( !! css.left ) {
+			$element.css( '--stretch-left', css.left );
+		} else {
+			$element.css( '--stretch-right', css.right );
+		}
 	},
 } );
