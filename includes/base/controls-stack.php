@@ -2145,8 +2145,8 @@ abstract class Controls_Stack extends Base_Object {
 
 		$controls_objs = Plugin::$instance->controls_manager->get_controls();
 
-		foreach ( $this->get_controls() as $raw_control ) {
-			$control_obj = $controls_objs[ $raw_control['type'] ] ?? null;
+		foreach ( $this->get_controls() as $control ) {
+			$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
@@ -2154,11 +2154,13 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control_settings = $control_obj->get_settings();
 
-			if ( isset( $control_settings['default'] ) && ! isset( $settings[ $raw_control['default'] ] ) ) {
-				$raw_control['default'] = $control_settings['default'];
+			$should_assign_default = isset( $control_settings['default'] ) && ! isset( $control['default'] );
+
+			if ( $should_assign_default ) {
+				$control['default'] = $control_settings['default'];
 			}
 
-			$settings[ $raw_control['name'] ] = $control_obj->get_value( $raw_control, $settings );
+			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
 
 		return $settings;
