@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Stack, CircularProgress, Divider, Button } from '@elementor/ui';
+import { Box, Stack, CircularProgress, Divider, Button, styled } from '@elementor/ui';
 import PromptSearch from '../../components/prompt-search';
 import GenerateSubmit from '../form-media/components/generate-submit';
 import EnhanceButton from '../form-media/components/enhance-button';
@@ -10,6 +10,11 @@ import SkeletonPlaceholders from './components/skeleton-placeholders';
 import ScreenshotContainer from './components/screenshot-container';
 
 const SCREENSHOT_HEIGHT = '138px';
+
+const ScreenshotImage = styled( 'img' )( ( { theme } ) => ( {
+	width: '100%',
+	borderRadius: theme.border.size.md,
+} ) );
 
 const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect } ) => {
 	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
@@ -26,7 +31,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const lastRun = useRef( () => {} );
 
-	const isLoading = isGeneratingTemplates || isEnhancing || isTakingScreenshots;
+	const isLoading = isGeneratingTemplates || isTakingScreenshots;
 
 	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
 
@@ -144,7 +149,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 											selected={ selectedScreenshotIndex === index }
 											onClick={ () => setSelectedScreenshotIndex( index ) }
 										>
-											<img width="100%" src={ screenshot } alt={ `Screenshot ${ index }` } />
+											<ScreenshotImage src={ screenshot } decoding="async" />
 										</ScreenshotContainer>
 									) )
 								)

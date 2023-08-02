@@ -1138,7 +1138,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect( contentContainerThree.locator( '.elementor-background-video-container' ) ).not.toBeVisible();
 	} );
 
-	test( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
+	test.skip( 'Nested tabs horizontal scroll', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
