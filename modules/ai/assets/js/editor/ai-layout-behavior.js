@@ -118,7 +118,16 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			title: __( 'AI Builder', 'elementor' ),
 		} );
 
-		$button.html( '<i class="eicon-ai"></i>' );
+		$button.html( `
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<div class="e-ai-layout-button--sparkle"></div>
+			<i class="eicon-ai"></i>
+		` );
 
 		this.ui.addTemplateButton.after( $button );
 	}

@@ -12,11 +12,10 @@ const PREVIEW_CONTAINER_ID = 'e-ai-preview-container';
 export function createPreviewContainer( options = {}, model = null ) {
 	toggleHistory( false );
 
-	// When no model is supplied, create an empty section and not a container in order to support
-	// sites without containers. This section is used for UI purposes only.
+	// When no model is supplied, create an empty Container. Used for UI purposes only.
 	if ( ! model ) {
 		model = {
-			elType: 'section',
+			elType: 'container',
 		};
 	}
 
