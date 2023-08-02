@@ -1,7 +1,7 @@
 [data-id="e-ai-preview-container"] {
 	--outline-size: 2px;
 
-	outline: var( --outline-size ) solid var(--e-p-border-con);
+	outline: var( --outline-size ) solid var( --e-p-border-con );
 	outline-offset: calc( -1 * var( --outline-size ) );
 }
 
@@ -26,10 +26,6 @@
 		min-height: $height;
 		overflow: hidden;
 		background-color: rgba( 12, 13, 14, 0.05 );
-
-		& > * {
-			visibility: hidden;
-		}
 
 		&::after {
 			content: '';
