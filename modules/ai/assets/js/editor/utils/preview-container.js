@@ -2,6 +2,8 @@ import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
 const PREVIEW_CONTAINER_ID = 'e-ai-preview-container';
+const LOADING_CLASS = 'e-ai-preview-container--loading';
+const IDLE_CLASS = 'e-ai-preview-container--idle';
 
 /**
  * @param {{ at?: number }} options
@@ -54,8 +56,9 @@ export function setPreviewContainerIdle() {
 	const container = getPreviewContainer();
 
 	if ( container ) {
-		container.view.$el.removeClass( 'e-ai-preview-container--loading' );
-		container.view.$el.addClass( 'e-ai-preview-container--idle' );
+		container.view.$el
+			.removeClass( LOADING_CLASS )
+			.addClass( IDLE_CLASS );
 	}
 }
 
@@ -63,8 +66,9 @@ export function setPreviewContainerLoading() {
 	const container = getPreviewContainer();
 
 	if ( container ) {
-		container.view.$el.removeClass( 'e-ai-preview-container--idle' );
-		container.view.$el.addClass( 'e-ai-preview-container--loading' );
+		container.view.$el
+			.removeClass( IDLE_CLASS )
+			.addClass( LOADING_CLASS );
 	}
 }
 
