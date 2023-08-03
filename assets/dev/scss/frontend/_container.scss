@@ -19,14 +19,14 @@
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
-	--margin-top: 0;
-	--margin-right: 0;
-	--margin-bottom: 0;
-	--margin-left: 0;
-	--padding-block-start: var( --container-default-padding-top, var( --container-default-padding-block-start, 10px ) );
-	--padding-inline-end: var( --container-default-padding-right, var( --container-default-padding-inline-end, 10px ) );
-	--padding-block-end: var( --container-default-padding-bottom, var( --container-default-padding-block-end, 10px ) );
-	--padding-inline-start: var( --container-default-padding-left, var( --container-default-padding-inline-start, 10px ) );
+	--margin-block-start: 0;
+	--margin-inline-end: 0;
+	--margin-block-end: 0;
+	--margin-inline-start: 0;
+	--padding-block-start: var( --container-default-padding-block-start, 10px );
+	--padding-inline-end: var( --container-default-padding-inline-end, 10px );
+	--padding-block-end: var( --container-default-padding-block-end, 10px );
+	--padding-inline-start: var( --container-default-padding-inline-start, 10px );
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -44,7 +44,7 @@
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
-	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
+	margin: var( --margin-top, var( --margin-block-start ) ) var( --margin-right, var( --margin-inline-end ) ) var( --margin-bottom, var( --margin-block-end ) ) var( --margin-left, var( --margin-inline-start ) );
 	padding-inline-start: var( --padding-left, var( --padding-inline-start ) );
 	padding-inline-end: var( --padding-right, var( --padding-inline-end ) );
 	z-index: var( --z-index );
@@ -140,8 +140,8 @@
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		// Default top-level containers to be centered.
-		--margin-right: auto;
-		--margin-left: auto;
+		--margin-inline-end: auto;
+		--margin-inline-start: auto;
 
 		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
@@ -151,18 +151,18 @@
 
 	// Hack to increase specificity and avoid using `!important`.
 	.elementor-widget.elementor-widget {
-		// Override the default margin-bottom of widgets.
-		margin-bottom: 0;
+		// Override the default margin-block-end of widgets.
+		margin-block-end: 0;
 	}
 
 	@mixin border-radius-for-background-elements {
 		border-radius: var( --border-radius );
 		border-style: var( --border-style );
 		border-color: var( --border-color );
-		border-block-start-width: var( --border-width-top, var( --border-block-start-width ) );
-		border-inline-end-width: var( --border-width-right, var( --border-inline-end-width ) );
-		border-block-end-width: var( --border-width-bottom, var( --border-block-end-width ) );
-		border-inline-start-width: var( --border-width-left, var( --border-inline-start-width ) );
+		border-block-start-width: var( --border-block-start-width );
+		border-inline-end-width: var( --border-inline-end-width );
+		border-block-end-width: var( --border-block-end-width );
+		border-inline-start-width: var( --border-inline-start-width );
 		top: calc( 0px - var( --border-block-start-width ) );
 		left: calc( 0px - var( --border-inline-start-width ) );
 		width: max( calc( 100% + var( --border-inline-end-width ) + var( --border-inline-start-width ) ), 100% );
