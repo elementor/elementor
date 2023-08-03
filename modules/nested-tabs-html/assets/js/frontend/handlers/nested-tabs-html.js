@@ -233,10 +233,20 @@ export default class NestedTabsHtml extends Base {
 
 	getTabEvents() {
 		return {
-			keydown: this.onKeydownAvoidUndesiredPageScrolling.bind( this ),
-			keyup: this.handleTitleKeyboardNavigation.bind( this ),
+			keydown: this.handleTitleKeyboardNavigation.bind( this ),
 			click: this.onTabClick.bind( this ),
 		};
+	}
+
+	handleContentElementEscapeEvent( event ) {
+		if ( 'Escape' !== event.key ) {
+			return;
+		}
+
+		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector,
+			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
+
+		$activeTitle.trigger( 'focus' );
 	}
 
 	getHeadingEvents() {
@@ -253,6 +263,7 @@ export default class NestedTabsHtml extends Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
+		this.elements.$tabContents.children().on( 'keydown', this.handleContentElementEscapeEvent.bind( this ) );
 
 		const settingsObject = {
 			element: this.elements.$headingContainer[ 0 ],
@@ -273,13 +284,6 @@ export default class NestedTabsHtml extends Base {
 		this.elements.$headingContainer.off();
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
-	}
-
-	onKeydownAvoidUndesiredPageScrolling( event ) {
-		// We listen to keydown event for these keys in order to prevent undesired page scrolling.
-		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
-			event.preventDefault();
-		}
 	}
 
 	/**
