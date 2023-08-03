@@ -807,9 +807,9 @@ class Controls_Manager {
 			$control_default_value = $control_type_instance->get_default_value();
 
 			if ( is_array( $control_default_value ) ) {
-				$control_data['default'] = isset( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
+				$control_data['default'] = isset( $control_data['default'] ) && is_array( $control_data['default'] ) ? array_merge( $control_default_value, $control_data['default'] ) : $control_default_value;
 			} else {
-				$control_data['default'] = isset( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
+				$control_data['default'] = isset( $control_data['default'] )  && is_array( $control_data['default'] ) ? $control_data['default'] : $control_default_value;
 			}
 		}
 
