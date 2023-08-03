@@ -2,7 +2,7 @@
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--border-block-start-width: 0px;
-	--border-block-inline-end-width: 0px;
+	--border-inline-end-width: 0px;
 	--border-block-end-width: 0px;
 	--border-inline-start-width: 0px;
 	--border-style: initial;
@@ -160,13 +160,13 @@
 		border-style: var( --border-style );
 		border-color: var( --border-color );
 		border-block-start-width: var( --border-width-top, var( --border-block-start-width ) );
-		border-inline-end-width: var( --border-width-right, var( --border-block-inline-end-width ) );
+		border-inline-end-width: var( --border-width-right, var( --border-inline-end-width ) );
 		border-block-end-width: var( --border-width-bottom, var( --border-block-end-width ) );
 		border-inline-start-width: var( --border-width-left, var( --border-inline-start-width ) );
 		top: calc( 0px - var( --border-block-start-width ) );
 		left: calc( 0px - var( --border-inline-start-width ) );
-		width: max( calc( 100% + var( --border-block-inline-end-width ) + var( --border-inline-start-width ) ), 100% );
-		height: max( calc( 100% + var( --border-width-top ) + var( --border-block-end-width ) ), 100% );
+		width: max( calc( 100% + var( --border-inline-end-width ) + var( --border-inline-start-width ) ), 100% );
+		height: max( calc( 100% + var( --border-block-start-width ) + var( --border-block-end-width ) ), 100% );
 	}
 
 	// Background overlay.

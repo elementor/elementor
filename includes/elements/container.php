@@ -1002,7 +1002,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-block-inline-end-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
