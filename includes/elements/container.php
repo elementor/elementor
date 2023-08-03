@@ -1340,7 +1340,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}};  --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
