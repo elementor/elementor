@@ -1,10 +1,10 @@
 .e-con {
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
-	--border-width-top: 0px;
-	--border-width-right: 0px;
-	--border-width-bottom: 0px;
-	--border-width-left: 0px;
+	--border-block-start-width: 0px;
+	--border-block-inline-end-width: 0px;
+	--border-block-end-width: 0px;
+	--border-inline-start-width: 0px;
 	--border-style: initial;
 	--border-color: initial;
 	--container-widget-width: 100%;
@@ -14,7 +14,7 @@
 	// Use the width from `Site Settings` or default to 1140px.
 	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
 	// isn't working properly.
-	--content-width: Min( 100%, var( --container-max-width, 1140px ) );
+	--content-width: min( 100%, var( --container-max-width, 1140px ) );
 	--width: 100%;
 	--min-height: initial;
 	--height: auto;
@@ -24,9 +24,9 @@
 	--margin-bottom: 0;
 	--margin-left: 0;
 	--padding-top: var( --container-default-padding-top, 10px );
-	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-inline-end: var( --container-default-padding-right, 10px );
 	--padding-bottom: var( --container-default-padding-bottom, 10px );
-	--padding-left: var( --container-default-padding-left, 10px );
+	--padding-inline-start: var( --container-default-padding-left, 10px );
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -34,9 +34,8 @@
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
-	--e-con-grid-template-columns: repeat(3, 1fr);
-	--e-con-grid-template-rows: repeat(2, 1fr);
-
+	--e-con-grid-template-columns: repeat( 3, 1fr );
+	--e-con-grid-template-rows: repeat( 2, 1fr );
 	position: var( --position );
 	width: var( --width );
 	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
@@ -46,11 +45,11 @@
 	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
-	padding-left: var( --padding-left );
-	padding-right: var( --padding-right );
+	padding-inline-start: var( --padding-left, var( --padding-inline-start ) );
+	padding-inline-end: var( --padding-right, var( --padding-inline-end ) );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
-	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+	transition: background var( --background-transition, 0.3s ), border var( --border-transition, 0.3s ), box-shadow var( --border-transition, 0.3s ), transform var( --e-con-transform-transition-duration, 0.4s );
 
 	&.e-flex {
 		--flex-direction: column;
@@ -147,7 +146,7 @@
 		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
 		// Capital `M` in order to use the CSS function and not the SCSS one.
-		max-width: Min( 100%, var( --width ) );
+		max-width: min( 100%, var( --width ) );
 	}
 
 	// Hack to increase specificity and avoid using `!important`.
@@ -157,17 +156,17 @@
 	}
 
 	@mixin border-radius-for-background-elements {
-		border-radius: var(--border-radius);
-		border-style: var(--border-style);
-		border-color: var(--border-color);
-		border-top-width: var(--border-width-top);
-		border-right-width: var(--border-width-right);
-		border-bottom-width: var(--border-width-bottom);
-		border-left-width: var(--border-width-left);
-		top: calc( 0px - var(--border-width-top) );
-		left: calc( 0px - var(--border-width-left) );
-		width: max( calc( 100% + var(--border-width-right) + var(--border-width-left) ), 100% );
-		height: max( calc( 100% + var(--border-width-top) + var(--border-width-bottom) ), 100% );
+		border-radius: var( --border-radius );
+		border-style: var( --border-style );
+		border-color: var( --border-color );
+		border-block-start-width: var( --border-width-top, var( --border-block-start-width ) );
+		border-inline-end-width: var( --border-width-right, var( --border-block-inline-end-width ) );
+		border-block-end-width: var( --border-width-bottom, var( --border-block-end-width ) );
+		border-inline-start-width: var( --border-width-left, var( --border-inline-start-width ) );
+		top: calc( 0px - var( --border-block-start-width ) );
+		left: calc( 0px - var( --border-inline-start-width ) );
+		width: max( calc( 100% + var( --border-block-inline-end-width ) + var( --border-inline-start-width ) ), 100% );
+		height: max( calc( 100% + var( --border-width-top ) + var( --border-block-end-width ) ), 100% );
 	}
 
 	// Background overlay.
@@ -213,7 +212,6 @@
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
 		min-width: 0;
-
 		// Fix iframe-based widgets (ED-5338) & widget with empty placeholder.
 		&-video,
 		&-google_maps,
@@ -243,7 +241,6 @@
 	// Hack with repeated classnames to increase the specificity.
 	.elementor.elementor &,
 	&.e-con > .e-con-inner {
-
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
 		& > .elementor-widget {
 			max-width: 100%;

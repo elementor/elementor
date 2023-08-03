@@ -1009,7 +1009,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-block-inline-end-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
@@ -1065,7 +1065,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; : {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
@@ -1347,7 +1347,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}};  --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
