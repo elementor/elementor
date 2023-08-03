@@ -25,7 +25,7 @@
 	--margin-left: 0;
 	--padding-block-start: var( --container-default-padding-top, var( --container-default-padding-block-start, 10px ) );
 	--padding-inline-end: var( --container-default-padding-right, var( --container-default-padding-inline-end, 10px ) );
-	--padding-bottom: var( --container-default-padding-bottom, var( --container-default-padding-block-end, 10px ) );
+	--padding-block-end: var( --container-default-padding-bottom, var( --container-default-padding-block-end, 10px ) );
 	--padding-inline-start: var( --container-default-padding-left, var( --container-default-padding-inline-start, 10px ) );
 	--position: relative;
 	--z-index: revert;
