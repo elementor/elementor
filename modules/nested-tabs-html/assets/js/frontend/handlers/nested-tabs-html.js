@@ -282,6 +282,7 @@ export default class NestedTabsHtml extends Base {
 	unbindEvents() {
 		this.elements.$tabTitles.off();
 		this.elements.$headingContainer.off();
+		this.elements.$tabContents.children().off();
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
 	}
