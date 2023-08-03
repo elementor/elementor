@@ -34,7 +34,7 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view, activeControl } = args,
-			elementTitle = model?.attributes?.custom?.isPreset
+			elementTitle = model?.attributes?.custom?.isPreset || model?.changed?.title
 				? model.attributes.title
 				: elementor.getElementData( model ).title,
 			/* Translators: %s: Element name. */
