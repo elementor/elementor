@@ -103,6 +103,8 @@ class Container extends Element_Base {
 						'presetWidget' => 'container_grid',
 						'preset_settings' => [
 							'container_type' => 'grid',
+							'presetTitle' => 'Grid',
+							'presetIcon' => 'eicon-container-grid',
 						],
 					],
 				],

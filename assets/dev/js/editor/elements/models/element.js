@@ -168,7 +168,7 @@ ElementModel = BaseElementModel.extend( {
 			custom = this.get( 'custom' );
 
 		if ( custom?.isPreset ?? false ) {
-			return this.get( 'icon' ) || mainIcon;
+			return this.attributes.custom.preset_settings.presetIcon || mainIcon;
 		}
 
 		const savedPresetIcon = this.getSetting( 'presetIcon' );
