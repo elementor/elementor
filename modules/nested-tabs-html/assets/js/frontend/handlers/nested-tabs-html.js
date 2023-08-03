@@ -109,9 +109,9 @@ export default class NestedTabsHtml extends Base {
 
 			const currentTabIndex = parseInt( this.getTabIndex( event.currentTarget ) ),
 				numberOfTabs = this.elements.$tabTitles.length,
-				tabIndexUpdated = this.getTabIndexUpdated( event, currentTabIndex, numberOfTabs );
+				tabIndexUpdated = this.getTabIndexFocusUpdated( event, currentTabIndex, numberOfTabs );
 
-			this.changeFocusedTab( currentTabIndex, tabIndexUpdated );
+			this.changeTabFocus( currentTabIndex, tabIndexUpdated );
 		} else if ( activationKeys.includes( event.key ) ) {
 			event.preventDefault();
 
@@ -119,8 +119,8 @@ export default class NestedTabsHtml extends Base {
 		}
 	}
 
-	getTabIndexUpdated( event, currentTabIndex, numberOfTabs ) {
-		let tabIndexUpdated;
+	getTabIndexFocusUpdated( event, currentTabIndex, numberOfTabs ) {
+		let tabIndexUpdated = 0;
 
 		switch ( event.key ) {
 			case 'Home':
@@ -131,11 +131,13 @@ export default class NestedTabsHtml extends Base {
 				break;
 			default:
 				const direction = this.getSettings( 'keyDirection' )[ event.key ],
-					directionValue = 'next' === direction ? 1 : -1;
+					directionValue = 'next' === direction ? 1 : -1,
+					isEndReached = numberOfTabs < currentTabIndex + directionValue,
+					isStartReached = 0 === currentTabIndex + directionValue;
 
-				if ( numberOfTabs < currentTabIndex + directionValue ) {
+				if ( isEndReached ) {
 					tabIndexUpdated = 1;
-				} else if ( 0 === currentTabIndex + directionValue ) {
+				} else if ( isStartReached ) {
 					tabIndexUpdated = numberOfTabs;
 				} else {
 					tabIndexUpdated = currentTabIndex + directionValue;
@@ -145,7 +147,7 @@ export default class NestedTabsHtml extends Base {
 		return tabIndexUpdated;
 	}
 
-	changeFocusedTab( currentTabIndex, tabIndexUpdated ) {
+	changeTabFocus( currentTabIndex, tabIndexUpdated ) {
 		const $currentTab = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( currentTabIndex ) ),
 			$newTab = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndexUpdated ) );
 
