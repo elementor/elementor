@@ -17,8 +17,8 @@
 				letter-spacing: inherit;
 				line-height: inherit;
 				flex-basis: 100%;
-				@include padding-start(5px); //fix for Chrome
-				@include padding-end(20px);
+				padding-inline-start: 5px; //fix for Chrome
+				padding-inline-end: 20px;
 				cursor: pointer;
 
 				&.e-select-placeholder {

@@ -15,6 +15,8 @@
 	--n-tabs-heading-grow: initial;
 	--n-tabs-heading-justify-content: center;
 	--n-tabs-heading-width: initial;
+	--n-tabs-heading-overflow-x: initial;
+	--n-tabs-heading-wrap: nowrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
 	--n-tabs-content-padding: initial;
@@ -35,6 +37,8 @@
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
 	--n-tabs-title-flex-grow: 0;
+	--n-tabs-title-flex-basis: content;
+	--n-tabs-title-flex-shrink: initial;
 	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
 	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
@@ -59,9 +63,33 @@
 			flex-basis: var( --n-tabs-heading-width );
 			flex-direction: var( --n-tabs-heading-direction );
 			flex-shrink: 0;
-			flex-wrap: wrap;
 			justify-content: var( --n-tabs-heading-justify-content );
 			gap: var( --n-tabs-title-gap );
+			overflow-x: var(--n-tabs-heading-overflow-x);
+			flex-wrap: var(--n-tabs-heading-wrap);
+			-ms-overflow-style: none;  /* IE and Edge */
+			scrollbar-width: none;  /* Firefox */
+
+			&::-webkit-scrollbar {
+				display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+			}
+
+			&.e-scroll {
+				cursor: grabbing;
+				cursor: -webkit-grabbing;
+
+				&-active {
+					position: relative;
+
+					&::before {
+						content: '';
+						position: absolute;
+						inset-block: 0;
+						inset-inline: -1000vw;
+						z-index: $second-layer;
+					}
+				}
+			}
 		}
 
 		&-content {
@@ -85,7 +113,8 @@
 			cursor: pointer;
 			outline: none;
 			flex-grow: var( --n-tabs-title-flex-grow );
-			flex-basis: fit-content;
+			flex-basis: var( --n-tabs-title-flex-basis );
+			flex-shrink: var( --n-tabs-title-flex-shrink );
 			padding-top: var( --n-tabs-title-padding-top );
 			padding-right: var( --n-tabs-title-padding-right );
 			padding-bottom: var( --n-tabs-title-padding-bottom );
@@ -238,6 +267,7 @@
 			-moz-user-select: none;
 			-ms-user-select: none;
 			user-select: none;
+			width: 100%;
 
 			&:not(:first-child) {
 				margin-top: var( --n-tabs-title-gap );
@@ -271,7 +301,7 @@
 
 // Responsive mode
 @mixin hide-normal-tabs-($device) {
-	.e-n-tabs-#{$device} {
+	.elementor-widget-n-tabs.e-n-tabs-#{$device} {
 
 		> .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading {
 			display: none;

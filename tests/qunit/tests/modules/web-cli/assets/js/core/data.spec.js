@@ -122,24 +122,24 @@ jQuery( () => {
 
 		QUnit.test( 'validateRequestData', ( assert ) => {
 			assert.throws( () => {
-					$e.data.validateRequestData( {} );
-				},
-				new Error( 'component is required.' ),
+				$e.data.validateRequestData( {} );
+			},
+			new Error( 'component is required.' ),
 			);
 			assert.throws( () => {
-					$e.data.validateRequestData( {
-						component: {},
-					} );
-				},
-				new Error( 'command is required.' ),
+				$e.data.validateRequestData( {
+					component: {},
+				} );
+			},
+			new Error( 'command is required.' ),
 			);
 			assert.throws( () => {
-					$e.data.validateRequestData( {
-						component: {},
-						command: '',
-					} );
-				},
-				new Error( 'endpoint is required.' ),
+				$e.data.validateRequestData( {
+					component: {},
+					command: '',
+				} );
+			},
+			new Error( 'endpoint is required.' ),
 			);
 		} );
 
@@ -176,9 +176,9 @@ jQuery( () => {
 
 		QUnit.test( 'prepareHeaders(): post without data', ( assert ) => {
 			const requestData = {
-					paramA: 'valueA',
-					type: 'create',
-				};
+				paramA: 'valueA',
+				type: 'create',
+			};
 
 			assert.throws( () => $e.data.prepareHeaders( requestData ),
 				new Error( `Invalid requestData.args.data` ),

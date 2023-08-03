@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Tools extends Settings_Page {
 
+	const CAPABILITY = 'manage_options';
+
 	/**
 	 * Settings page ID for Elementor tools.
 	 */
@@ -49,6 +51,10 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
@@ -66,6 +72,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -97,6 +107,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$from = Utils::get_super_global_value( $_POST, 'from' ) ?? '';
 		$to = Utils::get_super_global_value( $_POST, 'to' ) ?? '';
@@ -295,7 +309,7 @@ class Tools extends Settings_Page {
 							$intro_text = sprintf(
 								/* translators: %s: WordPress backups documentation. */
 								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
-								'http://go.elementor.com/wordpress-backups/'
+								'https://go.elementor.com/wordpress-backups/'
 							);
 							$intro_text = '<div>' . $intro_text . '</div>';
 
@@ -307,7 +321,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="large-text"><input type="text" name="to" placeholder="http://new-url.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="https://old.example.com" class="large-text"><input type="text" name="to" placeholder="https://new.example.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
 									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],

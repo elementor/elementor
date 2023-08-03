@@ -17,7 +17,7 @@ export default function EnvatoPromotion( props ) {
 	};
 
 	return (
-		<Text className="e-kit-library-bottom-promotion" variant="xl">
+		<Text className="e-kit-library-promotion" variant="xl">
 			{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }
 			<Button
 				variant="underlined"
@@ -31,6 +31,6 @@ export default function EnvatoPromotion( props ) {
 		</Text>
 	);
 }
- EnvatoPromotion.propTypes = {
+EnvatoPromotion.propTypes = {
 	category: PropTypes.string,
- };
+};

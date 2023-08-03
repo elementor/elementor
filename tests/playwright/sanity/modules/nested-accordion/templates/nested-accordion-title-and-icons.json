@@ -1,0 +1,81 @@
+[
+  {
+    "id": "7d373d8",
+    "elType": "container",
+    "settings": [],
+    "elements": [
+      {
+        "id": "48f02ad",
+        "elType": "widget",
+        "widgetType": "nested-accordion",
+        "settings": {
+          "items": [
+            {
+              "item_title": "One",
+              "_id": "971ae6a"
+            },
+            {
+              "item_title": "Two",
+              "_id": "05adc5a"
+            },
+            {
+              "item_title": "Three",
+              "_id": "bd50925"
+            }
+          ],
+          "item_position_horizontal": "stretch",
+          "_flex_align_self": "stretch",
+          "submenu_indicator_position": "left",
+          "submenu_indicator_icon": {
+            "value": "far fa-address-book",
+            "library": "fa-regular"
+          },
+          "accordion_item_title_position_horizontal_widescreen": "start",
+          "accordion_item_title_position_horizontal_tablet_extra": "center",
+          "accordion_item_title_position_horizontal_mobile": "start",
+          "accordion_item_title_position_horizontal_tablet": "start",
+          "accordion_item_title_icon_collapse": {
+            "value": "fas fa-angle-up",
+            "library": "fa-solid"
+          }
+        },
+        "elements": [
+          {
+            "id": "ace14f3",
+            "elType": "container",
+            "settings": {
+              "_title": "item #1",
+              "content_width": "full"
+            },
+            "elements": [],
+            "isInner": false,
+            "isLocked": true
+          },
+          {
+            "id": "82f91ac",
+            "elType": "container",
+            "settings": {
+              "_title": "item #2",
+              "content_width": "full"
+            },
+            "elements": [],
+            "isInner": false,
+            "isLocked": true
+          },
+          {
+            "id": "47355ad",
+            "elType": "container",
+            "settings": {
+              "_title": "item #3",
+              "content_width": "full"
+            },
+            "elements": [],
+            "isInner": false,
+            "isLocked": true
+          }
+        ]
+      }
+    ],
+    "isInner": false
+  }
+]

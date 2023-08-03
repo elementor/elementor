@@ -33,7 +33,7 @@ body {
 	&__header {
 		display: flex;
 		align-items: stretch;
-		border-bottom: var(--e-a-border);
+		border-block-end: var(--e-a-border);
 		color: var(--e-a-color-txt-accent);
 
 		&__title {
@@ -87,7 +87,7 @@ body {
 		}
 
 		> &-section {
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 		}
 	}
 
@@ -97,7 +97,7 @@ body {
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		border-top: var(--e-a-border);
+		border-block-start: var(--e-a-border);
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -152,15 +152,15 @@ body {
 	&__elements {
 
 		> .elementor-navigator__element-section,
-		> .elementor-navigator__element-container:not(:last-child),{
-			border-bottom: var(--e-a-border);
+		> .elementor-navigator__element-container:not(:last-child) {
+			border-block-end: var(--e-a-border);
 		}
 
 		.elementor-empty-view {
 			padding: 10px;
 
 			&__title {
-				@include margin-start(23px);
+				margin-inline-start: 23px;
 				font-size: 10px;
 				font-style: italic;
 			}
@@ -186,7 +186,7 @@ body {
 			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
-					border-top: var(--e-a-border);
+					border-block-start: var(--e-a-border);
 
 					.elementor-empty-view__title {
 						display: none;
@@ -235,12 +235,12 @@ body {
 		}
 
 		&__list-toggle {
-			@include margin-end(7px);
+			margin-inline-end: 7px;
 			transition: transform .3s;
 		}
 
 		&__element-type {
-			@include margin-end(8px);
+			margin-inline-end: 8px;
 			font-size: 14px;
 		}
 
@@ -277,7 +277,7 @@ body {
 		&__indicators {
 			position: relative;
 			transition: transform .5s;
-			@include padding-start(5px);
+			padding-inline-start: 5px;
 			z-index: 91;
 
 			&:not(:hover) {
@@ -295,10 +295,10 @@ body {
 			justify-content: center;
 			color: var(--e-a-color-txt-invert);
 			background-color: var(--e-a-color-white);
-			@include border-start(--e-a-border);
+			border-inline-start: var(--e-a-border);
 
 			&:first-child {
-				@include border-start(3px solid var(--e-a-border-color-accent));
+				border-inline-start: 3px solid var(--e-a-border-color-accent);
 
 				.elementor-editing & {
 					border-color: lighten($e-gray-900, 10%);

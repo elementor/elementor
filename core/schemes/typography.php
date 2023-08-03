@@ -12,26 +12,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * for typography.
  *
  * @since 1.0.0
+ * @deprecated 3.15.0 Use Global_Typography instead
  */
-class Typography extends Base_UI {
+class Typography {
 
 	/**
 	 * 1st typography scheme.
+	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_PRIMARY instead
 	 */
 	const TYPOGRAPHY_1 = '1';
 
 	/**
 	 * 2nd typography scheme.
+	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_SECONDARY instead
 	 */
 	const TYPOGRAPHY_2 = '2';
 
 	/**
 	 * 3rd typography scheme.
+	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_TEXT instead
 	 */
 	const TYPOGRAPHY_3 = '3';
 
 	/**
 	 * 4th typography scheme.
+	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_ACCENT instead
 	 */
 	const TYPOGRAPHY_4 = '4';
 
@@ -43,6 +48,7 @@ class Typography extends Base_UI {
 	 * @since 1.0.0
 	 * @access public
 	 * @static
+	 * @deprecated 3.15.0
 	 *
 	 * @return string Typography scheme type.
 	 */
@@ -57,11 +63,12 @@ class Typography extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.15.0
 	 *
 	 * @return string Typography scheme title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Typography', 'elementor' );
+		return '';
 	}
 
 	/**
@@ -71,11 +78,12 @@ class Typography extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.15.0
 	 *
 	 * @return string Typography scheme disabled title.
 	 */
 	public function get_disabled_title() {
-		return esc_html__( 'Default Fonts', 'elementor' );
+		return '';
 	}
 
 	/**
@@ -85,16 +93,12 @@ class Typography extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.15.0
 	 *
 	 * @return array Typography scheme titles.
 	 */
 	public function get_scheme_titles() {
-		return [
-			self::TYPOGRAPHY_1 => esc_html__( 'Primary Headline', 'elementor' ),
-			self::TYPOGRAPHY_2 => esc_html__( 'Secondary Headline', 'elementor' ),
-			self::TYPOGRAPHY_3 => esc_html__( 'Body Text', 'elementor' ),
-			self::TYPOGRAPHY_4 => esc_html__( 'Accent Text', 'elementor' ),
-		];
+		return [];
 	}
 
 	/**
@@ -104,41 +108,11 @@ class Typography extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.15.0
 	 *
 	 * @return array Default typography scheme.
 	 */
 	public function get_default_scheme() {
-		return [
-			self::TYPOGRAPHY_1 => [
-				'font_family' => 'Roboto',
-				'font_weight' => '600',
-			],
-			self::TYPOGRAPHY_2 => [
-				'font_family' => 'Roboto Slab',
-				'font_weight' => '400',
-			],
-			self::TYPOGRAPHY_3 => [
-				'font_family' => 'Roboto',
-				'font_weight' => '400',
-			],
-			self::TYPOGRAPHY_4 => [
-				'font_family' => 'Roboto',
-				'font_weight' => '500',
-			],
-		];
-	}
-
-	/**
-	 * Init system typography schemes.
-	 *
-	 * Initialize the system typography schemes.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array System typography schemes.
-	 */
-	protected function _init_system_schemes() {
 		return [];
 	}
 
@@ -150,10 +124,7 @@ class Typography extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.15.0
 	 */
-	public function print_template_content() {
-		?>
-		<div class="elementor-panel-scheme-items"></div>
-		<?php
-	}
+	public function print_template_content() {}
 }

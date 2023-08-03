@@ -52,7 +52,8 @@
 
 #elementor-panel-elements-search-input {
 	font-size: 11px;
-	@include padding(10px, 10px, 10px, 29px);
+	padding-block: 10px;
+	padding-inline: 29px 10px;
 	font-style: italic;
 	border: var(--e-a-border-bold);
 	border-radius: 0;
@@ -69,7 +70,7 @@
 
 	&:focus {
 		border-color: var(--e-a-border-color-focus);
-		@include padding-end(15px);
+		padding-inline-end: 15px;
 	}
 }
 
@@ -102,7 +103,7 @@
 
 		.icon {
 			font-size: 28px;
-			padding-top: 15px;
+			padding-block-start: 15px;
 		}
 
 		.title-wrapper {
@@ -146,7 +147,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, var(--e-a-bg-default));
+		border-inline-end-color: var(--e-a-bg-default);
 	}
 
 	&__title {
@@ -158,12 +159,12 @@
 		&-header {
 			display: flex;
 			padding: 20px;
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 			font-weight: 500;
 
 			.eicon-pro-icon {
 				flex-grow: 1;
-				@include margin-start(10px);
+				margin-inline-start: 10px;
 				font-size: 14px;
 				color: var(--e-a-color-accent);
 			}
@@ -208,7 +209,7 @@
 		@include end(100%);
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
-		@include border-end-property(color, $editor-background);
+		border-inline-end-color: $editor-background;
 	}
 
 	&__title {
@@ -220,12 +221,12 @@
 			display: flex;
 			padding: 20px 20px 0;
 			color: $editor-darkest;
-			border-bottom: 1px solid $editor-background;
+			border-block-end: 1px solid $editor-background;
 			font-weight: 500;
 
 			.eicon-pro-icon {
 				flex-grow: 1;
-				@include margin-start(10px);
+				margin-inline-start: 10px;
 				font-size: 14px;
 				color: $editor-accent;
 			}

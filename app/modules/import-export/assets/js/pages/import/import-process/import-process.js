@@ -35,7 +35,7 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_ID', payload: id } );
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-			kitActions.upload( { file: decodedFileURL, kitLibraryNonce: nonce } );
+			kitActions.upload( { kitId: id, file: decodedFileURL, kitLibraryNonce: nonce } );
 		},
 		importKit = () => {
 			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
@@ -45,7 +45,7 @@ export default function ImportProcess() {
 			}
 		},
 		applyAllSetCpt = () => {
-		const cpt = kitState.data?.manifest[ 'custom-post-type-title' ] || importContext.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
+			const cpt = kitState.data?.manifest[ 'custom-post-type-title' ] || importContext.data?.uploadedData?.manifest[ 'custom-post-type-title' ];
 			if ( cpt ) {
 				const cptArray = Object.keys( cpt );
 				sharedContext.dispatch( { type: 'SET_SELECTED_CPT', payload: cptArray } );

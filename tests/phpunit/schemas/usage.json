@@ -1079,10 +1079,6 @@
 										}
 									]
 								},
-								"a11y_improvements": {
-									"default": "active",
-									"state": "default"
-								},
 								"landing-pages": {
 									"default": "active",
 									"state": "default"

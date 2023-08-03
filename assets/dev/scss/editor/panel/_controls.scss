@@ -10,11 +10,11 @@
 	a {
 		font-weight: 500;
 		text-decoration: none;
-		border-bottom: 1px dotted transparent;
+		border-block-end: 1px dotted transparent;
 		transition: all ease-in-out .3s;
 
 		&:hover {
-			border-bottom-color: inherit;
+			border-block-end-color: inherit;
 		}
 	}
 
@@ -27,7 +27,7 @@
 	.elementor-control-title {
 		font-size: var(--control-title-size);
 		line-height: 1;
-		@include margin-end(5px);
+		margin-inline-end: 5px;
 	}
 
 	.elementor-control-spinner {
@@ -41,7 +41,7 @@
 
 		.elementor-control-content {
 			border-width: 0;
-			border-top: var(--e-a-border);
+			border-block-start: var(--e-a-border);
 
 			//For the next control in the panel
 			background-color: var(--e-a-bg-default);
@@ -52,7 +52,7 @@
 	&.elementor-control-separator- {
 
 		&before {
-			padding-top: 15px;
+			padding-block-start: 15px;
 
 			&:before {
 				content: '';
@@ -79,18 +79,18 @@
 
 			+ .elementor-control-type-tabs,
 			&:not(.elementor-hidden-control) {
-				+ .elementor-control-separator-default {
-					padding-top: 15px;
+				~ .elementor-control-separator-default {
+					padding-block-start: 15px;
 				}
 			}
 		}
 	}
 
 	&.elementor-control-deprecated {
-		color: $editor-warning;
+		color: var(--e-a-color-warning);
 
 		.elementor-control-field-description {
-			color: $editor-warning;
+			color:var(--e-a-color-warning);
 		}
 	}
 
@@ -132,13 +132,9 @@
 		.elementor-nerd-box {
 
 			&-message {
-				margin-top: 5px;
+				margin-block-start: 5px;
 			}
 		}
-	}
-
-	&.elementor-control-custom_css_title {
-		font-size: 12px;
 	}
 }
 
@@ -181,8 +177,8 @@
 	height: 48px;
 	padding-inline: 20px;
 	width: 100%;
-	border-top: var(--e-a-border); //todo: remove
-	border-top-width: 2px;
+	border-block-start: var(--e-a-border); //todo: remove
+	border-block-start-width: 2px;
 	color: var(--e-a-color-txt-accent);
 	cursor: pointer;
 
@@ -203,7 +199,7 @@
 	.elementor-control-type-section:first-child {
 
 		.elementor-panel-heading {
-			border-top: none;
+			border-block-start: none;
 		}
 	}
 }
@@ -223,7 +219,7 @@
 			> .elementor-control-input-wrapper {
 				width: 100%;
 				max-width: 100%;
-				margin-top: 10px;
+				margin-block-start: 10px;
 
 				// TODO: Hack to make choices full width when label is block.
 				> .elementor-choices {
@@ -246,7 +242,7 @@
 			> .elementor-control-field {
 
 				> .elementor-control-input-wrapper {
-					margin-top: 0;
+					margin-block-start: 0;
 				}
 			}
 		}
@@ -259,7 +255,7 @@
 			> .elementor-control-field {
 
 				> .elementor-control-input-wrapper {
-					margin-top: 0;
+					margin-block-start: 0;
 				}
 			}
 		}
@@ -278,7 +274,7 @@
 			}
 
 			> .elementor-control-input-wrapper {
-				@include margin-start(auto);
+				margin-inline-start: auto;
 			}
 		}
 	}
@@ -286,13 +282,13 @@
 
 .elementor-control-field-description {
 	@extend .elementor-descriptor;
-	margin-top: 10px;
+	margin-block-start: 10px;
 }
 
 .elementor-group-control-attachment_alert {
 
 	.elementor-control-field-description {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 
@@ -315,12 +311,11 @@
 
 .elementor-update-preview-button-wrapper {
 	flex-grow: 1;
-	text-align: $end;
+	text-align: end;
 }
 
 .elementor-update-preview-button {
 	padding: 8px 15px;
-	text-transform: uppercase;
 }
 
 // = Set direction control by class

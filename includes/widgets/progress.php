@@ -104,6 +104,29 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control(
+			'title_tag',
+			[
+				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'span',
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'progress_type',
 			[
 				'label' => esc_html__( 'Type', 'elementor' ),
@@ -116,6 +139,7 @@ class Widget_Progress extends Widget_Base {
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -138,12 +162,11 @@ class Widget_Progress extends Widget_Base {
 			'display_percentage',
 			[
 				'label' => esc_html__( 'Display Percentage', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'return_value' => 'show',
 				'default' => 'show',
-				'options' => [
-					'show' => esc_html__( 'Show', 'elementor' ),
-					'hide' => esc_html__( 'Hide', 'elementor' ),
-				],
 			]
 		);
 
@@ -330,51 +353,51 @@ class Widget_Progress extends Widget_Base {
 			$progress_percentage = 100;
 		}
 
-		$this->add_render_attribute( 'title', [
-			'class' => 'elementor-title',
-		]);
+		$this->add_render_attribute( 'title', 'class', 'elementor-title' );
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$this->add_render_attribute( 'wrapper', [
-			'class' => 'elementor-progress-wrapper',
-			'role' => 'progressbar',
-			'aria-valuemin' => '0',
-			'aria-valuemax' => '100',
-			'aria-valuenow' => $progress_percentage,
-		] );
+		$this->add_render_attribute(
+			'wrapper',
+			[
+				'class' => 'elementor-progress-wrapper',
+				'role' => 'progressbar',
+				'aria-valuemin' => '0',
+				'aria-valuemax' => '100',
+				'aria-valuenow' => $progress_percentage,
+			]
+		);
 
 		if ( ! empty( $settings['inner_text'] ) ) {
-			$this->add_render_attribute(
-				'wrapper',
-				'aria-valuetext',
-				sprintf( '%s (%s)', $progress_percentage . '%', $settings['inner_text'] )
-			);
+			$this->add_render_attribute( 'wrapper', 'aria-valuetext', "{$progress_percentage}% ({$settings['inner_text']})" );
 		}
 
 		if ( ! empty( $settings['progress_type'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'class', 'progress-' . $settings['progress_type'] );
 		}
 
-		$this->add_render_attribute( 'progress-bar', [
-			'class' => 'elementor-progress-bar',
-			'data-max' => $progress_percentage,
-		] );
+		$this->add_render_attribute(
+			'progress-bar',
+			[
+				'class' => 'elementor-progress-bar',
+				'data-max' => $progress_percentage,
+			]
+		);
 
-		$this->add_render_attribute( 'inner_text', [
-			'class' => 'elementor-progress-text',
-		] );
+		$this->add_render_attribute( 'inner_text', 'class', 'elementor-progress-text' );
 
 		$this->add_inline_editing_attributes( 'inner_text' );
 
 		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
-			<span <?php $this->print_render_attribute_string( 'title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></span>
+			<<?php Utils::print_validated_html_tag( $settings['title_tag'] ); ?> <?php $this->print_render_attribute_string( 'title' ); ?>>
+				<?php $this->print_unescaped_setting( 'title' ); ?>
+			</<?php Utils::print_validated_html_tag( $settings['title_tag'] ); ?>>
 		<?php } ?>
 
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'progress-bar' ); ?>>
 				<span <?php $this->print_render_attribute_string( 'inner_text' ); ?>><?php $this->print_unescaped_setting( 'inner_text' ); ?></span>
-				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
+				<?php if ( 'show' === $settings['display_percentage'] ) { ?>
 					<span class="elementor-progress-percentage"><?php echo $progress_percentage; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>%</span>
 				<?php } ?>
 			</div>
@@ -393,42 +416,43 @@ class Widget_Progress extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		const title_tag = elementor.helpers.validateHTMLTag( settings.title_tag );
+
 		let progress_percentage = 0;
 		if ( ! isNaN( settings.percent.size ) ) {
 			progress_percentage = 100 < settings.percent.size ? 100 : settings.percent.size;
 		}
 
-		view.addRenderAttribute( 'title', {
-			'class': 'elementor-title'
-		} );
+		view.addRenderAttribute( 'title', 'class', 'elementor-title' );
 
 		view.addInlineEditingAttributes( 'title' );
 
-		view.addRenderAttribute( 'progressWrapper', {
-			'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
-			'role': 'progressbar',
-			'aria-valuemin': '0',
-			'aria-valuemax': '100',
-			'aria-valuenow': progress_percentage,
-		} );
+		view.addRenderAttribute(
+			'progressWrapper',
+			{
+				'class': [ 'elementor-progress-wrapper', 'progress-' + settings.progress_type ],
+				'role': 'progressbar',
+				'aria-valuemin': '0',
+				'aria-valuemax': '100',
+				'aria-valuenow': progress_percentage,
+			}
+		);
 
 		if ( '' !== settings.inner_text ) {
 			view.addRenderAttribute( 'progressWrapper', 'aria-valuetext', progress_percentage + '% (' + settings.inner_text + ')' );
 		}
 
-		view.addRenderAttribute( 'inner_text', {
-			'class': 'elementor-progress-text'
-		} );
+		view.addRenderAttribute( 'inner_text', 'class', 'elementor-progress-text' );
 
 		view.addInlineEditingAttributes( 'inner_text' );
 		#>
 		<# if ( settings.title ) { #>
-			<span {{{ view.getRenderAttributeString( 'title' ) }}}>{{{ settings.title }}}</span><#
-		} #>
+			<{{ title_tag }} {{{ view.getRenderAttributeString( 'title' ) }}}>{{{ settings.title }}}</{{ title_tag }}>
+		<# } #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
 			<div class="elementor-progress-bar" data-max="{{ progress_percentage }}">
 				<span {{{ view.getRenderAttributeString( 'inner_text' ) }}}>{{{ settings.inner_text }}}</span>
-				<# if ( 'hide' !== settings.display_percentage ) { #>
+				<# if ( 'show' === settings.display_percentage ) { #>
 					<span class="elementor-progress-percentage">{{{ progress_percentage }}}%</span>
 				<# } #>
 			</div>

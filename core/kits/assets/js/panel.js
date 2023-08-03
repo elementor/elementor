@@ -16,7 +16,7 @@ export default Marionette.LayoutView.extend( {
 				model: container.model,
 				controls: container.settings.controls,
 				name: 'kit',
-		};
+			};
 
 		this.showChildView( 'content', new PanelContent( options ) );
 	},

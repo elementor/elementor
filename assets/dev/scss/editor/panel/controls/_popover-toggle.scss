@@ -9,7 +9,9 @@
 	}
 
 	.elementor-control-input-wrapper {
-		direction: getInverseDirection();
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
 	}
 
 	.elementor-control-popover-toggle-toggle {
@@ -46,7 +48,7 @@
 
 	.elementor-control-popover-toggle-reset-label {
 		color: var(--e-a-color-txt-muted);
-		margin-inline-start: 5px; //Considering the direction hack
+		margin-inline-end: 5px;
 
 		&:hover {
 			color: var(--e-a-color-txt);
@@ -57,14 +59,17 @@
 .elementor-controls-popover {
 
 	&.e-controls-popover--typography {
-		padding-top: 0;
+		padding-block-start: 0;
 	}
 }
 
 .e-control-global {
 
 	.elementor-control-popover-toggle-toggle-label {
-		border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+		border-start-start-radius: 0;
+		border-start-end-radius: var(--e-a-border-radius);
+		border-end-start-radius: 0;
+		border-end-end-radius: var(--e-a-border-radius);
 		flex-shrink: 0;
 	}
 }

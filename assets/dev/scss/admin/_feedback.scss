@@ -24,17 +24,18 @@
 	.dialog-header {
 		padding: 18px 15px;
 		box-shadow: $panel-bottom-shadow;
-		text-align: $start;
+		text-align: start;
 	}
 
 	.dialog-message {
-		padding: 30px 30px 0;
-		text-align: $start;
+		padding: 30px;
+		padding-block-end: 0;
+		text-align: start;
 	}
 
 	.elementor-deactivate-feedback-dialog-input {
-		float: $start;
-		@include margin(0, 15px, 0, 0);
+		margin-block: 0;
+		margin-inline: 0 15px;
 		box-shadow: none;
 
 		&:not(:checked) {
@@ -53,7 +54,8 @@
 	.elementor-feedback-text {
 		background-color: transparent;
 		color: var(--e-a-color-txt);
-		@include margin(10px, 0, 0, 30px);
+		margin-block: 10px 0;
+		margin-inline: 30px 0;	
 		padding: 5px;
 		box-shadow: none;
 		width: 92%;
@@ -122,11 +124,13 @@
 
 	&-form-body {
 		padding-block-start: 30px;
+		padding-block-end: 15px;
 	}
 }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
-	line-height: 1;
+	display: flex;
+	align-items: center;
+	line-height: 2;
 	overflow: hidden;
-	margin-block-end: 15px;
 }

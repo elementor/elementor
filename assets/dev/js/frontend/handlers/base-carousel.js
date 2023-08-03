@@ -5,7 +5,12 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		return {
 			selectors: {
 				carousel: `.${ elementorFrontend.config.swiperClass }`,
+				swiperWrapper: '.swiper-wrapper',
 				slideContent: '.swiper-slide',
+				swiperArrow: '.elementor-swiper-button',
+				paginationWrapper: '.swiper-pagination',
+				paginationBullet: '.swiper-pagination-bullet',
+				paginationBulletWrapper: '.swiper-pagination-bullets',
 			},
 		};
 	}
@@ -14,6 +19,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const selectors = this.getSettings( 'selectors' ),
 			elements = {
 				$swiperContainer: this.$element.find( selectors.carousel ),
+				$swiperWrapper: this.$element.find( selectors.swiperWrapper ),
+				$swiperArrows: this.$element.find( selectors.swiperArrow ),
+				$paginationWrapper: this.$element.find( selectors.paginationWrapper ),
+				$paginationBullets: this.$element.find( selectors.paginationBullet ),
+				$paginationBulletWrapper: this.$element.find( selectors.paginationBulletWrapper ),
 			};
 
 		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
@@ -80,7 +90,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		}
 
 		const showArrows = 'arrows' === elementSettings.navigation || 'both' === elementSettings.navigation,
-			showDots = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation;
+			showPagination = 'dots' === elementSettings.navigation || 'both' === elementSettings.navigation || elementSettings.pagination;
 
 		if ( showArrows ) {
 			swiperOptions.navigation = {
@@ -89,11 +99,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 		}
 
-		if ( showDots ) {
+		if ( showPagination ) {
 			swiperOptions.pagination = {
-				el: '.swiper-pagination',
-				type: 'bullets',
+				el: `.elementor-element-${ this.getID() } .swiper-pagination`,
+				type: !! elementSettings.pagination ? elementSettings.pagination : 'bullets',
 				clickable: true,
+				renderBullet: ( index, classname ) => {
+					return `<span class="${ classname }" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
+				},
 			};
 		}
 
@@ -104,7 +117,65 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 		}
 
+		swiperOptions.a11y = {
+			enabled: true,
+			prevSlideMessage: elementorFrontend.config.i18n.a11yCarouselPrevSlideMessage,
+			nextSlideMessage: elementorFrontend.config.i18n.a11yCarouselNextSlideMessage,
+			firstSlideMessage: elementorFrontend.config.i18n.a11yCarouselFirstSlideMessage,
+			lastSlideMessage: elementorFrontend.config.i18n.a11yCarouselLastSlideMessage,
+		};
+
+		swiperOptions.on = {
+			slideChangeTransitionEnd: () => {
+				this.a11ySetSlideAriaHidden();
+			},
+			slideChange: () => {
+				this.a11ySetPaginationTabindex();
+				this.handleElementHandlers();
+			},
+		};
+
+		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
+
 		return swiperOptions;
+	}
+
+	getOffsetWidth() {
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'offset_width', 'size', currentDevice ) || 0;
+	}
+
+	applyOffsetSettings( elementSettings, swiperOptions, slidesToShow ) {
+		const offsetSide = elementSettings.offset_sides,
+			isNestedCarouselInEditMode = elementorFrontend.isEditMode() && 'NestedCarousel' === this.constructor.name;
+
+		if ( isNestedCarouselInEditMode || ! offsetSide || 'none' === offsetSide ) {
+			return;
+		}
+
+		const offset = this.getOffsetWidth();
+
+		switch ( offsetSide ) {
+			case 'right':
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addClassToSwiperContainer( 'offset-right' );
+				break;
+			case 'left':
+				this.addClassToSwiperContainer( 'offset-left' );
+				break;
+			case 'both':
+				this.forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow );
+				this.addClassToSwiperContainer( 'offset-both' );
+				break;
+		}
+	}
+
+	forceSliderToShowNextSlideWhenOnLast( swiperOptions, slidesToShow ) {
+		swiperOptions.slidesPerView = slidesToShow + 0.001;
+	}
+
+	addClassToSwiperContainer( className ) {
+		this.getDefaultElements().$swiperContainer[ 0 ].classList.add( className );
 	}
 
 	async onInit( ...args ) {
@@ -125,6 +196,47 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
+
+		this.a11ySetWidgetAriaDetails();
+		this.a11ySetPaginationTabindex();
+		this.a11ySetSlideAriaHidden( 'initialisation' );
+	}
+
+	bindEvents() {
+		this.elements.$swiperArrows.on( 'keydown', this.onDirectionArrowKeydown.bind( this ) );
+		this.elements.$paginationWrapper.on( 'keydown', '.swiper-pagination-bullet', this.onDirectionArrowKeydown.bind( this ) );
+		this.elements.$swiperContainer.on( 'keydown', '.swiper-slide', this.onDirectionArrowKeydown.bind( this ) );
+		this.$element.find( ':focusable' ).on( 'focus', this.onFocusDisableAutoplay.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.getSwiperSettings.bind( this ) );
+	}
+
+	unbindEvents() {
+		this.elements.$swiperArrows.off();
+		this.elements.$paginationWrapper.off();
+		this.elements.$swiperContainer.off();
+		this.$element.find( ':focusable' ).off();
+		elementorFrontend.elements.$window.off( 'resize' );
+	}
+
+	onDirectionArrowKeydown( event ) {
+		const isRTL = elementorFrontend.config.isRTL,
+			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
+			currentKeydown = event.originalEvent.code,
+			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),
+			directionStart = isRTL ? 'ArrowRight' : 'ArrowLeft',
+			directionEnd = isRTL ? 'ArrowLeft' : 'ArrowRight';
+
+		if ( ! isDirectionInlineKeydown ) {
+			return true;
+		} else if ( directionStart === currentKeydown ) {
+			this.swiper.slidePrev();
+		} else if ( directionEnd === currentKeydown ) {
+			this.swiper.slideNext();
+		}
+	}
+
+	onFocusDisableAutoplay() {
+		this.swiper.autoplay.stop();
 	}
 
 	updateSwiperOption( propertyName ) {
@@ -199,4 +311,70 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		this.swiper.update();
 	}
+
+	getPaginationBullets( type = 'array' ) {
+		const paginationBullets = this.$element.find( this.getSettings( 'selectors' ).paginationBullet );
+
+		return 'array' === type ? Array.from( paginationBullets ) : paginationBullets;
+	}
+
+	a11ySetWidgetAriaDetails() {
+		const $widget = this.$element;
+
+		$widget.attr( 'aria-roledescription', 'carousel' );
+		$widget.attr( 'aria-label', elementorFrontend.config.i18n.a11yCarouselWrapperAriaLabel );
+	}
+
+	a11ySetPaginationTabindex() {
+		const bulletClass = this.swiper?.params.pagination.bulletClass,
+			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
+
+		this.getPaginationBullets().forEach( ( bullet ) => {
+			if ( ! bullet.classList.contains( activeBulletClass ) ) {
+				bullet.removeAttribute( 'tabindex' );
+			}
+		} );
+
+		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
+
+		if ( event?.target?.classList.contains( bulletClass ) && isDirectionInlineArrowKey ) {
+			this.$element.find( `.${ activeBulletClass }` ).trigger( 'focus' );
+		}
+	}
+
+	getSwiperWrapperTranformXValue() {
+		let transformValue = this.elements.$swiperWrapper[ 0 ]?.style.transform;
+		transformValue = transformValue.replace( 'translate3d(', '' );
+		transformValue = transformValue.split( ',' );
+		transformValue = parseInt( transformValue[ 0 ].replace( 'px', '' ) );
+
+		return !! transformValue ? transformValue : 0;
+	}
+
+	a11ySetSlideAriaHidden( status = '' ) {
+		const currentIndex = 'initialisation' === status ? 0 : this.swiper?.activeIndex;
+
+		if ( 'number' !== typeof currentIndex ) {
+			return;
+		}
+
+		const swiperWrapperTransformXValue = this.getSwiperWrapperTranformXValue(),
+			swiperWrapperWidth = this.elements.$swiperWrapper[ 0 ].clientWidth,
+			$slides = this.elements.$swiperContainer.find( this.getSettings( 'selectors' ).slideContent );
+
+		$slides.each( ( index, slide ) => {
+			const isSlideInsideWrapper = 0 <= ( slide.offsetLeft + swiperWrapperTransformXValue ) && ( swiperWrapperWidth > ( slide.offsetLeft + swiperWrapperTransformXValue ) );
+
+			if ( ! isSlideInsideWrapper ) {
+				slide.setAttribute( 'aria-hidden', true );
+				slide.setAttribute( 'inert', '' );
+			} else {
+				slide.removeAttribute( 'aria-hidden' );
+				slide.removeAttribute( 'inert' );
+			}
+		} );
+	}
+
+	// Empty method which can be overwritten by child methods.
+	handleElementHandlers() {}
 }

@@ -4,47 +4,52 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const { dependencies } = require( '../package.json' );
-
-const packages = Object.keys( dependencies )
-	.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
-	.map( ( packageName ) => {
-	   const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
-
-	   const { main, module, elementor } = JSON.parse( pkgJSON );
-
-	   return {
-	       mainFile: module || main,
-	       packageName,
-	       type: elementor?.type || 'util',
-	   }
-	} )
-	.filter( ( { mainFile } ) => !! mainFile )
-	.map( ( { mainFile, packageName, type } ) => {
-	   return {
-	       packageName,
-	       type,
-	       name: packageName.replace( '@elementor/', '' ),
-	       path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
-	   }
-	} );
+const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
 
 const common = {
 	name: 'packages',
 	entry: Object.fromEntries(
 		packages.map( ( { name, path } ) => [ name, path ] )
 	),
+	module: {
+		rules: [
+			{
+				test: /\.[jt]sx?$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [
+							'@babel/preset-typescript',
+							'@babel/preset-react',
+						],
+					},
+				},
+			},
+		],
+	},
+	resolve: {
+		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
+	},
 	plugins: [
 		new GenerateWordPressAssetFileWebpackPlugin( {
-			handlePrefix: 'elementor-packages-',
-			apps: packages.filter( ( entry ) => 'app' === entry.type ).map( ( entry ) => entry.name ),
-			extensions: packages.filter( ( entry ) => 'extension' === entry.type ).map( ( entry ) => entry.name ),
-			i18n: {
-				domain: 'elementor',
-
-			},
+			handle: ( entryName ) => `elementor-v2-${entryName}`,
+			map: [
+				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
+				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
+				{ request: 'react', handle: 'react' },
+				{ request: 'react-dom', handle: 'react-dom' },
+			]
 		} ),
-		new ExternalizeWordPressAssetsWebpackPlugin( { globalKey: '__UNSTABLE__elementorPackages' } ),
+		new ExternalizeWordPressAssetsWebpackPlugin( {
+			global: ( entryName ) => [ 'elementorV2', entryName ],
+			map: [
+				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
+				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+				{ request: 'react', global: 'React' },
+				{ request: 'react-dom', global: 'ReactDOM' },
+			]
+		} ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
@@ -58,7 +63,7 @@ const devConfig = {
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	output: {
 		...( common.output || {} ),
-		filename: '[name].js',
+		filename: '[name]/[name].js',
 	}
 }
 
@@ -76,7 +81,7 @@ const prodConfig = {
 	],
 	output: {
 		...( common.output || {} ),
-		filename: '[name].min.js',
+		filename: '[name]/[name].min.js',
 	}
 }
 
@@ -84,3 +89,53 @@ module.exports = {
 	dev: devConfig,
 	prod: prodConfig,
 };
+
+function getNodeModulesPackagesEntries() {
+	const { dependencies } = require( '../package.json' );
+
+	return Object.keys( dependencies )
+		.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
+		.map( ( packageName ) => {
+			const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
+
+			const { main, module } = JSON.parse( pkgJSON );
+
+			return {
+				mainFile: module || main,
+				packageName,
+			}
+		} )
+		.filter( ( { mainFile } ) => !! mainFile )
+		.map( ( { mainFile, packageName } ) => ( {
+			name: packageName.replace( '@elementor/', '' ),
+			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
+		} ) );
+}
+
+function getLocalRepoPackagesEntries() {
+	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
+	const relevantDirs = [ 'packages/core', 'packages/libs' ]
+
+	if ( ! repoPath ) {
+		throw new Error( 'ELEMENTOR_PACKAGES_PATH is not defined, define it in your operating system environment variables.' );
+	}
+
+	if ( ! fs.existsSync( repoPath ) ) {
+		throw new Error( `ELEMENTOR_PACKAGES_PATH is defined but the path ${repoPath} does not exist.` );
+	}
+
+	const packages = relevantDirs.flatMap( ( dir ) =>
+		fs.readdirSync( path.resolve( repoPath, dir ) )
+			.map( ( name ) => ( {
+				name,
+				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
+			} ) )
+	);
+
+	packages.push( {
+		name: 'ui',
+		path: './node_modules/@elementor/ui/index.js'
+	} );
+
+	return packages;
+}

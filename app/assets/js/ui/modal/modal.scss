@@ -15,11 +15,11 @@ $eps-modal-close-button-spacing: spacing(16);
 $eps-modal-close-button-border: solid 1px theme-colors(light);
 $eps-modal-animation: $eps-pop-animation;
 $eps-tip-padding: spacing(8);
-$eps-tip-padding-start: spacing(12);
-$eps-tip-border-start: 3px solid theme-colors(info);
+$eps-tip-padding-inline-start: spacing(12);
+$eps-tip-border-inline-start: 3px solid theme-colors(info);
 $eps-tip-background-color: theme-colors(info-bg);
-$eps-tip-margin-bottom: spacing(30);
-$eps-tip-margin-top: spacing(30);
+$eps-tip-margin-block-end: spacing(30);
+$eps-tip-margin-block-start: spacing(30);
 
 :root {
 	--eps-modal-background-color: #{$eps-modal-background-color};
@@ -54,7 +54,7 @@ $eps-dark-tip-background-color: dark-theme-colors(info-bg);
 		position: fixed;
 		display: flex;
 		top: 0;
-		left: 0;
+		@include start(0);
 		width: 100%;
 		height: 100%;
 		align-items: center;
@@ -85,20 +85,20 @@ $eps-dark-tip-background-color: dark-theme-colors(info-bg);
 
 	&__tip, .#{$eps-prefix}tip {
 		padding: $eps-tip-padding;
-		padding-inline-start: $eps-tip-padding-start;
-		border-inline-start: $eps-tip-border-start;
+		padding-inline-start: $eps-tip-padding-inline-start;
+		border-inline-start: $eps-tip-border-inline-start;
 		background-color: var(--eps-tip-background-color);
 		&:not(:last-child) {
-			margin-bottom: $eps-tip-margin-bottom;
+			margin-block-end: $eps-tip-margin-block-end;
 		}
 
 		&:not(:first-child) {
-			margin-top: $eps-tip-margin-top;
+			margin-block-start: $eps-tip-margin-block-start;
 		}
 	}
 
 	&__section:not(:first-child) {
-		margin-top: spacing(30);
+		margin-block-start: spacing(30);
 	}
 
 	&__close-wrapper {

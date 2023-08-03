@@ -441,7 +441,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.view.globalValue = null;
 
 				this.resetActivePreviewItem();
-		} );
+			} );
 	}
 
 	createGlobalInfoTooltip() {

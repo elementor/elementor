@@ -8,7 +8,7 @@ import ItemCollection from './items/item-collection';
 /**
  * @typedef {import('./manager')} Manager
  */
- export default class Normalizer {
+export default class Normalizer {
 	/**
 	 * Normalizer constructor.
 	 *

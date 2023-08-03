@@ -2,7 +2,7 @@
 	&-loader {
 		position: absolute;
 		top: 0;
-		left: 0;
+		@include start(0);
 		z-index: $ground-layer;
 	}
 

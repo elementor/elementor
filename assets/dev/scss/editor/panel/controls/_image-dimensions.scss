@@ -27,18 +27,18 @@
 	.elementor-image-dimensions-separator {
 		width: 20px;
 		text-align: center;
-		padding-top: 4px;
+		padding-block-start: 4px;
 	}
 
 	.elementor-image-dimensions-field-description {
 		display: block;
-		margin-top: 5px;
+		margin-block-start: 5px;
 		color: var(--e-a-color-txt-disabled);
 		font-size: $font-size-xs;
 		text-align: center;
 	}
 
 	.elementor-image-dimensions-apply-button {
-		@include margin-start(auto);
+		margin-inline-start: auto;
 	}
 }

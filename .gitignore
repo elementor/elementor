@@ -28,7 +28,7 @@ yarn.lock
 Thumbs.db
 *.DS_Store
 coverage/
-.plink.json
+.zimud.json
 
 # playwright
 test-results/

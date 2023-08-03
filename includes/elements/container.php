@@ -87,6 +87,29 @@ class Container extends Element_Base {
 		return $keywords;
 	}
 
+	public function get_panel_presets() {
+		return [
+			'container_grid' => [
+				'replacements' => [
+					'name' => 'container_grid',
+					'controls' => [
+						'container_type' => [ 'default' => 'grid' ],
+					],
+					'title' => 'Grid',
+					'icon' => 'eicon-container-grid',
+					'custom' => [
+						'isPreset' => true,
+						'originalWidget' => $this->get_name(),
+						'presetWidget' => 'container_grid',
+						'preset_settings' => [
+							'container_type' => 'grid',
+						],
+					],
+				],
+			],
+		];
+	}
+
 	/**
 	 * Override the render attributes to add a custom wrapper class.
 	 *
@@ -336,6 +359,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Container Layout', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'flex',
+				'prefix_class' => 'e-',
 				'options' => [
 					'flex' => esc_html__( 'Flexbox', 'elementor' ),
 					'grid' => esc_html__( 'Grid', 'elementor' ),
@@ -343,7 +367,7 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
-				'prefix_class' => 'e-',
+				'separator' => 'after',
 			];
 		}
 
@@ -352,11 +376,12 @@ class Container extends Element_Base {
 			'label' => esc_html__( 'Container Layout', 'elementor' ),
 			'type' => Controls_Manager::HIDDEN,
 			'render_type' => 'none',
-			'prefix_class' => 'e-',
 			'default' => 'flex',
+			'prefix_class' => 'e-',
 			'selectors' => [
 				'{{WRAPPER}}' => '--display: {{VALUE}}',
 			],
+			'separator' => 'after',
 		];
 	}
 
@@ -381,6 +406,13 @@ class Container extends Element_Base {
 		} else {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 		}
+
+		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
+
+		$this->add_control(
+			'container_type',
+			$this->get_container_type_control_options( $is_container_grid_active )
+		);
 
 		$this->add_control(
 			'content_width',
@@ -510,13 +542,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
-
-		$this->add_control(
-			'container_type',
-			$this->get_container_type_control_options( $is_container_grid_active )
-		);
-
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			$this->get_flex_control_options( $is_container_grid_active )
@@ -614,7 +639,6 @@ class Container extends Element_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
 				],
@@ -1754,7 +1778,11 @@ class Container extends Element_Base {
 	}
 
 	protected function hook_sticky_notice_into_transform_section() {
-		add_action( 'elementor/element/container/_section_transform/after_section_start', function( $container ) {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function( Container $container ) {
+			if ( ! empty( $container->get_controls( 'transform_sticky_notice' ) ) ) {
+				return;
+			}
+
 			$container->add_control(
 				'transform_sticky_notice',
 				[

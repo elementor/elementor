@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: space-between;
 	padding: 15px 20px;
-	border-bottom: var(--e-a-border);
+	border-block-end: var(--e-a-border);
 }
 
 .elementor-history- {
@@ -13,7 +13,7 @@
 		border: var(--e-a-border);
 		border-radius: var(--e-a-border-radius);
 		padding: 10px 15px;
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 		font-size: 11px;
 		line-height: 1.4;
 		cursor: pointer;
@@ -60,31 +60,28 @@
 			font-style: italic;
 			text-decoration: underline;
 		}
-
-		.__icon {
-			 float: $end;
-		 }
 	}
 
 	&revisions-message{
 		font-size: 11px;
 		text-align: center;
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 }
 
 #elementor-panel-history {
-	padding: 20px 20px 15px;
+	padding: 20px;
+	padding-block-end: 15px;
 
 	&.elementor-empty {
 
 		.elementor-history-revisions-message {
-			padding-top: 20px;
+			padding-block-start: 20px;
 		}
 	}
 
 	&:not(.elementor-empty) {
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 }
 
@@ -93,6 +90,6 @@
 	text-align: center;
 
 	.elementor-nerd-box-icon {
-		margin-top: 20px;
+		margin-block-start: 20px;
 	}
 }

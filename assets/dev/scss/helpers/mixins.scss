@@ -83,7 +83,6 @@
 	font-size: 12px;
 	font-weight: 500;
 	line-height: 1.2;
-	text-transform: uppercase;
 	padding: 8px 16px;
 	outline: none;
 	border: none;
@@ -93,7 +92,11 @@
 	transition: var(--e-a-transition-hover);
 
 	&:hover {
-		border: none; //Remove border on a:hover
+		border: none;
+	}
+
+	&:hover,
+	&:focus {
 		background-color: var(--e-a-btn-bg-hover);
 		color: var(--e-a-btn-color-invert);
 	}
@@ -122,7 +125,8 @@
 		background: transparent;
 		color: var(--e-a-color-txt);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background: var(--e-a-bg-hover);
 			color: var(--e-a-color-txt-hover);
 		}
@@ -137,7 +141,8 @@
 	&.e-success {
 		background-color: var(--e-a-btn-bg-success);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-btn-bg-success-hover);
 		}
 	}
@@ -146,7 +151,8 @@
 		background-color: var(--e-a-btn-bg-primary);
 		color: var(--e-a-btn-color);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-btn-bg-primary-hover);
 			color: var(--e-a-btn-color);
 		}
@@ -155,7 +161,8 @@
 			background: transparent;
 			color: var(--e-a-color-primary-bold);
 
-			&:hover {
+			&:hover,
+			&:focus {
 				background:var(--e-a-bg-primary);
 			}
 		}
@@ -165,7 +172,8 @@
 	&.e-accent {
 		background-color: var(--e-a-btn-bg-accent);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-btn-bg-accent-hover);
 		}
 
@@ -178,7 +186,8 @@
 	&.e-warning {
 		background-color: var(--e-a-btn-bg-warning);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-btn-bg-warning-hover);
 		}
 	}
@@ -187,7 +196,8 @@
 	&.e-danger {
 		background-color: var(--e-a-btn-bg-danger);
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var(--e-a-btn-bg-danger-hover);
 		}
 	}
@@ -225,6 +235,13 @@
 	&::-webkit-scrollbar-thumb {
 		background-color: $color;
 		border-radius: $border-radius;
+	}
+}
+
+@mixin button-focus-outline() {
+
+	&:focus-visible {
+		outline: 5px auto -webkit-focus-ring-color;
 	}
 }
 //End

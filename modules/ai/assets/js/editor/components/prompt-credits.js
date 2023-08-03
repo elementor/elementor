@@ -4,7 +4,7 @@ const PromptCredits = ( props ) => {
 	if ( props.usagePercentage < 80 ) {
 		return null;
 	}
-
+	const upgradeLink = props.usagePercentage < 100 ? 'https://go.elementor.com/ai-popup-purchase-limit-reached-80-percent/' : 'https://go.elementor.com/ai-popup-purchase-limit-reached/';
 	return (
 		<Typography variant="caption" color="text.tertiary">
 			{
@@ -12,7 +12,7 @@ const PromptCredits = ( props ) => {
 				sprintf( __( 'You\'ve used %s of the free trial.', 'elementor' ), props.usagePercentage + '%' )
 			}
 			{ ' ' }
-			<a href="https://go.elementor.com/ai-popup-purchase-limit-reached-80-percent/" target="_blank" rel="noreferrer">{ __( 'Upgrade for unlimited access', 'elementor' ) }</a>.
+			<a href={ upgradeLink } target="_blank" rel="noreferrer">{ __( 'Upgrade for unlimited access', 'elementor' ) }</a>.
 		</Typography>
 	);
 };

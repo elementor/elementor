@@ -1,0 +1,374 @@
+@import "../../../../assets/dev/scss/helpers/mixins";
+
+//
+// Nested Tabs
+//
+
+@mixin active-tab-title() {
+
+	&,
+	& a {
+		color: var( --n-tabs-title-color-active );
+	}
+
+	.e-n-tab-icon {
+
+		i {
+			color: var( --n-tabs-icon-color-active );
+		}
+
+		svg {
+			fill: var( --n-tabs-icon-color-active );
+		}
+
+		i,
+		svg {
+
+			&:first-child {
+				transform: translate(0, -100vh);
+				height: 0;
+				opacity: 0;
+			}
+		}
+	}
+
+	// Remove the hover animation from the active tabs.
+	&[class*="elementor-animation-"] {
+		&:focus,
+		&:active,
+		&:hover {
+			transform: initial;
+			animation: initial;
+		}
+	}
+}
+
+.elementor-widget-n-tabs-html {
+	--n-tabs-color-accent-fallback: #61CE70;
+	--n-tabs-color-secondary-fallback: #54595F;
+	--n-tabs-default-padding-block: 15px;
+	--n-tabs-default-padding-inline: 35px;
+	--n-tabs-background-color: transparent;
+	--n-tabs-display: flex;
+	--n-tabs-direction: column;
+	--n-tabs-gap: 10px;
+	--n-tabs-heading-display: flex;
+	--n-tabs-heading-direction: row;
+	--n-tabs-heading-grow: initial;
+	--n-tabs-heading-justify-content: center;
+	--n-tabs-heading-width: initial;
+	--n-tabs-heading-overflow-x: initial;
+	--n-tabs-heading-wrap: nowrap;
+	--n-tabs-border-width: 1px;
+	--n-tabs-border-color: #{$gray-light};
+	--n-tabs-content-display: flex;
+	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-title-color-hover: #{$white};
+	--n-tabs-title-color-active: #{$white};
+	--n-tabs-title-background-color: #{$editor-background-light};
+	--n-tabs-title-background-color-hover: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-background-color-active: var( --e-global-color-accent, var( --n-tabs-color-accent-fallback ) );
+	--n-tabs-title-width: initial;
+	--n-tabs-title-height: initial;
+	--n-tabs-title-font-size: 1rem;
+	--n-tabs-title-white-space: initial;
+	--n-tabs-title-justify-content-toggle: initial;
+	--n-tabs-title-align-items-toggle: center;
+	--n-tabs-title-justify-content: center;
+	--n-tabs-title-align-items: center;
+	--n-tabs-title-direction: row;
+	--n-tabs-title-gap: 10px;
+	--n-tabs-title-flex-grow: 0;
+	--n-tabs-title-flex-basis: content;
+	--n-tabs-title-flex-shrink: initial;
+	--n-tabs-title-order: initial;
+	--n-tabs-title-padding-block-start: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-end: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-block-end: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-start: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-border-radius: initial;
+	--n-tabs-title-transition: 0.3s;
+	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
+	--n-tabs-icon-color-hover: var( --n-tabs-title-color-hover );
+	--n-tabs-icon-color-active: #{$white};
+	--n-tabs-icon-gap: 5px;
+	width: 100%;
+	max-width: 100%; /* Fix issue with new created n-tabs inside n-tabs with overflow */
+
+	.e-n-tabs {
+		display: var( --n-tabs-display );
+		flex-direction: var( --n-tabs-direction );
+		gap: var( --n-tabs-gap );
+		text-align: $start;
+		min-width: 0;
+
+		&-heading {
+			display: var( --n-tabs-heading-display );
+			flex-basis: var( --n-tabs-heading-width );
+			flex-direction: var( --n-tabs-heading-direction );
+			flex-shrink: 0;
+			justify-content: var( --n-tabs-heading-justify-content );
+			gap: var( --n-tabs-title-gap );
+			overflow-x: var( --n-tabs-heading-overflow-x );
+			flex-wrap: var( --n-tabs-heading-wrap );
+			-ms-overflow-style: none; /* IE and Edge */
+			scrollbar-width: none; /* Firefox */
+
+			&::-webkit-scrollbar {
+				display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+			}
+
+			&.e-scroll {
+				cursor: grabbing;
+				cursor: -webkit-grabbing;
+
+				&-active {
+					position: relative;
+
+					&::before {
+						content: '';
+						position: absolute;
+						inset-block: 0;
+						inset-inline: -1000vw;
+						z-index: $second-layer;
+					}
+				}
+			}
+		}
+
+		&-content {
+			display: var( --n-tabs-content-display );
+			flex-grow: 1;
+			min-width: 0;
+
+			> .e-con {
+
+				&:not( .e-active ) {
+					display: none;
+				}
+			}
+		}
+
+		&:not( .e-activated ) > .e-n-tabs-content > .e-con:nth-child( 1 ) {
+			display: flex;
+		}
+	}
+
+	.e-n-tab {
+
+		&-title {
+			all: unset;
+			user-select: none;
+			display: flex;
+			align-items: var( --n-tabs-title-align-items-toggle, var( --n-tabs-title-align-items ) );
+			flex-direction: var( --n-tabs-title-direction );
+			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
+			gap: var( --n-tabs-icon-gap );
+			border-width: var( --n-tabs-border-width );
+			position: relative;
+			cursor: pointer;
+			outline: none;
+			flex-grow: var( --n-tabs-title-flex-grow );
+			flex-basis: var( --n-tabs-title-flex-basis );
+			flex-shrink: var( --n-tabs-title-flex-shrink );
+			padding-block-start: var( --n-tabs-title-padding-block-start );
+			padding-inline-end: var( --n-tabs-title-padding-inline-end );
+			padding-block-end: var( --n-tabs-title-padding-block-end );
+			padding-inline-start: var( --n-tabs-title-padding-inline-start );
+			border-radius: var( --n-tabs-title-border-radius );
+			height: var( --n-tabs-title-height );
+			width: var( --n-tabs-title-width );
+			white-space: var( --n-tabs-title-white-space );
+			transition: background var( --n-tabs-title-transition ),
+				color var( --n-tabs-title-transition ),
+				border var( --n-tabs-title-transition ),
+				box-shadow var( --n-tabs-title-transition ),
+				text-shadow var( --n-tabs-title-transition ),
+				stroke var( --n-tabs-title-transition ),
+				stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-color var( --n-tabs-title-transition ),
+				transform var( --n-tabs-title-transition );
+
+			@include button-focus-outline;
+
+			& span svg,
+			& span i {
+				transition: color var( --n-tabs-title-transition ),
+					fill var( --n-tabs-title-transition );
+			}
+
+			&-text {
+				display: flex;
+				align-items: center;
+				font-size: var( --n-tabs-title-font-size );
+			}
+
+			.e-n-tab-icon {
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				order: var( --n-tabs-icon-order );
+				overflow: hidden;
+
+				i {
+					font-size: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+				}
+
+				svg {
+					width: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+					height: var( --n-tabs-icon-size, var( --n-tabs-title-font-size ) );
+				}
+
+				&:empty {
+					display: none;
+				}
+			}
+
+			&[aria-selected="false"] {
+				background-color: var( --n-tabs-title-background-color );
+
+				&,
+				& a {
+					color: var( --n-tabs-title-color );
+				}
+
+				.e-n-tab-icon {
+
+					i {
+						color: var( --n-tabs-icon-color );
+					}
+
+					svg {
+						fill: var( --n-tabs-icon-color );
+					}
+
+					i,
+					svg {
+
+						&:last-child {
+							transform: translate(0, -100vh);
+							height: 0;
+							opacity: 0;
+						}
+					}
+				}
+			}
+
+			&[aria-selected="true"] {
+				@include active-tab-title;
+			}
+		}
+	}
+
+	[data-touch-mode="false"] {
+
+		.e-n-tab-title[aria-selected="false"]:hover {
+
+			&,
+			& a {
+				color: var( --n-tabs-title-color-hover );
+			}
+
+			.e-n-tab-icon {
+
+				i {
+					color: var( --n-tabs-icon-color-hover );
+				}
+
+				svg {
+					fill: var( --n-tabs-icon-color-hover );
+				}
+			}
+		}
+	}
+
+	[data-touch-mode="true"] {
+
+		.e-n-tab-title[aria-selected="false"]:hover {
+
+			@include active-tab-title;
+
+			.e-n-tab-icon {
+
+				i,
+				svg {
+
+					&:last-child {
+						transform: initial;
+						height: initial;
+						opacity: initial;
+					}
+				}
+			}
+		}
+	}
+}
+
+.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+	background-color: var( --n-tabs-title-background-color-hover );
+	background-image: initial;
+}
+
+// TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
+.elementor .elementor-element.elementor-widget-n-tabs-html > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title {
+
+	&[aria-selected="true"] {
+		background-color: var( --n-tabs-title-background-color-active );
+		background-image: initial;
+	}
+}
+
+// Responsive mode
+@mixin accordion-layout-($device) {
+	.elementor.elementor .elementor-widget-n-tabs-html.e-n-tabs-#{$device} {
+		--n-tabs-direction: column;
+		--n-tabs-heading-display: contents;
+		--n-tabs-content-display: contents;
+
+		.e-n-tabs {
+			gap: 0;
+
+			&-content > .e-con {
+				order: var( --n-tabs-title-order );
+			}
+		}
+
+		.e-n-tab-title {
+			order: var( --n-tabs-title-order );
+
+			&:not( :first-child ) {
+				margin-block-start: var( --n-tabs-title-gap );
+			}
+
+			&[aria-selected="true"] {
+				margin-block-end: var( --n-tabs-gap );
+			}
+		}
+	}
+}
+
+// Mobile.
+@media (max-width: $screen-mobile-max) {
+	@include accordion-layout-(mobile);
+}
+
+// Mobile Extra.
+@media (max-width: $screen-mobile-extra-max) {
+	@include accordion-layout-(mobile_extra);
+}
+
+// Tablet.
+@media (max-width: $screen-tablet-max) {
+	@include accordion-layout-(tablet);
+}
+
+// Tablet Extra.
+@media (max-width: $screen-tablet-extra-max) {
+	@include accordion-layout-(tablet_extra);
+}
+
+// Laptop.
+@media (max-width: $screen-laptop-max) {
+	@include accordion-layout-(laptop);
+}

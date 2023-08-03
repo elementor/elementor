@@ -6,12 +6,15 @@
 		width: 288px;
 		z-index: 1;
 		font-size: 12px;
-		@include padding-start(10px);
+		padding-inline-start: 10px;
 
 		&-toggle {
 			border: var(--e-a-border-bold);
-			@include border-end(0);
-			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			border-inline-end: 0;
+			border-start-start-radius: 3px;
+			border-start-end-radius: 0;
+			border-end-start-radius: 3px;
+			border-end-end-radius: 0;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -32,17 +35,17 @@
 			box-shadow: var(--e-a-popover-shadow);
 			border-radius: var(--e-a-border-radius);
 			background-color: var(--e-a-bg-default);
-			padding-bottom: 5px;
+			padding-block-end: 5px;
 		}
 
 		&-title {
 			padding: 15px 20px;
 			font-weight: 500;
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 			display: flex;
 
 			& > i {
-				@include margin-end(5px);
+				margin-inline-end: 5px;
 			}
 
 			&-text {
@@ -51,7 +54,7 @@
 		}
 
 		&-info {
-			@include margin-end(5px);
+			margin-inline-end: 5px;
 			display: inline-block;
 
 			&-tooltip {
@@ -68,7 +71,7 @@
 					bottom: -17px;
 					@include start(16px);
 					border: 10px solid transparent;
-					border-top-color: rgba(0,0,0,0.9);
+					border-block-start-color: rgba(0,0,0,0.9);
 				}
 			}
 
@@ -81,7 +84,7 @@
 	&__preview-items-container {
 		max-height: 260px;
 		overflow-y: auto;
-		margin-top: 5px;
+		margin-block-start: 5px;
 
 		@include webkit-scrollbar(7px, $editor-lighter, 10px)
 	}
@@ -118,11 +121,11 @@
 		align-items: center;
 
 		&:first-child {
-			margin-top: 5px;
+			margin-block-start: 5px;
 		}
 
 		&:last-child {
-			margin-bottom: 10px;
+			margin-block-end: 10px;
 		}
 
 		&-preview {
@@ -132,7 +135,7 @@
 				width: 20px;
 				border-radius: 3px;
 				border: 1px solid rgba(0, 0, 0, 0.1);
-				@include margin-end(10px);
+				margin-inline-end: 10px;
 				flex-shrink: 0;
 				position: relative;
 			}
@@ -155,7 +158,7 @@
 		&-title {
 			flex-grow: 1;
 			@include ellipsis;
-			@include padding-end(10px);
+			padding-inline-end: 10px;
 		}
 
 		&-hex {
@@ -236,11 +239,13 @@
 
 		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
 		.elementor-control-input-wrapper {
-			direction: $direction;
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
 		}
 	}
 
 	.elementor-control-spinner {
-		@include margin-end(4px);
+		margin-inline-end: 4px;
 	}
 }

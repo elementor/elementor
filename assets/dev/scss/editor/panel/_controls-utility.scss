@@ -14,7 +14,7 @@ $title-size: 12px;
 	width: $item-size;
 	height: $item-size;
 	margin: calc( -#{$item-size} + #{$title-size}) 0;
-	@include margin-end(5px);
+	margin-inline-end: 5px;
 
 	&__holder {
 		position: absolute;
@@ -85,7 +85,7 @@ $title-size: 12px;
 // Start control unit switcher
 .e-units-wrapper {
 	position: relative;
-	@include margin-start(auto);
+	margin-inline-start: auto;
 
 	.e-units-switcher {
 		cursor: pointer;
@@ -226,13 +226,13 @@ $font-family-monospace: monospace;
 			}
 
 			input {
-				@include border-start(none);
+				border-inline-start: none;
 				border-radius: 0;
 				padding: var(--e-a-border-radius);
 
 				&:focus {
-					@include border-start(var(--e-a-border-bold));
-					@include margin-start(-1px);
+					border-inline-start: var(--e-a-border-bold);
+					margin-inline-start: -1px;
 					width: calc(100% + 1px);
 
 					+ .elementor-control-#{$control-name}-label {
@@ -243,23 +243,29 @@ $font-family-monospace: monospace;
 
 			.elementor-link-#{$control-name}s {
 				border: var(--e-a-border-bold);
-				@include border-start(none);
+				border-inline-start: none;
 				background-color: var(--e-a-bg-default);
 				padding: 0;
 				outline: none;
-				border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
+				border-start-start-radius: 0;
+				border-start-end-radius: var(--e-a-border-radius);
+				border-end-start-radius: 0;
+				border-end-end-radius: var(--e-a-border-radius);
 				cursor: pointer;
 			}
 
 			&:first-child {
 
 				input {
-					@include border-start(1px solid var(--e-a-border-color-bold));
-					border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
+					border-inline-start: 1px solid var(--e-a-border-color-bold);
+					border-start-start-radius: var(--e-a-border-radius);
+					border-start-end-radius: 0;
+					border-end-start-radius: var(--e-a-border-radius);
+					border-end-end-radius: var(--e-a-border-radius);
 
 					&:focus {
 						border-color: var(--e-a-border-color-focus);
-						@include margin-start(0);
+						margin-inline-start: 0;
 						width: 100%;
 					}
 				}
@@ -285,7 +291,7 @@ $font-family-monospace: monospace;
 			display: block;
 			text-align: center;
 			font-size: 9px;
-			padding-top: 5px;
+			padding-block-start: 5px;
 		}
 
 		.elementor-link-#{$control-name}s {

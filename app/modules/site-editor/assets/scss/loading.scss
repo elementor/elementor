@@ -57,12 +57,12 @@ $e-elementor-loader-dark-box-color: tints(700);
 	&:nth-of-type(1) {
 		width: 20%;
 		height: 100%;
-		left: 0;
+		@include start(0);
 		top: 0;
 	}
 
 	&:not(:nth-of-type(1)) {
-		right: 0;
+		@include end(0);
 		height: 20%;
 		width: 60%;
 	}
