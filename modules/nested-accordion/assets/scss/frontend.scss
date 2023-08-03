@@ -33,7 +33,7 @@
 			position: relative;
 
 			&:not(:last-child) {
-				margin-bottom: var(--n-accordion-item-title-space-between);
+				margin-block-end: var(--n-accordion-item-title-space-between);
 			}
 
 			:where( & > .e-con ) {
@@ -100,7 +100,7 @@
 			&[open] {
 
 				.e-n-accordion-item-title {
-					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+					margin-block-end: var(--n-accordion-item-title-distance-from-content);
 					color: var(--n-accordion-title-active-color);
 
 					&-icon {
