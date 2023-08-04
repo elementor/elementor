@@ -9,7 +9,8 @@
 	--n-accordion-item-title-flex-grow: initial;
 	--n-accordion-item-title-space-between: 0px;
 	--n-accordion-item-title-distance-from-content: 0px;
-	--n-accordion-padding: 10px;
+	--n-accordion-padding-block: 10px;
+	--n-accordion-padding-inline: 10px;
 	--n-accordion-border-radius: 0px;
 	--n-accordion-icon-size: 15px;
 	--n-accordion-title-normal-color: #{$editor-darker};
@@ -37,22 +38,23 @@
 			}
 
 			:where( & > .e-con ) {
-				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
+				border: var( --n-accordion-border-width ) var( --n-accordion-border-style ) var( --n-accordion-border-color );
 			}
 
 			&-title {
 				display: flex;
 				flex-direction: row;
 				list-style: none;
-				padding: var(--n-accordion-padding);
-				border-width: var(--n-accordion-border-width);
-				border-color: var(--n-accordion-border-color);
-				border-style: var(--n-accordion-border-style);
-				justify-content: var(--n-accordion-title-justify-content);
-				border-radius: var(--n-accordion-border-radius);
-				flex-grow: var(--n-menu-title-flex-grow);
-				gap: var(--n-accordion-icon-gap);
-				color: var(--n-accordion-title-normal-color);
+				padding-block: var( --n-accordion-padding-block );
+				padding-inline: var( --n-accordion-padding-inline );
+				border-width: var( --n-accordion-border-width );
+				border-color: var( --n-accordion-border-color );
+				border-style: var( --n-accordion-border-style );
+				justify-content: var( --n-accordion-title-justify-content );
+				border-radius: var( --n-accordion-border-radius );
+				flex-grow: var( --n-menu-title-flex-grow );
+				gap: var( --n-accordion-icon-gap );
+				color: var( --n-accordion-title-normal-color );
 				align-items: center;
 				cursor: pointer;
 
