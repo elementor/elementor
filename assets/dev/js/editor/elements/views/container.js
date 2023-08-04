@@ -27,7 +27,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		const isNestedClassName = this.getOption( 'model' ).get( 'isInner' ) ? 'e-child' : 'e-parent';
+		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
