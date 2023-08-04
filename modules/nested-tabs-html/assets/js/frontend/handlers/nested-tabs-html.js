@@ -100,62 +100,6 @@ export default class NestedTabsHtml extends Base {
 		this.setSettings( originalToggleMethods );
 	}
 
-	handleTitleKeyboardNavigation( event ) {
-		const directionKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End' ],
-			activationKeys = [ 'Enter', 'Space' ];
-
-		if ( directionKeys.includes( event.key ) ) {
-			event.preventDefault();
-
-			const currentTabIndex = parseInt( this.getTabIndex( event.currentTarget ) ) || 1,
-				numberOfTabs = this.elements.$tabTitles.length,
-				tabIndexUpdated = this.getTabIndexFocusUpdated( event, currentTabIndex, numberOfTabs );
-
-			this.changeTabFocus( currentTabIndex, tabIndexUpdated );
-		} else if ( activationKeys.includes( event.key ) ) {
-			event.preventDefault();
-
-			this.changeActiveTab( this.getTabIndex( event.currentTarget ) );
-		}
-	}
-
-	getTabIndexFocusUpdated( event, currentTabIndex, numberOfTabs ) {
-		let tabIndexUpdated = 0;
-
-		switch ( event.key ) {
-			case 'Home':
-				tabIndexUpdated = 1;
-				break;
-			case 'End':
-				tabIndexUpdated = numberOfTabs;
-				break;
-			default:
-				const direction = this.getSettings( 'keyDirection' )[ event.key ],
-					directionValue = 'next' === direction ? 1 : -1,
-					isEndReached = numberOfTabs < currentTabIndex + directionValue,
-					isStartReached = 0 === currentTabIndex + directionValue;
-
-				if ( isEndReached ) {
-					tabIndexUpdated = 1;
-				} else if ( isStartReached ) {
-					tabIndexUpdated = numberOfTabs;
-				} else {
-					tabIndexUpdated = currentTabIndex + directionValue;
-				}
-		}
-
-		return tabIndexUpdated;
-	}
-
-	changeTabFocus( currentTabIndex, tabIndexUpdated ) {
-		const $currentTab = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( currentTabIndex ) ),
-			$newTab = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndexUpdated ) );
-
-		$currentTab.attr( 'tabindex', '-1' );
-		$newTab.attr( 'tabindex', '0' );
-		$newTab.trigger( 'focus' );
-	}
-
 	deactivateActiveTab( tabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
@@ -233,20 +177,8 @@ export default class NestedTabsHtml extends Base {
 
 	getTabEvents() {
 		return {
-			keydown: this.handleTitleKeyboardNavigation.bind( this ),
 			click: this.onTabClick.bind( this ),
 		};
-	}
-
-	handleContentElementEscapeEvent( event ) {
-		if ( 'Escape' !== event.key ) {
-			return;
-		}
-
-		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector,
-			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter );
-
-		$activeTitle.trigger( 'focus' );
 	}
 
 	getHeadingEvents() {
@@ -263,7 +195,6 @@ export default class NestedTabsHtml extends Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
-		this.elements.$tabContents.children().on( 'keydown', this.handleContentElementEscapeEvent.bind( this ) );
 
 		const settingsObject = {
 			element: this.elements.$headingContainer[ 0 ],
@@ -277,6 +208,7 @@ export default class NestedTabsHtml extends Base {
 
 		elementorFrontend.elements.$window.on( 'resize', this.setTouchMode.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.changeActiveTabByKeyboard.bind( this ) );
 	}
 
 	unbindEvents() {
@@ -326,6 +258,8 @@ export default class NestedTabsHtml extends Base {
 		setHorizontalScrollAlignment( settingsObject );
 
 		this.setTouchMode();
+
+		new elementorModules.frontend.handlers.TitleKeyboardHandler( this.getSettings() );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -387,6 +321,10 @@ export default class NestedTabsHtml extends Base {
 
 			this.activateTab( tabIndex );
 		}
+	}
+
+	changeActiveTabByKeyboard( event, tabIndex ) {
+		this.changeActiveTab( tabIndex, true );
 	}
 
 	activateMobileTab( tabIndex ) {
