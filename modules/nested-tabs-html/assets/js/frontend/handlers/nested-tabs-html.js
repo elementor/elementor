@@ -107,7 +107,7 @@ export default class NestedTabsHtml extends Base {
 		if ( directionKeys.includes( event.key ) ) {
 			event.preventDefault();
 
-			const currentTabIndex = parseInt( this.getTabIndex( event.currentTarget ) ),
+			const currentTabIndex = parseInt( this.getTabIndex( event.currentTarget ) ) || 1,
 				numberOfTabs = this.elements.$tabTitles.length,
 				tabIndexUpdated = this.getTabIndexFocusUpdated( event, currentTabIndex, numberOfTabs );
 
