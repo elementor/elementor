@@ -396,7 +396,6 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
-			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
@@ -447,7 +446,9 @@ const ContainerView = BaseElementView.extend( {
 			icon = this.getPanelIcon();
 
 		this.model.set( 'icon', icon );
-		this.model.get( 'settings' ).set( '_title', title );
+		this.model.set( 'title', title );
+
+		this.model.get( 'settings' ).set( 'presetTitle', title );
 		this.model.get( 'settings' ).set( 'presetIcon', icon );
 
 		/* Translators: %s: Element name. */
