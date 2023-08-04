@@ -229,6 +229,20 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Get widget number.
+	 *
+	 * Get the first three numbers of the element converted ID.
+	 *
+	 * @since 3.16
+	 * @access public
+	 *
+	 * @return string The widget number.
+	 */
+	public function get_widget_number(): string {
+		return substr( $this->get_id_int(), 0, 3 );
+	}
+
+	/**
 	 * Get the type.
 	 *
 	 * Retrieve the type, e.g. 'stack', 'section', 'widget' etc.
