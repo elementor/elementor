@@ -99,7 +99,7 @@
 		display: var( --n-tabs-display );
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
-		text-align: $start;
+		text-align: start;
 		min-width: 0;
 
 		&-heading {

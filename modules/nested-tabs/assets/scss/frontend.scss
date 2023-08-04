@@ -54,7 +54,7 @@
 		display: var( --n-tabs-display );
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
-		text-align: $start;
+		text-align: start;
 
 		&-heading {
 			display: var( --n-tabs-heading-display );
@@ -357,7 +357,6 @@
 @media (max-width: $screen-laptop-max) {
 	@include hide-normal-tabs-(laptop);
 }
-
 
 // Breakpoint - none.
 .e-n-tabs-none {
