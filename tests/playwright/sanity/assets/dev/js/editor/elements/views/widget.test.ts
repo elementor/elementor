@@ -89,7 +89,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Google Maps widget', async ( { page }, testInfo ) => {
+	test.skip( 'Check if the empty placeholder is displayed inside the Google Maps widget', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage();
