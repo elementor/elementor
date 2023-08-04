@@ -95,7 +95,7 @@ class Container extends Element_Base {
 					'controls' => [
 						'container_type' => [ 'default' => 'grid' ],
 					],
-					'title' => 'Grid',
+					'title' => esc_html__( 'Grid', 'elementor' ),
 					'icon' => 'eicon-container-grid',
 					'custom' => [
 						'isPreset' => true,
@@ -103,6 +103,8 @@ class Container extends Element_Base {
 						'presetWidget' => 'container_grid',
 						'preset_settings' => [
 							'container_type' => 'grid',
+							'presetTitle' => esc_html__( 'Grid', 'elementor' ),
+							'presetIcon' => 'eicon-container-grid',
 						],
 					],
 				],

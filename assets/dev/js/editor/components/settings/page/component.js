@@ -1,4 +1,4 @@
-import ComponentBase from 'elementor-api/modules/component-base';
+import ComponentBase from 'elementor-editor/component-base';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -13,8 +13,14 @@ export default class Component extends ComponentBase {
 		};
 	}
 
-	renderTab( tab ) {
-		elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
+	renderTab( tab, args ) {
+		const { activeControl } = args;
+
+		if ( ! activeControl || '' === activeControl ) {
+			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
+		}
+
+		this.activateControl( activeControl );
 	}
 
 	getTabsWrapperSelector() {
