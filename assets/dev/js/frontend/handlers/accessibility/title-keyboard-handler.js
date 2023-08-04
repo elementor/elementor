@@ -47,7 +47,7 @@ export default class TitleKeyboardHandler extends Base {
 	 *
 	 * @return {string}
 	 */
-	geTitleFilterSelector( titleIndex ) {
+	getTitleFilterSelector( titleIndex ) {
 		const indexAttribute = this.getSettings( 'datasets' ).titleIndex;
 		return `[${ indexAttribute }="${ titleIndex }"]`;
 	}
@@ -118,8 +118,8 @@ export default class TitleKeyboardHandler extends Base {
 	}
 
 	changeTitleFocus( currentTitleIndex, titleIndexUpdated ) {
-		const $currentTitle = this.elements.$itemTitles.filter( this.geTitleFilterSelector( currentTitleIndex ) ),
-			$newTitle = this.elements.$itemTitles.filter( this.geTitleFilterSelector( titleIndexUpdated ) );
+		const $currentTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( currentTitleIndex ) ),
+			$newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
 
 		$currentTitle.attr( 'tabindex', '-1' );
 		$newTitle.attr( 'tabindex', '0' );
