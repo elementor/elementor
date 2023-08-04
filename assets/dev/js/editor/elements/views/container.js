@@ -396,7 +396,6 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
-			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
@@ -448,7 +447,9 @@ const ContainerView = BaseElementView.extend( {
 			icon = this.getPanelIcon();
 
 		this.model.set( 'icon', icon );
-		this.model.get( 'settings' ).set( '_title', title );
+		this.model.set( 'title', title );
+
+		this.model.get( 'settings' ).set( 'presetTitle', title );
 		this.model.get( 'settings' ).set( 'presetIcon', icon );
 
 		/* Translators: %s: Element name. */
