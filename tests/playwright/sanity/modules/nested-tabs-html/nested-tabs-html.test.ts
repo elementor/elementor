@@ -8,6 +8,7 @@ import { testIconCount } from './tests/icons';
 import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
 import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 	let pageId: string;
@@ -1237,5 +1238,20 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await expect.soft( await tabsHeading ).toHaveCSS( 'flex-wrap', 'wrap' );
 		await expect.soft( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
 		await expect.soft( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
+	} );
+
+	test.only( 'Accessibility', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+		// Add widget.
+		await editor.addWidget( 'nested-tabs-html', container );
+
+		const accessibilityScanResults = await new AxeBuilder( { page } ).analyze();
+
+		await expect( accessibilityScanResults.violations ).toEqual( [] );
 	} );
 } );
