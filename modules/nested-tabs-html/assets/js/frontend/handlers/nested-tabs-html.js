@@ -60,12 +60,6 @@ export default class NestedTabsHtml extends Base {
 			toggleSelf: false,
 			hidePrevious: true,
 			autoExpand: true,
-			keyDirection: {
-				ArrowLeft: elementorFrontendConfig.is_rtl ? 'next' : 'previous',
-				ArrowUp: 'previous',
-				ArrowRight: elementorFrontendConfig.is_rtl ? 'previous' : 'next',
-				ArrowDown: 'next',
-			},
 		};
 	}
 
@@ -76,6 +70,16 @@ export default class NestedTabsHtml extends Base {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
+		};
+	}
+
+	getKeyboardNavigationSettings() {
+		return this.getSettings();
+	}
+
+	dropdownMenuHeightControllerConfig() {
+		return {
+			$element: this.$element,
 		};
 	}
 
@@ -259,7 +263,7 @@ export default class NestedTabsHtml extends Base {
 
 		this.setTouchMode();
 
-		new elementorModules.frontend.handlers.TitleKeyboardHandler( this.getSettings() );
+		new elementorModules.frontend.handlers.TitleKeyboardHandler( this.getKeyboardNavigationSettings() );
 	}
 
 	onEditSettingsChange( propertyName, value ) {
