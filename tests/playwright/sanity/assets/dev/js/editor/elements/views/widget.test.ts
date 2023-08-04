@@ -97,6 +97,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Act.
 		await editor.addWidget( 'google_maps' );
 		await page.locator( '.elementor-control-address input' ).fill( '' );
+		await editor.page.waitForLoadState( 'domcontentloaded' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
