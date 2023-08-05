@@ -173,30 +173,25 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'block-start' => [
+				'top' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'block-end' => [
+				'bottom' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'inline-end' => [
+				'end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'inline-start' => [
+				'start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
-				'block-start' => $styling_block_start,
-				'block-end' => $styling_block_end,
-				'inline-end' => $styling_inline_end,
-				'inline-start' => $styling_inline_start,
-				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'end' => $styling_inline_end,
@@ -240,8 +235,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'condition' => [
 				'tabs_direction' => [
 					'',
-					'block-start',
-					'block-end',
 					'top',
 					'bottom',
 				],
@@ -283,8 +276,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'tabs_direction' => [
 					'start',
 					'end',
-					'inline-start',
-					'inline-end',
 				],
 			],
 		] );
@@ -313,8 +304,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'tabs_direction' => [
 					'start',
 					'end',
-					'inline-start',
-					'inline-end',
 				],
 			],
 		] );
@@ -374,8 +363,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'condition' => [
 					'tabs_direction' => [
 						'',
-						'block-start',
-						'block-end',
 						'top',
 						'bottom',
 					],
@@ -861,30 +848,25 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'block-start' => [
+				'top' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'inline-end' => [
+				'end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'block-end' => [
+				'bottom' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'inline-start' => [
+				'start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'selectors_dictionary' => [
 				// The toggle variables for 'align items' and 'justify content' have been added to separate the styling of the two 'flex direction' modes.
-				'block-start' => $styling_block_start,
-				'inline-end' => $styling_inline_end,
-				'block-end' => $styling_block_end,
-				'inline-start' => $styling_inline_start,
-				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'start' => $styling_inline_start,
@@ -1092,7 +1074,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
-			'data-widget-number' => $item_settings['widget_number'],
 		] );
 
 		$render_attributes = $this->get_render_attribute_string( $setting_key );
@@ -1123,24 +1104,42 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 	protected function render_tab_containers_html( $item_settings ): string {
 		ob_start();
-		$this->print_child( $item_settings['index'] );
+		$this->print_child( $item_settings['index'], $item_settings );
 		$container_html = ob_get_clean();
 
-		$setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $item_settings['index'] );
-		$attribute_selector = '" data-id=';
-		$active_class = 0 === $item_settings['index'] ? ' e-active"' : '"';
+		if ( 0 === $item_settings['index'] ) {
+			return str_replace( 'class="', 'class="e-active ', $container_html );
+		}
 
-		$this->add_render_attribute( $setting_key, [
-			'id' => $item_settings['container_id'],
-			'role' => 'tabpanel',
-			'aria-labelledby' => $item_settings['tab_id'],
-			'data-tab-index' => $item_settings['tab_count'],
-			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
-		] );
+		return $container_html;
+	}
 
-		$render_attributes = $active_class . $this->get_render_attribute_string( $setting_key ) . str_replace( '"', '', $attribute_selector );
 
-		return str_replace( $attribute_selector, $render_attributes, $container_html );
+	/**
+	 * Print the content area.
+	 *
+	 * @param int $index
+	 * @param array $item_settings
+	 */
+	public function print_child( $index, $item_settings = [] ) {
+		$children = $this->get_children();
+
+		// Add data-tab-index attribute to the content area.
+		$add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings ) {
+			$container->add_render_attribute( '_wrapper', [
+				'id' => $item_settings['container_id'],
+				'role' => 'tabpanel',
+				'aria-labelledby' => $item_settings['tab_id'],
+				'data-tab-index' => $item_settings['tab_count'],
+				'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
+			] );
+
+			return $should_render;
+		};
+
+		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
+		$children[ $index ]->print_element();
+		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
 	}
 
 	protected function render() {
@@ -1154,6 +1153,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
 			'role' => 'tablist',
+			'data-widget-number' => $widget_number,
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );

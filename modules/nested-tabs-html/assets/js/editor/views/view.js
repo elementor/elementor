@@ -6,13 +6,14 @@ export default class View extends $e.components.get( 'nested-elements' ).exports
 	}
 
 	onAddChild( childView ) {
-		const widgetNumber = childView._parent.$el.find( '.e-n-tabs' )[ 0 ].attributes.widgetNumber,
-			index = childView.model.attributes.dataIndex;
+		const widgetNumber = childView._parent.$el.find( '.e-n-tabs' )[ 0 ]?.dataset.widgetNumber,
+			index = childView.model.attributes.dataIndex,
+			tabId = childView._parent.$el.find( `.e-n-tab-title[data-tab-index="${ index }"]` )?.attr( 'id' );
 
 		childView.$el.attr( {
 			id: 'e-n-tab-content-' + widgetNumber + '' + index,
 			role: 'tabpanel',
-			'aria-labelledby': widgetNumber + '' + index,
+			'aria-labelledby': tabId,
 			'data-tab-index': index,
 			style: '--n-tabs-title-order: ' + index + ';',
 		} );
