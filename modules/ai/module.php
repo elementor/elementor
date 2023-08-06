@@ -72,11 +72,11 @@ class Module extends BaseModule {
 		} );
 
 		add_filter( 'elementor/document/save/data', function ( $data ) {
-			if ( ! $this->is_layout_active() ) {
-				return $data;
+			if ( $this->is_layout_active() ) {
+				return $this->remove_temporary_containers( $data );
 			}
 
-			return $this->remove_temporary_containers( $data );
+			return $data;
 		} );
 	}
 
