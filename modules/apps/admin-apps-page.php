@@ -126,7 +126,7 @@ class Admin_Apps_Page {
 				'author' => 'Accessibility Team',
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpaccessibility/',
 				'badge' => 'Free',
-				'description' => 'Activity Log is the easiest way to keep track of your user activity. Find out exactly who does what on your website, and perform the most comprehensive security audit.',
+				'description' => 'The fastest plugin to enhance WordPress website accessibility. Empower your website to be user-friendly for all visitors.',
 				'learn_more_url' => 'https://go.elementor.com/wp-dash-apps-learn-more-wpaccessibility/',
 				'action_label' => 'Install',
 				'action_url' => '#',
