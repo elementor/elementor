@@ -34,8 +34,7 @@ function createHiddenWrapper() {
 
 	wrapper.style.position = 'fixed';
 	wrapper.style.opacity = '0';
-	wrapper.style.top = '0';
-	wrapper.style.left = '0';
+	wrapper.style.inset = '0';
 
 	return wrapper;
 }
