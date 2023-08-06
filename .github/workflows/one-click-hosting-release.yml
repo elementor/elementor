@@ -38,17 +38,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      - name: Set POSTFIX value
+        uses: ./.github/workflows/set-postfix-value
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          PRERELEASE: ${{ github.event.inputs.pre_release }}
       - name: Env Vars Configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          POSTFIX: ${{ github.event.inputs.pre_release }}
+          POSTFIX: ${{ env.POSTFIX }}
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
+          POSTFIX: ${{ env.POSTFIX }}
       - name: Install Dependencies
         run: npm ci
       - name: Build plugin

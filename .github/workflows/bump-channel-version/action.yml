@@ -8,6 +8,9 @@ inputs:
   CLEAN_PACKAGE_VERSION:
     required: true
     description: 'The current package version, e.g. "3.11.7".'
+  POSTFIX:
+    required: false
+    description: 'The postfix that will be added to the package version -rc / -test / empty.'
 
 runs:
   using: "composite"
@@ -28,8 +31,10 @@ runs:
             echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
             echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
 
-            if [[ "${{ env.POSTFIX }}" == "-test" ]]; then
-              echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ env.POSTFIX }}" >> $GITHUB_ENV
+            # This condition is for one click cloud prerelease execution testing manners.
+            # This condition should be removed once the one click prerelease execution gets to production.
+            if [[ "${{ inputs.POSTFIX }}" == "-test" ]]; then
+              echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ inputs.POSTFIX }}" >> $GITHUB_ENV
             fi
 
             if [[ ${{ inputs.CHANNEL }} == "beta" ]]; then

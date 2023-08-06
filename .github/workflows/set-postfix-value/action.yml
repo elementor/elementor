@@ -1,0 +1,25 @@
+name: Set Postfix Value
+description: Set the POSTFIX value for according the received channel and pre-release values.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version to (ga, cloud, beta).'
+  PRERELEASE:
+    required: false
+    description: 'Is this a pre-release?'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set POSTFIX value
+      shell: bash
+      run: |
+        POSTFIX=""
+
+        # Set the postfix value
+        if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.PRERELEASE }} == 'true' ]]; then
+          POSTFIX="-test"
+        fi
+
+        echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
