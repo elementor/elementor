@@ -33,14 +33,14 @@ class Backtrace_Helper {
 		$caller_line = $caller['line'] ?? '';
 		$source = self::get_source( $caller_file );
 
-		$res = array(
+		$res = [
 			'function' => $caller_function,
 			'class' => $caller_class,
 			'file' => $caller_file,
 			'line' => $caller_line,
 			'type' => $source['type'],
 			'name' => $source['name'],
-		);
+		];
 		return $res;
 	}
 
