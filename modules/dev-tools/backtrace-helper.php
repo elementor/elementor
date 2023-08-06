@@ -20,13 +20,13 @@ class Backtrace_Helper {
 	 * name - plugin/theme name
 	 */
 	public static function find_who_called_me( $stack_depth ) {
+		// phpcs:disable
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
-
+		// phpcs:enable
 		$caller = [];
 		if ( array_key_exists( $stack_depth, $backtrace ) ) {
 			$caller = $backtrace[ $stack_depth ];
 		}
-
 		$caller_function = $caller['function'] ?? '';
 		$caller_class = $caller['class'] ?? '';
 		$caller_file = $caller['file'] ?? '';
