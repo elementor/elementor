@@ -7,7 +7,7 @@
 			border: var(--e-a-border);
 			border-radius: var(--e-a-border-radius);
 			padding: 10px 15px;
-			margin-bottom: 10px;
+			margin-block-end: 10px;
 			font-size: 11px;
 			transition: var(--e-a-transition-hover);
 
@@ -40,14 +40,14 @@
 		}
 
 		&__details {
-			@include padding-start(15px);
+			padding-inline-start: 15px;
 			flex-grow: 1;
 			cursor: pointer;
 		}
 	}
 
 	&meta {
-		padding-top: 5px;
+		padding-block-start: 5px;
 		font-size: 10px;
 		font-weight: bold;
 	}

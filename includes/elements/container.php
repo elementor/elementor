@@ -87,6 +87,31 @@ class Container extends Element_Base {
 		return $keywords;
 	}
 
+	public function get_panel_presets() {
+		return [
+			'container_grid' => [
+				'replacements' => [
+					'name' => 'container_grid',
+					'controls' => [
+						'container_type' => [ 'default' => 'grid' ],
+					],
+					'title' => esc_html__( 'Grid', 'elementor' ),
+					'icon' => 'eicon-container-grid',
+					'custom' => [
+						'isPreset' => true,
+						'originalWidget' => $this->get_name(),
+						'presetWidget' => 'container_grid',
+						'preset_settings' => [
+							'container_type' => 'grid',
+							'presetTitle' => esc_html__( 'Grid', 'elementor' ),
+							'presetIcon' => 'eicon-container-grid',
+						],
+					],
+				],
+			],
+		];
+	}
+
 	/**
 	 * Override the render attributes to add a custom wrapper class.
 	 *
@@ -95,9 +120,12 @@ class Container extends Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
+		$is_nested_class_name = $this->get_data( 'isInner' ) ? 'e-child' : 'e-parent';
+
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
 				'e-con',
+				$is_nested_class_name,
 			],
 		] );
 	}
@@ -616,7 +644,6 @@ class Container extends Element_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'html_tag' => 'a',
 				],

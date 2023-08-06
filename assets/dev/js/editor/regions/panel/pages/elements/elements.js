@@ -67,8 +67,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initElementsCollection() {
-		const elementsCollection = new PanelElementsElementsCollection(),
-			isContainerActive = elementorCommon.config.experimentalFeatures.container;
+		const elementsCollection = new PanelElementsElementsCollection();
 
 		// Deprecated widget handling.
 		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
@@ -79,31 +78,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
-		_.each( elementor.widgetsCache, function( widget ) {
+		_.each( elementor.widgetsCache, ( widget ) => {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
 				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
 			}
 
-			if ( ! widget.show_in_panel ) {
+			if ( ! this.shouldAddWidget( widget ) ) {
 				return;
 			}
 
-			// Don't register the `Inner Section` if the Container experiment is enabled.
-			if ( 'inner-section' === widget.name && isContainerActive ) {
-				return;
-			}
-
-			elementsCollection.add( {
-				title: widget.title,
-				elType: widget.elType,
-				categories: widget.categories,
-				keywords: widget.keywords,
-				icon: widget.icon,
-				widgetType: widget.widget_type,
-				custom: widget.custom,
-				editable: widget.editable,
-				hideOnSearch: widget.hide_on_search,
-			} );
+			elementsCollection.add( this.getCollectionItem( widget ) );
 		} );
 
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
@@ -116,7 +100,35 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		if ( elementorCommon.config.experimentalFeatures.grid_widget ) {
+			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
+					replacements = widget.replacements,
+					presetWidget = this.deepMerge( originalWidget, replacements );
+
+				if ( ! this.shouldAddWidget( presetWidget ) ) {
+					return;
+				}
+
+				elementsCollection.add( this.getCollectionItem( presetWidget ) );
+			} );
+		}
+
 		this.elementsCollection = elementsCollection;
+	},
+
+	getCollectionItem( item ) {
+		return {
+			title: item.title,
+			elType: item.elType,
+			categories: item.categories,
+			keywords: item.keywords,
+			icon: item.icon,
+			widgetType: item.widget_type,
+			custom: item.custom,
+			editable: item.editable,
+			hideOnSearch: item.hide_on_search,
+		};
 	},
 
 	initCategoriesCollection() {
@@ -158,6 +170,42 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.categoriesCollection = categoriesCollection;
+	},
+
+	shouldAddWidget( widget ) {
+		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
+
+		return widget.show_in_panel && ( 'inner-section' !== widget.name || ! isContainerActive );
+	},
+
+	deepMerge( originalObj, replacementObj ) {
+		const mergedObj = { ...originalObj };
+
+		for ( const key in replacementObj ) {
+			this.deepMergeKey( mergedObj, originalObj, replacementObj, key );
+		}
+
+		return mergedObj;
+	},
+
+	deepMergeKey( mergedObj, originalObj, replacementObj, key ) {
+		if ( ! replacementObj.hasOwnProperty( key ) ) {
+			return;
+		}
+
+		const isMergeableObject = (
+			'object' === typeof replacementObj[ key ] &&
+			null !== replacementObj[ key ] &&
+			originalObj.hasOwnProperty( key ) &&
+			'object' === typeof originalObj[ key ] &&
+			null !== originalObj[ key ]
+		);
+
+		if ( isMergeableObject ) {
+			mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
+		} else {
+			mergedObj[ key ] = replacementObj[ key ];
+		}
 	},
 
 	showView( viewName ) {

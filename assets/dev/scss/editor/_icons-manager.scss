@@ -139,7 +139,8 @@
 .elementor-icons-manager {
 
 	&__tab-link {
-		@include padding(15px, 0, 15px, 45px);
+		padding-block: 15px;
+		padding-inline: 45px 0;
 		font-size: 12px;
 		text-align: start;
 		cursor: pointer;

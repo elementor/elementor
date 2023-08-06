@@ -27,7 +27,7 @@ jobs:
           ref: ${{ github.ref }}
       - name: Get Configuration
         id: configuration
-        uses: maork-elementor/json-to-variables@main
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
         with:
             filename: './.github/workflows/config.json'
             prefix: config
@@ -109,7 +109,7 @@ jobs:
                             "emoji": true
                           },
                           "value": "open-release",
-                          "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.PACKAGE_VERSION }}",
+                          "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
                           "action_id": "button-action"
                         }
                       },

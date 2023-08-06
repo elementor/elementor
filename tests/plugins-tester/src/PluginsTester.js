@@ -71,7 +71,7 @@ export class PluginsTester {
 	}
 
 	runServer() {
-		this.cmd( 'npm run wp-env start' );
+		this.cmd( 'npx wp-env start' );
 	}
 
 	setCwd() {
