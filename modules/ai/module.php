@@ -134,6 +134,10 @@ class Module extends BaseModule {
 	}
 
 	private function remove_temporary_containers( $data ) {
+		if ( empty( $data['elements'] ) ) {
+			return $data;
+		}
+
 		// If for some reason the document has been saved during an AI Layout session,
 		// ensure that the temporary containers are removed from the data.
 		$data['elements'] = array_filter( $data['elements'], function( $element ) {
