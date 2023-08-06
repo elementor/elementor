@@ -15,11 +15,11 @@ runs:
     - name: Set POSTFIX value
       shell: bash
       run: |
-        POSTFIX=""
-
         # Set the postfix value
         if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.PRERELEASE }} == 'true' ]]; then
           POSTFIX="-test"
+        else
+          POSTFIX=""
         fi
 
         echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
