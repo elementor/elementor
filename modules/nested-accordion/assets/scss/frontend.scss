@@ -45,8 +45,8 @@
 				display: flex;
 				flex-direction: row;
 				list-style: none;
-				padding-block: var( --n-accordion-padding,  var( --n-accordion-padding-block ) );
-				padding-inline: var( --n-accordion-padding, var( --n-accordion-padding-inline ) );
+				padding-block: var( --n-accordion-padding-block,  var( --n-accordion-padding ) );
+				padding-inline: var( --n-accordion-padding-inline, var( --n-accordion-padding ) );
 				border-width: var( --n-accordion-border-width );
 				border-color: var( --n-accordion-border-color );
 				border-style: var( --n-accordion-border-style );
