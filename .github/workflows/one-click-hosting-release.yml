@@ -64,7 +64,7 @@ jobs:
           PACKAGE_VERSION: ${{ env.ONE_CLICK_RELEASE_PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Generate changelog
-        uses : ./.github/workflows/generate-changelog
+        uses: ./.github/workflows/generate-changelog
         with:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -84,7 +84,7 @@ jobs:
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Post To Slack Created Cloud one click Release
         if: ${{ github.event.inputs.pre_release }} == false
-        uses : ./.github/workflows/post-to-slack
+        uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
