@@ -934,7 +934,7 @@ class Upgrades {
 	 *
 	 * @return array|mixed
 	 */
-	private static function convert_to_inner_containers( $data ) {
+	private static function maybe_convert_to_inner_containers( $data ) {
 		return Plugin::$instance->db->iterate_data(
 			$data, function ( $element ) {
 

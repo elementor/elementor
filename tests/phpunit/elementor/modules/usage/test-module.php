@@ -47,7 +47,7 @@ class Test_Module extends Elementor_Test_Base {
 		],
 	];
 
-	static $document_mock_default_with_container = [
+	public static $document_mock_default_with_container = [
 		'settings' => [
 			'post_status' => 'publish',
 		],
@@ -102,6 +102,92 @@ class Test_Module extends Elementor_Test_Base {
 						],
 					],
 				],
+			],
+		],
+	];
+
+	/**
+	 * @var array
+	 */
+	public static $document_mock_nested_tabs = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => '96a5894',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'fecdc45',
+						'elType' => 'widget',
+						'widgetType' => 'nested-tabs',
+						'settings' => [
+							'tabs' => [
+								[
+									'tab_title' => 'Tab #1',
+									'_id' => '477a473',
+									'tab_icon' => '',
+								],
+								[
+									'tab_title' => 'Tab #2',
+									'_id' => '4fb407a',
+									'tab_icon' => '',
+								],
+								[
+									'tab_title' => 'Tab #3',
+									'_id' => '59f7a8a',
+									'tab_icon' => '',
+								],
+							],
+						],
+						'elements' => [
+							[
+								'id' => 'cfe8a34',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #1',
+									'content_width' => 'full',
+								],
+								'elements' => [
+									[
+										'id' => '43454c4',
+										'elType' => 'container',
+										'settings' => [],
+										'elements' => [],
+										'isInner' => false,
+									],
+								],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+							[
+								'id' => '06b8b26',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #2',
+									'content_width' => 'full',
+								],
+								'elements' => [],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+							[
+								'id' => 'de89d62',
+								'elType' => 'container',
+								'settings' => [
+									'_title' => 'Tab #3',
+									'content_width' => 'full',
+								],
+								'elements' => [],
+								'isInner' => false,
+								'isLocked' => true,
+							],
+						],
+					],
+				],
+				'isInner' => false,
 			],
 		],
 	];
