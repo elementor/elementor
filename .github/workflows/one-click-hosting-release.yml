@@ -17,8 +17,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-22.04
-    outputs:
-      POSTFIX: ${{ steps.set_postfix_value.outputs.POSTFIX }}
     steps:
       - name: checkout branch
         uses: actions/checkout@v3
@@ -42,9 +40,14 @@ jobs:
           node-version: 18.x
       - name: Set POSTFIX value
         id: set_postfix_value
-        uses: ./.github/workflows/set-postfix-value
-        with:
-          PRERELEASE: ${{ github.event.inputs.pre_release }}
+        shell: bash
+        run: |
+          # Set the postfix value
+          POSTFIX=""
+          if [[ '${{ github.event.inputs.pre_release }}' == 'true' ]]; then
+            POSTFIX="-test"
+          fi
+          echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
