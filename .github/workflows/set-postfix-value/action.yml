@@ -2,9 +2,6 @@ name: Set Postfix Value
 description: Set the POSTFIX value for according the received channel and pre-release values.
 
 inputs:
-  CHANNEL:
-    required: true
-    description: 'The channel to get the version to (ga, cloud, beta).'
   PRERELEASE:
     required: false
     description: 'Is this a pre-release?'

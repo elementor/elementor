@@ -44,7 +44,7 @@ jobs:
         id: set_postfix_value
         uses: ./.github/workflows/set-postfix-value
         with:
-          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          PRERELEASE: ${{ github.event.inputs.pre_release }}
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
