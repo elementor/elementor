@@ -959,7 +959,7 @@ class Upgrades {
 	 *
 	 * @return \Elementor\Core\Base\Document|false
 	 */
-	public static function save_updated_document( $post_id, $data ) {
+	private static function save_updated_document( $post_id, $data ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		$document->save(
