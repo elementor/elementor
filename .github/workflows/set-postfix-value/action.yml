@@ -5,7 +5,10 @@ inputs:
   PRERELEASE:
     required: false
     description: 'Is this a pre-release?'
-
+outputs:
+  postfix:
+    description: "One click Postfix value."
+    value: ${{ steps.set-postfix-value.outputs.postfix }}
 runs:
   using: "composite"
   steps:
@@ -20,5 +23,4 @@ runs:
           POSTFIX="-test"
         fi
 
-        #echo "set-output name=POSTFIX::${POSTFIX}"
-        echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
+        echo "POSTFIX=$POSTFIX" >> $GITHUB_OUTPUT
