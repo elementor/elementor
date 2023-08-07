@@ -28,4 +28,4 @@ runs:
           POSTFIX=""
         fi
 
-        echo "set-output name=POSTFIX::${POSTFIX}
+        echo "set-output name=POSTFIX::${POSTFIX}"
