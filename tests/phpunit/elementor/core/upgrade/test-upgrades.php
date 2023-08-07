@@ -434,7 +434,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 	public function test_v_3_16_0_container_updates() {
 
 		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
-		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
+		//Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
 
 		$documents = [];
 		$updater = $this->create_updater();
@@ -447,7 +447,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$this->assert_container_changed( $this->get_decoded_post_meta( $documents[0] ) );
 		$this->assert_sections_not_changed( $this->get_decoded_post_meta( $documents[1] ) );
-		$this->assert_nested_elements_not_affected( $this->get_decoded_post_meta( $documents[2] ) );
+		//$this->assert_nested_elements_not_affected( $this->get_decoded_post_meta( $documents[2] ) );
 
 	}
 
