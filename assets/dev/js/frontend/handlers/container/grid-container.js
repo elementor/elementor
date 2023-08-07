@@ -95,8 +95,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	createOverlayItems() {
 		const { gridOutline } = this.elements,
 			{ classes: { outlineItem } } = this.getDefaultSettings(),
-			{ rows, columns } = this.getDeviceGridDimensions(),
-			numberOfItems = rows.length * columns.length;
+			numberOfItems = this.getMaxElementsNumber();
 
 		for ( let i = 0; i < numberOfItems; i++ ) {
 			const gridOutlineItem = document.createElement( 'div' );
@@ -277,10 +276,20 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	shouldRemoveEmptyView() {
-		const childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
-		const gridDimensions = this.getDeviceGridDimensions();
+		const maxElements = this.getMaxElementsNumber(),
+			childrenLength = this.elements.outlineParentContainer.querySelectorAll(':scope > .elementor-element').length;
+
+		return maxElements <= childrenLength;
+	}
+
+	getMaxElementsNumber() {
+		const elementSettings = this.getElementSettings(),
+			device = elementor.channels.deviceMode.request( 'currentMode' ),
+			// { grid_auto_flow: gridAutoFlow } = this.getElementSettings(),
+			rowsLength = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_rows_grid', 'size', device ),
+			gridDimensions = this.getDeviceGridDimensions();
 
 		// Auto Flow = Row
-		return 0 === childrenLength % gridDimensions.columns.length;
+		return gridDimensions.columns.length * rowsLength;
 	}
 }
