@@ -9,10 +9,16 @@ inputs:
     required: false
     description: 'Is this a pre-release?'
 
+outputs:
+  POSTFIX:
+      value: ${{ steps.set-postfix-value.outputs.POSTFIX }}
+      description: 'The postfix that will be added to the package version "-test" / empty string.'
+
 runs:
   using: "composite"
   steps:
     - name: Set POSTFIX value
+      id: set-postfix-value
       shell: bash
       run: |
         # Set the postfix value
@@ -22,4 +28,4 @@ runs:
           POSTFIX=""
         fi
 
-        echo "POSTFIX=${POSTFIX}" >> $GITHUB_ENV
+        echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT

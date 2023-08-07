@@ -44,17 +44,21 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PRERELEASE: ${{ github.event.inputs.pre_release }}
       - name: Env Vars Configure
+        id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
         with:
           CHANNEL: ${{ env.CHANNEL }}
           REF: ${{ github.ref }}
-          POSTFIX: ${{ env.POSTFIX }}
+          # POSTFIX: ${{ env.POSTFIX }}
+          POSTFIX: ${{ steps.env_vars_configure.outputs.POSTFIX }}
       - name: Bump Channel Version
+        id: bump_channel_version
         uses: ./.github/workflows/bump-channel-version
         with:
           CLEAN_PACKAGE_VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
           CHANNEL: ${{ env.CHANNEL }}
-          POSTFIX: ${{ env.POSTFIX }}
+          # POSTFIX: ${{ env.POSTFIX }}
+          POSTFIX: ${{ steps.bump_channel_version.outputs.POSTFIX }}
       - name: Install Dependencies
         run: npm ci
       - name: Build plugin
