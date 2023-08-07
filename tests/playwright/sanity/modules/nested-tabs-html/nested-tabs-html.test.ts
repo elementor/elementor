@@ -41,7 +41,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
-	test( 'Accessibility', async ( { page }, testInfo ) => {
+	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
@@ -96,13 +96,25 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			await page.keyboard.press( 'Tab' );
 			await expect( buttonBelow ).toBeFocused();
 		} );
+	} );
+
+	test( 'Accessibility on the Front End', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage(),
+			frame = await editor.getPreviewFrame();
+
+		await editor.addWidget( 'button' );
+
+		// Load template.
+		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
+		await editor.loadTemplate( filePath, false );
+		await frame.waitForSelector( '.e-n-tabs' );
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs-html' );
 
 		await test.step( 'Keyboard handling on the Front End', async () => {
-			await editor.saveAndReloadPage();
-			await page.waitForSelector( '.elementor-widget-n-tabs-html' );
-			await editor.publishAndViewPage();
-			await page.waitForSelector( '.elementor-widget-n-tabs-html' );
-
 			const tabTitleOne = page.locator( '.e-n-tab-title >> nth=0' ),
 				tabTitleTwo = page.locator( '.e-n-tab-title >> nth=1' ),
 				tabTitleThree = page.locator( '.e-n-tab-title >> nth=2' ),
