@@ -106,7 +106,6 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 			frame = await editor.getPreviewFrame();
 
 		await editor.addWidget( 'button' );
-		// Test.
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
