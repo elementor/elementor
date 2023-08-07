@@ -98,6 +98,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		} );
 
 		await test.step( 'Keyboard handling on the Front End', async () => {
+			await editor.saveAndReloadPage();
 			await editor.publishAndViewPage();
 			await page.waitForSelector( '.elementor-widget-n-tabs-html' );
 
