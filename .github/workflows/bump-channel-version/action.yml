@@ -33,9 +33,11 @@ runs:
 
             # This condition is for one click cloud prerelease execution testing manners.
             # This condition should be removed once the one click prerelease execution gets to production.
-            if [[ "${{ inputs.POSTFIX }}" == "-test" ]]; then
-              echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ inputs.POSTFIX }}" >> $GITHUB_ENV
-            fi
+            # if [[ "${{ inputs.CHANNEL }}" == "cloud" ]]; then
+            #  echo "PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ inputs.POSTFIX }}" >> $GITHUB_ENV
+            # fi
+
+            echo ONE_CLICK_RELEASE_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}${{ inputs.POSTFIX }} >> $GITHUB_ENV
 
             if [[ ${{ inputs.CHANNEL }} == "beta" ]]; then
                 BETA_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
