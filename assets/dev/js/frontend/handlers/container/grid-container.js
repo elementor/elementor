@@ -285,11 +285,15 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	getMaxElementsNumber() {
 		const elementSettings = this.getElementSettings(),
 			device = elementor.channels.deviceMode.request( 'currentMode' ),
-			// { grid_auto_flow: gridAutoFlow } = this.getElementSettings(),
-			rowsLength = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_rows_grid', 'size', device ),
-			gridDimensions = this.getDeviceGridDimensions();
+			{ grid_auto_flow: gridAutoFlow } = this.getElementSettings(),
+			rows = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_rows_grid', 'size', device ),
+			gridDimensions = this.getDeviceGridDimensions(),
+			rowsLength = isNaN( rows ) ? rows.split( ' ' ).length : rows;
 
-		// Auto Flow = Row
-		return gridDimensions.columns.length * rowsLength;
+		if ( 'row' === gridAutoFlow ) {
+			return gridDimensions.columns.length * rowsLength;
+		}
+
+		return gridDimensions.rows.length * columnsLength;
 	}
 }

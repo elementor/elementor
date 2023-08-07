@@ -601,10 +601,6 @@ const ContainerView = BaseElementView.extend( {
 			this.handleGridEmptyView();
 		}
 	},
-
-	isDistortsPreview() {
-		return this.container.children.length === this.container.settings.get( 'grid_columns_grid' ).size * this.container.settings.get( 'grid_rows_grid' ).size;
-	},
 } );
 
 module.exports = ContainerView;
