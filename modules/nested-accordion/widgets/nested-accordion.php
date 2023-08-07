@@ -411,6 +411,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		// To do: remove after we update the container styling from physical to logical properties.
+		$padding_physical_properties = '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};';
+
 		$this->add_responsive_control(
 			'accordion_padding',
 			[
@@ -418,7 +421,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-accordion-padding-block: {{TOP}}{{UNIT}} {{BOTTOM}}{{UNIT}}; --n-accordion-padding-inline: {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => $padding_physical_properties . '--n-accordion-padding-block: {{TOP}}{{UNIT}} {{BOTTOM}}{{UNIT}}; --n-accordion-padding-inline: {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
