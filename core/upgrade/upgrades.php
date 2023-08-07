@@ -833,9 +833,9 @@ class Upgrades {
 		}
 	}
 
-	public static function _v_3_16_0_container_updates($updater) {
+	public static function _v_3_16_0_container_updates( $updater ) {
 
-		$post_ids = self::get_post_ids_by_element_type($updater,  'container' );
+		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
 
 		if ( empty( $post_ids ) ) {
 			return false;
@@ -918,7 +918,7 @@ class Upgrades {
 	 *
 	 * @return array
 	 */
-	public static function get_post_ids_by_element_type( $updater,  string $element_type ): array {
+	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
 		global $wpdb;
 
 		return $updater->query_col(
