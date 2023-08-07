@@ -27,7 +27,8 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
 	childViewOptions() {
@@ -413,6 +414,7 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
+		this.model.set( 'isInner', this.getNestingLevel() > 0 );
 
 		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();
