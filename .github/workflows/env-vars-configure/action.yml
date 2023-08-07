@@ -25,6 +25,7 @@ runs:
         uses: ./.github/workflows/increment-patch-version
       - shell: bash
         run: |
+            echo "steps.set_postfix_value.outputs.POSTFIX=${{ steps.set_postfix_value.outputs.POSTFIX }}"
             # This command retrieves the latest tag that matches the specified channel and package version,
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
             # If inputs.POSTFIX == '-test', than get the latest prerelease version E.g, `3.11.0-cloud7-test`
