@@ -279,7 +279,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const maxElements = this.getMaxElementsNumber(),
 			childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
 
-		return maxElements <= childrenLength;
+		return maxElements <= childrenLength && this.isFullFilled( childrenLength );
 	}
 
 	getMaxElementsNumber() {
@@ -295,5 +295,16 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 
 		return gridDimensions.rows.length * columnsLength;
+	}
+
+	isFullFilled( numberOfElements ) {
+		const gridDimensions = this.getDeviceGridDimensions(),
+			{ grid_auto_flow: gridAutoFlow } = this.getElementSettings();
+
+		if ( 'row' === gridAutoFlow ) {
+			return 0 === numberOfElements % gridDimensions.columns.length;
+		}
+
+		return 0 === numberOfElements % gridDimensions.rows.length;
 	}
 }
