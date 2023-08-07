@@ -47,6 +47,65 @@ class Test_Module extends Elementor_Test_Base {
 		],
 	];
 
+	static $document_mock_default_with_container = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => 'd50d8c5',
+				'elType' => 'container',
+				'isInner' => false,
+				'settings' => [
+					'presetTitle' => 'Container',
+					'presetIcon' => 'eicon-container',
+				],
+				'elements' => [
+					[
+						'id' => 'a2e9b68',
+						'elType' => 'container',
+						'isInner' => false,
+						'settings' => [
+							'presetTitle' => 'Container',
+							'presetIcon' => 'eicon-container',
+						],
+						'elements' => [
+							[
+								'id' => '5a1e8e5',
+								'elType' => 'container',
+								'settings' => [
+									'presetTitle' => 'Container',
+									'presetIcon' => 'eicon-container',
+								],
+								'isInner' => false,
+								'elements' => [],
+							],
+							[
+								'id' => 'b0bf8fd',
+								'elType' => 'container',
+								'settings' => [
+									'presetTitle' => 'Container',
+									'presetIcon' => 'eicon-container',
+								],
+								'isInner' => false,
+								'elements' => [
+									[
+										'id' => '5a1e8e5',
+										'elType' => 'widget',
+										'isInner' => false,
+										'settings' => [ 'text' => 'I\'m not a default', ],
+										'elements' => [],
+										'widgetType' => 'button',
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		],
+	];
+
 	/**
 	 * @var Module
 	 */

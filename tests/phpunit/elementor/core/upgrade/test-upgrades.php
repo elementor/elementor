@@ -9,6 +9,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -428,6 +429,29 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		// Cleanup
 		$this->delete_image( $attachment_id );
+	}
+
+	public function test_v_3_16_0_container_updates() {
+
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
+
+		$documents = [];
+		$updater = $this->create_updater();
+		$updater->set_limit( $this->query_limit );
+		for ( $i = 0; $i < $this->query_limit; $i++ ) {
+			$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default_with_container );
+		}
+
+		Upgrades::_v_3_16_0_container_updates( $updater );
+
+		for ( $i = 0; $i < $this->query_limit; $i++ ) {
+			$post_meta = get_post_meta( $documents[0]->get_main_id(), '_elementor_data' );
+			$elementor_data = json_decode( $post_meta[0] );
+			self::assertFalse( $elementor_data[0]->isInner );
+			self::assertTrue( $elementor_data[0]->elements[0]->isInner );
+			self::assertTrue( $elementor_data[0]->elements[0]->elements[0]->isInner );
+			self::assertTrue( $elementor_data[0]->elements[0]->elements[1]->isInner );
+		}
 	}
 
 	private function create_image() {
