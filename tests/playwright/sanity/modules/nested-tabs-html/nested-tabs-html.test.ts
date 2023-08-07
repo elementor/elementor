@@ -1251,7 +1251,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await editor.addWidget( 'button' );
 
 		// Load template.
-		const filePath = _path.resolve( __dirname, `../../../templates/tabs-accessibility.json` );
+		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
 		await editor.loadTemplate( filePath, false );
 		await frame.waitForSelector( '.e-n-tabs' );
 
