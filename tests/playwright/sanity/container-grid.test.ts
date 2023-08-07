@@ -523,7 +523,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test Empty View should shows', async ( { page }, testInfo ) => {
+	test( 'Test Empty View should show', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
 
