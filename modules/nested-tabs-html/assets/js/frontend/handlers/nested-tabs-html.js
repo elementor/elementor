@@ -77,12 +77,6 @@ export default class NestedTabsHtml extends Base {
 		return this.getSettings();
 	}
 
-	dropdownMenuHeightControllerConfig() {
-		return {
-			$element: this.$element,
-		};
-	}
-
 	activateDefaultTab() {
 		const settings = this.getSettings();
 
