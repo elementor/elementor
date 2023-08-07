@@ -43,10 +43,10 @@ jobs:
         shell: bash
         run: |
           # Set the postfix value
-          if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ github.event.inputs.pre_release }} == 'true' ]]; then
+          POSTFIX=""
+
+          if [[ '${{ github.event.inputs.pre_release }}' == 'true' ]]; then
             POSTFIX="-test"
-          else
-            POSTFIX=""
           fi
 
           echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
