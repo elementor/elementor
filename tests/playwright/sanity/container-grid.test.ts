@@ -545,7 +545,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test.only( 'Test Empty View should not distorse preview', async ( { page }, testInfo ) => {
+	test( 'Test Empty View should not distorse preview', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost();
 
