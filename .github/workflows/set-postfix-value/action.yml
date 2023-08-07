@@ -17,11 +17,11 @@ runs:
       shell: bash
       run: |
         # Set the postfix value
-        if [[ ${{ inputs.CHANNEL }} == 'cloud' && ${{ inputs.PRERELEASE }} == 'true' ]]; then
+
+        POSTFIX=""
+        if [[ ${{ inputs.PRERELEASE }} == 'true' ]]; then
           POSTFIX="-test"
-        else
-          POSTFIX=""
         fi
 
-        echo "set-output name=POSTFIX::${POSTFIX}"
-        #echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
+        #echo "set-output name=POSTFIX::${POSTFIX}"
+        echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
