@@ -58,6 +58,9 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.createOverlayContainer();
 		this.createOverlayItems();
 
+		// Re-init empty view element after container layout change
+		const selectors = this.getSettings( 'selectors' );
+		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
 		this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 	}
 
