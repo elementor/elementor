@@ -39,6 +39,7 @@ jobs:
         with:
           node-version: 18.x
       - name: Set POSTFIX value
+        id: set_postfix_value
         uses: ./.github/workflows/set-postfix-value
         with:
           CHANNEL: ${{ env.CHANNEL }}

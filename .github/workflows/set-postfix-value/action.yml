@@ -24,4 +24,4 @@ runs:
         fi
 
         #echo "set-output name=POSTFIX::${POSTFIX}"
-        echo "POSTFIX=${POSTFIX}" >> "$GITHUB_OUTPUT"
+        echo "POSTFIX=${POSTFIX}" >> $GITHUB_OUTPUT
