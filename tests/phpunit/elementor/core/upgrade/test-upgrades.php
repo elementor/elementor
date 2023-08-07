@@ -443,7 +443,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
 
-
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
 		$this->assert_container_changed( $this->get_decoded_post_meta( $documents[0] ) );
