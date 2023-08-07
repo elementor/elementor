@@ -277,7 +277,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	shouldRemoveEmptyView() {
 		const maxElements = this.getMaxElementsNumber(),
-			childrenLength = this.elements.outlineParentContainer.querySelectorAll(':scope > .elementor-element').length;
+			childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length;
 
 		return maxElements <= childrenLength;
 	}
