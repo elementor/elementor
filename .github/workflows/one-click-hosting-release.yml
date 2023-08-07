@@ -60,7 +60,8 @@ jobs:
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          #PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          PACKAGE_VERSION: ${{ env.ONE_CLICK_RELEASE_PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Generate changelog
         uses : ./.github/workflows/generate-changelog
