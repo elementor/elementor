@@ -855,7 +855,6 @@ class Upgrades {
 			$data = self::maybe_convert_to_inner_containers( $data );
 
 			self::save_updated_document( $post_id, $data );
-
 		}
 	}
 
