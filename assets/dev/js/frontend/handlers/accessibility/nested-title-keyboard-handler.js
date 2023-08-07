@@ -1,6 +1,6 @@
 import Base from '../base';
 
-export default class TitleKeyboardHandler extends Base {
+export default class NestedTitleKeyboardHandler extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {

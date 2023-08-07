@@ -9,6 +9,7 @@ import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/caro
 import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 import AxeBuilder from '@axe-core/playwright';
+import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 	let pageId: string;
@@ -1240,18 +1241,113 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 		await expect.soft( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 
-	test.only( 'Accessibility', async ( { page }, testInfo ) => {
+	test( 'Accessibility', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = await editor.getPreviewFrame();
-		// Add widget.
-		await editor.addWidget( 'nested-tabs-html', container );
 
-		const accessibilityScanResults = await new AxeBuilder( { page } ).analyze();
+		await editor.addWidget( 'button' );
 
-		await expect( accessibilityScanResults.violations ).toEqual( [] );
+		// Load template.
+		const filePath = _path.resolve( __dirname, `../../../templates/tabs-accessibility.json` );
+		await editor.loadTemplate( filePath, false );
+		await frame.waitForSelector( '.e-n-tabs' );
+
+		await test.step( 'Keyboard handling inside the Editor', async () => {
+			const tabTitleOne = frame.locator( '.e-n-tab-title >> nth=0' ),
+				tabTitleTwo = frame.locator( '.e-n-tab-title >> nth=1' ),
+				tabTitleThree = frame.locator( '.e-n-tab-title >> nth=2' ),
+				button1 = frame.locator( '.elementor-button >> nth=0' ),
+				button2 = frame.locator( '.elementor-button >> nth=1' ),
+				buttonBelow = frame.locator( '.elementor-button >> nth=3' );
+
+			// Assert.
+			await frame.locator( '.page-header' ).click();
+
+			await page.keyboard.press( 'Tab' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Shift+Tab' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Tab' );
+			await expect( buttonBelow ).toBeFocused();
+			await page.keyboard.press( 'Shift+Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Escape' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleThree ).toBeFocused();
+			await expect( tabTitleThree ).toHaveAttribute( 'aria-selected', 'false' );
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleTwo ).toBeFocused();
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'false' );
+			await page.keyboard.press( 'Enter' );
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button2 ).toBeFocused();
+			await page.keyboard.press( 'Tab' );
+			await expect( buttonBelow ).toBeFocused();
+		} );
+
+		await test.step( 'Keyboard handling on the Front End', async () => {
+			await editor.publishAndViewPage();
+			await page.waitForSelector( '.elementor-widget-n-tabs-html' );
+
+			const tabTitleOne = page.locator( '.e-n-tab-title >> nth=0' ),
+				tabTitleTwo = page.locator( '.e-n-tab-title >> nth=1' ),
+				tabTitleThree = page.locator( '.e-n-tab-title >> nth=2' ),
+				button1 = page.locator( '.elementor-button >> nth=0' ),
+				button2 = page.locator( '.elementor-button >> nth=1' ),
+				buttonBelow = page.locator( '.elementor-button >> nth=3' );
+
+			// Assert.
+			await page.locator( '.page-header' ).click();
+
+			await page.keyboard.press( 'Tab' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Shift+Tab' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Tab' );
+			await expect( buttonBelow ).toBeFocused();
+			await page.keyboard.press( 'Shift+Tab' );
+			await expect( button1 ).toBeFocused();
+			await page.keyboard.press( 'Escape' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleThree ).toBeFocused();
+			await expect( tabTitleThree ).toHaveAttribute( 'aria-selected', 'false' );
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleTwo ).toBeFocused();
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'false' );
+			await page.keyboard.press( 'Enter' );
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'true' );
+			await page.keyboard.press( 'Tab' );
+			await expect( button2 ).toBeFocused();
+			await page.keyboard.press( 'Tab' );
+			await expect( buttonBelow ).toBeFocused();
+		} );
+
+		await test.step( '@axe-core/playwright', async () => {
+			const accessibilityScanResults = await new AxeBuilder( { page } )
+				.include( '.elementor-widget-n-tabs-html' )
+				.analyze();
+
+			await expect( accessibilityScanResults.violations ).toEqual( [] );
+		} );
 	} );
 } );

@@ -1171,7 +1171,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
-			'role' => 'tablist',
 			'data-widget-number' => $widget_number,
 			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
@@ -1205,7 +1204,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-n-tabs-content">
@@ -1218,9 +1217,9 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
