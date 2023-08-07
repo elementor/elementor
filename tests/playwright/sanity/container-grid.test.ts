@@ -585,6 +585,48 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
+
+	test.only( 'Test Empty View should not distorse preview on tablet', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.useElementorCleanPost();
+
+		let containerId;
+		await test.step( 'Arrange', async () => {
+			await editor.closeNavigatorIfOpen();
+			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.setSelectControlValue( 'container_type', 'grid' );
+
+			const gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
+			const columnsRowControl = page.locator( '.elementor-control-grid_columns_grid' );
+
+			await columnsRowControl.locator( '.elementor-slider-input input' ).fill( '3' );
+			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( '2' );
+
+			for ( let i = 0; i < 6; i++ ) {
+				await editor.addWidget( 'heading', containerId );
+			}
+		} );
+
+		await test.step( 'Empty item should not be presented', async () => {
+			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+		} );
+		//
+		await test.step( 'Empty item should not be present in tablet', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+		} );
+
+		await test.step( 'Change number of rows and columns to see empty item', async () => {
+			await editor.selectElement( containerId );
+
+			const gridRowsControlTablet = page.locator( '.elementor-control-grid_rows_grid_tablet' );
+			const columnsRowControlTablet = page.locator( '.elementor-control-grid_columns_grid_tablet' );
+
+			await gridRowsControlTablet.locator( '.elementor-slider-input input' ).fill( '2' );
+			await columnsRowControlTablet.locator( '.elementor-slider-input input' ).fill( '4' );
+			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+		} );
+	} );
 } );
 
 function hasWhiteSpace( s ) {
