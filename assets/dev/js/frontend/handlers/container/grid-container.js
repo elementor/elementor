@@ -95,7 +95,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	createOverlayItems() {
 		const { gridOutline } = this.elements,
 			{ classes: { outlineItem } } = this.getDefaultSettings(),
-			numberOfItems = this.getMaxElementsNumber();
+			numberOfItems = this.getMaxOutlineElementsNumber();
 
 		for ( let i = 0; i < numberOfItems; i++ ) {
 			const gridOutlineItem = document.createElement( 'div' );
@@ -286,13 +286,17 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const elementSettings = this.getElementSettings(),
 			device = elementor.channels.deviceMode.request( 'currentMode' ),
 			{ grid_auto_flow: gridAutoFlow } = this.getElementSettings(),
-			rows = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_rows_grid', 'size', device ),
-			gridDimensions = this.getDeviceGridDimensions(),
-			rowsLength = isNaN( rows ) ? rows.split( ' ' ).length : rows;
+			gridDimensions = this.getDeviceGridDimensions();
 
 		if ( 'row' === gridAutoFlow ) {
+			const rows = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_rows_grid', 'size', device );
+			const rowsLength = isNaN( rows ) ? rows.split( ' ' ).length : rows;
+
 			return gridDimensions.columns.length * rowsLength;
 		}
+
+		const columns = elementorFrontend.utils.controls.getResponsiveControlValue( elementSettings, 'grid_columns_grid', 'size', device );
+		const columnsLength = isNaN( columns ) ? rows.split( ' ' ).length : columns;
 
 		return gridDimensions.rows.length * columnsLength;
 	}
@@ -301,10 +305,20 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const gridDimensions = this.getDeviceGridDimensions(),
 			{ grid_auto_flow: gridAutoFlow } = this.getElementSettings();
 
-		if ( 'row' === gridAutoFlow ) {
-			return 0 === numberOfElements % gridDimensions.columns.length;
-		}
+		const flowTypeField = 'row' === gridAutoFlow ? 'columns' : 'rows';
 
-		return 0 === numberOfElements % gridDimensions.rows.length;
+		return 0 === numberOfElements % gridDimensions[ flowTypeField ].length;
+	}
+
+	getMaxOutlineElementsNumber() {
+		const childrenLength = this.elements.outlineParentContainer.querySelectorAll( ':scope > .elementor-element' ).length,
+			gridDimensions = this.getDeviceGridDimensions(),
+			maxElementsBySettings = this.getMaxElementsNumber(),
+			{ grid_auto_flow: gridAutoFlow } = this.getElementSettings();
+
+		const flowTypeField = 'row' === gridAutoFlow ? 'columns' : 'rows';
+		const maxElementsByItems = Math.ceil( childrenLength / gridDimensions[ flowTypeField ].length ) * gridDimensions[ flowTypeField ].length;
+
+		return maxElementsBySettings > maxElementsByItems ? maxElementsBySettings : maxElementsByItems;
 	}
 }
