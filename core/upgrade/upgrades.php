@@ -962,7 +962,7 @@ class Upgrades {
 			$data, function ( $element ) {
 
 				$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
-				if ( 'container' !== $element['elType'] || ! isset( $element['settings'] ) || ! $is_grid_container ) {
+				if ( 'container' !== $element['elType'] || ! empty( $element['settings'] ) || ! $is_grid_container ) {
 					return $element;
 				}
 
