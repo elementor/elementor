@@ -27,7 +27,8 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
 	childViewOptions() {
@@ -396,10 +397,8 @@ const ContainerView = BaseElementView.extend( {
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
-			this.updatePanelTitlesAndIcons();
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
@@ -415,6 +414,7 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
+		this.model.set( 'isInner', this.getNestingLevel() > 0 );
 
 		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();
@@ -448,7 +448,9 @@ const ContainerView = BaseElementView.extend( {
 			icon = this.getPanelIcon();
 
 		this.model.set( 'icon', icon );
-		this.model.get( 'settings' ).set( '_title', title );
+		this.model.set( 'title', title );
+
+		this.model.get( 'settings' ).set( 'presetTitle', title );
 		this.model.get( 'settings' ).set( 'presetIcon', icon );
 
 		/* Translators: %s: Element name. */
@@ -537,10 +539,11 @@ const ContainerView = BaseElementView.extend( {
 
 	handleGridEmptyView() {
 		const currentContainer = this.getCorrectContainerElement();
+		const emptyViewItem = currentContainer.find( '> .elementor-empty-view' );
 
 		this.moveElementToLastChild(
 			currentContainer,
-			currentContainer.find( '> .elementor-empty-view' ),
+			emptyViewItem,
 		);
 	},
 

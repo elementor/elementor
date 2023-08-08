@@ -9,6 +9,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -430,6 +431,26 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
+	public function test_v_3_16_0_container_updates() {
+
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
+		//Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
+
+		$documents = [];
+		$updater = $this->create_updater();
+
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default_with_container );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
+
+		Upgrades::_v_3_16_0_container_updates( $updater );
+
+		$this->assert_container_changed( $this->get_decoded_post_meta( $documents[0] ) );
+		$this->assert_sections_not_changed( $this->get_decoded_post_meta( $documents[1] ) );
+		//$this->assert_nested_elements_not_affected( $this->get_decoded_post_meta( $documents[2] ) );
+
+	}
+
 	private function create_image() {
 		$attachment_id = $this->_make_attachment( [
 			'file' => __DIR__ . '/../../../resources/mock-image.png',
@@ -452,5 +473,53 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	private function delete_image( $attachment_id ) {
 		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	public function assert_sections_not_changed( $elementor_data ) {
+		$top_level_element = $elementor_data[0];
+		self::assertFalse( $top_level_element->isInner );
+		self::assertFalse( $top_level_element->elements[0]->isInner );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	public function assert_container_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertFalse( $top_level_container->isInner );
+		self::assertTrue( $top_level_container->elements[0]->isInner );
+		self::assertTrue( $top_level_container->elements[0]->elements[0]->isInner );
+		self::assertTrue( $top_level_container->elements[0]->elements[1]->isInner );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_nested_elements_not_affected( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertFalse( $top_level_container->isInner );
+		$widget = $top_level_container->elements[0];
+		self::assertFalse( $widget->elements[0]->isInner );
+		self::assertFalse( $widget->elements[1]->isInner );
+		self::assertFalse( $widget->elements[2]->isInner );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return mixed
+	 */
+	public function get_decoded_post_meta( $documents ) {
+		$post_meta = get_post_meta( $documents->get_main_id(), '_elementor_data' );
+		return json_decode( $post_meta[0] );
 	}
 }
