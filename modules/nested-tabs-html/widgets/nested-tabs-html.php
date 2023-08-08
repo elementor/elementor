@@ -655,6 +655,9 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			]
 		);
 
+		// To do: remove after we update the container styling from physical to logical properties.
+		$padding_physical_properties = '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};';
+
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -662,7 +665,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => $padding_physical_properties . '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
