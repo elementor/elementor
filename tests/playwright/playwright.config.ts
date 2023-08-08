@@ -3,16 +3,16 @@ import { resolve } from 'path';
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
 		return [
-			// /@reverse-columns/,
+			/@reverse-columns/,
 			/@nested-tabs/,
 			/@nested-tabs-html/,
-			// /@container/,
-			// /@nested-accordion/,
-			// /@styleguide_image_link/,
-			// /@elements-regression/,
-			// /@ai/,
-			// /@onBoarding/,
-			// /@video/,
+			/@container/,
+			/@nested-accordion/,
+			/@styleguide_image_link/,
+			/@elements-regression/,
+			/@ai/,
+			/@onBoarding/,
+			/@video/,
 		];
 	}
 	return [];
