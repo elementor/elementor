@@ -41,7 +41,7 @@ class Admin_Pointer {
 				$( '#toplevel_page_elementor' ).pointer( {
 					content: '<?php echo $pointer_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
 					position: {
-						edge: 'left',
+						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align: 'center'
 					},
 					close: function() {
