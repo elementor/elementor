@@ -421,7 +421,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => $padding_physical_properties . '--n-accordion-padding-block: {{TOP}}{{UNIT}} {{BOTTOM}}{{UNIT}}; --n-accordion-padding-inline: {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => "$padding_physical_properties --n-accordion-padding-block: {{TOP}}{{UNIT}} {{BOTTOM}}{{UNIT}}; --n-accordion-padding-inline: {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}};",
 				],
 			]
 		);
