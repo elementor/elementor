@@ -447,7 +447,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
 		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
-		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
+		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
 
 	}
 
