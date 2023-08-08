@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Connect from './pages/connect';
 import FormLayout from './pages/form-layout';
 import GetStarted from './pages/get-started';
@@ -13,7 +12,6 @@ import useIntroduction from './hooks/use-introduction';
 const LayoutContent = ( { onClose, onConnect, onGenerationStart, onGenerationEnd, onInsert, onSelect } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-no-images-info' );
-	const [ showInfoAlert, setShowInfoAlert ] = useState( () => ! isViewed );
 
 	if ( isLoading ) {
 		return (
@@ -71,13 +69,10 @@ const LayoutContent = ( { onClose, onConnect, onGenerationStart, onGenerationEnd
 				children: showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } />,
 			} }
 			DialogContentProps={ {
-				children: showInfoAlert && (
+				children: ! isViewed && (
 					<Alert
 						color="info"
-						onClose={ () => {
-							markAsViewed();
-							setShowInfoAlert( false );
-						} }
+						onClose={ markAsViewed }
 					>
 						{ __( "At the moment images are not included, but we're working on it! stay tuned.", 'elementor' ) }
 					</Alert>

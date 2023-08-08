@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export default function useIntroduction( key ) {
-	const [ isViewed, setIsViewed ] = useState( !! window.ElementorConfig?.user?.introduction?.[ key ] );
+	const [ isViewed, setIsViewed ] = useState( !! window.elementor?.config?.user?.introduction?.[ key ] );
 
 	function markAsViewed() {
 		if ( ! key ) {
@@ -13,14 +13,20 @@ export default function useIntroduction( key ) {
 				reject();
 			}
 
+			setIsViewed( true );
+
 			elementorCommon.ajax.addRequest( 'introduction_viewed', {
 				data: { introductionKey: key },
-				error: () => reject(),
+				error: () => {
+					setIsViewed( false );
+
+					reject();
+				},
 				success: () => {
 					setIsViewed( true );
 
-					if ( window.ElementorConfig?.user?.introduction ) {
-						window.ElementorConfig.user.introduction[ key ] = true;
+					if ( window.elementor?.config?.user?.introduction ) {
+						window.elementor.config.user.introduction[ key ] = true;
 					}
 
 					resolve();
