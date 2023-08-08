@@ -833,6 +833,31 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_16_0_container_updates( $updater ) {
+
+		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
+
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = self::maybe_convert_to_inner_containers( $data );
+
+			self::save_updated_document( $post_id, $data );
+		}
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 
@@ -885,4 +910,63 @@ class Upgrades {
 		$logger = Plugin::$instance->logger->get_logger();
 		$logger->notice( $message );
 	}
+
+	/**
+	 * @param \wpdb $wpdb
+	 * @param string $element_type
+	 *
+	 * @return array
+	 */
+	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
+		global $wpdb;
+
+		return $updater->query_col(
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data" 
+					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
+		);
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function maybe_convert_to_inner_containers( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+
+				if ( 'container' !== $element['elType'] || ! isset( $element['elements'] ) ) {
+					return $element;
+				}
+
+				foreach ( $element['elements'] as &$inner_element ) {
+					if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
+						$inner_element['isInner'] = true;
+					}
+				}
+
+				return $element;
+			}
+		);
+	}
+
+	/**
+	 * @param $post_id
+	 * @param $data
+	 *
+	 * @return void
+	 */
+	private static function save_updated_document( $post_id, $data ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		$document->save(
+			[
+				'elements' => $data,
+			]
+		);
+
+	}
+
 }
