@@ -12,31 +12,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * colors.
  *
  * @since 1.0.0
- * @deprecated 3.15.0 Use Global_Colors instead
+ * @deprecated 3.0.0 Use `Global_Colors` instead.
  */
 class Color {
 
 	/**
 	 * 1st color scheme.
-	 * @deprecated 3.15.0 Use Global_Colors::COLOR_PRIMARY instead
+	 * @deprecated 3.0.0 Use `Global_Colors::COLOR_PRIMARY` instead.
 	 */
 	const COLOR_1 = '1';
 
 	/**
 	 * 2nd color scheme.
-	 * @deprecated 3.15.0 Use Global_Colors::COLOR_SECONDARY instead
+	 * @deprecated 3.0.0 Use `Global_Colors::COLOR_SECONDARY` instead.
 	 */
 	const COLOR_2 = '2';
 
 	/**
 	 * 3rd color scheme.
-	 * @deprecated 3.15.0 Use Global_Colors::COLOR_TEXT instead
+	 * @deprecated 3.0.0 Use `Global_Colors::COLOR_TEXT` instead.
 	 */
 	const COLOR_3 = '3';
 
 	/**
 	 * 4th color scheme.
-	 * @deprecated 3.15.0 Use Global_Colors::COLOR_ACCENT instead
+	 * @deprecated 3.0.0 Use `Global_Colors::COLOR_ACCENT` instead.
 	 */
 	const COLOR_4 = '4';
 
@@ -48,7 +48,7 @@ class Color {
 	 * @since 1.0.0
 	 * @access public
 	 * @static
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Color scheme type.
 	 */
@@ -63,7 +63,7 @@ class Color {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Color scheme title.
 	 */
@@ -78,7 +78,7 @@ class Color {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Color scheme disabled title.
 	 */
@@ -93,7 +93,7 @@ class Color {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Color scheme titles.
 	 */
@@ -108,7 +108,7 @@ class Color {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Default color scheme.
 	 */
@@ -124,7 +124,7 @@ class Color {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 */
 	public function print_template_content() {}
 }
