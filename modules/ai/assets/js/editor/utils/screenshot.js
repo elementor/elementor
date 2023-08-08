@@ -28,7 +28,7 @@ export const takeScreenshots = async ( templates = [] ) => {
 		return toSvg( node );
 	} );
 
-	const screenshots = await Promise.all( promises );
+	const screenshots = await Promise.allSettled( promises );
 
 	deleteContainers( containers );
 
@@ -36,7 +36,15 @@ export const takeScreenshots = async ( templates = [] ) => {
 
 	toggleHistory( true );
 
-	return screenshots;
+	return screenshots.map( ( { status, value } ) => {
+		// Return placeholder image if the screenshot failed.
+		// TODO: Use a real image.
+		if ( 'rejected' === status ) {
+			return '';
+		}
+
+		return value;
+	} );
 };
 
 function createHiddenWrapper() {
@@ -69,7 +77,7 @@ function deleteContainers( containers ) {
 	} );
 }
 
-function waitForContainer( id, timeout = 2000 ) {
+function waitForContainer( id, timeout = 5000 ) {
 	const timeoutPromise = sleep( timeout );
 
 	const waitPromise = new Promise( ( resolve ) => {
@@ -98,7 +106,13 @@ function waitForImage( image ) {
 
 	return new Promise( ( resolve ) => {
 		image.addEventListener( 'load', resolve );
-		image.addEventListener( 'error', resolve );
+
+		image.addEventListener( 'error', () => {
+			// Remove the image to make sure it won't break the screenshot.
+			image.remove();
+
+			resolve();
+		} );
 	} );
 }
 
