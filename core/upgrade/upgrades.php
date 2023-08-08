@@ -853,6 +853,7 @@ class Upgrades {
 			}
 
 			$data = self::maybe_convert_to_inner_containers( $data );
+			$data = self::maybe_convert_to_grid_container( $data );
 
 			self::save_updated_document( $post_id, $data );
 		}
@@ -923,11 +924,10 @@ class Upgrades {
 		return $updater->query_col(
 			'SELECT `post_id`
 					FROM `' . $wpdb->postmeta . '`
-					WHERE `meta_key` = "_elementor_data" 
+					WHERE `meta_key` = "_elementor_data"
 					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
 		);
 	}
-
 	/**
 	 * @param $data
 	 *
@@ -946,6 +946,28 @@ class Upgrades {
 						$inner_element['isInner'] = true;
 					}
 				}
+
+				return $element;
+			}
+		);
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function maybe_convert_to_grid_container( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+
+				$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
+				if ( 'container' !== $element['elType'] || ! isset( $element['settings'] ) || ! $is_grid_container ) {
+					return $element;
+				}
+
+				$element['settings']['presetTitle'] = 'Grid';
+				$element['settings']['presetIcon'] = 'eicon-container-grid';
 
 				return $element;
 			}
