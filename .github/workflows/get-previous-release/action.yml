@@ -7,7 +7,7 @@ inputs:
     description: "The channel to get the version to (ga, cloud, beta)."
   POSTFIX:
     required: false
-    description: "The postfix that will be added to the package version -rc / -test / empty."
+    description: "The postfix that will be added to the package version -rc / -test / "" (empty string)."
 
 runs:
   using: "composite"
