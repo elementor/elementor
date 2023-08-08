@@ -1091,6 +1091,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
+			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1170,8 +1171,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
-			'role' => 'tablist',
 			'data-widget-number' => $widget_number,
+			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1203,7 +1204,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-n-tabs-content">
@@ -1216,9 +1217,9 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
@@ -1247,6 +1248,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
