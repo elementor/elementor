@@ -479,7 +479,7 @@ class Ai extends Library {
 	public function generate_layout( $prompt, $context = [] ) {
 		return $this->ai_request(
 			'POST',
-			'generate/layout',
+			'generate/layout-variations',
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),

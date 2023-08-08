@@ -33,7 +33,7 @@ const promptDialogStyleProps = {
 
 const DialogHeader = ( { onClose, children } ) => (
 	<DialogTitle sx={ { fontWeight: 'normal' } }>
-		<AIIcon fontSize="small" sx={ { mr: 3 } } />
+		<AIIcon fontSize="large" sx={ { mr: 3 } } />
 
 		<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
 			{ __( 'AI Builder', 'elementor' ) }

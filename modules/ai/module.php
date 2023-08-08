@@ -680,9 +680,16 @@ class Module extends BaseModule {
 			throw new \Exception( $result->get_error_message() );
 		}
 
+		// Normalizing the response data.
+		$templates_data = array_map( function( $template_data ) {
+			return $template_data['text']['elements'][0];
+		}, $result['generated_blocks'] );
+
 		return [
-			'all' => $result,
-			'text' => $result['text'],
+			'all' => [],
+			'text' => [
+				'elements' => $templates_data,
+			],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];

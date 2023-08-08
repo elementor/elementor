@@ -1,4 +1,4 @@
-import { toSvg } from 'html-to-image';
+import { toPng, toSvg } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -16,7 +16,17 @@ export const takeScreenshots = async ( templates = [] ) => {
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
-	const promises = containers.map( ( { view } ) => toSvg( view.$el[ 0 ] ) );
+	const promises = containers.map( ( { view } ) => {
+		const node = view.$el[ 0 ];
+		const isSafari = elementorFrontend.utils.environment.safari;
+
+		if ( isSafari ) {
+			// Safari doesn't work properly with rendering screenshots of SVGs.
+			return toPng( node );
+		}
+
+		return toSvg( node );
+	} );
 
 	const screenshots = await Promise.all( promises );
 
@@ -34,8 +44,7 @@ function createHiddenWrapper() {
 
 	wrapper.style.position = 'fixed';
 	wrapper.style.opacity = '0';
-	wrapper.style.top = '0';
-	wrapper.style.left = '0';
+	wrapper.style.inset = '0';
 
 	return wrapper;
 }
