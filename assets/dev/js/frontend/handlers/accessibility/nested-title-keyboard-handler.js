@@ -1,5 +1,8 @@
 import Base from '../base';
 
+const directionNext = 'next',
+	directionPrevious = 'previous';
+
 export default class NestedTitleKeyboardHandler extends Base {
 	getDefaultSettings() {
 		return {
@@ -15,10 +18,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndex: 'data-tab-index',
 			},
 			keyDirection: {
-				ArrowLeft: elementorFrontendConfig.is_rtl ? 'next' : 'previous',
-				ArrowUp: 'previous',
-				ArrowRight: elementorFrontendConfig.is_rtl ? 'previous' : 'next',
-				ArrowDown: 'next',
+				ArrowLeft: elementorFrontendConfig.is_rtl ? directionNext : directionPrevious,
+				ArrowUp: directionPrevious,
+				ArrowRight: elementorFrontendConfig.is_rtl ? directionPrevious : directionNext,
+				ArrowDown: directionNext,
 			},
 		};
 	}
@@ -38,7 +41,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	 * @return {string}
 	 */
 	getTitleIndex( itemTitleElement ) {
-		const indexAttribute = this.getSettings( 'datasets' ).titleIndex;
+		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
 		return itemTitleElement.getAttribute( indexAttribute );
 	}
 
@@ -48,7 +51,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	 * @return {string}
 	 */
 	getTitleFilterSelector( titleIndex ) {
-		const indexAttribute = this.getSettings( 'datasets' ).titleIndex;
+		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
 		return `[${ indexAttribute }="${ titleIndex }"]`;
 	}
 
@@ -101,7 +104,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				break;
 			default:
 				const direction = this.getSettings( 'keyDirection' )[ event.key ],
-					directionValue = 'next' === direction ? 1 : -1,
+					directionValue = directionNext === direction ? 1 : -1,
 					isEndReached = numberOfTitles < currentTitleIndex + directionValue,
 					isStartReached = 0 === currentTitleIndex + directionValue;
 
