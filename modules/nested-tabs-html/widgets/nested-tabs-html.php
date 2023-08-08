@@ -281,10 +281,10 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
-					'start',
-					'end',
 					'inline-start',
 					'inline-end',
+					'start',
+					'end',
 				],
 			],
 		] );
@@ -311,10 +311,10 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
-					'start',
-					'end',
 					'inline-start',
 					'inline-end',
+					'start',
+					'end',
 				],
 			],
 		] );

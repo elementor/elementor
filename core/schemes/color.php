@@ -53,7 +53,7 @@ class Color {
 	 * @return string Color scheme type.
 	 */
 	public static function get_type() {
-		return '';
+		return 'color';
 	}
 
 	/**
