@@ -434,7 +434,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 	public function test_v_3_16_0_container_updates() {
 
 		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
-		//Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
 
 		$documents = [];
 		$updater = $this->create_updater();
@@ -445,9 +445,9 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
-		$this->assert_container_changed( $this->get_decoded_post_meta( $documents[0] ) );
-		$this->assert_sections_not_changed( $this->get_decoded_post_meta( $documents[1] ) );
-		//$this->assert_nested_elements_not_affected( $this->get_decoded_post_meta( $documents[2] ) );
+		$this->assert_container_changed(  $documents[0]->get_json_meta('_elementor_data') );
+		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
+		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
 
 	}
 
@@ -482,8 +482,8 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 */
 	public function assert_sections_not_changed( $elementor_data ) {
 		$top_level_element = $elementor_data[0];
-		self::assertFalse( $top_level_element->isInner );
-		self::assertFalse( $top_level_element->elements[0]->isInner );
+		self::assertFalse( $top_level_element['isInner']);
+		self::assertFalse( $top_level_element['elements'][0]['isInner'] );
 	}
 
 	/**
@@ -493,10 +493,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 */
 	public function assert_container_changed( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
-		self::assertFalse( $top_level_container->isInner );
-		self::assertTrue( $top_level_container->elements[0]->isInner );
-		self::assertTrue( $top_level_container->elements[0]->elements[0]->isInner );
-		self::assertTrue( $top_level_container->elements[0]->elements[1]->isInner );
+		self::assertFalse( $top_level_container['isInner'] );
+		self::assertTrue( $top_level_container['elements'][0]['isInner'] );
+		self::assertTrue( $top_level_container['elements'][0]['elements'][0]['isInner'] );
+		self::assertTrue( $top_level_container['elements'][0]['elements'][1]['isInner'] );
 	}
 
 	/**
@@ -506,20 +506,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 */
 	private function assert_nested_elements_not_affected( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
-		self::assertFalse( $top_level_container->isInner );
-		$widget = $top_level_container->elements[0];
-		self::assertFalse( $widget->elements[0]->isInner );
-		self::assertFalse( $widget->elements[1]->isInner );
-		self::assertFalse( $widget->elements[2]->isInner );
-	}
-
-	/**
-	 * @param $documents
-	 *
-	 * @return mixed
-	 */
-	public function get_decoded_post_meta( $documents ) {
-		$post_meta = get_post_meta( $documents->get_main_id(), '_elementor_data' );
-		return json_decode( $post_meta[0] );
+		self::assertFalse( $top_level_container['isInner']);
+		$widget = $top_level_container['elements'][0];
+		self::assertFalse( $widget['elements'][0]['isInner'] );
+		self::assertFalse( $widget['elements'][1]['isInner'] );
+		self::assertFalse( $widget['elements'][2]['isInner']);
 	}
 }
