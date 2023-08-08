@@ -149,8 +149,16 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		if ( 'size' === dataChanged && this.isSliderInitialized() ) {
 			this.ui.slider[ 0 ].noUiSlider.set( this.getSize() );
 		} else if ( 'unit' === dataChanged ) {
+			this.handleUnitChange();
+		}
+	},
+
+	handleUnitChange() {
+		if ( ! this.isCustomUnit() ) {
 			this.resetSize();
 		}
+
+		this.maybeDoFractionToCustomConversions();
 	},
 
 	updateUnitChoices() {
@@ -168,6 +176,37 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		if ( ! this.isMultiple() ) {
 			this.ui.input.attr( 'type', inputType );
 		}
+	},
+
+	maybeDoFractionToCustomConversions() {
+		if ( this.isMultiple() ) {
+			return;
+		}
+
+		// We assume if the control only has units for 'fr' and 'custom' we want to convert the value.
+		const sizeUnits = this.model.get( 'size_units' ),
+			isFrToCustom = 2 === sizeUnits.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
+
+		if ( ! isFrToCustom ) {
+			return;
+		}
+
+		if ( this.isCustomUnit() ) {
+			this.setValue( 'size', this.convertSizeToFrString( this.getSize() ) );
+		} else {
+			this.setValue( 'size', this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size );
+		}
+
+		this.render();
+	},
+
+	convertSizeToFrString( size ) {
+		if ( 'number' !== typeof size || size <= 0 ) {
+			return size;
+		}
+
+		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
+		return frString;
 	},
 
 	onBeforeDestroy() {
