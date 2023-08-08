@@ -491,7 +491,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 *
 	 * @return void
 	 */
-	public function assert_containers_changed($elementor_data ) {
+	public function assert_containers_changed( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
 		// isInner Changes
 		self::assertFalse( $top_level_container['isInner'] );
@@ -501,10 +501,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		self::assertTrue( $inner_container['elements'][1]['isInner'] );
 
 		// Grid container Changes
-		self::assertEquals('Grid', $top_level_container['settings']['presetTitle'] );
+		self::assertEquals( 'Grid', $top_level_container['settings']['presetTitle'] );
 		self::assertEquals( 'eicon-container-grid', $top_level_container['settings']['presetIcon'] );
 
-		self::assertEquals('Container', $inner_container['settings']['presetTitle'] );
+		self::assertEquals( 'Container', $inner_container['settings']['presetTitle'] );
 		self::assertEquals( 'eicon-container', $inner_container['settings']['presetIcon'] );
 	}
 
