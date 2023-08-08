@@ -230,7 +230,7 @@ class Usage_Reporter extends Base {
 					<th>
 						<span> <?php echo esc_html( $name ); ?> <span>(<?php echo esc_html( $count ); ?>)</span></span>
 					</th>
-					<td style="--size: calc( <?php echo esc_attr( $count ); ?> / <?php echo esc_attr( $max_per_document ); ?> );">
+					<td style="--size: calc( <?php echo esc_attr( $count ); ?> / <?php echo esc_attr( $max_per_widget ); ?> );">
 						<span class="data"><?php echo esc_html( $count ); ?></span>
 					</td>
 				</tr>
