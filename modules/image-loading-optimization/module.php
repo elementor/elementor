@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	private $min_priority_img_pixels = 50000;
+
 	public function get_name() {
 		return 'image-loading-optimization';
 	}
@@ -201,9 +203,7 @@ class Module extends BaseModule {
 		if ( $increase_count ) {
 			$this->increase_content_media_count();
 		} elseif ( $maybe_increase_count ) {
-			$min_priority_img_pixels = apply_filters( 'min_priority_img_pixels', 50000 );
-
-			if ( $min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
+			if ( $this->min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
 				$this->increase_content_media_count();
 			}
 		}
@@ -246,15 +246,7 @@ class Module extends BaseModule {
 			return $loading_attrs;
 		}
 
-		/**
-		 * Filters the minimum square-pixels threshold for an image to be eligible as the high-priority image.
-		 *
-		 * @since 6.3.0
-		 *
-		 * @param int $threshold Minimum square-pixels threshold. Default 50000.
-		 */
-		$min_priority_img_pixels = apply_filters( 'min_priority_img_pixels', 50000 );
-		if ( $min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
+		if ( $this->min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
 			$loading_attrs['fetchpriority'] = 'high';
 			$this->high_priority_element_flag( false );
 		}
