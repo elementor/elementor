@@ -1091,6 +1091,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
+			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1170,8 +1171,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
-			'role' => 'tablist',
 			'data-widget-number' => $widget_number,
+			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1202,8 +1203,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			$tab_containers_html .= $this->render_tab_containers_html( $item_settings );
 		}
 		?>
-        <div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-            <div class="e-n-tabs-heading">
+		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
             </div>
             <div class="e-n-tabs-content">
@@ -1215,66 +1216,68 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-        <# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-        <div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
-            <# if ( settings['tabs'] ) { #>
-            <div class="e-n-tabs-heading">
-                <# _.each( settings['tabs'], function( item, index ) {
-                const tabCount = index + 1,
-                tabUid = elementUid + tabCount,
-                tabWrapperKey = tabUid,
-                tabTitleKey = 'tab-title-' + tabUid,
-                tabIconKey = 'tab-icon-' + tabUid,
-                tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-                hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
 
-                let tabActiveIcon = tabIcon,
-                tabId = 'e-n-tab-title-' + tabUid;
+		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
+			<# if ( settings['tabs'] ) { #>
+			<div class="e-n-tabs-heading" role="tablist">
+				<# _.each( settings['tabs'], function( item, index ) {
+				const tabCount = index + 1,
+					tabUid = elementUid + tabCount,
+					tabWrapperKey = tabUid,
+					tabTitleKey = 'tab-title-' + tabUid,
+					tabIconKey = 'tab-icon-' + tabUid,
+					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
 
-                if ( '' !== item.tab_icon_active.value ) {
-                tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
-                }
+				let tabActiveIcon = tabIcon,
+					tabId = 'e-n-tab-title-' + tabUid;
 
-                if ( '' !== item.element_id ) {
-                tabId = item.element_id;
-                }
+				if ( '' !== item.tab_icon_active.value ) {
+					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+				}
 
-                view.addRenderAttribute( tabWrapperKey, {
-                'id': tabId,
-                'class': [ 'e-n-tab-title',hoverAnimationClass ],
-                'data-tab-index': tabCount,
-                'role': 'tab',
-                'aria-selected': 1 === tabCount ? 'true' : 'false',
-                'tabindex': 1 === tabCount ? '0' : '-1',
-                'aria-controls': 'e-n-tab-content-' + tabUid,
-                'style': '--n-tabs-title-order: ' + tabCount + ';',
-                } );
+				if ( '' !== item.element_id ) {
+					tabId = item.element_id;
+				}
 
-                view.addRenderAttribute( tabTitleKey, {
-                'class': [ 'e-n-tab-title-text' ],
-                'data-binding-type': 'repeater-item',
-                'data-binding-repeater-name': 'tabs',
-                'data-binding-setting': [ 'tab_title' ],
-                'data-binding-index': tabCount,
-                } );
+				view.addRenderAttribute( tabWrapperKey, {
+					'id': tabId,
+					'class': [ 'e-n-tab-title',hoverAnimationClass ],
+					'data-tab-index': tabCount,
+					'role': 'tab',
+					'aria-selected': 1 === tabCount ? 'true' : 'false',
+					'tabindex': 1 === tabCount ? '0' : '-1',
+					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
+					'style': '--n-tabs-title-order: ' + tabCount + ';',
+				} );
 
-                view.addRenderAttribute( tabIconKey, {
-                'class': [ 'e-n-tab-icon' ],
-                'data-binding-type': 'repeater-item',
-                'data-binding-repeater-name': 'tabs',
-                'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
-                'data-binding-index': tabCount,
-                } );
-                #>
-                <button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
-                    <span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
-                    <span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
-                </button>
-                <# } ); #>
-            </div>
-            <div class="e-n-tabs-content"></div>
-            <# } #>
-        </div>
+				view.addRenderAttribute( tabTitleKey, {
+					'class': [ 'e-n-tab-title-text' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_title' ],
+					'data-binding-index': tabCount,
+				} );
+
+				view.addRenderAttribute( tabIconKey, {
+					'class': [ 'e-n-tab-icon' ],
+					'data-binding-type': 'repeater-item',
+					'data-binding-repeater-name': 'tabs',
+					'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
+					'data-binding-index': tabCount,
+				} );
+				#>
+				<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
+					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
+				</button>
+				<# } ); #>
+			</div>
+			<div class="e-n-tabs-content"></div>
+			<# } #>
+		</div>
 		<?php
 	}
 
