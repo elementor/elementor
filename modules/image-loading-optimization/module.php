@@ -18,7 +18,7 @@ class Module extends BaseModule {
 
 		add_action( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
 		add_action( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
-		add_filter( 'elementor/frontend/the_content', [ $this, 'filter_images' ], 100, 1 );
+		add_filter( 'the_content', [ $this, 'filter_images' ], 10, 1 );
 	}
 
 	public function remove_get_attachment_loading_attributes( $attr, $attachment, $size ) {
@@ -43,7 +43,6 @@ class Module extends BaseModule {
 	
 		// List of the unique `img` tags found in $content.
 		$images = array();
-		
 
 		foreach ( $matches as $match ) {
 			$tag = $match[0];
@@ -56,7 +55,6 @@ class Module extends BaseModule {
 							* All identical tags will be replaced later with 'str_replace()'.
 							*/
 						$images[ $tag ] = $attachment_id;
-						break;
 					}
 			}
 			$images[ $tag ] = 0;
@@ -72,7 +70,7 @@ class Module extends BaseModule {
 			*/
 			_prime_post_caches( $attachment_ids, false, true );
 		}
-	
+
 		// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
 		foreach ( $matches as $match ) {
 			// Filter an image match.
@@ -93,13 +91,16 @@ class Module extends BaseModule {
 				unset( $images[ $match[0] ] );
 			}
 		}
+
 		return $content;
 	}
 
 	private function add_loading_optimization_attrs( $image ) {
 		$width             = preg_match( '/ width=["\']([0-9]+)["\']/', $image, $match_width ) ? (int) $match_width[1] : null;
 		$height            = preg_match( '/ height=["\']([0-9]+)["\']/', $image, $match_height ) ? (int) $match_height[1] : null;
-
+		$loading_val       = preg_match( '/ loading=["\']([A-Za-z]+)["\']/', $image, $match_loading ) ? $match_loading[1] : null;
+		$fetchpriority_val = preg_match( '/ fetchpriority=["\']([A-Za-z]+)["\']/', $image, $match_fetchpriority ) ? $match_fetchpriority[1] : null;
+	
 		// Images should have height and dimension width for the loading optimization attributes to be added.
 		if ( ! str_contains( $image, ' width="' ) || ! str_contains( $image, ' height="' ) ) {
 			return $image;
@@ -109,6 +110,8 @@ class Module extends BaseModule {
 			array(
 				'width'         => $width,
 				'height'        => $height,
+				'loading'       => $loading_val,
+				'fetchpriority' => $fetchpriority_val,
 			)
 		);
 		
@@ -198,7 +201,7 @@ class Module extends BaseModule {
 		if ( $increase_count ) {
 			$this->increase_content_media_count();
 		} elseif ( $maybe_increase_count ) {
-			$min_priority_img_pixels = 50000;
+			$min_priority_img_pixels = apply_filters( 'min_priority_img_pixels', 50000 );
 	
 			if ( $min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
 				$this->increase_content_media_count();
@@ -243,7 +246,14 @@ class Module extends BaseModule {
 			return $loading_attrs;
 		}
 	
-		$min_priority_img_pixels = 50000;
+		/**
+		 * Filters the minimum square-pixels threshold for an image to be eligible as the high-priority image.
+		 *
+		 * @since 6.3.0
+		 *
+		 * @param int $threshold Minimum square-pixels threshold. Default 50000.
+		 */
+		$min_priority_img_pixels = apply_filters( 'min_priority_img_pixels', 50000 );
 		if ( $min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
 			$loading_attrs['fetchpriority'] = 'high';
 			$this->high_priority_element_flag( false );
