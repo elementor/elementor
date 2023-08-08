@@ -40,7 +40,7 @@ class Module extends BaseModule {
 		if ( ! preg_match_all( '/<img\s[^>]+>/', $content, $matches, PREG_SET_ORDER ) ) {
 			return $content;
 		}
-	
+
 		// List of the unique `img` tags found in $content.
 		$images = array();
 
@@ -49,13 +49,13 @@ class Module extends BaseModule {
 			if ( preg_match( '/wp-image-([0-9]+)/i', $tag, $class_id ) ) {
 					$attachment_id = absint( $class_id[1] );
 
-					if ( $attachment_id ) {
-						/*
-							* If exactly the same image tag is used more than once, overwrite it.
-							* All identical tags will be replaced later with 'str_replace()'.
-							*/
-						$images[ $tag ] = $attachment_id;
-					}
+				if ( $attachment_id ) {
+					/*
+						* If exactly the same image tag is used more than once, overwrite it.
+						* All identical tags will be replaced later with 'str_replace()'.
+						*/
+					$images[ $tag ] = $attachment_id;
+				}
 			}
 			$images[ $tag ] = 0;
 		}
@@ -100,12 +100,12 @@ class Module extends BaseModule {
 		$height            = preg_match( '/ height=["\']([0-9]+)["\']/', $image, $match_height ) ? (int) $match_height[1] : null;
 		$loading_val       = preg_match( '/ loading=["\']([A-Za-z]+)["\']/', $image, $match_loading ) ? $match_loading[1] : null;
 		$fetchpriority_val = preg_match( '/ fetchpriority=["\']([A-Za-z]+)["\']/', $image, $match_fetchpriority ) ? $match_fetchpriority[1] : null;
-	
+
 		// Images should have height and dimension width for the loading optimization attributes to be added.
 		if ( ! str_contains( $image, ' width="' ) || ! str_contains( $image, ' height="' ) ) {
 			return $image;
 		}
-		
+
 		$optimization_attrs = $this->get_loading_optimization_attributes(
 			array(
 				'width'         => $width,
@@ -114,7 +114,7 @@ class Module extends BaseModule {
 				'fetchpriority' => $fetchpriority_val,
 			)
 		);
-		
+
 		if ( ! empty( $optimization_attrs['fetchpriority'] ) ) {
 			$image = str_replace( '<img', '<img fetchpriority="' . esc_attr( $optimization_attrs['fetchpriority'] ) . '"', $image );
 		}
@@ -128,7 +128,7 @@ class Module extends BaseModule {
 
 	private function get_loading_optimization_attributes( $attr ) {
 		$loading_attrs = array();
-	
+
 		// For any resources, width and height must be provided, to avoid layout shifts.
 		if ( ! isset( $attr['width'], $attr['height'] ) ) {
 			return $loading_attrs;
@@ -140,7 +140,7 @@ class Module extends BaseModule {
 		$maybe_in_viewport    = null;
 		$increase_count       = false;
 		$maybe_increase_count = false;
-	
+
 		// Logic to handle a `loading` attribute that is already provided.
 		if ( isset( $attr['loading'] ) ) {
 			/*
@@ -154,7 +154,7 @@ class Module extends BaseModule {
 				$maybe_in_viewport = true;
 			}
 		}
-	
+
 		// Logic to handle a `fetchpriority` attribute that is already provided.
 		if ( isset( $attr['fetchpriority'] ) && 'high' === $attr['fetchpriority'] ) {
 			/*
@@ -179,7 +179,7 @@ class Module extends BaseModule {
 				$maybe_in_viewport = true;
 			}
 		}
-	
+
 		if ( null === $maybe_in_viewport ) {
 			if ( ! is_admin() ) {
 				$content_media_count = $this->increase_content_media_count( 0 );
@@ -197,25 +197,25 @@ class Module extends BaseModule {
 		} else {
 			$loading_attrs['loading'] = 'lazy';
 		}
-	
+
 		if ( $increase_count ) {
 			$this->increase_content_media_count();
 		} elseif ( $maybe_increase_count ) {
 			$min_priority_img_pixels = apply_filters( 'min_priority_img_pixels', 50000 );
-	
+
 			if ( $min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
 				$this->increase_content_media_count();
 			}
 		}
-	
+
 		return $loading_attrs;
 	}
 
 	private function increase_content_media_count( $amount = 1 ) {
 		static $content_media_count = 0;
-	
+
 		$content_media_count += $amount;
-	
+
 		return $content_media_count;
 	}
 
@@ -224,7 +224,7 @@ class Module extends BaseModule {
 		if ( ! isset( $omit_threshold ) || $force ) {
 			$omit_threshold = 3;
 		}
-	
+
 		return $omit_threshold;
 	}
 
@@ -236,16 +236,16 @@ class Module extends BaseModule {
 			}
 			return $loading_attrs;
 		}
-	
+
 		// Lazy-loading and `fetchpriority="high"` are mutually exclusive.
 		if ( isset( $loading_attrs['loading'] ) && 'lazy' === $loading_attrs['loading'] ) {
 			return $loading_attrs;
 		}
-	
+
 		if ( ! $this->high_priority_element_flag() ) {
 			return $loading_attrs;
 		}
-	
+
 		/**
 		 * Filters the minimum square-pixels threshold for an image to be eligible as the high-priority image.
 		 *
@@ -263,7 +263,7 @@ class Module extends BaseModule {
 
 	private function high_priority_element_flag( $value = null ) {
 		static $high_priority_element = true;
-	
+
 		if ( is_bool( $value ) ) {
 			$high_priority_element = $value;
 		}
