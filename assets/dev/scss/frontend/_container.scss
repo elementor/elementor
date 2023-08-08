@@ -45,8 +45,8 @@
 	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin-top, var( --margin-block-start ) ) var( --margin-right, var( --margin-inline-end ) ) var( --margin-bottom, var( --margin-block-end ) ) var( --margin-left, var( --margin-inline-start ) );
-	padding-inline-start: var( --padding-left, var( --padding-inline-start ) );
-	padding-inline-end: var( --padding-right, var( --padding-inline-end ) );
+	padding-inline-start: var( --padding-inline-start, var( --padding-left ) );
+	padding-inline-end: var( --padding-inline-end, var( --padding-right ) );
 	z-index: var( --z-index );
 	overflow: var( --overflow );
 	transition: background var( --background-transition, 0.3s ), border var( --border-transition, 0.3s ), box-shadow var( --border-transition, 0.3s ), transform var( --e-con-transform-transition-duration, 0.4s );
@@ -62,8 +62,8 @@
 	&-full,
 	& > .e-con-inner {
 		text-align: var( --text-align );
-		padding-block-start: var( --padding-top, var( --padding-block-start ) );
-		padding-block-end: var( --padding-bottom, var( --padding-block-end ) );
+		padding-block-start: var( --padding-block-start, var( --padding-top ) );
+		padding-block-end: var( --padding-block-end, var( --padding-bottom ) );
 	}
 
 	&-full.e-flex,

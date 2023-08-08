@@ -173,25 +173,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
+				'block-start' => $styling_block_start,
+				'block-end' => $styling_block_end,
+				'inline-end' => $styling_inline_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'end' => $styling_inline_end,
@@ -235,6 +240,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'condition' => [
 				'tabs_direction' => [
 					'',
+					'block-start',
+					'block-end',
 					'top',
 					'bottom',
 				],
@@ -274,6 +281,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -302,6 +311,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -363,6 +374,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'condition' => [
 					'tabs_direction' => [
 						'',
+						'block-start',
+						'block-end',
 						'top',
 						'bottom',
 					],
@@ -386,7 +399,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			}
 
 			$dropdown_options[ $breakpoint_key ] = sprintf(
-				/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
+			/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
 				esc_html__( '%1$s (%2$s %3$dpx)', 'elementor' ),
 				$breakpoint_instance->get_label(),
 				'>',
@@ -655,9 +668,6 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			]
 		);
 
-		// To do: remove after we update the container styling from physical to logical properties.
-		$padding_physical_properties = '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};';
-
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -665,7 +675,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => $padding_physical_properties . '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -851,25 +861,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'selectors_dictionary' => [
 				// The toggle variables for 'align items' and 'justify content' have been added to separate the styling of the two 'flex direction' modes.
+				'block-start' => $styling_block_start,
+				'inline-end' => $styling_inline_end,
+				'block-end' => $styling_block_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'start' => $styling_inline_start,
@@ -1051,7 +1066,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => $padding_physical_properties . '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
+					$nested_tabs_content_selector_class => "$padding_physical_properties --padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};",
 				],
 			]
 		);
@@ -1092,15 +1107,15 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-			<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+        <button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
-				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+            <span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php echo esc_html( $title ); ?>
 				</span>
-			</button>
+        </button>
 		<?php
 		return ob_get_clean();
 	}
@@ -1187,79 +1202,79 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			$tab_containers_html .= $this->render_tab_containers_html( $item_settings );
 		}
 		?>
-		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-			<div class="e-n-tabs-heading">
+        <div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
+            <div class="e-n-tabs-heading">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
-			<div class="e-n-tabs-content">
+            </div>
+            <div class="e-n-tabs-content">
 				<?php echo $tab_containers_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
-		</div>
+            </div>
+        </div>
 		<?php
 	}
 
 	protected function content_template() {
 		?>
-		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
-			<# if ( settings['tabs'] ) { #>
-			<div class="e-n-tabs-heading">
-				<# _.each( settings['tabs'], function( item, index ) {
-				const tabCount = index + 1,
-					tabUid = elementUid + tabCount,
-					tabWrapperKey = tabUid,
-					tabTitleKey = 'tab-title-' + tabUid,
-					tabIconKey = 'tab-icon-' + tabUid,
-					tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-					hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
+        <# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+        <div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
+            <# if ( settings['tabs'] ) { #>
+            <div class="e-n-tabs-heading">
+                <# _.each( settings['tabs'], function( item, index ) {
+                const tabCount = index + 1,
+                tabUid = elementUid + tabCount,
+                tabWrapperKey = tabUid,
+                tabTitleKey = 'tab-title-' + tabUid,
+                tabIconKey = 'tab-icon-' + tabUid,
+                tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+                hoverAnimationClass = settings['hover_animation'] ? `elementor-animation-${ settings['hover_animation'] }` : '';
 
-				let tabActiveIcon = tabIcon,
-					tabId = 'e-n-tab-title-' + tabUid;
+                let tabActiveIcon = tabIcon,
+                tabId = 'e-n-tab-title-' + tabUid;
 
-				if ( '' !== item.tab_icon_active.value ) {
-					tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
-				}
+                if ( '' !== item.tab_icon_active.value ) {
+                tabActiveIcon = elementor.helpers.renderIcon( view, item.tab_icon_active, { 'aria-hidden': true }, 'i' , 'object' );
+                }
 
-				if ( '' !== item.element_id ) {
-					tabId = item.element_id;
-				}
+                if ( '' !== item.element_id ) {
+                tabId = item.element_id;
+                }
 
-				view.addRenderAttribute( tabWrapperKey, {
-					'id': tabId,
-					'class': [ 'e-n-tab-title',hoverAnimationClass ],
-					'data-tab-index': tabCount,
-					'role': 'tab',
-					'aria-selected': 1 === tabCount ? 'true' : 'false',
-					'tabindex': 1 === tabCount ? '0' : '-1',
-					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'style': '--n-tabs-title-order: ' + tabCount + ';',
-				} );
+                view.addRenderAttribute( tabWrapperKey, {
+                'id': tabId,
+                'class': [ 'e-n-tab-title',hoverAnimationClass ],
+                'data-tab-index': tabCount,
+                'role': 'tab',
+                'aria-selected': 1 === tabCount ? 'true' : 'false',
+                'tabindex': 1 === tabCount ? '0' : '-1',
+                'aria-controls': 'e-n-tab-content-' + tabUid,
+                'style': '--n-tabs-title-order: ' + tabCount + ';',
+                } );
 
-				view.addRenderAttribute( tabTitleKey, {
-					'class': [ 'e-n-tab-title-text' ],
-					'data-binding-type': 'repeater-item',
-					'data-binding-repeater-name': 'tabs',
-					'data-binding-setting': [ 'tab_title' ],
-					'data-binding-index': tabCount,
-				} );
+                view.addRenderAttribute( tabTitleKey, {
+                'class': [ 'e-n-tab-title-text' ],
+                'data-binding-type': 'repeater-item',
+                'data-binding-repeater-name': 'tabs',
+                'data-binding-setting': [ 'tab_title' ],
+                'data-binding-index': tabCount,
+                } );
 
-				view.addRenderAttribute( tabIconKey, {
-					'class': [ 'e-n-tab-icon' ],
-					'data-binding-type': 'repeater-item',
-					'data-binding-repeater-name': 'tabs',
-					'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
-					'data-binding-index': tabCount,
-				} );
-				#>
-				<button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
-					<span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
-					<span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
-				</button>
-				<# } ); #>
-			</div>
-			<div class="e-n-tabs-content"></div>
-			<# } #>
-		</div>
+                view.addRenderAttribute( tabIconKey, {
+                'class': [ 'e-n-tab-icon' ],
+                'data-binding-type': 'repeater-item',
+                'data-binding-repeater-name': 'tabs',
+                'data-binding-setting': [ 'tab_icon.value', 'tab_icon_active.value' ],
+                'data-binding-index': tabCount,
+                } );
+                #>
+                <button {{{ view.getRenderAttributeString( tabWrapperKey ) }}}>
+                    <span {{{ view.getRenderAttributeString( tabIconKey ) }}}>{{{ tabIcon.value }}}{{{ tabActiveIcon.value }}}</span>
+                    <span {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</span>
+                </button>
+                <# } ); #>
+            </div>
+            <div class="e-n-tabs-content"></div>
+            <# } #>
+        </div>
 		<?php
 	}
 
