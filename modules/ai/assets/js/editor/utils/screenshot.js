@@ -59,9 +59,14 @@ function createHiddenWrapper() {
 
 function createContainers( templates ) {
 	return templates.map( ( template ) => {
+		const model = generateIds( template );
+
+		// Set a custom ID, so it can be used later on in the backend.
+		model.id = `e-ai-screenshot-container-${ model.id }`;
+
 		return $e.run( 'document/elements/create', {
 			container: elementor.getPreviewContainer(),
-			model: generateIds( template ),
+			model,
 			options: {
 				edit: false,
 			},

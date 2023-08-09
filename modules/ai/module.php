@@ -46,7 +46,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
 			$this->enqueue_main_script();
 
-			if ( $this->should_enqueue_layout() ) {
+			if ( $this->is_layout_active() ) {
 				$this->enqueue_layout_script();
 			}
 		} );
@@ -61,7 +61,7 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/preview/enqueue_styles', function() {
-			if ( $this->should_enqueue_layout() ) {
+			if ( $this->is_layout_active() ) {
 				wp_enqueue_style(
 					'elementor-ai-layout-preview',
 					$this->get_css_assets_url( 'modules/ai/layout-preview' ),
@@ -69,6 +69,14 @@ class Module extends BaseModule {
 					ELEMENTOR_VERSION
 				);
 			}
+		} );
+
+		add_filter( 'elementor/document/save/data', function ( $data ) {
+			if ( $this->is_layout_active() ) {
+				return $this->remove_temporary_containers( $data );
+			}
+
+			return $data;
 		} );
 	}
 
@@ -125,8 +133,25 @@ class Module extends BaseModule {
 		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
 	}
 
-	private function should_enqueue_layout() {
+	private function is_layout_active() {
 		return Plugin::$instance->experiments->is_feature_active( 'container' );
+	}
+
+	private function remove_temporary_containers( $data ) {
+		if ( empty( $data['elements'] ) ) {
+			return $data;
+		}
+
+		// If for some reason the document has been saved during an AI Layout session,
+		// ensure that the temporary containers are removed from the data.
+		$data['elements'] = array_filter( $data['elements'], function( $element ) {
+			$is_preview_container = 'e-ai-preview-container' === $element['id'];
+			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
+
+			return ! $is_preview_container && ! $is_screenshot_container;
+		} );
+
+		return $data;
 	}
 
 	private function get_ai_connect_url() {
