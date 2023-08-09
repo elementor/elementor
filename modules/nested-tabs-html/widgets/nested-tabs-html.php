@@ -173,25 +173,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
+				'block-start' => $styling_block_start,
+				'block-end' => $styling_block_end,
+				'inline-end' => $styling_inline_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'end' => $styling_inline_end,
@@ -235,6 +240,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'condition' => [
 				'tabs_direction' => [
 					'',
+					'block-start',
+					'block-end',
 					'top',
 					'bottom',
 				],
@@ -274,6 +281,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -302,6 +311,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -363,6 +374,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'condition' => [
 					'tabs_direction' => [
 						'',
+						'block-start',
+						'block-end',
 						'top',
 						'bottom',
 					],
@@ -848,25 +861,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'selectors_dictionary' => [
 				// The toggle variables for 'align items' and 'justify content' have been added to separate the styling of the two 'flex direction' modes.
+				'block-start' => $styling_block_start,
+				'inline-end' => $styling_inline_end,
+				'block-end' => $styling_block_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'start' => $styling_inline_start,
@@ -1073,6 +1091,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
+			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1152,8 +1171,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
-			'role' => 'tablist',
 			'data-widget-number' => $widget_number,
+			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1185,7 +1204,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-n-tabs-content">
@@ -1198,9 +1217,9 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" role="tablist" data-widget-number="{{ elementUid }}">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
-			<div class="e-n-tabs-heading">
+			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
 				const tabCount = index + 1,
 					tabUid = elementUid + tabCount,
@@ -1229,6 +1248,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
