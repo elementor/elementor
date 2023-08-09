@@ -22,7 +22,7 @@ const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
 ] );
 
-const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect, DialogHeaderProps = {} } ) => {
+const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
 	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
 
 	const [ prompt, setPrompt ] = useState( '' );
@@ -44,6 +44,8 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
 
 	const hasUnsavedChanges = prompt !== '' || templatesData?.length > 0;
+
+	const { children: dialogContentChildren, ...dialogContentProps } = DialogContentProps;
 
 	const onCloseIntent = () => {
 		if ( hasUnsavedChanges ) {
@@ -106,7 +108,13 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 		<LayoutDialog onClose={ onCloseIntent }>
 			<LayoutDialog.Header onClose={ onCloseIntent } { ...DialogHeaderProps } />
 
-			<LayoutDialog.Content dividers>
+			<LayoutDialog.Content dividers { ...dialogContentProps }>
+				{ dialogContentChildren && (
+					<Box sx={ { pt: 5, px: 5, pb: 0 } }>
+						{ dialogContentChildren }
+					</Box>
+				) }
+
 				{ error && (
 					<Box sx={ { pt: 5, px: 5, pb: 0 } }>
 						<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
@@ -215,6 +223,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 FormLayout.propTypes = {
 	DialogHeaderProps: PropTypes.object,
+	DialogContentProps: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onGenerationStart: PropTypes.func.isRequired,
