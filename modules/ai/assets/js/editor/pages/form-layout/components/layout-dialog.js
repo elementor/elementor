@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { DialogTitle, Typography, Stack, IconButton, styled } from '@elementor/ui';
 import StyledChip from '../../../components/ui/styled-chip';
 import PromptDialog from '../../../components/prompt-dialog';
@@ -51,7 +52,44 @@ const StyledDialogContent = styled( PromptDialog.Content )( () => ( {
 	},
 } ) );
 
-const LayoutDialog = ( props ) => <StyledDialog maxWidth="md" { ...props } />;
+const LayoutDialog = ( { sx = {}, PaperProps = {}, ...props } ) => {
+	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
+	const timeoutRef = useRef( null );
+
+	/**
+	 * The PromptDialog is using disableScrollLock in order to allow scrolling the page when the Dialog is opened.
+	 * When using the react-draggable library inside the editor, the background page scroll is not working smoothly.
+	 * Therefore, we need to delay the pointerEvents: none, which allowing to scroll the page content.
+	 */
+	return (
+		<StyledDialog
+			maxWidth="md"
+			PaperProps={ {
+				sx: { pointerEvents: 'auto' },
+				onMouseEnter: () => {
+					clearTimeout( timeoutRef.current );
+
+					setSxStyle( { pointerEvents: 'all' } );
+				},
+				onMouseLeave: () => {
+					clearTimeout( timeoutRef.current );
+
+					timeoutRef.current = setTimeout( () => {
+						setSxStyle( { pointerEvents: 'none' } );
+					}, 200 );
+				},
+				...PaperProps,
+			} }
+			{ ...props }
+			sx={ { ...sxStyle, ...sx } }
+		/>
+	);
+};
+
+LayoutDialog.propTypes = {
+	sx: PropTypes.object,
+	PaperProps: PropTypes.object,
+};
 
 LayoutDialog.Header = DialogHeader;
 LayoutDialog.Content = StyledDialogContent;
