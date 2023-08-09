@@ -16,7 +16,7 @@ export const takeScreenshots = async ( templates = [] ) => {
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
-	const promises = containers.map( ( { view } ) => toPng( view.$el[ 0 ] ) );
+	const promises = containers.map( ( { view } ) => screenshotNode( view.$el[ 0 ] ) );
 
 	const screenshots = await Promise.allSettled( promises );
 
@@ -35,6 +35,13 @@ export const takeScreenshots = async ( templates = [] ) => {
 		return value;
 	} );
 };
+
+function screenshotNode( node ) {
+	return toPng( node, {
+		// Gray pixel.
+		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8dPrSfwAIFgNgET5chAAAAABJRU5ErkJggg==',
+	} );
+}
 
 function createHiddenWrapper() {
 	const wrapper = document.createElement( 'div' );
