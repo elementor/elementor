@@ -3,6 +3,7 @@ namespace Elementor\Modules\Ai;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
 use Elementor\User;
@@ -647,9 +648,10 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$context = $this->get_request_context( $data );
-
-		$result = $app->generate_layout( $data['prompt'], $context );
+		$result = $app->generate_layout(
+			$data['prompt'],
+			$this->prepare_generate_layout_context()
+		);
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -667,6 +669,73 @@ class Module extends BaseModule {
 			],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
+		];
+	}
+
+	private function prepare_generate_layout_context() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return [];
+		}
+
+		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
+
+		$colors = $kits_data
+			->filter( function ( $_, $key ) {
+				return in_array( $key, [ 'system_colors', 'custom_colors' ], true );
+			} )
+			->flatten()
+			->filter( function ( $val ) {
+				return ! empty( $val['_id'] );
+			} )
+			->map( function ( $val ) {
+				return [
+					'id' => $val['_id'],
+					'label' => $val['title'] ?? null,
+					'value' => $val['color'] ?? null,
+				];
+			} );
+
+		$typography = $kits_data
+			->filter( function ( $_, $key ) {
+				return in_array( $key, [ 'system_typography', 'custom_typography' ], true );
+			} )
+			->flatten()
+			->filter( function ( $val ) {
+				return ! empty( $val['_id'] );
+			} )
+			->map( function ( $val ) {
+				$font_size = null;
+
+				if (
+					isset( $val['typography_font_size']['unit'] ) &&
+					isset( $val['typography_font_size']['size'] )
+				) {
+					$prop = $val['typography_font_size'];
+
+					$font_size = 'custom' === $prop['unit']
+						? $prop['size']
+						: $prop['size'] . $prop['unit'];
+				}
+
+				return [
+					'id' => $val['_id'],
+					'label' => $val['title'] ?? null,
+					'value' => [
+						'family' => $val['typography_font_family'] ?? null,
+						'weight' => $val['typography_font_weight'] ?? null,
+						'style' => $val['typography_font_style'] ?? null,
+						'size' => $font_size,
+					],
+				];
+			} );
+
+		return [
+			'globals' => [
+				'colors' => $colors->all(),
+				'typography' => $typography->all(),
+			],
 		];
 	}
 
