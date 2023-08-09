@@ -53,7 +53,7 @@ const StyledDialogContent = styled( PromptDialog.Content )( () => ( {
 } ) );
 
 const LayoutDialog = ( { sx = {}, PaperProps = {}, ...props } ) => {
-	const [ sxStyle, setSxStyle ] = useState( {} );
+	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
 	const timeoutRef = useRef( null );
 
 	/**
