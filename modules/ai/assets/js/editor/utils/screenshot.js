@@ -1,4 +1,4 @@
-import { toPng, toSvg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -16,17 +16,7 @@ export const takeScreenshots = async ( templates = [] ) => {
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
-	const promises = containers.map( ( { view } ) => {
-		const node = view.$el[ 0 ];
-		const isSafari = elementorFrontend.utils.environment.safari;
-
-		if ( isSafari ) {
-			// Safari doesn't work properly with rendering screenshots of SVGs.
-			return toPng( node );
-		}
-
-		return toSvg( node );
-	} );
+	const promises = containers.map( ( { view } ) => toPng( view.$el[ 0 ] ) );
 
 	const screenshots = await Promise.allSettled( promises );
 
@@ -37,8 +27,7 @@ export const takeScreenshots = async ( templates = [] ) => {
 	toggleHistory( true );
 
 	return screenshots.map( ( { status, value } ) => {
-		// Return placeholder image if the screenshot failed.
-		// TODO: Use a real image.
+		// Return an empty image url if the screenshot failed.
 		if ( 'rejected' === status ) {
 			return '';
 		}
