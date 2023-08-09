@@ -733,10 +733,10 @@ class Module extends BaseModule {
 			->map( function ( $val ) {
 				$font_size = null;
 
-				if (
-					isset( $val['typography_font_size']['unit'] ) &&
-					isset( $val['typography_font_size']['size'] )
-				) {
+				if ( isset(
+					$val['typography_font_size']['unit'],
+					$val['typography_font_size']['size']
+				) ) {
 					$prop = $val['typography_font_size'];
 
 					$font_size = 'custom' === $prop['unit']
