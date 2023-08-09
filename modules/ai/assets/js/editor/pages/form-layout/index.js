@@ -8,6 +8,8 @@ import usePromptEnhancer from '../form-media/hooks/use-image-prompt-enhancer';
 import SkeletonPlaceholders from './components/skeleton-placeholders';
 import ScreenshotContainer from './components/screenshot-container';
 import PromptAutocomplete from './components/prompt-autocomplete';
+import UnsavedChangesAlert from './components/unsaved-changes-alert';
+import LayoutDialog from './components/layout-dialog';
 
 const SCREENSHOT_HEIGHT = '138px';
 
@@ -20,7 +22,7 @@ const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
 ] );
 
-const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect } ) => {
+const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect, DialogHeaderProps = {} } ) => {
 	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
 
 	const [ prompt, setPrompt ] = useState( '' );
@@ -33,11 +35,23 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const [ isTakingScreenshots, setIsTakingScreenshots ] = useState( false );
 
+	const [ showUnsavedChangesAlert, setShowUnsavedChangesAlert ] = useState( false );
+
 	const lastRun = useRef( () => {} );
 
 	const isLoading = isGeneratingTemplates || isTakingScreenshots;
 
 	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
+
+	const hasUnsavedChanges = prompt !== '' || templatesData?.length > 0;
+
+	const onCloseIntent = () => {
+		if ( hasUnsavedChanges ) {
+			return setShowUnsavedChangesAlert( true );
+		}
+
+		onClose();
+	};
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
@@ -89,103 +103,118 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	}, [ selectedScreenshotIndex ] );
 
 	return (
-		<>
-			{ error && (
-				<Box sx={ { pt: 5, px: 5, pb: 0 } }>
-					<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
+		<LayoutDialog onClose={ onCloseIntent }>
+			<LayoutDialog.Header onClose={ onCloseIntent } { ...DialogHeaderProps } />
+
+			<LayoutDialog.Content dividers>
+				{ error && (
+					<Box sx={ { pt: 5, px: 5, pb: 0 } }>
+						<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
+					</Box>
+				) }
+
+				{ showUnsavedChangesAlert && (
+					<UnsavedChangesAlert
+						open={ showUnsavedChangesAlert }
+						title={ __( 'Leave Layout Generator?', 'elementor' ) }
+						text={ __( "The results will be deleted forever and we won't be able to recover them. ", 'elementor' ) }
+						onClose={ onClose }
+						onCancel={ () => setShowUnsavedChangesAlert( false ) }
+					/>
+				) }
+
+				<Box component="form" onSubmit={ handleSubmit } sx={ { p: 5 } }>
+					<Stack direction="row" alignItems="flex-start" gap={ 3 }>
+						<PromptAutocomplete
+							value={ prompt }
+							disabled={ isLoading }
+							onSubmit={ handleSubmit }
+							options={ PROMPT_SUGGESTIONS }
+							groupBy={ ( option ) => option.group }
+							getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+							onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
+							renderInput={ ( params ) => (
+								<PromptAutocomplete.TextInput
+									{ ...params }
+									onChange={ ( e ) => setPrompt( e.target.value ) }
+									placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+								/>
+							) }
+						/>
+
+						<EnhanceButton
+							size="small"
+							disabled={ isLoading || '' === prompt }
+							isLoading={ isEnhancing }
+							onClick={ enhance }
+						/>
+
+						<GenerateSubmit
+							fullWidth={ false }
+							size="small"
+							disabled={ isLoading || '' === prompt }
+							sx={ {
+								minWidth: '100px',
+								// TODO: remove once exist in the UI library.
+								borderRadius: ( { border } ) => border.size.md,
+							} }
+						>
+							{ __( 'Generate', 'elementor' ) }
+						</GenerateSubmit>
+					</Stack>
 				</Box>
-			) }
 
-			<Box component="form" onSubmit={ handleSubmit } sx={ { p: 5 } }>
-				<Stack direction="row" alignItems="flex-start" gap={ 3 }>
-					<PromptAutocomplete
-						value={ prompt }
-						disabled={ isLoading }
-						onSubmit={ handleSubmit }
-						options={ PROMPT_SUGGESTIONS }
-						groupBy={ ( option ) => option.group }
-						getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
-						onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
-						renderInput={ ( params ) => (
-							<PromptAutocomplete.TextInput
-								{ ...params }
-								onChange={ ( e ) => setPrompt( e.target.value ) }
-								placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
-							/>
-						) }
-					/>
+				{
+					( screenshotsData.length > 0 || isLoading ) && (
+						<>
+							<Divider />
 
-					<EnhanceButton
-						size="small"
-						disabled={ isLoading || '' === prompt }
-						isLoading={ isEnhancing }
-						onClick={ enhance }
-					/>
+							<Box sx={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, p: 5 } }>
+								{
+									isLoading ? (
+										<SkeletonPlaceholders height={ SCREENSHOT_HEIGHT } />
+									) : (
+										screenshotsData.map( ( { screenshot }, index ) => (
+											<ScreenshotContainer
+												key={ index }
+												height={ SCREENSHOT_HEIGHT }
+												selected={ selectedScreenshotIndex === index }
+												sx={ { backgroundImage: `url('${ screenshot }')` } }
+												onClick={ () => setSelectedScreenshotIndex( index ) }
+											/>
+										) )
+									)
+								}
+							</Box>
 
-					<GenerateSubmit
-						fullWidth={ false }
-						size="small"
-						disabled={ isLoading || '' === prompt }
-						sx={ {
-							minWidth: '100px',
-							// TODO: remove once exist in the UI library.
-							borderRadius: ( { border } ) => border.size.md,
-						} }
-					>
-						{ __( 'Generate', 'elementor' ) }
-					</GenerateSubmit>
-				</Stack>
-			</Box>
-
-			{
-				( screenshotsData.length > 0 || isLoading ) && (
-					<>
-						<Divider />
-
-						<Box sx={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, p: 5 } }>
 							{
-								isLoading ? (
-									<SkeletonPlaceholders height={ SCREENSHOT_HEIGHT } />
-								) : (
-									screenshotsData.map( ( { screenshot }, index ) => (
-										<ScreenshotContainer
-											key={ index }
-											height={ SCREENSHOT_HEIGHT }
-											selected={ selectedScreenshotIndex === index }
-											sx={ { backgroundImage: `url('${ screenshot }')` } }
-											onClick={ () => setSelectedScreenshotIndex( index ) }
-										/>
-									) )
+								screenshotsData.length > 0 && (
+									<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="flex-end">
+										<Button
+											size="small"
+											variant="contained"
+											disabled={ isLoading }
+											onClick={ applyTemplate }
+											sx={ {
+											// TODO: remove once exist in the UI library.
+												borderRadius: ( { border } ) => border.size.md,
+											} }
+										>
+											{ __( 'Use Layout', 'elementor' ) }
+										</Button>
+									</Box>
 								)
 							}
-						</Box>
-
-						{
-							screenshotsData.length > 0 && (
-								<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="flex-end">
-									<Button
-										size="small"
-										variant="contained"
-										disabled={ isLoading }
-										onClick={ applyTemplate }
-										sx={ {
-											// TODO: remove once exist in the UI library.
-											borderRadius: ( { border } ) => border.size.md,
-										} }
-									>
-										{ __( 'Use Layout', 'elementor' ) }
-									</Button>
-								</Box>
-							)
-						}
-					</>
-				)
-			}
-		</>
+						</>
+					)
+				}
+			</LayoutDialog.Content>
+		</LayoutDialog>
 	);
 };
 
 FormLayout.propTypes = {
+	DialogHeaderProps: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onGenerationStart: PropTypes.func.isRequired,
