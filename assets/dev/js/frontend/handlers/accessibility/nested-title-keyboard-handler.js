@@ -8,7 +8,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return {
 			selectors: {
 				itemTitle: '.e-n-tab-title',
-				$itemContainer: '.e-n-tabs-content > .e-con',
+				itemContainer: '.e-n-tabs-content > .e-con',
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
@@ -31,8 +31,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 		return {
 			$itemTitles: this.findElement( selectors.itemTitle ),
-			$itemContainers: this.findElement( selectors.$itemContainer ),
+			$itemContainers: this.findElement( selectors.itemContainer ),
 		};
+	}
+
+	getKeyDirectionValue( event ) {
+		const direction = this.getSettings( 'keyDirection' )[ event.key ];
+		return directionNext === direction ? 1 : -1;
 	}
 
 	/**
@@ -53,6 +58,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getTitleFilterSelector( titleIndex ) {
 		const { titleIndex: indexAttribute } = this.getSettings( 'datasets' );
 		return `[${ indexAttribute }="${ titleIndex }"]`;
+	}
+
+	onInit( ...args ) {
+		super.onInit( ...args );
 	}
 
 	bindEvents() {
@@ -76,7 +85,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				numberOfTitles = this.elements.$itemTitles.length,
 				titleIndexUpdated = this.getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles );
 
-			this.changeTitleFocus( currentTitleIndex, titleIndexUpdated );
+			this.changeTitleFocus( titleIndexUpdated );
 		} else if ( activationKeys.includes( event.key ) ) {
 			event.preventDefault();
 
@@ -103,8 +112,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndexUpdated = numberOfTitles;
 				break;
 			default:
-				const direction = this.getSettings( 'keyDirection' )[ event.key ],
-					directionValue = directionNext === direction ? 1 : -1,
+				const directionValue = this.getKeyDirectionValue( event ),
 					isEndReached = numberOfTitles < currentTitleIndex + directionValue,
 					isStartReached = 0 === currentTitleIndex + directionValue;
 
@@ -120,13 +128,29 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return titleIndexUpdated;
 	}
 
-	changeTitleFocus( currentTitleIndex, titleIndexUpdated ) {
-		const $currentTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( currentTitleIndex ) ),
-			$newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
+	changeTitleFocus( titleIndexUpdated ) {
+		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndexUpdated ) );
 
-		$currentTitle.attr( 'tabindex', '-1' );
+		this.unsetTitleTabindex();
+		this.setTitleTabindex( titleIndexUpdated );
+		this.setTitleFocus( titleIndexUpdated );
+	}
+
+	unsetTitleTabindex() {
+		this.elements.$itemTitles.attr( 'tabindex', '-1' );
+	}
+
+	setTitleTabindex( titleIndex ) {
+		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndex ) );
+
 		$newTitle.attr( 'tabindex', '0' );
+	}
+
+	setTitleFocus( titleIndex ) {
+		const $newTitle = this.elements.$itemTitles.filter( this.getTitleFilterSelector( titleIndex ) );
+
 		$newTitle.trigger( 'focus' );
+		$newTitle.css( 'border', '1px solid red' );
 	}
 
 	handleContentElementEscapeEvent( event ) {

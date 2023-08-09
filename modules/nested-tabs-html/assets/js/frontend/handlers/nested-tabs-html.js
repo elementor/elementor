@@ -257,7 +257,9 @@ export default class NestedTabsHtml extends Base {
 
 		this.setTouchMode();
 
-		new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+		if ( 'nested-tabs-html.default' === this.getSettings( 'elementName' ) ) {
+			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+		}
 	}
 
 	onEditSettingsChange( propertyName, value ) {
