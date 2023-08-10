@@ -52,17 +52,19 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const lastRun = useRef( () => {} );
 
+	const promptInputRef = useRef( null );
+
 	const isLoading = isGeneratingTemplates || isTakingScreenshots;
 
 	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
 
-	const hasUnsavedChanges = prompt !== '' || templatesData?.length > 0;
-
 	const { children: dialogContentChildren, ...dialogContentProps } = DialogContentProps;
 
-	const isPromptFormActive = isPromptEditable || error;
+	const isPromptFormActive = !! ( isPromptEditable || error );
 
 	const onCloseIntent = () => {
+		const hasUnsavedChanges = promptInputRef.current.value !== '' || templatesData?.result.elements.length > 0;
+
 		if ( hasUnsavedChanges ) {
 			return setShowUnsavedChangesAlert( true );
 		}
@@ -157,6 +159,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 				) }
 
 				<PromptForm
+					ref={ promptInputRef }
 					isActive={ isPromptFormActive }
 					isLoading={ isLoading }
 					showActions={ screenshotsData.length > 0 || isLoading }

@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Box, Stack, InputAdornment, IconButton } from '@elementor/ui';
+import { useState, useRef, forwardRef } from 'react';
+import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
 import PromptAutocomplete from './prompt-autocomplete';
 import EnhanceButton from '../../form-media/components/enhance-button';
 import GenerateSubmit from '../../form-media/components/generate-submit';
@@ -16,16 +16,29 @@ const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
 ] );
 
+const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
+	<Tooltip title={ tooltip }>
+		<Box component="span" sx={ { cursor: props.disabled ? 'default' : 'pointer' } }>
+			<IconButton { ...props } />
+		</Box>
+	</Tooltip>
+);
+
+IconButtonWithTooltip.propTypes = {
+	tooltip: PropTypes.string,
+	disabled: PropTypes.bool,
+};
+
 const BackButton = ( props ) => (
-	<IconButton size="small" color="secondary" { ...props }>
+	<IconButtonWithTooltip size="small" color="secondary" tooltip={ __( 'Back to results', 'elementor' ) } { ...props }>
 		<ArrowLeftIcon />
-	</IconButton>
+	</IconButtonWithTooltip>
 );
 
 const EditButton = ( props ) => (
-	<IconButton size="small" color="primary" { ...props }>
+	<IconButtonWithTooltip size="small" color="primary" tooltip={ __( 'Edit prompt', 'elementor' ) } { ...props }>
 		<EditIcon />
-	</IconButton>
+	</IconButtonWithTooltip>
 );
 
 const GenerateButton = ( props ) => (
@@ -43,14 +56,34 @@ const GenerateButton = ( props ) => (
 	</GenerateSubmit>
 );
 
-const PromptForm = ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit } ) => {
+const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit }, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer();
 	const previousPrompt = useRef( '' );
 
+	const handleBack = () => {
+		setPrompt( previousPrompt.current );
+		onBack();
+	};
+
+	const handleEdit = () => {
+		previousPrompt.current = prompt;
+		onEdit();
+	};
+
 	return (
-		<Box component="form" onSubmit={ ( e ) => onSubmit( e, prompt ) } sx={ { p: 5 } }>
-			<Stack direction="row" alignItems="flex-start" gap={ 3 }>
+		<Box component="form" onSubmit={ ( e ) => onSubmit( e, prompt ) } sx={ { p: 5 } } display="flex" gap={ 3 }>
+			<Stack direction="row" flexGrow={ 1 }>
+				{
+					showActions && (
+						isActive ? (
+							<BackButton disabled={ isLoading } onClick={ handleBack } />
+						) : (
+							<EditButton disabled={ isLoading } onClick={ handleEdit } />
+						)
+					)
+				}
+
 				<PromptAutocomplete
 					size="small"
 					value={ prompt }
@@ -63,50 +96,25 @@ const PromptForm = ( { isActive, isLoading, showActions = false, onSubmit, onBac
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
 							{ ...params }
+							ref={ ref }
 							onChange={ ( e ) => setPrompt( e.target.value ) }
 							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
-							InputProps={ {
-								...params.InputProps,
-								startAdornment: showActions && (
-									<InputAdornment position="start">
-										{
-											isActive ? (
-												<BackButton
-													disabled={ isLoading }
-													onClick={ () => {
-														setPrompt( previousPrompt.current );
-														onBack();
-													} }
-												/>
-											) : (
-												<EditButton
-													disabled={ isLoading }
-													onClick={ () => {
-														previousPrompt.current = prompt;
-														onEdit();
-													} }
-												/>
-											)
-										}
-									</InputAdornment>
-								),
-							} }
 						/>
 					) }
 				/>
-
-				<EnhanceButton
-					size="small"
-					disabled={ isLoading || ! isActive || '' === prompt }
-					isLoading={ isEnhancing }
-					onClick={ enhance }
-				/>
-
-				<GenerateButton disabled={ isLoading || ! isActive || '' === prompt } />
 			</Stack>
+
+			<EnhanceButton
+				size="small"
+				disabled={ isLoading || ! isActive || '' === prompt }
+				isLoading={ isEnhancing }
+				onClick={ enhance }
+			/>
+
+			<GenerateButton disabled={ isLoading || ! isActive || '' === prompt } />
 		</Box>
 	);
-};
+} );
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
