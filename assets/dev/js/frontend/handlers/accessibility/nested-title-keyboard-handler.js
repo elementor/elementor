@@ -138,6 +138,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 			const titleIndex = this.getTitleIndex( event.currentTarget );
 
 			elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', titleIndex );
+		} else if ( 'Escape' === event.key ) {
+			this.handleTitleEscapeKeyEvents( event );
 		}
 	}
 
@@ -183,6 +185,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 		$newTitle.attr( 'tabindex', '0' );
 	}
+
+	handleTitleEscapeKeyEvents() {}
 
 	handleContentElementKeyboardNavigation( event ) {
 		if ( 'Tab' === event.key && ! event.shiftKey ) {
