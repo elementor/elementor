@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	private $min_priority_img_pixels = 50000;
+	private $min_priority_img_pixels;
 
 	public function get_name() {
 		return 'image-loading-optimization';
@@ -18,9 +18,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
-		add_action( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
+		$this->min_priority_img_pixels = 50000;
+		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
+		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
 		add_filter( 'the_content', [ $this, 'filter_images' ], 10, 1 );
+		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+		add_action( 'init', function () {
+			wp_high_priority_element_flag( false );
+		} );
 	}
 
 	public function remove_get_attachment_loading_attributes( $attr, $attachment, $size ) {
@@ -49,13 +54,12 @@ class Module extends BaseModule {
 		foreach ( $matches as $match ) {
 			$tag = $match[0];
 			if ( preg_match( '/wp-image-([0-9]+)/i', $tag, $class_id ) ) {
-					$attachment_id = absint( $class_id[1] );
-
+				$attachment_id = absint( $class_id[1] );
 				if ( $attachment_id ) {
 					/*
-						* If exactly the same image tag is used more than once, overwrite it.
-						* All identical tags will be replaced later with 'str_replace()'.
-						*/
+					 * If exactly the same image tag is used more than once, overwrite it.
+					 * All identical tags will be replaced later with 'str_replace()'.
+					 */
 					$images[ $tag ] = $attachment_id;
 				}
 			}
@@ -169,7 +173,7 @@ class Module extends BaseModule {
 			if ( false === $maybe_in_viewport ) {
 				_doing_it_wrong(
 					__FUNCTION__,
-					__( 'An image should not be lazy-loaded and marked as high priority at the same time.' )
+					__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' )
 				);
 				/*
 				 * Set `fetchpriority` here for backward-compatibility as we should
