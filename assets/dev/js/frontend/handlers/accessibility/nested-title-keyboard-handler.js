@@ -125,6 +125,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 			this.changeTitleFocus( titleIndexUpdated );
 			event.stopPropagation();
 		} else if ( this.isActivationKey( event ) ) {
+			const isLinkElement = 'a' === event.currentTarget.tagName.toLowerCase();
+
+			if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
+				event.stopPropagation();
+				return;
+			}
+
 			event.preventDefault();
 
 			const titleIndex = this.getTitleIndex( event.currentTarget );
