@@ -482,7 +482,7 @@ class Ai extends Library {
 			'generate/layout-variations',
 			[
 				'prompt' => $prompt,
-				'context' => wp_json_encode( $context ),
+				'context' => $context,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
