@@ -37,8 +37,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return {
 			$itemTitles: this.findElement( selectors.itemTitle ),
 			$itemContainers: this.findElement( selectors.itemContainer ),
-			$focusableContainerElements: this.findElement( selectors.itemContainer ).find( this.focusableElementSelector ),
+			$focusableContainerElements: this.getFocusableElements( this.findElement( selectors.itemContainer ) ),
+
 		};
+	}
+
+	getFocusableElements( $elements ) {
+		return $elements
+			.find( this.focusableElementSelector )
+			.not( '[disabled], [aria-hidden=true]' );
 	}
 
 	getKeyDirectionValue( event ) {
