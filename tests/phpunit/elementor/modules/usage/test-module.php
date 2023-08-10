@@ -194,6 +194,62 @@ class Test_Module extends Elementor_Test_Base {
 	];
 
 	/**
+	 * @var array
+	 */
+	public static $document_mock_flex_gap = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => '145b8fc',
+				'elType' => 'container',
+				'settings' => [
+					'flex_gap' => [
+						'unit' => 'px',
+						'size' => 99,
+						'sizes' => [],
+					],
+					'flex_gap_tablet' => [
+						'unit' => 'px',
+						'size' => 88,
+						'sizes' => [],
+					],
+					'flex_gap_mobile' => [
+						'unit' => 'px',
+						'size' => 77,
+						'sizes' => [],
+					],
+				],
+				'elements' => [
+					[
+						'id' => 'e1f0015',
+						'elType' => 'container',
+						'settings' => [
+							'flex_gap' => [
+								'unit' => 'px',
+								'size' => 66,
+								'sizes' => [],
+							],
+							'flex_gap_tablet' => [
+								'unit' => 'px',
+								'size' => 55,
+								'sizes' => [],
+							],
+							'flex_gap_mobile' => [
+								'unit' => 'px',
+								'size' => 44,
+								'sizes' => [],
+							],
+						],
+					],
+				],
+				'isInner' => false,
+			],
+		],
+	];
+
+	/**
 	 * @var Module
 	 */
 	private $module;
