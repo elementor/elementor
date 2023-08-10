@@ -172,7 +172,7 @@ class Module extends BaseModule {
 			}
 
 			try {
-				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'], $this );
+				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'] ?? null, $this );
 
 				if ( false === $results ) {
 					$this->add_response_data( false );
