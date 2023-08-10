@@ -10,7 +10,7 @@ const EnhanceButton = ( { isLoading, ...props } ) => {
 
 	return (
 		<Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
-			<Box component="span" sx={ { cursor: 'pointer' } }>
+			<Box component="span" sx={ { cursor: props.disabled ? 'default' : 'pointer' } }>
 				<IconButton
 					size="small"
 					color="secondary"
@@ -24,6 +24,7 @@ const EnhanceButton = ( { isLoading, ...props } ) => {
 };
 
 EnhanceButton.propTypes = {
+	disabled: PropTypes.bool,
 	isLoading: PropTypes.bool,
 };
 

@@ -108,7 +108,7 @@ class Ai extends Library {
 			$method,
 			$endpoint,
 			[
-				'timeout' => 50,
+				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
 			],
