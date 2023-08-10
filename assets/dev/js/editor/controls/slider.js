@@ -183,7 +183,14 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
-		// We assume if the control only has units for 'fr' and 'custom' we want to convert the value.
+		/*
+		We want our code to run only when the user switched from 'fr' to 'custom'.
+		But currently we do not have the previous state, so we won't know the user was previously on 'fr'.
+		So we make the assumption that if the control only has two units ('fr' and 'custom'), and we
+		are switching to custom now, then we can run our conversion logic.
+		In future, we might want to investigate a way to build some kind of 'previous state cache' to know
+		where we switched from.
+		*/
 		const sizeUnits = this.model.get( 'size_units' ),
 			isFrToCustom = 2 === sizeUnits.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
 
@@ -191,12 +198,11 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
-		if ( this.isCustomUnit() ) {
-			this.setValue( 'size', this.convertSizeToFrString( this.getSize() ) );
-		} else {
-			this.setValue( 'size', this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size );
-		}
+		const sizeValue = this.isCustomUnit()
+			? this.convertSizeToFrString( this.getSize() )
+			: this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size;
 
+		this.setValue( 'size', sizeValue );
 		this.render();
 	},
 
