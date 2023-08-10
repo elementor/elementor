@@ -1,9 +1,14 @@
 import Base from '../base';
 
-const directionNext = 'next',
-	directionPrevious = 'previous';
-
 export default class NestedTitleKeyboardHandler extends Base {
+	__construct( settings ) {
+		super.__construct( settings );
+
+		this.directionNext = 'next';
+		this.directionPrevious = 'previous';
+		this.focusableElementSelector = 'audio, button, canvas, details, iframe, input, select, summary, textarea, video, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -18,10 +23,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndex: 'data-tab-index',
 			},
 			keyDirection: {
-				ArrowLeft: elementorFrontendConfig.is_rtl ? directionNext : directionPrevious,
-				ArrowUp: directionPrevious,
-				ArrowRight: elementorFrontendConfig.is_rtl ? directionPrevious : directionNext,
-				ArrowDown: directionNext,
+				ArrowLeft: elementorFrontendConfig.is_rtl ? this.directionNext : this.directionPrevious,
+				ArrowUp: this.directionPrevious,
+				ArrowRight: elementorFrontendConfig.is_rtl ? this.directionPrevious : this.directionNext,
+				ArrowDown: this.directionNext,
 			},
 		};
 	}
@@ -32,12 +37,13 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return {
 			$itemTitles: this.findElement( selectors.itemTitle ),
 			$itemContainers: this.findElement( selectors.itemContainer ),
+			$focusableContainerElements: this.findElement( selectors.itemContainer ).find( this.focusableElementSelector ),
 		};
 	}
 
 	getKeyDirectionValue( event ) {
 		const direction = this.getSettings( 'keyDirection' )[ event.key ];
-		return directionNext === direction ? 1 : -1;
+		return this.directionNext === direction ? 1 : -1;
 	}
 
 	/**
@@ -60,13 +66,18 @@ export default class NestedTitleKeyboardHandler extends Base {
 		return `[${ indexAttribute }="${ titleIndex }"]`;
 	}
 
+	getActiveTitleElement() {
+		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector;
+		return this.elements.$itemTitles.filter( activeTitleFilter );
+	}
+
 	onInit( ...args ) {
 		super.onInit( ...args );
 	}
 
 	bindEvents() {
 		this.elements.$itemTitles.on( this.getTitleEvents() );
-		this.elements.$itemContainers.children().on( 'keydown', this.handleContentElementEscapeEvent.bind( this ) );
+		this.elements.$focusableContainerElements.on( this.getContentElementEvents() );
 	}
 
 	unbindEvents() {
@@ -77,6 +88,12 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getTitleEvents() {
 		return {
 			keydown: this.handleTitleKeyboardNavigation.bind( this ),
+		};
+	}
+
+	getContentElementEvents() {
+		return {
+			keydown: this.handleContentElementKeyboardNavigation.bind( this ),
 		};
 	}
 
@@ -103,7 +120,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndexUpdated = this.getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles );
 
 			this.changeTitleFocus( titleIndexUpdated );
-			this.stopPropagations( event );
+			this.avoidDuplicateKeyEventOnParentAndChildElement( event );
 		} else if ( this.isActivationKey( event ) ) {
 			event.preventDefault();
 
@@ -156,18 +173,19 @@ export default class NestedTitleKeyboardHandler extends Base {
 		$newTitle.attr( 'tabindex', '0' );
 	}
 
-	handleContentElementEscapeEvent( event ) {
-		if ( 'Escape' !== event.key ) {
-			return;
+	avoidDuplicateKeyEventOnParentAndChildElement() {}
+
+	handleContentElementKeyboardNavigation( event ) {
+		if ( 'Tab' === event.key ) {
+			this.handleContentElementTabEvents( event );
+		} else if ( 'Escape' === event.key ) {
+			this.handleContentElementEscapeEvents( event );
 		}
-
-		const activeTitleFilter = this.getSettings( 'ariaAttributes' ).activeTitleSelector,
-			$activeTitle = this.elements.$itemTitles.filter( activeTitleFilter );
-
-		$activeTitle.trigger( 'focus' );
 	}
 
-	stopPropagations( event ) {
-		event.stopPropagation();
+	handleContentElementEscapeEvents() {
+		this.getActiveTitleElement().trigger( 'focus' );
 	}
+
+	handleContentElementTabEvents() {}
 }
