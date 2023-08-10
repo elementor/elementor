@@ -1,4 +1,4 @@
-import { toPng } from 'html-to-image';
+import { toJpeg } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -37,9 +37,11 @@ export const takeScreenshots = async ( templates = [] ) => {
 };
 
 function screenshotNode( node ) {
-	return toPng( node, {
+	return toJpeg( node, {
 		// Gray pixel.
 		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8dPrSfwAIFgNgET5chAAAAABJRU5ErkJggg==',
+		quality: 0.4,
+		backgroundColor: '#FFF',
 	} );
 }
 
