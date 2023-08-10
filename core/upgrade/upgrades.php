@@ -854,6 +854,7 @@ class Upgrades {
 
 			$data = self::maybe_convert_to_inner_containers( $data );
 			$data = self::maybe_convert_to_grid_container( $data );
+			$data = self::maybe_convert_flex_gap_control( $data );
 
 			self::save_updated_document( $post_id, $data );
 		}
@@ -975,6 +976,61 @@ class Upgrades {
 	}
 
 	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function maybe_convert_flex_gap_control( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+				if ( 'container' !== $element['elType'] ) {
+					return $element;
+				}
+
+				return self::flex_gap_responsive_control_iterator( $element );
+			}
+		);
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function flex_gap_responsive_control_iterator( $element ) {
+		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
+		$breakpoints[] = 'desktop';
+		$old_control_name = 'flex_gap';
+		$new_control_name = 'flex_gaps';
+
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( 'desktop' !== $breakpoint ) {
+				$old_control = $old_control_name . '_' . $breakpoint;
+				$new_control = $new_control_name . '_' . $breakpoint;
+			} else {
+				$old_control = $old_control_name;
+				$new_control = $new_control_name;
+			}
+
+			if ( isset( $element['settings'][ $old_control ] ) ) {
+				$old_size = strval( $element['settings'][ $old_control ]['size'] );
+				$old_unit = $element['settings'][ $old_control ]['unit'];
+
+				$element['settings'][ $new_control ] = [
+					'column' => $old_size,
+					'row' => $old_size,
+					'unit' => $old_unit,
+					'isLinked' => true,
+				];
+
+				unset( $element['settings'][ $old_control ] );
+			}
+		}
+
+		return $element;
+	}
+
+	/**
 	 * @param $post_id
 	 * @param $data
 	 *
@@ -988,7 +1044,5 @@ class Upgrades {
 				'elements' => $data,
 			]
 		);
-
 	}
-
 }
