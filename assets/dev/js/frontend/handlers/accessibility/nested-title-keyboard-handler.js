@@ -45,7 +45,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getFocusableElements( $elements ) {
 		return $elements
 			.find( this.focusableElementSelector )
-			.not( '[disabled], [aria-hidden=true]' );
+			.not( '[disabled]' );
 	}
 
 	getKeyDirectionValue( event ) {
