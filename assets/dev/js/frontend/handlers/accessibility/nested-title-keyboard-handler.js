@@ -110,7 +110,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	isActivationKey( event ) {
-		const activationKeys = [ 'Enter', 'Space' ];
+		const activationKeys = [ 'Enter', ' ' ];
 		return activationKeys.includes( event.key );
 	}
 

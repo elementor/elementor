@@ -106,7 +106,7 @@ export default class NestedTabsHtml extends Base {
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.attr( this.getTitleDeactivationAttributes() );
+		$activeTitle.attr( this.getTitleDeactivationAttributes( tabIndex ) );
 		$activeContent.removeClass( activeClass );
 
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
