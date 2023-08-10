@@ -1,6 +1,8 @@
 var ControlBaseUnitsItemView = require( 'elementor-controls/base-units' ),
 	ControlSliderItemView;
 
+import { convertSizeToFrString } from 'elementor-editor-utils/helpers';
+
 ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	ui() {
 		var ui = ControlBaseUnitsItemView.prototype.ui.apply( this, arguments );
@@ -199,20 +201,11 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		const sizeValue = this.isCustomUnit()
-			? this.convertSizeToFrString( this.getSize() )
+			? convertSizeToFrString( this.getSize() )
 			: this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size;
 
 		this.setValue( 'size', sizeValue );
 		this.render();
-	},
-
-	convertSizeToFrString( size ) {
-		if ( 'number' !== typeof size || size <= 0 ) {
-			return size;
-		}
-
-		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
-		return frString;
 	},
 
 	onBeforeDestroy() {
