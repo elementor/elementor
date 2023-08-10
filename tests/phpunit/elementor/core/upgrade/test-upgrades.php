@@ -442,12 +442,14 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default_with_container );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
 
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
 		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
 		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
 		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
+		$this->assert_flex_gap_control_has_changed( $documents[3]->get_json_meta('_elementor_data') );
 
 	}
 
@@ -520,5 +522,57 @@ class Test_Upgrades extends Elementor_Test_Base {
 		self::assertFalse( $widget['elements'][0]['isInner'] );
 		self::assertFalse( $widget['elements'][1]['isInner'] );
 		self::assertFalse( $widget['elements'][2]['isInner']);
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_flex_gap_control_has_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertEquals( [
+			'column' => '99',
+			'row' => '99',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps'] );
+
+		self::assertEquals( [
+			'column' => '88',
+			'row' => '88',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps_tablet'] );
+
+		self::assertEquals( [
+			'column' => '77',
+			'row' => '77',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps_mobile'] );
+
+		$inner_container = $top_level_container['elements'][0];
+
+		self::assertEquals( [
+			'column' => '66',
+			'row' => '66',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps'] );
+
+		self::assertEquals( [
+			'column' => '55',
+			'row' => '55',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps_tablet'] );
+
+		self::assertEquals( [
+			'column' => '44',
+			'row' => '44',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps_mobile'] );
 	}
 }
