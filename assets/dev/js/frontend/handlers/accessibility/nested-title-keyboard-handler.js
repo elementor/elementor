@@ -97,10 +97,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 		};
 	}
 
-	isElementFocused( event ) {
-		return event.currentTarget.ownerDocument.activeElement === event.currentTarget;
-	}
-
 	isDirectionKey( event ) {
 		const directionKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End' ];
 		return directionKeys.includes( event.key );
@@ -120,7 +116,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 				titleIndexUpdated = this.getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles );
 
 			this.changeTitleFocus( titleIndexUpdated );
-			this.avoidDuplicateKeyEventOnParentAndChildElement( event );
+			event.stopPropagation();
 		} else if ( this.isActivationKey( event ) ) {
 			event.preventDefault();
 
@@ -173,10 +169,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 		$newTitle.attr( 'tabindex', '0' );
 	}
 
-	avoidDuplicateKeyEventOnParentAndChildElement() {}
-
 	handleContentElementKeyboardNavigation( event ) {
-		if ( 'Tab' === event.key ) {
+		if ( 'Tab' === event.key && ! event.shiftKey ) {
 			this.handleContentElementTabEvents( event );
 		} else if ( 'Escape' === event.key ) {
 			this.handleContentElementEscapeEvents( event );
