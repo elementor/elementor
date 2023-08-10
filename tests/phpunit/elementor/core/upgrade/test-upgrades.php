@@ -445,7 +445,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
-		$this->assert_container_changed(  $documents[0]->get_json_meta('_elementor_data') );
+		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
 		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
 		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
 
@@ -491,12 +491,21 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 *
 	 * @return void
 	 */
-	public function assert_container_changed( $elementor_data ) {
+	public function assert_containers_changed( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
+		// isInner Changes
 		self::assertFalse( $top_level_container['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['elements'][0]['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['elements'][1]['isInner'] );
+		$inner_container = $top_level_container['elements'][0];
+		self::assertTrue( $inner_container['isInner'] );
+		self::assertTrue( $inner_container['elements'][0]['isInner'] );
+		self::assertTrue( $inner_container['elements'][1]['isInner'] );
+
+		// Grid container Changes
+		self::assertEquals( 'Grid', $top_level_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container-grid', $top_level_container['settings']['presetIcon'] );
+
+		self::assertEquals( 'Container', $inner_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container', $inner_container['settings']['presetIcon'] );
 	}
 
 	/**

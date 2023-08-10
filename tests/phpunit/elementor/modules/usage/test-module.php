@@ -57,6 +57,7 @@ class Test_Module extends Elementor_Test_Base {
 				'elType' => 'container',
 				'isInner' => false,
 				'settings' => [
+					'container_type' => 'grid',
 					'presetTitle' => 'Container',
 					'presetIcon' => 'eicon-container',
 				],
