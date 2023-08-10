@@ -192,7 +192,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		where we switched from.
 		*/
 		const sizeUnits = this.model.get( 'size_units' ),
-			isFrToCustom = 2 === sizeUnits.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
+			isFrToCustom = 2 === sizeUnits?.length && sizeUnits.includes( 'fr' ) && sizeUnits.includes( 'custom' );
 
 		if ( ! isFrToCustom ) {
 			return;
