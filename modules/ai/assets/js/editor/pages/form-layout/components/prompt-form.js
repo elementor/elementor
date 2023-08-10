@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Box, Stack, InputAdornment, IconButton } from '@elementor/ui';
 import PromptAutocomplete from './prompt-autocomplete';
@@ -29,7 +28,7 @@ const EditButton = ( props ) => (
 	</IconButton>
 );
 
-const GenerateScreenshotsSubmit = ( props ) => (
+const GenerateButton = ( props ) => (
 	<GenerateSubmit
 		size="small"
 		fullWidth={ false }
@@ -46,9 +45,7 @@ const GenerateScreenshotsSubmit = ( props ) => (
 
 const PromptForm = ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit } ) => {
 	const [ prompt, setPrompt ] = useState( '' );
-
 	const { isEnhancing, enhance } = usePromptEnhancer();
-
 	const previousPrompt = useRef( '' );
 
 	return (
@@ -69,6 +66,7 @@ const PromptForm = ( { isActive, isLoading, showActions = false, onSubmit, onBac
 							onChange={ ( e ) => setPrompt( e.target.value ) }
 							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
 							InputProps={ {
+								...params.InputProps,
 								startAdornment: showActions && (
 									<InputAdornment position="start">
 										{
@@ -104,7 +102,7 @@ const PromptForm = ( { isActive, isLoading, showActions = false, onSubmit, onBac
 					onClick={ enhance }
 				/>
 
-				<GenerateScreenshotsSubmit disabled={ isLoading || ! isActive || '' === prompt } />
+				<GenerateButton disabled={ isLoading || ! isActive || '' === prompt } />
 			</Stack>
 		</Box>
 	);

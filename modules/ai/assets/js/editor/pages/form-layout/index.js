@@ -48,7 +48,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const [ showUnsavedChangesAlert, setShowUnsavedChangesAlert ] = useState( false );
 
-	const [ activePrompt, setActivePrompt ] = useState( true );
+	const [ isPromptEditable, setIsPromptEditable ] = useState( true );
 
 	const lastRun = useRef( () => {} );
 
@@ -59,6 +59,8 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	const hasUnsavedChanges = prompt !== '' || templatesData?.length > 0;
 
 	const { children: dialogContentChildren, ...dialogContentProps } = DialogContentProps;
+
+	const isPromptFormActive = isPromptEditable || error;
 
 	const onCloseIntent = () => {
 		if ( hasUnsavedChanges ) {
@@ -81,7 +83,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 		lastRun.current();
 
-		setActivePrompt( false );
+		setIsPromptEditable( false );
 	};
 
 	const handleEnhance = () => {
@@ -97,12 +99,12 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	};
 
 	const handleScreenshotClick = useCallback( ( index ) => {
-		if ( activePrompt ) {
+		if ( isPromptFormActive ) {
 			return;
 		}
 
 		setSelectedScreenshotIndex( index );
-	}, [ screenshotsData, activePrompt ] );
+	}, [ isPromptFormActive ] );
 
 	useEffect( () => {
 		if ( templatesData?.result ) {
@@ -155,12 +157,12 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 				) }
 
 				<PromptForm
-					isActive={ activePrompt }
+					isActive={ isPromptFormActive }
 					isLoading={ isLoading }
 					showActions={ screenshotsData.length > 0 || isLoading }
 					onSubmit={ handleSubmit }
-					onBack={ () => setActivePrompt( false ) }
-					onEdit={ () => setActivePrompt( true ) }
+					onBack={ () => setIsPromptEditable( false ) }
+					onEdit={ () => setIsPromptEditable( true ) }
 				/>
 
 				{
@@ -171,7 +173,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 							<ScreenshotsDisplay
 								isLoading={ isLoading }
 								screenshotsData={ screenshotsData }
-								disabled={ activePrompt }
+								disabled={ isPromptFormActive }
 								selectedIndex={ selectedScreenshotIndex }
 								onClick={ handleScreenshotClick }
 							/>
@@ -179,9 +181,9 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 							{
 								screenshotsData.length > 0 && (
 									<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="space-between">
-										<RegenerateButton onClick={ lastRun.current } disabled={ isLoading || activePrompt } />
+										<RegenerateButton onClick={ lastRun.current } disabled={ isLoading || isPromptFormActive } />
 
-										<UseLayoutButton onClick={ applyTemplate } disabled={ isLoading || activePrompt } />
+										<UseLayoutButton onClick={ applyTemplate } disabled={ isLoading || isPromptFormActive } />
 									</Box>
 								)
 							}

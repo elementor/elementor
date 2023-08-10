@@ -67,6 +67,10 @@ export function setPreviewContainerLoading() {
 }
 
 export function setPreviewContainerContent( template ) {
+	if ( ! template ) {
+		return;
+	}
+
 	const view = getPreviewContainer()?.view;
 
 	if ( ! view ) {

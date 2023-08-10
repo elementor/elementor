@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { Box, styled } from '@elementor/ui';
 
 const ScreenshotContainer = styled( Box )( ( { theme, selected, height, disabled } ) => {
@@ -24,4 +23,4 @@ const ScreenshotContainer = styled( Box )( ( { theme, selected, height, disabled
 	};
 } );
 
-export default memo( ScreenshotContainer );
+export default ScreenshotContainer;

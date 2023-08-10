@@ -1,4 +1,4 @@
-import { toPng, toSvg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -16,19 +16,9 @@ export const takeScreenshots = async ( templates = [] ) => {
 	// Wait for the containers to render.
 	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
 
-	const promises = containers.map( ( { view } ) => {
-		const node = view.$el[ 0 ];
-		const isSafari = elementorFrontend.utils.environment.safari;
+	const promises = containers.map( ( { view } ) => screenshotNode( view.$el[ 0 ] ) );
 
-		if ( isSafari ) {
-			// Safari doesn't work properly with rendering screenshots of SVGs.
-			return toPng( node );
-		}
-
-		return toSvg( node );
-	} );
-
-	const screenshots = await Promise.all( promises );
+	const screenshots = await Promise.allSettled( promises );
 
 	deleteContainers( containers );
 
@@ -36,8 +26,22 @@ export const takeScreenshots = async ( templates = [] ) => {
 
 	toggleHistory( true );
 
-	return screenshots;
+	return screenshots.map( ( { status, value } ) => {
+		// Return an empty image url if the screenshot failed.
+		if ( 'rejected' === status ) {
+			return '';
+		}
+
+		return value;
+	} );
 };
+
+function screenshotNode( node ) {
+	return toPng( node, {
+		// Gray pixel.
+		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8dPrSfwAIFgNgET5chAAAAABJRU5ErkJggg==',
+	} );
+}
 
 function createHiddenWrapper() {
 	const wrapper = document.createElement( 'div' );
@@ -74,7 +78,7 @@ function deleteContainers( containers ) {
 	} );
 }
 
-function waitForContainer( id, timeout = 2000 ) {
+function waitForContainer( id, timeout = 5000 ) {
 	const timeoutPromise = sleep( timeout );
 
 	const waitPromise = new Promise( ( resolve ) => {
@@ -103,7 +107,13 @@ function waitForImage( image ) {
 
 	return new Promise( ( resolve ) => {
 		image.addEventListener( 'load', resolve );
-		image.addEventListener( 'error', resolve );
+
+		image.addEventListener( 'error', () => {
+			// Remove the image to make sure it won't break the screenshot.
+			image.remove();
+
+			resolve();
+		} );
 	} );
 }
 
