@@ -29,6 +29,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		return 'nested-tabs-html';
 	}
 
+    //TODO remove
+    public function dummy_method() {
+        return 'testing php-unit';
+    }
+
 	public function get_title() {
 		return esc_html__( 'Tabs', 'elementor' );
 	}
