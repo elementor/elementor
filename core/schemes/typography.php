@@ -12,31 +12,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * for typography.
  *
  * @since 1.0.0
- * @deprecated 3.15.0 Use Global_Typography instead
+ * @deprecated 3.0.0 Use `Global_Typography` instead.
  */
 class Typography {
 
 	/**
 	 * 1st typography scheme.
-	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_PRIMARY instead
+	 * @deprecated 3.0.0 Use `Global_Typography::TYPOGRAPHY_PRIMARY` instead.
 	 */
 	const TYPOGRAPHY_1 = '1';
 
 	/**
 	 * 2nd typography scheme.
-	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_SECONDARY instead
+	 * @deprecated 3.0.0 Use `Global_Typography::TYPOGRAPHY_SECONDARY` instead.
 	 */
 	const TYPOGRAPHY_2 = '2';
 
 	/**
 	 * 3rd typography scheme.
-	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_TEXT instead
+	 * @deprecated 3.0.0 Use `Global_Typography::TYPOGRAPHY_TEXT` instead.
 	 */
 	const TYPOGRAPHY_3 = '3';
 
 	/**
 	 * 4th typography scheme.
-	 * @deprecated 3.15.0 Use Global_Typography::TYPOGRAPHY_ACCENT instead
+	 * @deprecated 3.0.0 Use `Global_Typography::TYPOGRAPHY_ACCENT` instead.
 	 */
 	const TYPOGRAPHY_4 = '4';
 
@@ -48,7 +48,7 @@ class Typography {
 	 * @since 1.0.0
 	 * @access public
 	 * @static
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Typography scheme type.
 	 */
@@ -63,7 +63,7 @@ class Typography {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Typography scheme title.
 	 */
@@ -78,7 +78,7 @@ class Typography {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return string Typography scheme disabled title.
 	 */
@@ -93,7 +93,7 @@ class Typography {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Typography scheme titles.
 	 */
@@ -108,7 +108,7 @@ class Typography {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Default typography scheme.
 	 */
@@ -124,7 +124,7 @@ class Typography {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.15.0
+	 * @deprecated 3.0.0
 	 */
 	public function print_template_content() {}
 }
