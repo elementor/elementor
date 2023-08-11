@@ -38,7 +38,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 			$itemTitles: this.findElement( selectors.itemTitle ),
 			$itemContainers: this.findElement( selectors.itemContainer ),
 			$focusableContainerElements: this.getFocusableElements( this.findElement( selectors.itemContainer ) ),
-
 		};
 	}
 
