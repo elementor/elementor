@@ -30,7 +30,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_buffer' ] );
 
 		// Run optimization logic on content.
-		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
+		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ] );
 		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
 
 		// Run optimization logic on footer.
