@@ -17,7 +17,6 @@
 	--n-tabs-heading-wrap: nowrap;
 	--n-tabs-border-width: 1px;
 	--n-tabs-border-color: #{$gray-light};
-	--n-tabs-content-padding: initial;
 	--n-tabs-content-border-radius: initial;
 	--n-tabs-title-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
 	--n-tabs-title-color-hover: #{$white};
@@ -92,8 +91,6 @@
 
 		&-content {
 			flex-grow: 1;
-			padding-block: var( --n-tabs-content-padding );
-			padding-inline: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
 			min-width: 0;
 		}
@@ -114,8 +111,8 @@
 			flex-grow: var( --n-tabs-title-flex-grow );
 			flex-basis: var( --n-tabs-title-flex-basis );
 			flex-shrink: var( --n-tabs-title-flex-shrink );
-			padding-block: var(--n-tabs-title-padding-block-start, var( --n-tabs-title-padding-top ) )  var( --n-tabs-title-padding-block-end, var( --n-tabs-title-padding-bottom ) );
-			padding-inline: var(--n-tabs-title-padding-inline-start, var( --n-tabs-title-padding-left ) ) var( --n-tabs-title-padding-inline-end, var( --n-tabs-title-padding-right ) );
+			padding-block: var(--n-tabs-title-padding-block-start )  var( --n-tabs-title-padding-block-end );
+			padding-inline: var(--n-tabs-title-padding-inline-start ) var( --n-tabs-title-padding-inline-end );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
