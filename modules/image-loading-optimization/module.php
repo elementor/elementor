@@ -20,13 +20,21 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->min_priority_img_pixels = 50000;
+
+		// Stop wp core logic
+		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
+		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+
+		// Run optimization logic
 		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
 		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
-		add_filter( 'the_content', [ $this, 'filter_images' ], 10, 1 );
-		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
-		add_action( 'init', function () {
+	}
+
+	public function stop_core_fetchpriority_high_logic() {
+		// wp_high_priority_element_flag was only introduced in 6.3.0
+		if ( function_exists( '\wp_high_priority_element_flag' ) ) {
 			\wp_high_priority_element_flag( false );
-		} );
+		}
 	}
 
 	public function remove_get_attachment_loading_attributes( $attr, $attachment, $size ) {
@@ -36,72 +44,14 @@ class Module extends BaseModule {
 	}
 
 	public function remove_content_img_tag_loading_attributes( $filtered_image, $context, $attachment_id ) {
-		if( isset( self::$image_visited[ $attachment_id ] ) ) {
+		if ( isset( self::$image_visited[ $attachment_id ] ) ) {
 			return self::$image_visited[ $attachment_id ];
 		}
-		
+
 		$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
 		self::$image_visited[ $attachment_id ] = $filtered_image;
 		return $filtered_image;
 	}
-
-	// public function filter_images( $content ) {
-	// 	if ( ! preg_match_all( '/<img\s[^>]+>/', $content, $matches, PREG_SET_ORDER ) ) {
-	// 		return $content;
-	// 	}
-
-	// 	// List of the unique `img` tags found in $content.
-	// 	$images = array();
-
-	// 	foreach ( $matches as $match ) {
-	// 		$tag = $match[0];
-	// 		if ( preg_match( '/wp-image-([0-9]+)/i', $tag, $class_id ) ) {
-	// 			$attachment_id = absint( $class_id[1] );
-	// 			if ( $attachment_id ) {
-	// 				/*
-	// 				 * If exactly the same image tag is used more than once, overwrite it.
-	// 				 * All identical tags will be replaced later with 'str_replace()'.
-	// 				 */
-	// 				$images[ $tag ] = $attachment_id;
-	// 			}
-	// 		}
-	// 		$images[ $tag ] = 0;
-	// 	}
-
-	// 	// Reduce the array to unique attachment IDs.
-	// 	$attachment_ids = array_unique( array_filter( array_values( $images ) ) );
-
-	// 	if ( count( $attachment_ids ) > 1 ) {
-	// 		/*
-	// 		* Warm the object cache with post and meta information for all found
-	// 		* images to avoid making individual database calls.
-	// 		*/
-	// 		_prime_post_caches( $attachment_ids, false, true );
-	// 	}
-
-	// 	// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
-	// 	foreach ( $matches as $match ) {
-	// 		// Filter an image match.
-	// 		if ( isset( $images[ $match[0] ] ) ) {
-	// 			$filtered_image = $match[0];
-	// 			$attachment_id  = $images[ $match[0] ];
-
-	// 			// Add loading optimization attributes if applicable.
-	// 			$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
-	// 			if ( $filtered_image !== $match[0] ) {
-	// 				$content = str_replace( $match[0], $filtered_image, $content );
-	// 			}
-
-	// 			/*
-	// 			* Unset image lookup to not run the same logic again unnecessarily if the same image tag is used more than
-	// 			* once in the same blob of content.
-	// 			*/
-	// 			unset( $images[ $match[0] ] );
-	// 		}
-	// 	}
-
-	// 	return $content;
-	// }
 
 	private function add_loading_optimization_attrs( $image ) {
 		$width             = preg_match( '/ width=["\']([0-9]+)["\']/', $image, $match_width ) ? (int) $match_width[1] : null;
