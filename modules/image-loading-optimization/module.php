@@ -21,13 +21,100 @@ class Module extends BaseModule {
 
 		$this->min_priority_img_pixels = 50000;
 
-		// Stop wp core logic
+		// Stop wp core logic.
 		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
 		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 
-		// Run optimization logic
+		// Run optimization logic on header.
+		add_action( 'get_header', [ $this, 'set_header_buffer' ] );
+		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_header_buffer' ] );
+
+		// Run optimization logic on content.
 		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
 		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
+
+		// Run optimization logic on footer.
+		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_footer_buffer' ] );
+		add_action( 'elementor/page_templates/header-footer/after_footer', [ $this, 'flush_footer_buffer' ] );
+	}
+
+	public function set_header_buffer() {
+		ob_start( [ $this, 'handel_buffer_content' ] );
+	}
+
+	public function flush_header_buffer() {
+		ob_end_flush();
+	}
+
+	public function set_footer_buffer() {
+		ob_start( [ $this, 'handel_buffer_content' ] );
+	}
+
+	public function flush_footer_buffer() {
+		ob_end_flush();
+	}
+
+	public function handel_buffer_content( $buffer ) {
+		return $this->filter_images( $buffer );
+	}
+
+	private function filter_images( $content ) {
+		if ( ! preg_match_all( '/<img\s[^>]+>/', $content, $matches, PREG_SET_ORDER ) ) {
+			return $content;
+		}
+
+		// List of the unique `img` tags found in $content.
+		$images = array();
+
+		foreach ( $matches as $match ) {
+			$tag = $match[0];
+			if ( preg_match( '/wp-image-([0-9]+)/i', $tag, $class_id ) ) {
+				$attachment_id = absint( $class_id[1] );
+				if ( $attachment_id ) {
+					/*
+					 * If exactly the same image tag is used more than once, overwrite it.
+					 * All identical tags will be replaced later with 'str_replace()'.
+					 */
+					$images[ $tag ] = $attachment_id;
+				}
+			}
+			$images[ $tag ] = 0;
+		}
+
+		// Reduce the array to unique attachment IDs.
+		$attachment_ids = array_unique( array_filter( array_values( $images ) ) );
+
+		if ( count( $attachment_ids ) > 1 ) {
+			/*
+			* Warm the object cache with post and meta information for all found
+			* images to avoid making individual database calls.
+			*/
+			_prime_post_caches( $attachment_ids, false, true );
+		}
+
+		// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
+		foreach ( $matches as $match ) {
+			// Filter an image match.
+			if ( isset( $images[ $match[0] ] ) ) {
+				$filtered_image = $match[0];
+				$attachment_id  = $images[ $match[0] ];
+
+				// Add loading optimization attributes if applicable.
+				$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
+				if ( $filtered_image !== $match[0] ) {
+					$content = str_replace( $match[0], $filtered_image, $content );
+				}
+
+				/*
+				* Unset image lookup to not run the same logic again unnecessarily if the same image tag is used more than
+				* once in the same blob of content.
+				*/
+				self::$image_visited[ $attachment_id ] = $filtered_image;
+				unset( $images[ $match[0] ] );
+			}
+		}
+
+		return $content;
 	}
 
 	public function stop_core_fetchpriority_high_logic() {
