@@ -28,3 +28,13 @@ do_action( 'elementor/page_templates/header-footer/before_content' );
 do_action( 'elementor/page_templates/header-footer/after_content' );
 
 get_footer();
+
+
+/**
+ * After Header-Footer page template footer.
+ *
+ * Fires after the footer page template.
+ *
+ * @since //TBD
+ */
+do_action( 'elementor/page_templates/header-footer/after_footer' );
