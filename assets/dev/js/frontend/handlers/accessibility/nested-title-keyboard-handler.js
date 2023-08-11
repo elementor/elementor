@@ -131,12 +131,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 			if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
 				location.href = event.currentTarget.getAttribute( 'href' );
 				event.stopPropagation();
+			}
+
+			if ( isLinkElement ) {
 				return;
 			}
 
 			const titleIndex = this.getTitleIndex( event.currentTarget );
 
-			elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', titleIndex );
+			elementorFrontend.elements.$window.trigger( 'elementor/nested-elements/activate-by-keyboard', { widgetId: this.getID(), titleIndex } );
 		} else if ( 'Escape' === event.key ) {
 			this.handleTitleEscapeKeyEvents( event );
 		}
@@ -191,7 +194,9 @@ export default class NestedTitleKeyboardHandler extends Base {
 		if ( 'Tab' === event.key && ! event.shiftKey ) {
 			this.handleContentElementTabEvents( event );
 		} else if ( 'Escape' === event.key ) {
-			this.handleContentElementEscapeEvents( event );
+			event.preventDefault();
+			event.stopPropagation();
+			this.handleContentElementEscapeEvents();
 		}
 	}
 
