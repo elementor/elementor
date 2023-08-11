@@ -173,25 +173,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'separator' => 'before',
 			'selectors_dictionary' => [
+				'block-start' => $styling_block_start,
+				'block-end' => $styling_block_end,
+				'inline-end' => $styling_inline_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'end' => $styling_inline_end,
@@ -235,6 +240,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'condition' => [
 				'tabs_direction' => [
 					'',
+					'block-start',
+					'block-end',
 					'top',
 					'bottom',
 				],
@@ -274,6 +281,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -302,6 +311,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			],
 			'condition' => [
 				'tabs_direction' => [
+					'inline-start',
+					'inline-end',
 					'start',
 					'end',
 				],
@@ -363,6 +374,8 @@ class NestedTabsHtml extends Widget_Nested_Base {
 				'condition' => [
 					'tabs_direction' => [
 						'',
+						'block-start',
+						'block-end',
 						'top',
 						'bottom',
 					],
@@ -848,25 +861,30 @@ class NestedTabsHtml extends Widget_Nested_Base {
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'top' => [
+				'block-start' => [
 					'title' => esc_html__( 'Above', 'elementor' ),
 					'icon' => 'eicon-v-align-top',
 				],
-				'end' => [
+				'inline-end' => [
 					'title' => esc_html__( 'After', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $end,
 				],
-				'bottom' => [
+				'block-end' => [
 					'title' => esc_html__( 'Below', 'elementor' ),
 					'icon' => 'eicon-v-align-bottom',
 				],
-				'start' => [
+				'inline-start' => [
 					'title' => esc_html__( 'Before', 'elementor' ),
 					'icon' => 'eicon-h-align-' . $start,
 				],
 			],
 			'selectors_dictionary' => [
 				// The toggle variables for 'align items' and 'justify content' have been added to separate the styling of the two 'flex direction' modes.
+				'block-start' => $styling_block_start,
+				'inline-end' => $styling_inline_end,
+				'block-end' => $styling_block_end,
+				'inline-start' => $styling_inline_start,
+				// Styling duplication for BC reasons.
 				'top' => $styling_block_start,
 				'bottom' => $styling_block_end,
 				'start' => $styling_inline_start,
