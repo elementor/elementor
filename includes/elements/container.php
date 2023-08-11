@@ -466,8 +466,6 @@ class Container extends Element_Base {
 			'separator' => 'none',
 		];
 
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
 		$full_width_devices_defaults = [];
 
 		$full_width_devices_settings = [
