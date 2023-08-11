@@ -204,7 +204,8 @@ class Module extends BaseModule {
 			if ( false === $maybe_in_viewport ) {
 				_doing_it_wrong(
 					__FUNCTION__,
-					__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' )
+					__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' ),
+					''
 				);
 				/*
 				 * Set `fetchpriority` here for backward-compatibility as we should
