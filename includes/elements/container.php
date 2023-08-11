@@ -466,6 +466,24 @@ class Container extends Element_Base {
 			'separator' => 'none',
 		];
 
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$full_width_devices_defaults = [];
+
+		$full_width_devices_settings = [
+			'default' => [
+				'unit' => '%',
+			],
+			'placeholder' => [
+				'size' => 100,
+				'unit' => '%',
+			],
+		];
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$full_width_devices_defaults[ $breakpoint_name ] = $full_width_devices_settings;
+		}
+
 		$this->add_responsive_control(
 			'width',
 			array_merge( $width_control_settings, [
@@ -475,21 +493,7 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-						// The mobile width is not inherited from the higher breakpoint width controls.
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-				],
+				'device_args' => $full_width_devices_defaults,
 			] )
 		);
 
