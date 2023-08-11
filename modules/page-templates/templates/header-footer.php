@@ -29,7 +29,6 @@ do_action( 'elementor/page_templates/header-footer/after_content' );
 
 get_footer();
 
-
 /**
  * After Header-Footer page template footer.
  *
