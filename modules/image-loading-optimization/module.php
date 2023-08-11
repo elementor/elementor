@@ -26,31 +26,23 @@ class Module extends BaseModule {
 		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 
 		// Run optimization logic on header.
-		add_action( 'get_header', [ $this, 'set_header_buffer' ] );
-		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_header_buffer' ] );
+		add_action( 'get_header', [ $this, 'set_buffer' ] );
+		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_buffer' ] );
 
 		// Run optimization logic on content.
 		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ], 10, 3 );
 		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
 
 		// Run optimization logic on footer.
-		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_footer_buffer' ] );
-		add_action( 'elementor/page_templates/header-footer/after_footer', [ $this, 'flush_footer_buffer' ] );
+		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_buffer' ] );
+		add_action( 'elementor/page_templates/header-footer/after_footer', [ $this, 'flush_buffer' ] );
 	}
 
-	public function set_header_buffer() {
+	public function set_buffer() {
 		ob_start( [ $this, 'handel_buffer_content' ] );
 	}
-
-	public function flush_header_buffer() {
-		ob_end_flush();
-	}
-
-	public function set_footer_buffer() {
-		ob_start( [ $this, 'handel_buffer_content' ] );
-	}
-
-	public function flush_footer_buffer() {
+	
+	public function flush_buffer() {
 		ob_end_flush();
 	}
 
@@ -119,7 +111,7 @@ class Module extends BaseModule {
 
 	public function stop_core_fetchpriority_high_logic() {
 		// wp_high_priority_element_flag was only introduced in 6.3.0
-		if ( function_exists( '\wp_high_priority_element_flag' ) ) {
+		if( function_exists('\wp_high_priority_element_flag') ) {
 			\wp_high_priority_element_flag( false );
 		}
 	}
@@ -131,10 +123,10 @@ class Module extends BaseModule {
 	}
 
 	public function remove_content_img_tag_loading_attributes( $filtered_image, $context, $attachment_id ) {
-		if ( isset( self::$image_visited[ $attachment_id ] ) ) {
+		if( isset( self::$image_visited[ $attachment_id ] ) ) {
 			return self::$image_visited[ $attachment_id ];
 		}
-
+		
 		$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
 		self::$image_visited[ $attachment_id ] = $filtered_image;
 		return $filtered_image;
