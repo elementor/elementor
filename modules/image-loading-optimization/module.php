@@ -54,62 +54,26 @@ class Module extends BaseModule {
 			return $content;
 		}
 
-		// List of the unique `img` tags found in $content.
-		$images = array();
-
-		foreach ( $matches as $match ) {
-			$tag = $match[0];
-			if ( preg_match( '/wp-image-([0-9]+)/i', $tag, $class_id ) ) {
-				$attachment_id = absint( $class_id[1] );
-				if ( $attachment_id ) {
-					/*
-					 * If exactly the same image tag is used more than once, overwrite it.
-					 * All identical tags will be replaced later with 'str_replace()'.
-					 */
-					$images[ $tag ] = $attachment_id;
-				}
-			}
-			$images[ $tag ] = 0;
-		}
-
-		// Reduce the array to unique attachment IDs.
-		$attachment_ids = array_unique( array_filter( array_values( $images ) ) );
-
-		if ( count( $attachment_ids ) > 1 ) {
-			/*
-			* Warm the object cache with post and meta information for all found
-			* images to avoid making individual database calls.
-			*/
-			_prime_post_caches( $attachment_ids, false, true );
-		}
-
 		// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
 		foreach ( $matches as $match ) {
 			$tag = $match[0];
 
 			// Filter an image match.
-			if ( isset( $images[ $tag ] ) ) {
-				$filtered_image = $tag;
-				$attachment_id  = $images[ $tag ];
+			$filtered_image = $tag;
+			$attachment_id  = $images[ $tag ];
 
-				if ( isset( self::$image_visited[ $tag ] ) ) {
-					$filtered_image = self::$image_visited[ $tag ];
-				} else {
-					// Add loading optimization attributes if applicable.
-					$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
-				}
-
-				if ( $filtered_image !== $tag ) {
-					$content = str_replace( $tag, $filtered_image, $content );
-				}
-
-				/*
-				* Unset image lookup to not run the same logic again unnecessarily if the same image tag is used more than
-				* once in the same blob of content.
-				*/
-				self::$image_visited[ $tag ] = $filtered_image;
-				unset( $images[ $tag ] );
+			if ( isset( self::$image_visited[ $tag ] ) ) {
+				$filtered_image = self::$image_visited[ $tag ];
+			} else {
+				// Add loading optimization attributes if applicable.
+				$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
 			}
+
+			if ( $filtered_image !== $tag ) {
+				$content = str_replace( $tag, $filtered_image, $content );
+			}
+
+			self::$image_visited[ $tag ] = $filtered_image;
 		}
 
 		return $content;
@@ -122,7 +86,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function loading_optimization_content_image( $image, $context, $attachment_id ) {
+	public function loading_optimization_content_image( $image ) {
 		if ( isset( self::$image_visited[ $image ] ) ) {
 			return self::$image_visited[ $image ];
 		}
