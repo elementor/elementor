@@ -30,7 +30,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_buffer' ] );
 
 		// Run optimization logic on content.
-		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ] );
+		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_content_image' ] );
 
 		// Run optimization logic on footer.
 		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_buffer' ] );
@@ -115,7 +115,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function remove_content_img_tag_loading_attributes( $image, $context, $attachment_id ) {
+	public function loading_optimization_content_image( $image, $context, $attachment_id ) {
 		if ( isset( self::$image_visited[ $image ] ) ) {
 			return self::$image_visited[ $image ];
 		}
