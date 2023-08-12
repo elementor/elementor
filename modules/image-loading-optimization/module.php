@@ -30,8 +30,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_buffer' ] );
 
 		// Run optimization logic on content.
-		add_filter( 'wp_get_attachment_image_attributes', [ $this, 'remove_get_attachment_loading_attributes' ] );
-		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ], 10, 3 );
+		add_filter( 'wp_content_img_tag', [ $this, 'remove_content_img_tag_loading_attributes' ] );
 
 		// Run optimization logic on footer.
 		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_buffer' ] );
@@ -41,7 +40,7 @@ class Module extends BaseModule {
 	public function set_buffer() {
 		ob_start( [ $this, 'handel_buffer_content' ] );
 	}
-	
+
 	public function flush_buffer() {
 		ob_end_flush();
 	}
@@ -111,24 +110,18 @@ class Module extends BaseModule {
 
 	public function stop_core_fetchpriority_high_logic() {
 		// wp_high_priority_element_flag was only introduced in 6.3.0
-		if( function_exists('\wp_high_priority_element_flag') ) {
-			\wp_high_priority_element_flag( false );
+		if ( function_exists( 'wp_high_priority_element_flag' ) ) {
+			wp_high_priority_element_flag( false );
 		}
 	}
 
-	public function remove_get_attachment_loading_attributes( $attr, $attachment, $size ) {
-		unset( $attr['fetchpriority'] );
-		unset( $attr['loading'] );
-		return $attr;
-	}
-
-	public function remove_content_img_tag_loading_attributes( $filtered_image, $context, $attachment_id ) {
-		if( isset( self::$image_visited[ $attachment_id ] ) ) {
-			return self::$image_visited[ $attachment_id ];
+	public function remove_content_img_tag_loading_attributes( $image, $context, $attachment_id ) {
+		if ( isset( self::$image_visited[ $image ] ) ) {
+			return self::$image_visited[ $image ];
 		}
-		
-		$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
-		self::$image_visited[ $attachment_id ] = $filtered_image;
+
+		$filtered_image = $this->add_loading_optimization_attrs( $image );
+		self::$image_visited[ $image ] = $filtered_image;
 		return $filtered_image;
 	}
 
@@ -231,7 +224,7 @@ class Module extends BaseModule {
 		}
 
 		if ( $maybe_in_viewport ) {
-			$loading_attrs = $this->maybe_add_fetchpriority_high_attr( $loading_attrs, $tag_name, $attr );
+			$loading_attrs = $this->maybe_add_fetchpriority_high_attr( $loading_attrs, $attr );
 		} else {
 			$loading_attrs['loading'] = 'lazy';
 		}
@@ -264,7 +257,7 @@ class Module extends BaseModule {
 		return $omit_threshold;
 	}
 
-	private function maybe_add_fetchpriority_high_attr( $loading_attrs, $tag_name, $attr ) {
+	private function maybe_add_fetchpriority_high_attr( $loading_attrs, $attr ) {
 		if ( isset( $attr['fetchpriority'] ) ) {
 			if ( 'high' === $attr['fetchpriority'] ) {
 				$loading_attrs['fetchpriority'] = 'high';
