@@ -85,23 +85,30 @@ class Module extends BaseModule {
 
 		// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
 		foreach ( $matches as $match ) {
-			// Filter an image match.
-			if ( isset( $images[ $match[0] ] ) ) {
-				$filtered_image = $match[0];
-				$attachment_id  = $images[ $match[0] ];
+			$tag = $match[0];
 
-				// Add loading optimization attributes if applicable.
-				$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
-				if ( $filtered_image !== $match[0] ) {
-					$content = str_replace( $match[0], $filtered_image, $content );
+			// Filter an image match.
+			if ( isset( $images[ $tag ] ) ) {
+				$filtered_image = $tag;
+				$attachment_id  = $images[ $tag ];
+
+				if ( isset( self::$image_visited[ $tag ] ) ) {
+					$filtered_image = self::$image_visited[ $tag ];
+				} else {
+					// Add loading optimization attributes if applicable.
+					$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
+				}
+
+				if ( $filtered_image !== $tag ) {
+					$content = str_replace( $tag, $filtered_image, $content );
 				}
 
 				/*
 				* Unset image lookup to not run the same logic again unnecessarily if the same image tag is used more than
 				* once in the same blob of content.
 				*/
-				self::$image_visited[ $attachment_id ] = $filtered_image;
-				unset( $images[ $match[0] ] );
+				self::$image_visited[ $tag ] = $filtered_image;
+				unset( $images[ $tag ] );
 			}
 		}
 
