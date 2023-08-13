@@ -63,7 +63,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	const isPromptFormActive = !! ( isPromptEditable || error );
 
 	const onCloseIntent = () => {
-		const hasUnsavedChanges = promptInputRef.current.value !== '' || templatesData?.result.elements.length > 0;
+		const hasUnsavedChanges = promptInputRef.current.value.trim() !== '' || templatesData?.result.elements.length > 0;
 
 		if ( hasUnsavedChanges ) {
 			return setShowUnsavedChangesAlert( true );

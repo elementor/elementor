@@ -36,7 +36,19 @@ const BackButton = ( props ) => (
 );
 
 const EditButton = ( props ) => (
-	<IconButtonWithTooltip size="small" color="primary" tooltip={ __( 'Edit prompt', 'elementor' ) } { ...props }>
+	<IconButtonWithTooltip
+		size="small"
+		color="primary"
+		tooltip={ __( 'Edit prompt', 'elementor' ) }
+		sx={ {
+			color: 'primary.inverse',
+			'&:hover': {
+				color: 'primary.inverse',
+				bgcolor: 'primary.background',
+			},
+		} }
+		{ ...props }
+	>
 		<EditIcon />
 	</IconButtonWithTooltip>
 );
