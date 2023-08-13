@@ -71,7 +71,7 @@ const LayoutContent = ( { onClose, onConnect, onGenerationStart, onGenerationEnd
 			DialogContentProps={ {
 				children: ! isViewed && (
 					<Alert
-						color="info"
+						severity="info"
 						onClose={ markAsViewed }
 					>
 						{ __( "At the moment images are not included, but we're working on it! stay tuned.", 'elementor' ) }
