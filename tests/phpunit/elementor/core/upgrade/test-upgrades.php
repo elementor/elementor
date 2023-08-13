@@ -9,6 +9,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -430,6 +431,22 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
+	public function test_v_3_15_3_container_updates() {
+
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
+
+		$documents = [];
+		$updater = $this->create_updater();
+
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
+
+		Upgrades::_v_3_15_3_container_updates( $updater );
+
+		$this->assert_flex_gap_control_has_changed( $documents[0]->get_json_meta('_elementor_data') );
+
+	}
+
 	private function create_image() {
 		$attachment_id = $this->_make_attachment( [
 			'file' => __DIR__ . '/../../../resources/mock-image.png',
@@ -452,5 +469,51 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	private function delete_image( $attachment_id ) {
 		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_flex_gap_control_has_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertEquals( [
+			'size' => 99,
+			'unit' => 'px',
+			'sizes' => [],
+		], $top_level_container['settings']['flex_gap'] );
+
+		self::assertEquals( [
+			'size' => 88,
+			'unit' => 'px',
+			'sizes' => [],
+		], $top_level_container['settings']['flex_gap_tablet'] );
+
+		self::assertEquals( [
+			'size' => 77,
+			'unit' => 'px',
+			'sizes' => [],
+		], $top_level_container['settings']['flex_gap_mobile'] );
+
+		$inner_container = $top_level_container['elements'][0];
+
+		self::assertEquals( [
+			'size' => 66,
+			'unit' => 'px',
+			'sizes' => [],
+		], $inner_container['settings']['flex_gap'] );
+
+		self::assertEquals( [
+			'size' => 55,
+			'unit' => 'px',
+			'sizes' => [],
+		], $inner_container['settings']['flex_gap_tablet'] );
+
+		self::assertEquals( [
+			'size' => 44,
+			'unit' => 'px',
+			'sizes' => [],
+		], $inner_container['settings']['flex_gap_mobile'] );
 	}
 }

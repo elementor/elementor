@@ -902,10 +902,9 @@ class Upgrades {
 		);
 	}
 
-	public static function _v_3_15_3_container_updates() {
-//		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
+	public static function _v_3_15_3_container_updates( $updater ) {
+		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
 
-		$post_ids = [ '1229' ];
 		if ( empty( $post_ids ) ) {
 			return false;
 		}
@@ -919,7 +918,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = self::maybe_convert_flex_gap_control( $data );
+			$data = self::maybe_convert_flex_gaps_control( $data );
 
 			self::save_updated_document( $post_id, $data );
 		}
@@ -930,14 +929,14 @@ class Upgrades {
 	 *
 	 * @return array|mixed
 	 */
-	private static function maybe_convert_flex_gap_control( $data ) {
+	private static function maybe_convert_flex_gaps_control( $data ) {
 		return Plugin::$instance->db->iterate_data(
 			$data, function ( $element ) {
 				if ( 'container' !== $element['elType'] ) {
 					return $element;
 				}
 
-				return self::flex_gap_responsive_control_iterator( $element );
+				return self::flex_gaps_responsive_control_iterator( $element );
 			}
 		);
 	}
@@ -947,11 +946,11 @@ class Upgrades {
 	 *
 	 * @return array
 	 */
-	private static function flex_gap_responsive_control_iterator( $element ) {
+	private static function flex_gaps_responsive_control_iterator( $element ) {
 		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
 		$breakpoints[] = 'desktop';
-		$old_control_name = 'flex_gap';
-		$new_control_name = 'flex_gaps';
+		$old_control_name = 'flex_gaps';
+		$new_control_name = 'flex_gap';
 
 		foreach ( $breakpoints as $breakpoint ) {
 			if ( 'desktop' !== $breakpoint ) {
@@ -963,11 +962,11 @@ class Upgrades {
 			}
 
 			if ( isset( $element['settings'][ $old_control ] ) ) {
-				$old_column = strval( $element['settings'][ $old_control ]['column'] );
+				$old_column = intval( $element['settings'][ $old_control ]['column'] );
 				$old_unit = $element['settings'][ $old_control ]['unit'];
 
 				$element['settings'][ $new_control ] = [
-					'column' => $old_column,
+					'size' => $old_column,
 					'unit' => $old_unit,
 					'sizes' => [],
 				];
