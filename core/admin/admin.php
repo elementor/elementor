@@ -160,6 +160,8 @@ class Admin extends App {
 
 		wp_enqueue_script( 'elementor-admin' );
 
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
+
 		$this->print_config();
 	}
 
@@ -749,6 +751,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
@@ -772,6 +776,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
 	}
 
 	/**
