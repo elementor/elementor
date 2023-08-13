@@ -149,14 +149,16 @@ class Tools extends Settings_Page {
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
-		$rollback = new Rollback(
-			[
-				'version' => $version,
-				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
-				'plugin_slug' => $plugin_slug,
-				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
-			]
-		);
+		$rollback_args = [
+			'version' => $version,
+			'plugin_name' => ELEMENTOR_PLUGIN_BASE,
+			'plugin_slug' => $plugin_slug,
+			'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
+		];
+
+		$rollback_args = apply_filters( 'elementor/settings/tools/rollback/rollback_args', $rollback_args );
+
+		$rollback = new Rollback( $rollback_args );
 
 		$rollback->run();
 
@@ -197,6 +199,7 @@ class Tools extends Settings_Page {
 
 	private function get_rollback_versions() {
 		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
+
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
@@ -211,6 +214,11 @@ class Tools extends Settings_Page {
 			if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
 				return [];
 			}
+
+			$plugin_information->versions = apply_filters(
+				'elementor/settings/tools/rollback/versions',
+				$plugin_information->versions
+			);
 
 			uksort( $plugin_information->versions, 'version_compare' );
 			$plugin_information->versions = array_reverse( $plugin_information->versions );
