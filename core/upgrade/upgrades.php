@@ -885,4 +885,112 @@ class Upgrades {
 		$logger = Plugin::$instance->logger->get_logger();
 		$logger->notice( $message );
 	}
+
+	/**
+	 * @param \wpdb $wpdb
+	 * @param string $element_type
+	 *
+	 * @return array
+	 */
+	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
+		global $wpdb;
+		return $updater->query_col(
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
+					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
+		);
+	}
+
+	public static function _v_3_15_3_container_updates() {
+//		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
+
+		$post_ids = [ '1229' ];
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = self::maybe_convert_flex_gap_control( $data );
+
+			self::save_updated_document( $post_id, $data );
+		}
+	}
+
+	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function maybe_convert_flex_gap_control( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+				if ( 'container' !== $element['elType'] ) {
+					return $element;
+				}
+
+				return self::flex_gap_responsive_control_iterator( $element );
+			}
+		);
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function flex_gap_responsive_control_iterator( $element ) {
+		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
+		$breakpoints[] = 'desktop';
+		$old_control_name = 'flex_gap';
+		$new_control_name = 'flex_gaps';
+
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( 'desktop' !== $breakpoint ) {
+				$old_control = $old_control_name . '_' . $breakpoint;
+				$new_control = $new_control_name . '_' . $breakpoint;
+			} else {
+				$old_control = $old_control_name;
+				$new_control = $new_control_name;
+			}
+
+			if ( isset( $element['settings'][ $old_control ] ) ) {
+				$old_column = strval( $element['settings'][ $old_control ]['column'] );
+				$old_unit = $element['settings'][ $old_control ]['unit'];
+
+				$element['settings'][ $new_control ] = [
+					'column' => $old_column,
+					'unit' => $old_unit,
+					'sizes' => [],
+				];
+
+				unset( $element['settings'][ $old_control ] );
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @param $post_id
+	 * @param $data
+	 *
+	 * @return void
+	 */
+	private static function save_updated_document( $post_id, $data ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+		$document->save(
+			[
+				'elements' => $data,
+			]
+		);
+	}
 }

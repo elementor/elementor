@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Upgrade\Upgrades;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -14,6 +16,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 	}
 
 	protected function init_fields() {
+		$upgrade = Upgrades::_v_3_15_3_container_updates();
+
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
 
