@@ -43,7 +43,7 @@ class Module extends BaseModule {
 		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 0 );
 
 		// Run optimization logic on content.
-		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_content_image' ] );
+		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_image' ] );
 
 		// Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
 		add_action( 'get_footer', [ $this, 'set_buffer' ] );
@@ -114,7 +114,7 @@ class Module extends BaseModule {
 			$tag = $match[0];
 
 			// Optimize an image.
-			$optimized_image = $this->loading_optimization_content_image( $tag );
+			$optimized_image = $this->loading_optimization_image( $tag );
 
 			if ( $optimized_image !== $tag ) {
 				$content = str_replace( $tag, $optimized_image, $content );
@@ -131,7 +131,7 @@ class Module extends BaseModule {
 	 *
 	 * @return string Optimized image.
 	 */
-	public function loading_optimization_content_image( $image ) {
+	public function loading_optimization_image( $image ) {
 		if ( isset( self::$image_visited[ $image ] ) ) {
 			return self::$image_visited[ $image ];
 		}
