@@ -55,8 +55,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGenerationStart={ () => {} }
-				onGenerationEnd={ this.onGenerated }
+				onGeneration={ this.onGenerated }
 				onSelect={ this.onSelect }
 				onInsert={ this.onInsert.bind( this ) }
 			/>,
