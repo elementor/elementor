@@ -486,19 +486,19 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 */
 	private function assert_flex_gap_control_has_changed( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 99,
 			'unit' => 'px',
 			'sizes' => [],
 		], $top_level_container['settings']['flex_gap'] );
 
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 88,
 			'unit' => 'px',
 			'sizes' => [],
 		], $top_level_container['settings']['flex_gap_tablet'] );
 
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 77,
 			'unit' => 'px',
 			'sizes' => [],
@@ -506,19 +506,19 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$inner_container = $top_level_container['elements'][0];
 
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 66,
 			'unit' => 'px',
 			'sizes' => [],
 		], $inner_container['settings']['flex_gap'] );
 
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 55,
 			'unit' => 'px',
 			'sizes' => [],
 		], $inner_container['settings']['flex_gap_tablet'] );
 
-		self::assertEquals( [
+		$this->assertEquals( [
 			'size' => 44,
 			'unit' => 'px',
 			'sizes' => [],
