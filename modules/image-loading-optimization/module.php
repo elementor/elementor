@@ -8,9 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-
+	/**
+	 * @var int Minimum square-pixels threshold.
+	 */
 	private $min_priority_img_pixels;
+
+	/**
+	 * @var int The number of content media elements to not lazy-load.
+	 */
 	private $omit_threshold;
+
+	/**
+	 * @var array Keep a track of images for which loading optimization strategy were computed.
+	 */
 	private static $image_visited = [];
 
 	public function get_name() {
