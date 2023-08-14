@@ -8,8 +8,8 @@ import useImageActions from '../../hooks/use-image-actions';
 import useReplaceBackground from './hooks/use-replace-background';
 import { useState } from 'react';
 import PromptField from '../../components/prompt-field';
-import {LOCATIONS} from "../../constants";
-import NewPromptButton from "../../components/new-prompt-button";
+import { LOCATIONS } from '../../constants';
+import NewPromptButton from '../../components/new-prompt-button';
 
 const RemoveBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
