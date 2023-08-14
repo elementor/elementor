@@ -23,10 +23,16 @@ class Module extends BaseModule {
 	 */
 	private static $image_visited = [];
 
+	/**
+	 * Get Module name.
+	 */
 	public function get_name() {
 		return 'image-loading-optimization';
 	}
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -71,7 +77,6 @@ class Module extends BaseModule {
 	 * This function behaves more like an action than a filter.
 	 *
 	 * @param string $content the content.
-	 *
 	 * @return string We simply return the content from parameter.
 	 */
 	public function flush_header_buffer( $content ) {
@@ -90,7 +95,6 @@ class Module extends BaseModule {
 	 * Callback to handle image optimization logic on buffered content.
 	 *
 	 * @param string $buffer Buffered content.
-	 *
 	 * @return string Content with optimized images.
 	 */
 	public function handel_buffer_content( $buffer ) {
@@ -101,7 +105,6 @@ class Module extends BaseModule {
 	 * Check for image in the content provided and apply optimization logic on them.
 	 *
 	 * @param string $content Content to be analyzed.
-	 *
 	 * @return string Content with optimized images.
 	 */
 	private function filter_images( $content ) {
@@ -128,7 +131,6 @@ class Module extends BaseModule {
 	 * Apply loading optimization logic on the image.
 	 *
 	 * @param mixed $image Original image tag.
-	 *
 	 * @return string Optimized image.
 	 */
 	public function loading_optimization_image( $image ) {
@@ -141,6 +143,12 @@ class Module extends BaseModule {
 		return $optimized_image;
 	}
 
+	/**
+	 * Adds optimization attributes to an `img` HTML tag.
+	 *
+	 * @param string $image   The HTML `img` tag where the attribute should be added.
+	 * @return string Converted `img` tag with optimization attributes added.
+	 */
 	private function add_loading_optimization_attrs( $image ) {
 		$width             = preg_match( '/ width=["\']([0-9]+)["\']/', $image, $match_width ) ? (int) $match_width[1] : null;
 		$height            = preg_match( '/ height=["\']([0-9]+)["\']/', $image, $match_height ) ? (int) $match_height[1] : null;
@@ -176,7 +184,6 @@ class Module extends BaseModule {
 	 * Return loading Loading optimization attributes for a image with give attribute.
 	 *
 	 * @param array $attr Existing image attributes.
-	 *
 	 * @return array Loading optimization attributes.
 	 */
 	private function get_loading_optimization_attributes( $attr ) {
@@ -267,8 +274,7 @@ class Module extends BaseModule {
 	 * Keeps a count of media image.
 	 *
 	 * @param int $amount Amount by which count must be increased.
-	 *
-	 * @return int new image count.
+	 * @return int current image count.
 	 */
 	private function increase_content_media_count( $amount = 1 ) {
 		static $content_media_count = 0;
