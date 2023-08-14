@@ -678,7 +678,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
-		$selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title';
+		$selector = '{{WRAPPER}} :where( > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > ) .e-n-accordion-item-title';
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
 		switch ( $state ) {
