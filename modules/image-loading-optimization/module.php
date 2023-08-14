@@ -29,8 +29,8 @@ class Module extends BaseModule {
 
 		// Run optimization logic on header.
 		add_action( 'get_header', [ $this, 'set_buffer' ] );
-		// Ensure buffer is flushed if any before any content logic.
-		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 1 );
+		// Ensure buffer is flushed (if any) before the content logic.
+		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 0 );
 
 		// Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_content_image' ] );
