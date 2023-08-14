@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	private $min_priority_img_pixels;
+	private $omit_threshold;
 	private static $image_visited = [];
 
 	public function get_name() {
@@ -20,35 +21,79 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->min_priority_img_pixels = 50000;
+		$this->omit_threshold = 3;
 
 		// Stop wp core logic.
 		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
 		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 
-		// Run optimization logic on header.
+		// // Run optimization logic on header.
 		add_action( 'get_header', [ $this, 'set_buffer' ] );
-		add_action( 'elementor/page_templates/header-footer/before_content', [ $this, 'flush_buffer' ] );
+		// // Ensure buffer is flushed if any before any content logic.
+		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 1 );
 
-		// Run optimization logic on content.
+		// // Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_content_image' ] );
 
-		// Run optimization logic on footer.
-		add_action( 'elementor/page_templates/header-footer/after_content', [ $this, 'set_buffer' ] );
-		add_action( 'elementor/page_templates/header-footer/after_footer', [ $this, 'flush_buffer' ] );
+		// // Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
+		add_action( 'get_footer', [ $this, 'set_buffer' ] );
 	}
 
+	/**
+	 * Stop WordPress core fetchpriority logic by setting the wp_high_priority_element_flag flag to false.
+	 */
+	public function stop_core_fetchpriority_high_logic() {
+		// wp_high_priority_element_flag was only introduced in 6.3.0
+		if ( function_exists( 'wp_high_priority_element_flag' ) ) {
+			wp_high_priority_element_flag( false );
+		}
+	}
+
+	/**
+	 * Set buffer to handle header and footer content.
+	 */
 	public function set_buffer() {
 		ob_start( [ $this, 'handel_buffer_content' ] );
 	}
 
+	/**
+	 * This function ensure that buffer if any is flushed before the content is called.
+	 * This function behaves more like an action than a filter.
+	 *
+	 * @param string $content the content.
+	 *
+	 * @return string We simply return the content from parameter.
+	 */
+	public function flush_header_buffer( $content ) {
+		$this->flush_buffer();
+		return $content;
+	}
+
+	/**
+	 * Flushes buffer.
+	 */
 	public function flush_buffer() {
 		ob_end_flush();
 	}
 
+	/**
+	 * Callback to handle image optimization logic on buffered content.
+	 *
+	 * @param string $buffer Buffered content.
+	 *
+	 * @return string Content with optimized images.
+	 */
 	public function handel_buffer_content( $buffer ) {
 		return $this->filter_images( $buffer );
 	}
 
+	/**
+	 * Check for image in the content provided and apply optimization logic on them.
+	 *
+	 * @param string $content Content to be analyzed.
+	 *
+	 * @return string Content with optimized images.
+	 */
 	private function filter_images( $content ) {
 		if ( ! preg_match_all( '/<img\s[^>]+>/', $content, $matches, PREG_SET_ORDER ) ) {
 			return $content;
@@ -58,42 +103,32 @@ class Module extends BaseModule {
 		foreach ( $matches as $match ) {
 			$tag = $match[0];
 
-			// Filter an image match.
-			$filtered_image = $tag;
-			$attachment_id  = $images[ $tag ];
+			// Optimize an image.
+			$optimized_image = $this->loading_optimization_content_image( $tag );
 
-			if ( isset( self::$image_visited[ $tag ] ) ) {
-				$filtered_image = self::$image_visited[ $tag ];
-			} else {
-				// Add loading optimization attributes if applicable.
-				$filtered_image = $this->add_loading_optimization_attrs( $filtered_image );
+			if ( $optimized_image !== $tag ) {
+				$content = str_replace( $tag, $optimized_image, $content );
 			}
-
-			if ( $filtered_image !== $tag ) {
-				$content = str_replace( $tag, $filtered_image, $content );
-			}
-
-			self::$image_visited[ $tag ] = $filtered_image;
 		}
 
 		return $content;
 	}
 
-	public function stop_core_fetchpriority_high_logic() {
-		// wp_high_priority_element_flag was only introduced in 6.3.0
-		if ( function_exists( 'wp_high_priority_element_flag' ) ) {
-			wp_high_priority_element_flag( false );
-		}
-	}
-
+	/**
+	 * Apply loading optimization logic on the image.
+	 *
+	 * @param mixed $image Original image tag.
+	 *
+	 * @return string Optimized image.
+	 */
 	public function loading_optimization_content_image( $image ) {
 		if ( isset( self::$image_visited[ $image ] ) ) {
 			return self::$image_visited[ $image ];
 		}
 
-		$filtered_image = $this->add_loading_optimization_attrs( $image );
-		self::$image_visited[ $image ] = $filtered_image;
-		return $filtered_image;
+		$optimized_image = $this->add_loading_optimization_attrs( $image );
+		self::$image_visited[ $image ] = $optimized_image;
+		return $optimized_image;
 	}
 
 	private function add_loading_optimization_attrs( $image ) {
@@ -127,6 +162,13 @@ class Module extends BaseModule {
 		return $image;
 	}
 
+	/**
+	 * Return loading Loading optimization attributes for a image with give attribute.
+	 *
+	 * @param array $attr Existing image attributes.
+	 *
+	 * @return array Loading optimization attributes.
+	 */
 	private function get_loading_optimization_attributes( $attr ) {
 		$loading_attrs = array();
 
@@ -186,7 +228,7 @@ class Module extends BaseModule {
 			if ( ! is_admin() ) {
 				$content_media_count = $this->increase_content_media_count( 0 );
 				$increase_count      = true;
-				if ( $content_media_count < $this->omit_loading_attr_threshold() ) {
+				if ( $content_media_count < $this->omit_threshold ) {
 					$maybe_in_viewport = true;
 				} else {
 					$maybe_in_viewport = false;
@@ -211,6 +253,13 @@ class Module extends BaseModule {
 		return $loading_attrs;
 	}
 
+	/**
+	 * Keeps a count of media image.
+	 *
+	 * @param int $amount Amount by which count must be increased.
+	 *
+	 * @return int new image count.
+	 */
 	private function increase_content_media_count( $amount = 1 ) {
 		static $content_media_count = 0;
 
@@ -219,15 +268,13 @@ class Module extends BaseModule {
 		return $content_media_count;
 	}
 
-	private function omit_loading_attr_threshold( $force = false ) {
-		static $omit_threshold;
-		if ( ! isset( $omit_threshold ) || $force ) {
-			$omit_threshold = 3;
-		}
-
-		return $omit_threshold;
-	}
-
+	/**
+	 * Determines whether to add `fetchpriority='high'` to loading attributes.
+	 *
+	 * @param array  $loading_attrs Array of the loading optimization attributes for the element.
+	 * @param array  $attr          Array of the attributes for the element.
+	 * @return array Updated loading optimization attributes for the element.
+	 */
 	private function maybe_add_fetchpriority_high_attr( $loading_attrs, $attr ) {
 		if ( isset( $attr['fetchpriority'] ) ) {
 			if ( 'high' === $attr['fetchpriority'] ) {
@@ -253,6 +300,12 @@ class Module extends BaseModule {
 		return $loading_attrs;
 	}
 
+	/**
+	 * Accesses a flag that indicates if an element is a possible candidate for `fetchpriority='high'`.
+	 *
+	 * @param bool $value Optional. Used to change the static variable. Default null.
+	 * @return bool Returns true if high-priority element was marked already, otherwise false.
+	 */
 	private function high_priority_element_flag( $value = null ) {
 		static $high_priority_element = true;
 
