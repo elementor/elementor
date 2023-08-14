@@ -139,10 +139,10 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	handeTitleLinkEnterOrSpaceEvent( event ) {
-		const isLinkElement = 'a' === event.currentTarget.tagName.toLowerCase();
+		const isLinkElement = 'a' === event?.currentTarget?.tagName?.toLowerCase();
 
 		if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
-			location.href = event.currentTarget.getAttribute( 'href' );
+			location.href = event?.currentTarget?.getAttribute( 'href' );
 			event.stopPropagation();
 		}
 
