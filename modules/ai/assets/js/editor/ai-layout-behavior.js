@@ -1,6 +1,6 @@
 import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
-import { takeScreenshots } from './utils/screenshot';
+import { takeScreenshot } from './utils/screenshot';
 import { startHistoryLog } from './utils/history';
 import { generateIds } from './utils/genereate-ids';
 import {
@@ -55,8 +55,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGenerationStart={ () => {} }
-				onGenerationEnd={ this.onGenerated }
+				onGeneration={ this.onGenerated }
 				onSelect={ this.onSelect }
 				onInsert={ this.onInsert.bind( this ) }
 			/>,
@@ -78,13 +77,13 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.view.onCloseButtonClick();
 	}
 
-	async onGenerated( templates ) {
-		const screenshots = await takeScreenshots( templates );
+	async onGenerated( template ) {
+		const screenshot = await takeScreenshot( template );
 
-		return screenshots.map( ( src, index ) => ( {
-			screenshot: src,
-			template: templates[ index ],
-		} ) );
+		return {
+			screenshot,
+			template,
+		};
 	}
 
 	onSelect( template ) {

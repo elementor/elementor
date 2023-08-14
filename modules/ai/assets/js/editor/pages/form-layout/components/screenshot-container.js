@@ -8,7 +8,7 @@ const ScreenshotContainer = styled( Box )( ( { theme, selected, height, disabled
 		cursor: disabled ? 'default' : 'pointer',
 		overflow: 'hidden',
 		boxSizing: 'border-box',
-		backgroundPosition: 'center',
+		backgroundPosition: 'top center',
 		backgroundSize: '100% auto',
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.common.white,
