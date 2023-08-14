@@ -675,23 +675,25 @@ class Module extends BaseModule {
 
 		$result = $app->generate_layout(
 			$data['prompt'],
-			$this->prepare_generate_layout_context()
+			$this->prepare_generate_layout_context(),
+			$data['variationType'],
 		);
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			$error_message = empty( $result->get_error_message() ) ? 'unknown_error' : $result->get_error_message();
+
+			throw new \Exception( $error_message );
 		}
 
-		// Normalizing the response data.
-		$templates_data = array_map( function( $template_data ) {
-			return $template_data['text']['elements'][0];
-		}, $result['generated_blocks'] );
+		$template = $result['text']['elements'][0] ?? null;
+
+		if ( empty( $template ) || ! is_array( $template ) ) {
+			throw new \Exception( 'unknown_error' );
+		}
 
 		return [
 			'all' => [],
-			'text' => [
-				'elements' => $templates_data,
-			],
+			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];
