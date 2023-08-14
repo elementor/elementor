@@ -126,14 +126,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		} else if ( this.isActivationKey( event ) ) {
 			event.preventDefault();
 
-			const isLinkElement = 'a' === event.currentTarget.tagName.toLowerCase();
-
-			if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
-				location.href = event.currentTarget.getAttribute( 'href' );
-				event.stopPropagation();
-			}
-
-			if ( isLinkElement ) {
+			if ( this.handeTitleLinkEnterOrSpaceEvent( event ) ) {
 				return;
 			}
 
@@ -143,6 +136,17 @@ export default class NestedTitleKeyboardHandler extends Base {
 		} else if ( 'Escape' === event.key ) {
 			this.handleTitleEscapeKeyEvents( event );
 		}
+	}
+
+	handeTitleLinkEnterOrSpaceEvent( event ) {
+		const isLinkElement = 'a' === event.currentTarget.tagName.toLowerCase();
+
+		if ( ! elementorFrontend.isEditMode() && isLinkElement ) {
+			location.href = event.currentTarget.getAttribute( 'href' );
+			event.stopPropagation();
+		}
+
+		return isLinkElement;
 	}
 
 	getTitleIndexFocusUpdated( event, currentTitleIndex, numberOfTitles ) {
