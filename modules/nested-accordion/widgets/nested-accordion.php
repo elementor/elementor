@@ -428,7 +428,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	private function add_content_style_section() {
 
-		$low_specificity_accordion_item_selector = ':where( {{WRAPPER}} .e-n-accordion-item ) > .e-con';
+		$low_specificity_accordion_item_selector = ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item ) > .e-con';
 
 		$this->start_controls_section(
 			'section_content_style',
@@ -678,7 +678,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
-		$selector = '{{WRAPPER}}  .e-n-accordion-item-title';
+		$selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title';
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
 		switch ( $state ) {
