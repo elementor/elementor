@@ -1,4 +1,4 @@
-import { toJpeg } from 'html-to-image';
+import { domToWebp } from 'modern-screenshot';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -37,11 +37,8 @@ export const takeScreenshots = async ( templates = [] ) => {
 };
 
 function screenshotNode( node ) {
-	return toJpeg( node, {
-		// Gray pixel.
-		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8dPrSfwAIFgNgET5chAAAAABJRU5ErkJggg==',
-		quality: 0.4,
-		backgroundColor: '#FFF',
+	return domToWebp( node, {
+		quality: 0.01,
 	} );
 }
 
