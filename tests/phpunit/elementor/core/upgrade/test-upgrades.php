@@ -451,8 +451,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$this->assertEquals( $option, 'yes' );
 
-		// Test the upgrade execution when the option is set up
-
+		// Test the upgrade script execution when the wp_option flag is set up
 		$this->assertEquals( Upgrades::_v_3_15_9_container_updates( $updater ), false );
 	}
 
