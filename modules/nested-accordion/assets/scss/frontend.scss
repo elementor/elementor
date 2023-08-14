@@ -40,7 +40,11 @@
 			}
 
 			:where( & > .e-con ) {
-				border: var( --n-accordion-border-width ) var( --n-accordion-border-style ) var( --n-accordion-border-color );
+				border-inline-start-width: var( --n-accordion-border-width );
+				border-inline-end-width: var( --n-accordion-border-width );
+				border-block-start-width: var( --n-accordion-border-width );
+				border-block-end-width: var( --n-accordion-border-width );
+				border: var( --n-accordion-border-style ) var( --n-accordion-border-color );
 			}
 
 			&-title {
@@ -51,7 +55,10 @@
 				padding-block-end: var( --n-accordion-padding-block-end,  var( --n-accordion-padding ) );
 				padding-inline-start: var( --n-accordion-padding-inline-start, var( --n-accordion-padding ) );
 				padding-inline-end: var( --n-accordion-padding-inline-end, var( --n-accordion-padding ) );
-				border-width: var( --n-accordion-border-width );
+				border-inline-start-width: var( --n-accordion-border-width );
+				border-inline-end-width: var( --n-accordion-border-width );
+				border-block-start-width: var( --n-accordion-border-width );
+				border-block-end-width: var( --n-accordion-border-width );
 				border-color: var( --n-accordion-border-color );
 				border-style: var( --n-accordion-border-style );
 				justify-content: var( --n-accordion-title-justify-content );
