@@ -172,7 +172,7 @@ export default class NestedTabsHtml extends Base {
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab-index' ), true );
+		this.changeActiveTab( event.currentTarget?.getAttribute( 'data-tab-index' ), true );
 	}
 
 	getTabEvents() {
