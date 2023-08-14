@@ -45,8 +45,10 @@
 				display: flex;
 				flex-direction: row;
 				list-style: none;
-				padding-block: var( --n-accordion-padding-block,  var( --n-accordion-padding ) );
-				padding-inline: var( --n-accordion-padding-inline, var( --n-accordion-padding ) );
+				padding-block-start: var( --n-accordion-padding-block,  var( --n-accordion-padding ) );
+				padding-block-end: var( --n-accordion-padding-block,  var( --n-accordion-padding ) );
+				padding-inline-start: var( --n-accordion-padding-inline, var( --n-accordion-padding ) );
+				padding-inline-end: var( --n-accordion-padding-inline, var( --n-accordion-padding ) );
 				border-width: var( --n-accordion-border-width );
 				border-color: var( --n-accordion-border-color );
 				border-style: var( --n-accordion-border-style );
@@ -62,7 +64,8 @@
 					display: flex;
 
 					h1, h2, h3, h4, h5, h6, p {
-						margin-block: 0;
+						margin-block-start: 0;
+						margin-block-end: 0;
 					}
 				}
 
