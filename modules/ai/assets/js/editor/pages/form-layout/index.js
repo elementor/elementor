@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Box, Divider, Button } from '@elementor/ui';
 import PromptErrorMessage from '../../components/prompt-error-message';
-import useLayoutPrompt from './hooks/use-layout-prompt';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import LayoutDialog from './components/layout-dialog';
-import ScreenshotsDisplay from './components/screenshots-display';
 import PromptForm from './components/prompt-form';
 import RefreshIcon from '../../icons/refresh-icon';
+import Screenshot from './components/screenshot';
+import useScreenshots from './hooks/use-screenshots';
 
 const RegenerateButton = ( props ) => (
 	<Button
@@ -37,14 +37,10 @@ const UseLayoutButton = ( props ) => (
 	</Button>
 );
 
-const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, onSelect, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
-	const { data: templatesData, isLoading: isGeneratingTemplates, error, send, sendUsageData } = useLayoutPrompt();
-
-	const [ screenshotsData, setScreenshotsData ] = useState( [] );
+const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
+	const { screenshots, generate, isLoading, error, abort } = useScreenshots( { onGeneration } );
 
 	const [ selectedScreenshotIndex, setSelectedScreenshotIndex ] = useState( -1 );
-
-	const [ isTakingScreenshots, setIsTakingScreenshots ] = useState( false );
 
 	const [ showUnsavedChangesAlert, setShowUnsavedChangesAlert ] = useState( false );
 
@@ -54,22 +50,25 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 
 	const promptInputRef = useRef( null );
 
-	const isLoading = isGeneratingTemplates || isTakingScreenshots;
-
-	const selectedTemplate = screenshotsData[ selectedScreenshotIndex ]?.template;
+	const selectedTemplate = screenshots[ selectedScreenshotIndex ]?.template;
 
 	const { children: dialogContentChildren, ...dialogContentProps } = DialogContentProps;
 
 	const isPromptFormActive = !! ( isPromptEditable || error );
 
+	const abortAndClose = () => {
+		abort();
+		onClose();
+	};
+
 	const onCloseIntent = () => {
-		const hasUnsavedChanges = promptInputRef.current.value.trim() !== '' || templatesData?.result.elements.length > 0;
+		const hasUnsavedChanges = promptInputRef.current.value.trim() !== '' || screenshots.length > 0;
 
 		if ( hasUnsavedChanges ) {
 			return setShowUnsavedChangesAlert( true );
 		}
 
-		onClose();
+		abortAndClose();
 	};
 
 	const handleSubmit = ( event, prompt ) => {
@@ -78,10 +77,10 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 		if ( '' === prompt.trim() ) {
 			return;
 		}
-
-		onGenerationStart();
-
-		lastRun.current = () => send( prompt );
+		lastRun.current = () => {
+			setSelectedScreenshotIndex( -1 );
+			generate( prompt );
+		};
 
 		lastRun.current();
 
@@ -93,43 +92,30 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 	};
 
 	const applyTemplate = () => {
-		sendUsageData();
-
 		onInsert( selectedTemplate );
 
-		onClose();
+		abortAndClose();
 	};
 
-	const handleScreenshotClick = useCallback( ( index ) => {
-		if ( isPromptFormActive ) {
-			return;
-		}
+	const handleScreenshotClick = useCallback( ( index, template ) => {
+		return () => {
+			if ( isPromptFormActive ) {
+				return;
+			}
 
-		setSelectedScreenshotIndex( index );
+			setSelectedScreenshotIndex( index );
+			onSelect( template );
+		};
 	}, [ isPromptFormActive ] );
 
 	useEffect( () => {
-		if ( templatesData?.result ) {
-			setIsTakingScreenshots( true );
-			setSelectedScreenshotIndex( -1 );
+		const isFirstScreenshot = 1 === screenshots.filter( ( screenshot ) => screenshot.template ).length;
 
-			const templates = templatesData?.result.elements;
-
-			onGenerationEnd( templates ).then( ( generatedData ) => {
-				setScreenshotsData( generatedData );
-				setIsTakingScreenshots( false );
-				setSelectedScreenshotIndex( 0 );
-			} );
+		if ( isFirstScreenshot ) {
+			onSelect( screenshots[ 0 ].template );
+			setSelectedScreenshotIndex( 0 );
 		}
-	}, [ templatesData ] );
-
-	useEffect( () => {
-		if ( -1 === selectedScreenshotIndex ) {
-			return;
-		}
-
-		onSelect( selectedTemplate );
-	}, [ selectedScreenshotIndex ] );
+	}, [ screenshots ] );
 
 	return (
 		<LayoutDialog onClose={ onCloseIntent }>
@@ -153,7 +139,7 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 						open={ showUnsavedChangesAlert }
 						title={ __( 'Leave Layout Generator?', 'elementor' ) }
 						text={ __( "The results will be deleted forever and we won't be able to recover them. ", 'elementor' ) }
-						onClose={ onClose }
+						onClose={ abortAndClose }
 						onCancel={ () => setShowUnsavedChangesAlert( false ) }
 					/>
 				) }
@@ -162,31 +148,36 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 					ref={ promptInputRef }
 					isActive={ isPromptFormActive }
 					isLoading={ isLoading }
-					showActions={ screenshotsData.length > 0 || isLoading }
+					showActions={ screenshots.length > 0 || isLoading }
 					onSubmit={ handleSubmit }
 					onBack={ () => setIsPromptEditable( false ) }
 					onEdit={ () => setIsPromptEditable( true ) }
 				/>
 
 				{
-					( screenshotsData.length > 0 || isLoading ) && (
+					( screenshots.length > 0 || isLoading ) && (
 						<>
 							<Divider />
 
-							<ScreenshotsDisplay
-								isLoading={ isLoading }
-								screenshotsData={ screenshotsData }
-								disabled={ isPromptFormActive }
-								selectedIndex={ selectedScreenshotIndex }
-								onClick={ handleScreenshotClick }
-							/>
+							<Box sx={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, p: 5 } }>
+								{
+									screenshots.map( ( { screenshot, template }, index ) => (
+										<Screenshot
+											key={ index }
+											url={ screenshot }
+											isSelected={ selectedScreenshotIndex === index }
+											onClick={ handleScreenshotClick( index, template ) }
+										/>
+									) )
+								}
+							</Box>
 
 							{
-								screenshotsData.length > 0 && (
+								screenshots.length > 0 && (
 									<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="space-between">
 										<RegenerateButton onClick={ lastRun.current } disabled={ isLoading || isPromptFormActive } />
 
-										<UseLayoutButton onClick={ applyTemplate } disabled={ isLoading || isPromptFormActive } />
+										<UseLayoutButton onClick={ applyTemplate } disabled={ isPromptFormActive || -1 === selectedScreenshotIndex } />
 									</Box>
 								)
 							}
@@ -203,8 +194,7 @@ FormLayout.propTypes = {
 	DialogContentProps: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
-	onGenerationStart: PropTypes.func.isRequired,
-	onGenerationEnd: PropTypes.func.isRequired,
+	onGeneration: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };
 
