@@ -450,6 +450,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$option = get_option( 'elementor_container_gap_updated' );
 
 		$this->assertEquals( $option, 'yes' );
+
+		// Test the upgrade execution when the option is set up
+
+		$this->assertEquals( Upgrades::_v_3_15_9_container_updates( $updater ), false );
 	}
 
 	private function create_image() {

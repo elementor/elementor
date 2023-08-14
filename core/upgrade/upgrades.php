@@ -904,7 +904,7 @@ class Upgrades {
 
 	public static function _v_3_15_9_container_updates( $updater ) {
 
-		if ( get_option( 'elementor_gap_control_updated' ) ) {
+		if ( get_option( 'elementor_container_gap_updated' ) ) {
 			return false;
 		}
 
@@ -928,7 +928,7 @@ class Upgrades {
 			self::save_updated_document( $post_id, $data );
 		}
 
-		add_option( 'elementor_gap_control_updated', 'yes' );
+		add_option( 'elementor_container_gap_updated', 'yes' );
 	}
 
 	/**
