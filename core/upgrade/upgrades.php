@@ -902,7 +902,12 @@ class Upgrades {
 		);
 	}
 
-	public static function _v_3_15_3_container_updates( $updater ) {
+	public static function _v_3_15_9_container_updates( $updater ) {
+
+		if ( get_option( 'elementor_gap_control_updated' ) ) {
+			return false;
+		}
+
 		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
 
 		if ( empty( $post_ids ) ) {
@@ -922,6 +927,8 @@ class Upgrades {
 
 			self::save_updated_document( $post_id, $data );
 		}
+
+		add_option( 'elementor_gap_control_updated', 'yes' );
 	}
 
 	/**

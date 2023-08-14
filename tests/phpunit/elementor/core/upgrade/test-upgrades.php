@@ -431,7 +431,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
-	public function test_v_3_15_3_container_updates() {
+	public function test_v_3_15_9_container_updates() {
 
 		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
 		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
@@ -441,10 +441,14 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
 
-		Upgrades::_v_3_15_3_container_updates( $updater );
+
+		self::assertEquals( get_option( 'elementor_container_gap_updated' ), null );
+
+		Upgrades::_v_3_15_9_container_updates( $updater );
 
 		$this->assert_flex_gap_control_has_changed( $documents[0]->get_json_meta('_elementor_data') );
 
+		self::assertEquals( get_option( 'elementor_container_gap_updated' ), 'yes' );
 	}
 
 	private function create_image() {
