@@ -111,8 +111,10 @@
 			flex-grow: var( --n-tabs-title-flex-grow );
 			flex-basis: var( --n-tabs-title-flex-basis );
 			flex-shrink: var( --n-tabs-title-flex-shrink );
-			padding-block: var(--n-tabs-title-padding-block-start )  var( --n-tabs-title-padding-block-end );
-			padding-inline: var(--n-tabs-title-padding-inline-start ) var( --n-tabs-title-padding-inline-end );
+			padding-block-start: var(--n-tabs-title-padding-block-start );
+			padding-block-end: var( --n-tabs-title-padding-block-end );
+			padding-inline-start: var(--n-tabs-title-padding-inline-start );
+			padding-inline-end: var( --n-tabs-title-padding-inline-end );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
