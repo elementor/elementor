@@ -27,15 +27,15 @@ class Module extends BaseModule {
 		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
 		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 
-		// // Run optimization logic on header.
+		// Run optimization logic on header.
 		add_action( 'get_header', [ $this, 'set_buffer' ] );
-		// // Ensure buffer is flushed if any before any content logic.
+		// Ensure buffer is flushed if any before any content logic.
 		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 1 );
 
-		// // Run optimization logic on content.
+		// Run optimization logic on content.
 		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_content_image' ] );
 
-		// // Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
+		// Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
 		add_action( 'get_footer', [ $this, 'set_buffer' ] );
 	}
 
