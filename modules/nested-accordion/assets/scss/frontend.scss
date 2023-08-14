@@ -33,26 +33,37 @@
 			position: relative;
 
 			&:not(:last-child) {
-				margin-bottom: var(--n-accordion-item-title-space-between);
+				margin-block-end: var(--n-accordion-item-title-space-between);
 			}
 
 			:where( & > .e-con ) {
 				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
+				border-inline-start-width: var( --n-accordion-border-width );
+				border-inline-end-width: var( --n-accordion-border-width );
+				border-block-start-width: var( --n-accordion-border-width );
+				border-block-end-width: var( --n-accordion-border-width );
+				border: var( --n-accordion-border-style ) var( --n-accordion-border-color );
 			}
 
 			&-title {
 				display: flex;
 				flex-direction: row;
 				list-style: none;
-				padding: var(--n-accordion-padding);
-				border-width: var(--n-accordion-border-width);
-				border-color: var(--n-accordion-border-color);
-				border-style: var(--n-accordion-border-style);
-				justify-content: var(--n-accordion-title-justify-content);
-				border-radius: var(--n-accordion-border-radius);
-				flex-grow: var(--n-menu-title-flex-grow);
-				gap: var(--n-accordion-icon-gap);
-				color: var(--n-accordion-title-normal-color);
+				padding-block-start: var( --n-accordion-padding-block-start,  var( --n-accordion-padding ) );
+				padding-block-end: var( --n-accordion-padding-block-end,  var( --n-accordion-padding ) );
+				padding-inline-start: var( --n-accordion-padding-inline-start, var( --n-accordion-padding ) );
+				padding-inline-end: var( --n-accordion-padding-inline-end, var( --n-accordion-padding ) );
+				border-inline-start-width: var( --n-accordion-border-width );
+				border-inline-end-width: var( --n-accordion-border-width );
+				border-block-start-width: var( --n-accordion-border-width );
+				border-block-end-width: var( --n-accordion-border-width );
+				border-color: var( --n-accordion-border-color );
+				border-style: var( --n-accordion-border-style );
+				justify-content: var( --n-accordion-title-justify-content );
+				border-radius: var( --n-accordion-border-radius );
+				flex-grow: var( --n-menu-title-flex-grow );
+				gap: var( --n-accordion-icon-gap );
+				color: var( --n-accordion-title-normal-color );
 				align-items: center;
 				cursor: pointer;
 
@@ -100,7 +111,7 @@
 			&[open] {
 
 				.e-n-accordion-item-title {
-					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+					margin-block-end: var(--n-accordion-item-title-distance-from-content);
 					color: var(--n-accordion-title-active-color);
 
 					&-icon {
