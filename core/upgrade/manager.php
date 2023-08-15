@@ -52,6 +52,10 @@ class Manager extends DB_Upgrades_Manager {
 		return 'Elementor\Core\Upgrade\Upgrades';
 	}
 
+	public function get_upgrades_conditions_class() {
+		return 'Elementor\Core\Upgrade\Conditions';
+	}
+
 	public static function get_installs_history() {
 		return get_option( self::INSTALLS_HISTORY_META, [] );
 	}

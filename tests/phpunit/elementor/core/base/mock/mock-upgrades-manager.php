@@ -33,6 +33,10 @@ class Mock_Upgrades_Manager extends DB_Upgrades_Manager {
 		return Mock_Upgrades::class;
 	}
 
+	public function get_upgrades_conditions_class() {
+		return Mock_Upgrades::class;
+	}
+
 	public function get_updater_label() {
 		return 'mock-upgrades-manager';
 	}
