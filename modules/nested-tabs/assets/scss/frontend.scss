@@ -1,6 +1,4 @@
-//
 // Nested Tabs
-//
 .elementor-widget-n-tabs {
 	--n-tabs-color-accent-fallback: #61CE70;
 	--n-tabs-color-secondary-fallback: #54595F;
@@ -39,10 +37,10 @@
 	--n-tabs-title-flex-grow: 0;
 	--n-tabs-title-flex-basis: content;
 	--n-tabs-title-flex-shrink: initial;
-	--n-tabs-title-padding-top: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-right: var( --n-tabs-default-padding-inline );
-	--n-tabs-title-padding-bottom: var( --n-tabs-default-padding-block );
-	--n-tabs-title-padding-left: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-block-start: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-end: var( --n-tabs-default-padding-inline );
+	--n-tabs-title-padding-block-end: var( --n-tabs-default-padding-block );
+	--n-tabs-title-padding-inline-start: var( --n-tabs-default-padding-inline );
 	--n-tabs-title-border-radius: initial;
 	--n-tabs-title-transition: 0.3s;
 	--n-tabs-icon-color: var( --e-global-color-secondary, var( --n-tabs-color-secondary-fallback ) );
@@ -56,7 +54,7 @@
 		display: var( --n-tabs-display );
 		flex-direction: var( --n-tabs-direction );
 		gap: var( --n-tabs-gap );
-		text-align: $start;
+		text-align: start;
 
 		&-heading {
 			display: var( --n-tabs-heading-display );
@@ -94,7 +92,8 @@
 
 		&-content {
 			flex-grow: 1;
-			padding: var( --n-tabs-content-padding );
+			padding-block: var( --n-tabs-content-padding );
+			padding-inline: var( --n-tabs-content-padding );
 			border-radius: var( --n-tabs-content-border-radius );
 			min-width: 0;
 		}
@@ -115,23 +114,21 @@
 			flex-grow: var( --n-tabs-title-flex-grow );
 			flex-basis: var( --n-tabs-title-flex-basis );
 			flex-shrink: var( --n-tabs-title-flex-shrink );
-			padding-top: var( --n-tabs-title-padding-top );
-			padding-right: var( --n-tabs-title-padding-right );
-			padding-bottom: var( --n-tabs-title-padding-bottom );
-			padding-left: var( --n-tabs-title-padding-left );
+			padding-block: var(--n-tabs-title-padding-block-start, var( --n-tabs-title-padding-top ) )  var( --n-tabs-title-padding-block-end, var( --n-tabs-title-padding-bottom ) );
+			padding-inline: var(--n-tabs-title-padding-inline-start, var( --n-tabs-title-padding-left ) ) var( --n-tabs-title-padding-inline-end, var( --n-tabs-title-padding-right ) );
 			border-radius: var( --n-tabs-title-border-radius );
 			height: var( --n-tabs-title-height );
 			width: var( --n-tabs-title-width );
 			transition: background var( --n-tabs-title-transition ),
-					color var( --n-tabs-title-transition ),
-					border var( --n-tabs-title-transition ),
-					box-shadow var( --n-tabs-title-transition ),
-					text-shadow var( --n-tabs-title-transition ),
-					stroke var( --n-tabs-title-transition ),
-					stroke-width var( --n-tabs-title-transition ),
-					-webkit-text-stroke-width var( --n-tabs-title-transition ),
-					-webkit-text-stroke-color var( --n-tabs-title-transition ),
-					transform var( --n-tabs-title-transition );
+				color var( --n-tabs-title-transition ),
+				border var( --n-tabs-title-transition ),
+				box-shadow var( --n-tabs-title-transition ),
+				text-shadow var( --n-tabs-title-transition ),
+				stroke var( --n-tabs-title-transition ),
+				stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-width var( --n-tabs-title-transition ),
+				-webkit-text-stroke-color var( --n-tabs-title-transition ),
+				transform var( --n-tabs-title-transition );
 
 			& span svg,
 			& span i {
@@ -141,8 +138,8 @@
 
 			&-text {
 				display: flex;
-			  	align-items: center;
-			  	font-size: var( --n-tabs-title-font-size );
+				align-items: center;
+				font-size: var( --n-tabs-title-font-size );
 			}
 
 			.e-n-tab-icon {
@@ -243,8 +240,8 @@
 					}
 				}
 
-			  	// Remove the hover animation from the active tabs.
-			  	&[class*="elementor-animation-"] {
+				// Remove the hover animation from the active tabs.
+				&[class*='elementor-animation-'] {
 					&:focus,
 					&:active,
 					&:hover {
@@ -270,11 +267,11 @@
 			width: 100%;
 
 			&:not(:first-child) {
-				margin-top: var( --n-tabs-title-gap );
+				margin-block-start: var( --n-tabs-title-gap );
 			}
 
 			&.e-active {
-				margin-bottom: var( --n-tabs-gap );
+				margin-block-end: var( --n-tabs-gap );
 			}
 		}
 
@@ -362,7 +359,6 @@
 @media (max-width: $screen-laptop-max) {
 	@include hide-normal-tabs-(laptop);
 }
-
 
 // Breakpoint - none.
 .e-n-tabs-none {
