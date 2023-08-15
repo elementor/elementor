@@ -441,13 +441,13 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
 
-		$this->assertEquals( get_option( 'elementor_container_gap_updated' ), null );
+		$this->assertEquals( get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ), null );
 
 		Upgrades::_v_3_15_9_container_updates( $updater );
 
 		$this->assert_flex_gap_control_has_changed( $documents[0]->get_json_meta('_elementor_data') );
 
-		$option = get_option( 'elementor_container_gap_updated' );
+		$option = get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
 
 		$this->assertEquals( $option, 'yes' );
 

@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+	const ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED = 'elementor_container_gap_updates_reversed';
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
@@ -904,7 +905,7 @@ class Upgrades {
 
 	public static function _v_3_15_9_container_updates( $updater ) {
 
-		if ( get_option( 'elementor_container_gap_updated' ) ) {
+		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
 			return false;
 		}
 
@@ -928,7 +929,7 @@ class Upgrades {
 			self::save_updated_document( $post_id, $data );
 		}
 
-		add_option( 'elementor_container_gap_updated', 'yes' );
+		add_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED, 'yes' );
 	}
 
 	/**
