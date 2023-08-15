@@ -109,7 +109,6 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 	}, [ isPromptFormActive ] );
 
 	useEffect( () => {
-		console.log( '### callculating...' );
 		const isFirstScreenshot = 1 === screenshots.filter( ( screenshot ) => screenshot.template ).length;
 
 		if ( isFirstScreenshot ) {

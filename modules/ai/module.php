@@ -680,12 +680,20 @@ class Module extends BaseModule {
 		);
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			$error_message = empty( $result->get_error_message() ) ? 'unknown_error' : $result->get_error_message();
+
+			throw new \Exception( $error_message );
+		}
+
+		$template = $result['text']['elements'][0] ?? null;
+
+		if ( empty( $template ) || ! is_array( $template ) ) {
+			throw new \Exception( 'unknown_error' );
 		}
 
 		return [
 			'all' => [],
-			'text' => $result['text']['elements'][0],
+			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];

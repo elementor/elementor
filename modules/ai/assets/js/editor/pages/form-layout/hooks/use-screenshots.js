@@ -16,7 +16,7 @@ const useScreenshots = ( { onGeneration } ) => {
 
 	const isLoading = styling.isLoading || wireframe.isLoading || mixed.isLoading;
 
-	const error = ( 0 === screenshots.legnth && ( styling.error || wireframe.error || mixed.error ) ) || '';
+	const error = ( 0 === screenshots.length && ( styling.error || wireframe.error || mixed.error ) ) || '';
 
 	const abort = () => abortController.current.abort();
 
