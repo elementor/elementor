@@ -944,8 +944,8 @@ class Upgrades {
 					return $element;
 				}
 
-				$element = self::convert_to_inner_container( $element );
-				$element = self::convert_to_grid_container( $element );
+				$element = self::maybe_convert_to_inner_container( $element );
+				$element = self::maybe_convert_to_grid_container( $element );
 				return self::flex_gap_responsive_control_iterator( $element );
 			}
 		);
@@ -956,7 +956,7 @@ class Upgrades {
 	 *
 	 * @return array
 	 */
-	private static function convert_to_inner_container( $element ) {
+	private static function maybe_convert_to_inner_container( $element ) {
 		foreach ( $element['elements'] as &$inner_element ) {
 			if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
 				$inner_element['isInner'] = true;
@@ -971,7 +971,7 @@ class Upgrades {
 	 *
 	 * @return array
 	 */
-	private static function convert_to_grid_container( $element ) {
+	private static function maybe_convert_to_grid_container( $element ) {
 		$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
 		if ( 'container' !== $element['elType'] || empty( $element['settings'] ) || ! $is_grid_container ) {
 			return $element;
