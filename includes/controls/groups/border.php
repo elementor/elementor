@@ -73,12 +73,14 @@ class Group_Control_Border extends Group_Control_Base {
 			],
 		];
 
+		// To do: remove after we update all widgets border-width properties to logical.
+		$border_physical_properties = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
 		$fields['width'] = [
 			'label' => esc_html_x( 'Width', 'Border Control', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
 			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 			'selectors' => [
-				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				'{{SELECTOR}}' => "$border_physical_properties border-block-start-width: {{TOP}}{{UNIT}}; border-inline-start-width {{RIGHT}}{{UNIT}}; border-block-end-width {{BOTTOM}}{{UNIT}}; --border-inline-start-width {{LEFT}}{{UNIT}};",
 			],
 			'condition' => [
 				'border!' => [ '', 'none' ],
