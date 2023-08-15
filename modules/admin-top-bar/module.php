@@ -88,7 +88,7 @@ class Module extends BaseApp {
 		do_action( 'elementor/admin-top-bar/init', $this );
 	}
 
-	private function should_be_shown() {
+	private function is_top_bar_active() {
 		$current_screen = get_current_screen();
 
 		if ( ! $current_screen ) {
@@ -99,7 +99,7 @@ class Module extends BaseApp {
 		$is_elementor_post_type_page = strpos( $current_screen->post_type ?? '', 'elementor' ) !== false;
 
 		return apply_filters(
-			'elementor/admin-top-bar/should-be-shown',
+			'elementor/admin-top-bar/is-active',
 			$is_elementor_page || $is_elementor_post_type_page,
 			$current_screen
 		);
@@ -112,7 +112,7 @@ class Module extends BaseApp {
 		parent::__construct();
 
 		add_action( 'current_screen', function () {
-			if ( ! $this->should_be_shown() ) {
+			if ( ! $this->is_top_bar_active() ) {
 				return;
 			}
 
