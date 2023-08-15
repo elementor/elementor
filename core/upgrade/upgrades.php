@@ -902,6 +902,10 @@ class Upgrades {
 		);
 	}
 
+	/**
+	 * Used to reverse the Gap control updates that were made in 3.16 - _v_3_16_0_container_updates()
+	 * if the user downgrades to 3.15.*
+	 */
 	public static function _v_3_15_9_container_updates( $updater ) {
 
 		if ( get_option( 'elementor_container_gap_updated' ) ) {
