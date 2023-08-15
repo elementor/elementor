@@ -230,14 +230,11 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$condition_methods = $upgrades_consditions_reflection->getMethods();
 
-		if ( ! in_array( $method_name, $condition_methods ) ) {
-			return true; // There is no condition.
+		if ( in_array( $method_name, $condition_methods ) ) {
+			return call_user_func( [ $upgrades_conditions_class, $method_name . $this->should_run_postfix ] );
 		}
 
-		$method_name = $method_name . $this->should_run_postfix;
-		$should_run = call_user_func( [ $upgrades_conditions_class, $method_name ] );
-
-		return $should_run;
+		return true; // There is no condition, callback can be added.
 	}
 
 	public function __construct() {
