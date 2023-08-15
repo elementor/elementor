@@ -109,13 +109,13 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 	}, [ isPromptFormActive ] );
 
 	useEffect( () => {
-		const isFirstScreenshot = 1 === screenshots.filter( ( screenshot ) => screenshot.template ).length;
+		const isFirstTemplateExist = screenshots[ 0 ]?.template;
 
-		if ( isFirstScreenshot ) {
+		if ( isFirstTemplateExist ) {
 			onSelect( screenshots[ 0 ].template );
 			setSelectedScreenshotIndex( 0 );
 		}
-	}, [ screenshots ] );
+	}, [ screenshots[ 0 ]?.template ] );
 
 	return (
 		<LayoutDialog onClose={ onCloseIntent }>

@@ -81,10 +81,17 @@ export function setPreviewContainerContent( template ) {
 
 	deletePreviewContainer();
 
-	createPreviewContainer(
-		{ at: currentContainerPosition },
-		generateIds( template ),
-	);
+	/**
+	 * Temp fix:
+	 * Deleting the preview container is an async action, if we try to create a new preview container before the current is deleted,
+	 * The new container will not be created due to targeting the same ID.
+	 */
+	setTimeout( () => {
+		createPreviewContainer(
+			{ at: currentContainerPosition },
+			generateIds( template ),
+		);
+	}, 1000 );
 }
 
 function getPreviewContainer() {
