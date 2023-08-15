@@ -228,9 +228,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$upgrades_conditions_class = $this->get_upgrades_conditions_class();
 		$upgrades_consditions_reflection = new \ReflectionClass( $upgrades_conditions_class );
 
-		$condition_methods = $upgrades_consditions_reflection->getMethods();
-
-		if ( in_array( $method_name, $condition_methods ) ) {
+		if ( in_array( $method_name, $upgrades_consditions_reflection->getMethods() ) ) {
 			return call_user_func( [ $upgrades_conditions_class, $method_name . $this->should_run_postfix ] );
 		}
 
