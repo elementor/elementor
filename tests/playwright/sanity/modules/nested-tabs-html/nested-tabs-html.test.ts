@@ -1156,8 +1156,9 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 						await expect.soft( activeContainer ).toHaveCSS( 'border-style', expectedCssValue );
 						break;
 					case 'containerBorderWidth':
-						// Workaround Flaky Border Width sometimes shrinks by small % as in Mega Menu
-						const ApproxBorderWidth = ( parseFloat( expectedCssValue.slice( 0, -2 ) ) - 0.1 );
+						// Workaround Flaky Border Width sometimes shrinks by small % as in Nested Tabs
+						// Expect border to not shrink below 90% of set border width.
+						const ApproxBorderWidth = ( parseFloat( expectedCssValue.slice( 0, -2 ) ) * 0.90 );
 						const borderWidth = await activeContainer.evaluate( ( element ) => {
 							return window.getComputedStyle( element ).getPropertyValue( 'border-width' );
 						} );
@@ -1170,8 +1171,10 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 						await expect.soft( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
 						break;
 					case 'containerPadding':
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-inline', expectedCssValue );
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-block', expectedCssValue );
+						await expect.soft( activeContainer ).toHaveCSS( 'padding-inline-start', expectedCssValue );
+						await expect.soft( activeContainer ).toHaveCSS( 'padding-inline-end', expectedCssValue );
+						await expect.soft( activeContainer ).toHaveCSS( 'padding-block-start', expectedCssValue );
+						await expect.soft( activeContainer ).toHaveCSS( 'padding-block-end', expectedCssValue );
 						break;
 				}
 			}

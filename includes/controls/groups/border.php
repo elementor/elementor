@@ -73,7 +73,7 @@ class Group_Control_Border extends Group_Control_Base {
 			],
 		];
 
-		// To do: remove after we update all widget border-width properties to logical.
+		// To do: remove after we update all widgets border-width properties to logical.
 		$border_physical_properties = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
 		$fields['width'] = [
 			'label' => esc_html_x( 'Width', 'Border Control', 'elementor' ),
