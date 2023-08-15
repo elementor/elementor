@@ -12,11 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	protected $current_version = null;
 	protected $query_limit = 100;
+	protected $should_run_postfix = '__should_run';
 
 	abstract public function get_new_version();
 	abstract public function get_version_option_name();
 	abstract public function get_upgrades_class();
 	abstract public function get_updater_label();
+	abstract public function get_upgrades_conditions_class();
 
 	public function get_task_runner_class() {
 		return 'Elementor\Core\Upgrade\Updater';
@@ -212,10 +214,30 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 				continue;
 			}
 
+			if ( ! $this->should_run( $method_name ) ) {
+				continue;
+			}
+
 			$callbacks[] = [ $upgrades_class, $method_name ];
 		}
 
 		return $callbacks;
+	}
+
+	public function should_run( $method_name ) {
+		$upgrades_conditions_class = $this->get_upgrades_conditions_class();
+		$upgrades_consditions_reflection = new \ReflectionClass( $upgrades_conditions_class );
+
+		$condition_methods = $upgrades_consditions_reflection->getMethods();
+
+		if ( ! in_array( $method_name, $condition_methods ) ) {
+			return true; // There is no condition.
+		}
+
+		$method_name = $method_name . $this->should_run_postfix;
+		$should_run = call_user_func( [ $upgrades_conditions_class, $method_name ] );
+
+		return $should_run;
 	}
 
 	public function __construct() {
