@@ -48,6 +48,68 @@ class Test_Module extends Elementor_Test_Base {
 	];
 
 	/**
+	 * @var array
+	 */
+	public static $document_mock_flex_gap = [
+		'settings' => [
+			'post_status' => 'publish',
+		],
+		'elements' => [
+			[
+				'id' => '145b8fc',
+				'elType' => 'container',
+				'settings' => [
+					'flex_gaps' => [
+						'column' => '99',
+						'row' => '99',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+					'flex_gaps_tablet' => [
+						'column' => '88',
+						'row' => '88',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+					'flex_gaps_mobile' => [
+						'column' => '77',
+						'row' => '77',
+						'unit' => 'px',
+						'isLinked' => true,
+					],
+				],
+				'elements' => [
+					[
+						'id' => 'e1f0015',
+						'elType' => 'container',
+						'settings' => [
+							'flex_gaps' => [
+								'column' => '66',
+								'row' => '66',
+								'unit' => 'px',
+								'isLinked' => true,
+							],
+							'flex_gaps_tablet' => [
+								'column' => '55',
+								'row' => '55',
+								'unit' => 'px',
+								'isLinked' => true,
+							],
+							'flex_gaps_mobile' => [
+								'column' => '44',
+								'row' => '44',
+								'unit' => 'px',
+								'isLinked' => true,
+							],
+						],
+					],
+				],
+				'isInner' => false,
+			],
+		],
+	];
+
+	/**
 	 * @var Module
 	 */
 	private $module;
@@ -366,10 +428,10 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange.
 		update_option( 'elementor_disable_color_schemes', 'no' );
 		update_option( 'elementor_editor_break_lines', '1' );
-		
+
 		// Default value should not exist in the result
-		update_option( 'elementor_css_print_method', 'external' ); 
-		
+		update_option( 'elementor_css_print_method', 'external' );
+
 		// Not an Elementor option should not exist in the result
 		update_option( Settings::UPDATE_TIME_FIELD, time() );
 

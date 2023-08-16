@@ -23,6 +23,10 @@
 
 	.e-n-accordion {
 
+		details > summary::-webkit-details-marker {
+			display: none;
+		}
+
 		&-item {
 			display: flex;
 			flex-direction: column;
