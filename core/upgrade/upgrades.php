@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+	const ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED = 'elementor_container_gap_updates_reversed';
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
@@ -834,7 +835,6 @@ class Upgrades {
 	}
 
 	public static function _v_3_16_0_container_updates( $updater ) {
-
 		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
 
 		if ( empty( $post_ids ) ) {
@@ -852,11 +852,13 @@ class Upgrades {
 				continue;
 			}
 
-			$data = self::maybe_convert_to_inner_containers( $data );
-			$data = self::maybe_convert_to_grid_container( $data );
-			$data = self::maybe_convert_flex_gap_control( $data );
+			$data = self::iterate_containers( $data );
 
 			self::save_updated_document( $post_id, $data );
+		}
+
+		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
+			delete_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
 		}
 	}
 
@@ -934,7 +936,7 @@ class Upgrades {
 	 *
 	 * @return array|mixed
 	 */
-	private static function maybe_convert_to_inner_containers( $data ) {
+	private static function iterate_containers( $data ) {
 		return Plugin::$instance->db->iterate_data(
 			$data, function ( $element ) {
 
@@ -942,54 +944,43 @@ class Upgrades {
 					return $element;
 				}
 
-				foreach ( $element['elements'] as &$inner_element ) {
-					if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
-						$inner_element['isInner'] = true;
-					}
-				}
-
-				return $element;
-			}
-		);
-	}
-
-	/**
-	 * @param $data
-	 *
-	 * @return array|mixed
-	 */
-	private static function maybe_convert_to_grid_container( $data ) {
-		return Plugin::$instance->db->iterate_data(
-			$data, function ( $element ) {
-
-				$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
-				if ( 'container' !== $element['elType'] || empty( $element['settings'] ) || ! $is_grid_container ) {
-					return $element;
-				}
-
-				$element['settings']['presetTitle'] = 'Grid';
-				$element['settings']['presetIcon'] = 'eicon-container-grid';
-
-				return $element;
-			}
-		);
-	}
-
-	/**
-	 * @param $data
-	 *
-	 * @return array|mixed
-	 */
-	private static function maybe_convert_flex_gap_control( $data ) {
-		return Plugin::$instance->db->iterate_data(
-			$data, function ( $element ) {
-				if ( 'container' !== $element['elType'] ) {
-					return $element;
-				}
-
+				$element = self::maybe_convert_to_inner_container( $element );
+				$element = self::maybe_convert_to_grid_container( $element );
 				return self::flex_gap_responsive_control_iterator( $element );
 			}
 		);
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_inner_container( $element ) {
+		foreach ( $element['elements'] as &$inner_element ) {
+			if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
+				$inner_element['isInner'] = true;
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_grid_container( $element ) {
+		$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
+		if ( 'container' !== $element['elType'] || empty( $element['settings'] ) || ! $is_grid_container ) {
+			return $element;
+		}
+
+		$element['settings']['presetTitle'] = 'Grid';
+		$element['settings']['presetIcon'] = 'eicon-container-grid';
+
+		return $element;
 	}
 
 	/**
