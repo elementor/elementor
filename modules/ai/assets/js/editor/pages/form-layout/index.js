@@ -77,6 +77,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 		if ( '' === prompt.trim() ) {
 			return;
 		}
+
 		lastRun.current = () => {
 			setSelectedScreenshotIndex( -1 );
 			generate( prompt );
@@ -97,7 +98,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 		abortAndClose();
 	};
 
-	const handleScreenshotClick = useCallback( ( index, template ) => {
+	const handleScreenshotClick = ( index, template ) => {
 		return () => {
 			if ( isPromptFormActive ) {
 				return;
@@ -106,7 +107,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 			setSelectedScreenshotIndex( index );
 			onSelect( template );
 		};
-	}, [ isPromptFormActive ] );
+	};
 
 	useEffect( () => {
 		const isFirstTemplateExist = screenshots[ 0 ]?.template;
@@ -165,6 +166,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 										<Screenshot
 											key={ index }
 											url={ screenshot }
+											disabled={ isPromptFormActive }
 											isSelected={ selectedScreenshotIndex === index }
 											onClick={ handleScreenshotClick( index, template ) }
 										/>

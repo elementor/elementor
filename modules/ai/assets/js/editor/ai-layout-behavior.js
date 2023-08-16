@@ -3,14 +3,11 @@ import { onConnect } from './helpers';
 import { takeScreenshot } from './utils/screenshot';
 import { startHistoryLog } from './utils/history';
 import { generateIds } from './utils/genereate-ids';
-import {
-	createPreviewContainer,
-	deletePreviewContainer,
-	setPreviewContainerContent,
-	setPreviewContainerIdle,
-} from './utils/preview-container';
+import { createPreviewContainer } from './utils/preview-container';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
+	previewContainer = null;
+
 	ui() {
 		return {
 			aiButton: '.e-ai-layout-button',
@@ -29,12 +26,12 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		this.closePanel();
 
-		createPreviewContainer( {
+		this.previewContainer = createPreviewContainer( {
 			// Create the container at the "drag widget here" area position.
 			at: this.view.getOption( 'at' ),
 		} );
 
-		setPreviewContainerIdle();
+		this.previewContainer.setIdle();
 
 		const rootElement = document.createElement( 'div' );
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
@@ -47,7 +44,8 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				isRTL={ isRTL }
 				colorScheme={ colorScheme }
 				onClose={ () => {
-					deletePreviewContainer();
+					this.previewContainer.destroy();
+					this.previewContainer = null;
 
 					ReactDOM.unmountComponentAtNode( rootElement );
 					rootElement.remove();
@@ -55,8 +53,8 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGeneration={ this.onGenerated }
-				onSelect={ this.onSelect }
+				onGeneration={ this.onGeneration }
+				onSelect={ this.onSelect.bind( this ) }
 				onInsert={ this.onInsert.bind( this ) }
 			/>,
 			rootElement,
@@ -77,7 +75,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.view.onCloseButtonClick();
 	}
 
-	async onGenerated( template ) {
+	async onGeneration( template ) {
 		const screenshot = await takeScreenshot( template );
 
 		return {
@@ -87,11 +85,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	}
 
 	onSelect( template ) {
-		setPreviewContainerContent( template );
+		this.previewContainer.setContent( template );
 	}
 
 	onInsert( template ) {
-		deletePreviewContainer();
 		this.hideDropArea();
 
 		const endHistoryLog = startHistoryLog( {

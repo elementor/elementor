@@ -1,11 +1,9 @@
-
-import { memo } from 'react';
 import { Skeleton } from '@elementor/ui';
 import ScreenshotContainer from './screenshot-container';
 
 const SCREENSHOT_HEIGHT = '138px';
 
-const Screenshot = ( { url, isSelected = false, onClick } ) => {
+const Screenshot = ( { url, isSelected = false, disabled, onClick } ) => {
 	if ( ! url ) {
 		return (
 			<Skeleton
@@ -21,6 +19,7 @@ const Screenshot = ( { url, isSelected = false, onClick } ) => {
 	return (
 		<ScreenshotContainer
 			selected={ isSelected }
+			disabled={ disabled }
 			sx={ { backgroundImage: `url('${ url }')` } }
 			onClick={ onClick }
 			height={ SCREENSHOT_HEIGHT }
@@ -30,8 +29,9 @@ const Screenshot = ( { url, isSelected = false, onClick } ) => {
 
 Screenshot.propTypes = {
 	isSelected: PropTypes.bool,
+	disabled: PropTypes.bool,
 	onClick: PropTypes.func.isRequired,
 	url: PropTypes.string,
 };
 
-export default memo( Screenshot );
+export default Screenshot;

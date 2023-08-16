@@ -1,4 +1,4 @@
-import { toPng } from 'html-to-image';
+import { toCanvas } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -39,10 +39,15 @@ export const takeScreenshot = async ( template ) => {
 };
 
 function screenshotNode( node ) {
-	return toPng( node, {
-		// Gray pixel.
-		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8dPrSfwAIFgNgET5chAAAAABJRU5ErkJggg==',
+	return toWebp( node, {
+		quality: 0.01,
 	} );
+}
+
+async function toWebp( node, options = {} ) {
+	const canvas = await toCanvas( node, options );
+
+	return canvas.toDataURL( 'image/webp', options.quality ?? 1 );
 }
 
 function createHiddenWrapper() {

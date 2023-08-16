@@ -146,7 +146,7 @@ class Module extends BaseModule {
 		// If for some reason the document has been saved during an AI Layout session,
 		// ensure that the temporary containers are removed from the data.
 		$data['elements'] = array_filter( $data['elements'], function( $element ) {
-			$is_preview_container = 'e-ai-preview-container' === $element['id'];
+			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
 			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
 
 			return ! $is_preview_container && ! $is_screenshot_container;
@@ -676,7 +676,7 @@ class Module extends BaseModule {
 		$result = $app->generate_layout(
 			$data['prompt'],
 			$this->prepare_generate_layout_context(),
-			$data['variationType'],
+			$data['variationType']
 		);
 
 		if ( is_wp_error( $result ) ) {

@@ -14,11 +14,11 @@ const useScreenshots = ( { onGeneration } ) => {
 
 	const templatesData = [ styling, wireframe, mixed ];
 
-	const isLoading = styling.isLoading || wireframe.isLoading || mixed.isLoading;
+	const isLoading = templatesData.some( ( t ) => t.isLoading );
 
-	const error = ( 0 === screenshots.length && ( styling.error || wireframe.error || mixed.error ) ) || '';
+	const error = ( 0 === screenshots.length && templatesData.find( ( t ) => t.error ) ) || '';
 
-	const abort = () => abortController.current.abort();
+	const abort = () => abortController.current?.abort();
 
 	const generate = ( prompt ) => {
 		setScreenshots( Array( templatesData.length ).fill( PLACEHOLDER_VALUE ) );
@@ -32,7 +32,6 @@ const useScreenshots = ( { onGeneration } ) => {
 
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-
 						const placeholderIndex = updatedData.indexOf( PLACEHOLDER_VALUE );
 
 						updatedData[ placeholderIndex ] = templateData;
@@ -43,7 +42,6 @@ const useScreenshots = ( { onGeneration } ) => {
 				.catch( () => {
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-
 						const placeholderIndex = updatedData.lastIndexOf( PLACEHOLDER_VALUE );
 
 						updatedData.splice( placeholderIndex, 1 );
