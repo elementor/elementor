@@ -860,10 +860,10 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.changeResponsiveView( 'tablet' );
 
-		const tablettWidthPlaceholder = await page.locator( '.elementor-control-width_tablet .elementor-slider-input #placeholder' ).first(),
-			tablettWidthValue = await tablettWidthPlaceholder.innerHTML();
+		const tabletWidthPlaceholder = await page.locator( '.elementor-control-width_tablet .elementor-slider-input #placeholder' ).first(),
+			tabletWidthValue = await tabletWidthPlaceholder.innerHTML();
 
-		expect( tablettWidthValue ).toBe( '90' );
+		expect( tabletWidthValue ).toBe( '90' );
 
 		await editor.changeResponsiveView( 'mobile' );
 
