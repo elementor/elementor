@@ -73,6 +73,8 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
 
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || '' === prompt;
+
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
 		onBack();
@@ -125,12 +127,12 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 
 			<EnhanceButton
 				size="small"
-				disabled={ isLoading || ! isActive || '' === prompt || isEnhancing }
+				disabled={ isInteractionsDisabled }
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isLoading || ! isActive || '' === prompt || isEnhancing } />
+			<GenerateButton disabled={ isInteractionsDisabled } />
 		</Box>
 	);
 } );
