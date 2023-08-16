@@ -1169,10 +1169,7 @@ test.describe( 'Nested Tabs tests @nested-tabs-html', () => {
 						await expect.soft( activeContainer ).toHaveCSS( 'box-shadow', expectedCssValue );
 						break;
 					case 'containerPadding':
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-inline-start', expectedCssValue );
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-inline-end', expectedCssValue );
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-block-start', expectedCssValue );
-						await expect.soft( activeContainer ).toHaveCSS( 'padding-block-end', expectedCssValue );
+						await expect.soft( activeContainer ).toHaveCSS( 'padding', expectedCssValue );
 						break;
 				}
 			}
