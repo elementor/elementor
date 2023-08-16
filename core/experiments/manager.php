@@ -390,7 +390,11 @@ class Manager extends Base_Object {
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.16.0',
+			],
 			'messages' => [
 				'on_deactivate' => esc_html__(
 					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
