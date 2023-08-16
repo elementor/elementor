@@ -3,7 +3,7 @@ import ScreenshotContainer from './screenshot-container';
 
 const SCREENSHOT_HEIGHT = '138px';
 
-const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick, sx = {} } ) => {
+const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick, sx = {}, outlineOffset } ) => {
 	if ( isPlaceholder ) {
 		return <Box sx={ { height: SCREENSHOT_HEIGHT, ...sx } } />;
 	}
@@ -27,6 +27,7 @@ const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick
 			sx={ { backgroundImage: `url('${ url }')`, ...sx } }
 			onClick={ onClick }
 			height={ SCREENSHOT_HEIGHT }
+			outlineOffset={ outlineOffset }
 		/>
 	);
 };
@@ -38,6 +39,7 @@ Screenshot.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	url: PropTypes.string,
 	sx: PropTypes.object,
+	outlineOffset: PropTypes.string,
 };
 
 export default Screenshot;

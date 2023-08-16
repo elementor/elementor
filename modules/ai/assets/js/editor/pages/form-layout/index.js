@@ -194,6 +194,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 												isPlaceholder={ isPlaceholder }
 												isSelected={ selectedScreenshotIndex === index }
 												onClick={ handleScreenshotClick( index, template ) }
+												outlineOffset={ screenshotOutlineOffset }
 												sx={ slideStyle }
 											/>
 										) )
