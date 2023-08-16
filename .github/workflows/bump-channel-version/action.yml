@@ -13,7 +13,7 @@ inputs:
     description: 'The postfix that will be added to the package version -rc / -test / empty.'
   OVERRIDE_PACKAGE_VERSION:
     required: false
-    default: false
+    default: 'false'
     description: 'Should override the PACKAGE_VERSION value with a custom value for the one click release process.'
 
 runs:
