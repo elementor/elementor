@@ -1,4 +1,4 @@
-import { domToWebp } from 'modern-screenshot';
+import { toCanvas } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
@@ -37,9 +37,15 @@ export const takeScreenshots = async ( templates = [] ) => {
 };
 
 function screenshotNode( node ) {
-	return domToWebp( node, {
+	return toWebp( node, {
 		quality: 0.01,
 	} );
+}
+
+async function toWebp( node, options = {} ) {
+	const canvas = await toCanvas( node, options );
+
+	return canvas.toDataURL( 'image/webp', options.quality ?? 1 );
 }
 
 function createHiddenWrapper() {
