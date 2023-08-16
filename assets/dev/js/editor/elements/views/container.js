@@ -96,7 +96,15 @@ const ContainerView = BaseElementView.extend( {
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 
-		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	onDestroy() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	/**
