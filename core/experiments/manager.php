@@ -389,8 +389,8 @@ class Manager extends Base_Object {
 				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_RC,
-			'default' => self::STATE_INACTIVE,
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'default' => self::STATE_ACTIVE,
 			'messages' => [
 				'on_deactivate' => esc_html__(
 					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
