@@ -418,7 +418,7 @@ class Manager extends Base_Object {
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
 
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 			'hidden' => false,
 			'dependencies' => [
