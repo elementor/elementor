@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Box, Divider, Button } from '@elementor/ui';
+import { useState, useRef, useEffect } from 'react';
+import { Box, Divider, Button, Pagination } from '@elementor/ui';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import LayoutDialog from './components/layout-dialog';
@@ -7,6 +7,7 @@ import PromptForm from './components/prompt-form';
 import RefreshIcon from '../../icons/refresh-icon';
 import Screenshot from './components/screenshot';
 import useScreenshots from './hooks/use-screenshots';
+import useSlider from './hooks/use-slider';
 
 const RegenerateButton = ( props ) => (
 	<Button
@@ -37,8 +38,23 @@ const UseLayoutButton = ( props ) => (
 	</Button>
 );
 
-const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
-	const { screenshots, generate, isLoading, error, abort } = useScreenshots( { onGeneration } );
+const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
+	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onGeneration } );
+
+	const screenshotOutlineOffset = '2px';
+
+	const {
+		currentPage,
+		setCurrentPage,
+		pagesCount,
+		sliderStyle,
+		trackStyle,
+		slideStyle,
+		slidesPerPage,
+	} = useSlider( {
+		slidesCount: screenshots.length,
+		translateXFilter: ( value ) => `calc(${ value } - ${ screenshotOutlineOffset })`,
+	} );
 
 	const [ selectedScreenshotIndex, setSelectedScreenshotIndex ] = useState( -1 );
 
@@ -86,6 +102,13 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 		lastRun.current();
 
 		setIsPromptEditable( false );
+		setCurrentPage( 1 );
+	};
+
+	const handleRegenerate = () => {
+		setCurrentPage( pagesCount + 1 );
+		regenerate( promptInputRef.current.value );
+		onRegenerate();
 	};
 
 	const handleEnhance = () => {
@@ -160,24 +183,38 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, DialogHeaderPr
 						<>
 							<Divider />
 
-							<Box sx={ { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, p: 5 } }>
-								{
-									screenshots.map( ( { screenshot, template }, index ) => (
-										<Screenshot
-											key={ index }
-											url={ screenshot }
-											disabled={ isPromptFormActive }
-											isSelected={ selectedScreenshotIndex === index }
-											onClick={ handleScreenshotClick( index, template ) }
-										/>
-									) )
-								}
+							<Box sx={ { p: 5, ...sliderStyle } }>
+								<Box sx={ trackStyle }>
+									{
+										screenshots.map( ( { screenshot, template, isPlaceholder }, index ) => (
+											<Screenshot
+												key={ index }
+												url={ screenshot }
+												disabled={ isPromptFormActive }
+												isPlaceholder={ isPlaceholder }
+												isSelected={ selectedScreenshotIndex === index }
+												onClick={ handleScreenshotClick( index, template ) }
+												sx={ slideStyle }
+											/>
+										) )
+									}
+								</Box>
 							</Box>
 
 							{
 								screenshots.length > 0 && (
 									<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="space-between">
-										<RegenerateButton onClick={ lastRun.current } disabled={ isLoading || isPromptFormActive } />
+										<RegenerateButton onClick={ handleRegenerate } disabled={ isLoading || isPromptFormActive } />
+
+										{
+											screenshots.length > slidesPerPage && (
+												<Pagination
+													page={ currentPage }
+													count={ pagesCount }
+													onChange={ ( _, page ) => setCurrentPage( page ) }
+												/>
+											)
+										}
 
 										<UseLayoutButton onClick={ applyTemplate } disabled={ isPromptFormActive || -1 === selectedScreenshotIndex } />
 									</Box>
@@ -198,6 +235,7 @@ FormLayout.propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	onGeneration: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
+	onRegenerate: PropTypes.func.isRequired,
 };
 
 export default FormLayout;

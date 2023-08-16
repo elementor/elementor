@@ -9,7 +9,7 @@ import LayoutDialog from './pages/form-layout/components/layout-dialog';
 import { Alert } from '@elementor/ui';
 import useIntroduction from './hooks/use-introduction';
 
-const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect } ) => {
+const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect, onRegenerate } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-no-images-info' );
 
@@ -64,6 +64,7 @@ const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect }
 			onInsert={ onInsert }
 			onGeneration={ onGeneration }
 			onSelect={ onSelect }
+			onRegenerate={ onRegenerate }
 			DialogHeaderProps={ {
 				children: showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } />,
 			} }
@@ -88,6 +89,7 @@ LayoutContent.propTypes = {
 	onGeneration: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
+	onRegenerate: PropTypes.func.isRequired,
 };
 
 export default LayoutContent;

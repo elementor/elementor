@@ -9,6 +9,7 @@ const LayoutApp = ( {
 	onGeneration,
 	onInsert,
 	onSelect,
+	onRegenerate,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
@@ -19,6 +20,7 @@ const LayoutApp = ( {
 					onGeneration={ onGeneration }
 					onInsert={ onInsert }
 					onSelect={ onSelect }
+					onRegenerate={ onRegenerate }
 				/>
 			</ThemeProvider>
 		</DirectionProvider>
@@ -33,6 +35,7 @@ LayoutApp.propTypes = {
 	onGeneration: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
+	onRegenerate: PropTypes.func.isRequired,
 };
 
 export default LayoutApp;
