@@ -1,29 +1,56 @@
 import { toggleHistory } from './history';
-import { generateIds } from './genereate-ids';
 
-const PREVIEW_CONTAINER_ID = 'e-ai-preview-container';
+const PREFIX = 'e-ai-preview-container';
+const CLASS_HIDDEN = PREFIX + '--hidden';
+const CLASS_IDLE = PREFIX + '--idle';
 
-/**
- * @param {{ at?: number }} options
- * @param {Object | null}   model
- *
- * @return {Object}
- */
-export function createPreviewContainer( options = {}, model = null ) {
-	toggleHistory( false );
+export function createPreviewContainer( options = {} ) {
+	const createdContainers = new Map();
+	const idleContainer = createIdleContainer( options );
 
-	// When no model is supplied, create an empty Container. Used for UI purposes only.
-	if ( ! model ) {
-		model = {
-			elType: 'container',
-		};
+	createdContainers.set( 'idle', idleContainer );
+
+	function setIdle() {
+		hideContainers( createdContainers );
+		showContainer( idleContainer );
 	}
 
-	const previewContainer = $e.run( 'document/elements/create', {
+	function setContent( template ) {
+		if ( ! template ) {
+			return;
+		}
+
+		hideContainers( createdContainers );
+
+		if ( ! createdContainers.has( template ) ) {
+			const newContainer = createContainer( template, options );
+
+			createdContainers.set( template, newContainer );
+		}
+
+		showContainer( createdContainers.get( template ) );
+	}
+
+	function destroy() {
+		deleteContainers( createdContainers );
+		createdContainers.clear();
+	}
+
+	return {
+		setIdle,
+		setContent,
+		destroy,
+	};
+}
+
+export function createContainer( model, options = {} ) {
+	toggleHistory( false );
+
+	const container = $e.run( 'document/elements/create', {
 		container: elementor.getPreviewContainer(),
 		model: {
 			...model,
-			id: PREVIEW_CONTAINER_ID,
+			id: `${ PREFIX }-${ elementorCommon.helpers.getUniqueId().toString() }`,
 		},
 		options: {
 			...options,
@@ -33,60 +60,38 @@ export function createPreviewContainer( options = {}, model = null ) {
 
 	toggleHistory( true );
 
-	return previewContainer;
+	container.view.$el.addClass( CLASS_HIDDEN );
+
+	return container;
 }
 
-export function deletePreviewContainer() {
+function createIdleContainer( options = {} ) {
+	// Create an empty container that'll be used of UI purposes.
+	const container = createContainer( { elType: 'container' }, options );
+
+	container.view.$el.addClass( CLASS_IDLE );
+
+	return container;
+}
+
+function hideContainers( containersMap ) {
+	for ( const [ , container ] of containersMap ) {
+		container.view.$el.addClass( CLASS_HIDDEN );
+	}
+}
+
+function showContainer( container ) {
+	container.view.$el.removeClass( CLASS_HIDDEN );
+}
+
+function deleteContainers( containersMap ) {
+	const containers = [ ...containersMap ].map( ( [ , container ] ) => container );
+
 	toggleHistory( false );
 
-	const container = getPreviewContainer();
-
-	if ( container ) {
-		$e.run( 'document/elements/delete', {
-			container,
-		} );
-	}
+	$e.run( 'document/elements/delete', {
+		containers,
+	} );
 
 	toggleHistory( true );
-}
-
-export function setPreviewContainerIdle() {
-	const container = getPreviewContainer();
-
-	if ( container ) {
-		container.view.$el.addClass( 'e-ai-preview-container--idle' );
-	}
-}
-
-export function setPreviewContainerLoading() {
-	const container = getPreviewContainer();
-
-	if ( container ) {
-		container.view.$el.addClass( 'e-ai-preview-container--loading' );
-	}
-}
-
-export function setPreviewContainerContent( template ) {
-	if ( ! template ) {
-		return;
-	}
-
-	const view = getPreviewContainer()?.view;
-
-	if ( ! view ) {
-		return;
-	}
-
-	const currentContainerPosition = view._index;
-
-	deletePreviewContainer();
-
-	createPreviewContainer(
-		{ at: currentContainerPosition },
-		generateIds( template ),
-	);
-}
-
-function getPreviewContainer() {
-	return elementor.getContainer( PREVIEW_CONTAINER_ID );
 }
