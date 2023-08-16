@@ -2,38 +2,40 @@ import { toCanvas } from 'html-to-image';
 import { toggleHistory } from './history';
 import { generateIds } from './genereate-ids';
 
-export const takeScreenshots = async ( templates = [] ) => {
-	// Disable history so the Editor won't show our hidden containers as user actions.
+export const takeScreenshot = async ( template ) => {
+	if ( ! template ) {
+		return '';
+	}
+
+	// Disable history so the Editor won't show our hidden container as a user action.
 	toggleHistory( false );
 
 	const hiddenWrapper = createHiddenWrapper();
-	const containers = createContainers( templates );
+	const container = createContainer( template );
 
-	wrapContainers( containers, hiddenWrapper );
+	wrapContainer( container, hiddenWrapper );
 
 	elementor.getPreviewView().$childViewContainer[ 0 ].appendChild( hiddenWrapper );
 
-	// Wait for the containers to render.
-	await Promise.all( containers.map( ( { id } ) => waitForContainer( id ) ) );
+	// Wait for the container to render.
+	await waitForContainer( container.id );
 
-	const promises = containers.map( ( { view } ) => screenshotNode( view.$el[ 0 ] ) );
+	let screenshot;
 
-	const screenshots = await Promise.allSettled( promises );
+	try {
+		screenshot = await screenshotNode( container.view.$el[ 0 ] );
+	} catch ( error ) {
+		// Return an empty image url if the screenshot failed.
+		screenshot = '';
+	}
 
-	deleteContainers( containers );
+	deleteContainer( container );
 
 	hiddenWrapper.remove();
 
 	toggleHistory( true );
 
-	return screenshots.map( ( { status, value } ) => {
-		// Return an empty image url if the screenshot failed.
-		if ( 'rejected' === status ) {
-			return '';
-		}
-
-		return value;
-	} );
+	return screenshot;
 };
 
 function screenshotNode( node ) {
@@ -58,28 +60,24 @@ function createHiddenWrapper() {
 	return wrapper;
 }
 
-function createContainers( templates ) {
-	return templates.map( ( template ) => {
-		const model = generateIds( template );
+function createContainer( template ) {
+	const model = generateIds( template );
 
-		// Set a custom ID, so it can be used later on in the backend.
-		model.id = `e-ai-screenshot-container-${ model.id }`;
+	// Set a custom ID, so it can be used later on in the backend.
+	model.id = `e-ai-screenshot-container-${ model.id }`;
 
-		return $e.run( 'document/elements/create', {
-			container: elementor.getPreviewContainer(),
-			model,
-			options: {
-				edit: false,
-			},
-		} );
+	return $e.run( 'document/elements/create', {
+		container: elementor.getPreviewContainer(),
+		model,
+		options: {
+			edit: false,
+		},
 	} );
 }
 
-function deleteContainers( containers ) {
-	containers.forEach( ( container ) => {
-		$e.run( 'document/elements/delete', {
-			container,
-		} );
+function deleteContainer( container ) {
+	return $e.run( 'document/elements/delete', {
+		container,
 	} );
 }
 
@@ -126,11 +124,9 @@ function sleep( ms ) {
 	return new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 }
 
-function wrapContainers( containers, wrapper ) {
-	containers.forEach( ( container ) => {
-		const el = container.view.$el[ 0 ];
+function wrapContainer( container, wrapper ) {
+	const el = container.view.$el[ 0 ];
 
-		el.parentNode.insertBefore( wrapper, el );
-		wrapper.appendChild( el );
-	} );
+	el.parentNode.insertBefore( wrapper, el );
+	wrapper.appendChild( el );
 }
