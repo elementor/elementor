@@ -399,10 +399,10 @@ class Settings extends Settings_Page {
 			'elementor-getting-started',
 			'elementor-system-info',
 			'e-form-submissions',
-			'elementor_custom_icons',
+			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
-			'elementor_custom_custom_code',
+			'elementor_custom_code',
 			'popup_templates',
 			'elementor-apps',
 		];
