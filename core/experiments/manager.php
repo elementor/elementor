@@ -431,7 +431,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Grid Widget', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
-			'hidden' => true,
+			'hidden' => false,
 			'dependencies' => [
 				'container',
 				'container_grid',
