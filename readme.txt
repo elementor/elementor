@@ -240,6 +240,16 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.15.2 - 2023-08-09 =
+
+* Fix: Popular Apps notification is not presented as expected in RTL websites ([#23307](https://github.com/elementor/elementor/issues/23307))
+* Fix: Typo in Popular Apps notification ([#23329](https://github.com/elementor/elementor/issues/23329))
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+
+= 3.15.1 - 2023-08-02 =
+
+* Fix: Error notices appear on front after schemes code deprecated
+
 = 3.15.0 - 2023-07-31 =
 
 * New: Introducing Accordion widget - Unleash your design creativity with nesting capabilities and layout flexibility ([#2587](https://github.com/elementor/elementor/issues/2587))
