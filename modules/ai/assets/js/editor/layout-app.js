@@ -6,8 +6,7 @@ const LayoutApp = ( {
 	colorScheme,
 	onClose,
 	onConnect,
-	onGenerationStart,
-	onGenerationEnd,
+	onGeneration,
 	onInsert,
 	onSelect,
 } ) => {
@@ -17,8 +16,7 @@ const LayoutApp = ( {
 				<LayoutContent
 					onClose={ onClose }
 					onConnect={ onConnect }
-					onGenerationStart={ onGenerationStart }
-					onGenerationEnd={ onGenerationEnd }
+					onGeneration={ onGeneration }
 					onInsert={ onInsert }
 					onSelect={ onSelect }
 				/>
@@ -32,8 +30,7 @@ LayoutApp.propTypes = {
 	isRTL: PropTypes.bool,
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
-	onGenerationStart: PropTypes.func.isRequired,
-	onGenerationEnd: PropTypes.func.isRequired,
+	onGeneration: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 };
