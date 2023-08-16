@@ -43,7 +43,7 @@ export function createPreviewContainer( options = {} ) {
 	};
 }
 
-export function createContainer( model, options = {} ) {
+function createContainer( model, options = {} ) {
 	toggleHistory( false );
 
 	const container = $e.run( 'document/elements/create', {
