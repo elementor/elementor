@@ -62,6 +62,10 @@ ControlsStack = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
+	onDestroy() {
+		this.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
 	initCollection() {
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
