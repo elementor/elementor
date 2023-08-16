@@ -1142,16 +1142,17 @@ class NestedTabsHtml extends Widget_Nested_Base {
 	 */
 	public function print_child( $index, $item_settings = [] ) {
 		$children = $this->get_children();
+		$child_ids = [];
+
+		foreach( $children as $child ) {
+			$child_ids[] = $child->get_id();
+		}
 
 		// Add data-tab-index attribute to the content area.
-		$add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings ) {
-			$container->add_render_attribute( '_wrapper', [
-				'id' => $item_settings['container_id'],
-				'role' => 'tabpanel',
-				'aria-labelledby' => $item_settings['tab_id'],
-				'data-tab-index' => $item_settings['tab_count'],
-				'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
-			] );
+		$add_attribute_to_container = function ( $should_render, $container ) use ( $item_settings, $child_ids ) {
+			if ( in_array( $container->get_id(), $child_ids ) ) {
+				$this->add_attributes_to_container( $container, $item_settings );
+			}
 
 			return $should_render;
 		};
@@ -1159,6 +1160,16 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
 		$children[ $index ]->print_element();
 		remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
+	}
+
+	protected function add_attributes_to_container( $container, $item_settings ) {
+		$container->add_render_attribute( '_wrapper', [
+				'id' => $item_settings['container_id'],
+				'role' => 'tabpanel',
+				'aria-labelledby' => $item_settings['tab_id'],
+				'data-tab-index' => $item_settings['tab_count'],
+				'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
+		] );
 	}
 
 	protected function render() {
