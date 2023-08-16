@@ -399,7 +399,7 @@ class Container extends Element_Base {
 		];
 
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
-			if ( $breakpoint_name === Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) {
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_name ) {
 				continue; // The mobile width is not inherited from the higher breakpoint width controls.
 			}
 
