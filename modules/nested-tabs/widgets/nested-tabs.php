@@ -381,7 +381,7 @@ class NestedTabs extends Widget_Nested_Base {
 			}
 
 			$dropdown_options[ $breakpoint_key ] = sprintf(
-			/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
+				/* translators: 1: Breakpoint label, 2: `>` character, 3: Breakpoint value. */
 				esc_html__( '%1$s (%2$s %3$dpx)', 'elementor' ),
 				$breakpoint_instance->get_label(),
 				'>',
