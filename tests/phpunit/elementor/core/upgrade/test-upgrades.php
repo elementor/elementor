@@ -442,13 +442,20 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default_with_container );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_default );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
+		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
+
+		// Simulate that the user has downgraded to 3.15.* and upgraded again.
+		add_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED, 'yes' );
+		$this->assertEquals( 'yes', get_option( 'elementor_container_gap_updates_reversed' ) );
 
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
-		$this->assert_container_changed(  $documents[0]->get_json_meta('_elementor_data') );
+		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
 		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
 		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
+		$this->assert_flex_gap_control_has_changed( $documents[3]->get_json_meta('_elementor_data') );
 
+		$this->assertEquals( null, get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) );
 	}
 
 	private function create_image() {
@@ -491,12 +498,21 @@ class Test_Upgrades extends Elementor_Test_Base {
 	 *
 	 * @return void
 	 */
-	public function assert_container_changed( $elementor_data ) {
+	public function assert_containers_changed( $elementor_data ) {
 		$top_level_container = $elementor_data[0];
+		// isInner Changes
 		self::assertFalse( $top_level_container['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['elements'][0]['isInner'] );
-		self::assertTrue( $top_level_container['elements'][0]['elements'][1]['isInner'] );
+		$inner_container = $top_level_container['elements'][0];
+		self::assertTrue( $inner_container['isInner'] );
+		self::assertTrue( $inner_container['elements'][0]['isInner'] );
+		self::assertTrue( $inner_container['elements'][1]['isInner'] );
+
+		// Grid container Changes
+		self::assertEquals( 'Grid', $top_level_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container-grid', $top_level_container['settings']['presetIcon'] );
+
+		self::assertEquals( 'Container', $inner_container['settings']['presetTitle'] );
+		self::assertEquals( 'eicon-container', $inner_container['settings']['presetIcon'] );
 	}
 
 	/**
@@ -511,5 +527,57 @@ class Test_Upgrades extends Elementor_Test_Base {
 		self::assertFalse( $widget['elements'][0]['isInner'] );
 		self::assertFalse( $widget['elements'][1]['isInner'] );
 		self::assertFalse( $widget['elements'][2]['isInner']);
+	}
+
+	/**
+	 * @param $documents
+	 *
+	 * @return void
+	 */
+	private function assert_flex_gap_control_has_changed( $elementor_data ) {
+		$top_level_container = $elementor_data[0];
+		self::assertEquals( [
+			'column' => '99',
+			'row' => '99',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps'] );
+
+		self::assertEquals( [
+			'column' => '88',
+			'row' => '88',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps_tablet'] );
+
+		self::assertEquals( [
+			'column' => '77',
+			'row' => '77',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $top_level_container['settings']['flex_gaps_mobile'] );
+
+		$inner_container = $top_level_container['elements'][0];
+
+		self::assertEquals( [
+			'column' => '66',
+			'row' => '66',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps'] );
+
+		self::assertEquals( [
+			'column' => '55',
+			'row' => '55',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps_tablet'] );
+
+		self::assertEquals( [
+			'column' => '44',
+			'row' => '44',
+			'unit' => 'px',
+			'isLinked' => true,
+		], $inner_container['settings']['flex_gaps_mobile'] );
 	}
 }
