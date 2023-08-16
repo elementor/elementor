@@ -8,12 +8,12 @@ import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../form-media/hooks/use-image-prompt-enhancer';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	{ text: __( 'Create a hero section with', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'I need a services section divided into three columns', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'Create a contact us section in one line that also includes a title and', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'Two columns divided into third and two-thirds', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
-	// eslint-disable-next-line @wordpress/i18n-translator-comments
-	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
+	__( 'Hero section with a background image, centered heading, and button about', 'elementor' ),
+	__( 'Testimonial section with an image-left, text-center style about', 'elementor' ),
+	__( 'Contact Us section with a location, email, phone, and button', 'elementor' ),
+	__( 'Our Services section with a 3-icon top and text block style', 'elementor' ),
+	__( '"Our team" section with 9 team members in a 3x3 layout, including image, heading, and text block for each one', 'elementor' ),
+	__( 'Two column Call to action boxed banner featuring an image on the left, a heading, and a button on the right', 'elementor' ),
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -102,9 +102,7 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 					disabled={ isLoading || ! isActive }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ PROMPT_SUGGESTIONS }
-					groupBy={ ( option ) => option.group }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
-					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
+					onChange={ ( _, selectedValue ) => setPrompt( selectedValue + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
 							{ ...params }

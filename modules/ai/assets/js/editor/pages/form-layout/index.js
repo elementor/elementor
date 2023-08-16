@@ -151,8 +151,8 @@ const FormLayout = ( { onClose, onInsert, onGenerationStart, onGenerationEnd, on
 				{ showUnsavedChangesAlert && (
 					<UnsavedChangesAlert
 						open={ showUnsavedChangesAlert }
-						title={ __( 'Leave Layout Generator?', 'elementor' ) }
-						text={ __( "The results will be deleted forever and we won't be able to recover them. ", 'elementor' ) }
+						title={ __( 'Leave Elementor AI?', 'elementor' ) }
+						text={ __( "Your progress will be deleted, and can't be recovered.", 'elementor' ) }
 						onClose={ onClose }
 						onCancel={ () => setShowUnsavedChangesAlert( false ) }
 					/>

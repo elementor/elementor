@@ -21,7 +21,7 @@ const DialogHeader = ( { onClose, children } ) => (
 		<AIIcon fontSize="large" sx={ { mr: 3 } } />
 
 		<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
-			{ __( 'AI Builder', 'elementor' ) }
+			{ __( 'AI', 'elementor' ) }
 		</Typography>
 
 		<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
