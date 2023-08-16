@@ -397,7 +397,9 @@ class Settings extends Settings_Page {
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
-			'elementor_custom_fonts',
+			'elementor-system-info',
+			'e-form-submissions',
+			'elementor_custom_icons',
 			'elementor_custom_icons',
 			'elementor-license',
 			'elementor_custom_custom_code',
