@@ -1,4 +1,11 @@
 export default class GridContainer extends elementorModules.frontend.handlers.Base {
+	__construct( settings ) {
+		super.__construct( settings );
+
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+		this.updateEmptyViewHeight = this.updateEmptyViewHeight.bind( this );
+	}
+
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -37,15 +44,15 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	bindEvents() {
-		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
-		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight );
 	}
 
 	initLayoutOverlay() {

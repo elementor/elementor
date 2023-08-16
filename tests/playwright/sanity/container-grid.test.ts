@@ -39,9 +39,9 @@ test.describe( 'Container Grid tests @container', () => {
 		const container = await frame.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert gaps', async () => {
-			await page.locator( '.elementor-control-gaps .elementor-link-gaps' ).first().click();
-			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
-			await page.locator( '.elementor-control-gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
+			await page.locator( '.elementor-control-grid_gaps .elementor-link-gaps' ).first().click();
+			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap:nth-child(1) input' ).first().fill( '10' );
+			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap:nth-child(2) input' ).first().fill( '20' );
 			await expect( container ).toHaveCSS( 'gap', '20px 10px' );
 		} );
 
@@ -141,7 +141,6 @@ test.describe( 'Container Grid tests @container', () => {
 				flexDragAreaOffsetLeft = await editor.getPreviewFrame()
 					.locator( '.e-flex .elementor-empty-view' )
 					.evaluate( ( flexContent: HTMLElement ) => flexContent.offsetLeft );
-
 			expect( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
 
 			// Add heading.

@@ -98,18 +98,20 @@ export default class NestedTabsHtml extends Base {
 		this.setSettings( originalToggleMethods );
 	}
 
-	deactivateActiveTab( tabIndex ) {
+	deactivateActiveTab( newTabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = !! tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : settings.ariaAttributes.activeTitleSelector,
-			activeContentFilter = !! tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			activeContentFilter = '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.attr( this.getTitleDeactivationAttributes() );
-		$activeContent.removeClass( activeClass );
+		this.setTabDeactivationAttributes( $activeTitle, newTabIndex );
 
+		$activeContent.removeClass( activeClass );
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
+
+		return $activeContent;
 	}
 
 	getTitleActivationAttributes() {
@@ -121,13 +123,13 @@ export default class NestedTabsHtml extends Base {
 		};
 	}
 
-	getTitleDeactivationAttributes() {
+	setTabDeactivationAttributes( $activeTitle ) {
 		const titleStateAttribute = this.getSettings( 'ariaAttributes' ).titleStateAttribute;
 
-		return {
+		$activeTitle.attr( {
 			tabindex: '-1',
 			[ titleStateAttribute ]: 'false',
-		};
+		} );
 	}
 
 	onHideTabContent() {}
@@ -170,7 +172,7 @@ export default class NestedTabsHtml extends Base {
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab-index' ), true );
+		this.changeActiveTab( event.currentTarget?.getAttribute( 'data-tab-index' ), true );
 	}
 
 	getTabEvents() {
@@ -257,7 +259,9 @@ export default class NestedTabsHtml extends Base {
 
 		this.setTouchMode();
 
-		new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+		if ( 'nested-tabs-html.default' === this.getSettings( 'elementName' ) ) {
+			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+		}
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -304,7 +308,7 @@ export default class NestedTabsHtml extends Base {
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
-			this.deactivateActiveTab();
+			this.deactivateActiveTab( tabIndex );
 		}
 
 		if ( ! settings.hidePrevious && isActiveTab ) {
@@ -321,8 +325,12 @@ export default class NestedTabsHtml extends Base {
 		}
 	}
 
-	changeActiveTabByKeyboard( event, tabIndex ) {
-		this.changeActiveTab( tabIndex, true );
+	changeActiveTabByKeyboard( event, settings ) {
+		if ( settings.widgetId !== this.getID() ) {
+			return;
+		}
+
+		this.changeActiveTab( settings.titleIndex, true );
 	}
 
 	activateMobileTab( tabIndex ) {
