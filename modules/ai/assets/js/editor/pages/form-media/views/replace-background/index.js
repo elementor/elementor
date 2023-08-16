@@ -8,6 +8,8 @@ import useImageActions from '../../hooks/use-image-actions';
 import useReplaceBackground from './hooks/use-replace-background';
 import { useState } from 'react';
 import PromptField from '../../components/prompt-field';
+import { LOCATIONS } from '../../constants';
+import NewPromptButton from '../../components/new-prompt-button';
 
 const RemoveBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
@@ -46,9 +48,14 @@ const RemoveBackground = () => {
 						placeholder={ __( 'Describe what you want to generate in the background (English only)', 'elementor' ) }
 					/>
 
-					<GenerateSubmit disabled={ isLoading || '' === prompt } >
-						{ __( 'Replace Background', 'elementor' ) }
+					<GenerateSubmit
+						disabled={ isLoading || '' === prompt }
+						color={ data?.result ? 'secondary' : 'primary' }
+					>
+						{ data?.result ? __( 'Generate Again', 'elementor' ) : __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
+
+					{ data?.result && <NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
 				</ImageForm>
 			</View.Panel>
 
