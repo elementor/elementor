@@ -1144,7 +1144,7 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		$children = $this->get_children();
 		$child_ids = [];
 
-		foreach( $children as $child ) {
+		foreach ( $children as $child ) {
 			$child_ids[] = $child->get_id();
 		}
 
@@ -1164,11 +1164,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 	protected function add_attributes_to_container( $container, $item_settings ) {
 		$container->add_render_attribute( '_wrapper', [
-				'id' => $item_settings['container_id'],
-				'role' => 'tabpanel',
-				'aria-labelledby' => $item_settings['tab_id'],
-				'data-tab-index' => $item_settings['tab_count'],
-				'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
+			'id' => $item_settings['container_id'],
+			'role' => 'tabpanel',
+			'aria-labelledby' => $item_settings['tab_id'],
+			'data-tab-index' => $item_settings['tab_count'],
+			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 	}
 
