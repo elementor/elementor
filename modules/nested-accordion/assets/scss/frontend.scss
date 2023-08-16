@@ -38,7 +38,7 @@
 
 			:where( & > .e-con ) {
 				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
-				border: var( --n-accordion-border-style ) var( --n-accordion-border-color );
+				border: var(--n-accordion-border-style) var(--n-accordion-border-color);
 			}
 
 			&-title {
@@ -47,13 +47,13 @@
 				list-style: none;
 				padding: var(--n-accordion-padding);
 				border-width: var(--n-accordion-border-width);
-				border-color: var( --n-accordion-border-color );
-				border-style: var( --n-accordion-border-style );
-				justify-content: var( --n-accordion-title-justify-content );
-				border-radius: var( --n-accordion-border-radius );
-				flex-grow: var( --n-menu-title-flex-grow );
-				gap: var( --n-accordion-icon-gap );
-				color: var( --n-accordion-title-normal-color );
+				border-color: var(--n-accordion-border-color);
+				border-style: var(--n-accordion-border-style);
+				justify-content: var(--n-accordion-title-justify-content);
+				border-radius: var(--n-accordion-border-radius);
+				flex-grow: var(--n-menu-title-flex-grow);
+				gap: var(--n-accordion-icon-gap);
+				color: var(--n-accordion-title-normal-color);
 				align-items: center;
 				cursor: pointer;
 
