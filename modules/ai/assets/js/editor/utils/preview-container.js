@@ -83,9 +83,12 @@ function hideContainers( containersMap ) {
 function showContainer( container ) {
 	container.view.$el.removeClass( CLASS_HIDDEN );
 
-	container.view.$el[ 0 ].scrollIntoView( {
-		behavior: 'smooth',
-		block: 'start',
+	// Delay the scroll to avoid UI jumps when toggling between containers.
+	setTimeout( () => {
+		container.view.$el[ 0 ].scrollIntoView( {
+			behavior: 'smooth',
+			block: 'start',
+		} );
 	} );
 }
 
