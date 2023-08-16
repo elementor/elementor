@@ -75,9 +75,9 @@ function createIdleContainer( options = {} ) {
 }
 
 function hideContainers( containersMap ) {
-	for ( const [ , container ] of containersMap ) {
+	[ ...containersMap.values() ].forEach( ( container ) => {
 		container.view.$el.addClass( CLASS_HIDDEN );
-	}
+	} );
 }
 
 function showContainer( container ) {
@@ -85,12 +85,10 @@ function showContainer( container ) {
 }
 
 function deleteContainers( containersMap ) {
-	const containers = [ ...containersMap ].map( ( [ , container ] ) => container );
-
 	toggleHistory( false );
 
 	$e.run( 'document/elements/delete', {
-		containers,
+		containers: [ ...containersMap.values() ],
 	} );
 
 	toggleHistory( true );
