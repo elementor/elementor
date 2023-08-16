@@ -1105,15 +1105,15 @@ class NestedTabsHtml extends Widget_Nested_Base {
 
 		ob_start();
 		?>
-        <button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<button <?php echo $render_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<span <?php echo $icon_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php echo $icon_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
-            <span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php echo esc_html( $title ); ?>
 				</span>
-        </button>
+		</button>
 		<?php
 		return ob_get_clean();
 	}
@@ -1203,11 +1203,11 @@ class NestedTabsHtml extends Widget_Nested_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="e-n-tabs-heading" role="tablist">
 				<?php echo $tab_titles_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-            </div>
-            <div class="e-n-tabs-content">
+			</div>
+			<div class="e-n-tabs-content">
 				<?php echo $tab_containers_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-            </div>
-        </div>
+			</div>
+		</div>
 		<?php
 	}
 
