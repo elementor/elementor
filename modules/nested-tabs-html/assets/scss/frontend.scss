@@ -164,10 +164,7 @@
 			flex-direction: var( --n-tabs-title-direction );
 			justify-content: var( --n-tabs-title-justify-content-toggle, var( --n-tabs-title-justify-content ) );
 			gap: var( --n-tabs-icon-gap );
-			border-inline-start-width: var( --n-tabs-border-width );
-			border-inline-end-width: var( --n-tabs-border-width );
-			border-block-start-width: var( --n-tabs-border-width );
-			border-block-end-width: var( --n-tabs-border-width );
+			border-width: var( --n-tabs-border-width );
 			position: relative;
 			cursor: pointer;
 			outline: none;
