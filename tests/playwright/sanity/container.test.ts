@@ -13,8 +13,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
-		} );
-		await wpAdmin.setExperiments( {
 			container_grid: true,
 		} );
 	} );
@@ -25,8 +23,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container_grid: false,
-		} );
-		await wpAdmin.setExperiments( {
 			container: false,
 		} );
 	} );
