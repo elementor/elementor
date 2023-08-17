@@ -1124,13 +1124,7 @@ class NestedTabs extends Widget_Nested_Base {
 	protected function render_tab_containers_html( $item_settings ): string {
 		ob_start();
 		$this->print_child( $item_settings['index'], $item_settings );
-		$container_html = ob_get_clean();
-
-		if ( 0 === $item_settings['index'] ) {
-			return str_replace( 'class="', 'class="e-active ', $container_html );
-		}
-
-		return $container_html;
+		return ob_get_clean();
 	}
 
 
@@ -1163,13 +1157,18 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function add_attributes_to_container( $container, $item_settings ) {
+		// $test = $container->get_render_attributes( '_wrapper', 'class' );
+
 		$container->add_render_attribute( '_wrapper', [
 			'id' => $item_settings['container_id'],
 			'role' => 'tabpanel',
 			'aria-labelledby' => $item_settings['tab_id'],
 			'data-tab-index' => $item_settings['tab_count'],
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
+			'class' => 0 === $item_settings['index'] ? 'e-active' : '',
 		] );
+
+		
 	}
 
 	protected function render() {
