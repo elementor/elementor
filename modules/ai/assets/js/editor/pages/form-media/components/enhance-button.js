@@ -4,10 +4,6 @@ import WandIcon from '../../../icons/wand-icon';
 const StyledWandIcon = withDirection( WandIcon );
 
 const EnhanceButton = ( { isLoading, ...props } ) => {
-	if ( isLoading ) {
-		return <CircularProgress color="secondary" size={ 20 } sx={ { mr: 2 } } />;
-	}
-
 	return (
 		<Tooltip title={ __( 'Enhance prompt', 'elementor' ) }>
 			<Box component="span" sx={ { cursor: props.disabled ? 'default' : 'pointer' } }>
@@ -16,7 +12,11 @@ const EnhanceButton = ( { isLoading, ...props } ) => {
 					color="secondary"
 					{ ...props }
 				>
-					<StyledWandIcon />
+					{
+						isLoading
+							? <CircularProgress color="secondary" size={ 20 } />
+							: <StyledWandIcon />
+					}
 				</IconButton>
 			</Box>
 		</Tooltip>

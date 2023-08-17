@@ -55,3 +55,5 @@ export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_promp
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
 
 export const generateLayout = ( prompt, variationType, signal ) => request( 'ai_generate_layout', { prompt, variationType }, true, signal );
+
+export const getLayoutPromptEnhanced = ( prompt ) => request( 'ai_get_layout_prompt_enhancer', { prompt } );

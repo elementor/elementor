@@ -42,6 +42,7 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_image_to_image_replace_background', [ $this, 'ajax_ai_get_image_to_image_replace_background' ] );
 			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
 			$ajax->register_ajax_action( 'ai_generate_layout', [ $this, 'ajax_ai_generate_layout' ] );
+			$ajax->register_ajax_action( 'ai_get_layout_prompt_enhancer', [ $this, 'ajax_ai_get_layout_prompt_enhancer' ] );
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
@@ -696,6 +697,32 @@ class Module extends BaseModule {
 			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_layout_prompt_enhancer( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->get_layout_prompt_enhanced( $data['prompt'] );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'text' => $result['text'] ?? $data['prompt'],
+			'response_id' => $result['responseId'] ?? '',
+			'usage' => $result['usage'] ?? '',
 		];
 	}
 
