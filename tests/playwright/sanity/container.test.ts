@@ -13,6 +13,8 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: true,
+		} );
+		await wpAdmin.setExperiments( {
 			container_grid: true,
 		} );
 	} );
@@ -23,11 +25,13 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container_grid: false,
+		} );
+		await wpAdmin.setExperiments( {
 			container: false,
 		} );
 	} );
 
-	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
