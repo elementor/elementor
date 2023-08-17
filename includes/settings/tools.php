@@ -147,11 +147,20 @@ class Tools extends Settings_Page {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
-		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
-
+		/**
+		 * Filter to allow override the rollback process.
+		 * Should return an instance of `Rollback` class.
+		 *
+		 * @since 3.16.0
+		 *
+		 * @param Rollback|null $rollback The rollback instance.
+		 * @param string        $version  The version to roll back to.
+		 */
 		$rollback = apply_filters( 'elementor/settings/rollback', null, $version );
 
 		if ( ! $rollback && ! ( $rollback instanceof Rollback ) ) {
+			$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+
 			$rollback = new Rollback( [
 				'version' => $version,
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
