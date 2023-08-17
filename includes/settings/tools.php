@@ -149,16 +149,16 @@ class Tools extends Settings_Page {
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
-		$rollback_args = [
-			'version' => $version,
-			'plugin_name' => ELEMENTOR_PLUGIN_BASE,
-			'plugin_slug' => $plugin_slug,
-			'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
-		];
+		$rollback = apply_filters( 'elementor/settings/rollback', null, $version );
 
-		$rollback_args = apply_filters( 'elementor/settings/tools/rollback/rollback_args', $rollback_args );
-
-		$rollback = new Rollback( $rollback_args );
+		if ( ! $rollback && ! ( $rollback instanceof Rollback ) ) {
+			$rollback = new Rollback( [
+				'version' => $version,
+				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
+				'plugin_slug' => $plugin_slug,
+				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
+			] );
+		}
 
 		$rollback->run();
 
@@ -203,32 +203,35 @@ class Tools extends Settings_Page {
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+			$versions = apply_filters( 'elementor/settings/rollback/versions', [] );
 
-			$plugin_information = plugins_api(
-				'plugin_information', [
-					'slug' => 'elementor',
-				]
-			);
+			if ( empty( $versions ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-			if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
-				return [];
+				$plugin_information = plugins_api(
+					'plugin_information', [
+						'slug' => 'elementor',
+					]
+				);
+
+				if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
+					return [];
+				}
+
+				uksort( $plugin_information->versions, 'version_compare' );
+				$versions = array_keys( array_reverse( $plugin_information->versions ) );
 			}
-
-			$plugin_information->versions = apply_filters(
-				'elementor/settings/tools/rollback/versions',
-				$plugin_information->versions
-			);
-
-			uksort( $plugin_information->versions, 'version_compare' );
-			$plugin_information->versions = array_reverse( $plugin_information->versions );
 
 			$rollback_versions = [];
 
 			$current_index = 0;
-			foreach ( $plugin_information->versions as $version => $download_link ) {
+			foreach ( $versions as $version ) {
 				if ( $max_versions <= $current_index ) {
 					break;
+				}
+
+				if ( substr( $version, 0, 1 ) == 'v' ) {
+					$version = substr( $version, 1 );
 				}
 
 				$lowercase_version = strtolower( $version );
