@@ -476,13 +476,13 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $context = [], $variation_type ) {
+	public function generate_layout( $prompt, $context, $variation_type ) {
 		return $this->ai_request(
 			'POST',
 			'generate/layout',
 			[
 				'prompt' => $prompt,
-				'context' => $context,
+				'context' => $context ?? [],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 				'variationType' => $variation_type,
