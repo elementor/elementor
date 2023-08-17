@@ -1,25 +1,7 @@
 import { useState, useRef } from 'react';
 import useLayoutPrompt from '../hooks/use-layout-prompt';
 
-const PENDING_VALUE = {};
-
-const handleGroupFailure = ( screenshotsData, groupCount ) => {
-	const isScreenthosGroupLoaded = 0 === ( screenshotsData.length % groupCount );
-
-	if ( ! isScreenthosGroupLoaded ) {
-		return screenshotsData;
-	}
-
-	const groupItems = screenshotsData.slice( groupCount * -1 );
-	const isAllGroupFailed = groupItems.every( ( { isPlaceholder } ) => isPlaceholder );
-
-	if ( isAllGroupFailed ) {
-		// Removing the entire group.
-		screenshotsData.splice( groupCount * -1, groupCount );
-	}
-
-	return screenshotsData;
-};
+const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
@@ -40,34 +22,51 @@ const useScreenshots = ( { onData } ) => {
 
 	const abort = () => abortController.current?.abort();
 
-	const createScreenshots = ( prompt ) => {
+	const createScreenshots = async ( prompt ) => {
 		abortController.current = new AbortController();
 
-		templatesData.forEach( async ( { send } ) => {
-			send( prompt, abortController.current.signal )
+		const promises = templatesData.map( ( { send } ) => {
+			return send( prompt, abortController.current.signal )
 				.then( async ( data ) => {
 					const templateData = await onData( data.result );
 
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.indexOf( PENDING_VALUE );
+						const pendingIndex = updatedData.indexOf( PENDING_VALUE );
 
-						updatedData[ placeholderIndex ] = templateData;
+						updatedData[ pendingIndex ] = templateData;
 
 						return updatedData;
 					} );
+
+					return true;
 				} )
 				.catch( () => {
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.lastIndexOf( PENDING_VALUE );
+						const pendingIndex = updatedData.lastIndexOf( PENDING_VALUE );
 
-						updatedData[ placeholderIndex ] = { isPlaceholder: true };
+						updatedData[ pendingIndex ] = { isError: true };
 
-						return handleGroupFailure( updatedData, screenshotsGroupCount );
+						return updatedData;
 					} );
+
+					return false;
 				} );
 		} );
+
+		const results = await Promise.all( promises );
+		const isAllFailed = results.every( ( value ) => false === value );
+
+		if ( isAllFailed ) {
+			setScreenshots( ( prev ) => {
+				const updatedData = [ ...prev ];
+
+				updatedData.splice( screenshotsGroupCount * -1 );
+
+				return updatedData;
+			} );
+		}
 	};
 
 	const generate = ( prompt ) => {

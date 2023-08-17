@@ -13,7 +13,7 @@ const useSlider = ( { slidesCount = 0, slidesPerPage = 3, gapPercentage = 2 } = 
 		if ( currentPage > 1 && currentPage > slidesCount / slidesPerPage ) {
 			setCurrentPage( ( prev ) => --prev );
 		}
-	}, [ slidesCount ] );
+	}, [ pagesCount ] );
 
 	return {
 		currentPage,
