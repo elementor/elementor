@@ -53,8 +53,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGenerationStart={ () => {} }
-				onGenerationEnd={ this.onGenerated }
+				onGeneration={ this.onGeneration }
 				onSelect={ this.onSelect.bind( this ) }
 				onInsert={ this.onInsert.bind( this ) }
 			/>,
@@ -76,7 +75,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.view.onCloseButtonClick();
 	}
 
-	async onGenerated( template ) {
+	async onGeneration( template ) {
 		const screenshot = await takeScreenshot( template );
 
 		return {
