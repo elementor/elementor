@@ -181,8 +181,8 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 						<>
 							<Divider />
 
-							<Box sx={ { p: 5 } }>
-								<Box sx={ { overflow: 'hidden' } }>
+							<Box sx={ { p: 4 } }>
+								<Box sx={ { overflow: 'hidden', p: 2 } }>
 									<Box
 										sx={ {
 											display: 'flex',
