@@ -5,6 +5,12 @@
 #elementor-system-info {
 	padding: 15px;
 
+	.elementor-system-info-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
 	.elementor-system-info-section {
 		margin-block-end: 10px;
 

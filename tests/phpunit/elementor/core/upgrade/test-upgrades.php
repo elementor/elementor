@@ -444,6 +444,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
 
+		// Simulate that the user has downgraded to 3.15.* and upgraded again.
+		add_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED, 'yes' );
+		$this->assertEquals( 'yes', get_option( 'elementor_container_gap_updates_reversed' ) );
+
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
 		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
@@ -451,6 +455,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
 		$this->assert_flex_gap_control_has_changed( $documents[3]->get_json_meta('_elementor_data') );
 
+		$this->assertEquals( null, get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) );
 	}
 
 	private function create_image() {
