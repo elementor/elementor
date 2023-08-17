@@ -3,6 +3,7 @@ namespace Elementor\Modules\Ai;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
@@ -13,12 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Module extends BaseModule {
 
+	const LAYOUT_EXPERIMENT = 'ai-layout';
+
 	public function get_name() {
 		return 'ai';
 	}
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->register_layout_experiment();
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -82,6 +87,19 @@ class Module extends BaseModule {
 		} );
 	}
 
+	private function register_layout_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => static::LAYOUT_EXPERIMENT,
+			'title' => esc_html__( 'Build with AI', 'elementor' ),
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
+			'dependencies' => [
+				'container',
+			],
+		] );
+	}
+
 	private function enqueue_main_script() {
 		wp_enqueue_script(
 			'elementor-ai',
@@ -136,7 +154,7 @@ class Module extends BaseModule {
 	}
 
 	private function is_layout_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'container' );
+		return Plugin::$instance->experiments->is_feature_active( self::LAYOUT_EXPERIMENT );
 	}
 
 	private function remove_temporary_containers( $data ) {
