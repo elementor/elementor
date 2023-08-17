@@ -6,10 +6,10 @@ const LayoutApp = ( {
 	colorScheme,
 	onClose,
 	onConnect,
-	onGeneration,
+	onData,
 	onInsert,
 	onSelect,
-	onRegenerate,
+	onGenerate,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
@@ -17,10 +17,10 @@ const LayoutApp = ( {
 				<LayoutContent
 					onClose={ onClose }
 					onConnect={ onConnect }
-					onGeneration={ onGeneration }
+					onData={ onData }
 					onInsert={ onInsert }
 					onSelect={ onSelect }
-					onRegenerate={ onRegenerate }
+					onGenerate={ onGenerate }
 				/>
 			</ThemeProvider>
 		</DirectionProvider>
@@ -32,10 +32,10 @@ LayoutApp.propTypes = {
 	isRTL: PropTypes.bool,
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
-	onGeneration: PropTypes.func.isRequired,
+	onData: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
-	onRegenerate: PropTypes.func.isRequired,
+	onGenerate: PropTypes.func.isRequired,
 };
 
 export default LayoutApp;

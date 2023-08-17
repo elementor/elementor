@@ -9,7 +9,7 @@ import LayoutDialog from './pages/form-layout/components/layout-dialog';
 import { Alert } from '@elementor/ui';
 import useIntroduction from './hooks/use-introduction';
 
-const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect, onRegenerate } ) => {
+const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGenerate } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-no-images-info' );
 
@@ -62,9 +62,9 @@ const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect, 
 			credits={ credits }
 			onClose={ onClose }
 			onInsert={ onInsert }
-			onGeneration={ onGeneration }
+			onData={ onData }
 			onSelect={ onSelect }
-			onRegenerate={ onRegenerate }
+			onGenerate={ onGenerate }
 			DialogHeaderProps={ {
 				children: showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } />,
 			} }
@@ -85,11 +85,10 @@ const LayoutContent = ( { onClose, onConnect, onGeneration, onInsert, onSelect, 
 LayoutContent.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
-	onGenerationStart: PropTypes.func.isRequired,
-	onGeneration: PropTypes.func.isRequired,
+	onData: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
-	onRegenerate: PropTypes.func.isRequired,
+	onGenerate: PropTypes.func.isRequired,
 };
 
 export default LayoutContent;

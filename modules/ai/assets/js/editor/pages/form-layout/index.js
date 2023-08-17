@@ -38,8 +38,8 @@ const UseLayoutButton = ( props ) => (
 	</Button>
 );
 
-const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
-	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onGeneration } );
+const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
+	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
 	const screenshotOutlineOffset = '2px';
 
@@ -47,14 +47,11 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 		currentPage,
 		setCurrentPage,
 		pagesCount,
-		sliderStyle,
-		trackStyle,
-		slideStyle,
+		gapPercentage,
 		slidesPerPage,
-	} = useSlider( {
-		slidesCount: screenshots.length,
-		translateXFilter: ( value ) => `calc(${ value } - ${ screenshotOutlineOffset })`,
-	} );
+		offsetXPercentage,
+		slideWidthPercentage,
+	} = useSlider( { slidesCount: screenshots.length } );
 
 	const [ selectedScreenshotIndex, setSelectedScreenshotIndex ] = useState( -1 );
 
@@ -87,12 +84,14 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 		abortAndClose();
 	};
 
-	const handleSubmit = ( event, prompt ) => {
+	const handleGenerate = ( event, prompt ) => {
 		event.preventDefault();
 
 		if ( '' === prompt.trim() ) {
 			return;
 		}
+
+		onGenerate();
 
 		lastRun.current = () => {
 			setSelectedScreenshotIndex( -1 );
@@ -106,9 +105,9 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 	};
 
 	const handleRegenerate = () => {
-		setCurrentPage( pagesCount + 1 );
 		regenerate( promptInputRef.current.value );
-		onRegenerate();
+		// Changing the current page to the next page number.
+		setCurrentPage( pagesCount + 1 );
 	};
 
 	const handleEnhance = () => {
@@ -173,7 +172,7 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 					isActive={ isPromptFormActive }
 					isLoading={ isLoading }
 					showActions={ screenshots.length > 0 || isLoading }
-					onSubmit={ handleSubmit }
+					onSubmit={ handleGenerate }
 					onBack={ () => setIsPromptEditable( false ) }
 					onEdit={ () => setIsPromptEditable( true ) }
 				/>
@@ -183,22 +182,31 @@ const FormLayout = ( { onClose, onInsert, onGeneration, onSelect, onRegenerate, 
 						<>
 							<Divider />
 
-							<Box sx={ { p: 5, ...sliderStyle } }>
-								<Box sx={ trackStyle }>
-									{
-										screenshots.map( ( { screenshot, template, isPlaceholder }, index ) => (
-											<Screenshot
-												key={ index }
-												url={ screenshot }
-												disabled={ isPromptFormActive }
-												isPlaceholder={ isPlaceholder }
-												isSelected={ selectedScreenshotIndex === index }
-												onClick={ handleScreenshotClick( index, template ) }
-												outlineOffset={ screenshotOutlineOffset }
-												sx={ slideStyle }
-											/>
-										) )
-									}
+							<Box sx={ { p: 4 } }>
+								<Box sx={ { overflow: 'hidden', p: 2 } }>
+									<Box
+										sx={ {
+											display: 'flex',
+											transition: 'all 0.4s ease',
+											gap: `${ gapPercentage }%`,
+											transform: `translateX(${ offsetXPercentage }%)`,
+										} }
+									>
+										{
+											screenshots.map( ( { screenshot, template, isPlaceholder }, index ) => (
+												<Screenshot
+													key={ index }
+													url={ screenshot }
+													disabled={ isPromptFormActive }
+													isPlaceholder={ isPlaceholder }
+													isSelected={ selectedScreenshotIndex === index }
+													onClick={ handleScreenshotClick( index, template ) }
+													outlineOffset={ screenshotOutlineOffset }
+													sx={ { flex: `0 0 ${ slideWidthPercentage }%` } }
+												/>
+											) )
+										}
+									</Box>
 								</Box>
 							</Box>
 
@@ -234,9 +242,9 @@ FormLayout.propTypes = {
 	DialogContentProps: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
-	onGeneration: PropTypes.func.isRequired,
+	onData: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
-	onRegenerate: PropTypes.func.isRequired,
+	onGenerate: PropTypes.func.isRequired,
 };
 
 export default FormLayout;
