@@ -31,7 +31,7 @@ test.describe( 'Container tests @container', () => {
 		} );
 	} );
 
-	test.only( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
+	test( 'Sort items in a Container using DnD', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const editor = await wpAdmin.useElementorCleanPost(),
