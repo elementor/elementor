@@ -5,7 +5,7 @@ import {
 	setHorizontalTitleScrollValues,
 } from 'elementor-frontend-utils/flex-horizontal-scroll';
 
-export default class NestedTabsHtml extends Base {
+export default class NestedTabs extends Base {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -259,7 +259,7 @@ export default class NestedTabsHtml extends Base {
 
 		this.setTouchMode();
 
-		if ( 'nested-tabs-html.default' === this.getSettings( 'elementName' ) ) {
+		if ( 'nested-tabs.default' === this.getSettings( 'elementName' ) ) {
 			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
 		}
 	}
