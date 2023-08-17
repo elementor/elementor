@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import useLayoutPrompt from '../hooks/use-layout-prompt';
 
-const PENDING_VALUE = {};
+const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
@@ -14,44 +14,63 @@ const useScreenshots = ( { onData } ) => {
 
 	const templatesData = [ styling, wireframe, mixed ];
 
+	const screenshotsGroupCount = templatesData.length;
+
 	const isLoading = templatesData.some( ( t ) => t.isLoading );
 
-	const error = ( 0 === screenshots.length && templatesData.find( ( t ) => t.error ) ) || '';
+	const error = templatesData.every( ( t ) => t.error ) ? templatesData[ 0 ].error : '';
 
 	const abort = () => abortController.current?.abort();
 
-	const createScreenshots = ( prompt ) => {
+	const createScreenshots = async ( prompt ) => {
 		abortController.current = new AbortController();
 
-		templatesData.forEach( async ( { send } ) => {
-			send( prompt, abortController.current.signal )
+		const promises = templatesData.map( ( { send } ) => {
+			return send( prompt, abortController.current.signal )
 				.then( async ( data ) => {
 					const templateData = await onData( data.result );
 
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.indexOf( PENDING_VALUE );
+						const pendingIndex = updatedData.indexOf( PENDING_VALUE );
 
-						updatedData[ placeholderIndex ] = templateData;
+						updatedData[ pendingIndex ] = templateData;
 
 						return updatedData;
 					} );
+
+					return true;
 				} )
 				.catch( () => {
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.lastIndexOf( PENDING_VALUE );
+						const pendingIndex = updatedData.lastIndexOf( PENDING_VALUE );
 
-						updatedData[ placeholderIndex ] = { isPlaceholder: true };
+						updatedData[ pendingIndex ] = { isError: true };
 
 						return updatedData;
 					} );
+
+					return false;
 				} );
 		} );
+
+		const results = await Promise.all( promises );
+		const isAllFailed = results.every( ( value ) => false === value );
+
+		if ( isAllFailed ) {
+			setScreenshots( ( prev ) => {
+				const updatedData = [ ...prev ];
+
+				updatedData.splice( screenshotsGroupCount * -1 );
+
+				return updatedData;
+			} );
+		}
 	};
 
 	const generate = ( prompt ) => {
-		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
 		setScreenshots( placeholders );
 
@@ -59,7 +78,7 @@ const useScreenshots = ( { onData } ) => {
 	};
 
 	const regenerate = ( prompt ) => {
-		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
 		setScreenshots( ( prev ) => [ ...prev, ...placeholders ] );
 

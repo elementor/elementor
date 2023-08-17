@@ -67,7 +67,10 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 
 	const { children: dialogContentChildren, ...dialogContentProps } = DialogContentProps;
 
-	const isPromptFormActive = !! ( isPromptEditable || error );
+	// When there are no screenshots the prompt field should be editable.
+	const shouldFallbackToEditPrompt = !! ( error && 0 === screenshots.length );
+
+	const isPromptFormActive = isPromptEditable || shouldFallbackToEditPrompt;
 
 	const abortAndClose = () => {
 		abort();
@@ -105,9 +108,13 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	};
 
 	const handleRegenerate = () => {
-		regenerate( promptInputRef.current.value );
-		// Changing the current page to the next page number.
-		setCurrentPage( pagesCount + 1 );
+		lastRun.current = () => {
+			regenerate( promptInputRef.current.value );
+			// Changing the current page to the next page number.
+			setCurrentPage( pagesCount + 1 );
+		};
+
+		lastRun.current();
 	};
 
 	const handleEnhance = () => {
@@ -193,12 +200,12 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 										} }
 									>
 										{
-											screenshots.map( ( { screenshot, template, isPlaceholder }, index ) => (
+											screenshots.map( ( { screenshot, template, isError }, index ) => (
 												<Screenshot
 													key={ index }
 													url={ screenshot }
 													disabled={ isPromptFormActive }
-													isPlaceholder={ isPlaceholder }
+													isPlaceholder={ isError }
 													isSelected={ selectedScreenshotIndex === index }
 													onClick={ handleScreenshotClick( index, template ) }
 													outlineOffset={ screenshotOutlineOffset }

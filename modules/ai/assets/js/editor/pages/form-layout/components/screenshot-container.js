@@ -1,6 +1,8 @@
 import { Box, styled } from '@elementor/ui';
 
-const ScreenshotContainer = styled( Box )( ( { theme, selected, height, disabled, outlineOffset = '0px' } ) => {
+const ScreenshotContainer = styled( Box, {
+	shouldForwardProp: ( prop ) => prop !== 'outlineOffset',
+} )( ( { theme, selected, height, disabled, outlineOffset = '0px' } ) => {
 	const outline = `${ theme.border.size.sm } ${ theme.border.style.solid } ${ theme.palette.text.primary }`;
 
 	return {
