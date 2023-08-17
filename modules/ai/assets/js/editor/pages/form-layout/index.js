@@ -105,8 +105,9 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	};
 
 	const handleRegenerate = () => {
-		setCurrentPage( pagesCount + 1 );
 		regenerate( promptInputRef.current.value );
+		// Changing the current page to the next page number.
+		setCurrentPage( pagesCount + 1 );
 	};
 
 	const handleEnhance = () => {
