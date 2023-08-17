@@ -188,7 +188,7 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	private function render_video_background() {
+	protected function render_video_background() {
 		$settings = $this->get_settings_for_display();
 
 		if ( 'video' !== $settings['background_background'] ) {
@@ -233,7 +233,7 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	private function render_shape_divider( $side ) {
+	protected function render_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
@@ -259,7 +259,7 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	private function print_html_tag() {
+	protected function print_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
@@ -313,7 +313,7 @@ class Container extends Element_Base {
 		<?php
 	}
 
-	private function is_boxed_container( array $settings ) {
+	protected function is_boxed_container( array $settings ) {
 		return ! empty( $settings['content_width'] ) && 'boxed' === $settings['content_width'];
 	}
 
