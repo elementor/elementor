@@ -1,8 +1,6 @@
 // eslint-disable-next-line
 import topPluginsConfig from "./top-plugins.json" assert {type: 'json'};
 
-console.log(topPluginsConfig);
-
 const notCompatiblePlugins = [
 	'complianz-gdpr', // SQL Error
 	'easy-table-of-contents', // A welcome page replaces the editor.
