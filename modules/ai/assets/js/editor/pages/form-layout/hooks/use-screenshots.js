@@ -3,6 +3,24 @@ import useLayoutPrompt from '../hooks/use-layout-prompt';
 
 const PENDING_VALUE = {};
 
+const handleGroupFailure = ( screenshotsData, groupCount ) => {
+	const isScreenthosGroupLoaded = 0 === ( screenshotsData.length % groupCount );
+
+	if ( ! isScreenthosGroupLoaded ) {
+		return screenshotsData;
+	}
+
+	const groupItems = screenshotsData.slice( groupCount * -1 );
+	const isAllGroupFailed = groupItems.every( ( { isPlaceholder } ) => isPlaceholder );
+
+	if ( isAllGroupFailed ) {
+		// Removing the entire group.
+		screenshotsData.splice( groupCount * -1, groupCount );
+	}
+
+	return screenshotsData;
+};
+
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
 
@@ -14,9 +32,11 @@ const useScreenshots = ( { onData } ) => {
 
 	const templatesData = [ styling, wireframe, mixed ];
 
+	const screenshotsGroupCount = templatesData.length;
+
 	const isLoading = templatesData.some( ( t ) => t.isLoading );
 
-	const error = ( 0 === screenshots.length && templatesData.find( ( t ) => t.error ) ) || '';
+	const error = templatesData.every( ( t ) => t.error ) ? templatesData[ 0 ].error : '';
 
 	const abort = () => abortController.current?.abort();
 
@@ -44,14 +64,14 @@ const useScreenshots = ( { onData } ) => {
 
 						updatedData[ placeholderIndex ] = { isPlaceholder: true };
 
-						return updatedData;
+						return handleGroupFailure( updatedData, screenshotsGroupCount );
 					} );
 				} );
 		} );
 	};
 
 	const generate = ( prompt ) => {
-		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
 		setScreenshots( placeholders );
 
@@ -59,7 +79,7 @@ const useScreenshots = ( { onData } ) => {
 	};
 
 	const regenerate = ( prompt ) => {
-		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
 		setScreenshots( ( prev ) => [ ...prev, ...placeholders ] );
 

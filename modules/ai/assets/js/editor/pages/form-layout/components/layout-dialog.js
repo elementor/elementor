@@ -12,7 +12,7 @@ const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
 	},
 	'& .MuiPaper-root': {
 		margin: 0,
-		maxHeight: '50vh',
+		maxHeight: '55vh',
 	},
 } ) );
 
