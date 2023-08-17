@@ -25,10 +25,12 @@ const useScreenshots = ( { onData } ) => {
 	const createScreenshots = async ( prompt ) => {
 		abortController.current = new AbortController();
 
-		const promises = templatesData.map( ( { send } ) => {
+		const promises = templatesData.map( ( { send, sendUsageData } ) => {
 			return send( prompt, abortController.current.signal )
 				.then( async ( data ) => {
 					const templateData = await onData( data.result );
+
+					templateData.sendUsageData = () => sendUsageData( data );
 
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];

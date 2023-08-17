@@ -124,6 +124,8 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	const applyTemplate = () => {
 		onInsert( selectedTemplate );
 
+		screenshots[ selectedScreenshotIndex ].sendUsageData();
+
 		abortAndClose();
 	};
 
