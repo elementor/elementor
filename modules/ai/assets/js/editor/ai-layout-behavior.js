@@ -31,7 +31,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			at: this.view.getOption( 'at' ),
 		} );
 
-		this.previewContainer.setIdle();
+		this.previewContainer.init();
 
 		const rootElement = document.createElement( 'div' );
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
@@ -53,10 +53,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
-				onGeneration={ this.onGeneration }
+				onGenerate={ this.onGenerate.bind( this ) }
+				onData={ this.onData }
 				onSelect={ this.onSelect.bind( this ) }
 				onInsert={ this.onInsert.bind( this ) }
-				onRegenerate={ () => {} }
 			/>,
 			rootElement,
 		);
@@ -76,7 +76,11 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.view.onCloseButtonClick();
 	}
 
-	async onGeneration( template ) {
+	onGenerate() {
+		this.previewContainer?.reset();
+	}
+
+	async onData( template ) {
 		const screenshot = await takeScreenshot( template );
 
 		return {
