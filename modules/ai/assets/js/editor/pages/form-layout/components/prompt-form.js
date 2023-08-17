@@ -5,7 +5,7 @@ import EnhanceButton from '../../form-media/components/enhance-button';
 import GenerateSubmit from '../../form-media/components/generate-submit';
 import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
-import usePromptEnhancer from '../../form-media/hooks/use-image-prompt-enhancer';
+import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'Create a hero section with', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
@@ -70,8 +70,10 @@ const GenerateButton = ( props ) => (
 
 const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit }, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
-	const { isEnhancing, enhance } = usePromptEnhancer();
+	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
+
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || '' === prompt;
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -84,7 +86,14 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 	};
 
 	return (
-		<Box component="form" onSubmit={ ( e ) => onSubmit( e, prompt ) } sx={ { p: 5 } } display="flex" gap={ 3 }>
+		<Box
+			component="form"
+			onSubmit={ ( e ) => onSubmit( e, prompt ) }
+			sx={ { p: 5 } }
+			display="flex"
+			alignItems="start"
+			gap={ 3 }
+		>
 			<Stack direction="row" flexGrow={ 1 }>
 				{
 					showActions && (
@@ -118,12 +127,12 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 
 			<EnhanceButton
 				size="small"
-				disabled={ isLoading || ! isActive || '' === prompt }
+				disabled={ isInteractionsDisabled }
 				isLoading={ isEnhancing }
-				onClick={ enhance }
+				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isLoading || ! isActive || '' === prompt } />
+			<GenerateButton disabled={ isInteractionsDisabled } />
 		</Box>
 	);
 } );
