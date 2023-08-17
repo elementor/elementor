@@ -431,7 +431,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
-	public function test_v_3_15_9_container_updates() {
+	public function test_v_3_15_9_container__downgrade() {
 
 		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
 		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
@@ -443,7 +443,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$this->assertEquals( get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ), null );
 
-		Upgrades::_v_3_15_9_container_updates( $updater );
+		Upgrades::_v_3_15_9_container__downgrade( $updater );
 
 		$this->assert_flex_gap_control_has_changed( $documents[0]->get_json_meta('_elementor_data') );
 
@@ -452,7 +452,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( $option, 'yes' );
 
 		// Test the upgrade script execution when the wp_option flag is set up
-		$this->assertEquals( Upgrades::_v_3_15_9_container_updates( $updater ), false );
+		$this->assertEquals( Upgrades::_v_3_15_9_container__downgrade( $updater ), false );
 	}
 
 	private function create_image() {

@@ -903,7 +903,13 @@ class Upgrades {
 		);
 	}
 
-	public static function _v_3_15_9_container_updates( $updater ) {
+	/**
+	 * This method will always run because the method name contains '__downgrade'
+	 * But it will only be added to the 3.15 branch
+	 * It reverses the container upgrades that were done in 3.16
+	 * In future we can build a downgrades manager to cater for this scenario
+	 */
+	public static function _v_3_15_9_container__downgrade( $updater ) {
 
 		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
 			return false;

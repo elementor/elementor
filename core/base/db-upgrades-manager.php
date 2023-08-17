@@ -198,6 +198,13 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 				continue;
 			}
 
+			$is_downgrade = false !== strpos( $method_name, '__downgrade' );
+
+			if ( $is_downgrade ) {
+				$callbacks[] = [ $upgrades_class, $method_name ];
+				continue;
+			}
+
 			if ( false === strpos( $method_name, $prefix ) ) {
 				continue;
 			}
