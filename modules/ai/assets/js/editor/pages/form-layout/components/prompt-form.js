@@ -8,12 +8,13 @@ import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../form-media/hooks/use-image-prompt-enhancer';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	__( 'Hero section with a background image, centered heading, and button about', 'elementor' ),
-	__( 'Testimonial section with an image-left, text-center style about', 'elementor' ),
-	__( 'Contact Us section with a location, email, phone, and button', 'elementor' ),
-	__( 'Our Services section with a 3-icon top and text block style', 'elementor' ),
-	__( '"Our team" section with 9 team members in a 3x3 layout, including image, heading, and text block for each one', 'elementor' ),
-	__( 'Two column Call to action boxed banner featuring an image on the left, a heading, and a button on the right', 'elementor' ),
+	{ text: __( 'Hero section with an image, headline, and call-to-action button about', 'elementor' ) },
+	{ text: __( 'Our Services section with a 3-icons and text blocks for', 'elementor' ) },
+	{ text: __( 'Testimonial section with an image-left, text-right style about', 'elementor' ) },
+	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
+	{ text: __( 'A short section about the importance of', 'elementor' ) },
+	{ text: __( 'FAQ section for ensuring easy navigation and clear answers about', 'elementor' ) },
+	{ text: __( 'Statistics display in a 3-column layout, with numbers and icons about', 'elementor' ) },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -102,7 +103,8 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 					disabled={ isLoading || ! isActive }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ PROMPT_SUGGESTIONS }
-					onChange={ ( _, selectedValue ) => setPrompt( selectedValue + ' ' ) }
+					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
 							{ ...params }
