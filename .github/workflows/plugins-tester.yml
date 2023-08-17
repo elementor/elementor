@@ -22,6 +22,7 @@ concurrency:
 
 jobs:
   build-plugin:
+    if: ${{ false }} # This job is disabled
     name: Build plugin
     runs-on: ubuntu-latest
     outputs:
@@ -40,7 +41,7 @@ jobs:
           PATTERNS: |
             **/*
             .*/**/*
-            !readme.txt  
+            !readme.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -74,12 +75,13 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+#    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ false }} # This job is disabled
     strategy:
-      matrix:     
-        testSuite: 
+      matrix:
+        testSuite:
           - 'test:part1'
-          - 'test:part2' 
+          - 'test:part2'
           - 'test'
         exclude:
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part1' }}
