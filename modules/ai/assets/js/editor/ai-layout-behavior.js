@@ -57,6 +57,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 				onData={ this.onData }
 				onSelect={ this.onSelect.bind( this ) }
 				onInsert={ this.onInsert.bind( this ) }
+				onGenerate={ () => {} }
 			/>,
 			rootElement,
 		);
