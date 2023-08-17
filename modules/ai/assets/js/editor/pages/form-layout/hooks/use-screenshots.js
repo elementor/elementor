@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
 import useLayoutPrompt from '../hooks/use-layout-prompt';
 
-const PLACEHOLDER_VALUE = {};
+const PENDING_VALUE = {};
 
-const useScreenshots = ( { onGeneration } ) => {
+const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
 
 	const styling = useLayoutPrompt( 'styling', null );
@@ -20,19 +20,17 @@ const useScreenshots = ( { onGeneration } ) => {
 
 	const abort = () => abortController.current?.abort();
 
-	const generate = ( prompt ) => {
-		setScreenshots( Array( templatesData.length ).fill( PLACEHOLDER_VALUE ) );
-
+	const createScreenshots = ( prompt ) => {
 		abortController.current = new AbortController();
 
 		templatesData.forEach( async ( { send } ) => {
 			send( prompt, abortController.current.signal )
 				.then( async ( data ) => {
-					const templateData = await onGeneration( data.result );
+					const templateData = await onData( data.result );
 
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.indexOf( PLACEHOLDER_VALUE );
+						const placeholderIndex = updatedData.indexOf( PENDING_VALUE );
 
 						updatedData[ placeholderIndex ] = templateData;
 
@@ -42,9 +40,9 @@ const useScreenshots = ( { onGeneration } ) => {
 				.catch( () => {
 					setScreenshots( ( prev ) => {
 						const updatedData = [ ...prev ];
-						const placeholderIndex = updatedData.lastIndexOf( PLACEHOLDER_VALUE );
+						const placeholderIndex = updatedData.lastIndexOf( PENDING_VALUE );
 
-						updatedData.splice( placeholderIndex, 1 );
+						updatedData[ placeholderIndex ] = { isPlaceholder: true };
 
 						return updatedData;
 					} );
@@ -52,8 +50,25 @@ const useScreenshots = ( { onGeneration } ) => {
 		} );
 	};
 
+	const generate = ( prompt ) => {
+		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+
+		setScreenshots( placeholders );
+
+		createScreenshots( prompt );
+	};
+
+	const regenerate = ( prompt ) => {
+		const placeholders = Array( templatesData.length ).fill( PENDING_VALUE );
+
+		setScreenshots( ( prev ) => [ ...prev, ...placeholders ] );
+
+		createScreenshots( prompt );
+	};
+
 	return {
 		generate,
+		regenerate,
 		screenshots,
 		isLoading,
 		error,
