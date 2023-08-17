@@ -1157,8 +1157,6 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function add_attributes_to_container( $container, $item_settings ) {
-		// $test = $container->get_render_attributes( '_wrapper', 'class' );
-
 		$container->add_render_attribute( '_wrapper', [
 			'id' => $item_settings['container_id'],
 			'role' => 'tabpanel',
@@ -1167,8 +1165,6 @@ class NestedTabs extends Widget_Nested_Base {
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 			'class' => 0 === $item_settings['index'] ? 'e-active' : '',
 		] );
-
-		
 	}
 
 	protected function render() {
