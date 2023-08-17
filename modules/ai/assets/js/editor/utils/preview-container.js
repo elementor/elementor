@@ -8,10 +8,18 @@ export function createPreviewContainer( options = {} ) {
 	const createdContainers = new Map();
 	const idleContainer = createIdleContainer( options );
 
-	createdContainers.set( 'idle', idleContainer );
+	function init() {
+		showContainer( idleContainer );
+	}
 
-	function setIdle() {
-		hideContainers( createdContainers );
+	function getAllContainers() {
+		return [ ...createdContainers.values(), idleContainer ];
+	}
+
+	function reset() {
+		deleteContainers( [ ...createdContainers.values() ] );
+		createdContainers.clear();
+
 		showContainer( idleContainer );
 	}
 
@@ -20,7 +28,7 @@ export function createPreviewContainer( options = {} ) {
 			return;
 		}
 
-		hideContainers( createdContainers );
+		hideContainers( getAllContainers() );
 
 		if ( ! createdContainers.has( template ) ) {
 			const newContainer = createContainer( template, options );
@@ -32,12 +40,14 @@ export function createPreviewContainer( options = {} ) {
 	}
 
 	function destroy() {
-		deleteContainers( createdContainers );
+		deleteContainers( getAllContainers() );
+
 		createdContainers.clear();
 	}
 
 	return {
-		setIdle,
+		init,
+		reset,
 		setContent,
 		destroy,
 	};
@@ -74,8 +84,8 @@ function createIdleContainer( options = {} ) {
 	return container;
 }
 
-function hideContainers( containersMap ) {
-	[ ...containersMap.values() ].forEach( ( container ) => {
+function hideContainers( containers ) {
+	containers.forEach( ( container ) => {
 		container.view.$el.addClass( CLASS_HIDDEN );
 	} );
 }
@@ -92,12 +102,10 @@ function showContainer( container ) {
 	} );
 }
 
-function deleteContainers( containersMap ) {
+function deleteContainers( containers ) {
 	toggleHistory( false );
 
-	$e.run( 'document/elements/delete', {
-		containers: [ ...containersMap.values() ],
-	} );
+	$e.run( 'document/elements/delete', { containers } );
 
 	toggleHistory( true );
 }

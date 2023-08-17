@@ -7,9 +7,9 @@ export async function testIconCount( editor: EditorPage ) {
 		iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
 
 	// Assert.
-	// Check if the tabs has 1 icon in the Add Section element and the main container 3 icons.
+	// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
 	expect( iconCountForTabs ).toBe( 1 );
-	expect( iconCountForMainContainer ).toBe( 3 );
+	expect( iconCountForMainContainer ).toBe( 2 );
 }
 
 module.exports = {

@@ -74,7 +74,7 @@ const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGene
 						severity="info"
 						onClose={ markAsViewed }
 					>
-						{ __( "At the moment images are not included, but we're working on it! stay tuned.", 'elementor' ) }
+						{ __( 'Currently, we offer basic widgets, but enhancements are underway. Stay tuned for updates!', 'elementor' ) }
 					</Alert>
 				),
 			} }
