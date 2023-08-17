@@ -8,12 +8,13 @@ import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	{ text: __( 'Create a hero section with', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'I need a services section divided into three columns', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'Create a contact us section in one line that also includes a title and', 'elementor' ), group: __( 'Layout Type', 'elementor' ) },
-	{ text: __( 'Two columns divided into third and two-thirds', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
-	// eslint-disable-next-line @wordpress/i18n-translator-comments
-	{ text: __( 'Three columns 20% 20% 60%', 'elementor' ), group: __( 'Layout Structure', 'elementor' ) },
+	{ text: __( 'Hero section with an image, headline, and call-to-action button about', 'elementor' ) },
+	{ text: __( 'Our Services section with a 3-icons and text blocks for', 'elementor' ) },
+	{ text: __( 'Testimonial section with an image-left, text-right style about', 'elementor' ) },
+	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
+	{ text: __( 'A short section about the importance of', 'elementor' ) },
+	{ text: __( 'FAQ section for ensuring easy navigation and clear answers about', 'elementor' ) },
+	{ text: __( 'Statistics display in a 3-column layout, with numbers and icons about', 'elementor' ) },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -111,7 +112,6 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 					disabled={ isLoading || ! isActive }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ PROMPT_SUGGESTIONS }
-					groupBy={ ( option ) => option.group }
 					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (

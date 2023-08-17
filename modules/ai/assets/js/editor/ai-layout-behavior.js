@@ -31,7 +31,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			at: this.view.getOption( 'at' ),
 		} );
 
-		this.previewContainer.setIdle();
+		this.previewContainer.init();
 
 		const rootElement = document.createElement( 'div' );
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
@@ -53,10 +53,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 					this.openPanel();
 				} }
 				onConnect={ onConnect }
+				onGenerate={ this.onGenerate.bind( this ) }
 				onData={ this.onData }
 				onSelect={ this.onSelect.bind( this ) }
 				onInsert={ this.onInsert.bind( this ) }
-				onGenerate={ () => {} }
 			/>,
 			rootElement,
 		);
@@ -74,6 +74,10 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 	hideDropArea() {
 		this.view.onCloseButtonClick();
+	}
+
+	onGenerate() {
+		this.previewContainer?.reset();
 	}
 
 	async onData( template ) {
@@ -112,7 +116,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	onRender() {
 		const $button = jQuery( '<button>', {
 			class: 'e-ai-layout-button elementor-add-section-area-button e-button-primary',
-			title: __( 'AI Builder', 'elementor' ),
+			title: __( 'Build with AI', 'elementor' ),
 		} );
 
 		$button.html( `
