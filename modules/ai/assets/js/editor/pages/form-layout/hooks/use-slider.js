@@ -5,7 +5,7 @@ const useSlider = ( { slidesCount = 0, slidesPerPage = 3, gapPercentage = 2 } = 
 
 	const gapsCount = slidesPerPage - 1;
 	const slideWidthPercentage = ( 100 - ( gapPercentage * gapsCount ) ) / slidesPerPage;
-	const offsetXPercentage = ( ( slideWidthPercentage + gapPercentage ) * slidesPerPage ) * ( currentPage - 1 );
+	const offsetXPercentage = ( ( ( slideWidthPercentage + gapPercentage ) * slidesPerPage ) * ( currentPage - 1 ) ) * -1;
 	const pagesCount = Math.ceil( slidesCount / slidesPerPage );
 
 	return {

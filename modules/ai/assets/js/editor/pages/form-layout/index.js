@@ -189,7 +189,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 											display: 'flex',
 											transition: 'all 0.4s ease',
 											gap: `${ gapPercentage }%`,
-											transform: `translateX(${ offsetXPercentage * -1 }%)`,
+											transform: `translateX(${ offsetXPercentage }%)`,
 										} }
 									>
 										{
