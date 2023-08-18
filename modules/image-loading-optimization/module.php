@@ -77,20 +77,13 @@ class Module extends BaseModule {
 	 * @return string We simply return the content from parameter.
 	 */
 	public function flush_header_buffer( $content ) {
-		$this->flush_buffer();
-		return $content;
-	}
-
-	/**
-	 * Flushes buffer.
-	 */
-	public function flush_buffer() {
 		$buffer_status = ob_get_status();
 		if ( ! empty( $buffer_status ) &&
 			1 === $buffer_status['type'] &&
 			get_class( $this ) . '::handle_buffer_content' == $buffer_status['name'] ) {
 			ob_end_flush();
 		}
+		return $content;
 	}
 
 	/**
