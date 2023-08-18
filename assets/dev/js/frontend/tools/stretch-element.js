@@ -101,7 +101,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		css.width = '';
 
-		css[ settings( 'direction' ) ] = '';
+		css[ settings.direction ] = '';
 
 		$element.css( css );
 	},
