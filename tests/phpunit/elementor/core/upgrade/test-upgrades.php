@@ -543,7 +543,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '99',
 			'row' => '99',
 			'isLinked' => true,
-		], $top_level_container['settings']['flex_gaps'] );
+		], $top_level_container['settings']['flex_gap'] );
 
 		self::assertEquals( [
 			'unit' => 'px',
@@ -552,7 +552,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '88',
 			'row' => '88',
 			'isLinked' => true,
-		], $top_level_container['settings']['flex_gaps_tablet'] );
+		], $top_level_container['settings']['flex_gap_tablet'] );
 
 		self::assertEquals( [
 			'unit' => 'px',
@@ -561,7 +561,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '77',
 			'row' => '77',
 			'isLinked' => true,
-		], $top_level_container['settings']['flex_gaps_mobile'] );
+		], $top_level_container['settings']['flex_gap_mobile'] );
 
 		$inner_container = $top_level_container['elements'][0];
 
@@ -572,7 +572,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '66',
 			'row' => '66',
 			'isLinked' => true,
-		], $inner_container['settings']['flex_gaps'] );
+		], $inner_container['settings']['flex_gap'] );
 
 		self::assertEquals( [
 			'unit' => 'px',
@@ -581,7 +581,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '55',
 			'row' => '55',
 			'isLinked' => true,
-		], $inner_container['settings']['flex_gaps_tablet'] );
+		], $inner_container['settings']['flex_gap_tablet'] );
 
 		self::assertEquals( [
 			'unit' => 'px',
@@ -590,6 +590,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'column' => '44',
 			'row' => '44',
 			'isLinked' => true,
-		], $inner_container['settings']['flex_gaps_mobile'] );
+		], $inner_container['settings']['flex_gap_mobile'] );
 	}
 }
