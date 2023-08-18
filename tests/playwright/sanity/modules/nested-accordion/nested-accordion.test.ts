@@ -253,15 +253,17 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			frame = editor.getPreviewFrame();
 
 		await test.step( 'Load Template', async () => {
-			const filePath = _path.resolve( __dirname, `./templates/nested-accordion-inner.json` );
+			const filePath = _path.resolve( __dirname, `./templates/nested-accordions-parent-child.json` );
 			await editor.loadTemplate( filePath, false );
 			await frame.waitForSelector( '.elementor-widget-n-accordion' );
 			await editor.closeNavigatorIfOpen();
 		} );
 
 		await test.step( 'Verify that the inner accordion doesn\'t inherit styling from parent', async () => {
-			await expect.soft( await frame.locator( '.e-n-accordion-item-title' ).first() ).toHaveCSS( 'background-color', 'rgb(110, 193, 228)' );
-			await expect.soft( await frame.locator( '.e-n-accordion-item > .e-con .e-n-accordion-item-title' ).first() ).toHaveCSS( 'background-color', 'rgba(0, 0, 0, 0)' );
+			expect( await editor.getPreviewFrame()
+				.locator( '.e-n-accordion' ).first()
+				.screenshot( { type: 'png' } ) )
+				.toMatchSnapshot( 'nested-accordions-parent-child.jpeg' );
 		} );
 	} );
 } );
