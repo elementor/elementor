@@ -345,10 +345,7 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.3.0-beta',
-			],
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
@@ -391,6 +388,10 @@ class Manager extends Base_Object {
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.16.0',
+			],
 			'messages' => [
 				'on_deactivate' => esc_html__(
 					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
@@ -421,23 +422,11 @@ class Manager extends Base_Object {
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
 
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 			'hidden' => false,
 			'dependencies' => [
 				'container',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'grid_widget',
-			'title' => esc_html__( 'Grid Widget', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
-			'hidden' => true,
-			'dependencies' => [
-				'container',
-				'container_grid',
 			],
 		] );
 	}
