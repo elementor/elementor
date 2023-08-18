@@ -263,7 +263,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			expect( await editor.getPreviewFrame()
 				.locator( '.e-n-accordion' ).first()
 				.screenshot( { type: 'png' } ) )
-				.toMatchSnapshot( 'nested-accordions-parent-child.jpeg' );
+				.toMatchSnapshot( 'nested-accordions-parent-child.png' );
 		} );
 	} );
 } );
