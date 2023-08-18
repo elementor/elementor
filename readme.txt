@@ -1,7 +1,7 @@
 === Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 5.9
+Requires at least: 6.0
 Tested up to: 6.3
 Requires PHP: 7.0
 Stable tag: 3.12.1
@@ -146,7 +146,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.9 or greater
+* WordPress 6.0 or greater
 * PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
