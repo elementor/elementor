@@ -21,7 +21,7 @@ export class PluginsTester {
 			this.runServer();
 			this.prepareTestSite();
 		}
-
+		this.disableContainers();
 		this.checkPlugins();
 	}
 
@@ -70,6 +70,11 @@ export class PluginsTester {
 		}
 	}
 
+	disableContainers() {
+		console.log( 'Disabling containers!!!' );
+		this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+	}
+
 	runServer() {
 		this.cmd( 'npx wp-env start' );
 	}
@@ -92,6 +97,5 @@ export class PluginsTester {
 		this.cmd( `npx wp-env run cli wp elementor flush-css` );
 		this.cmd( `npx wp-env run cli wp post list --post_type=page` );
 		this.cmd( `npx wp-env run cli wp option update blogname "elementor"` );
-		this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 	}
 }
