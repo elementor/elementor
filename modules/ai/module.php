@@ -131,6 +131,7 @@ class Module extends BaseModule {
 				'react-dom',
 				'backbone-marionette',
 				'elementor-web-cli',
+				'wp-date',
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',

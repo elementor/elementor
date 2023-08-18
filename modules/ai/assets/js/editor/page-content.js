@@ -8,6 +8,9 @@ import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
 import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
+import History from './components/prompt-history';
+import { HISTORY_ACTION_TYPES, HISTORY_TYPES } from './components/prompt-history/history-types';
+import { useState } from 'react';
 
 const PageContent = (
 	{
@@ -21,6 +24,13 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
+	const [ isPromptHistoryOpen, setIsPromptHistoryOpen ] = useState( false );
+	const [ promptHistoryAction, setPromptHistoryAction ] = useState( {
+		type: '',
+		id: '',
+		data: null,
+	} );
+
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -33,6 +43,7 @@ const PageContent = (
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
 				height: ! isLoading && 'media' === type ? '95vh' : 'auto',
+				minHeight: isPromptHistoryOpen ? '61vh' : 'auto',
 			},
 		},
 	};
@@ -50,6 +61,22 @@ const PageContent = (
 				usagePercentage={ usagePercentage }
 			/>
 		);
+	};
+
+	const onPromptCopy = ( id, prompt ) => {
+		setPromptHistoryAction( {
+			type: HISTORY_ACTION_TYPES.COPY,
+			id,
+			data: prompt,
+		} );
+	};
+
+	const onResultEdit = ( id, result ) => {
+		setPromptHistoryAction( {
+			type: HISTORY_ACTION_TYPES.EDIT,
+			id,
+			data: result,
+		} );
 	};
 
 	if ( isLoading ) {
@@ -132,10 +159,14 @@ const PageContent = (
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
+				<History promptType={ HISTORY_TYPES.TEXT }
+					onPromptCopy={ onPromptCopy }
+					onResultEdit={ onResultEdit }
+					setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
 				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 
-			<PromptDialog.Content dividers>
+			<PromptDialog.Content dividers sx={ { position: 'relative' } }>
 				<FormText
 					type={ type }
 					controlType={ controlType }
@@ -145,6 +176,7 @@ const PageContent = (
 					additionalOptions={ additionalOptions }
 					credits={ credits }
 					usagePercentage={ usagePercentage }
+					promptHistoryAction={ promptHistoryAction }
 				/>
 			</PromptDialog.Content>
 		</PromptDialog>
