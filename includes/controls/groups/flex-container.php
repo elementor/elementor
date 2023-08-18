@@ -152,18 +152,24 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['gaps'] = [
+		$fields['gap'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
 			'default' => [
 				'unit' => 'px',
+				'row' => '20',
+				'column' => '20',
 			],
 			'separator' => 'before',
 			'selectors' => [
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'conversion_map' => [
+				'old_key' => 'size',
+				'new_key' => 'column',
+			],
 		];
 
 		$fields['wrap'] = [
