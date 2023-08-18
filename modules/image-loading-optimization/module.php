@@ -86,7 +86,7 @@ class Module extends BaseModule {
 	 */
 	public function flush_buffer() {
 		$buffer_status = ob_get_status();
-		if ( isset( $buffer_status['type'], $buffer_status['name'] ) &&
+		if ( ! empty( $buffer_status ) &&
 			1 === $buffer_status['type'] &&
 			get_class( $this ) . '::handle_buffer_content' == $buffer_status['name'] ) {
 			ob_end_flush();
