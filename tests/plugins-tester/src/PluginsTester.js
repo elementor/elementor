@@ -72,7 +72,7 @@ export class PluginsTester {
 
 	disableContainers() {
 		console.log( 'Disabling containers!!!' );
-		this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+		this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
 	}
 
 	runServer() {
