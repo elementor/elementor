@@ -74,8 +74,7 @@ jobs:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
-#    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
-    if: ${{ false }} # This job is disabled
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
         testSuite:
