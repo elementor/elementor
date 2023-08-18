@@ -11,12 +11,12 @@ class Module extends BaseModule {
 	/**
 	 * @var int Minimum square-pixels threshold.
 	 */
-	private $min_priority_img_pixels;
+	private $min_priority_img_pixels = 50000;
 
 	/**
 	 * @var int The number of content media elements to not lazy-load.
 	 */
-	private $omit_threshold;
+	private $omit_threshold = 3;
 
 	/**
 	 * @var array Keep a track of images for which loading optimization strategy were computed.
@@ -35,9 +35,6 @@ class Module extends BaseModule {
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		$this->min_priority_img_pixels = 50000;
-		$this->omit_threshold = 3;
 
 		// Stop wp core logic.
 		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
@@ -69,7 +66,7 @@ class Module extends BaseModule {
 	 * Set buffer to handle header and footer content.
 	 */
 	public function set_buffer() {
-		ob_start( [ $this, 'handel_buffer_content' ] );
+		ob_start( [ $this, 'handle_buffer_content' ] );
 	}
 
 	/**
@@ -97,7 +94,7 @@ class Module extends BaseModule {
 	 * @param string $buffer Buffered content.
 	 * @return string Content with optimized images.
 	 */
-	public function handel_buffer_content( $buffer ) {
+	public function handle_buffer_content( $buffer ) {
 		return $this->filter_images( $buffer );
 	}
 
@@ -242,14 +239,12 @@ class Module extends BaseModule {
 		}
 
 		if ( null === $maybe_in_viewport ) {
-			if ( ! is_admin() ) {
-				$content_media_count = $this->increase_content_media_count( 0 );
-				$increase_count      = true;
-				if ( $content_media_count < $this->omit_threshold ) {
-					$maybe_in_viewport = true;
-				} else {
-					$maybe_in_viewport = false;
-				}
+			$content_media_count = $this->increase_content_media_count( 0 );
+			$increase_count      = true;
+			if ( $content_media_count < $this->omit_threshold ) {
+				$maybe_in_viewport = true;
+			} else {
+				$maybe_in_viewport = false;
 			}
 		}
 
