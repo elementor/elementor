@@ -22,7 +22,6 @@ concurrency:
 
 jobs:
   build-plugin:
-    if: ${{ false }} # This job is disabled
     name: Build plugin
     runs-on: ubuntu-latest
     outputs:
