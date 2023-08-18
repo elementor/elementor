@@ -41,6 +41,11 @@ $e-pink-800:	#D004D4;
 $e-pink-900:	#C00BB9;
 $e-pink-a100:	#310132;
 
+//Promotion Colors (Using in promotion CTA)
+$e-rose-600:	#A93365;
+$e-rose-700:	#8F1A4C;
+$e-rose-800:	#93003f;
+
 //Editor Facelift 2023 - Indigo
 $e-indigo-600:	#524CFF;
 $e-indigo-700:	#4C43E5;
@@ -55,7 +60,7 @@ $e-success:				$e-teal-600;
 $e-info: 				#2563EB;
 $e-danger:				#DC2626;
 $e-warning: 			#F59E0B;
-$e-accent: 				$e-purple;
+$e-accent: 				$e-rose-800;
 $e-primary-bg:			$e-pink-50;
 $e-success-bg:			#F2FDF5;
 $e-danger-bg:			#FEF1F4;
@@ -133,7 +138,7 @@ $wp-warning-text: #f56e28;
 $wp-success: #46b450;
 $wp-success-text: #79ba49;
 //BC for wp-admin (previous version)
-$wp-admin-brand-color: #93003c;
+$wp-admin-brand-color: $e-accent;
 
 // Panel style
 $panel-top-shadow: -2px -5px 8px rgba(0, 0, 0, 0.1);
@@ -151,7 +156,7 @@ $panel-xl-width: 300px;
 $platform-primary: #040080;
 $platform-secondary: #6A727C;
 $platform-text: #46F2B6;
-$platform-accent: #871A40;
+$platform-accent: $e-accent;
 $platform-darkest-gray: #0C0D0E;
 $platform-darker-gray: #3A3F45;
 $platform-dark-gray: #525861;
