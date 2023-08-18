@@ -7,7 +7,6 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
-use Elementor\Modules\NestedTabsHtml\Widgets\NestedTabsHtml;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -257,11 +256,6 @@ class Widgets_Manager {
 	 * @return void
 	 */
 	private function register_promoted_widgets() {
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements-html' ) ) {
-			$this->_promoted_widgets['nested-elements-html'] = NestedTabsHtml::class;
-			unset( $this->_promoted_widgets['nested-elements'] );
-		}
 
 		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
 
