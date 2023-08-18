@@ -471,7 +471,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector  => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -483,7 +483,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector => '---padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -778,15 +778,15 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			ob_start();
 			?>
-				<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-					<summary class='e-n-accordion-item-title'>
-						<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
-						<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
-							echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						} ?>
-					</summary>
-					<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</details>
+			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
+				<summary class='e-n-accordion-item-title'>
+					<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
+					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
+						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					} ?>
+				</summary>
+				<?php echo $item_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</details>
 			<?php
 			$items_title_html .= ob_get_clean();
 		}
@@ -803,50 +803,50 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
-				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
-				itemTitleText = 'item-title-text-' + elementUid,
-				defaultState = settings.default_state,
-				itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
-				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
-					? itemTitleIcon
-					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
+			titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+			itemTitleText = 'item-title-text-' + elementUid,
+			defaultState = settings.default_state,
+			itemTitleIcon = elementor.helpers.renderIcon( view, settings['accordion_item_title_icon'], { 'aria-hidden': true }, 'i', 'object' ) ?? '',
+			itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
+			? itemTitleIcon
+			: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
 			#>
 
-				<# _.each( settings['items'], function( item, index ) {
-				const itemCount = index + 1,
-					itemUid = elementUid + itemCount,
-					itemWrapperKey = itemUid,
-					itemTitleKey = 'item-' + itemUid;
+			<# _.each( settings['items'], function( item, index ) {
+			const itemCount = index + 1,
+			itemUid = elementUid + itemCount,
+			itemWrapperKey = itemUid,
+			itemTitleKey = 'item-' + itemUid;
 
-					if ( '' !== item.element_css_id ) {
-						itemId = item.element_css_id;
-					} else {
-						itemId = 'e-n-accordion-item-' + itemUid;
-					}
+			if ( '' !== item.element_css_id ) {
+			itemId = item.element_css_id;
+			} else {
+			itemId = 'e-n-accordion-item-' + itemUid;
+			}
 
-					const itemWrapperAttributes = {
-						'id': itemId,
-						'class': [ 'e-n-accordion-item', 'e-normal' ],
-					};
+			const itemWrapperAttributes = {
+			'id': itemId,
+			'class': [ 'e-n-accordion-item', 'e-normal' ],
+			};
 
-					if ( defaultState === 'expanded' && index === 0) {
-						itemWrapperAttributes['open'] = true;
-					}
+			if ( defaultState === 'expanded' && index === 0) {
+			itemWrapperAttributes['open'] = true;
+			}
 
-					view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
+			view.addRenderAttribute( itemWrapperKey, itemWrapperAttributes );
 
-					view.addRenderAttribute( itemTitleKey, {
-						'class': ['e-n-accordion-item-title'],
-					});
+			view.addRenderAttribute( itemTitleKey, {
+			'class': ['e-n-accordion-item-title'],
+			});
 
-					view.addRenderAttribute( itemTitleText, {
-						'class': ['e-n-accordion-item-title-text'],
-						'data-binding-type': 'repeater-item',
-						'data-binding-repeater-name': 'items',
-						'data-binding-setting': ['item_title'],
-						'data-binding-index': itemCount,
-					});
-				#>
+			view.addRenderAttribute( itemTitleText, {
+			'class': ['e-n-accordion-item-title-text'],
+			'data-binding-type': 'repeater-item',
+			'data-binding-repeater-name': 'items',
+			'data-binding-setting': ['item_title'],
+			'data-binding-index': itemCount,
+			});
+			#>
 
 			<details {{{ view.getRenderAttributeString( itemWrapperKey ) }}}>
 				<summary {{{ view.getRenderAttributeString( itemTitleKey ) }}}>
@@ -864,7 +864,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				</summary>
 			</details>
 			<# } ); #>
-		<# } #>
+			<# } #>
 		</div>
 		<?php
 	}
