@@ -1,5 +1,3 @@
-// Dummy push
-
 module.exports = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
