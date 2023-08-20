@@ -240,6 +240,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.15.3 - 2023-08-20 =
+
+* Fix: Elements can't be edited after accessing the page settings panel ([#23365](https://github.com/elementor/elementor/issues/23365))
+* Fix: Reverted Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+* Fix: Elementor Admin Top Bar affects styling on non-elementor screens in WordPress
+* Fix: Changed CSS class for Apps page for better i18n support
+
 = 3.15.2 - 2023-08-09 =
 
 * Fix: Popular Apps notification is not presented as expected in RTL websites ([#23307](https://github.com/elementor/elementor/issues/23307))
