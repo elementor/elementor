@@ -37,7 +37,7 @@ export default class Component extends ComponentBase {
 			/* Translators: %s: Element name. */
 			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
-		if ( this.wasOutOfFocus() || this.activeModelId !== args.model.id || tab !== this.activeTabs[ args.model.id ] ) {
+		if ( this.shouldRenderPage( tab, args.model.id ) ) {
 			this.activeModelId = args.model.id;
 			this.activeTabs[ args.model.id ] = tab;
 
@@ -52,12 +52,14 @@ export default class Component extends ComponentBase {
 		this.activateControl( activeControl );
 	}
 
-	wasOutOfFocus() {
-		const history = $e.routes.getHistory( 'panel' );
-		const lastRoute = history[ history.length - 1 ].route;
-		const lastRouteParts = lastRoute.split( '/' );
+	shouldRenderPage( tab, modelId ) {
+		const currentPanelView = elementor.getPanelView();
 
-		return 'categories' === lastRouteParts[ lastRouteParts.length - 1 ];
+		const isSamePage = 'editor' === currentPanelView.getCurrentPageName();
+		const isSameTab = tab === currentPanelView.getCurrentPageView().activeTab;
+		const isEditingSameModel = modelId === this.activeModelId;
+
+		return ! isSamePage || ! isSameTab || ! isEditingSameModel;
 	}
 
 	setDefaultTab( args ) {
