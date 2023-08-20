@@ -229,6 +229,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 												<Pagination
 													page={ currentPage }
 													count={ pagesCount }
+													disabled={ isPromptFormActive }
 													onChange={ ( _, page ) => setCurrentPage( page ) }
 												/>
 											)
