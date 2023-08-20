@@ -7,9 +7,9 @@ const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
 
 	const screenshotsData = [
-		useScreenshot( 'styling', onData ),
-		useScreenshot( 'wireframe', onData ),
-		useScreenshot( 'mixed', onData ),
+		useScreenshot( 0, onData ),
+		useScreenshot( 1, onData ),
+		useScreenshot( 2, onData ),
 	];
 
 	const screenshotsGroupCount = screenshotsData.length;
