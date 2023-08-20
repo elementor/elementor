@@ -5,7 +5,6 @@ function getGrepInvert() {
 		return [
 			/@reverse-columns/,
 			/@nested-tabs/,
-			/@nested-tabs-html/,
 			/@container/,
 			/@nested-accordion/,
 			/@styleguide_image_link/,

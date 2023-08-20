@@ -90,13 +90,20 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	reset() {
-		var css = {};
+		const css = {},
+			settings = this.getSettings(),
+			$element = this.elements.$element;
+
+		if ( 'variables' === settings.cssOutput ) {
+			this.resetCssVariables( $element );
+			return;
+		}
 
 		css.width = '';
 
-		css[ this.getSettings( 'direction' ) ] = '';
+		css[ settings.direction ] = '';
 
-		this.elements.$element.css( css );
+		$element.css( css );
 	},
 
 	applyCssVariables( $element, css ) {
@@ -107,5 +114,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		} else {
 			$element.css( '--stretch-right', css.right );
 		}
+	},
+
+	resetCssVariables( $element ) {
+		$element.css( {
+			'--stretch-width': '',
+			'--stretch-left': '',
+			'--stretch-right': '',
+		} );
 	},
 } );

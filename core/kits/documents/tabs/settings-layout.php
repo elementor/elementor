@@ -90,7 +90,7 @@ class Settings_Layout extends Tab_Base {
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
-						'.e-con' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
+						'.e-con' => '--container-default-padding-block-start: {{TOP}}{{UNIT}}; --container-default-padding-inline-end: {{RIGHT}}{{UNIT}}; --container-default-padding-block-end: {{BOTTOM}}{{UNIT}}; --container-default-padding-inline-start: {{LEFT}}{{UNIT}};',
 					],
 				]
 			);
@@ -120,7 +120,7 @@ class Settings_Layout extends Tab_Base {
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
 				],
 			]
