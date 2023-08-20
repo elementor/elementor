@@ -288,5 +288,4 @@ class Test_Base extends Elementor_Test_Base {
 			'SIZE'
 		);
 	}
-
 }
