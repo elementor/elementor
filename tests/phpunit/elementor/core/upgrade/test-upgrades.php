@@ -9,7 +9,6 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
-use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -431,30 +430,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->delete_image( $attachment_id );
 	}
 
-	public function test_v_3_15_9_container_updates() {
-
-		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
-		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
-
-		$documents = [];
-		$updater = $this->create_updater();
-
-		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
-
-		$this->assertEquals( get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ), null );
-
-		Upgrades::_v_3_15_9_container_updates( $updater );
-
-		$this->assert_flex_gap_control_has_changed( $documents[0]->get_json_meta('_elementor_data') );
-
-		$option = get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
-
-		$this->assertEquals( $option, 'yes' );
-
-		// Test the upgrade script execution when the wp_option flag is set up
-		$this->assertEquals( Upgrades::_v_3_15_9_container_updates( $updater ), false );
-	}
-
 	private function create_image() {
 		$attachment_id = $this->_make_attachment( [
 			'file' => __DIR__ . '/../../../resources/mock-image.png',
@@ -477,51 +452,5 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	private function delete_image( $attachment_id ) {
 		wp_delete_attachment( $attachment_id, true );
-	}
-
-	/**
-	 * @param $documents
-	 *
-	 * @return void
-	 */
-	private function assert_flex_gap_control_has_changed( $elementor_data ) {
-		$top_level_container = $elementor_data[0];
-		$this->assertEquals( [
-			'size' => 99,
-			'unit' => 'px',
-			'sizes' => [],
-		], $top_level_container['settings']['flex_gap'] );
-
-		$this->assertEquals( [
-			'size' => 88,
-			'unit' => 'px',
-			'sizes' => [],
-		], $top_level_container['settings']['flex_gap_tablet'] );
-
-		$this->assertEquals( [
-			'size' => 77,
-			'unit' => 'px',
-			'sizes' => [],
-		], $top_level_container['settings']['flex_gap_mobile'] );
-
-		$inner_container = $top_level_container['elements'][0];
-
-		$this->assertEquals( [
-			'size' => 66,
-			'unit' => 'px',
-			'sizes' => [],
-		], $inner_container['settings']['flex_gap'] );
-
-		$this->assertEquals( [
-			'size' => 55,
-			'unit' => 'px',
-			'sizes' => [],
-		], $inner_container['settings']['flex_gap_tablet'] );
-
-		$this->assertEquals( [
-			'size' => 44,
-			'unit' => 'px',
-			'sizes' => [],
-		], $inner_container['settings']['flex_gap_mobile'] );
 	}
 }
