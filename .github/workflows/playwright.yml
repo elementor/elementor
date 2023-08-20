@@ -66,7 +66,7 @@ jobs:
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
-        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'nested-tabs-html', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link']
+        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3

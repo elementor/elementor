@@ -88,7 +88,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * filled.
 	 * 2. Clicking on 'Skip' should take the user to the Site Logo screen
 	 */
-	test.skip( 'Onboarding Site Name Page', async ( { page } ) => {
+	test( 'Onboarding Site Name Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteName' );
 
 		await page.fill( 'input[type="text"]', '' );
