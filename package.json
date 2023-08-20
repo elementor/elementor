@@ -19,7 +19,6 @@
 		"test:playwright:default": "npx cross-env TEST_SUITE=@default playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:reverse-columns": "npx cross-env TEST_SUITE=@reverse-columns playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:nested-tabs": "npx cross-env TEST_SUITE=@nested-tabs playwright test -c tests/playwright/playwright.config.ts",
-		"test:playwright:nested-tabs-html": "npx cross-env TEST_SUITE=@nested-tabs-html playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:container": "npx cross-env TEST_SUITE=@container playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:nested-accordion": "npx cross-env TEST_SUITE=@nested-accordion playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:video": "npx cross-env TEST_SUITE=@video playwright test -c tests/playwright/playwright.config.ts",

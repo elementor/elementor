@@ -123,7 +123,7 @@ class Test_Module extends Elementor_Test_Base {
 					[
 						'id' => 'fecdc45',
 						'elType' => 'widget',
-						'widgetType' => 'nested-tabs-html',
+						'widgetType' => 'nested-tabs',
 						'settings' => [
 							'tabs' => [
 								[
