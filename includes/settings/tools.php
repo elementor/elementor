@@ -158,7 +158,7 @@ class Tools extends Settings_Page {
 		 */
 		$rollback = apply_filters( 'elementor/settings/rollback', null, $version );
 
-		if ( ! $rollback && ! ( $rollback instanceof Rollback ) ) {
+		if ( ! ( $rollback instanceof Rollback ) ) {
 			$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
 			$rollback = new Rollback( [
@@ -237,10 +237,6 @@ class Tools extends Settings_Page {
 			foreach ( $versions as $version ) {
 				if ( $max_versions <= $current_index ) {
 					break;
-				}
-
-				if ( substr( $version, 0, 1 ) == 'v' ) {
-					$version = substr( $version, 1 );
 				}
 
 				$lowercase_version = strtolower( $version );
