@@ -28,8 +28,8 @@ const useScreenshot = ( type, onData ) => {
 
 	return {
 		generate,
-		error: layoutData.error?.message || error?.message || '',
-		isLoading: layoutData.isLoading || isLoading,
+		error,
+		isLoading,
 	};
 };
 
