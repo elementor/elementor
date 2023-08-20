@@ -1,60 +1,59 @@
 import { useState, useRef } from 'react';
-import useLayoutPrompt from '../hooks/use-layout-prompt';
+import useScreenshot from './use-screenshot';
 
 const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
 
-	const styling = useLayoutPrompt( 'styling', null );
-	const wireframe = useLayoutPrompt( 'wireframe', null );
-	const mixed = useLayoutPrompt( 'mixed', null );
+	const screenshotsData = [
+		useScreenshot( 0, onData ),
+		useScreenshot( 1, onData ),
+		useScreenshot( 2, onData ),
+	];
+
+	const screenshotsGroupCount = screenshotsData.length;
+
+	const error = screenshotsData.every( ( s ) => s?.error ) ? screenshotsData[ 0 ].error : '';
+	const isLoading = screenshotsData.some( ( s ) => s?.isLoading );
 
 	const abortController = useRef( null );
-
-	const templatesData = [ styling, wireframe, mixed ];
-
-	const screenshotsGroupCount = templatesData.length;
-
-	const isLoading = templatesData.some( ( t ) => t.isLoading );
-
-	const error = templatesData.every( ( t ) => t.error ) ? templatesData[ 0 ].error : '';
 
 	const abort = () => abortController.current?.abort();
 
 	const createScreenshots = async ( prompt ) => {
 		abortController.current = new AbortController();
 
-		const promises = templatesData.map( ( { send, sendUsageData } ) => {
-			return send( prompt, abortController.current.signal )
-				.then( async ( data ) => {
-					const templateData = await onData( data.result );
+		const onGenerate = ( screenshot ) => {
+			setScreenshots( ( prev ) => {
+				const updatedData = [ ...prev ];
+				const pendingIndex = updatedData.indexOf( PENDING_VALUE );
 
-					templateData.sendUsageData = () => sendUsageData( data );
+				updatedData[ pendingIndex ] = screenshot;
 
-					setScreenshots( ( prev ) => {
-						const updatedData = [ ...prev ];
-						const pendingIndex = updatedData.indexOf( PENDING_VALUE );
+				return updatedData;
+			} );
 
-						updatedData[ pendingIndex ] = templateData;
+			return true;
+		};
 
-						return updatedData;
-					} );
+		const onError = () => {
+			setScreenshots( ( prev ) => {
+				const updatedData = [ ...prev ];
+				const pendingIndex = updatedData.lastIndexOf( PENDING_VALUE );
 
-					return true;
-				} )
-				.catch( () => {
-					setScreenshots( ( prev ) => {
-						const updatedData = [ ...prev ];
-						const pendingIndex = updatedData.lastIndexOf( PENDING_VALUE );
+				updatedData[ pendingIndex ] = { isError: true };
 
-						updatedData[ pendingIndex ] = { isError: true };
+				return updatedData;
+			} );
 
-						return updatedData;
-					} );
+			return false;
+		};
 
-					return false;
-				} );
+		const promises = screenshotsData.map( ( { generate } ) => {
+			return generate( prompt, abortController.current.signal )
+				.then( onGenerate )
+				.catch( onError );
 		} );
 
 		const results = await Promise.all( promises );
