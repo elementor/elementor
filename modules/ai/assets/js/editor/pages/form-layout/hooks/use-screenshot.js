@@ -19,7 +19,7 @@ const useScreenshot = ( type, onData ) => {
 				return createdScreenshot;
 			} )
 			.catch( ( err ) => {
-				setError( err.responseText || err );
+				setError( err.message|| err );
 
 				throw err;
 			} )
