@@ -149,7 +149,8 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
-			await editor.gotoPostId();
+			await wpAdmin.editWithElementor();
+			await wpAdmin.waitForPanel();
 			frame = editor.getPreviewFrame();
 
 			await frame.locator( '.e-n-accordion-item-title' ).first().click();

@@ -236,7 +236,9 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
-			await editor.gotoPostId( pageId );
+			await wpAdmin.editWithElementor();
+			await wpAdmin.waitForPanel();
+
 			frame = editor.getPreviewFrame();
 			// Remove and add a new widget to reset the style
 			await editor.removeElement( nestedAccordionID );
