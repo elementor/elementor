@@ -1,4 +1,17 @@
 .e-con {
+	// LTR/RTL corrections.
+	--bc-margin-inline-start: var(--margin-left);
+	--bc-margin-inline-end: var(--margin-right);
+	--bc-padding-inline-start: var(--padding-left);
+	--bc-padding-inline-end: var(--padding-right);
+
+	[dir="rtl"] & {
+		--bc-margin-inline-start: var(--margin-right);
+		--bc-margin-inline-end: var(--margin-left);
+		--bc-padding-inline-start: var(--padding-right);
+		--bc-padding-inline-end: var(--padding-left);
+	}
+
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--border-block-start-width: 0px;
@@ -44,9 +57,12 @@
 	min-height: var(--min-height);
 	height: var(--height);
 	border-radius: var(--border-radius);
-	margin: var(--margin-top, var(--margin-block-start)) var(--margin-right, var(--margin-inline-end)) var(--margin-bottom, var(--margin-block-end)) var(--margin-left, var(--margin-inline-start));
-	padding-inline-start: var(--padding-left, var(--padding-inline-start));
-	padding-inline-end: var(--padding-right, var(--padding-inline-end));
+	margin-block-start: var(--bc-margin-block-start, var(--margin-block-start));
+	margin-inline-end: var(--bc-margin-inline-end, var(--margin-inline-end));
+	margin-block-end: var(--bc-margin-block-end, var(--margin-block-end));
+	margin-inline-start: var(--bc-margin-inline-start, var(--margin-inline-start));
+	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
+	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
 	z-index: var(--z-index);
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
@@ -62,8 +78,8 @@
 	&-full,
 	& > .e-con-inner {
 		text-align: var(--text-align);
-		padding-block-start: var(--padding-top, var(--padding-block-start));
-		padding-block-end: var(--padding-bottom, var(--padding-block-end));
+		padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
+		padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
 	}
 
 	&-full.e-flex,
