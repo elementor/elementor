@@ -293,7 +293,7 @@ class Controls_Manager {
 	/**
 	 * Has stacks cache been cleared.
 	 *
-	 * Holds the list of all the control stacks that have been cleared.
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -301,7 +301,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	private $has_post_stacks_cache_been_cleared = [];
+	private $has_stacks_cache_been_cleared = false;
 
 	/**
 	 * Init tabs.
@@ -881,8 +881,8 @@ class Controls_Manager {
 	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function has_stacks_cache_been_cleared( $handle_id = 'default' ) {
-		return isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] );
+	public function has_stacks_cache_been_cleared() {
+		return $this->has_stacks_cache_been_cleared;
 	}
 
 	/**
@@ -891,10 +891,9 @@ class Controls_Manager {
 	 * @since 3.13.0
 	 * @access public
 	 */
-	public function clear_stack_cache( $handle_id = 'default' ) {
+	public function clear_stack_cache() {
 		$this->stacks = [];
-
-		$this->has_post_stacks_cache_been_cleared[ $handle_id ] = true;
+		$this->has_stacks_cache_been_cleared = true;
 	}
 
 	/**
@@ -1174,24 +1173,5 @@ class Controls_Manager {
 		);
 
 		$controls_stack->end_controls_section();
-	}
-
-	/**
-	 * Clear stacks
-	 *
-	 * If a page contains templates, such as loop items, shortcodes, kits, or template widgets,
-	 * the templates responsive setting will not be updated unless the 'Regenerate CSS' option is used.
-	 * Reproduce only when additional breakpoints are active.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @access private
-	 */
-	public function clear_stacks( $handle_id ) {
-		if ( $handle_id ) {
-			if ( ! $this->has_stacks_cache_been_cleared( $handle_id ) ) {
-				$this->clear_stack_cache( $handle_id );
-			}
-		}
 	}
 }

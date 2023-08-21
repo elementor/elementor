@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+	const ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED = 'elementor_container_gap_updates_reversed';
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
@@ -833,6 +834,34 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_16_0_container_updates( $updater ) {
+		$post_ids = self::get_post_ids_by_element_type( $updater, 'container' );
+
+		if ( empty( $post_ids ) ) {
+			return false;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			if ( $document ) {
+				$data = $document->get_elements_data();
+			}
+
+			if ( empty( $data ) ) {
+				continue;
+			}
+
+			$data = self::iterate_containers( $data );
+
+			self::save_updated_document( $post_id, $data );
+		}
+
+		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
+			delete_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
+		}
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 
@@ -884,5 +913,127 @@ class Upgrades {
 	private static function notice( $message ) {
 		$logger = Plugin::$instance->logger->get_logger();
 		$logger->notice( $message );
+	}
+
+	/**
+	 * @param \wpdb $wpdb
+	 * @param string $element_type
+	 *
+	 * @return array
+	 */
+	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
+		global $wpdb;
+
+		return $updater->query_col(
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
+					AND `meta_value` LIKE \'%"elType":"' . $element_type . '"%\';'
+		);
+	}
+	/**
+	 * @param $data
+	 *
+	 * @return array|mixed
+	 */
+	private static function iterate_containers( $data ) {
+		return Plugin::$instance->db->iterate_data(
+			$data, function ( $element ) {
+
+				if ( 'container' !== $element['elType'] || ! isset( $element['elements'] ) ) {
+					return $element;
+				}
+
+				$element = self::maybe_convert_to_inner_container( $element );
+				$element = self::maybe_convert_to_grid_container( $element );
+				return self::flex_gap_responsive_control_iterator( $element );
+			}
+		);
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_inner_container( $element ) {
+		foreach ( $element['elements'] as &$inner_element ) {
+			if ( 'container' === $inner_element['elType'] && ! $inner_element['isInner'] ) {
+				$inner_element['isInner'] = true;
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function maybe_convert_to_grid_container( $element ) {
+		$is_grid_container = isset( $element['settings']['container_type'] ) && 'grid' === $element['settings']['container_type'];
+		if ( 'container' !== $element['elType'] || empty( $element['settings'] ) || ! $is_grid_container ) {
+			return $element;
+		}
+
+		$element['settings']['presetTitle'] = 'Grid';
+		$element['settings']['presetIcon'] = 'eicon-container-grid';
+
+		return $element;
+	}
+
+	/**
+	 * @param $element
+	 *
+	 * @return array
+	 */
+	private static function flex_gap_responsive_control_iterator( $element ) {
+		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
+		$breakpoints[] = 'desktop';
+		$old_control_name = 'flex_gap';
+		$new_control_name = 'flex_gaps';
+
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( 'desktop' !== $breakpoint ) {
+				$old_control = $old_control_name . '_' . $breakpoint;
+				$new_control = $new_control_name . '_' . $breakpoint;
+			} else {
+				$old_control = $old_control_name;
+				$new_control = $new_control_name;
+			}
+
+			if ( isset( $element['settings'][ $old_control ] ) ) {
+				$old_size = strval( $element['settings'][ $old_control ]['size'] );
+				$old_unit = $element['settings'][ $old_control ]['unit'];
+
+				$element['settings'][ $new_control ] = [
+					'column' => $old_size,
+					'row' => $old_size,
+					'unit' => $old_unit,
+					'isLinked' => true,
+				];
+
+				unset( $element['settings'][ $old_control ] );
+			}
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @param $post_id
+	 * @param $data
+	 *
+	 * @return void
+	 */
+	private static function save_updated_document( $post_id, $data ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		$document->save(
+			[
+				'elements' => $data,
+			]
+		);
 	}
 }

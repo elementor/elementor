@@ -100,7 +100,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		if ( elementorCommon.config.experimentalFeatures.grid_widget ) {
+		if ( elementorCommon.config.experimentalFeatures.container_grid ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
 				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
 					replacements = widget.replacements,

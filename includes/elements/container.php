@@ -95,7 +95,7 @@ class Container extends Element_Base {
 					'controls' => [
 						'container_type' => [ 'default' => 'grid' ],
 					],
-					'title' => 'Grid',
+					'title' => esc_html__( 'Grid', 'elementor' ),
 					'icon' => 'eicon-container-grid',
 					'custom' => [
 						'isPreset' => true,
@@ -103,6 +103,8 @@ class Container extends Element_Base {
 						'presetWidget' => 'container_grid',
 						'preset_settings' => [
 							'container_type' => 'grid',
+							'presetTitle' => esc_html__( 'Grid', 'elementor' ),
+							'presetIcon' => 'eicon-container-grid',
 						],
 					],
 				],
@@ -118,9 +120,12 @@ class Container extends Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 
+		$is_nested_class_name = $this->get_data( 'isInner' ) ? 'e-child' : 'e-parent';
+
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
 				'e-con',
+				$is_nested_class_name,
 			],
 		] );
 	}
@@ -385,6 +390,39 @@ class Container extends Element_Base {
 		];
 	}
 
+	private function get_full_width_device_args( $active_breakpoints ) {
+		$full_width_devices_defaults = [];
+		$default = [ 'unit' => '%' ];
+
+		$full_width_devices_settings = [
+			'default' => $default,
+		];
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_name ) {
+				continue; // The mobile width is not inherited from the higher breakpoint width controls.
+			}
+
+			$full_width_devices_defaults[ $breakpoint_name ] = $full_width_devices_settings;
+		}
+
+		$default_placeholder = [
+			'size' => 100,
+			'unit' => '%',
+		];
+
+		$full_width_devices_defaults[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] = [
+			'placeholder' => $default_placeholder,
+		];
+
+		$full_width_devices_defaults[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = [
+			'placeholder' => $default_placeholder,
+			'default' => $default,
+		];
+
+		return $full_width_devices_defaults;
+	}
+
 	/**
 	 * Register the Container's layout controls.
 	 *
@@ -470,21 +508,7 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-						// The mobile width is not inherited from the higher breakpoint width controls.
-						'placeholder' => [
-							'size' => 100,
-							'unit' => '%',
-						],
-					],
-				],
+				'device_args' => $this->get_full_width_device_args( $active_breakpoints ),
 			] )
 		);
 
@@ -1002,7 +1026,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
@@ -1026,7 +1050,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: {{RIGHT}}{{UNIT}}; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1058,7 +1082,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-width-top: {{TOP}}{{UNIT}}; --border-width-right: {{RIGHT}}{{UNIT}}; --border-width-bottom: {{BOTTOM}}{{UNIT}}; --border-width-left: {{LEFT}}{{UNIT}};',
+							'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: {{LEFT}}{{UNIT}};',
 						],
 					],
 					'color' => [
@@ -1328,7 +1352,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--margin-top: {{TOP}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}}; --margin-bottom: {{BOTTOM}}{{UNIT}}; --margin-left:{{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--margin-block-start: {{TOP}}{{UNIT}}; --margin-block-end: {{BOTTOM}}{{UNIT}}; --margin-inline-start:{{LEFT}}{{UNIT}}; --margin-inline-end: {{RIGHT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1340,7 +1364,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}};',
 				],
 			]
 		);
