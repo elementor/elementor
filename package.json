@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "3.16.0",
+	"version": "3.17.0",
 	"last_beta_version": "3.12.0-beta3",
 	"last_cloud_version": "3.13.0-cloud2",
 	"last_dev_version": "3.9.0-dev2",
@@ -19,7 +19,6 @@
 		"test:playwright:default": "npx cross-env TEST_SUITE=@default playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:reverse-columns": "npx cross-env TEST_SUITE=@reverse-columns playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:nested-tabs": "npx cross-env TEST_SUITE=@nested-tabs playwright test -c tests/playwright/playwright.config.ts",
-		"test:playwright:nested-tabs-html": "npx cross-env TEST_SUITE=@nested-tabs-html playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:container": "npx cross-env TEST_SUITE=@container playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:nested-accordion": "npx cross-env TEST_SUITE=@nested-accordion playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:video": "npx cross-env TEST_SUITE=@video playwright test -c tests/playwright/playwright.config.ts",
