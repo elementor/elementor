@@ -84,18 +84,6 @@ export class PluginsTester {
 	}
 
 	prepareTestSite() {
-		this.cmd( `npx wp-env run cli wp theme activate hello-elementor` );
-		try {
-			this.cmd( `npx wp-env run cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"` );
-		} catch ( error ) {
-			this.options.logger.error( error );
-		}
-
-		this.cmd( `npx wp-env run cli wp rewrite structure "/%postname%/" --hard` );
-		this.cmd( `npx wp-env run cli wp cache flush` );
-		this.cmd( `npx wp-env run cli wp rewrite flush --hard` );
-		this.cmd( `npx wp-env run cli wp elementor flush-css` );
-		this.cmd( `npx wp-env run cli wp post list --post_type=page` );
-		this.cmd( `npx wp-env run cli wp option update blogname "elementor"` );
+		this.cmd( 'npm run test:setup' );
 	}
 }

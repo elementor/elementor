@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
+		"test:setup": "wp-env run cli \"bash -c 'bash elementor-config/setup.sh'\"",
 		"test": "node index.js",
 		"test:part1": "cross-env TEST_SUITE=part1 node index.js ",
 		"test:part2": "cross-env TEST_SUITE=part2 node index.js ",
@@ -12,13 +13,13 @@
 	},
 	"author": "Elementor Team",
 	"dependencies": {
-		"backstopjs": "6.1.4",
-		"canvas": "2.10.2",
-		"merge-images": "2.0.0",
-		"node-fetch": "3.3.0"
+		"backstopjs": "^6.1.4",
+		"canvas": "^2.10.2",
+		"merge-images": "^2.0.0",
+		"node-fetch": "^3.3.0"
 	},
 	"devDependencies": {
-		"@wordpress/env": "8.4.0",
-		"cross-env": "7.0.3"
+		"@wordpress/env": "5.0.0",
+		"cross-env": "^7.0.3"
 	}
 }
