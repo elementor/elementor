@@ -18,10 +18,10 @@ const useScreenshot = ( type, onData ) => {
 
 				return createdScreenshot;
 			} )
-			.catch( ( e ) => {
-				setError( e.message || 'unknown_error' );
+			.catch( ( err ) => {
+				setError( err.responseText || err );
 
-				throw e;
+				throw err;
 			} )
 			.finally( () => setIsLoading( false ) );
 	};

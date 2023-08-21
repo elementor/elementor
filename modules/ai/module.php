@@ -699,9 +699,7 @@ class Module extends BaseModule {
 		);
 
 		if ( is_wp_error( $result ) ) {
-			$error_message = empty( $result->get_error_message() ) ? 'unknown_error' : $result->get_error_message();
-
-			throw new \Exception( $error_message );
+			throw new \Exception( $result->get_error_message() );
 		}
 
 		$template = $result['text']['elements'][0] ?? null;
