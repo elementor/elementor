@@ -5,6 +5,7 @@ import widgets from '../enums/widgets';
 import Breakpoints from '../assets/breakpoints';
 import ImageCarousel from '../pages/widgets/image-carousel';
 import EditorPage from '../pages/editor-page';
+import _path from 'path';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -871,6 +872,59 @@ test.describe( 'Container tests @container', () => {
 		currentWidthUnitValue = await currentWidthUnit.innerHTML();
 
 		expect( currentWidthUnitValue ).toBe( '%' );
+	} );
+
+	test( 'Test dimensions rtl', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: 'active',
+			'nested-elements': 'active',
+		} );
+
+		try {
+			await wpAdmin.setLanguage( 'he_IL' );
+
+			const editor = await wpAdmin.openNewPage(),
+				frame = await editor.getPreviewFrame();
+
+			await test.step( 'Load Template', async () => {
+				const filePath = _path.resolve( __dirname, `../templates/container-dimensions-ltr-rtl.json` );
+				await editor.loadTemplate( filePath, false );
+				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
+				await editor.closeNavigatorIfOpen();
+			} );
+
+			await test.step( 'Rtl screenshot', async () => {
+				expect( await editor.getPreviewFrame()
+					.locator( '.e-con.e-parent>>nth=0' )
+					.screenshot( { type: 'png' } ) )
+					.toMatchSnapshot( 'container-dimensions-rtl.png' );
+			} );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		const editor = await wpAdmin.openNewPage(),
+			frame = await editor.getPreviewFrame();
+
+		await test.step( 'Load Template', async () => {
+			const filePath = _path.resolve( __dirname, `../templates/container-dimensions-ltr-rtl.json` );
+			await editor.loadTemplate( filePath, false );
+			await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
+			await editor.closeNavigatorIfOpen();
+		} );
+
+		await test.step( 'Ltr screenshot', async () => {
+			expect( await editor.getPreviewFrame()
+				.locator( '.e-con.e-parent>>nth=0' )
+				.screenshot( { type: 'png' } ) )
+				.toMatchSnapshot( 'container-dimensions-ltr.png' );
+		} );
+
+		await wpAdmin.setExperiments( {
+			container: 'inactive',
+			'nested-elements': 'inactive',
+		} );
 	} );
 } );
 
