@@ -874,7 +874,7 @@ test.describe( 'Container tests @container', () => {
 		expect( currentWidthUnitValue ).toBe( '%' );
 	} );
 
-	test( 'Test dimensions rtl', async ( { page }, testInfo ) => {
+	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: 'active',
