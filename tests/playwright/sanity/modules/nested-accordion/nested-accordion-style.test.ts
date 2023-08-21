@@ -232,7 +232,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );
-			await editor.gotoPostId( pageId );
 		} );
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
