@@ -875,7 +875,6 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
-		// Test push.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
 			container: 'active',
