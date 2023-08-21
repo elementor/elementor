@@ -30,7 +30,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 				values[ internalKey ] = internalValue;
 			} );
 		} else {
-			values[ key ] = value;//
+			values[ key ] = value;
 		}
 
 		const conversion = this.model.get( 'conversion_map' );
