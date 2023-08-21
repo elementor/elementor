@@ -353,8 +353,6 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			...sectionDefaultSettings,
 			flex_gap: {
 				size: 10,
-				column: '10',
-				row: '10',
 				unit: '%',
 			},
 		};
