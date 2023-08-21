@@ -158,8 +158,6 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
 			'default' => [
 				'unit' => 'px',
-				'row' => '20',
-				'column' => '20',
 			],
 			'separator' => 'before',
 			'selectors' => [

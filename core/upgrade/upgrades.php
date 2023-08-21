@@ -994,11 +994,9 @@ class Upgrades {
 		$control_name = 'flex_gap';
 
 		foreach ( $breakpoints as $breakpoint ) {
-			if ( 'desktop' !== $breakpoint ) {
-				$control = $control_name . '_' . $breakpoint;
-			} else {
-				$control = $control_name;
-			}
+			$control = 'desktop' !== $breakpoint
+				? $control_name . '_' . $breakpoint
+				: $control_name;
 
 			if ( isset( $element['settings'][ $control ] ) ) {
 				$old_size = strval( $element['settings'][ $control ]['size'] );
