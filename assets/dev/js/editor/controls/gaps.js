@@ -39,7 +39,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 			values[ conversion.old_key ] = parseInt( values[ conversion.new_key ] );
 		}
 
-		this.setSettingsModel( values );
+		this.setSettingsModel( values );//
 	},
 
 	getControlPlaceholder() {
