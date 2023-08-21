@@ -132,6 +132,8 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	const sectionDefaultSettings = {
 		flex_gap: {
 			size: 10,
+			column: '10',
+			row: '10',
 			unit: 'px',
 		},
 		flex_align_items: 'stretch',
