@@ -3,7 +3,7 @@ import Draggable from 'react-draggable';
 import DialogHeader from './dialog-header';
 
 const DraggablePaper = ( props ) => (
-	<Draggable handle=".MuiDialogTitle-root" cancel={ '[class*="MuiDialogContent-root"]' }>
+	<Draggable handle=".MuiDialogTitle-root" cancel={ '[class*="MuiDialogContent-root"]' } bounds="parent">
 		<Paper { ...props } />
 	</Draggable>
 );
