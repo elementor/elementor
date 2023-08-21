@@ -736,7 +736,7 @@ test.describe( 'Container tests @container', () => {
 		expect( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
 
-	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => { // Dummy push.
+	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.useElementorCleanPost(),
 			frame = await editor.getPreviewFrame(),
