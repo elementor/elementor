@@ -877,8 +877,9 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
+			container: true,
+			'nested-elements': true,
+			'mega-menu': true,
 		} );
 
 		try {
@@ -888,13 +889,15 @@ test.describe( 'Container tests @container', () => {
 				frame = await editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
-				const filePath = _path.resolve( __dirname, `../templates/container-dimensions-ltr-rtl.json` );
+				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
 				await editor.loadTemplate( filePath, false );
 				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
 				await editor.closeNavigatorIfOpen();
 			} );
 
 			await test.step( 'Rtl screenshot', async () => {
+				await editor.togglePreviewMode();
+
 				expect.soft( await editor.getPreviewFrame()
 					.locator( '.e-con.e-parent>>nth=0' )
 					.screenshot( { type: 'png' } ) )
@@ -908,13 +911,15 @@ test.describe( 'Container tests @container', () => {
 			frame = await editor.getPreviewFrame();
 
 		await test.step( 'Load Template', async () => {
-			const filePath = _path.resolve( __dirname, `../templates/container-dimensions-ltr-rtl.json` );
+			const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
 			await editor.loadTemplate( filePath, false );
 			await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
 			await editor.closeNavigatorIfOpen();
 		} );
 
 		await test.step( 'Ltr screenshot', async () => {
+			await editor.togglePreviewMode();
+
 			expect.soft( await editor.getPreviewFrame()
 				.locator( '.e-con.e-parent>>nth=0' )
 				.screenshot( { type: 'png' } ) )
@@ -922,8 +927,9 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await wpAdmin.setExperiments( {
-			container: 'inactive',
-			'nested-elements': 'inactive',
+			'mega-menu': false,
+			'nested-elements': false,
+			container: false,
 		} );
 	} );
 } );
