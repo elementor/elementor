@@ -232,11 +232,13 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 			// Assert
 			await expectScreenshotToMatchLocator( 'header-style-front.png', nestedAccordionWidgetFront );
-			await editor.gotoPostId( pageId );
 		} );
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
-			await editor.gotoPostId( pageId );
+			await wpAdmin.editWithElementor();
+			await page.waitForTimeout( 3000 );
+			await wpAdmin.waitForPanel();
+
 			frame = editor.getPreviewFrame();
 			// Remove and add a new widget to reset the style
 			await editor.removeElement( nestedAccordionID );
