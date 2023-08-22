@@ -235,10 +235,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 
 		await test.step( 'Headers Stroke and Text-Shadow', async () => {
 			await wpAdmin.editWithElementor();
-
-			frame = editor.getPreviewFrame();
-
-			await editor.isUiStable( await frame.locator( '.elementor-edit-mode' ), 10, 2000 );
+			await page.waitForLoadState( 'load' );
 			await wpAdmin.waitForPanel();
 
 			frame = editor.getPreviewFrame();

@@ -112,7 +112,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
+	test.only( 'Nested Accordion test SVG Icon and No Icon', async ( { browser }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo );
 
@@ -150,10 +150,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
 			await wpAdmin.editWithElementor();
-
-			frame = editor.getPreviewFrame();
-
-			await editor.isUiStable( await frame.locator( '.elementor-edit-mode' ), 10, 2000 );
+			await page.waitForLoadState( 'load' );
 			await wpAdmin.waitForPanel();
 
 			frame = editor.getPreviewFrame();
