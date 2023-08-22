@@ -57,9 +57,9 @@
 	min-height: var(--min-height);
 	height: var(--height);
 	border-radius: var(--border-radius);
-	margin-block-start: var(--bc-margin-block-start, var(--margin-block-start));
+	margin-block-start: var(--margin-top, var(--margin-block-start));
 	margin-inline-end: var(--bc-margin-inline-end, var(--margin-inline-end));
-	margin-block-end: var(--bc-margin-block-end, var(--margin-block-end));
+	margin-block-end: var(--margin-bottom, var(--margin-block-end));
 	margin-inline-start: var(--bc-margin-inline-start, var(--margin-inline-start));
 	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
 	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
