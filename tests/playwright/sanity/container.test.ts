@@ -877,9 +877,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-			'mega-menu': true,
+			container: 'active',
+			'nested-elements': 'active',
 		} );
 
 		try {
@@ -927,9 +926,8 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await wpAdmin.setExperiments( {
-			'mega-menu': false,
-			'nested-elements': false,
-			container: false,
+			'nested-elements': 'inactive',
+			container: 'inactive',
 		} );
 	} );
 } );
