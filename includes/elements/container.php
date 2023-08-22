@@ -130,6 +130,16 @@ class Container extends Element_Base {
 				$is_nested_class_name,
 			],
 		] );
+
+		if ( $this->get_data( 'isInner' ) ) {
+			return;
+		}
+
+		// Todo: remove in future version.
+		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+		$this->add_render_attribute( '_wrapper', [
+			'data-core-v316-plus' => 'true',
+		] );
 	}
 
 	/**

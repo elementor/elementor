@@ -412,6 +412,12 @@ const ContainerView = BaseElementView.extend( {
 				this.reInitEmptyView();
 			}
 
+			// Todo: remove in future version.
+			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.$el[ 0 ].dataset.coreV316Plus = 'true';
+			}
+
 			this.droppableInitialize( this.container.settings );
 		} );
 	},
