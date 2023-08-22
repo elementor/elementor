@@ -21,13 +21,15 @@
 
 @import "../flex-icons.scss";
 
+.e-grid-outline {
+	padding-block-start: var(--padding-block-start);
+	padding-block-end: var(--padding-block-end);
+	padding-inline-start: var(--padding-inline-end);
+	padding-inline-end: var(--padding-inline-start);
+}
 
 // mixins
 @mixin e-grid-outline-base {
-	padding-block-start: var(--container-default-padding-block-start, 10px);
-	padding-block-end: var(--container-default-padding-block-end, 10px);
-	padding-inline-start: var(--container-default-padding-inline-start, 0);
-	padding-inline-end: var(--container-default-padding-inline-end, 0);
 	display: grid;
 	position: absolute;
 	top: 0;
@@ -40,6 +42,7 @@
 	justify-content: var(--grid-justify-content);
 	align-content: var(--grid-align-content);
 	min-height: var(--min-height);
+	padding-block-start: var(--padding-block-start);
 }
 
 @mixin e-grid-outline-boxed {
