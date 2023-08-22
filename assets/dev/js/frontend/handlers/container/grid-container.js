@@ -215,8 +215,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	 * @return {Array}
 	 */
 	getResponsiveControlNames( propsThatTriggerGridLayoutRender ) {
-		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList();
-		const responsiveControlNames = [];
+		const activeBreakpoints = elementorFrontend.breakpoints.getActiveBreakpointsList(),
+			responsiveControlNames = [];
 
 		for ( const prop of propsThatTriggerGridLayoutRender ) {
 			for ( const breakpoint of activeBreakpoints ) {
