@@ -21,7 +21,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 			'column',
 		];
 	},
-	setValue( key, value ) { // hi
+	setValue( key, value ) {
 		var values = this.getControlValue();
 
 		if ( 'object' === typeof key ) {
