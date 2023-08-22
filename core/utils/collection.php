@@ -295,12 +295,18 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Find an element from the items.
 	 *
-	 * @param callable $callback
+	 * @param callable|string|number $value
 	 * @param null     $default
 	 *
 	 * @return mixed|null
 	 */
-	public function find( callable $callback, $default = null ) {
+	public function find( $value, $default = null ) {
+		$callback = $value instanceof \Closure
+			? $value
+			: function ( $item ) use ( $value ) {
+				return $item === $value;
+			};
+
 		foreach ( $this->all() as $key => $item ) {
 			if ( $callback( $item, $key ) ) {
 				return $item;

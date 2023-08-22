@@ -469,4 +469,39 @@ class Test_Collection extends Elementor_Test_Base {
 		// Act
 		$collection->each( [ $mock, 'each_callback' ] );
 	}
+
+	public function test_find() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result = $collection->find( function( $item ) {
+			return strpos( $item, '3' ) !== false;
+		} );
+
+		// Expect.
+		$this->assertEquals( 'c3', $result );
+	}
+
+	public function test_find__with_value() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result = $collection->find( 'b2' );
+
+		// Expect.
+		$this->assertEquals( 'b2', $result );
+	}
+
+	public function test_find__default_value() {
+		// Arrange.
+		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
+
+		// Act.
+		$result = $collection->find( 'e5', 'default' );
+
+		// Expect.
+		$this->assertEquals( 'default', $result );
+	}
 }

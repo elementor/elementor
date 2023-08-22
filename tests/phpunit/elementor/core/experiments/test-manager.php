@@ -566,6 +566,72 @@ class Test_Manager extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_sort_allowed_options_by_dependencies() {
+		// Arrange.
+		$this->experiments->add_feature( [
+			'name' => 'test_A',
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_B',
+			'dependencies' => [
+				'test_A',
+				'test_C',
+			],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_D',
+			'dependencies' => [ 'test_A' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_E',
+		] );
+
+		// Act.
+		$result = apply_filters(
+			'allowed_options',
+			[
+				'group' => [
+					'option_a',
+				],
+				'elementor' => [
+					'option_b',
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_D',
+					'elementor_experiment-test_E',
+					'option_c',
+					'elementor_experiment-test_A',
+				],
+			]
+		);
+
+		// Assert.
+		$this->assertEqualSets(
+			[
+				'group' => [
+					'option_a',
+				],
+				'elementor' => [
+					'option_b',
+					'option_c',
+					'elementor_experiment-test_A',
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_D',
+					'elementor_experiment-test_E',
+				],
+			],
+			$result
+		);
+
+		// Teardown.
+		$this->experiments->remove_feature( 'test_A' );
+		$this->experiments->remove_feature( 'test_B' );
+		$this->experiments->remove_feature( 'test_D' );
+		$this->experiments->remove_feature( 'test_E' );
+	}
+
 	private function add_test_feature( array $args = [] ) {
 		$test_feature_data = [
 			'name' => 'test_feature',
