@@ -843,6 +843,35 @@ test.describe( 'Container tests @container', () => {
 			await editor.removeElement( container );
 		} );
 	} );
+
+	test( 'Test full width container default size and units', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+		await page.locator( '.elementor-control-width [data-setting="size"]' ).fill( '90' );
+
+		let currentWidthUnit = await page.locator( '.e-units-switcher > span' ).first();
+		let currentWidthUnitValue = await currentWidthUnit.innerHTML();
+
+		expect( currentWidthUnitValue ).toBe( '%' );
+
+		await editor.changeResponsiveView( 'tablet' );
+
+		const tabletWidthPlaceholder = await page.locator( '.elementor-control-width_tablet [data-setting="size"]' ),
+			tabletWidthValue = await tabletWidthPlaceholder.getAttribute( 'placeholder' );
+
+		expect( tabletWidthValue ).toBe( '90' );
+
+		await editor.changeResponsiveView( 'mobile' );
+
+		currentWidthUnit = await page.locator( '.e-units-switcher > span' ).first();
+		currentWidthUnitValue = await currentWidthUnit.innerHTML();
+
+		expect( currentWidthUnitValue ).toBe( '%' );
+	} );
 } );
 
 async function createCanvasPage( wpAdmin: WpAdminPage ) {

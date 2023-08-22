@@ -671,4 +671,13 @@ module.exports = {
 	validateHTMLTag( tag ) {
 		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
 	},
+
+	convertSizeToFrString( size ) {
+		if ( 'number' !== typeof size || size <= 0 ) {
+			return size;
+		}
+
+		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
+		return frString;
+	},
 };

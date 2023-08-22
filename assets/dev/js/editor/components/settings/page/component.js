@@ -16,11 +16,20 @@ export default class Component extends ComponentBase {
 	renderTab( tab, args ) {
 		const { activeControl } = args;
 
-		if ( ! activeControl || '' === activeControl ) {
+		if ( this.shouldRenderPage( tab ) ) {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 		}
 
 		this.activateControl( activeControl );
+	}
+
+	shouldRenderPage( tab ) {
+		const currentPanelView = elementor.getPanelView();
+
+		const isSamePage = 'page_settings' === currentPanelView.getCurrentPageName();
+		const isSameTab = tab === currentPanelView.getCurrentPageView().activeTab;
+
+		return ! isSamePage || ! isSameTab;
 	}
 
 	getTabsWrapperSelector() {
