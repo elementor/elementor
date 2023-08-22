@@ -56,15 +56,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	initLayoutOverlay() {
-		if ( ! this.shouldDrawOutline() ) {
-			return;
-		}
-
 		this.getCorrectContainer();
-		this.removeExistingOverlay();
-		this.createOverlayContainer();
-		this.createOverlayItems();
-
 		// Re-init empty view element after container layout change
 		const selectors = this.getSettings( 'selectors' );
 		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
@@ -72,6 +64,14 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		if ( this.elements?.emptyView ) {
 			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 		}
+
+		if ( ! this.shouldDrawOutline() ) {
+			return;
+		}
+
+		this.removeExistingOverlay();
+		this.createOverlayContainer();
+		this.createOverlayItems();
 	}
 
 	shouldDrawOutline() {
