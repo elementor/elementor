@@ -1,18 +1,4 @@
 .e-con {
-	// Todo: remove in future version.
-	// LTR/RTL corrections for physical Css properties.
-	--bc-margin-inline-start: var(--margin-left);
-	--bc-margin-inline-end: var(--margin-right);
-	--bc-padding-inline-start: var(--padding-left);
-	--bc-padding-inline-end: var(--padding-right);
-
-	[dir="rtl"] & {
-		--bc-margin-inline-start: var(--margin-right);
-		--bc-margin-inline-end: var(--margin-left);
-		--bc-padding-inline-start: var(--padding-right);
-		--bc-padding-inline-end: var(--padding-left);
-	}
-
 	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
 	--border-radius: 0;
 	--border-block-start-width: 0px;
@@ -270,5 +256,21 @@
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: wrap;
+	}
+}
+
+// Todo: remove in future version.
+// LTR/RTL corrections for physical Css properties.
+.e-con {
+	--bc-margin-inline-start: var(--margin-left);
+	--bc-margin-inline-end: var(--margin-right);
+	--bc-padding-inline-start: var(--padding-left);
+	--bc-padding-inline-end: var(--padding-right);
+
+	[dir="rtl"] & {
+		--bc-margin-inline-start: var(--margin-right);
+		--bc-margin-inline-end: var(--margin-left);
+		--bc-padding-inline-start: var(--padding-right);
+		--bc-padding-inline-end: var(--padding-left);
 	}
 }
