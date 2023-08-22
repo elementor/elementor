@@ -21,13 +21,6 @@
 
 @import "../flex-icons.scss";
 
-.e-grid-outline {
-	padding-block-start: var(--padding-block-start);
-	padding-block-end: var(--padding-block-end);
-	padding-inline-start: var(--padding-inline-end);
-	padding-inline-end: var(--padding-inline-start);
-}
-
 // mixins
 @mixin e-grid-outline-base {
 	display: grid;
@@ -53,8 +46,8 @@
 
 @mixin e-grid-outline-full-width {
 	@include e-grid-outline-base;
-	padding-right: var(--padding-right);
-	padding-left: var(--padding-left);
+	//padding-right: var(--padding-right);
+	//padding-left: var(--padding-left);
 	width: 100%;
 	left: 0;
 }
@@ -97,6 +90,10 @@ html.elementor-html {
 
 	.e-grid-outline {
 		display: none;
+		padding-block-start: var(--padding-block-start);
+		padding-block-end: var(--padding-block-end);
+		padding-inline-start: var(--padding-inline-end);
+		padding-inline-end: var(--padding-inline-start);
 	}
 
 	.elementor-element-editable.e-grid {
