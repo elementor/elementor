@@ -117,6 +117,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		const $button = jQuery( '<div>', {
 			class: 'e-ai-layout-button elementor-add-section-area-button e-button-primary',
 			title: __( 'Build with AI', 'elementor' ),
+			role: 'button',
 		} );
 
 		$button.html( `
