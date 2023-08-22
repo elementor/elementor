@@ -190,14 +190,85 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 	public function test_deprecated_function_soft() {
 		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.4.0' );
+		$settings = $this->deprecation->get_settings();
+
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices'][ __FUNCTION__ ] );
+		} else { // to support PHP 7.0
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice( $settings['soft_notices'][ __FUNCTION__ ], 0, 2, true ));
+		}
+	}
+
+
+	public function test_deprecated_function_as_admin() {
+		$this->act_as_admin();
+		$function_name = 'test';
+		$this->setExpectedDeprecated( $function_name );
+		$this->run_function_deprecated_test( $function_name );
+	}
+
+	public function test_deprecated_argument_as_admin() {
+		$this->act_as_admin();
+		$argument_name = 'test';
+		$this->setExpectedDeprecated( $argument_name );
+		$this->expectError();
+		$this->run_argument_deprecated_test( $argument_name );
+	}
+
+	public function test_deprecated_function_not_as_admin_does_not_show_message() {
+		$this->run_function_deprecated_test();
+		$this->assertTrue( true ); // hack because phpunit demands assert
+	}
+
+	private function run_function_deprecated_test( $function_name = 'test' ) {
+		$this->deprecation->deprecated_function( $function_name, '2.5.0', 'test2', '6.5.0' );
+	}
+
+	private function run_argument_deprecated_test( $argument_name = 'test' ) {
+		$this->deprecation->deprecated_argument( $argument_name, '2.5.0', 'test2', '6.5.0' );
+
+	}
+
+	public function test_deprecated_argument_not_as_admin_does_not_show_message() {
+		$this->run_argument_deprecated_test();
+		$this->assertTrue( true ); // hack because phpunit demands assert
+	}
+
+
+	public function test_deprecated_argument_soft() {
+		$this->deprecation->deprecated_argument( '$testarg', '0.0.0', '', '0.4.0' );
 
 		$settings = $this->deprecation->get_settings();
 
-		$this->assertEquals( [
-			'0.0.0',
-			'',
-		], $settings['soft_notices']['test_deprecated_function_soft'] );
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		
+		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices']['$testarg'] );
+		} else { // to support PHP 7.0
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice( $settings['soft_notices']['$testarg'], 0, 2, true ));
+		}
 	}
+
 
 	public function test_do_deprecated_action() {
 		add_action( 'elementor/test/deprecated_action', function() {
@@ -226,10 +297,23 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 		$settings = $this->deprecation->get_settings();
 
-		$this->assertEquals( [
-			'0.0.0',
-			'',
-		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
+		$caller = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[0];
+		
+		if ( array_key_exists( 'file', $caller ) ) {
+			$message = sprintf( '%s on file %s:%d.', __FUNCTION__, $caller['file'], $caller['line'] );
+
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+				$message,
+			], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
+		}else { // to support PHP 7.0
+			
+			$this->assertEquals( [
+				'0.0.0',
+				'',
+			], array_slice ($settings['soft_notices']['elementor/test/deprecated_action_soft'], 0, 2, true ));
+		}
 	}
 
 	public function test_apply_deprecated_filter__without_filter() {
@@ -285,7 +369,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 		$hook = 'elementor/test/deprecated_filter';
 
 		// Act.
-		$result = $this->deprecation->apply_deprecated_filter( $hook, ['elementor', 'elementor-pro'], '0.0.0', '', '0.5.0' );
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [ 'elementor', 'elementor-pro' ], '0.0.0', '', '0.5.0' );
 
 		// Assert.
 		$this->assertEquals( 'elementor', $result );
@@ -300,7 +384,7 @@ class Test_Deprecation extends Elementor_Test_Base {
 		}, 10, 2 );
 
 		// Act.
-		$result = $this->deprecation->apply_deprecated_filter( $hook, ['elementor', 'elementor-pro'], '0.0.0', '', '0.5.0' );
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [ 'elementor', 'elementor-pro' ], '0.0.0', '', '0.5.0' );
 
 		// Assert.
 		$this->assertEquals( 'elementor-pro-test', $result );

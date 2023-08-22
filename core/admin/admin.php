@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -75,38 +76,25 @@ class Admin extends App {
 		exit;
 	}
 
-	private function get_package_config( $package_name ) {
-		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
-
-		if ( ! file_exists( $asset_file ) ) {
-			return [];
-		}
-
-		$data = require $asset_file;
-
-		return [
-			'handle' => $data['handle'],
-			'src' => $data['src'],
-			'deps' => $data['deps'],
-		];
-	}
-
 	private function register_packages() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
 		Collection::make( [ 'ui', 'icons' ] )
-			->map( function( $package_name ) {
-				return $this->get_package_config( $package_name );
-			} )
-			->filter( function( $package_config ) {
-				return ! empty( $package_config );
-			} )
-			->each( function( $package_config ) {
+			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
-				$src = str_replace( '{{MIN_SUFFIX}}', $suffix, $package_config['src'] );
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
 
 				wp_register_script(
-					$package_config['handle'],
-					$src,
-					$package_config['deps'],
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
 					ELEMENTOR_VERSION,
 					true
 				);
@@ -140,8 +128,8 @@ class Admin extends App {
 			$this->get_js_assets_url( 'ai-admin' ),
 			[
 				'elementor-common',
-				'elementor-packages-ui',
-				'elementor-packages-icons',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -159,6 +147,8 @@ class Admin extends App {
 		);
 
 		wp_enqueue_script( 'elementor-admin' );
+
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
 
 		$this->print_config();
 	}
@@ -749,6 +739,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
@@ -772,6 +764,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
 	}
 
 	/**

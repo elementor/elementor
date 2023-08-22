@@ -99,6 +99,8 @@ export class ContainerHelper {
 				flex_gap: {
 					unit: 'px',
 					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					column: '0',
+					row: '0',
 				},
 			};
 
@@ -175,10 +177,11 @@ export class ContainerHelper {
 				case 'c100-c50-50': {
 					settings = {
 						flex_direction: ContainerHelper.DIRECTION_ROW,
-						flex_wrap: 'wrap',
 						flex_gap: {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+							column: '0',
+							row: '0',
 						},
 					};
 
@@ -213,6 +216,8 @@ export class ContainerHelper {
 						flex_gap: {
 							unit: 'px',
 							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+							column: '0',
+							row: '0',
 						},
 					}, newContainer, { edit: false } );
 

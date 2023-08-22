@@ -24,7 +24,7 @@ class Icons_Manager {
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 
-	const ELEMENTOR_ICONS_VERSION = '5.21.0';
+	const ELEMENTOR_ICONS_VERSION = '5.23.0';
 
 	/**
 	 * Tabs.

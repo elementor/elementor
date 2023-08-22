@@ -111,7 +111,6 @@ const entry = {
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
-	'nested-tabs-html': path.resolve( __dirname, '../modules/nested-tabs-html/assets/js/editor/index.js' ),
 	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
@@ -144,8 +143,8 @@ const externals = {
 	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
-	'@elementor/ui': '__UNSTABLE__elementorPackages.ui',
-	'@elementor/icons': '__UNSTABLE__elementorPackages.icons',
+	'@elementor/ui': 'elementorV2.ui',
+	'@elementor/icons': 'elementorV2.icons',
 };
 
 const plugins = [
@@ -310,6 +309,7 @@ const gruntWebpackConfig = {
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
+	packages: packagesConfigs.dev,
 };
 
 module.exports = gruntWebpackConfig;

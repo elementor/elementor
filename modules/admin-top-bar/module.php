@@ -48,6 +48,8 @@ class Module extends BaseApp {
 			'tipsy',
 		], ELEMENTOR_VERSION, true );
 
+		wp_set_script_translations( 'elementor-admin-top-bar', 'elementor' );
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script( 'tipsy', ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js', [
@@ -60,6 +62,10 @@ class Module extends BaseApp {
 	private function add_frontend_settings() {
 		$settings = [];
 		$settings['is_administrator'] = current_user_can( 'manage_options' );
+
+		// TODO: Find a better way to add apps page url to the admin top bar.
+		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
+
 		$current_screen = get_current_screen();
 
 		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
@@ -82,22 +88,43 @@ class Module extends BaseApp {
 		do_action( 'elementor/admin-top-bar/init', $this );
 	}
 
+	private function is_top_bar_active() {
+		$current_screen = get_current_screen();
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
+		$is_elementor_post_type_page = strpos( $current_screen->post_type ?? '', 'elementor' ) !== false;
+
+		return apply_filters(
+			'elementor/admin-top-bar/is-active',
+			$is_elementor_page || $is_elementor_post_type_page,
+			$current_screen
+		);
+	}
+
 	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'in_admin_header', function () {
-			$this->render_admin_top_bar();
-		} );
-
-		add_action( 'admin_enqueue_scripts', function () {
-			$this->enqueue_scripts();
-		} );
-
 		add_action( 'current_screen', function () {
+			if ( ! $this->is_top_bar_active() ) {
+				return;
+			}
+
 			$this->add_frontend_settings();
+
+			add_action( 'in_admin_header', function () {
+				$this->render_admin_top_bar();
+			} );
+
+			add_action( 'admin_enqueue_scripts', function () {
+				$this->enqueue_scripts();
+			} );
 		} );
 	}
 }
