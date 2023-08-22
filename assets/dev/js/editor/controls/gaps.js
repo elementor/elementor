@@ -21,7 +21,6 @@ ControlGapItemView = ControlDimensionsView.extend( {
 			'column',
 		];
 	},
-//dummy
 	setValue( key, value ) {
 		var values = this.getControlValue();
 
