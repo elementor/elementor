@@ -412,7 +412,7 @@ const ContainerView = BaseElementView.extend( {
 				this.reInitEmptyView();
 			}
 
-			// Todo: remove in future version.
+			// Todo: Remove in version 3.20.0.
 			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
 			if ( ! this.model.get( 'isInner' ) ) {
 				this.$el[ 0 ].dataset.coreV316Plus = 'true';

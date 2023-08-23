@@ -135,7 +135,7 @@ class Container extends Element_Base {
 			return;
 		}
 
-		// Todo: remove in future version.
+		// Todo: Remove in version 3.20.0.
 		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
 		$this->add_render_attribute( '_wrapper', [
 			'data-core-v316-plus' => 'true',
