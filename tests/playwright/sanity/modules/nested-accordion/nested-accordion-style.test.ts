@@ -236,9 +236,9 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
-		let frame = editor.getPreviewFrame(),
-			nestedAccordionItem = await frame.locator( '.e-n-accordion-item' ),
-			nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
+		let frame = editor.getPreviewFrame();
+		const nestedAccordionItem = await frame.locator( '.e-n-accordion-item' );
+		let nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' ),
 			nestedAccordionItemText = await frame.locator( '.e-n-accordion-item-title-text' );
 		const nestedAccordionItemFront = await nestedAccordionWidgetFront.locator( '.e-n-accordion-item' ),
 			nestedAccordionItemFrontText = await page.locator( '.e-n-accordion-item-title-text' );
@@ -287,7 +287,6 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 				nestedAccordionWidgetFront = await page.locator( '.e-n-accordion' );
 				// Assert
 				await expectScreenshotToMatchLocator( 'nested-accordion-stroke-and-text-shadow-front.png', nestedAccordionWidgetFront );
-				// Await expect.soft( await page.locator( '.elementor-widget-n-accordion' ).screenshot( { type: 'png' } ) ).toMatchSnapshot( 'nested-accordion-stroke-and-text-shadow-front.png' );
 			} );
 
 			await test.step( 'Check stroke and text-shadow Hover styling - Frontend', async () => {
