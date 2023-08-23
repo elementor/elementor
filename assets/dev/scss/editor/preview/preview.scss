@@ -24,8 +24,8 @@
 
 // mixins
 @mixin e-grid-outline-base {
-	padding-block-start: var(--padding-top, var(--padding-block-start));
-	padding-block-end: var(--padding-bottom, var(--padding-block-end));
+	padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
+	padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
 	display: grid;
 	position: absolute;
 	top: 0;
