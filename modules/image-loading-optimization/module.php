@@ -103,23 +103,18 @@ class Module extends BaseModule {
 	 * @return string Content with optimized images.
 	 */
 	private function filter_images( $content ) {
-		if ( ! preg_match_all( '/<img\s[^>]+>/', $content, $matches, PREG_SET_ORDER ) ) {
-			return $content;
-		}
+		return preg_replace_callback( '/<img\s[^>]+>/', [ $this, 'apply_image_optimization' ], $content );
+	}
 
-		// Iterate through the matches in order of occurrence as it is relevant for whether or not to lazy-load.
-		foreach ( $matches as $match ) {
-			$tag = $match[0];
-
-			// Optimize an image.
-			$optimized_image = $this->loading_optimization_image( $tag );
-
-			if ( $optimized_image !== $tag ) {
-				$content = str_replace( $tag, $optimized_image, $content );
-			}
-		}
-
-		return $content;
+	/**
+	 * Callback to apply optimization logic on the image.
+	 * This function is called for each image tag found in the content.
+	 *
+	 * @param array $matches Array of matches.
+	 * @return string Optimized image.
+	 */
+	private function apply_image_optimization( $matches ) {
+		return $this->loading_optimization_image( $matches[0] );
 	}
 
 	/**
