@@ -485,7 +485,7 @@ class Ai extends Library {
 				'context' => $context ?? [],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-				'variationType' => $variation_type,
+				'variationType' => (int) $variation_type,
 			]
 		);
 	}

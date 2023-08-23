@@ -3,7 +3,8 @@ import { Box, styled } from '@elementor/ui';
 const ScreenshotContainer = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'outlineOffset',
 } )( ( { theme, selected, height, disabled, outlineOffset = '0px' } ) => {
-	const outline = `${ theme.border.size.sm } ${ theme.border.style.solid } ${ theme.palette.text.primary }`;
+	const outlineColor = selected ? theme.palette.text.primary : theme.palette.text.disabled;
+	const outline = `${ theme.border.size.sm } ${ theme.border.style.solid } ${ outlineColor }`;
 
 	return {
 		height,
@@ -16,11 +17,11 @@ const ScreenshotContainer = styled( Box, {
 		backgroundColor: theme.palette.common.white,
 		borderRadius: theme.border.size.md,
 		outlineOffset,
-		outline: selected ? outline : 'none',
+		outline,
 		opacity: disabled ? '0.4' : '1',
 		transition: `all 50ms linear`,
-		'&:hover': {
-			outline: ( disabled && ! selected ) ? 'none' : outline,
+		'&:hover': disabled ? {} : {
+			outlineColor: theme.palette.text.primary,
 		},
 	};
 } );
