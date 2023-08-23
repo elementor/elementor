@@ -991,30 +991,19 @@ class Upgrades {
 	private static function flex_gap_responsive_control_iterator( $element ) {
 		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
 		$breakpoints[] = 'desktop';
-		$old_control_name = 'flex_gap';
-		$new_control_name = 'flex_gaps';
+		$control_name = 'flex_gap';
 
 		foreach ( $breakpoints as $breakpoint ) {
-			if ( 'desktop' !== $breakpoint ) {
-				$old_control = $old_control_name . '_' . $breakpoint;
-				$new_control = $new_control_name . '_' . $breakpoint;
-			} else {
-				$old_control = $old_control_name;
-				$new_control = $new_control_name;
-			}
+			$control = 'desktop' !== $breakpoint
+				? $control_name . '_' . $breakpoint
+				: $control_name;
 
-			if ( isset( $element['settings'][ $old_control ] ) ) {
-				$old_size = strval( $element['settings'][ $old_control ]['size'] );
-				$old_unit = $element['settings'][ $old_control ]['unit'];
+			if ( isset( $element['settings'][ $control ] ) ) {
+				$old_size = strval( $element['settings'][ $control ]['size'] );
 
-				$element['settings'][ $new_control ] = [
-					'column' => $old_size,
-					'row' => $old_size,
-					'unit' => $old_unit,
-					'isLinked' => true,
-				];
-
-				unset( $element['settings'][ $old_control ] );
+				$element['settings'][ $control ]['column'] = $old_size;
+				$element['settings'][ $control ]['row'] = $old_size;
+				$element['settings'][ $control ]['isLinked'] = true;
 			}
 		}
 
