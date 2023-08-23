@@ -5,6 +5,7 @@ import widgets from '../enums/widgets';
 import Breakpoints from '../assets/breakpoints';
 import ImageCarousel from '../pages/widgets/image-carousel';
 import EditorPage from '../pages/editor-page';
+import _path from 'path';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -56,7 +57,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert.
 		// Test that the image is between the heading & button.
-		expect( elBeforeButton ).toEqual( elAfterHeading );
+		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page }, testInfo ) => {
@@ -89,7 +90,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect( container ).toHaveScreenshot( 'container-row.png' );
+		await expect.soft( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -99,7 +100,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
 
-		await expect( container ).toHaveScreenshot( 'container-row-full.png' );
+		await expect.soft( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -114,7 +115,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect( container ).toHaveScreenshot( 'container-column-full-start.png' );
+		await expect.soft( container ).toHaveScreenshot( 'container-column-full-start.png' );
 
 		// Act
 		await editor.togglePreviewMode();
@@ -125,7 +126,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
+		await expect.soft( container ).toHaveScreenshot( 'container-column-boxed-start.png' );
 	} );
 
 	test( 'Test widgets inside the container using position absolute', async ( { page }, testInfo ) => {
@@ -154,7 +155,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect( await pageView.screenshot( {
+		expect.soft( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-boxed-absolute.jpeg' );
@@ -171,7 +172,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect( await pageView.screenshot( {
+		expect.soft( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-absolute.jpeg' );
@@ -211,7 +212,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert
 		// Take screenshot.
-		expect( await pageView.screenshot( {
+		expect.soft( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-boxed-fixed.jpeg' );
@@ -253,7 +254,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		expect( await pageView.screenshot( {
+		expect.soft( await pageView.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'heading-full-fixed.jpeg' );
@@ -266,9 +267,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.getPreviewFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
+		await expect.soft( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();
-		await expect( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
+		await expect.soft( editor.getPreviewFrame().locator( '.e-con-full' ) ).toHaveCount( 1 );
 	} );
 
 	test( 'Widget display inside container flex wrap', async ( { page }, testInfo ) => {
@@ -325,7 +326,7 @@ test.describe( 'Container tests @container', () => {
 
 		// Duplicate carousel widget.
 		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
-		await expect( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
+		await expect.soft( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
 		// Add flex grow effect.
 		await editor.activatePanelTab( 'advanced' );
@@ -336,7 +337,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert.
-		expect( await containerElement.screenshot( {
+		expect.soft( await containerElement.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-row-flex-wrap.jpeg' );
@@ -388,7 +389,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.togglePreviewMode();
 
-		expect( await container.screenshot( {
+		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
@@ -406,7 +407,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.togglePreviewMode();
 
-		expect( await container.screenshot( {
+		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 100,
 		} ) ).toMatchSnapshot( 'container-background-border-radius.jpeg' );
@@ -441,7 +442,7 @@ test.describe( 'Container tests @container', () => {
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
 
 		// Assert
-		expect( await container.screenshot( {
+		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-column-spacer-align-center.jpeg' );
@@ -455,11 +456,11 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
 
-		await expect( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
+		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column' ).last() ).toHaveCSS( 'padding', '0px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
 			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
-			await expect( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
+			await expect.soft( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
 		} );
 	} );
 
@@ -471,7 +472,7 @@ test.describe( 'Container tests @container', () => {
 			const editor = await createCanvasPage( wpAdmin );
 			await editor.closeNavigatorIfOpen();
 			const container = await addContainerAndHover( editor );
-			expect( await container.screenshot( {
+			expect.soft( await container.screenshot( {
 				type: 'jpeg',
 				quality: 100,
 			} ) ).toMatchSnapshot( 'container-rtl-centered.jpeg' );
@@ -482,7 +483,7 @@ test.describe( 'Container tests @container', () => {
 		const editor = await createCanvasPage( wpAdmin );
 		const container = await addContainerAndHover( editor );
 
-		expect( await container.screenshot( {
+		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
@@ -512,8 +513,8 @@ test.describe( 'Container tests @container', () => {
 
 		// Assert.
 		// Check rotate and scale value.
-		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
-		await expect( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
+		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
+		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
 
 	test( 'Justify icons are displayed correctly', async ( { page }, testInfo ) => {
@@ -552,10 +553,10 @@ test.describe( 'Container tests @container', () => {
 		const preview = editor.getPreviewFrame();
 
 		const resizers = await preview.locator( '.ui-resizable-handle.ui-resizable-e' );
-		await expect( resizers ).toHaveCount( 4 );
+		await expect.soft( resizers ).toHaveCount( 4 );
 
 		await editor.togglePreviewMode();
-		await expect( resizers ).toHaveCount( 0 );
+		await expect.soft( resizers ).toHaveCount( 0 );
 	} );
 
 	test( 'Test grid container controls', async ( { page }, testInfo ) => {
@@ -588,8 +589,8 @@ test.describe( 'Container tests @container', () => {
 		// Check container settings are set as expected in the editor.
 		for ( const container of containers ) {
 			const element = editor.getPreviewFrame().locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
-			await expect( element ).toHaveCSS( 'justify-items', container.setting );
-			await expect( element ).toHaveCSS( 'align-items', container.setting );
+			await expect.soft( element ).toHaveCSS( 'justify-items', container.setting );
+			await expect.soft( element ).toHaveCSS( 'align-items', container.setting );
 		}
 
 		await editor.publishAndViewPage();
@@ -598,8 +599,8 @@ test.describe( 'Container tests @container', () => {
 		// Check container settings are set as expected on frontend.
 		for ( const container of containers ) {
 			const element = await page.locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
-			await expect( element ).toHaveCSS( 'justify-items', container.setting );
-			await expect( element ).toHaveCSS( 'align-items', container.setting );
+			await expect.soft( element ).toHaveCSS( 'justify-items', container.setting );
+			await expect.soft( element ).toHaveCSS( 'align-items', container.setting );
 		}
 	} );
 
@@ -639,27 +640,27 @@ test.describe( 'Container tests @container', () => {
 		// 4. Container 2.
 		// 5. A new container with a heading widget.
 		// 6. Container 3.
-		await expect( editor.getPreviewFrame()
+		await expect.soft( editor.getPreviewFrame()
 			.locator( '.e-con >> nth=0' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-heading/ );
-		expect( await editor.getPreviewFrame()
+		expect.soft( await editor.getPreviewFrame()
 			.locator( '.e-con >> nth=1' )
 			.getAttribute( 'data-id' ) )
 			.toEqual( containerId1 );
-		await expect( editor.getPreviewFrame()
+		await expect.soft( editor.getPreviewFrame()
 			.locator( '.e-con >> nth=2' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-spacer/ );
-		expect( await editor.getPreviewFrame()
+		expect.soft( await editor.getPreviewFrame()
 			.locator( '.e-con >> nth=3' )
 			.getAttribute( 'data-id' ) )
 			.toEqual( containerId2 );
-		await expect( editor.getPreviewFrame()
+		await expect.soft( editor.getPreviewFrame()
 			.locator( '.e-con >> nth=4' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-heading/ );
-		expect( await editor.getPreviewFrame()
+		expect.soft( await editor.getPreviewFrame()
 			.locator( '.e-con >> nth=5' )
 			.getAttribute( 'data-id' ) )
 			.toEqual( containerId3 );
@@ -674,8 +675,8 @@ test.describe( 'Container tests @container', () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			const toFlex = await frame.locator( '.flex-preset-button' );
 			const toGrid = await frame.locator( '.grid-preset-button' );
-			await expect( toFlex ).toBeVisible();
-			await expect( toGrid ).toBeVisible();
+			await expect.soft( toFlex ).toBeVisible();
+			await expect.soft( toGrid ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
 		} );
 
@@ -683,7 +684,7 @@ test.describe( 'Container tests @container', () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.flex-preset-button' ).click();
 			const flexList = frame.locator( '.e-con-select-preset__list' );
-			await expect( flexList ).toBeVisible();
+			await expect.soft( flexList ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
 		} );
 
@@ -691,7 +692,7 @@ test.describe( 'Container tests @container', () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.grid-preset-button' ).click();
 			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
-			await expect( gridList ).toBeVisible();
+			await expect.soft( gridList ).toBeVisible();
 		} );
 	} );
 
@@ -715,7 +716,7 @@ test.describe( 'Container tests @container', () => {
 		}, containerSelector );
 
 		// Check for no horizontal scroll.
-		expect( hasNoHorizontalScroll ).toBe( true );
+		expect.soft( hasNoHorizontalScroll ).toBe( true );
 	} );
 
 	test( 'Convert to container does not show when only containers are on the page', async ( { page }, testInfo ) => {
@@ -733,7 +734,7 @@ test.describe( 'Container tests @container', () => {
 
 		await page.locator( '#elementor-panel-footer-settings' ).click();
 
-		expect( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
+		expect.soft( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
 
 	test( 'Test spacer inside of the container', async ( { page }, testInfo ) => {
@@ -751,7 +752,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
+			await expect.soft( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -766,7 +767,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
+			await expect.soft( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -780,7 +781,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
+			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -800,7 +801,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
 
-			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
+			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -819,7 +820,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( String( spacerElementWidth ) ).toBe( spacerSize );
+			await expect.soft( String( spacerElementWidth ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -839,7 +840,7 @@ test.describe( 'Container tests @container', () => {
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
 
-			await expect( String( spacerElementHeight ) ).toBe( spacerSize );
+			await expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 	} );
@@ -856,21 +857,78 @@ test.describe( 'Container tests @container', () => {
 		let currentWidthUnit = await page.locator( '.e-units-switcher > span' ).first();
 		let currentWidthUnitValue = await currentWidthUnit.innerHTML();
 
-		expect( currentWidthUnitValue ).toBe( '%' );
+		expect.soft( currentWidthUnitValue ).toBe( '%' );
 
 		await editor.changeResponsiveView( 'tablet' );
 
 		const tabletWidthPlaceholder = await page.locator( '.elementor-control-width_tablet [data-setting="size"]' ),
 			tabletWidthValue = await tabletWidthPlaceholder.getAttribute( 'placeholder' );
 
-		expect( tabletWidthValue ).toBe( '90' );
+		expect.soft( tabletWidthValue ).toBe( '90' );
 
 		await editor.changeResponsiveView( 'mobile' );
 
 		currentWidthUnit = await page.locator( '.e-units-switcher > span' ).first();
 		currentWidthUnitValue = await currentWidthUnit.innerHTML();
 
-		expect( currentWidthUnitValue ).toBe( '%' );
+		expect.soft( currentWidthUnitValue ).toBe( '%' );
+	} );
+
+	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await wpAdmin.setExperiments( {
+			container: 'active',
+			'nested-elements': 'active',
+		} );
+
+		try {
+			await wpAdmin.setLanguage( 'he_IL' );
+
+			const editor = await wpAdmin.openNewPage(),
+				frame = await editor.getPreviewFrame();
+
+			await test.step( 'Load Template', async () => {
+				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
+				await editor.loadTemplate( filePath, false );
+				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
+				await editor.closeNavigatorIfOpen();
+			} );
+
+			await test.step( 'Rtl screenshot', async () => {
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame()
+					.locator( '.e-con.e-parent>>nth=0' )
+					.screenshot( { type: 'png' } ) )
+					.toMatchSnapshot( 'container-dimensions-rtl.png' );
+			} );
+		} finally {
+			await wpAdmin.setLanguage( '' );
+		}
+
+		const editor = await wpAdmin.openNewPage(),
+			frame = await editor.getPreviewFrame();
+
+		await test.step( 'Load Template', async () => {
+			const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
+			await editor.loadTemplate( filePath, false );
+			await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
+			await editor.closeNavigatorIfOpen();
+		} );
+
+		await test.step( 'Ltr screenshot', async () => {
+			await editor.togglePreviewMode();
+
+			expect.soft( await editor.getPreviewFrame()
+				.locator( '.e-con.e-parent>>nth=0' )
+				.screenshot( { type: 'png' } ) )
+				.toMatchSnapshot( 'container-dimensions-ltr.png' );
+		} );
+
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'inactive',
+			container: 'inactive',
+		} );
 	} );
 } );
 
@@ -909,7 +967,7 @@ async function captureJustifySnapShot(
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
 	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
-	expect( await justifyControlsContent.screenshot( {
+	expect.soft( await justifyControlsContent.screenshot( {
 		type: 'jpeg',
 		quality: 90,
 	} ) ).toMatchSnapshot( `container-justify-controls-${ snapshotPrefix }-${ direction }-${ breakpoints[ i ] }.jpeg` );
