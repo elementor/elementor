@@ -47,7 +47,7 @@ jobs:
       - name: Format Changelog
         id: format_changelog
         run: |
-          changes=$(sed 's/^-/*/g; s#(\(https://github.com/mark-elementor/changelog-test/commit/\)\([^)]*\)) - #[\2](\1\2)  \n#g; s/\[\]//g' <<< "${{ steps.update_changelog.outputs.changes }}")
+          changes=$(sed 's/^-/*/g; s/\[\`[^`]*\`\]//g; s#(\(https://github.com/mark-elementor/changelog-test/commit/\)\([^)]*\)) - #[\2](\1\2)  \n#g; s/\[\]//g' <<< "${{ steps.update_changelog.outputs.changes }}")
           echo "$changes" > CHANGELOG.md
 
       - name: Upload Changelog as Artifact
