@@ -200,8 +200,15 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			return;
 		}
 
+		const currentSize = this.getSize(),
+			alreadyConverted = 'string' === typeof currentSize && currentSize.includes( 'fr' );
+
+		if ( alreadyConverted ) {
+			return;
+		}
+
 		const sizeValue = this.isCustomUnit()
-			? convertSizeToFrString( this.getSize() )
+			? convertSizeToFrString( currentSize )
 			: this.getControlPlaceholder()?.size || this.model.get( 'default' )?.size;
 
 		this.setValue( 'size', sizeValue );
@@ -212,6 +219,20 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		this.destroySlider();
 
 		this.$el.remove();
+	},
+
+	onDeviceModeChange() {
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			isMobile = 'mobile' === currentDeviceMode,
+			isMobileValue = this.model.get( 'name' ).includes( '_mobile' ),
+			hasDefault = this.model.get( 'default' ),
+			shouldRunConversion = isMobile && isMobileValue && hasDefault && this.isCustomUnit();
+
+		if ( shouldRunConversion ) {
+			setTimeout( () => {
+				this.maybeDoFractionToCustomConversions();
+			} );
+		}
 	},
 } );
 
