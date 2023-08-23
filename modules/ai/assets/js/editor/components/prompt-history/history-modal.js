@@ -8,6 +8,7 @@ import { useContext, useEffect, useRef } from 'react';
 import useDeletePromptHistoryItem from '../../hooks/use-delete-prompt-history-item';
 import PromptErrorMessage from '../prompt-error-message';
 import { groupPromptHistoryData, LAST_30_DAYS_KEY, LAST_7_DAYS_KEY } from './helpers/history-period-helpers';
+import PromptHistoryEmpty from './parts/modal-empty';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	width: 360,
@@ -105,6 +106,7 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 						{ isLoading && <LinearProgress color="secondary" /> }
 
 						<Box sx={ { overflowY: 'scroll', height: '85%' } }>
+							{ ! isLoading && 0 === items?.length && <PromptHistoryEmpty promptType={ promptType } /> }
 							{ ! isLoading && items?.length > 0 && renderPeriods() }
 						</Box>
 					</StyledContent>
