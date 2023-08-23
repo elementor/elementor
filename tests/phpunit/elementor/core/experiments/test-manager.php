@@ -640,7 +640,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->experiments->remove_feature( 'test_E' );
 	}
 
-	public function test_test_sort_allowed_options_by_dependencies__recursive_deps() {
+	public function test_sort_allowed_options_by_dependencies__circular_deps() {
 		// Arrange.
 		$this->experiments->add_feature( [
 			'name' => 'test_A',

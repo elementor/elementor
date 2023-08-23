@@ -479,7 +479,7 @@ class Test_Collection extends Elementor_Test_Base {
 			return strpos( $item, '3' ) !== false;
 		} );
 
-		// Expect.
+		// Assert.
 		$this->assertEquals( 'c3', $result );
 	}
 
@@ -496,7 +496,7 @@ class Test_Collection extends Elementor_Test_Base {
 
 		$result3 = $collection->contains( 'b3' );
 
-		// Expect.
+		// Assert.
 		$this->assertTrue( $result1 );
 		$this->assertTrue( $result2 );
 		$this->assertFalse( $result3 );
