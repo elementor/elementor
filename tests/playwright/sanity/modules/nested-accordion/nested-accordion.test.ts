@@ -242,7 +242,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			containerWidth = ( await containerElement.boundingBox() ).width,
 			nestedAccordionWidth = ( await nestedAccordionElement.boundingBox() ).width;
 
-		expect( nestedAccordionWidth ).toEqual( containerWidth );
+		expect.soft( nestedAccordionWidth ).toEqual( containerWidth );
 	} );
 
 	test( 'Nested Accordion with inner Nested Accordion', async ( { browser }, testInfo ) => {
@@ -260,7 +260,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 
 		await test.step( 'Verify that the inner accordion doesn\'t inherit styling from parent', async () => {
-			expect( await editor.getPreviewFrame()
+			expect.soft( await editor.getPreviewFrame()
 				.locator( '.e-n-accordion' ).first()
 				.screenshot( { type: 'png' } ) )
 				.toMatchSnapshot( 'nested-accordions-parent-child.png' );
