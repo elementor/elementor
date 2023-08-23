@@ -26,6 +26,8 @@
 @mixin e-grid-outline-base {
 	padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
 	padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
+	padding-inline-start: var(--padding-inline-end);
+	padding-inline-end: var(--padding-inline-start);
 	display: grid;
 	position: absolute;
 	top: 0;
@@ -92,10 +94,6 @@ html.elementor-html {
 
 	.e-grid-outline {
 		display: none;
-		padding-block-start: var(--padding-block-start);
-		padding-block-end: var(--padding-block-end);
-		padding-inline-start: var(--padding-inline-end);
-		padding-inline-end: var(--padding-inline-start);
 	}
 
 	.elementor-element-editable.e-grid {
