@@ -388,7 +388,7 @@ class Manager extends Base_Object {
 				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_STABLE,
+			'release_status' => self::RELEASE_STATUS_RC,
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -902,11 +902,14 @@ class Manager extends Base_Object {
 		}
 
 		$sorted = Collection::make();
+		$visited = Collection::make();
 
-		$sort = function ( $item ) use ( &$sorted, &$sort ) {
-			if ( $sorted->find( $item ) ) {
+		$sort = function ( $item ) use ( &$sort, $sorted, $visited ) {
+			if ( $visited->contains( $item ) ) {
 				return;
 			}
+
+			$visited->push( $item );
 
 			$feature = $this->get_features( $item );
 
@@ -915,7 +918,6 @@ class Manager extends Base_Object {
 			}
 
 			foreach ( $feature['dependencies'] ?? [] as $dep ) {
-				// Check if exists in allowed options
 				$name = is_string( $dep ) ? $dep : $dep->get_name();
 
 				$sort( $name );
@@ -925,7 +927,9 @@ class Manager extends Base_Object {
 		};
 
 		foreach ( $allowed_options['elementor'] as $option ) {
-			if ( 0 !== strpos( $option, static::OPTION_PREFIX ) ) {
+			$is_experiment_option = strpos( $option, static::OPTION_PREFIX ) === 0;
+
+			if ( ! $is_experiment_option ) {
 				continue;
 			}
 

@@ -295,12 +295,27 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Find an element from the items.
 	 *
-	 * @param callable|string|number $value
+	 * @param callable $callback
 	 * @param null     $default
 	 *
 	 * @return mixed|null
 	 */
-	public function find( $value, $default = null ) {
+	public function find( callable $callback, $default = null ) {
+		foreach ( $this->all() as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return $item;
+			}
+		}
+
+		return $default;
+	}
+
+	/**
+	 * @param callable|string|int $value
+	 *
+	 * @return bool
+	 */
+	public function contains( $value ) {
 		$callback = $value instanceof \Closure
 			? $value
 			: function ( $item ) use ( $value ) {
@@ -309,11 +324,11 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 
 		foreach ( $this->all() as $key => $item ) {
 			if ( $callback( $item, $key ) ) {
-				return $item;
+				return true;
 			}
 		}
 
-		return $default;
+		return false;
 	}
 
 	/**

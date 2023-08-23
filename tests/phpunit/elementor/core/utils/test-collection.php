@@ -483,25 +483,22 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEquals( 'c3', $result );
 	}
 
-	public function test_find__with_value() {
+	public function test_contains() {
 		// Arrange.
 		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
 
 		// Act.
-		$result = $collection->find( 'b2' );
+		$result1 = $collection->contains( 'b2' );
+
+		$result2 = $collection->contains( function ( $item ) {
+			return 'd4' === $item;
+		} );
+
+		$result3 = $collection->contains( 'b3' );
 
 		// Expect.
-		$this->assertEquals( 'b2', $result );
-	}
-
-	public function test_find__default_value() {
-		// Arrange.
-		$collection = Collection::make( [ 'a1', 'b2', 'c3', 'd4' ] );
-
-		// Act.
-		$result = $collection->find( 'e5', 'default' );
-
-		// Expect.
-		$this->assertEquals( 'default', $result );
+		$this->assertTrue( $result1 );
+		$this->assertTrue( $result2 );
+		$this->assertFalse( $result3 );
 	}
 }

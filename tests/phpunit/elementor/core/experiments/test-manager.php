@@ -205,7 +205,7 @@ class Test_Manager extends Elementor_Test_Base {
 							'label' => 'Second tag',
 						],
 					],
-				]
+				],
 			],
 			'New feature passing tags to both "tag" and "tags"' => [
 				'name' => 'test_feature_with_tags7',
@@ -576,32 +576,38 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'test_B',
 			'dependencies' => [
 				'test_A',
-				'test_C',
+				'non-existing-dep-that-should-be-ignored',
 			],
 		] );
 
 		$this->experiments->add_feature( [
+			'name' => 'test_C',
+			'dependencies' => [ 'test_B' ],
+		] );
+
+		$this->experiments->add_feature( [
 			'name' => 'test_D',
-			'dependencies' => [ 'test_A' ],
 		] );
 
 		$this->experiments->add_feature( [
 			'name' => 'test_E',
+			'dependencies' => [ 'test_A' ],
 		] );
 
 		// Act.
 		$result = apply_filters(
 			'allowed_options',
 			[
-				'group' => [
+				'not-elementor' => [
 					'option_a',
 				],
 				'elementor' => [
-					'option_b',
+					'not_experiment',
+					'elementor_experiment-test_C',
 					'elementor_experiment-test_B',
 					'elementor_experiment-test_D',
 					'elementor_experiment-test_E',
-					'option_c',
+					'not_experiment_2',
 					'elementor_experiment-test_A',
 				],
 			]
@@ -610,14 +616,15 @@ class Test_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets(
 			[
-				'group' => [
+				'not-elementor' => [
 					'option_a',
 				],
 				'elementor' => [
-					'option_b',
-					'option_c',
+					'not_experiment',
+					'not_experiment_2',
 					'elementor_experiment-test_A',
 					'elementor_experiment-test_B',
+					'elementor_experiment-test_C',
 					'elementor_experiment-test_D',
 					'elementor_experiment-test_E',
 				],
@@ -628,8 +635,56 @@ class Test_Manager extends Elementor_Test_Base {
 		// Teardown.
 		$this->experiments->remove_feature( 'test_A' );
 		$this->experiments->remove_feature( 'test_B' );
+		$this->experiments->remove_feature( 'test_C' );
 		$this->experiments->remove_feature( 'test_D' );
 		$this->experiments->remove_feature( 'test_E' );
+	}
+
+	public function test_test_sort_allowed_options_by_dependencies__recursive_deps() {
+		// Arrange.
+		$this->experiments->add_feature( [
+			'name' => 'test_A',
+			'dependencies' => [ 'test_C' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_B',
+			'dependencies' => [ 'test_A' ],
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_C',
+			'dependencies' => [ 'test_B' ],
+		] );
+
+		// Act.
+		$result = apply_filters(
+			'allowed_options',
+			[
+				'elementor' => [
+					'elementor_experiment-test_B',
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_A',
+				],
+			]
+		);
+
+		// Assert.
+		$this->assertEqualSets(
+			[
+				'elementor' => [
+					'elementor_experiment-test_C',
+					'elementor_experiment-test_A',
+					'elementor_experiment-test_B',
+				],
+			],
+			$result
+		);
+
+		// Teardown.
+		$this->experiments->remove_feature( 'test_A' );
+		$this->experiments->remove_feature( 'test_B' );
+		$this->experiments->remove_feature( 'test_C' );
 	}
 
 	private function add_test_feature( array $args = [] ) {
