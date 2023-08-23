@@ -24,7 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
-	const ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED = 'elementor_container_gap_updates_reversed';
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
@@ -856,10 +855,6 @@ class Upgrades {
 
 			self::save_updated_document( $post_id, $data );
 		}
-
-		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
-			delete_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
-		}
 	}
 
 	public static function remove_remote_info_api_data() {
@@ -1017,12 +1012,8 @@ class Upgrades {
 	 * @return void
 	 */
 	private static function save_updated_document( $post_id, $data ) {
-		$document = Plugin::$instance->documents->get( $post_id );
+		$json_value = wp_slash( wp_json_encode( $data ) );
 
-		$document->save(
-			[
-				'elements' => $data,
-			]
-		);
+		update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 	}
 }
