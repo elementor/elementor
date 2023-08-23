@@ -24,9 +24,9 @@
 	--margin-block-end: 0;
 	--margin-inline-start: 0;
 	--padding-block-start: var(--container-default-padding-block-start, 10px);
-	--padding-inline-end: var(--container-default-padding-inline-end, 0);
+	--padding-inline-end: var(--container-default-padding-inline-end, 10px);
 	--padding-block-end: var(--container-default-padding-block-end, 10px);
-	--padding-inline-start: var(--container-default-padding-inline-start, 0);
+	--padding-inline-start: var(--container-default-padding-inline-start, 10px);
 	--position: relative;
 	--z-index: revert;
 	--overflow: visible;
@@ -137,8 +137,8 @@
 		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
-		padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
-		padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
+		padding-inline-start: var(--bc-padding-inline-start, 0);
+		padding-inline-end: var(--bc-padding-inline-end, 0);
 		height: 100%;
 	}
 
