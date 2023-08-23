@@ -46,8 +46,6 @@
 
 @mixin e-grid-outline-full-width {
 	@include e-grid-outline-base;
-	//padding-right: var(--padding-right);
-	//padding-left: var(--padding-left);
 	width: 100%;
 	left: 0;
 }
