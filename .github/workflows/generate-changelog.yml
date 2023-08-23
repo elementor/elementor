@@ -1,5 +1,4 @@
 name: Generate Temp Changelog
-description: Generate a changelog between two versions.
 
 on:
   workflow_dispatch:
