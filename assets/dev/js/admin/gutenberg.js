@@ -32,11 +32,15 @@
 				self.cache.$gutenberg.find( '.edit-post-header-toolbar' ).append( self.cache.$switchMode );
 			}
 
+			if ( this.hasIframe() ) {
+				this.hideIframeContent();
+			}
+
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
-				// TODO: `editor-block-list__layout` class for WP < 5.3 support.
-				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.editor-block-list__layout, .editor-post-text-editor, .block-editor-block-list__layout' );
-				self.cache.$gurenbergBlockList.after( self.cache.$editorPanel );
+
+				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.is-desktop-preview' );
+				self.cache.$gurenbergBlockList.append( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );
 
@@ -61,6 +65,26 @@
 					self.redirectWhenSave();
 				} );
 			}
+		},
+
+		// Sometimes Gutenberg uses iframe instead of div.
+		hasIframe() {
+			return !! this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).length;
+		},
+
+		hideIframeContent() {
+			const style = `<style>
+				.editor-post-text-editor,
+				.block-editor-block-list__layout {
+					display: none;
+				}
+
+				body {
+					padding: 0 !important;
+				}
+			</style>`;
+
+			this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).contents().find( 'body' ).append( style );
 		},
 
 		bindEvents() {
