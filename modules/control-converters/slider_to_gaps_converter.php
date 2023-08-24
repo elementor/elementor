@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\ControlConverter;
+namespace Elementor\Modules\ControlConverters;
 
 use Elementor\Plugin;
 
@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module {
+class Slider_To_Gaps_Converter implements Command {
 
-	public static function flex_container_gaps_converter( $element ) {
+	public function execute( $element ) {
 		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
 		$breakpoints[] = 'desktop';
 		$control_name = 'flex_gap';

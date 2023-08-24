@@ -15,7 +15,8 @@ use Elementor\Group_Control_Grid_Container;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
-use Elementor\Modules\ControlConverter\Module as Control_Converter;
+use Elementor\Modules\ControlConverters\Module as Command_Invoker;
+use Elementor\Modules\ControlConverters\Slider_To_Gaps_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1843,6 +1844,11 @@ class Container extends Element_Base {
 	}
 
 	public function on_import( $element ) {
-		return Control_Converter::flex_container_gaps_converter( $element );
+		$invoker = new Command_Invoker();
+		$command = new Slider_To_Gaps_Converter();
+
+		$invoker->setCommand( $command );
+
+		return $invoker->executeCommand( $element );
 	}
 }
