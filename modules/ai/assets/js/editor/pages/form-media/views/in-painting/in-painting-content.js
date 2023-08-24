@@ -72,8 +72,8 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 	}, [ stroke ] );
 
 	return (
-		<Stack alignItems="flex-start" spacing={ 2 } flexGrow={ 1 }>
-			<Stack width="100%" direction="row" spacing={ 7 } alignSelf="center" justifyContent="center" sx={ { mb: 6 } }>
+		<Stack alignItems="flex-start" spacing={ 0.5 } flexGrow={ 1 }>
+			<Stack width="100%" direction="row" spacing={ 3 } alignSelf="center" justifyContent="center" sx={ { mb: 2.5 } }>
 				<Stack direction="row" gap={ 3 }>
 					<Tooltip title={ __( 'Undo', 'elementor' ) }>
 						<Button variant="outlined" color="secondary" onClick={ () => sketchRef.current.undo() } sx={ { px: 0 } }>
@@ -113,7 +113,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 						} }
 						sx={ {
 							'& .MuiSelect-select .MuiListItemIcon-root': {
-								mr: 1,
+								mr: 0.25,
 								width: 'initial',
 								minWidth: 'initial',
 								justifyContent: 'flex-start',
@@ -122,7 +122,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					>
 						{ [ 10, 20, 30, 40, 50 ].map( ( value ) => (
 							<MenuItem key={ 'stroke-width-option-' + value } value={ value }>
-								<Stack direction="row" alignItems="center" gap={ 3 }>
+								<Stack direction="row" alignItems="center" gap={ 1 }>
 									<ListItemIcon sx={ { width: 30, display: 'flex', justifyContent: 'center' } }>
 										<BrishSizeIcon size={ value } />
 									</ListItemIcon>

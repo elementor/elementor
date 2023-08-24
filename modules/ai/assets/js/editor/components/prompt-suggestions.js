@@ -8,7 +8,7 @@ const PromptSuggestions = ( props ) => {
 				{ __( 'Suggested prompts', 'elementor' ) + ':' }
 			</Typography>
 
-			<Stack direction="column" alignItems="flex-start" gap={ 3 } sx={ { my: 3 } }>
+			<Stack direction="column" alignItems="flex-start" gap={ 1 } sx={ { my: 1 } }>
 				{ props.suggestions?.map( ( option, index ) => (
 					<StyledChip
 						key={ index }

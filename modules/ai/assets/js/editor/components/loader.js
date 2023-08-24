@@ -5,7 +5,7 @@ const Loader = ( { sx = {}, ...props } ) => (
 		width="100%"
 		display="flex"
 		alignItems="center"
-		sx={ { px: 4, minHeight: ( theme ) => theme.sizing[ 500 ] } }
+		sx={ { px: 1.5, minHeight: ( theme ) => theme.sizing[ 500 ] } }
 	>
 		<LinearProgress color="secondary" { ...props } sx={ { width: '100%', ...sx } } />
 	</Box>

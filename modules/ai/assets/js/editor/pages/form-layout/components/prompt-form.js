@@ -90,7 +90,7 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 		<Box
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
-			sx={ { p: 5 } }
+			sx={ { p: 2 } }
 			display="flex"
 			alignItems="start"
 			gap={ 3 }

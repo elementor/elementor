@@ -10,9 +10,8 @@ const Panel = ( { sx = {}, ...props } ) => {
 				sx: {
 					position: 'relative',
 					width: 360,
-					px: 8,
-					pt: 8,
-					bgcolor: 'background.default',
+					px: 4,
+					pt: 4,
 				},
 			} }
 			sx={ { height: '100%', ...sx } }

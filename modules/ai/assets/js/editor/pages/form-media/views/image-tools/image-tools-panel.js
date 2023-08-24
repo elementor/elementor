@@ -87,7 +87,7 @@ const ImageToolsPanel = () => {
 						color="secondary"
 						disabled={ false }
 						sx={ {
-							py: 7,
+							py: 3,
 							fontSize: '12px',
 							height: 'auto',
 							borderRadius: '4px',
@@ -99,7 +99,7 @@ const ImageToolsPanel = () => {
 							alignItems="center"
 							flexDirection="column"
 						>
-							<Icon sx={ { mb: 2 } } />
+							<Icon sx={ { mb: 0.5 } } />
 							{ label }
 						</Box>
 					</Button>
@@ -109,7 +109,7 @@ const ImageToolsPanel = () => {
 			<ToolsTeaserContainer display="flex" flexDirection="column" alignItems="center">
 				<TeaserDrawing />
 
-				<Typography variant="body2" align="center" color="secondary" sx={ { mt: 5 } }>
+				<Typography variant="body2" align="center" color="secondary" sx={ { mt: 2 } }>
 					{ __( 'Stay tuned! More incredible AI tools are coming your way soon.', 'elementor' ) }
 				</Typography>
 			</ToolsTeaserContainer>

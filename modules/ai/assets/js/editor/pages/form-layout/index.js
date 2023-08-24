@@ -169,13 +169,13 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 			<LayoutDialog.Content dividers { ...dialogContentProps }>
 				<Collapse in={ ! isMinimized }>
 					{ dialogContentChildren && (
-						<Box sx={ { pt: 5, px: 5, pb: 0 } }>
+						<Box sx={ { pt: 2, px: 2, pb: 0 } }>
 							{ dialogContentChildren }
 						</Box>
 					) }
 
 					{ error && (
-						<Box sx={ { pt: 5, px: 5, pb: 0 } }>
+						<Box sx={ { pt: 2, px: 2, pb: 0 } }>
 							<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
 						</Box>
 					) }
@@ -205,8 +205,8 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 							<>
 								<Divider />
 
-								<Box sx={ { p: 4 } }>
-									<Box sx={ { overflow: 'hidden', p: 2 } }>
+								<Box sx={ { p: 1.5 } }>
+									<Box sx={ { overflow: 'hidden', p: 0.5 } }>
 										<Box
 											sx={ {
 												display: 'flex',
@@ -235,7 +235,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 
 								{
 									screenshots.length > 0 && (
-										<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="space-between">
+										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="flex" justifyContent="space-between">
 											<RegenerateButton onClick={ handleRegenerate } disabled={ isLoading || isPromptFormActive } />
 
 											{
