@@ -1391,7 +1391,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert
 		await page.setViewportSize( viewportSize.mobile );
 
-		expect.soft( await page.locator( '.e-n-tabs' ).screenshot( {
+		expect.soft( await page.locator( '.elementor-widget-n-tabs' ).screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'tabs-accordion-title-width.jpeg' );
 
