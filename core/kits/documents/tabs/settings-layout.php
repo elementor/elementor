@@ -106,24 +106,25 @@ class Settings_Layout extends Tab_Base {
 			'space_between_widgets',
 			[
 				'label' => $widgets_space_label,
-				'type' => Controls_Manager::SLIDER,
+				'type' => Controls_Manager::GAPS,
 				'default' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
+					'unit' => 'px',
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 40,
-					],
-				],
 				'placeholder' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{SIZE}}{{UNIT}}',
-					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
+					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
+					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				],
+				'conversion_map' => [
+					'old_key' => 'size',
+					'new_key' => 'column',
 				],
 			]
 		);
