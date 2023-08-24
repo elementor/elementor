@@ -137,8 +137,8 @@
 		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
-		padding-inline-start: var(--bc-padding-inline-start, 0);
-		padding-inline-end: var(--bc-padding-inline-end, 0);
+		padding-inline-start: 0;
+		padding-inline-end: 0;
 		height: 100%;
 	}
 

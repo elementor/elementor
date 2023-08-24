@@ -42,8 +42,6 @@
 
 @mixin e-grid-outline-boxed {
 	@include e-grid-outline-base;
-	//padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
-	//padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
 	width: var(--width);
 	margin: 0 auto;
 }
