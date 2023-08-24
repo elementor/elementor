@@ -24,8 +24,8 @@
 
 // mixins
 @mixin e-grid-outline-base {
-	padding-top: var(--padding-top);
-	padding-bottom: var(--padding-bottom);
+	padding-block-start: var(--bc-padding-block-start, var(--padding-block-start));
+	padding-block-end: var(--bc-padding-block-end, var(--padding-block-end));
 	display: grid;
 	position: absolute;
 	top: 0;
@@ -48,8 +48,8 @@
 
 @mixin e-grid-outline-full-width {
 	@include e-grid-outline-base;
-	padding-right: var(--padding-right);
-	padding-left: var(--padding-left);
+	padding-inline-end: var(--bc-padding-inline-end, var(--padding-inline-end));
+	padding-inline-start: var(--bc-padding-inline-start, var(--padding-inline-start));
 	width: 100%;
 	left: 0;
 }
