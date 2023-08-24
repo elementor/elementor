@@ -15,6 +15,7 @@ use Elementor\Group_Control_Grid_Container;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
+use Elementor\Modules\ControlConverter\Module as Control_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1827,5 +1828,9 @@ class Container extends Element_Base {
 		$this->register_layout_tab();
 		$this->register_style_tab();
 		$this->register_advanced_tab();
+	}
+
+	public function on_import( $element ) {
+		return Control_Converter::flex_container_gaps_converter( $element );
 	}
 }
