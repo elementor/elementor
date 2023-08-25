@@ -196,25 +196,39 @@ class AddSectionBase extends Marionette.ItemView {
 			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
 			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
 
-		const newContainer = ContainerHelper.createContainer(
-			{
-				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
-				grid_columns_grid: {
-					unit: 'fr',
-					size: parsedStructure.columns,
+		const newContainer = $e.run( 'document/elements/create', {
+			container: elementor.getPreviewContainer(),
+			model: {
+				elType: 'container',
+				title: __( 'Grid', 'elementor' ),
+				custom: {
+					isPreset: true,
+					originalWidget: 'container',
+					presetWidget: 'container_grid',
+					preset_settings: {
+						container_type: ContainerHelper.CONTAINER_TYPE_GRID,
+						presetIcon: 'eicon-container-grid',
+						presetTitle: __( 'Grid', 'elementor' ),
+					},
 				},
-				grid_rows_grid: {
-					unit: 'fr',
-					size: parsedStructure.rows,
-				},
-				grid_rows_grid_mobile: {
-					unit: 'fr',
-					size: parsedStructure.rows,
+				settings: {
+					container_type: ContainerHelper.CONTAINER_TYPE_GRID,
+					grid_columns_grid: {
+						unit: 'fr',
+						size: parsedStructure.columns,
+					},
+					grid_rows_grid: {
+						unit: 'fr',
+						size: parsedStructure.rows,
+					},
+					grid_rows_grid_mobile: {
+						unit: 'fr',
+						size: parsedStructure.rows,
+					},
 				},
 			},
-			elementor.getPreviewContainer(),
-			this.options,
-		);
+			options: Object.assign( {}, this.options ),
+		} );
 
 		if ( isAddedAboveAnotherContainer ) {
 			this.destroy();
