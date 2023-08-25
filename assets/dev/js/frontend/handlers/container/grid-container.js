@@ -59,11 +59,11 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.getCorrectContainer();
 		// Re-init empty view element after container layout change
 		const selectors = this.getSettings( 'selectors' ),
-			isGridContainer = this.getElementSettings( 'container_type' );
+			isGridContainer = 'grid' === this.getElementSettings( 'container_type' );
 
 		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
 
-		if ( 'grid' === isGridContainer && this.elements?.emptyView ) {
+		if ( isGridContainer && this.elements?.emptyView ) {
 			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 		}
 
