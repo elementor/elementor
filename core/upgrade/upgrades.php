@@ -860,7 +860,7 @@ class Upgrades {
 	public static function _v_3_17_0_site_settings_updates() {
 		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
 
-		foreach( $options as $option_name ) {
+		foreach ( $options as $option_name ) {
 			$kit_id = get_option( $option_name );
 
 			if ( ! $kit_id ) {
