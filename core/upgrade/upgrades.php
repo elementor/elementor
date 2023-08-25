@@ -857,6 +857,34 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_17_0_site_settings_updates() {
+		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
+
+		foreach( $options as $option_name ) {
+			$kit_id = get_option( $option_name );
+
+			if ( ! $kit_id ) {
+				continue;
+			}
+
+			$kit_data_array = get_post_meta( (int) $kit_id, '_elementor_page_settings', true );
+
+			$setting_not_exist = ! isset( $kit_data_array['space_between_widgets'] );
+			$already_processed = isset( $kit_data_array['space_between_widgets']['column'] );
+
+			if ( $setting_not_exist || $already_processed ) {
+				continue;
+			}
+
+			$size = strval( $kit_data_array['space_between_widgets']['size'] );
+			$kit_data_array['space_between_widgets']['column'] = $size;
+			$kit_data_array['space_between_widgets']['row'] = $size;
+			$kit_data_array['space_between_widgets']['isLinked'] = true;
+
+			update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
+		}
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 
