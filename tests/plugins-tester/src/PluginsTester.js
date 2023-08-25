@@ -41,7 +41,7 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `SLUG=${ slug } npm run test:plugin:activate` );
+			this.cmd( `SLUG=${ slug } npm run test:plugin:activate` );
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
