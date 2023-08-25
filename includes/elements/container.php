@@ -385,6 +385,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
 				'separator' => 'after',
+				'frontend_available' => true,
 			];
 		}
 
