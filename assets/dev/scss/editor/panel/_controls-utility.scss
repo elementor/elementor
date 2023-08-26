@@ -261,7 +261,7 @@ $font-family-monospace: monospace;
 					border-start-start-radius: var(--e-a-border-radius);
 					border-start-end-radius: 0;
 					border-end-start-radius: var(--e-a-border-radius);
-					border-end-end-radius: var(--e-a-border-radius);
+					border-end-end-radius: 0;
 
 					&:focus {
 						border-color: var(--e-a-border-color-focus);
