@@ -73,6 +73,10 @@
 		},
 
 		hideIframeContent() {
+			if ( ! this.isElementorMode ) {
+				return;
+			}
+
 			const style = `<style>
 				.editor-post-text-editor,
 				.block-editor-block-list__layout {
