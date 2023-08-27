@@ -874,7 +874,7 @@ test.describe( 'Container tests @container', () => {
 		expect.soft( currentWidthUnitValue ).toBe( '%' );
 	} );
 
-	test( 'Gaps Control test - Check that control placeholder', async ( { page }, testInfo ) => {
+	test.only( 'Gaps Control test - Check that control placeholder', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage();
 
