@@ -15,8 +15,6 @@ use Elementor\Group_Control_Grid_Container;
 use Elementor\Plugin;
 use Elementor\Shapes;
 use Elementor\Utils;
-use Elementor\Modules\ControlConverters\Module as Command_Invoker;
-use Elementor\Modules\ControlConverters\Slider_To_Gaps_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1844,11 +1842,34 @@ class Container extends Element_Base {
 	}
 
 	public function on_import( $element ) {
-		$invoker = new Command_Invoker();
-		$command = new Slider_To_Gaps_Converter();
+		return self::slider_to_gaps_converter( $element );
+	}
 
-		$invoker->setCommand( $command );
+	/**
+	 * convert slider to gaps control for the 3.16 upgrade script
+	 *
+	 * @param $element
+	 * @return array
+	 */
+	public static function slider_to_gaps_converter( $element ) {
+		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
+		$breakpoints[] = 'desktop';
+		$control_name = 'flex_gap';
 
-		return $invoker->executeCommand( $element );
+		foreach ( $breakpoints as $breakpoint ) {
+			$control = 'desktop' !== $breakpoint
+					? $control_name . '_' . $breakpoint
+					: $control_name;
+
+			if ( isset( $element['settings'][ $control ] ) ) {
+				$old_size = strval( $element['settings'][ $control ]['size'] );
+
+				$element['settings'][ $control ]['column'] = $old_size;
+				$element['settings'][ $control ]['row'] = $old_size;
+				$element['settings'][ $control ]['isLinked'] = true;
+			}
+		}
+
+		return $element;
 	}
 }
