@@ -350,7 +350,7 @@ class Container extends Element_Base {
 			'selector' => '{{WRAPPER}}',
 			'fields_options' => [
 				'gap' => [
-					'label' => esc_html_x( 'Gap between elements', 'Flex Container Control', 'elementor' ),
+					'label' => esc_html_x( 'Gaps', 'Flex Container Control', 'elementor' ),
 					'device_args' => [
 						Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 							// Use the default gap from the kit as a placeholder.
@@ -385,6 +385,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--display: {{VALUE}}',
 				],
 				'separator' => 'after',
+				'frontend_available' => true,
 			];
 		}
 
