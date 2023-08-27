@@ -1841,4 +1841,36 @@ class Container extends Element_Base {
 		$this->register_style_tab();
 		$this->register_advanced_tab();
 	}
+
+	public function on_import( $element ) {
+		return self::slider_to_gaps_converter( $element );
+	}
+
+	/**
+	 * convert slider to gaps control for the 3.16 upgrade script
+	 *
+	 * @param $element
+	 * @return array
+	 */
+	public static function slider_to_gaps_converter( $element ) {
+		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
+		$breakpoints[] = 'desktop';
+		$control_name = 'flex_gap';
+
+		foreach ( $breakpoints as $breakpoint ) {
+			$control = 'desktop' !== $breakpoint
+					? $control_name . '_' . $breakpoint
+					: $control_name;
+
+			if ( isset( $element['settings'][ $control ] ) ) {
+				$old_size = strval( $element['settings'][ $control ]['size'] );
+
+				$element['settings'][ $control ]['column'] = $old_size;
+				$element['settings'][ $control ]['row'] = $old_size;
+				$element['settings'][ $control ]['isLinked'] = true;
+			}
+		}
+
+		return $element;
+	}
 }
