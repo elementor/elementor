@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator } from './helper';
+import _path from 'path';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -241,6 +242,28 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			containerWidth = ( await containerElement.boundingBox() ).width,
 			nestedAccordionWidth = ( await nestedAccordionElement.boundingBox() ).width;
 
-		expect( nestedAccordionWidth ).toEqual( containerWidth );
+		expect.soft( nestedAccordionWidth ).toEqual( containerWidth );
+	} );
+
+	test( 'Nested Accordion with inner Nested Accordion', async ( { browser }, testInfo ) => {
+		// Act
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame();
+
+		await test.step( 'Load Template', async () => {
+			const filePath = _path.resolve( __dirname, `./templates/nested-accordions-parent-child.json` );
+			await editor.loadTemplate( filePath, false );
+			await frame.waitForSelector( '.elementor-widget-n-accordion' );
+			await editor.closeNavigatorIfOpen();
+		} );
+
+		await test.step( 'Verify that the inner accordion doesn\'t inherit styling from parent', async () => {
+			expect.soft( await editor.getPreviewFrame()
+				.locator( '.e-n-accordion' ).first()
+				.screenshot( { type: 'png' } ) )
+				.toMatchSnapshot( 'nested-accordions-parent-child.png' );
+		} );
 	} );
 } );
