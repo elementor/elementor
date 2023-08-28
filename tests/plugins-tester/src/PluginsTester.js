@@ -32,9 +32,9 @@ export class PluginsTester {
 	}
 
 	runWP( cmd ) {
-		// If ( ! this.options.runServer ) {
-		// return this.cmd( `cd ../../ && ${ cmd }` );
-		// }
+		if ( ! this.options.runServer ) {
+			return this.cmd( `cd ../../ && ${ cmd }` );
+		}
 		return this.cmd( cmd );
 	}
 
