@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
+use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -24,7 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
-	const ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED = 'elementor_container_gap_updates_reversed';
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
@@ -856,10 +856,6 @@ class Upgrades {
 
 			self::save_updated_document( $post_id, $data );
 		}
-
-		if ( get_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) ) {
-			delete_option( self::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED );
-		}
 	}
 
 	public static function remove_remote_info_api_data() {
@@ -946,7 +942,7 @@ class Upgrades {
 
 				$element = self::maybe_convert_to_inner_container( $element );
 				$element = self::maybe_convert_to_grid_container( $element );
-				return self::flex_gap_responsive_control_iterator( $element );
+				return Container::slider_to_gaps_converter( $element );
 			}
 		);
 	}
@@ -984,45 +980,14 @@ class Upgrades {
 	}
 
 	/**
-	 * @param $element
-	 *
-	 * @return array
-	 */
-	private static function flex_gap_responsive_control_iterator( $element ) {
-		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
-		$breakpoints[] = 'desktop';
-		$control_name = 'flex_gap';
-
-		foreach ( $breakpoints as $breakpoint ) {
-			$control = 'desktop' !== $breakpoint
-				? $control_name . '_' . $breakpoint
-				: $control_name;
-
-			if ( isset( $element['settings'][ $control ] ) ) {
-				$old_size = strval( $element['settings'][ $control ]['size'] );
-
-				$element['settings'][ $control ]['column'] = $old_size;
-				$element['settings'][ $control ]['row'] = $old_size;
-				$element['settings'][ $control ]['isLinked'] = true;
-			}
-		}
-
-		return $element;
-	}
-
-	/**
 	 * @param $post_id
 	 * @param $data
 	 *
 	 * @return void
 	 */
 	private static function save_updated_document( $post_id, $data ) {
-		$document = Plugin::$instance->documents->get( $post_id );
+		$json_value = wp_slash( wp_json_encode( $data ) );
 
-		$document->save(
-			[
-				'elements' => $data,
-			]
-		);
+		update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 	}
 }
