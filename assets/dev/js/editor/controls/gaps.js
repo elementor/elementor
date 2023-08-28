@@ -41,10 +41,6 @@ ControlGapItemView = ControlDimensionsView.extend( {
 
 		this.setSettingsModel( values );
 	},
-
-	getControlPlaceholder() {
-		return '';
-	},
 } );
 
 module.exports = ControlGapItemView;

@@ -41,13 +41,12 @@ class Control_Gaps extends Control_Dimensions {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array_merge(
-			parent::get_default_value(), [
-				'column' => '',
-				'row' => '',
-				'isLinked' => true,
-			]
-		);
+		return [
+			'column' => '',
+			'row' => '',
+			'isLinked' => true,
+			'unit' => 'px',
+		];
 	}
 
 	public function get_singular_name() {
