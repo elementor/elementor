@@ -115,4 +115,13 @@ class Utils {
 
 		return $import_sessions;
 	}
+
+	public static function update_space_between_widgets_values( $space_between_widgets ) {
+		$size = strval( $space_between_widgets['size'] );
+		$space_between_widgets['column'] = $size;
+		$space_between_widgets['row'] = $size;
+		$space_between_widgets['isLinked'] = true;
+
+		return $space_between_widgets;
+	}
 }

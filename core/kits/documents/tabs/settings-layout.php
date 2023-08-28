@@ -356,4 +356,21 @@ class Settings_Layout extends Tab_Base {
 			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}
 	}
+
+
+	public function convert_control( $data ) {
+
+		return $data;
+	}
+
+	public function __construct( $parent ) {
+		parent::__construct( $parent );
+
+		add_filter( 'elementor/app/site-settings/import', function( $data ) {
+			$data = $this->convert_control( $data );
+			return $data;
+		} );
+	}
+
+
 }
