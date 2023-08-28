@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 
 export class PluginsTester {
 	options = {
+		runServer: true,
 		debug: false,
 		pluginsToTest: [],
 		cwd: '',
@@ -15,9 +16,11 @@ export class PluginsTester {
 	}
 
 	async run() {
-		this.setCwd();
-		this.runServer();
-		this.prepareTestSite();
+		if ( this.options.runServer ) {
+			this.setCwd();
+			this.runServer();
+			this.prepareTestSite();
+		}
 		this.disableContainers();
 		this.checkPlugins();
 	}
@@ -29,9 +32,9 @@ export class PluginsTester {
 	}
 
 	runWP( cmd ) {
-		if ( ! this.options.runServer ) {
-			return this.cmd( `cd ../../ && ${ cmd }` );
-		}
+		// If ( ! this.options.runServer ) {
+		// return this.cmd( `cd ../../ && ${ cmd }` );
+		// }
 		return this.cmd( cmd );
 	}
 
@@ -49,7 +52,7 @@ export class PluginsTester {
 				} );
 			}
 
-			this.cmd( `npx wp-env run cli wp plugin deactivate ${ slug }` );
+			this.runWP( `npx wp-env run cli wp plugin deactivate ${ slug }` );
 		} );
 
 		if ( errors.length ) {
@@ -68,7 +71,7 @@ export class PluginsTester {
 
 	disableContainers() {
 		console.log( 'Disabling containers!!!' );
-		this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+		this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
 	}
 
 	runServer() {

@@ -50,6 +50,7 @@ logger.log(
 );
 
 new PluginsTester( {
+	runServer: ! process.env.CI,
 	debug: true,
 	pluginsToTest,
 	diffThreshold,
