@@ -63,7 +63,7 @@
 		"@testing-library/dom": "^8.17.1",
 		"@wordpress/babel-plugin-import-jsx-pragma": "~3.2.0",
 		"@wordpress/babel-preset-default": "^3.0.2",
-		"@wordpress/env": "7.0.0",
+		"@wordpress/env": "5.16.0",
 		"@wordpress/eslint-plugin": "^12.6.0",
 		"autoprefixer": "~10.4.12",
 		"babel-jest": "^28.1.2",
