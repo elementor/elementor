@@ -885,7 +885,6 @@ class Upgrades {
 
 		$kit_data_array['space_between_widgets'] = Utils::update_space_between_widgets_values( $kit_data_array['space_between_widgets'] );
 
-
 		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
 	}
 
