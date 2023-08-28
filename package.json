@@ -147,6 +147,7 @@
 		"reach-router-hash-history": "0.0.3",
 		"react-avatar-editor": "^13.0.0",
 		"react-draggable": "^4.4.5",
+		"react-infinite-scroller": "^1.2.6",
 		"react-markdown": "^8.0.5",
 		"react-redux": "^7.2.6",
 		"react-sketch-canvas": "^6.2.0",

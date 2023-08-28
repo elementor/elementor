@@ -9,6 +9,7 @@ import useDeletePromptHistoryItem from '../../hooks/use-delete-prompt-history-it
 import PromptErrorMessage from '../prompt-error-message';
 import { groupPromptHistoryData, LAST_30_DAYS_KEY, LAST_7_DAYS_KEY } from './helpers/history-period-helpers';
 import PromptHistoryEmpty from './parts/modal-empty';
+import InfiniteScroll from 'react-infinite-scroller';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	width: 360,
@@ -20,21 +21,26 @@ const StyledContent = styled( Box )( ( { theme } ) => ( {
 	height: '52vh',
 } ) );
 
+const ITEMS_LIMIT = 10;
+
 const PromptHistoryModal = ( { promptType, ...props } ) => {
 	const lastRun = useRef( () => {} );
+	const scrollContainer = useRef( null );
 
 	const {
 		items,
+		meta,
 		isLoading: isHistoryFetchingInProgress,
 		error: historyFetchingError,
 		send: fetchData,
-	} = usePromptHistory( { promptType } );
+		deleteItemById,
+	} = usePromptHistory( promptType );
 
 	const {
 		isLoading: isDeletingInProgress,
 		error: historyDeletingError,
 		send: deleteItem,
-	} = useDeletePromptHistoryItem( { promptType } );
+	} = useDeletePromptHistoryItem();
 
 	const { onModalClose } = useContext( PromptHistoryContext );
 
@@ -42,10 +48,20 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 	const isLoading = isHistoryFetchingInProgress || isDeletingInProgress;
 
 	useEffect( () => {
-		lastRun.current = async () => fetchData();
+		lastRun.current = async () => fetchData( { page: 1, limit: ITEMS_LIMIT } );
 
 		lastRun.current();
 	}, [] );
+
+	const loadNext = () => {
+		if ( isLoading || meta?.currentPage === meta?.totalPages ) {
+			return;
+		}
+
+		lastRun.current = async () => fetchData( { page: meta.currentPage + 1, limit: ITEMS_LIMIT } );
+
+		lastRun.current();
+	};
 
 	const onHistoryItemDelete = async ( id ) => {
 		lastRun.current = async () => await deleteItem( id );
@@ -53,9 +69,7 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 		await lastRun.current();
 
 		if ( ! historyDeletingError ) {
-			lastRun.current = async () => await fetchData();
-
-			await lastRun.current();
+			deleteItemById( id );
 		}
 	};
 
@@ -105,9 +119,17 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 
 						{ isLoading && <LinearProgress color="secondary" /> }
 
-						<Box sx={ { overflowY: 'scroll', height: '85%' } }>
-							{ ! isLoading && 0 === items?.length && <PromptHistoryEmpty promptType={ promptType } /> }
-							{ ! isLoading && items?.length > 0 && renderPeriods() }
+						<Box sx={ { overflowY: 'scroll', height: '85%' } } ref={ scrollContainer }>
+							{ 0 === items?.length && <PromptHistoryEmpty promptType={ promptType } /> }
+
+							{ items?.length > 0 && <InfiniteScroll loadMore={ loadNext }
+								getScrollParent={ () => scrollContainer.current }
+								useWindow={ false }
+								isReverse={ false }
+								threshold={ 30 }
+								initialLoad={ false }
+								hasMore={ meta.currentPage !== meta.totalPages }
+								children={ renderPeriods() } /> }
 						</Box>
 					</StyledContent>
 				</Slide>

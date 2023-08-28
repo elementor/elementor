@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getHistory } from '../api';
+import { produce } from 'immer';
 
 const normalizeItems = ( items ) => {
 	return items?.map( ( item ) => {
@@ -13,17 +14,23 @@ const normalizeItems = ( items ) => {
 	} );
 };
 
-const usePromptHistory = ( { promptType, page, limit } ) => {
+const usePromptHistory = ( promptType ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ data, setData ] = useState( [] );
+	const [ data, setData ] = useState( {} );
 	const [ error, setError ] = useState( '' );
 
-	const send = async () => new Promise( ( resolve, reject ) => {
+	const send = async ( { page, limit } ) => new Promise( ( resolve, reject ) => {
 		setIsLoading( true );
 
 		getHistory( promptType, page, limit )
-			.then( ( history ) => {
-				setData( history );
+			.then( ( response ) => {
+				setData( produce( ( draft ) => {
+					draft.meta = response.meta;
+					draft.items = [ ...draft?.items || [], ...normalizeItems( response.items ) ];
+
+					return draft;
+				} ) );
+
 				resolve( true );
 			} )
 			.catch( ( err ) => {
@@ -35,12 +42,29 @@ const usePromptHistory = ( { promptType, page, limit } ) => {
 			.finally( () => setIsLoading( false ) );
 	} );
 
+	const deleteItemById = ( id ) => {
+		const itemIndex = data.items.findIndex( ( item ) => item.id === id );
+
+		if ( -1 === itemIndex ) {
+			return false;
+		}
+
+		setData( produce( ( draft ) => {
+			draft.items.splice( itemIndex, 1 );
+
+			return draft;
+		} ) );
+
+		return true;
+	};
+
 	return {
 		isLoading,
 		error,
-		items: normalizeItems( data.items ),
+		items: data.items,
 		meta: data.meta,
 		send,
+		deleteItemById,
 	};
 };
 
