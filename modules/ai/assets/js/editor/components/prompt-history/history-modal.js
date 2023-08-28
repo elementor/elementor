@@ -10,6 +10,7 @@ import PromptErrorMessage from '../prompt-error-message';
 import { groupPromptHistoryData, LAST_30_DAYS_KEY, LAST_7_DAYS_KEY } from './helpers/history-period-helpers';
 import PromptHistoryEmpty from './parts/modal-empty';
 import InfiniteScroll from 'react-infinite-scroller';
+import PromptHistoryUpgrade from './parts/modal-upgrade';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	width: 360,
@@ -22,6 +23,7 @@ const StyledContent = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const ITEMS_LIMIT = 10;
+const NO_HISTORY_ACCESS_ERROR = 'invalid_connect_data';
 
 const PromptHistoryModal = ( { promptType, ...props } ) => {
 	const lastRun = useRef( () => {} );
@@ -44,8 +46,9 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 
 	const { onModalClose } = useContext( PromptHistoryContext );
 
-	const isError = historyFetchingError || historyDeletingError;
+	const error = historyFetchingError || historyDeletingError;
 	const isLoading = isHistoryFetchingInProgress || isDeletingInProgress;
+	const isLastPage = meta && meta?.currentPage === meta?.totalPages;
 
 	useEffect( () => {
 		lastRun.current = async () => fetchData( { page: 1, limit: ITEMS_LIMIT } );
@@ -54,7 +57,7 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 	}, [] );
 
 	const loadNext = () => {
-		if ( isLoading || meta?.currentPage === meta?.totalPages ) {
+		if ( isLoading || isLastPage ) {
 			return;
 		}
 
@@ -115,11 +118,15 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 					<StyledContent aria-label={ __( 'Prompt history modal', 'elementor' ) }>
 						<PromptHistoryModalHeader onClose={ onModalClose } />
 
-						{ isError && <PromptErrorMessage error={ isError } onRetry={ lastRun.current } sx={ { position: 'absolute', zIndex: 1 } } /> }
+						{ error && NO_HISTORY_ACCESS_ERROR !== error && <PromptErrorMessage error={ error }
+							onRetry={ lastRun.current }
+							sx={ { position: 'absolute', zIndex: 1 } } /> }
 
 						{ isLoading && <LinearProgress color="secondary" /> }
 
 						<Box sx={ { overflowY: 'scroll', height: '85%' } } ref={ scrollContainer }>
+							{ error && NO_HISTORY_ACCESS_ERROR === error && <PromptHistoryUpgrade variant="full" /> }
+
 							{ 0 === items?.length && <PromptHistoryEmpty promptType={ promptType } /> }
 
 							{ items?.length > 0 && <InfiniteScroll loadMore={ loadNext }
@@ -128,8 +135,10 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 								isReverse={ false }
 								threshold={ 30 }
 								initialLoad={ false }
-								hasMore={ meta.currentPage !== meta.totalPages }
+								hasMore={ ! isLastPage }
 								children={ renderPeriods() } /> }
+
+							{ items?.length > 0 && isLastPage && <PromptHistoryUpgrade variant="small" /> }
 						</Box>
 					</StyledContent>
 				</Slide>
