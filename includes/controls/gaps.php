@@ -91,7 +91,6 @@ class Control_Gaps extends Control_Dimensions {
 									// PHPCS - the variable $dimension_key is a plain text.
 									echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									?> ) ) {
-										console.log( {placeholder} )
 											print( placeholder.<?php
 											// PHPCS - the variable $dimension_key is a plain text.
 											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
