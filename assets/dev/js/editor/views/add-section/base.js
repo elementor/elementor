@@ -214,6 +214,15 @@ class AddSectionBase extends Marionette.ItemView {
 			},
 			elementor.getPreviewContainer(),
 			this.options,
+			{
+				title: __( 'Grid', 'elementor' ),
+				custom: {
+					isPreset: true,
+					preset_settings: {
+						presetIcon: 'eicon-container-grid',
+					},
+				},
+			},
 		);
 
 		if ( isAddedAboveAnotherContainer ) {
