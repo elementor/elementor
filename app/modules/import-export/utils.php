@@ -117,6 +117,13 @@ class Utils {
 	}
 
 	public static function update_space_between_widgets_values( $space_between_widgets ) {
+		$setting_not_exist = ! isset( $space_between_widgets['size'] );
+		$already_processed = isset( $space_between_widgets['column'] );
+
+		if ( $setting_not_exist || $already_processed ) {
+			return $space_between_widgets;
+		}
+
 		$size = strval( $space_between_widgets['size'] );
 		$space_between_widgets['column'] = $size;
 		$space_between_widgets['row'] = $size;
