@@ -453,6 +453,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_3_17_0_site_settings_updates() {
+		// Arrange
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
 		$original_kit_id = Plugin::$instance->kits_manager->get_active_id();
@@ -465,18 +466,20 @@ class Test_Upgrades extends Elementor_Test_Base {
 			],
 		] );
 
+		// Act
 		Upgrades::_v_3_17_0_site_settings_updates();
 
 		$kit_data_array = get_post_meta( (int) $new_kit_id, '_elementor_page_settings', true );
 
+		// Assert
 		$this->assertArrayHasKey( 'row', $kit_data_array['space_between_widgets'] );
 		$this->assertArrayHasKey( 'column', $kit_data_array['space_between_widgets'] );
 		$this->assertArrayHasKey( 'isLinked', $kit_data_array['space_between_widgets'] );
-
 		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['row'] );
 		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['column'] );
 		$this->assertTrue( $kit_data_array['space_between_widgets']['isLinked'] );
 
+		// Tear down
 		if ( $original_kit_id ) {
 			update_option( 'elementor_active_kit', $original_kit_id );
 		}
