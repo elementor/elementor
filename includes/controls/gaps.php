@@ -59,47 +59,4 @@ class Control_Gaps extends Control_Dimensions {
 			'row' => esc_html__( 'Row', 'elementor' ),
 		];
 	}
-
-	/**
-	 * Render gaps control output in the editor.
-	 *
-	 * Used to generate the control HTML in the editor using Underscore JS
-	 * template. The variables for the class are available using `data` JS
-	 * object.
-	 *
-	 * @since 3.16.0
-	 * @access public
-	 */
-	protected function print_input_fields( $class_name ) {
-		foreach ( $this->get_dimensions() as $dimension_key => $dimension_title ) :
-			?>
-		<li class="elementor-control-<?php echo esc_attr( $class_name ); ?>">
-			<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
-			// PHPCS - the variable $dimension_key is a plain text.
-			echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			?>" placeholder="<#
-				placeholder = view.getControlPlaceholder();
-				if ( _.isObject( placeholder ) && ! _.isUndefined( placeholder.<?php
-					// PHPCS - the variable $dimension_key is a plain text.
-					echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?> ) ) {
-					print( placeholder.<?php
-					// PHPCS - the variable $dimension_key is a plain text.
-					echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					?> );
-				} #>"
-			<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
-			// PHPCS - the variable $dimension_key is a plain text.
-			echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			?>' ) ) { #>
-			disabled
-			<# } #>
-			/>
-			<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-<?php echo esc_attr( $class_name ); ?>-label"><?php
-				// PHPCS - the variable $dimension_title holds an escaped translated value.
-				echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			?></label>
-		</li>
-		<?php endforeach;
-	}
 }
