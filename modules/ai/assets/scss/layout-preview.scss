@@ -3,6 +3,16 @@
 	outline-offset: -2px;
 }
 
+// Force screenshot containers not to have animations so the screenshots
+// won't be broken due to elements movement.
+[data-id^="e-ai-screenshot-container"] {
+	&, & * {
+		animation-duration: 0s !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0s !important;
+	}
+}
+
 .e-ai-preview-container {
 	&--idle {
 		height: 154px;
