@@ -104,7 +104,39 @@ class Control_Dimensions extends Control_Base_Units {
 			<?php $this->print_units_template(); ?>
 			<div class="elementor-control-input-wrapper">
 				<ul class="elementor-control-<?php echo esc_attr( $class_name ); ?>s">
-					<?php $this->print_input_fields( $class_name ); ?>
+					<?php
+					foreach ( $this->get_dimensions() as $dimension_key => $dimension_title ) :
+						?>
+						<li class="elementor-control-<?php echo esc_attr( $class_name ); ?>">
+							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
+								// PHPCS - the variable $dimension_key is a plain text.
+								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>" placeholder="<#
+									placeholder = view.getControlPlaceholder();
+									if ( _.isObject( placeholder ) && ! _.isUndefined( placeholder.<?php
+										// PHPCS - the variable $dimension_key is a plain text.
+										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									?> ) ) {
+											print( placeholder.<?php
+											// PHPCS - the variable $dimension_key is a plain text.
+											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+											?> );
+									} else {
+										print( placeholder );
+									} #>"
+							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
+								// PHPCS - the variable $dimension_key is a plain text.
+								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>' ) ) { #>
+								disabled
+								<# } #>
+									/>
+							<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-<?php echo esc_attr( $class_name ); ?>-label"><?php
+								// PHPCS - the variable $dimension_title holds an escaped translated value.
+								echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?></label>
+						</li>
+					<?php endforeach; ?>
 					<li>
 						<button class="elementor-link-<?php echo esc_attr( $class_name ); ?>s tooltip-target" data-tooltip="<?php echo esc_attr__( 'Link values together', 'elementor' ); ?>">
 							<span class="elementor-linked">
@@ -124,40 +156,5 @@ class Control_Dimensions extends Control_Base_Units {
 		<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
-	}
-
-	protected function print_input_fields( $class_name ) {
-		foreach ( $this->get_dimensions() as $dimension_key => $dimension_title ) :
-			?>
-			<li class="elementor-control-<?php echo esc_attr( $class_name ); ?>">
-				<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="text" data-setting="<?php
-				// PHPCS - the variable $dimension_key is a plain text.
-				echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>" placeholder="<#
-											placeholder = view.getControlPlaceholder();
-											if ( _.isObject( placeholder ) && ! _.isUndefined( placeholder.<?php
-											// PHPCS - the variable $dimension_key is a plain text.
-											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-											?> ) ) {
-													print( placeholder.<?php
-													// PHPCS - the variable $dimension_key is a plain text.
-													echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-													?> );
-											} else {
-												print( placeholder );
-											} #>"
-				<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
-				// PHPCS - the variable $dimension_key is a plain text.
-				echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>' ) ) { #>
-				disabled
-				<# } #>
-				/>
-				<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-<?php echo esc_attr( $class_name ); ?>-label"><?php
-					// PHPCS - the variable $dimension_title holds an escaped translated value.
-					echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?></label>
-			</li>
-		<?php endforeach;
 	}
 }
