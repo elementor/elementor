@@ -1,8 +1,8 @@
 === Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 5.9
-Tested up to: 6.2
+Requires at least: 6.0
+Tested up to: 6.3
 Requires PHP: 7.0
 Stable tag: 3.12.1
 License: GPLv3
@@ -146,7 +146,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.9 or greater
+* WordPress 6.0 or greater
 * PHP version 7.0 or greater
 * MySQL version 5.0 or greater
 
@@ -239,6 +239,63 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.15.3 - 2023-08-20 =
+
+* Fix: Elements can't be edited after accessing the page settings panel ([#23365](https://github.com/elementor/elementor/issues/23365))
+* Fix: Reverted Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+* Fix: Elementor Admin Top Bar affects styling on non-elementor screens in WordPress
+* Fix: Changed CSS class for Apps page for better i18n support
+
+= 3.15.2 - 2023-08-09 =
+
+* Fix: Popular Apps notification is not presented as expected in RTL websites ([#23307](https://github.com/elementor/elementor/issues/23307))
+* Fix: Typo in Popular Apps notification ([#23329](https://github.com/elementor/elementor/issues/23329))
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+
+= 3.15.1 - 2023-08-02 =
+
+* Fix: Error notices appear on front after schemes code deprecated
+
+= 3.15.0 - 2023-07-31 =
+
+* New: Introducing Accordion widget - Unleash your design creativity with nesting capabilities and layout flexibility ([#2587](https://github.com/elementor/elementor/issues/2587))
+* New: Enhancements Elementor AI for Images - Seamlessly Remove and Replace Backgrounds
+* New: Introducing Apps Page - Discover a selection of tools, specifically tailored to enhance your Elementor-powered website
+* Tweak: Added a "Container" option to the 'Hover Area' dropdown in Lottie widget ([#20360](https://github.com/elementor/elementor/issues/20360))
+* Tweak: Updated several URLs from `http:` to `https` for enhanced compliance (props [@DAnn2012](https://github.com/DAnn2012))
+* Tweak: Added Image Size control to Gravatar image in Author Box widget
+* Tweak: Remove deprecated schemes area
+* Tweak: Accessibility Improvements feature merged to version
+* Tweak: Deleted `aspect-ratio` from SASS files
+* Tweak: Added keyboard accessibility to Repeater control
+* Tweak: Unified the appearance of `stretch` and `center` buttons in Tabs widgets
+* Tweak: Updated `eicons` library to v5.21.0
+* Tweak: Group together position controls in Icon Box widget
+* Tweak: Group together position controls in Image Box widget
+* Tweak: Added additional units to lightbox controls
+* Tweak: Implemented CSS logical properties in Elementor App
+* Tweak: Implemented CSS logical properties in Elementor Editor
+* Tweak: Enhanced `text-align` property by implementing CSS logical properties
+* Tweak: Improved panel UI in Video widget
+* Tweak: Replaced Display Percentage select control to toggle control in Progress Bar widget
+* Tweak: Added "Title HTML Tag" to Title in Progress Bar widget
+* Tweak: Updated recommended PHP version
+* Tweak: Added `classes_dictionary` support for editor controls
+* Tweak: Expanded AI resize option elevating the resolution limit to 2048px
+* Tweak: Landing Pages feature downgraded to BETA status
+* Tweak: Promoted "Global Style Preview" feature to BETA status
+* Fix: Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active ([#19394](https://github.com/elementor/elementor/issues/19394), [#19394](https://github.com/elementor/elementor/issues/19394))
+* Fix: Video lightbox incorrect aspect ratio when multiple video widgets are utilized on the same page ([#21649](https://github.com/elementor/elementor/issues/21649))
+* Fix: Disabling popup overlay does not disable it in the editor ([#22412](https://github.com/elementor/elementor/issues/22412))
+* Fix: Corrected typo in `DONOTCACHCEOBJECT` to `DONOTCACHEOBJECT` for accurate `do_not_cache` definition ([#22786](https://github.com/elementor/elementor/issues/22786))
+* Fix: Stretch option is not working as expected when items are set to the sides in Tabs widget ([#22774](https://github.com/elementor/elementor/issues/22774))
+* Fix: Color picker is not working as expected on document settings ([#22867](https://github.com/elementor/elementor/issues/22867))
+* Fix: Updated text domain of multiple strings to exclude 'elementor-pro' for better compatibility (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Video overlay image `aspect-ratio` fixes
+* Fix: Rectified template categories filter to reference the correct ID accurately
+* Fix: Lightbox overlay color was not visible when previewing the lightbox within the editor
 
 = 3.14.1 - 2023-06-26 =
 
