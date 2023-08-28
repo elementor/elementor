@@ -99,11 +99,11 @@ class Settings_Layout extends Tab_Base {
 		}
 
 		$widgets_space_label = $is_container_active
-			? esc_html__( 'Gap between elements', 'elementor' )
+			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
 		$this->add_control(
-			'Gaps',
+			'space_between_widgets',
 			[
 				'label' => $widgets_space_label,
 				'type' => Controls_Manager::GAPS,
