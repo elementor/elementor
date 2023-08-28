@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"test:setup": "wp-env run cli \"bash -c 'bash elementor-config/setup.sh'\"",
-		"test:plugin:activate": "wp-env run cli \"bash -c 'bash elementor-config/activate_plugin.sh $SLUG'\"",
+		"test:plugin:activate": "cd ../../ && wp-env run cli \"bash -c 'bash elementor-config/activate_plugin.sh $SLUG'\"",
 		"test": "node index.js",
 		"test:part1": "cross-env TEST_SUITE=part1 node index.js ",
 		"test:part2": "cross-env TEST_SUITE=part2 node index.js ",
