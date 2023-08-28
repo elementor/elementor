@@ -874,6 +874,37 @@ test.describe( 'Container tests @container', () => {
 		expect.soft( currentWidthUnitValue ).toBe( '%' );
 	} );
 
+	test( 'Gaps Control test - Check that control placeholder', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage();
+
+		await editor.addElement( { elType: 'container' }, 'document' );
+
+		const desktopGapControlColumnInput = await page.locator( '.elementor-control-flex_gap input[data-setting="column"]' ),
+			tabletGapControlColumnInput = await page.locator( '.elementor-control-flex_gap_tablet input[data-setting="column"]' ),
+			mobileGapControlColumnInput = await page.locator( '.elementor-control-flex_gap_mobile input[data-setting="column"]' );
+
+		await test.step( 'Check the control initial placeholder', async () => {
+			let gapControlPlaceholder = await desktopGapControlColumnInput.getAttribute( 'placeholder' );
+			await expect( gapControlPlaceholder ).toBe( '20' );
+			await expect( gapControlPlaceholder ).not.toBe( '[object, object]' );
+		} );
+
+		await test.step( 'Check the control placeholder inheritance from desktop to tablet after value change', async () => {
+			desktopGapControlColumnInput.fill( '50' );
+			await editor.changeResponsiveView( 'tablet' );
+			let gapControlPlaceholder = await tabletGapControlColumnInput.getAttribute( 'placeholder' );
+			await expect( gapControlPlaceholder ).toBe( '50' );
+		} );
+
+		await test.step( 'Check the control placeholder inheritance from tablet to mobile after value change', async () => {
+			tabletGapControlColumnInput.fill( '40' );
+			await editor.changeResponsiveView( 'mobile' );
+			let gapControlPlaceholder = await mobileGapControlColumnInput.getAttribute( 'placeholder' );
+			await expect( gapControlPlaceholder ).toBe( '40' );
+		} );
+	} );
+
 	test( 'Test dimensions with logical properties using ltr & rtl', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await wpAdmin.setExperiments( {
