@@ -104,8 +104,8 @@ jobs:
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master'
         run: |
-          npx wp-env run cli "wp core version"
-          npx wp-env run cli "wp --info"
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
       - name: Run Lighthouse tests
         if: matrix.wpCoreVersion != 'master'
         run: |
