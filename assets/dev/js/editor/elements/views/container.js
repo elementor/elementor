@@ -4,6 +4,7 @@ import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -141,10 +142,10 @@ const ContainerView = BaseElementView.extend( {
 		return parent.view.getNestingLevel() + 1;
 	},
 
-	checkIfParentIsWidget() {
-		const parent = this.container.parent;
+	isNestedElementContentContainer() {
+		const widgetType = this.container.parent.model.get( 'widgetType' ); // 'nested-accordion'
 
-		return 'widget' === parent.type;
+		return widgetType && widgetType.trim() !== '' && isWidgetSupportNesting( widgetType );
 	},
 
 	getDroppableAxis() {
@@ -415,7 +416,7 @@ const ContainerView = BaseElementView.extend( {
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
 			if ( ! this.model.get( 'isInner' ) ) {
-				this.model.set( 'isInner', this.checkIfParentIsWidget() || this.getNestingLevel() > 0 );
+				this.model.set( 'isInner', this.isNestedElementContentContainer() || this.getNestingLevel() > 0 );
 			}
 
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
