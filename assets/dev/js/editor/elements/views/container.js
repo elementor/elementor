@@ -141,6 +141,12 @@ const ContainerView = BaseElementView.extend( {
 		return parent.view.getNestingLevel() + 1;
 	},
 
+	checkIfParentIsWidget() {
+		const parent = this.container.parent;
+
+		return 'widget' === parent.type;
+	},
+
 	getDroppableAxis() {
 		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
 			currentDirection = this.getContainer().settings.get( this.getDirectionSettingKey() );
@@ -407,6 +413,7 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+			this.model.set( 'isInner', this.checkIfParentIsWidget() || this.getNestingLevel() > 0 );
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
@@ -428,7 +435,7 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
-		this.model.set( 'isInner', this.getNestingLevel() > 0 );
+		this.model.set( 'isInner', this.checkIfParentIsWidget() || this.getNestingLevel() > 0 );
 
 		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();
