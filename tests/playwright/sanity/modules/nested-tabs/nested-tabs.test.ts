@@ -1371,4 +1371,30 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( await tabTitle ).toHaveCSS( 'flex-basis', 'content' );
 		await expect.soft( await tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
+
+	test( 'Check title width inside the accordion mode', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage();
+
+		// Load template.
+		const filePath = _path.resolve( __dirname, `./templates/tabs-accordion.json` );
+		await editor.loadTemplate( filePath, false );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs' );
+
+		// Act.
+		// Open front end.
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+		// Assert
+		await page.setViewportSize( viewportSize.mobile );
+
+		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
+			type: 'png',
+		} ) ).toMatchSnapshot( 'tabs-accordion-title-width.png' );
+
+		await cleanup( wpAdmin );
+	} );
 } );

@@ -56,19 +56,24 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	initLayoutOverlay() {
+		this.getCorrectContainer();
+		// Re-init empty view element after container layout change
+		const selectors = this.getSettings( 'selectors' ),
+			isGridContainer = 'grid' === this.getElementSettings( 'container_type' );
+
+		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
+
+		if ( isGridContainer && this.elements?.emptyView ) {
+			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
+		}
+
 		if ( ! this.shouldDrawOutline() ) {
 			return;
 		}
 
-		this.getCorrectContainer();
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
-
-		// Re-init empty view element after container layout change
-		const selectors = this.getSettings( 'selectors' );
-		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
-		this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 	}
 
 	shouldDrawOutline() {
