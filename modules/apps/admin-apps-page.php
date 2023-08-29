@@ -116,7 +116,7 @@ class Admin_Apps_Page {
 				'image' => $images_url . 'fiverr.svg',
 			],
 			[
-				'name' => 'Hover',
+				'name' => 'Hover Custom Domains',
 				'author' => 'Tucows',
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-hover/',
 				'description' => 'Elevate your website with a custom domain for maximum online impact. Enjoy exclusive Elementor user discounts through our Hover partnership.',
