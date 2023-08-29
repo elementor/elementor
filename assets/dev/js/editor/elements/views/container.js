@@ -143,7 +143,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	isNestedElementContentContainer() {
-		const widgetType = this.container.parent.model.get( 'widgetType' ); // 'nested-accordion'
+		const widgetType = this.container.parent.model.get( 'widgetType' );
 
 		return widgetType && widgetType.trim() !== '' && isWidgetSupportNesting( widgetType );
 	},
