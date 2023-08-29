@@ -80,10 +80,14 @@ jobs:
         testSuite:
           - 'test:part1'
           - 'test:part2'
+          - 'test:part1:containers'
+          - 'test:part2:containers'
           - 'test'
         exclude:
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part1' }}
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part2' }}
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part1:containers' }}
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part2:containers' }}
           - testSuite: ${{ github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
