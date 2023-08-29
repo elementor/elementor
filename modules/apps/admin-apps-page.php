@@ -104,6 +104,16 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-ultimate-elementor/',
 				'image' => $images_url . 'uae.svg',
 			],
+			[
+				'name' => 'Fiverr Logo Maker',
+				'author' => 'Fiverr',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-fiverr/',
+				'description' => 'Craft your brand\'s identity on Fiverr Logo Maker. Upload logo, choose typography & colors for versatile variations. Elevate your brand effortlessly.',
+				'badge' => 'Premium',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-fiverr/',
+				'image' => $images_url . 'fiverr.svg',
+			],
 		];
 
 		$wporg_plugins = [
