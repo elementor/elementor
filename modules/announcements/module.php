@@ -161,18 +161,18 @@ class Module extends BaseApp {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
 	}
 
-    public function on_elementor_init() {
-	    if ( empty( $this->get_active_announcements() ) ) {
-		    return;
-	    }
+	public function on_elementor_init() {
+		if ( empty( $this->get_active_announcements() ) ) {
+			return;
+		}
 
-	    add_action( 'elementor/editor/footer', function () {
-		    $this->render_app_wrapper();
-	    } );
+		add_action( 'elementor/editor/footer', function () {
+			$this->render_app_wrapper();
+		} );
 
-	    add_action( 'elementor/editor/after_enqueue_scripts', function () {
-		    $this->enqueue_scripts();
-		    $this->enqueue_styles();
-	    } );
-    }
+		add_action( 'elementor/editor/after_enqueue_scripts', function () {
+			$this->enqueue_scripts();
+			$this->enqueue_styles();
+		} );
+	}
 }
