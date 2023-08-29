@@ -11,6 +11,7 @@ use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\App\Modules\ImportExport\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -882,10 +883,7 @@ class Upgrades {
 			return;
 		}
 
-		$size = strval( $kit_data_array['space_between_widgets']['size'] );
-		$kit_data_array['space_between_widgets']['column'] = $size;
-		$kit_data_array['space_between_widgets']['row'] = $size;
-		$kit_data_array['space_between_widgets']['isLinked'] = true;
+		$kit_data_array['space_between_widgets'] = Utils::update_space_between_widgets_values( $kit_data_array['space_between_widgets'] );
 
 		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
 	}
