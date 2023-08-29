@@ -413,7 +413,11 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			this.model.set( 'isInner', this.checkIfParentIsWidget() || this.getNestingLevel() > 0 );
+
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.model.set( 'isInner', this.checkIfParentIsWidget() || this.getNestingLevel() > 0 );
+			}
+
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
