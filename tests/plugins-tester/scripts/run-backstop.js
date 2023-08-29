@@ -3,7 +3,8 @@ import backstop from 'backstopjs'; // It's not included in global package.json.
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { mergeReportFromDir } from '../src/merge-images-utils.js';
-import config from '../backstop.json' assert {type: 'json'};
+import configSections from '../backstop.json' assert {type: 'json'};
+import configContainers from '../backstop_container.json' assert {type: 'json'};
 
 const __filename = fileURLToPath( import.meta.url );
 const __dirname = dirname( __filename );
@@ -17,6 +18,7 @@ const args = process.argv.slice( 2 ).reduce( ( acc, arg ) => {
 
 // Config
 const { slug, diffThreshold } = args;
+const config = process.env.CONTAINERS ? configContainers : configSections;
 
 const backstopConfig = Object.assign( config, {
 	paths: {
