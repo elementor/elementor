@@ -59,7 +59,7 @@ class Admin_Apps_Page {
 				'offering' => 'Use coupon code: onlyforelementor',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-crocoblock/',
-				'image' => $images_url . 'crocoblock.svg',
+				'image' => $images_url . 'crocoblock.png',
 			],
 			[
 				'name' => 'Unlimited Elements',
