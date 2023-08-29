@@ -7,9 +7,11 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
+use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\App\Modules\ImportExport\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -857,6 +859,35 @@ class Upgrades {
 		}
 	}
 
+	public static function _v_3_17_0_site_settings_updates() {
+		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
+
+		foreach ( $options as $option_name ) {
+			self::maybe_add_gap_control_data( $option_name );
+		}
+	}
+
+	private static function maybe_add_gap_control_data( $option_name ) {
+		$kit_id = get_option( $option_name );
+
+		if ( ! $kit_id ) {
+			return;
+		}
+
+		$kit_data_array = get_post_meta( (int) $kit_id, '_elementor_page_settings', true );
+
+		$setting_not_exist = ! isset( $kit_data_array['space_between_widgets'] );
+		$already_processed = isset( $kit_data_array['space_between_widgets']['column'] );
+
+		if ( $setting_not_exist || $already_processed ) {
+			return;
+		}
+
+		$kit_data_array['space_between_widgets'] = Utils::update_space_between_widgets_values( $kit_data_array['space_between_widgets'] );
+
+		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
+	}
+
 	public static function remove_remote_info_api_data() {
 		global $wpdb;
 
@@ -941,7 +972,7 @@ class Upgrades {
 
 				$element = self::maybe_convert_to_inner_container( $element );
 				$element = self::maybe_convert_to_grid_container( $element );
-				return self::flex_gap_responsive_control_iterator( $element );
+				return Container::slider_to_gaps_converter( $element );
 			}
 		);
 	}
@@ -974,33 +1005,6 @@ class Upgrades {
 
 		$element['settings']['presetTitle'] = 'Grid';
 		$element['settings']['presetIcon'] = 'eicon-container-grid';
-
-		return $element;
-	}
-
-	/**
-	 * @param $element
-	 *
-	 * @return array
-	 */
-	private static function flex_gap_responsive_control_iterator( $element ) {
-		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
-		$breakpoints[] = 'desktop';
-		$control_name = 'flex_gap';
-
-		foreach ( $breakpoints as $breakpoint ) {
-			$control = 'desktop' !== $breakpoint
-				? $control_name . '_' . $breakpoint
-				: $control_name;
-
-			if ( isset( $element['settings'][ $control ] ) ) {
-				$old_size = strval( $element['settings'][ $control ]['size'] );
-
-				$element['settings'][ $control ]['column'] = $old_size;
-				$element['settings'][ $control ]['row'] = $old_size;
-				$element['settings'][ $control ]['isLinked'] = true;
-			}
-		}
 
 		return $element;
 	}
