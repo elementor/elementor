@@ -88,7 +88,7 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		return [
+		$raw_announcements = [
 			[
 				'title' => 'Picture perfect: Introducing the AI image generator',
 				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
@@ -120,6 +120,9 @@ class Module extends BaseApp {
 				],
 			],
 		];
+
+		// DO NOT USE THIS FILTER
+		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	/**
