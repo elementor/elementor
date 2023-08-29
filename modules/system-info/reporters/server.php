@@ -154,7 +154,7 @@ class Server extends Base {
 	 */
 	public function get_php_memory_limit() {
 		$result = [
-			'value' => (string) get_cfg_var( 'memory_limit' ),
+			'value' => (string) ini_get( 'memory_limit' ),
 		];
 
 		$min_recommended_memory = '128M';
