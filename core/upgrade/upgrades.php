@@ -1021,3 +1021,4 @@ class Upgrades {
 		update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 	}
 }
+
