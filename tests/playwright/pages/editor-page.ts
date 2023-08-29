@@ -16,6 +16,7 @@ export default class EditorPage extends BasePage {
 
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+		await this.page.waitForLoadState( 'load' );
 		await this.ensurePanelLoaded();
 	}
 
