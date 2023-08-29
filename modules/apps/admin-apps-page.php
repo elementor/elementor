@@ -89,6 +89,7 @@ class Admin_Apps_Page {
 				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-element-pack-pro/',
 				'description' => 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!',
 				'badge' => '10% Off',
+				'offering' => 'Discount is automatically applied',
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-element-pack-pro/',
 				'image' => $images_url . 'element-pack.gif',
@@ -113,6 +114,17 @@ class Admin_Apps_Page {
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-fiverr/',
 				'image' => $images_url . 'fiverr.svg',
+			],
+			[
+				'name' => 'Hover',
+				'author' => 'Tucows',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-hover/',
+				'description' => 'Elevate your website with a custom domain for maximum online impact. Enjoy exclusive Elementor user discounts through our Hover partnership.',
+				'badge' => '10% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
+				'image' => $images_url . 'hover.svg',
 			],
 		];
 
