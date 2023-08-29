@@ -9,3 +9,4 @@ wp rewrite flush --hard
 wp elementor flush-css
 wp post list --post_type=page
 wp option update blogname "elementor"
+wp option update elementor_onboarded 1
