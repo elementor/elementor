@@ -2,12 +2,19 @@
 namespace Elementor\Modules\ImageLoadingOptimization;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends BaseModule {
+
+	/**
+	 * @var string The experiment name.
+	 */
+	const EXPERIMENT_NAME = 'e_image_loading_optimization';
+
 	/**
 	 * @var int Minimum square-pixels threshold.
 	 */
@@ -31,6 +38,22 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get experimental data.
+	 *
+	 * @return array Experimental settings.
+	 */
+	public static function get_experimental_data() {
+		return [
+			'name' => static::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Optimize Image Loading', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Applying `fetchpriority="high"` on LCP image and lazy loading on images below the fold.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
+	}
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -50,6 +73,7 @@ class Module extends BaseModule {
 
 		// Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
 		add_action( 'get_footer', [ $this, 'set_buffer' ] );
+		add_action( 'shutdown', [ $this, 'set_buffer' ] );
 	}
 
 	/**
