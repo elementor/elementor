@@ -14,7 +14,8 @@ const PromptHistoryUpgrade = ( { variant } ) => {
 
 	return (
 		<Stack justifyContent="center"
-			sx={ { height: VARIANT_SMALL === variant ? 'auto' : '100%', textAlign: 'center', p: 5 } }>
+			sx={ { height: VARIANT_SMALL === variant ? 'auto' : '100%', textAlign: 'center', p: 5 } }
+			data-testid={ `e-ph-upgrade-${ variant }` }>
 			<Typography variant="body1" sx={ { marginBottom: 5 } }>
 				{ messages[ variant ] || messages[ VARIANT_FULL ] }
 			</Typography>

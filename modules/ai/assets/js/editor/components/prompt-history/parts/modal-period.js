@@ -19,7 +19,7 @@ const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete }
 	const { onPromptCopy, onResultEdit } = useContext( PromptHistoryContext );
 
 	return (
-		<StyledPeriod>
+		<StyledPeriod data-testid="e-ph-p">
 			<StyledPeriodTitle variant="subtitle1">{ periodTitle }</StyledPeriodTitle>
 
 			{ historyItems.map( ( { id, date, action, prompt, result } ) => {

@@ -147,6 +147,26 @@ const EditorSelectors = {
 	googleMaps: {
 		location: '[data-setting="address"]',
 	},
+	ai: {
+		aiButton: '.e-ai-button',
+		promptInput: 'input[name="prompt"]',
+		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
+
+		promptHistory: {
+			button: 'button[aria-label="Show prompt history"]',
+			modal: '#prompt-history-modal',
+			closeButton: 'button[aria-label="Hide prompt history"]',
+			upgradeMessageFull: 'e-ph-upgrade-full',
+			upgradeMessageSmall: 'e-ph-upgrade-small',
+			noDataMessage: 'e-ph-empty',
+			period: 'e-ph-p',
+			item: 'e-ph-i',
+			fallbackIcon: 'e-ph-fi',
+			deleteButton: 'button[aria-label="Delete item"]',
+			copyButton: 'button[aria-label="Copy prompt"]',
+			editButton: 'button[aria-label="Edit result"]',
+		},
+	},
 };
 
 export default EditorSelectors;

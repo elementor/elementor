@@ -4,7 +4,7 @@ import CopyIcon from '../../../icons/copy-icon';
 import { getIconByAction } from '../helpers/history-item-helpers';
 import { TrashIcon } from '@elementor/icons';
 
-const StyledPeriod = styled( Stack )`
+const StyledItem = styled( Stack )`
   flex-direction: row;
 	align-items: flex-start;
 	padding: ${ ( { theme } ) => theme.spacing( 3, 5 ) };
@@ -68,7 +68,7 @@ const ActionButton = ( props ) => {
 
 const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromptCopy, onResultEdit } ) => {
 	return (
-		<StyledPeriod tabIndex="0">
+		<StyledItem tabIndex="0" data-testid="e-ph-i">
 			{ getIconByAction( action ) }
 
 			<Stack direction="column" width="90%">
@@ -80,7 +80,7 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 					<StyledButtonsWrapper>
 						<ActionButton
 							onClick={ onHistoryItemDelete }
-							aria-label={ __( 'Delete prompt', 'elementor' ) }>
+							aria-label={ __( 'Delete item', 'elementor' ) }>
 							<TrashIcon />
 						</ActionButton>
 
@@ -92,13 +92,13 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 
 						<ActionButton
 							onClick={ onResultEdit }
-							aria-label={ __( 'Copy result', 'elementor' ) }>
+							aria-label={ __( 'Edit result', 'elementor' ) }>
 							<EditIcon />
 						</ActionButton>
 					</StyledButtonsWrapper>
 				</Stack>
 			</Stack>
-		</StyledPeriod> );
+		</StyledItem> );
 };
 
 PromptHistoryItem.propTypes = {

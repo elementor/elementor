@@ -11,7 +11,7 @@ const PromptHistoryEmpty = ( { promptType } ) => {
 	};
 
 	return (
-		<Stack justifyContent="center" sx={ { height: '100%', textAlign: 'center' } }>
+		<Stack justifyContent="center" sx={ { height: '100%', textAlign: 'center' } } data-testid="e-ph-empty">
 			<Typography variant="h6">{ __( 'Prepare to be amazed', 'elementor' ) }</Typography>
 			<Typography variant="body1">
 				{ sprintf(

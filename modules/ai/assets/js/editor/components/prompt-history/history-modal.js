@@ -138,7 +138,7 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 								hasMore={ ! isLastPage }
 								children={ renderPeriods() } /> }
 
-							{ items?.length > 0 && isLastPage && <PromptHistoryUpgrade variant="small" /> }
+							{ items?.length > 0 && meta?.allowedDays < 90 && isLastPage && <PromptHistoryUpgrade variant="small" /> }
 						</Box>
 					</StyledContent>
 				</Slide>
