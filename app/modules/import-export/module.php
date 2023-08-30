@@ -670,7 +670,7 @@ class Module extends BaseModule {
 
 		if ( ! empty( $import['status'] ) ) {
 			Plugin::$instance->logger->get_logger()->info(
-				sprintf( 'Import part complete: %1$s %2$s',
+				sprintf( 'Import runner completed: %1$s %2$s',
 					$import['runner'],
 					( 'success' === $import['status'] ? '✓' : '✗' )
 				)
