@@ -150,7 +150,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 * PHP version 7.3 or greater
 * MySQL version 5.0 or greater
 
-= Recommend Requirements =
+= Recommended Requirements =
 
 * PHP version 7.4 or greater
 * MySQL version 5.6 or greater
