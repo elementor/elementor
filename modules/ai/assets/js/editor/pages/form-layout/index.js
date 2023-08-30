@@ -216,12 +216,13 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 											} }
 										>
 											{
-												screenshots.map( ( { screenshot, template, isError }, index ) => (
+												screenshots.map( ( { screenshot, template, isError, isPending }, index ) => (
 													<Screenshot
 														key={ index }
 														url={ screenshot }
 														disabled={ isPromptFormActive }
 														isPlaceholder={ isError }
+														isLoading={ isPending }
 														isSelected={ selectedScreenshotIndex === index }
 														onClick={ handleScreenshotClick( index, template ) }
 														outlineOffset={ screenshotOutlineOffset }
