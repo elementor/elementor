@@ -33,11 +33,12 @@ const UseLayoutButton = ( props ) => (
 	<Button
 		size="small"
 		variant="contained"
+		{ ...props }
 		sx={ {
+			...( props.sx || {} ),
 			// TODO: remove once exist in the UI library.
 			borderRadius: ( { border } ) => border.size.md,
 		} }
-		{ ...props }
 	>
 		{ __( 'Use Layout', 'elementor' ) }
 	</Button>
