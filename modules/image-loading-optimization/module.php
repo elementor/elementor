@@ -106,7 +106,7 @@ class Module extends BaseModule {
 		return preg_replace_callback(
 			'/<img\s[^>]+>/',
 			function ( $matches ) {
-				return $this->loading_optimization_image( $matches[0] )
+				return $this->loading_optimization_image( $matches[0] );
 			},
 			$content
 		);
