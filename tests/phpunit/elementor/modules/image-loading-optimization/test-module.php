@@ -1,11 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Image_Loading_Optimization;
 
-use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\TemplateLibrary\Source_Local;
 
 class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Base {
 	/**
@@ -46,11 +44,10 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 	}
 
 	public function get_page_template() {
-		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		return [
-			[ $page_templates_module::TEMPLATE_CANVAS ],
-			[ $page_templates_module::TEMPLATE_HEADER_FOOTER ],
-			[ $page_templates_module::TEMPLATE_THEME ]
+			[ PageTemplatesModule::TEMPLATE_CANVAS ],
+			[ PageTemplatesModule::TEMPLATE_HEADER_FOOTER ],
+			[ PageTemplatesModule::TEMPLATE_THEME ]
 		];
 	}
 	
