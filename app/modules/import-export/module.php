@@ -649,7 +649,7 @@ class Module extends BaseModule {
 			sprintf( 'Selected import runners: %1$s',
 				implode( ', ', $import['runners'] )
 			)
-		 );
+		);
 
 		wp_send_json_success( $import );
 	}
