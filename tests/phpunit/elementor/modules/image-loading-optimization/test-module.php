@@ -21,10 +21,6 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		wp_update_post( $updated_post );
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$document->update_main_meta( '_wp_page_template', $page_template );
-
-		print_r($page_template);
-		print_r($document->get_main_id());
-		// print_r($document);
 		
 		query_posts( [ 'p' => $document->get_main_id() ] );
 		
@@ -40,6 +36,13 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 
 		ob_start();
 		load_template($template_path);
+		/* This is to ensure buffer started in footer is closed.
+		 * php endscript works differently for phpunit. 
+		 * https://stackoverflow.com/questions/38400305/phpunit-help-needed-about-risky-tests.
+		 */ 
+		if( 'elementor_canvas' != $page_template ) {
+			echo ob_get_clean();
+		}
 		$output = ob_get_clean();
 
 		$expected = '<p><img fetchpriority="high" decoding="async" width="800" height="530" src="featured_image.jpg" /><img decoding="async" width="640" height="471" src="image_1.jpg" /><img decoding="async" width="800" height="800" src="image_2.jpg" /><img loading="lazy" decoding="async" width="566" height="541" src="image_3.jpg" /><img loading="lazy" decoding="async" width="691" height="1024" src="image_4.jpg" /></p>';
@@ -50,8 +53,8 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		return [
 			[ $page_templates_module::TEMPLATE_CANVAS ],
-			// [ $page_templates_module::TEMPLATE_HEADER_FOOTER ],
-			// [ $page_templates_module::TEMPLATE_THEME ]
+			[ $page_templates_module::TEMPLATE_HEADER_FOOTER ],
+			[ $page_templates_module::TEMPLATE_THEME ]
 		];
 	}
 }
