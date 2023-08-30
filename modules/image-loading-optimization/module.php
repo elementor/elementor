@@ -103,18 +103,13 @@ class Module extends BaseModule {
 	 * @return string Content with optimized images.
 	 */
 	private function filter_images( $content ) {
-		return preg_replace_callback( '/<img\s[^>]+>/', [ $this, 'apply_image_optimization' ], $content );
-	}
-
-	/**
-	 * Callback to apply optimization logic on the image.
-	 * This function is called for each image tag found in the content.
-	 *
-	 * @param array $matches Array of matches.
-	 * @return string Optimized image.
-	 */
-	private function apply_image_optimization( $matches ) {
-		return $this->loading_optimization_image( $matches[0] );
+		return preg_replace_callback(
+			'/<img\s[^>]+>/',
+			function ( $matches ) {
+				return $this->loading_optimization_image( $matches[0] )
+			},
+			$content
+		);
 	}
 
 	/**
