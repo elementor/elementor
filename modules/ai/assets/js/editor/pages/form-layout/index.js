@@ -44,6 +44,10 @@ const UseLayoutButton = ( props ) => (
 	</Button>
 );
 
+UseLayoutButton.propTypes = {
+	sx: PropTypes.object,
+};
+
 const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
