@@ -403,39 +403,6 @@ class Container extends Element_Base {
 		];
 	}
 
-	private function get_full_width_device_args( $active_breakpoints ) {
-		$full_width_devices_defaults = [];
-		$default = [ 'unit' => '%' ];
-
-		$full_width_devices_settings = [
-			'default' => $default,
-		];
-
-		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
-			if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_name ) {
-				continue; // The mobile width is not inherited from the higher breakpoint width controls.
-			}
-
-			$full_width_devices_defaults[ $breakpoint_name ] = $full_width_devices_settings;
-		}
-
-		$default_placeholder = [
-			'size' => 100,
-			'unit' => '%',
-		];
-
-		$full_width_devices_defaults[ Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP ] = [
-			'placeholder' => $default_placeholder,
-		];
-
-		$full_width_devices_defaults[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = [
-			'placeholder' => $default_placeholder,
-			'default' => $default,
-		];
-
-		return $full_width_devices_defaults;
-	}
-
 	/**
 	 * Register the Container's layout controls.
 	 *
@@ -521,7 +488,21 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'full',
 				],
-				'device_args' => $this->get_full_width_device_args( $active_breakpoints ),
+				'device_args' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
+					],
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
+						// The mobile width is not inherited from the higher breakpoint width controls.
+						'placeholder' => [
+							'size' => 100,
+							'unit' => '%',
+						],
+					],
+				],
 			] )
 		);
 
