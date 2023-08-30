@@ -8,7 +8,6 @@ use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\TemplateLibrary\Source_Local;
 
 class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Base {
-
 	/**
 	 * @dataProvider get_page_template
 	 */
@@ -36,13 +35,10 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 
 		ob_start();
 		load_template($template_path);
-		/* This is to ensure buffer started in footer is closed.
-		 * php endscript works differently for phpunit. 
-		 * https://stackoverflow.com/questions/38400305/phpunit-help-needed-about-risky-tests.
+		/* php endscript works differently for phpunit.
+		 * This is to ensure buffer started in footer is closed.
 		 */ 
-		if( 'elementor_canvas' != $page_template ) {
-			echo ob_get_clean();
-		}
+		$this->close_and_print_open_buffer();
 		$output = ob_get_clean();
 
 		$expected = '<p><img fetchpriority="high" decoding="async" width="800" height="530" src="featured_image.jpg" /><img decoding="async" width="640" height="471" src="image_1.jpg" /><img decoding="async" width="800" height="800" src="image_2.jpg" /><img loading="lazy" decoding="async" width="566" height="541" src="image_3.jpg" /><img loading="lazy" decoding="async" width="691" height="1024" src="image_4.jpg" /></p>';
@@ -56,6 +52,16 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 			[ $page_templates_module::TEMPLATE_HEADER_FOOTER ],
 			[ $page_templates_module::TEMPLATE_THEME ]
 		];
+	}
+	
+	/**
+	 * This is to ensure buffer started in footer is closed.
+	 */
+	private function close_and_print_open_buffer() {
+		$buffer_status = ob_get_status();
+		if( ! empty( $buffer_status ) && str_contains( $buffer_status['name'], 'ImageLoadingOptimization\Module::handle_buffer_content') ) {
+			echo ob_get_clean();
+		}
 	}
 }
 
