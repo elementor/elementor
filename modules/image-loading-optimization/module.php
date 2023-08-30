@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-
 	/**
 	 * @var string The experiment name.
 	 */
