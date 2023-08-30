@@ -103,6 +103,7 @@ class Control_URL extends Control_Base_Multiple {
 				</button>
 				<# } #>
 			</div>
+			<# if ( !! data.options ) { #>
 			<div class="elementor-control-url-more-options">
 				<div class="elementor-control-url-option">
 					<input id="<?php $this->print_control_uid( 'is_external' ); ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="is_external">
@@ -120,6 +121,7 @@ class Control_URL extends Control_Base_Multiple {
 				<div class="elementor-control-field-description">{{{ data.custom_attributes_description }}}</div>
 				<# } #>
 			</div>
+			<# } #>
 		</div>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-field-description">{{{ data.description }}}</div>
