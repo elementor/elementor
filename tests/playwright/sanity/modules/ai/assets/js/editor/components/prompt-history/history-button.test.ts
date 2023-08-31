@@ -1,6 +1,6 @@
 import { test, Page } from '@playwright/test';
 
-import { findPromptHistoryButton } from './helper';
+import { closeAIDialog, findPromptHistoryButton } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 
@@ -28,12 +28,24 @@ test.describe( 'AI @ai', () => {
 			await editor.addWidget( 'heading' );
 
 			await findPromptHistoryButton( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Wysiwyg control', async () => {
 			await editor.addWidget( 'text-editor' );
 
 			await findPromptHistoryButton( page );
+
+			await closeAIDialog( page );
+		} );
+
+		await test.step( 'HTML control', async () => {
+			await editor.addWidget( 'html' );
+
+			await findPromptHistoryButton( page );
+
+			await closeAIDialog( page );
 		} );
 	} );
 } );

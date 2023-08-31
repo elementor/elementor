@@ -12,15 +12,23 @@ import PromptHistoryEmpty from './parts/modal-empty';
 import InfiniteScroll from 'react-infinite-scroller';
 import PromptHistoryUpgrade from './parts/modal-upgrade';
 
-const StyledContent = styled( Box )( ( { theme } ) => ( {
-	width: 360,
-	position: 'relative',
-	marginTop: theme.spacing( 5 ),
-	marginRight: theme.spacing( 5 ),
-	backgroundColor: theme.palette.background.paper,
-	borderRadius: theme.border.radius.sm,
-	height: '52vh',
-} ) );
+const StyledContent = styled( Box )`
+	width: 360px;
+	position: relative;
+	margin-top: ${ ( { theme } ) => theme.spacing( 5 ) };
+	margin-right: ${ ( { theme } ) => theme.spacing( 5 ) };
+	background-color: ${ ( { theme } ) => theme.palette.background.paper };
+	border-radius: ${ ( { theme } ) => theme.border.radius.sm };
+	height: 52vh;
+
+	@media screen and (max-width: 456px) {
+		width: 320px;
+	}
+
+  @media screen and (max-width: 420px) {
+		width: 230px;
+  }
+`;
 
 const ITEMS_LIMIT = 10;
 const NO_HISTORY_ACCESS_ERROR = 'invalid_connect_data';

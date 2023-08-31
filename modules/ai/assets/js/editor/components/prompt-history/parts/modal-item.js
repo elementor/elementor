@@ -90,11 +90,13 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 							<CopyIcon />
 						</ActionButton>
 
-						<ActionButton
-							onClick={ onResultEdit }
-							aria-label={ __( 'Edit result', 'elementor' ) }>
-							<EditIcon />
-						</ActionButton>
+						{ onResultEdit && (
+							<ActionButton
+								onClick={ onResultEdit }
+								aria-label={ __( 'Edit result', 'elementor' ) }>
+								<EditIcon />
+							</ActionButton>
+						) }
 					</StyledButtonsWrapper>
 				</Stack>
 			</Stack>
@@ -108,7 +110,7 @@ PromptHistoryItem.propTypes = {
 	date: PropTypes.string.isRequired,
 	onHistoryItemDelete: PropTypes.func.isRequired,
 	onPromptCopy: PropTypes.func.isRequired,
-	onResultEdit: PropTypes.func.isRequired,
+	onResultEdit: PropTypes.func,
 };
 
 export default PromptHistoryItem;

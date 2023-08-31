@@ -192,4 +192,32 @@ test.describe( 'AI @ai', () => {
 			expect( await textarea.inputValue() ).toBe( 'Test result' );
 		} );
 	} );
+
+	test( 'Prompt History - Code', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Copy button copies prompt', async () => {
+			await editor.addWidget( 'html' );
+
+			await mockRoute( page, {
+				getHistoryMock: copyAndEditTextDataMock,
+			} );
+
+			await openPromptHistory( page );
+
+			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+
+			await item.hover();
+
+			await item.locator( EditorSelectors.ai.promptHistory.copyButton ).click();
+
+			const input = page.locator( EditorSelectors.ai.promptInput ).first();
+
+			await expect( input ).toBeVisible();
+
+			expect( await input.inputValue() ).toBe( 'Test prompt' );
+		} );
+	} );
 } );

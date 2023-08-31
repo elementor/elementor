@@ -36,7 +36,7 @@ const PromptHistory = ( { promptType, onPromptCopy, onResultEdit, setIsPromptHis
 			promptType,
 			onModalClose,
 			onPromptCopy: closeModalAfterAction( onPromptCopy ),
-			onResultEdit: closeModalAfterAction( onResultEdit ),
+			onResultEdit: onResultEdit ? closeModalAfterAction( onResultEdit ) : null,
 		} }>
 			<PromptHistoryButton
 				isActive={ isOpen }
@@ -52,7 +52,7 @@ const PromptHistory = ( { promptType, onPromptCopy, onResultEdit, setIsPromptHis
 PromptHistory.propTypes = {
 	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
 	onPromptCopy: PropTypes.func.isRequired,
-	onResultEdit: PropTypes.func.isRequired,
+	onResultEdit: PropTypes.func,
 	setIsPromptHistoryOpen: PropTypes.func.isRequired,
 };
 

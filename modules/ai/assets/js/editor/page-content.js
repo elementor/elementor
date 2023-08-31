@@ -139,10 +139,14 @@ const PageContent = (
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
+					<History promptType={ HISTORY_TYPES.CODE }
+						onPromptCopy={ onPromptCopy }
+						setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
+
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
-				<PromptDialog.Content dividers>
+				<PromptDialog.Content dividers sx={ { position: 'relative' } }>
 					<FormCode
 						onClose={ onClose }
 						getControlValue={ getControlValue }
@@ -150,6 +154,7 @@ const PageContent = (
 						additionalOptions={ additionalOptions }
 						credits={ credits }
 						usagePercentage={ usagePercentage }
+						promptHistoryAction={ promptHistoryAction }
 					/>
 				</PromptDialog.Content>
 			</PromptDialog>
@@ -163,6 +168,7 @@ const PageContent = (
 					onPromptCopy={ onPromptCopy }
 					onResultEdit={ onResultEdit }
 					setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
+
 				{ maybeRenderUpgradeChip() }
 			</PromptDialog.Header>
 

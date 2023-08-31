@@ -31,7 +31,7 @@ const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete }
 						id={ id }
 						onHistoryItemDelete={ () => onHistoryItemDelete( id ) }
 						onPromptCopy={ () => onPromptCopy( id, prompt ) }
-						onResultEdit={ () => onResultEdit( id, result ) } /> );
+						onResultEdit={ onResultEdit ? () => onResultEdit( id, result ) : null } /> );
 			} ) }
 		</StyledPeriod>
 	);
