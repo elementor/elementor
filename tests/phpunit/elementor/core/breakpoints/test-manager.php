@@ -151,4 +151,51 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$this->reset_breakpoints_to_default();
 	}
+
+	public function test_get_responsive_control_duplication_mode_comparison() {
+		// Arrange
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'off' );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'on' );
+
+		// Assert
+		$this->assertFalse( $comparison );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'dynamic' );
+
+		// Assert
+		$this->assertFalse( $comparison );
+
+		// Arrange
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'dynamic' );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'dynamic' );
+
+		// Assert
+		$this->assertFalse( $comparison );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'on' );
+
+		// Assert
+		$this->assertFalse( $comparison );
+
+		// Arrange
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'dynamic' );
+
+		// Assert
+		$this->assertTrue( $comparison );
+
+		// Act
+		$comparison = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( 'off' );
+
+		// Assert
+		$this->assertTrue( $comparison );
+	}
 }
