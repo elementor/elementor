@@ -1003,7 +1003,9 @@ class Controls_Manager {
 			return null;
 		}
 
-		$should_clean_stack = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( $this->stacks[ $stack_id ]['responsive_control_duplication_mode'] ?? 'off' );
+		// If responsive_control_duplication_mode is missing use 'on' as default so the stack won't be deleted.
+		$current_stack_responsive_control_duplication_mode = $this->stacks[ $stack_id ]['responsive_control_duplication_mode'] ?? 'on';
+		$should_clean_stack = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( $current_stack_responsive_control_duplication_mode );
 
 		if ( $should_clean_stack ) {
 			$this->delete_stack( $controls_stack );
