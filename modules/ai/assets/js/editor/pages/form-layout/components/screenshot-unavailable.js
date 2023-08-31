@@ -10,6 +10,10 @@ export default function ScreenshotUnavailable( props ) {
 			backgroundColor: 'background.paper',
 			color: 'text.tertiary',
 			fontStyle: 'italic',
+			fontSize: '12px',
+			paddingInline: 12,
+			textAlign: 'center',
+			lineHeight: 1.5,
 		} }>
 			{ __( 'Preview unavailable', 'elementor' ) }
 		</ScreenshotContainer>
