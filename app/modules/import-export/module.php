@@ -645,6 +645,12 @@ class Module extends BaseModule {
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
 
+		Plugin::$instance->logger->get_logger()->info(
+			sprintf( 'Selected import runners: %1$s',
+				implode( ', ', $import['runners'] )
+			)
+		);
+
 		wp_send_json_success( $import );
 	}
 
@@ -661,6 +667,15 @@ class Module extends BaseModule {
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
+
+		if ( ! empty( $import['status'] ) ) {
+			Plugin::$instance->logger->get_logger()->info(
+				sprintf( 'Import runner completed: %1$s %2$s',
+					$import['runner'],
+					( 'success' === $import['status'] ? '✓' : '✗' )
+				)
+			);
+		}
 
 		wp_send_json_success( $import );
 	}
