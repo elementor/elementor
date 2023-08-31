@@ -994,7 +994,7 @@ class Controls_Manager {
 	 *
 	 * @param Controls_Stack $controls_stack  Controls stack.
 	 *
-	 * @return null|array Stack data if it exist, `null` otherwise.
+	 * @return null|array Stack data if it exists, `null` otherwise.
 	 */
 	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
@@ -1003,11 +1003,7 @@ class Controls_Manager {
 			return null;
 		}
 
-		// If responsive_control_duplication_mode is missing use 'on' as default so the stack won't be deleted.
-		$current_stack_responsive_control_duplication_mode = $this->stacks[ $stack_id ]['responsive_control_duplication_mode'] ?? 'on';
-		$should_clean_stack = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode_comparison( $current_stack_responsive_control_duplication_mode );
-
-		if ( $should_clean_stack ) {
+		if ( $this->should_clean_stack( $this->stacks[ $stack_id ] ) ) {
 			$this->delete_stack( $controls_stack );
 			return null;
 		}
@@ -1183,5 +1179,35 @@ class Controls_Manager {
 		);
 
 		$controls_stack->end_controls_section();
+	}
+
+	/**
+	 * Check if the current stack should be cleaned by the responsive control duplication mode.
+	 *
+	 * @param $stack
+	 * @return bool
+	 */
+	private function should_clean_stack( $stack ): bool {
+		if ( ! isset( $stack['responsive_control_duplication_mode'] ) ) {
+			return false;
+		}
+
+		$current_stack_responsive_control_duplication_mode = $stack['responsive_control_duplication_mode'];
+
+		$modes = [
+			'off' => 1,
+			'dynamic' => 2,
+			'on' => 3,
+		];
+
+		if ( ! isset( $modes[ $current_stack_responsive_control_duplication_mode ] ) ) {
+			return false;
+		}
+
+		if ( $modes[ $current_stack_responsive_control_duplication_mode ] >= $modes[ Plugin::$instance->breakpoints->get_responsive_control_duplication_mode() ] ) {
+			return false;
+		}
+
+		return true;
 	}
 }

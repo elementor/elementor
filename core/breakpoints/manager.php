@@ -399,38 +399,6 @@ class Manager extends Module {
 	}
 
 	/**
-	 * Get Responsive Control Duplication Mode Comparison.
-	 * Use this method to compare the current $responsive_control_duplication_mode to a $mode passed as a parameter.
-	 * If the $mode passed is higher than the current $responsive_control_duplication_mode, this method returns false.
-	 * Otherwise, it returns true.
-	 *
-	 * This method is used to determine whether a control stack should be recreated or not.
-	 *
-	 * @since 3.17.0
-	 * @access public
-	 *
-	 * @param string $mode
-	 * @return bool
-	 */
-	public function get_responsive_control_duplication_mode_comparison( string $mode ): bool {
-		$modes = [
-			'off' => 1,
-			'dynamic' => 2,
-			'on' => 3,
-		];
-
-		if ( ! isset( $modes[ $mode ] ) ) {
-			return false;
-		}
-
-		if ( $modes[ $mode ] >= $modes[ $this->responsive_control_duplication_mode ] ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Get Stylesheet Templates Path
 	 *
 	 * @since 3.2.0
