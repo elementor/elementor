@@ -8,7 +8,8 @@ export default function ScreenshotUnavailable( props ) {
 			alignItems: 'center',
 			justifyContent: 'center',
 			backgroundColor: 'background.paper',
-			color: 'text.secondary',
+			color: 'text.tertiary',
+			fontStyle: 'italic',
 		} }>
 			{ __( 'Preview unavailable', 'elementor' ) }
 		</ScreenshotContainer>
