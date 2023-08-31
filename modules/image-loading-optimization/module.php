@@ -72,7 +72,6 @@ class Module extends BaseModule {
 
 		// Run optimization logic on footer. Flushing of footer buffer will be handled by PHP script end default logic.
 		add_action( 'get_footer', [ $this, 'set_buffer' ] );
-		add_action( 'shutdown', [ $this, 'set_buffer' ] );
 	}
 
 	/**
