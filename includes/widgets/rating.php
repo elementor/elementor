@@ -132,20 +132,28 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function render() {
+		$this->add_render_attribute( 'widget', [
+			'class' => 'e-rating',
+			'itemtype' => 'https://schema.org/Rating',
+			'itemscope' => '',
+			'itemprop' => 'reviewRating',
+		] );
+
+		$this->add_render_attribute( 'widget_wrapper', [
+			'class' => 'e-rating-wrapper',
+			'itemprop' => 'reviewValue',
+			'content' => $this->get_rating_value(),
+			'role' => 'img',
+			'aria-label' => $this->get_rating_value() . ' and a half of ' . $this->get_rating_maximum_value() . ' stars',
+		] );
 		?>
-		<div class="e-rating" itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+		<div <?php $this->print_render_attribute_string( 'widget' ); ?>>
 			<meta itemprop="worstRating" content="0">
-			<meta itemprop="bestRating" content="<?php echo $this->get_rating_maximum_value(); ?>">
-			<div class="e-rating-wrapper" itemprop="ratingValue" content="<?php echo $this->get_rating_value(); ?>">
-				<?php echo $this->get_star_markup(); ?>
+			<meta itemprop="bestRating" content="<?php echo $this->get_rating_maximum_value(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+			<div <?php $this->print_render_attribute_string( 'widget_wrapper' ); ?>>
+				<?php echo $this->get_star_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
-		<?php
-	}
-
-	protected function content_template_bak() {
-		?>
-		Editor render rating
 		<?php
 	}
 }
