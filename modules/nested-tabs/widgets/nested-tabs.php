@@ -1098,7 +1098,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$text_class = $this->get_render_attribute_string( 'tab-title-text' );
 		$icon_class = $this->get_render_attribute_string( 'tab-icon' );
 
-		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true' ] );
+		$icon_html = Icons_Manager::try_get_icon_html( $item_settings['item']['tab_icon'], [ 'aria-hidden' => 'true', 'style' => 'opacity: 0.5;' ] );
 		$icon_active_html = $icon_html;
 
 		if ( $this->is_active_icon_exist( $item_settings['item'] ) ) {
