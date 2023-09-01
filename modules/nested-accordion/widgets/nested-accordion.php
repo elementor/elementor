@@ -277,6 +277,32 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			]
 		);
+
+		$this->add_control(
+			'faq_schema',
+			[
+				'label' => esc_html__( 'FAQ Schema', 'textdomain' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'textdomain' ),
+				'label_off' => esc_html__( 'No', 'textdomain' ),
+				'default' => 'no',
+			]
+		);
+
+		$this->add_control(
+			'faq_schema_message',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. For best SEO results, only use this once per page', 'elementor-pro' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => [
+					'faq_schema[value]' => 'yes',
+				],
+				'separator' => 'none',
+			]
+		);
+
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -759,6 +785,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
+		$faq_schema = [];
+
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
@@ -779,6 +807,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$this->print_child( $index );
 			$item_content = ob_get_clean();
 
+			$faq_schema[ $item_title ] = $item_content;
+
 			ob_start();
 			?>
 			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
@@ -798,6 +828,28 @@ class Nested_Accordion extends Widget_Nested_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-accordion' ); ?>>
 			<?php echo $items_title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
+		<?php
+
+		if ($settings['faq_schema']) {
+			$json = [
+				'@context' => 'https://schema.org',
+				'@type' => 'FAQPage',
+				'mainEntity' => [],
+			];
+
+			foreach ( $faq_schema as $name => $text ) {
+				$json['mainEntity'][] = [
+					'@type' => 'Question',
+					'name' => wp_strip_all_tags( $name ),
+					'acceptedAnswer' => [
+						'@type' => 'Answer',
+						'text' => wp_strip_all_tags( $text ),
+					],
+				];
+			}
+		}
+		?>
+        <script type="application/ld+json"><?php echo wp_json_encode( $json ?? [] ); ?></script>
 		<?php
 	}
 
