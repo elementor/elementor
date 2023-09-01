@@ -438,7 +438,7 @@ class Manager extends Base_Object {
 			'description' => sprintf( esc_html__(
 				'Display author-assigned star ratings within your content in most customizable way and better performance. %1$sLearn more%2$s',
 				'elementor'
-				), '<a target="_blank" href="http://go.elementor.com/widget-rating">', '</a>'),
+			), '<a target="_blank" href="http://go.elementor.com/widget-rating">', '</a>'),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
 		] );

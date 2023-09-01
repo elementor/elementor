@@ -38,11 +38,11 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
-		 $this->add_control(
-		 	'rating_maximum_value',
-		 	[
-		 		'label' => esc_html__( 'Rating Scale', 'elementor' ),
-		 		'type' => Controls_Manager::SLIDER,
+	 	$this->add_control(
+		'rating_maximum_value',
+			[
+				'label' => esc_html__( 'Rating Scale', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
 						'min' => 1,
@@ -53,8 +53,8 @@ class Widget_Rating extends Widget_Base {
 				'default' => [
 					'size' => '5',
 				],
-		 	]
-		 );
+			]
+		);
 
 		$this->add_control(
 			'rating_value',
@@ -105,9 +105,9 @@ class Widget_Rating extends Widget_Base {
 	protected function get_marked_star_width( $star_index ): string {
 		$rating_value = $this->get_rating_value();
 
-		if ( $star_index <= $rating_value ) {
+		if ( $rating_value >= $star_index ) {
 			return '100%';
-		} else if ( $star_index === intval( ceil( $rating_value ) ) ) {
+		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
 			return ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
 
@@ -115,7 +115,7 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_star_markup(): string {
-		$icon = $this->get_settings_for_display( 'rating_icon') ;
+		$icon = $this->get_settings_for_display( 'rating_icon' );
 		$rating_maximum_value = $this->get_rating_maximum_value();
 		$output = '';
 
