@@ -12,6 +12,7 @@ function getGrepInvert() {
 			/@ai/,
 			/@onBoarding/,
 			/@video/,
+			/@rating/,
 		];
 	}
 	return [];
