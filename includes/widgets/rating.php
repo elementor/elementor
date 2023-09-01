@@ -90,6 +90,8 @@ class Widget_Rating extends Widget_Base {
 				],
 			]
 		);
+
+		$this->end_controls_section();
 	}
 
 	protected function get_rating_value(): float {
@@ -113,13 +115,13 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_star_markup(): string {
-		$icon = $this->get_settings_for_display( 'rating_icon' );
+		$icon = $this->get_settings_for_display( 'rating_icon') ;
 		$rating_maximum_value = $this->get_rating_maximum_value();
 		$output = '';
 
 		for ( $index = 1; $index <= $rating_maximum_value; $index++ ) {
 			$output .= '<div class="e-star">';
-			$output .= '<div class="e-star-wrapper e-star-marked" style="--e-rating-marked-star-width: ' . $this->get_marked_star_width( $index ) . ';">';
+			$output .= '<div class="e-star-wrapper e-star-marked " style="--e-rating-marked-star-width: ' . $this->get_marked_star_width( $index ) . ';">';
 			$output .= Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] );
 			$output .= '</div>';
 			$output .= '<div class="e-star-wrapper e-star-unmarked">';
