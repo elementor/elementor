@@ -38,8 +38,8 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
-	 	$this->add_control(
-		'rating_maximum_value',
+		$this->add_control(
+			'rating_maximum_value',
 			[
 				'label' => esc_html__( 'Rating Scale', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
