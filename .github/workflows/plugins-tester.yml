@@ -114,7 +114,9 @@ jobs:
       - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
-        run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
+        run: | 
+              cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
+              run: echo "::warning"
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
