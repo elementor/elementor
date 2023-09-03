@@ -36,7 +36,8 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
-          tag: ${{ github.event.inputs.toTag }}
+          toTag: ${{ github.event.inputs.toTag }}
+          fromTag: ${{ github.event.inputs.fromTag }}
           writeToFile: ${{ github.event.inputs.saveChangelog }}
           includeInvalidCommits: "true"
           includeRefIssues: "false"
