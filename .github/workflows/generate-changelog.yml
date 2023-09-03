@@ -57,6 +57,7 @@ jobs:
           REPO=${{ github.repository }}
           PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
           MERGED_PRS=$(echo "$PRS" | jq -r --arg TAG "$TAG" '.[] | select(.headRefName | startswith($TAG)) | "- #" + (.number|tostring) + " - " + .title')
+          echo ${{ MERGED_PRS }}
           echo "$MERGED_PRS" > merged_prs.md
 
       - name: Upload artifact
