@@ -14,19 +14,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          REPO=${{ github.repository }}
-          PAGE=1
-          PER_PAGE=100
-          MERGED_PRS=""
-          while : ; do
-            PRS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO/pulls?state=closed&per_page=$PER_PAGE&page=$PAGE")
-            MERGED_PRS+=$(echo "$PRS" | jq -r '.[] | select(.merged_at != null) | "- #" + (.number|tostring) + " - " + .title + "\n"')
-            if [ $(echo "$PRS" | jq -r 'length') -lt $PER_PAGE ]; then
-              break
-            fi
-            ((PAGE++))
-          done
-          echo -e "$MERGED_PRS" > merged_prs.md
+          # REPO=${{ github.repository }}
+          REPO="elementor/elementor"
+          PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
+          MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
+          echo "$MERGED_PRS"
+          echo "$MERGED_PRS" > merged_prs.md
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
