@@ -21,8 +21,16 @@ runs:
   steps:
     - shell: bash
       run: |
-            CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
-            NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
+
+            if [[ ${{ inputs.CHANNEL }}  == "latest" ]]; then
+              CURRENT_TIMESTAMP=$(date +%s)
+              echo "CURRENT_TIMESTAMP=${CURRENT_TIMESTAMP}"
+              NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+ '-' +CURRENT_TIMESTAMP))
+            else
+              CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
+              NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
+            fi
+
             ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
 
             if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
