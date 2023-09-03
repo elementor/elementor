@@ -2,6 +2,10 @@ name: Generate Temp Changelog
 
 on:
   workflow_dispatch:
+      inputs:
+        tag:
+          description: 'Tag'
+          required: true
 
 jobs:
   fetch-merged-prs:
@@ -16,10 +20,15 @@ jobs:
         run: |
           # REPO=${{ github.repository }}
           REPO="elementor/elementor"
-          PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
-          MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
-          echo "$MERGED_PRS"
+          TAG=${{ github.event.inputs.tag }}
+          PRS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO/pulls?state=closed&per_page=100")
+          MERGED_PRS=$(echo "$PRS" | jq -r --arg TAG "$TAG" '.[] | select(.merged_at!=null) | select(.head.ref | startswith($TAG)) | "- #" + (.number|tostring) + " - " + .title')
           echo "$MERGED_PRS" > merged_prs.md
+
+          # PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
+          # MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
+          # echo "$MERGED_PRS"
+          # echo "$MERGED_PRS" > merged_prs.md
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
