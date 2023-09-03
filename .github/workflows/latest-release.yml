@@ -84,7 +84,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-#          tag_name: ${{ env.PACKAGE_VERSION }}
+          tag_name: ${{ env.PACKAGE_VERSION }}
 #          target_commitish: ${{ env.CLEAN_REF }}
           files: |
             elementor-*.zip
