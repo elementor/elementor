@@ -3,22 +3,25 @@ name: Generate Temp Changelog
 on:
   workflow_dispatch:
     inputs:
-      toTag:
-        description: 'To Tag'
+        tag:
+        description: 'Tag'
         required: true
-        type: string
-        default: 'main'
+      # toTag:
+      #   description: 'To Tag'
+      #   required: true
+      #   type: string
+      #   default: 'main'
 
-      fromTag:
-        description: 'From Tag'
-        required: true
-        type: string
-        default: 'main'
+      # fromTag:
+      #   description: 'From Tag'
+      #   required: true
+      #   type: string
+      #   default: 'main'
 
-      saveChangelog:
-        description: 'Save Changelog?'
-        required: true
-        type: boolean
+      # saveChangelog:
+      #   description: 'Save Changelog?'
+      #   required: true
+      #   type: boolean
 
 jobs:
   generate-changelog:
@@ -44,120 +47,37 @@ jobs:
       #     useGitmojis: "false"
       #     excludeTypes: ""
 
-      - name: Update Changelog
-        id: update_changelog
-        uses: mikepenz/release-changelog-builder-action@v4.0.0
-        with:
-          ignorePreReleases: "false"
-          fromTag: ${{ github.event.inputs.toTag }}
-          toTag: ${{ github.event.inputs.fromTag }}
-          token: ${{ github.token }}
-          fetchViaCommits: "true"
-          configurationJson: |
-            {
-              "categories": [
-                {
-                  "title": "## 🚀 Features",
-                  "labels": ["feature"]
-                },
-                {
-                  "title": "## 🐛 Fixes",
-                  "labels": ["fix"]
-                },
-                {
-                  "key": "tests",
-                  "title": "## 🧪 Tests",
-                  "labels": ["test"]
-                },
-                {
-                  "title": "## 🧪 Tests and some 🪄 Magic",
-                  "labels": ["test", "magic"],
-                  "exclude_labels": ["no-magic"],
-                  "exhaustive": true,
-                  "exhaustive_rules": "false",
-                  "empty_content": "- no matching PRs",
-                  "rules": [
-                    {
-                      "pattern": "open",
-                      "on_property": "status",
-                      "flags": "gu"
-                    }
-                  ]
-                }
-              ],
-              "ignore_labels": [
-                "ignore"
-              ],
-              "sort": {
-                "order": "ASC",
-                "on_property": "mergedAt"
-              },
-              "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
-              "pr_template": "- #{{TITLE}}\n   - PR: ##{{NUMBER}}",
-              "empty_template": "- no changes",
-              "label_extractor": [
-                {
-                  "pattern": "(.) (.+)",
-                  "target": "$1",
-                  "flags": "gu"
-                },
-                {
-                  "pattern": "\\[Issue\\]",
-                  "on_property": "title",
-                  "method": "match"
-                }
-              ],
-              "duplicate_filter": {
-                "pattern": "\\[ABC-....\\]",
-                "on_property": "title",
-                "method": "match"
-              },
-              "reference": {
-                "pattern": ".*\\ \\#(.).*",
-                "on_property": "body",
-                "method": "replace",
-                "target": "$1"
-              },
-              "transformers": [
-                {
-                  "pattern": "[\\-\\*] (\\[(...|TEST|CI|SKIP)\\])( )?(.+?)\n(.+?[\\-\\*] )(.+)",
-                  "target": "- $4\n  - $6"
-                }
-              ],
-              "trim_values": false,
-              "max_tags_to_fetch": 200,
-              "max_pull_requests": 200,
-              "max_back_track_time_days": 365,
-              "exclude_merge_branches": [
-                "Owner/qa"
-              ],
-              "tag_resolver": {
-                "method": "semver",
-                "filter": {
-                  "pattern": "api-(.+)",
-                  "flags": "gu"
-                }
-              },
-              "base_branches": [
-                "dev"
-              ]
-            }
-
-      - name: Format Changelog
-        id: format_changelog
+      - name: Fetch merged PRs and save as artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "${{ steps.update_changelog.outputs.changes }}" > CHANGELOG.md
+          TAG=${{ github.event.inputs.tag }}
+          REPO=${{ github.repository }}
+          PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
+          MERGED_PRS=$(echo "$PRS" | jq -r --arg TAG "$TAG" '.[] | select(.headRefName | startswith($TAG)) | "- #" + (.number|tostring) + " - " + .title')
+          echo "$MERGED_PRS" > merged_prs.md
 
-      - name: Upload Changelog as Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: Changelog
-          path: CHANGELOG.md
+          name: merged-prs
+          path: merged_prs.md
 
-      - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@v4
-        if: github.event.inputs.saveChangelog == 'true'
-        with:
-          branch: main
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
-          file_pattern: CHANGELOG.md
+      # - name: Format Changelog
+      #   id: format_changelog
+      #   run: |
+      #     echo "${{ steps.update_changelog.outputs.changes }}" > CHANGELOG.md
+
+      # - name: Upload Changelog as Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Changelog
+      #     path: CHANGELOG.md
+
+      # - name: Commit CHANGELOG.md
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   if: github.event.inputs.saveChangelog == 'true'
+      #   with:
+      #     branch: main
+      #     commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+      #     file_pattern: CHANGELOG.md
