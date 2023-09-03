@@ -96,7 +96,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published a Cloud release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {
