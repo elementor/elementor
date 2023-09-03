@@ -8,7 +8,7 @@ const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
 	'& .MuiDialog-container': {
 		marginTop: 0,
 		alignItems: 'flex-end',
-		paddingBottom: theme.spacing( 13 ),
+		paddingBottom: '16vh',
 	},
 	'& .MuiPaper-root': {
 		margin: 0,

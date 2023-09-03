@@ -33,15 +33,20 @@ const UseLayoutButton = ( props ) => (
 	<Button
 		size="small"
 		variant="contained"
+		{ ...props }
 		sx={ {
+			...( props.sx || {} ),
 			// TODO: remove once exist in the UI library.
 			borderRadius: ( { border } ) => border.size.md,
 		} }
-		{ ...props }
 	>
 		{ __( 'Use Layout', 'elementor' ) }
 	</Button>
 );
+
+UseLayoutButton.propTypes = {
+	sx: PropTypes.object,
+};
 
 const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
@@ -235,8 +240,12 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 
 								{
 									screenshots.length > 0 && (
-										<Box sx={ { pt: 0, px: 5, pb: 5 } } display="flex" justifyContent="space-between">
-											<RegenerateButton onClick={ handleRegenerate } disabled={ isLoading || isPromptFormActive } />
+										<Box sx={ { pt: 0, px: 5, pb: 5 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
+											<RegenerateButton
+												onClick={ handleRegenerate }
+												disabled={ isLoading || isPromptFormActive }
+												sx={ { justifySelf: 'start' } }
+											/>
 
 											{
 												screenshots.length > slidesPerPage && (
@@ -249,7 +258,11 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 												)
 											}
 
-											<UseLayoutButton onClick={ applyTemplate } disabled={ isPromptFormActive || -1 === selectedScreenshotIndex } />
+											<UseLayoutButton
+												onClick={ applyTemplate }
+												disabled={ isPromptFormActive || -1 === selectedScreenshotIndex }
+												sx={ { justifySelf: 'end', gridColumn: 3 } }
+											/>
 										</Box>
 									)
 								}
