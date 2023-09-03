@@ -17,7 +17,12 @@ const popoverId = 'e-ai-upgrade-popover';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
-	marginTop: theme.spacing( 6 ),
+	'[data-popper-placement="top"] &': {
+		marginBottom: theme.spacing( 6 ),
+	},
+	'[data-popper-placement="bottom"] &': {
+		marginTop: theme.spacing( 6 ),
+	},
 	padding: theme.spacing( 7 ),
 	backgroundColor: theme.palette.background.paper,
 	boxShadow: theme.shadows[ 4 ],
@@ -29,10 +34,17 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 	width: theme.sizing[ 500 ],
 	height: theme.sizing[ 200 ],
 	position: 'absolute',
-	top: `calc(${ theme.sizing[ 200 ] } * -1)`,
-	left: '50%',
-	transform: 'translateX(-50%) rotate(180deg)',
 	overflow: 'hidden',
+	// Override Popper inline styles.
+	left: '50% !important',
+	transform: 'translateX(-50%) rotate(var(--rotate, 0deg)) !important',
+	'[data-popper-placement="top"] &': {
+		top: '100%',
+	},
+	'[data-popper-placement="bottom"] &': {
+		'--rotate': '180deg',
+		top: `calc(${ theme.sizing[ 200 ] } * -1)`,
+	},
 	'&::after': {
 		backgroundColor: theme.palette.background.paper,
 		content: '""',
@@ -68,6 +80,7 @@ const UpgradeChip = ( {
 } ) => {
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const anchorEl = useRef( null );
+	const arrowEl = useRef( null );
 
 	const showPopover = () => setIsPopoverOpen( true );
 
@@ -96,9 +109,16 @@ const UpgradeChip = ( {
 				open={ isPopoverOpen }
 				anchorEl={ anchorEl.current }
 				sx={ { zIndex: '9999', maxWidth: 300 } }
+				modifiers={ [ {
+					name: 'arrow',
+					enabled: true,
+					options: {
+						element: arrowEl.current,
+					},
+				} ] }
 			>
 				<StyledContent>
-					<StyledArrow />
+					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
 						{ __( 'Unlimited access to Elementor AI', 'elementor' ) }

@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Tools extends Settings_Page {
 
+	const CAPABILITY = 'manage_options';
+
 	/**
 	 * Settings page ID for Elementor tools.
 	 */
@@ -49,6 +51,10 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_clear_cache() {
 		check_ajax_referer( 'elementor_clear_cache', '_nonce' );
 
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		Plugin::$instance->files_manager->clear_cache();
 
 		wp_send_json_success();
@@ -66,6 +72,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -97,6 +107,10 @@ class Tools extends Settings_Page {
 	 */
 	public function ajax_elementor_replace_url() {
 		check_ajax_referer( 'elementor_replace_url', '_nonce' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		$from = Utils::get_super_global_value( $_POST, 'from' ) ?? '';
 		$to = Utils::get_super_global_value( $_POST, 'to' ) ?? '';
@@ -133,16 +147,27 @@ class Tools extends Settings_Page {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
-		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+		/**
+		 * Filter to allow override the rollback process.
+		 * Should return an instance of `Rollback` class.
+		 *
+		 * @since 3.16.0
+		 *
+		 * @param Rollback|null $rollback The rollback instance.
+		 * @param string        $version  The version to roll back to.
+		 */
+		$rollback = apply_filters( 'elementor/settings/rollback', null, $version );
 
-		$rollback = new Rollback(
-			[
+		if ( ! ( $rollback instanceof Rollback ) ) {
+			$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
+
+			$rollback = new Rollback( [
 				'version' => $version,
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
 				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
-			]
-		);
+			] );
+		}
 
 		$rollback->run();
 
@@ -183,28 +208,33 @@ class Tools extends Settings_Page {
 
 	private function get_rollback_versions() {
 		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
+
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+			$versions = apply_filters( 'elementor/settings/rollback/versions', [] );
 
-			$plugin_information = plugins_api(
-				'plugin_information', [
-					'slug' => 'elementor',
-				]
-			);
+			if ( empty( $versions ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-			if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
-				return [];
+				$plugin_information = plugins_api(
+					'plugin_information', [
+						'slug' => 'elementor',
+					]
+				);
+
+				if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
+					return [];
+				}
+
+				uksort( $plugin_information->versions, 'version_compare' );
+				$versions = array_keys( array_reverse( $plugin_information->versions ) );
 			}
-
-			uksort( $plugin_information->versions, 'version_compare' );
-			$plugin_information->versions = array_reverse( $plugin_information->versions );
 
 			$rollback_versions = [];
 
 			$current_index = 0;
-			foreach ( $plugin_information->versions as $version => $download_link ) {
+			foreach ( $versions as $version ) {
 				if ( $max_versions <= $current_index ) {
 					break;
 				}

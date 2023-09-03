@@ -321,6 +321,21 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Get panel presets.
+	 *
+	 * Used for displaying the widget in the panel multiple times, but with different defaults values,
+	 * icon, title etc.
+	 *
+	 * @since 3.16.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_panel_presets() {
+		return [];
+	}
+
+	/**
 	 * Add new child element.
 	 *
 	 * Register new child element to allow hierarchy.

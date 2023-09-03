@@ -11,7 +11,7 @@ $app-header-box-shadow: $eps-box-shadow-2;
 $app-header-height: px-to-rem(50);
 $app-header-color: tints(800);
 $app-header-font-size: type(size, "15");
-$app-header-padding-inline: 0 spacing(16);
+$app-header-padding-inline: spacing(16);
 $app-header-padding-block: 0;
 $app-header-z-index: 3;
 

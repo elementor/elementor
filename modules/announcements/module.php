@@ -119,32 +119,6 @@ class Module extends BaseApp {
 					],
 				],
 			],
-			[
-				'title' => 'Activate Containers for Brilliant Layouts',
-				'description' => 'Take advantage of the full power of Containers in Elementor to create slick, pixel-perfect, responsive layouts, plus improve the performance of your website. Follow these steps: <strong>Switch Flexbox Container to ‘Active’ and Save.</strong>',
-				'media' => [
-					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/containers-announcement.png',
-				],
-				'cta' => [
-					[
-						'label' => 'Activate Container',
-						'variant' => 'primary',
-						'target' => '_blank',
-						'url' => ElementorSettings::get_url() . '#tab-experiments',
-					],
-					[
-						'label' => 'Try It First',
-						'target' => '_blank',
-						'url' => 'https://go.elementor.com/whats-new-popup/',
-					],
-				],
-				'triggers' => [
-					[
-						'action' => 'isFlexContainerInactive',
-					],
-				],
-			],
 		];
 	}
 

@@ -15,6 +15,7 @@ export default class extends Marionette.CompositeView {
 			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
 			indicator: '> .elementor-navigator__item > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
 			elements: '> .elementor-navigator__elements',
+			icon: '> .elementor-navigator__item .elementor-navigator__element__element-type',
 		};
 	}
 
@@ -331,6 +332,14 @@ export default class extends Marionette.CompositeView {
 	onModelSettingsChange( settingsModel ) {
 		if ( undefined !== settingsModel.changed._title ) {
 			this.ui.title.text( this.model.getTitle() );
+		}
+
+		if ( undefined !== settingsModel.changed.presetTitle && undefined === settingsModel._title ) {
+			this.ui.title.text( this.model.getTitle() );
+		}
+
+		if ( undefined !== settingsModel.changed.presetIcon ) {
+			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
 		}
 
 		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
