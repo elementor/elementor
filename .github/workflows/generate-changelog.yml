@@ -31,18 +31,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # - name: Update Changelog
+      #   id: update_changelog
+      #   uses: requarks/changelog-action@v1
+      #   with:
+      #     token: ${{ github.token }}
+      #     toTag: ${{ github.event.inputs.toTag }}
+      #     fromTag: ${{ github.event.inputs.fromTag }}
+      #     writeToFile: ${{ github.event.inputs.saveChangelog }}
+      #     includeInvalidCommits: "true"
+      #     includeRefIssues: "false"
+      #     useGitmojis: "false"
+      #     excludeTypes: ""
+
       - name: Update Changelog
         id: update_changelog
-        uses: requarks/changelog-action@v1
+        uses: mikepenz/release-changelog-builder-action@4.0.0
         with:
+          ignorePreReleases: "false"
+          fromTag: ${{ github.event.inputs.toTag }}
+          toTag: ${{ github.event.inputs.fromTag }}
           token: ${{ github.token }}
-          toTag: ${{ github.event.inputs.toTag }}
-          fromTag: ${{ github.event.inputs.fromTag }}
-          writeToFile: ${{ github.event.inputs.saveChangelog }}
-          includeInvalidCommits: "true"
-          includeRefIssues: "false"
-          useGitmojis: "false"
-          excludeTypes: ""
 
       - name: Format Changelog
         id: format_changelog
