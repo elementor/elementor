@@ -52,6 +52,7 @@ jobs:
           fromTag: ${{ github.event.inputs.toTag }}
           toTag: ${{ github.event.inputs.fromTag }}
           token: ${{ github.token }}
+          fetchViaCommits: "true"
 
       - name: Format Changelog
         id: format_changelog
