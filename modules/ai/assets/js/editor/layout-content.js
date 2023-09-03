@@ -11,7 +11,7 @@ import useIntroduction from './hooks/use-introduction';
 
 const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGenerate } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-no-images-info' );
+	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-coming-soon-info' );
 
 	if ( isLoading ) {
 		return (
@@ -74,7 +74,7 @@ const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGene
 						severity="info"
 						onClose={ markAsViewed }
 					>
-						{ __( 'Currently, we offer basic widgets, but enhancements are underway. Stay tuned for updates!', 'elementor' ) }
+						{ __( "Layouts generated with AI only include some Elementor widgets, but we're evolving! More capabilities coming soon...", 'elementor' ) }
 					</Alert>
 				),
 			} }
