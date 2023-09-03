@@ -123,11 +123,7 @@ jobs:
                   "type": "divider"
                 },
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n "
-                  }
+                  "type": "section"
                 }
               ]
             }
