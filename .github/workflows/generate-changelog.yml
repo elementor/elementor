@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
         tag:
-        description: 'Tag to fetch'
-        required: true
-        type: string
+          description: 'Tag to fetch'
+          required: true
+          type: string
 
       # toTag:
       #   description: 'To Tag'
