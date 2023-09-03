@@ -3,7 +3,7 @@ name: Automated Latest Release
 env:
   CHANNEL: 'latest'
   PRERELEASE: 'true'
-  SLACK_TAG_CHANNELS: 'C05QRUJSLG3'
+  SLACK_TAG_CHANNELS: 'C05QRUJSLG3' # Slack channel ID
 
 on:
   pull_request:
@@ -122,6 +122,13 @@ jobs:
                 {
                   "type": "divider"
                 },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n "
+                  }
+                }
               ]
             }
 
