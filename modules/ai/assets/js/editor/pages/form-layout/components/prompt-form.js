@@ -59,7 +59,6 @@ const GenerateButton = ( props ) => (
 		size="small"
 		fullWidth={ false }
 		sx={ {
-			minWidth: '100px',
 			// TODO: remove once exist in the UI library.
 			borderRadius: ( { border } ) => border.size.md,
 		} }

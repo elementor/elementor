@@ -1,14 +1,15 @@
 import { Box, Skeleton } from '@elementor/ui';
 import ScreenshotContainer from './screenshot-container';
+import ScreenshotUnavailable from './screenshot-unavailable';
 
 const SCREENSHOT_HEIGHT = '138px';
 
-const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick, sx = {}, outlineOffset } ) => {
+const Screenshot = ( { url, isLoading = false, isSelected = false, isPlaceholder, disabled, onClick, sx = {}, outlineOffset } ) => {
 	if ( isPlaceholder ) {
 		return <Box sx={ { height: SCREENSHOT_HEIGHT, ...sx } } />;
 	}
 
-	if ( ! url ) {
+	if ( isLoading ) {
 		return (
 			<Skeleton
 				width="100%"
@@ -16,6 +17,19 @@ const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick
 				variant="rounded"
 				height={ SCREENSHOT_HEIGHT }
 				sx={ { borderRadius: ( { border } ) => border.size.md, ...sx } }
+			/>
+		);
+	}
+
+	if ( ! url ) {
+		return (
+			<ScreenshotUnavailable
+				selected={ isSelected }
+				disabled={ disabled }
+				sx={ sx }
+				onClick={ onClick }
+				height={ SCREENSHOT_HEIGHT }
+				outlineOffset={ outlineOffset }
 			/>
 		);
 	}
@@ -34,6 +48,7 @@ const Screenshot = ( { url, isSelected = false, isPlaceholder, disabled, onClick
 
 Screenshot.propTypes = {
 	isSelected: PropTypes.bool,
+	isLoading: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	disabled: PropTypes.bool,
 	onClick: PropTypes.func.isRequired,

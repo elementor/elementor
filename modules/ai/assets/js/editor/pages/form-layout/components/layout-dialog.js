@@ -4,11 +4,11 @@ import StyledChip from '../../../components/ui/styled-chip';
 import PromptDialog from '../../../components/prompt-dialog';
 import { AIIcon, XIcon } from '@elementor/icons';
 
-const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
+const StyledDialog = styled( PromptDialog )( () => ( {
 	'& .MuiDialog-container': {
 		marginTop: 0,
 		alignItems: 'flex-end',
-		paddingBottom: theme.spacing( 13 ),
+		paddingBottom: '16vh',
 	},
 	'& .MuiPaper-root': {
 		margin: 0,
@@ -17,7 +17,7 @@ const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
 } ) );
 
 const DialogHeader = ( { onClose, children } ) => (
-	<AppBar sx={ { fontWeight: 'normal' } } elevation={ 0 } color="transparent" position="relative">
+	<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
 		<Toolbar>
 			<AIIcon fontSize="large" sx={ { mr: 1 } } />
 
