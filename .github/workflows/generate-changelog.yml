@@ -2,62 +2,21 @@ name: Generate Temp Changelog
 
 on:
   workflow_dispatch:
-    inputs:
-        tag:
-          description: 'Tag to fetch'
-          required: true
-          type: string
-
-      # toTag:
-      #   description: 'To Tag'
-      #   required: true
-      #   type: string
-      #   default: 'main'
-
-      # fromTag:
-      #   description: 'From Tag'
-      #   required: true
-      #   type: string
-      #   default: 'main'
-
-      # saveChangelog:
-      #   description: 'Save Changelog?'
-      #   required: true
-      #   type: boolean
 
 jobs:
-  generate-changelog:
-    permissions:
-      contents: write
-
+  fetch-merged-prs:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Update Changelog
-      #   id: update_changelog
-      #   uses: requarks/changelog-action@v1
-      #   with:
-      #     token: ${{ github.token }}
-      #     toTag: ${{ github.event.inputs.toTag }}
-      #     fromTag: ${{ github.event.inputs.fromTag }}
-      #     writeToFile: ${{ github.event.inputs.saveChangelog }}
-      #     includeInvalidCommits: "true"
-      #     includeRefIssues: "false"
-      #     useGitmojis: "false"
-      #     excludeTypes: ""
-
-      - name: Fetch merged PRs and save as artifact
+      - name: Fetch all merged PRs and save as artifact
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          TAG=${{ github.event.inputs.tag }}
           REPO=${{ github.repository }}
           PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
-          MERGED_PRS=$(echo "$PRS" | jq -r --arg TAG "$TAG" '.[] | select(.headRefName | startswith($TAG)) | "- #" + (.number|tostring) + " - " + .title')
-          echo $PRS
+          MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
           echo "$MERGED_PRS" > merged_prs.md
 
       - name: Upload artifact
@@ -66,21 +25,89 @@ jobs:
           name: merged-prs
           path: merged_prs.md
 
-      # - name: Format Changelog
-      #   id: format_changelog
-      #   run: |
-      #     echo "${{ steps.update_changelog.outputs.changes }}" > CHANGELOG.md
+# name: Generate Temp Changelog
 
-      # - name: Upload Changelog as Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Changelog
-      #     path: CHANGELOG.md
+# on:
+#   workflow_dispatch:
+#     inputs:
+#         tag:
+#           description: 'Tag to fetch'
+#           required: true
+#           type: string
 
-      # - name: Commit CHANGELOG.md
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   if: github.event.inputs.saveChangelog == 'true'
-      #   with:
-      #     branch: main
-      #     commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
-      #     file_pattern: CHANGELOG.md
+#       # toTag:
+#       #   description: 'To Tag'
+#       #   required: true
+#       #   type: string
+#       #   default: 'main'
+
+#       # fromTag:
+#       #   description: 'From Tag'
+#       #   required: true
+#       #   type: string
+#       #   default: 'main'
+
+#       # saveChangelog:
+#       #   description: 'Save Changelog?'
+#       #   required: true
+#       #   type: boolean
+
+# jobs:
+#   generate-changelog:
+#     permissions:
+#       contents: write
+
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+
+#       # - name: Update Changelog
+#       #   id: update_changelog
+#       #   uses: requarks/changelog-action@v1
+#       #   with:
+#       #     token: ${{ github.token }}
+#       #     toTag: ${{ github.event.inputs.toTag }}
+#       #     fromTag: ${{ github.event.inputs.fromTag }}
+#       #     writeToFile: ${{ github.event.inputs.saveChangelog }}
+#       #     includeInvalidCommits: "true"
+#       #     includeRefIssues: "false"
+#       #     useGitmojis: "false"
+#       #     excludeTypes: ""
+
+#       - name: Fetch merged PRs and save as artifact
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           TAG=${{ github.event.inputs.tag }}
+#           REPO=${{ github.repository }}
+#           PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
+#           MERGED_PRS=$(echo "$PRS" | jq -r --arg TAG "$TAG" '.[] | select(.headRefName | startswith($TAG)) | "- #" + (.number|tostring) + " - " + .title')
+#           echo $PRS
+#           echo "$MERGED_PRS" > merged_prs.md
+
+#       - name: Upload artifact
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: merged-prs
+#           path: merged_prs.md
+
+#       # - name: Format Changelog
+#       #   id: format_changelog
+#       #   run: |
+#       #     echo "${{ steps.update_changelog.outputs.changes }}" > CHANGELOG.md
+
+#       # - name: Upload Changelog as Artifact
+#       #   uses: actions/upload-artifact@v2
+#       #   with:
+#       #     name: Changelog
+#       #     path: CHANGELOG.md
+
+#       # - name: Commit CHANGELOG.md
+#       #   uses: stefanzweifel/git-auto-commit-action@v4
+#       #   if: github.event.inputs.saveChangelog == 'true'
+#       #   with:
+#       #     branch: main
+#       #     commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+#       #     file_pattern: CHANGELOG.md
