@@ -118,12 +118,6 @@ jobs:
                     "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
                     "action_id": "button-action"
                   }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section"
                 }
               ]
             }
