@@ -12,18 +12,48 @@ jobs:
 
       - name: Fetch all merged PRs and save as artifact
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO=${{ github.repository }}
-          PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
-          MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
-          echo "$MERGED_PRS" > merged_prs.md
-
+          PAGE=1
+          PER_PAGE=100
+          MERGED_PRS=""
+          while : ; do
+            PRS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO/pulls?state=closed&per_page=$PER_PAGE&page=$PAGE")
+            MERGED_PRS+=$(echo "$PRS" | jq -r '.[] | select(.merged_at != null) | "- #" + (.number|tostring) + " - " + .title + "\n"')
+            if [ $(echo "$PRS" | jq -r 'length') -lt $PER_PAGE ]; then
+              break
+            fi
+            ((PAGE++))
+          done
+          echo -e "$MERGED_PRS" > merged_prs.md
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: merged-prs
           path: merged_prs.md
+
+# jobs:
+#   fetch-merged-prs:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Fetch all merged PRs and save as artifact
+#         env:
+#           GITHUB_TOKEN: ${{ github.token }}
+#         run: |
+#           REPO=${{ github.repository }}
+#           PRS=$(gh pr list --repo $REPO --state merged --json number,title,headRefName --limit 100)
+#           MERGED_PRS=$(echo "$PRS" | jq -r '.[] | "- #" + (.number|tostring) + " - " + .title')
+#           echo "$MERGED_PRS" > merged_prs.md
+
+#       - name: Upload artifact
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: merged-prs
+#           path: merged_prs.md
 
 # name: Generate Temp Changelog
 
