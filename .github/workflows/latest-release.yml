@@ -2,7 +2,6 @@ name: Automated Latest Release
 
 env:
   CHANNEL: 'latest'
-  CHANGELOG_FILE: 'temp-changelog.txt'
   PRERELEASE: 'true'
 
 on:
@@ -85,10 +84,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
-#          target_commitish: ${{ env.CLEAN_REF }}
+          target_commitish: ${{ env.CLEAN_REF }}
           files: |
             elementor-*.zip
-#            ${{ env.CHANGELOG_FILE }}
+          body: false
           prerelease: ${{ env.PRERELEASE }}
       - name: Post To Slack Created Latest auto Release
         if: ${{ github.event.inputs.pre_release }} == false
