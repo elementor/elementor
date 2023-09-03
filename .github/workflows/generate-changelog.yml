@@ -6,6 +6,8 @@ on:
         tag:
         description: 'Tag to fetch'
         required: true
+        type: string
+
       # toTag:
       #   description: 'To Tag'
       #   required: true
