@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
         tag:
-        description: 'Tag'
+        description: 'Tag to fetch'
         required: true
       # toTag:
       #   description: 'To Tag'
