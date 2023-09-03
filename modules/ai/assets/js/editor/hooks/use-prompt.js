@@ -38,7 +38,7 @@ const usePrompt = ( fetchData, initialState ) => {
 			.finally( () => setIsLoading( false ) );
 	} );
 
-	const sendUsageData = () => data.responseId && setStatusFeedback( data.responseId );
+	const sendUsageData = ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId );
 
 	const reset = () => {
 		setData( ( { credits } ) => ( { credits, result: '', responseId: '' } ) );
