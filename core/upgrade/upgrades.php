@@ -11,6 +11,7 @@ use Elementor\Includes\Elements\Container;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\App\Modules\ImportExport\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -856,6 +857,35 @@ class Upgrades {
 
 			self::save_updated_document( $post_id, $data );
 		}
+	}
+
+	public static function _v_3_17_0_site_settings_updates() {
+		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
+
+		foreach ( $options as $option_name ) {
+			self::maybe_add_gap_control_data( $option_name );
+		}
+	}
+
+	private static function maybe_add_gap_control_data( $option_name ) {
+		$kit_id = get_option( $option_name );
+
+		if ( ! $kit_id ) {
+			return;
+		}
+
+		$kit_data_array = get_post_meta( (int) $kit_id, '_elementor_page_settings', true );
+
+		$setting_not_exist = ! isset( $kit_data_array['space_between_widgets'] );
+		$already_processed = isset( $kit_data_array['space_between_widgets']['column'] );
+
+		if ( $setting_not_exist || $already_processed ) {
+			return;
+		}
+
+		$kit_data_array['space_between_widgets'] = Utils::update_space_between_widgets_values( $kit_data_array['space_between_widgets'] );
+
+		update_post_meta( (int) $kit_id, '_elementor_page_settings', $kit_data_array );
 	}
 
 	public static function remove_remote_info_api_data() {
