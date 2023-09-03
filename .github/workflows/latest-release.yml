@@ -3,6 +3,7 @@ name: Automated Latest Release
 env:
   CHANNEL: 'latest'
   PRERELEASE: 'true'
+  SLACK_TAG_CHANNELS: 'C05QRUJSLG3'
 
 on:
   pull_request:
@@ -86,7 +87,7 @@ jobs:
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: "C05QRUJSLG3"
+          SLACK_TAG_CHANNELS: ${{ env.SLACK_TAG_CHANNELS }}
           PAYLOAD: |
             {
               "blocks": [
