@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExport;
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Modules\System_Info\Reporters\Server;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
@@ -59,7 +60,13 @@ class Utils {
 	}
 
 	public static function get_elementor_post_types() {
-		return [ 'post', 'page', 'e-landing-page' ];
+		$post_types = [ 'post', 'page' ];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
+			$post_types[] = Landing_Pages_Module::CPT;
+		}
+
+		return $post_types;
 	}
 
 	public static function get_builtin_wp_post_types() {
