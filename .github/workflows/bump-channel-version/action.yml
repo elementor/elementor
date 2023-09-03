@@ -58,3 +58,4 @@ runs:
                 echo "Add beta tag to readme file"
                 sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: $BETA_VERSION$(printf '\n\r')" ./readme.txt
             fi
+        fi
