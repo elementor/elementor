@@ -23,7 +23,7 @@ runs:
       run: |
 
             if [[ ${{ inputs.CHANNEL }}  == "latest" ]]; then
-              NEW_CHANNEL_VERSION=$(date +%s)
+              NEW_CHANNEL_VERSION=-$(date +%s)
             else
               CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
               NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
