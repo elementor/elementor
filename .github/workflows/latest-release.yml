@@ -86,7 +86,7 @@ jobs:
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: 'C05QRUJSLG3'  // #latest-hosting-release ID
+          SLACK_TAG_CHANNELS: "C05QRUJSLG3"
           PAYLOAD: |
             {
               "blocks": [
@@ -117,6 +117,9 @@ jobs:
                     "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
                     "action_id": "button-action"
                   }
+                },
+                {
+                  "type": "divider"
                 },
               ]
             }
