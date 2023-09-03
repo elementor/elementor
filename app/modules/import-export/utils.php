@@ -60,13 +60,7 @@ class Utils {
 	}
 
 	public static function get_elementor_post_types() {
-		$post_types = [ 'post', 'page' ];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
-			$post_types[] = Landing_Pages_Module::CPT;
-		}
-
-		return $post_types;
+		return get_post_types_by_support( 'elementor' );
 	}
 
 	public static function get_builtin_wp_post_types() {
