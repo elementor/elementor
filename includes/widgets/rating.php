@@ -129,11 +129,11 @@ class Widget_Rating extends Widget_Base {
 		ob_start();
 
 		for ( $index = 1; $index <= $rating_scale; $index++ ) {
-			$star_marked_width = $this->get_star_marked_width( $index );
-
 			$this->add_render_attribute( 'star_marked_' . $index, [
 				'class' => 'e-star-wrapper e-star-marked',
 			] );
+
+			$star_marked_width = $this->get_star_marked_width( $index );
 
 			if ( '100%' !== $star_marked_width ) {
 				$this->add_render_attribute( 'star_marked_' . $index, [
