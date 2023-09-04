@@ -105,9 +105,11 @@ class Widget_Rating extends Widget_Base {
 
 	protected function get_star_marked_width( $star_index ): string {
 		$initial_value = $this->get_rating_scale();
-		$rating_value = $this->get_rating_value()
-			? $this->get_rating_value()
-			: $initial_value;
+		$rating_value = $this->get_rating_value();
+
+		if ( empty( $rating_value ) ) {
+			$rating_value = $initial_value;
+		}
 
 		$width = '0%';
 
@@ -123,13 +125,24 @@ class Widget_Rating extends Widget_Base {
 	protected function get_star_markup(): string {
 		$icon = $this->get_settings_for_display( 'rating_icon' );
 		$rating_scale = $this->get_rating_scale();
-		$output = '';
+
+		ob_start();
 
 		for ( $index = 1; $index <= $rating_scale; $index++ ) {
-			ob_start();
+			$star_marked_width = $this->get_star_marked_width( $index );
+
+			$this->add_render_attribute( 'star_marked_' . $index, [
+				'class' => 'e-star-wrapper e-star-marked',
+			] );
+
+			if ( '100%' !== $star_marked_width ) {
+				$this->add_render_attribute( 'star_marked_' . $index, [
+					'style' => '--e-rating-star-marked-width: ' . $star_marked_width . ';',
+				] );
+			}
 			?>
 			<div class="e-star">
-				<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: <?php echo $this->get_star_marked_width( $index ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;">
+				<div <?php $this->print_render_attribute_string( 'star_marked_' . $index ); ?>>
 					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 				<div class="e-star-wrapper e-star-unmarked">
@@ -137,10 +150,9 @@ class Widget_Rating extends Widget_Base {
 				</div>
 			</div>
 			<?php
-			$output .= ob_get_clean();
 		}
 
-		return $output;
+		return ob_get_clean();
 	}
 
 	protected function render() {
@@ -151,12 +163,17 @@ class Widget_Rating extends Widget_Base {
 			'itemprop' => 'reviewRating',
 		] );
 
+		$aria_label_string = 'Rated %d out of %s';
+
 		$this->add_render_attribute( 'widget_wrapper', [
 			'class' => 'e-rating-wrapper',
 			'itemprop' => 'reviewValue',
 			'content' => $this->get_rating_value(),
 			'role' => 'img',
-			'aria-label' => $this->get_rating_value() . ' and a half of ' . $this->get_rating_scale() . ' stars',
+			'aria-label' => sprintf( esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
+				$this->get_rating_value(),
+				$this->get_rating_scale()
+			),
 		] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'widget' ); ?>>
