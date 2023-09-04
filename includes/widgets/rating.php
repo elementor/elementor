@@ -121,14 +121,18 @@ class Widget_Rating extends Widget_Base {
 		$output = '';
 
 		for ( $index = 1; $index <= $rating_scale; $index++ ) {
-			$output .= '<div class="e-star">';
-			$output .= '<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: ' . $this->get_star_marked_width( $index ) . ';">';
-			$output .= Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] );
-			$output .= '</div>';
-			$output .= '<div class="e-star-wrapper e-star-unmarked">';
-			$output .= Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] );
-			$output .= '</div>';
-			$output .= '</div>';
+			ob_start();
+			?>
+			<div class="e-star">
+				<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: <?php echo $this->get_star_marked_width( $index ); ?>;">
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); ?>
+				</div>
+				<div class="e-star-wrapper e-star-unmarked">
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); ?>
+				</div>
+			</div>
+			<?php
+			$output .= ob_get_clean();
 		}
 
 		return $output;
