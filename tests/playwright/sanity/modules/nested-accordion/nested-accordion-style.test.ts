@@ -5,6 +5,8 @@ import { borderStyle } from '../../../enums/border-styles';
 import { displayState } from '../../../enums/display-states';
 import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
+test.describe.configure( { mode: 'parallel' } ); // Enable Parallel execution of this test file.
+
 test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();

@@ -3,6 +3,8 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator } from './helper';
 import _path from 'path';
 
+test.describe.configure( { mode: 'parallel' } ); // Enable Parallel execution of this test file.
+
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();

@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } from './helper';
 
+test.describe.configure( { mode: 'parallel' } ); // Enable Parallel execution of this test file.
+
 test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
 		const page = await browser.newPage();
