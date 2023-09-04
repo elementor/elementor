@@ -31,6 +31,9 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function register_controls() {
+		$start_logical = is_rtl() ? 'end' : 'start';
+		$end_logical = is_rtl() ? 'start' : 'end';
+
 		$this->start_controls_section(
 			'section_rating',
 			[
@@ -94,6 +97,34 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control( 'alignment', [
+			'label' => esc_html__( 'Alignment', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => "eicon-align-$start_logical-h",
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'elementor' ),
+					'icon' => 'eicon-align-center-h',
+				],
+				'end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => "eicon-align-$end_logical-h",
+				],
+			],
+			'selectors_dictionary' => [
+				'start' => '--e-rating-justify-content: flex-start;',
+				'center' => '--e-rating-justify-content: center;',
+				'end' => '--e-rating-justify-content: flex-end;',
+			],
+			'selectors' => [
+				'{{WRAPPER}} .e-rating' => '{{VALUE}}',
+			],
+			'separator' => 'before',
+		] );
+
 		$this->end_controls_section();
 	}
 
@@ -117,7 +148,7 @@ class Widget_Rating extends Widget_Base {
 
 		if ( $rating_value >= $star_index ) {
 			$width = '100%';
-		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
+		} elseif ( intval( ceil( $rating_value ) ) === $star_index ) {
 			$width = ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
 

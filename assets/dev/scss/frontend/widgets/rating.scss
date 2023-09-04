@@ -4,6 +4,9 @@
 	--e-rating-star-color: #{$gray-mouse};
 	--e-rating-star-marked-color: #{$orange};
 	--e-rating-star-marked-width: 100%;
+  	--e-rating-justify-content: flex-start;
+  	display: flex;
+  	justify-content: var(--e-rating-justify-content);
 
 	&-wrapper {
 		display: flex;
