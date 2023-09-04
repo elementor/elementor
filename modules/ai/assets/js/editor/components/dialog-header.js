@@ -20,7 +20,7 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 
 const DialogHeader = ( props ) => {
 	return (
-		<AppBar sx={ { fontWeight: 'normal' } } color="primary" position="relative">
+		<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
 			<Toolbar>
 				<StyledElementorLogo sx={ { mr: 1 } } />
 

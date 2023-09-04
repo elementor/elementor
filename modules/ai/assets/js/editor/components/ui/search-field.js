@@ -1,10 +1,23 @@
 import { forwardRef } from 'react';
-import { TextField, InputAdornment } from '@elementor/ui';
+import { TextField, InputAdornment, styled } from '@elementor/ui';
 import { SearchIcon } from '@elementor/icons';
+
+const StyledTextField = styled( TextField )( ( { theme } ) => ( {
+	// Overwriting the admin global CSS.
+	'& .MuiInputBase-input, & .MuiInputBase-input:focus': {
+		backgroundColor: theme.palette.background.default,
+		border: 'none',
+		boxShadow: 'none',
+		color: theme.palette.text.primary,
+	},
+	'& .MuiInputAdornment-root': {
+		color: theme.palette.text.tertiary,
+	},
+} ) );
 
 const SearchField = forwardRef( ( props, ref ) => {
 	return (
-		<TextField
+		<StyledTextField
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus
 			fullWidth
