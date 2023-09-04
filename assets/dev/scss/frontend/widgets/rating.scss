@@ -2,8 +2,8 @@
 	--e-rating-gap: 0px;
 	--e-rating-star-font-size: 16px;
 	--e-rating-star-color: #{$gray-mouse};
-	--e-rating-star-color-value: #{$orange};
-	--e-rating-star-marked-width: 0%;
+	--e-rating-star-marked-color: #{$orange};
+	--e-rating-star-marked-width: 100%;
 
 	&-wrapper {
 		display: flex;
@@ -18,7 +18,7 @@
 		&-wrapper {
 
 			&.e-star-marked {
-				--e-rating-star-color: var(--e-rating-star-color-value);
+				--e-rating-star-color: var(--e-rating-star-marked-color);
 				width: var(--e-rating-star-marked-width);
 				position: absolute;
 				z-index: $first-layer;

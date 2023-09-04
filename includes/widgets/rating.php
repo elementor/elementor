@@ -39,7 +39,7 @@ class Widget_Rating extends Widget_Base {
 		);
 
 		$this->add_control(
-			'rating_maximum_value',
+			'rating_scale',
 			[
 				'label' => esc_html__( 'Rating Scale', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
@@ -61,6 +61,7 @@ class Widget_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rating', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
+				'placeholder' => 5,
 				'min' => 0,
 				'step' => 0.01,
 				'dynamic' => [
@@ -98,8 +99,8 @@ class Widget_Rating extends Widget_Base {
 		return floatval( $this->get_settings_for_display( 'rating_value' ) );
 	}
 
-	protected function get_rating_maximum_value(): int {
-		return intval( $this->get_settings_for_display( 'rating_maximum_value' )['size'] );
+	protected function get_rating_scale(): int {
+		return intval( $this->get_settings_for_display( 'rating_scale' )['size'] );
 	}
 
 	protected function get_star_marked_width( $star_index ): string {
@@ -116,10 +117,10 @@ class Widget_Rating extends Widget_Base {
 
 	protected function get_star_markup(): string {
 		$icon = $this->get_settings_for_display( 'rating_icon' );
-		$rating_maximum_value = $this->get_rating_maximum_value();
+		$rating_scale = $this->get_rating_scale();
 		$output = '';
 
-		for ( $index = 1; $index <= $rating_maximum_value; $index++ ) {
+		for ( $index = 1; $index <= $rating_scale; $index++ ) {
 			$output .= '<div class="e-star">';
 			$output .= '<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: ' . $this->get_star_marked_width( $index ) . ';">';
 			$output .= Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] );
@@ -146,12 +147,12 @@ class Widget_Rating extends Widget_Base {
 			'itemprop' => 'reviewValue',
 			'content' => $this->get_rating_value(),
 			'role' => 'img',
-			'aria-label' => $this->get_rating_value() . ' and a half of ' . $this->get_rating_maximum_value() . ' stars',
+			'aria-label' => $this->get_rating_value() . ' and a half of ' . $this->get_rating_scale() . ' stars',
 		] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'widget' ); ?>>
 			<meta itemprop="worstRating" content="0">
-			<meta itemprop="bestRating" content="<?php echo $this->get_rating_maximum_value(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+			<meta itemprop="bestRating" content="<?php echo $this->get_rating_scale(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 			<div <?php $this->print_render_attribute_string( 'widget_wrapper' ); ?>>
 				<?php echo $this->get_star_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
