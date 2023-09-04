@@ -171,7 +171,7 @@ class Control_Repeater extends Base_Data_Control {
 				<button class="elementor-button elementor-repeater-add" type="button">
 					<i class="eicon-plus" aria-hidden="true"></i>
 					<# if ( data.button_text ) { #>
-						<?php echo esc_html__( '{{{ data.button_text }}}', 'elementor' ); ?>
+						{{{ data.button_text }}}
 					<# } else { #>
 						<?php echo esc_html__( 'Add Item', 'elementor' ); ?>
 					<# } #>

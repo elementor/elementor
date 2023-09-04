@@ -166,7 +166,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			},
 			error() {
 				// eslint-disable-next-line no-alert
-				alert( 'An error occurred' );
+				alert( 'An error occurred.' );
 			},
 		} );
 	},

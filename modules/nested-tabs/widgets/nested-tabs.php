@@ -731,7 +731,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 			]
@@ -777,7 +777,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 
@@ -824,7 +824,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 			]
