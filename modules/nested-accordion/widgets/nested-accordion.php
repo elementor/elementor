@@ -281,10 +281,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->add_control(
 			'faq_schema',
 			[
-				'label' => esc_html__( 'FAQ Schema', 'textdomain' ),
+				'label' => esc_html__( 'FAQ Schema', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SWITCHER,
-				'label_on' => esc_html__( 'Yes', 'textdomain' ),
-				'label_off' => esc_html__( 'No', 'textdomain' ),
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default' => 'no',
 			]
 		);
@@ -293,7 +293,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'faq_schema_message',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor-pro' ),
+				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
 					'faq_schema[value]' => 'yes',
@@ -301,7 +301,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'separator' => 'none',
 			]
 		);
-
 
 		$this->end_controls_section();
 
@@ -830,7 +829,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		</div>
 		<?php
 
-		if ($settings['faq_schema']) {
+		if ( $settings['faq_schema'] ) {
 			$json = [
 				'@context' => 'https://schema.org',
 				'@type' => 'FAQPage',
@@ -849,7 +848,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			}
 		}
 		?>
-        <script type="application/ld+json"><?php echo wp_json_encode( $json ?? [] ); ?></script>
+		<script type="application/ld+json"><?php echo wp_json_encode( $json ?? [] ); ?></script>
 		<?php
 	}
 
