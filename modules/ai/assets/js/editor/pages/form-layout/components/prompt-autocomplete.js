@@ -1,17 +1,8 @@
 import { useState, forwardRef } from 'react';
-import { Autocomplete, TextField, styled } from '@elementor/ui';
-
-// Const StyledTextField = styled( TextField )( () => ( {
-// 	// '& .MuiOutlinedInput-notchedOutline': { border: 0 },
-// 	// '& .MuiInputBase-root.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 0 },
-// 	// '& .MuiInputBase-root.MuiOutlinedInput-root, & .MuiInputBase-root.MuiOutlinedInput-root:focus': {
-// 	// 	padding: 0,
-// 	// },
-// } ) );
+import { Autocomplete, TextField } from '@elementor/ui';
 
 const TextInput = forwardRef( ( props, ref ) => (
 	<TextField
-		ref={ ref }
 		// eslint-disable-next-line jsx-a11y/no-autofocus
 		autoFocus
 		multiline
@@ -20,6 +11,7 @@ const TextInput = forwardRef( ( props, ref ) => (
 		color="secondary"
 		variant="standard"
 		{ ...props }
+		inputRef={ ref }
 		InputProps={ {
 			...props.InputProps,
 			type: 'search',

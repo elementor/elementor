@@ -18,12 +18,12 @@ const popoverId = 'e-ai-upgrade-popover';
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
 	'[data-popper-placement="top"] &': {
-		marginBottom: theme.spacing( 6 ),
+		marginBottom: theme.spacing( 2.5 ),
 	},
 	'[data-popper-placement="bottom"] &': {
-		marginTop: theme.spacing( 6 ),
+		marginTop: theme.spacing( 2.5 ),
 	},
-	padding: theme.spacing( 7 ),
+	padding: theme.spacing( 3 ),
 	backgroundColor: theme.palette.background.paper,
 	boxShadow: theme.shadows[ 4 ],
 	borderRadius: theme.border.radius.sm,
@@ -103,7 +103,7 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } />
+			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -124,11 +124,11 @@ const UpgradeChip = ( {
 						{ __( 'Unlimited access to Elementor AI', 'elementor' ) }
 					</Typography>
 
-					<List sx={ { mb: 7 } }>
+					<List sx={ { mb: 1 } }>
 						{
 							upgradeBullets.map( ( bullet, index ) => (
-								<ListItem key={ index } disableGutters sx={ { alignItems: 'flex-start', my: 4 } }>
-									<ListItemIcon sx={ { mr: 3 } }>
+								<ListItem key={ index } disableGutters sx={ { alignItems: 'flex-start' } }>
+									<ListItemIcon>
 										<CheckedCircleIcon />
 									</ListItemIcon>
 									<ListItemText sx={ { m: 0 } }>
