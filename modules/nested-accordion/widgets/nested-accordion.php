@@ -293,7 +293,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'faq_schema_message',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. For best SEO results, only use this once per page', 'elementor-pro' ),
+				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor-pro' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
 					'faq_schema[value]' => 'yes',
