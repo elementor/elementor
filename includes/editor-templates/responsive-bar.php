@@ -22,12 +22,13 @@ $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->g
 					$tooltip_label = esc_html__( 'Desktop <br> Settings added for the base device will apply to all breakpoints unless edited', 'elementor' );
 				} elseif ( 'widescreen' === $device_key ) {
 					$tooltip_label = sprintf(
+						/* translators: %d: Breakpoint screen size. */
 						esc_html__( 'Widescreen <br> Settings added for the Widescreen device will apply to screen sizes %dpx and up', 'elementor' ),
 						$active_breakpoints[ $device_key ]->get_value()
 					);
 				} else {
 					$tooltip_label = sprintf(
-						/* translators: %1$s: Device Name */
+						/* translators: %1$s: Device name, %2$s: Breakpoint screen size. */
 						esc_html__( '%1$s <br> Settings added for the %1$s device will apply to %2$spx screens and down', 'elementor' ),
 						$active_breakpoints[ $device_key ]->get_label(), $active_breakpoints[ $device_key ]->get_value()
 					);
