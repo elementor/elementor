@@ -104,12 +104,15 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_star_marked_width( $star_index ): string {
-		$rating_value = $this->get_rating_value();
+		$initial_value = $this->get_rating_scale();
+		$rating_value = $this->get_rating_value()
+			? $this->get_rating_value()
+			: $initial_value;
+
 		$width = '0%';
-		׳
 
 		if ( $rating_value >= $star_index ) {
-			$width = 100%';
+			$width = '100%';
 		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
 			$width = ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
