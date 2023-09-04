@@ -397,4 +397,39 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			expect.soft( maxHeightAfterOpen ).not.toEqual( '0px' );
 		} );
 	} );
+
+	test.only('Nested Accordion FAQ Schema', async ( {page}, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			nestedAccordionID = '14080fa';
+
+		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-three-child-headings', '.elementor-widget-n-accordion' );
+
+		await editor.closeNavigatorIfOpen();
+		await editor.selectElement( nestedAccordionID );
+
+		// Act
+		await editor.setSwitcherControlValue('faq_schema', true )
+		await editor.publishAndViewPage();
+
+		await page.waitForLoadState('load');
+
+		// Assert
+		const faqSchema = await page.evaluate(async() => {
+			let jsonSchema = await document.querySelectorAll('script[type="application/ld+json"]');
+			return await JSON.parse(jsonSchema[0]['text']);
+		});
+
+		await expect.soft( faqSchema['@type'], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe('FAQPage' );
+
+		let i = 1;
+		for ( const faq of faqSchema['mainEntity'] ) {
+			expect.soft( faq['@type'], 'Expecting Title\'s schema to be Question but found' ).toBe( 'Question' );
+			expect.soft( faq['name'], 'Expecting NA Title\'s content to match FAQ schema but found' ).toBe('Item #' + i);
+			expect.soft( faq['acceptedAnswer']['text'], 'Expecting accordion content to match Answer but found' ).toBe('Add Your Heading Text Here ' + i );
+			i++;
+		}
+
+	} );
 } );
