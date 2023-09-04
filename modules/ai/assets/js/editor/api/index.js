@@ -1,15 +1,23 @@
-const request = ( endpoint, data = {} ) => {
+const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
 		data.context = window.elementorAiCurrentContext;
 	}
 
-	return new Promise( ( resolve, reject ) => elementorCommon.ajax.addRequest(
-		endpoint, {
-			success: resolve,
-			error: reject,
-			data,
-		},
-	) );
+	return new Promise( ( resolve, reject ) => {
+		const ajaxData = elementorCommon.ajax.addRequest(
+			endpoint,
+			{
+				success: resolve,
+				error: reject,
+				data,
+			},
+			immediately,
+		);
+
+		if ( signal && ajaxData.jqXhr ) {
+			signal.addEventListener( 'abort', ajaxData.jqXhr.abort );
+		}
+	} );
 };
 
 export const getUserInformation = () => request( 'ai_get_user_information' );
@@ -45,3 +53,7 @@ export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
+
+export const generateLayout = ( prompt, variationType, signal ) => request( 'ai_generate_layout', { prompt, variationType }, true, signal );
+
+export const getLayoutPromptEnhanced = ( prompt ) => request( 'ai_get_layout_prompt_enhancer', { prompt } );
