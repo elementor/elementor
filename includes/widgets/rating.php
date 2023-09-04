@@ -163,8 +163,6 @@ class Widget_Rating extends Widget_Base {
 			'itemprop' => 'reviewRating',
 		] );
 
-		$aria_label_string = 'Rated %d out of %s';
-
 		$this->add_render_attribute( 'widget_wrapper', [
 			'class' => 'e-rating-wrapper',
 			'itemprop' => 'reviewValue',
