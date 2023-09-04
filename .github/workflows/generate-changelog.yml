@@ -21,7 +21,7 @@ jobs:
     - name: Fetch merged PRs after tag
       run: |
         # Use GitHub's API to fetch PRs
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&per_page=100")
+        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=3.16&per_page=100")
 
         # Extract PRs merged after the specific tag's date and print in desired format
         echo "$pr_data" | jq -r --arg TAG_DATE "$TAG_DATE" '.[] | select(.merged_at > $TAG_DATE) | "#\(.number) - \(.title)"'
