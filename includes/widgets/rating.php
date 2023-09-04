@@ -129,11 +129,11 @@ class Widget_Rating extends Widget_Base {
 			ob_start();
 			?>
 			<div class="e-star">
-				<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: <?php echo $this->get_star_marked_width( $index ); ?>;">
-					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); ?>
+				<div class="e-star-wrapper e-star-marked " style="--e-rating-star-marked-width: <?php echo $this->get_star_marked_width( $index ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;">
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 				<div class="e-star-wrapper e-star-unmarked">
-					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); ?>
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			</div>
 			<?php
