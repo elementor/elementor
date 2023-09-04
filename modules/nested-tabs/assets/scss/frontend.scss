@@ -336,6 +336,7 @@
 
 		.e-n-tab-title {
 			order: var(--n-tabs-title-order);
+			width: initial;
 
 			&:not( :first-child ) {
 				margin-block-start: var(--n-tabs-title-gap);

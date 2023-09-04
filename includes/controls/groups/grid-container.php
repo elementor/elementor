@@ -95,7 +95,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		$fields['gaps'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'default' => [
 				'unit' => 'px',
 			],
@@ -104,6 +104,11 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
+			],
 		];
 
 		$fields['auto_flow'] = [

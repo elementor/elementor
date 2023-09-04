@@ -119,7 +119,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
 		editor.postId = await editor.getPageId();
-		let frame = editor.getPreviewFrame();
+		const frame = editor.getPreviewFrame();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.addWidget( 'nested-accordion', container );
@@ -147,9 +147,28 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 				await expect.soft( page.locator( '.e-n-accordion-item-title-icon .e-closed svg' ) ).toHaveCount( 3 ); // SVG Icon
 			} );
 		} );
+	} );
+
+	test( 'Nested Accordion test SVG Icon and No Icon when Title Icons is disabled', async ( { browser }, testInfo ) => {
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.enableAdvancedUploads();
+		const editor = await wpAdmin.openNewPage();
+		editor.postId = await editor.getPageId();
+		let frame = editor.getPreviewFrame();
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( 'nested-accordion', container );
+		await editor.closeNavigatorIfOpen();
+
+		await test.step( 'Check that an SVG title icon is displayed', async () => {
+			await frame.locator( '.e-n-accordion-item-title' ).first().click();
+			await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
+			await editor.uploadSVG();
+		} );
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
-			await editor.gotoPostId();
 			frame = editor.getPreviewFrame();
 
 			await frame.locator( '.e-n-accordion-item-title' ).first().click();
@@ -175,6 +194,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			await wpAdmin.disableAdvancedUploads();
 		} );
 	} );
+
 	test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 		// Act
 		const page = await browser.newPage(),

@@ -41,8 +41,7 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `npx wp-env run cli wp plugin install ${ slug } --activate` );
-
+			this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug }'` );
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
@@ -71,8 +70,11 @@ export class PluginsTester {
 	}
 
 	disableContainers() {
-		console.log( 'Disabling containers!!!' );
-		this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
+		console.log( `Disabling containers: ${ process.env.CONTAINERS }` );
+		if ( ! process.env.CONTAINERS ) {
+			console.log( 'Deactivating containers !!!' );
+			this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
+		}
 	}
 
 	runServer() {
