@@ -94,7 +94,7 @@ export const unknownActionDataMock = getJsonMock( {
 	},
 } );
 
-export const copyAndEditTextDataMock = getJsonMock( {
+export const reuseAndEditTextDataMock = getJsonMock( {
 	success: true,
 	code: 200,
 	data: {

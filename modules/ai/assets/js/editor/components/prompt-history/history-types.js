@@ -15,6 +15,6 @@ export const TRANSLATED_HISTORY_TYPES = Object.freeze( {
 } );
 
 export const HISTORY_ACTION_TYPES = Object.freeze( {
-	COPY: 'copy',
+	REUSE: 'reuse',
 	EDIT: 'edit',
 } );

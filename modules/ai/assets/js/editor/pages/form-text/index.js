@@ -67,7 +67,7 @@ const FormText = (
 			return;
 		}
 
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.COPY ) {
+		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.REUSE ) {
 			reset();
 			setPrompt( promptHistoryAction.data );
 		}

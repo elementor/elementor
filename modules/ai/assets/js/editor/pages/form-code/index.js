@@ -37,7 +37,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			return;
 		}
 
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.COPY ) {
+		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.REUSE ) {
 			reset();
 			setPrompt( promptHistoryAction.data );
 		}

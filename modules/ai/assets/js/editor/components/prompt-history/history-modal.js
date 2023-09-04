@@ -130,7 +130,10 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 							onRetry={ lastRun.current }
 							sx={ { position: 'absolute', zIndex: 1 } } /> }
 
-						{ isLoading && <LinearProgress color="secondary" /> }
+						{ isLoading && <LinearProgress
+							role="progressbar"
+							aria-label={ __( 'Loading', 'elementor' ) }
+							color="secondary" /> }
 
 						<Box sx={ { overflowY: 'scroll', height: '85%' } } ref={ scrollContainer }>
 							{ error && NO_HISTORY_ACCESS_ERROR === error && <PromptHistoryUpgrade variant="full" /> }

@@ -63,9 +63,9 @@ const PageContent = (
 		);
 	};
 
-	const onPromptCopy = ( id, prompt ) => {
+	const onPromptReuse = ( id, prompt ) => {
 		setPromptHistoryAction( {
-			type: HISTORY_ACTION_TYPES.COPY,
+			type: HISTORY_ACTION_TYPES.REUSE,
 			id,
 			data: prompt,
 		} );
@@ -140,7 +140,7 @@ const PageContent = (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 				<PromptDialog.Header onClose={ onClose }>
 					<History promptType={ HISTORY_TYPES.CODE }
-						onPromptCopy={ onPromptCopy }
+						onPromptReuse={ onPromptReuse }
 						setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
 
 					{ maybeRenderUpgradeChip() }
@@ -165,7 +165,7 @@ const PageContent = (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptDialog.Header onClose={ onClose }>
 				<History promptType={ HISTORY_TYPES.TEXT }
-					onPromptCopy={ onPromptCopy }
+					onPromptReuse={ onPromptReuse }
 					onResultEdit={ onResultEdit }
 					setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
 

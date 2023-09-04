@@ -7,7 +7,7 @@ export const PromptHistoryContext = React.createContext( {} );
 
 const PROMPT_HISTORY_MODAL_ID = 'prompt-history-modal';
 
-const PromptHistory = ( { promptType, onPromptCopy, onResultEdit, setIsPromptHistoryOpen } ) => {
+const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, setIsPromptHistoryOpen } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const onModalOpen = () => {
@@ -35,7 +35,7 @@ const PromptHistory = ( { promptType, onPromptCopy, onResultEdit, setIsPromptHis
 		<PromptHistoryContext.Provider value={ {
 			promptType,
 			onModalClose,
-			onPromptCopy: closeModalAfterAction( onPromptCopy ),
+			onPromptReuse: closeModalAfterAction( onPromptReuse ),
 			onResultEdit: onResultEdit ? closeModalAfterAction( onResultEdit ) : null,
 		} }>
 			<PromptHistoryButton
@@ -51,7 +51,7 @@ const PromptHistory = ( { promptType, onPromptCopy, onResultEdit, setIsPromptHis
 
 PromptHistory.propTypes = {
 	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
-	onPromptCopy: PropTypes.func.isRequired,
+	onPromptReuse: PropTypes.func.isRequired,
 	onResultEdit: PropTypes.func,
 	setIsPromptHistoryOpen: PropTypes.func.isRequired,
 };

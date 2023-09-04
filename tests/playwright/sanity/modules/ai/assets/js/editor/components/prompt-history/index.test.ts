@@ -1,6 +1,6 @@
 import { test, Page, expect } from '@playwright/test';
 import {
-	copyAndEditTextDataMock,
+	reuseAndEditTextDataMock,
 	differentPeriodsDataMock,
 	noDataMock,
 	noPlanMock,
@@ -12,6 +12,7 @@ import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../../../../selectors/editor-selectors';
 import { successMock } from './delete-history-item.mock';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'AI @ai', () => {
 	const mockRoute = async ( page: Page, { getHistoryMock = {}, deleteHistoryMock = {} } ) => {
@@ -119,7 +120,7 @@ test.describe( 'AI @ai', () => {
 			await closePromptHistory( page );
 		} );
 
-		await test.step( 'Deletes item', async () => {
+		await test.step( 'Removes item', async () => {
 			await editor.addWidget( 'text-editor' );
 
 			await mockRoute( page, {
@@ -135,11 +136,35 @@ test.describe( 'AI @ai', () => {
 
 			await items.first().hover();
 
-			await items.first().locator( EditorSelectors.ai.promptHistory.deleteButton ).click();
+			await items.first().locator( EditorSelectors.ai.promptHistory.removeButton ).click();
 
 			await expect( items ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
+		} );
+	} );
+
+	test( 'Prompt History - a11y', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'History items list a11y', async () => {
+			await editor.addWidget( 'text-editor' );
+
+			await mockRoute( page, {
+				getHistoryMock: differentPeriodsDataMock,
+			} );
+
+			await openPromptHistory( page );
+
+			await page.waitForSelector( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` );
+
+			const accessibilityScanResults = await new AxeBuilder( { page } )
+				.include( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` )
+				.analyze();
+
+			expect( accessibilityScanResults.violations ).toEqual( [] );
 		} );
 	} );
 
@@ -148,11 +173,11 @@ test.describe( 'AI @ai', () => {
 
 		const editor = await wpAdmin.openNewPage();
 
-		await test.step( 'Copy button copies prompt', async () => {
+		await test.step( 'Reuse button reuses prompt', async () => {
 			await editor.addWidget( 'text-editor' );
 
 			await mockRoute( page, {
-				getHistoryMock: copyAndEditTextDataMock,
+				getHistoryMock: reuseAndEditTextDataMock,
 			} );
 
 			await openPromptHistory( page );
@@ -161,7 +186,7 @@ test.describe( 'AI @ai', () => {
 
 			await item.hover();
 
-			await item.locator( EditorSelectors.ai.promptHistory.copyButton ).click();
+			await item.locator( EditorSelectors.ai.promptHistory.reuseButton ).click();
 
 			const input = page.locator( EditorSelectors.ai.promptInput ).first();
 
@@ -170,11 +195,11 @@ test.describe( 'AI @ai', () => {
 			expect( await input.inputValue() ).toBe( 'Test prompt' );
 		} );
 
-		await test.step( 'Copy button edits result', async () => {
+		await test.step( 'Edit button edits result', async () => {
 			await editor.addWidget( 'text-editor' );
 
 			await mockRoute( page, {
-				getHistoryMock: copyAndEditTextDataMock,
+				getHistoryMock: reuseAndEditTextDataMock,
 			} );
 
 			await openPromptHistory( page );
@@ -198,11 +223,11 @@ test.describe( 'AI @ai', () => {
 
 		const editor = await wpAdmin.openNewPage();
 
-		await test.step( 'Copy button copies prompt', async () => {
+		await test.step( 'Reuse button reuses prompt', async () => {
 			await editor.addWidget( 'html' );
 
 			await mockRoute( page, {
-				getHistoryMock: copyAndEditTextDataMock,
+				getHistoryMock: reuseAndEditTextDataMock,
 			} );
 
 			await openPromptHistory( page );
@@ -211,7 +236,7 @@ test.describe( 'AI @ai', () => {
 
 			await item.hover();
 
-			await item.locator( EditorSelectors.ai.promptHistory.copyButton ).click();
+			await item.locator( EditorSelectors.ai.promptHistory.reuseButton ).click();
 
 			const input = page.locator( EditorSelectors.ai.promptInput ).first();
 

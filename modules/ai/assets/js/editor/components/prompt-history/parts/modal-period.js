@@ -16,7 +16,7 @@ const StyledPeriodTitle = styled( Typography )( ( { theme } ) => ( {
 const DATE_FORMAT = __( 'F j, g:i A', 'elementor' );
 
 const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete } ) => {
-	const { onPromptCopy, onResultEdit } = useContext( PromptHistoryContext );
+	const { onPromptReuse, onResultEdit } = useContext( PromptHistoryContext );
 
 	return (
 		<StyledPeriod data-testid="e-ph-p">
@@ -30,7 +30,7 @@ const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete }
 						prompt={ prompt }
 						id={ id }
 						onHistoryItemDelete={ () => onHistoryItemDelete( id ) }
-						onPromptCopy={ () => onPromptCopy( id, prompt ) }
+						onPromptReuse={ () => onPromptReuse( id, prompt ) }
 						onResultEdit={ onResultEdit ? () => onResultEdit( id, result ) : null } /> );
 			} ) }
 		</StyledPeriod>

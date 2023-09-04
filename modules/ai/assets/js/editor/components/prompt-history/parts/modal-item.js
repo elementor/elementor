@@ -1,8 +1,8 @@
-import { Box, IconButton, Stack, styled, Typography } from '@elementor/ui';
+import { Box, IconButton, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import EditIcon from '../../../icons/edit-icon';
-import CopyIcon from '../../../icons/copy-icon';
 import { getIconByAction } from '../helpers/history-item-helpers';
 import { TrashIcon } from '@elementor/icons';
+import RestoreIcon from '../../../icons/restore-icon';
 
 const StyledItem = styled( Stack )`
   flex-direction: row;
@@ -57,22 +57,43 @@ const StyledButtonsWrapper = styled( Box )`
 	}
 `;
 
-const ActionButton = ( props ) => {
-	return <IconButton type="button"
-		size="small"
-		disableRipple={ true }
-		disableFocusRipple={ true }
-		disableTouchRipple={ true }
-		{ ...props } />;
+const ActionButton = ( { tooltipTitle, ...props } ) => {
+	return (
+		<Tooltip title={ tooltipTitle } placement="top" componentsProps={ {
+			tooltip: {
+				sx: { m: '0 !important' } },
+		} } >
+			<IconButton type="button"
+				size="small"
+				disableRipple={ true }
+				disableFocusRipple={ true }
+				disableTouchRipple={ true }
+				{ ...props } />
+		</Tooltip>
+	);
 };
 
-const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromptCopy, onResultEdit } ) => {
+ActionButton.propTypes = {
+	tooltipTitle: PropTypes.string.isRequired,
+};
+
+const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromptReuse, onResultEdit } ) => {
 	return (
 		<StyledItem tabIndex="0" data-testid="e-ph-i">
 			{ getIconByAction( action ) }
 
 			<Stack direction="column" width="90%">
-				<StyledTitle variant="subtitle1" paragraph>{ prompt }</StyledTitle>
+				<Tooltip title={ prompt } arrow={ false } placement="bottom-start" componentsProps={ {
+					tooltip: {
+						sx: {
+							m: '0 !important',
+							py: 2,
+							px: 3,
+						},
+					},
+				} } >
+					<StyledTitle variant="subtitle1" paragraph>{ prompt }</StyledTitle>
+				</Tooltip>
 
 				<Stack direction="row" justifyContent="space-between" alignItems="center" height="16px">
 					<StyledDateSubtitle variant="caption">{ date }</StyledDateSubtitle>
@@ -80,20 +101,23 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 					<StyledButtonsWrapper>
 						<ActionButton
 							onClick={ onHistoryItemDelete }
-							aria-label={ __( 'Delete item', 'elementor' ) }>
+							aria-label={ __( 'Remove item', 'elementor' ) }
+							tooltipTitle={ __( 'Remove', 'elementor' ) }>
 							<TrashIcon />
 						</ActionButton>
 
 						<ActionButton
-							onClick={ onPromptCopy }
-							aria-label={ __( 'Copy prompt', 'elementor' ) }>
-							<CopyIcon />
+							onClick={ onPromptReuse }
+							aria-label={ __( 'Reuse prompt', 'elementor' ) }
+							tooltipTitle={ __( 'Reuse prompt', 'elementor' ) }>
+							<RestoreIcon />
 						</ActionButton>
 
 						{ onResultEdit && (
 							<ActionButton
 								onClick={ onResultEdit }
-								aria-label={ __( 'Edit result', 'elementor' ) }>
+								aria-label={ __( 'Edit result', 'elementor' ) }
+								tooltipTitle={ __( 'Edit', 'elementor' ) }>
 								<EditIcon />
 							</ActionButton>
 						) }
@@ -109,7 +133,7 @@ PromptHistoryItem.propTypes = {
 	prompt: PropTypes.string.isRequired,
 	date: PropTypes.string.isRequired,
 	onHistoryItemDelete: PropTypes.func.isRequired,
-	onPromptCopy: PropTypes.func.isRequired,
+	onPromptReuse: PropTypes.func.isRequired,
 	onResultEdit: PropTypes.func,
 };
 
