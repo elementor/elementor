@@ -12,16 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Get Tag Date
+    - name: Get Release Date
       id: get-release-date
       run: |
-        RELEASE_DATE=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/git/refs/releases/${{ github.event.inputs.release }}" | jq -r '.object.url' | xargs curl -H "Accept: application/vnd.github.v3+json" | jq -r '.committer.date')
+        RELEASE_DATE=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/releases/tags/${{ github.event.inputs.release }}" | jq -r '.published_at')
         echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
 
-    - name: Fetch merged PRs after tag
+    - name: Fetch merged PRs after release
       run: |
         # Use GitHub's API to fetch PRs
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=3.16&per_page=100")
-
-        # Extract PRs merged after the specific tag's date and print in desired format
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number) - \(.title)"'
+        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls
