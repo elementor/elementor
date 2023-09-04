@@ -39,7 +39,7 @@ runs:
     - name: Install wp-env
       shell: bash
       run: |
-          npm i -g --no-package-lock --no-save @wordpress/env@5.7.0
+          npm i -g --no-package-lock --no-save @wordpress/env@8.6.1
     - name: Setup WordPress environment
       shell: bash
       run: |
@@ -50,5 +50,5 @@ runs:
     - name: WordPress debug information
       shell: bash
       run: |
-        npx wp-env run cli "wp core version"
-        npx wp-env run cli "wp --info"
+        npx wp-env run cli wp core version
+        npx wp-env run cli wp --info
