@@ -16,19 +16,19 @@ import PromptCredits from '../../components/prompt-credits';
 const promptActions = [
 	{
 		label: __( 'Simplify language', 'elementor' ),
-		icon: <MessageIcon />, value: 'Simplify the language of the following message',
+		icon: <MessageIcon fontSize="small" />, value: 'Simplify the language of the following message',
 	},
 	{
 		label: __( 'Make it longer', 'elementor' ),
-		icon: <ExpandIcon />, value: 'Make the following message longer',
+		icon: <ExpandIcon fontSize="small" />, value: 'Make the following message longer',
 	},
 	{
 		label: __( 'Make it shorter', 'elementor' ),
-		icon: <ShrinkIcon />, value: 'Make the following message shorter',
+		icon: <ShrinkIcon fontSize="small" />, value: 'Make the following message shorter',
 	},
 	{
 		label: __( 'Fix spelling & grammar', 'elementor' ),
-		icon: <AIIcon />, value: 'Fix the spelling and grammar of the following message',
+		icon: <AIIcon fontSize="small" />, value: 'Fix the spelling and grammar of the following message',
 	},
 ];
 
@@ -92,6 +92,8 @@ const FormText = (
 	const applyPrompt = () => {
 		sendUsageData();
 
+		console.log( '--- resultField.current.value', resultField.current.value );
+
 		setControlValue( resultField.current.value );
 
 		onClose();
@@ -103,7 +105,7 @@ const FormText = (
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 2.5 } } /> }
 
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>

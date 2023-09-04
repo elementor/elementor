@@ -1,6 +1,5 @@
-import { AppBar, Toolbar, Stack, SvgIcon, IconButton, styled } from '@elementor/ui';
+import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, styled } from '@elementor/ui';
 import { XIcon } from '@elementor/icons';
-import StyledChip from './ui/styled-chip';
 
 const ElementorLogo = ( props ) => {
 	return (
@@ -26,7 +25,7 @@ const DialogHeader = ( props ) => {
 
 				{ __( 'AI', 'elementor' ) }
 
-				<StyledChip size="small" label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 1 } } />
+				<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
 				<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
 					{ props.children }

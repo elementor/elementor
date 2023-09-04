@@ -91,10 +91,10 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
 			sx={ { p: 2 } }
 			display="flex"
-			alignItems="start"
-			gap={ 3 }
+			alignItems="center"
+			gap={ 1 }
 		>
-			<Stack direction="row" flexGrow={ 1 }>
+			<Stack direction="row" flexGrow={ 1 } spacing={ 1 }>
 				{
 					showActions && (
 						isActive ? (
@@ -106,7 +106,6 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 				}
 
 				<PromptAutocomplete
-					size="small"
 					value={ prompt }
 					disabled={ isLoading || ! isActive }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }

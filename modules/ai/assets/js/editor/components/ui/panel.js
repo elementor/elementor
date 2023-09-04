@@ -5,9 +5,10 @@ const Panel = ( { sx = {}, ...props } ) => {
 		<>
 			<Box
 				sx={ {
-					height: '100%',
-					width: 360,
 					p: 4,
+					width: 360,
+					flexShrink: 0,
+					height: '100%',
 					...sx,
 				} }
 				{ ...props }

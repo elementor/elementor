@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
-import { AppBar, Toolbar, Typography, Stack, IconButton, styled } from '@elementor/ui';
-import StyledChip from '../../../components/ui/styled-chip';
+import { AppBar, Toolbar, Typography, Stack, IconButton, Chip, styled } from '@elementor/ui';
 import PromptDialog from '../../../components/prompt-dialog';
 import { AIIcon, XIcon } from '@elementor/icons';
 
@@ -19,13 +18,13 @@ const StyledDialog = styled( PromptDialog )( () => ( {
 const DialogHeader = ( { onClose, children } ) => (
 	<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
 		<Toolbar>
-			<AIIcon fontSize="large" sx={ { mr: 1 } } />
+			<AIIcon sx={ { mr: 1 } } />
 
 			<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
 				{ __( 'AI', 'elementor' ) }
 			</Typography>
 
-			<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 1 } } />
+			<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
 			<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
 				{ children }
