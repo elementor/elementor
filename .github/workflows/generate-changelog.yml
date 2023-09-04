@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Determine branch name
+      id: get-branch-name
+      run: |
+        BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+        echo "BASE_BRANCH=${BRANCH_NAME:-main}" >> $GITHUB_ENV
+
     - name: Get Release Date
       id: get-release-date
       run: |
@@ -20,8 +26,5 @@ jobs:
 
     - name: Fetch merged PRs after release
       run: |
-        # Use GitHub's API to fetch PRs
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=3.16&per_page=100")
-
-        # Extract PRs merged after the specific release's date and print in desired format
+        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=$BASE_BRANCH&per_page=100")
         echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number) - \(.title)"'
