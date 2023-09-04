@@ -27,7 +27,7 @@ class Admin_Pointer {
 		wp_enqueue_style( 'wp-pointer' );
 
 		$pointer_content = '<h3>' . esc_html__( 'New! Popular Apps', 'elementor' ) . '</h3>';
-		$pointer_content .= '<p>' . esc_html__( 'Discover our collection of plugins and add-ons carefully selected to to enhance your Elementor website and unleash your creativity.', 'elementor' ) . '</p>';
+		$pointer_content .= '<p>' . esc_html__( 'Discover our collection of plugins and add-ons carefully selected to enhance your Elementor website and unleash your creativity.', 'elementor' ) . '</p>';
 
 		$pointer_content .= sprintf(
 			'<p><a class="button button-primary" href="%s">%s</a></p>',
@@ -41,7 +41,7 @@ class Admin_Pointer {
 				$( '#toplevel_page_elementor' ).pointer( {
 					content: '<?php echo $pointer_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
 					position: {
-						edge: 'left',
+						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align: 'center'
 					},
 					close: function() {

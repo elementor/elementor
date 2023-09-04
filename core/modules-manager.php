@@ -100,7 +100,6 @@ class Modules_Manager {
 			// Depends on Nested Elements module
 			'nested-tabs',
 			'nested-accordion',
-			'nested-tabs-html',
 			'container-converter',
 			'web-cli',
 			'promotions',

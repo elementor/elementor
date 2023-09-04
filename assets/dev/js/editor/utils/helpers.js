@@ -51,9 +51,22 @@ module.exports = {
 		},
 	},
 
-	enqueueCSS( url, $document ) {
-		const selector = 'link[href="' + url + '"]',
-			link = '<link href="' + url + '" rel="stylesheet" type="text/css">';
+	/**
+	 * @param {string}                   url
+	 * @param {jQuery}                   $document
+	 * @param {{ crossOrigin: boolean }} options
+	 */
+	enqueueCSS( url, $document, options = {} ) {
+		const selector = 'link[href="' + url + '"]';
+		const link = document.createElement( 'link' );
+
+		link.href = url;
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+
+		if ( options.crossOrigin ) {
+			link.crossOrigin = 'anonymous';
+		}
 
 		if ( ! $document ) {
 			return;
@@ -251,6 +264,8 @@ module.exports = {
 				he_IL: 'hebrew',
 			};
 
+		const enqueueOptions = {};
+
 		let	fontUrl;
 
 		switch ( fontType ) {
@@ -261,11 +276,15 @@ module.exports = {
 					fontUrl += '&subset=' + subsets[ elementor.config.locale ];
 				}
 
+				enqueueOptions.crossOrigin = true;
+
 				break;
 
 			case 'earlyaccess': {
 				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
 				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+
+				enqueueOptions.crossOrigin = true;
 				break;
 			}
 		}
@@ -275,7 +294,7 @@ module.exports = {
 				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
 				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
 			} else {
-				this.enqueueCSS( fontUrl, elementor.$previewContents );
+				this.enqueueCSS( fontUrl, elementor.$previewContents, enqueueOptions );
 			}
 		}
 
@@ -670,5 +689,14 @@ module.exports = {
 	 */
 	validateHTMLTag( tag ) {
 		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+	},
+
+	convertSizeToFrString( size ) {
+		if ( 'number' !== typeof size || size <= 0 ) {
+			return size;
+		}
+
+		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
+		return frString;
 	},
 };
