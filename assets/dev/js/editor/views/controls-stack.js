@@ -210,9 +210,9 @@ ControlsStack = Marionette.CompositeView.extend( {
 	handlePopovers( view ) {
 		let popover;
 
-		view.popovers = [];
-
 		this.removePopovers( view );
+
+		view.popovers = [];
 
 		view.children.each( ( control ) => {
 			if ( popover ) {
@@ -237,7 +237,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 		} );
 	},
 	removePopovers( view ) {
-		view.popovers.forEach( ( popover ) => popover.destroy() );
+		view.popovers?.forEach( ( popover ) => popover.destroy() );
 	},
 } );
 
