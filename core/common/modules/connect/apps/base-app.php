@@ -498,6 +498,10 @@ abstract class Base_App {
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
+			if ( ! $code ) {
+				$code = $response_code;
+			}
+
 			if ( 401 === $code ) {
 				$this->delete();
 
