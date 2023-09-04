@@ -1,10 +1,10 @@
 import { InputAdornment } from '@elementor/ui';
 import Textarea from '../../../components/textarea';
 import EnhanceButton from './enhance-button';
-import usePromptEnhancer from '../hooks/use-image-prompt-enhancer';
+import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 
 const PromptField = ( { disabled, onChange, ...props } ) => {
-	const { enhance, isEnhancing } = usePromptEnhancer( props.value );
+	const { enhance, isEnhancing } = usePromptEnhancer( props.value, 'media' );
 
 	return (
 		<Textarea
