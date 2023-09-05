@@ -16,13 +16,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-22.04
-    steps:
-      - run: |
-          echo ${{ github.event.pull_request.merged }} was succesfully merged
+#  if_merged:
+#    if: github.event.pull_request.merged == true && github.base_ref == 'master' && !contains(github.event.pull_request.labels.*.name, 'skip release')
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - run: |
+#          echo ${{ github.event.pull_request.merged }} was succesfully merged
+#          echo $
   latest_release:
+    if: github.event.pull_request.merged == true && github.base_ref == 'master' && !contains(github.event.pull_request.labels.*.name, 'skip release')
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
