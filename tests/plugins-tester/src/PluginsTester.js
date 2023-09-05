@@ -44,8 +44,12 @@ export class PluginsTester {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
 			try {
-				fs.unlinkSync( 'logs.txt' );
-				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
+				const filename = 'logs.txt';
+				if ( fs.existsSync( filename ) ) {
+					fs.unlinkSync( 'logs.txt' );
+				}
+
+				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>${ filename }' ` );
 				const warn = fs.readFileSync( 'logs.txt' );
 				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
 					info( warn.toString() );
