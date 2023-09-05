@@ -24,7 +24,7 @@ const SearchField = forwardRef( ( props, ref ) => {
 			value={ props.value }
 			onChange={ props.onChange }
 			{ ...props }
-			ref={ ref }
+			inputRef={ ref }
 		/>
 	);
 } );

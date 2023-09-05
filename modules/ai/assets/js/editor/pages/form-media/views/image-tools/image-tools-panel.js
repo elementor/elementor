@@ -78,7 +78,7 @@ const ImageToolsPanel = () => {
 	];
 	return (
 		<ImageToolsContainer>
-			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 3 } justifyContent="center">
+			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 1 } justifyContent="center">
 				{ tools.map( ( { label, Icon, onClick } ) => (
 					<Button
 						onClick={ onClick }

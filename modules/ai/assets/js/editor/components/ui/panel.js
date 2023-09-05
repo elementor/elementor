@@ -9,6 +9,7 @@ const Panel = ( { sx = {}, ...props } ) => {
 					width: 360,
 					flexShrink: 0,
 					height: '100%',
+					overflowY: 'auto',
 					...sx,
 				} }
 				{ ...props }

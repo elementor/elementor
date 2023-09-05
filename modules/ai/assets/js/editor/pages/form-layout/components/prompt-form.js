@@ -98,7 +98,7 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 				{
 					showActions && (
 						isActive ? (
-							<BackButton disabled={ isLoading } onClick={ handleBack } />
+							<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
 						) : (
 							<EditButton disabled={ isLoading } onClick={ handleEdit } />
 						)
@@ -107,7 +107,7 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 
 				<PromptAutocomplete
 					value={ prompt }
-					disabled={ isLoading || ! isActive }
+					disabled={ isLoading || ! isActive || isEnhancing }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ PROMPT_SUGGESTIONS }
 					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }

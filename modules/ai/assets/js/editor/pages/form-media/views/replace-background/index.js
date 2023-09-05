@@ -8,17 +8,16 @@ import useImageActions from '../../hooks/use-image-actions';
 import useReplaceBackground from './hooks/use-replace-background';
 import { useState } from 'react';
 import PromptField from '../../components/prompt-field';
-import { LOCATIONS } from '../../constants';
 import NewPromptButton from '../../components/new-prompt-button';
 
-const RemoveBackground = () => {
+const ReplaceBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 
 	const { editImage } = useEditImage();
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
-	const { data, send, isLoading: isGenerating, error } = useReplaceBackground();
+	const { data, send, isLoading: isGenerating, error, reset } = useReplaceBackground();
 
 	const isLoading = isGenerating || isUploading;
 
@@ -55,7 +54,16 @@ const RemoveBackground = () => {
 						{ data?.result ? __( 'Generate Again', 'elementor' ) : __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
 
-					{ data?.result && <NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
+					{
+						data?.result && (
+							<NewPromptButton
+								disabled={ isLoading }
+								onClick={ () => {
+									setPrompt( '' );
+									reset();
+								} }
+							/>
+						) }
 				</ImageForm>
 			</View.Panel>
 
@@ -83,4 +91,4 @@ const RemoveBackground = () => {
 	);
 };
 
-export default RemoveBackground;
+export default ReplaceBackground;

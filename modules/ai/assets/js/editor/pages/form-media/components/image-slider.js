@@ -35,7 +35,7 @@ const Actions = ( { children, startAction, sx = {}, ...props } ) => (
 	<Box display="flex" justifyContent="flex-end" alignItems="center" width="100%" { ...props } sx={ { mb: 1.5, ...sx } }>
 		{ startAction }
 
-		<Stack direction="row" spacing={ 3 } justifyContent="flex-end" flexGrow={ 1 } width="100%">
+		<Stack direction="row" spacing={ 2 } justifyContent="flex-end" flexGrow={ 1 } width="100%">
 			{ children }
 		</Stack>
 	</Box>
