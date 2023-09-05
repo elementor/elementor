@@ -4,7 +4,7 @@ const ScreenshotContainer = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'outlineOffset',
 } )( ( { theme, selected, height, disabled, outlineOffset = '0px' } ) => {
 	const outlineColor = selected ? theme.palette.text.primary : theme.palette.text.disabled;
-	const outline = `${ theme.shape.borderRadius }px solid ${ outlineColor }`;
+	const outline = `2px solid ${ outlineColor }`;
 
 	return {
 		height,

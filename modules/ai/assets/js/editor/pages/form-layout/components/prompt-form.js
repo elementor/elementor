@@ -58,10 +58,6 @@ const GenerateButton = ( props ) => (
 	<GenerateSubmit
 		size="small"
 		fullWidth={ false }
-		sx={ {
-			// TODO: remove once exist in the UI library.
-			borderRadius: ( { border } ) => border.size.md,
-		} }
 		{ ...props }
 	>
 		{ __( 'Generate', 'elementor' ) }

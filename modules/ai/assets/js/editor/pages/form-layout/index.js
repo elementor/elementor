@@ -19,10 +19,6 @@ const RegenerateButton = ( props ) => (
 		size="small"
 		color="secondary"
 		startIcon={ <RefreshIcon /> }
-		sx={ {
-			// TODO: remove once exist in the UI library.
-			borderRadius: ( { border } ) => border.size.md,
-		} }
 		{ ...props }
 	>
 		{ __( 'Regenerate', 'elementor' ) }
@@ -34,11 +30,6 @@ const UseLayoutButton = ( props ) => (
 		size="small"
 		variant="contained"
 		{ ...props }
-		sx={ {
-			...( props.sx || {} ),
-			// TODO: remove once exist in the UI library.
-			borderRadius: ( { border } ) => border.size.md,
-		} }
 	>
 		{ __( 'Use Layout', 'elementor' ) }
 	</Button>
