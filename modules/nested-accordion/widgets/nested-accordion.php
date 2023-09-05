@@ -847,7 +847,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			}
 			?>
 			<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
-						 <?php
+			<?php
 		}
 	}
 
