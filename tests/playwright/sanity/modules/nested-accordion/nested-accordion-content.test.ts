@@ -421,7 +421,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			return await JSON.parse( jsonSchema[ 0 ][ 'text' ] );
 		} );
 
-		await expect.soft( faqSchema[ '@type' ], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe('FAQPage' );
+		await expect.soft( faqSchema[ '@type' ], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe( 'FAQPage' );
 
 		let i = 1;
 		for ( const faq of faqSchema[ 'mainEntity' ] ) {
