@@ -104,6 +104,11 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
+			],
 		];
 
 		$fields['auto_flow'] = [
