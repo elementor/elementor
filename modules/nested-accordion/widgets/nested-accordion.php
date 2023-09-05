@@ -282,7 +282,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'faq_schema',
 			[
 				'label' => esc_html__( 'FAQ Schema', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default' => 'no',
@@ -828,8 +828,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<?php echo $items_title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
-
-		if ( $settings['faq_schema'] ) {
+		if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
 			$json = [
 				'@context' => 'https://schema.org',
 				'@type' => 'FAQPage',
@@ -846,9 +845,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 					],
 				];
 			}
+			$structured_data = wp_json_encode( $json );
+			echo "<script type=\"application/ld+json\">$structured_data</script>";
 		}
 		?>
-		<script type="application/ld+json"><?php echo wp_json_encode( $json ?? [] ); ?></script>
 		<?php
 	}
 
