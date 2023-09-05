@@ -398,7 +398,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test.only('Nested Accordion FAQ Schema', async ( {page}, testInfo ) => {
+	test('Nested Accordion FAQ Schema', async ( {page}, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
