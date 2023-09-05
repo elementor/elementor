@@ -33,7 +33,7 @@ class Widget_Rating extends Widget_Base {
 	/**
 	 * @return void
 	 */
-	public function add_style_tab() {
+	private function add_style_tab() {
 		$this->start_controls_section(
 			'section_icon_style',
 			[
