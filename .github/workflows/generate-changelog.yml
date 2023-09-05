@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Get Release Date
       id: get-release-date
       run: |
@@ -23,6 +26,13 @@ jobs:
         echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
 
     - name: Fetch merged PRs after release
+      id: fetch-prs
       run: |
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number) - \(.title)"'
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number),\(.title)"' > merged_prs.csv
+
+    - name: Upload merged PRs as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: merged-prs
+        path: merged_prs.csv
