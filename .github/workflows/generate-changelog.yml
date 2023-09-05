@@ -28,8 +28,9 @@ jobs:
     - name: Fetch merged PRs after release
       id: fetch-prs
       run: |
+        echo "PR Number,PR Title" > merged_prs.csv
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number),\(.title)"' > merged_prs.csv
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number),\(.title | gsub(",\""; "\",\""))"' >> merged_prs.csv
 
     - name: Upload merged PRs as artifact
       uses: actions/upload-artifact@v2
