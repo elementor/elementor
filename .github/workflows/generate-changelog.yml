@@ -28,12 +28,12 @@ jobs:
     - name: Fetch merged PRs after release
       id: fetch-prs
       run: |
-        echo "PR Title,PR Link" > merged_prs.csv
+        echo "PR Title,PR Link,PR Owner" > merged_prs.csv
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "\"\(.title)\",\(.html_url)"' >> merged_prs.csv
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
 
     - name: Upload merged PRs as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: merged-prs
         path: merged_prs.csv
