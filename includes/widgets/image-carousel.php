@@ -932,7 +932,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'aria-live' => $has_autoplay_enabled ? 'off' : 'polite',
 			],
 			'carousel-wrapper' => [
-				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'class' => 'elementor-image-carousel-wrapper ' . $this->swiper_css_class(),
 				'dir' => $settings['direction'],
 			],
 		] );
@@ -1040,5 +1040,9 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		Icons_Manager::render_icon( $icon_settings, [ 'aria-hidden' => 'true' ] );
+	}
+
+	protected function swiper_css_class() {
+		return '5.3.6' === get_option( 'elementor_e_swiper_active_version' ) ? 'swiper-container' : 'swiper';
 	}
 }

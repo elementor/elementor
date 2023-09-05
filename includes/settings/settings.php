@@ -365,6 +365,21 @@ class Settings extends Settings_Page {
 									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
+							'e_swiper_active_version' => [
+								'label' => esc_html__( 'Swiper Library', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '',
+									'options' => [
+										'5.3.6' => esc_html__( '5.3.6', 'elementor' ),
+										'8.4.5' => esc_html__( '8.4.5', 'elementor' ),
+									],
+									'desc' => sprintf( esc_html__(
+										'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements. %1$sLearn more%2$s',
+										'elementor'
+									), '<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">', '</a>'),
+								],
+							],
 						],
 					],
 				],
@@ -428,6 +443,25 @@ class Settings extends Settings_Page {
 	}
 
 	/**
+	 * Convert Swiper experiment value to settings.
+	 *
+	 * @since 3.17.0
+	 * @access private
+	 */
+	private function swiper_experiment_convertor() {
+		if ( get_option( 'elementor_e_swiper_active_version' ) ) {
+			return;
+		}
+
+		$swiper_version = get_option( 'elementor_experiment-e_swiper_latest' );
+		if ( 'active' === $swiper_version ) {
+			update_option( 'elementor_e_swiper_active_version', '8.4.5' );
+		} else {
+			update_option( 'elementor_e_swiper_active_version', '5.3.6' );
+		}
+	}
+
+	/**
 	 * Settings page constructor.
 	 *
 	 * Initializing Elementor "Settings" page.
@@ -467,5 +501,7 @@ class Settings extends Settings_Page {
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
+
+		$this->swiper_experiment_convertor();
 	}
 }
