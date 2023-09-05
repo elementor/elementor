@@ -6,18 +6,16 @@ on:
       release:
         description: 'Release after which to fetch merged PRs'
         required: true
+      branch:
+        description: 'Branch to fetch merged PRs from'
+        required: true
+        default: 'main'
 
 jobs:
   fetch-merged-prs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Determine branch name
-      id: get-branch-name
-      run: |
-        BRANCH_NAME="${GITHUB_REF#refs/heads/}"
-        echo "BASE_BRANCH=${BRANCH_NAME:-main}" >> $GITHUB_ENV
-
     - name: Get Release Date
       id: get-release-date
       run: |
@@ -26,5 +24,5 @@ jobs:
 
     - name: Fetch merged PRs after release
       run: |
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=$BASE_BRANCH&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number) - \(.title)"'
+        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE"
