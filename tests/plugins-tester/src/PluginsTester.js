@@ -51,7 +51,7 @@ export class PluginsTester {
 				}
 
 				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
-				const warn = fs.readFileSync( 'logs.txt' );
+				const warn = fs.readFileSync( filename );
 				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
 					info( warn.toString() );
 				}
