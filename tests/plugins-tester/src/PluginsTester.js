@@ -1,4 +1,6 @@
 import { execSync } from 'child_process';
+import { info } from '@actions/core';
+import fs from 'fs';
 
 export class PluginsTester {
 	options = {
@@ -41,11 +43,20 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug }'` );
+			try {
+				fs.unlinkSync( 'logs.txt' );
+				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
+				const warn = fs.readFileSync( 'logs.txt' );
+				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
+					info( warn.toString() );
+				}
+			} catch ( e ) {
+				this.options.logger.error( e );
+			}
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
-				this.options.logger.error( error );
+				this.options.logger.error( error.toString() );
 				errors.push( {
 					slug,
 					error,
