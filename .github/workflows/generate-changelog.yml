@@ -25,18 +25,14 @@ jobs:
         RELEASE_DATE=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/releases/tags/${{ github.event.inputs.release }}" | jq -r '.published_at')
         echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
 
-    - name: Fetch merged PRs
+    - name: Fetch merged PRs after release
       id: fetch-prs
       run: |
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "PR_DATA=$pr_data" >> $GITHUB_ENV
-    
-    - name: Format PR Data
-      run: |
         echo "PR Title,PR Link,PR Owner" > merged_prs.csv
-        echo "$PR_DATA" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
+        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
 
-    - name: Upload output as artifact
+    - name: Upload merged PRs as artifact
       uses: actions/upload-artifact@v3
       with:
         name: merged-prs
