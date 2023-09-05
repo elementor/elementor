@@ -845,8 +845,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 					],
 				];
 			}
-			$structured_data = wp_json_encode( $json );
-			echo "<script type=\"application/ld+json\">$structured_data</script>";
+			?>
+			<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
+                         <?php
 		}
 	}
 
