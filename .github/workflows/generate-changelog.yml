@@ -25,16 +25,19 @@ jobs:
         RELEASE_DATE=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/releases/tags/${{ github.event.inputs.release }}" | jq -r '.published_at')
         echo "RELEASE_DATE=$RELEASE_DATE" >> $GITHUB_ENV
 
-    - name: Fetch merged PRs after release
+    - name: Fetch PRs merged after Release
       id: fetch-prs
       run: |
-        echo "PR Title,PR Link,PR Owner,Jira Task URL" > merged_prs.csv
-        pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | 
-          let jira_id = (try capture("\\[([A-Z]{2,4}-[0-9]{4,5})\\]"; .title).capture catch empty);
-          "\"\(.title)\",\(.html_url),\(.user.login),\("https://elementor.atlassian.net/browse/" + jira_id)"' >> merged_prs.csv
+        PR_DATA=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
+        echo "PR_DATA=$PR_DATA" >> $GITHUB_ENV
 
-    - name: Upload merged PRs as artifact
+    - name: Format output as CSV
+      id: format-as-csv
+      run: |
+        echo "PR Title,PR Link,PR Owner" > merged_prs.csv
+        echo "$PR_DATA" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
+
+    - name: Upload output as artifact
       uses: actions/upload-artifact@v3
       with:
         name: merged-prs
