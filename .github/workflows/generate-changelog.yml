@@ -25,4 +25,4 @@ jobs:
     - name: Fetch merged PRs after release
       run: |
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE"
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | "#\(.number) - \(.title)"'
