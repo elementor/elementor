@@ -189,7 +189,7 @@ class Widget_Rating extends Widget_Base {
 
 		if ( $rating_value >= $star_index ) {
 			$width = '100%';
-		} elseif ( intval( ceil( $rating_value ) ) === $star_index ) {
+		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
 			$width = ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
 
