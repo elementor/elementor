@@ -31,6 +31,9 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function register_controls() {
+		$start_logical = is_rtl() ? 'end' : 'start';
+		$end_logical = is_rtl() ? 'start' : 'end';
+
 		$this->start_controls_section(
 			'section_rating',
 			[
@@ -93,6 +96,34 @@ class Widget_Rating extends Widget_Base {
 				'exclude_inline_options' => [ 'none' ],
 			]
 		);
+
+		$this->add_responsive_control( 'icon_alignment', [
+			'label' => esc_html__( 'Alignment', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => "eicon-align-$start_logical-h",
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'elementor' ),
+					'icon' => 'eicon-align-center-h',
+				],
+				'end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => "eicon-align-$end_logical-h",
+				],
+			],
+			'selectors_dictionary' => [
+				'start' => '--e-rating-justify-content: flex-start;',
+				'center' => '--e-rating-justify-content: center;',
+				'end' => '--e-rating-justify-content: flex-end;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+			'separator' => 'before',
+		] );
 
 		$this->end_controls_section();
 	}
