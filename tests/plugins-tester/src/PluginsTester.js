@@ -44,9 +44,10 @@ export class PluginsTester {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
 			try {
-				const filename = 'logs.txt';
+				const filename = process.env.CI ? '../../logs.txt' : 'logs.txt';
+
 				if ( fs.existsSync( filename ) ) {
-					fs.unlinkSync( 'logs.txt' );
+					fs.unlinkSync( filename );
 				}
 
 				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>${ filename }' ` );
