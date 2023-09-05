@@ -89,6 +89,8 @@ class Widget_Rating extends Widget_Base {
 					'value' => 'eicon-star',
 					'library' => 'eicons',
 				],
+				'separator' => 'before',
+				'exclude_inline_options' => [ 'none' ],
 			]
 		);
 
