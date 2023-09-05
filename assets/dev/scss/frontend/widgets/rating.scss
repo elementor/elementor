@@ -33,7 +33,7 @@
 					overflow: hidden;
 				}
 
-			:is( i, svg ) {
+				:is( i, svg ) {
 					display: flex;
 					flex-shrink: 0;
 				}
