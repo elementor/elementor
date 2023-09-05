@@ -97,7 +97,7 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'alignment', [
+		$this->add_responsive_control( 'icon_alignment', [
 			'label' => esc_html__( 'Alignment', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
