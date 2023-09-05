@@ -8,7 +8,7 @@ const Loader = ( { sx = {}, BoxProps = {}, ...props } ) => (
 		{ ...BoxProps }
 		sx={ {
 			px: 1.5,
-			minHeight: ( theme ) => theme.sizing[ 500 ],
+			minHeight: ( theme ) => theme.spacing( 5 ),
 			...( BoxProps.sx || {} ),
 		} }
 	>

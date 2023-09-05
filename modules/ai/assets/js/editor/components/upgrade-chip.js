@@ -10,12 +10,13 @@ import {
 	ListItem,
 	ListItemText,
 	ListItemIcon,
+	Paper,
 } from '@elementor/ui';
 import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
-const StyledContent = styled( Box )( ( { theme } ) => ( {
+const StyledContent = styled( Paper )( ( { theme } ) => ( {
 	position: 'relative',
 	'[data-popper-placement="top"] &': {
 		marginBottom: theme.spacing( 2.5 ),
@@ -24,15 +25,13 @@ const StyledContent = styled( Box )( ( { theme } ) => ( {
 		marginTop: theme.spacing( 2.5 ),
 	},
 	padding: theme.spacing( 3 ),
-	backgroundColor: theme.palette.background.paper,
 	boxShadow: theme.shadows[ 4 ],
-	borderRadius: theme.border.radius.sm,
 	zIndex: '9999',
 } ) );
 
 const StyledArrow = styled( Box )( ( { theme } ) => ( {
-	width: theme.sizing[ 500 ],
-	height: theme.sizing[ 200 ],
+	width: theme.spacing( 5 ),
+	height: theme.spacing( 2.5 ),
 	position: 'absolute',
 	overflow: 'hidden',
 	// Override Popper inline styles.
@@ -43,15 +42,15 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 	},
 	'[data-popper-placement="bottom"] &': {
 		'--rotate': '180deg',
-		top: `calc(${ theme.sizing[ 200 ] } * -1)`,
+		top: `calc(${ theme.spacing( 2.5 ) } * -1)`,
 	},
 	'&::after': {
 		backgroundColor: theme.palette.background.paper,
 		content: '""',
 		display: 'block',
 		position: 'absolute',
-		width: theme.sizing[ 200 ],
-		height: theme.sizing[ 200 ],
+		width: theme.spacing( 2.5 ),
+		height: theme.spacing( 2.5 ),
 		top: 0,
 		left: '50%',
 		transform: 'translateX(-50%) translateY(-50%) rotate(45deg)',

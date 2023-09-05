@@ -10,8 +10,8 @@ const ElementorLogo = ( props ) => {
 };
 
 const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
-	width: theme.sizing[ '400' ],
-	height: theme.sizing[ '400' ],
+	width: theme.spacing( 4 ),
+	height: theme.spacing( 4 ),
 	'& path': {
 		fill: theme.palette.text.primary,
 	},
