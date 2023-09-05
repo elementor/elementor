@@ -120,7 +120,7 @@ class Widget_Rating extends Widget_Base {
 				'end' => '--e-rating-justify-content: flex-end;',
 			],
 			'selectors' => [
-				'{{WRAPPER}} .e-rating' => '{{VALUE}}',
+				'{{WRAPPER}}' => '{{VALUE}}',
 			],
 			'separator' => 'before',
 		] );

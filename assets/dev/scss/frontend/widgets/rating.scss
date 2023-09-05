@@ -1,50 +1,53 @@
-.e-rating {
+.elementor-widget-rating {
 	--e-rating-gap: 0px;
 	--e-rating-star-font-size: 16px;
 	--e-rating-star-color: #{$gray-mouse};
 	--e-rating-star-marked-color: #{$orange};
 	--e-rating-star-marked-width: 100%;
-  	--e-rating-justify-content: flex-start;
-  	display: flex;
-  	justify-content: var(--e-rating-justify-content);
+	--e-rating-justify-content: flex-start;
 
-	&-wrapper {
-		display: flex;
-		gap: var(--e-rating-gap);
-		flex-direction: row;
-		width: fit-content;
-	}
-
-	.e-star {
-		position: relative;
+	.e-rating {
+  		display: flex;
+  		justify-content: var(--e-rating-justify-content);
 
 		&-wrapper {
+			display: flex;
+			gap: var(--e-rating-gap);
+			flex-direction: row;
+			width: fit-content;
+		}
 
-			&.e-star-marked {
-				--e-rating-star-color: var(--e-rating-star-marked-color);
-				width: var(--e-rating-star-marked-width);
-				position: absolute;
-				z-index: $first-layer;
-				height: 100%;
-				left: 0;
-				top: 0;
-				overflow: hidden;
-			}
+		.e-star {
+			position: relative;
+
+			&-wrapper {
+
+				&.e-star-marked {
+					--e-rating-star-color: var(--e-rating-star-marked-color);
+					width: var(--e-rating-star-marked-width);
+					position: absolute;
+					z-index: $first-layer;
+					height: 100%;
+					left: 0;
+					top: 0;
+					overflow: hidden;
+				}
 
 			:is( i, svg ) {
-				display: flex;
-				flex-shrink: 0;
-			}
+					display: flex;
+					flex-shrink: 0;
+				}
 
-			i {
-				font-size: var(--e-rating-star-font-size);
-				color: var(--e-rating-star-color);
-			}
+				i {
+					font-size: var(--e-rating-star-font-size);
+					color: var(--e-rating-star-color);
+				}
 
-			svg {
-				width: var(--e-rating-star-font-size);
-				height: var(--e-rating-star-font-size);
-				fill: var(--e-rating-star-color);
+				svg {
+					width: var(--e-rating-star-font-size);
+					height: var(--e-rating-star-font-size);
+					fill: var(--e-rating-star-color);
+				}
 			}
 		}
 	}
