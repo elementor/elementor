@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { warning } from '@actions/core';
-import github from '@actions/github';
 import fs from 'fs';
 
 export class PluginsTester {
@@ -55,7 +54,7 @@ export class PluginsTester {
 				const warn = fs.readFileSync( filename );
 
 				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
-					warning( warn.toString(), { title: `${ github.context.job }: There are warnings during ${ slug } plugin installation!` } );
+					warning( warn.toString() );
 				}
 			} catch ( e ) {
 				this.options.logger.error( e );
