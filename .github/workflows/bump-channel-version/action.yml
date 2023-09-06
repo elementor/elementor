@@ -21,7 +21,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        SetChannelPackageVersion( ${{ inputs.CHANNEL }} )
+        SetChannelPackageVersion "${{ inputs.CHANNEL }}"
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION }"
 
         sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
@@ -55,6 +55,7 @@ runs:
         fi
 
         function SetChannelPackageVersion() {
+          echo "SetChannelPackageVersion 1# param is $1"
           case $1 in
           * )
             CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
