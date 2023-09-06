@@ -94,6 +94,10 @@ class Widgets_Manager {
 			'playing-cards'
 		];
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'rating' ) ) {
+			$build_widgets_filename[] = 'rating';
+		}
+
 		$this->_widget_types = [];
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
@@ -249,10 +253,10 @@ class Widgets_Manager {
 		return true;
 	}
 
-	/** register promoted widgets
+	/** Register promoted widgets
 	 *
 	 * Since we cannot allow widgets to place themselves is a specific
-	 * location on our widgets panel we need to use an hard coded solution fort his
+	 * location on our widgets panel we need to use a hard coded solution for this.
 	 *
 	 * @return void
 	 */
