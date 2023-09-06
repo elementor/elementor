@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Rating widget @rating', () => {
 	test.describe( 'Rating experiment inactive', () => {
@@ -100,6 +101,23 @@ test.describe( 'Rating widget @rating', () => {
 
 				// Assert
 				await expect( await rating ).toHaveCount( 1 );
+			} );
+		} );
+
+		test( '@axe-core accessibility test', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.addWidget( 'rating', container );
+			await editor.publishAndViewPage();
+
+			await test.step( '@axe-core/playwright', async () => {
+				const accessibilityScanResults = await new AxeBuilder( { page } )
+					.include( '.elementor-widget-rating' )
+					.analyze();
+
+				await expect( accessibilityScanResults.violations ).toEqual( [] );
 			} );
 		} );
 	} );
