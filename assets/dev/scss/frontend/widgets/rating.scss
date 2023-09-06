@@ -1,9 +1,9 @@
 .elementor-widget-rating {
 	--e-rating-gap: 0px;
-	--e-rating-star-font-size: 16px;
-	--e-rating-star-color: #{$gray-mouse};
-	--e-rating-star-marked-color: #{$orange};
-	--e-rating-star-marked-width: 100%;
+	--e-rating-icon-font-size: 16px;
+	--e-rating-icon-color: #{$gray-mouse};
+	--e-rating-icon-marked-color: #{$orange};
+	--e-rating-icon-marked-width: 100%;
 	--e-rating-justify-content: flex-start;
 
 	.e-rating {
@@ -17,14 +17,14 @@
 			width: fit-content;
 		}
 
-		.e-star {
+		.e-icon {
 			position: relative;
 
 			&-wrapper {
 
-				&.e-star-marked {
-					--e-rating-star-color: var(--e-rating-star-marked-color);
-					width: var(--e-rating-star-marked-width);
+				&.e-icon-marked {
+					--e-rating-icon-color: var(--e-rating-icon-marked-color);
+					width: var(--e-rating-icon-marked-width);
 					position: absolute;
 					z-index: $first-layer;
 					height: 100%;
@@ -39,14 +39,14 @@
 				}
 
 				i {
-					font-size: var(--e-rating-star-font-size);
-					color: var(--e-rating-star-color);
+					font-size: var(--e-rating-icon-font-size);
+					color: var(--e-rating-icon-color);
 				}
 
 				svg {
-					width: var(--e-rating-star-font-size);
-					height: var(--e-rating-star-font-size);
-					fill: var(--e-rating-star-color);
+					width: var(--e-rating-icon-font-size);
+					height: var(--e-rating-icon-font-size);
+					fill: var(--e-rating-icon-color);
 				}
 			}
 		}
