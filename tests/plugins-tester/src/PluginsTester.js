@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { info } from '@actions/core';
+import { warning } from '@actions/core';
 import fs from 'fs';
 
 export class PluginsTester {
@@ -52,13 +52,13 @@ export class PluginsTester {
 
 				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
 				const warn = fs.readFileSync( filename );
-				info( warn.toString() );
-				// If ( warn.toString().includes( 'Warning' ) ) {
-				// 	if ( process.env.CI ) {
-				// 		console.info( 'We are in the annotation section' );
-				// 		info( warn.toString() );
-				// 	}
-				// }
+
+				if ( warn.toString().includes( 'Warning' ) ) {
+					if ( process.env.CI ) {
+						console.info( 'We are in the annotation section' );
+						warning( warn.toString() );
+					}
+				}
 			} catch ( e ) {
 				this.options.logger.error( e );
 			}
