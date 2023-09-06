@@ -126,6 +126,11 @@ class Settings_Layout extends Tab_Base {
 					'old_key' => 'size',
 					'new_key' => 'column',
 				],
+				'validators' => [
+					'Number' => [
+						'min' => 0,
+					],
+				],
 			]
 		);
 
