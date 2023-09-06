@@ -30,7 +30,73 @@ class Widget_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
+	/**
+	 * @return void
+	 */
+	private function add_style_tab() {
+		$this->start_controls_section(
+			'section_icon_style',
+			[
+				'label' => esc_html__( 'Icon', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-star-font-size: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'icon_gap',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-gap: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	protected function register_controls() {
+		$start_logical = is_rtl() ? 'end' : 'start';
+		$end_logical = is_rtl() ? 'start' : 'end';
+
 		$this->start_controls_section(
 			'section_rating',
 			[
@@ -94,7 +160,37 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control( 'icon_alignment', [
+			'label' => esc_html__( 'Alignment', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'options' => [
+				'start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => "eicon-align-$start_logical-h",
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'elementor' ),
+					'icon' => 'eicon-align-center-h',
+				],
+				'end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => "eicon-align-$end_logical-h",
+				],
+			],
+			'selectors_dictionary' => [
+				'start' => '--e-rating-justify-content: flex-start;',
+				'center' => '--e-rating-justify-content: center;',
+				'end' => '--e-rating-justify-content: flex-end;',
+			],
+			'selectors' => [
+				'{{WRAPPER}}' => '{{VALUE}}',
+			],
+			'separator' => 'before',
+		] );
+
 		$this->end_controls_section();
+
+		$this->add_style_tab();
 	}
 
 	protected function get_rating_value(): float {
@@ -117,7 +213,7 @@ class Widget_Rating extends Widget_Base {
 
 		if ( $rating_value >= $star_index ) {
 			$width = '100%';
-		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
+		} elseif ( intval( ceil( $rating_value ) ) === $star_index ) {
 			$width = ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
 
