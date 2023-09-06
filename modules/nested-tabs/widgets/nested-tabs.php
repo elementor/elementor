@@ -1082,6 +1082,8 @@ class NestedTabs extends Widget_Nested_Base {
 			$css_classes[] = 'elementor-animation-' . $item_settings['settings']['hover_animation'];
 		}
 
+		$aria_label = esc_html__( '. Open links with Enter or Space, close with Escape, navigate with Arrow Keys', 'elementor' );
+
 		$this->add_render_attribute( $setting_key, [
 			'id' => $item_settings['tab_id'],
 			'class' => $css_classes,
@@ -1090,7 +1092,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
-			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
+			'aria-label' => 1 === $item_settings['tab_count'] ? $title . $aria_label : $title,
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1245,6 +1247,8 @@ class NestedTabs extends Widget_Nested_Base {
 					tabId = item.element_id;
 				}
 
+				const ariaLabel = '<?php echo esc_html__( '. Open links with Enter or Space, close with Escape, navigate with Arrow Keys', 'elementor' ); ?>';
+
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
 					'class': [ 'e-n-tab-title',hoverAnimationClass ],
@@ -1253,7 +1257,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
+					'aria-label': 1 === tabCount ? item.tab_title + ariaLabel : item.tab_title,
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
