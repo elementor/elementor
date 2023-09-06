@@ -21,7 +21,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        SetChannelPackageVersion ${{ inputs.CHANNEL }}
+        SetChannelPackageVersion( ${{ inputs.CHANNEL }} )
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION }"
 
         sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
