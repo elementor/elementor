@@ -66,6 +66,53 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'icon_gap',
+			[
+				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'em' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 10,
+						'step' => 0.1,
+					],
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-gap: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'icon_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-star-marked-color: {{VALUE}}',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_unmasked_color',
+			[
+				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-star-color: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -189,7 +236,7 @@ class Widget_Rating extends Widget_Base {
 
 		if ( $rating_value >= $star_index ) {
 			$width = '100%';
-		} else if ( intval( ceil( $rating_value ) ) === $star_index ) {
+		} elseif ( intval( ceil( $rating_value ) ) === $star_index ) {
 			$width = ( $rating_value - ( $star_index - 1 ) ) * 100 . '%';
 		}
 
