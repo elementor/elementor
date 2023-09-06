@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+// eslint-disable-next-line
 import { warning } from '@actions/core';
 import fs from 'fs';
 
