@@ -217,7 +217,14 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_rating_value(): float {
-		return floatval( $this->get_settings_for_display( 'rating_value' ) );
+		$initial_value = $this->get_rating_scale();
+		$rating_value = $this->get_settings_for_display( 'rating_value' );
+
+		if ( '' === $rating_value ) {
+			$rating_value = $initial_value;
+		}
+
+		return floatval( $rating_value );
 	}
 
 	protected function get_rating_scale(): int {
@@ -225,12 +232,7 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_star_marked_width( $star_index ): string {
-		$initial_value = $this->get_rating_scale();
 		$rating_value = $this->get_rating_value();
-
-		if ( empty( $rating_value ) ) {
-			$rating_value = $initial_value;
-		}
 
 		$width = '0%';
 
