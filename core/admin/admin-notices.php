@@ -271,8 +271,7 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'title' => esc_html__( 'Congrats!', 'elementor' ),
-			'description' => esc_html__( 'You created over 10 pages with Elementor. Great job! If you can spare a minute,
-				please help us by leaving a five star review on WordPress.org.', 'elementor' ),
+			'description' => esc_html__( 'You created over 10 pages with Elementor. Great job! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ),
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Happy To Help', 'elementor' ),
