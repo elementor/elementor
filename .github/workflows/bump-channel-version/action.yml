@@ -21,7 +21,20 @@ runs:
   steps:
     - shell: bash
       run: |
-        SetChannelPackageVersion "${{ inputs.CHANNEL }}"
+        case ${{ inputs.CHANNEL }} in
+         * )
+           CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
+           NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
+           ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+           ;;&
+         "latest" )
+            NEW_CHANNEL_VERSION=-$(date +%s)
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+           ;;
+         "ga" )
+           ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
+           ;;
+         esac
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION }"
 
         sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
@@ -53,21 +66,3 @@ runs:
             echo "Add beta tag to readme file"
             sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: $BETA_VERSION$(printf '\n\r')" ./readme.txt
         fi
-
-        function SetChannelPackageVersion() {
-          echo "SetChannelPackageVersion 1# param is $1"
-          case $1 in
-          * )
-            CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
-            NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
-            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
-            ;;&
-          "latest" )
-             NEW_CHANNEL_VERSION=-$(date +%s)
-             ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
-            ;;
-          "ga" )
-            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
-            ;;
-          esac
-        }
