@@ -151,6 +151,8 @@ const EditorSelectors = {
 		aiButton: '.e-ai-button',
 		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
 		promptInput: 'input[name="prompt"]',
+		imagePromptTextarea: '[data-testid="e-image-prompt"] textarea',
+		generatedImage: '[data-testid="e-gallery-image"] img',
 		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
 
 		promptHistory: {
@@ -165,6 +167,7 @@ const EditorSelectors = {
 			fallbackIcon: 'e-ph-fi',
 			removeButton: 'button[aria-label="Remove item"]',
 			reuseButton: 'button[aria-label="Reuse prompt"]',
+			restoreButton: 'button[aria-label="Restore"]',
 			editButton: 'button[aria-label="Edit result"]',
 		},
 	},

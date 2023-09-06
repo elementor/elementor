@@ -10,7 +10,22 @@ import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
 import History from './components/prompt-history';
 import { HISTORY_ACTION_TYPES, HISTORY_TYPES } from './components/prompt-history/history-types';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
+
+const reducer = ( state, { type, id, data } ) => {
+	switch ( type ) {
+		case HISTORY_ACTION_TYPES.REUSE:
+		case HISTORY_ACTION_TYPES.EDIT:
+		case HISTORY_ACTION_TYPES.RESTORE:
+			return {
+				type,
+				id,
+				data,
+			};
+		default:
+			throw Error( 'Unknown action.' );
+	}
+};
 
 const PageContent = (
 	{
@@ -25,7 +40,7 @@ const PageContent = (
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const [ isPromptHistoryOpen, setIsPromptHistoryOpen ] = useState( false );
-	const [ promptHistoryAction, setPromptHistoryAction ] = useState( {
+	const [ promptHistoryAction, dispatchPromptHistoryAction ] = useReducer( reducer, {
 		type: '',
 		id: '',
 		data: null,
@@ -63,21 +78,9 @@ const PageContent = (
 		);
 	};
 
-	const onPromptReuse = ( id, prompt ) => {
-		setPromptHistoryAction( {
-			type: HISTORY_ACTION_TYPES.REUSE,
-			id,
-			data: prompt,
-		} );
-	};
-
-	const onResultEdit = ( id, result ) => {
-		setPromptHistoryAction( {
-			type: HISTORY_ACTION_TYPES.EDIT,
-			id,
-			data: result,
-		} );
-	};
+	const onPromptReuse = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.REUSE, id, data } );
+	const onResultEdit = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.EDIT, id, data } );
+	const onImagesRestore = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.RESTORE, id, data } );
 
 	if ( isLoading ) {
 		return (
@@ -131,6 +134,8 @@ const PageContent = (
 				credits={ credits }
 				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
 				DialogProps={ promptDialogStyleProps }
+				onImagesRestore={ onImagesRestore }
+				promptHistoryAction={ promptHistoryAction }
 			/>
 		);
 	}

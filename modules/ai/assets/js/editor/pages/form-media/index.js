@@ -7,6 +7,8 @@ import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import { EditImageProvider } from './context/edit-image-context';
 import { GlobalActionsProvider } from './context/global-actions-context';
 import { GlobalSettingsProvider } from './context/global-settings-context';
+import { HISTORY_TYPES } from '../../components/prompt-history/history-types';
+import History from '../../components/prompt-history';
 
 const initialData = {
 	isAllSaved: false,
@@ -30,8 +32,6 @@ const reducer = ( state, { type, payload } ) => {
 				isAllSaved: true,
 				hasUnsavedChanges: false,
 			};
-		case RESET:
-			return initialValue;
 		default:
 			throw Error( 'Unknown action.' );
 	}
@@ -44,6 +44,8 @@ const FormMedia = ( {
 	controlView,
 	additionalOptions,
 	maybeRenderUpgradeChip,
+	onImagesRestore,
+	promptHistoryAction,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -66,6 +68,7 @@ const FormMedia = ( {
 
 	const globalSettings = {
 		initialImageType: additionalOptions?.defaultImageType || '',
+		promptHistoryAction,
 	};
 
 	const globalActions = {
@@ -89,8 +92,11 @@ const FormMedia = ( {
 
 	return (
 		<>
-			<PromptDialog onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
+			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ () => onCloseIntent() }>
+					<History promptType={ HISTORY_TYPES.IMAGE }
+						onImagesRestore={ onImagesRestore } />
+
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
@@ -124,6 +130,8 @@ FormMedia.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,
+	onImagesRestore: PropTypes.func,
+	promptHistoryAction: PropTypes.object,
 };
 
 export default FormMedia;

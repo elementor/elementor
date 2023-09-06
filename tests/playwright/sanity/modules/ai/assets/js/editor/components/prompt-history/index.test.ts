@@ -5,9 +5,9 @@ import {
 	noDataMock,
 	noPlanMock,
 	thirtyDaysLimitDataMock,
-	unknownActionDataMock,
+	unknownActionDataMock, restoreImageDataMock,
 } from './get-history.mock';
-import { closePromptHistory, openPromptHistory } from './helper';
+import { closeAIDialog, closePromptHistory, openPromptHistory } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../../../../selectors/editor-selectors';
@@ -149,7 +149,7 @@ test.describe( 'AI @ai', () => {
 
 		const editor = await wpAdmin.openNewPage();
 
-		await test.step( 'History items list a11y', async () => {
+		await test.step( 'Text - History items list a11y', async () => {
 			await editor.addWidget( 'text-editor' );
 
 			await mockRoute( page, {
@@ -161,10 +161,34 @@ test.describe( 'AI @ai', () => {
 			await page.waitForSelector( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` );
 
 			const accessibilityScanResults = await new AxeBuilder( { page } )
-				.include( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` )
+				.include( EditorSelectors.ai.promptHistory.modal )
 				.analyze();
 
 			expect( accessibilityScanResults.violations ).toEqual( [] );
+
+			await closePromptHistory( page );
+			await closeAIDialog( page );
+		} );
+
+		await test.step( 'Image - History items list a11y', async () => {
+			await editor.addWidget( 'image' );
+
+			await mockRoute( page, {
+				getHistoryMock: restoreImageDataMock,
+			} );
+
+			await openPromptHistory( page );
+
+			await page.waitForSelector( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` );
+
+			const accessibilityScanResults = await new AxeBuilder( { page } )
+				.include( EditorSelectors.ai.promptHistory.modal )
+				.analyze();
+
+			expect( accessibilityScanResults.violations ).toEqual( [] );
+
+			await closePromptHistory( page );
+			await closeAIDialog( page );
 		} );
 	} );
 
@@ -243,6 +267,40 @@ test.describe( 'AI @ai', () => {
 			await expect( input ).toBeVisible();
 
 			expect( await input.inputValue() ).toBe( 'Test prompt' );
+		} );
+	} );
+
+	test( 'Prompt History - Image', async ( { page }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo );
+
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Restore button restores prompt', async () => {
+			await editor.addWidget( 'image' );
+
+			await mockRoute( page, {
+				getHistoryMock: restoreImageDataMock,
+			} );
+
+			await openPromptHistory( page );
+
+			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+
+			await item.hover();
+
+			await item.locator( EditorSelectors.ai.promptHistory.restoreButton ).click();
+
+			const promptTextarea = page.locator( EditorSelectors.ai.imagePromptTextarea ).first();
+
+			await expect( promptTextarea ).toBeVisible();
+
+			expect( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
+
+			const images = page.locator( EditorSelectors.ai.generatedImage );
+
+			expect( await images.count() ).toEqual( 2 );
+
+			expect( await images.first().getAttribute( 'src' ) ).toEqual( 'https://example.com/img1.jpg' );
 		} );
 	} );
 } );

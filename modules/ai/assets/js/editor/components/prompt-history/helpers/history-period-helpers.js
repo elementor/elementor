@@ -1,5 +1,5 @@
 import { produce } from 'immer';
-import { daysDiff, translateDate } from '../../../dateHelpers';
+import { daysDiff, translateDate } from '../../../date-helpers';
 
 const DATE_KEY = 'date';
 

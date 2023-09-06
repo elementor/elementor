@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Stack } from '@elementor/ui';
 import View from '../../components/view';
 import Gallery from '../../components/gallery';
@@ -17,6 +17,7 @@ import useSuggestedImages from './hooks/use-suggested-images';
 import useTextToImage from './hooks/use-text-to-image';
 import useImageActions from '../../hooks/use-image-actions';
 import { useGlobalSettings } from '../../context/global-settings-context';
+import { HISTORY_ACTION_TYPES } from '../../../../components/prompt-history/history-types';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -31,7 +32,7 @@ const getPromptPlaceholder = ( images ) => {
 const Generate = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const { initialImageType } = useGlobalSettings();
+	const { initialImageType, promptHistoryAction } = useGlobalSettings();
 
 	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
 
@@ -39,13 +40,24 @@ const Generate = () => {
 
 	const promptPlaceholder = getPromptPlaceholder( suggestedImages );
 
-	const { data: generatedImages, send, isLoading: isGenerating, error, reset } = useTextToImage();
+	const { data: generatedImages, setResult, send, isLoading: isGenerating, error, reset } = useTextToImage( {} );
+
+	useEffect( () => {
+		if ( ! promptHistoryAction.type ) {
+			return;
+		}
+
+		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.RESTORE ) {
+			setPrompt( promptHistoryAction.data?.prompt );
+			setResult( promptHistoryAction.data?.images, promptHistoryAction.id );
+		}
+	}, [ promptHistoryAction ] );
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const isLoading = isPreloading || isGenerating || isUploading;
 
-	// The aspect ratio in the content view shuld only be updated when the generated images are updated.
+	// The aspect ratio in the content view should only be updated when the generated images are updated.
 	const generateAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ generatedImages?.result ] );
 
 	const handleSubmit = ( event ) => {
@@ -74,6 +86,7 @@ const Generate = () => {
 
 				<ImageForm onSubmit={ handleSubmit }>
 					<PromptField
+						data-testid="e-image-prompt"
 						value={ prompt }
 						disabled={ isLoading }
 						placeholder={ promptPlaceholder }

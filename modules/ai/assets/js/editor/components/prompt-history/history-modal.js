@@ -1,6 +1,5 @@
 import { Backdrop, Box, LinearProgress, Modal, Slide, styled } from '@elementor/ui';
 import usePromptHistory from '../../hooks/use-prompt-history';
-import { HISTORY_TYPES } from './history-types';
 import PromptHistoryModalHeader from './parts/modal-header';
 import PromptHistoryPeriod from './parts/modal-period';
 import { PromptHistoryContext } from './index';
@@ -11,6 +10,7 @@ import { groupPromptHistoryData, LAST_30_DAYS_KEY, LAST_7_DAYS_KEY } from './hel
 import PromptHistoryEmpty from './parts/modal-empty';
 import InfiniteScroll from 'react-infinite-scroller';
 import PromptHistoryUpgrade from './parts/modal-upgrade';
+import { HISTORY_TYPES } from './history-types';
 
 const StyledContent = styled( Box )`
 	width: 360px;
@@ -19,7 +19,7 @@ const StyledContent = styled( Box )`
 	margin-right: ${ ( { theme } ) => theme.spacing( 5 ) };
 	background-color: ${ ( { theme } ) => theme.palette.background.paper };
 	border-radius: ${ ( { theme } ) => theme.border.radius.sm };
-	height: 52vh;
+	height: ${ ( { fullHeight } ) => fullHeight ? '86vh' : '52vh' };
 
 	@media screen and (max-width: 456px) {
 		width: 320px;
@@ -33,9 +33,10 @@ const StyledContent = styled( Box )`
 const ITEMS_LIMIT = 10;
 const NO_HISTORY_ACCESS_ERROR = 'invalid_connect_data';
 
-const PromptHistoryModal = ( { promptType, ...props } ) => {
+const PromptHistoryModal = ( { ...props } ) => {
 	const lastRun = useRef( () => {} );
 	const scrollContainer = useRef( null );
+	const { onModalClose, promptType } = useContext( PromptHistoryContext );
 
 	const {
 		items,
@@ -51,8 +52,6 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 		error: historyDeletingError,
 		send: deleteItem,
 	} = useDeletePromptHistoryItem();
-
-	const { onModalClose } = useContext( PromptHistoryContext );
 
 	const error = historyFetchingError || historyDeletingError;
 	const isLoading = isHistoryFetchingInProgress || isDeletingInProgress;
@@ -113,7 +112,7 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 
 	return (
 		<Modal
-			container={ () => document.querySelector( '.MuiDialogContent-root:not(.MuiBackdrop-root)' ) }
+			container={ () => document.querySelector( '.MuiDialogContent-root:not(.MuiBackdrop-root), #e-form-media .MuiBox-root' ) }
 			open={ true }
 			hideBackdrop={ true }
 			onClose={ onModalClose }
@@ -123,7 +122,8 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 				sx={ { position: 'absolute', justifyContent: 'flex-end', alignItems: 'flex-start' } }
 				aria-hidden={ false }>
 				<Slide direction="left" in={ true } mountOnEnter unmountOnExit>
-					<StyledContent aria-label={ __( 'Prompt history modal', 'elementor' ) }>
+					<StyledContent aria-label={ __( 'Prompt history modal', 'elementor' ) }
+						fullHeight={ promptType === HISTORY_TYPES.IMAGE }>
 						<PromptHistoryModalHeader onClose={ onModalClose } />
 
 						{ error && NO_HISTORY_ACCESS_ERROR !== error && <PromptErrorMessage error={ error }
@@ -156,10 +156,6 @@ const PromptHistoryModal = ( { promptType, ...props } ) => {
 			</Backdrop>
 		</Modal>
 	);
-};
-
-PromptHistoryModal.propTypes = {
-	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
 };
 
 export default PromptHistoryModal;

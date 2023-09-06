@@ -57,6 +57,13 @@ const StyledButtonsWrapper = styled( Box )`
 	}
 `;
 
+const StyledImage = styled( 'img' )`
+	height: 72px;
+	width: 72px;
+	object-fit: cover;
+	margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
+`;
+
 const ActionButton = ( { tooltipTitle, ...props } ) => {
 	return (
 		<Tooltip title={ tooltipTitle } placement="top" componentsProps={ {
@@ -77,7 +84,16 @@ ActionButton.propTypes = {
 	tooltipTitle: PropTypes.string.isRequired,
 };
 
-const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromptReuse, onResultEdit } ) => {
+const PromptHistoryItem = ( {
+	action,
+	prompt,
+	date,
+	images,
+	onHistoryItemDelete,
+	onPromptReuse,
+	onResultEdit,
+	onImagesRestore,
+} ) => {
 	return (
 		<StyledItem tabIndex="0" data-testid="e-ph-i">
 			{ getIconByAction( action ) }
@@ -106,12 +122,23 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 							<TrashIcon />
 						</ActionButton>
 
-						<ActionButton
-							onClick={ onPromptReuse }
-							aria-label={ __( 'Reuse prompt', 'elementor' ) }
-							tooltipTitle={ __( 'Reuse prompt', 'elementor' ) }>
-							<RestoreIcon />
-						</ActionButton>
+						{ onPromptReuse && (
+							<ActionButton
+								onClick={ onPromptReuse }
+								aria-label={ __( 'Reuse prompt', 'elementor' ) }
+								tooltipTitle={ __( 'Reuse prompt', 'elementor' ) }>
+								<RestoreIcon />
+							</ActionButton>
+						) }
+
+						{ onImagesRestore && (
+							<ActionButton
+								onClick={ onImagesRestore }
+								aria-label={ __( 'Restore', 'elementor' ) }
+								tooltipTitle={ __( 'Restore', 'elementor' ) }>
+								<RestoreIcon />
+							</ActionButton>
+						) }
 
 						{ onResultEdit && (
 							<ActionButton
@@ -123,6 +150,12 @@ const PromptHistoryItem = ( { action, prompt, date, onHistoryItemDelete, onPromp
 						) }
 					</StyledButtonsWrapper>
 				</Stack>
+
+				{ images?.length > 0 && (
+					<Stack flexDirection="row" mt={ 3 }>
+						{ images.map( ( image, i ) => <StyledImage key={ i } alt="" src={ image.image_url } /> ) }
+					</Stack>
+				) }
 			</Stack>
 		</StyledItem> );
 };
@@ -132,9 +165,11 @@ PromptHistoryItem.propTypes = {
 	action: PropTypes.string.isRequired,
 	prompt: PropTypes.string.isRequired,
 	date: PropTypes.string.isRequired,
+	images: PropTypes.array,
 	onHistoryItemDelete: PropTypes.func.isRequired,
-	onPromptReuse: PropTypes.func.isRequired,
+	onPromptReuse: PropTypes.func,
 	onResultEdit: PropTypes.func,
+	onImagesRestore: PropTypes.func,
 };
 
 export default PromptHistoryItem;

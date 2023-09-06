@@ -47,5 +47,21 @@ test.describe( 'AI @ai', () => {
 
 			await closeAIDialog( page );
 		} );
+
+		await test.step( 'Image control', async () => {
+			await editor.addWidget( 'image' );
+
+			await findPromptHistoryButton( page );
+
+			await closeAIDialog( page );
+		} );
+
+		await test.step( 'Image box', async () => {
+			await editor.addWidget( 'image-box' );
+
+			await findPromptHistoryButton( page );
+
+			await closeAIDialog( page );
+		} );
 	} );
 } );

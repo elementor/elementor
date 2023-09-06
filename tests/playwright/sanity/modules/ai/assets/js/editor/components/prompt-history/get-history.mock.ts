@@ -120,3 +120,40 @@ export const reuseAndEditTextDataMock = getJsonMock( {
 		},
 	},
 } );
+
+export const restoreImageDataMock = getJsonMock( {
+	success: true,
+	code: 200,
+	data: {
+		items: [
+			generateItem( {
+				request: {
+					prompt: 'Test prompt',
+				},
+				response: {
+					results: {
+						images: [
+							{
+								seed: 123,
+								image_url: 'https://example.com/img1.jpg',
+							},
+							{
+								seed: 456,
+								image_url: 'https://example.com/img2.jpg',
+							},
+						],
+					},
+				},
+			} ),
+		],
+		meta: {
+			totalItems: 2,
+			itemCount: 2,
+			itemsPerPage: 10,
+			totalPages: 1,
+			currentPage: 1,
+			allowedDays: 90,
+		},
+	},
+} );
+

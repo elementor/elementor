@@ -51,7 +51,7 @@ ContentHeading.propTypes = {
 
 const View = ( { children, ...props } ) => {
 	return (
-		<Box display="flex" sx={ { overflowY: 'auto' } } height="100%" { ...props }>
+		<Box display="flex" sx={ { overflowY: 'auto', position: 'relative' } } height="100%" { ...props }>
 			{ children }
 		</Box>
 	);

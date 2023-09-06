@@ -1,10 +1,6 @@
-type PromptHistoryMeta = {
-	totalItems: number
-	itemCount: number
-	itemsPerPage: number
-	totalPages: number
-	currentPage: number
-	allowedDays: number
+type Image = {
+	seed: number
+	image_url: string
 }
 
 export type PromptHistoryItem = {
@@ -17,11 +13,21 @@ export type PromptHistoryItem = {
 	}
 	response: {
 		results: {
-			text: string
+			text?: string,
+			images?: Image[],
 		}
 	}
 	createdAt: string
 	isFavorite: boolean
+}
+
+type PromptHistoryMeta = {
+	totalItems: number
+	itemCount: number
+	itemsPerPage: number
+	totalPages: number
+	currentPage: number
+	allowedDays: number
 }
 
 type PromptHistoryPaginationData = {

@@ -9,7 +9,8 @@ const normalizeItems = ( items ) => {
 			date: item?.createdAt,
 			action: item?.action,
 			prompt: item?.request?.prompt,
-			result: item?.response?.results?.text,
+			text: item?.response?.results?.text,
+			images: item?.response?.results?.images,
 		};
 	} );
 };

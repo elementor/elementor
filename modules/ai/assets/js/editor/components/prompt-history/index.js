@@ -7,11 +7,13 @@ export const PromptHistoryContext = React.createContext( {} );
 
 const PROMPT_HISTORY_MODAL_ID = 'prompt-history-modal';
 
-const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, setIsPromptHistoryOpen } ) => {
+const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, onImagesRestore, setIsPromptHistoryOpen } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const onModalOpen = () => {
-		setIsPromptHistoryOpen( true );
+		if ( setIsPromptHistoryOpen ) {
+			setIsPromptHistoryOpen( true );
+		}
 
 		setTimeout( () => {
 			setIsOpen( true );
@@ -21,9 +23,11 @@ const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, setIsPromptHi
 	const onModalClose = () => {
 		setIsOpen( false );
 
-		setTimeout( () => {
-			setIsPromptHistoryOpen( false );
-		}, 250 );
+		if ( setIsPromptHistoryOpen ) {
+			setTimeout( () => {
+				setIsPromptHistoryOpen( false );
+			}, 250 );
+		}
 	};
 
 	const closeModalAfterAction = ( action ) => ( ...data ) => {
@@ -35,8 +39,9 @@ const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, setIsPromptHi
 		<PromptHistoryContext.Provider value={ {
 			promptType,
 			onModalClose,
-			onPromptReuse: closeModalAfterAction( onPromptReuse ),
+			onPromptReuse: onPromptReuse ? closeModalAfterAction( onPromptReuse ) : null,
 			onResultEdit: onResultEdit ? closeModalAfterAction( onResultEdit ) : null,
+			onImagesRestore: onImagesRestore ? closeModalAfterAction( onImagesRestore ) : null,
 		} }>
 			<PromptHistoryButton
 				isActive={ isOpen }
@@ -44,16 +49,17 @@ const PromptHistory = ( { promptType, onPromptReuse, onResultEdit, setIsPromptHi
 				aria-haspopup="dialog"
 				aria-controls={ PROMPT_HISTORY_MODAL_ID } />
 
-			{ isOpen && <PromptHistoryModal id={ PROMPT_HISTORY_MODAL_ID } promptType={ promptType } /> }
+			{ isOpen && <PromptHistoryModal id={ PROMPT_HISTORY_MODAL_ID } /> }
 		</PromptHistoryContext.Provider>
 	);
 };
 
 PromptHistory.propTypes = {
 	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
-	onPromptReuse: PropTypes.func.isRequired,
+	onPromptReuse: PropTypes.func,
 	onResultEdit: PropTypes.func,
-	setIsPromptHistoryOpen: PropTypes.func.isRequired,
+	onImagesRestore: PropTypes.func,
+	setIsPromptHistoryOpen: PropTypes.func,
 };
 
 export default PromptHistory;
