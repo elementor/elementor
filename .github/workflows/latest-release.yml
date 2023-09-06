@@ -72,8 +72,7 @@ jobs:
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
-          files: |
-            elementor-*.zip
+          files: elementor-*.zip
           body: ""
           prerelease: ${{ env.PRERELEASE }}
       - name: Post To Slack Created Latest auto Release
