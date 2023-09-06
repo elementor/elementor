@@ -90,6 +90,29 @@ class Widget_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'icon_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-star-marked-color: {{VALUE}}',
+				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'icon_unmasked_color',
+			[
+				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-rating-star-color: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
