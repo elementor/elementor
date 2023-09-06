@@ -61,7 +61,7 @@ class Widget_Rating extends Widget_Base {
 				],
 				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--e-rating-star-font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--e-rating-icon-font-size: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
