@@ -73,7 +73,7 @@ jobs:
           tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
           files: elementor-*.zip
-          body: ""
+          body: "Automated release for ${{ env.PACKAGE_VERSION }}"
           prerelease: ${{ env.PRERELEASE }}
       - name: Post To Slack Created Latest auto Release
         if: ${{ github.event.inputs.pre_release }} == false
