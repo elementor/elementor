@@ -286,7 +286,7 @@ class Widget_Rating extends Widget_Base {
 
 		$this->add_render_attribute( 'widget_wrapper', [
 			'class' => 'e-rating-wrapper',
-			'itemprop' => 'reviewValue',
+			'itemprop' => 'ratingValue',
 			'content' => $this->get_rating_value(),
 			'role' => 'img',
 			'aria-label' => sprintf( esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
