@@ -1,0 +1,43 @@
+.elementor-playing-cards-wrapper {
+	--e-playing-card-red-color: red;
+	--e-playing-card-black-color: black;
+	--e-playing-card-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.55);
+
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+
+	.elementor-playing-card {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 50px;
+		width: 50px;
+		gap: .2rem;
+		border: 1px solid;
+		border-radius: 8px;
+		box-shadow: var(--e-playing-card-box-shadow);
+		-webkit-box-shadow: var(--e-playing-card-box-shadow);
+		-moz-box-shadow: var(--e-playing-card-box-shadow);
+		cursor: pointer;
+		transition: all ease-in-out .3s;
+
+		& > div {
+			pointer-events: none;
+		}
+
+		&:hover {
+			background-color: rgba(0,0,0,0.05);
+		}
+	}
+
+	.elementor-playing-card-red {
+		color:var(--e-playing-card-red-color);
+	}
+
+	.elementor-playing-card-black {
+		color: var(--e-playing-card-black-color);
+	}
+}
+
+
