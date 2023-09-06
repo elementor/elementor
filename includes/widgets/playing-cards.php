@@ -186,7 +186,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_control(
 			'playing_card_padding',
 			[
-				'label' => esc_html__( 'Padding', 'elementor-pro' ),
+				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
@@ -198,7 +198,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_control(
 			'playing_card_gap',
 			[
-				'label' => esc_html__( 'Gap', 'elementor-pro' ),
+				'label' => esc_html__( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
