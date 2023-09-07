@@ -150,9 +150,8 @@ class Widget_Rating extends Widget_Base {
 			[
 				'label' => esc_html__( 'Rating', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'placeholder' => 5,
 				'min' => 0,
-				'step' => 0.01,
+				'step' => 0.5,
 				'dynamic' => [
 					'active' => true,
 				],
@@ -224,7 +223,9 @@ class Widget_Rating extends Widget_Base {
 			$rating_value = $initial_value;
 		}
 
-		return floatval( $rating_value );
+		$rating_value = floatval( $rating_value );
+
+		return round( $rating_value, 2 );
 	}
 
 	protected function get_rating_scale(): int {
@@ -232,7 +233,6 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function get_icon_marked_width( $icon_index ): string {
-		$initial_value = $this->get_rating_scale();
 		$rating_value = $this->get_rating_value();
 
 		$width = '0%';
