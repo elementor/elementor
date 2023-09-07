@@ -39,7 +39,7 @@ jobs:
           .[] 
           | select(.merged_at > $RELEASE_DATE)
           | {
-              title: (.title | gsub("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\] "; "")),
+              title: (.title | gsub(" \\[([A-Za-z]{2,4}-)?\\d{4,6}\\]"; "")),
               url: .html_url,
               login: .user.login,
               task_id: (.title | match("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\]") | .string | gsub("\\[|\\]"; ""))
