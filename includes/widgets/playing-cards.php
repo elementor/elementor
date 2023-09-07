@@ -80,26 +80,26 @@ class Widget_Playing_Cards extends Widget_Base {
 	 */
 	protected function register_controls() {
 		$card_numbers = [
-			'A' => ['title' => esc_html__( 'A', 'elementor' )],
-			2 => ['title' => esc_html__('2', 'elementor')],
-			3 => ['title' => esc_html__('3', 'elementor')],
-			4 => ['title' => esc_html__('4', 'elementor')],
-			5 => ['title' => esc_html__('5', 'elementor')],
-			6 => ['title' => esc_html__('6', 'elementor')],
-			7 => ['title' => esc_html__('7', 'elementor')],
-			8 => ['title' => esc_html__('8', 'elementor')],
-			9 => ['title' => esc_html__('9', 'elementor')],
-			10 => ['title' => esc_html__('10', 'elementor')],
-			'J' => ['title' => esc_html__('J', 'elementor')],
-			'Q' => ['title' => esc_html__('Q', 'elementor')],
-			'K' => ['title' => esc_html__('K', 'elementor')]
+			'A' => [ 'title' => esc_html__( 'A', 'elementor' ) ],
+			3 => [ 'title' => esc_html__( '3', 'elementor' ) ],
+			2 => [ 'title' => esc_html__('2', 'elementor' ) ],
+			4 => [ 'title' => esc_html__('4', 'elementor' ) ],
+			5 => [ 'title' => esc_html__('5', 'elementor' ) ],
+			6 => [ 'title' => esc_html__('6', 'elementor' ) ],
+			7 => [ 'title' => esc_html__('7', 'elementor' ) ],
+			8 => [ 'title' => esc_html__('8', 'elementor' ) ],
+			9 => [ 'title' => esc_html__('9', 'elementor' ) ],
+			10 => [ 'title' => esc_html__('10', 'elementor' ) ],
+			'J' => [ 'title' => esc_html__('J', 'elementor' ) ],
+			'Q' => [ 'title' => esc_html__('Q', 'elementor' ) ],
+			'K' => [ 'title' => esc_html__('K', 'elementor' ) ],
 		];
 
 		$card_types = [
-			'♠' => ['title' => esc_html__('♠', 'elementor')],
-			'♥'	=> ['title' => esc_html__('♥', 'elementor')],
-			'♣'	=> ['title' => esc_html__('♣', 'elementor')],
-			'♦'	=> ['title' => esc_html__('♦', 'elementor')]
+			'♠' => [ 'title' => esc_html__( '♠', 'elementor' )],
+			'♥'	=> [ 'title' => esc_html__( '♥', 'elementor' )],
+			'♣'	=> [ 'title' => esc_html__( '♣', 'elementor' )],
+			'♦'	=> [ 'title' => esc_html__( '♦', 'elementor' )],
 		];
 
 		$this->start_controls_section(
@@ -111,7 +111,6 @@ class Widget_Playing_Cards extends Widget_Base {
 
 		$repeater = new Repeater();
 
-
 		$repeater->add_control(
 			'playing_card_number',
 			[
@@ -122,7 +121,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'options' => $card_numbers
+				'options' => $card_numbers,
 			]
 		);
 
@@ -222,7 +221,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			<?php
 				foreach ( $cards as $index => $item ) :
 					$card_count = $index + 1;
-					$card_color_class = $item['playing_card_type'] === '♠' || $item['playing_card_type'] === '♣' ? 'elementor-playing-card-black' : 'elementor-playing-card-red';
+					$card_color_class = '♠' === $item['playing_card_type'] || '♣' === $item['playing_card_type'] ? 'elementor-playing-card-black' : 'elementor-playing-card-red';
 					$playing_card_number_settings_key = $this->get_repeater_setting_key( 'playing_card_number', 'cards', $index );
 					$playing_card_type_setting_key = $this->get_repeater_setting_key( 'playing_card_type', 'cards', $card_count );
                     $playing_card_wrapper_setting_key = $this->get_repeater_setting_key( 'playing-card-wrapper', 'cards', $card_count );
