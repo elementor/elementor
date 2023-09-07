@@ -3,7 +3,7 @@ name: Automated Latest Release
 env:
   CHANNEL: 'latest'
   PRERELEASE: 'false'
-  ACTIVE: false
+  ACTIVE: 'false'
 
 on:
   pull_request:
