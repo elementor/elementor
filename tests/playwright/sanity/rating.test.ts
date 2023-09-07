@@ -41,7 +41,7 @@ test.describe( 'Rating widget @rating', () => {
 				await editor.addWidget( 'star-rating', container );
 
 				// Assert
-				await expect( await starRatingWrapper ).toHaveCount( 1 );
+				await expect.soft( await starRatingWrapper ).toHaveCount( 1 );
 			} );
 		} );
 	} );
@@ -71,7 +71,7 @@ test.describe( 'Rating widget @rating', () => {
 			await page.close();
 		} );
 
-		test( 'General Test', async ( { page }, testInfo ) => {
+		test( 'Widget panel test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -91,7 +91,7 @@ test.describe( 'Rating widget @rating', () => {
 				await page.locator( widgetSearchBar ).fill( 'star-rating' );
 
 				// Assert
-				await expect( starRatingWidgetInPanel ).toBeHidden();
+				await expect.soft( starRatingWidgetInPanel ).toBeHidden();
 			} );
 
 			await test.step( 'Check that Rating widget is active', async () => {
@@ -100,7 +100,59 @@ test.describe( 'Rating widget @rating', () => {
 				rating = await editor.selectElement( ratingID );
 
 				// Assert
-				await expect( await rating ).toHaveCount( 1 );
+				await expect.soft( await rating ).toHaveCount( 1 );
+			} );
+		} );
+
+		test( 'Functionality test', async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage(),
+				container = await editor.addElement( { elType: 'container' }, 'document' ),
+				ratingID = await editor.addWidget( 'rating', container ),
+				ratingElement = await editor.selectElement( ratingID );
+
+			await test.step( 'Rating Scale', async () => {
+				await editor.setSliderControlValue( 'rating_scale', '3' );
+				await expect.soft( await ratingElement.locator( '.e-icon' ) ).toHaveCount( 3 );
+			} );
+
+			await test.step( 'Rating Value', async () => {
+				await editor.setNumberControlValue( 'rating_value', '1.543' );
+				await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( '.e-icon-marked' ) ).toHaveCSS( '--e-rating-icon-marked-width', '100%' );
+				await expect.soft( await ratingElement.locator( '.e-icon >> nth=1' ).locator( '.e-icon-marked' ) ).toHaveCSS( '--e-rating-icon-marked-width', '54%' );
+				await expect.soft( await ratingElement.locator( '.e-icon >> nth=2' ).locator( '.e-icon-marked' ) ).toHaveCSS( '--e-rating-icon-marked-width', '0%' );
+			} );
+
+			await test.step( 'Icon Alignment Start', async () => {
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( 'rating-alignment-start.png' );
+
+				await editor.togglePreviewMode();
+			} );
+
+			await test.step( 'Icon Alignment Center', async () => {
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-center-h' );
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( 'rating-alignment-center.png' );
+
+				await editor.togglePreviewMode();
+			} );
+
+			await test.step( 'Icon Alignment End', async () => {
+				await editor.setChooseControlValue( 'icon_alignment', 'eicon-align-end-h' );
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( 'rating-alignment-end.png' );
+
+				await editor.togglePreviewMode();
 			} );
 		} );
 
@@ -121,7 +173,7 @@ test.describe( 'Rating widget @rating', () => {
 					.include( '.elementor-widget-rating' )
 					.analyze();
 
-				await expect( accessibilityScanResults.violations ).toEqual( [] );
+				await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 			} );
 
 			await test.step( 'Check aria & schema.org properties', async () => {
@@ -130,17 +182,17 @@ test.describe( 'Rating widget @rating', () => {
 					worstRating = await page.locator( '[itemprop="worstRating"]' ),
 					bestRating = await page.locator( '[itemprop="bestRating"]' );
 
-				await expect( await ratingWrapper.getAttribute( 'aria-label' ) ).toEqual( 'Rated 3.54 out of 7' );
-				await expect( await ratingWrapper.getAttribute( 'content' ) ).toEqual( '3.54' );
-				await expect( await ratingWrapper.getAttribute( 'role' ) ).toEqual( 'img' );
-				await expect( await ratingWrapper.getAttribute( 'itemprop' ) ).toEqual( 'ratingValue' );
+				await expect.soft( await ratingWrapper.getAttribute( 'aria-label' ) ).toEqual( 'Rated 3.54 out of 7' );
+				await expect.soft( await ratingWrapper.getAttribute( 'content' ) ).toEqual( '3.54' );
+				await expect.soft( await ratingWrapper.getAttribute( 'role' ) ).toEqual( 'img' );
+				await expect.soft( await ratingWrapper.getAttribute( 'itemprop' ) ).toEqual( 'ratingValue' );
 
-				await expect( await ratingWidget.getAttribute( 'itemtype' ) ).toEqual( 'https://schema.org/Rating' );
-				await expect( await ratingWidget.getAttribute( 'itemprop' ) ).toEqual( 'reviewRating' );
-				await expect( await ratingWidget.getAttribute( 'itemscope' ) ).toEqual( '' );
+				await expect.soft( await ratingWidget.getAttribute( 'itemtype' ) ).toEqual( 'https://schema.org/Rating' );
+				await expect.soft( await ratingWidget.getAttribute( 'itemprop' ) ).toEqual( 'reviewRating' );
+				await expect.soft( await ratingWidget.getAttribute( 'itemscope' ) ).toEqual( '' );
 
-				await expect( await worstRating.getAttribute( 'content' ) ).toEqual( '0' );
-				await expect( await bestRating.getAttribute( 'content' ) ).toEqual( '7' );
+				await expect.soft( await worstRating.getAttribute( 'content' ) ).toEqual( '0' );
+				await expect.soft( await bestRating.getAttribute( 'content' ) ).toEqual( '7' );
 			} );
 		} );
 	} );

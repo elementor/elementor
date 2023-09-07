@@ -319,6 +319,10 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
+	async setChooseControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-choose-${ controlId } input >> nth=0` ).fill( value.toString() );
+	}
+
 	/**
 	 * Set a widget to `flew grow`.
 	 *
