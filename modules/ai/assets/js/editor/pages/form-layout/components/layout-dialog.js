@@ -17,7 +17,7 @@ const StyledDialog = styled( PromptDialog )( () => ( {
 
 const DialogHeader = ( { onClose, children } ) => (
 	<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
-		<Toolbar>
+		<Toolbar variant="dense">
 			<AIIcon sx={ { mr: 1 } } />
 
 			<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
