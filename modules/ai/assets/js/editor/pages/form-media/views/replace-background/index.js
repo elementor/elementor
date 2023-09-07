@@ -58,13 +58,7 @@ const ReplaceBackground = () => {
 						{ data?.result ? __( 'Generate Again', 'elementor' ) : __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
 
-					{
-						data?.result && (
-							<NewPromptButton
-								disabled={ isLoading }
-								onClick={ () => navigate( LOCATIONS.GENERATE ) }
-							/>
-						) }
+					{ data?.result && <NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
 				</ImageForm>
 			</View.Panel>
 
