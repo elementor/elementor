@@ -15,7 +15,7 @@ test.describe( 'Accessibility & Structured data @rating', () => {
 		await afterAll( browser, testInfo );
 	} );
 
-	test.only( 'Accessibility & Structured data', async ( { page }, testInfo ) => {
+	test( 'Accessibility & Structured data', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );

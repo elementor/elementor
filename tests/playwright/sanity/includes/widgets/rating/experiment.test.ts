@@ -55,7 +55,7 @@ test.describe( 'Rating widget @rating', () => {
 			await afterAll( browser, testInfo );
 		} );
 
-		test.only( 'Widget panel test', async ( { page }, testInfo ) => {
+		test( 'Widget panel test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
