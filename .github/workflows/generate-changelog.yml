@@ -30,7 +30,7 @@ jobs:
       run: |
         echo "PR Title,PR Link,PR Owner,Jira Task URL" > merged_prs.csv
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | .title |= gsub("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\] "; "") | "\"\(.title)\",\(.html_url),\(.user.login),\((if .title | test("\\[\\d{4,6}\\]") then "https://elementor.atlassian.net/browse/ED-" else "https://elementor.atlassian.net/browse/" end) + (.title | match("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\]")?.captures[0].string | gsub("\\[|\\]"; "")) // "")\"' >> merged_prs.csv
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | {title: .title, url: .html_url, login: .user.login, task_id: (.title | match("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\]")?.captures[0].string | gsub("\\[|\\]"; ""))} | .title |= gsub("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\] "; "") | "\"\(.title)\",\(.url),\(.login),\((if .task_id | test("^\\d+$") then "https://elementor.atlassian.net/browse/ED-" + .task_id else if .task_id then "https://elementor.atlassian.net/browse/" + .task_id else "" end end)\"' >> merged_prs.csv
 
     - name: Upload merged PRs as artifact
       uses: actions/upload-artifact@v3
