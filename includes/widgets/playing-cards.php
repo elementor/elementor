@@ -82,24 +82,24 @@ class Widget_Playing_Cards extends Widget_Base {
 		$card_numbers = [
 			'A' => [ 'title' => esc_html__( 'A', 'elementor' ) ],
 			3 => [ 'title' => esc_html__( '3', 'elementor' ) ],
-			2 => [ 'title' => esc_html__('2', 'elementor' ) ],
-			4 => [ 'title' => esc_html__('4', 'elementor' ) ],
-			5 => [ 'title' => esc_html__('5', 'elementor' ) ],
-			6 => [ 'title' => esc_html__('6', 'elementor' ) ],
-			7 => [ 'title' => esc_html__('7', 'elementor' ) ],
-			8 => [ 'title' => esc_html__('8', 'elementor' ) ],
-			9 => [ 'title' => esc_html__('9', 'elementor' ) ],
-			10 => [ 'title' => esc_html__('10', 'elementor' ) ],
-			'J' => [ 'title' => esc_html__('J', 'elementor' ) ],
-			'Q' => [ 'title' => esc_html__('Q', 'elementor' ) ],
-			'K' => [ 'title' => esc_html__('K', 'elementor' ) ],
+			2 => [ 'title' => esc_html__( '2', 'elementor' ) ],
+			4 => [ 'title' => esc_html__( '4', 'elementor' ) ],
+			5 => [ 'title' => esc_html__( '5', 'elementor' ) ],
+			6 => [ 'title' => esc_html__( '6', 'elementor' ) ],
+			7 => [ 'title' => esc_html__( '7', 'elementor' ) ],
+			8 => [ 'title' => esc_html__( '8', 'elementor' ) ],
+			9 => [ 'title' => esc_html__( '9', 'elementor' ) ],
+			10 => [ 'title' => esc_html__( '10', 'elementor' ) ],
+			'J' => [ 'title' => esc_html__( 'J', 'elementor' ) ],
+			'Q' => [ 'title' => esc_html__( 'Q', 'elementor' ) ],
+			'K' => [ 'title' => esc_html__( 'K', 'elementor' ) ],
 		];
 
 		$card_types = [
-			'♠' => [ 'title' => esc_html__( '♠', 'elementor' )],
-			'♥'	=> [ 'title' => esc_html__( '♥', 'elementor' )],
-			'♣'	=> [ 'title' => esc_html__( '♣', 'elementor' )],
-			'♦'	=> [ 'title' => esc_html__( '♦', 'elementor' )],
+			'♠' => [ 'title' => esc_html__( '♠', 'elementor' ) ],
+			'♥' => [ 'title' => esc_html__( '♥', 'elementor' ) ],
+			'♣' => [ 'title' => esc_html__( '♣', 'elementor' ) ],
+			'♦' => [ 'title' => esc_html__( '♦', 'elementor' ) ],
 		];
 
 		$this->start_controls_section(
@@ -215,38 +215,38 @@ class Widget_Playing_Cards extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$cards = $this->get_settings_for_display('cards');
+		$cards = $this->get_settings_for_display( 'cards' );
 		?>
 		<div  class="elementor-playing-cards-wrapper" >
 			<?php
-				foreach ( $cards as $index => $item ) :
-					$card_count = $index + 1;
-					$card_color_class = '♠' === $item['playing_card_type'] || '♣' === $item['playing_card_type'] ? 'elementor-playing-card-black' : 'elementor-playing-card-red';
-					$playing_card_number_settings_key = $this->get_repeater_setting_key( 'playing_card_number', 'cards', $index );
-					$playing_card_type_setting_key = $this->get_repeater_setting_key( 'playing_card_type', 'cards', $card_count );
-                    $playing_card_wrapper_setting_key = $this->get_repeater_setting_key( 'playing-card-wrapper', 'cards', $card_count );
+			foreach ( $cards as $index => $item ) :
+				$card_count = $index + 1;
+				$card_color_class = '♠' === $item['playing_card_type'] || '♣' === $item['playing_card_type'] ? 'elementor-playing-card-black' : 'elementor-playing-card-red';
+				$playing_card_number_settings_key = $this->get_repeater_setting_key( 'playing_card_number', 'cards', $index );
+				$playing_card_type_setting_key = $this->get_repeater_setting_key( 'playing_card_type', 'cards', $card_count );
+				$playing_card_wrapper_setting_key = $this->get_repeater_setting_key( 'playing-card-wrapper', 'cards', $card_count );
 
-					$this->add_render_attribute( $playing_card_number_settings_key, [
+				$this->add_render_attribute( $playing_card_number_settings_key, [
 						'class' => [ 'elementor-playing-card-value', $card_color_class ],
 						'data-playing-card-number' => $item['playing_card_number'],
 						'tabindex' => '0',
-					]);
+				]);
 
-					$this->add_render_attribute( $playing_card_type_setting_key, [
+				$this->add_render_attribute( $playing_card_type_setting_key, [
 						'class' => [ 'elementor-playing-card-value', $card_color_class ],
-                        'data-playing-card-type' => $item['playing_card_type'],
-                    ]);
+						'data-playing-card-type' => $item['playing_card_type'],
+				]);
 
-                    $this->add_render_attribute( $playing_card_wrapper_setting_key, [
-                        'data-card-number'=> $card_count,
-                    ]);
-				?>
+				$this->add_render_attribute( $playing_card_wrapper_setting_key, [
+						'data-card-number' => $card_count,
+				]);
+			?>
 
-				<div class="elementor-playing-card" <?php $this->print_render_attribute_string($playing_card_wrapper_setting_key); ?> >
+				<div class="elementor-playing-card" <?php $this->print_render_attribute_string( $playing_card_wrapper_setting_key ); ?> >
 					<div <?php $this->print_render_attribute_string( $playing_card_number_settings_key ); ?>>
-						<?php
+					<?php
 						echo $item['playing_card_number'] . $item['playing_card_type']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped;
-						?>
+					?>
 					</div>
 				</div>
 			<?php endforeach; ?>
@@ -279,7 +279,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'class': [ 'elementor-playing-card', cardColorClass ],
 				'data-card': cardCount,
 				'role': 'card',
-            	'tabindex': 1 === cardCount ? '0' : '-1',
+				'tabindex': 1 === cardCount ? '0' : '-1',
 			} );
 			#>
 			<div {{{ view.getRenderAttributeString( cardTitleKey ) }}}>{{{ item.playing_card_number }}}{{{item.playing_card_type}}}</div>
