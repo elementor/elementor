@@ -8,7 +8,9 @@ import useImageActions from '../../hooks/use-image-actions';
 import useReplaceBackground from './hooks/use-replace-background';
 import { useState } from 'react';
 import PromptField from '../../components/prompt-field';
+import { LOCATIONS } from '../../constants';
 import NewPromptButton from '../../components/new-prompt-button';
+import { useLocation } from '../../context/location-context';
 
 const ReplaceBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
@@ -18,6 +20,8 @@ const ReplaceBackground = () => {
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const { data, send, isLoading: isGenerating, error, reset } = useReplaceBackground();
+
+	const { navigate } = useLocation();
 
 	const isLoading = isGenerating || isUploading;
 
@@ -58,10 +62,7 @@ const ReplaceBackground = () => {
 						data?.result && (
 							<NewPromptButton
 								disabled={ isLoading }
-								onClick={ () => {
-									setPrompt( '' );
-									reset();
-								} }
+								onClick={ () => navigate( LOCATIONS.GENERATE ) }
 							/>
 						) }
 				</ImageForm>

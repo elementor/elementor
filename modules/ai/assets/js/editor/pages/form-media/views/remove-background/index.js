@@ -17,7 +17,7 @@ const RemoveBackground = () => {
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
-	const { data, send, isLoading: isGenerating, error, reset } = useRemoveBackground();
+	const { data, send, isLoading: isGenerating, error } = useRemoveBackground();
 
 	const { navigate } = useLocation();
 
@@ -47,7 +47,7 @@ const RemoveBackground = () => {
 						<NewPromptButton
 							variant="contained"
 							disabled={ isLoading }
-							onClick={ reset } />
+							onClick={ () => navigate( LOCATIONS.GENERATE ) } />
 					) : (
 						<GenerateSubmit disabled={ isLoading } >
 							{ __( 'Remove Background', 'elementor' ) }
