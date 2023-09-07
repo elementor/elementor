@@ -33,12 +33,13 @@ const TeaserDrawing = () => (
 );
 
 const ImageToolsContainer = styled( Box )( ( { theme } ) => ( {
-	height: `calc(100% - 140px)`,
+	height: `calc(100% - ${ theme.spacing( 13 ) })`,
 } ) );
 
 const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 	position: 'sticky',
-	top: `calc(100% - ${ theme.spacing( 10 ) })`,
+	top: '100%',
+	padding: theme.spacing( 4, 0, 1 ),
 } ) );
 
 const ImageToolsPanel = () => {
