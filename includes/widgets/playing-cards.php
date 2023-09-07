@@ -227,18 +227,18 @@ class Widget_Playing_Cards extends Widget_Base {
 				$playing_card_wrapper_setting_key = $this->get_repeater_setting_key( 'playing-card-wrapper', 'cards', $card_count );
 
 				$this->add_render_attribute( $playing_card_number_settings_key, [
-						'class' => [ 'elementor-playing-card-value', $card_color_class ],
-						'data-playing-card-number' => $item['playing_card_number'],
-						'tabindex' => '0',
+					'class' => [ 'elementor-playing-card-value', $card_color_class ],
+					'data-playing-card-number' => $item['playing_card_number'],
+					'tabindex' => '0',
 				]);
 
 				$this->add_render_attribute( $playing_card_type_setting_key, [
-						'class' => [ 'elementor-playing-card-value', $card_color_class ],
-						'data-playing-card-type' => $item['playing_card_type'],
+					'class' => [ 'elementor-playing-card-value', $card_color_class ],
+					'data-playing-card-type' => $item['playing_card_type'],
 				]);
 
 				$this->add_render_attribute( $playing_card_wrapper_setting_key, [
-						'data-card-number' => $card_count,
+					'data-card-number' => $card_count,
 				]);
 			?>
 
