@@ -6,10 +6,14 @@ env:
   ACTIVE: 'false'
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
     branches:
       - main
+
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - main
 
 # Cancel in-progress jobs or runs for the current workflow run
 concurrency:
