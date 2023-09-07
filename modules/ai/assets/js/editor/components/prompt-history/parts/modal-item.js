@@ -1,8 +1,10 @@
-import { Box, IconButton, Stack, styled, Tooltip, Typography } from '@elementor/ui';
+import { Box, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import EditIcon from '../../../icons/edit-icon';
 import { getIconByAction } from '../helpers/history-item-helpers';
 import { TrashIcon } from '@elementor/icons';
 import RestoreIcon from '../../../icons/restore-icon';
+import { getImageThumbnailURL } from '../helpers/image-helpers';
+import ActionButton from './modal-item-action-button';
 
 const StyledItem = styled( Stack )`
   flex-direction: row;
@@ -63,26 +65,6 @@ const StyledImage = styled( 'img' )`
 	object-fit: cover;
 	margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
 `;
-
-const ActionButton = ( { tooltipTitle, ...props } ) => {
-	return (
-		<Tooltip title={ tooltipTitle } placement="top" componentsProps={ {
-			tooltip: {
-				sx: { m: '0 !important' } },
-		} } >
-			<IconButton type="button"
-				size="small"
-				disableRipple={ true }
-				disableFocusRipple={ true }
-				disableTouchRipple={ true }
-				{ ...props } />
-		</Tooltip>
-	);
-};
-
-ActionButton.propTypes = {
-	tooltipTitle: PropTypes.string.isRequired,
-};
 
 const PromptHistoryItem = ( {
 	action,
@@ -153,7 +135,15 @@ const PromptHistoryItem = ( {
 
 				{ images?.length > 0 && (
 					<Stack flexDirection="row" mt={ 3 }>
-						{ images.map( ( image, i ) => <StyledImage key={ i } alt="" src={ image.image_url } /> ) }
+						{ images.map(
+							/**
+							 * @param {Object} image
+							 * @return {React.ReactNode}
+							 */ ( image ) => (
+								<StyledImage key={ `thumbnail-${ image.seed }` }
+									alt=""
+									src={ getImageThumbnailURL( image.image_url ) } />
+							) ) }
 					</Stack>
 				) }
 			</Stack>
