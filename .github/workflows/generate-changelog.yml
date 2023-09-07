@@ -30,7 +30,7 @@ jobs:
       run: |
         echo "PR Title,PR Link,PR Owner" > merged_prs.csv
         pr_data=$(curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/elementor/elementor/pulls?state=closed&base=${{ github.event.inputs.branch }}&per_page=100")
-        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | .title |= gsub("\\[[A-Za-z]{2,4}-\\d{4,6}\\] "; "") | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
+        echo "$pr_data" | jq -r --arg RELEASE_DATE "$RELEASE_DATE" '.[] | select(.merged_at > $RELEASE_DATE) | .title |= gsub(" \\[[A-Za-z]{2,4}-\\d{4,6}\\]"; "") | "\"\(.title)\",\(.html_url),\(.user.login)"' >> merged_prs.csv
 
     - name: Upload merged PRs as artifact
       uses: actions/upload-artifact@v3
