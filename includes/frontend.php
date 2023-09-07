@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\Swiper\Module as Swiper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1181,6 +1182,7 @@ class Frontend extends App {
 		$content = ob_get_clean();
 
 		$content = $this->process_more_tag( $content );
+		$content = $this->process_more_tag( $content );
 
 		/**
 		 * Frontend content.
@@ -1413,8 +1415,8 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => '5.3.6' === get_option( 'elementor_e_swiper_active_version' ) ? 'swiper-container' : 'swiper',
-			'swiperActiveVersion' => get_option( 'elementor_e_swiper_active_version' ),
+			'swiperClass' => Swiper::swiper_active_version(),
+			'swiperActiveVersion' => Swiper::get_active_class(),
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
