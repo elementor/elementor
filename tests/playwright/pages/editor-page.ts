@@ -320,7 +320,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async setChooseControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-choose-${ controlId } input >> nth=0` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
 	}
 
 	/**
