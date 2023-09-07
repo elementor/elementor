@@ -35,14 +35,14 @@ jobs:
             if .task_id | test("^[A-Za-z]{2,4}-\\d{4,6}$") then "https://elementor.atlassian.net/browse/" + .task_id 
             elif .task_id | test("^\\d{4,6}$") then "https://elementor.atlassian.net/browse/ED-" + .task_id 
             else "" end;
-
+    
           .[] 
           | select(.merged_at > $RELEASE_DATE)
           | {
-              title: (.title | gsub(" \\[([A-Za-z]{2,4}-)?\\d{4,6}\\]"; "")),
+              title: (.title | gsub("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\] "; "")),
               url: .html_url,
               login: .user.login,
-              task_id: (.title | match("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\]"; "g")?.string | gsub("\\[|\\]"; ""))
+              task_id: if (.title | contains("[") and .title | contains("]")) then (.title | match("\\[([A-Za-z]{2,4}-)?\\d{4,6}\\]"; "g").string | gsub("\\[|\\]"; "")) else null end
             } 
           | [ .title, .url, .login, jira_url ]
           | @csv
