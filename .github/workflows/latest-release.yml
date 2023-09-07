@@ -24,6 +24,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
+      - name: Get Lables
+        run: |
+          echo "LABELS: ${{ github.event.pull_request.labels }}"
+          x=${{ toJson(github.event.pull_request.labels.*.name) }}
+          echo "Labels 2 is $x"
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
