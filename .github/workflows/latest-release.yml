@@ -6,10 +6,12 @@ env:
   ACTIVE: 'false'
 
 on:
+# delete this lines to enable on PR merge to main
   workflow_dispatch:
     branches:
       - main
 
+# uncomment to enable on PR merge to main
 #   pull_request:
 #     types: [closed]
 #     branches:
