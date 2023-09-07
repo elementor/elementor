@@ -3,19 +3,12 @@ name: Automated Latest Release
 env:
   CHANNEL: 'latest'
   PRERELEASE: 'false'
-  ACTIVE: 'false'
 
 on:
-# delete this lines to enable on PR merge to main
-  workflow_dispatch:
+  pull_request:
+    types: [closed]
     branches:
       - main
-
-# uncomment to enable on PR merge to main
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - main
 
 # Cancel in-progress jobs or runs for the current workflow run
 concurrency:
@@ -24,7 +17,7 @@ concurrency:
 
 jobs:
   latest_release:
-    if: ${{ env.ACTIVE }} == 'true' && github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
