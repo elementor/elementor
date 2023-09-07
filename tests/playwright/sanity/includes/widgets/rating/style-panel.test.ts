@@ -42,8 +42,6 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(250, 0, 0)' );
 					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'svg' ) ).toHaveCSS( 'fill', 'rgb(34, 0, 255)' );
 				} else {
-					// Await page.pause();
-
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
 					await expect.soft( await ratingElement.locator( '.e-icon-marked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(250, 0, 0)' );
 					await expect.soft( await ratingElement.locator( '.e-icon-unmarked >> nth=0' ).locator( 'i' ) ).toHaveCSS( 'color', 'rgb(34, 0, 255)' );
