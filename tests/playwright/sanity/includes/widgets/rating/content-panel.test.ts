@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { afterAll, beforeAll } from './helper';
 
-test.describe( 'Rating content panel @rating', () => {
-	const iconExperimentStates = [ 'inactive', 'active' ];
+const iconExperimentStates = [ 'inactive', 'active' ];
 
-	iconExperimentStates.forEach( ( iconExperimentState ) => {
+iconExperimentStates.forEach( ( iconExperimentState ) => {
+	test.describe( `Rating content panel - Icon Experiment ${ iconExperimentState } @rating`, () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			await beforeAll( browser, testInfo, iconExperimentState );
 		} );

@@ -1,6 +1,6 @@
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-export async function beforeAll( browser, testInfo, iconExperimentState ) {
+export async function beforeAll( browser, testInfo, iconExperimentState = 'active' ) {
 	const page = await browser.newPage();
 	const wpAdmin = await new WpAdminPage( page, testInfo );
 

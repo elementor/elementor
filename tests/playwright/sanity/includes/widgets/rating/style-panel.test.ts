@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { afterAll, beforeAll } from './helper';
 
-test.describe( `Rating style panel @rating`, () => {
-	const iconExperimentStates = [ 'inactive', 'active' ];
+const iconExperimentStates = [ 'inactive', 'active' ];
 
-	iconExperimentStates.forEach( ( iconExperimentState ) => {
+iconExperimentStates.forEach( ( iconExperimentState ) => {
+	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
 			await beforeAll( browser, testInfo, iconExperimentState );
 		} );
@@ -14,7 +14,7 @@ test.describe( `Rating style panel @rating`, () => {
 			await afterAll( browser, testInfo );
 		} );
 
-		test.only( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
+		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
