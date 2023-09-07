@@ -240,7 +240,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				$this->add_render_attribute( $playing_card_wrapper_setting_key, [
 					'data-card-number' => $card_count,
 				]);
-			?>
+				?>
 
 				<div class="elementor-playing-card" <?php $this->print_render_attribute_string( $playing_card_wrapper_setting_key ); ?> >
 					<div <?php $this->print_render_attribute_string( $playing_card_number_settings_key ); ?>>
