@@ -245,7 +245,8 @@ class Widget_Playing_Cards extends Widget_Base {
 				<div class="elementor-playing-card" <?php $this->print_render_attribute_string( $playing_card_wrapper_setting_key ); ?> >
 					<div <?php $this->print_render_attribute_string( $playing_card_number_settings_key ); ?>>
 					<?php
-						echo $item['playing_card_number'] . $item['playing_card_type']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped;
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped;
+						echo $item['playing_card_number'] . $item['playing_card_type'];
 					?>
 					</div>
 				</div>
