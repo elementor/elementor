@@ -248,8 +248,7 @@ class Widget_Playing_Cards extends Widget_Base {
 						echo $item['playing_card_number'] . $item['playing_card_type']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped;
 						?>
 					</div>
-
-					</div>
+				</div>
 			<?php endforeach; ?>
 		</div>
 		<?php
@@ -276,11 +275,11 @@ class Widget_Playing_Cards extends Widget_Base {
 			cardColorClass = item.playing_card_type === '♠' || item.playing_card_type === '♣' ? 'elementor-playing-card-black' : 'elementor-playing-card-red';
 
 			view.addRenderAttribute( cardTitleKey, {
-			'id': 'elementor-playing-card-' + cardUid,
-			'class': [ 'elementor-playing-card', cardColorClass ],
-			'data-card': cardCount,
-			'role': 'card',
-            'tabindex': 1 === cardCount ? '0' : '-1',
+				'id': 'elementor-playing-card-' + cardUid,
+				'class': [ 'elementor-playing-card', cardColorClass ],
+				'data-card': cardCount,
+				'role': 'card',
+            	'tabindex': 1 === cardCount ? '0' : '-1',
 			} );
 			#>
 			<div {{{ view.getRenderAttributeString( cardTitleKey ) }}}>{{{ item.playing_card_number }}}{{{item.playing_card_type}}}</div>

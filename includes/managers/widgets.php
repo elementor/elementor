@@ -91,7 +91,7 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
-			'playing-cards'
+			'playing-cards',
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'rating' ) ) {
