@@ -151,6 +151,8 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 	return (
 		<LayoutDialog onClose={ onCloseIntent }>
 			<LayoutDialog.Header onClose={ onCloseIntent } { ...DialogHeaderProps }>
+				{ DialogHeaderProps.children }
+
 				<Tooltip title={ isMinimized ? __( 'Expand', 'elementor' ) : __( 'Minimize', 'elementor' ) }>
 					<IconButton
 						size="small"
