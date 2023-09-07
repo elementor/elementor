@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import PlayingCardContent from '../../../pages/widgets/playing-cards-page';
-test.describe.only( 'Playing Cards', () => {
+test.describe( 'Playing Cards', () => {
 	test( 'it should display 1 playing card on adding the widget on default', async ( { page }, testInfo ) => {
 		const wpAdmin: WpAdminPage = new WpAdminPage( page, testInfo );
 		const editor: EditorPage = new EditorPage( page, testInfo );
