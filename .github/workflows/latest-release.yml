@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' && ${{env.ACTIVE}} == true )
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' ) && ${{ env.ACTIVE }} == true
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
