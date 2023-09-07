@@ -1,9 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Controls_Manager;
-use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -70,7 +67,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'select', 'tabs', 'accordion', 'toggle'  ];
+		return [ 'playing cards', 'card' ];
 	}
 
 	/**
@@ -272,7 +269,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		<# if ( settings.cards )
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 
-		<div class="elementor-playing-cards-wrapper" role="cardslist">
+		<div class="elementor-playing-cards-wrapper">
 			<# _.each( settings.cards, function( item, index ) {
 			var cardCount = index + 1,
 			cardUid = elementUid + cardCount,
