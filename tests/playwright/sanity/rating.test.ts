@@ -104,7 +104,7 @@ test.describe( 'Rating widget @rating', () => {
 			} );
 		} );
 
-		test.only( 'Functionality test', async ( { page }, testInfo ) => {
+		test( 'Functionality test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
