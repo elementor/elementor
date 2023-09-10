@@ -1181,7 +1181,6 @@ class Frontend extends App {
 		$content = ob_get_clean();
 
 		$content = $this->process_more_tag( $content );
-		$content = $this->process_more_tag( $content );
 
 		/**
 		 * Frontend content.
@@ -1575,8 +1574,6 @@ class Frontend extends App {
 			$dependencies[] = 'share-link';
 			$dependencies[] = 'elementor-dialog';
 		}
-
-		do_action( 'elementor/frontend/register_scripts', $this );
 
 		return $dependencies;
 	}
