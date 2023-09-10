@@ -41,7 +41,7 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug }` );
+			this.runWP( `npx wp-env run cli wp plugin install ${ slug } --activate` );
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
