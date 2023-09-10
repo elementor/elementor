@@ -33,10 +33,10 @@ test.describe( 'Playing Cards', () => {
 		// Waiting for page to load
 		await page.waitForLoadState( 'load' );
 		// Tests
-		const playingCardsWrapperElement = page.locator( '.e-playing-cards-wrapper' );
+		const playingCardsWrapperElement = page.locator( '.e-widget-playing-cards' );
 		const playingCardsElements = page.locator( '.e-playing-card' );
-		const firstPlayingCard = page.locator( '.e-playing-cards-wrapper' ).getByText( 'A♠' );
-		const secondPlayingCard = page.locator( '.e-playing-cards-wrapper' ).getByText( 'J♦' );
+		const firstPlayingCard = page.locator( '.e-widget-playing-cards' ).getByText( 'A♠' );
+		const secondPlayingCard = page.locator( '.e-widget-playing-cards' ).getByText( 'J♦' );
 
 		await expect( playingCardsWrapperElement ).toBeVisible();
 		await expect( playingCardsElements ).toHaveCount( 2 );

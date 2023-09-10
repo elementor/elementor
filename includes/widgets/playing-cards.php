@@ -174,7 +174,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					'default' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-wrapper .e-playing-card' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .e-widget-playing-cards .e-playing-card' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -186,7 +186,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-wrapper .e-playing-card' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .e-widget-playing-cards .e-playing-card' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -198,7 +198,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-widget-playing-cards' => 'gap: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -217,7 +217,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	protected function render() {
 		$cards = $this->get_settings_for_display( 'cards' );
 		?>
-		<div class="e-playing-cards-wrapper">
+		<div class="e-widget-playing-cards">
 			<?php
 			foreach ( $cards as $index => $item ) :
 				$card_count = $index + 1;
@@ -269,9 +269,9 @@ class Widget_Playing_Cards extends Widget_Base {
 		<# if ( settings.cards )
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 
-		<div class="e-playing-cards-wrapper">
+		<div class="e-widget-playing-cards">
 			<# _.each( settings.cards, function( item, index ) {
-			var cardCount = index + 1,
+			const cardCount = index + 1,
 			cardUid = elementUid + cardCount,
 			cardTitleKey = 'playing-card-title-' + cardUid,
 			cardColorClass = item.playing_card_type === '♠' || item.playing_card_type === '♣' ? 'e-playing-card-black' : 'e-playing-card-red';
