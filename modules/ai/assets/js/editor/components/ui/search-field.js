@@ -1,10 +1,30 @@
 import { forwardRef } from 'react';
-import { TextField, InputAdornment } from '@elementor/ui';
+import { TextField, InputAdornment, styled } from '@elementor/ui';
 import { SearchIcon } from '@elementor/icons';
+
+// Customization for the WP admin global CSS.
+const StyledTextField = styled( TextField )( () => ( {
+	'.wp-admin & .MuiInputBase-input, & .MuiInputBase-input:focus': {
+		backgroundColor: 'initial',
+		boxShadow: 'none',
+		border: 0,
+		color: 'inherit',
+		outline: 0,
+		/**
+		 * TODO:
+		 * Find a better solution to get the component padding value dynamically or fix the global CSS override.
+		 * These values are taken from Material UI's source code (the left padding reset was added to match the component style).
+		 */
+		padding: '16.5px 14px 16.5px 0',
+		'&.MuiInputBase-inputSizeSmall': {
+			padding: '8.5px 14px 8.5px 0',
+		},
+	},
+} ) );
 
 const SearchField = forwardRef( ( props, ref ) => {
 	return (
-		<TextField
+		<StyledTextField
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus
 			fullWidth
