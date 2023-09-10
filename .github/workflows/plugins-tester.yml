@@ -112,7 +112,7 @@ jobs:
           PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
           PORT: '7777' # In order to enable local run side by side with another default server (port 8888)
       - run: wp-env run cli wp option update elementor_onboarded 1
-      - run: wp-env run cli mkdir /var/www/html/wp-content/upgrade
+      - run: wp-env run cli mkdir -m 777 /var/www/html/wp-content/upgrade
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
