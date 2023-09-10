@@ -19,7 +19,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	 *
 	 * Retrieve HTML widget name.
 	 *
-	 * @since 1.0.0
+	 * @since 3.18.0
 	 * @access public
 	 *
 	 * @return string Widget name.
