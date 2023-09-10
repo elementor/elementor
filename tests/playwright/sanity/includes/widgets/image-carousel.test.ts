@@ -6,21 +6,24 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
-	test( 'Image Carousel', async ( { page }, testInfo ) => {
+	test.only( 'Image Carousel', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-
 		await wpAdmin.setAdvancedSettings( {
 			swiper_active_version: '5.3.6',
 		} );
 
 		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
-		const widgetId = await imageCarousel.addWidget();
+		const widgetId = await imageCarousel.addWidget(),
+			widget = await editor.getPreviewFrame().waitForSelector(`.elementor-element-${widgetId}`)
+
 		await imageCarousel.selectNavigation( 'none' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
+		await widget.waitForElementState( 'stable' );
 
 		await test.step( 'Verify image population', async () => {
 			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
