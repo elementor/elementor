@@ -829,7 +829,7 @@ class Widget_Video extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 				'condition' => [
