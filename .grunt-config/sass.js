@@ -72,6 +72,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/playing-card/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/playing-card',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
 				dest: 'assets/css/modules/apps',

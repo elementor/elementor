@@ -1,0 +1,32 @@
+.e-playing-cards-wrapper{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+
+	&-item{
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+		width: 200px;
+		height: 400px;
+		box-shadow: 1px 3px 5px 0 rgba(184,184,184,0.75);
+		-webkit-box-shadow: 1px 3px 5px 0 rgba(184,184,184,0.75);
+		-moz-box-shadow: 1px 3px 5px 0 rgba(184,184,184,0.75);
+		font-size: 3rem;
+		font-weight: bold;
+		border-radius: 5px;
+
+		&-bottom{
+			align-self: flex-end;
+		}
+
+		&-top{
+			align-self: flex-start;
+		}
+	}
+}
+
+
+
+

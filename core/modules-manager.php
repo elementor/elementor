@@ -96,6 +96,7 @@ class Modules_Manager {
 			'shapes',
 			'favorites',
 			'admin-top-bar',
+			'playing-card',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
