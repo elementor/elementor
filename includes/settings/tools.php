@@ -144,7 +144,7 @@ class Tools extends Settings_Page {
 		$version = Utils::get_super_global_value( $_GET, 'version' );
 
 		if ( empty( $version ) || ! in_array( $version, $rollback_versions, true ) ) {
-			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
+			wp_die( esc_html__( 'An error occurred, the selected version is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
 		/**
