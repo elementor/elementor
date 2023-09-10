@@ -14,8 +14,8 @@ test.describe( 'Playing Cards', () => {
 		// Waiting for page to load
 		await page.waitForLoadState( 'load' );
 		// Tests
-		const playingCardsWrapperElement = page.locator( '.elementor-playing-cards-wrapper' );
-		const playingCardsElements = page.locator( '.elementor-playing-card' );
+		const playingCardsWrapperElement = page.locator( '.e-playing-cards-wrapper' );
+		const playingCardsElements = page.locator( '.e-playing-card' );
 		await expect( playingCardsWrapperElement ).toBeVisible();
 		await expect( playingCardsElements ).toHaveCount( 1 );
 	} );
@@ -33,16 +33,16 @@ test.describe( 'Playing Cards', () => {
 		// Waiting for page to load
 		await page.waitForLoadState( 'load' );
 		// Tests
-		const playingCardsWrapperElement = page.locator( '.elementor-playing-cards-wrapper' );
-		const playingCardsElements = page.locator( '.elementor-playing-card' );
-		const firstPlayingCard = page.locator( '.elementor-playing-cards-wrapper' ).getByText( 'A♠' );
-		const secondPlayingCard = page.locator( '.elementor-playing-cards-wrapper' ).getByText( 'J♦' );
+		const playingCardsWrapperElement = page.locator( '.e-playing-cards-wrapper' );
+		const playingCardsElements = page.locator( '.e-playing-card' );
+		const firstPlayingCard = page.locator( '.e-playing-cards-wrapper' ).getByText( 'A♠' );
+		const secondPlayingCard = page.locator( '.e-playing-cards-wrapper' ).getByText( 'J♦' );
 
 		await expect( playingCardsWrapperElement ).toBeVisible();
 		await expect( playingCardsElements ).toHaveCount( 2 );
 		await expect( firstPlayingCard ).toBeVisible();
 		await expect( secondPlayingCard ).toBeVisible();
-		await expect( firstPlayingCard ).toHaveClass( 'elementor-playing-card-value elementor-playing-card-black' );
-		await expect( secondPlayingCard ).toHaveClass( 'elementor-playing-card-value elementor-playing-card-red' );
+		await expect( firstPlayingCard ).toHaveClass( 'e-playing-card-value e-playing-card-black' );
+		await expect( secondPlayingCard ).toHaveClass( 'e-playing-card-value e-playing-card-red' );
 	} );
 } );
