@@ -83,7 +83,7 @@ jobs:
             ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
           body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Post To Slack Created Cloud one click Release
+      - name: Post To Slack Created one click Hosting Release
         if: ${{ github.event.inputs.pre_release }} == false
         uses: ./.github/workflows/post-to-slack
         with:
@@ -96,7 +96,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published Could release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published a Hosting release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {

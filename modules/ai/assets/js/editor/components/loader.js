@@ -1,9 +1,18 @@
 import { Box, LinearProgress } from '@elementor/ui';
 
-const Loader = ( props ) => (
-	<Box sx={ { px: 4, py: 6 } } width="100%">
-		<LinearProgress color="secondary" { ...props } />
+const Loader = ( { sx = {}, ...props } ) => (
+	<Box
+		width="100%"
+		display="flex"
+		alignItems="center"
+		sx={ { px: 4, minHeight: ( theme ) => theme.sizing[ 500 ] } }
+	>
+		<LinearProgress color="secondary" { ...props } sx={ { width: '100%', ...sx } } />
 	</Box>
 );
+
+Loader.propTypes = {
+	sx: PropTypes.object,
+};
 
 export default Loader;
