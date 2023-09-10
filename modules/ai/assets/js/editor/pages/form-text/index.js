@@ -92,8 +92,6 @@ const FormText = (
 	const applyPrompt = () => {
 		sendUsageData();
 
-		console.log( '--- resultField.current.value', resultField.current.value );
-
 		setControlValue( resultField.current.value );
 
 		onClose();
