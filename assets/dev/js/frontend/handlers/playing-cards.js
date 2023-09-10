@@ -19,7 +19,7 @@ export default class PlayingCards extends elementorModules.frontend.handlers.Bas
 	}
 
 	unbindEvents() {
-		this.elements.$playingCard.on( 'click', this.onCardClick.unbind( this ) );
+		this.elements.$playingCard.off( 'click', this.onCardClick.unbind( this ) );
 	}
 
 	onCardClick( event ) {
