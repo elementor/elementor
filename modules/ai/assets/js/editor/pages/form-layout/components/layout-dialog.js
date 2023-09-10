@@ -20,7 +20,7 @@ const DialogHeader = ( { onClose, children } ) => (
 		<Toolbar variant="dense">
 			<AIIcon sx={ { mr: 1 } } />
 
-			<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+			<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
 				{ __( 'AI', 'elementor' ) }
 			</Typography>
 

@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, styled } from '@elementor/ui';
+import { AppBar, Toolbar, Stack, SvgIcon, IconButton, Chip, Typography, styled } from '@elementor/ui';
 import { XIcon } from '@elementor/icons';
 
 const ElementorLogo = ( props ) => {
@@ -23,7 +23,9 @@ const DialogHeader = ( props ) => {
 			<Toolbar variant="dense">
 				<StyledElementorLogo sx={ { mr: 1 } } />
 
-				{ __( 'AI', 'elementor' ) }
+				<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+					{ __( 'AI', 'elementor' ) }
+				</Typography>
 
 				<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
