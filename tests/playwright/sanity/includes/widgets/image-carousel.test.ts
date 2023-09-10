@@ -11,8 +11,8 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 
 		await wpAdmin.openNewPage();
@@ -107,8 +107,8 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 		await wpAdmin.openNewPage();
 		await editor.useDefaultTemplate();
@@ -141,8 +141,8 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 
 		await wpAdmin.openNewPage();

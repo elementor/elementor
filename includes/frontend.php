@@ -337,9 +337,8 @@ class Frontend extends App {
 	}
 
 	public function init_swiper_settings() {
-		$e_swiper_active_version = get_option( 'elementor_e_swiper_active_version' );
-		$this->e_swiper_asset_path = 'assets/lib/swiper/' . $e_swiper_active_version . '/';
-		$this->e_swiper_version = $e_swiper_active_version;
+		$this->e_swiper_asset_path = 'assets/lib/swiper/' . Swiper::swiper_active_version() . '/';
+		$this->e_swiper_version = Swiper::swiper_active_version();
 	}
 
 	/**
@@ -1415,8 +1414,8 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 			],
-			'swiperClass' => Swiper::swiper_active_version(),
-			'swiperActiveVersion' => Swiper::get_active_class(),
+			'swiperClass' => Swiper::swiper_css_class(),
+			'swiperActiveVersion' => Swiper::swiper_active_version(),
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1576,6 +1575,8 @@ class Frontend extends App {
 			$dependencies[] = 'share-link';
 			$dependencies[] = 'elementor-dialog';
 		}
+
+		do_action( 'elementor/frontend/register_scripts', $this );
 
 		return $dependencies;
 	}

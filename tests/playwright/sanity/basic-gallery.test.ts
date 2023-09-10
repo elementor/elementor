@@ -27,10 +27,9 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: true,
+	await wpAdmin.setAdvancedSettings( {
+		swiper_active_version: '8.4.5',
 	} );
-
 	const editor = await wpAdmin.useElementorCleanPost();
 
 	// Close Navigator
@@ -39,8 +38,8 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page }, testIn
 	// Act.
 	await testBasicSwiperGallery( editor, page, imageCarousel );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
+	await wpAdmin.setAdvancedSettings( {
+		swiper_active_version: '5.3.6',
 	} );
 } );
 
@@ -49,8 +48,8 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page }, testInf
 	const wpAdmin = new WpAdminPage( page, testInfo );
 	const imageCarousel = new ImageCarousel( page, testInfo );
 
-	await wpAdmin.setExperiments( {
-		e_swiper_latest: false,
+	await wpAdmin.setAdvancedSettings( {
+		swiper_active_version: '5.3.6',
 	} );
 
 	const editor = await wpAdmin.useElementorCleanPost();

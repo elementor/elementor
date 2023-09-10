@@ -199,4 +199,18 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
+
+	async setAdvancedSettings( experiments: {[ n: string ]: string } ) {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-advanced' );
+
+		const prefix = 'elementor_';
+
+		for ( const [ id, state ] of Object.entries( experiments ) ) {
+			const selector = `select[name="${ prefix }${ id }"]`;
+
+			await this.page.selectOption( selector, state );
+		}
+
+		await this.page.click( '#submit' );
+	}
 }
