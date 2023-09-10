@@ -37,7 +37,7 @@ jobs:
               else "" end;
 
             .[]
-            | select(.merged_at > $RELEASE_DATE)
+            | select(.merged_at != null and .merged_at > $RELEASE_DATE)
             | {
                 title: (.title | gsub(" \\[([A-Za-z]{2,4}-)?\\d{4,6}\\]"; "")),
                 url: .html_url,
