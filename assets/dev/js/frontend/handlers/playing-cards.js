@@ -2,7 +2,7 @@ export default class PlayingCards extends elementorModules.frontend.handlers.Bas
 	getDefaultSettings() {
 		return {
 			selectors: {
-				playingCard: '.elementor-playing-card',
+				playingCard: '.e-playing-card',
 			},
 		};
 	}
