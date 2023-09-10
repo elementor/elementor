@@ -85,7 +85,7 @@ module.exports = Marionette.CompositeView.extend( {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
 
 				// eslint-disable-next-line no-alert
-				alert( 'An error occurred' );
+				alert( 'An error occurred.' );
 			},
 		} );
 	},

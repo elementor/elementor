@@ -268,6 +268,14 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		if ( ! this.onDynamicServerRequestEnd ) {
+			this.onDynamicServerRequestEnd = _.debounce( () => {
+				this.render();
+
+				this.$el.removeClass( 'elementor-loading' );
+			}, 100 );
+		}
 	},
 
 	getHandlesOverlay() {
@@ -788,11 +796,7 @@ BaseElementView = BaseContainer.extend( {
 			onServerRequestStart() {
 				self.$el.addClass( 'elementor-loading' );
 			},
-			onServerRequestEnd() {
-				self.render();
-
-				self.$el.removeClass( 'elementor-loading' );
-			},
+			onServerRequestEnd: self.onDynamicServerRequestEnd,
 		};
 	},
 
