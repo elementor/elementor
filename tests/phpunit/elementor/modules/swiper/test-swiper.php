@@ -5,36 +5,20 @@ use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\Swiper\Module as Swiper_Module;
 
 class Test_Swiper extends Elementor_Test_Base {
-	public function test__swiper_exp_to_settings_conversion__inactive() {
-		// Arrange
-		update_option( 'elementor_experiment-e_swiper_latest', 'inactive' );
-
-		// Act
-		Swiper_Module::swiper_experiment_convertor();
-
-		// Assert
-		$this->assertEquals( '5.3.6', get_option( 'elementor_swiper_active_version' ) );
+	public function test__swiper_exp_to_settings_conversion() {
+		$this->swiper_exp_to_settings_conversion( 'inactive', '5.3.6' );
+		$this->swiper_exp_to_settings_conversion( 'active', '8.4.5' );
 	}
 
-	public function test__swiper_exp_to_settings_conversion__active() {
+	public function swiper_exp_to_settings_conversion( $old_value, $expected_value ) {
 		// Arrange
-		update_option( 'elementor_experiment-e_swiper_latest', 'active' );
+		add_option( 'elementor_experiment-e_swiper_latest', $old_value );
 
 		// Act
 		Swiper_Module::swiper_experiment_convertor();
 
 		// Assert
-		$this->assertEquals( '8.4.5', get_option( 'elementor_swiper_active_version' ) );
-	}
-
-	public function test__swiper_exp_to_settings_conversion__empty() {
-		// Arrange
-		delete_option( 'elementor_experiment-e_swiper_latest' );
-
-		// Act
-		Swiper_Module::swiper_experiment_convertor();
-
-		// Assert
-		$this->assertEquals( '5.3.6', get_option( 'elementor_swiper_active_version' ) );
+		$this->assertEquals( $expected_value, get_option( 'elementor_swiper_active_version' ) );
+		delete_option( 'elementor_swiper_active_version' );
 	}
 }

@@ -86,9 +86,9 @@ class Module extends \Elementor\Core\Base\Module {
 		// Old swiper experiment value.
 		$swiper_version = get_option( 'elementor_experiment-e_swiper_latest' );
 		if ( 'active' === $swiper_version ) {
-			update_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_8_4_5 );
+			add_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_8_4_5 );
 		} else {
-			update_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_5_3_6 );
+			add_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_5_3_6 );
 		}
 	}
 
