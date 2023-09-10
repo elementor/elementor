@@ -108,7 +108,7 @@ class Ai extends Library {
 			$method,
 			$endpoint,
 			[
-				'timeout' => 50,
+				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
 			],
@@ -474,6 +474,33 @@ class Ai extends Library {
 		);
 
 		return $result;
+	}
+
+	public function generate_layout( $prompt, $context, $variation_type ) {
+		return $this->ai_request(
+			'POST',
+			'generate/layout',
+			[
+				'prompt' => $prompt,
+				'context' => $context ?? [],
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'variationType' => (int) $variation_type,
+			]
+		);
+	}
+
+	public function get_layout_prompt_enhanced( $prompt, $context = [] ) {
+		return $this->ai_request(
+			'POST',
+			'generate/enhance-prompt',
+			[
+				'prompt' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
 	}
 
 	protected function init() {}

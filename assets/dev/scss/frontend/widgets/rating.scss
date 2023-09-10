@@ -1,0 +1,54 @@
+.elementor-widget-rating {
+	--e-rating-gap: 0px;
+	--e-rating-icon-font-size: 16px;
+	--e-rating-icon-color: #{$gray-mouse};
+	--e-rating-icon-marked-color: #{$orange};
+	--e-rating-icon-marked-width: 100%;
+	--e-rating-justify-content: flex-start;
+
+	.e-rating {
+  		display: flex;
+  		justify-content: var(--e-rating-justify-content);
+
+		&-wrapper {
+			display: flex;
+			gap: var(--e-rating-gap);
+			flex-direction: row;
+			width: fit-content;
+		}
+
+		.e-icon {
+			position: relative;
+
+			&-wrapper {
+
+				&.e-icon-marked {
+					--e-rating-icon-color: var(--e-rating-icon-marked-color);
+					width: var(--e-rating-icon-marked-width);
+					position: absolute;
+					z-index: $first-layer;
+					height: 100%;
+					left: 0;
+					top: 0;
+					overflow: hidden;
+				}
+
+				:is( i, svg ) {
+					display: flex;
+					flex-shrink: 0;
+				}
+
+				i {
+					font-size: var(--e-rating-icon-font-size);
+					color: var(--e-rating-icon-color);
+				}
+
+				svg {
+					width: var(--e-rating-icon-font-size);
+					height: var(--e-rating-icon-font-size);
+					fill: var(--e-rating-icon-color);
+				}
+			}
+		}
+	}
+}
