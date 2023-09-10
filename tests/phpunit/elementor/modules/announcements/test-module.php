@@ -90,6 +90,9 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_construct_render() {
+		// Arrange
+		do_action( 'elementor/init' );
+
 		// Act
 		ob_start();
 		do_action( 'elementor/editor/footer' );
