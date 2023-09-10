@@ -80,6 +80,8 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 
 		if ( $is_container_active ) {
 			$this->add_responsive_control(
@@ -90,38 +92,44 @@ class Settings_Layout extends Tab_Base {
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
-						'.e-con' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
+						'.e-con' => "--container-default-padding-block-start: {{TOP}}{{UNIT}}; --container-default-padding-inline-end: $logical_dimensions_inline_end; --container-default-padding-block-end: {{BOTTOM}}{{UNIT}}; --container-default-padding-inline-start: $logical_dimensions_inline_start;",
 					],
 				]
 			);
 		}
 
 		$widgets_space_label = $is_container_active
-			? esc_html__( 'Gap between elements', 'elementor' )
+			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
 		$this->add_control(
 			'space_between_widgets',
 			[
 				'label' => $widgets_space_label,
-				'type' => Controls_Manager::SLIDER,
+				'type' => Controls_Manager::GAPS,
 				'default' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
+					'unit' => 'px',
 				],
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 40,
-					],
-				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'placeholder' => [
-					'size' => 20,
+					'row' => '20',
+					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
+					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
+					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				],
+				'conversion_map' => [
+					'old_key' => 'size',
+					'new_key' => 'column',
+				],
+				'validators' => [
+					'Number' => [
+						'min' => 0,
+					],
 				],
 			]
 		);

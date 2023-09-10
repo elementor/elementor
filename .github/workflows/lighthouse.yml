@@ -2,6 +2,7 @@ name: Lighthouse
 
 on:
   pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -35,7 +36,7 @@ jobs:
         with:
           node-version: 18.x
       - name: Cache node modules
-        if: steps.changelog_diff_files.outputs.diff
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
@@ -47,13 +48,13 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        if: steps.changelog_diff_files.outputs.diff
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
       - name: Build
-        if: steps.changelog_diff_files.outputs.diff
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npx grunt build
       - name: Save build to cache
-        if: steps.changelog_diff_files.outputs.diff
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache@v2
         id: restore-build
         with:
@@ -64,7 +65,7 @@ jobs:
     name: Lighthouse test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: ${{ needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
         include:

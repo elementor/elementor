@@ -212,6 +212,15 @@ abstract class Base extends Base_File {
 			return;
 		}
 
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires before enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/before_enqueue', $this );
+
 		// First time after clear cache and etc.
 		if ( '' === $meta['status'] || $this->is_update_required() ) {
 			$this->update();
@@ -262,6 +271,15 @@ abstract class Base extends Base_File {
 		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
+
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires after enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/after_enqueue', $this );
 	}
 
 	/**
@@ -903,7 +921,7 @@ abstract class Base extends Base_File {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+				if ( $controls_stack->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 

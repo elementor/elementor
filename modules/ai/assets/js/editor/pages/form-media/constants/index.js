@@ -5,6 +5,9 @@ export const LOCATIONS = {
 	IMAGE_TOOLS: 'image-tools',
 	IN_PAINTING: 'in-painting',
 	OUT_PAINTING: 'out-painting',
+	REMOVE_BACKGROUND: 'remove-background',
+	REPLACE_BACKGROUND: 'replace-background',
+	REMOVE_TEXT: 'remove-text',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {

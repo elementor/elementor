@@ -95,7 +95,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		$fields['gaps'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'default' => [
 				'unit' => 'px',
 			],
@@ -104,6 +104,11 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
+			],
 		];
 
 		$fields['auto_flow'] = [
@@ -119,7 +124,8 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--grid-auto-flow: {{VALUE}}',
 			],
 			'responsive' => true,
-		];
+			'frontend_available' => true,
+		] + $this->get_responsive_autoflow_defaults();
 
 		$fields['justify_items'] = [
 			'label' => esc_html_x( 'Justify Items', 'Grid Container Control', 'elementor' ),
@@ -293,6 +299,17 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 		}
 
 		return $responsive_unit_defaults;
+	}
+
+	protected function get_responsive_autoflow_defaults() {
+		$responsive_autoflow_defaults = [];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$responsive_autoflow_defaults[ $breakpoint_name . '_default' ] = 'row';
+		}
+
+		return $responsive_autoflow_defaults;
 	}
 
 	protected function get_default_options() {

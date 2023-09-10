@@ -3,6 +3,8 @@ namespace Elementor\Modules\Ai;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
 use Elementor\Plugin;
 use Elementor\User;
@@ -12,12 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Module extends BaseModule {
 
+	const LAYOUT_EXPERIMENT = 'ai-layout';
+
 	public function get_name() {
 		return 'ai';
 	}
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->register_layout_experiment();
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -37,42 +43,135 @@ class Module extends BaseModule {
 			$ajax->register_ajax_action( 'ai_get_image_to_image_mask', [ $this, 'ajax_ai_get_image_to_image_mask' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_outpainting', [ $this, 'ajax_ai_get_image_to_image_outpainting' ] );
 			$ajax->register_ajax_action( 'ai_get_image_to_image_upscale', [ $this, 'ajax_ai_get_image_to_image_upscale' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_remove_background', [ $this, 'ajax_ai_get_image_to_image_remove_background' ] );
+			$ajax->register_ajax_action( 'ai_get_image_to_image_replace_background', [ $this, 'ajax_ai_get_image_to_image_replace_background' ] );
 			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
+			$ajax->register_ajax_action( 'ai_generate_layout', [ $this, 'ajax_ai_generate_layout' ] );
+			$ajax->register_ajax_action( 'ai_get_layout_prompt_enhancer', [ $this, 'ajax_ai_get_layout_prompt_enhancer' ] );
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
-			wp_enqueue_script(
-				'elementor-ai',
-				$this->get_js_assets_url( 'ai' ),
-				[
-					'elementor-common',
-					'elementor-editor-modules',
-					'elementor-editor-document',
-					'elementor-packages-ui',
-					'elementor-packages-icons',
-				],
-				ELEMENTOR_VERSION,
-				true
-			);
+			$this->enqueue_main_script();
 
-			wp_localize_script(
-				'elementor-ai',
-				'ElementorAiConfig',
-				[
-					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'connect_url' => $this->get_ai_connect_url(),
-				]
-			);
+			if ( $this->is_layout_active() ) {
+				$this->enqueue_layout_script();
+			}
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
 			wp_enqueue_style(
-				'elementor-ai',
+				'elementor-ai-editor',
 				$this->get_css_assets_url( 'modules/ai/editor' ),
 				[],
 				ELEMENTOR_VERSION
 			);
 		} );
+
+		add_action( 'elementor/preview/enqueue_styles', function() {
+			if ( $this->is_layout_active() ) {
+				wp_enqueue_style(
+					'elementor-ai-layout-preview',
+					$this->get_css_assets_url( 'modules/ai/layout-preview' ),
+					[],
+					ELEMENTOR_VERSION
+				);
+			}
+		} );
+
+		add_filter( 'elementor/document/save/data', function ( $data ) {
+			if ( $this->is_layout_active() ) {
+				return $this->remove_temporary_containers( $data );
+			}
+
+			return $data;
+		} );
+	}
+
+	private function register_layout_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => static::LAYOUT_EXPERIMENT,
+			'title' => esc_html__( 'Build with AI', 'elementor' ),
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
+			'dependencies' => [
+				'container',
+			],
+		] );
+	}
+
+	private function enqueue_main_script() {
+		wp_enqueue_script(
+			'elementor-ai',
+			$this->get_js_assets_url( 'ai' ),
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-web-cli',
+				'elementor-common',
+				'elementor-editor-modules',
+				'elementor-editor-document',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai',
+			'ElementorAiConfig',
+			[
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+			]
+		);
+
+		wp_set_script_translations( 'elementor-ai', 'elementor' );
+	}
+
+	private function enqueue_layout_script() {
+		wp_enqueue_script(
+			'elementor-ai-layout',
+			$this->get_js_assets_url( 'ai-layout' ),
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-common',
+				'elementor-web-cli',
+				'elementor-editor-modules',
+				'elementor-ai',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
+	}
+
+	private function is_layout_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::LAYOUT_EXPERIMENT );
+	}
+
+	private function remove_temporary_containers( $data ) {
+		if ( empty( $data['elements'] ) ) {
+			return $data;
+		}
+
+		// If for some reason the document has been saved during an AI Layout session,
+		// ensure that the temporary containers are removed from the data.
+		$data['elements'] = array_filter( $data['elements'], function( $element ) {
+			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
+			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
+
+			return ! $is_preview_container && ! $is_screenshot_container;
+		} );
+
+		return $data;
 	}
 
 	private function get_ai_connect_url() {
@@ -309,11 +408,11 @@ class Module extends BaseModule {
 	public function ajax_ai_get_text_to_image( $data ) {
 		$this->verify_permissions( $data['editor_post_id'] );
 
-		$app = $this->get_ai_app();
-
 		if ( empty( $data['prompt'] ) ) {
 			throw new \Exception( 'Missing prompt' );
 		}
+
+		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
 			throw new \Exception( 'not_connected' );
@@ -395,6 +494,71 @@ class Module extends BaseModule {
 
 		$result = $app->get_image_to_image_upscale( [
 			'promptSettings' => $data['promptSettings'],
+			'attachment_id' => $data['image']['id'],
+		], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_image_to_image_replace_background( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Prompt Missing' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_image_to_image_replace_background( [
+			'attachment_id' => $data['image']['id'],
+			'prompt' => $data['prompt'],
+		], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_image_to_image_remove_background( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['image'] ) || empty( $data['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_image_to_image_remove_background( [
 			'attachment_id' => $data['image']['id'],
 		], $context );
 
@@ -512,6 +676,136 @@ class Module extends BaseModule {
 
 		return [
 			'image' => array_merge( $image_data, $data ),
+		];
+	}
+
+	public function ajax_ai_generate_layout( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->generate_layout(
+			$data['prompt'],
+			$this->prepare_generate_layout_context(),
+			$data['variationType']
+		);
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		$template = $result['text']['elements'][0] ?? null;
+
+		if ( empty( $template ) || ! is_array( $template ) ) {
+			throw new \Exception( 'unknown_error' );
+		}
+
+		return [
+			'all' => [],
+			'text' => $template,
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_layout_prompt_enhancer( $data ) {
+		$this->verify_permissions( $data['editor_post_id'] );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$result = $app->get_layout_prompt_enhanced( $data['prompt'] );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [
+			'text' => $result['text'] ?? $data['prompt'],
+			'response_id' => $result['responseId'] ?? '',
+			'usage' => $result['usage'] ?? '',
+		];
+	}
+
+	private function prepare_generate_layout_context() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return [];
+		}
+
+		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
+
+		$colors = $kits_data
+			->filter( function ( $_, $key ) {
+				return in_array( $key, [ 'system_colors', 'custom_colors' ], true );
+			} )
+			->flatten()
+			->filter( function ( $val ) {
+				return ! empty( $val['_id'] );
+			} )
+			->map( function ( $val ) {
+				return [
+					'id' => $val['_id'],
+					'label' => $val['title'] ?? null,
+					'value' => $val['color'] ?? null,
+				];
+			} );
+
+		$typography = $kits_data
+			->filter( function ( $_, $key ) {
+				return in_array( $key, [ 'system_typography', 'custom_typography' ], true );
+			} )
+			->flatten()
+			->filter( function ( $val ) {
+				return ! empty( $val['_id'] );
+			} )
+			->map( function ( $val ) {
+				$font_size = null;
+
+				if ( isset(
+					$val['typography_font_size']['unit'],
+					$val['typography_font_size']['size']
+				) ) {
+					$prop = $val['typography_font_size'];
+
+					$font_size = 'custom' === $prop['unit']
+						? $prop['size']
+						: $prop['size'] . $prop['unit'];
+				}
+
+				return [
+					'id' => $val['_id'],
+					'label' => $val['title'] ?? null,
+					'value' => [
+						'family' => $val['typography_font_family'] ?? null,
+						'weight' => $val['typography_font_weight'] ?? null,
+						'style' => $val['typography_font_style'] ?? null,
+						'size' => $font_size,
+					],
+				];
+			} );
+
+		return [
+			'globals' => [
+				'colors' => $colors->all(),
+				'typography' => $typography->all(),
+			],
 		];
 	}
 

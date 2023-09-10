@@ -153,31 +153,26 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		];
 
 		$fields['gap'] = [
-			'label' => esc_html_x( 'Gap', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 500,
-				],
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'vw' => [
-					'min' => 0,
-					'max' => 100,
-				],
-				'em' => [
-					'min' => 0,
-					'max' => 50,
-				],
-			],
+			'label' => esc_html__( 'Gaps', 'elementor' ),
+			'type' => Controls_Manager::GAPS,
 			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+			'default' => [
+				'unit' => 'px',
+			],
+			'separator' => 'before',
 			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
+				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 			],
 			'responsive' => true,
+			'conversion_map' => [
+				'old_key' => 'size',
+				'new_key' => 'column',
+			],
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
+			],
 		];
 
 		$fields['wrap'] = [

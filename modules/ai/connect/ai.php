@@ -108,7 +108,7 @@ class Ai extends Library {
 			$method,
 			$endpoint,
 			[
-				'timeout' => 50,
+				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
 			],
@@ -312,6 +312,65 @@ class Ai extends Library {
 	}
 
 	/**
+	 * get_image_to_image_remove_background
+	 * @param $image_data
+	 *
+	 * @return mixed|\WP_Error
+	 * @throws \Exception
+	 */
+	public function get_image_to_image_remove_background( $image_data, $context = [] ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/remove-background',
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			$image_file,
+			'image'
+		);
+
+		return $result;
+	}
+
+	/**
+	 * get_image_to_image_remove_text
+	 * @param $image_data
+	 *
+	 * @return mixed|\WP_Error
+	 * @throws \Exception
+	 */
+	public function get_image_to_image_replace_background( $image_data, $context = [] ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/replace-background',
+			[
+				self::PROMPT => $image_data[ self::PROMPT ],
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			$image_file,
+			'image'
+		);
+
+		return $result;
+	}
+
+	/**
 	 * store_temp_file
 	 * used to store a temp file for the AI request and deletes it once the request is done
 	 * @param $file_content
@@ -415,6 +474,33 @@ class Ai extends Library {
 		);
 
 		return $result;
+	}
+
+	public function generate_layout( $prompt, $context, $variation_type ) {
+		return $this->ai_request(
+			'POST',
+			'generate/layout',
+			[
+				'prompt' => $prompt,
+				'context' => $context ?? [],
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'variationType' => (int) $variation_type,
+			]
+		);
+	}
+
+	public function get_layout_prompt_enhanced( $prompt, $context = [] ) {
+		return $this->ai_request(
+			'POST',
+			'generate/enhance-prompt',
+			[
+				'prompt' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
 	}
 
 	protected function init() {}

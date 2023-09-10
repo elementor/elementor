@@ -1,6 +1,8 @@
 name: Qunit
 
-on: [pull_request]
+on:
+  pull_request:
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -29,7 +31,7 @@ jobs:
   q-unit:
     runs-on: ubuntu-20.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
+    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     name: Qunit - Test
     steps:
       - name: Checkout source code
