@@ -1,21 +1,23 @@
-name: One Click Hosting Release
+name: Automated Latest Release
+
+env:
+  CHANNEL: 'latest'
+  PRERELEASE: 'false'
 
 on:
-  workflow_dispatch:
-    inputs:
-      pre_release:
-        type: boolean
-        description: 'Pre-release?'
-        default: true
-        required: false
+  pull_request:
+    types: [closed]
     branches:
       - main
-env:
-  CHANNEL: 'cloud'
-  CHANGELOG_FILE: 'temp-changelog.txt'
+
+# Cancel in-progress jobs or runs for the current workflow run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  release:
+  latest_release:
+    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
@@ -42,7 +44,7 @@ jobs:
         id: set_postfix_value
         uses: ./.github/workflows/set-postfix-value
         with:
-          PRERELEASE: ${{ github.event.inputs.pre_release }}
+          PRERELEASE: ${{ env.PRERELEASE }}
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
@@ -65,30 +67,20 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-      - name: Generate changelog
-        uses: ./.github/workflows/generate-changelog
-        with:
-          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: ${{ github.ref }}
-          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
-          GENERATE_EMPTY_CHANGELOG: true
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
-          files: |
-            elementor-*.zip
-            ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.pre_release }}
-          body_path: ${{ env.CHANGELOG_FILE }}
-      - name: Post To Slack Created one click Hosting Release
+          files: elementor-*.zip
+          body: "Automated release for ${{ env.PACKAGE_VERSION }}"
+          prerelease: ${{ env.PRERELEASE }}
+      - name: Post To Slack Created Latest auto Release
         if: ${{ github.event.inputs.pre_release }} == false
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
+          SLACK_TAG_CHANNELS: ${{ secrets.LATEST_HOSTING_RELEASE_CHANNAL_ID }}
           PAYLOAD: |
             {
               "blocks": [
@@ -96,7 +88,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hi All :smile:\n\nWe just Published a Hosting release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                    "text": "Hi All :smile:\n\nWe just Published Latest release of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                   }
                 },
                 {
@@ -118,16 +110,6 @@ jobs:
                     "value": "open-release",
                     "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ env.PACKAGE_VERSION }}",
                     "action_id": "button-action"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*v${{ env.PACKAGE_VERSION }} Changelog* \n\n ${{ env.CHANGELOG_CONTENT }}"
                   }
                 }
               ]
