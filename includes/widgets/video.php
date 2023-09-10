@@ -254,7 +254,7 @@ class Widget_Video extends Widget_Base {
 			'videopress_url',
 			[
 				'label' => esc_html__( 'URL', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
+				'type' => Controls_Manager::URL,
 				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
@@ -1343,7 +1343,7 @@ class Widget_Video extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		if ( ! empty( $settings['insert_url'] ) ) {
-			return $settings['videopress_url'];
+			return $settings['videopress_url']['url'];
 		}
 
 		return $settings['hosted_url']['url'];
