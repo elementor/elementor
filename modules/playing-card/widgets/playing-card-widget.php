@@ -21,19 +21,19 @@ class PlayingCardWidget extends Widget_Base {
 	protected $suites_map  = [
 		'❤️' => [
 			'name' => 'Hearts',
-			'color' => '#FF0000',
+			'color_class' => 'red',
 		],
 		'💎' => [
 			'name' => 'Diamonds',
-			'color' => '#FF0000',
+			'color_class' => 'red',
 		],
 		'♠️' => [
 			'name' => 'Spades',
-			'color' => '#000000',
+			'color_class' => 'black',
 		],
 		'♣️' => [
 			'name' => 'Club',
-			'color' => '#000000',
+			'color_class' => 'black',
 		],
 	];
 	public function get_name() {
@@ -201,11 +201,15 @@ class PlayingCardWidget extends Widget_Base {
 		<div class="e-playing-cards-wrapper">
 			<?php
 			foreach ( $settings['playing_cards_list'] as $index => $item ) {
-				$card_id = 'card_' . $index;
+				$card_id          = 'card_' . $index;
+				$card_number      = $item['card_number'];
+				$card_suit        = $item['card_suit'];
+				$card_color_class = $this->suites_map[ $card_suit ]['color_class'];
 
 				$this->add_render_attribute( $card_id, 'class', [
 					'e-playing-cards-wrapper-item',
 					'elementor-repeater-item-' . $item['_id'],
+					$card_color_class,
 				]);
 
 				$card_number = $item['card_number'];
@@ -213,9 +217,9 @@ class PlayingCardWidget extends Widget_Base {
 				$card_color  = $this->suites_map[ $card_suit ]['color'];
 				?>
 				<div <?php $this->print_render_attribute_string( $card_id ); ?>>
-					<div class="e-playing-cards-wrapper-item-top"><?php echo esc_attr( $card_suit ); ?></div>
-					<div class="e-playing-cards-wrapper-item-center e-playing-cards-wrapper-item--number" style="color: <?php echo esc_html( $card_color ); ?>"><?php echo esc_attr( $card_number ); ?></div>
-					<div class="e-playing-cards-wrapper-item-bottom"><?php echo esc_attr( $card_suit ); ?></div>
+					<div class="e-playing-cards-item-top"><?php echo esc_html( $card_suit ); ?></div>
+					<div class="e-playing-cards-item-center e-playing-cards-item-number"><?php echo esc_html( $card_number ); ?></div>
+					<div class="e-playing-cards-item-bottom"><?php echo esc_html( $card_suit ); ?></div>
 				</div>
 			<?php } ?>
 		<?php
