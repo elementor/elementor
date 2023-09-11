@@ -157,11 +157,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
-			const accessibilityScanResults = await new AxeBuilder( { page } )
-				.include( '.elementor-widget-n-tabs' )
-				.analyze();
-
-			await expect( accessibilityScanResults.violations ).toEqual( [] );
+			await editor.axeCoreAccessibilityTest( page, '.elementor-widget-n-tabs' );
 		} );
 	} );
 
