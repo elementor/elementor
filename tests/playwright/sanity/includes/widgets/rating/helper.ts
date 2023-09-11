@@ -7,7 +7,7 @@ export async function beforeAll( browser, testInfo, iconExperimentState = 'activ
 	await wpAdmin.setExperiments( {
 		container: 'active',
 		rating: 'active',
-		e_font_icon_svg: 'active' === iconExperimentState,
+		e_font_icon_svg: iconExperimentState,
 	} );
 
 	await page.close();

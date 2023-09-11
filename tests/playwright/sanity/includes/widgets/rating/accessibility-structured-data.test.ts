@@ -28,11 +28,7 @@ test.describe( 'Accessibility & Structured data @rating', () => {
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
-			const accessibilityScanResults = await new AxeBuilder( { page } )
-				.include( '.elementor-widget-rating' )
-				.analyze();
-
-			await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
+			await editor.axeCoreAccessibilityTest( page, '.elementor-widget-rating' );
 		} );
 
 		await test.step( 'Check aria & schema.org properties', async () => {
