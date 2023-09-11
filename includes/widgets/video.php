@@ -257,6 +257,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
 				'show_label' => false,
+				'default' => 'https://videopress.com/v/ZCAOzTNk',
 				'dynamic' => [
 					'active' => true,
 					'categories' => [
