@@ -134,7 +134,7 @@ class PlayingCardWidget extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}}' => '--e-playing-card-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -186,7 +186,7 @@ class PlayingCardWidget extends Widget_Base {
 					'size' => 0,
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container > .e-playing-cards-wrapper' => 'gap: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}' => '--e-playing-cards-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -198,7 +198,7 @@ class PlayingCardWidget extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		?>
-		<div class="e-playing-cards-wrapper">
+		<div class="e-playing-cards">
 			<?php
 			foreach ( $settings['playing_cards_list'] as $index => $item ) {
 				$card_id          = 'card_' . $index;
@@ -207,14 +207,11 @@ class PlayingCardWidget extends Widget_Base {
 				$card_color_class = $this->suites_map[ $card_suit ]['color_class'];
 
 				$this->add_render_attribute( $card_id, 'class', [
-					'e-playing-cards-wrapper-item',
+					'e-playing-cards-item',
 					'elementor-repeater-item-' . $item['_id'],
 					$card_color_class,
 				]);
 
-				$card_number = $item['card_number'];
-				$card_suit   = $item['card_suit'];
-				$card_color  = $this->suites_map[ $card_suit ]['color'];
 				?>
 				<div <?php $this->print_render_attribute_string( $card_id ); ?>>
 					<div class="e-playing-cards-item-top"><?php echo esc_html( $card_suit ); ?></div>
