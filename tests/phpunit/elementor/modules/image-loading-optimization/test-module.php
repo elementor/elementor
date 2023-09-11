@@ -13,6 +13,47 @@ use ElementorEditorTesting\Elementor_Test_Base;
  */
 class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Base {
 	/**
+	 * An array of attachments.
+	 *
+	 * @type int[]
+	 */
+	static $attachments = [];
+
+	/**
+	 * Setup shared attachments.
+	 */
+	public static function set_up_before_class() {
+		parent::set_up_before_class();
+
+		self::$attachments[] = self::factory()->attachment->create_upload_object(
+			ELEMENTOR_PATH . '/tests/phpunit/resources/mock-image.png'
+		);
+	}
+
+	/**
+	 * Clean up uploaded files when finished.
+	 */
+	public static function tear_down_after_class() {
+		array_map(
+			function ( $attachment_id ) {
+				wp_delete_attachment( $attachment_id, true );
+			},
+			self::$attachments
+		);
+
+		parent::tear_down_after_class();
+	}
+
+	/**
+	 * Test fixtures are working as expected.
+	 */
+	public function test_attachment_fixtures() {
+		$image = wp_get_attachment_image( self::$attachments[0], 'full' );
+
+		$this->assertRegExp( '/mock-image.png/', $image, 'Could not confirm attachments were created' );
+	}
+
+	/**
 	 * @dataProvider get_page_template
 	 */
 	public function test_loading_optimization_without_logo( $page_template ) {
