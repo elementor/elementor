@@ -1082,8 +1082,6 @@ class NestedTabs extends Widget_Nested_Base {
 			$css_classes[] = 'elementor-animation-' . $item_settings['settings']['hover_animation'];
 		}
 
-		$keyboard_instruction = esc_html__( 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys', 'elementor' );
-
 		$this->add_render_attribute( $setting_key, [
 			'id' => $item_settings['tab_id'],
 			'class' => $css_classes,
@@ -1092,7 +1090,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
-			'aria-label' => 1 === $item_settings['tab_count'] ? $title . '. ' . $keyboard_instruction : $title,
+			'aria-label' => $title,
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1179,7 +1177,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
 			'data-widget-number' => $widget_number,
-			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
+			'aria-label' => esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1224,7 +1222,7 @@ class NestedTabs extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
@@ -1247,8 +1245,6 @@ class NestedTabs extends Widget_Nested_Base {
 					tabId = item.element_id;
 				}
 
-				const keyboardInstruction = '<?php echo esc_html__( 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys', 'elementor' ); ?>';
-
 				view.addRenderAttribute( tabWrapperKey, {
 					'id': tabId,
 					'class': [ 'e-n-tab-title',hoverAnimationClass ],
@@ -1257,7 +1253,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-label': 1 === tabCount ? item.tab_title + '. ' + keyboardInstruction : item.tab_title,
+					'aria-label': item.tab_title,
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
