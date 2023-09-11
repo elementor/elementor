@@ -39,16 +39,16 @@ runs:
     - name: Install wp-env
       shell: bash
       run: |
-          npm i -g --no-package-lock --no-save @wordpress/env@5.7.0
+          npm i -g --no-package-lock --no-save @wordpress/env@8.6.1
     - name: Setup WordPress environment
       shell: bash
       run: |
         npx wp-env start
         # change wp-env folder owner to www-data
         sudo chown 33:33 -R ~/wp-env/
-        npx wp-env run cli "bash -c 'bash elementor-config/setup.sh'"
+        npx wp-env run cli bash -c 'bash elementor-config/setup.sh'
     - name: WordPress debug information
       shell: bash
       run: |
-        npx wp-env run cli "wp core version"
-        npx wp-env run cli "wp --info"
+        npx wp-env run cli wp core version
+        npx wp-env run cli wp --info
