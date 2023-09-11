@@ -854,7 +854,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_aria_label_for_title( $index, $item_title ): string {
-		if ( $index === 0 ) {
+		if ( 0 === $index ) {
 			return $item_title . 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
 		}
 
