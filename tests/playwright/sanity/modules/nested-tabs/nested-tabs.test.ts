@@ -1420,6 +1420,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await test.step( 'Verify hover styling - desktop', async () => {
 			await secondTab.hover();
+			await page.waitForTimeout( 500 );
 
 			expect.soft( await widget.screenshot( {
 				type: 'png',
@@ -1431,6 +1432,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await page.setViewportSize( viewportSize.mobile );
 
 			await secondTab.hover();
+			await page.waitForTimeout( 500 );
 
 			expect.soft( await widget.screenshot( {
 				type: 'png',
