@@ -5,6 +5,12 @@ use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+/**
+ * Unit tests for the Image Loading Optimization module
+ *
+ * @group modules
+ * @group image-loading-optimization
+ */
 class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Base {
 	/**
 	 * @dataProvider get_page_template
@@ -18,12 +24,12 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		wp_update_post( $updated_post );
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$document->update_main_meta( '_wp_page_template', $page_template );
-		
+
 		query_posts( [ 'p' => $document->get_main_id() ] );
-		
+
 		// Need to do the_post as `template_include` depends on `wp_query` for the post.
 		the_post();
-		
+
 		// get template path from post. If it's not set switch to default single page template.
 		$template_path = locate_template('single.php');
 		$template_path = $page_templates_module->template_include( $template_path );
@@ -35,7 +41,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		load_template($template_path);
 		/* php endscript works differently for phpunit.
 		 * This is to ensure buffer started in footer is closed.
-		 */ 
+		 */
 		$this->close_and_print_open_buffer();
 		$output = ob_get_clean();
 
@@ -50,7 +56,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 			[ PageTemplatesModule::TEMPLATE_THEME ]
 		];
 	}
-	
+
 	/**
 	 * This is to ensure buffer started in footer is closed.
 	 */
