@@ -1082,8 +1082,6 @@ class NestedTabs extends Widget_Nested_Base {
 			$css_classes[] = 'elementor-animation-' . $item_settings['settings']['hover_animation'];
 		}
 
-		$keyboard_instruction = esc_html__( 'Open items with Enter or Space, close with Escape, navigate with Arrow Keys', 'elementor' );
-
 		$this->add_render_attribute( $setting_key, [
 			'id' => $item_settings['tab_id'],
 			'class' => $css_classes,
