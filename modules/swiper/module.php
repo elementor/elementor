@@ -78,7 +78,7 @@ class Module extends \Elementor\Core\Base\Module {
 	/**
 	 * Convert Swiper experiment value to settings.
 	 */
-	public static function swiper_experiment_convertor() {
+	public static function swiper_experiment_converter() {
 		if ( get_option( self::SWIPER_SETTINGS_OPTION_NAME ) ) {
 			return;
 		}

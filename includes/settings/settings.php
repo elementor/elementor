@@ -469,6 +469,6 @@ class Settings extends Settings_Page {
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
 
-		Swiper::swiper_experiment_convertor();
+		Swiper::swiper_experiment_converter();
 	}
 }
