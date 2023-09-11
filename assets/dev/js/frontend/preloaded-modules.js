@@ -9,7 +9,7 @@ import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
 import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
 import NestedAccordion from 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion';
-import PlayingCard from '../../../../modules/playing-card/assets/js/frontend/handlers/playing-card';
+import PlayingCard from 'elementor/modules/playing-card/assets/js/frontend/handlers/playing-card';
 
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
 
