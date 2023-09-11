@@ -22,7 +22,7 @@ const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete }
 		<StyledPeriod data-testid="e-ph-p">
 			<StyledPeriodTitle variant="subtitle1">{ periodTitle }</StyledPeriodTitle>
 
-			{ historyItems.map( ( { id, date, action, prompt, text, images } ) => {
+			{ historyItems.map( ( { id, date, action, prompt, text, images, imageType, ratio } ) => {
 				return (
 					<PromptHistoryItem key={ id }
 						date={ translateDate( DATE_FORMAT, date ) }
@@ -33,7 +33,7 @@ const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete }
 						onHistoryItemDelete={ () => onHistoryItemDelete( id ) }
 						onPromptReuse={ onPromptReuse ? () => onPromptReuse( id, prompt ) : null }
 						onResultEdit={ onResultEdit ? () => onResultEdit( id, text ) : null }
-						onImagesRestore={ onImagesRestore ? () => onImagesRestore( id, { prompt, images } ) : null } /> );
+						onImagesRestore={ onImagesRestore ? () => onImagesRestore( id, { prompt, images, imageType, ratio } ) : null } /> );
 			} ) }
 		</StyledPeriod>
 	);

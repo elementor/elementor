@@ -9,6 +9,8 @@ const normalizeItems = ( items ) => {
 			date: item?.createdAt,
 			action: item?.action,
 			prompt: item?.request?.prompt,
+			imageType: item?.request?.image_type,
+			ratio: item?.request?.ratio,
 			text: item?.response?.results?.text,
 			images: item?.response?.results?.images,
 		};

@@ -42,17 +42,6 @@ const Generate = () => {
 
 	const { data: generatedImages, setResult, send, isLoading: isGenerating, error, reset } = useTextToImage( {} );
 
-	useEffect( () => {
-		if ( ! promptHistoryAction.type ) {
-			return;
-		}
-
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.RESTORE ) {
-			setPrompt( promptHistoryAction.data?.prompt );
-			setResult( promptHistoryAction.data?.images, promptHistoryAction.id );
-		}
-	}, [ promptHistoryAction ] );
-
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const isLoading = isPreloading || isGenerating || isUploading;
@@ -73,6 +62,23 @@ const Generate = () => {
 
 		updateSettings( { [ IMAGE_TYPE ]: type, [ IMAGE_STYLE ]: style } );
 	};
+
+	useEffect( () => {
+		if ( ! promptHistoryAction.type ) {
+			return;
+		}
+
+		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.RESTORE ) {
+			handleCopyPrompt( {
+				prompt: promptHistoryAction.data?.prompt,
+				imageType: promptHistoryAction.data?.imageType || '',
+			} );
+
+			updateSettings( { [ IMAGE_RATIO ]: promptHistoryAction.data?.ratio } );
+
+			setResult( promptHistoryAction.data?.images, promptHistoryAction.id );
+		}
+	}, [ promptHistoryAction ] );
 
 	return (
 		<View>
