@@ -10,6 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Elementor Playing Card widget.
+ *
+ * Elementor widget that displays a playing card with a number and a suit.
+ *
+ * @since 3.16.0
+ */
 class PlayingCardWidget extends Widget_Base {
 	protected $suites_map  = [
 		'❤️' => [
@@ -33,72 +40,22 @@ class PlayingCardWidget extends Widget_Base {
 		return 'playing-card';
 	}
 
-	/**
-	 * Get widget title.
-	 *
-	 * Retrieve divider widget title.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget title.
-	 */
 	public function get_title() {
 		return esc_html__( 'Playing Cards', 'elementor' );
 	}
 
-	/**
-	 * Get widget icon.
-	 *
-	 * Retrieve divider widget icon.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget icon.
-	 */
 	public function get_icon() {
 		return 'eicon-nerd';
 	}
 
-	/**
-	 * Get widget categories.
-	 *
-	 * Retrieve the list of categories the divider widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return array Widget categories.
-	 */
 	public function get_categories() {
 		return [ 'basic' ];
 	}
 
-	/**
-	 * Get widget keywords.
-	 *
-	 * Retrieve the list of keywords the widget belongs to.
-	 *
-	 * @since 2.1.0
-	 * @access public
-	 *
-	 * @return array Widget keywords.
-	 */
 	public function get_keywords() {
 		return [ 'card', 'playing' ];
 	}
 
-	/**
-	 * Register divider widget controls.
-	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 */
 	protected function register_controls() {
 		$this->add_playing_cards_content_section();
 		$this->add_playing_cards_style_section();
@@ -237,14 +194,6 @@ class PlayingCardWidget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Render playing card widget output on the frontend.
-	 *
-	 * Written in PHP and used to generate the final HTML.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
