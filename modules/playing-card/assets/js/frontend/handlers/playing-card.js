@@ -25,6 +25,10 @@ export default class PlayingCard extends Base {
 		this.elements.$playingCard.on( 'click', this.clickListener.bind( this ) );
 	}
 
+	unbindEvents() {
+		this.elements.$playingCard.off();
+	}
+
 	clickListener( event ) {
 		event.preventDefault();
 		const cardElement = event.currentTarget;
