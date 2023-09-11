@@ -113,15 +113,12 @@ export default class NestedAccordion extends Base {
 		} else if ( 'Escape' === event.key ) {
 			event.preventDefault();
 
-			const currentTitle = event.currentTarget;
-			const isCurrentlyActive = 'true' === $( currentTitle ).attr( 'aria-selected' );
+			const summaryNode = event.currentTarget,
+				isOpen = summaryNode.parentElement.open;
 
-			if ( isCurrentlyActive ) {
-				// If the current accordion item is expanded, trigger the click event to close it.
+			if ( isOpen ) {
 				this.clickListener( event );
 			}
-			// Optionally, you can move the focus away from the current title after closing
-			// $(currentTitle).blur();
 		}
 	}
 
@@ -164,6 +161,11 @@ export default class NestedAccordion extends Base {
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
 		this.animations.set( accordionItem, animation );
+
+		const summaryNode = accordionItem.querySelector( 'summary' );
+		if ( summaryNode ) {
+			summaryNode.setAttribute( 'aria-expanded', isOpen );
+		}
 	}
 
 	closeAccordionItem( accordionItem, accordionItemTitle ) {

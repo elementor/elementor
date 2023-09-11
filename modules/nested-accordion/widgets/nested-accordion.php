@@ -793,6 +793,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
+			$aria_expanded = 'expanded' === $default_state && 0 === $index ? 'true' : 'false';
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
@@ -812,7 +813,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			ob_start();
 			?>
 			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-				<summary class='e-n-accordion-item-title' role="button" aria-expanded="false" tabindex="-1" aria-controls="<?php echo $item_id?>" aria-label="<?php echo $this->get_aria_label_for_title( $index, $item_title ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+				<summary class='e-n-accordion-item-title' role="button" aria-expanded="<?php echo $aria_expanded; ?>" aria-controls="<?php echo $item_id; ?>" aria-label="<?php echo $this->get_aria_label_for_title( $index, $item_title ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 					<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
 						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -852,13 +853,13 @@ class Nested_Accordion extends Widget_Nested_Base {
 		}
 	}
 
-    protected function get_aria_label_for_title( $index, $item_title ): string {
-        if ( $index === 0 ) {
-            return $item_title . 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
-        }
+	protected function get_aria_label_for_title( $index, $item_title ): string {
+		if ( $index === 0 ) {
+			return $item_title . 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
+		}
 
-        return $item_title;
-    }
+		return $item_title;
+	}
 
 	protected function content_template() {
 		?>
