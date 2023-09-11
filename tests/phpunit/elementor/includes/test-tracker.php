@@ -66,6 +66,7 @@ class Test_Tracker extends Elementor_Test_Base {
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
 			'meta_generator_tag' => '1',
+			'swiper_active_version' => '5.3.6',
 		], $actual );
 	}
 

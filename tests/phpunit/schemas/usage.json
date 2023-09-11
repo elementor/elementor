@@ -969,7 +969,16 @@
 									],
 									"title": "Generator Tag",
 									"default": ""
-								}
+								},
+								"swiper_active_version": {
+									"$id": "#/usages/settings/advanced/swiper_active_version",
+									"title": "Swiper Library",
+									"default": "5.3.6",
+									"enum": [
+									  "5.3.6",
+									  "8.4.5"
+								  ]
+							  }
 							},
 							"additionalProperties": false
 						},

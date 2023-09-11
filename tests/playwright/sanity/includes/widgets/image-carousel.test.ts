@@ -11,16 +11,20 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 
 		await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 		await editor.useCanvasTemplate();
-		const widgetId = await imageCarousel.addWidget();
+		const widgetId = await imageCarousel.addWidget(),
+			widget = await editor.getPreviewFrame().waitForSelector(`.elementor-element-${widgetId}`);
+
 		await imageCarousel.selectNavigation( 'none' );
 		await imageCarousel.addImageGallery();
 		await imageCarousel.setAutoplay();
+		await widget.waitForElementState( 'stable' );
 
 		await test.step( 'Verify image population', async () => {
 			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
@@ -107,8 +111,8 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 		await wpAdmin.openNewPage();
 		await editor.useDefaultTemplate();
@@ -141,8 +145,8 @@ test.describe( 'Image carousel tests', () => {
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
 		} );
 
 		await wpAdmin.openNewPage();
