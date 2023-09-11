@@ -277,6 +277,31 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			]
 		);
+
+		$this->add_control(
+			'faq_schema',
+			[
+				'label' => esc_html__( 'FAQ Schema', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'elementor' ),
+				'label_off' => esc_html__( 'No', 'elementor' ),
+				'default' => 'no',
+			]
+		);
+
+		$this->add_control(
+			'faq_schema_message',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => [
+					'faq_schema[value]' => 'yes',
+				],
+				'separator' => 'none',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -476,6 +501,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
+
 		$this->add_responsive_control(
 			'content_padding',
 			[
@@ -483,7 +511,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					$low_specificity_accordion_item_selector => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
+					$low_specificity_accordion_item_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: $logical_dimensions_inline_end; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start;",
 				],
 			]
 		);
@@ -656,7 +684,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
 					'fields_options' => [
 						'text_shadow_type' => [
-							'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+							'label' => esc_html__( 'Shadow', 'elementor' ),
 						],
 					],
 				]
@@ -756,6 +784,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
+		$faq_schema = [];
+
 		foreach ( $items as $index => $item ) {
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
@@ -775,6 +805,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			ob_start();
 			$this->print_child( $index );
 			$item_content = ob_get_clean();
+
+			$faq_schema[ $item_title ] = $item_content;
 
 			ob_start();
 			?>
@@ -796,6 +828,27 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<?php echo $items_title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
+		if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
+			$json = [
+				'@context' => 'https://schema.org',
+				'@type' => 'FAQPage',
+				'mainEntity' => [],
+			];
+
+			foreach ( $faq_schema as $name => $text ) {
+				$json['mainEntity'][] = [
+					'@type' => 'Question',
+					'name' => wp_strip_all_tags( $name ),
+					'acceptedAnswer' => [
+						'@type' => 'Answer',
+						'text' => wp_strip_all_tags( $text ),
+					],
+				];
+			}
+			?>
+			<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
+			<?php
+		}
 	}
 
 	protected function content_template() {

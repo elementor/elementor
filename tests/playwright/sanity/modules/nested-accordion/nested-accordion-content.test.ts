@@ -119,7 +119,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
 		editor.postId = await editor.getPageId();
-		let frame = editor.getPreviewFrame();
+		const frame = editor.getPreviewFrame();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.addWidget( 'nested-accordion', container );
@@ -147,12 +147,28 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 				await expect.soft( page.locator( '.e-n-accordion-item-title-icon .e-closed svg' ) ).toHaveCount( 3 ); // SVG Icon
 			} );
 		} );
+	} );
+
+	test( 'Nested Accordion test SVG Icon and No Icon when Title Icons is disabled', async ( { browser }, testInfo ) => {
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.enableAdvancedUploads();
+		const editor = await wpAdmin.openNewPage();
+		editor.postId = await editor.getPageId();
+		let frame = editor.getPreviewFrame();
+
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( 'nested-accordion', container );
+		await editor.closeNavigatorIfOpen();
+
+		await test.step( 'Check that an SVG title icon is displayed', async () => {
+			await frame.locator( '.e-n-accordion-item-title' ).first().click();
+			await page.locator( '.elementor-control-icons--inline__svg' ).first().click();
+			await editor.uploadSVG();
+		} );
 
 		await test.step( 'Check that No Icon container is displayed when Title Icons is disabled', async () => {
-			await wpAdmin.editWithElementor();
-			await page.waitForTimeout( 3000 );
-			await wpAdmin.waitForPanel();
-
 			frame = editor.getPreviewFrame();
 
 			await frame.locator( '.e-n-accordion-item-title' ).first().click();
@@ -178,6 +194,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			await wpAdmin.disableAdvancedUploads();
 		} );
 	} );
+
 	test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
 		// Act
 		const page = await browser.newPage(),
@@ -379,5 +396,40 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 
 			expect.soft( maxHeightAfterOpen ).not.toEqual( '0px' );
 		} );
+	} );
+
+	test('Nested Accordion FAQ Schema', async ( {page}, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo ),
+			editor = await wpAdmin.openNewPage(),
+			nestedAccordionID = '14080fa';
+
+		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-three-child-headings', '.elementor-widget-n-accordion' );
+
+		await editor.closeNavigatorIfOpen();
+		await editor.selectElement( nestedAccordionID );
+
+		// Act
+		await editor.setSwitcherControlValue( 'faq_schema', true )
+		await editor.publishAndViewPage();
+
+		await page.waitForLoadState( 'load' );
+
+		// Assert
+		const faqSchema = await page.evaluate( async () => {
+			let jsonSchema = await document.querySelectorAll( 'script[type="application/ld+json"]' );
+			return await JSON.parse( jsonSchema[ 0 ][ 'text' ] );
+		} );
+
+		await expect.soft( faqSchema[ '@type' ], 'Expecting Structured data Schema to be of type FAQPage but found' ).toBe( 'FAQPage' );
+
+		let i = 1;
+		for ( const faq of faqSchema[ 'mainEntity' ] ) {
+			expect.soft( faq[ '@type' ], 'Expecting Title\'s schema to be Question but found' ).toBe( 'Question' );
+			expect.soft( faq[ 'name' ], 'Expecting NA Title\'s content to match FAQ schema but found' ).toBe( 'Item #' + i );
+			expect.soft( faq[ 'acceptedAnswer' ][ 'text' ], 'Expecting accordion content to match Answer but found' ).toBe( 'Add Your Heading Text Here ' + i );
+			i++;
+		}
+
 	} );
 } );
