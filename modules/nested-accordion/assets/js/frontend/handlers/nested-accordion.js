@@ -5,6 +5,9 @@ export default class NestedAccordion extends Base {
 		super( ...args );
 
 		this.animations = new Map();
+		this.directionNext = 'next';
+		this.directionPrevious = 'previous';
+		this.focusableElementSelector = 'button, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
 	}
 
 	getDefaultSettings() {
@@ -50,6 +53,76 @@ export default class NestedAccordion extends Base {
 
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
+		this.elements.$accordionTitles.on( 'keydown', this.handleTitleKeyboardNavigation.bind( this ) );
+	}
+
+	isDirectionKey( event ) {
+		const directionKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End' ];
+		return directionKeys.includes( event.key );
+	}
+
+	isActivationKey( event ) {
+		const activationKeys = [ 'Enter', ' ' ];
+		return activationKeys.includes( event.key );
+	}
+
+	handleTitleKeyboardNavigation( event ) {
+		if ( this.isDirectionKey( event ) ) {
+			event.preventDefault();
+
+			const currentTitle = event.currentTarget;
+			const $accordionTitles = this.elements.$accordionTitles;
+			let index = $accordionTitles.index( currentTitle );
+
+			switch ( event.key ) {
+				case 'ArrowRight':
+					index = elementorFrontendConfig.is_rtl
+						? ( index - 1 + $accordionTitles.length ) % $accordionTitles.length
+						: ( index + 1 ) % $accordionTitles.length;
+					break;
+				case 'ArrowLeft':
+					index = elementorFrontendConfig.is_rtl
+						? ( index + 1 ) % $accordionTitles.length
+						: ( index - 1 + $accordionTitles.length ) % $accordionTitles.length;
+					break;
+				case 'ArrowUp':
+					index = ( index - 1 + $accordionTitles.length ) % $accordionTitles.length;
+					break;
+				case 'ArrowDown':
+					index = ( index + 1 ) % $accordionTitles.length;
+					break;
+				case 'Home':
+					index = 0;
+					break;
+				case 'End':
+					index = $accordionTitles.length - 1;
+					break;
+				default:
+					break;
+			}
+
+			const nextTitle = $accordionTitles.get( index );
+			nextTitle.focus();
+
+			event.stopPropagation();
+		} else if ( this.isActivationKey( event ) ) {
+			event.preventDefault();
+
+			// Trigger the click event to toggle the accordion state
+			this.clickListener( event );
+		} else if ( 'Escape' === event.key ) {
+			event.preventDefault();
+
+			const currentTitle = event.currentTarget;
+			const isCurrentlyActive = 'true' === $( currentTitle ).attr( 'aria-selected' );
+
+			if ( isCurrentlyActive ) {
+				// If the current accordion item is expanded, trigger the click event to close it.
+				this.clickListener( event );
+			}
+			// Optionally, you can move the focus away from the current title after closing
+			// $(currentTitle).blur();
+		}
 	}
 
 	unbindEvents() {
