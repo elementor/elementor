@@ -64,6 +64,7 @@ class Module extends BaseModule {
 
 		// Run optimization logic on header.
 		add_action( 'get_header', [ $this, 'set_buffer' ] );
+
 		// Ensure buffer is flushed (if any) before the content logic.
 		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 0 );
 
@@ -100,11 +101,13 @@ class Module extends BaseModule {
 	 */
 	public function flush_header_buffer( $content ) {
 		$buffer_status = ob_get_status();
+
 		if ( ! empty( $buffer_status ) &&
 			1 === $buffer_status['type'] &&
 			get_class( $this ) . '::handle_buffer_content' === $buffer_status['name'] ) {
 			ob_end_flush();
 		}
+
 		return $content;
 	}
 
@@ -147,6 +150,7 @@ class Module extends BaseModule {
 
 		$optimized_image = $this->add_loading_optimization_attrs( $image );
 		self::$image_visited[ $image ] = $optimized_image;
+
 		return $optimized_image;
 	}
 
@@ -234,7 +238,7 @@ class Module extends BaseModule {
 			if ( false === $maybe_in_viewport ) {
 				_doing_it_wrong(
 					__FUNCTION__,
-					__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' ),
+					esc_html__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' ),
 					''
 				);
 				/*
@@ -303,6 +307,7 @@ class Module extends BaseModule {
 				$loading_attrs['fetchpriority'] = 'high';
 				$this->high_priority_element_flag( false );
 			}
+
 			return $loading_attrs;
 		}
 
@@ -319,6 +324,7 @@ class Module extends BaseModule {
 			$loading_attrs['fetchpriority'] = 'high';
 			$this->high_priority_element_flag( false );
 		}
+
 		return $loading_attrs;
 	}
 
@@ -334,6 +340,7 @@ class Module extends BaseModule {
 		if ( is_bool( $value ) ) {
 			$high_priority_element = $value;
 		}
+
 		return $high_priority_element;
 	}
 }
