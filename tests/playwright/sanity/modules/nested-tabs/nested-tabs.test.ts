@@ -3,7 +3,7 @@ import { createPage, deletePage } from '../../../utilities/rest-api';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { testTabIsVisibleInAccordionView } from './tests/accordion';
+import { testTabsInAccordionView } from './tests/accordion';
 import { testIconCount } from './tests/icons';
 import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
 import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } from './helper';
@@ -38,7 +38,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Tests.
 		await testIconCount( editor );
 		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, imageCarousel );
-		await testTabIsVisibleInAccordionView( page, editor );
+		await testTabsInAccordionView( page, editor );
 	} );
 
 	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
