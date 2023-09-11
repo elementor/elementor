@@ -65,6 +65,7 @@ const FormMedia = ( {
 	};
 
 	const editImageInitialData = getControlValue() === additionalOptions?.defaultValue ? {} : getControlValue();
+	const isGenerateScreen = ! editImageInitialData?.id;
 
 	const globalSettings = {
 		initialImageType: additionalOptions?.defaultImageType || '',
@@ -94,8 +95,7 @@ const FormMedia = ( {
 		<>
 			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ () => onCloseIntent() }>
-					<History promptType={ HISTORY_TYPES.IMAGE }
-						onImagesRestore={ onImagesRestore } />
+					{ isGenerateScreen && <History promptType={ HISTORY_TYPES.IMAGE } onImagesRestore={ onImagesRestore } /> }
 
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
