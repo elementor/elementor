@@ -155,7 +155,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		$fields['gap'] = [
 			'label' => esc_html__( 'Gaps', 'elementor' ),
 			'type' => Controls_Manager::GAPS,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vm', 'custom' ],
+			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 			'default' => [
 				'unit' => 'px',
 			],
@@ -167,6 +167,11 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'conversion_map' => [
 				'old_key' => 'size',
 				'new_key' => 'column',
+			],
+			'validators' => [
+				'Number' => [
+					'min' => 0,
+				],
 			],
 		];
 
