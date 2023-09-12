@@ -788,6 +788,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$faq_schema = [];
 
 		foreach ( $items as $index => $item ) {
+            $accordion_count = $index + 1;
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
@@ -813,7 +814,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			ob_start();
 			?>
 			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-				<summary class='e-n-accordion-item-title' tabindex="<?php echo 'expanded' === $default_state ? $aria_expanded ? 0 : -1 : 0; ?>" role="button" aria-expanded="<?php echo $aria_expanded; ?>" aria-controls="<?php echo $item_id; ?>" aria-label="<?php echo $this->get_aria_label_for_title( $index, $item_title ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
+				<summary class='e-n-accordion-item-title' data-accordion-index="<?php echo $accordion_count; ?>" tabindex="<?php echo 'expanded' === $default_state ? $aria_expanded ? 0 : -1 : 0; ?>" role="button" aria-expanded="<?php echo $aria_expanded; ?>" aria-controls="<?php echo $item_id; ?>" aria-label="<?php echo $this->get_aria_label_for_title( $index, $item_title ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 					<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
 						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

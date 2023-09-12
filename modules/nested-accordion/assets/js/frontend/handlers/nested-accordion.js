@@ -18,8 +18,23 @@ export default class NestedAccordion extends Base {
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionContent: '.e-n-accordion-item > .e-con',
+				itemTitle: '.e-n-accordion-item-title',
+				itemContainer: '.e-n-accordion-item > .e-con',
 			},
 			default_state: 'expanded',
+			ariaAttributes: {
+				titleStateAttribute: 'aria-expanded',
+				activeTitleSelector: '[aria-expanded="true"]',
+			},
+			datasets: {
+				titleIndex: 'data-accordion-index',
+			},
+			keyDirection: {
+				ArrowLeft: elementorFrontendConfig.is_rtl ? this.directionNext : this.directionPrevious,
+				ArrowUp: this.directionPrevious,
+				ArrowRight: elementorFrontendConfig.is_rtl ? this.directionPrevious : this.directionNext,
+				ArrowDown: this.directionNext,
+			},
 		};
 	}
 
@@ -35,11 +50,19 @@ export default class NestedAccordion extends Base {
 		};
 	}
 
+	getKeyboardNavigationSettings() {
+		return this.getSettings();
+	}
+
 	onInit( ...args ) {
 		super.onInit( ...args );
 
 		if ( elementorFrontend.isEditMode() ) {
 			this.interlaceContainers();
+		}
+
+		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
+			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
 		}
 	}
 
@@ -53,7 +76,7 @@ export default class NestedAccordion extends Base {
 
 	bindEvents() {
 		this.elements.$accordionTitles.on( 'click', this.clickListener.bind( this ) );
-		this.elements.$accordionTitles.on( 'keydown', this.handleTitleKeyboardNavigation.bind( this ) );
+		// This.elements.$accordionTitles.on( 'keydown', this.handleTitleKeyboardNavigation.bind( this ) );
 	}
 
 	isDirectionKey( event ) {
