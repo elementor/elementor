@@ -924,6 +924,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
+		$swiper_class = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
 		$has_autoplay_enabled = 'yes' === $this->get_settings_for_display( 'autoplay' );
 
 		$this->add_render_attribute( [
@@ -932,7 +933,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'aria-live' => $has_autoplay_enabled ? 'off' : 'polite',
 			],
 			'carousel-wrapper' => [
-				'class' => 'elementor-image-carousel-wrapper ' . Swiper::swiper_css_class(),
+				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
 				'dir' => $settings['direction'],
 			],
 		] );
