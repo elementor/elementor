@@ -16,7 +16,7 @@ const Screenshot = ( { url, isLoading = false, isSelected = false, isPlaceholder
 				animation="wave"
 				variant="rounded"
 				height={ SCREENSHOT_HEIGHT }
-				sx={ { borderRadius: ( { border } ) => border.size.md, ...sx } }
+				sx={ sx }
 			/>
 		);
 	}
