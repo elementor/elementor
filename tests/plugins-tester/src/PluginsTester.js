@@ -1,4 +1,7 @@
 import { execSync } from 'child_process';
+// eslint-disable-next-line
+import { warning } from '@actions/core';
+import fs from 'fs';
 
 export class PluginsTester {
 	options = {
@@ -41,11 +44,29 @@ export class PluginsTester {
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug }'` );
+			try {
+				const filename = process.env.CI ? '../../logs.txt' : 'logs.txt';
+
+				if ( fs.existsSync( filename ) ) {
+					fs.unlinkSync( filename );
+				}
+
+				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
+				const warn = fs.readFileSync( filename );
+
+				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
+					warning( warn.toString() );
+				}
+			} catch ( e ) {
+				this.options.logger.error( e );
+			}
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
-				this.options.logger.error( error );
+				this.options.logger.error( error.toString() );
+				if ( process.env.CI ) {
+					error( error.toString() );
+				}
 				errors.push( {
 					slug,
 					error,

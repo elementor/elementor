@@ -1,5 +1,4 @@
-import { Box, Typography, Stack } from '@elementor/ui';
-import StyledChip from './ui/styled-chip';
+import { Box, Typography, Stack, Chip } from '@elementor/ui';
 
 const PromptSuggestions = ( props ) => {
 	return (
@@ -8,9 +7,9 @@ const PromptSuggestions = ( props ) => {
 				{ __( 'Suggested prompts', 'elementor' ) + ':' }
 			</Typography>
 
-			<Stack direction="column" alignItems="flex-start" gap={ 3 } sx={ { my: 3 } }>
+			<Stack direction="column" alignItems="flex-start" gap={ 1 } sx={ { my: 1 } }>
 				{ props.suggestions?.map( ( option, index ) => (
-					<StyledChip
+					<Chip
 						key={ index }
 						variant="outlined"
 						size="large"

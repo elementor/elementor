@@ -39,7 +39,7 @@ const Resize = () => {
 				{ error && <View.ErrorMessage error={ error } onRetry={ handleSubmit } /> }
 
 				<ImageForm onSubmit={ handleSubmit }>
-					<Stack spacing={ 2 }>
+					<Stack spacing={ 0.2 }>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
 							<Typography variant="caption">512px</Typography>
 

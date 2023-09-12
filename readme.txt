@@ -3,7 +3,7 @@ Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 6.0
 Tested up to: 6.3
-Requires PHP: 7.0
+Requires PHP: 7.3
 Stable tag: 3.12.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -147,12 +147,12 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 = Minimum Requirements =
 
 * WordPress 6.0 or greater
-* PHP version 7.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.0 or greater
 
-= We recommend your host supports: =
+= Recommended Requirements =
 
-* PHP version 7.3 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -239,6 +239,40 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.16.0 - 2023-09-12 =
+
+* New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
+* Tweak: Enhanced TTFB metric by optimizing controls display condition functions in the Editor (props [@DMajorChump](https://github.com/MajorChump), [#21762](https://github.com/elementor/elementor/issues/21762))
+* Tweak: Implemented accessibility improvements in Nested Tabs ([#22935](https://github.com/elementor/elementor/issues/22935))
+* Tweak: Promoted Flexbox Container feature to Stable status
+* Tweak: Enabled Flexbox Container feature by default for new installations
+* Tweak: Substituted 'Gap between elements' control in site settings with the new Container Gap control
+* Tweak: Upgraded HTML Structure for Tabs Widget
+* Tweak: Implemented CSS logical properties for border-radius in Elementor Editor
+* Tweak: Implemented CSS logical properties in Container, Accordion and Tabs widgets
+* Tweak: Enhanced dropdown preview for Global Typography styles
+* Tweak: Enabled Improved Asset Loading feature by default for all sites
+* Tweak: Promoted Grid Container feature to Beta status
+* Tweak: Replace CSS `float` with other layouts in the Editor
+* Tweak: Concealed the 'Empty View' cell within the Grid Container to prevent distortion of the preview
+* Tweak: Updated `eicons` library to v5.23.0
+* Tweak: Added keyboard accessibility to a link in Icon Box widget
+* Tweak: Added keyboard accessibility to a link in Image Box widget
+* Tweak: Added 'Download System Info" button to the top of Elementor System Info screen
+* Fix: Justify Content and Align Items controls are not functioning as expected in responsive mode in Container widget ([#19363](https://github.com/elementor/elementor/issues/19363))
+* Fix: Wrong structure of predefined Container layouts in RTL ([#20184](https://github.com/elementor/elementor/issues/20184))
+* Fix: Editing a post or page created in Gutenberg with Elementor resulted in sections being displayed instead of containers ([#20282](https://github.com/elementor/elementor/issues/20282))
+* Fix: Custom unit inheritance problem in mobile mode in Grid Container ([#22289](https://github.com/elementor/elementor/issues/22289))
+* Fix: Spacer not functioning as intended in Container widget ([#20023](https://github.com/elementor/elementor/issues/20023))
+* Fix: Translated blending mode options in `heading.php` for improved usability (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Use default placeholder set in URL control (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved translation functionality in the Editor (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved code security enforcement in Text Path widget
+* Fix: "Add New Container" functionality is not functioning correctly in Finder
+* Fix: Styling from the parent Accordion was inherited by an Accordion placed inside it in Accordion widget
+* Fix: Title is not breaking in Recently Edited modal in Editor Top Bar
+* Fix: Edit page with WordPress Editor issue when using WordPress 6.3
 
 = 3.15.3 - 2023-08-20 =
 
