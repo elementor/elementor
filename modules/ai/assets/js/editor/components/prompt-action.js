@@ -1,8 +1,8 @@
-import StyledChip from './ui/styled-chip';
+import { Chip } from '@elementor/ui';
 
 const PromptAction = ( props ) => {
 	return (
-		<StyledChip
+		<Chip
 			size="large"
 			color="secondary"
 			variant="outlined"

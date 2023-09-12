@@ -1,6 +1,6 @@
 import { Skeleton } from '@elementor/ui';
 
-const SkeletonPlaceholders = ( { sx = {}, ...props } ) => (
+const SkeletonPlaceholders = ( props ) => (
 	<>
 		{
 			Array( 3 ).fill( true ).map( ( _, index ) => (
@@ -10,15 +10,10 @@ const SkeletonPlaceholders = ( { sx = {}, ...props } ) => (
 					animation="wave"
 					variant="rounded"
 					{ ...props }
-					sx={ { borderRadius: ( { border } ) => border.size.md, ...sx } }
 				/>
 			) )
 		}
 	</>
 );
-
-SkeletonPlaceholders.propTypes = {
-	sx: PropTypes.object,
-};
 
 export default SkeletonPlaceholders;
