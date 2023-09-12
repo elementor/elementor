@@ -83,7 +83,7 @@ const ImagesDisplay = ( {
 							<ImageActions>
 								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
 
-								<Stack direction="row" spacing={ 1 } alignItems="center">
+								<Stack direction="row" spacing={ 0.25 } alignItems="center">
 									<ImageActions.ZoomIcon onClick={ () => setZoomIndex( index ) } size="medium" />
 									<ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" />
 								</Stack>

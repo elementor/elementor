@@ -74,7 +74,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		>
 			{ message.text }
 			{ message.description }
-			{ 'bottom' === actionPosition && <Box sx={ { mt: 3 } }>{ action }</Box> }
+			{ 'bottom' === actionPosition && <Box sx={ { mt: 1 } }>{ action }</Box> }
 		</Alert>
 	);
 };

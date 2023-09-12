@@ -4,7 +4,7 @@ import { AIIcon } from '@elementor/icons';
 const VariationsPlaceholder = () => {
 	return (
 		<Box sx={ { overflowY: 'scroll' } } flexGrow={ 1 }>
-			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 7 }>
+			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 3 }>
 				{
 					Array( 4 ).fill( true ).map( ( _, index ) => (
 						<Box

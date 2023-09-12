@@ -61,7 +61,7 @@ const OutPainting = () => {
 						onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 					/>
 
-					<FormControl sx={ { width: '100%', mb: 6 } }>
+					<FormControl sx={ { width: '100%', mb: 2.5 } }>
 						<Slider
 							marks
 							id="zoom"
@@ -92,7 +92,7 @@ const OutPainting = () => {
 
 					{
 						data?.result ? (
-							<Stack gap={ 5 } sx={ { my: 6 } }>
+							<Stack gap={ 2 } sx={ { my: 2.5 } }>
 								<GenerateAgainSubmit disabled={ isLoading } />
 
 								<NewPromptButton disabled={ isLoading } onClick={ () => {

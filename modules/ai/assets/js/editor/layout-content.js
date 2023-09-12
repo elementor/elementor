@@ -19,7 +19,7 @@ const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGene
 				<LayoutDialog.Header onClose={ onClose } />
 
 				<LayoutDialog.Content dividers>
-					<Loader />
+					<Loader BoxProps={ { sx: { px: 3 } } } />
 				</LayoutDialog.Content>
 			</LayoutDialog>
 		);
