@@ -48,32 +48,6 @@ jobs:
       - name: Read changelog and set current date
         if: env.CHANNEL == 'ga' && github.event.inputs.pre_release == 'false'
         uses : ./.github/workflows/get-changelog-datetime
-      - name: Parse Jira Keys from changelog # Only for GA releases
-        if: env.CHANNEL == 'ga' && github.event.inputs.pre_release == 'false'
-        id: jira_keys
-        uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
-        with:
-          commit-message: '${{ env.CHANGELOG }}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-      - name: Push Deployment Info to Jira
-        if: env.CHANNEL != 'ga' && steps.jira_keys.outputs.jira-keys != '' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false'
-        uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
-        with:
-          client-id: '${{ secrets.JIRA_CLIENT_ID }}'
-          client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
-          cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
-          issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
-          display-name: "${{ env.PACKAGE_VERSION }}"
-          url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          description: "This PR was merged to the following release(s)"
-          last-updated: '${{ env.NOW }}'
-          state: 'successful'
-          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
-          pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          environment-id: "${{ env.PACKAGE_VERSION }}"
-          environment-display-name: "${{ env.PACKAGE_VERSION }}"
-          environment-type: 'production'
       - name: Unzip Release zip file
         run: |
           unzip -q /tmp/${{ github.event.repository.name }}-${{ env.CLEAN_PACKAGE_NAME }}.zip -d $GITHUB_WORKSPACE
