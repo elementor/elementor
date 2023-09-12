@@ -576,18 +576,11 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
-				'swiper',
-				$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path_old . 'css/' ),
-				[],
-				$this->e_swiper_version_old
+			'swiper',
+			$this->get_css_assets_url( 'swiper', 'assets/' . $this->e_swiper_asset_path . 'css/' ),
+			[],
+			$this->e_swiper_version
 		);
-
-//		wp_register_style(
-//			'swiper',
-//			$this->get_css_assets_url( 'swiper', 'assets/' . $this->e_swiper_asset_path . 'css/' ),
-//			[],
-//			$this->e_swiper_version
-//		);
 
 		/**
 		 * After frontend register styles.
@@ -1436,8 +1429,8 @@ class Frontend extends App {
 				'assets' => $assets_url,
 			],
 			'swiperClass' => Swiper::swiper_css_class(),
-//			'swiperActiveVersion' => $this->e_swiper_version,
-//			'swiperAssetsPath' => $this->e_swiper_asset_path,
+			'swiperActiveVersion' => $this->e_swiper_version,
+			'swiperAssetsPath' => $this->e_swiper_asset_path,
 //			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
 		];
 
