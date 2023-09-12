@@ -88,7 +88,7 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		return [
+		$raw_announcements = [
 			[
 				'title' => 'Picture perfect: Introducing the AI image generator',
 				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
@@ -120,6 +120,9 @@ class Module extends BaseApp {
 				],
 			],
 		];
+
+		// DO NOT USE THIS FILTER
+		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	/**
@@ -153,10 +156,15 @@ class Module extends BaseApp {
 	}
 
 	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+	}
+
+	public function on_elementor_init() {
 		if ( empty( $this->get_active_announcements() ) ) {
 			return;
 		}
-		parent::__construct();
 
 		add_action( 'elementor/editor/footer', function () {
 			$this->render_app_wrapper();

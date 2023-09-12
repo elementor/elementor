@@ -142,7 +142,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				'700' => '700 ' . esc_html_x( '(Bold)', 'Typography Control', 'elementor' ),
 				'800' => '800 ' . esc_html_x( '(Extra Bold)', 'Typography Control', 'elementor' ),
 				'900' => '900 ' . esc_html_x( '(Black)', 'Typography Control', 'elementor' ),
-				'' => esc_html_x( 'Default', 'Typography Control', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
 				'normal' => esc_html_x( 'Normal', 'Typography Control', 'elementor' ),
 				'bold' => esc_html_x( 'Bold', 'Typography Control', 'elementor' ),
 			],
@@ -187,7 +187,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['line_height'] = [
-			'label' => esc_html_x( 'Line-Height', 'Typography Control', 'elementor' ),
+			'label' => esc_html__( 'Line Height', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'desktop_default' => [
 				'unit' => 'em',
@@ -209,7 +209,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['letter_spacing'] = [
-			'label' => esc_html_x( 'Letter Spacing', 'Typography Control', 'elementor' ),
+			'label' => esc_html__( 'Letter Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 			'range' => [
@@ -227,7 +227,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$fields['word_spacing'] = [
-			'label' => esc_html_x( 'Word Spacing', 'Typography Control', 'elementor' ),
+			'label' => esc_html__( 'Word Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'desktop_default' => [
 				'unit' => 'em',
@@ -332,7 +332,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		return [
 			'popover' => [
 				'starter_name' => 'typography',
-				'starter_title' => esc_html_x( 'Typography', 'Typography Control', 'elementor' ),
+				'starter_title' => esc_html__( 'Typography', 'elementor' ),
 				'settings' => [
 					'render_type' => 'ui',
 					'groupType' => 'typography',
