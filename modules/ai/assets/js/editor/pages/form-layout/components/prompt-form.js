@@ -58,10 +58,6 @@ const GenerateButton = ( props ) => (
 	<GenerateSubmit
 		size="small"
 		fullWidth={ false }
-		sx={ {
-			// TODO: remove once exist in the UI library.
-			borderRadius: ( { border } ) => border.size.md,
-		} }
 		{ ...props }
 	>
 		{ __( 'Generate', 'elementor' ) }
@@ -89,16 +85,16 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 		<Box
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
-			sx={ { p: 5 } }
+			sx={ { p: 2 } }
 			display="flex"
-			alignItems="start"
-			gap={ 3 }
+			alignItems="center"
+			gap={ 1 }
 		>
-			<Stack direction="row" flexGrow={ 1 }>
+			<Stack direction="row" flexGrow={ 1 } spacing={ 1 }>
 				{
 					showActions && (
 						isActive ? (
-							<BackButton disabled={ isLoading } onClick={ handleBack } />
+							<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
 						) : (
 							<EditButton disabled={ isLoading } onClick={ handleEdit } />
 						)
@@ -106,9 +102,8 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 				}
 
 				<PromptAutocomplete
-					size="small"
 					value={ prompt }
-					disabled={ isLoading || ! isActive }
+					disabled={ isLoading || ! isActive || isEnhancing }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ PROMPT_SUGGESTIONS }
 					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
