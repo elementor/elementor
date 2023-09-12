@@ -1090,7 +1090,6 @@ class NestedTabs extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
-			'aria-label' => $title,
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1253,7 +1252,6 @@ class NestedTabs extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-label': item.tab_title,
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
