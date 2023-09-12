@@ -43,16 +43,17 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public static function swiper_css_class() {
-		return self::SWIPER_VERSION_5_3_6 === self::swiper_active_version() ? 'swiper-container' : 'swiper';
+		return self::SWIPER_VERSION_8_4_5 === self::swiper_active_version() ? 'swiper' : 'swiper-container';
 	}
 
 	public static function swiper_assets_path() {
-		switch ( self::swiper_active_version() ) {
-			case self::SWIPER_VERSION_5_3_6:
-				return 'lib/swiper/';
-			case self::SWIPER_VERSION_8_4_5:
-				return 'lib/swiper/v8/';
+		$path = 'lib/swiper/';
+
+		if ( self::SWIPER_VERSION_8_4_5 === self::swiper_active_version() ) {
+			$path .= 'v8/';
 		}
+
+		return $path;
 	}
 
 	/**
