@@ -57,6 +57,18 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 
 				await editor.togglePreviewMode();
 			} );
+
+			await test.step( 'Assert styling with negative spacing value', async () => {
+				await editor.setSliderControlValue( 'icon_gap', '-5' );
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+			} );
 		} );
 	} );
 } );
