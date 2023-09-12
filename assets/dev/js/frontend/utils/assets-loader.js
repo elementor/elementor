@@ -41,12 +41,12 @@ const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : 
 // 	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
 // 	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
 
-const swiperSource = elementorFrontendConfig.swiperActiveVersion === '8.4.5'
-	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
-	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
+// const swiperSource = elementorFrontendConfig.swiperActiveVersion === '8.4.5'
+// 	? `${ elementorFrontendConfig.urls.assets }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
+// 	: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
 
-// const { swiperAssetsPath, swiperActiveVersion } = elementorFrontendConfig,
-// 	swiperSource = `${ elementorFrontendConfig.urls.assets }${ swiperAssetsPath }swiper${ fileSuffix }.js?ver=${ swiperActiveVersion }`;
+const { swiperAssetsPath, swiperActiveVersion } = elementorFrontendConfig,
+	swiperSource = `${ elementorFrontendConfig.urls.assets }${ swiperAssetsPath }swiper${ fileSuffix }.js?ver=${ swiperActiveVersion }`;
 
 AssetsLoader.assets = {
 	script: {
