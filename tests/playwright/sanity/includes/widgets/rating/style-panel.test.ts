@@ -35,7 +35,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Assert styling', async () => {
-				await expect.soft( await ratingElement.locator( '.e-rating-wrapper' ) ).toHaveCSS( 'gap', '30px' );
+				await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
 
 				if ( 'active' === iconExperimentState ) {
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
