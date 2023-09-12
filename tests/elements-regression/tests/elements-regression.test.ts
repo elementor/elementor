@@ -12,6 +12,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		await wpAdmin.setExperiments( {
 			container: 'active',
 		} );
+
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
+		} );
 	} );
 
 	const testData = [
@@ -50,6 +54,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
+			await page.pause();
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',
