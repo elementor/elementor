@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.1 - 2023-09-12 =
+
+* Fix: Flexbox Container feature is activated by default for existing sites
+
 = 3.16.0 - 2023-09-12 =
 
 * New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
