@@ -61,7 +61,7 @@ const GalleryImage = ( {
 
 			{ children && (
 				<Overlay>
-					<OverlayBar gap={ 3 } position="bottom" { ...OverlayBarProps }>
+					<OverlayBar gap={ 1 } position="bottom" { ...OverlayBarProps }>
 						{ text && <OverlayBarText>{ text }</OverlayBarText> }
 
 						{ children }
