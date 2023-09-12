@@ -102,7 +102,7 @@ const Generate = () => {
 					{
 						generatedImages?.result
 							? (
-								<Stack gap={ 5 } sx={ { my: 6 } }>
+								<Stack gap={ 2 } sx={ { my: 2.5 } }>
 									<GenerateAgainSubmit disabled={ isLoading || '' === prompt } />
 
 									<NewPromptButton disabled={ isLoading } onClick={ () => {

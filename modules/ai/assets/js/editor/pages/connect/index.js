@@ -15,8 +15,8 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 	}, [] );
 
 	return (
-		<Stack alignItems="center" gap={ 5 }>
-			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
+		<Stack alignItems="center" gap={ 2 }>
+			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 1 } } />
 
 			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
@@ -35,7 +35,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 				href={ connectUrl }
 				variant="contained"
 				sx={ {
-					mt: 3,
+					mt: 1,
 					'&:hover': {
 						color: 'primary.contrastText',
 					},
