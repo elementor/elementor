@@ -805,7 +805,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 			// items content.
 			ob_start();
-			$this->print_child( $index );
+			$this->print_child( $index, $item_id );
 			$item_content = ob_get_clean();
 
 			$faq_schema[ $item_title ] = $item_content;
@@ -851,6 +851,31 @@ class Nested_Accordion extends Widget_Nested_Base {
 			<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
 			<?php
 		}
+	}
+
+	public function print_child( $index, $item_id = null ) {
+		$children = $this->get_children();
+
+		if ( ! empty( $children[ $index ] ) ) {
+			// Add data-tab-index attribute to the content area.
+			$add_attribute_to_container = function ( $should_render, $container ) use ( $item_id ) {
+					$this->add_attributes_to_container( $container, $item_id );
+
+				return $should_render;
+			};
+
+			add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
+			$children[ $index ]->print_element();
+			remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
+		}
+	}
+
+	protected function add_attributes_to_container( $container, $item_id ) {
+		$container->add_render_attribute( '_wrapper', [
+			'id' => $item_id,
+			'role' => 'region',
+			'aria-labelledby' => $item_id,
+		] );
 	}
 
 	protected function get_aria_label_for_title( $index, $item_title ): string {
