@@ -46,8 +46,7 @@ runs:
         npx wp-env start
         # change wp-env folder owner to www-data
         sudo chown 33:33 -R ~/wp-env/
-        sudo chown -R www-data:www-data wp-content/themes
-        sudo chown -R www-data:www-data wp-content/plugins
+        npx wp-env run cli ls -al
         npx wp-env run cli bash -c 'bash elementor-config/setup.sh'
     - name: WordPress debug information
       shell: bash
