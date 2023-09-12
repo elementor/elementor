@@ -73,6 +73,14 @@ PanelMenu.addAdminMenu = () => {
 		title: __( 'Finder', 'elementor' ),
 		callback: () => $e.route( 'finder' ),
 	}, 'navigate_from_page', 'view-page' );
+
+	PanelMenu.addItem( {
+		name: 'apps',
+		icon: 'eicon-search',
+		title: __( 'Apps', 'elementor' ),
+		type: 'link',
+		link: elementor.config.admin_apps_url,
+	}, 'navigate_from_page', 'finder' );
 };
 
 PanelMenu.addExitItem = () => {
