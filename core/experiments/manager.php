@@ -411,6 +411,7 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.11.0',
 			],
 			'default' => self::STATE_INACTIVE,
+			'hidden' => 'true',
 		] );
 
 		$this->add_feature( [

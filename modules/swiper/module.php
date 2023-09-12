@@ -80,16 +80,19 @@ class Module extends \Elementor\Core\Base\Module {
 	 * Convert Swiper experiment value to settings.
 	 */
 	public static function swiper_experiment_converter() {
-		if ( get_option( self::SWIPER_SETTINGS_OPTION_NAME ) ) {
-			return;
-		}
+//		if ( get_option( self::SWIPER_SETTINGS_OPTION_NAME ) ) {
+//			return;
+//		}
 
 		// Old swiper experiment value.
-		$swiper_version = get_option( 'elementor_experiment-e_swiper_latest' );
-		if ( 'active' === $swiper_version ) {
+		$swiper_settings = get_option( self::SWIPER_SETTINGS_OPTION_NAME );
+
+		if ( self::SWIPER_VERSION_8_4_5 === $swiper_settings ) {
 			update_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_8_4_5 );
+			update_option( 'elementor_experiment-e_swiper_latest', 'active' );
 		} else {
 			update_option( self::SWIPER_SETTINGS_OPTION_NAME, self::SWIPER_VERSION_5_3_6 );
+			update_option( 'elementor_experiment-e_swiper_latest', 'inactive' );
 		}
 	}
 

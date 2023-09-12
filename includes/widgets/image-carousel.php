@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Modules\Swiper\Module as Swiper;
 
 /**
  * Elementor image carousel widget.
@@ -932,7 +933,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'aria-live' => $has_autoplay_enabled ? 'off' : 'polite',
 			],
 			'carousel-wrapper' => [
-				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'class' => 'elementor-image-carousel-wrapper ' . Swiper::swiper_css_class(),
 				'dir' => $settings['direction'],
 			],
 		] );
