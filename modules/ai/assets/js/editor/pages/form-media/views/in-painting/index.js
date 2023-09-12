@@ -59,7 +59,7 @@ const InPainting = () => {
 
 					{
 						data?.result ? (
-							<Stack gap={ 5 } sx={ { my: 6 } }>
+							<Stack gap={ 2 } sx={ { my: 2.5 } }>
 								<GenerateAgainSubmit disabled={ isLoading } />
 
 								<NewPromptButton disabled={ isLoading } onClick={ () => {

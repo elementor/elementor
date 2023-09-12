@@ -1,10 +1,9 @@
 import { useState, useRef } from 'react';
-import { DialogTitle, Typography, Stack, IconButton, styled } from '@elementor/ui';
-import StyledChip from '../../../components/ui/styled-chip';
+import { AppBar, Toolbar, Typography, Stack, IconButton, Chip, styled } from '@elementor/ui';
 import PromptDialog from '../../../components/prompt-dialog';
 import { AIIcon, XIcon } from '@elementor/icons';
 
-const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
+const StyledDialog = styled( PromptDialog )( () => ( {
 	'& .MuiDialog-container': {
 		marginTop: 0,
 		alignItems: 'flex-end',
@@ -17,28 +16,30 @@ const StyledDialog = styled( PromptDialog )( ( { theme } ) => ( {
 } ) );
 
 const DialogHeader = ( { onClose, children } ) => (
-	<DialogTitle sx={ { fontWeight: 'normal' } }>
-		<AIIcon fontSize="large" sx={ { mr: 3 } } />
+	<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
+		<Toolbar variant="dense">
+			<AIIcon sx={ { mr: 1 } } />
 
-		<Typography component="span" variant="subtitle1" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
-			{ __( 'AI', 'elementor' ) }
-		</Typography>
+			<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+				{ __( 'AI', 'elementor' ) }
+			</Typography>
 
-		<StyledChip label={ __( 'Beta', 'elementor' ) } color="default" sx={ { ml: 3 } } />
+			<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
 
-		<Stack direction="row" spacing={ 3 } alignItems="center" sx={ { ml: 'auto' } }>
-			{ children }
+			<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
+				{ children }
 
-			<IconButton
-				size="small"
-				aria-label="close"
-				onClick={ onClose }
-				sx={ { '&.MuiButtonBase-root': { mr: -4 } } }
-			>
-				<XIcon />
-			</IconButton>
-		</Stack>
-	</DialogTitle>
+				<IconButton
+					size="small"
+					aria-label="close"
+					onClick={ onClose }
+					sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
+				>
+					<XIcon />
+				</IconButton>
+			</Stack>
+		</Toolbar>
+	</AppBar>
 );
 
 DialogHeader.propTypes = {

@@ -11,8 +11,8 @@ SingleImagePreview.propTypes = {
 };
 
 const Actions = ( { children, sx = {}, ...props } ) => (
-	<Box display="flex" width="100%" justifyContent="flex-end" alignItems="center" { ...props } sx={ { mb: 4, ...sx } }>
-		<Stack direction="row" spacing={ 3 } justifyContent="flex-end" width="100%">
+	<Box display="flex" width="100%" justifyContent="flex-end" alignItems="center" { ...props } sx={ { mb: 1.5, ...sx } }>
+		<Stack direction="row" spacing={ 2 } justifyContent="flex-end" width="100%">
 			{ children }
 		</Stack>
 	</Box>
