@@ -58,7 +58,7 @@
 		"@babel/runtime-corejs3": "~7.18.6",
 		"@elementor/eslint-plugin-editor": "^0.4.0",
 		"@elementor/externalize-wordpress-assets-webpack-plugin": "0.3.0",
-		"@elementor/extract-i18n-wordpress-expressions-webpack-plugin": "0.2.2",
+		"@elementor/extract-i18n-wordpress-expressions-webpack-plugin": "0.3.0",
 		"@elementor/generate-wordpress-asset-file-webpack-plugin": "0.3.0",
 		"@playwright/test": "1.33.0",
 		"@testing-library/dom": "^8.17.1",
