@@ -154,16 +154,6 @@ class Frontend extends App {
 	private $e_swiper_version;
 
 	/**
-	 * @var string
-	 */
-	private $e_swiper_asset_path_old;
-
-	/**
-	 * @var string
-	 */
-	private $e_swiper_version_old;
-
-	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -349,11 +339,6 @@ class Frontend extends App {
 	public function init_swiper_settings() {
 		$this->e_swiper_asset_path = Swiper::swiper_assets_path();
 		$this->e_swiper_version = Swiper::swiper_active_version();
-
-//		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-//		$this->e_swiper_asset_path_old = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
-//		$this->e_swiper_version_old = $e_swiper_latest ? '8.4.5' : '5.3.6';
-
 	}
 
 	/**
@@ -574,13 +559,6 @@ class Frontend extends App {
 			$frontend_dependencies,
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
-
-//		wp_register_style(
-//				'swiper',
-//				$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path_old . 'css/' ),
-//				[],
-//				$this->e_swiper_version_old
-//		);
 
 		wp_register_style(
 			'swiper',
