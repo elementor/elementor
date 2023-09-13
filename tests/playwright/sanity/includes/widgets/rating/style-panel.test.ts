@@ -58,6 +58,19 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await editor.togglePreviewMode();
 			} );
 
+			await test.step( 'Assert styling with negative spacing value', async () => {
+				await editor.setSliderControlValue( 'icon_gap', '-5' );
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+				await editor.setSliderControlValue( 'icon_gap', '' );
+			} );
+
 			await test.step( 'Assert styling of asymmetric Font Awesome icon has same size with font experiment on and off', async () => {
 				await editor.activatePanelTab( 'content' );
 				await page.locator( '.elementor-control-icons--inline__icon >> nth=0' ).click();
@@ -69,18 +82,6 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				}
-      } );
-
-			await test.step( 'Assert styling with negative spacing value', async () => {
-				await editor.setSliderControlValue( 'icon_gap', '-5' );
-
-				await editor.togglePreviewMode();
-
-				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
-					type: 'png',
-				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
-
-				await editor.togglePreviewMode();
 			} );
 		} );
 	} );
