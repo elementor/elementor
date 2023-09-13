@@ -21,13 +21,16 @@ export default class ElementRegressionHelper {
 		const widgetCount = await this.editorPage.getWidgetCount();
 		for ( let i = 0; i < widgetCount; i++ ) {
 			const widget = this.editorPage.getWidget().nth( i );
-			await expect( widget ).not.toHaveClass( /elementor-widget-empty/ );
+
+
+			await expect.soft( widget ).not.toHaveClass( /elementor-widget-empty/ );
 
 			if ( args.widgetType.includes( 'hover' ) ) {
 				await widget.locator( args.hoverSelector[ args.widgetType ] ).hover();
 				animation = 'allow';
 			}
-			await expect( widget )
+
+			await expect.soft( widget )
 				.toHaveScreenshot( `${ args.widgetType }_${ i }.png`, { maxDiffPixels: 200, timeout: 10000, animations: animation } );
 		}
 	}
@@ -37,11 +40,13 @@ export default class ElementRegressionHelper {
 		if ( args.widgetType.includes( 'hover' ) ) {
 			for ( let i = 0; i < widgetCount; i++ ) {
 				await this.page.locator( `${ EditorSelectors.widget } ${ args.hoverSelector[ args.widgetType ] }` ).nth( i ).hover();
-				await expect( this.page.locator( EditorSelectors.widget ).nth( i ) ).
+
+				await expect.soft( this.page.locator( EditorSelectors.widget ).nth( i ) ).
 					toHaveScreenshot( `${ args.widgetType }_${ i }_published.png`, { maxDiffPixels: 200, timeout: 10000, animations: 'allow' } );
 			}
 		} else {
-			await expect( this.page.locator( EditorSelectors.container ) )
+
+			await expect.soft( this.page.locator( EditorSelectors.container ) )
 				.toHaveScreenshot( `${ args.widgetType }_published.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}
@@ -67,7 +72,8 @@ export default class ElementRegressionHelper {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
 			label = '_published';
-			await expect( page.locator( EditorSelectors.container ) )
+
+			await expect.soft( page.locator( EditorSelectors.container ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editorPage.getPreviewFrame();
@@ -76,7 +82,8 @@ export default class ElementRegressionHelper {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '2000px';
 			} );
-			await expect( page.locator( EditorSelectors.container ) )
+
+			await expect.soft( page.locator( EditorSelectors.container ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}
