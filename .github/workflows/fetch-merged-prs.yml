@@ -22,10 +22,17 @@ jobs:
       - name: Get Release Date
         id: get-release-date
         run: ./.github/scripts/get-release-date.sh
+        env:
+          INPUT_RELEASE: ${{ github.event.inputs.release }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch merged PRs after release
         id: fetch-prs
         run: ./.github/scripts/fetch-merged-prs.sh
+        env:
+          INPUT_BRANCH: ${{ github.event.inputs.branch }}
+          RELEASE_DATE: ${{ env.RELEASE_DATE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload merged PRs as artifact
         uses: actions/upload-artifact@v3
