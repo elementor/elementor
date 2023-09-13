@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.2 - 2023-09-13 =
+
+* Fix: Various issues with deprecation updates and 3rd party plugins
+
 = 3.16.1 - 2023-09-12 =
 
 * Fix: Flexbox Container feature is activated by default for existing sites
