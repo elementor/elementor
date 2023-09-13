@@ -532,7 +532,7 @@ class Widget_Testimonial extends Widget_Base {
 			hasImage = ' elementor-has-image';
 
 			var imageHtml = '<img src="' + imageUrl + '" alt="testimonial" />';
-			if ( settings.link.url ) {
+			if ( !!settings.link && settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '">' + imageHtml + '</a>';
 			}
 		}
@@ -573,7 +573,7 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_name', 'none' );
 
-			if ( settings.link.url ) {
+			if ( !!settings.link && settings.link.url ) {
 				#>
 				<a href="{{{ settings.link.url }}}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</a>
 				<#
@@ -589,7 +589,7 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_job', 'none' );
 
-			if ( settings.link.url ) {
+			if ( !!settings.link && settings.link.url ) {
 				#>
 				<a href="{{{ settings.link.url }}}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</a>
 				<#

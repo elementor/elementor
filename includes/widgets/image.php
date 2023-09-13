@@ -795,7 +795,7 @@ class Widget_Image extends Widget_Base {
 
 			var link_url;
 
-			if ( 'custom' === settings.link_to ) {
+			if ( 'custom' === settings.link_to && !!settings.link ) {
 				link_url = settings.link.url;
 			}
 

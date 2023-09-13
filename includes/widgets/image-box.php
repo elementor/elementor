@@ -680,7 +680,7 @@ class Widget_Image_Box extends Widget_Base {
 
 			var imageHtml = '<img src="' + image_url + '" class="elementor-animation-' + settings.hover_animation + '" />';
 
-			if ( settings.link.url ) {
+			if ( !!settings.link && settings.link.url ) {
 				imageHtml = '<a href="' + settings.link.url + '" tabindex="-1">' + imageHtml + '</a>';
 			}
 
@@ -696,7 +696,7 @@ class Widget_Image_Box extends Widget_Base {
 				var title_html = settings.title_text,
 					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
-				if ( settings.link.url ) {
+				if ( !!settings.link && settings.link.url ) {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
 				}
 

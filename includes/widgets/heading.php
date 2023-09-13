@@ -343,7 +343,7 @@ class Widget_Heading extends Widget_Base {
 		<#
 		var title = settings.title;
 
-		if ( '' !== settings.link.url ) {
+		if ( !!settings.link && '' !== settings.link.url ) {
 			title = '<a href="' + settings.link.url + '">' + title + '</a>';
 		}
 
