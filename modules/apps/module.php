@@ -33,7 +33,7 @@ class Module extends BaseModule {
 		}, 10, 2 );
 
 		add_filter( 'elementor/finder/categories', function( array $categories ) {
-			$categories['settings']['items']['apps'] = [
+			$categories['site']['items']['apps'] = [
 				'title' => esc_html__( 'Apps', 'elementor-pro' ),
 				'url' => admin_url( 'admin.php?page=' . static::PAGE_ID ),
 				'icon' => 'apps',
