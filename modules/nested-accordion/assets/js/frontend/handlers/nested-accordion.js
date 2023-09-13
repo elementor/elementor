@@ -62,7 +62,8 @@ export default class NestedAccordion extends Base {
 		}
 
 		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
-			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+			const handler = new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+			handler.handeTitleLinkEnterOrSpaceEvent = this.clickListener.bind( this ); // To support enter and space keys
 		}
 	}
 
