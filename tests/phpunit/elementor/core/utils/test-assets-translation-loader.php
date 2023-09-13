@@ -42,8 +42,8 @@ class Test_Assets_Translation_Loader extends Elementor_Test_Base {
 
 		wp_register_script( 'test-script', $src );
 
-		Assets_Translation_Loader::for_handles( [ 'test-script' ], null, function ( $relative_path, $script_src, $handle ) {
-			if ( $handle === 'test-script' ) {
+		Assets_Translation_Loader::for_handles( [ 'test-script' ], null, function ( $relative_path, $script_src ) use ( $src ) {
+			if ( $script_src === $src ) {
 				return '/assets/js/script-override.translations.js';
 			}
 
