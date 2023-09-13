@@ -68,6 +68,20 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
 
 				await editor.togglePreviewMode();
+				await editor.setSliderControlValue( 'icon_gap', '' );
+			} );
+
+			await test.step( 'Assert styling of asymmetric Font Awesome icon has same size with font experiment on and off', async () => {
+				await editor.activatePanelTab( 'content' );
+				await page.locator( '.elementor-control-icons--inline__icon >> nth=0' ).click();
+				await page.locator( `.elementor-icons-manager__tab__item__content .fa-address-card` ).first().click();
+
+				if ( 'active' === iconExperimentState ) {
+					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+				} else {
+					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
+					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
+				}
 			} );
 		} );
 	} );
