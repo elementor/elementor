@@ -9,14 +9,12 @@ import ActionButton from './modal-item-action-button';
 const StyledItem = styled( Stack )`
   flex-direction: row;
 	align-items: flex-start;
-	padding: ${ ( { theme } ) => theme.spacing( 3, 5 ) };
+	padding: ${ ( { theme } ) => theme.spacing( 1, 2 ) };
 
 	& > .MuiSvgIcon-root {
-		margin-right: ${ ( { theme } ) => theme.spacing( 4 ) };
-		width: 16px;
-		height: 16px;
+		margin-right: ${ ( { theme } ) => theme.spacing( 1.5 ) };
 		position: relative;
-		top: ${ ( { theme } ) => theme.spacing( 1 ) };
+		top: ${ ( { theme } ) => theme.spacing( 0.25 ) };
 	}
 
   & .MuiIconButton-root {
@@ -42,10 +40,8 @@ const StyledItem = styled( Stack )`
 `;
 
 const StyledTitle = styled( Typography )`
-	margin-bottom: ${ ( { theme } ) => theme.spacing( 2 ) };
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	margin-bottom: ${ ( { theme } ) => theme.spacing( 0.5 ) };
+	font-size: 14px;
 `;
 
 const StyledDateSubtitle = styled( Typography )`
@@ -54,8 +50,7 @@ const StyledDateSubtitle = styled( Typography )`
 
 const StyledButtonsWrapper = styled( Box )`
 	& .MuiSvgIcon-root {
-		width: 16px;
-		height: 16px;
+		font-size: 1rem;
 	}
 `;
 
@@ -63,7 +58,7 @@ const StyledImage = styled( 'img' )`
 	height: 72px;
 	width: 72px;
 	object-fit: cover;
-	margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
+	margin-right: ${ ( { theme } ) => theme.spacing( 0.5 ) };
 `;
 
 const PromptHistoryItem = ( {
@@ -85,12 +80,12 @@ const PromptHistoryItem = ( {
 					tooltip: {
 						sx: {
 							m: '0 !important',
-							py: 2,
-							px: 3,
+							py: 0.5,
+							px: 1,
 						},
 					},
 				} } >
-					<StyledTitle variant="subtitle1" paragraph>{ prompt }</StyledTitle>
+					<StyledTitle variant="subtitle1" noWrap paragraph>{ prompt }</StyledTitle>
 				</Tooltip>
 
 				<Stack direction="row" justifyContent="space-between" alignItems="center" height="16px">
@@ -134,7 +129,7 @@ const PromptHistoryItem = ( {
 				</Stack>
 
 				{ images?.length > 0 && (
-					<Stack flexDirection="row" mt={ 3 }>
+					<Stack flexDirection="row" mt={ 1 }>
 						{ images.map(
 							/**
 							 * @param {Object} image

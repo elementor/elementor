@@ -9,7 +9,8 @@ const StyledPeriod = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const StyledPeriodTitle = styled( Typography )( ( { theme } ) => ( {
-	padding: theme.spacing( 4, 5 ),
+	padding: theme.spacing( 1.5, 2 ),
+	fontSize: '14px',
 	color: theme.palette.secondary.light,
 } ) );
 

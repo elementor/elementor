@@ -14,9 +14,9 @@ const PromptHistoryUpgrade = ( { variant } ) => {
 
 	return (
 		<Stack justifyContent="center"
-			sx={ { height: VARIANT_SMALL === variant ? 'auto' : '100%', textAlign: 'center', p: 5 } }
+			sx={ { height: VARIANT_SMALL === variant ? 'auto' : '100%', textAlign: 'center', p: 2 } }
 			data-testid={ `e-ph-upgrade-${ variant }` }>
-			<Typography variant="body1" sx={ { marginBottom: 5 } }>
+			<Typography variant="body1" sx={ { marginBottom: 2 } }>
 				{ messages[ variant ] || messages[ VARIANT_FULL ] }
 			</Typography>
 
@@ -29,7 +29,6 @@ const PromptHistoryUpgrade = ( { variant } ) => {
 				rel="noopener noreferrer"
 				startIcon={ <UpgradeIcon /> }
 				sx={ {
-					borderRadius: '4px',
 					width: '50%',
 					alignSelf: 'center',
 

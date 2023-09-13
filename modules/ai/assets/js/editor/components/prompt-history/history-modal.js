@@ -15,10 +15,10 @@ import { HISTORY_TYPES } from './history-types';
 const StyledContent = styled( Box )`
 	width: 360px;
 	position: relative;
-	margin-top: ${ ( { theme } ) => theme.spacing( 5 ) };
-	margin-right: ${ ( { theme } ) => theme.spacing( 5 ) };
+	margin-top: ${ ( { theme } ) => theme.spacing( 2 ) };
+	margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
 	background-color: ${ ( { theme } ) => theme.palette.background.paper };
-	border-radius: ${ ( { theme } ) => theme.border.radius.sm };
+	border-radius: ${ ( { theme } ) => `${ theme.shape.borderRadius }px` };
 	height: ${ ( { fullHeight } ) => fullHeight ? '86vh' : '52vh' };
 
 	@media screen and (max-width: 456px) {

@@ -3,7 +3,7 @@ import { XIcon } from '@elementor/icons';
 
 const StyledContent = styled( Box )( ( { theme } ) => ( {
 	marginTop: 0,
-	padding: theme.spacing( 4 ),
+	padding: theme.spacing( 1.5 ),
 	borderBottom: `1px solid ${ theme.palette.action.focus }`,
 	display: 'flex',
 	alignItems: 'center',
