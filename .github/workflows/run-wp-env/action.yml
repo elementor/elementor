@@ -44,7 +44,7 @@ runs:
       shell: bash
       run: |
         npx wp-env start
-        npx wp-env run cli chmod -R 755 wp-content
+        npx wp-env run cli chmod -R 777 wp-content
         # change wp-env folder owner to www-data
         sudo chown 33:33 -R ~/wp-env/
         npx wp-env run cli bash -c 'bash elementor-config/setup.sh'
