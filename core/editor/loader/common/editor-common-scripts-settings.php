@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
+use Elementor\Modules\Apps\Module as AppsModule;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Shapes;
@@ -35,6 +36,7 @@ class Editor_Common_Scripts_Settings {
 			'home_url' => home_url(),
 			'admin_settings_url' => admin_url( 'admin.php?page=' . Settings::PAGE_ID ),
 			'admin_tools_url' => admin_url( 'admin.php?page=' . Tools::PAGE_ID ),
+			'admin_apps_url' => admin_url( 'admin.php?page=' . AppsModule::PAGE_ID ),
 			'autosave_interval' => AUTOSAVE_INTERVAL,
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),

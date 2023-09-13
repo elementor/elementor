@@ -8,7 +8,6 @@ import { testIconCount } from './tests/icons';
 import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
 import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
-import AxeBuilder from '@axe-core/playwright';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -1390,6 +1389,50 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
 			type: 'png',
 		} ) ).toMatchSnapshot( 'tabs-accordion-title-width.png' );
+
+		await cleanup( wpAdmin );
+	} );
+
+	test( 'Verify the correct hover effect with screenshots', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Load template', async () => {
+			// Load template.
+			const filePath = _path.resolve( __dirname, `./templates/tabs-hover-styling.json` );
+			await editor.loadTemplate( filePath, false );
+			await editor.getPreviewFrame().waitForSelector( '.e-n-tabs' );
+
+			// Open front end.
+			await editor.publishAndViewPage();
+			await page.waitForSelector( '.elementor-widget-n-tabs' );
+		} );
+
+		const secondTab = await page.locator( '.e-n-tab-title >> nth=1' ),
+			widget = await page.locator( '.e-n-tabs' );
+
+		await test.step( 'Verify hover styling - desktop', async () => {
+			await secondTab.hover();
+			await page.waitForTimeout( 500 );
+
+			expect.soft( await widget.screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-with-hover-desktop.png' );
+		} );
+
+		// Assert
+		await test.step( 'Verify hover styling - mobile', async () => {
+			await page.setViewportSize( viewportSize.mobile );
+
+			await secondTab.hover();
+			await page.waitForTimeout( 500 );
+
+			expect.soft( await widget.screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-with-hover-mobile.png' );
+		} );
 
 		await cleanup( wpAdmin );
 	} );

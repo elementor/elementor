@@ -4,7 +4,7 @@ const ScreenshotContainer = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'outlineOffset',
 } )( ( { theme, selected, height, disabled, outlineOffset = '0px' } ) => {
 	const outlineColor = selected ? theme.palette.text.primary : theme.palette.text.disabled;
-	const outline = `${ theme.border.size.sm } ${ theme.border.style.solid } ${ outlineColor }`;
+	const outline = `2px solid ${ outlineColor }`;
 
 	return {
 		height,
@@ -15,7 +15,7 @@ const ScreenshotContainer = styled( Box, {
 		backgroundSize: '100% auto',
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.common.white,
-		borderRadius: theme.border.size.md,
+		borderRadius: theme.shape.borderRadius * 0.5,
 		outlineOffset,
 		outline,
 		opacity: disabled ? '0.4' : '1',
