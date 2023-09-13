@@ -47,6 +47,7 @@ runs:
         # change wp-env folder owner to www-data
         sudo chown 33:33 -R ~/wp-env/
         sudo pwd
+        sudo ls -al ~/wp-env/
         sudo chown 777 -R ~/wp-env/
         sudo ls -al
         npx wp-env run cli bash -c 'bash elementor-config/setup.sh'
