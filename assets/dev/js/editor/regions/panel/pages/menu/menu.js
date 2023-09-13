@@ -80,6 +80,7 @@ PanelMenu.addAdminMenu = () => {
 		title: __( 'Apps', 'elementor' ),
 		type: 'link',
 		link: elementor.config.admin_apps_url,
+		newTab: true,
 	}, 'navigate_from_page', 'finder' );
 };
 
