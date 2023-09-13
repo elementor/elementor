@@ -35,7 +35,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 
 			await test.step( 'Assert styling', async () => {
-				await expect.soft( await ratingElement.locator( '.e-rating-wrapper' ) ).toHaveCSS( 'gap', '30px' );
+				await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ) ).toHaveCSS( 'margin-inline-end', '30px' );
 
 				if ( 'active' === iconExperimentState ) {
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'svg >> nth=1' ) ).toHaveCSS( 'width', '50px' );
@@ -54,6 +54,18 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
 					type: 'png',
 				} ) ).toMatchSnapshot( `rating-styling-icon-experiment-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+			} );
+
+			await test.step( 'Assert styling with negative spacing value', async () => {
+				await editor.setSliderControlValue( 'icon_gap', '-5' );
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
 
 				await editor.togglePreviewMode();
 			} );
