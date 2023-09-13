@@ -392,6 +392,7 @@ class Manager extends Base_Object {
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
+				'minimum_installation_version' => '3.16.0',
 			],
 			'messages' => [
 				'on_deactivate' => esc_html__(
