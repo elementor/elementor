@@ -1,32 +1,38 @@
-import { Dialog, DialogContent } from '@elementor/ui';
+import { Dialog, DialogContent, Paper } from '@elementor/ui';
 import Draggable from 'react-draggable';
 import DialogHeader from './dialog-header';
 
+const DraggablePaper = ( props ) => (
+	<Draggable handle=".MuiAppBar-root" cancel={ '[class*="MuiDialogContent-root"]' } bounds="parent">
+		<Paper { ...props } />
+	</Draggable>
+);
+
 const PromptDialog = ( props ) => {
 	return (
-		<Draggable handle=".MuiDialogTitle-root" cancel={ '[class*="MuiDialogContent-root"]' }>
-			<Dialog
-				open={ true }
-				fullWidth={ true }
-				hideBackdrop={ true }
-				scroll="paper"
-				sx={ {
-					'& .MuiDialog-container': {
-						alignItems: 'flex-start',
-						mt: '18vh',
-					},
-				} }
-				PaperProps={ {
-					sx: {
-						m: 0,
-						maxHeight: '76vh',
-					},
-				} }
-				{ ...props }
-			>
-				{ props.children }
-			</Dialog>
-		</Draggable>
+		<Dialog
+			scroll="paper"
+			open={ true }
+			fullWidth={ true }
+			hideBackdrop={ true }
+			PaperComponent={ DraggablePaper }
+			disableScrollLock={ true }
+			sx={ {
+				'& .MuiDialog-container': {
+					alignItems: 'flex-start',
+					mt: '18vh',
+				},
+			} }
+			PaperProps={ {
+				sx: {
+					m: 0,
+					maxHeight: '76vh',
+				},
+			} }
+			{ ...props }
+		>
+			{ props.children }
+		</Dialog>
 	);
 };
 

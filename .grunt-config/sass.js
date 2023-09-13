@@ -66,7 +66,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/ai/assets/scss',
-				src: 'editor.scss',
+				src: '*.scss',
 				dest: 'assets/css/modules/ai',
 				ext: '.css',
 			},

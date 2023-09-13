@@ -4,7 +4,7 @@ import { TextField } from '@elementor/ui';
 const Textarea = forwardRef( ( props, ref ) => {
 	return (
 		<TextField
-			ref={ ref }
+			inputRef={ ref }
 			multiline
 			minRows={ 4 }
 			maxRows={ 20 }
