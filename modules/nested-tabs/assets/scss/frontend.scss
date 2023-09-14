@@ -76,6 +76,7 @@
 	--n-tabs-title-align-items-toggle: center;
 	--n-tabs-title-justify-content: center;
 	--n-tabs-title-align-items: center;
+	--n-tabs-title-text-align: center;
 	--n-tabs-title-direction: row;
 	--n-tabs-title-gap: 10px;
 	--n-tabs-title-flex-grow: 0;
@@ -202,12 +203,14 @@
 				display: flex;
 				align-items: center;
 				font-size: var(--n-tabs-title-font-size);
+				text-align: var(--n-tabs-title-text-align);
 			}
 
 			.e-n-tab-icon {
 				display: flex;
 				align-items: center;
 				flex-direction: column;
+				flex-shrink: 0;
 				order: var(--n-tabs-icon-order);
 				overflow: hidden;
 
