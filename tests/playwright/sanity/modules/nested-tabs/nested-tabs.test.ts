@@ -1437,4 +1437,28 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		await cleanup( wpAdmin );
 	} );
+
+	test( 'Check title long title alignment', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage();
+
+		// Load template.
+		const filePath = _path.resolve( __dirname, `./templates/tabs-long-titles.json` );
+		await editor.loadTemplate( filePath, false );
+		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs' );
+
+		// Act.
+		// Open front end.
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+		// Assert
+		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
+			type: 'png',
+		} ) ).toMatchSnapshot( 'tabs-long-titles.png' );
+
+		await cleanup( wpAdmin );
+	} );
 } );
