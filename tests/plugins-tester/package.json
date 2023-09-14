@@ -22,7 +22,7 @@
 	},
 	"devDependencies": {
 		"@actions/core": "^1.10.0",
-		"@wordpress/env": "^5.7.0",
+		"@wordpress/env": "8.6.1",
 		"cross-env": "^7.0.3"
 	}
 }

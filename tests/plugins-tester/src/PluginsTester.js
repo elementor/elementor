@@ -19,11 +19,11 @@ export class PluginsTester {
 	}
 
 	async run() {
-		if ( this.options.runServer ) {
-			this.setCwd();
-			this.runServer();
-			this.prepareTestSite();
-		}
+		// If ( this.options.runServer ) {
+		this.setCwd();
+		this.runServer();
+		this.prepareTestSite();
+		// }
 		this.disableContainers();
 		this.checkPlugins();
 	}
@@ -35,9 +35,9 @@ export class PluginsTester {
 	}
 
 	runWP( cmd ) {
-		if ( ! this.options.runServer ) {
-			return this.cmd( `cd ../../ && ${ cmd }` );
-		}
+		// If ( ! this.options.runServer ) {
+		// 	return this.cmd( `cd ../../ && ${ cmd }` );
+		// }
 		return this.cmd( cmd );
 	}
 
