@@ -3,6 +3,7 @@ namespace Elementor\Core\Editor\Loader\V2;
 
 use Elementor\Core\Editor\Loader\Common\Editor_Common_Scripts_Settings;
 use Elementor\Core\Editor\Loader\Editor_Base_Loader;
+use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -91,9 +92,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				ELEMENTOR_VERSION,
 				true
 			);
-
-			wp_set_script_translations( $config['handle'], 'elementor' );
 		}
+
+		$packages_handles = $this->assets_config_provider->pluck( 'handle' )->all();
+
+		Assets_Translation_Loader::for_handles( $packages_handles, 'elementor' );
 
 		do_action( 'elementor/editor/v2/scripts/register' );
 	}
