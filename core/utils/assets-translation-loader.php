@@ -20,6 +20,7 @@ class Assets_Translation_Loader {
 
 		foreach ( $handles as $handle ) {
 			wp_set_script_translations( $handle, $domain );
+			
 		}
 	}
 
