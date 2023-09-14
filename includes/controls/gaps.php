@@ -59,4 +59,16 @@ class Control_Gaps extends Control_Dimensions {
 			'row' => esc_html__( 'Row', 'elementor' ),
 		];
 	}
+
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
+
+		// BC for any old Slider control values.
+		if ( isset( $value['size'] ) && '' !== $value['size'] && '' === $value['column'] ) {
+			$value['column'] = strval( $value['size'] );
+			$value['row'] = strval( $value['size'] );
+		}
+
+		return $value;
+	}
 }
