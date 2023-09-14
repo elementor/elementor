@@ -64,11 +64,15 @@ class Control_Gaps extends Control_Dimensions {
 		$value = parent::get_value( $control, $settings );
 
 		// BC for any old Slider control values.
-		if ( isset( $value['size'] ) && '' !== $value['size'] && '' === $value['column'] ) {
+		if ( $this->should_update_gaps_values( $value ) ) {
 			$value['column'] = strval( $value['size'] );
 			$value['row'] = strval( $value['size'] );
 		}
 
 		return $value;
+	}
+
+	private function should_update_gaps_values( $value ) {
+		return isset( $value['size'] ) && '' !== $value['size'] && '' === $value['column'];
 	}
 }

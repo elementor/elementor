@@ -45,7 +45,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 	getControlValue( key ) {
 		const valuesUpdated = ControlDimensionsView.prototype.getControlValue.apply( this, arguments );
 
-		if ( valuesUpdated.hasOwnProperty( 'size' ) && '' !== valuesUpdated.size && ! valuesUpdated.hasOwnProperty( 'column' ) ) {
+		if ( this.shouldUpdateGapsValues( valuesUpdated ) ) {
 			valuesUpdated.column = '' + valuesUpdated.size;
 			valuesUpdated.row = '' + valuesUpdated.size;
 			valuesUpdated.isLinked = true;
@@ -53,6 +53,10 @@ ControlGapItemView = ControlDimensionsView.extend( {
 
 		return valuesUpdated;
 	},
+
+	shouldUpdateGapsValues( valuesUpdated ) {
+		return !! valuesUpdated.hasOwnProperty( 'size' ) && '' !== valuesUpdated.size && ! valuesUpdated.hasOwnProperty( 'column' )
+	}
 } );
 
 module.exports = ControlGapItemView;
