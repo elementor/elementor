@@ -14,7 +14,7 @@
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
 		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
 		"test:qunit": "grunt qunit",
-		"test:setup:playwright": "wp-env run cli \"bash -c 'bash elementor-config/setup.sh'\"",
+		"test:setup:playwright": "wp-env run cli bash elementor-config/setup.sh",
 		"test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:default": "npx cross-env TEST_SUITE=@default playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:reverse-columns": "npx cross-env TEST_SUITE=@reverse-columns playwright test -c tests/playwright/playwright.config.ts",

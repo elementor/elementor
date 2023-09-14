@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"test:setup": "wp-env run cli bash -c 'bash elementor-config/setup.sh'",
+		"test:setup": "wp-env run cli bash elementor-config/setup.sh",
 		"test": "node index.js",
 		"test:part1": "cross-env TEST_SUITE=part1  node index.js ",
 		"test:part2": "cross-env TEST_SUITE=part2  node index.js ",

@@ -45,8 +45,7 @@ export class PluginsTester {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
 			try {
-				this.runWP( 'npx wp-env run cli whoami' );
-				this.runWP( `npx wp-env run cli bash -c 'bash elementor-config/activate_plugin.sh ${ slug }' ` );
+				this.runWP( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug }` );
 				// Const filename = process.env.CI ? '../../logs.txt' : 'logs.txt';
 
 				// if ( fs.existsSync( filename ) ) {
