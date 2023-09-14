@@ -240,9 +240,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.16.3 - 2023-09-13 =
+= 3.16.3 - 2023-09-14 =
 
+* Tweak: Changed Improved CSS loading feature to inactive for existing sites
 * Fix: Dynamic tag for ACF image field is not working as expected ([#23757](https://github.com/elementor/elementor/issues/23757))
+* Fix: Display issues when using long titles inside Tabs widget ([#23670](https://github.com/elementor/elementor/issues/23670))
+* Fix: Gaps control does not present values as expected in Container widget
 
 = 3.16.2 - 2023-09-13 =
 
