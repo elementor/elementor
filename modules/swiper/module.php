@@ -24,16 +24,6 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	const SWIPER_VERSION_8_4_5 = '8.4.5';
 
-	/**
-	 * Get name.
-	 *
-	 * Retrieve the module name.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return string Module name.
-	 */
 	public function get_name() {
 		return 'swiper';
 	}
