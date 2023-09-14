@@ -157,11 +157,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
-			const accessibilityScanResults = await new AxeBuilder( { page } )
-				.include( '.elementor-widget-n-tabs' )
-				.analyze();
-
-			await expect( accessibilityScanResults.violations ).toEqual( [] );
+			await editor.axeCoreAccessibilityTest( page, '.elementor-widget-n-tabs' );
 		} );
 	} );
 
@@ -1398,26 +1394,46 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await cleanup( wpAdmin );
 	} );
 
-	test( 'Check title long title alignment', async ( { page }, testInfo ) => {
+	test( 'Verify the correct hover effect with screenshots', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
 		await setup( wpAdmin );
 		const editor = await wpAdmin.openNewPage();
 
-		// Load template.
-		const filePath = _path.resolve( __dirname, `./templates/tabs-long-titles.json` );
-		await editor.loadTemplate( filePath, false );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs' );
+		await test.step( 'Load template', async () => {
+			// Load template.
+			const filePath = _path.resolve( __dirname, `./templates/tabs-hover-styling.json` );
+			await editor.loadTemplate( filePath, false );
+			await editor.getPreviewFrame().waitForSelector( '.e-n-tabs' );
 
-		// Act.
-		// Open front end.
-		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs' );
+			// Open front end.
+			await editor.publishAndViewPage();
+			await page.waitForSelector( '.elementor-widget-n-tabs' );
+		} );
+
+		const secondTab = await page.locator( '.e-n-tab-title >> nth=1' ),
+			widget = await page.locator( '.e-n-tabs' );
+
+		await test.step( 'Verify hover styling - desktop', async () => {
+			await secondTab.hover();
+			await page.waitForTimeout( 500 );
+
+			expect.soft( await widget.screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-with-hover-desktop.png' );
+		} );
 
 		// Assert
-		expect.soft( await page.locator( '.e-con' ).first().screenshot( {
-			type: 'png',
-		} ) ).toMatchSnapshot( 'tabs-long-titles.png' );
+		await test.step( 'Verify hover styling - mobile', async () => {
+			await page.setViewportSize( viewportSize.mobile );
+
+			await secondTab.hover();
+			await page.waitForTimeout( 500 );
+
+			expect.soft( await widget.screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-with-hover-mobile.png' );
+		} );
 
 		await cleanup( wpAdmin );
 	} );
