@@ -9,6 +9,7 @@ class Test_Swiper extends Elementor_Test_Base {
 	public function test__swiper_exp_to_settings_conversion() {
 		$this->swiper_exp_to_settings_conversion( 'inactive', '5.3.6' );
 		$this->swiper_exp_to_settings_conversion( 'active', '8.4.5' );
+		$this->swiper_exp_to_settings_conversion( 'undefined', '5.3.6' );
 	}
 
 	public function swiper_exp_to_settings_conversion( $old_value, $expected_value ) {
@@ -21,6 +22,5 @@ class Test_Swiper extends Elementor_Test_Base {
 		$this->assertEquals( $expected_value, get_option( 'elementor_swiper_active_version' ) );
 		delete_option( 'elementor_swiper_active_version' );
 		delete_option( 'elementor_experiment-e_swiper_latest' );
-
 	}
 }
