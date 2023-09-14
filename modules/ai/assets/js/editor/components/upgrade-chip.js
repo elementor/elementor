@@ -10,29 +10,28 @@ import {
 	ListItem,
 	ListItemText,
 	ListItemIcon,
+	Paper,
 } from '@elementor/ui';
 import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
 
-const StyledContent = styled( Box )( ( { theme } ) => ( {
+const StyledContent = styled( Paper )( ( { theme } ) => ( {
 	position: 'relative',
 	'[data-popper-placement="top"] &': {
-		marginBottom: theme.spacing( 6 ),
+		marginBottom: theme.spacing( 2.5 ),
 	},
 	'[data-popper-placement="bottom"] &': {
-		marginTop: theme.spacing( 6 ),
+		marginTop: theme.spacing( 2.5 ),
 	},
-	padding: theme.spacing( 7 ),
-	backgroundColor: theme.palette.background.paper,
+	padding: theme.spacing( 3 ),
 	boxShadow: theme.shadows[ 4 ],
-	borderRadius: theme.border.radius.sm,
 	zIndex: '9999',
 } ) );
 
 const StyledArrow = styled( Box )( ( { theme } ) => ( {
-	width: theme.sizing[ 500 ],
-	height: theme.sizing[ 200 ],
+	width: theme.spacing( 5 ),
+	height: theme.spacing( 2.5 ),
 	position: 'absolute',
 	overflow: 'hidden',
 	// Override Popper inline styles.
@@ -43,19 +42,20 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 	},
 	'[data-popper-placement="bottom"] &': {
 		'--rotate': '180deg',
-		top: `calc(${ theme.sizing[ 200 ] } * -1)`,
+		top: `calc(${ theme.spacing( 2.5 ) } * -1)`,
 	},
 	'&::after': {
 		backgroundColor: theme.palette.background.paper,
 		content: '""',
 		display: 'block',
 		position: 'absolute',
-		width: theme.sizing[ 200 ],
-		height: theme.sizing[ 200 ],
+		width: theme.spacing( 2.5 ),
+		height: theme.spacing( 2.5 ),
 		top: 0,
 		left: '50%',
 		transform: 'translateX(-50%) translateY(-50%) rotate(45deg)',
 		boxShadow: '1px 1px 5px 0px rgba(0, 0, 0, 0.2)',
+		backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
 	},
 } ) );
 
@@ -103,7 +103,7 @@ const UpgradeChip = ( {
 			display="flex"
 			alignItems="center"
 		>
-			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } />
+			<Chip color="accent" label={ __( 'Upgrade', 'elementor' ) } icon={ <UpgradeIcon /> } size="small" />
 
 			<Popper
 				open={ isPopoverOpen }
@@ -124,11 +124,11 @@ const UpgradeChip = ( {
 						{ __( 'Unlimited access to Elementor AI', 'elementor' ) }
 					</Typography>
 
-					<List sx={ { mb: 7 } }>
+					<List sx={ { mb: 1 } }>
 						{
 							upgradeBullets.map( ( bullet, index ) => (
-								<ListItem key={ index } disableGutters sx={ { alignItems: 'flex-start', my: 4 } }>
-									<ListItemIcon sx={ { mr: 3 } }>
+								<ListItem key={ index } disableGutters sx={ { alignItems: 'flex-start' } }>
+									<ListItemIcon>
 										<CheckedCircleIcon />
 									</ListItemIcon>
 									<ListItemText sx={ { m: 0 } }>

@@ -33,7 +33,7 @@ const PromptField = ( { disabled, onChange, ...props } ) => {
 			} }
 			sx={ {
 				'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
-					pb: 9,
+					pb: 5,
 					width: '89%',
 				},
 			} }
