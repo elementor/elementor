@@ -55,8 +55,8 @@ ControlGapItemView = ControlDimensionsView.extend( {
 	},
 
 	shouldUpdateGapsValues( valuesUpdated ) {
-		return !! valuesUpdated.hasOwnProperty( 'size' ) && '' !== valuesUpdated.size && ! valuesUpdated.hasOwnProperty( 'column' )
-	}
+		return !! valuesUpdated.hasOwnProperty( 'size' ) && '' !== valuesUpdated.size && ! valuesUpdated.hasOwnProperty( 'column' );
+	},
 } );
 
 module.exports = ControlGapItemView;
