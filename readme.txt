@@ -240,6 +240,52 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.3 - 2023-09-13 =
+
+* Fix: Dynamic tag for ACF image field is not working as expected ([#23757](https://github.com/elementor/elementor/issues/23757))
+
+= 3.16.2 - 2023-09-13 =
+
+* Fix: Various issues with deprecation updates and 3rd party plugins
+
+= 3.16.1 - 2023-09-12 =
+
+* Fix: Flexbox Container feature is activated by default for existing sites
+
+= 3.16.0 - 2023-09-12 =
+
+* New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
+* Tweak: Enhanced TTFB metric by optimizing controls display condition functions in the Editor (props [@DMajorChump](https://github.com/MajorChump), [#21762](https://github.com/elementor/elementor/issues/21762))
+* Tweak: Implemented accessibility improvements in Nested Tabs ([#22935](https://github.com/elementor/elementor/issues/22935))
+* Tweak: Promoted Flexbox Container feature to Stable status
+* Tweak: Enabled Flexbox Container feature by default for new installations
+* Tweak: Substituted 'Gap between elements' control in site settings with the new Container Gap control
+* Tweak: Upgraded HTML Structure for Tabs Widget
+* Tweak: Implemented CSS logical properties for border-radius in Elementor Editor
+* Tweak: Implemented CSS logical properties in Container, Accordion and Tabs widgets
+* Tweak: Enhanced dropdown preview for Global Typography styles
+* Tweak: Enabled Improved Asset Loading feature by default for all sites
+* Tweak: Promoted Grid Container feature to Beta status
+* Tweak: Replace CSS `float` with other layouts in the Editor
+* Tweak: Concealed the 'Empty View' cell within the Grid Container to prevent distortion of the preview
+* Tweak: Updated `eicons` library to v5.23.0
+* Tweak: Added keyboard accessibility to a link in Icon Box widget
+* Tweak: Added keyboard accessibility to a link in Image Box widget
+* Tweak: Added 'Download System Info" button to the top of Elementor System Info screen
+* Fix: Justify Content and Align Items controls are not functioning as expected in responsive mode in Container widget ([#19363](https://github.com/elementor/elementor/issues/19363))
+* Fix: Wrong structure of predefined Container layouts in RTL ([#20184](https://github.com/elementor/elementor/issues/20184))
+* Fix: Editing a post or page created in Gutenberg with Elementor resulted in sections being displayed instead of containers ([#20282](https://github.com/elementor/elementor/issues/20282))
+* Fix: Custom unit inheritance problem in mobile mode in Grid Container ([#22289](https://github.com/elementor/elementor/issues/22289))
+* Fix: Spacer not functioning as intended in Container widget ([#20023](https://github.com/elementor/elementor/issues/20023))
+* Fix: Translated blending mode options in `heading.php` for improved usability (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Use default placeholder set in URL control (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved translation functionality in the Editor (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved code security enforcement in Text Path widget
+* Fix: "Add New Container" functionality is not functioning correctly in Finder
+* Fix: Styling from the parent Accordion was inherited by an Accordion placed inside it in Accordion widget
+* Fix: Title is not breaking in Recently Edited modal in Editor Top Bar
+* Fix: Edit page with WordPress Editor issue when using WordPress 6.3
+
 = 3.15.3 - 2023-08-20 =
 
 * Fix: Elements can't be edited after accessing the page settings panel ([#23365](https://github.com/elementor/elementor/issues/23365))
