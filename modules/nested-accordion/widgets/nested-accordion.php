@@ -788,7 +788,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$faq_schema = [];
 
 		foreach ( $items as $index => $item ) {
-            $accordion_count = $index + 1;
+			$accordion_count = $index + 1;
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
@@ -888,7 +888,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-		<div class="e-n-accordion" aria-label="Accordion"> <!-- todo -->
+		<div class="e-n-accordion" aria-label="Accordion">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
@@ -905,13 +905,13 @@ class Nested_Accordion extends Widget_Nested_Base {
 					itemUid = elementUid + itemCount,
 					itemWrapperKey = itemUid,
 					itemTitleKey = 'item-' + itemUid,
-                    ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
+					ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
 
-                let itemTitle = item.item_title;
+				let itemTitle = item.item_title;
 
-                    if (0 === index) {
-                        itemTitle = itemTitle + 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
-                    }
+					if (0 === index) {
+						itemTitle = itemTitle + 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
+					}
 
 					if ( '' !== item.element_css_id ) {
 						itemId = item.element_css_id;
@@ -932,12 +932,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 					view.addRenderAttribute( itemTitleKey, {
 						'class': ['e-n-accordion-item-title'],
-                        'data-accordion-index': itemCount,
-                        'tabindex': defaultState ? ariaExpanded ? 0 : -1 : 0,
-                        'aria-expanded': ariaExpanded,
-                        'aria-controls': itemId,
-                        'aria-label': itemTitle,
-                        'role': 'button',
+						'data-accordion-index': itemCount,
+						'tabindex': defaultState ? ariaExpanded ? 0 : -1 : 0,
+						'aria-expanded': ariaExpanded,
+						'aria-controls': itemId,
+						'aria-label': itemTitle,
+						'role': 'button',
 					});
 
 					view.addRenderAttribute( itemTitleText, {
