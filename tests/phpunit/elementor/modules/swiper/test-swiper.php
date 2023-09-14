@@ -7,7 +7,7 @@ use Elementor\Modules\Swiper\Module as Swiper_Module;
 
 class Test_Swiper extends Elementor_Test_Base {
 	public function test__swiper_exp_to_settings_conversion() {
-//		$this->swiper_exp_to_settings_conversion( 'inactive', '5.3.6' );
+		$this->swiper_exp_to_settings_conversion( 'inactive', '5.3.6' );
 		$this->swiper_exp_to_settings_conversion( 'active', '8.4.5' );
 	}
 
