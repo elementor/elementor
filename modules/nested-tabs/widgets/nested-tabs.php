@@ -731,7 +731,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
 					],
 				],
 			]
@@ -777,7 +777,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
 					],
 				],
 
@@ -824,7 +824,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
+						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
 					],
 				],
 			]
@@ -1090,6 +1090,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
+			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1176,7 +1177,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
 			'data-widget-number' => $widget_number,
-			'aria-label' => esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ),
+			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1221,7 +1222,7 @@ class NestedTabs extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ); ?>">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
@@ -1252,6 +1253,7 @@ class NestedTabs extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
+					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 
