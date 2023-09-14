@@ -63,7 +63,7 @@ class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?v=icTcREd1tAg&amp;list=PLZyp9H25CboE6dhe7MnUxUdp4zU7OsNSe&amp;index=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?si=XX1RveLtiTcLKmvC&amp;list=PLZyp9H25CboFLsiad-zQOs-o-pGiv0a54;index=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
@@ -71,7 +71,7 @@ class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 								<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo esc_html__( 'Watch the Full Guide', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/wp-dash-getting-started-container/" target="_blank" class="button button-secondary button-hero"><?php echo esc_html__( 'Watch the Full Guide', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>

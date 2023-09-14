@@ -31,6 +31,10 @@ class Embed {
 		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
 		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
 		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
+		'videopress' => [
+			'/^(?:http(?:s)?:\/\/)?videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
+			'/^(?:http(?:s)?:\/\/)?(?:www\.)?video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/i',
+		],
 	];
 
 	/**
@@ -48,6 +52,7 @@ class Embed {
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
+		'videopress' => 'https://videopress.com/embed/{VIDEO_ID}',
 	];
 
 	/**
@@ -65,13 +70,17 @@ class Embed {
 	 */
 	public static function get_video_properties( $video_url ) {
 		foreach ( self::$provider_match_masks as $provider => $match_mask ) {
-			preg_match( $match_mask, $video_url, $matches );
+			if ( ! is_array( $match_mask ) ) {
+				$match_mask = [ $match_mask ];
+			}
 
-			if ( $matches ) {
-				return [
-					'provider' => $provider,
-					'video_id' => $matches[1],
-				];
+			foreach ( $match_mask as $mask ) {
+				if ( preg_match( $mask, $video_url, $matches ) ) {
+					return [
+						'provider' => $provider,
+						'video_id' => $matches[1],
+					];
+				}
 			}
 		}
 
@@ -181,7 +190,7 @@ class Embed {
 		if ( ! $video_embed_url ) {
 			return null;
 		}
-		if ( ! $options['lazy_load'] ) {
+		if ( ! isset( $options['lazy_load'] ) || ! $options['lazy_load'] ) {
 			$default_frame_attributes['src'] = $video_embed_url;
 		} else {
 			$default_frame_attributes['data-lazy-load'] = $video_embed_url;

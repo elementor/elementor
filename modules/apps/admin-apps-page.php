@@ -22,7 +22,7 @@ class Admin_Apps_Page {
 				<?php self::render_plugins_list(); ?>
 			</div>
 			<div class="e-a-page-footer">
-				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
+				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on the their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
 			</div>
 		</div>
 		<?php
