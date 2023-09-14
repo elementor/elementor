@@ -240,6 +240,18 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.3 - 2023-09-13 =
+
+* Fix: Dynamic tag for ACF image field is not working as expected ([#23757](https://github.com/elementor/elementor/issues/23757))
+
+= 3.16.2 - 2023-09-13 =
+
+* Fix: Various issues with deprecation updates and 3rd party plugins
+
+= 3.16.1 - 2023-09-12 =
+
+* Fix: Flexbox Container feature is activated by default for existing sites
+
 = 3.16.0 - 2023-09-12 =
 
 * New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
