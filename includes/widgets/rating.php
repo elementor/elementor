@@ -103,7 +103,7 @@ class Widget_Rating extends Widget_Base {
 		);
 
 		$this->add_control(
-			'icon_unmasked_color',
+			'icon_unmarked_color',
 			[
 				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,

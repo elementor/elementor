@@ -19,7 +19,7 @@ const OutPaintingContent = ( {
 	};
 
 	return (
-		<Stack alignItems={ 'center' } spacing={ 2 } flexGrow={ 1 }>
+		<Stack alignItems={ 'center' } spacing={ 0.5 } flexGrow={ 1 }>
 			<AvatarEditor
 				ref={ cropperRef }
 				image={ editImage.url }

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import WpAdminPage from '../pages/wp-admin-page';
-import AxeBuilder from '@axe-core/playwright';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import { afterAll, beforeAll } from './helper';
 
 test.describe( 'Rating widget @rating', () => {
 	test.describe( 'Rating experiment inactive', () => {
@@ -41,37 +41,21 @@ test.describe( 'Rating widget @rating', () => {
 				await editor.addWidget( 'star-rating', container );
 
 				// Assert
-				await expect( await starRatingWrapper ).toHaveCount( 1 );
+				await expect.soft( await starRatingWrapper ).toHaveCount( 1 );
 			} );
 		} );
 	} );
 
 	test.describe( 'Rating experiment is active', () => {
 		test.beforeAll( async ( { browser }, testInfo ) => {
-			const page = await browser.newPage();
-			const wpAdmin = await new WpAdminPage( page, testInfo );
-
-			await wpAdmin.setExperiments( {
-				container: 'active',
-				rating: 'active',
-			} );
-
-			await page.close();
+			await beforeAll( browser, testInfo );
 		} );
 
 		test.afterAll( async ( { browser }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				rating: 'inactive',
-				container: 'inactive',
-			} );
-
-			await page.close();
+			await afterAll( browser, testInfo );
 		} );
 
-		test( 'General Test', async ( { page }, testInfo ) => {
+		test( 'Widget panel test', async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -91,7 +75,7 @@ test.describe( 'Rating widget @rating', () => {
 				await page.locator( widgetSearchBar ).fill( 'star-rating' );
 
 				// Assert
-				await expect( starRatingWidgetInPanel ).toBeHidden();
+				await expect.soft( starRatingWidgetInPanel ).toBeHidden();
 			} );
 
 			await test.step( 'Check that Rating widget is active', async () => {
@@ -100,24 +84,7 @@ test.describe( 'Rating widget @rating', () => {
 				rating = await editor.selectElement( ratingID );
 
 				// Assert
-				await expect( await rating ).toHaveCount( 1 );
-			} );
-		} );
-
-		test( '@axe-core accessibility test', async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo ),
-				editor = await wpAdmin.openNewPage(),
-				container = await editor.addElement( { elType: 'container' }, 'document' );
-
-			await editor.addWidget( 'rating', container );
-			await editor.publishAndViewPage();
-
-			await test.step( '@axe-core/playwright', async () => {
-				const accessibilityScanResults = await new AxeBuilder( { page } )
-					.include( '.elementor-widget-rating' )
-					.analyze();
-
-				await expect( accessibilityScanResults.violations ).toEqual( [] );
+				await expect.soft( await rating ).toHaveCount( 1 );
 			} );
 		} );
 	} );

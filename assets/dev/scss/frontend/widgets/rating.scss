@@ -12,13 +12,16 @@
 
 		&-wrapper {
 			display: flex;
-			gap: var(--e-rating-gap);
 			flex-direction: row;
 			width: fit-content;
 		}
 
 		.e-icon {
 			position: relative;
+
+			&:not(:last-child) {
+				margin-inline-end: var(--e-rating-gap);
+			}
 
 			&-wrapper {
 
@@ -44,7 +47,7 @@
 				}
 
 				svg {
-					width: var(--e-rating-icon-font-size);
+					width: auto;
 					height: var(--e-rating-icon-font-size);
 					fill: var(--e-rating-icon-color);
 				}

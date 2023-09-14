@@ -77,7 +77,9 @@ const prodConfig = {
 	},
 	plugins: [
 		...( common.plugins || [] ),
-		new ExtractI18nWordpressExpressionsWebpackPlugin(),
+		new ExtractI18nWordpressExpressionsWebpackPlugin( {
+			pattern: ( entryPath ) => path.resolve( entryPath, '../../src/**/*.{ts,tsx,js,jsx}' ),
+		} ),
 	],
 	output: {
 		...( common.output || {} ),

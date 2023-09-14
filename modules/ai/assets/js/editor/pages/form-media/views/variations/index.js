@@ -99,7 +99,7 @@ const Variations = () => {
 						onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 					/>
 
-					<Stack gap={ 5 } sx={ { my: 6 } }>
+					<Stack gap={ 2 } sx={ { my: 2.5 } }>
 						{
 							data?.result?.length > 0
 								? <GenerateAgainSubmit disabled={ isLoading || '' === prompt } />
