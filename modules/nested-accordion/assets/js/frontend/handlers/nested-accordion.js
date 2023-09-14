@@ -5,9 +5,6 @@ export default class NestedAccordion extends Base {
 		super( ...args );
 
 		this.animations = new Map();
-		this.directionNext = 'next';
-		this.directionPrevious = 'previous';
-		this.focusableElementSelector = 'button, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
 	}
 
 	getDefaultSettings() {
