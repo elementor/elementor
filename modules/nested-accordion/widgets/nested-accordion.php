@@ -873,7 +873,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	protected function add_attributes_to_container( $container, $item_id ) {
 		$container->add_render_attribute( '_wrapper', [
-			'id' => $item_id,
 			'role' => 'region',
 			'aria-labelledby' => $item_id,
 		] );
@@ -889,7 +888,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	protected function content_template() {
 		?>
-		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
+		<div class="e-n-accordion" aria-label="Accordion"> <!-- todo -->
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
@@ -905,7 +904,14 @@ class Nested_Accordion extends Widget_Nested_Base {
 				const itemCount = index + 1,
 					itemUid = elementUid + itemCount,
 					itemWrapperKey = itemUid,
-					itemTitleKey = 'item-' + itemUid;
+					itemTitleKey = 'item-' + itemUid,
+                    ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
+
+                let itemTitle = item.item_title;
+
+                    if (0 === index) {
+                        itemTitle = itemTitle + 'Open links with Enter or Space, close with Escape, navigate with Arrow Keys';
+                    }
 
 					if ( '' !== item.element_css_id ) {
 						itemId = item.element_css_id;
@@ -926,6 +932,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 					view.addRenderAttribute( itemTitleKey, {
 						'class': ['e-n-accordion-item-title'],
+                        'data-accordion-index': itemCount,
+                        'tabindex': defaultState ? ariaExpanded ? 0 : -1 : 0,
+                        'aria-expanded': ariaExpanded,
+                        'aria-controls': itemId,
+                        'aria-label': itemTitle,
+                        'role': 'button',
 					});
 
 					view.addRenderAttribute( itemTitleText, {
