@@ -172,10 +172,6 @@
 			flex-grow: var(--n-tabs-title-flex-grow);
 			flex-basis: var(--n-tabs-title-flex-basis);
 			flex-shrink: var(--n-tabs-title-flex-shrink);
-			padding-block-start: var(--n-tabs-title-padding-block-start);
-			padding-inline-end: var(--n-tabs-title-padding-inline-end);
-			padding-block-end: var(--n-tabs-title-padding-block-end);
-			padding-inline-start: var(--n-tabs-title-padding-inline-start);
 			border-radius: var(--n-tabs-title-border-radius);
 			height: var(--n-tabs-title-height);
 			width: var(--n-tabs-title-width);
@@ -192,6 +188,19 @@
 				transform var(--n-tabs-title-transition);
 
 			@include button-focus-outline;
+
+			--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
+			--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
+
+			[dir="rtl"] & {
+				--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
+				--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
+			}
+
+			padding-block-start: var(--n-tabs-title-padding-block-start);
+			padding-block-end: var(--n-tabs-title-padding-block-end);
+			padding-inline-end: var(--n-tabs-title-padding-inline-end);
+			padding-inline-start: var(--n-tabs-title-padding-inline-start);
 
 			& span svg,
 			& span i {
