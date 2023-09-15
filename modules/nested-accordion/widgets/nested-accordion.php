@@ -802,20 +802,19 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'class' => $item_classes,
 			] );
 
-            $this->add_render_attribute( $item_summary_key, [
-				'class' => ['e-n-accordion-item-title'],
-                'role' => 'button',
-                'data-accordion-index' => $accordion_count,
-                'tabindex' => 'expanded' === $default_state ? $aria_expanded ? 0 : -1 : 0,
-                'aria-expanded' => $aria_expanded ? 'true' : 'false',
-                'aria-controls' => $item_id,
+			$this->add_render_attribute( $item_summary_key, [
+				'class' => [ 'e-n-accordion-item-title' ],
+				'role' => 'button',
+				'data-accordion-index' => $accordion_count,
+				'tabindex' => 'expanded' === $default_state ? $aria_expanded ? 0 : -1 : 0,
+				'aria-expanded' => $aria_expanded ? 'true' : 'false',
+				'aria-controls' => $item_id,
 			] );
 
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
 			$title_render_attributes = $title_render_attributes . ' ' . $is_open;
 
 			$summary_render_attributes = $this->get_render_attribute_string( $item_summary_key );
-
 
 			// items content.
 			ob_start();
@@ -827,7 +826,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			ob_start();
 			?>
 			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-				<summary <?php echo wp_kses_post( $summary_render_attributes  ); ?> >
+				<summary <?php echo wp_kses_post( $summary_render_attributes ); ?> >
 					<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
 						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

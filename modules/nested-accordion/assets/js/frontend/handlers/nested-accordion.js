@@ -8,31 +8,34 @@ export default class NestedAccordion extends Base {
 	}
 
 	getDefaultSettings() {
-		return {
+		const defaultSettings = super.getDefaultSettings();
+
+		// Accessibility settings
+		defaultSettings.selectors = defaultSettings.selectors || {};
+		defaultSettings.selectors.itemTitle = '.e-n-accordion-item-title';
+		defaultSettings.selectors.itemContainer = '.e-n-accordion-item > .e-con';
+		defaultSettings.ariaAttributes = defaultSettings.selectors.ariaAttributes || {};
+		defaultSettings.ariaAttributes.titleStateAttribute = 'aria-expanded';
+		defaultSettings.ariaAttributes.activeTitleSelector = '[aria-expanded="true"]';
+		defaultSettings.datasets = defaultSettings.datasets || {};
+		defaultSettings.datasets.titleIndex = 'data-accordion-index';
+
+		// Widget settings
+		const settings = {
 			selectors: {
 				accordion: '.e-n-accordion',
 				accordionContentContainers: '.e-n-accordion > .e-con',
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionContent: '.e-n-accordion-item > .e-con',
-				itemTitle: '.e-n-accordion-item-title',
-				itemContainer: '.e-n-accordion-item > .e-con',
 			},
 			default_state: 'expanded',
-			ariaAttributes: {
-				titleStateAttribute: 'aria-expanded',
-				activeTitleSelector: '[aria-expanded="true"]',
-			},
-			datasets: {
-				titleIndex: 'data-accordion-index',
-			},
-			keyDirection: {
-				ArrowLeft: elementorFrontendConfig.is_rtl ? this.directionNext : this.directionPrevious,
-				ArrowUp: this.directionPrevious,
-				ArrowRight: elementorFrontendConfig.is_rtl ? this.directionPrevious : this.directionNext,
-				ArrowDown: this.directionNext,
-			},
 		};
+
+		defaultSettings.selectors = { ...defaultSettings.selectors, ...settings.selectors };
+		defaultSettings.default_state = settings.default_state;
+
+		return defaultSettings;
 	}
 
 	getDefaultElements() {
