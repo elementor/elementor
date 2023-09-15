@@ -54,6 +54,22 @@
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
+	--margin-inline-start: var(--margin-left);
+	--margin-inline-end: var(--margin-right);
+	--padding-inline-start: var(--padding-left);
+	--padding-inline-end: var(--padding-right);
+	--border-inline-start-width: var(--border-left-width);
+	--border-inline-end-width: var(--border-right-width);
+
+	[dir="rtl"] & {
+		--margin-inline-start: var(--margin-right);
+		--margin-inline-end: var(--margin-left);
+		--padding-inline-start: var(--padding-right);
+		--padding-inline-end: var(--padding-left);
+		--border-inline-start-width: var(--border-right-width);
+		--border-inline-end-width: var(--border-left-width);
+	}
+
 	&.e-flex {
 		--flex-direction: column;
 		--flex-basis: auto;
