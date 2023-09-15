@@ -6,6 +6,7 @@ import { viewportSize } from '../../../enums/viewport-sizes';
 import { testTabIsVisibleInAccordionView } from './tests/accordion';
 import { testIconCount } from './tests/icons';
 import { testCarouselIsVisibleWhenUsingDirectionRightOrLeft } from './tests/carousel';
+import { testTitlesWithHTML } from './tests/titles-with-html';
 import { editTab, clickTab, setup, cleanup, setTabItemColor, setTabBorderColor, setBackgroundVideoUrl, isTabTitleVisible, selectDropdownContainer } from './helper';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 import _path from 'path';
@@ -36,7 +37,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Tests.
 		await testIconCount( editor );
+		await testTitlesWithHTML( page, editor );
 		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, imageCarousel );
+		await testTitlesWithHTML( page, editor );
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
