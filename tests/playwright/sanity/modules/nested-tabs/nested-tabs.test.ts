@@ -39,7 +39,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await testIconCount( editor );
 		await testTitlesWithHTML( page, editor );
 		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( page, editor, imageCarousel );
-		await testTitlesWithHTML( page, editor );
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
