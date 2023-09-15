@@ -91,11 +91,9 @@ jobs:
           key: ${{ github.sha }}
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
-        uses: ./.github/workflows/run-wp-env
-        with:
-          TEMPLATES: './tests/lighthouse/templates'
-          PHP_VERSION: ${{ matrix.phpVersion }}
-          WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
+        run: |
+          npx wp-env start
+          npx wp-env run cli bash elementor-config/setup.sh
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
         run: |

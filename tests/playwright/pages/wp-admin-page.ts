@@ -149,7 +149,7 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	getActiveTheme() {
-		return execSync( `npx wp-env run cli "wp theme list --status=active --field=name --format=csv"` ).toString().trim();
+		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
 	}
 
 	activateTheme( theme: string ) {
