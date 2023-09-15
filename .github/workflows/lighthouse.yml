@@ -89,6 +89,10 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
+      - name: Install wp-env
+        shell: bash
+        run: |
+              npm i -g --no-package-lock --no-save @wordpress/env@8.6.1
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
         run: |
