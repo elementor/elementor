@@ -153,7 +153,7 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
+		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
 	async openSiteSettings() {
