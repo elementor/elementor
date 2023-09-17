@@ -197,7 +197,8 @@ export default class WpAdminPage extends BasePage {
 
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
-		await this.page.getByRole( 'textbox', { name: 'Add title' } ).click( { force: true } );
+		const regex = new RegExp( `http://(.*)/wp-content/themes/hello-elementor/(.*)` );
+		await this.page.waitForResponse( regex );
 		await this.closeBlockEditorPopupIfVisible();
 	}
 }
