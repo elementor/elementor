@@ -32,25 +32,17 @@ export class PluginsTester {
 		return execSync( cmd ).toString();
 	}
 
-	runWP( cmd ) {
-		// If ( ! this.options.runServer ) {
-		// 	return this.cmd( `cd ../../ && ${ cmd }` );
-		// }
-		return this.cmd( cmd );
-	}
-
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
 			try {
-				// This.runWP( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug }` );
 				const filename = 'logs.txt';
 
 				if ( fs.existsSync( filename ) ) {
 					fs.unlinkSync( filename );
 				}
 
-				this.runWP( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt ` );
+				this.cmd( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt ` );
 				const warn = fs.readFileSync( filename );
 
 				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
@@ -72,7 +64,7 @@ export class PluginsTester {
 				} );
 			}
 
-			this.runWP( `npx wp-env run cli wp plugin deactivate ${ slug }` );
+			this.cmd( `npx wp-env run cli wp plugin deactivate ${ slug }` );
 		} );
 
 		if ( errors.length ) {
@@ -93,7 +85,7 @@ export class PluginsTester {
 		console.log( `Disabling containers: ${ process.env.CONTAINERS }` );
 		if ( ! process.env.CONTAINERS ) {
 			console.log( 'Deactivating containers !!!' );
-			this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
+			this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 		}
 	}
 
