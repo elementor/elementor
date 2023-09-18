@@ -53,7 +53,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function get_installs_history() {
-		return get_option( self::INSTALLS_HISTORY_META, [] );
+		return get_option( static::INSTALLS_HISTORY_META, [] );
 	}
 
 	public static function install_compare( $version, $operator ) {
@@ -84,6 +84,6 @@ class Manager extends DB_Upgrades_Manager {
 
 		uksort( $installs_history, 'version_compare' );
 
-		update_option( self::INSTALLS_HISTORY_META, $installs_history );
+		update_option( static::INSTALLS_HISTORY_META, $installs_history );
 	}
 }
