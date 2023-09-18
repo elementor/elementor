@@ -7,8 +7,7 @@ import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import { EditImageProvider } from './context/edit-image-context';
 import { GlobalActionsProvider } from './context/global-actions-context';
 import { GlobalSettingsProvider } from './context/global-settings-context';
-import { HISTORY_TYPES } from '../../components/prompt-history/history-types';
-import History from '../../components/prompt-history';
+import PromptHistory from '../../components/prompt-history';
 
 const initialData = {
 	isAllSaved: false,
@@ -44,8 +43,6 @@ const FormMedia = ( {
 	controlView,
 	additionalOptions,
 	maybeRenderUpgradeChip,
-	onImagesRestore,
-	promptHistoryAction,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -65,11 +62,9 @@ const FormMedia = ( {
 	};
 
 	const editImageInitialData = getControlValue() === additionalOptions?.defaultValue ? {} : getControlValue();
-	const isGenerateScreen = ! editImageInitialData?.id;
 
 	const globalSettings = {
 		initialImageType: additionalOptions?.defaultImageType || '',
-		promptHistoryAction,
 	};
 
 	const globalActions = {
@@ -95,7 +90,7 @@ const FormMedia = ( {
 		<>
 			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ () => onCloseIntent() }>
-					{ isGenerateScreen && <History promptType={ HISTORY_TYPES.IMAGE } onImagesRestore={ onImagesRestore } /> }
+					<PromptHistory />
 
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
@@ -130,8 +125,6 @@ FormMedia.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,
-	onImagesRestore: PropTypes.func,
-	promptHistoryAction: PropTypes.object,
 };
 
 export default FormMedia;

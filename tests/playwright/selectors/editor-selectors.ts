@@ -151,9 +151,15 @@ const EditorSelectors = {
 		aiButton: '.e-ai-button',
 		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
 		promptInput: 'input[name="prompt"]',
-		imagePromptTextarea: '[data-testid="e-image-prompt"] textarea',
-		generatedImage: '[data-testid="e-gallery-image"] img',
 		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
+
+		image: {
+			promptTextarea: '[data-testid="e-image-prompt"] textarea',
+			typeInput: '#image-type + input',
+			styleInput: '#style + input',
+			aspectRationInput: '#aspect-ratio + input',
+			generatedImage: '[data-testid="e-gallery-image"] img',
+		},
 
 		promptHistory: {
 			button: 'button[aria-label="Show prompt history"]',

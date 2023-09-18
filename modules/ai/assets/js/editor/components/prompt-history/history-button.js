@@ -2,9 +2,9 @@ import { IconButton, styled } from '@elementor/ui';
 import { HistoryIcon } from '@elementor/icons';
 
 const StyledHistoryButton = styled( IconButton )`
-	margin-right: ${ ( { theme } ) => theme.spacing( 3 ) };
+  margin-right: ${ ( { theme } ) => theme.spacing( 3 ) };
 
-	${ ( { isActive, theme } ) => isActive && `
+  ${ ( { isActive, theme } ) => isActive && `
     background-color: ${ theme.palette.action.hover };
     color: ${ theme.palette.text.tertiary };
   ` }

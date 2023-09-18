@@ -276,6 +276,8 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Restore button restores prompt', async () => {
+			const { promptHistory, image } = EditorSelectors.ai;
+
 			await editor.addWidget( 'image' );
 
 			await mockRoute( page, {
@@ -284,19 +286,42 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+			const item = page.getByTestId( promptHistory.item ).first();
 
 			await item.hover();
 
-			await item.locator( EditorSelectors.ai.promptHistory.restoreButton ).click();
+			await item.locator( promptHistory.restoreButton ).click();
 
-			const promptTextarea = page.locator( EditorSelectors.ai.imagePromptTextarea ).first();
+			// Check prompt
+			const promptTextarea = page.locator( image.promptTextarea ).first();
 
 			await expect( promptTextarea ).toBeVisible();
 
 			expect( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
 
-			const images = page.locator( EditorSelectors.ai.generatedImage );
+			// Check image type
+			const imageTypeInput = page.locator( image.typeInput ).first();
+
+			await expect( imageTypeInput ).toBeVisible();
+
+			expect( await imageTypeInput.inputValue() ).toBe( 'photographic' );
+
+			// Check image style
+			const imageStyleInput = page.locator( image.styleInput ).first();
+
+			await expect( imageStyleInput ).toBeVisible();
+
+			expect( await imageStyleInput.inputValue() ).toBe( 'portrait' );
+
+			// Check image ratio
+			const imageRatioInput = page.locator( image.aspectRationInput ).first();
+
+			await expect( imageRatioInput ).toBeVisible();
+
+			expect( await imageRatioInput.inputValue() ).toBe( '16:9' );
+
+			// Check restored images
+			const images = page.locator( image.generatedImage );
 
 			expect( await images.count() ).toEqual( 2 );
 

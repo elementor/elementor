@@ -12,10 +12,16 @@ const ICONS_BY_ACTIONS = Object.freeze( {
 	'custom-code': <CodeIcon />,
 } );
 
-export const getIconByAction = ( action ) => {
+const PromptHistoryActionIcon = ( { action } ) => {
 	if ( ICONS_BY_ACTIONS[ action ] ) {
 		return ICONS_BY_ACTIONS[ action ];
 	}
 
 	return FALLBACK_ICON;
 };
+
+PromptHistoryActionIcon.propTypes = {
+	action: PropTypes.string.isRequired,
+};
+
+export default PromptHistoryActionIcon;

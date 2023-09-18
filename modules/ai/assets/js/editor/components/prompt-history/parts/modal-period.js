@@ -1,7 +1,5 @@
 import { Box, styled, Typography } from '@elementor/ui';
 import PromptHistoryItem from './modal-item';
-import { useContext } from 'react';
-import { PromptHistoryContext } from '../index';
 import { translateDate } from '../../../date-helpers';
 
 const StyledPeriod = styled( Box )( ( { theme } ) => ( {
@@ -17,24 +15,18 @@ const StyledPeriodTitle = styled( Typography )( ( { theme } ) => ( {
 const DATE_FORMAT = __( 'F j, g:i A', 'elementor' );
 
 const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete } ) => {
-	const { onPromptReuse, onResultEdit, onImagesRestore } = useContext( PromptHistoryContext );
-
 	return (
 		<StyledPeriod data-testid="e-ph-p">
 			<StyledPeriodTitle variant="subtitle1">{ periodTitle }</StyledPeriodTitle>
 
-			{ historyItems.map( ( { id, date, action, prompt, text, images, imageType, ratio } ) => {
+			{ historyItems.map( ( { id, date, ...props } ) => {
 				return (
 					<PromptHistoryItem key={ id }
 						date={ translateDate( DATE_FORMAT, date ) }
-						images={ images }
-						action={ action }
-						prompt={ prompt }
-						id={ id }
 						onHistoryItemDelete={ () => onHistoryItemDelete( id ) }
-						onPromptReuse={ onPromptReuse ? () => onPromptReuse( id, prompt ) : null }
-						onResultEdit={ onResultEdit ? () => onResultEdit( id, text ) : null }
-						onImagesRestore={ onImagesRestore ? () => onImagesRestore( id, { prompt, images, imageType, ratio } ) : null } /> );
+						id={ id }
+						{ ...props } />
+				);
 			} ) }
 		</StyledPeriod>
 	);

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Stack } from '@elementor/ui';
 import View from '../../components/view';
 import Gallery from '../../components/gallery';
@@ -17,7 +17,10 @@ import useSuggestedImages from './hooks/use-suggested-images';
 import useTextToImage from './hooks/use-text-to-image';
 import useImageActions from '../../hooks/use-image-actions';
 import { useGlobalSettings } from '../../context/global-settings-context';
-import { HISTORY_ACTION_TYPES } from '../../../../components/prompt-history/history-types';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../../../components/prompt-history/context/prompt-history-action-context';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -32,7 +35,7 @@ const getPromptPlaceholder = ( images ) => {
 const Generate = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 
-	const { initialImageType, promptHistoryAction } = useGlobalSettings();
+	const { initialImageType } = useGlobalSettings();
 
 	const { settings, updateSettings, resetSettings } = usePromptSettings( { type: initialImageType } );
 
@@ -63,22 +66,21 @@ const Generate = () => {
 		updateSettings( { [ IMAGE_TYPE ]: type, [ IMAGE_STYLE ]: style } );
 	};
 
-	useEffect( () => {
-		if ( ! promptHistoryAction.type ) {
-			return;
-		}
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.RESTORE,
+			handler( action ) {
+				handleCopyPrompt( {
+					prompt: action.data?.prompt,
+					imageType: action.data?.imageType || '',
+				} );
 
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.RESTORE ) {
-			handleCopyPrompt( {
-				prompt: promptHistoryAction.data?.prompt,
-				imageType: promptHistoryAction.data?.imageType || '',
-			} );
+				updateSettings( { [ IMAGE_RATIO ]: action.data?.ratio } );
 
-			updateSettings( { [ IMAGE_RATIO ]: promptHistoryAction.data?.ratio } );
-
-			setResult( promptHistoryAction.data?.images, promptHistoryAction.id );
-		}
-	}, [ promptHistoryAction ] );
+				setResult( action.data?.images, action.id );
+			},
+		},
+	] );
 
 	return (
 		<View>

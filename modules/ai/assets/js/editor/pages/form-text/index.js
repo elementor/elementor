@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Box, Button, Grid, Stack } from '@elementor/ui';
 import { AIIcon, MessageIcon, ShrinkIcon, ExpandIcon } from '@elementor/icons';
 import Loader from '../../components/loader';
@@ -12,7 +12,10 @@ import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
 import PromptCredits from '../../components/prompt-credits';
-import { HISTORY_ACTION_TYPES } from '../../components/prompt-history/history-types';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../components/prompt-history/context/prompt-history-action-context';
 
 const promptActions = [
 	{
@@ -53,7 +56,6 @@ const FormText = (
 		additionalOptions,
 		credits,
 		usagePercentage,
-		promptHistoryAction,
 	},
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
@@ -62,20 +64,21 @@ const FormText = (
 
 	const [ prompt, setPrompt ] = useState( '' );
 
-	useEffect( () => {
-		if ( ! promptHistoryAction.type ) {
-			return;
-		}
-
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.REUSE ) {
-			reset();
-			setPrompt( promptHistoryAction.data );
-		}
-
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.EDIT ) {
-			setResult( promptHistoryAction.data );
-		}
-	}, [ promptHistoryAction ] );
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.REUSE,
+			handler( action ) {
+				reset();
+				setPrompt( action.data );
+			},
+		},
+		{
+			type: ACTION_TYPES.EDIT,
+			handler( action ) {
+				setResult( action.data );
+			},
+		},
+	] );
 
 	const searchField = useRef( null );
 
@@ -214,7 +217,6 @@ FormText.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
-	promptHistoryAction: PropTypes.object,
 };
 
 export default FormText;

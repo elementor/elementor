@@ -10,6 +10,8 @@ export type PromptHistoryItem = {
 	action: string
 	request: {
 		prompt: string
+		image_type?: string
+		ratio?: string
 	}
 	response: {
 		results: {

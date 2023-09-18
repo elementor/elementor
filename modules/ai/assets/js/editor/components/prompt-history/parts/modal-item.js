@@ -1,10 +1,11 @@
 import { Box, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import EditIcon from '../../../icons/edit-icon';
-import { getIconByAction } from '../helpers/history-item-helpers';
 import { TrashIcon } from '@elementor/icons';
 import RestoreIcon from '../../../icons/restore-icon';
 import { getImageThumbnailURL } from '../helpers/image-helpers';
 import ActionButton from './modal-item-action-button';
+import { ACTION_TYPES, usePromptHistoryAction } from '../context/prompt-history-action-context';
+import PromptHistoryActionIcon from './action-icon';
 
 const StyledItem = styled( Stack )`
   flex-direction: row;
@@ -62,18 +63,18 @@ const StyledImage = styled( 'img' )`
 `;
 
 const PromptHistoryItem = ( {
-	action,
-	prompt,
+	id,
 	date,
-	images,
 	onHistoryItemDelete,
-	onPromptReuse,
-	onResultEdit,
-	onImagesRestore,
+	...props
 } ) => {
+	const { getAllowedActions, onPromptReuse, onResultEdit, onImagesRestore } = usePromptHistoryAction();
+	const { action, prompt, text, images, imageType, ratio } = props;
+	const allowedActions = getAllowedActions();
+
 	return (
 		<StyledItem tabIndex="0" data-testid="e-ph-i">
-			{ getIconByAction( action ) }
+			<PromptHistoryActionIcon action={ action } />
 
 			<Stack direction="column" width="90%">
 				<Tooltip title={ prompt } arrow={ false } placement="bottom-start" componentsProps={ {
@@ -93,33 +94,33 @@ const PromptHistoryItem = ( {
 
 					<StyledButtonsWrapper>
 						<ActionButton
-							onClick={ onHistoryItemDelete }
+							onClick={ () => onHistoryItemDelete( id ) }
 							aria-label={ __( 'Remove item', 'elementor' ) }
 							tooltipTitle={ __( 'Remove', 'elementor' ) }>
 							<TrashIcon />
 						</ActionButton>
 
-						{ onPromptReuse && (
+						{ allowedActions[ ACTION_TYPES.REUSE ] && (
 							<ActionButton
-								onClick={ onPromptReuse }
+								onClick={ () => onPromptReuse( id, prompt ) }
 								aria-label={ __( 'Reuse prompt', 'elementor' ) }
 								tooltipTitle={ __( 'Reuse prompt', 'elementor' ) }>
 								<RestoreIcon />
 							</ActionButton>
 						) }
 
-						{ onImagesRestore && (
+						{ allowedActions[ ACTION_TYPES.RESTORE ] && (
 							<ActionButton
-								onClick={ onImagesRestore }
+								onClick={ () => onImagesRestore( id, { prompt, images, imageType, ratio } ) }
 								aria-label={ __( 'Restore', 'elementor' ) }
 								tooltipTitle={ __( 'Restore', 'elementor' ) }>
 								<RestoreIcon />
 							</ActionButton>
 						) }
 
-						{ onResultEdit && (
+						{ allowedActions[ ACTION_TYPES.EDIT ] && (
 							<ActionButton
-								onClick={ onResultEdit }
+								onClick={ () => onResultEdit( id, text ) }
 								aria-label={ __( 'Edit result', 'elementor' ) }
 								tooltipTitle={ __( 'Edit', 'elementor' ) }>
 								<EditIcon />
@@ -150,11 +151,11 @@ PromptHistoryItem.propTypes = {
 	action: PropTypes.string.isRequired,
 	prompt: PropTypes.string.isRequired,
 	date: PropTypes.string.isRequired,
-	images: PropTypes.array,
 	onHistoryItemDelete: PropTypes.func.isRequired,
-	onPromptReuse: PropTypes.func,
-	onResultEdit: PropTypes.func,
-	onImagesRestore: PropTypes.func,
+	text: PropTypes.string,
+	images: PropTypes.array,
+	imageType: PropTypes.string,
+	ratio: PropTypes.string,
 };
 
 export default PromptHistoryItem;

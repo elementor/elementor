@@ -2,8 +2,7 @@ import { Backdrop, Box, LinearProgress, Modal, Slide, styled } from '@elementor/
 import usePromptHistory from '../../hooks/use-prompt-history';
 import PromptHistoryModalHeader from './parts/modal-header';
 import PromptHistoryPeriod from './parts/modal-period';
-import { PromptHistoryContext } from './index';
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import useDeletePromptHistoryItem from '../../hooks/use-delete-prompt-history-item';
 import PromptErrorMessage from '../prompt-error-message';
 import { groupPromptHistoryData, LAST_30_DAYS_KEY, LAST_7_DAYS_KEY } from './helpers/history-period-helpers';
@@ -11,22 +10,23 @@ import PromptHistoryEmpty from './parts/modal-empty';
 import InfiniteScroll from 'react-infinite-scroller';
 import PromptHistoryUpgrade from './parts/modal-upgrade';
 import { HISTORY_TYPES } from './history-types';
+import { usePromptHistoryContext } from './context/prompt-history-context';
 
 const StyledContent = styled( Box )`
-	width: 360px;
-	position: relative;
-	margin-top: ${ ( { theme } ) => theme.spacing( 2 ) };
-	margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
-	background-color: ${ ( { theme } ) => theme.palette.background.paper };
-	border-radius: ${ ( { theme } ) => `${ theme.shape.borderRadius }px` };
-	height: ${ ( { fullHeight } ) => fullHeight ? '86vh' : '52vh' };
+  width: 360px;
+  position: relative;
+  margin-top: ${ ( { theme } ) => theme.spacing( 2 ) };
+  margin-right: ${ ( { theme } ) => theme.spacing( 2 ) };
+  background-color: ${ ( { theme } ) => theme.palette.background.paper };
+  border-radius: ${ ( { theme } ) => `${ theme.shape.borderRadius }px` };
+  height: ${ ( { fullHeight } ) => fullHeight ? '86vh' : '52vh' };
 
-	@media screen and (max-width: 456px) {
-		width: 320px;
-	}
+  @media screen and (max-width: 456px) {
+    width: 320px;
+  }
 
   @media screen and (max-width: 420px) {
-		width: 230px;
+    width: 230px;
   }
 `;
 
@@ -36,7 +36,7 @@ const NO_HISTORY_ACCESS_ERROR = 'invalid_connect_data';
 const PromptHistoryModal = ( { ...props } ) => {
 	const lastRun = useRef( () => {} );
 	const scrollContainer = useRef( null );
-	const { onModalClose, promptType } = useContext( PromptHistoryContext );
+	const { onClose, promptType } = usePromptHistoryContext();
 
 	const {
 		items,
@@ -56,6 +56,7 @@ const PromptHistoryModal = ( { ...props } ) => {
 	const error = historyFetchingError || historyDeletingError;
 	const isLoading = isHistoryFetchingInProgress || isDeletingInProgress;
 	const isLastPage = meta && meta?.currentPage === meta?.totalPages;
+	const showUpgrade = items?.length > 0 && meta?.allowedDays < 90 && isLastPage;
 
 	useEffect( () => {
 		lastRun.current = async () => fetchData( { page: 1, limit: ITEMS_LIMIT } );
@@ -115,7 +116,7 @@ const PromptHistoryModal = ( { ...props } ) => {
 			container={ () => document.querySelector( '.MuiDialogContent-root:not(.MuiBackdrop-root), #e-form-media .MuiBox-root' ) }
 			open={ true }
 			hideBackdrop={ true }
-			onClose={ onModalClose }
+			onClose={ onClose }
 			sx={ { position: 'absolute' } }
 			{ ...props }>
 			<Backdrop open={ true }
@@ -124,7 +125,7 @@ const PromptHistoryModal = ( { ...props } ) => {
 				<Slide direction="left" in={ true } mountOnEnter unmountOnExit>
 					<StyledContent aria-label={ __( 'Prompt history modal', 'elementor' ) }
 						fullHeight={ promptType === HISTORY_TYPES.IMAGE }>
-						<PromptHistoryModalHeader onClose={ onModalClose } />
+						<PromptHistoryModalHeader onClose={ onClose } />
 
 						{ error && NO_HISTORY_ACCESS_ERROR !== error && <PromptErrorMessage error={ error }
 							onRetry={ lastRun.current }
@@ -149,7 +150,7 @@ const PromptHistoryModal = ( { ...props } ) => {
 								hasMore={ ! isLastPage }
 								children={ renderPeriods() } /> }
 
-							{ items?.length > 0 && meta?.allowedDays < 90 && isLastPage && <PromptHistoryUpgrade variant="small" /> }
+							{ showUpgrade && <PromptHistoryUpgrade variant="small" /> }
 						</Box>
 					</StyledContent>
 				</Slide>

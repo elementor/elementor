@@ -8,24 +8,13 @@ import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
 import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
-import History from './components/prompt-history';
-import { HISTORY_ACTION_TYPES, HISTORY_TYPES } from './components/prompt-history/history-types';
-import { useReducer, useState } from 'react';
-
-const reducer = ( state, { type, id, data } ) => {
-	switch ( type ) {
-		case HISTORY_ACTION_TYPES.REUSE:
-		case HISTORY_ACTION_TYPES.EDIT:
-		case HISTORY_ACTION_TYPES.RESTORE:
-			return {
-				type,
-				id,
-				data,
-			};
-		default:
-			throw Error( 'Unknown action.' );
-	}
-};
+import PromptHistory from './components/prompt-history';
+import { HISTORY_TYPES } from './components/prompt-history/history-types';
+import { useState } from 'react';
+import {
+	PromptHistoryActionProvider,
+} from './components/prompt-history/context/prompt-history-action-context';
+import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
 
 const PageContent = (
 	{
@@ -40,11 +29,6 @@ const PageContent = (
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const [ isPromptHistoryOpen, setIsPromptHistoryOpen ] = useState( false );
-	const [ promptHistoryAction, dispatchPromptHistoryAction ] = useReducer( reducer, {
-		type: '',
-		id: '',
-		data: null,
-	} );
 
 	const promptDialogStyleProps = {
 		sx: {
@@ -77,10 +61,6 @@ const PageContent = (
 			/>
 		);
 	};
-
-	const onPromptReuse = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.REUSE, id, data } );
-	const onResultEdit = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.EDIT, id, data } );
-	const onImagesRestore = ( id, data ) => dispatchPromptHistoryAction( { type: HISTORY_ACTION_TYPES.RESTORE, id, data } );
 
 	if ( isLoading ) {
 		return (
@@ -126,70 +106,73 @@ const PageContent = (
 
 	if ( 'media' === type ) {
 		return (
-			<FormMedia
-				onClose={ onClose }
-				getControlValue={ getControlValue }
-				controlView={ controlView }
-				additionalOptions={ additionalOptions }
-				credits={ credits }
-				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
-				DialogProps={ promptDialogStyleProps }
-				onImagesRestore={ onImagesRestore }
-				promptHistoryAction={ promptHistoryAction }
-			/>
+			<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.IMAGE }>
+				<PromptHistoryActionProvider>
+					<FormMedia
+						onClose={ onClose }
+						getControlValue={ getControlValue }
+						controlView={ controlView }
+						additionalOptions={ additionalOptions }
+						credits={ credits }
+						maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
+						DialogProps={ promptDialogStyleProps }
+					/>
+				</PromptHistoryActionProvider>
+			</PromptHistoryProvider>
 		);
 	}
 
 	if ( 'code' === type ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onClose }>
-					<History promptType={ HISTORY_TYPES.CODE }
-						onPromptReuse={ onPromptReuse }
-						setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
+				<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.CODE }>
+					<PromptHistoryActionProvider>
+						<PromptDialog.Header onClose={ onClose }>
+							<PromptHistory />
 
-					{ maybeRenderUpgradeChip() }
-				</PromptDialog.Header>
+							{ maybeRenderUpgradeChip() }
+						</PromptDialog.Header>
 
-				<PromptDialog.Content dividers sx={ { position: 'relative' } }>
-					<FormCode
-						onClose={ onClose }
-						getControlValue={ getControlValue }
-						setControlValue={ setControlValue }
-						additionalOptions={ additionalOptions }
-						credits={ credits }
-						usagePercentage={ usagePercentage }
-						promptHistoryAction={ promptHistoryAction }
-					/>
-				</PromptDialog.Content>
+						<PromptDialog.Content dividers sx={ { position: 'relative' } }>
+							<FormCode
+								onClose={ onClose }
+								getControlValue={ getControlValue }
+								setControlValue={ setControlValue }
+								additionalOptions={ additionalOptions }
+								credits={ credits }
+								usagePercentage={ usagePercentage }
+							/>
+						</PromptDialog.Content>
+					</PromptHistoryActionProvider>
+				</PromptHistoryProvider>
 			</PromptDialog>
 		);
 	}
 
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-			<PromptDialog.Header onClose={ onClose }>
-				<History promptType={ HISTORY_TYPES.TEXT }
-					onPromptReuse={ onPromptReuse }
-					onResultEdit={ onResultEdit }
-					setIsPromptHistoryOpen={ setIsPromptHistoryOpen } />
+			<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.TEXT }>
+				<PromptHistoryActionProvider>
+					<PromptDialog.Header onClose={ onClose }>
+						<PromptHistory />
 
-				{ maybeRenderUpgradeChip() }
-			</PromptDialog.Header>
+						{ maybeRenderUpgradeChip() }
+					</PromptDialog.Header>
 
-			<PromptDialog.Content dividers sx={ { position: 'relative' } }>
-				<FormText
-					type={ type }
-					controlType={ controlType }
-					onClose={ onClose }
-					getControlValue={ getControlValue }
-					setControlValue={ setControlValue }
-					additionalOptions={ additionalOptions }
-					credits={ credits }
-					usagePercentage={ usagePercentage }
-					promptHistoryAction={ promptHistoryAction }
-				/>
-			</PromptDialog.Content>
+					<PromptDialog.Content dividers sx={ { position: 'relative' } }>
+						<FormText
+							type={ type }
+							controlType={ controlType }
+							onClose={ onClose }
+							getControlValue={ getControlValue }
+							setControlValue={ setControlValue }
+							additionalOptions={ additionalOptions }
+							credits={ credits }
+							usagePercentage={ usagePercentage }
+						/>
+					</PromptDialog.Content>
+				</PromptHistoryActionProvider>
+			</PromptHistoryProvider>
 		</PromptDialog>
 	);
 };

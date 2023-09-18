@@ -129,6 +129,8 @@ export const restoreImageDataMock = getJsonMock( {
 			generateItem( {
 				request: {
 					prompt: 'Test prompt',
+					ratio: '16:9',
+					image_type: 'photographic/portrait',
 				},
 				response: {
 					results: {

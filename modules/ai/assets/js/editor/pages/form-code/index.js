@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
@@ -10,7 +10,10 @@ import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
 import PromptCredits from '../../components/prompt-credits';
-import { HISTORY_ACTION_TYPES } from '../../components/prompt-history/history-types';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../components/prompt-history/context/prompt-history-action-context';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -27,21 +30,20 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 	},
 } ) );
 
-const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, usagePercentage, promptHistoryAction } ) => {
+const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, usagePercentage } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
 
-	useEffect( () => {
-		if ( ! promptHistoryAction.type ) {
-			return;
-		}
-
-		if ( promptHistoryAction.type === HISTORY_ACTION_TYPES.REUSE ) {
-			reset();
-			setPrompt( promptHistoryAction.data );
-		}
-	}, [ promptHistoryAction ] );
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.REUSE,
+			handler( action ) {
+				reset();
+				setPrompt( action.data );
+			},
+		},
+	] );
 
 	const lastRun = useRef( () => {} );
 
@@ -134,7 +136,6 @@ FormCode.propTypes = {
 	} ),
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
-	promptHistoryAction: PropTypes.object,
 };
 
 export default FormCode;

@@ -13,9 +13,3 @@ export const TRANSLATED_HISTORY_TYPES = Object.freeze( {
 	[ HISTORY_TYPES.IMAGE ]: __( 'images', 'elementor' ),
 	[ HISTORY_TYPES.BLOCK ]: __( 'blocks', 'elementor' ),
 } );
-
-export const HISTORY_ACTION_TYPES = Object.freeze( {
-	REUSE: 'reuse',
-	EDIT: 'edit',
-	RESTORE: 'restore',
-} );
