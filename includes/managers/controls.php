@@ -1194,8 +1194,8 @@ class Controls_Manager {
 
 		$stack_duplication_mode = $stack['responsive_control_duplication_mode'];
 
-        // This array provides a convenient way to map human-readable mode names to numeric values for comparison.
-        // If the current stack's mode is greater than or equal to the current mode, then we shouldn't clean the stack.
+		// This array provides a convenient way to map human-readable mode names to numeric values for comparison.
+		// If the current stack's mode is greater than or equal to the current mode, then we shouldn't clean the stack.
 		$modes = [
 			'off' => 1,
 			'dynamic' => 2,
@@ -1206,7 +1206,7 @@ class Controls_Manager {
 			return false;
 		}
 
-        $current_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+		$current_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
 		if ( $modes[ $stack_duplication_mode ] >= $modes[ $current_duplication_mode ] ) {
 			return false;
