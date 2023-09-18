@@ -72,6 +72,12 @@ export default class NestedAccordion extends Base {
 
 		$contentContainers.each( ( index, element ) => {
 			$accordionItems[ index ].appendChild( element );
+
+			const summary = $accordionItems[ index ].querySelector( 'summary' ),
+				itemId = summary.getAttribute( 'aria-controls' );
+
+			element.setAttribute( 'role', 'region' );
+			element.setAttribute( 'aria-labelledby', itemId );
 		} );
 	}
 
