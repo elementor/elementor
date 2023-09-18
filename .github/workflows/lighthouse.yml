@@ -79,20 +79,24 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
         if: matrix.wpCoreVersion != 'master'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      - name: Restore NPM from cache
+        uses: actions/cache/restore@v3
+        id: restore-npm
+        with:
+            path: ~/.npm
+            key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore build from cache
         if: matrix.wpCoreVersion != 'master'
-        uses: actions/cache@v2
+        uses: actions/cache/restore@v3
         id: restore-build
         with:
           path: ./build/*
           key: ${{ github.sha }}
       - name: Install node modules
-        shell: bash
-        run: |
-              npm ci
+        run: npm ci
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
         run: |
