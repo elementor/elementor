@@ -1565,7 +1565,7 @@ class Frontend extends App {
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
-				$this->get_js_assets_url( 'swiper', $this->e_swiper_asset_path ),
+				$this->get_js_assets_url( 'swiper', 'assets/' . $this->e_swiper_asset_path ),
 				[],
 				$this->e_swiper_version,
 				true
