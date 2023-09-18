@@ -14,7 +14,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		} );
 
 		await wpAdmin.setAdvancedSettings( {
-			swiper_active_version: '5.3.6',
+			swiper_active_version: '8.4.5',
 		} );
 	} );
 
