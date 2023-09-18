@@ -190,8 +190,10 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async closeBlockEditorPopupIfVisible() {
-		await this.page.locator( '.components-modal__header' ).getByRole( 'button', { name: 'Close' } )
-			.or( this.page.getByRole( 'textbox', { name: 'Add title' } ) ).click();
+		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
+		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
+			await this.page.getByRole( 'button', { name: 'Close' } ).click();
+		}
 	}
 
 	async openNewWordpressPage() {
