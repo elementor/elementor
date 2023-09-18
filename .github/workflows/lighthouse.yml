@@ -76,7 +76,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      
       - name: Restore NPM from cache
+        if: matrix.wpCoreVersion != 'master'
         uses: actions/cache/restore@v3
         id: restore-npm
         with:
@@ -90,6 +92,7 @@ jobs:
           path: ./build/*
           key: ${{ github.sha }}
       - name: Install node modules
+        if: matrix.wpCoreVersion != 'master'
         run: npm ci
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
