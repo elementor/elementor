@@ -190,7 +190,7 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async closeBlockEditorPopupIfVisible() {
-		await this.page.locator( '[aria-label="Close dialog"]' )
+		await this.page.locator( '.components-modal__header' ).getByRole( 'button', { name: 'Close' } )
 			.or( this.page.getByRole( 'textbox', { name: 'Add title' } ) ).click();
 	}
 
