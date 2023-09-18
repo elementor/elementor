@@ -13,9 +13,9 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			container: 'active',
 		} );
 
-		// await wpAdmin.setAdvancedSettings( {
-		// 	swiper_active_version: '5.3.6',
-		// } );
+		await wpAdmin.setAdvancedSettings( {
+			swiper_active_version: '5.3.6',
+		} );
 	} );
 
 	const testData = [
@@ -54,7 +54,6 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page }, testInfo ) => {
-			// await page.pause();
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',
@@ -72,6 +71,11 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 			await editorPage.closeNavigatorIfOpen();
 			await editorPage.loadTemplate( filePath, true );
 			await editorPage.waitForIframeToLoaded( widgetType );
+
+			if ( 'image_carousel' === widgetType ) {
+				page.waitForTimeout( 3000 );
+			}
+
 			await helper.doScreenshotComparison( { widgetType, hoverSelector } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
