@@ -190,15 +190,12 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async closeBlockEditorPopupIfVisible() {
-		if ( await this.page.locator( '[aria-label="Close dialog"]' ).isVisible() ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
-		}
+		await this.page.locator( '[aria-label="Close dialog"]' )
+			.or( this.page.getByRole( 'textbox', { name: 'Add title' } ) ).click();
 	}
 
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
-		const regex = new RegExp( `http://(.*)/wp-content/themes/hello-elementor/(.*)` );
-		await this.page.waitForResponse( regex );
 		await this.closeBlockEditorPopupIfVisible();
 	}
 }
