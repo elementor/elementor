@@ -8,20 +8,7 @@ export default class NestedAccordion extends Base {
 	}
 
 	getDefaultSettings() {
-		const defaultSettings = super.getDefaultSettings();
-
-		// Accessibility settings
-		defaultSettings.selectors = defaultSettings.selectors || {};
-		defaultSettings.selectors.itemTitle = '.e-n-accordion-item-title';
-		defaultSettings.selectors.itemContainer = '.e-n-accordion-item > .e-con';
-		defaultSettings.ariaAttributes = defaultSettings.selectors.ariaAttributes || {};
-		defaultSettings.ariaAttributes.titleStateAttribute = 'aria-expanded';
-		defaultSettings.ariaAttributes.activeTitleSelector = '[aria-expanded="true"]';
-		defaultSettings.datasets = defaultSettings.datasets || {};
-		defaultSettings.datasets.titleIndex = 'data-accordion-index';
-
-		// Widget settings
-		const settings = {
+		return {
 			selectors: {
 				accordion: '.e-n-accordion',
 				accordionContentContainers: '.e-n-accordion > .e-con',
@@ -31,11 +18,6 @@ export default class NestedAccordion extends Base {
 			},
 			default_state: 'expanded',
 		};
-
-		defaultSettings.selectors = { ...defaultSettings.selectors, ...settings.selectors };
-		defaultSettings.default_state = settings.default_state;
-
-		return defaultSettings;
 	}
 
 	getDefaultElements() {
@@ -51,7 +33,20 @@ export default class NestedAccordion extends Base {
 	}
 
 	getKeyboardNavigationSettings() {
-		return this.getSettings();
+		return {
+			$element: this.$element,
+			selectors: {
+				itemTitle: '.e-n-accordion-item-title',
+				itemContainer: '.e-n-accordion-item > .e-con',
+			},
+			ariaAttributes: {
+				titleStateAttribute: 'aria-expanded',
+				activeTitleSelector: '[aria-expanded="true"]',
+			},
+			datasets: {
+				titleIndex: 'data-accordion-index',
+			},
+		};
 	}
 
 	onInit( ...args ) {
@@ -72,12 +67,6 @@ export default class NestedAccordion extends Base {
 
 		$contentContainers.each( ( index, element ) => {
 			$accordionItems[ index ].appendChild( element );
-
-			const summary = $accordionItems[ index ].querySelector( 'summary' ),
-				itemId = summary.getAttribute( 'aria-controls' );
-
-			element.setAttribute( 'role', 'region' );
-			element.setAttribute( 'aria-labelledby', itemId );
 		} );
 	}
 
