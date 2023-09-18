@@ -89,15 +89,15 @@ jobs:
         with:
           path: ./build/*
           key: ${{ github.sha }}
-      - name: Install wp-env
+      - name: Install node modules
         shell: bash
         run: |
-              npm i -g --no-package-lock --no-save @wordpress/env@8.6.1
+              npm ci
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
         run: |
-          npx wp-env start
-          npx wp-env run cli bash elementor-config/setup.sh
+          npm run start-local-server
+          npm run test:setup:playwright
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
         run: |
