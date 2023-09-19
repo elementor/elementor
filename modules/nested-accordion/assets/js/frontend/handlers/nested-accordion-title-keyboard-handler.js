@@ -3,8 +3,6 @@ import NestedTitleKeyboardHandler from 'elementor-assets-js/frontend/handlers/ac
 export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyboardHandler {
 	__construct( ...args ) {
 		super.__construct( ...args );
-		const config = args[ 0 ];
-		this.toggleTitle = config.toggleTitle;
 	}
 
 	getDefaultSettings() {
@@ -24,23 +22,5 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 				titleIndex: 'data-accordion-index',
 			},
 		};
-	}
-
-	handeTitleLinkEnterOrSpaceEvent( event ) {
-		this.toggleTitle( event );
-	}
-
-	handleContentElementEscapeEvents( event ) {
-		this.getActiveTitleElement().trigger( 'focus' );
-		this.toggleTitle( event );
-	}
-
-	handleTitleEscapeKeyEvents( event ) {
-		const detailsNode = event?.currentTarget.parentElement,
-			isOpen = detailsNode?.open;
-
-		if ( isOpen ) {
-			this.toggleTitle( event );
-		}
 	}
 }
