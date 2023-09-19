@@ -4,6 +4,7 @@ import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboa
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
+		alert( 'NestedAccordion' );
 
 		this.animations = new Map();
 	}

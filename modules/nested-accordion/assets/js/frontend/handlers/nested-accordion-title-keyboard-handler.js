@@ -6,6 +6,7 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		super.__construct( ...args );
 		const DTO = args[ 0 ];
 		this.toggleTitle = DTO.toggleTitle;
+		alert( 'NestedAccordionTitleKeyboardHandler' );
 	}
 
 	getDefaultSettings() {
