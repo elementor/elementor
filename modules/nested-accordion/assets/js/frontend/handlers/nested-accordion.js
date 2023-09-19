@@ -115,6 +115,7 @@ export default class NestedAccordion extends Base {
 		this.animations.set( accordionItem, animation );
 
 		const summaryNode = accordionItem.querySelector( 'summary' );
+
 		if ( summaryNode ) {
 			summaryNode.setAttribute( 'aria-expanded', isOpen );
 		}

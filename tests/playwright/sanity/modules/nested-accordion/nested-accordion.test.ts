@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator } from './helper';
 import _path from 'path';
@@ -286,55 +286,8 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = frame.locator( '.elementor-button >> nth=0' );
 
-			// Assert.
 			await frame.locator( '.page-header' ).click();
-
-			await page.keyboard.press( 'Tab' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Tab' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Shift+Tab' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Enter' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-			await expect( button1 ).toBeVisible();
-
-			await page.keyboard.press( 'Tab' );
-			await expect( button1 ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-
-			await page.keyboard.press( 'Escape' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-			await expect( button1 ).toBeVisible();
-
-			await page.keyboard.press( 'Space' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-			await expect( button1 ).toBeHidden();
-
-			await page.keyboard.press( 'ArrowDown' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowRight' );
-			await expect( accordionTitleThree ).toBeFocused();
-			await expect( accordionTitleThree ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowUp' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowLeft' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 	} );
 
@@ -357,55 +310,8 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
 				button1 = page.locator( '.elementor-button >> nth=0' );
 
-			// Assert.
 			await page.locator( '.page-header' ).click();
-
-			await page.keyboard.press( 'Tab' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Tab' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Shift+Tab' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'Enter' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-			await expect( button1 ).toBeVisible();
-
-			await page.keyboard.press( 'Tab' );
-			await expect( button1 ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-
-			await page.keyboard.press( 'Escape' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
-			await expect( button1 ).toBeVisible();
-
-			await page.keyboard.press( 'Space' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-			await expect( button1 ).toBeHidden();
-
-			await page.keyboard.press( 'ArrowDown' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowRight' );
-			await expect( accordionTitleThree ).toBeFocused();
-			await expect( accordionTitleThree ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowUp' );
-			await expect( accordionTitleTwo ).toBeFocused();
-			await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-			await page.keyboard.press( 'ArrowLeft' );
-			await expect( accordionTitleOne ).toBeFocused();
-			await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
 		} );
 
 		await test.step( '@axe-core/playwright', async () => {
@@ -417,3 +323,52 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 	} );
 } );
+
+async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
+	await page.keyboard.press( 'Tab' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'Tab' );
+	await expect( accordionTitleTwo ).toBeFocused();
+	await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'Shift+Tab' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'Enter' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect( button1 ).toBeVisible();
+
+	await page.keyboard.press( 'Tab' );
+	await expect( button1 ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	await page.keyboard.press( 'Escape' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect( button1 ).toBeVisible();
+
+	await page.keyboard.press( 'Space' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect( button1 ).toBeHidden();
+
+	await page.keyboard.press( 'ArrowDown' );
+	await expect( accordionTitleTwo ).toBeFocused();
+	await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowRight' );
+	await expect( accordionTitleThree ).toBeFocused();
+	await expect( accordionTitleThree ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowUp' );
+	await expect( accordionTitleTwo ).toBeFocused();
+	await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowLeft' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+}

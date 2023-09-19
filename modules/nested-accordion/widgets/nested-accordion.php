@@ -791,7 +791,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			$accordion_count = $index + 1;
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
 			$item_summary_key = $this->get_repeater_setting_key( 'item_summary', 'items', $index );
-			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
+			$item_classes = [ 'e-n-accordion-item' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
@@ -931,7 +931,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					view.addRenderAttribute( itemTitleKey, {
 						'class': ['e-n-accordion-item-title'],
 						'data-accordion-index': itemCount,
-						'tabindex': defaultState ? ariaExpanded ? 0 : -1 : 0,
+						'tabindex': 'expanded' === defaultState ? ariaExpanded ? 0 : -1 : 0,
 						'aria-expanded': ariaExpanded,
 						'aria-controls': itemId,
 						'role': 'button',
