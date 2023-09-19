@@ -1,4 +1,5 @@
 import Module from 'elementor-assets-js/modules/imports/module.js';
+
 export default class extends Module {
 	constructor() {
 		super();
