@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 // eslint-disable-next-line
-import { warning } from '@actions/core';
+import gitHub from '@actions/core';
 import fs from 'fs';
 
 export class PluginsTester {
@@ -19,11 +19,9 @@ export class PluginsTester {
 	}
 
 	async run() {
-		if ( this.options.runServer ) {
-			this.setCwd();
-			this.runServer();
-			this.prepareTestSite();
-		}
+		this.setCwd();
+		this.runServer();
+		this.prepareTestSite();
 		this.disableContainers();
 		this.checkPlugins();
 	}
@@ -34,28 +32,21 @@ export class PluginsTester {
 		return execSync( cmd ).toString();
 	}
 
-	runWP( cmd ) {
-		if ( ! this.options.runServer ) {
-			return this.cmd( `cd ../../ && ${ cmd }` );
-		}
-		return this.cmd( cmd );
-	}
-
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
 			try {
-				const filename = process.env.CI ? '../../logs.txt' : 'logs.txt';
+				const filename = 'logs.txt';
 
 				if ( fs.existsSync( filename ) ) {
 					fs.unlinkSync( filename );
 				}
 
-				this.runWP( `npx wp-env run cli 'bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt' ` );
+				this.cmd( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt ` );
 				const warn = fs.readFileSync( filename );
 
 				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
-					warning( warn.toString() );
+					gitHub.warning( warn.toString() );
 				}
 			} catch ( e ) {
 				this.options.logger.error( e );
@@ -65,7 +56,7 @@ export class PluginsTester {
 			} catch ( error ) {
 				this.options.logger.error( error.toString() );
 				if ( process.env.CI ) {
-					error( error.toString() );
+					gitHub.error( error.toString() );
 				}
 				errors.push( {
 					slug,
@@ -73,7 +64,7 @@ export class PluginsTester {
 				} );
 			}
 
-			this.runWP( `npx wp-env run cli wp plugin deactivate ${ slug }` );
+			this.cmd( `npx wp-env run cli wp plugin deactivate ${ slug }` );
 		} );
 
 		if ( errors.length ) {
@@ -94,7 +85,7 @@ export class PluginsTester {
 		console.log( `Disabling containers: ${ process.env.CONTAINERS }` );
 		if ( ! process.env.CONTAINERS ) {
 			console.log( 'Deactivating containers !!!' );
-			this.runWP( `npx wp-env run cli wp elementor experiments deactivate container` );
+			this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
 		}
 	}
 
