@@ -9,7 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends DB_Upgrades_Manager {
 
+	/**
+	 * @deprecated 3.17.0
+	 */
 	const INSTALLS_HISTORY_META = 'elementor_install_history';
+
+	public static function get_install_history_meta() {
+		return 'elementor_install_history';
+	}
 
 	// todo: remove in future releases
 	public function should_upgrade() {
@@ -53,7 +60,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function get_installs_history() {
-		return get_option( self::INSTALLS_HISTORY_META, [] );
+		return get_option( static::get_install_history_meta(), [] );
 	}
 
 	public static function install_compare( $version, $operator ) {
@@ -84,6 +91,6 @@ class Manager extends DB_Upgrades_Manager {
 
 		uksort( $installs_history, 'version_compare' );
 
-		update_option( self::INSTALLS_HISTORY_META, $installs_history );
+		update_option( static::get_install_history_meta(), $installs_history );
 	}
 }
