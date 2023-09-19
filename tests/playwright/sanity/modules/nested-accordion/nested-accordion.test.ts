@@ -329,18 +329,18 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 	await expect( accordionTitleOne ).toBeFocused();
 	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 
-	await page.keyboard.press( 'Tab' );
-	await expect( accordionTitleTwo ).toBeFocused();
-	await expect( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
-
-	await page.keyboard.press( 'Shift+Tab' );
-	await expect( accordionTitleOne ).toBeFocused();
-	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
-
 	await page.keyboard.press( 'Enter' );
 	await expect( accordionTitleOne ).toBeFocused();
 	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 	await expect( button1 ).toBeVisible();
+
+	await page.keyboard.press( 'Tab' );
+	await expect( button1 ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	await page.keyboard.press( 'Shift+Tab' );
+	await expect( accordionTitleOne ).toBeFocused();
+	await expect( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 
 	await page.keyboard.press( 'Tab' );
 	await expect( button1 ).toBeFocused();
