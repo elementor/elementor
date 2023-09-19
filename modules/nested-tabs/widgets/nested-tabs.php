@@ -339,9 +339,9 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-align-items: flex-start;',
-				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-align-items: center;',
-				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-align-items: flex-end;',
+				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-align-items: flex-start; --n-tabs-title-text-align: start;',
+				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-align-items: center; --n-tabs-title-text-align: center;',
+				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-align-items: flex-end; --n-tabs-title-text-align: end;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -1112,7 +1112,7 @@ class NestedTabs extends Widget_Nested_Base {
 					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo esc_html( $title ); ?>
+					<?php echo wp_kses_post( $title ); ?>
 				</span>
 			</button>
 		<?php
