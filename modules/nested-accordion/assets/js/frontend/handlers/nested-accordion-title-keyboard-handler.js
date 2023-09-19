@@ -1,12 +1,10 @@
-import NestedTitleKeyboardHandler
-	from '../../../../../../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler';
+import NestedTitleKeyboardHandler from 'elementor-assets-js/frontend/handlers/accessibility/nested-title-keyboard-handler';
 
 export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyboardHandler {
 	__construct( ...args ) {
 		super.__construct( ...args );
-		const DTO = args[ 0 ];
-		this.toggleTitle = DTO.toggleTitle;
-		alert( 'NestedAccordionTitleKeyboardHandler' );
+		const config = args[ 0 ];
+		this.toggleTitle = config.toggleTitle;
 	}
 
 	getDefaultSettings() {
@@ -28,13 +26,7 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		};
 	}
 
-	bindEvents() {
-		super.bindEvents();
-		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.handeEnterOrSpaceEvent.bind( this ) );
-	}
-
-	handeEnterOrSpaceEvent( event, data ) {
-		event.currentTarget = this.elements.$itemTitles[ data.titleIndex - 1 ];
+	handeTitleLinkEnterOrSpaceEvent( event ) {
 		this.toggleTitle( event );
 	}
 

@@ -4,7 +4,6 @@ import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboa
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
 		super( ...args );
-		alert( 'NestedAccordion' );
 
 		this.animations = new Map();
 	}
@@ -101,11 +100,7 @@ export default class NestedAccordion extends Base {
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
 		this.animations.set( accordionItem, animation );
 
-		const summaryNode = accordionItem.querySelector( 'summary' );
-
-		if ( summaryNode ) {
-			summaryNode.setAttribute( 'aria-expanded', isOpen );
-		}
+		accordionItem.querySelector( 'summary' )?.setAttribute( 'aria-expanded', isOpen );
 	}
 
 	closeAccordionItem( accordionItem, accordionItemTitle ) {
