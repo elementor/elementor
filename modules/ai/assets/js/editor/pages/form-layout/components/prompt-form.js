@@ -41,13 +41,6 @@ const EditButton = ( props ) => (
 		size="small"
 		color="primary"
 		tooltip={ __( 'Edit prompt', 'elementor' ) }
-		sx={ {
-			color: 'primary.inverse',
-			'&:hover': {
-				color: 'primary.inverse',
-				bgcolor: 'primary.background',
-			},
-		} }
 		{ ...props }
 	>
 		<EditIcon />
