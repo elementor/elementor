@@ -32,33 +32,11 @@ export default class NestedAccordion extends Base {
 		};
 	}
 
-	getKeyboardNavigationSettings() {
-		return {
-			$element: this.$element,
-			selectors: {
-				itemTitle: '.e-n-accordion-item-title',
-				itemContainer: '.e-n-accordion-item > .e-con',
-			},
-			ariaAttributes: {
-				titleStateAttribute: 'aria-expanded',
-				activeTitleSelector: '[aria-expanded="true"]',
-			},
-			datasets: {
-				titleIndex: 'data-accordion-index',
-			},
-		};
-	}
-
 	onInit( ...args ) {
 		super.onInit( ...args );
 
 		if ( elementorFrontend.isEditMode() ) {
 			this.interlaceContainers();
-		}
-
-		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
-			const handler = new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
-			handler.handeTitleLinkEnterOrSpaceEvent = this.clickListener.bind( this ); // To support enter and space keys
 		}
 	}
 
