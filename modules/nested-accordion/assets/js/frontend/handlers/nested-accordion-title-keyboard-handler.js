@@ -41,4 +41,13 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		this.getActiveTitleElement().trigger( 'focus' );
 		this.toggleTitle( event );
 	}
+
+	handleTitleEscapeKeyEvents( event ) {
+		const detailsNode = event?.currentTarget.parentElement,
+			isOpen = detailsNode?.open;
+
+		if ( isOpen ) {
+			this.toggleTitle( event );
+		}
+	}
 }
