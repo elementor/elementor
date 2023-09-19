@@ -11,6 +11,10 @@ class Manager extends DB_Upgrades_Manager {
 
 	const INSTALLS_HISTORY_META = 'elementor_install_history';
 
+	public static function get_install_history_meta() {
+		return 'elementor_install_history';
+	}
+
 	// todo: remove in future releases
 	public function should_upgrade() {
 		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
@@ -53,7 +57,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function get_installs_history() {
-		return get_option( static::INSTALLS_HISTORY_META, [] );
+		return get_option( static::get_install_history_meta(), [] );
 	}
 
 	public static function install_compare( $version, $operator ) {
@@ -84,6 +88,6 @@ class Manager extends DB_Upgrades_Manager {
 
 		uksort( $installs_history, 'version_compare' );
 
-		update_option( static::INSTALLS_HISTORY_META, $installs_history );
+		update_option( static::get_install_history_meta(), $installs_history );
 	}
 }
