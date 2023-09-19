@@ -380,7 +380,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active__new_site() {
-		update_option( Manager::INSTALLS_HISTORY_META, [
+		update_option( Manager::get_install_history_meta(), [
 			time() => '3.1.0',
 		] );
 
@@ -400,7 +400,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active__immutable() {
-		update_option( Manager::INSTALLS_HISTORY_META, [
+		update_option( Manager::get_install_history_meta(), [
 			time() => '3.1.0',
 		] );
 
