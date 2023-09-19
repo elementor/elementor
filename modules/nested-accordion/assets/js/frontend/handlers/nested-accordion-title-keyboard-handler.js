@@ -1,36 +1,44 @@
-export default class NestedAccordionTitleKeyboardHandler extends elementorModules.frontend.handlers.NestedTitleKeyboardHandler {
+import NestedTitleKeyboardHandler
+	from '../../../../../../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler';
+
+export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyboardHandler {
 	__construct( ...args ) {
 		super.__construct( ...args );
-		alert( 121 );
+		const DTO = args[ 0 ];
+		this.toggleTitle = DTO.toggleTitle;
 	}
 
-	// GetDefaultSettings() {
-	// 	return {
-	// 		$element: this.$element,
-	// 		selectors: {
-	// 			itemTitle: '.e-n-accordion-item-title',
-	// 			itemContainer: '.e-n-accordion-item > .e-con',
-	// 		},
-	// 		ariaAttributes: {
-	// 			titleStateAttribute: 'aria-expanded',
-	// 			activeTitleSelector: '[aria-expanded="true"]',
-	// 		},
-	// 		datasets: {
-	// 			titleIndex: 'data-accordion-index',
-	// 		},
-	// 	};
-	// }
-	//
-	// bindEvents() {
-	// 	elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.handeEnterOrSpaceEvent.bind( this ) );
-	// }
-	//
-	// handeEnterOrSpaceEvent( event, data ) {
-	// 	event.currentTarget = this.elements.$accordionTitles[ data.titleIndex - 1 ];
-	// 	this.clickListener( event );
-	// }
-	//
-	// handleContentElementEscapeEvents( event ) {
-	// 	const target = event?.target;
-	// }
+	getDefaultSettings() {
+		const parentSettings = super.getDefaultSettings();
+
+		return {
+			...parentSettings,
+			selectors: {
+				itemTitle: '.e-n-accordion-item-title',
+				itemContainer: '.e-n-accordion-item > .e-con',
+			},
+			ariaAttributes: {
+				titleStateAttribute: 'aria-expanded',
+				activeTitleSelector: '[aria-expanded="true"]',
+			},
+			datasets: {
+				titleIndex: 'data-accordion-index',
+			},
+		};
+	}
+
+	bindEvents() {
+		super.bindEvents();
+		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.handeEnterOrSpaceEvent.bind( this ) );
+	}
+
+	handeEnterOrSpaceEvent( event, data ) {
+		event.currentTarget = this.elements.$itemTitles[ data.titleIndex - 1 ];
+		this.toggleTitle( event );
+	}
+
+	handleContentElementEscapeEvents( event ) {
+		this.getActiveTitleElement().trigger( 'focus' );
+		this.toggleTitle( event );
+	}
 }
