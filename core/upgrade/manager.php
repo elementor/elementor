@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends DB_Upgrades_Manager {
 
+	/**
+	 * @deprecated 3.17.0
+	 */
 	const INSTALLS_HISTORY_META = 'elementor_install_history';
 
 	public static function get_install_history_meta() {
