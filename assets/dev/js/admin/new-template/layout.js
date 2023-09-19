@@ -1,5 +1,6 @@
 var NewTemplateView = require( 'elementor-admin/new-template/view' );
 import LockPro from './behaviors/lock-pro';
+import AdjustPostType from './behaviors/adjust-post-type';
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 
@@ -30,6 +31,9 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.lockProBehavior = new LockPro( this.elements );
 		this.lockProBehavior.bindEvents();
 
+		this.adjustPostTypeBehavior = new AdjustPostType( this.elements );
+		this.adjustPostTypeBehavior.bindEvents();
+
 		const dynamicControlsVisibilityListener = () => {
 			elementorAdmin.templateControls.setDynamicControlsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
 		};
@@ -53,6 +57,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			submitButton: container.querySelector( `${ root }__submit` ),
 			lockButton: container.querySelector( `${ root }__lock_button` ),
 			templateType: container.querySelector( `${ root }__template-type` ),
+			postType: container.querySelector( `${ root }__post-type` ),
 			lockBadge: container.querySelector( `${ root }__template-type-badge` ),
 			lockBadgeText: container.querySelector( `${ root }__template-type-badge__text` ),
 			lockBadgeIcon: container.querySelector( `${ root }__template-type-badge__icon` ),
