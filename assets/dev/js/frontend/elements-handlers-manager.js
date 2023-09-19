@@ -31,7 +31,7 @@ module.exports = function( $ ) {
 	}
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
-		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
+		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/frontend' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );

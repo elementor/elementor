@@ -8,7 +8,7 @@ import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
 import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
-import NestedAccordion from 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion';
+import NestedAccordion from 'elementor/modules/nested-accordion/assets/js/frontend/frontend/';
 
 import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
 
