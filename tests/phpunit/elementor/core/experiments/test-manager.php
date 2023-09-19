@@ -390,7 +390,10 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_is_feature_active() {
-		$this->add_test_feature();
+		$this->add_test_feature( [
+			'name' => 'test_feature',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
 
 		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
