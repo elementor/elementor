@@ -155,18 +155,18 @@ class Manager extends Base_Object {
 		return $experimental_data;
 	}
 
-    private function install_compare( $version ) {
-	    $installs_history = Upgrade_Manager::get_installs_history();
+	private function install_compare( $version ) {
+		$installs_history = Upgrade_Manager::get_installs_history();
 
-        end( $installs_history );
-        $cleaned_version = preg_replace('/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
+		end( $installs_history );
+		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
 
-	    return version_compare(
-		    $cleaned_version,
-		    $version,
-		    '>='
-	    );
-    }
+		return version_compare(
+			$cleaned_version,
+			$version,
+			'>='
+		);
+	}
 
 	/**
 	 * Combine 'tag' and 'tags' into one property.
