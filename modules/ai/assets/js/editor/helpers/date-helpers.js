@@ -1,3 +1,5 @@
+export const MONTH_DECEMBER_INDEX = 12;
+export const MONTH_JANUARY_INDEX = 0;
 /**
  * Formats a date (like wp_date() in PHP), translating it into site's locale.
  *

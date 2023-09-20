@@ -1,12 +1,11 @@
-import { IconButton, Tooltip } from '@elementor/ui';
+import { IconButton } from '@elementor/ui';
+import Tooltip from '../../tooltip';
 
 const ActionButton = ( { tooltipTitle, ...props } ) => {
 	return (
-		<Tooltip title={ tooltipTitle } placement="top" componentsProps={ {
-			tooltip: {
-				sx: { m: '0 !important' } },
-		} } >
-			<IconButton type="button"
+		<Tooltip title={ tooltipTitle } placement="top">
+			<IconButton
+				type="button"
 				size="small"
 				disableRipple={ true }
 				disableFocusRipple={ true }

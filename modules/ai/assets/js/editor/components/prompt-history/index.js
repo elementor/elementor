@@ -5,7 +5,7 @@ import { usePromptHistoryContext } from './context/prompt-history-context';
 const PROMPT_HISTORY_MODAL_ID = 'prompt-history-modal';
 
 const PromptHistory = () => {
-	const { isOpen, onOpen, onClose } = usePromptHistoryContext();
+	const { isOpen, isModalOpen, onOpen, onClose } = usePromptHistoryContext();
 
 	return (
 		<>
@@ -15,7 +15,7 @@ const PromptHistory = () => {
 				aria-haspopup="dialog"
 				aria-controls={ PROMPT_HISTORY_MODAL_ID } />
 
-			{ isOpen && <PromptHistoryModal id={ PROMPT_HISTORY_MODAL_ID } /> }
+			{ isModalOpen && <PromptHistoryModal id={ PROMPT_HISTORY_MODAL_ID } /> }
 		</>
 	);
 };

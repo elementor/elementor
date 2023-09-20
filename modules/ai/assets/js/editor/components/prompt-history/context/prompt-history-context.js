@@ -1,13 +1,41 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { HISTORY_TYPES } from '../history-types';
+import { vh } from '../../../helpers';
 
 export const PromptHistoryContext = createContext( {} );
 
-export const PromptHistoryProvider = ( { promptType, state, children } ) => {
-	const { isPromptHistoryOpen, setIsPromptHistoryOpen } = state;
+const DIALOG_CONTAINER_SELECTOR = '.e-ai-dialog-content';
+
+const getContainer = () => {
+	return document.querySelector( DIALOG_CONTAINER_SELECTOR );
+};
+
+const getContainerHeight = () => {
+	const contentContainer = document.querySelector( DIALOG_CONTAINER_SELECTOR );
+	return contentContainer?.clientHeight;
+};
+
+const getContentHeight = () => {
+	const contentContainer = document.querySelector( DIALOG_CONTAINER_SELECTOR );
+	return contentContainer.children[ 0 ].clientHeight + 50;
+};
+
+const setContentHeight = ( height ) => {
+	const contentContainer = document.querySelector( DIALOG_CONTAINER_SELECTOR );
+
+	if ( 'auto' === height ) {
+		contentContainer.style.height = 'auto';
+		return;
+	}
+
+	contentContainer.style.height = `${ height }px`;
+};
+
+export const PromptHistoryProvider = ( { promptType, children } ) => {
+	const showHistoryState = useState( false );
 
 	return (
-		<PromptHistoryContext.Provider value={ { promptType, isPromptHistoryOpen, setIsPromptHistoryOpen } }>
+		<PromptHistoryContext.Provider value={ { promptType, showHistoryState } }>
 			{ children }
 		</PromptHistoryContext.Provider>
 	);
@@ -15,25 +43,90 @@ export const PromptHistoryProvider = ( { promptType, state, children } ) => {
 
 PromptHistoryProvider.propTypes = {
 	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
-	state: PropTypes.object.isRequired,
 	children: PropTypes.node,
 };
 
 export const usePromptHistoryContext = () => {
-	const { promptType, isPromptHistoryOpen, setIsPromptHistoryOpen } = useContext( PromptHistoryContext );
+	const { promptType, showHistoryState } = useContext( PromptHistoryContext );
+	const [ showHistory, setShowHistory ] = showHistoryState;
+
+	const [ showModalWrapper, setShowModalWrapper ] = useState( false );
+	const [ showPromptHistory, setShowPromptHistory ] = useState( false );
+
+	const handleFullScreenHistoryState = () => {
+		if ( showHistory ) {
+			setShowModalWrapper( true );
+			setTimeout( () => setShowPromptHistory( true ), 200 );
+
+			return;
+		}
+
+		setShowPromptHistory( false );
+		setTimeout( () => setShowModalWrapper( false ), 500 );
+	};
+
+	const handleDefaultHistoryState = () => {
+		if ( showHistory ) {
+			const currentHeight = getContentHeight();
+
+			// Set initial state
+			setContentHeight( currentHeight );
+
+			setTimeout( () => {
+				if ( currentHeight < vh( 61 ) ) {
+					setContentHeight( vh( 61 ) );
+
+					setTimeout( () => setShowModalWrapper( true ), 200 );
+					setTimeout( () => setShowPromptHistory( true ), 300 );
+
+					return;
+				}
+
+				setShowModalWrapper( true );
+				setShowPromptHistory( true );
+			}, 20 );
+
+			return;
+		}
+
+		setShowPromptHistory( false );
+
+		setTimeout( () => {
+			setShowModalWrapper( false );
+			setContentHeight( getContentHeight() );
+
+			setTimeout( () => setContentHeight( 'auto' ), 300 );
+		}, 500 );
+	};
+
+	useEffect( () => {
+		if ( showHistory === showModalWrapper && showHistory === showPromptHistory ) {
+			return;
+		}
+
+		if ( promptType === HISTORY_TYPES.IMAGE ) {
+			return handleFullScreenHistoryState();
+		}
+
+		handleDefaultHistoryState();
+	}, [ showHistory ] );
 
 	const onOpen = () => {
-		setIsPromptHistoryOpen( true );
+		setShowHistory( true );
 	};
 
 	const onClose = () => {
-		setIsPromptHistoryOpen( false );
+		setShowHistory( false );
 	};
 
 	return {
 		promptType,
-		isOpen: isPromptHistoryOpen,
+		isOpen: showPromptHistory,
+		isModalOpen: showModalWrapper,
+		showHistory,
 		onOpen,
 		onClose,
+		getContainer,
+		getContainerHeight,
 	};
 };

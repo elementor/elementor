@@ -1,5 +1,5 @@
-import { produce } from 'immer';
-import { daysDiff, translateDate } from '../../../date-helpers';
+import { daysDiff, MONTH_DECEMBER_INDEX, MONTH_JANUARY_INDEX, translateDate } from '../../../helpers/date-helpers';
+import PromptHistoryPeriod from '../parts/modal-period';
 
 const DATE_KEY = 'date';
 
@@ -15,17 +15,8 @@ const MONTH_FORMAT = __( 'F', 'elementor' );
  * @return {Array}
  */
 const sortPromptHistoryData = ( historyData ) => {
-	return historyData.sort( ( a, b ) => new Date( b[ DATE_KEY ] ) - new Date( a[ DATE_KEY ] ) );
-};
-
-/**
- * Creates a copy of data and sorts it.
- *
- * @param {Array} historyData
- * @return {Array}
- */
-const prepareData = ( historyData ) => {
-	return produce( historyData, ( d ) => sortPromptHistoryData( d ) );
+	const clone = [ ...historyData ];
+	return clone.sort( ( a, b ) => new Date( b[ DATE_KEY ] ) - new Date( a[ DATE_KEY ] ) );
 };
 
 /**
@@ -35,7 +26,7 @@ const prepareData = ( historyData ) => {
  * @return {Object.<string, {label: string, items: any[]}>}
  */
 export const groupPromptHistoryData = ( historyData ) => {
-	const data = prepareData( historyData );
+	const data = sortPromptHistoryData( historyData );
 	const currentDate = new Date();
 
 	const result = {
@@ -67,4 +58,31 @@ export const groupPromptHistoryData = ( historyData ) => {
 	}
 
 	return result;
+};
+
+export const renderPeriods = ( { items, onDelete } ) => {
+	const groupData = groupPromptHistoryData( items );
+	const periods = [];
+
+	if ( groupData[ LAST_7_DAYS_KEY ]?.items?.length ) {
+		periods.push( <PromptHistoryPeriod periodTitle={ groupData[ LAST_7_DAYS_KEY ].label }
+			onHistoryItemDelete={ onDelete }
+			historyItems={ groupData[ LAST_7_DAYS_KEY ].items } /> );
+	}
+
+	if ( groupData[ LAST_30_DAYS_KEY ]?.items?.length ) {
+		periods.push( <PromptHistoryPeriod periodTitle={ groupData[ LAST_30_DAYS_KEY ].label }
+			onHistoryItemDelete={ onDelete }
+			historyItems={ groupData[ LAST_30_DAYS_KEY ].items } /> );
+	}
+
+	for ( let i = MONTH_DECEMBER_INDEX; i >= MONTH_JANUARY_INDEX; i-- ) {
+		if ( groupData[ i ] ) {
+			periods.push( <PromptHistoryPeriod periodTitle={ groupData[ i ].label }
+				onHistoryItemDelete={ onDelete }
+				historyItems={ groupData[ i ].items } /> );
+		}
+	}
+
+	return periods;
 };

@@ -10,7 +10,6 @@ import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
 import PromptHistory from './components/prompt-history';
 import { HISTORY_TYPES } from './components/prompt-history/history-types';
-import { useState } from 'react';
 import {
 	PromptHistoryActionProvider,
 } from './components/prompt-history/context/prompt-history-action-context';
@@ -28,7 +27,6 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-	const [ isPromptHistoryOpen, setIsPromptHistoryOpen ] = useState( false );
 
 	const promptDialogStyleProps = {
 		sx: {
@@ -36,13 +34,17 @@ const PageContent = (
 				alignItems: 'flex-start',
 				mt: 'media' === type ? '2.5vh' : '18vh',
 			},
+			'& .MuiDialogContent-root': {
+				willChange: 'height',
+				transition: 'height 300ms ease-in-out',
+				position: 'relative',
+			},
 		},
 		PaperProps: {
 			sx: {
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
 				height: ! isLoading && 'media' === type ? '95vh' : 'auto',
-				minHeight: isPromptHistoryOpen ? '61vh' : 'auto',
 			},
 		},
 	};
@@ -106,7 +108,7 @@ const PageContent = (
 
 	if ( 'media' === type ) {
 		return (
-			<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.IMAGE }>
+			<PromptHistoryProvider promptType={ HISTORY_TYPES.IMAGE }>
 				<PromptHistoryActionProvider>
 					<FormMedia
 						onClose={ onClose }
@@ -125,7 +127,7 @@ const PageContent = (
 	if ( 'code' === type ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-				<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.CODE }>
+				<PromptHistoryProvider promptType={ HISTORY_TYPES.CODE }>
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
@@ -133,7 +135,7 @@ const PageContent = (
 							{ maybeRenderUpgradeChip() }
 						</PromptDialog.Header>
 
-						<PromptDialog.Content dividers sx={ { position: 'relative' } }>
+						<PromptDialog.Content className="e-ai-dialog-content" dividers>
 							<FormCode
 								onClose={ onClose }
 								getControlValue={ getControlValue }
@@ -151,7 +153,7 @@ const PageContent = (
 
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-			<PromptHistoryProvider state={ { isPromptHistoryOpen, setIsPromptHistoryOpen } } promptType={ HISTORY_TYPES.TEXT }>
+			<PromptHistoryProvider promptType={ HISTORY_TYPES.TEXT }>
 				<PromptHistoryActionProvider>
 					<PromptDialog.Header onClose={ onClose }>
 						<PromptHistory />
@@ -159,7 +161,7 @@ const PageContent = (
 						{ maybeRenderUpgradeChip() }
 					</PromptDialog.Header>
 
-					<PromptDialog.Content dividers sx={ { position: 'relative' } }>
+					<PromptDialog.Content className="e-ai-dialog-content" dividers>
 						<FormText
 							type={ type }
 							controlType={ controlType }

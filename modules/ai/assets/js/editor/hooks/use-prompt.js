@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { setStatusFeedback } from '../api';
-import { produce } from 'immer';
 
 const normalizeResponse = ( { text, response_id: responseId, usage, images } ) => {
 	const creditsData = usage ? ( usage.quota - usage.usedQuota ) : 0;
@@ -48,13 +47,15 @@ const usePrompt = ( fetchData, initialState ) => {
 	};
 
 	const setResult = ( result, responseId = null ) => {
-		setData( produce( ( draft ) => {
-			draft.result = result;
+		const updatedResult = { ...data };
 
-			if ( responseId ) {
-				draft.responseId = responseId;
-			}
-		} ) );
+		updatedResult.result = result;
+
+		if ( responseId ) {
+			updatedResult.responseId = responseId;
+		}
+
+		setData( updatedResult );
 	};
 
 	return {

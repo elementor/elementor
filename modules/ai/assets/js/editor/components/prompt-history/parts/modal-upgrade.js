@@ -4,16 +4,17 @@ import { UpgradeIcon } from '@elementor/icons';
 const VARIANT_FULL = 'full';
 const VARIANT_SMALL = 'small';
 
+const messages = {
+	[ VARIANT_FULL ]: __( 'Want to see your image generation history for as far as the past 90 days?', 'elementor' ),
+	[ VARIANT_SMALL ]: __( 'Want to see your image generation history for the past 90 days?', 'elementor' ),
+};
+
+const actionUrl = 'https://go.elementor.com/ai-popup-purchase-dropdown/';
+
 const PromptHistoryUpgrade = ( { variant } ) => {
-	const messages = {
-		[ VARIANT_FULL ]: __( 'Want to see your image generation history for as far as the past 90 days?', 'elementor' ),
-		[ VARIANT_SMALL ]: __( 'Want to see your image generation history for the past 90 days?', 'elementor' ),
-	};
-
-	const actionUrl = 'https://go.elementor.com/ai-popup-purchase-dropdown/';
-
 	return (
-		<Stack justifyContent="center"
+		<Stack
+			justifyContent="center"
 			sx={ { height: VARIANT_SMALL === variant ? 'auto' : '100%', textAlign: 'center', p: 2 } }
 			data-testid={ `e-ph-upgrade-${ variant }` }>
 			<Typography variant="body1" sx={ { marginBottom: 2 } }>

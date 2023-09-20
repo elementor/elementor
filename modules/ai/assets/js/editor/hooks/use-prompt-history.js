@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import { getHistory } from '../api';
-import { produce } from 'immer';
 
-const normalizeItems = ( items ) => {
+const getImageThumbnailURL = ( base, imageURL ) => {
+	if ( ! base ) {
+		return imageURL;
+	}
+
+	return `${ base }/?o=${ btoa( imageURL, false ) }`;
+};
+
+const normalizeItems = ( response ) => {
+	const { meta, items } = response;
+
 	return items?.map( ( item ) => {
 		return {
 			id: item?.elementorApiId,
@@ -13,6 +22,12 @@ const normalizeItems = ( items ) => {
 			ratio: item?.request?.ratio,
 			text: item?.response?.results?.text,
 			images: item?.response?.results?.images,
+			thumbnails: item?.response?.results?.images?.map( ( image ) => {
+				return {
+					...image,
+					image_url: getImageThumbnailURL( meta.thumbnailUrl, image.image_url ),
+				};
+			} ),
 		};
 	} );
 };
@@ -22,17 +37,17 @@ const usePromptHistory = ( promptType ) => {
 	const [ data, setData ] = useState( {} );
 	const [ error, setError ] = useState( '' );
 
-	const send = async ( { page, limit } ) => new Promise( ( resolve, reject ) => {
+	const fetchData = async ( { page, limit } ) => new Promise( ( resolve, reject ) => {
 		setIsLoading( true );
 
 		getHistory( promptType, page, limit )
 			.then( ( response ) => {
-				setData( produce( ( draft ) => {
-					draft.meta = response.meta;
-					draft.items = [ ...draft?.items || [], ...normalizeItems( response.items ) ];
+				const clone = JSON.parse( JSON.stringify( data ) );
 
-					return draft;
-				} ) );
+				clone.meta = response.meta;
+				clone.items = [ ...clone?.items || [], ...normalizeItems( response ) ];
+
+				setData( clone );
 
 				resolve( true );
 			} )
@@ -52,11 +67,11 @@ const usePromptHistory = ( promptType ) => {
 			return false;
 		}
 
-		setData( produce( ( draft ) => {
-			draft.items.splice( itemIndex, 1 );
+		const clone = JSON.parse( JSON.stringify( data ) );
 
-			return draft;
-		} ) );
+		clone.items.splice( itemIndex, 1 );
+
+		setData( clone );
 
 		return true;
 	};
@@ -66,7 +81,7 @@ const usePromptHistory = ( promptType ) => {
 		error,
 		items: data.items,
 		meta: data.meta,
-		send,
+		fetchData,
 		deleteItemById,
 	};
 };

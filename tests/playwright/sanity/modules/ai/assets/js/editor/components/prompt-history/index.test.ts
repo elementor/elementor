@@ -7,7 +7,7 @@ import {
 	thirtyDaysLimitDataMock,
 	unknownActionDataMock, restoreImageDataMock,
 } from './get-history.mock';
-import { closeAIDialog, closePromptHistory, openPromptHistory } from './helper';
+import { closeAIDialog, closePromptHistory, openPromptHistory, waitForPromptHistoryItem } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../../../../selectors/editor-selectors';
@@ -65,7 +65,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFull ).first() ).toBeVisible();
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFullTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -77,7 +77,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessage ).first() ).toBeVisible();
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessageTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -89,9 +89,9 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.period ) ).toHaveCount( 2 );
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.periodTestId ) ).toHaveCount( 2 );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.item ) ).toHaveCount( 2 );
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ) ).toHaveCount( 2 );
 
 			await closePromptHistory( page );
 		} );
@@ -103,7 +103,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmall ).first() ).toBeVisible();
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmallTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
 		} );
@@ -115,7 +115,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIcon ) ).toHaveCount( 1 );
+			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIconTestId ) ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
 		} );
@@ -130,7 +130,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const items = page.getByTestId( EditorSelectors.ai.promptHistory.item );
+			const items = page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId );
 
 			await expect( items ).toHaveCount( 2 );
 
@@ -158,7 +158,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await page.waitForSelector( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` );
+			await waitForPromptHistoryItem( page );
 
 			const accessibilityScanResults = await new AxeBuilder( { page } )
 				.include( EditorSelectors.ai.promptHistory.modal )
@@ -179,7 +179,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			await page.waitForSelector( `[data-testid="${ EditorSelectors.ai.promptHistory.item }"]` );
+			await waitForPromptHistoryItem( page );
 
 			const accessibilityScanResults = await new AxeBuilder( { page } )
 				.include( EditorSelectors.ai.promptHistory.modal )
@@ -206,7 +206,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+			const item = page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ).first();
 
 			await item.hover();
 
@@ -228,7 +228,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+			const item = page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ).first();
 
 			await item.hover();
 
@@ -256,7 +256,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const item = page.getByTestId( EditorSelectors.ai.promptHistory.item ).first();
+			const item = page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ).first();
 
 			await item.hover();
 
@@ -286,7 +286,7 @@ test.describe( 'AI @ai', () => {
 
 			await openPromptHistory( page );
 
-			const item = page.getByTestId( promptHistory.item ).first();
+			const item = page.getByTestId( promptHistory.itemTestId ).first();
 
 			await item.hover();
 
@@ -322,6 +322,8 @@ test.describe( 'AI @ai', () => {
 
 			// Check restored images
 			const images = page.locator( image.generatedImage );
+
+			await images.first().waitFor( { state: 'visible' } );
 
 			expect( await images.count() ).toEqual( 2 );
 

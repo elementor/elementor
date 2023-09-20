@@ -30,6 +30,7 @@ type PromptHistoryMeta = {
 	totalPages: number
 	currentPage: number
 	allowedDays: number
+	thumbnailUrl: string
 }
 
 type PromptHistoryPaginationData = {

@@ -14,18 +14,22 @@ export const ACTION_TYPES = Object.freeze( {
 	REUSE: 'reuse',
 	EDIT: 'edit',
 	RESTORE: 'restore',
+	REMOVE: 'remove',
 } );
 
 const ENABLED_ACTIONS_BY_TYPE = {
 	[ HISTORY_TYPES.TEXT ]: {
 		[ ACTION_TYPES.REUSE ]: true,
 		[ ACTION_TYPES.EDIT ]: true,
+		[ ACTION_TYPES.REMOVE ]: true,
 	},
 	[ HISTORY_TYPES.CODE ]: {
 		[ ACTION_TYPES.REUSE ]: true,
+		[ ACTION_TYPES.REMOVE ]: true,
 	},
 	[ HISTORY_TYPES.IMAGE ]: {
 		[ ACTION_TYPES.RESTORE ]: true,
+		[ ACTION_TYPES.REMOVE ]: true,
 	},
 };
 

@@ -20,3 +20,7 @@ export const openPromptHistory = async ( page: Page ) => {
 export const closePromptHistory = async ( page: Page ) => {
 	await page.locator( EditorSelectors.ai.promptHistory.closeButton ).click();
 };
+
+export const waitForPromptHistoryItem = async ( page: Page ) => {
+	await page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ).first().waitFor( { state: 'visible' } );
+};

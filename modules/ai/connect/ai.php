@@ -510,7 +510,7 @@ class Ai extends Library {
 			: add_query_arg( [
 				'page' => $page,
 				'limit' => $limit,
-			], 'history/' . $type );
+			], "history/{$type}" );
 
 		return $this->ai_request(
 			'POST',

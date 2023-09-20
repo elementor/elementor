@@ -5,7 +5,7 @@ const useDeletePromptHistoryItem = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( '' );
 
-	const send = async ( id ) => new Promise( ( resolve, reject ) => {
+	const deleteItem = async ( id ) => new Promise( ( resolve, reject ) => {
 		setError( '' );
 		setIsLoading( true );
 
@@ -25,7 +25,7 @@ const useDeletePromptHistoryItem = () => {
 	return {
 		isLoading,
 		error,
-		send,
+		deleteItem,
 	};
 };
 

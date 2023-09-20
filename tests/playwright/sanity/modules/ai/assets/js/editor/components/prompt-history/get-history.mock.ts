@@ -34,6 +34,7 @@ export const noDataMock = getJsonMock( {
 			totalPages: 0,
 			currentPage: 1,
 			allowedDays: 90,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );
@@ -53,6 +54,7 @@ export const differentPeriodsDataMock = getJsonMock( {
 			totalPages: 1,
 			currentPage: 1,
 			allowedDays: 90,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );
@@ -71,6 +73,7 @@ export const thirtyDaysLimitDataMock = getJsonMock( {
 			totalPages: 1,
 			currentPage: 1,
 			allowedDays: 30,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );
@@ -90,6 +93,7 @@ export const unknownActionDataMock = getJsonMock( {
 			totalPages: 1,
 			currentPage: 1,
 			allowedDays: 90,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );
@@ -117,6 +121,7 @@ export const reuseAndEditTextDataMock = getJsonMock( {
 			totalPages: 1,
 			currentPage: 1,
 			allowedDays: 90,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );
@@ -155,6 +160,7 @@ export const restoreImageDataMock = getJsonMock( {
 			totalPages: 1,
 			currentPage: 1,
 			allowedDays: 90,
+			thumbnailUrl: 'https://example.com',
 		},
 	},
 } );

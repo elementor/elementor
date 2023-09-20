@@ -1,14 +1,13 @@
-import { Box, styled, Typography } from '@elementor/ui';
+import { List, ListSubheader, styled, Typography } from '@elementor/ui';
 import PromptHistoryItem from './modal-item';
-import { translateDate } from '../../../date-helpers';
+import { translateDate } from '../../../helpers/date-helpers';
 
-const StyledPeriod = styled( Box )( ( { theme } ) => ( {
+const StyledPeriodList = styled( List )( ( { theme } ) => ( {
 	borderBottom: `1px solid ${ theme.palette.action.focus }`,
 } ) );
 
 const StyledPeriodTitle = styled( Typography )( ( { theme } ) => ( {
 	padding: theme.spacing( 1.5, 2 ),
-	fontSize: '14px',
 	color: theme.palette.secondary.light,
 } ) );
 
@@ -16,19 +15,25 @@ const DATE_FORMAT = __( 'F j, g:i A', 'elementor' );
 
 const PromptHistoryPeriod = ( { periodTitle, historyItems, onHistoryItemDelete } ) => {
 	return (
-		<StyledPeriod data-testid="e-ph-p">
-			<StyledPeriodTitle variant="subtitle1">{ periodTitle }</StyledPeriodTitle>
+		<StyledPeriodList
+			data-testid="e-ph-p"
+			subheader={
+				<ListSubheader disableSticky={ true } disableGutters={ true }>
+					<StyledPeriodTitle variant="body2" role="heading" aria-level="6">{ periodTitle }</StyledPeriodTitle>
+				</ListSubheader>
+			} >
 
 			{ historyItems.map( ( { id, date, ...props } ) => {
 				return (
-					<PromptHistoryItem key={ id }
+					<PromptHistoryItem
+						key={ id }
 						date={ translateDate( DATE_FORMAT, date ) }
 						onHistoryItemDelete={ () => onHistoryItemDelete( id ) }
 						id={ id }
 						{ ...props } />
 				);
 			} ) }
-		</StyledPeriod>
+		</StyledPeriodList>
 	);
 };
 
