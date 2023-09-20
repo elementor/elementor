@@ -4,13 +4,13 @@ import Draggable from 'react-draggable';
 import DialogHeader from './dialog-header';
 
 const DraggablePaper = ( props ) => {
-	const [ controlledPosition, setControlledPosition ] = useState( { x: 0, y: 0 } );
+	const [ position, setPosition ] = useState( { x: 0, y: 0 } );
 	const paperRef = useRef( null );
 	const timeout = useRef( null );
 
-	const onControlledDrag = ( _e, { x, y } ) => setControlledPosition( { x, y } );
+	const onDrag = ( _e, { x, y } ) => setPosition( { x, y } );
 
-	const handlePositionBoundries = () => {
+	const handlePositionBoundaries = () => {
 		clearTimeout( timeout.current );
 
 		// Ensuring the dialog header, which is used as the dialog dragging handle, does not exceed the screen.
@@ -18,25 +18,25 @@ const DraggablePaper = ( props ) => {
 			const dialogTop = paperRef.current?.getBoundingClientRect().top;
 
 			if ( dialogTop < 0 ) {
-				setControlledPosition( ( prev ) => ( { ...prev, y: prev.y - dialogTop } ) );
+				setPosition( ( prev ) => ( { ...prev, y: prev.y - dialogTop } ) );
 			}
 		}, 50 );
 	};
 
 	useEffect( () => {
-		const myObserver = new ResizeObserver( handlePositionBoundries );
+		const resizeObserver = new ResizeObserver( handlePositionBoundaries );
 
-		myObserver.observe( paperRef.current );
+		resizeObserver.observe( paperRef.current );
 
 		return () => {
-			myObserver.disconnect();
+			resizeObserver.disconnect();
 		};
 	}, [] );
 
 	return (
 		<Draggable
-			position={ controlledPosition }
-			onDrag={ onControlledDrag }
+			position={ position }
+			onDrag={ onDrag }
 			handle=".MuiAppBar-root"
 			cancel={ '[class*="MuiDialogContent-root"]' }
 			bounds="parent"
