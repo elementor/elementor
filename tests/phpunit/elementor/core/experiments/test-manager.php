@@ -420,6 +420,27 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $is_test_feature_active );
 	}
 
+
+	public function test_is_feature_active__new_site_should_be_active() {
+		update_option( Manager::INSTALLS_HISTORY_META, [
+			'3.1.0' => time(),
+		] );
+
+		$this->experiments->add_feature( [
+			'name' => 'test_feature',
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'mutable' => false,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.0.0',
+			],
+		] );
+
+		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
+
+		$this->assertTrue( $is_test_feature_active );
+	}
+
 	public function test_is_feature_active__new_site_should_be_inactive() {
 		update_option( Manager::INSTALLS_HISTORY_META, [
 			'3.0.0' => time(),
@@ -459,26 +480,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
 
 		$this->assertTrue( $is_test_feature_active );
-	}
-
-	public function test_is_feature_active__new_site_with_beta_should_be_inactive() {
-		update_option( Manager::INSTALLS_HISTORY_META, [
-			'3.1.0-beta' => time(),
-		] );
-
-		$this->experiments->add_feature( [
-			'name' => 'test_feature',
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'mutable' => false,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.0.0',
-			],
-		] );
-
-		$is_test_feature_active = $this->experiments->is_feature_active( 'test_feature' );
-
-		$this->assertFalse( $is_test_feature_active );
 	}
 
 	public function test_is_feature_active__immutable() {
