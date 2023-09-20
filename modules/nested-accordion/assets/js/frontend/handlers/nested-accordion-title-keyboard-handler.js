@@ -16,6 +16,7 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 			selectors: {
 				itemTitle: '.e-n-accordion-item-title',
 				itemContainer: '.e-n-accordion-item > .e-con',
+				accordionWrapper: '.e-n-accordion-item',
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-expanded',
@@ -38,13 +39,13 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		if ( summaryNode ) {
 			event.currentTarget = summaryNode;
 
-			this.getActiveTitleElement().trigger( 'focus' );
+			summaryNode.focus();
 			this.toggleTitle( event );
 		}
 	}
 
 	handleTitleEscapeKeyEvents( event ) {
-		const detailsNode = event?.currentTarget.parentElement,
+		const detailsNode = event?.currentTarget?.parentElement,
 			isOpen = detailsNode?.open;
 
 		if ( isOpen ) {
@@ -52,13 +53,9 @@ export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyb
 		}
 	}
 
-	findParentDetailsNode( el ) {
-		while ( el ) {
-			if ( 'details' === el.nodeName.toLowerCase() ) {
-				return el;
-			}
-			el = el.parentElement;
-		}
-		return null;
+	findParentDetailsNode( element ) {
+		const accordionWrapper = this.getDefaultSettings().selectors.accordionWrapper;
+
+		return element?.closest( accordionWrapper ) || null;
 	}
 }
