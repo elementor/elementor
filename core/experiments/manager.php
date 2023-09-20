@@ -93,7 +93,7 @@ class Manager extends Base_Object {
 		$new_site = $experimental_data['new_site'];
 
 		if ( $new_site['default_active'] || $new_site['always_active'] ) {
-			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
+			$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
 
 			if ( $is_new_installation ) {
 				if ( $new_site['always_active'] ) {
@@ -154,6 +154,19 @@ class Manager extends Base_Object {
 
 		return $experimental_data;
 	}
+
+    private function install_compare( $version ) {
+	    $installs_history = Upgrade_Manager::get_installs_history();
+
+        end( $installs_history );
+        $cleaned_version = preg_replace('/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
+
+	    return version_compare(
+		    $cleaned_version,
+		    $version,
+		    '>='
+	    );
+    }
 
 	/**
 	 * Combine 'tag' and 'tags' into one property.

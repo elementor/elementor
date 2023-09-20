@@ -443,6 +443,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_is_feature_active__new_site_with_beta() {
 		update_option( Manager::INSTALLS_HISTORY_META, [
 			'3.1.0-beta' => time(),
+			'3.1.0-beta2' => time() + 1,
 		] );
 
 		$this->experiments->add_feature( [
@@ -451,7 +452,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'mutable' => false,
 			'new_site' => [
 				'default_active' => true,
-				'minimum_installation_version' => '3.1.0-beta',
+				'minimum_installation_version' => '3.1.0',
 			],
 		] );
 
@@ -471,7 +472,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'mutable' => false,
 			'new_site' => [
 				'default_active' => true,
-				'minimum_installation_version' => '3.1.0',
+				'minimum_installation_version' => '3.0.0',
 			],
 		] );
 
