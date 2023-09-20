@@ -348,10 +348,15 @@ async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, 
 
 	await page.keyboard.press( 'Escape' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect.soft( button1 ).toBeHidden();
+
+	await page.keyboard.press( 'Space' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
 	await expect.soft( button1 ).toBeVisible();
 
-	await page.keyboard.press( 'Space' );
+	await page.keyboard.press( 'Escape' );
 	await expect.soft( accordionTitleOne ).toBeFocused();
 	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
 	await expect.soft( button1 ).toBeHidden();

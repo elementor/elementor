@@ -40,11 +40,15 @@ export default class NestedAccordion extends Base {
 			this.interlaceContainers();
 		}
 
+		this.injectKeyboardHandler();
+	}
+
+	injectKeyboardHandler() {
 		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
 			const handler = new NestedAccordionTitleKeyboardHandler( {
 				$element: this.$element,
 			} );
-			handler.handeTitleLinkEnterOrSpaceEvent = this.handeTitleLinkEnterOrSpaceEvent.bind( this );
+			handler.handeTitleLinkEnterOrSpaceEvent = this.clickListener.bind( this );
 			handler.handleContentElementEscapeEvents = this.handleContentElementEscapeEvents.bind( this );
 			handler.handleTitleEscapeKeyEvents = this.handleTitleEscapeKeyEvents.bind( this );
 			this.handler = handler;
@@ -142,10 +146,6 @@ export default class NestedAccordion extends Base {
 	getAnimationDuration() {
 		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
 		return size * ( 'ms' === unit ? 1 : 1000 );
-	}
-
-	handeTitleLinkEnterOrSpaceEvent( event ) {
-		this.clickListener( event );
 	}
 
 	handleContentElementEscapeEvents( event ) {
