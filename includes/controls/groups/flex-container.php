@@ -168,6 +168,10 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'old_key' => 'size',
 				'new_key' => 'column',
 			],
+			'upgrade_conversion_map' => [
+				'old_key' => 'size',
+				'new_keys' => [ 'column', 'row' ],
+			],
 			'validators' => [
 				'Number' => [
 					'min' => 0,
