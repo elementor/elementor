@@ -124,7 +124,6 @@ export default class NestedAccordion extends Base {
 	}
 
 	openAccordionItem( accordionItem, accordionItemTitle, accordionItemContent ) {
-		console.log( arguments );
 		const startHeight = `${ accordionItem.offsetHeight }px`,
 			endHeight = `${ accordionItemTitle.offsetHeight + accordionItemContent.offsetHeight }px`;
 
