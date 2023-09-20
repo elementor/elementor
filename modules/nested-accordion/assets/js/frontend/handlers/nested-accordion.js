@@ -45,13 +45,10 @@ export default class NestedAccordion extends Base {
 
 	injectKeyboardHandler() {
 		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
-			const handler = new NestedAccordionTitleKeyboardHandler( {
+			new NestedAccordionTitleKeyboardHandler( {
 				$element: this.$element,
+				toggleTitle: this.clickListener.bind( this ),
 			} );
-			handler.handeTitleLinkEnterOrSpaceEvent = this.clickListener.bind( this );
-			handler.handleContentElementEscapeEvents = this.handleContentElementEscapeEvents.bind( this );
-			handler.handleTitleEscapeKeyEvents = this.handleTitleEscapeKeyEvents.bind( this );
-			this.handler = handler;
 		}
 	}
 
@@ -146,35 +143,5 @@ export default class NestedAccordion extends Base {
 	getAnimationDuration() {
 		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
 		return size * ( 'ms' === unit ? 1 : 1000 );
-	}
-
-	handleContentElementEscapeEvents( event ) {
-		const detailsNode = this.findParentDetailsNode( event.currentTarget ),
-			summaryNode = detailsNode.querySelector( 'summary' );
-
-		if ( summaryNode ) {
-			summaryNode.focus();
-			event.currentTarget = summaryNode;
-			this.clickListener( event );
-		}
-	}
-
-	handleTitleEscapeKeyEvents( event ) {
-		const detailsNode = event?.currentTarget?.parentElement,
-			isOpen = detailsNode?.open;
-
-		if ( isOpen ) {
-			this.clickListener( event );
-		}
-	}
-
-	findParentDetailsNode( el ) {
-		while ( el ) {
-			if ( 'details' === el.nodeName.toLowerCase() ) {
-				return el;
-			}
-			el = el.parentElement;
-		}
-		return null;
 	}
 }

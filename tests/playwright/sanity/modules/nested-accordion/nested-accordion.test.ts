@@ -319,7 +319,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 				.include( '.e-n-accordion' )
 				.analyze();
 
-			await expect( accessibilityScanResults.violations ).toEqual( [] );
+			await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 		} );
 	} );
 } );
