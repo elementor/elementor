@@ -41,6 +41,8 @@ export const takeScreenshot = async ( template ) => {
 function screenshotNode( node ) {
 	return toWebp( node, {
 		quality: 0.01,
+		// Transparent 1x1 pixel.
+		imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
 	} );
 }
 
