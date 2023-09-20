@@ -1073,8 +1073,8 @@ trait Base_Carousel_Trait {
 		$this->end_controls_section();
 	}
 
-	public function render_carousel_footer( $settings ) {
-		if ( 'yes' === $settings['arrows'] && 1 < $this->get_num_of_carousel_items( $settings ) ) : ?>
+	public function render_carousel_footer( $settings ) { ?>
+		<?php if ( 'yes' === $settings['arrows'] && 1 < $settings['posts_per_page'] ) : ?>
 			<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 				<?php $this->render_swiper_button( 'previous' ); ?>
 			</div>
@@ -1083,7 +1083,7 @@ trait Base_Carousel_Trait {
 			</div>
 		<?php endif;
 
-		if ( $settings['pagination'] && 1 < $this->get_num_of_carousel_items( $settings ) ) : ?>
+		if ( $settings['pagination'] && 1 < $settings['posts_per_page'] ) : ?>
 			<div class="swiper-pagination"></div>
 		<?php endif;
 	}
@@ -1372,13 +1372,5 @@ trait Base_Carousel_Trait {
 		];
 
 		return is_rtl() ? array_reverse( $navigation_controls ) : $navigation_controls;
-	}
-
-	/**
-	 * @param array $settings
-	 * @return int
-	 */
-	private function get_num_of_carousel_items( $settings ) {
-		return is_admin() ? $settings['posts_per_page'] : count( $settings['carousel_items'] );
 	}
 }
