@@ -240,6 +240,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.4 - 2023-09-20 =
+
+* Fix: HTML tags are not rendering on title field in Tabs widget ([#23752](https://github.com/elementor/elementor/issues/23752))
+* Fix: Tabs is using the 'active' color for both 'active' and 'hover' states in the accordion layout in Tabs widget
+* Fix: Gaps values aren't displayed inside the Editor in Container widget
+
 = 3.16.3 - 2023-09-14 =
 
 * Tweak: Changed Improved CSS loading feature to inactive for existing sites
