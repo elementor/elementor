@@ -46,7 +46,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * @return void
 	 */
 	public function init() {
-		$packages = array_merge( self::PACKAGES_TO_ENQUEUE, self::LIBS );
+		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
 
 		foreach ( $packages as $package ) {
 			$this->assets_config_provider->load( $package );
@@ -121,7 +121,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			);
 		}
 
-		foreach ( $this->assets_config_provider->only( self::PACKAGES_TO_ENQUEUE ) as $config ) {
+		foreach ( $this->assets_config_provider->only( $this->get_packages_to_enqueue() ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
 		}
 
@@ -177,5 +177,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$body_file_path = __DIR__ . '/templates/editor-body-v2.view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	private function get_packages_to_enqueue() : array {
+		return apply_filters( 'elementor/editor/v2/packages', self::PACKAGES_TO_ENQUEUE );
 	}
 }
