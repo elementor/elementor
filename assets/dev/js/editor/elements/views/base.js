@@ -1053,9 +1053,6 @@ BaseElementView = BaseContainer.extend( {
 	/**
 	 * Inside the Pro version 3.16.0 and 3.16.1 we overwrote the original logical padding properties inside the Mega Menu & Nested Carousel widgets by using the `:not(.e-core-315)` selector.
 	 * Inside this function we add the `e-core-315` class name to the Nested Widgets in the 3.16.0/1 Pro plugins.
-	 *
-	 * @param  key
-	 * @param  value
 	 */
 	bc316ProPluginUpdateNestedClassName( key = null, value = null ) {
 		if ( ! key || ! value ) {
