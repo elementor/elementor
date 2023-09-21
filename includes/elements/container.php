@@ -1355,9 +1355,11 @@ class Container extends Element_Base {
 			]
 		);
 
-		$bc316_styling = $this->is_pro316_v0_or_v1()
-			? '--bc316-padding-top: {{TOP}}{{UNIT}}; --bc316-padding-bottom: {{BOTTOM}}{{UNIT}}; --bc316-padding-left: {{LEFT}}{{UNIT}}; --bc316-padding-right: {{RIGHT}}{{UNIT}}; '
-			: '';
+		// $bc316_styling = $this->is_pro316_v0_or_v1()
+		// 	? '--bc316-padding-top: {{TOP}}{{UNIT}}; --bc316-padding-bottom: {{BOTTOM}}{{UNIT}}; --bc316-padding-left: {{LEFT}}{{UNIT}}; --bc316-padding-right: {{RIGHT}}{{UNIT}}; '
+		// 	: '';
+
+		$bc316_styling = '';
 
 		$this->add_responsive_control(
 			'padding',

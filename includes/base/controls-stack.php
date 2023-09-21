@@ -1807,6 +1807,12 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return self Current instance of the element.
 	 */
 	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
+		$is_pro_nested_widget = is_array( $value ) && ( in_array( 'e-n-menu', $value ) || in_array( 'e-n-carousel', $value ) );
+
+		if ( $is_pro_nested_widget ) {
+			$value[] = 'e-core-315';
+		}
+
 		if ( is_array( $element ) ) {
 			foreach ( $element as $element_key => $attributes ) {
 				$this->add_render_attribute( $element_key, $attributes, null, $overwrite );
