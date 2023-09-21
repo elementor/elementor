@@ -132,18 +132,6 @@ class Container extends Element_Base {
 		if ( $this->get_data( 'isInner' ) ) {
 			return;
 		}
-
-		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-		$this->add_render_attribute( '_wrapper', [
-			'data-core-v316-plus' => 'true',
-		] );
-
-		if ( $this->is_pro316_v0_or_v1() ) {
-			$this->add_render_attribute( '_wrapper', [
-				'data-core-v316-logical' => 'true',
-			] );
-		}
 	}
 
 	/**
@@ -1355,12 +1343,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		// $bc316_styling = $this->is_pro316_v0_or_v1()
-		// 	? '--bc316-padding-top: {{TOP}}{{UNIT}}; --bc316-padding-bottom: {{BOTTOM}}{{UNIT}}; --bc316-padding-left: {{LEFT}}{{UNIT}}; --bc316-padding-right: {{RIGHT}}{{UNIT}}; '
-		// 	: '';
-
-		$bc316_styling = '';
-
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -1368,7 +1350,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "$bc316_styling--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
+					'{{WRAPPER}}' => "--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);

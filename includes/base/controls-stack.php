@@ -2469,10 +2469,10 @@ abstract class Controls_Stack extends Base_Object {
 			return $value;
 		}
 
-		$pro316_0_and_1 = [ '3.16.0', '3.16.1' ];
-		$is_active_pro316_0_and_1 = in_array( ELEMENTOR_PRO_VERSION, $pro316_0_and_1, true );
+		$pro316_v0_or_v1 = [ '3.16.0', '3.16.1' ];
+		$is_active_pro316_v0_and_v1 = in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_or_v1, true );
 
-		if ( ! $is_active_pro316_0_and_1 ) {
+		if ( ! $is_active_pro316_v0_and_v1 ) {
 			return $value;
 		}
 
