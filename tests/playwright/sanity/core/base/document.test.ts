@@ -50,7 +50,8 @@ test.describe( 'Document tests', async () => {
 } );
 
 async function addElement( wpAdmin: WpAdminPage, elementType: string ) {
-	await wpAdmin.page.click( '.block-editor-inserter__toggle' );
+	const frame = wpAdmin.page.frame( { name: 'editor-canvas' } );
+	await frame.click( '.block-editor-inserter__toggle' );
 	await wpAdmin.page.click( '.editor-block-list-item-' + elementType );
-	await wpAdmin.page.click( '.editor-styles-wrapper' );
+	await frame.click( '.editor-styles-wrapper' );
 }

@@ -8,13 +8,17 @@ import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	{ text: __( 'Hero section with an image, headline, and call-to-action button about', 'elementor' ) },
-	{ text: __( 'Our Services section with a 3-icons and text blocks for', 'elementor' ) },
-	{ text: __( 'Testimonial section with an image-left, text-right style about', 'elementor' ) },
-	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
-	{ text: __( 'A short section about the importance of', 'elementor' ) },
-	{ text: __( 'FAQ section for ensuring easy navigation and clear answers about', 'elementor' ) },
+	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
+	{ text: __( 'An accordion-style FAQ block, with clickable questions revealing detailed answers about', 'elementor' ) },
+	{ text: __( 'A hero section combining an image, heading, subheading, and call-to-action button about', 'elementor' ) },
+	{ text: __( 'A full-width call-to-action with a background image, overlaid text, and a standout button about', 'elementor' ) },
+	{ text: __( 'A carousel testimonial block displaying user images, names, and their feedback on', 'elementor' ) },
+	{ text: __( 'A features block, showcasing the feature title, and brief description about', 'elementor' ) },
+	{ text: __( 'Multi column minimalistic About us section with icons showcasing', 'elementor' ) },
+	{ text: __( 'A section with contact form and social media icons representing alternative contact methods for', 'elementor' ) },
 	{ text: __( 'Statistics display in a 3-column layout, with numbers and icons about', 'elementor' ) },
+	{ text: __( 'Pricing table section with highlighted option for', 'elementor' ) },
+	{ text: __( 'About us section, combining company history and values about', 'elementor' ) },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
@@ -41,13 +45,6 @@ const EditButton = ( props ) => (
 		size="small"
 		color="primary"
 		tooltip={ __( 'Edit prompt', 'elementor' ) }
-		sx={ {
-			color: 'primary.inverse',
-			'&:hover': {
-				color: 'primary.inverse',
-				bgcolor: 'primary.background',
-			},
-		} }
 		{ ...props }
 	>
 		<EditIcon />

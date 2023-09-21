@@ -2,7 +2,7 @@
 	"phpVersion": "7.4",
 	"plugins": [
 		"./plugins/elementor-tests-utils",
-		"../../"
+		"../../build"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/hello-elementor.zip"

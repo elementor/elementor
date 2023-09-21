@@ -50,7 +50,7 @@ const GalleryImage = ( {
 				justifyContent="center"
 				alignItems="center"
 				sx={ {
-					bgcolor: 'secondary.background',
+					bgcolor: 'action.selected',
 					height: 'contained' === variant ? 336 : 'auto',
 					position: 'relative',
 					overflow: 'hidden',

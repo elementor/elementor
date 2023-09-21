@@ -1110,7 +1110,7 @@ class NestedTabs extends Widget_Nested_Base {
 					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo esc_html( $title ); ?>
+					<?php echo wp_kses_post( $title ); ?>
 				</span>
 			</button>
 		<?php
