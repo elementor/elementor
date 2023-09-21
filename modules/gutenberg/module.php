@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Gutenberg;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
@@ -132,8 +133,49 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		$this->register_experiments();
+
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'dequeue_assets' ], 999 );
+	}
+
+	public function register_experiments() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'gutenberg_assets_optimize',
+			'title' => esc_html__( 'Gutenberg Assets Optimize', 'elementor' ),
+			'description' => esc_html__( 'Optimize Gutenberg assets', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
+	}
+
+	public function dequeue_assets() {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'gutenberg_assets_optimize' ) ) {
+			return;
+		}
+
+		$post = get_post();
+
+		if ( empty( $post->ID ) ) {
+			return;
+		}
+
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return;
+		}
+
+		if ( has_blocks( $post ) ) {
+			return;
+		}
+
+		wp_dequeue_style( 'wp-block-library' );
+		wp_dequeue_style( 'wp-block-library-theme' );
+		wp_dequeue_style( 'wc-block-style' );
+		wp_dequeue_style( 'wc-blocks-style' );
 	}
 }
