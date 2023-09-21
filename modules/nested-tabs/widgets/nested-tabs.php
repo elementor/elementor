@@ -675,7 +675,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};",
+					'{{WRAPPER}}' => "--n-tabs-title-padding-top: {{TOP}}{{UNIT}}; --n-tabs-title-padding-right: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-bottom: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-left: {{LEFT}}{{UNIT}};",
 				],
 			]
 		);
@@ -1056,6 +1056,12 @@ class NestedTabs extends Widget_Nested_Base {
 			]
 		);
 
+		// $bc316_styling = $this->is_pro316_v0_or_v1
+		// 	? '--bc316-padding-top: {{TOP}}{{UNIT}}; --bc316-padding-bottom: {{BOTTOM}}{{UNIT}}; --bc316-padding-left: {{LEFT}}{{UNIT}}; --bc316-padding-right: {{RIGHT}}{{UNIT}}; '
+		// 	: '';
+
+		$bc316_styling = '';
+
 		$this->add_responsive_control(
 			'box_padding',
 			[
@@ -1063,7 +1069,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};",
+					$content_selector => "$bc316_styling--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};",
 				],
 			]
 		);

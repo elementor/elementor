@@ -138,6 +138,12 @@ class Container extends Element_Base {
 		$this->add_render_attribute( '_wrapper', [
 			'data-core-v316-plus' => 'true',
 		] );
+
+		if ( $this->is_pro316_v0_or_v1() ) {
+			$this->add_render_attribute( '_wrapper', [
+				'data-core-v316-logical' => 'true',
+			] );
+		}
 	}
 
 	/**
@@ -1018,7 +1024,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-right-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-left-width: {{LEFT}}{{UNIT}};",
+							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-width: {{TOP}}{{UNIT}}; --border-right-width: {{RIGHT}}{{UNIT}}; --border-bottom-width: {{BOTTOM}}{{UNIT}}; --border-left-width: {{LEFT}}{{UNIT}};",
 						],
 					],
 					'color' => [
@@ -1074,7 +1080,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-right-width: {{RIGHT}}{{UNIT}}; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-left-width: {{LEFT}}{{UNIT}};",
+							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-width: {{TOP}}{{UNIT}}; --border-right-width: {{RIGHT}}{{UNIT}}; --border-bottom-width: {{BOTTOM}}{{UNIT}}; --border-left-width: {{LEFT}}{{UNIT}};",
 						],
 					],
 					'color' => [
@@ -1344,10 +1350,14 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--margin-block-start: {{TOP}}{{UNIT}}; --margin-block-end: {{BOTTOM}}{{UNIT}}; --margin-left: {{LEFT}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}};",
+					'{{WRAPPER}}' => "--margin-top: {{TOP}}{{UNIT}}; --margin-bottom: {{BOTTOM}}{{UNIT}}; --margin-left: {{LEFT}}{{UNIT}}; --margin-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);
+
+		$bc316_styling = $this->is_pro316_v0_or_v1()
+			? '--bc316-padding-top: {{TOP}}{{UNIT}}; --bc316-padding-bottom: {{BOTTOM}}{{UNIT}}; --bc316-padding-left: {{LEFT}}{{UNIT}}; --bc316-padding-right: {{RIGHT}}{{UNIT}}; '
+			: '';
 
 		$this->add_responsive_control(
 			'padding',
@@ -1356,7 +1366,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
+					'{{WRAPPER}}' => "$bc316_styling--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);

@@ -1419,6 +1419,17 @@ abstract class Element_Base extends Controls_Stack {
 		return $settings;
 	}
 
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	/**
+	 * Check if Pro version is version 3.16.0 or 3.16.1.
+	 * We introduced logical properties for the dimension controls inside Elementor Pro 3.16.0 and 3.16.1, but removed them afterwards.
+	 */
+	protected function is_pro316_v0_or_v1() {
+		$pro316_versions_with_logical_properties = [ '3.16.0', '3.16.1' ];
+		return in_array( ELEMENTOR_PRO_VERSION, $pro316_versions_with_logical_properties, true );
+	}
+
 	/**
 	 * Get child type.
 	 *
