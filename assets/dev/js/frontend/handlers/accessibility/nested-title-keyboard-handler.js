@@ -200,7 +200,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 		} else if ( 'Escape' === event.key ) {
 			event.preventDefault();
 			event.stopPropagation();
-			this.handleContentElementEscapeEvents();
+			this.handleContentElementEscapeEvents( event );
 		}
 	}
 
