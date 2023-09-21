@@ -419,6 +419,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addRenderAttribute( element, key, value, overwrite ) {
+		value = this.bc316ProPluginUpdateNestedClassName( key, value );
+
 		const self = this;
 
 		if ( 'object' === typeof element ) {
@@ -1044,6 +1046,30 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	bc316ProPluginUpdateNestedClassName( key = null, value = null ) {
+		if ( ! key || ! value ) {
+			return value;
+		}
+
+		const pro316v0v1 = [ '3.16.0', '3.16.1' ],
+			activeProVersion = elementorFrontend?.config?.version_pro,
+			isActivePro316v0v1 = pro316v0v1.includes( activeProVersion );
+
+		if ( ! isActivePro316v0v1 ) {
+			return value;
+		}
+
+		const isProNestedWidget = Array.isArray( value ) && 'class' === key && ( value.includes( 'e-n-menu' ) || value.includes( 'e-n-carousel' ) );
+
+		if ( ! isProNestedWidget ) {
+			return value;
+		}
+
+		value.push( 'e-core-315' );
+
+		return value;
 	},
 } );
 

@@ -61,7 +61,7 @@
 	--padding-inline-start: var(--padding-left);
 	--padding-inline-end: var(--padding-right);
 
-	[dir="rtl"] & {
+	body.rtl & {
 		--margin-inline-start: var(--margin-right);
 		--margin-inline-end: var(--margin-left);
 		--border-inline-start-width: var(--border-right-width);

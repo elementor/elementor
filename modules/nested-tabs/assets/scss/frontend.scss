@@ -194,7 +194,7 @@
 			--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-left);
 			--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-right);
 
-			[dir="rtl"] & {
+			body.rtl & {
 				--n-tabs-title-padding-inline-start: var(--n-tabs-title-padding-right);
 				--n-tabs-title-padding-inline-end: var(--n-tabs-title-padding-left);
 			}
