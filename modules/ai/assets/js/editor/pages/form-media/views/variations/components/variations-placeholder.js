@@ -12,7 +12,7 @@ const VariationsPlaceholder = () => {
 							display="flex"
 							justifyContent="center"
 							alignItems="center"
-							sx={ { bgcolor: 'secondary.background', height: 336 } }
+							sx={ { bgcolor: 'action.selected', height: 336 } }
 						>
 							<AIIcon color="secondary" sx={ { fontSize: 36 } } />
 						</Box>
