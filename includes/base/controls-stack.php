@@ -2450,7 +2450,25 @@ abstract class Controls_Stack extends Base_Object {
 		return $settings;
 	}
 
-	private function bc316_pro_plugin_update_nested_class_name( $key, $value ) {
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	/**
+	 * Inside the Pro version 3.16.0 and 3.16.1 we overwrote the original logical padding properties inside the Mega Menu & Nested Carousel widgets by using the `:not(.e-core-315)` selector.
+	 * Inside this function we add the `e-core-315` class name to the Nested Widgets in the 3.16.0/1 Pro plugin.
+	 *
+	 * @since 3.16.5
+	 * @access private
+	 *
+	 * @param array|string|null $key       Optional. Attribute key. Default is null.
+	 * @param array|string|null $value     Optional. Attribute value. Default is null.
+	 *
+	 * @return array|string|null Updated attribute value.
+	 */
+	private function bc316_pro_plugin_update_nested_class_name( $key = null, $value = null ) {
+		if ( null === $key || null === $value ) {
+			return $value;
+		}
+
 		$pro316_versions_with_logical_properties = [ '3.16.0', '3.16.1' ];
 		$needs_update = in_array( ELEMENTOR_PRO_VERSION, $pro316_versions_with_logical_properties, true );
 
