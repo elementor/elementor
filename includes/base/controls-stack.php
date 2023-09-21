@@ -2469,10 +2469,14 @@ abstract class Controls_Stack extends Base_Object {
 			return $value;
 		}
 
-		$pro316_v0_or_v1 = [ '3.16.0', '3.16.1' ];
-		$is_active_pro316_v0_and_v1 = in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_or_v1, true );
+		if ( ! Utils::has_pro() ) {
+			return $value;
+		}
 
-		if ( ! $is_active_pro316_v0_and_v1 ) {
+		$pro316_v0_v1_or_v2 = [ '3.16.0', '3.16.1', '3.16.2' ];
+		$is_active_pro316_v0_v1_or_v2 = in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_v1_or_v2, true );
+
+		if ( ! $is_active_pro316_v0_v1_or_v2 ) {
 			return $value;
 		}
 

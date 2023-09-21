@@ -1055,11 +1055,11 @@ BaseElementView = BaseContainer.extend( {
 			return value;
 		}
 
-		const pro316v0v1 = [ '3.16.0', '3.16.1' ],
+		const pro316v0v1v2 = [ '3.16.0', '3.16.1', '3.16.2' ],
 			activeProVersion = elementorFrontend?.config?.version_pro,
-			isActivePro316v0v1 = pro316v0v1.includes( activeProVersion );
+			isActivePro316v0v1v2 = pro316v0v1v2.includes( activeProVersion );
 
-		if ( ! isActivePro316v0v1 ) {
+		if ( ! isActivePro316v0v1v2 ) {
 			return value;
 		}
 
