@@ -158,7 +158,6 @@ class Manager extends Base_Object {
 	private function install_compare( $version ) {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
-		end( $installs_history );
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
 
 		return version_compare(
