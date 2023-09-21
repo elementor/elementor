@@ -1807,11 +1807,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return self Current instance of the element.
 	 */
 	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
-		$is_pro_nested_widget = is_array( $value ) && ( in_array( 'e-n-menu', $value ) || in_array( 'e-n-carousel', $value ) );
-
-		if ( $is_pro_nested_widget ) {
-			$value[] = 'e-core-315';
-		}
+		$value = $this->bc316_pro_plugin_update_nested_class_name( $key, $value );
 
 		if ( is_array( $element ) ) {
 			foreach ( $element as $element_key => $attributes ) {
@@ -2452,6 +2448,25 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return $settings;
+	}
+
+	private function bc316_pro_plugin_update_nested_class_name( $key, $value ) {
+		$pro316_versions_with_logical_properties = [ '3.16.0', '3.16.1' ];
+		$needs_update = in_array( ELEMENTOR_PRO_VERSION, $pro316_versions_with_logical_properties, true );
+
+		if ( ! $needs_update ) {
+			return $value;
+		}
+
+		$is_pro_nested_widget = is_array( $value ) && 'class' === $key && ( in_array( 'e-n-menu', $value ) || in_array( 'e-n-carousel', $value ) );
+
+		if ( ! $is_pro_nested_widget ) {
+			return $value;
+		}
+
+		$value[] = 'e-core-315';
+
+		return $value;
 	}
 
 	/**

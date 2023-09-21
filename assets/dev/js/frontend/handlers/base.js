@@ -181,18 +181,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		const modelCID = this.getModelCID();
 
-		if ( this.$element.hasClass( 'elementor-widget-n-carousel' ) ) {
-			console.log( 'carousel' );
-
-			var elements = this.$element.find( '.e-n-carousel:not(.e-core-315) .swiper-wrapper > .e-con' );
-
-			elements.each( ( element ) => {
-				if ( 'initial' === element?.style?.getPropertyValue( '--padding-left' ) ) {
-					element?.style?.removeProperty( '--padding-left' );
-				}
-			} );
-		}
-
 		if ( this.isEdit && modelCID ) {
 			const settings = elementorFrontend.config.elements.data[ modelCID ],
 				attributes = settings.attributes;
