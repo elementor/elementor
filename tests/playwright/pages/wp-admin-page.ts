@@ -149,11 +149,11 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	getActiveTheme() {
-		return execSync( `npx wp-env run cli "wp theme list --status=active --field=name --format=csv"` ).toString().trim();
+		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
 	}
 
 	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
+		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
 	async openSiteSettings() {
@@ -190,8 +190,9 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	async closeBlockEditorPopupIfVisible() {
-		if ( await this.page.locator( '[aria-label="Close dialog"]' ).isVisible() ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
+		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
+		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
+			await this.page.getByRole( 'button', { name: 'Close' } ).click();
 		}
 	}
 

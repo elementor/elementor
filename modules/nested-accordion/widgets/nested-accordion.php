@@ -778,29 +778,44 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$items_title_html = '';
 		$icons_content = $this->render_accordion_icons( $settings );
 		$this->add_render_attribute( 'elementor-accordion', 'class', 'e-n-accordion' );
+		$this->add_render_attribute( 'elementor-accordion', 'aria-label', 'Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys' );
 		$default_state = $settings['default_state'];
 		$title_html_tag = Utils::validate_html_tag( $settings['title_tag'] );
 
 		$faq_schema = [];
 
 		foreach ( $items as $index => $item ) {
+			$accordion_count = $index + 1;
 			$item_setting_key = $this->get_repeater_setting_key( 'item_title', 'items', $index );
-			$item_classes = [ 'e-n-accordion-item', 'e-normal' ];
+			$item_summary_key = $this->get_repeater_setting_key( 'item_summary', 'items', $index );
+			$item_classes = [ 'e-n-accordion-item' ];
 			$item_id = empty( $item['element_css_id'] ) ? 'e-n-accordion-item-' . $id_int . $index : $item['element_css_id'];
 			$item_title = $item['item_title'];
 			$is_open = 'expanded' === $default_state && 0 === $index ? 'open' : '';
+			$aria_expanded = 'expanded' === $default_state && 0 === $index;
 
 			$this->add_render_attribute( $item_setting_key, [
 				'id' => $item_id,
 				'class' => $item_classes,
 			] );
 
+			$this->add_render_attribute( $item_summary_key, [
+				'class' => [ 'e-n-accordion-item-title' ],
+				'role' => 'button',
+				'data-accordion-index' => $accordion_count,
+				'tabindex' => 0 === $index ? 0 : -1,
+				'aria-expanded' => $aria_expanded ? 'true' : 'false',
+				'aria-controls' => $item_id,
+			] );
+
 			$title_render_attributes = $this->get_render_attribute_string( $item_setting_key );
 			$title_render_attributes = $title_render_attributes . ' ' . $is_open;
 
+			$summary_render_attributes = $this->get_render_attribute_string( $item_summary_key );
+
 			// items content.
 			ob_start();
-			$this->print_child( $index );
+			$this->print_child( $index, $item_id );
 			$item_content = ob_get_clean();
 
 			$faq_schema[ $item_title ] = $item_content;
@@ -808,7 +823,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			ob_start();
 			?>
 			<details <?php echo wp_kses_post( $title_render_attributes ); ?>>
-				<summary class='e-n-accordion-item-title'>
+				<summary <?php echo wp_kses_post( $summary_render_attributes ); ?> >
 					<span class='e-n-accordion-item-title-header'><?php echo wp_kses_post( "<$title_html_tag class=\"e-n-accordion-item-title-text\"> $item_title </$title_html_tag>" ); ?></span>
 					<?php if ( ! empty( $settings['accordion_item_title_icon']['value'] ) ) {
 						echo $icons_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -848,9 +863,33 @@ class Nested_Accordion extends Widget_Nested_Base {
 		}
 	}
 
+	public function print_child( $index, $item_id = null ) {
+		$children = $this->get_children();
+
+		if ( ! empty( $children[ $index ] ) ) {
+			// Add data-tab-index attribute to the content area.
+			$add_attribute_to_container = function ( $should_render, $container ) use ( $item_id ) {
+					$this->add_attributes_to_container( $container, $item_id );
+
+				return $should_render;
+			};
+
+			add_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container, 10, 3 );
+			$children[ $index ]->print_element();
+			remove_filter( 'elementor/frontend/container/should_render', $add_attribute_to_container );
+		}
+	}
+
+	protected function add_attributes_to_container( $container, $item_id ) {
+		$container->add_render_attribute( '_wrapper', [
+			'role' => 'region',
+			'aria-labelledby' => $item_id,
+		] );
+	}
+
 	protected function content_template() {
 		?>
-		<div class="e-n-accordion" role="tablist" aria-orientation="vertical">
+		<div class="e-n-accordion" aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys">
 			<# if ( settings['items'] ) {
 			const elementUid = view.getIDInt().toString().substring( 0, 3 ),
 				titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
@@ -864,9 +903,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 				<# _.each( settings['items'], function( item, index ) {
 				const itemCount = index + 1,
-					itemUid = elementUid + itemCount,
+					itemUid = elementUid + index,
 					itemWrapperKey = itemUid,
-					itemTitleKey = 'item-' + itemUid;
+					itemTitleKey = 'item-' + itemUid,
+					ariaExpanded = 'expanded' === defaultState && 0 === index ? 'true' : 'false';
 
 					if ( '' !== item.element_css_id ) {
 						itemId = item.element_css_id;
@@ -887,6 +927,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 					view.addRenderAttribute( itemTitleKey, {
 						'class': ['e-n-accordion-item-title'],
+						'data-accordion-index': itemCount,
+						'tabindex': 0 === index ? 0 : -1,
+						'aria-expanded': ariaExpanded,
+						'aria-controls': itemId,
+						'role': 'button',
 					});
 
 					view.addRenderAttribute( itemTitleText, {
