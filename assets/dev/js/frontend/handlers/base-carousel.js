@@ -134,6 +134,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.handleElementHandlers();
 			},
 			init: () => {
+				this.a11ySetWidgetAriaDetails();
+				this.a11ySetPaginationTabindex();
 				this.a11ySetSlideAriaHidden( 'initialisation' );
 			},
 		};
@@ -199,10 +201,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
-
-		this.a11ySetWidgetAriaDetails();
-		this.a11ySetPaginationTabindex();
-		this.a11ySetSlideAriaHidden( 'initialisation' );
 	}
 
 	bindEvents() {
