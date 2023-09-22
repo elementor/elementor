@@ -886,8 +886,12 @@ test.describe( 'Container tests @container', () => {
 		try {
 			await wpAdmin.setLanguage( 'he_IL' );
 
-			const editor = await wpAdmin.openNewPage(),
-				frame = await editor.getPreviewFrame();
+			await page.goto( 'wp-admin/profile.php' );
+			await page.selectOption( '[name="locale"]', 'he_IL' );
+			await page.locator( 'input#submit' ).click();
+
+			let editor = await wpAdmin.openNewPage();
+			let frame = await editor.getPreviewFrame();
 
 			await test.step( 'Load Template', async () => {
 				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
@@ -897,12 +901,58 @@ test.describe( 'Container tests @container', () => {
 			} );
 
 			await test.step( 'Rtl screenshot', async () => {
+				await expect.soft( await page.locator( 'body' ) ).toHaveClass( /rtl/ );
+				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+
 				await editor.togglePreviewMode();
 
 				expect.soft( await editor.getPreviewFrame()
 					.locator( '.e-con.e-parent>>nth=0' )
 					.screenshot( { type: 'png' } ) )
 					.toMatchSnapshot( 'container-dimensions-rtl.png' );
+			} );
+
+			await test.step( 'Install Hebrew language', async () => {
+				// Install Hebrew language on CI.
+				await page.goto( 'wp-admin/update-core.php' );
+				await page.waitForLoadState( 'domcontentloaded' );
+
+				const hasLanguageUpdateButton = await page.locator( '.wrap' ).evaluate( ( element ) => {
+					return ! element?.querySelector( 'input.button[name="upgrade"]' );
+				} );
+
+				if ( hasLanguageUpdateButton ) {
+					await page.locator( 'form.upgrade input.button[name="upgrade"]' ).click();
+					await page.waitForLoadState( 'domcontentloaded' );
+				}
+			} );
+
+			await test.step( 'Set user language to English', async () => {
+				await page.goto( 'wp-admin/profile.php' );
+				await page.selectOption( '[name="locale"]', '' );
+				await page.locator( 'input#submit' ).click();
+			} );
+
+			editor = await wpAdmin.openNewPage();
+			frame = await editor.getPreviewFrame();
+
+			await test.step( 'Load Template', async () => {
+				const filePath = _path.resolve( __dirname, `./templates/container-dimensions-ltr-rtl.json` );
+				await editor.loadTemplate( filePath, false );
+				await frame.waitForSelector( '.e-con.e-parent>>nth=0' );
+				await editor.closeNavigatorIfOpen();
+			} );
+
+			await test.step( 'Rtl screenshot with LTR UI', async () => {
+				await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+				await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).toHaveClass( /rtl/ );
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame()
+					.locator( '.e-con.e-parent>>nth=0' )
+					.screenshot( { type: 'png' } ) )
+					.toMatchSnapshot( 'container-dimensions-rtl-with-ltr-ui.png' );
 			} );
 		} finally {
 			await wpAdmin.setLanguage( '' );
@@ -919,6 +969,9 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Ltr screenshot', async () => {
+			await expect.soft( await page.locator( 'body' ) ).not.toHaveClass( /rtl/ );
+			await expect.soft( await editor.getPreviewFrame().locator( 'body' ) ).not.toHaveClass( /rtl/ );
+
 			await editor.togglePreviewMode();
 
 			expect.soft( await editor.getPreviewFrame()

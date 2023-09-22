@@ -48,20 +48,24 @@
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
-	--margin-block-start: var(--margin-top);
-	--margin-block-end: var(--margin-bottom);
-	--margin-inline-start: var(--margin-left);
-	--margin-inline-end: var(--margin-right);
-	--border-block-start-width: var(--border-top-width);
-	--border-block-end-width: var(--border-bottom-width);
-	--border-inline-start-width: var(--border-left-width);
-	--border-inline-end-width: var(--border-right-width);
-	--padding-block-start: var(--padding-top);
-	--padding-block-end: var(--padding-bottom);
-	--padding-inline-start: var(--padding-left);
-	--padding-inline-end: var(--padding-right);
+	&,
+	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--margin-block-start: var(--margin-top);
+		--margin-block-end: var(--margin-bottom);
+		--margin-inline-start: var(--margin-left);
+		--margin-inline-end: var(--margin-right);
+		--border-block-start-width: var(--border-top-width);
+		--border-block-end-width: var(--border-bottom-width);
+		--border-inline-start-width: var(--border-left-width);
+		--border-inline-end-width: var(--border-right-width);
+		--padding-block-start: var(--padding-top);
+		--padding-block-end: var(--padding-bottom);
+		--padding-inline-start: var(--padding-left);
+		--padding-inline-end: var(--padding-right);
+	}
 
-	body.rtl & {
+	body.rtl &,
+	[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
 		--margin-inline-start: var(--margin-right);
 		--margin-inline-end: var(--margin-left);
 		--border-inline-start-width: var(--border-right-width);
