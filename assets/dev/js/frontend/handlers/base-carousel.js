@@ -133,6 +133,9 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
 			},
+			init: () => {
+				this.a11ySetSlideAriaHidden( 'initialisation' );
+			},
 		};
 
 		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
