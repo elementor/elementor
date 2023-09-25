@@ -1807,8 +1807,6 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return self Current instance of the element.
 	 */
 	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
-//		$value = $this->bc316_pro_plugin_update_nested_class_name( $key, $value );
-
 		if ( is_array( $element ) ) {
 			foreach ( $element as $element_key => $attributes ) {
 				$this->add_render_attribute( $element_key, $attributes, null, $overwrite );
@@ -2448,47 +2446,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return $settings;
-	}
-
-	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-	/**
-	 * Inside the Pro version 3.16.0 and 3.16.1 we overwrote the original logical padding properties inside the Mega Menu & Nested Carousel widgets by using the `:not(.e-core-315)` selector.
-	 * Inside this function we add the `e-core-315` class name to the Nested Widgets in the 3.16.0/1 Pro plugins.
-	 *
-	 * @since 3.16.5
-	 * @access private
-	 *
-	 * @param array|string|null $key       Optional. Attribute key. Default is null.
-	 * @param array|string|null $value     Optional. Attribute value. Default is null.
-	 *
-	 * @return array|string|null Updated attribute value.
-	 */
-	private function bc316_pro_plugin_update_nested_class_name( $key = null, $value = null ) {
-		if ( null === $key || null === $value ) {
-			return $value;
-		}
-
-		if ( ! Utils::has_pro() ) {
-			return $value;
-		}
-
-		$pro316_v0_v1_or_v2 = [ '3.16.0', '3.16.1', '3.16.2' ];
-		$is_active_pro316_v0_v1_v2 = in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_v1_or_v2, true );
-
-		if ( ! $is_active_pro316_v0_v1_v2 ) {
-			return $value;
-		}
-
-		$is_pro_nested_widget = is_array( $value ) && 'class' === $key && ( in_array( 'e-n-menu', $value ) || in_array( 'e-n-carousel', $value ) );
-
-		if ( ! $is_pro_nested_widget ) {
-			return $value;
-		}
-
-		$value[] = 'e-core-315';
-
-		return $value;
 	}
 
 	/**

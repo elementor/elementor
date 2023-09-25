@@ -419,8 +419,6 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addRenderAttribute( element, key, value, overwrite ) {
-		// Value = this.bc316ProPluginUpdateNestedClassName( key, value );
-
 		const self = this;
 
 		if ( 'object' === typeof element ) {
@@ -1046,32 +1044,6 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
-	},
-
-	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-	// LTR/RTL corrections for physical Css properties.
-	bc316ProPluginUpdateNestedClassName( key = null, value = null ) {
-		if ( ! key || ! value ) {
-			return value;
-		}
-
-		const pro316v0v1v2 = [ '3.16.0', '3.16.1', '3.16.2' ],
-			activeProVersion = elementorFrontend?.config?.version_pro,
-			isActivePro316v0v1v2 = pro316v0v1v2.includes( activeProVersion );
-
-		if ( ! isActivePro316v0v1v2 ) {
-			return value;
-		}
-
-		const isProNestedWidget = Array.isArray( value ) && 'class' === key && ( value.includes( 'e-n-menu' ) || value.includes( 'e-n-carousel' ) );
-
-		if ( ! isProNestedWidget ) {
-			return value;
-		}
-
-		value.push( 'e-core-315' );
-
-		return value;
 	},
 } );
 
