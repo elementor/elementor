@@ -1807,7 +1807,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return self Current instance of the element.
 	 */
 	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
-		$value = $this->bc316_pro_plugin_update_nested_class_name( $key, $value );
+//		$value = $this->bc316_pro_plugin_update_nested_class_name( $key, $value );
 
 		if ( is_array( $element ) ) {
 			foreach ( $element as $element_key => $attributes ) {

@@ -419,7 +419,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	addRenderAttribute( element, key, value, overwrite ) {
-		value = this.bc316ProPluginUpdateNestedClassName( key, value );
+		// Value = this.bc316ProPluginUpdateNestedClassName( key, value );
 
 		const self = this;
 
