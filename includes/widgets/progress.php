@@ -428,7 +428,7 @@ class Widget_Progress extends Widget_Base {
 		?>
 		<#
 		const title_tag = elementor.helpers.validateHTMLTag( settings.title_tag );
-		const progressbar_id = 'elementor-progress-bar-<?php echo $this->get_id(); ?>';
+		const progressbar_id = 'elementor-progress-bar-<?php echo esc_attr( $this->get_id() ); ?>';
 
 		let progress_percentage = 0;
 		if ( ! isNaN( settings.percent.size ) ) {
