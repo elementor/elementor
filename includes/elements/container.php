@@ -1354,6 +1354,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$bc316_logical_css = $this->$this->get_bc316_logical_padding_css();
+
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -1361,7 +1363,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "$this->get_bc316_logical_padding_css()--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
+					'{{WRAPPER}}' => "$bc316_logical_css--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);
