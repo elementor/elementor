@@ -172,12 +172,12 @@ class Module extends BaseModule {
 		}
 
 		$optimization_attrs = $this->get_loading_optimization_attributes(
-			array(
+			[
 				'width'         => $width,
 				'height'        => $height,
 				'loading'       => $loading_val,
 				'fetchpriority' => $fetchpriority_val,
-			)
+			]
 		);
 
 		if ( ! empty( $optimization_attrs['fetchpriority'] ) ) {
@@ -198,7 +198,7 @@ class Module extends BaseModule {
 	 * @return array Loading optimization attributes.
 	 */
 	private function get_loading_optimization_attributes( $attr ) {
-		$loading_attrs = array();
+		$loading_attrs = [];
 
 		// For any resources, width and height must be provided, to avoid layout shifts.
 		if ( ! isset( $attr['width'], $attr['height'] ) ) {
