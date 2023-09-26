@@ -157,19 +157,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$post = get_post();
-
-		if ( empty( $post->ID ) ) {
-			return;
-		}
-
-		$document = Plugin::$instance->documents->get( $post->ID );
-
-		if ( ! $document || ! $document->is_built_with_elementor() ) {
-			return;
-		}
-
-		if ( has_blocks( $post ) ) {
+		if ( ! static::is_need_to_dequeue_gutenberg_assets() ) {
 			return;
 		}
 
@@ -177,5 +165,56 @@ class Module extends BaseModule {
 		wp_dequeue_style( 'wp-block-library-theme' );
 		wp_dequeue_style( 'wc-block-style' );
 		wp_dequeue_style( 'wc-blocks-style' );
+	}
+
+	private static function is_need_to_dequeue_gutenberg_assets() : bool {
+		$post = get_post();
+
+		if ( empty( $post->ID ) ) {
+			return false;
+		}
+
+		if ( ! static::is_built_with_elementor( $post ) ) {
+			return false;
+		}
+
+		if ( static::is_gutenberg_in_page( $post ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private static function is_built_with_elementor( $post ) : bool {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private static function is_gutenberg_in_page( $post ) : bool {
+		if ( has_blocks( $post ) ) {
+			return true;
+		}
+
+		if ( static::current_theme_is_fse_theme() ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static function current_theme_is_fse_theme() : bool {
+		if ( function_exists( 'wp_is_block_theme' ) ) {
+			return (bool) wp_is_block_theme();
+		}
+		if ( function_exists( 'gutenberg_is_fse_theme' ) ) {
+			return (bool) gutenberg_is_fse_theme();
+		}
+
+		return false;
 	}
 }
