@@ -133,6 +133,11 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
 			},
+			init: () => {
+				this.a11ySetWidgetAriaDetails();
+				this.a11ySetPaginationTabindex();
+				this.a11ySetSlideAriaHidden( 'initialisation' );
+			},
 		};
 
 		this.applyOffsetSettings( elementSettings, swiperOptions, slidesToShow );
@@ -196,10 +201,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		if ( 'yes' === elementSettings.pause_on_hover ) {
 			this.togglePauseOnHover( true );
 		}
-
-		this.a11ySetWidgetAriaDetails();
-		this.a11ySetPaginationTabindex();
-		this.a11ySetSlideAriaHidden( 'initialisation' );
 	}
 
 	bindEvents() {
@@ -330,14 +331,14 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			activeBulletClass = this.swiper?.params.pagination.bulletActiveClass;
 
 		this.getPaginationBullets().forEach( ( bullet ) => {
-			if ( ! bullet.classList.contains( activeBulletClass ) ) {
+			if ( ! bullet.classList?.contains( activeBulletClass ) ) {
 				bullet.removeAttribute( 'tabindex' );
 			}
 		} );
 
 		const isDirectionInlineArrowKey = 'ArrowLeft' === event?.code || 'ArrowRight' === event?.code;
 
-		if ( event?.target?.classList.contains( bulletClass ) && isDirectionInlineArrowKey ) {
+		if ( event?.target?.classList?.contains( bulletClass ) && isDirectionInlineArrowKey ) {
 			this.$element.find( `.${ activeBulletClass }` ).trigger( 'focus' );
 		}
 	}
