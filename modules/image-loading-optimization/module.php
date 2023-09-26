@@ -279,12 +279,29 @@ class Module extends BaseModule {
 		if ( $increase_count ) {
 			$this->increase_content_media_count();
 		} elseif ( $maybe_increase_count ) {
-			if ( $this->min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
+			if ( $this->get_min_priority_img_pixels() <= $attr['width'] * $attr['height'] ) {
 				$this->increase_content_media_count();
 			}
 		}
 
 		return $loading_attrs;
+	}
+
+	/**
+	 * Helper to get the minimum threshold for number of pixels an image needs to have to be considered "priority".
+	 *
+	 * @return int The minimum number of pixels (width * height). Default is 50000.
+	 */
+	private function get_min_priority_img_pixels() {
+		/**
+		 * Filter the minimum pixel threshold used to determine if an image should have fetchpriority="high" applied.
+		 *
+		 * @see https://developer.wordpress.org/reference/hooks/wp_min_priority_img_pixels/
+		 *
+		 * @param int $pixels The minimum number of pixels (with * height).
+		 * @return int The filtered value.
+		 */
+		return apply_filters( 'elementor/image-loading-optimization/min_priority_img_pixels', $this->min_priority_img_pixels );
 	}
 
 	/**
@@ -327,7 +344,7 @@ class Module extends BaseModule {
 			return $loading_attrs;
 		}
 
-		if ( $this->min_priority_img_pixels <= $attr['width'] * $attr['height'] ) {
+		if ( $this->get_min_priority_img_pixels() <= $attr['width'] * $attr['height'] ) {
 			$loading_attrs['fetchpriority'] = 'high';
 			$this->high_priority_element_flag( false );
 		}
