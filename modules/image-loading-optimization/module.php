@@ -217,7 +217,11 @@ class Module extends BaseModule {
 		$increase_count       = false;
 		$maybe_increase_count = false;
 
-		// Logic to handle a `loading` attribute that is already provided.
+		/*
+		 * Logic to handle a `loading` attribute that is already provided.
+		 *
+		 * Copied from `wp_get_loading_optimization_attributes()`.
+		 */
 		if ( isset( $attr['loading'] ) ) {
 			/*
 			 * Interpret "lazy" as not in viewport. Any other value can be
@@ -234,6 +238,11 @@ class Module extends BaseModule {
 		// Logic to handle a `fetchpriority` attribute that is already provided.
 		$has_fetchpriority_high_attr = ( isset( $attr['fetchpriority'] ) && 'high' === $attr['fetchpriority'] );
 
+		/*
+		 * Handle cases where a `fetchpriority="high"` has already been set.
+		 *
+		 * Copied from `wp_get_loading_optimization_attributes()`.
+		 */
 		if ( $has_fetchpriority_high_attr ) {
 			/*
 			 * If the image was already determined to not be in the viewport (e.g.
