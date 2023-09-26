@@ -48,10 +48,10 @@
 	--n-tabs-color-secondary-fallback: #54595F;
 	--n-tabs-default-padding-block: 15px;
 	--n-tabs-default-padding-inline: 35px;
-	--n-tabs-default-padding-top: var(--n-tabs-default-padding-block);
-	--n-tabs-default-padding-bottom: var(--n-tabs-default-padding-block);
-	--n-tabs-default-padding-left: var(--n-tabs-default-padding-inline);
-	--n-tabs-default-padding-right: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-top: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-bottom: var(--n-tabs-default-padding-block);
+	--n-tabs-title-padding-left: var(--n-tabs-default-padding-inline);
+	--n-tabs-title-padding-right: var(--n-tabs-default-padding-inline);
 	--n-tabs-background-color: transparent;
 	--n-tabs-display: flex;
 	--n-tabs-direction: column;
