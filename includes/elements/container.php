@@ -1354,7 +1354,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		$bc316_logical_css = $this->$this->get_bc316_logical_padding_css();
+		$bc316_logical_css = $this->get_bc316_logical_padding_css();
 
 		$this->add_responsive_control(
 			'padding',
