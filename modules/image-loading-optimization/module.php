@@ -232,7 +232,9 @@ class Module extends BaseModule {
 		}
 
 		// Logic to handle a `fetchpriority` attribute that is already provided.
-		if ( isset( $attr['fetchpriority'] ) && 'high' === $attr['fetchpriority'] ) {
+		$has_fetchpriority_high_attr = ( isset( $attr['fetchpriority'] ) && 'high' === $attr['fetchpriority'] );
+
+		if ( $has_fetchpriority_high_attr ) {
 			/*
 			 * If the image was already determined to not be in the viewport (e.g.
 			 * from an already provided `loading` attribute), trigger a warning.
