@@ -163,7 +163,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! static::is_need_to_dequeue_gutenberg_assets() ) {
+		if ( ! static::should_dequeue_gutenberg_assets() ) {
 			return;
 		}
 
@@ -173,7 +173,7 @@ class Module extends BaseModule {
 		wp_dequeue_style( 'wc-blocks-style' );
 	}
 
-	private static function is_need_to_dequeue_gutenberg_assets() : bool {
+	private static function should_dequeue_gutenberg_assets() : bool {
 		$post = get_post();
 
 		if ( empty( $post->ID ) ) {
