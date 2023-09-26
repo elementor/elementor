@@ -259,8 +259,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		if ( null === $maybe_in_viewport ) {
-			//@todo: Only run this functionality for frontend like in wp core.
+		if ( null === $maybe_in_viewport && ! is_admin() ) {
 			$content_media_count = $this->increase_content_media_count( 0 );
 			$increase_count      = true;
 			if ( $content_media_count < $this->omit_threshold ) {
