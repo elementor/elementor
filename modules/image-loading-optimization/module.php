@@ -46,7 +46,12 @@ class Module extends BaseModule {
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Optimize Image Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Applying `fetchpriority="high"` on LCP image and lazy loading on images below the fold.', 'elementor' ),
+			'description' => sprintf(
+				/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
+				esc_html__( 'Applying %s on LCP image and %s on images below the fold.', 'elementor' ),
+				'<code>fetchpriority="high"</code>',
+				'<code>loading="lazy"</code>'
+			),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		];
