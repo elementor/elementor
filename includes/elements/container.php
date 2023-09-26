@@ -1343,6 +1343,14 @@ class Container extends Element_Base {
 			]
 		);
 
+		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+		$pro316_v0_v1_or_v2 = [ '3.16.0', '3.16.1', '3.16.2' ];
+		$is_active_pro316_v0_v1_v2 = Utils::has_pro() ? in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_v1_or_v2, true ) : false;
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
+		$bc316_logical_properties = $is_active_pro316_v0_v1_v2 ? "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start; --padding-inline-end: $logical_dimensions_inline_end; " : '';
+
 		$this->add_responsive_control(
 			'padding',
 			[
@@ -1350,7 +1358,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};',
+					'{{WRAPPER}}' => "$bc316_logical_properties--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};",
 				],
 			]
 		);
