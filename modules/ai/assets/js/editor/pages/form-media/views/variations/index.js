@@ -56,7 +56,7 @@ const Variations = () => {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						bgcolor: 'secondary.background',
+						bgcolor: 'action.selected',
 					} }>
 						<img src={ editImage?.image_url || editImage?.url } alt={ prompt } style={ {
 							width: 'auto',
