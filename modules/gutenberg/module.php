@@ -184,7 +184,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		if ( static::is_gutenberg_in_page( $post ) ) {
+		if ( static::is_gutenberg_in_post( $post ) ) {
 			return false;
 		}
 
@@ -201,7 +201,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_gutenberg_in_page( $post ) : bool {
+	private static function is_gutenberg_in_post( $post ) : bool {
 		if ( has_blocks( $post ) ) {
 			return true;
 		}
