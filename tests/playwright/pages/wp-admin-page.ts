@@ -134,6 +134,10 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/options-general.php' );
 		await this.page.selectOption( '#WPLANG', language );
 		await this.page.locator( '#submit' ).click();
+
+		await this.page.goto( 'wp-admin/profile.php' );
+		await this.page.selectOption( '[name="locale"]', language );
+		await this.page.locator( 'input#submit' ).click();
 	}
 
 	async confirmExperimentModalIfOpen() {
