@@ -62,7 +62,8 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 	 */
 	private function close_and_print_open_buffer() {
 		$buffer_status = ob_get_status();
-		if( ! empty( $buffer_status ) && str_contains( $buffer_status['name'], 'ImageLoadingOptimization\Module::handle_buffer_content') ) {
+
+		if ( ! empty( $buffer_status ) && str_contains( $buffer_status['name'], 'ImageLoadingOptimization\Module::handle_buffer_content') ) {
 			echo ob_get_clean();
 		}
 	}
