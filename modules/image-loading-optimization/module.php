@@ -48,11 +48,11 @@ class Module extends BaseModule {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => sprintf(
 				/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-				esc_html__( 'Applying %s on LCP image and %s on images below the fold.', 'elementor' ),
+				esc_html__( 'Applying %1$s on LCP image and %2$s on images below the fold to improve performance scores.', 'elementor' ),
 				'<code>fetchpriority="high"</code>',
 				'<code>loading="lazy"</code>'
 			),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		];
 	}
