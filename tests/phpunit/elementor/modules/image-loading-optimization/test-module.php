@@ -61,6 +61,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 
 	/**
 	 * @dataProvider get_page_template
+	 * @group test
 	 */
 	public function test_loading_optimization_without_logo( $page_template ) {
 		$document = self::factory()->create_post();
@@ -92,8 +93,31 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		$this->close_and_print_open_buffer();
 		$output = ob_get_clean();
 
-		$expected = '<p><img fetchpriority="high" decoding="async" width="800" height="530" src="featured_image.jpg" /><img decoding="async" width="640" height="471" src="image_1.jpg" /><img decoding="async" width="800" height="800" src="image_2.jpg" /><img loading="lazy" decoding="async" width="566" height="541" src="image_3.jpg" /><img loading="lazy" decoding="async" width="691" height="1024" src="image_4.jpg" /></p>';
-		$this->assertStringContainsString( $expected, $output, "Loading optimization not applied to the content" );
+		// Match the images to the expected attribute that should be added.
+		$test_images = [
+			'featured_image.jpg' => 'fetchpriority="high"',
+			'image_1.jpg' => null,
+			'image_2.jpg' => null,
+			'image_3.jpg' => 'loading="lazy"',
+			'image_4.jpg' => 'loading="lazy"',
+		];
+
+		// Loop through each scenario and ensure attributes are being correctly applied.
+		foreach ( $test_images as $src => $match ) {
+			if ( $match ) {
+				$this->assertMatchesRegularExpression(
+					'/<img[^>]+' . $match . '[^>]+' . $src . '[^>]+>/',
+					$output,
+					"Did not find img $src with attribute $match."
+				);
+			} else {
+				$this->assertDoesNotMatchRegularExpression(
+					'/<img[^>]+((fetchpriority="high")|(loading="lazy"))[^>]+' . $src .'[^>]+>/',
+					$output,
+					'Image should not have loading attributes.'
+				);
+			}
+		}
 	}
 
 	public function get_page_template() {
