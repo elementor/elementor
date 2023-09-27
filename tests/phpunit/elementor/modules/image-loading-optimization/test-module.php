@@ -78,14 +78,14 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		the_post();
 
 		// get template path from post. If it's not set switch to default single page template.
-		$template_path = locate_template('single.php');
+		$template_path = locate_template( 'single.php' );
 		$template_path = $page_templates_module->template_include( $template_path );
 
 		// Template usually contains a loop so need to rewind it.
 		rewind_posts();
 
 		ob_start();
-		load_template($template_path);
+		load_template( $template_path );
 		/* php endscript works differently for phpunit.
 		 * This is to ensure buffer started in footer is closed.
 		 */
@@ -93,7 +93,7 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		$output = ob_get_clean();
 
 		$expected = '<p><img fetchpriority="high" decoding="async" width="800" height="530" src="featured_image.jpg" /><img decoding="async" width="640" height="471" src="image_1.jpg" /><img decoding="async" width="800" height="800" src="image_2.jpg" /><img loading="lazy" decoding="async" width="566" height="541" src="image_3.jpg" /><img loading="lazy" decoding="async" width="691" height="1024" src="image_4.jpg" /></p>';
-		$this->assertStringContainsString( $expected, $output, "Loading optimization not applied to the content");
+		$this->assertStringContainsString( $expected, $output, "Loading optimization not applied to the content" );
 	}
 
 	public function get_page_template() {
