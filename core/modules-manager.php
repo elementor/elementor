@@ -106,6 +106,7 @@ class Modules_Manager {
 			'notes',
 			'performance-lab',
 			'lazyload',
+			'image-loading-optimization',
 			'kit-elements-defaults',
 			'announcements',
 			'site-navigation',
