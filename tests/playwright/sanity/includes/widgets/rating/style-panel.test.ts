@@ -5,7 +5,7 @@ const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
-		test.only( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
+		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
