@@ -91,11 +91,8 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
+			'rating',
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'rating' ) ) {
-			$build_widgets_filename[] = 'rating';
-		}
 
 		$this->_widget_types = [];
 
