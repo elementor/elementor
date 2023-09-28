@@ -70,9 +70,17 @@
 		--margin-inline-end: var(--margin-left);
 		--border-inline-start-width: var(--border-right-width);
 		--border-inline-end-width: var(--border-left-width);
-		--padding-inline-start: var(--padding-right);
-		--padding-inline-end: var(--padding-left);
 	}
+
+	&:not(.e-con-pro316) {
+
+		body.rtl &,
+		[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+			--padding-inline-start: var(--padding-right);
+			--padding-inline-end: var(--padding-left);
+		}
+	}
+
 
 	margin-block-start: var(--margin-block-start);
 	margin-block-end: var(--margin-block-end);

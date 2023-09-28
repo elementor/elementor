@@ -29,7 +29,16 @@ const ContainerView = BaseElementView.extend( {
 
 	className() {
 		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
+
+		let containerClasses = `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
+
+		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+		if ( !! this.getPro316VersionClass() ) {
+			containerClasses = `${ containerClasses } ${ this.getPro316VersionClass() }`;
+		}
+
+		return containerClasses;
 	},
 
 	childViewOptions() {
@@ -621,6 +630,18 @@ const ContainerView = BaseElementView.extend( {
 			this.showEmptyView(); // Marionette function.
 			this.handleGridEmptyView();
 		}
+	},
+
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	getPro316VersionClass() {
+		const activeProVersion = elementorFrontend?.config?.version_pro;
+
+		if ( !! activeProVersion && activeProVersion.includes( '3.16' ) ) {
+			return 'e-con-pro316';
+		}
+
+		return '';
 	},
 } );
 

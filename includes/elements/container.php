@@ -128,6 +128,16 @@ class Container extends Element_Base {
 				$is_nested_class_name,
 			],
 		] );
+
+		if ( ! $this->is_pro_version_316() ) {
+			return;
+		}
+
+		$this->add_render_attribute( '_wrapper', [
+			'class' => [
+				'e-con-pro316',
+			],
+		] );
 	}
 
 	/**
@@ -148,14 +158,18 @@ class Container extends Element_Base {
 
 	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
 	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-	protected function get_bc316_logical_padding_css() {
+	protected function is_pro_version_316() {
 		if ( ! Utils::has_pro() ) {
-			return '';
+			return false;
 		}
 
-		$is_pro_version316 = strpos( ELEMENTOR_PRO_VERSION, '3.16.' ) !== false;
+		return strpos( ELEMENTOR_PRO_VERSION, '3.16' ) !== false;
+	}
 
-		if ( ! $is_pro_version316 ) {
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	protected function get_bc316_logical_padding_css() {
+		if ( ! $this->is_pro_version_316() ) {
 			return '';
 		}
 
