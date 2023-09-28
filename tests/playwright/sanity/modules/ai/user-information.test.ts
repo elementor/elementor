@@ -45,7 +45,7 @@ test.describe( 'AI @ai', () => {
 				}
 			} );
 
-			await expect( page.getByText( 'You\'ve used 100% of the free trial' ) ).toHaveCount( 1 );
+			await expect( page.getByText( 'You\'ve used 100% of your Elementor AI plan' ) ).toHaveCount( 1 );
 
 			await page.locator( 'button[aria-label="close"]' ).click();
 		} );
