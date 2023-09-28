@@ -38,15 +38,9 @@ jobs:
       - name: Cache node modules
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         run: npm ci
@@ -79,23 +73,32 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Node.js 18.x
         if: matrix.wpCoreVersion != 'master'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
+      
+      - name: Restore NPM from cache
+        if: matrix.wpCoreVersion != 'master'
+        uses: actions/cache/restore@v3
+        id: restore-npm
+        with:
+            path: ~/.npm
+            key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore build from cache
         if: matrix.wpCoreVersion != 'master'
-        uses: actions/cache@v2
+        uses: actions/cache/restore@v3
         id: restore-build
         with:
           path: ./build/*
           key: ${{ github.sha }}
+      - name: Install node modules
+        if: matrix.wpCoreVersion != 'master'
+        run: npm ci
       - name: Run wp-env
         if: matrix.wpCoreVersion != 'master'
-        uses: ./.github/workflows/run-wp-env
-        with:
-          TEMPLATES: './tests/lighthouse/templates'
-          PHP_VERSION: ${{ matrix.phpVersion }}
-          WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
+        run: |
+          npm run start-local-server
+          npm run test:setup:playwright
       - name: Install lhci
         if: matrix.wpCoreVersion != 'master'
         run: |
@@ -104,8 +107,8 @@ jobs:
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master'
         run: |
-          npx wp-env run cli "wp core version"
-          npx wp-env run cli "wp --info"
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
       - name: Run Lighthouse tests
         if: matrix.wpCoreVersion != 'master'
         run: |
