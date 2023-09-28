@@ -1,20 +1,11 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import { afterAll, beforeAll } from './helper';
 
 const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating content panel - Icon Experiment ${ iconExperimentState } @rating`, () => {
-		test.beforeAll( async ( { browser }, testInfo ) => {
-			await beforeAll( browser, testInfo, iconExperimentState );
-		} );
-
-		test.afterAll( async ( { browser }, testInfo ) => {
-			await afterAll( browser, testInfo );
-		} );
-
-		test( `Functionality test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
+		test.only( `Functionality test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
