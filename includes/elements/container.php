@@ -153,10 +153,9 @@ class Container extends Element_Base {
 			return '';
 		}
 
-		$pro316_v0_v1_or_v2 = [ '3.16.0', '3.16.1', '3.16.2' ];
-		$is_active_pro316_v0_v1_v2 = in_array( ELEMENTOR_PRO_VERSION, $pro316_v0_v1_or_v2, true );
+		$is_pro_version316 = strpos( ELEMENTOR_PRO_VERSION, '3.16.' ) !== false;
 
-		if ( ! $is_active_pro316_v0_v1_v2 ) {
+		if ( ! $is_pro_version316 ) {
 			return '';
 		}
 
