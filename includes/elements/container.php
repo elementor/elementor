@@ -129,10 +129,14 @@ class Container extends Element_Base {
 			],
 		] );
 
+		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
 		if ( ! $this->is_pro_version_316() ) {
 			return;
 		}
 
+		// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+		// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
 				'e-con-pro316',

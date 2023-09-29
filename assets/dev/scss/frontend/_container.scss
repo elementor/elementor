@@ -179,8 +179,8 @@
 
 	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		// Default top-level containers to be centered.
-		--margin-inline-end: auto;
-		--margin-inline-start: auto;
+		--margin-left: auto;
+		--margin-right: auto;
 
 		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
