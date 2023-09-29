@@ -7,6 +7,7 @@ use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -90,7 +91,7 @@ class Settings_Layout extends Tab_Base {
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
-						'.e-con' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
+						'.e-con' => $this->get_bc316_logical_padding_css() . '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
 					],
 				]
 			);
@@ -238,6 +239,29 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
+	}
+
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	protected function is_pro_version_316() {
+		if ( ! Utils::has_pro() ) {
+			return false;
+		}
+
+		return strpos( ELEMENTOR_PRO_VERSION, '3.16' ) !== false;
+	}
+
+	// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+	// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+	protected function get_bc316_logical_padding_css() {
+		if ( ! $this->is_pro_version_316() ) {
+			return '';
+		}
+
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
+
+		return "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start; --padding-inline-end: $logical_dimensions_inline_end; ";
 	}
 
 	/**
