@@ -908,25 +908,8 @@ test.describe( 'Container tests @container', () => {
 					.toMatchSnapshot( 'container-dimensions-rtl.png' );
 			} );
 
-			await test.step( 'Install Hebrew language', async () => {
-				// Install Hebrew language on CI.
-				await page.goto( 'wp-admin/update-core.php' );
-				await page.waitForLoadState( 'domcontentloaded' );
-
-				const hasLanguageUpdateButton = await page.locator( '.wrap' ).evaluate( ( element ) => {
-					return ! element?.querySelector( 'input.button[name="upgrade"]' );
-				} );
-
-				if ( hasLanguageUpdateButton ) {
-					await page.locator( 'form.upgrade input.button[name="upgrade"]' ).click();
-					await page.waitForLoadState( 'domcontentloaded' );
-				}
-			} );
-
 			await test.step( 'Set user language to English', async () => {
-				await page.goto( 'wp-admin/profile.php' );
-				await page.selectOption( '[name="locale"]', '' );
-				await page.locator( 'input#submit' ).click();
+				await wpAdmin.setLanguage( 'he_IL', '' );
 			} );
 
 			editor = await wpAdmin.openNewPage();
