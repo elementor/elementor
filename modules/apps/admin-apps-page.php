@@ -159,6 +159,28 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-cozmoslabs-wordpress-profile-builder/',
 				'image' => $images_url . 'profile-builder.svg',
 			],
+			[
+				'name' => 'Paid Member Subscriptions',
+				'author' => 'Cozmoslabs',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-cozmoslabs-wordpress-paid-member-subscriptions/',
+				'description' => 'Launch your membership site, online course or paid community, increase conversions and generate subscription revenue with one flexible and seamless solution.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-cozmoslabs-wordpress-paid-member-subscriptions/',
+				'image' => $images_url . 'paid-member-subscriptions.svg',
+			],
+			[
+				'name' => 'BetterDocs',
+				'author' => 'WPDeveloper',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper-betterdocs/',
+				'description' => 'BetterDocs is the ultimate WordPress knowledge base tool to create powerful documentation, multiple or internal knowledge bases, FAQ sections, and more.',
+				'badge' => '20% Off',
+				'offering' => 'Use coupon code: Elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper-betterdocs/',
+				'image' => $images_url . 'better-docs.svg',
+			],
 		];
 
 		$wporg_plugins = [
