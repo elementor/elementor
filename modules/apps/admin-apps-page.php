@@ -126,6 +126,17 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
 				'image' => $images_url . 'hover.svg',
 			],
+			[
+				'name' => 'Gravity Forms',
+				'author' => 'Gravity Forms',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-gravityforms/',
+				'description' => 'Millions trust Gravity Forms for versatile forms—boost email lists, create quizzes, accept payments, and more!',
+				'badge' => '30% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
+				'image' => $images_url . 'gravity-forms.svg',
+			],
 		];
 
 		$wporg_plugins = [
