@@ -181,6 +181,17 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper-betterdocs/',
 				'image' => $images_url . 'better-docs.svg',
 			],
+			[
+				'name' => 'SchedulePress',
+				'author' => 'WPDeveloper',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper-wp-scheduled-posts/',
+				'description' => 'SchedulePress is the advanced WordPress content management solution for effortlessly scheduling site content & sharing on multiple social media platforms.',
+				'badge' => '20% Off',
+				'offering' => 'Use coupon code: Elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper-wp-scheduled-posts/',
+				'image' => $images_url . 'schedule-press.svg',
+			],
 		];
 
 		$wporg_plugins = [
