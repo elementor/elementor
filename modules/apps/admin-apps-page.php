@@ -134,7 +134,7 @@ class Admin_Apps_Page {
 				'badge' => '30% Off',
 				'offering' => 'Discount is automatically applied',
 				'action_label' => 'Let\'s Go',
-				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-gravityforms/',
 				'image' => $images_url . 'gravity-forms.svg',
 			],
 		];
