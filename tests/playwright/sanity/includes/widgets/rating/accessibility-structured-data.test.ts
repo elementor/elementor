@@ -1,20 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import AxeBuilder from '@axe-core/playwright';
-import {
-	beforeAll,
-	afterAll,
-} from './helper';
 
 test.describe( 'Accessibility & Structured data @rating', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
-		await beforeAll( browser, testInfo );
-	} );
-
-	test.afterAll( async ( { browser }, testInfo ) => {
-		await afterAll( browser, testInfo );
-	} );
-
 	test( 'Accessibility & Structured data', async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo ),
 			editor = await wpAdmin.openNewPage(),

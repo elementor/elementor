@@ -76,13 +76,13 @@ class Widget_Star_Rating extends Widget_Base {
 	/**
 	 * Hide widget from panel.
 	 *
-	 * Hide the toggle widget from the panel if the rating experiment is active.
+	 * Hide the star rating widget from the panel.
 	 *
 	 * @since 3.17.0
 	 * @return bool
 	 */
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'rating' );
+		return false;
 	}
 
 	/**
