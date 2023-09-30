@@ -148,6 +148,17 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-translatepress/',
 				'image' => $images_url . 'translate-press.png',
 			],
+			[
+				'name' => 'Profile Builder',
+				'author' => 'Cozmoslabs',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-cozmoslabs-wordpress-profile-builder/',
+				'description' => 'Create beautiful user registration forms, user profiles and member directories with the #1 user management tool for modern websites.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-cozmoslabs-wordpress-profile-builder/',
+				'image' => $images_url . 'profile-builder.svg',
+			],
 		];
 
 		$wporg_plugins = [
