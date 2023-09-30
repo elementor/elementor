@@ -137,6 +137,17 @@ class Admin_Apps_Page {
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-gravityforms/',
 				'image' => $images_url . 'gravity-forms.svg',
 			],
+			[
+				'name' => 'TranslatePress',
+				'author' => 'Reflection Media SRL',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-translatepress/',
+				'description' => 'TranslatePress is the easiest way to translate your WordPress site and go multilingual. It\'s a proven way to grow multilingual traffic and reach more people.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-translatepress/',
+				'image' => $images_url . 'translate-press.png',
+			],
 		];
 
 		$wporg_plugins = [
