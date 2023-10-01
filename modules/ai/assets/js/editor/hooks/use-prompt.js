@@ -46,10 +46,23 @@ const usePrompt = ( fetchData, initialState ) => {
 		setIsLoading( false );
 	};
 
+	const setResult = ( result, responseId = null ) => {
+		const updatedResult = { ...data };
+
+		updatedResult.result = result;
+
+		if ( responseId ) {
+			updatedResult.responseId = responseId;
+		}
+
+		setData( updatedResult );
+	};
+
 	return {
 		isLoading,
 		error,
 		data,
+		setResult,
 		reset,
 		send,
 		sendUsageData,
