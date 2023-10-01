@@ -9,7 +9,7 @@ const PromptCredits = ( props ) => {
 		<Typography variant="caption" color="text.tertiary">
 			{
 				/* Translators: %s: AI prompt remained credits. */
-				sprintf( __( 'You\'ve used %s of the free trial.', 'elementor' ), props.usagePercentage + '%' )
+				sprintf( __( 'You\'ve used %s of your Elementor AI plan.', 'elementor' ), props.usagePercentage + '%' )
 			}
 			{ ' ' }
 			<a href={ upgradeLink } target="_blank" rel="noreferrer">{ __( 'Upgrade for unlimited access', 'elementor' ) }</a>.
