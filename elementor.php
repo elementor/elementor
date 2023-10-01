@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.14.0' ); //this is actually 3.13.0  , just a Workaround to allow screenshooter tests for 3.16
+define( 'ELEMENTOR_VERSION', '3.15.0' ); //this is actually 3.14.0  , just a Workaround to allow screenshooter tests for 3.17
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
