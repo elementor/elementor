@@ -489,15 +489,11 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Min Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 1440,
-					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
 					],
 				],
 				'description' => sprintf(
@@ -510,7 +506,24 @@ class Container extends Element_Base {
 			]
 		);
 
-		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
+		$this->add_responsive_control(
+			'max_height',
+			[
+				'label' => esc_html__( 'Max Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'vh', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10000,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'max-height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+    $is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
 
 		$this->add_control(
 			'container_type',
