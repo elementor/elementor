@@ -60,8 +60,8 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
-	__( 'Generate professional texts about any topic, in any tone.', 'elementor' ),
-	__( 'Translate your content into twenty-five different languages.', 'elementor' ),
+	__( 'Generate impressive images that you can, edit, enhance and refine.', 'elementor' ),
+	__( 'Create professional text, about any topic, in any tone and language.', 'elementor' ),
 	__( 'Unleash infinite possibilities with the custom code generator.', 'elementor' ),
 ];
 

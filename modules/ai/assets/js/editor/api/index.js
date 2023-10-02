@@ -57,3 +57,9 @@ export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image }
 export const generateLayout = ( prompt, variationType, signal ) => request( 'ai_generate_layout', { prompt, variationType }, true, signal );
 
 export const getLayoutPromptEnhanced = ( prompt ) => request( 'ai_get_layout_prompt_enhancer', { prompt } );
+
+export const getHistory = ( type, page, limit ) => request( 'ai_get_history', { type, page, limit } );
+
+export const deleteHistoryItem = ( id ) => request( 'ai_delete_history_item', { id } );
+
+export const toggleFavoriteHistoryItem = ( id ) => request( 'ai_toggle_favorite_history_item', { id } );
