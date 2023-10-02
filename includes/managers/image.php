@@ -138,6 +138,8 @@ class Images_Manager {
 				'description' => $attachment->post_content,
 				'title' => $attachment->post_title,
 			];
+			
+			$image_data = apply_filters('elementor/image/lightbox/before_content', $attachment->ID, $image_data);
 
 			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
 				$attributes['title'] = $image_data[ $lightbox_title_src ];
