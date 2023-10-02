@@ -20,7 +20,7 @@ const PromptHistoryModal = ( props ) => {
 	const lastRun = useRef( () => {} );
 	const scrollContainer = useRef( null );
 
-	const { promptType, onClose } = usePromptHistoryContext();
+	const { historyType, onClose } = usePromptHistoryContext();
 
 	const {
 		items,
@@ -29,7 +29,7 @@ const PromptHistoryModal = ( props ) => {
 		error: historyFetchingError,
 		fetchData,
 		deleteItemById: deleteItemFromState,
-	} = usePromptHistory( promptType );
+	} = usePromptHistory( historyType );
 
 	const {
 		isLoading: isDeletingInProgress,
@@ -86,9 +86,9 @@ const PromptHistoryModal = ( props ) => {
 				color="secondary" /> }
 
 			<Box sx={ { overflowY: 'scroll', height: '85%' } } ref={ scrollContainer }>
-				{ error && FREE_PLAN_ERRORS.includes( error ) && <PromptHistoryUpgrade variant="full" /> }
+				{ error && FREE_PLAN_ERRORS.includes( error ) && <PromptHistoryUpgrade variant="full" historyType={ historyType } /> }
 
-				{ ! error && 0 === items?.length && <PromptHistoryEmpty promptType={ promptType } /> }
+				{ ! error && 0 === items?.length && <PromptHistoryEmpty historyType={ historyType } /> }
 
 				{ items?.length > 0 && <InfiniteScroll loadMore={ loadNext }
 					getScrollParent={ () => scrollContainer.current }
@@ -101,7 +101,7 @@ const PromptHistoryModal = ( props ) => {
 				</InfiniteScroll>
 				}
 
-				{ showUpgrade && <PromptHistoryUpgrade variant="small" /> }
+				{ showUpgrade && <PromptHistoryUpgrade variant="small" historyType={ historyType } /> }
 			</Box>
 		</ModalContainer>
 	);
