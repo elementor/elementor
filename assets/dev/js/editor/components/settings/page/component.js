@@ -27,7 +27,7 @@ export default class Component extends ComponentBase {
 		const currentPanelView = elementor.getPanelView();
 
 		const isSamePage = 'page_settings' === currentPanelView.getCurrentPageName();
-		const isSameTab = tab === currentPanelView.getCurrentPageView().activeTab;
+		const isSameTab = tab === currentPanelView.getCurrentPageView()?.activeTab;
 
 		return ! isSamePage || ! isSameTab;
 	}
