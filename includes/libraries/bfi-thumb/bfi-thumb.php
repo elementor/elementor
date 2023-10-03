@@ -734,8 +734,8 @@ if ( ! function_exists( 'bfi_image_resize_dimensions' ) ) {
 	function bfi_image_resize_dimensions( $payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false ) {
 		$aspect_ratio = $orig_w / $orig_h;
 
-		$new_w = $dest_w;
-		$new_h = $dest_h;
+		$new_w = intval($dest_w);
+		$new_h = intval($dest_h);
 
 		if ( empty( $new_w ) || $new_w < 0 ) {
 			$new_w = intval( $new_h * $aspect_ratio );
