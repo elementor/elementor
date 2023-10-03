@@ -24,7 +24,7 @@ class Svg_Sanitizer {
 	/**
 	 * Sanitize SVG
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access public
 	 *
 	 * @param $filename
@@ -60,7 +60,7 @@ class Svg_Sanitizer {
 	/**
 	 * Sanitizer
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access public
 	 *
 	 * @param $content
@@ -122,7 +122,7 @@ class Svg_Sanitizer {
 	 * Check if the contents of the SVG file are gzipped
 	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $contents
@@ -141,7 +141,7 @@ class Svg_Sanitizer {
 	/**
 	 * Encode SVG
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $content
@@ -154,7 +154,7 @@ class Svg_Sanitizer {
 	/**
 	 * Decode SVG
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $content
@@ -168,7 +168,7 @@ class Svg_Sanitizer {
 	/**
 	 * Is Allowed Tag
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $element
@@ -195,7 +195,7 @@ class Svg_Sanitizer {
 	 *
 	 * Removes the passed element from its DomDocument tree
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $element
@@ -207,7 +207,7 @@ class Svg_Sanitizer {
 	/**
 	 * Is It An Attribute
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $name
@@ -221,7 +221,7 @@ class Svg_Sanitizer {
 	/**
 	 * Is Remote Value
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $value
@@ -241,7 +241,7 @@ class Svg_Sanitizer {
 	/**
 	 * Has JS Value
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $value
@@ -256,7 +256,7 @@ class Svg_Sanitizer {
 	 *
 	 * Returns an array of allowed tag attributes in SVG files.
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @return array
@@ -376,7 +376,7 @@ class Svg_Sanitizer {
 	 *
 	 * Returns an array of allowed element tags to be in SVG files.
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @return array
@@ -438,7 +438,7 @@ class Svg_Sanitizer {
 	/**
 	 * Validate Allowed Attributes
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param \DOMElement $element
@@ -472,7 +472,7 @@ class Svg_Sanitizer {
 	/**
 	 * Strip xlinks
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param \DOMElement $element
@@ -546,7 +546,7 @@ class Svg_Sanitizer {
 	/**
 	 * Validate Use Tag
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $element
@@ -561,7 +561,7 @@ class Svg_Sanitizer {
 	/**
 	 * Strip Doctype
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 */
@@ -576,7 +576,7 @@ class Svg_Sanitizer {
 	/**
 	 * Sanitize Elements
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 */
 	private function sanitize_elements() {
@@ -608,7 +608,7 @@ class Svg_Sanitizer {
 	/**
 	 * Strip PHP Tags
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $string
@@ -629,7 +629,7 @@ class Svg_Sanitizer {
 	/**
 	 * Strip Comments
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $string
@@ -648,7 +648,7 @@ class Svg_Sanitizer {
 	/**
 	 * Strip Line Breaks
 	 *
-	 * @since 3.5.0
+	 * @since 3.16.0
 	 * @access private
 	 *
 	 * @param $string
