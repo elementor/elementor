@@ -30,7 +30,7 @@ class Svg_Sanitizer {
 	 * @param $filename
 	 * @return bool
 	 */
-	public function sanitize_svg( $filename ) {
+	public function sanitize_file( $filename ) {
 		$original_content = Utils::file_get_contents( $filename );
 		$is_encoded = $this->is_encoded( $original_content );
 
@@ -66,7 +66,7 @@ class Svg_Sanitizer {
 	 * @param $content
 	 * @return bool|string
 	 */
-	public function sanitizer( $content ) {
+	public function sanitize( $content ) {
 		// Strip php tags
 		$content = $this->strip_comments( $content );
 		$content = $this->strip_php_tags( $content );

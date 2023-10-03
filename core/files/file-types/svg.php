@@ -19,11 +19,6 @@ class Svg extends Base {
 	const SCRIPT_REGEX = '/(?:\w+script|data):/xi';
 
 	/**
-	 * @var \Svg_Sanitizer
-	 */
-	private static $svg_sanitizer = null;
-
-	/**
 	 * Get File Extension
 	 *
 	 * Returns the file type's file extension
@@ -61,9 +56,7 @@ class Svg extends Base {
 	 * @return bool
 	 */
 	public function sanitize_svg( $filename ) {
-		$svg_sanitizier = self::get_svg_sanitizier();
-
-		return $svg_sanitizier->sanitize_svg( $filename );
+		return ( new SVG_Sanitizer() )->sanitize_file( $filename );
 	}
 
 	/**
@@ -93,9 +86,7 @@ class Svg extends Base {
 	 * @return bool|string
 	 */
 	public function sanitizer( $content ) {
-		$svg_sanitizier = self::get_svg_sanitizier();
-
-		return $svg_sanitizier->sanitizer( $content );
+		return ( new SVG_Sanitizer() )->sanitize( $content );
 	}
 
 	/**
@@ -233,9 +224,7 @@ class Svg extends Base {
 
 		$svg = Utils::file_get_contents( $attachment_file );
 
-		$svg_sanitizer = self::get_svg_sanitizier();
-
-		$valid_svg = $svg_sanitizer->sanitizer( $svg );
+		$valid_svg = ( new SVG_Sanitizer() )->sanitize( $svg );
 
 		if ( false === $valid_svg ) {
 			return '';
@@ -246,14 +235,6 @@ class Svg extends Base {
 		}
 
 		return $valid_svg;
-	}
-
-	private static function get_svg_sanitizier() {
-		if ( ! self::$svg_sanitizer ) {
-			self::$svg_sanitizer = new Svg_Sanitizer();
-		}
-
-		return self::$svg_sanitizer;
 	}
 
 	public function __construct() {
