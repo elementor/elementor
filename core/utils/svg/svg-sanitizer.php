@@ -22,7 +22,7 @@ class Svg_Sanitizer {
 	private $svg_dom = null;
 
 	/**
-	 * Sanitize SVG
+	 * Sanitize File
 	 *
 	 * @since 3.16.0
 	 * @access public
@@ -58,7 +58,7 @@ class Svg_Sanitizer {
 	}
 
 	/**
-	 * Sanitizer
+	 * Sanitize
 	 *
 	 * @since 3.16.0
 	 * @access public
