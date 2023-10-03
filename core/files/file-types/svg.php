@@ -297,17 +297,17 @@ class Svg extends Base {
 
 		$svg = Utils::file_get_contents( $attachment_file );
 
-		$is_valid_svg = ( new self )->sanitizer( $svg );
+		$valid_svg = ( new self )->sanitizer( $svg );
 
-		if ( false === $is_valid_svg ) {
+		if ( false === $valid_svg ) {
 			return '';
 		}
 
-		if ( ! empty( $svg ) ) {
-			update_post_meta( $attachment_id, self::META_KEY, $svg );
+		if ( ! empty( $valid_svg ) ) {
+			update_post_meta( $attachment_id, self::META_KEY, $valid_svg );
 		}
 
-		return $svg;
+		return $valid_svg;
 	}
 
 	/**
