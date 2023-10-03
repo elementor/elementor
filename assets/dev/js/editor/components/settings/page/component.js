@@ -14,13 +14,22 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { activeControl } = args;
+		const { activeControl, refresh = false } = args;
 
-		if ( ! activeControl || '' === activeControl ) {
+		if ( this.shouldRenderPage( tab ) || refresh ) {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
 		}
 
 		this.activateControl( activeControl );
+	}
+
+	shouldRenderPage( tab ) {
+		const currentPanelView = elementor.getPanelView();
+
+		const isSamePage = 'page_settings' === currentPanelView.getCurrentPageName();
+		const isSameTab = tab === currentPanelView.getCurrentPageView()?.activeTab;
+
+		return ! isSamePage || ! isSameTab;
 	}
 
 	getTabsWrapperSelector() {

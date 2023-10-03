@@ -1,4 +1,11 @@
 export default class GridContainer extends elementorModules.frontend.handlers.Base {
+	__construct( settings ) {
+		super.__construct( settings );
+
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+		this.updateEmptyViewHeight = this.updateEmptyViewHeight.bind( this );
+	}
+
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -37,31 +44,36 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	bindEvents() {
-		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange );
+		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight );
 		this.addChildLifeCycleEventListeners();
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
-		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange.bind( this ) );
-		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight.bind( this ) );
+		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange );
+		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight );
 	}
 
 	initLayoutOverlay() {
+		this.getCorrectContainer();
+		// Re-init empty view element after container layout change
+		const selectors = this.getSettings( 'selectors' ),
+			isGridContainer = 'grid' === this.getElementSettings( 'container_type' );
+
+		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
+
+		if ( isGridContainer && this.elements?.emptyView ) {
+			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
+		}
+
 		if ( ! this.shouldDrawOutline() ) {
 			return;
 		}
 
-		this.getCorrectContainer();
 		this.removeExistingOverlay();
 		this.createOverlayContainer();
 		this.createOverlayItems();
-
-		// Re-init empty view element after container layout change
-		const selectors = this.getSettings( 'selectors' );
-		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
-		this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 	}
 
 	shouldDrawOutline() {

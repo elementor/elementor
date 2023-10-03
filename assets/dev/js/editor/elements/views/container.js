@@ -4,6 +4,7 @@ import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -96,7 +97,15 @@ const ContainerView = BaseElementView.extend( {
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 
-		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	onDestroy() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	/**
@@ -131,6 +140,12 @@ const ContainerView = BaseElementView.extend( {
 		}
 
 		return parent.view.getNestingLevel() + 1;
+	},
+
+	isNestedElementContentContainer() {
+		const widgetType = this.container.parent.model.get( 'widgetType' );
+
+		return widgetType && widgetType.trim() !== '' && isWidgetSupportNesting( widgetType );
 	},
 
 	getDroppableAxis() {
@@ -399,9 +414,20 @@ const ContainerView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.model.set( 'isInner', this.isNestedElementContentContainer() || this.getNestingLevel() > 0 );
+			}
+
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
+			}
+
+			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.$el[ 0 ].dataset.coreV316Plus = 'true';
 			}
 
 			this.droppableInitialize( this.container.settings );
@@ -414,7 +440,6 @@ const ContainerView = BaseElementView.extend( {
 
 	onAddChild() {
 		this.$el.removeClass( 'e-empty' );
-		this.model.set( 'isInner', this.getNestingLevel() > 0 );
 
 		if ( this.isGridContainer() ) {
 			this.handleGridEmptyView();

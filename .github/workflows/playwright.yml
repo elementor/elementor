@@ -66,7 +66,7 @@ jobs:
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
-        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'nested-tabs-html', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link']
+        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link', 'rating']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -99,11 +99,11 @@ jobs:
           npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run cli "wp core version"
-          npx wp-env run cli "wp --info"
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
       - name: Activate performance experiments
         run: |
-          npx wp-env run cli "wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints"
+          npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints,e_image_loading_optimization
       - name: Install playwright/test
         run: |
           npx playwright install chromium

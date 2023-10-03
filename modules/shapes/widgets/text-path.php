@@ -659,7 +659,7 @@ class TextPath extends Widget_Base {
 		// Add Text Path attributes.
 		$this->add_render_attribute( 'text_path', [
 			'class' => 'e-text-path',
-			'data-text' => esc_attr( $settings['text'] ),
+			'data-text' => htmlentities( esc_attr( $settings['text'] ) ),
 			'data-url' => esc_url( $path_url ),
 			'data-link-url' => esc_url( $settings['link']['url'] ?? '' ),
 		] );

@@ -111,7 +111,6 @@ const entry = {
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
-	'nested-tabs-html': path.resolve( __dirname, '../modules/nested-tabs-html/assets/js/editor/index.js' ),
 	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),
 	'container-converter': path.resolve( __dirname, '../modules/container-converter/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
@@ -123,6 +122,7 @@ const entry = {
 	'editor-environment-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-environment-v2.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
+	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),

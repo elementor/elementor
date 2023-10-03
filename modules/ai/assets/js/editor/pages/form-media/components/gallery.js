@@ -50,7 +50,7 @@ const GalleryImage = ( {
 				justifyContent="center"
 				alignItems="center"
 				sx={ {
-					bgcolor: 'secondary.background',
+					bgcolor: 'action.selected',
 					height: 'contained' === variant ? 336 : 'auto',
 					position: 'relative',
 					overflow: 'hidden',
@@ -61,7 +61,7 @@ const GalleryImage = ( {
 
 			{ children && (
 				<Overlay>
-					<OverlayBar gap={ 3 } position="bottom" { ...OverlayBarProps }>
+					<OverlayBar gap={ 1 } position="bottom" { ...OverlayBarProps }>
 						{ text && <OverlayBarText>{ text }</OverlayBarText> }
 
 						{ children }

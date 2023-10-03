@@ -59,7 +59,12 @@ class Utils {
 	}
 
 	public static function get_elementor_post_types() {
-		return [ 'post', 'page', 'e-landing-page' ];
+		$elementor_post_types = get_post_types_by_support( 'elementor' );
+
+		return array_filter( $elementor_post_types, function ( $value ) {
+			// Templates are handled in a separate process.
+			return 'elementor_library' !== $value;
+		} );
 	}
 
 	public static function get_builtin_wp_post_types() {
@@ -114,5 +119,21 @@ class Utils {
 		}
 
 		return $import_sessions;
+	}
+
+	public static function update_space_between_widgets_values( $space_between_widgets ) {
+		$setting_exist = isset( $space_between_widgets['size'] );
+		$already_processed = isset( $space_between_widgets['column'] );
+
+		if ( ! $setting_exist || $already_processed ) {
+			return $space_between_widgets;
+		}
+
+		$size = strval( $space_between_widgets['size'] );
+		$space_between_widgets['column'] = $size;
+		$space_between_widgets['row'] = $size;
+		$space_between_widgets['isLinked'] = true;
+
+		return $space_between_widgets;
 	}
 }

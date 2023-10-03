@@ -40,7 +40,7 @@ jobs:
           PATTERNS: |
             **/*
             .*/**/*
-            !readme.txt  
+            !readme.txt
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
@@ -76,14 +76,18 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      matrix:     
-        testSuite: 
+      matrix:
+        testSuite:
           - 'test:part1'
-          - 'test:part2' 
+          - 'test:part2'
+          - 'test:part1:containers'
+          - 'test:part2:containers'
           - 'test'
         exclude:
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part1' }}
           - testSuite: ${{ !github.event.inputs.plugins || 'test:part2' }}
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part1:containers' }}
+          - testSuite: ${{ !github.event.inputs.plugins || 'test:part2:containers' }}
           - testSuite: ${{ github.event.inputs.plugins || 'test' }}
     steps:
       - name: Checkout source code
@@ -102,12 +106,6 @@ jobs:
         run: |
             echo "PLUGINS_TESTER__PLUGINS_TO_TEST=${{ github.event.inputs.plugins }}" >> $GITHUB_ENV
             echo "PLUGINS_TESTER__DIFF_THRESHOLD=${{ github.event.inputs.diffThreshold }}" >> $GITHUB_ENV
-      - name: Run wp-env
-        uses: ./.github/workflows/run-wp-env
-        with:
-          PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
-          PORT: '7777' # In order to enable local run side by side with another default server (port 8888)
-      - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}

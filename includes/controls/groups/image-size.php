@@ -287,12 +287,12 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$fields = [];
 
 		$fields['size'] = [
-			'label' => esc_html_x( 'Image Size', 'Image Size Control', 'elementor' ),
+			'label' => esc_html__( 'Image Size', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 		];
 
 		$fields['custom_dimension'] = [
-			'label' => esc_html_x( 'Image Dimension', 'Image Size Control', 'elementor' ),
+			'label' => esc_html__( 'Image Dimension', 'elementor' ),
 			'type' => Controls_Manager::IMAGE_DIMENSIONS,
 			'description' => esc_html__( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
 			'condition' => [
@@ -372,10 +372,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$image_sizes[ $size_key ] = $control_title;
 		}
 
-		$image_sizes['full'] = esc_html_x( 'Full', 'Image Size Control', 'elementor' );
+		$image_sizes['full'] = esc_html__( 'Full', 'elementor' );
 
 		if ( ! empty( $args['include']['custom'] ) || ! in_array( 'custom', $args['exclude'] ) ) {
-			$image_sizes['custom'] = esc_html_x( 'Custom', 'Image Size Control', 'elementor' );
+			$image_sizes['custom'] = esc_html__( 'Custom', 'elementor' );
 		}
 
 		return $image_sizes;

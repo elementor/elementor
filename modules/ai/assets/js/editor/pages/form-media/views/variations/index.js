@@ -56,7 +56,7 @@ const Variations = () => {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						bgcolor: 'secondary.background',
+						bgcolor: 'action.selected',
 					} }>
 						<img src={ editImage?.image_url || editImage?.url } alt={ prompt } style={ {
 							width: 'auto',
@@ -99,7 +99,7 @@ const Variations = () => {
 						onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 					/>
 
-					<Stack gap={ 5 } sx={ { my: 6 } }>
+					<Stack gap={ 2 } sx={ { my: 2.5 } }>
 						{
 							data?.result?.length > 0
 								? <GenerateAgainSubmit disabled={ isLoading || '' === prompt } />
