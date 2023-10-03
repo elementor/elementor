@@ -297,7 +297,7 @@ class Svg extends Base {
 
 		$svg = Utils::file_get_contents( $attachment_file );
 
-		$valid_svg = ( new self )->sanitizer( $svg );
+		$valid_svg = ( new self() )->sanitizer( $svg );
 
 		if ( false === $valid_svg ) {
 			return '';
