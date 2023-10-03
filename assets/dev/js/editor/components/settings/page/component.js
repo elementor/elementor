@@ -14,7 +14,7 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		const { activeControl, refresh } = args;
+		const { activeControl, refresh = false } = args;
 
 		if ( this.shouldRenderPage( tab ) || refresh ) {
 			elementor.getPanelView().setPage( 'page_settings' ).activateTab( tab );
