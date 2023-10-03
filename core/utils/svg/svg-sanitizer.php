@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Svg_Sanitizer {
 
-    /**
+	/**
 	 * @var \DOMDocument
 	 */
 	private $svg_dom = null;
 
-    /**
+	/**
 	 * Sanitize SVG
 	 *
 	 * @since 3.5.0
@@ -57,7 +57,7 @@ class Svg_Sanitizer {
 		return true;
 	}
 
-    /**
+	/**
 	 * Sanitizer
 	 *
 	 * @since 3.5.0
@@ -116,7 +116,7 @@ class Svg_Sanitizer {
 		return $sanitized;
 	}
 
-    /**
+	/**
 	 * Is Encoded
 	 *
 	 * Check if the contents of the SVG file are gzipped
@@ -645,7 +645,7 @@ class Svg_Sanitizer {
 		return $string;
 	}
 
-    /**
+	/**
 	 * Strip Line Breaks
 	 *
 	 * @since 3.5.0
