@@ -173,7 +173,7 @@ class Assets extends Base {
 		$page_assets = $this->get_saved_page_assets();
 
 		// If $page_assets is not empty then enabling the assets for loading.
-		if ( $page_assets ) {
+		if ( $page_assets && is_array($page_assets) ) {
 			Plugin::$instance->assets_loader->enable_assets( $page_assets );
 		}
 	}
