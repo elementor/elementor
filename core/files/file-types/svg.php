@@ -21,7 +21,7 @@ class Svg extends Base {
 	/**
 	 * @var \Svg_Sanitizer
 	 */
-	private $svg_sanitizer = null;
+	private static $svg_sanitizer = null;
 
 	/**
 	 * Get File Extension
@@ -61,7 +61,9 @@ class Svg extends Base {
 	 * @return bool
 	 */
 	public function sanitize_svg( $filename ) {
-		return $this->svg_sanitizer->sanitize_svg( $filename );
+		$svg_sanitizier = self::get_svg_sanitizier();
+
+		return $svg_sanitizier->sanitize_svg( $filename );
 	}
 
 	/**
@@ -91,7 +93,9 @@ class Svg extends Base {
 	 * @return bool|string
 	 */
 	public function sanitizer( $content ) {
-		return $this->svg_sanitizer->sanitizer( $content );
+		$svg_sanitizier = self::get_svg_sanitizier();
+
+		return $svg_sanitizier->sanitizer( $content );
 	}
 
 	/**
@@ -229,7 +233,9 @@ class Svg extends Base {
 
 		$svg = Utils::file_get_contents( $attachment_file );
 
-		$valid_svg = ( new self() )->sanitizer( $svg );
+		$svg_sanitizer = self::get_svg_sanitizier();
+
+		$valid_svg = $svg_sanitizer->sanitizer( $svg );
 
 		if ( false === $valid_svg ) {
 			return '';
@@ -242,9 +248,15 @@ class Svg extends Base {
 		return $valid_svg;
 	}
 
-	public function __construct() {
-		$this->svg_sanitizer = new Svg_Sanitizer();
+	private static function get_svg_sanitizier() {
+		if ( ! self::$svg_sanitizer ) {
+			self::$svg_sanitizer = new Svg_Sanitizer();
+		}
 
+		return self::$svg_sanitizer;
+	}
+
+	public function __construct() {
 		add_filter( 'wp_update_attachment_metadata', [ $this, 'set_svg_meta_data' ], 10, 2 );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
