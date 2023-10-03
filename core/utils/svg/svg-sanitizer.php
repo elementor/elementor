@@ -42,7 +42,7 @@ class Svg_Sanitizer {
 			$original_content = $decoded;
 		}
 
-		$valid_svg = $this->sanitizer( $original_content );
+		$valid_svg = $this->sanitize( $original_content );
 
 		if ( false === $valid_svg ) {
 			return false;
