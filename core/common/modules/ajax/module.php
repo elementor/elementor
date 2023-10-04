@@ -172,7 +172,7 @@ class Module extends BaseModule {
 			}
 
 			try {
-				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'], $this );
+				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $action_data['data'] ?? null, $this );
 
 				if ( false === $results ) {
 					$this->add_response_data( false );
@@ -259,13 +259,14 @@ class Module extends BaseModule {
 			],
 		];
 
-		$json = wp_json_encode( $response );
+		$is_testing = Utils::is_elementor_tests();
+		$json       = wp_json_encode( $response );
 
-		while ( ob_get_status() ) {
+		while ( ! $is_testing && ob_get_status() ) {
 			ob_end_clean();
 		}
 
-		if ( function_exists( 'gzencode' ) ) {
+		if ( ! $is_testing && function_exists( 'gzencode' ) ) {
 			$response = gzencode( $json );
 
 			header( 'Content-Type: application/json; charset=utf-8' );
