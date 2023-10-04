@@ -1,0 +1,14 @@
+{
+	"phpVersion": "7.4",
+	"plugins": [],
+	"themes": [
+		"https://downloads.wordpress.org/theme/hello-elementor.zip"
+	],
+	"mappings": {
+		"elementor-templates": "./elementor-templates",
+		"elementor-config": "./wp-env/config",
+		"plugin": "./plugin"
+	},
+	"port": 7777,
+	"testsPort": 7778
+}
