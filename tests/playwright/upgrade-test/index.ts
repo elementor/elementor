@@ -20,6 +20,7 @@ export class UpgradeElementor {
 	}
 
 	getBuild() {
+		// Don't forget to npx grunt build in root folder for local testing
 		this.cmd( 'mkdir plugin' );
 		this.cmd( 'cd ../../../ && mkdir elementor' );
 		this.cmd( 'cd ../../../ && cp -r ./build/* elementor && zip -r elementor elementor' );
@@ -30,8 +31,14 @@ export class UpgradeElementor {
 		this.cmd( 'npx wp-env start' );
 	}
 
-	installLatestPluginFromWP() {
-		this.cmd( `npx wp-env run cli wp plugin install elementor --activate` );
+	installPluginFromWP() {
+		const version = process.env.ELEMENTOR_PLUGIN_VERSION;
+		console.log( 'version is: ' + version );
+		if ( version !== '' ) {
+			this.cmd( `npx wp-env run cli bash -c 'wp plugin install elementor --version=${ version }  --activate --force'` );
+		} else {
+			this.cmd( `npx wp-env run cli wp plugin install elementor --activate` );
+		}
 		this.cmd( 'npx wp-env run cli wp plugin list' );
 	}
 
@@ -49,7 +56,9 @@ export class UpgradeElementor {
 	}
 
 	runSmokeTest() {
-		this.cmd( 'cd ../../../ && npm run test:playwright:elements-regression -- --grep="Test heading template"' );
+		if ( ! process.env.CI ) {
+			this.cmd( 'cd ../../../ && npm run test:playwright:elements-regression -- --grep="Test heading template"' );
+		}
 	}
 }
 
@@ -57,7 +66,7 @@ const runner = new UpgradeElementor();
 runner.cleanUpBeforeTest();
 runner.getBuild();
 runner.runServer();
-runner.installLatestPluginFromWP();
+runner.installPluginFromWP();
 runner.installCurrentPlugin();
 runner.setupTests();
 runner.runSmokeTest();
