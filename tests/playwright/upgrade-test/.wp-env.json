@@ -5,10 +5,8 @@
 		"https://downloads.wordpress.org/theme/hello-elementor.zip"
 	],
 	"mappings": {
-		"elementor-templates": "./elementor-templates",
-		"elementor-config": "./wp-env/config",
+		"elementor-templates": "../templates",
+		"elementor-config": "../../wp-env/config",
 		"plugin": "./plugin"
-	},
-	"port": 7777,
-	"testsPort": 7778
+	}
 }
