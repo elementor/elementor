@@ -54,12 +54,16 @@
 	overflow: var(--overflow);
 	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 
-	--padding-inline-start: var(--padding-left);
-	--padding-inline-end: var(--padding-right);
-	--padding-block-start: var(--padding-top);
-	--padding-block-end: var(--padding-bottom);
+	&,
+	[dir="ltr"]:is( .swiper, .swiper-container ) .swiper-slide > & {
+		--padding-inline-start: var(--padding-left);
+		--padding-inline-end: var(--padding-right);
+		--padding-block-start: var(--padding-top);
+		--padding-block-end: var(--padding-bottom);
+	}
 
-	body.rtl & {
+	body.rtl &,
+	[dir="rtl"]:is( .swiper, .swiper-container ) .swiper-slide > & {
 		--padding-inline-start: var(--padding-right);
 		--padding-inline-end: var(--padding-left);
 	}
