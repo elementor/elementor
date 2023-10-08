@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	const EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const DEFAULT_EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 
 	private $plain_notices = [
 		'api_notice',
@@ -26,6 +26,7 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
+		'design_not_appearing',
 	];
 
 	private $elementor_pages_count = null;
@@ -376,10 +377,47 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	public function print_admin_notice( array $options ) {
+	private function notice_design_not_appearing() {
+		$notice_id = 'design_not_appearing';
+
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Design not appearing as expected?', 'elementor' ),
+			'description' => esc_html__( 'Unexpected changes may occur after you update the plugin. Don’t worry - we’ve collected all the fixes for troubleshooting common issues.', 'elementor' ),
+			'id' => $notice_id,
+			'button' => [
+				'text' => esc_html__( 'Find a solution', 'elementor' ),
+				'url' => 'https://go.elementor.com/wp-dash-changes-do-not-appear-online/',
+				'type' => 'cta',
+			],
+		];
+
+		$excluded_pages = [];
+		if ( $this->elementor_has_updated() ) {
+			$this->print_admin_notice( $options, $excluded_pages );
+		}
+
+		return true;
+	}
+
+	private function elementor_has_updated() {
+		$previous_version = get_option( 'elementor_version', '' );
+
+		if ( ELEMENTOR_VERSION !== $previous_version ) {
+			update_option( 'elementor_version', ELEMENTOR_VERSION );
+			return true;
+		}
+
+		return false;
+	}
+
+	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDE_PAGES ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, self::EXCLUDE_PAGES ) ) {
+		if ( in_array( $pagenow, $exclude_pages, true ) ) {
 			return;
 		}
 
