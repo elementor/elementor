@@ -15,8 +15,8 @@
 			flex-direction: row;
 			width: fit-content;
 			flex-wrap: wrap;
-			margin-block-end: calc( 0px - var(--e-rating-gap) );
-			margin-inline-end: calc( 0px - var(--e-rating-gap) );
+			margin-block-end: calc(0px - var(--e-rating-gap));
+			margin-inline-end: calc(0px - var(--e-rating-gap));
 		}
 
 		.e-icon {
