@@ -79,6 +79,7 @@ const ImagesDisplay = ( {
 							alt={ `generated-${ index }` }
 							src={ image.image_url }
 							aspectRatio={ aspectRatio }
+							data-testid="e-gallery-image"
 						>
 							<ImageActions>
 								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
