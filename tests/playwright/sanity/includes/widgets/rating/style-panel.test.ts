@@ -64,7 +64,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 
 				await editor.togglePreviewMode();
 
-				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
 					type: 'png',
 				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
 
