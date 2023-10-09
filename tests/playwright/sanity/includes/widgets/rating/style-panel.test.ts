@@ -14,7 +14,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 		test.afterAll( async ( { browser }, testInfo ) => {
 			await afterAll( browser, testInfo );
 		} );
-		// Dummy push.
+
 		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo ),
 				editor = await wpAdmin.openNewPage(),
