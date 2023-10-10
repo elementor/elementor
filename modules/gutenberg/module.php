@@ -146,7 +146,7 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'block_editor_assets_optimize',
 			'title' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
-			'description' => esc_html__( 'Description: Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
+			'description' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'new_site' => [
