@@ -107,6 +107,22 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 				await editor.togglePreviewMode();
 			} );
 
+			await test.step( 'Assert flex-wrap with center alignment screenshot inside the editor', async () => {
+				await editor.getPreviewFrame().locator( '.e-rating' ).click();
+				await page.locator( '.elementor-control-icon_alignment .eicon-align-end-h' ).click();
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-flex-wrap-alignment-center-editor-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+
+				await editor.getPreviewFrame().locator( '.e-rating' ).click();
+				await page.locator( '.elementor-control-icon_alignment .eicon-align-start-h' ).click();
+			} );
+
 			await test.step( 'Assert flex-wrap screenshot on the front end', async () => {
 				await editor.publishAndViewPage();
 				await page.waitForSelector( '.e-rating' );
