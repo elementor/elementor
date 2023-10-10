@@ -8,13 +8,14 @@
 
 	.e-rating {
   		display: flex;
-  		justify-content: var(--e-rating-justify-content);
+		justify-content: var(--e-rating-justify-content);
 
 		&-wrapper {
 			display: flex;
+			justify-content: inherit;
 			flex-direction: row;
-			width: fit-content;
 			flex-wrap: wrap;
+			width: fit-content;
 			margin-block-end: calc(0px - var(--e-rating-gap));
 			margin-inline-end: calc(0px - var(--e-rating-gap));
 		}
