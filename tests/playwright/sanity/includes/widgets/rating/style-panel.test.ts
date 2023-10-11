@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { afterAll, beforeAll } from './helper';
+import _path from 'path';
 
 const iconExperimentStates = [ 'inactive', 'active' ];
 
@@ -63,7 +64,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 
 				await editor.togglePreviewMode();
 
-				expect.soft( await editor.getPreviewFrame().locator( '.e-rating-wrapper' ).screenshot( {
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
 					type: 'png',
 				} ) ).toMatchSnapshot( `rating-styling-icon-with-negative-spacing-experiment-${ iconExperimentState }.png` );
 
@@ -82,6 +83,53 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'font-size', '50px' );
 					await expect.soft( await ratingElement.locator( '.e-icon >> nth=0' ).locator( 'i >> nth=1' ) ).toHaveCSS( 'height', '50px' );
 				}
+			} );
+		} );
+
+		test( `Rating flex-wrap styling: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo ),
+				editor = await wpAdmin.openNewPage();
+
+			await test.step( 'Load Template', async () => {
+				const filePath = _path.resolve( __dirname, `../../../../templates/rating-flex-wrap.json` );
+				await editor.loadTemplate( filePath, false );
+				await editor.getPreviewFrame().waitForSelector( '.e-rating' );
+				await editor.closeNavigatorIfOpen();
+			} );
+
+			await test.step( 'Assert flex-wrap screenshot inside the editor', async () => {
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-flex-wrap-editor-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+			} );
+
+			await test.step( 'Assert flex-wrap with center alignment screenshot inside the editor', async () => {
+				await editor.getPreviewFrame().locator( '.e-rating' ).click();
+				await page.locator( '.elementor-control-icon_alignment .eicon-align-end-h' ).click();
+
+				await editor.togglePreviewMode();
+
+				expect.soft( await editor.getPreviewFrame().locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-flex-wrap-alignment-center-editor-${ iconExperimentState }.png` );
+
+				await editor.togglePreviewMode();
+
+				await editor.getPreviewFrame().locator( '.e-rating' ).click();
+				await page.locator( '.elementor-control-icon_alignment .eicon-align-start-h' ).click();
+			} );
+
+			await test.step( 'Assert flex-wrap screenshot on the front end', async () => {
+				await editor.publishAndViewPage();
+				await page.waitForSelector( '.e-rating' );
+
+				expect.soft( await page.locator( '.e-rating' ).screenshot( {
+					type: 'png',
+				} ) ).toMatchSnapshot( `rating-flex-wrap-frontend-${ iconExperimentState }.png` );
 			} );
 		} );
 	} );
