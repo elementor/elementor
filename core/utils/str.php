@@ -38,4 +38,25 @@ class Str {
 	public static function ends_with( $haystack, $needle ) {
 		return substr( $haystack, -strlen( $needle ) ) === $needle;
 	}
+
+	/**
+	 * Recursively sanitize input string or array
+	 *
+	 * @param $input
+	 *
+	 * @return mixed|string
+	 */
+	public static function sanitize_input_string_or_array( $input ) {
+		if ( is_array( $input ) ) {
+			foreach ( $input as $key => $value ) {
+				$input[ $key ] = self::sanitize_input_string_or_array( $value );
+			}
+		}
+
+		if ( is_string( $input ) ) {
+			$input = htmlspecialchars( $input );
+		}
+
+		return $input;
+	}
 }
