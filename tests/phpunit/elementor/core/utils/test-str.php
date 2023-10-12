@@ -49,4 +49,48 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertTrue( Str::ends_with( $str1, 'str' ) );
 		$this->assertFalse( Str::ends_with( $str2, 'str' ) );
 	}
+
+	public function test_sanitize_string() {
+		$input = "<script>alert('XSS');</script>";
+		$output = Str::sanitize_input_string_or_array( $input );
+		$this->assertEquals( '&lt;script&gt;alert(&#039;XSS&#039;);&lt;/script&gt;', $output );
+	}
+
+	public function test_sanitize_array() {
+		$input = [
+			"<script>alert('XSS1');</script>",
+			"<script>alert('XSS2');</script>",
+		];
+		$output = Str::sanitize_input_string_or_array( $input );
+		$expected = [
+			'&lt;script&gt;alert(&#039;XSS1&#039;);&lt;/script&gt;',
+			'&lt;script&gt;alert(&#039;XSS2&#039;);&lt;/script&gt;',
+		];
+		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_sanitize_nested_array() {
+		$input = [
+			"<script>alert('XSS1');</script>",
+			[
+				"<script>alert('Nested');</script>",
+				'Safe String',
+			],
+		];
+		$output = Str::sanitize_input_string_or_array( $input );
+		$expected = [
+			'&lt;script&gt;alert(&#039;XSS1&#039;);&lt;/script&gt;',
+			[
+				'&lt;script&gt;alert(&#039;Nested&#039;);&lt;/script&gt;',
+				'Safe String',
+			],
+		];
+		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_non_string_or_array() {
+		$input = 123;
+		$output = Str::sanitize_input_string_or_array( $input );
+		$this->assertEquals( 123, $output );
+	}
 }

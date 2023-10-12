@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\DynamicTags;
 
+use Elementor\Core\Utils\Str;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,7 +52,7 @@ abstract class Tag extends Base_Tag {
 			endif;
 
 		} elseif ( ! Utils::is_empty( $settings, 'fallback' ) ) {
-			$value = $settings['fallback'];
+			$value = Str::sanitize_input_string_or_array( $settings['fallback'] );
 		}
 
 		return $value;
