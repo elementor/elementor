@@ -8,20 +8,22 @@
 
 	.e-rating {
   		display: flex;
-  		justify-content: var(--e-rating-justify-content);
+		justify-content: var(--e-rating-justify-content);
 
 		&-wrapper {
 			display: flex;
+			justify-content: inherit;
 			flex-direction: row;
+			flex-wrap: wrap;
 			width: fit-content;
+			margin-block-end: calc(0px - var(--e-rating-gap));
+			margin-inline-end: calc(0px - var(--e-rating-gap));
 		}
 
 		.e-icon {
 			position: relative;
-
-			&:not(:last-child) {
-				margin-inline-end: var(--e-rating-gap);
-			}
+			margin-block-end: var(--e-rating-gap);
+			margin-inline-end: var(--e-rating-gap);
 
 			&-wrapper {
 

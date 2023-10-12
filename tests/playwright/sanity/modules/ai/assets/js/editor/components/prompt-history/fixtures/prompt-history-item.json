@@ -1,0 +1,16 @@
+{
+	"elementorApiId": "ec064b63-50cf-4cf1-a9a7-ea6c28acf444",
+	"url": "https://example.com/",
+	"type": "text",
+	"action": "edit-text",
+	"request": {
+		"prompt": "Translate the following message to en-US Quality Crafts, Exceptional Prices"
+	},
+	"response": {
+		"results": {
+			"text": "We offer high-quality handmade crafts at affordable prices."
+		}
+	},
+	"createdAt": "2023-08-23T10:00:45.681Z",
+	"isFavorite": false
+}

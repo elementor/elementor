@@ -12,7 +12,20 @@ use Elementor\User;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
 class Module extends BaseModule {
+	const HISTORY_TYPE_ALL = 'all';
+	const HISTORY_TYPE_TEXT = 'text';
+	const HISTORY_TYPE_CODE = 'code';
+	const HISTORY_TYPE_IMAGE = 'images';
+	const HISTORY_TYPE_BLOCK = 'blocks';
+	const VALID_HISTORY_TYPES = [
+		self::HISTORY_TYPE_ALL,
+		self::HISTORY_TYPE_TEXT,
+		self::HISTORY_TYPE_CODE,
+		self::HISTORY_TYPE_IMAGE,
+		self::HISTORY_TYPE_BLOCK,
+	];
 
 	const LAYOUT_EXPERIMENT = 'ai-layout';
 
@@ -30,24 +43,33 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/ajax/register_actions', function( $ajax ) {
-			$ajax->register_ajax_action( 'ai_get_user_information', [ $this, 'ajax_ai_get_user_information' ] );
-			$ajax->register_ajax_action( 'ai_get_completion_text', [ $this, 'ajax_ai_get_completion_text' ] );
-			$ajax->register_ajax_action( 'ai_get_edit_text', [ $this, 'ajax_ai_get_edit_text' ] );
-			$ajax->register_ajax_action( 'ai_get_custom_code', [ $this, 'ajax_ai_get_custom_code' ] );
-			$ajax->register_ajax_action( 'ai_get_custom_css', [ $this, 'ajax_ai_get_custom_css' ] );
-			$ajax->register_ajax_action( 'ai_set_get_started', [ $this, 'ajax_ai_set_get_started' ] );
-			$ajax->register_ajax_action( 'ai_set_status_feedback', [ $this, 'ajax_ai_set_status_feedback' ] );
-			$ajax->register_ajax_action( 'ai_get_image_prompt_enhancer', [ $this, 'ajax_ai_get_image_prompt_enhancer' ] );
-			$ajax->register_ajax_action( 'ai_get_text_to_image', [ $this, 'ajax_ai_get_text_to_image' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image', [ $this, 'ajax_ai_get_image_to_image' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_mask', [ $this, 'ajax_ai_get_image_to_image_mask' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_outpainting', [ $this, 'ajax_ai_get_image_to_image_outpainting' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_upscale', [ $this, 'ajax_ai_get_image_to_image_upscale' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_remove_background', [ $this, 'ajax_ai_get_image_to_image_remove_background' ] );
-			$ajax->register_ajax_action( 'ai_get_image_to_image_replace_background', [ $this, 'ajax_ai_get_image_to_image_replace_background' ] );
-			$ajax->register_ajax_action( 'ai_upload_image', [ $this, 'ajax_ai_upload_image' ] );
-			$ajax->register_ajax_action( 'ai_generate_layout', [ $this, 'ajax_ai_generate_layout' ] );
-			$ajax->register_ajax_action( 'ai_get_layout_prompt_enhancer', [ $this, 'ajax_ai_get_layout_prompt_enhancer' ] );
+			$handlers = [
+				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
+				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
+				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
+				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
+				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
+				'ai_set_get_started' => [ $this, 'ajax_ai_set_get_started' ],
+				'ai_set_status_feedback' => [ $this, 'ajax_ai_set_status_feedback' ],
+				'ai_get_image_prompt_enhancer' => [ $this, 'ajax_ai_get_image_prompt_enhancer' ],
+				'ai_get_text_to_image' => [ $this, 'ajax_ai_get_text_to_image' ],
+				'ai_get_image_to_image' => [ $this, 'ajax_ai_get_image_to_image' ],
+				'ai_get_image_to_image_mask' => [ $this, 'ajax_ai_get_image_to_image_mask' ],
+				'ai_get_image_to_image_outpainting' => [ $this, 'ajax_ai_get_image_to_image_outpainting' ],
+				'ai_get_image_to_image_upscale' => [ $this, 'ajax_ai_get_image_to_image_upscale' ],
+				'ai_get_image_to_image_remove_background' => [ $this, 'ajax_ai_get_image_to_image_remove_background' ],
+				'ai_get_image_to_image_replace_background' => [ $this, 'ajax_ai_get_image_to_image_replace_background' ],
+				'ai_upload_image' => [ $this, 'ajax_ai_upload_image' ],
+				'ai_generate_layout' => [ $this, 'ajax_ai_generate_layout' ],
+				'ai_get_layout_prompt_enhancer' => [ $this, 'ajax_ai_get_layout_prompt_enhancer' ],
+				'ai_get_history' => [ $this, 'ajax_ai_get_history' ],
+				'ai_delete_history_item' => [ $this, 'ajax_ai_delete_history_item' ],
+				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
+			];
+
+			foreach ( $handlers as $tag => $callback ) {
+				$ajax->register_ajax_action( $tag, $callback );
+			}
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
@@ -109,6 +131,7 @@ class Module extends BaseModule {
 				'react-dom',
 				'backbone-marionette',
 				'elementor-web-cli',
+				'wp-date',
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
@@ -826,5 +849,76 @@ class Module extends BaseModule {
 			'alt' => $image_title,
 			'source' => 'library',
 		];
+	}
+
+	public function ajax_ai_get_history( $data ): array {
+		$type = $data['type'] ?? self::HISTORY_TYPE_ALL;
+
+		if ( ! in_array( $type, self::VALID_HISTORY_TYPES, true ) ) {
+			throw new \Exception( 'Invalid history type' );
+		}
+
+		$page = sanitize_text_field( $data['page'] ?? 1 );
+		$limit = sanitize_text_field( $data['limit'] ?? 10 );
+
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->get_history_by_type( $type, $page, $limit, $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return $result;
+	}
+
+	public function ajax_ai_delete_history_item( $data ): array {
+		if ( empty( $data['id'] ) || ! wp_is_uuid( $data['id'] ) ) {
+			throw new \Exception( 'Missing id parameter' );
+		}
+
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->delete_history_item( $data['id'], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [];
+	}
+
+	public function ajax_ai_toggle_favorite_history_item( $data ): array {
+		if ( empty( $data['id'] ) || ! wp_is_uuid( $data['id'] ) ) {
+			throw new \Exception( 'Missing id parameter' );
+		}
+
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$result = $app->toggle_favorite_history_item( $data['id'], $context );
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		return [];
 	}
 }

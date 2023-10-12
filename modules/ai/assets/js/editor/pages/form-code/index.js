@@ -10,6 +10,10 @@ import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
 import PromptCredits from '../../components/prompt-credits';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../components/prompt-history/context/prompt-history-action-context';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -30,6 +34,16 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
+
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.REUSE,
+			handler( action ) {
+				reset();
+				setPrompt( action.data );
+			},
+		},
+	] );
 
 	const lastRun = useRef( () => {} );
 
