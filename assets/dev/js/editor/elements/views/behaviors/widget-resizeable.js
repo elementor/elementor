@@ -51,7 +51,7 @@ export default class extends Marionette.Behavior {
 	toggle() {
 		this.deactivate();
 
-		if ( this.view.container.isDesignable() ) {
+		if ( this.view.container.isDesignable() && ! this.view.container.isGridContainer() ) {
 			this.activate();
 		}
 	}

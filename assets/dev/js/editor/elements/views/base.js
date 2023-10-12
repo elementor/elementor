@@ -41,6 +41,7 @@ BaseElementView = BaseContainer.extend( {
 		return {
 			'data-id': this.getID(),
 			'data-element_type': this.model.get( 'elType' ),
+			'data-model-cid': this.model.cid,
 		};
 	},
 
@@ -267,6 +268,14 @@ BaseElementView = BaseContainer.extend( {
 			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
 
 		this.initControlsCSSParser();
+
+		if ( ! this.onDynamicServerRequestEnd ) {
+			this.onDynamicServerRequestEnd = _.debounce( () => {
+				this.render();
+
+				this.$el.removeClass( 'elementor-loading' );
+			}, 100 );
+		}
 	},
 
 	getHandlesOverlay() {
@@ -371,6 +380,11 @@ BaseElementView = BaseContainer.extend( {
 			model.isInner = true;
 		} else if ( 'container' !== model.elType ) {
 			// Don't allow adding anything other than widget, inner-section or a container.
+			return;
+		}
+
+		// Don't allow adding inner-sections inside inner-sections.
+		if ( 'section' === model.elType && this.isInner() ) {
 			return;
 		}
 
@@ -548,7 +562,9 @@ BaseElementView = BaseContainer.extend( {
 	renderCustomElementID() {
 		const customElementID = this.getEditModel().get( 'settings' ).get( '_element_id' );
 
-		this.$el.attr( 'id', customElementID );
+		if ( customElementID ) {
+			this.$el.attr( 'id', customElementID );
+		}
 	},
 
 	renderUI() {
@@ -738,12 +754,12 @@ BaseElementView = BaseContainer.extend( {
 						changed = renderDataBinding( dataBinding );
 					}
 				}
-				break;
+					break;
 
 				case 'content': {
 					changed = renderDataBinding( dataBinding );
 				}
-				break;
+					break;
 			}
 
 			if ( changed ) {
@@ -780,11 +796,7 @@ BaseElementView = BaseContainer.extend( {
 			onServerRequestStart() {
 				self.$el.addClass( 'elementor-loading' );
 			},
-			onServerRequestEnd() {
-				self.render();
-
-				self.$el.removeClass( 'elementor-loading' );
-			},
+			onServerRequestEnd: self.onDynamicServerRequestEnd,
 		};
 	},
 
@@ -983,6 +995,10 @@ BaseElementView = BaseContainer.extend( {
 	 * Initialize the Droppable instance.
 	 */
 	initDraggable() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
 			return;

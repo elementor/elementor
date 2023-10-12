@@ -29,32 +29,25 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$is_network = $this->is_network( $assoc_args );
 
-		// Activate experiment callback.
-		$activate = function ( $site = '', $id = null ) use ( $args, $is_network ) {
-			$success = 'Experiment activated successfully';
-			$error = 'Cannot activate experiment';
-
-			if ( $is_network ) {
-				$success .= " for site {$site}";
-				$error .= " for site {$site}";
-			}
-
-			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[0] );
-
-			update_option( $option, Experiments_Manager::STATE_ACTIVE );
-
-			try {
-				\WP_CLI::success( $success );
-			} catch ( \Exception $e ) {
-				\WP_CLI::error( $error );
-			}
-		};
+		$experiments = $this->parse_experiments( $args[0] );
+		$plural = $this->get_plural( $experiments );
+		$success = 'Experiment' . $plural . ' activated successfully';
+		$error = 'Cannot activate experiment' . $plural;
 
 		if ( $is_network ) {
-			$this->foreach_sites( $activate );
+			$success .= " for site {$site}";
+			$error .= " for site {$site}";
+		}
+
+		$experiments_manager = Plugin::instance()->experiments;
+		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
+			\WP_CLI::error( 'Experiments do not exist' . $args[0] );
+		}
+
+		if ( $is_network ) {
+			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
 		} else {
-			$activate();
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_ACTIVE, $is_network, $success, $error );
 		}
 	}
 
@@ -76,32 +69,20 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		$is_network = $this->is_network( $assoc_args );
 
-		// Activate experiment callback.
-		$activate = function ( $site = '' ) use ( $args, $is_network ) {
-			$success = 'Experiment deactivated successfully';
-			$error = 'Cannot deactivate experiment';
+		$experiments = $this->parse_experiments( $args[0] );
+		$plural = $this->get_plural( $experiments );
+		$success = 'Experiment' . $plural . ' deactivated successfully';
+		$error = 'Cannot deactivate experiment' . $plural;
 
-			if ( $is_network ) {
-				$success .= " for site {$site}";
-				$error .= " for site {$site}";
-			}
-
-			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[0] );
-
-			update_option( $option, Experiments_Manager::STATE_INACTIVE );
-
-			try {
-				\WP_CLI::success( $success );
-			} catch ( \Exception $e ) {
-				\WP_CLI::error( $error );
-			}
-		};
+		$experiments_manager = Plugin::instance()->experiments;
+		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
+			\WP_CLI::error( 'Experiments do not exist' );
+		}
 
 		if ( $is_network ) {
-			$this->foreach_sites( $activate );
+			$this->foreach_sites( $this->update_experiment_state, $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
 		} else {
-			$activate();
+			$this->update_experiment_state( $experiments, Experiments_Manager::STATE_INACTIVE, $is_network, $success, $error );
 		}
 	}
 
@@ -144,7 +125,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 *
 	 * @return void
 	 */
-	private function foreach_sites( callable $callback ) {
+	private function foreach_sites( callable $callback, $experiments, $state, $is_network, $success, $error ) {
 		$blog_ids = get_sites( [
 			'fields' => 'ids',
 			'number' => 0,
@@ -153,9 +134,62 @@ class Wp_Cli extends \WP_CLI_Command {
 		foreach ( $blog_ids as $blog_id ) {
 			switch_to_blog( $blog_id );
 
-			$callback( get_option( 'home' ), $blog_id );
+			$callback( get_option( 'home' ), $experiments, $state, $is_network, $success, $error );
 
 			restore_current_blog();
+		}
+	}
+
+	/**
+	 * @param string $experiments_str comma delimeted string of experiments
+	 *
+	 * @return array array of experiments
+	 */
+	private function parse_experiments( $experiments_str ) {
+		return explode( ',', $experiments_str );
+	}
+
+	/**
+	 * @param array $experiments experiments
+	 *
+	 * @return string plural
+	 */
+	private function get_plural( $experiments ) {
+		return count( $experiments ) > 0 ? 's' : '';
+	}
+
+	/**
+	 * @param Experiments_Manager $experiments_manager manager
+	 * @param array $experiments experiments
+	 *
+	 * @return bool true when all experiments exist, otherwise false
+	 */
+	private function check_experiments_exist( $experiments_manager, $experiments ) {
+		foreach ( $experiments as $experiment ) {
+			$feature = $experiments_manager->get_features( $experiment );
+			if ( ! $feature ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private function update_experiment_state( $experiments, $state, $is_network, $success_message, $error_message, $site_id = '' ) {
+		if ( $is_network ) {
+			$success_message .= " for site {$site}";
+			$error_message .= " for site {$site}";
+		}
+
+		$experiments_manager = Plugin::instance()->experiments;
+		foreach ( $experiments as $experiment ) {
+			$option = $experiments_manager->get_feature_option_key( $experiment );
+			update_option( $option, $state );
+		}
+
+		try {
+			\WP_CLI::success( $success_message );
+		} catch ( \Exception $e ) {
+			\WP_CLI::error( $error_message );
 		}
 	}
 }

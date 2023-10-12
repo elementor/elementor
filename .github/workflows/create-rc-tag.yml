@@ -27,7 +27,7 @@ jobs:
           ref: ${{ github.ref }}
       - name: Get Configuration
         id: configuration
-        uses: maork-elementor/json-to-variables@main
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
         with:
             filename: './.github/workflows/config.json'
             prefix: config
@@ -46,6 +46,7 @@ jobs:
         with:
           CHANNEL: ${{ github.event.inputs.channel }}
           REF: ${{ github.ref }}
+          POSTFIX: '-rc'
       - name: Bump Channel Version
         uses: ./.github/workflows/bump-channel-version
         with:
@@ -89,7 +90,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
+                          "text": "Hi All :smile:\n\nWe just Published RC Tag of *Elementor*\n`${{ env.PACKAGE_VERSION }}`"
                         }
                       },
                       {
@@ -99,7 +100,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "GitHub Release *v${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
+                          "text": "GitHub RC Tag *${{ env.PACKAGE_VERSION }}* \nCreated by ${{ github.actor }}"
                         },
                         "accessory": {
                           "type": "button",

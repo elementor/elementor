@@ -84,6 +84,10 @@ class Uploads_Manager extends Base_Object {
 		// Returns an array of file paths.
 		$extracted = $zip_handler->extract( $file_path, $allowed_file_types );
 
+		if ( is_wp_error( $extracted ) ) {
+			return $extracted;
+		}
+
 		// If there are no extracted file names, no files passed the extraction validation.
 		if ( empty( $extracted['files'] ) ) {
 			// TODO: Decide what to do if no files passed the extraction validation

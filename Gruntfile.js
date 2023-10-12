@@ -70,6 +70,10 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'webpack:productionWatch' );
 	} );
 
+	grunt.registerTask( 'scripts:packages', () => {
+		grunt.task.run( 'webpack:packages' );
+	} );
+
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		if ( ! isDevMode ) {
 			grunt.task.run( 'create_widgets_temp_scss_files' );
@@ -131,11 +135,9 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'build', [
 		'default',
-		'shell:packages_build',
 		'usebanner',
 		'clean',
 		'copy',
-		'default', // Remove banners for GitHub
 	] );
 
 	grunt.registerTask( 'publish', ( releaseType ) => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import ReactMarkdown from 'react-markdown';
 import { codeCssAutocomplete, codeHtmlAutocomplete } from '../../actions-data';
@@ -9,6 +9,11 @@ import GenerateButton from '../../components/generate-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import CodeBlock from './code-block';
 import useCodePrompt from '../../hooks/use-code-prompt';
+import PromptCredits from '../../components/prompt-credits';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../components/prompt-history/context/prompt-history-action-context';
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -25,10 +30,22 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 	},
 } ) );
 
-const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits } ) => {
+const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, usagePercentage } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
 
 	const [ prompt, setPrompt ] = useState( '' );
+
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.REUSE,
+			handler( action ) {
+				reset();
+				setPrompt( action.data );
+			},
+		},
+	] );
+
+	const lastRun = useRef( () => {} );
 
 	const autocompleteItems = 'css' === additionalOptions?.codeLanguage ? codeCssAutocomplete : codeHtmlAutocomplete;
 
@@ -37,7 +54,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 
-		send( prompt );
+		lastRun.current = () => send( prompt );
+
+		lastRun.current();
 	};
 
 	const applyPrompt = ( inputText ) => {
@@ -54,11 +73,11 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	return (
 		<>
-			{ error && <PromptErrorMessage error={ error } sx={ { mb: 6 } } /> }
+			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 2.5 } } /> }
 
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
-					<Box sx={ { pb: 4 } }>
+					<Box sx={ { pb: 1.5 } }>
 						<PromptSearch
 							placeholder={ __( 'Describe the code you want to use...', 'elementor' ) }
 							name="prompt"
@@ -70,10 +89,14 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } /> }
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { py: 4, mt: 8 } }>
-						<GenerateButton>
-							{ __( 'Generate code', 'elementor' ) }
-						</GenerateButton>
+					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
+						<PromptCredits usagePercentage={ usagePercentage } />
+
+						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
+							<GenerateButton>
+								{ __( 'Generate code', 'elementor' ) }
+							</GenerateButton>
+						</Stack>
 					</Stack>
 				</Box>
 			) }
@@ -86,8 +109,10 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						{ data.result }
 					</ReactMarkdown>
 
-					<Stack direction="row" alignItems="center" justifyContent="flex-end" sx={ { mt: 8 } }>
-						<Stack direction="row" justifyContent="flex-end" gap={ 3 }>
+					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
+						<PromptCredits usagePercentage={ usagePercentage } />
+
+						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
 							</Button>
@@ -110,6 +135,7 @@ FormCode.propTypes = {
 		initialCredits: PropTypes.number,
 	} ),
 	credits: PropTypes.number,
+	usagePercentage: PropTypes.number,
 };
 
 export default FormCode;

@@ -10,7 +10,7 @@ $root: e-app-drop-zone;
 	--e-app-drop-zone-secondary-text-color: #{$e-app-drop-zone-secondary-text-color};
 
 	&__icon {
-		margin-bottom: spacing(44);
+		margin-block-end: spacing(44);
 		font-size: 60px;
 	}
 

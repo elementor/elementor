@@ -27,7 +27,7 @@ $remote-templates-items-space: 30px;
 .elementor-template-library-menu-item {
 	display: inline-block;
 	padding: 17px 20px;
-	border-bottom: 3px solid transparent;
+	border-block-end: 3px solid transparent;
 	cursor: pointer;
 
 	&:hover {
@@ -45,7 +45,7 @@ $remote-templates-items-space: 30px;
 	display: flex;
 
 	> div {
-		@include padding_end(16px);
+		padding-inline-end: 16px;
 	}
 }
 
@@ -55,8 +55,9 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
-	@include padding(16.5px, 16.5px, 15px, 0);
-	@include border-end(var(--e-a-border));
+	padding-block: 16.5px 15px;
+	padding-inline: 0 16.5px;
+	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
 
@@ -65,7 +66,7 @@ $remote-templates-items-space: 30px;
 	}
 
 	i {
-		@include padding-end(10px);
+		padding-inline-end: 10px;
 		font-size: 18px;
 
 		&:before {
@@ -79,9 +80,9 @@ $remote-templates-items-space: 30px;
 	&[data-template-source="local"] {
 
 		#elementor-template-library-templates-container {
-			margin-top: 10px;
-			margin-bottom: 45px;
-			border-top: var(--e-a-border);
+			margin-block-start: 10px;
+			margin-block-end: 45px;
+			border-block-start: var(--e-a-border);
 		}
 
 		.elementor-template-library-order-input {
@@ -133,12 +134,12 @@ $remote-templates-items-space: 30px;
 		&:checked {
 
 			+ .elementor-template-library-order-label {
-				@include padding-end(8px);
+				padding-inline-end: 8px;
 
 				&:after {
 					font-family: eicons;
 					content: '\e8ae';
-					@include margin-start(3px);
+					margin-inline-start: 3px;
 				}
 			}
 
@@ -178,12 +179,12 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-order {
 	display: flex;
-	@include border-end(var(--e-a-border));
+	border-inline-end: var(--e-a-border);
 }
 
 .elementor-template-library-order-label {
 	text-transform: uppercase;
-	@include padding-end(22px);
+	padding-inline-end: 22px;
 	user-select: none;
 }
 
@@ -198,7 +199,7 @@ label.elementor-template-library-order-label {
 #elementor-template-library-filter {
 
 	.select2 {
-		text-align: $start;
+		text-align: start;
 		width: calc(#{$control-unit} * 5) !important;
 	}
 
@@ -211,15 +212,15 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
-		text-align: $start;
-		@include padding-start(5px);
+		text-align: start;
+		padding-inline-start: 5px;
 	}
 }
 
 #elementor-template-library-my-favorites {
 	flex-grow: 1;
-	text-align: $start;
-	@include padding-start(20px);
+	text-align: start;
+	padding-inline-start: 20px;
 }
 
 #elementor-template-library-filter-my-favorites {
@@ -257,7 +258,7 @@ label.elementor-template-library-order-label {
 	}
 
 	i {
-		@include padding-end(5px);
+		padding-inline-end: 5px;
 
 		&:after {
 			content: '\e923';
@@ -279,7 +280,7 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-filter-text {
 	border: none;
-	border-bottom: var(--e-a-border-bold);
+	border-block-end: var(--e-a-border-bold);
 	border-radius: 0;
 	font-size: 11px;
 	padding: 8px 15px 8px 0;
@@ -415,10 +416,10 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-name {
-		text-align: $start;
+		text-align: start;
 		flex-grow: 1;
 		@include ellipsis;
-		@include padding-end(5px);
+		padding-inline-end: 5px;
 	}
 
 	.elementor-template-library-template-favorite-input {
@@ -477,11 +478,11 @@ label.elementor-template-library-order-label {
 	display: flex;
 	align-items: center;
 	padding: 0 25px;
-	text-align: $start;
+	text-align: start;
 }
 
 #elementor-template-library-order-toolbar-local {
-	margin-top: 30px;
+	margin-block-start: 30px;
 
 	.elementor-template-library-order-label {
 		line-height: 1;
@@ -493,7 +494,7 @@ label.elementor-template-library-order-label {
 .elementor-template-library-template-local {
 	height: 50px;
 	width: 100%;
-	margin-top: 1px;
+	margin-block-start: 1px;
 	transition: background-color .3s linear;
 
 	&:hover {
@@ -501,11 +502,17 @@ label.elementor-template-library-order-label {
 	}
 
 	&:first-child {
-		border-radius: 3px 3px 0 0;
+		border-start-start-radius: 3px;
+		border-start-end-radius: 3px;
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
 	}
 
 	&:last-child {
-		border-radius: 0 0 3px 3px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-start-radius: 3px;
+		border-end-end-radius: 3px;
 	}
 
 	.elementor-template-library-template-name {
@@ -514,7 +521,7 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-name,
 	.elementor-template-library-template-meta {
-		@include padding-end(20px);
+		padding-inline-end: 20px;
 	}
 
 	.elementor-template-library-template-name,
@@ -538,12 +545,12 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-insert {
 
 		i {
-			@include margin-end(3px);
+			margin-inline-end: 3px;
 		}
 	}
 
 	.elementor-template-library-template-control-title {
-		@include margin-start(6px);
+		margin-inline-start: 6px;
 	}
 
 	.elementor-template-library-template-more {
@@ -573,7 +580,7 @@ label.elementor-template-library-order-label {
 			position: absolute;
 			border: solid transparent;
 			border-width: 8px 4px;
-			border-bottom-color: var(--e-a-color-white);
+			border-block-end-color: var(--e-a-color-white);
 			transform: translateY(-100%);
 		}
 
@@ -589,7 +596,7 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-more-toggle {
 		flex-grow: 1;
-		text-align: $end;
+		text-align: end;
 
 		i {
 			font-size: 16px;
@@ -617,7 +624,7 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-icon {
 	font-size: 64px;
-	margin-top: 45px;
+	margin-block-start: 45px;
 	line-height: 1;
 
 	img {
@@ -631,7 +638,7 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-title {
 	font-size: 30px;
-	margin-top: 20px;
+	margin-block-start: 20px;
 
 	@media (max-width: $editor-screen-lg-max) {
 		font-size: 25px;
@@ -640,17 +647,17 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-message {
 	font-size: 18px;
-	margin-top: 15px;
+	margin-block-start: 15px;
 	font-weight: 300;
 
 	@media (max-width: $editor-screen-lg-max) {
 		font-size: 16px;
-		margin-top: 10px;
+		margin-block-start: 10px;
 	}
 }
 
 #elementor-template-library-save-template-form {
-	margin-top: 40px;
+	margin-block-start: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -663,13 +670,19 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-save-template-name {
 	width: 500px;
-	@include padding-start(25px);
-	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+	padding-inline-start: 25px;
+	border-start-start-radius: 3px;
+	border-start-end-radius: 0;
+	border-end-start-radius: 3px;
+	border-end-end-radius: 0;
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
-	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	border-start-start-radius: 0;
+	border-start-end-radius: 3px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 }
 
 #elementor-template-library-import {
@@ -682,12 +695,12 @@ label.elementor-template-library-order-label {
 		transition: var(--e-a-transition-hover);
 
 		&-or {
-			margin-top: 15px;
+			margin-block-start: 15px;
 			font-size: 18px;
 		}
 
 		&-label {
-			margin-top: 20px;
+			margin-block-start: 20px;
 			padding: 15px 35px;
 			display: inline-block;
 		}
@@ -704,11 +717,11 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-blank {
 
 		&-icon {
-			margin-top: 0;
+			margin-block-start: 0;
 		}
 
 		&-message {
-			margin-top: 20px;
+			margin-block-start: 20px;
 		}
 	}
 }
@@ -733,7 +746,7 @@ label.elementor-template-library-order-label {
 		display: inline-block;
 		position: relative;
 		z-index: 1; // over the images
-		margin-top: 25px;
+		margin-block-start: 25px;
 		padding: 12px 24px;
 		font-size: 14px;
 	}
@@ -779,21 +792,21 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-footer-banner {
-	padding-bottom: 45px;
+	padding-block-end: 45px;
 
 	i {
 		font-size: 56px;
-		margin-top: 40px;
+		margin-block-start: 40px;
 	}
 
 	.elementor-nerd-box-icon {
-		margin-top: 70px;
+		margin-block-start: 70px;
 	}
 }
 
 #elementor-template-library-templates-empty {
 	width: 100%;
-	margin-top: 40px;
+	margin-block-start: 40px;
 }
 
 #elementor-template-library-error-dialog {
@@ -804,7 +817,7 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-error-info {
-	margin-top: 10px;
+	margin-block-start: 10px;
 }
 
 @media (max-width: $library_screen_breakpoint) {

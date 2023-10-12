@@ -21,11 +21,12 @@ export default function useKit() {
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		uploadKit = ( { file, kitLibraryNonce } ) => {
+		uploadKit = ( { kitId, file, kitLibraryNonce } ) => {
 			setAjax( {
 				data: {
 					action: UPLOAD_KIT_KEY,
 					e_import_file: file,
+					kit_id: kitId,
 					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
 			} );
@@ -82,10 +83,12 @@ export default function useKit() {
 						.catch( ( error ) => {
 							stopIterations = true;
 
+							const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
 							setKitState( ( prevState ) => ( { ...prevState, ...{
-									status: KIT_STATUS_MAP.ERROR,
-									data: error,
-								} } ) );
+								status: KIT_STATUS_MAP.ERROR,
+								data: response || {},
+							} } ) );
 						} );
 				} else {
 					setAjax( ajaxConfig );

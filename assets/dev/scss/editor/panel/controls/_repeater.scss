@@ -5,9 +5,9 @@
 .elementor-control-type-repeater {
 
 	.elementor-control:not(.elementor-control-type-tab) {
-		padding-right: 10px;
-		padding-left: 10px;
-		padding-bottom: 10px;
+		padding-inline-start: 10px;
+		padding-inline-end: 10px;
+		padding-block-end: 10px;
 	}
 
 	&.elementor-repeater-has-minimum-rows {
@@ -23,8 +23,8 @@
 
 	.elementor-repeater-row-controls {
 		border: var(--e-a-border-bold);
-		border-top-width: 0;
-		padding-top: 15px;
+		border-block-start-width: 0;
+		padding-block-start: 15px;
 
 		&:not(.editable) {
 			display: none;
@@ -32,35 +32,31 @@
 	}
 
 	.elementor-repeater-row-tools {
-		display: table;
-		table-layout: fixed;
+		display: flex;
+		align-items: center;
 		width: 100%;
-		background-color: var(--e-a-border-color-bold);
-		height: 40px;
-		border-spacing: 1px;
-		transition: all .5s;
+		border: 1px solid var(--e-a-border-color-bold);
+		transition: var(--e-a-transition-hover);
 
-		&:hover {
-			background-color: var(--e-a-border-color-focus);
-		}
-
-		> div {
-			display: table-cell;
-			text-align: center;
-			vertical-align: middle;
+		> button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 40px;
+			border: none;
+			background-color: transparent;
+			color: currentColor;
 			cursor: pointer;
 
-			&:not(.elementor-repeater-row-handle-sortable) {
-				background-color: var(--e-a-bg-default);
-			}
-
-			&:hover {
+			&:hover,
+			&:focus {
 				background-color: var(--e-a-bg-hover);
 			}
 		}
 
 		.elementor-repeater-row-item-title {
-			text-align: $start;
+			flex: 1;
+			justify-content: flex-start;
 			padding: 0 10px;
 			font-size: var(--control-title-size);
 			@include ellipsis;
@@ -68,7 +64,7 @@
 			.eicon,
 			i,
 			svg {
-				@include margin-end(5px);
+				margin-inline-end: 5px;
 			}
 
 			img[src$="svg"] {
@@ -78,17 +74,18 @@
 
 		.elementor-repeater-row-tool {
 			width: 40px;
+			border-inline-start: 1px solid var(--e-a-border-color-bold);
 		}
 
 		.elementor-repeater-row-handle-sortable {
-			cursor: move;
 			width: 10px;
-			color: #fff;
+			border-inline-end: 1px solid var(--e-a-border-color-bold);
+			cursor: move;
 		}
 	}
 
 	.elementor-button-wrapper {
 		text-align: center;
-		padding-top: 5px;
+		padding-block-start: 5px;
 	}
 }

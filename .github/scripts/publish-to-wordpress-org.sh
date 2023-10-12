@@ -52,3 +52,9 @@ svn ci -m "Upload v${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --usern
 echo "Copy files from trunk to tag ${PLUGIN_VERSION}"
 svn cp https://plugins.svn.wordpress.org/elementor/trunk https://plugins.svn.wordpress.org/elementor/tags/${PLUGIN_VERSION} --message "Tagged ${PLUGIN_VERSION}" --no-auth-cache --non-interactive  --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
 svn update
+
+echo "Remove the SVN folder from the workspace (for multiple releases in the same Action)"
+rm -rf $SVN_PATH
+
+echo "Back to the workspace root"
+cd $GITHUB_WORKSPACE

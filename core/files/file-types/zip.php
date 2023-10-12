@@ -128,6 +128,11 @@ class Zip extends Base {
 			$filename = $zip->getNameIndex( $i );
 			$extension = pathinfo( $filename, PATHINFO_EXTENSION );
 
+			// Skip files with transversal paths.
+			if ( strpos( $filename, '..' ) !== false ) {
+				continue;
+			}
+
 			if ( in_array( $extension, $allowed_file_types, true ) ) {
 				$allowed_files[] = $filename;
 			}

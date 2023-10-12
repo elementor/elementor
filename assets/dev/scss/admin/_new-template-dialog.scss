@@ -16,7 +16,7 @@
 		display: flex;
 		align-items: center;
 		height: 100%;
-		text-align: $start;
+		text-align: start;
 
 		@media (max-width: $library_screen_breakpoint) {
 			padding: 0 50px;

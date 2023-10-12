@@ -1,9 +1,9 @@
-=== Elementor Website Builder ===
+=== Elementor Website Builder - More than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
-Requires at least: 5.9
-Tested up to: 6.1
-Requires PHP: 7.0
+Requires at least: 6.0
+Tested up to: 6.3
+Requires PHP: 7.3
 Stable tag: 3.12.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -146,13 +146,13 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 
 = Minimum Requirements =
 
-* WordPress 5.9 or greater
-* PHP version 7.0 or greater
+* WordPress 6.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.0 or greater
 
-= We recommend your host supports: =
+= Recommended Requirements =
 
-* PHP version 7.0 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -239,6 +239,223 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.16.5 - 2023-10-09 =
+
+* Fix: Widget panel appears empty for Editor role with "Access to edit content only" permission ([#23696](https://github.com/elementor/elementor/issues/23696))
+* Fix: Improved code security enforcement in SVG Icon control
+
+= 3.16.4 - 2023-09-20 =
+
+* Fix: HTML tags are not rendering on title field in Tabs widget ([#23752](https://github.com/elementor/elementor/issues/23752))
+* Fix: Tabs is using the 'active' color for both 'active' and 'hover' states in the accordion layout in Tabs widget
+* Fix: Gaps values aren't displayed inside the Editor in Container widget
+
+= 3.16.3 - 2023-09-14 =
+
+* Tweak: Changed Improved CSS loading feature to inactive for existing sites
+* Fix: Dynamic tag for ACF image field is not working as expected ([#23757](https://github.com/elementor/elementor/issues/23757))
+* Fix: Display issues when using long titles inside Tabs widget ([#23670](https://github.com/elementor/elementor/issues/23670))
+* Fix: Gaps control does not present values as expected in Container widget
+
+= 3.16.2 - 2023-09-13 =
+
+* Fix: Various issues with deprecation updates and 3rd party plugins
+
+= 3.16.1 - 2023-09-12 =
+
+* Fix: Flexbox Container feature is activated by default for existing sites
+
+= 3.16.0 - 2023-09-12 =
+
+* New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
+* Tweak: Enhanced TTFB metric by optimizing controls display condition functions in the Editor (props [@DMajorChump](https://github.com/MajorChump), [#21762](https://github.com/elementor/elementor/issues/21762))
+* Tweak: Implemented accessibility improvements in Nested Tabs ([#22935](https://github.com/elementor/elementor/issues/22935))
+* Tweak: Promoted Flexbox Container feature to Stable status
+* Tweak: Enabled Flexbox Container feature by default for new installations
+* Tweak: Substituted 'Gap between elements' control in site settings with the new Container Gap control
+* Tweak: Upgraded HTML Structure for Tabs Widget
+* Tweak: Implemented CSS logical properties for border-radius in Elementor Editor
+* Tweak: Implemented CSS logical properties in Container, Accordion and Tabs widgets
+* Tweak: Enhanced dropdown preview for Global Typography styles
+* Tweak: Enabled Improved Asset Loading feature by default for all sites
+* Tweak: Promoted Grid Container feature to Beta status
+* Tweak: Replace CSS `float` with other layouts in the Editor
+* Tweak: Concealed the 'Empty View' cell within the Grid Container to prevent distortion of the preview
+* Tweak: Updated `eicons` library to v5.23.0
+* Tweak: Added keyboard accessibility to a link in Icon Box widget
+* Tweak: Added keyboard accessibility to a link in Image Box widget
+* Tweak: Added 'Download System Info" button to the top of Elementor System Info screen
+* Fix: Justify Content and Align Items controls are not functioning as expected in responsive mode in Container widget ([#19363](https://github.com/elementor/elementor/issues/19363))
+* Fix: Wrong structure of predefined Container layouts in RTL ([#20184](https://github.com/elementor/elementor/issues/20184))
+* Fix: Editing a post or page created in Gutenberg with Elementor resulted in sections being displayed instead of containers ([#20282](https://github.com/elementor/elementor/issues/20282))
+* Fix: Custom unit inheritance problem in mobile mode in Grid Container ([#22289](https://github.com/elementor/elementor/issues/22289))
+* Fix: Spacer not functioning as intended in Container widget ([#20023](https://github.com/elementor/elementor/issues/20023))
+* Fix: Translated blending mode options in `heading.php` for improved usability (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Use default placeholder set in URL control (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved translation functionality in the Editor (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved code security enforcement in Text Path widget
+* Fix: "Add New Container" functionality is not functioning correctly in Finder
+* Fix: Styling from the parent Accordion was inherited by an Accordion placed inside it in Accordion widget
+* Fix: Title is not breaking in Recently Edited modal in Editor Top Bar
+* Fix: Edit page with WordPress Editor issue when using WordPress 6.3
+
+= 3.15.3 - 2023-08-20 =
+
+* Fix: Elements can't be edited after accessing the page settings panel ([#23365](https://github.com/elementor/elementor/issues/23365))
+* Fix: Reverted Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+* Fix: Elementor Admin Top Bar affects styling on non-elementor screens in WordPress
+* Fix: Changed CSS class for Apps page for better i18n support
+
+= 3.15.2 - 2023-08-09 =
+
+* Fix: Popular Apps notification is not presented as expected in RTL websites ([#23307](https://github.com/elementor/elementor/issues/23307))
+* Fix: Typo in Popular Apps notification ([#23329](https://github.com/elementor/elementor/issues/23329))
+* Fix: Redundant accordion icon appears when using Safari browser in Accordion widget
+
+= 3.15.1 - 2023-08-02 =
+
+* Fix: Error notices appear on front after schemes code deprecated
+
+= 3.15.0 - 2023-07-31 =
+
+* New: Introducing Accordion widget - Unleash your design creativity with nesting capabilities and layout flexibility ([#2587](https://github.com/elementor/elementor/issues/2587))
+* New: Enhancements Elementor AI for Images - Seamlessly Remove and Replace Backgrounds
+* New: Introducing Apps Page - Discover a selection of tools, specifically tailored to enhance your Elementor-powered website
+* Tweak: Added a "Container" option to the 'Hover Area' dropdown in Lottie widget ([#20360](https://github.com/elementor/elementor/issues/20360))
+* Tweak: Updated several URLs from `http:` to `https` for enhanced compliance (props [@DAnn2012](https://github.com/DAnn2012))
+* Tweak: Added Image Size control to Gravatar image in Author Box widget
+* Tweak: Remove deprecated schemes area
+* Tweak: Accessibility Improvements feature merged to version
+* Tweak: Deleted `aspect-ratio` from SASS files
+* Tweak: Added keyboard accessibility to Repeater control
+* Tweak: Unified the appearance of `stretch` and `center` buttons in Tabs widgets
+* Tweak: Updated `eicons` library to v5.21.0
+* Tweak: Group together position controls in Icon Box widget
+* Tweak: Group together position controls in Image Box widget
+* Tweak: Added additional units to lightbox controls
+* Tweak: Implemented CSS logical properties in Elementor App
+* Tweak: Implemented CSS logical properties in Elementor Editor
+* Tweak: Enhanced `text-align` property by implementing CSS logical properties
+* Tweak: Improved panel UI in Video widget
+* Tweak: Replaced Display Percentage select control to toggle control in Progress Bar widget
+* Tweak: Added "Title HTML Tag" to Title in Progress Bar widget
+* Tweak: Updated recommended PHP version
+* Tweak: Added `classes_dictionary` support for editor controls
+* Tweak: Expanded AI resize option elevating the resolution limit to 2048px
+* Tweak: Landing Pages feature downgraded to BETA status
+* Tweak: Promoted "Global Style Preview" feature to BETA status
+* Fix: Responsive settings for Section Templates won't entirely save when Additional Breakpoints feature is active ([#19394](https://github.com/elementor/elementor/issues/19394), [#19394](https://github.com/elementor/elementor/issues/19394))
+* Fix: Video lightbox incorrect aspect ratio when multiple video widgets are utilized on the same page ([#21649](https://github.com/elementor/elementor/issues/21649))
+* Fix: Disabling popup overlay does not disable it in the editor ([#22412](https://github.com/elementor/elementor/issues/22412))
+* Fix: Corrected typo in `DONOTCACHCEOBJECT` to `DONOTCACHEOBJECT` for accurate `do_not_cache` definition ([#22786](https://github.com/elementor/elementor/issues/22786))
+* Fix: Stretch option is not working as expected when items are set to the sides in Tabs widget ([#22774](https://github.com/elementor/elementor/issues/22774))
+* Fix: Color picker is not working as expected on document settings ([#22867](https://github.com/elementor/elementor/issues/22867))
+* Fix: Updated text domain of multiple strings to exclude 'elementor-pro' for better compatibility (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Video overlay image `aspect-ratio` fixes
+* Fix: Rectified template categories filter to reference the correct ID accurately
+* Fix: Lightbox overlay color was not visible when previewing the lightbox within the editor
+
+= 3.14.1 - 2023-06-26 =
+
+* Fix: Video background added on the parent tab container only works on the first tab in Tabs widget
+* Fix: AI Image screen is not loading when there is no image in the control
+
+= 3.14.0 - 2023-06-19 =
+
+* New: Introducing Elementor AI for Image Creation – Unleash your creativity, improve and accelerate your workflow by instantly generating any type of image
+* New: Add widgets to the Editor with a click - streamline and accelerate your workflow ([#20142](https://github.com/elementor/elementor/issues/20142), [#21965](https://github.com/elementor/elementor/issues/21965))
+* New: Global Styles Preview - Showcase your global colors and fonts for better insight of your website's design system
+* Tweak: Added a None option to the breakpoint options in Tabs widget ([#7742](https://github.com/elementor/elementor/issues/7742))
+* Tweak: Updated "Manage Website" button functionality and name in Editor Top Bar ([#22359](https://github.com/elementor/elementor/issues/22359), [#22464](https://github.com/elementor/elementor/issues/22464))
+* Tweak: Added a horizontal scrolling option in Tabs widget
+* Tweak: Implemented "Add new page" option in recently edited documents dropdown in Editor Top Bar
+* Tweak: Allow loading a document without reloading when using recently edited documents dropdown in Editor Top Bar
+* Tweak: Changed document name simultaneously when changing it in the document settings panel and the Editor Top Bar
+* Tweak: Moved the 'Container Type' dropdown to the top of the container widget in Grid Container experiment
+* Tweak: Added Fit to Size control to SVG file in Icon widget
+* Tweak: Added "Object Position" control to Image widget
+* Tweak: Added "Order" control to page settings panel
+* Tweak: Added "Comments" control to page settings panel
+* Tweak: Updated the layout of Keyboard Shortcuts panel
+* Tweak: Added "Page Settings" hotkey to the Keyboard Shortcuts panel
+* Tweak: Added "User Preferences" hotkey to the Keyboard Shortcuts panel
+* Tweak: Added "Notes" feature hotkey to the Keyboard Shortcuts panel
+* Tweak: Use CSS Logical Properties in Elementor Admin SCSS files
+* Tweak: Move the "Elementor Loading" HTML block from the preview area
+* Tweak: Use `media_types` array in Media controls
+* Tweak: Added keyboard accessibility to Navigator items
+* Tweak: Added keyboard accessibility to Basic Gallery widget
+* Tweak: Added keyboard accessibility to Image Carousel widget
+* Tweak: Improved accessibility to Button widget
+* Tweak: Added focus state to Editor buttons
+* Tweak: Replaced select control with choose control for Vertical Alignment control in Icon Box widget
+* Tweak: Replaced select control with choose control for Vertical Alignment control in Image Box widget
+* Fix: Not-crawlable link error in Accordion widget ([#14371](https://github.com/elementor/elementor/issues/14371), [#20214](https://github.com/elementor/elementor/issues/20214), [#20477](https://github.com/elementor/elementor/issues/20477), [#8943](https://github.com/elementor/elementor/issues/8943), [#11611](https://github.com/elementor/elementor/issues/11611))
+* Fix: Not-crawlable link error in Toggle widget ([#14371](https://github.com/elementor/elementor/issues/14371), [#20214](https://github.com/elementor/elementor/issues/20214), [#20477](https://github.com/elementor/elementor/issues/20477), [#8943](https://github.com/elementor/elementor/issues/8943), [#11611](https://github.com/elementor/elementor/issues/11611))
+* Fix: "Convert to Containers" functionality appears on a page without Sections ([#19361](https://github.com/elementor/elementor/issues/19361))
+* Fix: Responsive settings for templates don't work as expected when Additional Custom Breakpoints feature is active ([#16819](https://github.com/elementor/elementor/issues/16819), [#19394](https://github.com/elementor/elementor/issues/19394))
+* Fix: ARIA `role` attributes in Accordion widget
+* Fix: ARIA `role` attributes in Toggle widget
+* Fix: Background video is not working as expected inside the editor on container level in Nested Elements
+* Fix: Dropdown select control UI background color glitch on dark mode in the Editor
+* Fix: Special characters are not displaying as expected when using recently edited documents dropdown in Editor Top Bar
+
+= 3.13.4 - 2023-05-28 =
+
+* Fix: Unable to save a new Global Widget ([#22544](https://github.com/elementor/elementor/issues/22544))
+
+= 3.13.3 - 2023-05-22 =
+
+* Security Fix: Addressed security weaknesses in template creation mechanism
+* Tweak: Improved error messages when a kit is not downloaded successfully in Kit Library
+
+= 3.13.2 - 2023-05-11 =
+
+* Security Fix: Addressed security weaknesses in access management related functions
+
+= 3.13.1 - 2023-05-09 =
+
+* Tweak: Removed autocomplete functionality in Color Picker
+* Fix: 'Editing Handle' location issue in various places in the Editor
+
+= 3.13.0 - 2023-05-08 =
+
+* New: Introducing Elementor AI Write - Boost your productivity and efficiency, while elevating your website's design and content.
+* New: CSS Grid layout in Container - ideal for grid-like layouts and achieving infinite design possibilities ([#18839](https://github.com/elementor/elementor/issues/18839))
+* Tweak: Added RGBA and HSLA types to color picker ([#18308](https://github.com/elementor/elementor/issues/18308))
+* Tweak: Improved items behavior when the width of all the tabs titles exceeds the parent container width ([#21650](https://github.com/elementor/elementor/issues/21650))
+* Tweak: Adjusted Favorites section functionality for better user experience ([#20939](https://github.com/elementor/elementor/issues/20939))
+* Tweak: Added quick site navigation within the editor's new Top Bar
+* Tweak: Added the Save Options functionality to new Editor Top Bar
+* Tweak: Added "Site Settings" hotkey to keyboard shortcuts panel
+* Tweak: Removed Pojo integration from Elementor
+* Tweak: General improvements in Elementor's new color scheme
+* Tweak: Updated `Pickr` library to v1.8.0
+* Tweak: Updated `eicons` library to v5.20.0
+* Tweak: Added Lazy Load support to various Elementor Editor and Admin images
+* Tweak: Added Lazy Load support for embedded video thumbnail image
+* Tweak: Improved accessibility in Lightbox functionality
+* Tweak: Added keyboard accessibility to Elementor Editor tabs
+* Tweak: Added keyboard accessibility to Elementor Editor icons
+* Tweak: Added keyboard accessibility to Elementor widget categories
+* Tweak: Added keyboard accessibility to header and footer in widgets panel
+* Tweak: Added keyboard accessibility to "Edit with Elementor" button
+* Tweak: Added keyboard accessibility to navigation arrows in Image Carousel widget
+* Tweak: Added keyboard accessibility to URL control "Link Options" button
+* Tweak: Added keyboard accessibility to editor "mode switcher"
+* Tweak: Added keyboard accessibility to close and toggle buttons in Navigator
+* Tweak: HTML structure changed in Elementor Editor components for better readability
+* Fix: Can't paste widgets into the 'Drag widget here' area when using Container ([#21652](https://github.com/elementor/elementor/issues/21652), [#22142](https://github.com/elementor/elementor/issues/22142))
+* Fix: Removed redundant scroll in Finder
+* Fix: Carousel widgets are not working correctly inside Nested Tabs widget
+* Fix: Lightbox image captions are not aligned to the center
+* Fix: Border radius not affecting the Video and Slideshow background types in Container
+* Fix: Update translation strings escaping for safe use in attributes output
+* Fix: Added `aspect-ratio` fallback in Video widget for old browsers
+* Fix: Disabled 'Dominant Color' on PNG and GIF images in Lazy Load Background Images experiment
+* Fix: Wrong ARIA text value in Progress Bar widget
 
 = 3.12.1 - 2023-04-02 =
 

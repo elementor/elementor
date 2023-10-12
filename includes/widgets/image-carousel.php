@@ -305,7 +305,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
@@ -827,7 +826,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**
@@ -884,7 +882,22 @@ class Widget_Image_Carousel extends Widget_Base {
 
 			$image_caption = $this->get_image_caption( $attachment );
 
-			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
+			$slide_count = $index + 1;
+			$slide_setting_key = 'swiper_slide_' . $index;
+
+			$this->add_render_attribute( $slide_setting_key, [
+				'class' => 'swiper-slide',
+				'role' => 'group',
+				'aria-roledescription' => 'slide',
+				'aria-label' => sprintf(
+					/* translators: 1: Slide count, 2: Total slides count. */
+					esc_html__( '%1$s of %2$s', 'elementor' ),
+					$slide_count,
+					count( $settings['carousel'] )
+				),
+			] );
+
+			$slide_html = '<div ' . $this->get_render_attribute_string( $slide_setting_key ) . '>' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( $lazyload ) {
 				$slide_html .= '<div class="swiper-lazy-preloader"></div>';
@@ -911,10 +924,12 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		$swiper_class = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
+		$has_autoplay_enabled = 'yes' === $this->get_settings_for_display( 'autoplay' );
 
 		$this->add_render_attribute( [
 			'carousel' => [
 				'class' => 'elementor-image-carousel swiper-wrapper',
+				'aria-live' => $has_autoplay_enabled ? 'off' : 'polite',
 			],
 			'carousel-wrapper' => [
 				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
@@ -930,7 +945,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		$slides_count = count( $settings['carousel'] );
-
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
@@ -938,18 +952,17 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
-				<?php if ( $show_dots ) : ?>
-					<div class="swiper-pagination"></div>
-				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'previous' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous image', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-swiper-button elementor-swiper-button-next" role="button" tabindex="0">
 						<?php $this->render_swiper_button( 'next' ); ?>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Next image', 'elementor' ); ?></span>
 					</div>
+				<?php endif; ?>
+
+				<?php if ( $show_dots ) : ?>
+					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 			<?php endif; ?>
 		</div>

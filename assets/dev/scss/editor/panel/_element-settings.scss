@@ -5,13 +5,13 @@
 .elementor-panel-navigation {
 	display: flex;
 	width: 100%;
-	border-bottom: var(--e-a-border);
+	border-block-end: var(--e-a-border);
 
 	.elementor-panel-navigation-tab {
 		all: unset;
 		flex: auto;
 		transition: var(--e-a-transition-hover);
-		border-bottom: 3px solid transparent;
+		border-block-end: 3px solid transparent;
 		cursor: pointer;
 
 		&:hover,
@@ -47,7 +47,7 @@
 				font-family: eicons;
 				font-size: $font-size-lg;
 				display: block;
-				margin-bottom: 8px;
+				margin-block-end: 8px;
 			}
 		}
 	}
