@@ -39,8 +39,6 @@ class Container extends Element_Base {
 		parent::__construct( $data, $args );
 
 		$this->active_kit = Plugin::$instance->kits_manager->get_active_kit();
-		$this->logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
-		$this->logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 	}
 
 	/**
@@ -992,6 +990,9 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	protected function register_border_controls() {
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
+
 		$this->start_controls_section(
 			'section_border',
 			[
@@ -1020,7 +1021,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: $this->logical_dimensions_inline_end; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: $this->logical_dimensions_inline_start;",
+							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: $logical_dimensions_inline_end; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: $logical_dimensions_inline_start;",
 						],
 					],
 					'color' => [
@@ -1076,7 +1077,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'width' => [
 						'selectors' => [
-							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: $this->logical_dimensions_inline_end; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: $this->logical_dimensions_inline_start;",
+							'{{SELECTOR}}' => "border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-block-start-width: {{TOP}}{{UNIT}}; --border-inline-end-width: $logical_dimensions_inline_end; --border-block-end-width: {{BOTTOM}}{{UNIT}}; --border-inline-start-width: $logical_dimensions_inline_start;",
 						],
 					],
 					'color' => [
@@ -1095,7 +1096,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover' => "--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: $this->logical_dimensions_inline_end; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: $this->logical_dimensions_inline_start;",
+					'{{WRAPPER}}:hover' => "--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --border-top-left-radius: {{TOP}}{{UNIT}}; --border-top-right-radius: $logical_dimensions_inline_end; --border-bottom-right-radius: {{BOTTOM}}{{UNIT}}; --border-bottom-left-radius: $logical_dimensions_inline_start;",
 				],
 			]
 		);
@@ -1331,6 +1332,9 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	protected function register_advanced_controls() {
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
+
 		$this->start_controls_section(
 			'section_layout',
 			[
@@ -1346,7 +1350,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--margin-block-start: {{TOP}}{{UNIT}}; --margin-block-end: {{BOTTOM}}{{UNIT}}; --margin-inline-start: $this->logical_dimensions_inline_start; --margin-inline-end: $this->logical_dimensions_inline_end;",
+					'{{WRAPPER}}' => "--margin-block-start: {{TOP}}{{UNIT}}; --margin-block-end: {{BOTTOM}}{{UNIT}}; --margin-inline-start: $logical_dimensions_inline_start; --margin-inline-end: $logical_dimensions_inline_end;",
 				],
 			]
 		);
@@ -1358,7 +1362,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $this->logical_dimensions_inline_start; --padding-inline-end: $this->logical_dimensions_inline_end;",
+					'{{WRAPPER}}' => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start; --padding-inline-end: $logical_dimensions_inline_end;",
 				],
 			]
 		);

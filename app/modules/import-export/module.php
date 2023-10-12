@@ -749,8 +749,8 @@ class Module extends BaseModule {
 			$post_type_object = get_post_type_object( $post_type );
 
 			$summary_titles['content'][ $post_type ] = [
-				'single' => $post_type_object->labels->singular_name,
-				'plural' => $post_type_object->label,
+				'single' => ! empty( $post_type_object ) ? $post_type_object->labels->singular_name : '',
+				'plural' => ! empty( $post_type_object ) ? $post_type_object->label : '',
 			];
 		}
 
@@ -762,14 +762,14 @@ class Module extends BaseModule {
 				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => ! empty( $custom_post_types_object ) ? $custom_post_types_object->labels->singular_name : '',
+					'plural' => ! empty( $custom_post_types_object ) ? $custom_post_types_object->label : '',
 				];
 
 				// 2. customPostTypes object: in order to actually export the data
 				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => ! empty( $custom_post_types_object ) ? $custom_post_types_object->labels->singular_name : '',
+					'plural' => ! empty( $custom_post_types_object ) ? $custom_post_types_object->label : '',
 				];
 			}
 		}
