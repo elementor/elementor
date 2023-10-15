@@ -20,6 +20,10 @@ class Kit_Library extends Library {
 		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION, $args );
 	}
 
+	public function get_by_id( $id ) {
+		return $this->http_request( 'GET', 'kits/' . $id );
+	}
+
 	public function get_taxonomies() {
 		return $this->http_request( 'GET', 'taxonomies' );
 	}

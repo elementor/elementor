@@ -21,7 +21,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return '<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Upgrade', 'elementor' );
+		return esc_html__( 'Upgrade', 'elementor' );
 	}
 
 	public function get_page_title() {

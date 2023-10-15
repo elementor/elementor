@@ -35,15 +35,17 @@ export function mockDialog() {
 		return currentConfig.onCancel();
 	};
 
+	const createWidget = jest.fn( ( type, config ) => {
+		currentConfig = config;
+
+		return {
+			show,
+		};
+	} );
+
 	window.elementorCommon = {
 		dialogsManager: {
-			createWidget: ( type, config ) => {
-				currentConfig = config;
-
-				return {
-					show,
-				};
-			},
+			createWidget,
 		},
 	};
 
@@ -51,6 +53,7 @@ export function mockDialog() {
 		show,
 		confirm,
 		cancel,
+		createWidget,
 	};
 }
 
@@ -62,12 +65,16 @@ export function mockExperimentsConfig() {
 				state: 'default',
 				default: 'active',
 				dependencies: [],
+				messages: {
+					on_deactivate: 'Active dependency is active',
+				},
 			},
 			inactive_dependency: {
 				name: 'inactive_dependency',
 				state: 'inactive',
 				default: 'inactive',
 				dependencies: [],
+				messages: [],
 			},
 			depends_on_active: {
 				name: 'depends_on_active',
@@ -76,6 +83,7 @@ export function mockExperimentsConfig() {
 				dependencies: [
 					'active_dependency',
 				],
+				messages: [],
 			},
 			depends_on_inactive: {
 				name: 'depends_on_inactive',
@@ -84,6 +92,25 @@ export function mockExperimentsConfig() {
 				dependencies: [
 					'inactive_dependency',
 				],
+				messages: [],
+			},
+			default_active: {
+				name: 'default_active',
+				state: 'inactive',
+				default: 'active',
+				dependencies: [],
+				messages: {
+					on_deactivate: 'Active dependency is active',
+				},
+			},
+			depends_on_default_active: {
+				name: 'depends_on_default_active',
+				state: 'active',
+				default: 'active',
+				dependencies: [
+					'default_active',
+				],
+				messages: [],
 			},
 		},
 	};

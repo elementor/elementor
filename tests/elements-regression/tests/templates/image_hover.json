@@ -1,0 +1,74 @@
+{
+    "content": [
+        {
+            "id": "78c591ce",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "20482a05",
+                    "settings": {
+                        "_column_size": 100,
+                        "_inline_size": null
+                    },
+                    "elements": [
+                        {
+                            "id": "89650c6",
+                            "settings": {
+                                "image": {
+                                    "url": "http:\/\/localhost:8888\/wp-content\/uploads\/2023\/06\/Video.png",
+                                    "id": 8,
+                                    "size": "",
+                                    "alt": "",
+                                    "source": "library"
+                                },
+                                "opacity_hover": {
+                                    "unit": "px",
+                                    "size": 0.54,
+                                    "sizes": []
+                                },
+                                "css_filters_hover_css_filter": "custom",
+                                "css_filters_hover_blur": {
+                                    "unit": "px",
+                                    "size": 0.7,
+                                    "sizes": []
+                                },
+                                "css_filters_hover_brightness": {
+                                    "unit": "px",
+                                    "size": 66,
+                                    "sizes": []
+                                },
+                                "css_filters_hover_contrast": {
+                                    "unit": "px",
+                                    "size": 128,
+                                    "sizes": []
+                                },
+                                "css_filters_hover_saturate": {
+                                    "unit": "px",
+                                    "size": 126,
+                                    "sizes": []
+                                },
+                                "css_filters_hover_hue": {
+                                    "unit": "px",
+                                    "size": 112,
+                                    "sizes": []
+                                }
+                            },
+                            "elements": [],
+                            "isInner": false,
+                            "widgetType": "image",
+                            "elType": "widget"
+                        }
+                    ],
+                    "isInner": false,
+                    "elType": "column"
+                }
+            ],
+            "isInner": false,
+            "elType": "section"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "image_hover",
+    "type": "page"
+}

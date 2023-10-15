@@ -1,0 +1,70 @@
+{
+    "content": [
+        {
+            "id": "1e4b5033",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "651c0275",
+                    "settings": {
+                        "youtube_url": "https:\/\/www.youtube.com\/watch?v=XHOmBV4js_E",
+                        "vimeo_url": "https:\/\/vimeo.com\/235215203",
+                        "dailymotion_url": "https:\/\/www.dailymotion.com\/video\/x6tqhqb",
+                        "aspect_ratio": "43",
+                        "image_overlay": {
+                            "id": "",
+                            "url": "http:\/\/localhost:8888\/wp-content\/plugins\/build\/assets\/images\/placeholder.png"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "video",
+                    "elType": "widget"
+                },
+                {
+                    "id": "17f7eaa6",
+                    "settings": {
+                        "youtube_url": "https:\/\/www.youtube.com\/watch?v=XHOmBV4js_E",
+                        "vimeo_url": "https:\/\/vimeo.com\/235215203",
+                        "dailymotion_url": "https:\/\/www.dailymotion.com\/video\/x6tqhqb",
+                        "show_image_overlay": "yes",
+                        "image_overlay": {
+                            "id": "",
+                            "url": "http:\/\/localhost:8888\/wp-content\/plugins\/build\/assets\/images\/placeholder.png"
+                        },
+                        "play_icon": {
+                            "value": "fas fa-play",
+                            "library": "fa-solid"
+                        },
+                        "aspect_ratio": "32",
+                        "play_icon_size": {
+                            "unit": "px",
+                            "size": 240,
+                            "sizes": []
+                        },
+                        "play_icon_text_shadow_text_shadow_type": "yes",
+                        "play_icon_text_shadow_text_shadow": {
+                            "horizontal": -13,
+                            "vertical": 0,
+                            "blur": 10,
+                            "color": "rgba(0,0,0,0.3)"
+                        },
+                        "__globals__": {
+                            "play_icon_color": "globals\/colors?id=primary"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "video",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "video",
+    "type": "page"
+}

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<# if ( 'skip' === closeType ) { #>
 				<span><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 				<# } #>
-				<i class="eicon-close" aria-hidden="true" title="<?php echo esc_html__( 'Close', 'elementor' ); ?>"></i>
+				<i class="eicon-close" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 			</div>
 		<# } #>

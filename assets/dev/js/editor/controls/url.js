@@ -82,7 +82,7 @@ class URL extends BaseMultiple {
 			},
 		} );
 
-			// The `_renderItem` cannot be override via the arguments.
+		// The `_renderItem` cannot be override via the arguments.
 		$mainInput.autocomplete( 'instance' )._renderItem = ( ul, item ) => {
 			const fallbackTitle = window.wpLinkL10n ? window.wpLinkL10n.noTitle : '',
 				title = item.title ? item.title : fallbackTitle;

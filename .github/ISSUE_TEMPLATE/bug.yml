@@ -1,23 +1,33 @@
 name: "🐞 Bug Report"
-description: "Report a bug if something isn't working as expected in Elementor"
+description: "Did you find a bug on Elementor and can reproduce it consistently? Report it here."
 labels: ["status/awaiting_triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        ## BEFORE POSTING YOUR ISSUE
+        ## ⚠️ BEFORE POSTING YOUR ISSUE
+        ### 🐞 Please create GitHub issues only for Elementor Bug Reports. 
+        #### ❌ GitHub issues should <ins>NOT BE USED FOR SUPPORT</ins> ❌.
+        ❔ If you have questions, need guidance, help, or general support, please use one of the following channels:
+        - [Elementor Global Community](https://facebook.com/groups/Elementors/) The main Facebook group where all kinds of users come together to help each other.
+        - [Elementor Academy](https://elementor.com/academy) Learn everything you need to know about using Elementor.
+        - [Elementor Developers Documentation](https://developers.elementor.com/) Learn everything about our Developer-API.
+        - [Free Support Forum](https://wordpress.org/support/plugin/elementor) Get help on WordPress.org.
 
-        - Please create GitHub issues only for Elementor bugs. GitHub issues ARE NOT FOR SUPPORT.
+        💎 If you have an active [Elementor Pro](https://elementor.com/pro) license you are entitled to personal support, please see your purchase email or visit your [Elementor Account page](https://my.elementor.com/dashboard-support/) for details.
 
-        - To avoide duplicates, please search this repository for the issue.
-
-        - If the issue can't be recreated on other sites, it's not an Elementor bug. In that case use the support links above.
-
-        - Make sure you are using the most updated versions of Elementor, WordPress & your theme.
-
-        - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
-
-        - Change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/).
+        ### 🙏 Follow these best practices to help save you time
+        - 🔍 **Search Before Posting:** Before creating a new Bug Report, please [search for similar issues](https://github.com/elementor/elementor/issues/) to prevent creating duplicates.
+        - 🆕 **Stay Up-to-date:** Make sure you are using the most recent and stable versions of [Elementor](https://wordpress.org/plugins/elementor/#developers), [Elementor Pro](https://elementor.com/pro/changelog/), [WordPress](https://wordpress.org/download/releases/), and your theme.
+        - 🔬 **Isolate the problem:** Deactivate all of your plugins (except Elementor/Pro), and temporarily change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/). If this solves the problem, gradually activate your plugins and theme one by one, until you spot the conflicting plugin or theme.
+        - 🕵️ **Validate Your Issue:** If the issue can't be recreated consistently or reproduced on other sites, it's likely not an Elementor bug. In that case, use one of the support links above.
+        - 🧩 **Contact 3rd-party Support:** If the issue happens with an Elementor add-on, extension, compatible plugin, or integrated theme, contact their support first. We do not provide support for 3rd-party software.
+        - ✒️ **Clear and concise title:** Please provide a clear and concise title that gives context to your issue.
+        - 💬 **Description:** In your description, provide examples, screenshots, and screen recordings if you have them (just drag and drop in the field), and save time by describing in detail what happened. The more information you provide, the faster we can find a solution!
+        - 👣 **Steps to replicate:** Think of it as explaining to someone over the phone how to replicate your issue. They can't see the problem, so explain it in detail in a way that we can try to replicate your issue in our own environments. Be thorough.
+        - 💾 **System info:** Please include the System Info report as outlined in our [guidelines](https://github.com/elementor/elementor/issues/new?assignees=&labels=status%2Fawaiting_triage&template=bug.yml). 
+          - Get your System Info from your WordPress `Dashboard` > `Elementor` > `System info` [learn how to copy it here](https://elementor.com/help/hare-my-system-info/). We can't accept issues without it.
+        - ☝️ **One Issue Per Thread:** If you are experiencing more than one bug, submit only **<ins>ONE ISSUE PER THREAD</ins>**, so we can properly track them and reference them without any confusion.
 
         ## THE ISSUE
   - type: checkboxes
@@ -35,14 +45,14 @@ body:
       required: true
     attributes:
       label: "Description"
-      description: "Describe the problem. What caused the issue? What did you expect to happen and what actual happen? Please be as descriptive as possible. Attach screenshots and related links."
+      description: "Describe the problem. What caused the issue? What did you expect to happen and what actually happened? Please be as descriptive as possible. Attach screenshots, screen recordings, and related links."
   - type: textarea
     id: steps_to_reproduce
     validations:
       required: true
     attributes:
       label: "Steps to reproduce"
-      description: "List all the steps needed to reproduce the issue, so we can replicate it ourselves."
+      description: "List all the steps needed to reproduce the issue in detail, so we can replicate it ourselves on our own installation. Be thorough, we won't be able to reproduce it if you don't explain how."
       placeholder: "1) ... 2) ... 3) ..."
   - type: checkboxes
     id: isolating_the_problem
@@ -51,11 +61,16 @@ body:
       options:
         - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
         - label: "This bug happens with a Blank WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
-        - label: "I can reproduce this bug consistently using the steps above."
+        - label: "I can reproduce this bug consistently following the steps above."
   - type: textarea
     id: system_info
     validations:
       required: true
     attributes:
       label: "System Info"
-      description: "For faster debugging [copy your system environment](https://www.youtube.com/watch?v=tDXdynsnYuA) from `Elementor` => `System info`, and paste it here or in https://pastebin.com/"
+      description: "Please share your **System Info** from your WordPress `Dashboard` > `Elementor` > `System info` [learn how to copy it here](https://elementor.com/help/hare-my-system-info/), and paste it below."
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ⚠️ Please follow all the instructions indicated above, and fill all the required fields with valid information. We reserve the right to close issues that do not comply with these guidelines without any warning.

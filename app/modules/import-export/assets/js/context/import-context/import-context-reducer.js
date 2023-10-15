@@ -2,6 +2,8 @@ import { ReducerUtils } from '../utils/reducer-utils';
 
 export const reducer = ( state, { type, payload } ) => {
 	switch ( type ) {
+		case 'SET_ID':
+			return { ...state, id: payload };
 		case 'SET_FILE':
 			return { ...state, file: payload };
 		case 'ADD_OVERRIDE_CONDITION':

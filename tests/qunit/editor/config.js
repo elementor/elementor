@@ -59,12 +59,6 @@ config.controls = new Proxy( {}, {
 	},
 } );
 
-// Schemes.
-config.schemes = {
-	items: SchemeItems,
-	enabled_schemes: [ 'color', 'typography', 'color-picker' ],
-};
-
 // Dynamic Tags.
 config.dynamicTags.tags = {
 	'post-date': postDate,

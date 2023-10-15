@@ -14,7 +14,6 @@ class Module extends \Elementor\Core\Base\Module {
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
-			'tag' => esc_html__( 'Feature', 'elementor' ),
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => sprintf(
 				esc_html__( 'Create a rich user experience by layering widgets together inside "Nested" Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected. %1$sLearn More%2$s', 'elementor' ),
@@ -40,7 +39,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/controls/controls_registered', function ( $controls_manager ) {
+		add_action( 'elementor/controls/register', function ( $controls_manager ) {
 			$controls_manager->register( new Controls\Control_Nested_Repeater() );
 		} );
 

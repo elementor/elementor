@@ -24,7 +24,7 @@ class Icons_Manager {
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 
-	const ELEMENTOR_ICONS_VERSION = '5.18.0';
+	const ELEMENTOR_ICONS_VERSION = '5.23.0';
 
 	/**
 	 * Tabs.
@@ -446,7 +446,7 @@ class Icons_Manager {
 			/**
 			 * Is icon migration allowed.
 			 *
-			 * Filters whther the icons migration allowed.
+			 * Filters whether the icons migration allowed.
 			 *
 			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */
@@ -547,6 +547,10 @@ class Icons_Manager {
 	 */
 	public function ajax_upgrade_to_fa5() {
 		check_ajax_referer( self::NEEDS_UPDATE_OPTION, '_nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 

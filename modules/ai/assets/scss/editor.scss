@@ -1,0 +1,33 @@
+@import "assets/dev/scss/helpers/variables.scss";
+
+.e-ai-button {
+	background: none;
+	border: none;
+	font-size: var(--control-title-size);
+	cursor: pointer;
+	transition: var(--e-a-transition-hover);
+
+	&:not(.e-active) {
+		color: var(--e-a-color-primary-bold);
+	}
+
+	&:hover {
+		color: $e-pink-600;
+	}
+}
+
+.e-ai-promotion {
+	font-size: var(--control-title-size);
+
+	i {
+		margin-inline-end: 5px;
+	}
+}
+
+.elementor-label-block {
+
+	.e-ai-promotion,
+	.e-ai-button {
+		margin-inline-start: auto;
+	}
+}

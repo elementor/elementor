@@ -37,6 +37,7 @@ export class Duplicate extends $e.modules.editor.document.CommandHistoryBase {
 				options: Object.assign( {
 					at: index + 1,
 				}, options ),
+				renderAfterInsert: args.renderAfterInsert,
 			} ) );
 		} );
 

@@ -153,6 +153,19 @@ class Model extends BaseModel {
 			]
 		);
 
+		$this->add_control(
+			'enable_styleguide_preview',
+			[
+				'label' => esc_html__( 'Style Guide Preview', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => esc_html__( 'Switch between the content area and style guide to preview your changes to global colors and fonts.', 'elementor' ),
+				'separator' => 'before',
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'default' => 'yes',
+			]
+		);
+
 		$this->end_controls_section();
 	}
 }

@@ -1,4 +1,4 @@
-
+@import "../global/dialog-confirm";
 //Elementor Feedback
 
 @keyframes elementor-rotation {
@@ -15,6 +15,7 @@
 }
 
 #elementor-deactivate-feedback-modal {
+	color: var(--e-a-color-txt);
 
 	.dialog-widget-content {
 		width: 550px;
@@ -23,17 +24,18 @@
 	.dialog-header {
 		padding: 18px 15px;
 		box-shadow: $panel-bottom-shadow;
-		text-align: $start;
+		text-align: start;
 	}
 
 	.dialog-message {
-		padding: 30px 30px 0;
-		text-align: $start;
+		padding: 30px;
+		padding-block-end: 0;
+		text-align: start;
 	}
 
 	.elementor-deactivate-feedback-dialog-input {
-		float: $start;
-		@include margin(0, 15px, 0, 0);
+		margin-block: 0;
+		margin-inline: 0 15px;
 		box-shadow: none;
 
 		&:not(:checked) {
@@ -47,34 +49,27 @@
 	.elementor-deactivate-feedback-dialog-label {
 		display: block;
 		font-size: 13px;
-		color: $editor-dark;
 	}
 
 	.elementor-feedback-text {
-		@include margin(10px, 0, 0, 30px);
+		background-color: transparent;
+		color: var(--e-a-color-txt);
+		margin-block: 10px 0;
+		margin-inline: 30px 0;	
 		padding: 5px;
-		font-size: 13px;
 		box-shadow: none;
-		background-color: #fff;
 		width: 92%;
 	}
 
 	.dialog-buttons-wrapper {
-		border-top: none;
-		text-align: $start;
+		display: flex;
+		justify-content: space-between;
 		padding: 20px 30px 30px;
-		overflow: hidden;
 	}
 
 	.dialog-submit {
-		background-color: $editor-accent;
-		border-radius: 3px;
-		color: #fff;
-		line-height: 1;
-		padding: 12px 20px;
-		font-size: 13px;
-		width: 180px;
-		height: 38px;
+		@extend .e-btn;
+		@extend .e-primary;
 
 		&.elementor-loading {
 
@@ -88,11 +83,8 @@
 	}
 
 	.dialog-skip {
-		font-size: 12px;
-		color: $editor-light;
-		background: none;
-		float: $end;
-		width: auto;
+		@extend .e-btn;
+		@extend .e-btn-txt;
 	}
 
 	&[data-feedback-selected="elementor_pro"] {
@@ -113,7 +105,6 @@
 	&-header {
 
 		i {
-			color: $editor-accent;
 			font-size: 19px;
 		}
 	}
@@ -122,23 +113,24 @@
 		font-size: 15px;
 		text-transform: uppercase;
 		font-weight: bold;
-		@include padding-start(5px);
+		padding-inline-start: 5px;
 	}
 
 	&-form-caption {
 		font-weight: bold;
 		font-size: 15px;
-		color: $editor-darkest;
 		line-height: 1.4;
 	}
 
 	&-form-body {
-		padding-top: 30px;
+		padding-block-start: 30px;
+		padding-block-end: 15px;
 	}
 }
 
 .elementor-deactivate-feedback-dialog-input-wrapper {
-	line-height: 1;
+	display: flex;
+	align-items: center;
+	line-height: 2;
 	overflow: hidden;
-	margin-bottom: 15px;
 }

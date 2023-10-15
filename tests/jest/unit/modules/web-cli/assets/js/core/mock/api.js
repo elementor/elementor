@@ -13,10 +13,6 @@ export const setupMock = async () => {
 		deprecated: jest.fn(),
 	} ) );
 
-	global.navigator = {
-		userAgent: 'Mock/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
-	};
-
 	global.jQuery = () => {
 		return {
 			on: () => {},
@@ -31,28 +27,15 @@ export const setupMock = async () => {
 		},
 	};
 
-	global.localStorage = {
-		getItem: () => {},
-		setItem: () => {},
-		removeItem: () => {},
-	};
+	if ( ! global.location ) {
+		global.location = {};
+	}
+	global.location.href = 'http://localhost.test:8080/wp-admin/admin.php?page=elementor-web-preview';
+	global.location.hash = 'test-hash';
 
-	global.location = {
-		href: 'http://localhost.test:8080/wp-admin/admin.php?page=elementor-web-preview',
-		hash: 'test-hash',
-	};
-
-	global.window = global;
-
-	global.document = {
-		body: {
-			classList: {
-				add: () => {},
-				remove: () => {},
-				toggle() {},
-			},
-		},
-	};
+	if ( ! global.window ) {
+		global.window = global;
+	}
 
 	global._ = {
 		isEqual: ( a, b ) => a === b,
@@ -68,7 +51,6 @@ export const freeMock = () => {
 	delete global.navigator;
 	delete global.jQuery;
 	delete global.elementorWebCliConfig;
-	delete global.localStorage;
 	delete global.location;
 	delete global.window;
 	delete global._;

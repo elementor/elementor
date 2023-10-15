@@ -2,7 +2,7 @@
 
 // checkbox label
 .#{$eps-prefix}popover {
-	padding: $eps-popover-padding-y 0;
+	padding: $eps-popover-padding-block 0;
 	background-color: var(--popover-background-color);
 	box-shadow: var(--popover-box-shadow-size) var(--popover-box-shadow-color);
 	list-style: none;
@@ -12,16 +12,16 @@
 	border-radius: $eps-popover-border-radius;
 	position: absolute;
 	z-index: $eps-zindex-popover;
-	margin-top: $eps-popover-arrow-height;
+	margin-block-start: $eps-popover-arrow-height;
 	transform: translateX(-50%);
-	left: px-to-rem(4);
+	@include start(px-to-rem(4));
 
 	&__background {
 		position: fixed;
 		top: 0;
 		bottom: 0;
-		left: 0;
-		right: 0;
+		@include start(0);
+		@include end(0);
 		z-index: $eps-zindex-modal-backdrop;
 	}
 
@@ -37,12 +37,12 @@
 		height: $eps-popover-arrow-height;
 		margin: 0 $eps-popover-border-radius $eps-popover-arrow-height;
 		top: -$eps-popover-arrow-height;
-		left: 50%;
+		@include start(50%);
 		transform: translateX(-50%);
 		border-color: transparent;
 		border-style: solid;
 		border-width: 0 calc(#{$eps-popover-arrow-width} / 2) $eps-popover-arrow-height calc(#{$eps-popover-arrow-width} / 2);
-		border-bottom-color: var(--popover-arrow-color);
+		border-block-end-color: var(--popover-arrow-color);
 	}
 
 	&__item {

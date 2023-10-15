@@ -1,0 +1,36 @@
+//
+// Dialog Base
+//
+
+.dialog-widget-content {
+	background-color: var(--e-a-bg-default);
+	position: absolute;
+	border-radius: 3px;
+	box-shadow: 2px 8px 23px 3px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+}
+
+.dialog-message {
+	line-height: 1.5;
+	box-sizing: border-box;
+}
+
+.dialog-close-button {
+	cursor: pointer;
+	position: absolute;
+	margin-top: 15px;
+	@include end(15px);
+	color: var(--e-a-color-txt);
+	font-size: 15px;
+	line-height: 1;
+	transition: var(--e-a-transition-hover);
+
+	&:hover {
+		color: var(--e-a-color-txt-hover);
+	}
+}
+
+.dialog-prevent-scroll {
+	overflow: hidden;
+	max-height: 100vh;
+}

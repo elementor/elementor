@@ -9,6 +9,7 @@ use Elementor\App\Modules\ImportExport\Runners\Revert\Site_Settings;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Wp_Content;
+use Elementor\App\Modules\ImportExport\Utils;
 
 class Revert {
 
@@ -25,8 +26,8 @@ class Revert {
 	 * @throws \Exception
 	 */
 	public function __construct() {
-		$this->import_sessions = $this->get_import_sessions();
-		$this->revert_sessions = $this->get_revert_sessions();
+		$this->import_sessions = self::get_import_sessions();
+		$this->revert_sessions = self::get_revert_sessions();
 	}
 
 	/**
@@ -57,25 +58,30 @@ class Revert {
 			throw new \Exception( 'Couldn’t execute the revert process because no revert runners have been specified. Try again by specifying revert runners.' );
 		}
 
-		$data = $this->get_last_import_session();
+		$import_session = $this->get_last_import_session();
 
-		if ( empty( $data ) ) {
+		if ( empty( $import_session ) ) {
 			throw new \Exception( 'Couldn’t execute the revert process because there are no import sessions to revert.' );
 		}
 
+		// fallback if the import session failed and doesn't have the runners metadata
+		if ( ! isset( $import_session['runners'] ) && isset( $import_session['instance_data'] ) ) {
+			$import_session['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
+		}
+
 		foreach ( $this->runners as $runner ) {
-			if ( $runner->should_revert( $data ) ) {
-				$runner->revert( $data );
+			if ( $runner->should_revert( $import_session ) ) {
+				$runner->revert( $import_session );
 			}
 		}
 
-		$this->revert_attachments( $data );
+		$this->revert_attachments( $import_session );
 
 		$this->delete_last_import_data();
 	}
 
-	public function get_import_sessions() {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+	public static function get_import_sessions() {
+		$import_sessions = Utils::get_import_sessions();
 
 		if ( ! $import_sessions ) {
 			return [];
@@ -88,7 +94,7 @@ class Revert {
 		return $import_sessions;
 	}
 
-	public function get_revert_sessions() {
+	public static function get_revert_sessions() {
 		$revert_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
 
 		if ( ! $revert_sessions ) {
@@ -135,7 +141,9 @@ class Revert {
 
 		$revert_sessions[] = [
 			'session_id' => $reverted_session['session_id'],
+			'kit_title' => $reverted_session['kit_title'],
 			'kit_name' => $reverted_session['kit_name'],
+			'kit_thumbnail' => $reverted_session['kit_thumbnail'],
 			'source' => $reverted_session['kit_source'],
 			'user_id' => get_current_user_id(),
 			'import_timestamp' => $reverted_session['start_timestamp'],

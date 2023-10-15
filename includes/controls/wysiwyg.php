@@ -67,6 +67,10 @@ class Control_Wysiwyg extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
+			'ai' => [
+				'active' => true,
+				'type' => 'textarea',
+			],
 			'dynamic' => [
 				'active' => true,
 				'categories' => [ TagsModule::TEXT_CATEGORY ],

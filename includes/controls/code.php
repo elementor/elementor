@@ -47,6 +47,10 @@ class Control_Code extends Base_Data_Control {
 			'label_block' => true,
 			'language' => 'html', // html/css
 			'rows' => 10,
+			'ai' => [
+				'active' => true,
+				'type' => 'code',
+			],
 			'dynamic' => [
 				'categories' => [ TagsModule::TEXT_CATEGORY ],
 			],
@@ -68,7 +72,7 @@ class Control_Code extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
-				<textarea id="<?php $this->print_control_uid(); ?>" rows="{{ data.rows }}" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
+				<textarea id="<?php $this->print_control_uid(); ?>" rows="{{ data.rows }}" class="e-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

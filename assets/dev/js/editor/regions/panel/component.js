@@ -1,9 +1,11 @@
-import ComponentBase from 'elementor-api/modules/component-base';
+import ComponentBase from 'elementor-editor/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands/internal/';
 
 export default class Component extends ComponentBase {
 	stateReadyOnce = false;
+
+	#userInteractionsBlocked = false;
 
 	getNamespace() {
 		return 'panel';
@@ -30,6 +32,7 @@ export default class Component extends ComponentBase {
 		return {
 			toggle: {
 				keys: 'ctrl+p',
+				dependency: () => ! this.isUserInteractionsBlocked(),
 			},
 			save: {
 				keys: 'ctrl+s',
@@ -45,6 +48,28 @@ export default class Component extends ComponentBase {
 			'change-device-mode': {
 				keys: 'ctrl+shift+m',
 			},
+			'page-settings': {
+				keys: 'ctrl+shift+y',
+			},
+			'editor-preferences': {
+				keys: 'ctrl+shift+u',
+			},
 		};
+	}
+
+	blockUserInteractions() {
+		elementor.panel.$el.addClass( 'e-panel-block-interactions' );
+
+		this.#userInteractionsBlocked = true;
+	}
+
+	unblockUserInteractions() {
+		elementor.panel.$el.removeClass( 'e-panel-block-interactions' );
+
+		this.#userInteractionsBlocked = false;
+	}
+
+	isUserInteractionsBlocked() {
+		return this.#userInteractionsBlocked;
 	}
 }

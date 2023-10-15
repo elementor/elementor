@@ -10,7 +10,7 @@ html {
 }
 
 html {
-    background-color: #F1F1F1;
+    background-color: var(--e-a-bg-loading);
 }
 
 iframe,
@@ -27,8 +27,9 @@ a {
 }
 
 body {
-    color: $editor-dark;
-    font-family: $admin-font-family;
+	background-color: var(--e-a-bg-default);
+    color: var(--e-a-color-txt);
+    font-family: var(--e-a-font-family);
     font-size: 13px;
     font-weight: normal;
     line-height: 1;
@@ -43,15 +44,15 @@ body {
 		@include end(0);
 		height: 100%;
 		width: 0;
-		background-color: $editor-info;
+		background-color: var(--e-a-bg-default);
 		transition: width .5s;
 	}
 
 	a {
-		color: $editor-info;
+		color: var(--e-a-color-info);
 
 		&:hover {
-			color: $editor-accent;
+			color: var(--e-a-color-primary-bold);
 		}
 	}
 

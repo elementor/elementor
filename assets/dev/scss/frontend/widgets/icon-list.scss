@@ -56,8 +56,8 @@
 
 		&, a {
 			display: flex;
-			align-items: center;
 			font-size: inherit;
+			align-items: var(--icon-vertical-align, center);
 		}
 	}
 
@@ -68,6 +68,8 @@
 
 	.elementor-icon-list-icon {
 		display: flex;
+		position: relative;
+		top: var(--icon-vertical-offset, initial);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;

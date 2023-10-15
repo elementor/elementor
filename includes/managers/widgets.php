@@ -5,6 +5,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
+use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,21 @@ class Widgets_Manager {
 	 * @var Widget_Base[]
 	 */
 	private $_widget_types = null;
+
+	/**
+	 * Promoted widget types.
+	 *
+	 * Holds the list of all the Promoted widget types.
+	 *
+	 * @since 3.15.0
+	 * @access private
+	 *
+	 * @var Widget_Base[]
+	 */
+	private $_promoted_widgets = [
+		'nested-elements' => NestedTabs::class,
+		'nested-accordion' => Nested_Accordion::class,
+	];
 
 	/**
 	 * Init widgets.
@@ -75,6 +91,7 @@ class Widgets_Manager {
 			'menu-anchor',
 			'sidebar',
 			'read-more',
+			'rating',
 		];
 
 		$this->_widget_types = [];
@@ -136,21 +153,6 @@ class Widgets_Manager {
 	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
-		// Skip Pojo widgets.
-		$pojo_allowed_widgets = [
-			'Pojo_Widget_Recent_Posts',
-			'Pojo_Widget_Posts_Group',
-			'Pojo_Widget_Gallery',
-			'Pojo_Widget_Recent_Galleries',
-			'Pojo_Slideshow_Widget',
-			'Pojo_Forms_Widget',
-			'Pojo_Widget_News_Ticker',
-
-			'Pojo_Widget_WC_Products',
-			'Pojo_Widget_WC_Products_Category',
-			'Pojo_Widget_WC_Product_Categories',
-		];
-
 		// Allow themes/plugins to filter out their widgets.
 		$black_list = [];
 
@@ -168,10 +170,6 @@ class Widgets_Manager {
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 
 			if ( in_array( $widget_class, $black_list ) ) {
-				continue;
-			}
-
-			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $pojo_allowed_widgets ) ) {
 				continue;
 			}
 
@@ -215,7 +213,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->register()` instead.
+	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
 	 * @param Widget_Base $widget Elementor widget.
 	 *
@@ -225,7 +223,7 @@ class Widgets_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'register'
+			'register()'
 		);
 
 		return $this->register( $widget );
@@ -251,17 +249,21 @@ class Widgets_Manager {
 		return true;
 	}
 
-	/** register promoted widgets
+	/** Register promoted widgets
 	 *
 	 * Since we cannot allow widgets to place themselves is a specific
-	 * location on our widgets panel we need to use an hard coded solution fort his
+	 * location on our widgets panel we need to use a hard coded solution for this.
 	 *
 	 * @return void
 	 */
 	private function register_promoted_widgets() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
-			$nested_tabs = new NestedTabs();
-			$this->_widget_types = [ $nested_tabs->get_name() => $nested_tabs ] + $this->_widget_types;
+
+		foreach ( $this->_promoted_widgets as $module_name => $class_name ) {
+
+			if ( Plugin::$instance->experiments->is_feature_active( $module_name ) ) {
+				$instance = new $class_name();
+				$this->_widget_types[ $instance->get_name() ] = $instance;
+			}
 		}
 	}
 
@@ -272,7 +274,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
+	 * @deprecated 3.5.0 Use `unregister()` method instead.
 	 *
 	 * @param string $name Widget name.
 	 *
@@ -282,7 +284,7 @@ class Widgets_Manager {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
-			'unregister'
+			'unregister()'
 		);
 
 		return $this->unregister( $name );
@@ -354,7 +356,12 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function ajax_get_widget_types_controls_config( array $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
 		wp_raise_memory_limit( 'admin' );
 
 		$config = [];
@@ -420,11 +427,7 @@ class Widgets_Manager {
 	 * }
 	 */
 	public function ajax_render_widget( $request ) {
-		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
-
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
-		}
+		$document = Plugin::$instance->documents->get_with_permissions( $request['editor_post_id'] );
 
 		// Override the global $post for the render.
 		query_posts(
@@ -462,8 +465,11 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
+	 * @throws \Exception
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
+		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );
+
 		if ( empty( $request['widget_type'] ) ) {
 			return false;
 		}

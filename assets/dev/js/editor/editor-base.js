@@ -5,6 +5,7 @@ import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import ElementsManager from './elements/manager';
+import IntroductionTooltipsManager from './introduction-tooltips/manager';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -18,7 +19,6 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Selection from './components/selection/manager';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
@@ -47,7 +47,6 @@ export default class EditorBase extends Marionette.Application {
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
-	schemes = require( 'elementor-editor-utils/schemes' );
 	presetsFactory = require( 'elementor-editor-utils/presets-factory' );
 	templates = require( 'elementor-templates/manager' );
 
@@ -66,6 +65,9 @@ export default class EditorBase extends Marionette.Application {
 		responsivePreview: Backbone.Radio.channel( 'ELEMENTOR:responsivePreview' ),
 	};
 
+	/**
+	 * @deprecated since 3.0.0, use `elementorCommon.debug` instead.
+	 */
 	get debug() {
 		elementorDevTools.deprecation.deprecated(
 			'elementor.debug',
@@ -77,9 +79,13 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	backgroundClickListeners = {
+		tooltip: {
+			element: '.dialog-tooltip-widget',
+			ignore: '.dialog-widget, .elementor-controls-popover, .pcr-selection',
+		},
 		popover: {
 			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app, .dialog-tooltip-widget',
 		},
 		globalControlsSelect: {
 			element: '.e-global__popover',
@@ -93,7 +99,7 @@ export default class EditorBase extends Marionette.Application {
 			element: '.elementor-panel-footer-tool.elementor-toggle-state',
 			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
 			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-open' );
+				$elementsToHide.removeClass( 'e-open' );
 			},
 		},
 		panelResponsiveSwitchers: {
@@ -125,7 +131,9 @@ export default class EditorBase extends Marionette.Application {
 	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
 	modules = {
-		// TODO: Deprecated alias since 2.3.0
+		/**
+		 * @deprecated since 2.3.0, use `elementorModules.Module` instead.
+		 */
 		get Module() {
 			elementorDevTools.deprecation.deprecated( 'elementor.modules.Module', '2.3.0', 'elementorModules.Module' );
 
@@ -134,7 +142,9 @@ export default class EditorBase extends Marionette.Application {
 		components: {
 			templateLibrary: {
 				views: {
-					// TODO: Deprecated alias since 2.4.0
+					/**
+					 * @deprecated since 2.4.0, use `lementorModules.common.views.modal.Layout` instead.
+					 */
 					get BaseModalLayout() {
 						elementorDevTools.deprecation.deprecated( 'elementor.modules.components.templateLibrary.views.BaseModalLayout', '2.4.0', 'elementorModules.common.views.modal.Layout' );
 
@@ -149,6 +159,9 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		saver: {
+			/**
+			 * @deprecated since 2.9.0, use `elementor.modules.components.saver.behaviors.FooterSaver` instead.
+			 */
 			get footerBehavior() {
 				elementorDevTools.deprecation.deprecated( 'elementor.modules.saver.footerBehavior.',
 					'2.9.0',
@@ -171,6 +184,7 @@ export default class EditorBase extends Marionette.Application {
 			Dimensions: require( 'elementor-controls/dimensions' ),
 			Exit_animation: require( 'elementor-controls/select2' ),
 			Font: require( 'elementor-controls/font' ),
+			Gaps: require( 'elementor-controls/gaps' ),
 			Gallery: require( 'elementor-controls/gallery' ),
 			Hidden: require( 'elementor-controls/hidden' ),
 			Hover_animation: require( 'elementor-controls/select2' ),
@@ -179,7 +193,6 @@ export default class EditorBase extends Marionette.Application {
 			Image_dimensions: require( 'elementor-controls/image-dimensions' ),
 			Media: require( 'elementor-controls/media' ),
 			Number: require( 'elementor-controls/number' ),
-			Order: require( 'elementor-controls/order' ),
 			Popover_toggle: PopoverToggleControl,
 			Repeater: require( 'elementor-controls/repeater' ),
 			RepeaterRow: require( 'elementor-controls/repeater-row' ),
@@ -201,7 +214,9 @@ export default class EditorBase extends Marionette.Application {
 				... elementTypes,
 			},
 			models: {
-				// TODO: Deprecated alias since 2.4.0
+				/**
+				 * @deprecated since 2.4.0, use `elementorModules.editor.elements.models.BaseSettings` instead.
+				 */
 				get BaseSettings() {
 					elementorDevTools.deprecation.deprecated( 'elementor.modules.elements.models.BaseSettings', '2.4.0', 'elementorModules.editor.elements.models.BaseSettings' );
 
@@ -231,7 +246,9 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		views: {
-			// TODO: Deprecated alias since 2.4.0
+			/**
+			 * @deprecated since 2.4.0, use `elementorModules.editor.views.ControlsStack` instead.
+			 */
 			get ControlsStack() {
 				elementorDevTools.deprecation.deprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
@@ -385,6 +402,8 @@ export default class EditorBase extends Marionette.Application {
 		this.promotion = new Promotion();
 
 		this.browserImport = new BrowserImport();
+
+		this.introductionTooltips = new IntroductionTooltipsManager();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -562,18 +581,9 @@ export default class EditorBase extends Marionette.Application {
 	initPanel() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
+		window.dispatchEvent( new CustomEvent( 'elementor/panel/init' ) );
+
 		this.trigger( 'panel:init' );
-	}
-
-	initResponsiveBar() {
-		this.addRegions( {
-			responsiveBar: {
-				el: '#elementor-responsive-bar',
-				regionClass: ResponsiveBar,
-			},
-		} );
-
-		this.trigger( 'responsiveBar:init' );
 	}
 
 	initNavigator() {
@@ -968,7 +978,7 @@ export default class EditorBase extends Marionette.Application {
 		// TODO: Should be command?
 		jQuery( '#elementor-preview-loading' ).show();
 
-		this.$preview[ 0 ].contentWindow.location.reload( true );
+		this.$preview[ 0 ].src = this.config.initial_document.urls.preview;
 	}
 
 	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
@@ -994,6 +1004,13 @@ export default class EditorBase extends Marionette.Application {
 		} else if ( 'desktop' !== newDeviceMode ) {
 			this.enterDeviceMode();
 		}
+
+		dispatchEvent( new CustomEvent( 'elementor/device-mode/change', {
+			detail: {
+				activeMode: newDeviceMode,
+
+			},
+		} ) );
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
@@ -1164,8 +1181,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initFrontend();
 
-		this.schemes.init();
-
 		this.preventClicksInsideEditor();
 
 		this.addBackgroundClickArea( elementorFrontend.elements.window.document );
@@ -1202,13 +1217,17 @@ export default class EditorBase extends Marionette.Application {
 	onFirstPreviewLoaded() {
 		this.initPanel();
 
-		this.initResponsiveBar();
-
 		this.previewLoadedOnce = true;
 	}
 
 	onEditModeSwitched() {
 		const activeMode = this.channels.dataEditMode.request( 'activeMode' );
+
+		dispatchEvent( new CustomEvent( 'elementor/edit-mode/change', {
+			detail: {
+				activeMode,
+			},
+		} ) );
 
 		if ( 'edit' === activeMode ) {
 			this.exitPreviewMode();
@@ -1312,7 +1331,16 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			$elementsToHide.hide();
+			$elementsToHide.each( ( elementIndex, element ) => {
+				const $element = jQuery( element );
+				const isVisible = $element.is( ':visible' );
+
+				$element.hide();
+
+				if ( isVisible ) {
+					$element.trigger( 'hide' );
+				}
+			} );
 		} );
 	}
 
@@ -1583,9 +1611,9 @@ export default class EditorBase extends Marionette.Application {
 
 	toggleDocumentCssFiles( document, state ) {
 		const selectors = [
-			`#elementor-post-${ document.config.id }-css`,
-			`#elementor-preview-${ document.config.revisions.current_id }`,
-		],
+				`#elementor-post-${ document.config.id }-css`,
+				`#elementor-preview-${ document.config.revisions.current_id }`,
+			],
 			$files = this.$previewContents.find( selectors.join( ',' ) ),
 			type = state ? 'text/css' : 'elementor/disabled-css';
 

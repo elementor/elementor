@@ -1,0 +1,47 @@
+{
+    "content": [
+        {
+            "id": "5cfd4116",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "28342274",
+                    "settings": {
+                        "text": "Click here",
+                        "hover_animation": "shrink",
+                        "__globals__": {
+                            "hover_color": "globals\/colors?id=primary",
+                            "button_background_hover_color": "globals\/colors?id=secondary",
+                            "button_hover_border_color": "globals\/colors?id=accent"
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "348ca7f4",
+                    "settings": {
+                        "text": "Click here",
+                        "hover_color": "#DD1010",
+                        "button_background_hover_color": "#110E0E",
+                        "button_hover_border_color": "#DAD0D0",
+                        "hover_animation": "rotate",
+                        "border_border": "solid"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "button_hover",
+    "type": "page"
+}

@@ -7,7 +7,7 @@ export const Save = () => {
 		} );
 
 		QUnit.test( 'Multiple documents', async ( assert ) => {
-				const documentConfigs = [
+			const documentConfigs = [
 					{ id: 2 },
 					{ id: 3 },
 				],

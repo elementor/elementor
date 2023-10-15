@@ -55,7 +55,7 @@ set -ex
 check_for_svn() {
   if [ ! `which svn` ]; then
     echo 'Please install "svn" and re run this script.'
-    ehco 'Mac users: `brew install svn`'
+    echo 'Mac users: `brew install svn`'
     exit 1
   fi
 }

@@ -213,9 +213,6 @@ class Deprecation {
 			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
 				$print_deprecated = true;
 			}
-		} else {
-			// Hard deprecated.
-			$print_deprecated = true;
 		}
 
 		return $print_deprecated;

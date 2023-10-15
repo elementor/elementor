@@ -1,10 +1,14 @@
 .elementor-control-type-wp_widget {
+
 	.widget-inside {
 		// Overwrite WP Default
+		line-height: 2;
+		background-color: inherit;
 		display: block;
 	}
 
 	.quicktags-toolbar {
+
 		input {
 			width: auto;
 		}

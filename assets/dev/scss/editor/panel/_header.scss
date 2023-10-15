@@ -3,21 +3,26 @@
 //
 
 #elementor-panel-header {
-	display: table;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	height: 40px;
 	width: 100%;
-	background-color: $editor-accent;
-	color: #fff;
+	background-color: var(--e-a-dark-bg);
+	color: var(--e-a-color-white);
 
 	> * {
-		display: table-cell;
-		vertical-align: middle;
-		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 }
 
 .elementor-header-button {
 	width: 40px;
+	border: 0;
+	color: currentColor;
+	background-color: transparent;
 
 	.elementor-icon {
 		cursor: pointer;
@@ -25,20 +30,23 @@
 		font-size: 19px;
 		height: 40px;
 		line-height: 40px;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
 		&.eicon-menu-bar {
 			font-size: 18px;
 		}
 
-		&:hover {
-			color: $editor-lightest;
+		&:hover,
+		&:focus {
+			color: var(--e-a-dark-color-txt-hover);
 		}
 	}
 }
 
 #elementor-panel-header-title {
+	flex: 1;
 	font-size: 15px;
+	font-weight: 700;
 
 	img {
 		width: 90px;

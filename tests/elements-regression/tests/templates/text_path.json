@@ -1,0 +1,223 @@
+{
+    "content": [
+        {
+            "id": "73e6f947",
+            "settings": [],
+            "elements": [
+                {
+                    "id": "463e5153",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "align": "left",
+                        "size": {
+                            "unit": "px",
+                            "size": 200,
+                            "sizes": []
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "21",
+                            "right": "21",
+                            "bottom": "21",
+                            "left": "21",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "11f3f927",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "arc",
+                        "align": "center",
+                        "size": {
+                            "unit": "px",
+                            "size": 100,
+                            "sizes": []
+                        },
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Roboto",
+                        "text_typography_font_size": {
+                            "unit": "px",
+                            "size": 39,
+                            "sizes": []
+                        },
+                        "text_typography_font_weight": "200",
+                        "text_typography_text_transform": "lowercase",
+                        "text_typography_font_style": "italic",
+                        "text_typography_line_height": {
+                            "unit": "px",
+                            "size": 100,
+                            "sizes": []
+                        },
+                        "text_typography_letter_spacing": {
+                            "unit": "px",
+                            "size": -3,
+                            "sizes": []
+                        },
+                        "text_typography_word_spacing": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "rotation": {
+                            "unit": "deg",
+                            "size": 0,
+                            "sizes": []
+                        },
+                        "_margin": {
+                            "unit": "px",
+                            "top": "0",
+                            "right": "0",
+                            "bottom": "0",
+                            "left": "0",
+                            "isLinked": true
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "11",
+                            "right": "11",
+                            "bottom": "11",
+                            "left": "11",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "2c4038e1",
+                    "settings": {
+                        "text": "text direction -RTL",
+                        "path": "line",
+                        "text_path_direction": "rtl",
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Roboto",
+                        "text_typography_font_weight": "600",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "text_color_normal": "#D61212",
+                        "__globals__": {
+                            "text_typography_typography": ""
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "35",
+                            "right": "35",
+                            "bottom": "35",
+                            "left": "35",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "445782ee",
+                    "settings": {
+                        "text": "text direction-LTR",
+                        "path": "oval",
+                        "text_path_direction": "ltr",
+                        "text_typography_typography": "custom",
+                        "text_typography_font_family": "Times New Roman",
+                        "text_typography_font_size": {
+                            "unit": "px",
+                            "size": 24,
+                            "sizes": []
+                        },
+                        "text_typography_font_weight": "700",
+                        "text_typography_text_transform": "uppercase",
+                        "text_stroke_text_stroke_type": "yes",
+                        "text_stroke_text_stroke": {
+                            "unit": "px",
+                            "size": 1,
+                            "sizes": []
+                        },
+                        "text_stroke_stroke_color": "#9A4343",
+                        "word_spacing": {
+                            "unit": "px",
+                            "size": 20,
+                            "sizes": []
+                        },
+                        "start_point": {
+                            "unit": "%",
+                            "size": 31,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "text_color_normal": "globals\/colors?id=accent"
+                        },
+                        "align": "right",
+                        "size": {
+                            "unit": "px",
+                            "size": 300,
+                            "sizes": []
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "45",
+                            "right": "45",
+                            "bottom": "45",
+                            "left": "45",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                },
+                {
+                    "id": "28d3c348",
+                    "settings": {
+                        "text": "Add Your Curvy Text Here",
+                        "path": "spiral",
+                        "show_path": "#E8178A",
+                        "size": {
+                            "unit": "px",
+                            "size": 400,
+                            "sizes": []
+                        },
+                        "start_point": {
+                            "unit": "%",
+                            "size": 39,
+                            "sizes": []
+                        },
+                        "__globals__": {
+                            "text_color_normal": "globals\/colors?id=primary"
+                        },
+                        "_padding": {
+                            "unit": "px",
+                            "top": "45",
+                            "right": "45",
+                            "bottom": "45",
+                            "left": "45",
+                            "isLinked": true
+                        }
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "text-path",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "text_path",
+    "type": "page"
+}

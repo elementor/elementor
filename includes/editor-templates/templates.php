@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="radio" id="elementor-template-library-order-popular" class="elementor-template-library-order-input" name="elementor-template-library-order" value="popularityIndex">
 						<label for="elementor-template-library-order-popular" class="elementor-template-library-order-label"><?php echo esc_html__( 'Popular', 'elementor' ); ?></label>
 					</div>
-				<# } else {
+				<# } else if ( 'lb' !== activeType ) {
 					var config = elementor.templates.getConfig( activeType );
 					if ( config.categories ) { #>
 						<div id="elementor-template-library-filter">
@@ -130,7 +130,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php
 				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );
-			?>" />
+			?>" loading="lazy" />
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( 'page' === type || 'lp' === type ) { #>
 			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
 		<# } else { #>
-			<img src="{{ thumbnail }}">
+			<img src="{{ thumbnail }}" loading="lazy">
 		<# } #>
 		<div class="elementor-template-library-template-preview">
 			<i class="eicon-zoom-in-bold" aria-hidden="true"></i>
@@ -167,11 +167,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
-		<div class="elementor-template-library-template-preview">
+		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
 			<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Preview', 'elementor' ); ?></span>
 		</div>
-		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button elementor-button-success">
+		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary e-btn-txt">
 			<i class="eicon-file-download" aria-hidden="true"></i>
 			<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 		</button>
@@ -195,7 +195,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
-	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button">
+	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
 		<i class="eicon-file-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>
@@ -203,18 +203,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-upgrade-plan-button">
 	<a
-		class="elementor-template-library-template-action elementor-button elementor-go-pro"
+		class="elementor-template-library-template-action elementor-button go-pro"
 		href="{{{ promotionLink }}}"
 		target="_blank"
 	>
-		<i class="eicon-external-link-square" aria-hidden="true"></i>
 		<span class="elementor-button-title">{{{ promotionText }}}</span>
 	</a>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
-		<i class="eicon-library-save" aria-hidden="true"></i>
+		<i class="eicon-library-upload" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
@@ -222,7 +221,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
-		<button id="elementor-template-library-save-template-submit" class="elementor-button elementor-button-success">
+		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
@@ -243,7 +242,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-blank-title"><?php echo esc_html__( 'Import Template to Your Library', 'elementor' ); ?></div>
 		<div class="elementor-template-library-blank-message"><?php echo esc_html__( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>
 		<div id="elementor-template-library-import-form-or"><?php echo esc_html__( 'or', 'elementor' ); ?></div>
-		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button elementor-button-success"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
+		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button e-primary"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
 			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
@@ -254,7 +253,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<div class="elementor-template-library-blank-icon">
-		<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg' ); ?>" class="elementor-template-library-no-results" />
+		<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg' ); ?>" class="elementor-template-library-no-results" loading="lazy" />
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
@@ -286,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			'utm_content' => '%%template_type%%', // will be replaced in the frontend
 		] );
 		?>
-	<a id="elementor-template-library-connect__button" class="elementor-button elementor-button-success" href="<?php echo esc_attr( $url ); ?>">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_attr( $url ); ?>">
 		{{{ button }}}
 	</a>
 	<?php
@@ -295,6 +294,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
 
 	foreach ( $images as $image ) : ?>
-		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false"/>
+		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false" loading="lazy" />
 	<?php endforeach; ?>
 </script>

@@ -1,0 +1,65 @@
+//
+// Content Only - Role Manager
+//
+// This file is used to hide the editor elements when the user is not an admin
+// and the editor is in content only mode.
+
+.elementor-editor-content-only {
+	//Empty Section
+	.elementor-first-add {
+		display: none;
+	}
+
+	// Section
+	.elementor-section {
+
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
+					display: none;
+				}
+			}
+		}
+	}
+
+	// Column
+	.elementor-column {
+
+		> .elementor-element-overlay {
+			display: none;
+
+			&:after {
+				display: none;
+			}
+		}
+
+		&:hover,
+		&.elementor-element-editable {
+
+			> .elementor-element-overlay {
+
+				&:after {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.elementor-editor-element-edit {
+
+		@media(min-width: $editor-screen-lg-min) {
+			cursor: pointer;
+		}
+	}
+}

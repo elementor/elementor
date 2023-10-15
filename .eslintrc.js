@@ -4,14 +4,16 @@ module.exports = {
 		'plugin:no-jquery/deprecated',
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
 		'plugin:@elementor/editor/recommended',
+		'plugin:import/typescript',
 	],
 	plugins: [
 		'babel',
 		'react',
 		'@elementor/editor',
 		'no-jquery',
+		'@typescript-eslint',
 	],
-	parser: '@babel/eslint-parser',
+	parser: '@typescript-eslint/parser',
 	globals: {
 		wp: true,
 		window: true,
@@ -55,7 +57,7 @@ module.exports = {
 		'no-mixed-operators': 'error',
 		'no-nested-ternary': 'error',
 		'no-cond-assign': 'error',
-		indent: [ 'off', 'tab', { SwitchCase: 1 } ],
+		indent: [ 1, 'tab', { SwitchCase: 1 } ],
 		'padded-blocks': [ 'error', 'never' ],
 		'one-var-declaration-per-line': 'error',
 		'array-bracket-spacing': [ 'error', 'always' ],
@@ -90,6 +92,7 @@ module.exports = {
 		} ],
 		'react/react-in-jsx-scope': 'off',
 		'react/prop-types': 'error',
+		'react/no-deprecated': 'warn', // Temporary until we remove the deprecated components
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'jsdoc/require-returns-description': 'off', // We prefer self-explanatory method names
@@ -106,9 +109,12 @@ module.exports = {
 		],
 		'spaced-comment': [ 'error', 'always', { markers: [ '!' ] } ],
 	},
-    settings: {
-        jsdoc: {
-            mode: 'typescript',
-        },
-    },
+	settings: {
+		'import/resolver': {
+			node: {
+				extensions: [ '.js', '.jsx', '.ts', '.tsx', '.json' ],
+			},
+		},
+		jsdoc: { mode: 'typescript' },
+	},
 };

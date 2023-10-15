@@ -2,11 +2,6 @@
 // Panel Global
 //
 
-.elementor-panel-box {
-	margin-top: 10px;
-	background-color: #fff;
-}
-
 .elementor-panel-box-content {
 	padding: 20px 20px 10px;
 }
@@ -17,17 +12,19 @@
 
 // Alert
 .elementor-panel-alert {
-    background-color: $editor-background-lighter;
+    background-color: var(--e-a-bg-primary);
 	padding: 15px;
-    @include border-start(3px solid transparent);
+	border-inline-start: 3px solid var(--e-a-color-primary);
 	position: relative;
 	font-size: 12px;
 	font-weight: 300;
 	font-style: italic;
 	line-height: 1.5;
-	text-align: $start;
-	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
-    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.07);
+	text-align: start;
+	border-start-start-radius: 0;
+	border-start-end-radius: 3px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 
 	a {
 		color: inherit;
@@ -36,55 +33,24 @@
 	&.elementor-panel-alert- {
 
 		&info {
-			border-color: $editor-alert-info;
-			background-color: $editor-alert-info-bg;
+			border-color: var(--e-a-color-info);
+			background: var(--e-a-bg-info);
 		}
 
 		&success {
-			border-color: $editor-success;
+			border-color: var(--e-a-color-success);
+			background: var(--e-a-bg-success);
 		}
 
 		&warning {
-			border-color: $editor-alert-warning;
+			border-inline-start: 3px solid var(--e-a-color-warning);
+			background: var(--e-a-bg-warning);
 		}
 
 		&danger {
-			border-color: $editor-danger;
+			border-color: var(--e-a-color-danger);
+			background: var(--e-a-bg-danger);
 		}
-	}
-}
-
-.elementor-label {
-	display: inline;
-	padding: .2em .6em .3em;
-	font-size: 75%;
-	font-weight: 700;
-	line-height: 1;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	border-radius: .25em;
-	text-transform: capitalize;
-
-	&.elementor-label-default {
-		background-color: $editor-light;
-	}
-
-	&.elementor-label-info {
-		background-color: $info;
-	}
-
-	&.elementor-label-success {
-		background-color: $success;
-	}
-
-	&.elementor-label-warning {
-		background-color: $warning;
-	}
-
-	&.elementor-label-danger {
-		background-color: $danger;
 	}
 }
 
@@ -92,21 +58,21 @@
 	font-size: 11px;
 	font-style: italic;
 	line-height: 1.4;
-	color: $editor-light;
+	color: var(--e-a-color-txt-muted);
 }
 
 .elementor-controls-popover {
 	display: none;
 	position: absolute;
-	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
 	left: 0;
 	right: 0;
 	margin: -4px auto 5px;
-	padding-top: 15px;
+	padding-block-start: 15px;
 	width: 90%;
 	z-index: $super-layer; // Above the select2 select boxes
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
 
 	$triangle-size: 8px;
 
@@ -116,7 +82,7 @@
 		top: -$triangle-size * 2;
 		@include end(22px);
 		border: $triangle-size solid transparent;
-		border-bottom-color: #fff;
+		border-block-end-color: var(--e-a-bg-default);
 	}
 
 	div.elementor-control { // Harder selector to override default settings
@@ -128,19 +94,12 @@
 	}
 }
 
-// Pojo Theme Support
-#elementor-controls {
-	.pojo-widget-button-collapse {
-		display: none;
-	}
-}
-
 #elementor-panel-global {
 
 	.elementor-nerd-box {
 
 		.elementor-nerd-box-icon {
-			margin-top: 20px;
+			margin-block-start: 20px;
 		}
 	}
 }

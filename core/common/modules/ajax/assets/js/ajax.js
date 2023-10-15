@@ -52,10 +52,10 @@ export default class extends elementorModules.Module {
 		options.ids.forEach( ( objectId ) => {
 			deferredArray.push(
 				this.load( {
-						action: options.action,
-						unique_id: options.data.unique_id + objectId,
-						data: jQuery.extend( { id: objectId }, options.data ),
-					} )
+					action: options.action,
+					unique_id: options.data.unique_id + objectId,
+					data: jQuery.extend( { id: objectId }, options.data ),
+				} )
 					.done( ( data ) => dataCollection = jQuery.extend( dataCollection, data ) ),
 			);
 		} );

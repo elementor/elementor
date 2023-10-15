@@ -183,7 +183,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 
 	/**
 	 * @expectedException \Exception
-	 * @expectedExceptionMessage Invalid revision.
+	 * @expectedExceptionMessage Not found.
 	 */
 	public function test_should_not_get_revision_data_on_request_because_of_invalid_revision() {
 		$args['id'] = $this->fake_post_id;

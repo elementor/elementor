@@ -55,9 +55,9 @@ export default class ControlsPopover {
 
 		const groupControlName = this.child.model.get( 'groupPrefix' ) + 'typography',
 			args = {
-			container: this.child.options.container,
-			settings: { [ groupControlName ]: '' },
-		};
+				container: this.child.options.container,
+				settings: { [ groupControlName ]: '' },
+			};
 
 		if ( this.child.options.container.globals.get( groupControlName ) ) {
 			// The Disable Globals command applies global settings locally,

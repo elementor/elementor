@@ -17,6 +17,7 @@ import DragDrop from './ui/atoms/drag-drop';
 import DropZone from './organisms/drop-zone';
 import ErrorBoundary from './organisms/error-boundary';
 import Heading from './ui/atoms/heading';
+import GoProButton from './molecules/go-pro-button';
 import Grid from './ui/grid/grid';
 import Icon from './ui/atoms/icon';
 import List from './ui/molecules/list';
@@ -41,6 +42,8 @@ import useAjax from './hooks/use-ajax';
 import useAction from './hooks/use-action';
 import usePageTitle from './hooks/use-page-title';
 import useQueryParams from './hooks/use-query-params';
+import useIntroduction from './hooks/use-introduction';
+import useConfirmAction from './hooks/use-confirm-action';
 
 export const appUi = {
 	AddNewButton,
@@ -60,6 +63,7 @@ export const appUi = {
 	DropZone,
 	ErrorBoundary,
 	Heading,
+	GoProButton,
 	Grid,
 	Icon,
 	List,
@@ -87,4 +91,6 @@ export const hooks = {
 	useAction,
 	usePageTitle,
 	useQueryParams,
+	useIntroduction,
+	useConfirmAction,
 };

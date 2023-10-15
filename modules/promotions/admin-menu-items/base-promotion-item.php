@@ -36,13 +36,13 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo esc_url( $this->get_image_url() ); ?>" />
+				<img src="<?php echo esc_url( $this->get_image_url() ); ?>" loading="lazy" />
 
 				<h3><?php Utils::print_unescaped_internal_string( $this->get_promotion_title() ); ?></h3>
 
 				<p><?php $this->render_promotion_description(); ?></p>
 
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
+				<a class="elementor-button go-pro" href="<?php echo esc_url( $this->get_cta_url() ); ?>">
 					<?php Utils::print_unescaped_internal_string( $this->get_cta_text() ); ?>
 				</a>
 			</div>

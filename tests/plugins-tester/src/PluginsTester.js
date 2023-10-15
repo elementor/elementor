@@ -1,4 +1,7 @@
 import { execSync } from 'child_process';
+// eslint-disable-next-line
+import gitHub from '@actions/core';
+import fs from 'fs';
 
 export class PluginsTester {
 	options = {
@@ -16,11 +19,10 @@ export class PluginsTester {
 	}
 
 	async run() {
-		if ( this.options.runServer ) {
-			this.setCwd();
-			this.runServer();
-		}
-
+		this.setCwd();
+		this.runServer();
+		this.prepareTestSite();
+		this.disableContainers();
 		this.checkPlugins();
 	}
 
@@ -30,40 +32,65 @@ export class PluginsTester {
 		return execSync( cmd ).toString();
 	}
 
-	runWP( cmd ) {
-		if ( ! this.options.runServer ) {
-			return this.cmd( `cd ../../ && ${ cmd }` );
-		}
-		return this.cmd( cmd );
-	}
-
 	checkPlugins() {
 		const errors = [];
 		this.options.pluginsToTest.forEach( ( slug ) => {
-			this.runWP( `npx wp-env run cli wp plugin install ${ slug } --activate` );
+			try {
+				const filename = 'logs.txt';
 
+				if ( fs.existsSync( filename ) ) {
+					fs.unlinkSync( filename );
+				}
+
+				this.cmd( `npx wp-env run cli bash elementor-config/activate_plugin.sh ${ slug } 2>>logs.txt ` );
+				const warn = fs.readFileSync( filename );
+
+				if ( warn.toString().includes( 'Warning' ) && process.env.CI ) {
+					gitHub.warning( warn.toString() );
+				}
+			} catch ( e ) {
+				this.options.logger.error( e );
+			}
 			try {
 				this.cmd( `node ./scripts/run-backstop.js --slug=${ slug } --diffThreshold=${ this.options.diffThreshold }` );
 			} catch ( error ) {
-				this.options.logger.error( error );
+				this.options.logger.error( error.toString() );
+				if ( process.env.CI ) {
+					gitHub.error( error.toString() );
+				}
 				errors.push( {
 					slug,
 					error,
 				} );
 			}
 
-			this.runWP( `npx wp-env run cli wp plugin deactivate ${ slug }` );
+			this.cmd( `npx wp-env run cli wp plugin deactivate ${ slug }` );
 		} );
 
-		this.options.logger.error( 'errors:', errors );
-
 		if ( errors.length ) {
+			this.cmd( `mkdir -p errors-reports` );
+
+			const slugs = errors.map( ( error ) => error.slug );
+			slugs.forEach( ( slug ) => {
+				this.cmd( `mv reports/${ slug } errors-reports/${ slug }` );
+			} );
+
+			this.options.logger.error( slugs );
+
 			process.exit( 1 );
 		}
 	}
 
+	disableContainers() {
+		console.log( `Disabling containers: ${ process.env.CONTAINERS }` );
+		if ( ! process.env.CONTAINERS ) {
+			console.log( 'Deactivating containers !!!' );
+			this.cmd( `npx wp-env run cli wp elementor experiments deactivate container` );
+		}
+	}
+
 	runServer() {
-		this.cmd( 'npm run wp-env start' );
+		this.cmd( 'npx wp-env start' );
 	}
 
 	setCwd() {
@@ -71,17 +98,6 @@ export class PluginsTester {
 	}
 
 	prepareTestSite() {
-		this.cmd( `npx wp-env run cli wp theme activate hello-elementor` );
-		try {
-			this.cmd( `npx wp-env run cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"` );
-		} catch ( error ) {
-			this.options.logger.error( error );
-		}
-
-		this.cmd( `npx wp-env run cli wp rewrite structure "/%postname%/" --hard` );
-		this.cmd( `npx wp-env run cli wp cache flush` );
-		this.cmd( `npx wp-env run cli wp rewrite flush --hard` );
-		this.cmd( `npx wp-env run cli wp elementor flush-css` );
-		this.cmd( `npx wp-env run cli wp post list --post_type=page` );
+		this.cmd( 'npm run test:setup' );
 	}
 }

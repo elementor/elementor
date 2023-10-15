@@ -187,18 +187,26 @@ class Utils {
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
+
 		if ( ! $is_valid_urls ) {
 			throw new \Exception( 'Couldn’t replace your address because at least one of the URLs provided are invalid. Try again by entering valid URLs.' );
 		}
 
 		global $wpdb;
+		$escaped_from = str_replace( '/', '\\/', $from );
+		$escaped_to = str_replace( '/', '\\/', $to );
+		$meta_value_like = '[%'; // meta_value LIKE '[%' are json formatted
 
-		// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
 		$rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
-			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-		// @codingStandardsIgnoreEnd
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} " .
+				'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ' .
+				"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE %s;",
+				$escaped_from,
+				$escaped_to,
+				$meta_value_like
+			)
+		);
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( 'An error occurred while replacing URL\'s.' );
@@ -240,7 +248,7 @@ class Utils {
 		 * Filters whether the post type supports editing with Elementor.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` Instead
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` hook Instead.
 		 *
 		 * @param bool $is_supported Whether the post type supports editing with Elementor.
 		 * @param int $post_id Post ID.
@@ -359,8 +367,8 @@ class Utils {
 			define( 'DONOTCDN', true );
 		}
 
-		if ( ! defined( 'DONOTCACHCEOBJECT' ) ) {
-			define( 'DONOTCACHCEOBJECT', true );
+		if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
+			define( 'DONOTCACHEOBJECT', true );
 		}
 
 		// Set the headers to prevent caching for the different browsers.
@@ -401,7 +409,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
-	 * @deprecated 3.3.0
+	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.

@@ -1,14 +1,19 @@
 $eps-dark-theme-colors: (
-		text-muted:$eps-dark-theme-text-muted,
+		text-muted: $eps-dark-theme-text-muted,
 		disabled: $eps-dark-theme-disabled,
 		light: $eps-dark-theme-light,
 		dark: $eps-dark-theme-dark,
-		info:$eps-dark-theme-info,
 		accent:$eps-dark-theme-accent,
-		danger: $eps-dark-theme-danger,
 		cta: $eps-dark-theme-cta,
+		brand: $eps-dark-theme-brand,
 		success: $eps-dark-theme-success,
+		success-bg: $eps-dark-theme-success-bg,
+		info: $eps-dark-theme-info,
+		info-bg: $eps-dark-theme-info-bg,
 		warning: $eps-dark-theme-warning,
+		warning-bg: $eps-dark-theme-warning-bg,
+		danger: $eps-dark-theme-danger,
+		danger-bg: $eps-dark-theme-danger-bg,
 );
 
 $eps-dark-theme-elements-colors: (

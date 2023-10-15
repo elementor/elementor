@@ -183,7 +183,9 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 							break;
 						case YT.PlayerState.ENDED:
-							this.player.seekTo( elementSettings.background_video_start || 0 );
+							if ( 'function' === typeof this.player.seekTo ) {
+								this.player.seekTo( elementSettings.background_video_start || 0 );
+							}
 							if ( elementSettings.background_play_once ) {
 								this.player.destroy();
 							}
@@ -250,7 +252,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			}
 		}
 
-		elementorFrontend.elements.$window.on( 'resize', this.changeVideoSize );
+		elementorFrontend.elements.$window.on( 'resize elementor/bg-video/recalc', this.changeVideoSize );
 	}
 
 	deactivate() {

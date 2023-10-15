@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -232,6 +231,20 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Get widget number.
+	 *
+	 * Get the first three numbers of the element converted ID.
+	 *
+	 * @since 3.16
+	 * @access public
+	 *
+	 * @return string The widget number.
+	 */
+	public function get_widget_number(): string {
+		return substr( $this->get_id_int(), 0, 3 );
+	}
+
+	/**
 	 * Get the type.
 	 *
 	 * Retrieve the type, e.g. 'stack', 'section', 'widget' etc.
@@ -335,7 +348,7 @@ abstract class Controls_Stack extends Base_Object {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $this->is_control_visible( $control, $settings ) ) {
+				if ( $this->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 
@@ -786,30 +799,6 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * Get scheme controls.
-	 *
-	 * Retrieve all the controls that use schemes.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 * @deprecated 3.0.0
-	 *
-	 * @return array Scheme controls.
-	 */
-	final public function get_scheme_controls() {
-
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
-		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
-
-		return array_filter(
-			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-			}
-		);
-	}
-
-	/**
 	 * Get style controls.
 	 *
 	 * Retrieve style controls for all active controls or, when requested, from
@@ -1237,6 +1226,8 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_settings = [];
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( ! isset( $controls[ $setting_key ] ) ) {
 				$active_settings[ $setting_key ] = $setting;
@@ -1246,8 +1237,8 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = $controls[ $setting_key ];
 
-			if ( $this->is_control_visible( $control, $settings ) ) {
-				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			if ( $this->is_control_visible( $control, $settings, $controls ) ) {
+				$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
@@ -1316,9 +1307,11 @@ abstract class Controls_Stack extends Base_Object {
 			$controls = $this->get_controls();
 		}
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $controls as $control ) {
 			$control_name = $control['name'];
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
@@ -1432,7 +1425,7 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Get Responsive Control Device Suffix
 	 *
-	 * @deprecated 3.7.6
+	 * @deprecated 3.7.6 Use `Elementor\Controls_Manager::get_responsive_control_device_suffix()` instead.
 	 * @param array $control
 	 * @return string $device suffix
 	 */
@@ -1455,7 +1448,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool Whether the control is visible.
 	 */
-	public function is_control_visible( $control, $values = null ) {
+	public function is_control_visible( $control, $values = null, $controls = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
 		}
@@ -1468,7 +1461,9 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
-		$controls = $this->get_controls();
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
@@ -2192,10 +2187,10 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access protected
-	 * @deprecated 3.1.0 Use `Controls_Stack::register_controls()` instead
+	 * @deprecated 3.1.0 Use `register_controls()` method instead.
 	 */
 	protected function _register_controls() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_controls()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_controls()' );
 
 		$this->register_controls();
 	}
@@ -2240,8 +2235,10 @@ abstract class Controls_Stack extends Base_Object {
 	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $this->get_controls() as $control ) {
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
@@ -2279,13 +2276,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 use `get_initial_config()` instead
+	 * @deprecated 2.9.0 Use `get_initial_config()` method instead.
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::get_initial_config()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'get_initial_config()' );
 
 		return $this->get_initial_config();
 	}
@@ -2377,11 +2374,11 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
 	 * @since 2.0.0
-	 * @deprecated 2.9.0 use `content_template()` instead
+	 * @deprecated 2.9.0 Use `content_template()` method instead.
 	 * @access protected
 	 */
 	protected function _content_template() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::content_template()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'content_template()' );
 
 		$this->content_template();
 	}
@@ -2464,13 +2461,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * Set the raw data, the ID and the parsed settings.
 	 *
 	 * @since 1.4.0
-	 * @deprecated 2.9.0 use `init()` instead
+	 * @deprecated 2.9.0 Use `init()` method instead.
 	 * @access protected
 	 *
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::init()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', 'init()' );
 
 		$this->init( $data );
 	}
