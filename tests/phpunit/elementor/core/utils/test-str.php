@@ -58,7 +58,7 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "<script></script>", $output );
+		$this->assertEquals("alert('XSS');", $output);
 	}
 
 	public function test_sanitize_array() {
@@ -68,8 +68,8 @@ class Test_Str extends Elementor_Test_Base {
 			"<script>alert('XSS2');</script>",
 		];
 		$expected = [
-			"<script></script>",
-			"<script></script>",
+			"alert('XSS1');",
+			"alert('XSS2');"
 		];
 
 		// Act
@@ -89,11 +89,11 @@ class Test_Str extends Elementor_Test_Base {
 			],
 		];
 		$expected = [
-			"<script></script>",
+			"alert('XSS1');",
 			[
-				"<script></script>",
-				"Safe String",
-			],
+				"alert('Nested');",
+				"Safe String"
+			]
 		];
 
 		// Act
@@ -110,8 +110,8 @@ class Test_Str extends Elementor_Test_Base {
 			'key2' => 'Safe String',
 		];
 		$expected = [
-			'key1' => "<script></script>",
-			'key2' => 'Safe String',
+			'key1' => "alert('XSS1');",
+			'key2' => 'Safe String'
 		];
 
 		// Act
@@ -130,10 +130,10 @@ class Test_Str extends Elementor_Test_Base {
 			null,
 		];
 		$expected = [
-			"<script></script>",
+			"alert('XSS');",
 			12345,
 			true,
-			null,
+			null
 		];
 
 		// Act
@@ -159,17 +159,17 @@ class Test_Str extends Elementor_Test_Base {
 			],
 		];
 		$expected = [
-			"<script></script>",
+			"alert('XSS1');",
 			[
-				"<script></script>",
+				"alert('Nested');",
 				"Safe String",
 				[
-					"Deeper" => [
-						"<script></script>",
-						"Another Safe String",
-					],
-				],
-			],
+					'Deeper' => [
+						"alert('Even Deeper');",
+						"Another Safe String"
+					]
+				]
+			]
 		];
 
 		// Act
@@ -209,6 +209,6 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "<script></script>Hello<script></script>World", $output );
+		$this->assertEquals("alert('1');Helloalert('2');World", $output);
 	}
 }
