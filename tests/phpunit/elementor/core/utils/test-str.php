@@ -51,25 +51,36 @@ class Test_Str extends Elementor_Test_Base {
 	}
 
 	public function test_sanitize_string() {
+		// Arrange
 		$input = "<script>alert('XSS');</script>";
+
+		// Act
 		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
 		$this->assertEquals( '', $output );
 	}
 
 	public function test_sanitize_array() {
+		// Arrange
 		$input = [
 			"<script>alert('XSS1');</script>",
 			"<script>alert('XSS2');</script>",
 		];
-		$output = Str::sanitize_input_string_or_array( $input );
 		$expected = [
 			'',
 			'',
 		];
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
 		$this->assertEquals( $expected, $output );
 	}
 
 	public function test_sanitize_nested_array() {
+		// Arrange
 		$input = [
 			"<script>alert('XSS1');</script>",
 			[
@@ -77,7 +88,6 @@ class Test_Str extends Elementor_Test_Base {
 				'Safe String',
 			],
 		];
-		$output = Str::sanitize_input_string_or_array( $input );
 		$expected = [
 			'',
 			[
@@ -85,12 +95,120 @@ class Test_Str extends Elementor_Test_Base {
 				'Safe String',
 			],
 		];
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_non_string_or_array() {
-		$input = 123;
+	public function test_sanitize_associative_array() {
+		// Arrange
+		$input = [
+			'key1' => "<script>alert('XSS1');</script>",
+			'key2' => 'Safe String',
+		];
+		$expected = [
+			'key1' => '',
+			'key2' => 'Safe String',
+		];
+
+		// Act
 		$output = Str::sanitize_input_string_or_array( $input );
-		$this->assertEquals( 123, $output );
+
+		// Assert
+		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_array_with_different_data_types() {
+		// Arrange
+		$input = [
+			"<script>alert('XSS');</script>",
+			12345,
+			true,
+			null,
+		];
+		$expected = [
+			'',
+			12345,
+			true,
+			null,
+		];
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
+		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_deeply_nested_arrays() {
+		// Arrange
+		$input = [
+			"<script>alert('XSS1');</script>",
+			[
+				"<script>alert('Nested');</script>",
+				'Safe String',
+				[
+					'Deeper' => [
+						"<script>alert('Even Deeper');</script>",
+						'Another Safe String',
+					],
+				],
+			],
+		];
+		$expected = [
+			'',
+			[
+				'',
+				'Safe String',
+				[
+					'Deeper' => [
+						'',
+						'Another Safe String',
+					],
+				],
+			],
+		];
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
+		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_html_entities() {
+		// Arrange
+		$input = "Hello &amp; World";
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
+		$this->assertEquals( "Hello &amp; World", $output );
+	}
+
+	public function test_basic_html() {
+		// Arrange
+		$input = "<b>Bold</b> <i>Italic</i>";
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
+		$this->assertEquals( "Bold Italic", $output );
+	}
+
+	public function test_multiple_sanitizable_parts() {
+		// Arrange
+		$input = "<script>alert('1');</script>Hello<script>alert('2');</script>World";
+
+		// Act
+		$output = Str::sanitize_input_string_or_array( $input );
+
+		// Assert
+		$this->assertEquals( "HelloWorld", $output );
 	}
 }

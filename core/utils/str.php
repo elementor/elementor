@@ -54,7 +54,7 @@ class Str {
 		}
 
 		if ( is_string( $input ) ) {
-			$input = sanitize_text_field( $input );
+			$input = wp_kses_post( $input );
 		}
 
 		return $input;
