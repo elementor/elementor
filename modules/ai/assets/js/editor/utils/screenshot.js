@@ -1,6 +1,6 @@
 import { toCanvas } from 'html-to-image';
 import { toggleHistory } from './history';
-import { generateIds } from './genereate-ids';
+import { generateIds } from './generate-ids';
 
 export const takeScreenshot = async ( template ) => {
 	if ( ! template ) {

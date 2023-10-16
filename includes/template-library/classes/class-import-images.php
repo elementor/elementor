@@ -108,6 +108,8 @@ class Import_Images {
 	 * @return false|array Imported image data, or false.
 	 */
 	public function import( $attachment, $parent_post_id = null ) {
+		$content_type = null;
+
 		if ( isset( $attachment['tmp_name'] ) ) {
 			// Used when called to import a directly-uploaded file.
 			$filename = $attachment['name'];
@@ -123,8 +125,9 @@ class Import_Images {
 				}
 			}
 
-			// Extract the file name and extension from the url.
+			// Extract the file name without the query string.
 			$filename = basename( $attachment['url'] );
+			$filename = explode( '?', $filename )[0];
 
 			$request = wp_safe_remote_get( $attachment['url'] );
 
@@ -134,6 +137,7 @@ class Import_Images {
 			}
 
 			$file_content = wp_remote_retrieve_body( $request );
+			$content_type = wp_remote_retrieve_header( $request, 'content-type' );
 		}
 
 		if ( empty( $file_content ) ) {
@@ -141,13 +145,22 @@ class Import_Images {
 		}
 
 		$filetype = wp_check_filetype( $filename );
+		$extension = $filetype['ext'];
 
-		// If the file type is not recognized by WordPress, exit here to avoid creation of an empty attachment document.
-		if ( ! $filetype['ext'] ) {
+		// If the file type is not recognized by WordPress, fallback to extension by content type.
+		if ( ! $extension ) {
+			$extension = $this->get_extension_from_content_type( $content_type );
+
+			// Append the extension to the filename since it probably doesn't have one.
+			$filename .= ".{$extension}";
+		}
+
+		// If there is no file type, exit here to avoid creation of an empty attachment document.
+		if ( ! $extension ) {
 			return false;
 		}
 
-		if ( 'svg' === $filetype['ext'] ) {
+		if ( 'svg' === $extension ) {
 			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
 			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				return false;
@@ -225,5 +238,20 @@ class Import_Images {
 		}
 
 		WP_Filesystem();
+	}
+
+	private function get_extension_from_content_type( $content_type ) {
+		if ( ! $content_type ) {
+			return false;
+		}
+
+		$allowed_mimes = get_allowed_mime_types();
+		$extensions = array_search( $content_type, $allowed_mimes, true );
+
+		if ( ! $extensions ) {
+			return false;
+		}
+
+		return explode( '|', $extensions )[0];
 	}
 }

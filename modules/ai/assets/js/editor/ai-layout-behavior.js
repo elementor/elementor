@@ -2,7 +2,6 @@ import LayoutApp from './layout-app';
 import { onConnect } from './helpers';
 import { takeScreenshot } from './utils/screenshot';
 import { startHistoryLog } from './utils/history';
-import { generateIds } from './utils/genereate-ids';
 import { createPreviewContainer } from './utils/preview-container';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
@@ -93,8 +92,26 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		this.previewContainer.setContent( template );
 	}
 
-	onInsert( template ) {
+	async onInsert( template ) {
 		this.hideDropArea();
+
+		let templateData = null;
+
+		try {
+			// Import the template so the media files will be imported as well.
+			const [ importedTemplate ] = await this.importTemplate( template );
+
+			templateData = await this.getTemplateData(
+				importedTemplate.source,
+				importedTemplate.template_id,
+			);
+		} catch ( e ) {
+			return Promise.reject( 'cannot_import_template' );
+		}
+
+		if ( ! templateData?.length ) {
+			return Promise.reject( 'imported_template_is_empty' );
+		}
 
 		const endHistoryLog = startHistoryLog( {
 			type: 'import',
@@ -103,7 +120,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		$e.run( 'document/elements/create', {
 			container: elementor.getPreviewContainer(),
-			model: generateIds( template ),
+			model: templateData[ 0 ],
 			options: {
 				at: this.view.getOption( 'at' ),
 				edit: true,
@@ -132,5 +149,33 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		` );
 
 		this.ui.addTemplateButton.after( $button );
+	}
+
+	importTemplate( template ) {
+		const normalizedTemplate = {
+			content: [ template ],
+			type: template.elType ?? 'container', // `container` or `section`.
+		};
+
+		return new Promise( ( resolve, reject ) => {
+			elementorCommon.ajax.addRequest( 'import_template', {
+				success: resolve,
+				error: reject,
+				data: {
+					fileName: 'ai-layout-template.json',
+					// Needs to be a base64 encoded JSON.
+					fileData: btoa( JSON.stringify( normalizedTemplate ) ),
+				},
+			} );
+		} );
+	}
+
+	getTemplateData( source, templateId ) {
+		return new Promise( ( resolve, reject ) => {
+			$e.components.get( 'library' ).manager.requestTemplateContent( source, templateId, {
+				success: resolve,
+				error: reject,
+			} );
+		} );
 	}
 }
