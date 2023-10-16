@@ -53,7 +53,7 @@ class Test_Str extends Elementor_Test_Base {
 	public function test_sanitize_string() {
 		$input = "<script>alert('XSS');</script>";
 		$output = Str::sanitize_input_string_or_array( $input );
-		$this->assertEquals( '&lt;script&gt;alert(&#039;XSS&#039;);&lt;/script&gt;', $output );
+		$this->assertEquals( 'alert(\'XSS\');', $output ); // Note: sanitize_text_field() would strip the <script> tags
 	}
 
 	public function test_sanitize_array() {
@@ -63,8 +63,8 @@ class Test_Str extends Elementor_Test_Base {
 		];
 		$output = Str::sanitize_input_string_or_array( $input );
 		$expected = [
-			'&lt;script&gt;alert(&#039;XSS1&#039;);&lt;/script&gt;',
-			'&lt;script&gt;alert(&#039;XSS2&#039;);&lt;/script&gt;',
+			'alert(\'XSS1\');',
+			'alert(\'XSS2\');',
 		];
 		$this->assertEquals( $expected, $output );
 	}
@@ -79,9 +79,9 @@ class Test_Str extends Elementor_Test_Base {
 		];
 		$output = Str::sanitize_input_string_or_array( $input );
 		$expected = [
-			'&lt;script&gt;alert(&#039;XSS1&#039;);&lt;/script&gt;',
+			'alert(\'XSS1\');',
 			[
-				'&lt;script&gt;alert(&#039;Nested&#039;);&lt;/script&gt;',
+				'alert(\'Nested\');',
 				'Safe String',
 			],
 		];

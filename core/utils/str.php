@@ -54,7 +54,7 @@ class Str {
 		}
 
 		if ( is_string( $input ) ) {
-			$input = htmlspecialchars( $input, ENT_QUOTES, 'UTF-8' );
+			$input = sanitize_text_field( $input );
 		}
 
 		return $input;
