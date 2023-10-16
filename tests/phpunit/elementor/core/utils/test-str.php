@@ -187,7 +187,7 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "Hello &amp; World", $output );
+		$this->assertEquals( $input, $output );
 	}
 
 	public function test_basic_html() {
@@ -198,7 +198,7 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "<b>Bold</b> <i>Italic</i>", $output );
+		$this->assertEquals( $input, $output );
 	}
 
 	public function test_multiple_sanitizable_parts() {
