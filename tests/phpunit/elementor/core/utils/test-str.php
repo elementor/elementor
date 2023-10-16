@@ -50,7 +50,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertFalse( Str::ends_with( $str2, 'str' ) );
 	}
 
-	public function test_sanitize_string() {
+	public function test_sanitize_input_string_or_array__string() {
 		// Arrange
 		$input = "<script>alert('XSS');</script>";
 
@@ -61,7 +61,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals("alert('XSS');", $output);
 	}
 
-	public function test_sanitize_array() {
+	public function test_sanitize_input_string_or_array__array() {
 		// Arrange
 		$input = [
 			"<script>alert('XSS1');</script>",
@@ -79,7 +79,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_sanitize_nested_array() {
+	public function test_sanitize_input_string_or_array__nested_array() {
 		// Arrange
 		$input = [
 			"<script>alert('XSS1');</script>",
@@ -103,7 +103,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_sanitize_associative_array() {
+	public function test_sanitize_input_string_or_array__associative_array() {
 		// Arrange
 		$input = [
 			'key1' => "<script>alert('XSS1');</script>",
@@ -121,7 +121,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_array_with_different_data_types() {
+	public function test_sanitize_input_string_or_array__array_with_different_data_types() {
 		// Arrange
 		$input = [
 			"<script>alert('XSS');</script>",
@@ -143,7 +143,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_deeply_nested_arrays() {
+	public function test_sanitize_input_string_or_array__deeply_nested_arrays() {
 		// Arrange
 		$input = [
 			"<script>alert('XSS1');</script>",
@@ -179,7 +179,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $output );
 	}
 
-	public function test_html_entities() {
+	public function test_sanitize_input_string_or_array__html_entities() {
 		// Arrange
 		$input = "Hello &amp; World";
 
@@ -190,7 +190,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $input, $output );
 	}
 
-	public function test_basic_html() {
+	public function test_sanitize_input_string_or_array__basic_html() {
 		// Arrange
 		$input = "<b>Bold</b> <i>Italic</i>";
 
@@ -201,7 +201,7 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertEquals( $input, $output );
 	}
 
-	public function test_multiple_sanitizable_parts() {
+	public function test_sanitize_input_string_or_array__multiple_sanitizable_parts() {
 		// Arrange
 		$input = "<script>alert('1');</script>Hello<script>alert('2');</script>World";
 
