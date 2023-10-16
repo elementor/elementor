@@ -175,7 +175,7 @@ class User {
 	 *
 	 * @return array A list of user notices.
 	 */
-	private static function get_user_notices() {
+	public static function get_user_notices() {
 		return get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
 	}
 
@@ -195,11 +195,16 @@ class User {
 	public static function is_user_notice_viewed( $notice_id ) {
 		$notices = self::get_user_notices();
 
-		if ( empty( $notices ) || empty( $notices[ $notice_id ] ) ) {
+		if ( empty( $notices[ $notice_id ] ) ) {
 			return false;
 		}
 
-		return true;
+		// BC: Handles old structure ( `[ 'notice_id' => 'true' ]` ).
+		if ( 'true' === $notices[ $notice_id ] ) {
+			return true;
+		}
+
+		return $notices[ $notice_id ]['is_viewed'] ?? false;
 	}
 
 	/**
@@ -221,13 +226,7 @@ class User {
 			wp_die();
 		}
 
-		$notices = self::get_user_notices();
-		if ( empty( $notices ) ) {
-			$notices = [];
-		}
-
-		$notices[ $notice_id ] = 'true';
-		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
+		self::set_notice_viewed( $notice_id );
 
 		if ( ! wp_doing_ajax() ) {
 			wp_safe_redirect( admin_url() );
@@ -235,6 +234,25 @@ class User {
 		}
 
 		wp_die();
+	}
+
+	public static function set_notice_viewed( $notice_id, $is_viewed = true, $meta = null ) {
+		$notices = self::get_user_notices();
+
+		if ( ! is_array( $notices ) ) {
+			$notices = [];
+		}
+
+		if ( ! is_array( $meta ) ) {
+			$meta = $notices[ $notice_id ]['meta'] ?? [];
+		}
+
+		$notices[ $notice_id ] = [
+			'is_viewed' => $is_viewed,
+			'meta' => $meta,
+		];
+
+		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 	}
 
 	/**

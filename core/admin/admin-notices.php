@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	const DEFAULT_EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 
 	private $plain_notices = [
 		'api_notice',
@@ -129,11 +129,11 @@ class Admin_Notices extends Module {
 		}
 
 		$message = sprintf(
-			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
+		/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
 			esc_attr( sprintf(
-				/* translators: %s: Elementor version. */
+			/* translators: %s: Elementor version. */
 				__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
 			) ),
@@ -378,9 +378,11 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_design_not_appearing() {
-		$notice_id = 'design_not_appearing';
+		$notice_id        = 'design_not_appearing';
+		$installs_history = get_option( 'elementor_install_history', [] );
+		$is_first_install = 1 === count( $installs_history );
 
-		if ( ! current_user_can( 'update_plugins' ) ) {
+		if ( $is_first_install || ! current_user_can( 'update_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
@@ -395,26 +397,26 @@ class Admin_Notices extends Module {
 			],
 		];
 
-		$excluded_pages = [];
-		if ( $this->elementor_has_updated() ) {
+		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
+		$notice_version     = $notice['meta']['version'] ?? null;
+		$is_version_changed = $this->elementor_version() !== $notice_version;
+
+		if ( $is_version_changed ) {
+			User::set_notice_viewed( $notice_id, false, [ 'version' => $this->elementor_version() ] );
+
+			$excluded_pages = [];
 			$this->print_admin_notice( $options, $excluded_pages );
 		}
 
 		return true;
 	}
 
-	private function elementor_has_updated() {
-		$previous_version = get_option( 'elementor_version', '' );
-
-		if ( ELEMENTOR_VERSION !== $previous_version ) {
-			update_option( 'elementor_version', ELEMENTOR_VERSION );
-			return true;
-		}
-
-		return false;
+	// For testing purposes
+	public function elementor_version() {
+		return ELEMENTOR_VERSION;
 	}
 
-	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDE_PAGES ) {
+	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDED_PAGES ) {
 		global $pagenow;
 
 		if ( in_array( $pagenow, $exclude_pages, true ) ) {
