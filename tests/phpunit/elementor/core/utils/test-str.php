@@ -198,7 +198,7 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "Bold Italic", $output );
+		$this->assertEquals( "<b>Bold</b> <i>Italic</i>", $output );
 	}
 
 	public function test_multiple_sanitizable_parts() {
