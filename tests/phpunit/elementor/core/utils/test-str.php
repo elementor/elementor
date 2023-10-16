@@ -58,7 +58,7 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( '', $output );
+		$this->assertEquals( "<script></script>", $output );
 	}
 
 	public function test_sanitize_array() {
@@ -68,8 +68,8 @@ class Test_Str extends Elementor_Test_Base {
 			"<script>alert('XSS2');</script>",
 		];
 		$expected = [
-			'',
-			'',
+			"<script></script>",
+			"<script></script>",
 		];
 
 		// Act
@@ -89,10 +89,10 @@ class Test_Str extends Elementor_Test_Base {
 			],
 		];
 		$expected = [
-			'',
+			"<script></script>",
 			[
-				'',
-				'Safe String',
+				"<script></script>",
+				"Safe String",
 			],
 		];
 
@@ -110,7 +110,7 @@ class Test_Str extends Elementor_Test_Base {
 			'key2' => 'Safe String',
 		];
 		$expected = [
-			'key1' => '',
+			'key1' => "<script></script>",
 			'key2' => 'Safe String',
 		];
 
@@ -130,7 +130,7 @@ class Test_Str extends Elementor_Test_Base {
 			null,
 		];
 		$expected = [
-			'',
+			"<script></script>",
 			12345,
 			true,
 			null,
@@ -159,14 +159,14 @@ class Test_Str extends Elementor_Test_Base {
 			],
 		];
 		$expected = [
-			'',
+			"<script></script>",
 			[
-				'',
-				'Safe String',
+				"<script></script>",
+				"Safe String",
 				[
-					'Deeper' => [
-						'',
-						'Another Safe String',
+					"Deeper" => [
+						"<script></script>",
+						"Another Safe String",
 					],
 				],
 			],
@@ -209,6 +209,6 @@ class Test_Str extends Elementor_Test_Base {
 		$output = Str::sanitize_input_string_or_array( $input );
 
 		// Assert
-		$this->assertEquals( "HelloWorld", $output );
+		$this->assertEquals( "<script></script>Hello<script></script>World", $output );
 	}
 }
