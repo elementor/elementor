@@ -1307,7 +1307,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await page.mouse.down();
 
 			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
-				element.scrollBy( 600, 0 );
+				element.scrollBy( 300, 0 );
 			} );
 
 			isFirstItemVisible = await isTabTitleVisible( frame, 0 );
@@ -1315,7 +1315,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await expect.soft( isFirstItemVisible ).not.toBeTruthy();
 
 			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
-				element.scrollBy( -600, 0 );
+				element.scrollBy( -300, 0 );
 			} );
 
 			isFirstItemVisible = await isTabTitleVisible( frame, 0 );
