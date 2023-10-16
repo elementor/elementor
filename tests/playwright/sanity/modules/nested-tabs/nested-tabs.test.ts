@@ -1291,34 +1291,72 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await expect.soft( nestedTabsHeading ).toHaveCSS( 'overflow-x', 'scroll' );
 		} );
 
-		await test.step( 'Assert scrolling behaviour', async () => {
+		await test.step( 'Assert scrolling behaviour inside the Editor', async () => {
 			await page.waitForTimeout( 1000 );
 
 			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
 				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
 
-			let isFirstItemVisible = await isTabTitleVisible( page, frame, 0 ),
-				isLastItemVisible = await isTabTitleVisible( page, frame, ( itemCount - 1 ) );
+			let isFirstItemVisible = await isTabTitleVisible( frame, 0 ),
+				isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
 
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
 			await expect.soft( isLastItemVisible ).not.toBeTruthy();
 
 			await widgetHeading.hover();
 			await page.mouse.down();
 
 			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
-				element.scrollBy( 300, 0 );
+				element.scrollBy( 600, 0 );
 			} );
 
-			isFirstItemVisible = await isTabTitleVisible( page, frame, 0 );
+			isFirstItemVisible = await isTabTitleVisible( frame, 0 );
 
 			await expect.soft( isFirstItemVisible ).not.toBeTruthy();
 
 			await frame.locator( '.e-scroll' ).evaluate( ( element ) => {
-				element.scrollBy( -300, 0 );
+				element.scrollBy( -600, 0 );
 			} );
 
-			isFirstItemVisible = await isTabTitleVisible( page, frame, 0 );
-			isLastItemVisible = await isTabTitleVisible( page, frame, ( itemCount - 1 ) );
+			isFirstItemVisible = await isTabTitleVisible( frame, 0 );
+			isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
+
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
+
+			await frame.locator( '.e-n-tabs-content' ).hover();
+			await frame.locator( '.e-n-tabs-content' ).click();
+		} );
+
+		await test.step( 'Assert scrolling behaviour on the Frontend', async () => {
+			await editor.publishAndViewPage();
+
+			const widgetHeading = page.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+
+			let isFirstItemVisible = await isTabTitleVisible( page, 0 ),
+				isLastItemVisible = await isTabTitleVisible( page, ( itemCount - 1 ) );
+
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
+
+			await widgetHeading.hover();
+			await page.mouse.down();
+
+			await page.locator( '.e-scroll' ).evaluate( ( element ) => {
+				element.scrollBy( 600, 0 );
+			} );
+
+			isFirstItemVisible = await isTabTitleVisible( page, 0 );
+
+			await expect.soft( isFirstItemVisible ).not.toBeTruthy();
+
+			await page.locator( '.e-scroll' ).evaluate( ( element ) => {
+				element.scrollBy( -600, 0 );
+			} );
+
+			isFirstItemVisible = await isTabTitleVisible( page, 0 );
+			isLastItemVisible = await isTabTitleVisible( page, ( itemCount - 1 ) );
 
 			await expect.soft( isFirstItemVisible ).toBeTruthy();
 			await expect.soft( isLastItemVisible ).not.toBeTruthy();

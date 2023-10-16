@@ -70,7 +70,7 @@ function getChildrenWidth( children ) {
 }
 
 function initialScrollPosition( element, direction, justifyCSSVariable ) {
-	const isRTL = elementorCommon.config.isRTL;
+	const isRTL = elementorFrontend.config.isRTL;
 
 	switch ( direction ) {
 		case 'end':
