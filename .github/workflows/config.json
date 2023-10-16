@@ -1,7 +1,7 @@
 {
-  "deployment" : {
-    "repository_owner" : "elementor",
-    "environment" : "prod",
-    "permitted" : "KingYes,shilo-ey,matipojo,TzviRabinovitch,Blackcolt,davseve,louiswol94,mykytamurzin,hein-obox,Barcov,ArmanPurtoian"
+  "deployment": {
+    "repository_owner": "elementor",
+    "environment": "prod",
+    "permitted": "KingYes,shilo-ey,matipojo,TzviRabinovitch,Blackcolt,davseve,louiswol94,mykytamurzin,hein-obox,Barcov,ArmanPurtoian,dmaziar"
   }
 }
