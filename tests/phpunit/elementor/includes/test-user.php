@@ -86,7 +86,7 @@ class Test_User extends Elementor_Test_Base {
 		$notices = User::get_user_notices();
 
 		// Assert.
-		$this->assretIsArray( $notices );
+		$this->assertTrue( is_array( $notices ) );
 		$this->assertEmpty( $notices );
 	}
 
