@@ -40,7 +40,7 @@ runs:
 
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
 
-        if [[ ${{inputs.CHANNEL}} == "latest"]]; then
+        if [[ ${{ inputs.CHANNEL }} == "latest" ]]; then
           echo "I'm here!!!!!"
           sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION_NO_TIMESTAMP}/g" elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION_NO_TIMESTAMP}'/g" elementor.php
