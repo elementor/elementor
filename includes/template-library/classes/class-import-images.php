@@ -151,8 +151,8 @@ class Import_Images {
 		if ( ! $extension ) {
 			$extension = $this->get_extension_from_content_type( $content_type );
 
-			// Append the extension to the filename since it probably doesn't have one.
-			$filename .= ".{$extension}";
+			// Append the extension to the filename since it probably doesn't have one, and `wp_upload_bits` requires it.
+			$filename = $extension ? "{$filename}.{$extension}" : $filename;
 		}
 
 		// If there is no file type, exit here to avoid creation of an empty attachment document.
