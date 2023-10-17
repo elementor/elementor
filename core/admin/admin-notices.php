@@ -129,11 +129,11 @@ class Admin_Notices extends Module {
 		}
 
 		$message = sprintf(
-		/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
+			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
 			esc_attr( sprintf(
-			/* translators: %s: Elementor version. */
+				/* translators: %s: Elementor version. */
 				__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
 			) ),
@@ -388,7 +388,7 @@ class Admin_Notices extends Module {
 
 		$options = [
 			'title' => esc_html__( 'Design not appearing as expected?', 'elementor' ),
-			'description' => esc_html__( 'Unexpected changes may occur after you update the plugin. Don’t worry - we’ve collected all the fixes for troubleshooting common issues.', 'elementor' ),
+			'description' => esc_html__( 'Unexpected changes may occur after you update the plugin. Don\'t worry - we\'ve collected all the fixes for troubleshooting common issues.', 'elementor' ),
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Find a solution', 'elementor' ),
@@ -399,20 +399,22 @@ class Admin_Notices extends Module {
 
 		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
 		$notice_version     = $notice['meta']['version'] ?? null;
-		$is_version_changed = $this->elementor_version() !== $notice_version;
-
+		$is_version_changed = $this->get_elementor_version() !== $notice_version;
 		if ( $is_version_changed ) {
-			User::set_notice_viewed( $notice_id, false, [ 'version' => $this->elementor_version() ] );
-
-			$excluded_pages = [];
-			$this->print_admin_notice( $options, $excluded_pages );
+			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
 		}
 
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$excluded_pages = [];
+		$this->print_admin_notice( $options, $excluded_pages );
 		return true;
 	}
 
 	// For testing purposes
-	public function elementor_version() {
+	public function get_elementor_version() {
 		return ELEMENTOR_VERSION;
 	}
 
