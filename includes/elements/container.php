@@ -26,6 +26,8 @@ class Container extends Element_Base {
 	 * @var \Elementor\Core\Kits\Documents\Kit
 	 */
 	private $active_kit;
+	private $logical_dimensions_inline_start;
+	private $logical_dimensions_inline_end;
 
 	/**
 	 * Container constructor.
