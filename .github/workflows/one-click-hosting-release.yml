@@ -21,7 +21,7 @@ jobs:
       - name: checkout branch
         uses: actions/checkout@v3
         with:
-          ref: main
+          ref: hosting_release_name
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
