@@ -52,7 +52,7 @@ abstract class Tag extends Base_Tag {
 			endif;
 
 		} elseif ( ! Utils::is_empty( $settings, 'fallback' ) ) {
-			$value = Str::sanitize_input_string_or_array( $settings['fallback'] );
+			$value = wp_kses_post_deep( $settings['fallback'] );
 		}
 
 		return $value;
