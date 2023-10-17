@@ -11,7 +11,7 @@ on:
     branches:
       - main
 env:
-  CHANNEL: 'cloud'
+  CHANNEL: 'latest'
   CHANGELOG_FILE: 'temp-changelog.txt'
 
 jobs:
