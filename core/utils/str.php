@@ -37,6 +37,5 @@ class Str {
 	 */
 	public static function ends_with( $haystack, $needle ) {
 		return substr( $haystack, -strlen( $needle ) ) === $needle;
-
 	}
 }
