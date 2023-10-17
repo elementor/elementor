@@ -109,7 +109,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			return Promise.reject( 'cannot_import_template' );
 		}
 
-		if ( ! templateData?.content?.length ) {
+		if ( ! templateData ) {
 			return Promise.reject( 'imported_template_is_empty' );
 		}
 
@@ -120,7 +120,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		$e.run( 'document/elements/create', {
 			container: elementor.getPreviewContainer(),
-			model: templateData.content[ 0 ],
+			model: templateData,
 			options: {
 				at: this.view.getOption( 'at' ),
 				edit: true,
@@ -154,7 +154,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	importTemplate( template ) {
 		const normalizedTemplate = {
 			content: [ template ],
-			type: template.elType ?? 'container', // `container` or `section`.
+			type: template.elType || 'container', // `container` or `section`.
 		};
 
 		return new Promise( ( resolve, reject ) => {
@@ -170,12 +170,14 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		} );
 	}
 
-	getTemplateData( source, templateId ) {
-		return new Promise( ( resolve, reject ) => {
+	async getTemplateData( source, templateId ) {
+		const data = await new Promise( ( resolve, reject ) => {
 			$e.components.get( 'library' ).manager.requestTemplateContent( source, templateId, {
 				success: resolve,
 				error: reject,
 			} );
 		} );
+
+		return data?.content?.[ 0 ] || null;
 	}
 }
