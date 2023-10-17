@@ -378,7 +378,6 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_design_not_appearing() {
-		$notice_id        = 'design_not_appearing';
 		$installs_history = get_option( 'elementor_install_history', [] );
 		$is_first_install = 1 === count( $installs_history );
 
@@ -386,6 +385,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		$notice_id          = 'design_not_appearing';
 		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
 		$notice_version     = $notice['meta']['version'] ?? null;
 		$is_version_changed = $this->get_elementor_version() !== $notice_version;
