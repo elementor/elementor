@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Divider, Button, Pagination, IconButton, Collapse, Tooltip, withDirection } from '@elementor/ui';
+import {
+	Box,
+	Divider,
+	Button,
+	Pagination,
+	IconButton,
+	Collapse,
+	Tooltip,
+	withDirection,
+	CircularProgress,
+} from '@elementor/ui';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import LayoutDialog from './components/layout-dialog';
@@ -25,22 +35,30 @@ const RegenerateButton = ( props ) => (
 	</Button>
 );
 
-const UseLayoutButton = ( props ) => (
+const UseLayoutButton = ( { isLoading, disabled, ...props } ) => (
 	<Button
 		size="small"
 		variant="contained"
+		disabled={ disabled || isLoading }
 		{ ...props }
 	>
-		{ __( 'Use Layout', 'elementor' ) }
+		{ isLoading
+			? <CircularProgress />
+			: __( 'Use Layout', 'elementor' )
+		}
 	</Button>
 );
 
 UseLayoutButton.propTypes = {
 	sx: PropTypes.object,
+	isLoading: PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
 const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHeaderProps = {}, DialogContentProps = {} } ) => {
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
+
+	const [ isInserting, setIsInserting ] = useState( false );
 
 	const screenshotOutlineOffset = '2px';
 
@@ -120,10 +138,14 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 		lastRun.current();
 	};
 
-	const applyTemplate = () => {
-		onInsert( selectedTemplate );
-
+	const applyTemplate = async () => {
 		screenshots[ selectedScreenshotIndex ].sendUsageData();
+
+		setIsInserting( true );
+
+		await onInsert( selectedTemplate );
+
+		setIsInserting( false );
 
 		abortAndClose();
 	};
@@ -218,7 +240,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 													<Screenshot
 														key={ index }
 														url={ screenshot }
-														disabled={ isPromptFormActive }
+														disabled={ isPromptFormActive || isInserting }
 														isPlaceholder={ isError }
 														isLoading={ isPending }
 														isSelected={ selectedScreenshotIndex === index }
@@ -237,7 +259,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 										<Box sx={ { pt: 0, px: 2, pb: 2 } } display="grid" gridTemplateColumns="repeat(3, 1fr)" justifyItems="center">
 											<RegenerateButton
 												onClick={ handleRegenerate }
-												disabled={ isLoading || isPromptFormActive }
+												disabled={ isLoading || isPromptFormActive || isInserting }
 												sx={ { justifySelf: 'start' } }
 											/>
 
@@ -246,7 +268,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 													<Pagination
 														page={ currentPage }
 														count={ pagesCount }
-														disabled={ isPromptFormActive }
+														disabled={ isPromptFormActive || isInserting }
 														onChange={ ( _, page ) => setCurrentPage( page ) }
 													/>
 												)
@@ -255,6 +277,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 											<UseLayoutButton
 												onClick={ applyTemplate }
 												disabled={ isPromptFormActive || -1 === selectedScreenshotIndex }
+												isLoading={ isInserting }
 												sx={ { justifySelf: 'end', gridColumn: 3 } }
 											/>
 										</Box>

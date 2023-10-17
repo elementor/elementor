@@ -109,7 +109,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			return Promise.reject( 'cannot_import_template' );
 		}
 
-		if ( ! templateData?.length ) {
+		if ( ! templateData?.content?.length ) {
 			return Promise.reject( 'imported_template_is_empty' );
 		}
 
@@ -120,7 +120,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 
 		$e.run( 'document/elements/create', {
 			container: elementor.getPreviewContainer(),
-			model: templateData[ 0 ],
+			model: templateData.content[ 0 ],
 			options: {
 				at: this.view.getOption( 'at' ),
 				edit: true,
