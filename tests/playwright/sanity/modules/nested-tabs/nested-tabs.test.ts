@@ -1428,6 +1428,10 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 				type: 'png',
 			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-frontend.png' );
 		} );
+
+		await test.step( 'Reset language to English', async () => {
+			await wpAdmin.setLanguage( '' );
+		} );
 	} );
 
 	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
