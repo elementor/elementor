@@ -29,6 +29,7 @@ runs:
             ;;&
           "latest" )
             NEW_CHANNEL_VERSION=-$(date +%s)
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION_NO_TIMESTAMP=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}
             ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
            ;;
           "ga" )
@@ -38,8 +39,13 @@ runs:
 
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
 
-        sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
-        sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION}'/g" elementor.php
+        if [[${{inputs.CHANNEL}} == "latest"]]; then
+          sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION_NO_TIMESTAMP}/g" elementor.php
+          sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION_NO_TIMESTAMP}'/g" elementor.php
+        else
+          sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
+          sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION}'/g" elementor.php
+        fi
 
         echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
         echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
