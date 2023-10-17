@@ -40,7 +40,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Act
 		ob_start();
 
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 
 		$result = ob_get_clean();
 
@@ -69,7 +69,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Act
 		ob_start();
 
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 
 		$result = ob_get_clean();
 
@@ -92,7 +92,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->willReturn('1.0.0');
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		$result = ob_get_clean();
 
 		// Assert
@@ -106,13 +106,16 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
+		update_option( 'elementor_install_history', [
+			'1.0.0' => time(),
+			'2.0.0' => time() + 1,
+		] );
 
 		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		$result = ob_get_clean();
 
 		//Assert
@@ -128,13 +131,16 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
+		update_option( 'elementor_install_history', [
+			'1.0.0' => time(),
+			'2.0.0' => time() + 1,
+		] );
 
 		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		$result = ob_get_clean();
 
 		//Assert
@@ -150,20 +156,23 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
+		update_option( 'elementor_install_history', [
+			'1.0.0' => time(),
+			'2.0.0' => time() + 1,
+		] );
 
 		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		ob_get_clean();
 
 		$notice_id = 'design_not_appearing';
 		User::set_user_notice( $notice_id );
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		$result = ob_get_clean();
 
 		//Assert
@@ -179,17 +188,8 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
-
-		$admin_notices_mock->method('get_elementor_version')
-			->willReturn('2.0.0');
-
-		ob_start();
-		do_action( 'admin_notices' );
-		ob_get_clean();
-
 		$notice_id = 'design_not_appearing';
-		User::set_user_notice( $notice_id );
+		User::set_user_notice( $notice_id, true, [ 'version' => '2.0.0' ] );
 
 		update_option( 'elementor_install_history', [
 			'1.0.0' => time(),
@@ -201,10 +201,10 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 			->willReturn('3.0.0');
 
 		ob_start();
-		do_action( 'admin_notices' );
+		do_action('admin_notices');
 		$result = ob_get_clean();
 
 		//Assert
-		$this->assertEmpty( $result );
+		$this->assertContains( 'Design not appearing as expected?', $result );
 	}
 }

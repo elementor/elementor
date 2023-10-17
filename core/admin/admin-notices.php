@@ -381,8 +381,18 @@ class Admin_Notices extends Module {
 		$notice_id        = 'design_not_appearing';
 		$installs_history = get_option( 'elementor_install_history', [] );
 		$is_first_install = 1 === count( $installs_history );
+		if ( $is_first_install || ! current_user_can( 'update_plugins' ) ) {
+			return false;
+		}
 
-		if ( $is_first_install || ! current_user_can( 'update_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
+		$notice_version     = $notice['meta']['version'] ?? null;
+		$is_version_changed = $this->get_elementor_version() !== $notice_version;
+		if ( $is_version_changed ) {
+			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
+		}
+
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
@@ -396,17 +406,6 @@ class Admin_Notices extends Module {
 				'type' => 'cta',
 			],
 		];
-
-		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
-		$notice_version     = $notice['meta']['version'] ?? null;
-		$is_version_changed = $this->get_elementor_version() !== $notice_version;
-		if ( $is_version_changed ) {
-			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
-		}
-
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
 
 		$excluded_pages = [];
 		$this->print_admin_notice( $options, $excluded_pages );
