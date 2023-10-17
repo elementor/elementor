@@ -1363,6 +1363,73 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
+	test( 'Nested tabs horizontal scroll - rtl', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		await wpAdmin.setLanguage( 'he_IL' );
+
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			frame = await editor.getPreviewFrame();
+
+		// Add widget.
+		await editor.addWidget( 'nested-tabs', container );
+
+		await test.step( 'Set scrolling settings', async () => {
+			await editor.openSection( 'section_tabs_responsive' );
+			await page.selectOption( '.elementor-control-breakpoint_selector >> select', { value: 'none' } );
+			await page.selectOption( '.elementor-control-horizontal_scroll >> select', { value: 'enable' } );
+
+			await editor.openSection( 'section_tabs' );
+			Array.from( { length: 3 }, async () => {
+				await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child( 2 ) .elementor-repeater-row-tools .elementor-repeater-tool-duplicate' ).click();
+			} );
+		} );
+
+		await test.step( 'Assert scrolling behaviour inside the Editor', async () => {
+			await page.waitForTimeout( 1000 );
+
+			const widgetHeading = frame.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+
+			await editor.changeResponsiveView( 'mobile' );
+			await editor.isUiStable( frame.locator( '.e-n-tabs-heading' ) );
+
+			const isFirstItemVisible = await isTabTitleVisible( frame, 0 ),
+				isLastItemVisible = await isTabTitleVisible( frame, ( itemCount - 1 ) );
+
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
+			await expect.soft( await frame.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
+
+			expect.soft( await frame.locator( '.e-n-tabs-heading' ).first().screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-editor.png' );
+		} );
+
+		await test.step( 'Assert scrolling behaviour on the Frontend', async () => {
+			await editor.publishAndViewPage();
+
+			const widgetHeading = page.locator( '.e-n-tabs-heading' ),
+				itemCount = await widgetHeading.evaluate( ( element ) => element.querySelectorAll( '.e-n-tab-title' ).length );
+
+			await page.setViewportSize( viewportSize.mobile );
+			await editor.isUiStable( page.locator( '.e-n-tabs-heading' ) );
+
+			const isFirstItemVisible = await isTabTitleVisible( page, 0 ),
+				isLastItemVisible = await isTabTitleVisible( page, ( itemCount - 1 ) );
+
+			await expect.soft( isFirstItemVisible ).toBeTruthy();
+			await expect.soft( isLastItemVisible ).not.toBeTruthy();
+			await expect.soft( await page.locator( '.e-n-tabs-heading' ) ).toHaveCSS( 'justify-content', 'start' );
+
+			expect.soft( await page.locator( '.e-n-tabs-heading' ).first().screenshot( {
+				type: 'png',
+			} ) ).toMatchSnapshot( 'tabs-horizontal-scroll-initial-frontend.png' );
+		} );
+	} );
+
 	test( 'Nested tabs stretch for right direction', async ( { page }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo );
