@@ -23,7 +23,7 @@ global.HTMLElement = class {
 window.getComputedStyle = jest.fn().mockReturnValue( { gap: 10 } );
 
 // Mock elementorFrontend
-global.elementorFrontend = { config: { isRTL: false } };
+global.elementorFrontend = { config: { is_rtl: false } };
 
 describe( 'Test horizontal scroll functions', () => {
 	test( 'changeScrollStatus', () => {
