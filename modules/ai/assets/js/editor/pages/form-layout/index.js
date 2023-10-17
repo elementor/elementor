@@ -152,7 +152,7 @@ const FormLayout = ( { onClose, onInsert, onData, onSelect, onGenerate, DialogHe
 
 	const handleScreenshotClick = ( index, template ) => {
 		return () => {
-			if ( isPromptFormActive ) {
+			if ( isPromptFormActive || isInserting ) {
 				return;
 			}
 
