@@ -65,6 +65,10 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+      - uses: actions/upload-artifact@v3
+        with:
+            name: ${{ env.PLUGIN_ZIP_FILENAME }}
+            path: elementor-*.zip
       # - name: Generate changelog
       #   uses: ./.github/workflows/generate-changelog
       #   with:
