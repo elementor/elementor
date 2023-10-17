@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.16.6 - 2023-10-17 =
+
+* Fix: Improved code security enforcement in Dynamic Tag Fallback control
+
 = 3.16.5 - 2023-10-09 =
 
 * Fix: Widget panel appears empty for Editor role with "Access to edit content only" permission ([#23696](https://github.com/elementor/elementor/issues/23696))
