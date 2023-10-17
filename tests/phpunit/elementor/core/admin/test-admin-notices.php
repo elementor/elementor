@@ -81,17 +81,16 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$admin_notices_mock = $this->getMockBuilder(Admin_Notices::class)
-			->setMethods(['elementor_version'])
+		$admin_notices_mock = $this->getMockBuilder( Admin_Notices::class )
+			->setMethods( [ 'get_elementor_version' ] )
 			->getMock();
 
-		//Act
+		// Act
 		update_option( 'elementor_install_history', [ '1.0.0' => time() ] );
 
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('1.0.0');
 
-		// Act
 		ob_start();
 		do_action( 'admin_notices' );
 		$result = ob_get_clean();
@@ -102,23 +101,14 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 
 	public function test_notice_not_appearing_on_second_install_for_author() {
 		// Arrange
-		$admin_notices_mock = $this->getMockBuilder(Admin_Notices::class)
-			->setMethods(['elementor_version'])
+		$admin_notices_mock = $this->getMockBuilder( Admin_Notices::class )
+			->setMethods( [ 'get_elementor_version' ] )
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time() ] );
+		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
 
-		$admin_notices_mock->method('elementor_version')
-			->willReturn('1.0.0');
-
-		ob_start();
-		do_action( 'admin_notices' );
-		ob_get_clean();
-
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() ] );
-
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
@@ -133,23 +123,14 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$admin_notices_mock = $this->getMockBuilder(Admin_Notices::class)
-			->setMethods(['elementor_version'])
+		$admin_notices_mock = $this->getMockBuilder( Admin_Notices::class )
+			->setMethods( [ 'get_elementor_version' ] )
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time() ] );
+		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
 
-		$admin_notices_mock->method('elementor_version')
-			->willReturn('1.0.0');
-
-		ob_start();
-		do_action( 'admin_notices' );
-		ob_get_clean();
-
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() ] );
-
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
@@ -164,23 +145,14 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$admin_notices_mock = $this->getMockBuilder(Admin_Notices::class)
-			->setMethods(['elementor_version'])
+		$admin_notices_mock = $this->getMockBuilder( Admin_Notices::class )
+			->setMethods( [ 'get_elementor_version' ] )
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time() ] );
+		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
 
-		$admin_notices_mock->method('elementor_version')
-			->willReturn('1.0.0');
-
-		ob_start();
-		do_action( 'admin_notices' );
-		ob_get_clean();
-
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() ] );
-
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
@@ -188,7 +160,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		ob_get_clean();
 
 		$notice_id = 'design_not_appearing';
-		User::set_notice_viewed( $notice_id, false );
+		User::set_user_notice( $notice_id );
 
 		ob_start();
 		do_action( 'admin_notices' );
@@ -202,23 +174,14 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$admin_notices_mock = $this->getMockBuilder(Admin_Notices::class)
-			->setMethods(['elementor_version'])
+		$admin_notices_mock = $this->getMockBuilder( Admin_Notices::class )
+			->setMethods( [ 'get_elementor_version' ] )
 			->getMock();
 
 		//Act
-		update_option( 'elementor_install_history', [ '1.0.0' => time() ] );
+		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1 ] );
 
-		$admin_notices_mock->method('elementor_version')
-			->willReturn('1.0.0');
-
-		ob_start();
-		do_action( 'admin_notices' );
-		ob_get_clean();
-
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() ] );
-
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('2.0.0');
 
 		ob_start();
@@ -226,11 +189,15 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		ob_get_clean();
 
 		$notice_id = 'design_not_appearing';
-		User::set_notice_viewed( $notice_id, false );
+		User::set_user_notice( $notice_id );
 
-		update_option( 'elementor_install_history', [ '1.0.0' => time(), '2.0.0' => time() + 1, '3.0.0' => time() + 2 ] );
+		update_option( 'elementor_install_history', [
+			'1.0.0' => time(),
+			'2.0.0' => time() + 1,
+			'3.0.0' => time() + 2,
+		] );
 
-		$admin_notices_mock->method('elementor_version')
+		$admin_notices_mock->method('get_elementor_version')
 			->willReturn('3.0.0');
 
 		ob_start();
