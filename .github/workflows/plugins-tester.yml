@@ -109,6 +109,8 @@ jobs:
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
+      - name: simulate failure
+        run: exit 1
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
