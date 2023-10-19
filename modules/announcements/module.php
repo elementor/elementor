@@ -93,9 +93,9 @@ class Module extends BaseApp {
 				'title' => 'Unlock the Power of Elementor AI',
 				'description' => '<p>Design professional websites with natively integrated AI tools.</p>
 				<ul>
-					<li>Effortlessly generate captivating text and flawless code - all at the touch of a prompt.</li>
-					<li>Choose from twenty-nine preset styles that will supercharge your prompts and check out the image-prompt gallery for inspiration. </li>
-					<li>Create custom code, write content, and generate images with Elementor’s comprehensive AI toolbox.</li>
+					<li>Let AI write or edit your text, adjust its length and tone of voice. Also generate custom code that seamlessly integrates into your website.</li>
+					<li>Create one-of-a kind images, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Access and repurpose previously-generated prompts with Elementor’s AI History Panel to streamline your workflow and ensure consistency.</li>
 				</ul>',
 				'media' => [
 					'type' => 'image',
