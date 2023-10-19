@@ -394,19 +394,22 @@ class Admin_Notices extends Module {
 			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
 		}
 
+		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard', 'update-core', 'plugins' ], true ) ) {
+			return false;
+		}
+
 		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
 		$options = [
-			'title' => esc_html__( 'Design not appearing as expected?', 'elementor' ),
-			'description' => esc_html__( 'Unexpected changes may occur after you update the plugin. Don\'t worry - we\'ve collected all the fixes for troubleshooting common issues.', 'elementor' ),
+			'title' => esc_html__( 'The version was updated successfully!', 'elementor' ),
+			'description' => sprintf(
+				esc_html__( 'Encountering issues after updating the version? Don’t worry - we’ve collected all the fixes for troubleshooting common issues. %1$sFind a solution%2$s', 'elementor' ),
+				'<a href="https://go.elementor.com/wp-dash-changes-do-not-appear-online/" target="_blank">',
+				'</a>'
+			),
 			'id' => $notice_id,
-			'button' => [
-				'text' => esc_html__( 'Find a solution', 'elementor' ),
-				'url' => 'https://go.elementor.com/wp-dash-changes-do-not-appear-online/',
-				'type' => 'cta',
-			],
 		];
 
 		$excluded_pages = [];
