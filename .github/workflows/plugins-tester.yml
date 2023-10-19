@@ -120,7 +120,7 @@ jobs:
       needs: Plugin-tester
       if: ${{ always() }} # Will be run even if 'Plugin-tester' matrix will be skipped
       runs-on: ubuntu-22.04
-      name: Playwright - Test Results
+      name: Plugin Tester - Test Results
       steps:
         - name: Test status
           run: echo "Test status is - ${{ needs.Plugin-tester.result }}"
