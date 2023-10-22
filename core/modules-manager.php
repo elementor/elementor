@@ -97,6 +97,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'nested-elements',
+			'optimize-controls',
 			// Depends on Nested Elements module
 			'nested-tabs',
 			'nested-accordion',

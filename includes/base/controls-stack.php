@@ -393,6 +393,12 @@ abstract class Controls_Stack extends Base_Object {
 			'position' => null,
 		];
 
+		$should_optimize_controls = $this->should_optimize_controls();
+
+		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::RAW_HTML, Controls_Manager::DIVIDER, Controls_Manager::HEADING, Controls_Manager::BUTTON ] ) ) {
+			return false;
+		}
+
 		if ( isset( $args['scheme'] ) ) {
 			$args['global'] = [
 				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args['scheme'] ),
@@ -431,7 +437,40 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
+		if ( $should_optimize_controls ) {
+			unset(
+				$args['label_block'],
+				$args['label'],
+				$args['tab'],
+				$args['options'],
+				$args['separator'],
+				$args['size_units'],
+				$args['range'],
+				$args['render_type'],
+				$args['toggle'],
+				$args['ai'],
+				$args['label_on'],
+				$args['label_off'],
+				$args['labels'],
+				$args['handles'],
+			);
+		}
+
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
+	}
+
+	private function should_optimize_controls() {
+		static $retval = null;
+
+		if ( null === $retval ) {
+			$retval = (
+				Plugin::$instance->experiments->is_feature_active( 'e_optimize_controls' )
+				&& ! is_admin()
+				&& ! \Elementor\Plugin::$instance->preview->is_preview_mode()
+			);
+		}
+
+		return $retval;
 	}
 
 	/**
