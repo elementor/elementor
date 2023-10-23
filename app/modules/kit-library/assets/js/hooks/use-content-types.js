@@ -1,5 +1,6 @@
 import ContentType from '../models/content-type';
 import { useQuery } from 'react-query';
+import { useSettingsContext } from '../context/settings-context';
 
 export const KEY = 'content-types';
 
@@ -10,14 +11,18 @@ export const KEY = 'content-types';
  * @return {import('react-query').UseQueryResult<Promise.constructor, unknown>} result
  */
 export default function useContentTypes() {
-	return useQuery( [ KEY ], fetchContentTypes );
+	const { settings } = useSettingsContext();
+
+	return useQuery( [ KEY, settings ], () => fetchContentTypes( settings.access_tier ) );
 }
 
 /**
+ * @param {string} tier - Current user tier.
+ *
  * @return {Promise.constructor} content types
  */
-function fetchContentTypes() {
-	return Promise.resolve( [
+function fetchContentTypes( tier ) {
+	const contentTypes = [
 		{
 			id: 'page',
 			label: __( 'Pages', 'elementor' ),
@@ -46,13 +51,37 @@ function fetchContentTypes() {
 			],
 			order: 1,
 		},
-		{
+	];
+
+	// BC: When there is no tier, fallback to legacy (Core/Pro dependency).
+	const currentTier = tier || 'legacy';
+
+	if ( isValidTier( currentTier, 'legacy' ) ) {
+		contentTypes.push( {
 			id: 'popup',
 			label: __( 'Popups', 'elementor' ),
 			doc_types: [ 'popup' ],
 			order: 2,
-		},
-	] ).then( ( data ) => {
+		} );
+	}
+
+	return Promise.resolve( contentTypes ).then( ( data ) => {
 		return data.map( ( contentType ) => ContentType.createFromResponse( contentType ) );
 	} );
+}
+
+function isValidTier( currentTier, expectedTier ) {
+	const tiers = {
+		essential: 10,
+		legacy: 15,
+		advanced: 20,
+		expert: 30,
+		agency: 40,
+	};
+
+	if ( ! tiers[ currentTier ] || ! tiers[ expectedTier ] ) {
+		return false;
+	}
+
+	return tiers[ currentTier ] >= tiers[ expectedTier ];
 }
