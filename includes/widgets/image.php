@@ -31,6 +31,7 @@ class Widget_Image extends Widget_Base {
 		return 'image';
 	}
 
+	
 	/**
 	 * Get widget title.
 	 *
