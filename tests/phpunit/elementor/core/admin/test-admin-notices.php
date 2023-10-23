@@ -144,7 +144,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		//Assert
-		$this->assertContains( 'Design not appearing as expected?', $result );
+		$this->assertContains( 'The version was updated successfully!', $result );
 	}
 
 	public function test_notice_not_appearing_on_second_install_for_admin_if_viewed() {
@@ -205,6 +205,6 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		//Assert
-		$this->assertContains( 'Design not appearing as expected?', $result );
+		$this->assertContains( 'The version was updated successfully!', $result );
 	}
 }
