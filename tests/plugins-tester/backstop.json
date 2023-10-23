@@ -40,7 +40,8 @@
 	"engineOptions": {
 		"args": [
 			"--no-sandbox"
-		]
+		],
+		"headless": "new"
 	},
 	"asyncCaptureLimit": 5,
 	"asyncCompareLimit": 50,
