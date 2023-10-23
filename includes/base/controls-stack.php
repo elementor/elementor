@@ -464,8 +464,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		if ( null === $retval ) {
 			$retval = (
-				Plugin::$instance->experiments->is_feature_active( 'e_optimize_controls' )
-				&& ! is_admin()
+				! is_admin()
 				&& ! \Elementor\Plugin::$instance->preview->is_preview_mode()
 			);
 		}
