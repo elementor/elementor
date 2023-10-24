@@ -278,7 +278,7 @@ class Control_Media extends Control_Base_Multiple {
 			<# if ( data.has_sizes ) { #>
 			<div class="elementor-control-type-select e-control-image-size">
 				<div class="elementor-control-field">
-					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Size', 'elementor' ); ?></label>
+					<label class="elementor-control-title" data-e-responsive-switcher-sibling="false" for="<?php $this->print_control_uid( 'size' ); ?>"><?php echo esc_html__( 'Image Resolution', 'elementor' ); ?></label>
 					<div class="elementor-control-input-wrapper elementor-control-unit-5">
 						<select class="e-image-size-select" id="<?php $this->print_control_uid( 'size' ); ?>" data-setting="size">
 							<?php foreach ( $this->get_image_sizes() as $size_key => $size_title ) : ?>
