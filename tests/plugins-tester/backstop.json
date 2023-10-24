@@ -18,6 +18,7 @@
 		{
 			"label": "law-firm-about-editor",
 			"url": "http://localhost:7777/law-firm-about/?elementor",
+			"onReadyScript": "scroll-to-bottom.cjs",
 			"readyEvent": "Elementor is ready!",
 			"removeSelectors": [
 				"#e-announcements-root"
@@ -40,8 +41,7 @@
 	"engineOptions": {
 		"args": [
 			"--no-sandbox"
-		],
-		"headless": "new"
+		]
 	},
 	"asyncCaptureLimit": 5,
 	"asyncCompareLimit": 50,
