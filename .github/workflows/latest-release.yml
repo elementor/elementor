@@ -9,6 +9,13 @@ on:
     types: [closed]
     branches:
       - main
+  workflow_dispatch:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
 
 permissions:
   contents: write
@@ -21,7 +28,7 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+#     if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
