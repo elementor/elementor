@@ -9,6 +9,13 @@ on:
     types: [closed]
     branches:
       - main
+  workflow_dispatch:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
 
 # Cancel in-progress jobs or runs for the current workflow run
 concurrency:
@@ -17,7 +24,7 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+#     if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
@@ -30,12 +37,6 @@ jobs:
         with:
           filename: './.github/workflows/config.json'
           prefix: config
-      - name: Test permissions
-        uses: ./.github/workflows/permissions
-        with:
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
       - name: Install Node.js 18.x
         uses: actions/setup-node@v3
         with:
