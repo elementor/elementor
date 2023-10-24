@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  id-token: "write"
 
 # Cancel in-progress jobs or runs for the current workflow run
 concurrency:
