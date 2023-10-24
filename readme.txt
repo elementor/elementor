@@ -240,6 +240,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+
 = 3.17.0 - 2023-10-24 =
 
 * New: AI History - Quickly restore AI-generated content, enhancing your workflow by improving content recovery and acceleration
