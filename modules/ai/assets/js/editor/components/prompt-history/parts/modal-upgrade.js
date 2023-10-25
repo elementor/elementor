@@ -1,4 +1,6 @@
 import { Button, Stack, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { UpgradeIcon } from '@elementor/icons';
 import { getTranslatedPromptHistoryType, HISTORY_TYPES } from '../history-types';
 

@@ -1,4 +1,5 @@
 import { Box, Skeleton } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import ScreenshotContainer from './screenshot-container';
 import ScreenshotUnavailable from './screenshot-unavailable';
 
