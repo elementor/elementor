@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { TextField } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const Textarea = forwardRef( ( props, ref ) => {
 	return (
