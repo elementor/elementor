@@ -9,6 +9,13 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
+	public function tearDown() {
+		parent::tearDown();
+
+		$_REQUEST  = [];
+		$_FILES = [];
+	}
+
 	public function test_should_return_elementor_pro_link() {
 		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
@@ -279,7 +286,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
 	}
 
-	public function test_get_super_global_value__files() {
+	public function test_get_super_global_value__single_file() {
 		// Arrange
 		$_FILES['file'] = [
 			'name' => '..%2ffile_upload_test.php',
@@ -302,6 +309,74 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( $sanitized, $file);
+	}
+
+	public function test_get_super_global_value__with_multiple_files() {
+		// Arrange
+		$key   = 'test';
+		$value = [
+			[
+				[
+					'name' => 'test file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+				[
+					'name' => 'test file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+			],
+			[
+				[
+					'name' => 'test file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+			],
+		];
+
+		$_FILES[ $key ] = $value;
+
+		// Act
+		$result = Utils::get_super_global_value( $_FILES, $key );
+
+		// Assert
+		$sanitized_files = [
+			[
+				[
+					'name' => 'test-file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+				[
+					'name' => 'test-file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+			],
+			[
+				[
+					'name' => 'test-file.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => __DIR__ . '/mock/mock-file.txt',
+					'error' => 0,
+					'size' => 123,
+				],
+			],
+		];
+
+		$this->assertEquals( $sanitized_files, $result );
 	}
 
 	private function create_mocked_elements_data( $url ) {
