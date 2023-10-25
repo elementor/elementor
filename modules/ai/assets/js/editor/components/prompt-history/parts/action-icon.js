@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import TextIcon from '../../../icons/text-icon';
 import { AIIcon } from '@elementor/icons';
 import CodeIcon from '../../../icons/code-icon';
