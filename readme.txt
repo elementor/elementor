@@ -240,7 +240,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.17.0 - 2023-10-24 =
+= 3.17.0 - 2023-10-25 =
 
 * New: AI History - Quickly restore AI-generated content, enhancing your workflow by improving content recovery and acceleration
 * New: Revamped Rating widget - enhanced flexibility for customizable visual rating scales, elevating your designs to be more engaging and interactive ([#18793](https://github.com/elementor/elementor/issues/18793), [#10529](https://github.com/elementor/elementor/issues/10529), [#18169](https://github.com/elementor/elementor/issues/18169), [#20651](https://github.com/elementor/elementor/issues/20651), [#10127](https://github.com/elementor/elementor/issues/10127))
