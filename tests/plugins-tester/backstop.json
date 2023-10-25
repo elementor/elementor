@@ -18,7 +18,6 @@
 		{
 			"label": "law-firm-about-editor",
 			"url": "http://localhost:7777/law-firm-about/?elementor",
-			"onReadyScript": "reload-page.cjs",
 			"readyEvent": "Elementor is ready!",
 			"removeSelectors": [
 				"#e-announcements-root"
