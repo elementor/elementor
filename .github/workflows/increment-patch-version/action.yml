@@ -20,7 +20,7 @@ runs:
           # sort -V: The sort command is used to sort the version numbers in numerical order (-V flag ensures the sorting is done correctly for version numbers).
           # tail -1: Finally, the tail command retrieves the last (most recent) version number from the sorted list.
 
-          latest_ga_version=$(git ls-remote --tags | grep "$major_minor" | awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}' | sort -V | tail -1)
+          latest_ga_version=$(git ls-remote --tags | grep "refs/tags/$major_minor" | awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}' | sort -V | tail -1)
           echo "latest_ga_version is=${latest_ga_version}"
           # Exit with status code 0 if no latest version is found
           if [ -z "$latest_ga_version" ]; then
