@@ -1,4 +1,5 @@
 import { InputAdornment } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Textarea from '../../../components/textarea';
 import EnhanceButton from './enhance-button';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const ChevronRightIcon = React.forwardRef( ( props, ref ) => {
