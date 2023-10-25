@@ -22,6 +22,7 @@ concurrency:
 jobs:
   latest_release:
     if: github.event.pull_request.merged == true && github.base_ref == 'main' && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    permissions: write-all
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
@@ -67,12 +68,15 @@ jobs:
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
-          release_name: "${{ env.PACKAGE_VERSION }}: ${{ github.event.pull_request.title }}"
+          target_commitish: ${{ env.CLEAN_REF }}
+          files: elementor-*.zip
           body: "Automated release for ${{ env.PACKAGE_VERSION }}"
-          draft: false
-          prerelease: false
+          prerelease: ${{ env.PRERELEASE }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Post To Slack Created Latest auto Release
         if: ${{ github.event.inputs.pre_release }} == false
         uses: ./.github/workflows/post-to-slack
