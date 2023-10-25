@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.17.1 - 2023-10-25 =
+
+* Error message appears when loading the Theme Builder
+
 = 3.17.0 - 2023-10-25 =
 
 * New: AI History - Quickly restore AI-generated content, enhancing your workflow by improving content recovery and acceleration
