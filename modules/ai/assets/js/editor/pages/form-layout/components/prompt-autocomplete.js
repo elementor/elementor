@@ -1,5 +1,6 @@
 import { useState, forwardRef } from 'react';
 import { Autocomplete, TextField } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const TextInput = forwardRef( ( props, ref ) => (
 	<TextField

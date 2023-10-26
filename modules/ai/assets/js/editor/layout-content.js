@@ -7,6 +7,8 @@ import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
 import LayoutDialog from './pages/form-layout/components/layout-dialog';
 import { Alert } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import useIntroduction from './hooks/use-introduction';
 
 const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGenerate } ) => {

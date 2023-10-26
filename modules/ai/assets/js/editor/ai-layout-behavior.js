@@ -1,4 +1,5 @@
 import LayoutApp from './layout-app';
+import { __ } from '@wordpress/i18n';
 import { onConnect } from './helpers';
 import { takeScreenshot } from './utils/screenshot';
 import { startHistoryLog } from './utils/history';

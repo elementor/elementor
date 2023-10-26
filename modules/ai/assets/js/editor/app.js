@@ -1,4 +1,5 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import PageContent from './page-content';
 import { onConnect } from './helpers';
 
