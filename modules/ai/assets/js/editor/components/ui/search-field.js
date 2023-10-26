@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { TextField, InputAdornment, styled } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import { SearchIcon } from '@elementor/icons';
 
 // Customization for the WP admin global CSS.

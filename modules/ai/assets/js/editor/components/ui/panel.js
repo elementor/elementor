@@ -1,4 +1,5 @@
 import { Box, Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const Panel = ( { sx = {}, ...props } ) => {
 	return (

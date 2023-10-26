@@ -1,4 +1,5 @@
 import { ImageList, ImageListItem, Box } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Overlay from '../../../components/ui/overlay';
 import OverlayBar from '../../../components/ui/overlay-bar';
 import OverlayBarText from '../../../components/ui/overlay-bar-text';

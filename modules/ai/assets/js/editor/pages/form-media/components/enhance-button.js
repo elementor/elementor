@@ -1,4 +1,6 @@
 import { CircularProgress, Tooltip, Box, IconButton, withDirection } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import WandIcon from '../../../icons/wand-icon';
 
 const StyledWandIcon = withDirection( WandIcon );

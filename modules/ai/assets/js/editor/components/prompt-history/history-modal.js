@@ -1,4 +1,5 @@
 import { Box, LinearProgress } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import usePromptHistory from '../../hooks/use-prompt-history';
 import PromptHistoryModalHeader from './parts/modal-header';
 import { useEffect, useRef } from 'react';
