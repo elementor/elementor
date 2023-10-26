@@ -9,7 +9,7 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
+	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 
 	const eventTracking = ( command ) => {

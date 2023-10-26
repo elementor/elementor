@@ -1,6 +1,7 @@
 import ContentType from '../models/content-type';
 import { useQuery } from 'react-query';
 import { useSettingsContext } from '../context/settings-context';
+import { isTierAtLeast, TIERS } from '../tiers';
 
 export const KEY = 'content-types';
 
@@ -54,9 +55,10 @@ function fetchContentTypes( tier ) {
 	];
 
 	// BC: When there is no tier, fallback to legacy (Core/Pro dependency).
-	const currentTier = tier || 'legacy';
+	const currentTier = tier || TIERS.legacy;
+	const tierThatSupportsPopups = TIERS.legacy;
 
-	if ( isValidTier( currentTier, 'legacy' ) ) {
+	if ( isTierAtLeast( currentTier, tierThatSupportsPopups ) ) {
 		contentTypes.push( {
 			id: 'popup',
 			label: __( 'Popups', 'elementor' ),
@@ -68,20 +70,4 @@ function fetchContentTypes( tier ) {
 	return Promise.resolve( contentTypes ).then( ( data ) => {
 		return data.map( ( contentType ) => ContentType.createFromResponse( contentType ) );
 	} );
-}
-
-function isValidTier( currentTier, expectedTier ) {
-	const tiers = {
-		essential: 10,
-		legacy: 15,
-		advanced: 20,
-		expert: 30,
-		agency: 40,
-	};
-
-	if ( ! tiers[ currentTier ] || ! tiers[ expectedTier ] ) {
-		return false;
-	}
-
-	return tiers[ currentTier ] >= tiers[ expectedTier ];
 }

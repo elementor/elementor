@@ -318,6 +318,7 @@ class Source_Remote extends Source_Base {
 			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
 			'accessLevel' => $template_data['access_level'],
+			'accessTier' => $template_data['access_tier'],
 			'popularityIndex' => (int) $template_data['popularity_index'],
 			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),

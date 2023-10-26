@@ -256,6 +256,7 @@ class Repository {
 				'title' => $kit->title,
 				'thumbnail_url' => $kit->thumbnail,
 				'access_level' => $kit->access_level,
+				'access_tier' => $kit->access_tier,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies->values(),
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
