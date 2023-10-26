@@ -210,7 +210,7 @@ class Module extends BaseModule {
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_LEGACY => [
-				'label' => 'Advanced', // Should be the same label as "Advanced".
+				'label' => 'Pro', // Should be the same label as "Advanced".
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
