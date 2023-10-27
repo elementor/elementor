@@ -45,6 +45,9 @@ export default {
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
+		launchOptions: {
+			args: [ '--remote-debugging-port=9222' ],
+		},
 		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
