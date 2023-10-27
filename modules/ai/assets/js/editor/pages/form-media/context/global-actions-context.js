@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { createContext, useContext } from 'react';
 
 export const GlobalActionsContext = createContext( {} );

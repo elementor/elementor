@@ -1,4 +1,5 @@
 import { Stack } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import useImageSize from '../../hooks/use-image-size';

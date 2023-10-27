@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, Paper } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Draggable from 'react-draggable';
 import DialogHeader from './dialog-header';
 

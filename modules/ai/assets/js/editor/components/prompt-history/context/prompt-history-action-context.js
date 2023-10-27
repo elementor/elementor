@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { HISTORY_TYPES } from '../history-types';
 import { usePromptHistoryContext } from './prompt-history-context';

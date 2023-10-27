@@ -1,4 +1,5 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import LayoutContent from './layout-content';
 
 const LayoutApp = ( {
