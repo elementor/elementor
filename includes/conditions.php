@@ -82,7 +82,7 @@ class Conditions {
 			if ( ! empty( $term['terms'] ) ) {
 				$comparison_result = self::check( $term, $comparison );
 			} else {
-				preg_match( '/(\w+)(?:\[(\w+)])?/', $term['name'], $parsed_name );
+				$parsed_name = self::parse_name( $term['name'] );
 
 				$value = $comparison[ $parsed_name[1] ];
 
@@ -109,5 +109,27 @@ class Conditions {
 		}
 
 		return $condition_succeed;
+	}
+
+	/**
+	 * Fast name parsing logic.
+	 * Replacement for previosly used regex: '/(\w+)(?:\[(\w+)])?/'.
+	 *
+	 * @param string $name Name to parse.
+	 *
+	 * @return string[] Parsing result.
+	 */
+	private static function parse_name( string $name ): array {
+		$open_bracket_pos = strpos( $name, '[' );
+		if( $open_bracket_pos === false ) {
+			return [ $name ];
+		}
+
+		$close_bracket_pos = strpos( $name, ']' );
+
+		$first_part = substr( $name, 0, $open_bracket_pos );
+		$second_part = substr( $name, $open_bracket_pos + 1, $close_bracket_pos - $open_bracket_pos - 1 );
+
+		return [ $first_part, $second_part ];
 	}
 }
