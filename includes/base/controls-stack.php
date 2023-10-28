@@ -1425,6 +1425,9 @@ abstract class Controls_Stack extends Base_Object {
 			$controls = $this->get_controls();
 		}
 
+		$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+		$control_responsive = isset( $control['responsive'] );
+
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			list( $pure_condition_key, $condition_sub_key, $is_negative_condition ) = self::parse_condition_key( $condition_key );
 
@@ -1432,16 +1435,14 @@ abstract class Controls_Stack extends Base_Object {
 				return false;
 			}
 
-			$are_control_and_condition_responsive = isset( $control['responsive'] ) && ! empty( $controls[ $pure_condition_key ]['responsive'] );
+			$are_control_and_condition_responsive = $control_responsive && ! empty( $controls[ $pure_condition_key ]['responsive'] );
 			$condition_name_to_check = $pure_condition_key;
 
 			if ( $are_control_and_condition_responsive ) {
-				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
-
 				$condition_name_to_check = $pure_condition_key . $device_suffix;
 
 				// If the control is not desktop, and a conditioning control for the corresponding device exists, use it.
-				$instance_value = $values[ $pure_condition_key . $device_suffix ] ?? $values[ $pure_condition_key ];
+				$instance_value = $values[ $condition_name_to_check ] ?? $values[ $pure_condition_key ];
 			} else {
 				$instance_value = $values[ $pure_condition_key ];
 			}
