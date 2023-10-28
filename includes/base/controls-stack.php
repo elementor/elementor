@@ -1358,6 +1358,44 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Fast condition key parsing logic
+	 *
+	 * @param string $condition_key Condition Key
+	 *
+	 * @return array Result array containing Condition key (string), Condition sub key (string) and whether the condition is negated (bool)
+	 */
+	private static function parse_condition_key( string $condition_key ): array {
+		// Check for negation
+		$is_negative_condition = substr( $condition_key, -1 ) === '!';
+		if ( $is_negative_condition ) {
+			// Remove ! for further processing
+			$condition_key = substr( $condition_key, 0, -1 );
+		}
+
+    	$condition_sub_key = '';
+
+		// Check for negation
+		if ( substr( $condition_key, -1 ) === '!' ) {
+			$is_negative_condition = true;
+
+			// Remove ! for further processing
+			$condition_key = substr( $condition_key, 0, -1 );
+		}
+
+     	// Check for brackets
+    	if ( strrpos( $condition_key, ']' ) === ( strlen( $condition_key ) - 1 ) && ( $pos = strpos( $condition_key, '[' ) ) !== false ) {
+        	$pure_condition_key = substr( $condition_key, 0, $pos );
+
+			// Remove the last char and get the key
+        	$condition_sub_key = substr( $condition_key, $pos + 1, -1 );
+    	} else {
+        	$pure_condition_key = $condition_key;
+    	}
+
+		return [ $pure_condition_key, $condition_sub_key, $is_negative_condition ];
+	}
+
+	/**
 	 * Whether the control is visible or not.
 	 *
 	 * Used to determine whether the control is visible or not.
@@ -1388,11 +1426,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
-			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
-
-			$pure_condition_key = $condition_key_parts[1];
-			$condition_sub_key = $condition_key_parts[2];
-			$is_negative_condition = ! ! $condition_key_parts[3];
+			list( $pure_condition_key, $condition_sub_key, $is_negative_condition ) = self::parse_condition_key( $condition_key );
 
 			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
