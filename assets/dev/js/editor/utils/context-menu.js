@@ -23,7 +23,7 @@ module.exports = elementorModules.Module.extend( {
 	buildActionItem( action ) {
 		var self = this,
 			classes = self.getSettings( 'classes' ),
-			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name, role: 'menuitem' } ),
+			$item = jQuery( '<div>', { class: classes.item + ' ' + classes.itemTypePrefix + action.name, role: 'menuitem', tabindex: '0' } ),
 			$itemTitle = jQuery( '<div>', { class: classes.itemTitle } ).text( action.title ),
 			$itemIcon = jQuery( '<div>', { class: classes.iconShortcut } );
 
@@ -42,6 +42,14 @@ module.exports = elementorModules.Module.extend( {
 		if ( action.callback ) {
 			$item.on( 'click', function() {
 				self.runAction( action );
+			} );
+			$item.on( 'keyup', function( event ) {
+				const ENTER_KEY = 13,
+				  SPACE_KEY = 32;
+
+				if ( ENTER_KEY === event.keyCode || SPACE_KEY === event.keyCode ) {
+					self.runAction( action );
+				}
 			} );
 		}
 
