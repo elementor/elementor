@@ -395,7 +395,14 @@ abstract class Controls_Stack extends Base_Object {
 
 		$should_optimize_controls = $this->should_optimize_controls();
 
-		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::RAW_HTML, Controls_Manager::DIVIDER, Controls_Manager::HEADING, Controls_Manager::BUTTON ] ) ) {
+		$ui_controls = [
+			Controls_Manager::RAW_HTML,
+			Controls_Manager::DIVIDER,
+			Controls_Manager::HEADING,
+			Controls_Manager::BUTTON,
+		];
+
+		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], $ui_controls ) ) {
 			return false;
 		}
 
@@ -452,7 +459,7 @@ abstract class Controls_Stack extends Base_Object {
 				$args['label_on'],
 				$args['label_off'],
 				$args['labels'],
-				$args['handles'],
+				$args['handles']
 			);
 		}
 
