@@ -15,8 +15,7 @@ runs:
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
 
-            CLEAN_REF=$(echo $CLEAN_PACKAGE_NAME | cut -d'.' -f1-2)
-            CLEAN_REF=${CLEAN_REF#refs/heads/}
+            CLEAN_REF =$(echo $CLEAN_PACKAGE_NAME | cut -d'.' -f1-2)
             echo "CLEAN_REF=${CLEAN_REF}" >> $GITHUB_ENV
             echo "CLEAN_REF=${CLEAN_REF}"
 
