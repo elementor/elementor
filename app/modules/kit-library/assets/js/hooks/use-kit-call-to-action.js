@@ -9,9 +9,10 @@ export const TYPE_APPLY = 'apply';
 export default function useKitCallToAction( kitAccessTier ) {
 	const { settings } = useSettingsContext();
 
-	// BC: When user has old Pro version which doesn't set the access_tier.
+	// BC: When user has old Pro version which doesn't override the `free` access_tier.
 	let userAccessTier = settings.access_tier;
-	const shouldFallbackToLegacy = userAccessTier === TIERS.free && settings.is_pro;
+	const isPaidUser = settings.access_level > 0;
+	const shouldFallbackToLegacy = isPaidUser && userAccessTier === TIERS.free;
 
 	if ( shouldFallbackToLegacy ) {
 		userAccessTier = TIERS.legacy;

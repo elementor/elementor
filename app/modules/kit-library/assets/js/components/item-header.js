@@ -10,6 +10,7 @@ import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { isTierAtLeast, TIERS } from '../tiers';
 
 import './item-header.scss';
 
@@ -99,10 +100,12 @@ export default function ItemHeader( props ) {
 				if ( 401 === errorResponse.code ) {
 					elementorCommon.config.library_connect.is_connected = false;
 					elementorCommon.config.library_connect.current_access_level = 0;
+					elementorCommon.config.library_connect.current_access_tier = TIERS.free;
 
 					updateSettings( {
 						is_library_connected: false,
 						access_level: 0,
+						access_tier: TIERS.free,
 					} );
 
 					setIsConnectDialogOpen( true );
@@ -167,16 +170,23 @@ export default function ItemHeader( props ) {
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
 						const accessLevel = data.kits_access_level || data.access_level || 0;
+						const accessTier = data.access_tier;
 
 						elementorCommon.config.library_connect.is_connected = true;
 						elementorCommon.config.library_connect.current_access_level = accessLevel;
+						elementorCommon.config.library_connect.current_access_tier = accessTier;
 
 						updateSettings( {
 							is_library_connected: true,
 							access_level: accessLevel, // BC: Check for 'access_level' prop
+							access_tier: accessTier,
 						} );
 
 						if ( data.access_level < props.model.accessLevel ) {
+							return;
+						}
+
+						if ( ! isTierAtLeast( accessTier, props.model.accessTier ) ) {
 							return;
 						}
 
