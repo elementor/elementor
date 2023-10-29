@@ -388,11 +388,6 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
-		$default_options = [
-			'overwrite' => false,
-			'position' => null,
-		];
-
 		$should_optimize_controls = $this->should_optimize_controls();
 
 		$ui_controls = [
@@ -405,6 +400,11 @@ abstract class Controls_Stack extends Base_Object {
 		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], $ui_controls ) ) {
 			return false;
 		}
+
+		$default_options = [
+			'overwrite' => false,
+			'position' => null,
+		];
 
 		if ( isset( $args['scheme'] ) ) {
 			$args['global'] = [
