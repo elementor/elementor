@@ -23,7 +23,7 @@ runs:
             echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
 
             # e.g. 3.17
-            CLEAN_REF =$(echo "$PACKAGE_VERSION" | cut -d'.' -f1-2)
+            CLEAN_REF=$(echo "$PACKAGE_VERSION" | cut -d'.' -f1-2)
             echo "CLEAN_REF=${CLEAN_REF}" >> $GITHUB_ENV
             echo "CLEAN_REF=${CLEAN_REF}"
 
