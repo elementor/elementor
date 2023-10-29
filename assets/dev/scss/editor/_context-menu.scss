@@ -3,9 +3,8 @@
 	width: 250px;
 	padding: 5px 0px;
 	background-color: var(--e-a-bg-default);
-	border: var(--e-a-border);
 	border-radius: var(--e-a-border-radius);
-	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	// To make sure the navigator item context menu is above the navigator, which has a z-index of 100
 	z-index: 101;
@@ -37,7 +36,8 @@
 
 			&:not(.elementor-context-menu-list__item--disabled) {
 
-				&:hover {
+				&:hover,
+				&:focus {
 					background-color: var(--e-a-bg-hover);
 					color: var(--e-a-color-hover);
 				}
@@ -51,21 +51,26 @@
 			&__title {
 				flex-grow: 1;
 				@include ellipsis;
-				font-size: 14px;
-				font-style: normal;
-				font-weight: 500;
-				line-height: normal;
 			}
 
 			&__shortcut {
 				color: var(--e-a-color-txt-muted);
 			}
 
+			&__title,
+			&__shortcut {
+				font-size: 14px;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 1;
+			}
+
 			&.elementor-context-menu-list__item-delete {
 
 				&:not(.elementor-context-menu-list__item--disabled) {
 
-					&:hover {
+					&:hover,
+					&:focus {
 
 						> * {
 							color: var(--e-global-color-danger);
