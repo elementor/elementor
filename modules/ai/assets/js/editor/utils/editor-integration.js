@@ -23,12 +23,10 @@ export const onConnect = ( data ) => {
 export const getUiConfig = () => {
 	const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 	const isRTL = elementorCommon.config.isRTL;
-	const locale = elementorCommon.config.locale;
 
 	return {
 		colorScheme,
 		isRTL,
-		locale,
 	};
 };
 
@@ -44,7 +42,7 @@ export const renderLayoutApp = ( options = {
 
 	previewContainer.init();
 
-	const { colorScheme, isRTL, locale } = getUiConfig();
+	const { colorScheme, isRTL } = getUiConfig();
 
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
@@ -53,7 +51,6 @@ export const renderLayoutApp = ( options = {
 		<LayoutApp
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
-			locale={ locale }
 			onClose={ () => {
 				previewContainer.destroy();
 
