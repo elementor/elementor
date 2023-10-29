@@ -1,4 +1,6 @@
 import { List, ListSubheader, styled, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import PromptHistoryItem from './modal-item';
 import { translateDate } from '../../../helpers/date-helpers';
 

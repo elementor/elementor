@@ -220,7 +220,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onDirectionArrowKeydown( event ) {
-		const isRTL = elementorFrontend.config.isRTL,
+		const isRTL = elementorFrontend.config.is_rtl,
 			inlineDirectionArrows = [ 'ArrowLeft', 'ArrowRight' ],
 			currentKeydown = event.originalEvent.code,
 			isDirectionInlineKeydown = -1 !== inlineDirectionArrows.indexOf( currentKeydown ),

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { HISTORY_TYPES } from '../history-types';
 import { usePromptHistoryContext } from './prompt-history-context';
@@ -49,14 +50,14 @@ PromptHistoryActionProvider.propTypes = {
 
 export const usePromptHistoryAction = () => {
 	const { state, dispatch } = useContext( PromptHistoryActionContext );
-	const { promptType, onClose } = usePromptHistoryContext();
+	const { historyType, onClose } = usePromptHistoryContext();
 
 	const closeModalAfterAction = ( action ) => ( ...data ) => {
 		action( ...data );
 		onClose();
 	};
 
-	const getAllowedActions = () => ENABLED_ACTIONS_BY_TYPE[ promptType ] || {};
+	const getAllowedActions = () => ENABLED_ACTIONS_BY_TYPE[ historyType ] || {};
 
 	const onPromptReuse = ( id, data ) => dispatch( { type: ACTION_TYPES.REUSE, id, data } );
 	const onResultEdit = ( id, data ) => dispatch( { type: ACTION_TYPES.EDIT, id, data } );

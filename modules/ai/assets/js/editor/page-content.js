@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
@@ -108,7 +109,7 @@ const PageContent = (
 
 	if ( 'media' === type ) {
 		return (
-			<PromptHistoryProvider promptType={ HISTORY_TYPES.IMAGE }>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.IMAGE }>
 				<PromptHistoryActionProvider>
 					<FormMedia
 						onClose={ onClose }
@@ -127,7 +128,7 @@ const PageContent = (
 	if ( 'code' === type ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-				<PromptHistoryProvider promptType={ HISTORY_TYPES.CODE }>
+				<PromptHistoryProvider historyType={ HISTORY_TYPES.CODE }>
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
@@ -153,7 +154,7 @@ const PageContent = (
 
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-			<PromptHistoryProvider promptType={ HISTORY_TYPES.TEXT }>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.TEXT }>
 				<PromptHistoryActionProvider>
 					<PromptDialog.Header onClose={ onClose }>
 						<PromptHistory />

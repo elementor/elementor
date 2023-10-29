@@ -1,6 +1,7 @@
 import { useEffect, useState, useReducer } from 'react';
 import { LocationProvider } from './context/location-context';
 import { Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import PromptDialog from '../../components/prompt-dialog';
 import MediaOutlet from './media-outlet';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';

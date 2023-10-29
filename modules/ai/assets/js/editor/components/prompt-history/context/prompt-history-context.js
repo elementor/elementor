@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { HISTORY_TYPES } from '../history-types';
 import { vh } from '../../../helpers';
@@ -31,23 +32,23 @@ const setContentHeight = ( height ) => {
 	contentContainer.style.height = `${ height }px`;
 };
 
-export const PromptHistoryProvider = ( { promptType, children } ) => {
+export const PromptHistoryProvider = ( { historyType, children } ) => {
 	const showHistoryState = useState( false );
 
 	return (
-		<PromptHistoryContext.Provider value={ { promptType, showHistoryState } }>
+		<PromptHistoryContext.Provider value={ { historyType, showHistoryState } }>
 			{ children }
 		</PromptHistoryContext.Provider>
 	);
 };
 
 PromptHistoryProvider.propTypes = {
-	promptType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
+	historyType: PropTypes.oneOf( Object.values( HISTORY_TYPES ) ).isRequired,
 	children: PropTypes.node,
 };
 
 export const usePromptHistoryContext = () => {
-	const { promptType, showHistoryState } = useContext( PromptHistoryContext );
+	const { historyType, showHistoryState } = useContext( PromptHistoryContext );
 	const [ showHistory, setShowHistory ] = showHistoryState;
 
 	const [ showModalWrapper, setShowModalWrapper ] = useState( false );
@@ -104,7 +105,7 @@ export const usePromptHistoryContext = () => {
 			return;
 		}
 
-		if ( promptType === HISTORY_TYPES.IMAGE ) {
+		if ( historyType === HISTORY_TYPES.IMAGE ) {
 			return handleFullScreenHistoryState();
 		}
 
@@ -120,7 +121,7 @@ export const usePromptHistoryContext = () => {
 	};
 
 	return {
-		promptType,
+		historyType,
 		isOpen: showPromptHistory,
 		isModalOpen: showModalWrapper,
 		showHistory,
