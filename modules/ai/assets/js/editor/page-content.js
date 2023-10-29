@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';

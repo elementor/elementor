@@ -1,4 +1,5 @@
 import { MenuItem, Select, FormControl, InputLabel } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const labelToDashCash = ( str ) => str.toLowerCase().replace( / /g, '-' );
 

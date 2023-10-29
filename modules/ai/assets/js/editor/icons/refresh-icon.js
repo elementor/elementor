@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const RefreshIcon = React.forwardRef( ( props, ref ) => {
