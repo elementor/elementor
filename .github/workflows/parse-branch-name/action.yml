@@ -15,6 +15,10 @@ runs:
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME##*/}
             CLEAN_PACKAGE_NAME=${CLEAN_PACKAGE_NAME:1}
 
+            CLEAN_REF =$(echo $CLEAN_PACKAGE_NAME | cut -d'.' -f1-2)
+            echo "CLEAN_REF=${CLEAN_REF}" >> $GITHUB_ENV
+            echo "CLEAN_REF=${CLEAN_REF}"
+
             PACKAGE_VERSION=$(echo $CLEAN_PACKAGE_NAME | cut -d "/" -f3 | cut -d "-" -f1 | sed -e 's/^v//')
             CHANNEL=$(echo $CLEAN_PACKAGE_NAME | cut -d "-" -f2)
 
