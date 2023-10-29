@@ -8,7 +8,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 	const approveButtonRef = useRef();
 
 	useEffect( () => {
-		// On local dev, the connect lib is not loaded.
+		// On local dev (as a standalone app), the connect lib is not loaded.
 		if ( ! jQuery.fn.elementorConnect ) {
 			return;
 		}
