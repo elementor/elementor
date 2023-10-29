@@ -833,7 +833,7 @@ class Utils {
 	private static function sanitize_multi_upload( $fields ) {
 		return array_map( function( $field ) {
 			return array_map( 'self::sanitize_file_name', $field );
-		}, $fields);
+		}, $fields );
 	}
 
 	private static function sanitize_file_name( $file ) {
