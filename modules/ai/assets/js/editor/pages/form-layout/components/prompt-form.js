@@ -1,5 +1,7 @@
 import { useState, useRef, forwardRef } from 'react';
 import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import PromptAutocomplete from './prompt-autocomplete';
 import EnhanceButton from '../../form-media/components/enhance-button';
 import GenerateSubmit from '../../form-media/components/generate-submit';

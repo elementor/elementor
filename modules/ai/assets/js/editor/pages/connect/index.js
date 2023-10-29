@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Stack, Button, Typography, Link } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { AIIcon } from '@elementor/icons';
 
 const Connect = ( { connectUrl, onSuccess } ) => {

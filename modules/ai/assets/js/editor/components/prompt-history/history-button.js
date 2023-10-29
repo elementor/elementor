@@ -1,4 +1,6 @@
 import { IconButton, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { HistoryIcon } from '@elementor/icons';
 
 const StyledHistoryButton = styled( IconButton )`

@@ -1,5 +1,6 @@
 import Panel from '../../../components/ui/panel';
 import { Box, Stack, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Loader from '../../../components/loader';
 import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
