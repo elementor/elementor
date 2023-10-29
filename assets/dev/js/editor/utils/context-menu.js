@@ -45,7 +45,7 @@ module.exports = elementorModules.Module.extend( {
 			} );
 			$item.on( 'keyup', function( event ) {
 				const ENTER_KEY = 13,
-				  SPACE_KEY = 32;
+					SPACE_KEY = 32;
 
 				if ( ENTER_KEY === event.keyCode || SPACE_KEY === event.keyCode ) {
 					self.runAction( action );
