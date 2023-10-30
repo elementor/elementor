@@ -21,7 +21,7 @@ test.describe( 'Lighthouse tests', () => {
 				'best-practices': 85,
 				seo: 80,
 			},
-			port: 9222,
+			port: parseInt( process.env.DEBUG_PORT ),
 		} );
 	} );
 } );
