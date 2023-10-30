@@ -1827,6 +1827,10 @@
   content: "\ef02";
 }
 
+.eicon-upgrade:before {
+  content: "\eb82";
+}
+
 .eicon-eye:before {
   content: "\e8ac";
 }
