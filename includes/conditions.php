@@ -84,10 +84,10 @@ class Conditions {
 			} else {
 				$parsed_name = self::parse_name( $term['name'] );
 
-				$value = $comparison[ $parsed_name[1] ];
+				$value = $comparison[ $parsed_name[0] ];
 
-				if ( ! empty( $parsed_name[2] ) ) {
-					$value = $value[ $parsed_name[2] ];
+				if ( ! empty( $parsed_name[1] ) ) {
+					$value = $value[ $parsed_name[1] ];
 				}
 
 				$operator = null;
