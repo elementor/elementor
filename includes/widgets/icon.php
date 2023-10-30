@@ -471,7 +471,7 @@ class Widget_Icon extends Widget_Base {
 				iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
-			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
+			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{ link }}>
 				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 					{{{ iconHTML.value }}}
 				<# } else { #>
