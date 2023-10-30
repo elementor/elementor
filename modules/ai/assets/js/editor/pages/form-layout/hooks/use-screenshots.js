@@ -111,4 +111,3 @@ const useScreenshots = ( { onData } ) => {
 };
 
 export default useScreenshots;
-

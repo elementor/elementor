@@ -483,7 +483,7 @@ class Ai extends Library {
 			'generate/layout',
 			[
 				'prompt' => $prompt,
-                'generatedBaseTemplatesIds' => $prev_generated_ids,
+				'generatedBaseTemplatesIds' => $prev_generated_ids,
 				'context' => $context ?? [],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
