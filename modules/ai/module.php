@@ -718,7 +718,8 @@ class Module extends BaseModule {
 		$result = $app->generate_layout(
 			$data['prompt'],
 			$this->prepare_generate_layout_context(),
-			$data['variationType']
+			$data['variationType'],
+			$data['prevGeneratedIds']
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -726,6 +727,7 @@ class Module extends BaseModule {
 		}
 
 		$template = $result['text']['elements'][0] ?? null;
+		$base_template_id = $result['baseTemplateId'] ?? null;
 
 		if ( empty( $template ) || ! is_array( $template ) ) {
 			throw new \Exception( 'unknown_error' );
@@ -736,6 +738,7 @@ class Module extends BaseModule {
 			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
+			'base_template_id' => $base_template_id,
 		];
 	}
 
