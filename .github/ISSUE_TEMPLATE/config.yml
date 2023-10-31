@@ -1,20 +1,32 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 🚀 Feature Request
-    url: https://github.com/orgs/elementor/discussions/new?category=feature-request
-    about: Suggest new ideas, features, or enhancements
-  - name: ❓ Support Question
-    url: https://wordpress.org/support/plugin/elementor/
-    about: For Elementor users who need assistant and have general usage questions.
-  - name: 💎 Elementor Pro Support
-    url: https://elementor.com/support/
-    about: If you have an active Elementor Pro license you are entitled to personal support, please see your purchase email or visit your Elementor Account page for details.
-  - name: 🗨️ Elementor Global Community
-    url: https://www.facebook.com/groups/Elementors/
-    about: The main Facebook group where all kinds of users come together to help each other.
-  - name: 🎓 Elementor Academy
-    url: https://elementor.com/academy/
-    about: Learn everything you need to know about using Elementor.
-  - name: 📚 Elementor Developers Documentation
-    url: https://developers.elementor.com/
-    about: Technical information and Elementor developers docs. Learn everything about our Developer-API.
+    - name: 🛟 Get Support
+      url: https://elemn.to/support-ticket
+      about: Need Help, Guidance, Assistance, or Support? Follow these instructions.
+    - name: 📖 Contributing Guidelines
+      url: https://elemn.to/gh-contributing
+      about: Before filing a bug report, a feature request, or sending pull requests, read the Contribution Guidelines.
+    - name: 🤝 Code of Conduct
+      url: https://elemn.to/gh-code-of-conduct
+      about: To foster a safe, open, and welcoming environment, we have a Code of Conduct that all participants should follow.
+    - name: 🚩 Elementor Roadmap
+      url: https://elemn.to/gh-to-roadmap
+      about: Before submitting a request, visit the Elementor Roadmap and learn about the status of upcoming or newly-released features.
+    - name: 🚀 Feature Request
+      url: https://elemn.to/gh-new-feature-request
+      about: Suggest new ideas, features, or enhancements for the Elementor plugin.
+    - name: 📑 Help Center
+      url: https://elemn.to/gh-to-help-center
+      about: Visit our Help Center to find solutions to the most frequent problems or learn how to use Elementor's many features.
+    - name: 🎓 Elementor Academy
+      url: https://elemn.to/gh-to-academy
+      about: Grow your Web Creator skills and learn how to make the most of Elementor.
+    - name: 🗨️ Elementor Global Community
+      url: https://elemn.to/community-on-fb
+      about: The main Facebook group is where all kinds of users come together to help each other.
+    - name: 📚 Elementor Developers Center
+      url: https://elemn.to/gh-to-dev-center
+      about: Technical information and Elementor Developers documentation. Learn everything about extending Elementor.
+    - name: 🌐 Elementor Developers Community
+      url: https://elemn.to/dev-community
+      about: Share tips, tricks, and knowledge with other developers about extending and developing for Elementor.
