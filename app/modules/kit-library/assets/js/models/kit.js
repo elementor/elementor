@@ -34,8 +34,8 @@ export default class Kit extends BaseModel {
 			isFavorite: kit.is_favorite,
 			thumbnailUrl: kit.thumbnail_url,
 			previewUrl: kit.preview_url,
-			// TODO: fix to a proper solution  - probably switch to access_tier.
-			accessLevel: 1 === kit.access_level ? 15 : kit.access_level,
+			accessLevel: kit.access_level,
+			accessTier: kit.access_tier,
 			trendIndex: kit.trend_index,
 			popularityIndex: kit.popularity_index,
 			featuredIndex: kit.featured_index,

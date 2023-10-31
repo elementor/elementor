@@ -9,7 +9,7 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
+	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 
 	const eventTracking = ( command ) => {
@@ -47,7 +47,7 @@ const KitListItem = ( props ) => {
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					{
-						! elementorAppConfig.hasPro && subscriptionPlan?.label &&
+						TYPE_PROMOTION === type && subscriptionPlan?.label &&
 							<Badge
 								variant="sm"
 								className="e-kit-library__kit-item-subscription-plan-badge"

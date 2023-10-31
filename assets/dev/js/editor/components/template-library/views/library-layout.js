@@ -26,18 +26,15 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getTemplateActionButton( templateData ) {
 		const subscriptionPlans = elementor.config.library_connect.subscription_plans,
-			baseAccessLevel = elementor.config.library_connect.base_access_level,
-			// TODO: find a proper solution for this - probably replace with access_tier.
-			templateAccessLevel = 1 === templateData.accessLevel ? 15 : templateData.accessLevel;
+			baseAccessTier = elementor.config.library_connect.base_access_tier,
+			templateAccessTier = templateData.accessTier;
 
-		let viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateAccessLevel ? 'upgrade-plan-button' : 'insert-button' );
+		let viewId = '#tmpl-elementor-template-library-' + ( baseAccessTier !== templateAccessTier ? 'upgrade-plan-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
 		const template = Marionette.TemplateCache.get( viewId );
-
-		// TODO: check if still needed: subscriptionPlans[ 1 ]
-		const subscriptionPlan = subscriptionPlans[ templateAccessLevel ] ?? subscriptionPlans[ 1 ]; // 1 is Pro plan.
+		const subscriptionPlan = subscriptionPlans[ templateAccessTier ];
 
 		return Marionette.Renderer.render( template, {
 			promotionText: `Upgrade`,

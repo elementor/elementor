@@ -19,12 +19,12 @@ class Module extends BaseModule {
 	const ACCESS_LEVEL_PRO = 1;
 	const ACCESS_LEVEL_EXPERT = 20;
 
-	const ACCESS_TIER_CORE = 0;
-	const ACCESS_TIER_ESSENTIAL = 10;
-	const ACCESS_TIER_LEGACY = 15;
-	const ACCESS_TIER_ADVANCED = 20;
-	const ACCESS_TIER_EXPERT = 30;
-	const ACCESS_TIER_AGENCY = 40;
+	const ACCESS_TIER_FREE = 'free';
+	const ACCESS_TIER_ESSENTIAL = 'essential';
+	const ACCESS_TIER_LEGACY = 'legacy';
+	const ACCESS_TIER_ADVANCED = 'advanced';
+	const ACCESS_TIER_EXPERT = 'expert';
+	const ACCESS_TIER_AGENCY = 'agency';
 
 	/**
 	 * @since 2.3.0
@@ -199,33 +199,33 @@ class Module extends BaseModule {
 	 */
 	public function get_subscription_plans( $context = '' ) {
 		return [
-			static::ACCESS_TIER_CORE => [
+			static::ACCESS_TIER_FREE => [
 				'label' => null,
 				'promotion_url' => null,
 				'color' => null,
 			],
 			static::ACCESS_TIER_ESSENTIAL => [
-				'label' => 'Pro',
+				'label' => 'Essential',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_LEGACY => [
-				'label' => 'Pro',
+				'label' => 'Pro', // Should be the same label as "Advanced".
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_ADVANCED => [
-				'label' => 'Pro',
+				'label' => 'Advanced',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_EXPERT => [
-				'label' => 'Pro',
+				'label' => 'Expert',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_AGENCY => [
-				'label' => 'Pro',
+				'label' => 'Agency',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
