@@ -482,7 +482,7 @@ trait Button_Trait {
 
 		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
 
-		if ( '' !== settings.link.url ) {
+		if ( !!settings.link && '' !== settings.link.url ) {
 			view.addRenderAttribute( 'button', 'href', settings.link.url );
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-link' );
 		} else {
