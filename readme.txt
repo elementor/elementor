@@ -2,8 +2,8 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 6.0
-Tested up to: 6.3
-Requires PHP: 7.0
+Tested up to: 6.4
+Requires PHP: 7.3
 Stable tag: 3.12.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -147,12 +147,12 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 = Minimum Requirements =
 
 * WordPress 6.0 or greater
-* PHP version 7.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.0 or greater
 
-= We recommend your host supports: =
+= Recommended Requirements =
 
-* PHP version 7.3 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -239,6 +239,92 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.17.1 - 2023-10-25 =
+
+* Error message appears when loading the Theme Builder
+
+= 3.17.0 - 2023-10-25 =
+
+* New: AI History - Quickly restore AI-generated content, enhancing your workflow by improving content recovery and acceleration
+* New: Revamped Rating widget - enhanced flexibility for customizable visual rating scales, elevating your designs to be more engaging and interactive ([#18793](https://github.com/elementor/elementor/issues/18793), [#10529](https://github.com/elementor/elementor/issues/10529), [#18169](https://github.com/elementor/elementor/issues/18169), [#20651](https://github.com/elementor/elementor/issues/20651), [#10127](https://github.com/elementor/elementor/issues/10127))
+* New: Introducing Gutenberg Asset Loading as a Beta feature - enhance performance by avoiding unnecessary block editor assets
+* New: Introducing Optimize Image Loading as a Beta feature - Apply default optimization strategies during content rendering for improved LCP
+* Tweak: Allowed using TinyMCE Full Screen Toolbar with Editor Top Bar ([#23463](https://github.com/elementor/elementor/issues/23463), [#22873](https://github.com/elementor/elementor/issues/22873))
+* Tweak: Make the Container element extendable (props [@HadyShaltout](https://github.com/HadyShaltout))
+* Tweak: Added a FAQ Schema support in Accordion widget
+* Tweak: Added VideoPress integration for self-hosted videos in Video widget
+* Tweak: Implemented accessibility improvements in Accordion widget
+* Tweak: Upgraded minimum required PHP version to 7.3
+* Fix: Responsive settings for Templates wouldn't save completely when Additional Custom Breakpoints feature is activated ([#19394](https://github.com/elementor/elementor/issues/19394), [#22829](https://github.com/elementor/elementor/issues/22829))
+* Fix: Error messages appear on Theme Builder when using PHP 8.X ([#22991](https://github.com/elementor/elementor/issues/22991))
+* Fix: Disabling options in URL Control does not hide the options icon in External URL field ([#11214](https://github.com/elementor/elementor/issues/11214))
+* Fix: UI Glitch in widget Style and Advanced tabs ([#23402](https://github.com/elementor/elementor/issues/23402))
+* Fix: PHP Memory Limit displayed in System Info wasn't accurate in various scenarios
+
+= 3.16.6 - 2023-10-17 =
+
+* Fix: Improved code security enforcement in Dynamic Tag Fallback control
+
+= 3.16.5 - 2023-10-09 =
+
+* Fix: Widget panel appears empty for Editor role with "Access to edit content only" permission ([#23696](https://github.com/elementor/elementor/issues/23696))
+* Fix: Improved code security enforcement in SVG Icon control
+
+= 3.16.4 - 2023-09-20 =
+
+* Fix: HTML tags are not rendering on title field in Tabs widget ([#23752](https://github.com/elementor/elementor/issues/23752))
+* Fix: Tabs is using the 'active' color for both 'active' and 'hover' states in the accordion layout in Tabs widget
+* Fix: Gaps values aren't displayed inside the Editor in Container widget
+
+= 3.16.3 - 2023-09-14 =
+
+* Tweak: Changed Improved CSS loading feature to inactive for existing sites
+* Fix: Dynamic tag for ACF image field is not working as expected ([#23757](https://github.com/elementor/elementor/issues/23757))
+* Fix: Display issues when using long titles inside Tabs widget ([#23670](https://github.com/elementor/elementor/issues/23670))
+* Fix: Gaps control does not present values as expected in Container widget
+
+= 3.16.2 - 2023-09-13 =
+
+* Fix: Various issues with deprecation updates and 3rd party plugins
+
+= 3.16.1 - 2023-09-12 =
+
+* Fix: Flexbox Container feature is activated by default for existing sites
+
+= 3.16.0 - 2023-09-12 =
+
+* New: Grid widget is now accessible in the widgets panel, enhancing workflow and user experience
+* Tweak: Enhanced TTFB metric by optimizing controls display condition functions in the Editor (props [@DMajorChump](https://github.com/MajorChump), [#21762](https://github.com/elementor/elementor/issues/21762))
+* Tweak: Implemented accessibility improvements in Nested Tabs ([#22935](https://github.com/elementor/elementor/issues/22935))
+* Tweak: Promoted Flexbox Container feature to Stable status
+* Tweak: Enabled Flexbox Container feature by default for new installations
+* Tweak: Substituted 'Gap between elements' control in site settings with the new Container Gap control
+* Tweak: Upgraded HTML Structure for Tabs Widget
+* Tweak: Implemented CSS logical properties for border-radius in Elementor Editor
+* Tweak: Implemented CSS logical properties in Container, Accordion and Tabs widgets
+* Tweak: Enhanced dropdown preview for Global Typography styles
+* Tweak: Enabled Improved Asset Loading feature by default for all sites
+* Tweak: Promoted Grid Container feature to Beta status
+* Tweak: Replace CSS `float` with other layouts in the Editor
+* Tweak: Concealed the 'Empty View' cell within the Grid Container to prevent distortion of the preview
+* Tweak: Updated `eicons` library to v5.23.0
+* Tweak: Added keyboard accessibility to a link in Icon Box widget
+* Tweak: Added keyboard accessibility to a link in Image Box widget
+* Tweak: Added 'Download System Info" button to the top of Elementor System Info screen
+* Fix: Justify Content and Align Items controls are not functioning as expected in responsive mode in Container widget ([#19363](https://github.com/elementor/elementor/issues/19363))
+* Fix: Wrong structure of predefined Container layouts in RTL ([#20184](https://github.com/elementor/elementor/issues/20184))
+* Fix: Editing a post or page created in Gutenberg with Elementor resulted in sections being displayed instead of containers ([#20282](https://github.com/elementor/elementor/issues/20282))
+* Fix: Custom unit inheritance problem in mobile mode in Grid Container ([#22289](https://github.com/elementor/elementor/issues/22289))
+* Fix: Spacer not functioning as intended in Container widget ([#20023](https://github.com/elementor/elementor/issues/20023))
+* Fix: Translated blending mode options in `heading.php` for improved usability (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Use default placeholder set in URL control (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved translation functionality in the Editor (props [@DAnn2012](https://github.com/DAnn2012))
+* Fix: Improved code security enforcement in Text Path widget
+* Fix: "Add New Container" functionality is not functioning correctly in Finder
+* Fix: Styling from the parent Accordion was inherited by an Accordion placed inside it in Accordion widget
+* Fix: Title is not breaking in Recently Edited modal in Editor Top Bar
+* Fix: Edit page with WordPress Editor issue when using WordPress 6.3
 
 = 3.15.3 - 2023-08-20 =
 

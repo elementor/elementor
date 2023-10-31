@@ -444,18 +444,62 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_nested_tabs );
 		$documents[] = $this->create_document_with_data( Test_Module::$document_mock_flex_gap );
 
-		// Simulate that the user has downgraded to 3.15.* and upgraded again.
-		add_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED, 'yes' );
-		$this->assertEquals( 'yes', get_option( 'elementor_container_gap_updates_reversed' ) );
-
 		Upgrades::_v_3_16_0_container_updates( $updater );
 
 		$this->assert_containers_changed( $documents[0]->get_json_meta('_elementor_data') );
 		$this->assert_sections_not_changed( $documents[1]->get_json_meta('_elementor_data') );
 		$this->assert_nested_elements_not_affected( $documents[2]->get_json_meta('_elementor_data') );
 		$this->assert_flex_gap_control_has_changed( $documents[3]->get_json_meta('_elementor_data') );
+	}
 
-		$this->assertEquals( null, get_option( Upgrades::ELEMENTOR_CONTAINER_GAP_UPDATES_REVERSED ) );
+	public function test_v_3_17_0_site_settings_updates() {
+		// Arrange
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		$original_kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		$new_kit_id = $this->create_kit_with_settings( [
+			'space_between_widgets' => [
+				'unit' => 'px',
+				'size' => 10,
+				'sizes' => [],
+			],
+		] );
+
+		// Act
+		Upgrades::_v_3_17_0_site_settings_updates();
+
+		$kit_data_array = get_post_meta( (int) $new_kit_id, '_elementor_page_settings', true );
+
+		// Assert
+		$this->assertArrayHasKey( 'row', $kit_data_array['space_between_widgets'] );
+		$this->assertArrayHasKey( 'column', $kit_data_array['space_between_widgets'] );
+		$this->assertArrayHasKey( 'isLinked', $kit_data_array['space_between_widgets'] );
+		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['row'] );
+		$this->assertEquals( '10', $kit_data_array['space_between_widgets']['column'] );
+		$this->assertTrue( $kit_data_array['space_between_widgets']['isLinked'] );
+
+		// Tear down
+		if ( $original_kit_id ) {
+			update_option( 'elementor_active_kit', $original_kit_id );
+		}
+	}
+
+	private function create_kit_with_settings( $settings = [] ) {
+		$id = wp_insert_post( [
+			'post_title' => esc_html__( 'Test Kit', 'elementor-pro' ),
+			'post_type' => 'elementor_library',
+			'post_status' => 'publish',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_template_type' => 'kit',
+				'_elementor_page_settings' => $settings,
+			],
+		] );
+
+		update_option( 'elementor_active_kit', $id );
+
+		return $id;
 	}
 
 	private function create_image() {

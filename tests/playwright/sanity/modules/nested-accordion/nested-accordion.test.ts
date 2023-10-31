@@ -1,7 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Locator, Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator } from './helper';
 import _path from 'path';
+import { setup } from '../nested-tabs/helper';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser }, testInfo ) => {
@@ -242,7 +244,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			containerWidth = ( await containerElement.boundingBox() ).width,
 			nestedAccordionWidth = ( await nestedAccordionElement.boundingBox() ).width;
 
-		expect( nestedAccordionWidth ).toEqual( containerWidth );
+		expect.soft( nestedAccordionWidth ).toEqual( containerWidth );
 	} );
 
 	test( 'Nested Accordion with inner Nested Accordion', async ( { browser }, testInfo ) => {
@@ -260,10 +262,118 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		} );
 
 		await test.step( 'Verify that the inner accordion doesn\'t inherit styling from parent', async () => {
-			expect( await editor.getPreviewFrame()
+			expect.soft( await editor.getPreviewFrame()
 				.locator( '.e-n-accordion' ).first()
 				.screenshot( { type: 'png' } ) )
 				.toMatchSnapshot( 'nested-accordions-parent-child.png' );
 		} );
 	} );
+
+	test( 'Accessibility inside the Editor', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage(),
+			frame = await editor.getPreviewFrame();
+
+		// Load template.
+		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-accessibility', '.elementor-widget-n-accordion' );
+		await frame.waitForSelector( '.e-n-accordion' );
+
+		await test.step( 'Keyboard handling inside the Editor', async () => {
+			const accordionTitleOne = frame.locator( '.e-n-accordion-item-title >> nth=0' ),
+				accordionTitleTwo = frame.locator( '.e-n-accordion-item-title >> nth=1' ),
+				accordionTitleThree = frame.locator( '.e-n-accordion-item-title >> nth=2' ),
+				button1 = frame.locator( '.elementor-button >> nth=0' );
+
+			await frame.locator( '.page-header' ).click();
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+		} );
+	} );
+
+	test( 'Accessibility on the Front End', async ( { page }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo );
+		await setup( wpAdmin );
+		const editor = await wpAdmin.openNewPage(),
+			frame = await editor.getPreviewFrame();
+
+		// Load template.
+		await editor.loadJsonPageTemplate( __dirname, 'nested-accordion-accessibility', '.elementor-widget-n-accordion' );
+		await frame.waitForSelector( '.e-n-accordion' );
+		await editor.publishAndViewPage();
+		await page.waitForSelector( '.e-n-accordion' );
+
+		await test.step( 'Keyboard handling on the Front End', async () => {
+			const accordionTitleOne = page.locator( '.e-n-accordion-item-title >> nth=0' ),
+				accordionTitleTwo = page.locator( '.e-n-accordion-item-title >> nth=1' ),
+				accordionTitleThree = page.locator( '.e-n-accordion-item-title >> nth=2' ),
+				button1 = page.locator( '.elementor-button >> nth=0' );
+
+			await page.locator( '.page-header' ).click();
+			await checkKeyboardNavigation( page, accordionTitleOne, accordionTitleTwo, button1, accordionTitleThree );
+		} );
+
+		await test.step( '@axe-core/playwright', async () => {
+			const accessibilityScanResults = await new AxeBuilder( { page } )
+				.include( '.e-n-accordion' )
+				.analyze();
+
+			await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
+		} );
+	} );
 } );
+
+async function checkKeyboardNavigation( page: Page, accordionTitleOne: Locator, accordionTitleTwo: Locator, button1: Locator, accordionTitleThree: Locator ) {
+	await page.keyboard.press( 'Tab' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'Enter' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect.soft( button1 ).toBeVisible();
+
+	await page.keyboard.press( 'Tab' );
+	await expect.soft( button1 ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	await page.keyboard.press( 'Shift+Tab' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	await page.keyboard.press( 'Tab' );
+	await expect.soft( button1 ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	await page.keyboard.press( 'Escape' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect.soft( button1 ).toBeHidden();
+
+	await page.keyboard.press( 'Space' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'true' );
+	await expect.soft( button1 ).toBeVisible();
+
+	await page.keyboard.press( 'Escape' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect.soft( button1 ).toBeHidden();
+
+	await page.keyboard.press( 'ArrowDown' );
+	await expect.soft( accordionTitleTwo ).toBeFocused();
+	await expect.soft( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowRight' );
+	await expect.soft( accordionTitleThree ).toBeFocused();
+	await expect.soft( accordionTitleThree ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowUp' );
+	await expect.soft( accordionTitleTwo ).toBeFocused();
+	await expect.soft( accordionTitleTwo ).toHaveAttribute( 'aria-expanded', 'false' );
+
+	await page.keyboard.press( 'ArrowLeft' );
+	await expect.soft( accordionTitleOne ).toBeFocused();
+	await expect.soft( accordionTitleOne ).toHaveAttribute( 'aria-expanded', 'false' );
+}

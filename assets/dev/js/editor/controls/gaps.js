@@ -42,8 +42,20 @@ ControlGapItemView = ControlDimensionsView.extend( {
 		this.setSettingsModel( values );
 	},
 
-	getControlPlaceholder() {
-		return '';
+	getControlValue( key ) {
+		const valuesUpdated = ControlDimensionsView.prototype.getControlValue.apply( this, arguments );
+
+		if ( this.shouldUpdateGapsValues( valuesUpdated ) ) {
+			valuesUpdated.column = '' + valuesUpdated.size;
+			valuesUpdated.row = '' + valuesUpdated.size;
+			valuesUpdated.isLinked = true;
+		}
+
+		return valuesUpdated;
+	},
+
+	shouldUpdateGapsValues( valuesUpdated ) {
+		return !! valuesUpdated.hasOwnProperty( 'size' ) && '' !== valuesUpdated.size && ! valuesUpdated.hasOwnProperty( 'column' );
 	},
 } );
 

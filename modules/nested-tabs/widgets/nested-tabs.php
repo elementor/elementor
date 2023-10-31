@@ -80,6 +80,8 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
+		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
+		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 		$heading_selector_non_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 		$heading_selector_touch_device = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
 		$heading_selector = '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
@@ -337,9 +339,9 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'selectors_dictionary' => [
-				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-align-items: flex-start;',
-				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-align-items: center;',
-				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-align-items: flex-end;',
+				'start' => '--n-tabs-title-justify-content: flex-start; --n-tabs-title-align-items: flex-start; --n-tabs-title-text-align: start;',
+				'center' => '--n-tabs-title-justify-content: center; --n-tabs-title-align-items: center; --n-tabs-title-text-align: center;',
+				'end' => '--n-tabs-title-justify-content: flex-end; --n-tabs-title-align-items: flex-end; --n-tabs-title-text-align: end;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -675,7 +677,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}' => '--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: {{RIGHT}}{{UNIT}}; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => "--n-tabs-title-padding-block-start: {{TOP}}{{UNIT}}; --n-tabs-title-padding-inline-end: $logical_dimensions_inline_end; --n-tabs-title-padding-block-end: {{BOTTOM}}{{UNIT}}; --n-tabs-title-padding-inline-start: $logical_dimensions_inline_start;",
 				],
 			]
 		);
@@ -729,7 +731,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 			]
@@ -775,7 +777,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 
@@ -822,7 +824,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html_x( 'Shadow', 'Text Shadow Control', 'elementor' ),
+						'label' => esc_html__( 'Shadow', 'elementor' ),
 					],
 				],
 			]
@@ -1063,7 +1065,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$content_selector => '--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: {{RIGHT}}{{UNIT}}; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: {{LEFT}}{{UNIT}};',
+					$content_selector => "--padding-block-start: {{TOP}}{{UNIT}}; --padding-inline-end: $logical_dimensions_inline_end; --padding-block-end: {{BOTTOM}}{{UNIT}}; --padding-inline-start: $logical_dimensions_inline_start;",
 				],
 			]
 		);
@@ -1088,7 +1090,6 @@ class NestedTabs extends Widget_Nested_Base {
 			'role' => 'tab',
 			'tabindex' => 1 === $item_settings['tab_count'] ? '0' : '-1',
 			'aria-controls' => $item_settings['container_id'],
-			'aria-label' => esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ),
 			'style' => '--n-tabs-title-order: ' . $item_settings['tab_count'] . ';',
 		] );
 
@@ -1111,7 +1112,7 @@ class NestedTabs extends Widget_Nested_Base {
 					<?php echo $icon_active_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
 				<span <?php echo $text_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-					<?php echo esc_html( $title ); ?>
+					<?php echo wp_kses_post( $title ); ?>
 				</span>
 			</button>
 		<?php
@@ -1175,7 +1176,7 @@ class NestedTabs extends Widget_Nested_Base {
 		$this->add_render_attribute( 'elementor-tabs', [
 			'class' => 'e-n-tabs',
 			'data-widget-number' => $widget_number,
-			'aria-label' => esc_html__( 'Tabs', 'elementor' ),
+			'aria-label' => esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ),
 		] );
 
 		$this->add_render_attribute( 'tab-title-text', 'class', 'e-n-tab-title-text' );
@@ -1220,7 +1221,7 @@ class NestedTabs extends Widget_Nested_Base {
 	protected function content_template() {
 		?>
 		<# const elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
-		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs', 'elementor' ); ?>">
+		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
 				<# _.each( settings['tabs'], function( item, index ) {
@@ -1251,7 +1252,6 @@ class NestedTabs extends Widget_Nested_Base {
 					'aria-selected': 1 === tabCount ? 'true' : 'false',
 					'tabindex': 1 === tabCount ? '0' : '-1',
 					'aria-controls': 'e-n-tab-content-' + tabUid,
-					'aria-label': '<?php echo esc_html__( 'Open tab (Enter or Space) | Return (Escape)', 'elementor' ); ?>',
 					'style': '--n-tabs-title-order: ' + tabCount + ';',
 				} );
 

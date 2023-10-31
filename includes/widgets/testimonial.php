@@ -276,7 +276,7 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_control(
 			'image_size',
 			[
-				'label' => esc_html__( 'Image Size', 'elementor' ),
+				'label' => esc_html__( 'Image Resolution', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [

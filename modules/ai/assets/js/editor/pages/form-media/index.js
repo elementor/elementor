@@ -1,12 +1,14 @@
 import { useEffect, useState, useReducer } from 'react';
 import { LocationProvider } from './context/location-context';
 import { Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import PromptDialog from '../../components/prompt-dialog';
 import MediaOutlet from './media-outlet';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import { EditImageProvider } from './context/edit-image-context';
 import { GlobalActionsProvider } from './context/global-actions-context';
 import { GlobalSettingsProvider } from './context/global-settings-context';
+import PromptHistory from '../../components/prompt-history';
 
 const initialData = {
 	isAllSaved: false,
@@ -30,8 +32,6 @@ const reducer = ( state, { type, payload } ) => {
 				isAllSaved: true,
 				hasUnsavedChanges: false,
 			};
-		case RESET:
-			return initialValue;
 		default:
 			throw Error( 'Unknown action.' );
 	}
@@ -89,8 +89,10 @@ const FormMedia = ( {
 
 	return (
 		<>
-			<PromptDialog onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
+			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ () => onCloseIntent() }>
+					<PromptHistory />
+
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 

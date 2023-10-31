@@ -1,4 +1,5 @@
 import View from '../../components/view';
+import { __ } from '@wordpress/i18n';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';
 import ImagesDisplay from '../../components/images-display';
@@ -10,15 +11,18 @@ import { useState } from 'react';
 import PromptField from '../../components/prompt-field';
 import { LOCATIONS } from '../../constants';
 import NewPromptButton from '../../components/new-prompt-button';
+import { useLocation } from '../../context/location-context';
 
-const RemoveBackground = () => {
+const ReplaceBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 
 	const { editImage } = useEditImage();
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
-	const { data, send, isLoading: isGenerating, error } = useReplaceBackground();
+	const { data, send, isLoading: isGenerating, error, reset } = useReplaceBackground();
+
+	const { navigate } = useLocation();
 
 	const isLoading = isGenerating || isUploading;
 
@@ -83,4 +87,4 @@ const RemoveBackground = () => {
 	);
 };
 
-export default RemoveBackground;
+export default ReplaceBackground;

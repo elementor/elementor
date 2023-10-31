@@ -4,6 +4,7 @@ import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
+import AxeBuilder from '@axe-core/playwright';
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
@@ -16,6 +17,7 @@ export default class EditorPage extends BasePage {
 
 	async gotoPostId( id = this.postId ) {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
+		await this.page.waitForLoadState( 'load' );
 		await this.ensurePanelLoaded();
 	}
 
@@ -316,6 +318,10 @@ export default class EditorPage extends BasePage {
 
 	async setNumberControlValue( controlId: string, value: string ) {
 		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
+	}
+
+	async setChooseControlValue( controlId: string, value: string ) {
+		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
 	}
 
 	/**
@@ -847,5 +853,21 @@ export default class EditorPage extends BasePage {
 	 */
 	async selectStateTab( controlID, tab ) {
 		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
+	}
+
+	/**
+	 * Do an @Axe-Core Accessibility test.
+	 *
+	 * @param          page
+	 * @param {string} selector
+	 *
+	 * @return {Promise<void>}
+	 */
+	async axeCoreAccessibilityTest( page, selector ) {
+		const accessibilityScanResults = await new AxeBuilder( { page } )
+			.include( selector )
+			.analyze();
+
+		await expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	}
 }

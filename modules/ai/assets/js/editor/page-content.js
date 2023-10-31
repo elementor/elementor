@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
 import FormCode from './pages/form-code';
@@ -8,6 +9,12 @@ import WizardDialog from './components/wizard-dialog';
 import PromptDialog from './components/prompt-dialog';
 import UpgradeChip from './components/upgrade-chip';
 import FormMedia from './pages/form-media';
+import PromptHistory from './components/prompt-history';
+import { HISTORY_TYPES } from './components/prompt-history/history-types';
+import {
+	PromptHistoryActionProvider,
+} from './components/prompt-history/context/prompt-history-action-context';
+import { PromptHistoryProvider } from './components/prompt-history/context/prompt-history-context';
 
 const PageContent = (
 	{
@@ -21,11 +28,17 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
+
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
 				alignItems: 'flex-start',
 				mt: 'media' === type ? '2.5vh' : '18vh',
+			},
+			'& .MuiDialogContent-root': {
+				willChange: 'height',
+				transition: 'height 300ms ease-in-out',
+				position: 'relative',
 			},
 		},
 		PaperProps: {
@@ -96,57 +109,73 @@ const PageContent = (
 
 	if ( 'media' === type ) {
 		return (
-			<FormMedia
-				onClose={ onClose }
-				getControlValue={ getControlValue }
-				controlView={ controlView }
-				additionalOptions={ additionalOptions }
-				credits={ credits }
-				maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
-				DialogProps={ promptDialogStyleProps }
-			/>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.IMAGE }>
+				<PromptHistoryActionProvider>
+					<FormMedia
+						onClose={ onClose }
+						getControlValue={ getControlValue }
+						controlView={ controlView }
+						additionalOptions={ additionalOptions }
+						credits={ credits }
+						maybeRenderUpgradeChip={ maybeRenderUpgradeChip }
+						DialogProps={ promptDialogStyleProps }
+					/>
+				</PromptHistoryActionProvider>
+			</PromptHistoryProvider>
 		);
 	}
 
 	if ( 'code' === type ) {
 		return (
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onClose }>
-					{ maybeRenderUpgradeChip() }
-				</PromptDialog.Header>
+				<PromptHistoryProvider historyType={ HISTORY_TYPES.CODE }>
+					<PromptHistoryActionProvider>
+						<PromptDialog.Header onClose={ onClose }>
+							<PromptHistory />
 
-				<PromptDialog.Content dividers>
-					<FormCode
-						onClose={ onClose }
-						getControlValue={ getControlValue }
-						setControlValue={ setControlValue }
-						additionalOptions={ additionalOptions }
-						credits={ credits }
-						usagePercentage={ usagePercentage }
-					/>
-				</PromptDialog.Content>
+							{ maybeRenderUpgradeChip() }
+						</PromptDialog.Header>
+
+						<PromptDialog.Content className="e-ai-dialog-content" dividers>
+							<FormCode
+								onClose={ onClose }
+								getControlValue={ getControlValue }
+								setControlValue={ setControlValue }
+								additionalOptions={ additionalOptions }
+								credits={ credits }
+								usagePercentage={ usagePercentage }
+							/>
+						</PromptDialog.Content>
+					</PromptHistoryActionProvider>
+				</PromptHistoryProvider>
 			</PromptDialog>
 		);
 	}
 
 	return (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
-			<PromptDialog.Header onClose={ onClose }>
-				{ maybeRenderUpgradeChip() }
-			</PromptDialog.Header>
+			<PromptHistoryProvider historyType={ HISTORY_TYPES.TEXT }>
+				<PromptHistoryActionProvider>
+					<PromptDialog.Header onClose={ onClose }>
+						<PromptHistory />
 
-			<PromptDialog.Content dividers>
-				<FormText
-					type={ type }
-					controlType={ controlType }
-					onClose={ onClose }
-					getControlValue={ getControlValue }
-					setControlValue={ setControlValue }
-					additionalOptions={ additionalOptions }
-					credits={ credits }
-					usagePercentage={ usagePercentage }
-				/>
-			</PromptDialog.Content>
+						{ maybeRenderUpgradeChip() }
+					</PromptDialog.Header>
+
+					<PromptDialog.Content className="e-ai-dialog-content" dividers>
+						<FormText
+							type={ type }
+							controlType={ controlType }
+							onClose={ onClose }
+							getControlValue={ getControlValue }
+							setControlValue={ setControlValue }
+							additionalOptions={ additionalOptions }
+							credits={ credits }
+							usagePercentage={ usagePercentage }
+						/>
+					</PromptDialog.Content>
+				</PromptHistoryActionProvider>
+			</PromptHistoryProvider>
 		</PromptDialog>
 	);
 };

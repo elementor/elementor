@@ -34,6 +34,8 @@ class Manager extends Base_Object {
 
 	const TYPE_HIDDEN = 'hidden';
 
+	const OPTION_PREFIX = 'elementor_experiment-';
+
 	private $states;
 
 	private $release_statuses;
@@ -91,7 +93,7 @@ class Manager extends Base_Object {
 		$new_site = $experimental_data['new_site'];
 
 		if ( $new_site['default_active'] || $new_site['always_active'] ) {
-			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
+			$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
 
 			if ( $is_new_installation ) {
 				if ( $new_site['always_active'] ) {
@@ -151,6 +153,18 @@ class Manager extends Base_Object {
 		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
 
 		return $experimental_data;
+	}
+
+	private function install_compare( $version ) {
+		$installs_history = Upgrade_Manager::get_installs_history();
+
+		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
+
+		return version_compare(
+			$cleaned_version,
+			$version,
+			'>='
+		);
 	}
 
 	/**
@@ -309,7 +323,7 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	public function get_feature_option_key( $feature_name ) {
-		return 'elementor_experiment-' . $feature_name;
+		return static::OPTION_PREFIX . $feature_name;
 	}
 
 	private function add_default_features() {
@@ -345,7 +359,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.3.0',
+			],
 			'generator_tag' => true,
 		] );
 
@@ -386,7 +403,7 @@ class Manager extends Base_Object {
 				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
 				'elementor'
 			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_RC,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -882,6 +899,74 @@ class Manager extends Base_Object {
 		return new Non_Existing_Dependency( $dependency_name );
 	}
 
+	/**
+	 * The experiments page is a WordPress options page, which means all the experiments are registered via WordPress' register_settings(),
+	 * and their states are being sent in the POST request when saving.
+	 * The options are being updated in a chronological order based on the POST data.
+	 * This behavior interferes with the experiments dependency mechanism because the data that's being sent can be in any order,
+	 * while the dependencies mechanism expects it to be in a specific order (dependencies should be activated before their dependents can).
+	 * In order to solve this issue, we sort the experiments in the POST data based on their dependencies tree.
+	 *
+	 * @param $allowed_options
+	 *
+	 * @return mixed
+	 */
+	private function sort_allowed_options_by_dependencies( $allowed_options ) {
+		if ( ! isset( $allowed_options['elementor'] ) ) {
+			return $allowed_options;
+		}
+
+		$sorted = Collection::make();
+		$visited = Collection::make();
+
+		$sort = function ( $item ) use ( &$sort, $sorted, $visited ) {
+			if ( $visited->contains( $item ) ) {
+				return;
+			}
+
+			$visited->push( $item );
+
+			$feature = $this->get_features( $item );
+
+			if ( ! $feature ) {
+				return;
+			}
+
+			foreach ( $feature['dependencies'] ?? [] as $dep ) {
+				$name = is_string( $dep ) ? $dep : $dep->get_name();
+
+				$sort( $name );
+			}
+
+			$sorted->push( $item );
+		};
+
+		foreach ( $allowed_options['elementor'] as $option ) {
+			$is_experiment_option = strpos( $option, static::OPTION_PREFIX ) === 0;
+
+			if ( ! $is_experiment_option ) {
+				continue;
+			}
+
+			$sort(
+				str_replace( static::OPTION_PREFIX, '', $option )
+			);
+		}
+
+		$allowed_options['elementor'] = Collection::make( $allowed_options['elementor'] )
+			->filter( function ( $option ) {
+				return 0 !== strpos( $option, static::OPTION_PREFIX );
+			} )
+			->merge(
+				$sorted->map( function ( $item ) {
+					return static::OPTION_PREFIX . $item;
+				} )
+			)
+			->values();
+
+		return $allowed_options;
+	}
+
 	public function __construct() {
 		$this->init_states();
 
@@ -903,6 +988,10 @@ class Manager extends Base_Object {
 
 			add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
 				$this->register_settings_fields( $settings );
+			}, 11 );
+
+			add_filter( 'allowed_options', function ( $allowed_options ) {
+				return $this->sort_allowed_options_by_dependencies( $allowed_options );
 			}, 11 );
 		}
 

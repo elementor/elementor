@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Ai\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Modules\Ai\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -108,7 +109,7 @@ class Ai extends Library {
 			$method,
 			$endpoint,
 			[
-				'timeout' => 50,
+				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
 			],
@@ -474,6 +475,74 @@ class Ai extends Library {
 		);
 
 		return $result;
+	}
+
+	public function generate_layout( $prompt, $context, $variation_type ) {
+		return $this->ai_request(
+			'POST',
+			'generate/layout',
+			[
+				'prompt' => $prompt,
+				'context' => $context ?? [],
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'variationType' => (int) $variation_type,
+			]
+		);
+	}
+
+	public function get_layout_prompt_enhanced( $prompt, $context = [] ) {
+		return $this->ai_request(
+			'POST',
+			'generate/enhance-prompt',
+			[
+				'prompt' => $prompt,
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function get_history_by_type( $type, $page, $limit, $context = [] ) {
+		$endpoint = Module::HISTORY_TYPE_ALL === $type
+			? 'history'
+			: add_query_arg( [
+				'page' => $page,
+				'limit' => $limit,
+			], "history/{$type}" );
+
+		return $this->ai_request(
+			'POST',
+			$endpoint,
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function delete_history_item( $id, $context = [] ) {
+		return $this->ai_request(
+			'DELETE', 'history/' . $id,
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
+	public function toggle_favorite_history_item( $id, $context = [] ) {
+		return $this->ai_request(
+			'POST', sprintf( 'history/%s/favorite', $id ),
+			[
+				'context' => wp_json_encode( $context ),
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
 	}
 
 	protected function init() {}
