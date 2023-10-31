@@ -5,7 +5,6 @@ const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
-	const [ promptPrevIds, setPromptPrevIds ] = useState( {} );
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -35,17 +34,6 @@ const useScreenshots = ( { onData } ) => {
 				return updatedData;
 			} );
 
-			setPromptPrevIds( ( prev ) => {
-				if ( ! prev[ prompt ] ) {
-					prev[ prompt ] = [];
-				}
-
-				return {
-					...prev,
-					[ prompt ]: [ ...prev[ prompt ], screenshot.baseTemplateId ],
-				};
-			} );
-
 			return true;
 		};
 
@@ -63,7 +51,7 @@ const useScreenshots = ( { onData } ) => {
 		};
 
 		const promises = screenshotsData.map( ( { generate } ) => {
-			const prevGeneratedIds = promptPrevIds[ prompt ] || [];
+			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId );
 
 			return generate( prompt, prevGeneratedIds, abortController.current.signal )
 				.then( onGenerate )
