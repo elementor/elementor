@@ -438,10 +438,10 @@ class Widget_Progress extends Widget_Base {
 		if ( settings.title ) {
 			view.addRenderAttribute(
 				'title',
-				[
+				{
 					'class': 'elementor-title',
 					'id': progressbar_id,
-				]
+				}
 			);
 
 			view.addInlineEditingAttributes( 'title' );
