@@ -205,12 +205,12 @@ class Module extends BaseModule {
 				'color' => null,
 			],
 			static::ACCESS_TIER_ESSENTIAL => [
-				'label' => 'Essential',
+				'label' => 'Pro',
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
 			static::ACCESS_TIER_LEGACY => [
-				'label' => 'Pro', // Should be the same label as "Advanced".
+				'label' => 'Advanced', // Should be the same label as "Advanced".
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],

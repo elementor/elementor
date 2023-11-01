@@ -28,6 +28,7 @@ import './item-header.scss';
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, model.id, model.title );
+	const { settings } = useSettingsContext();
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -50,7 +51,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 			return {
 				id: 'promotion',
 				// Translators: %s is the subscription plan name.
-				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+				text: settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`,
 				hideText: false,
 				variant: 'contained',
 				color: 'cta',
