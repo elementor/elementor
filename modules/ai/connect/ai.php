@@ -477,18 +477,41 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $context, $variation_type, $prev_generated_ids = [] ) {
+	public function generate_layout( $prompt, $attachments, $context, $variation_type, $prev_generated_ids = [] ) {
+		$endpoint = 'generate/layout';
+		$body = [
+			'prompt' => $prompt,
+			'generatedBaseTemplatesIds' => $prev_generated_ids,
+			"config" => [
+				"generate" => [
+					"all" => true
+				],
+			],
+			'context' => $context ?? [],
+			'api_version' => ELEMENTOR_VERSION,
+			'site_lang' => get_bloginfo( 'language' ),
+			'variationType' => (int) $variation_type,
+		];
+
+		if ( ! empty( $attachments ) ) {
+			switch ( $attachments[0]['type'] ) {
+				case 'json':
+					$endpoint = 'generate/generate-json-variation';
+
+					$json = new \stdClass();
+					$json->type ='elementor';
+					$json->elements = [ $attachments[0]['content'] ];
+
+					$body['json'] = wp_json_encode( $json );
+
+					break;
+			}
+		}
+
 		return $this->ai_request(
 			'POST',
-			'generate/layout',
-			[
-				'prompt' => $prompt,
-				'generatedBaseTemplatesIds' => $prev_generated_ids,
-				'context' => $context ?? [],
-				'api_version' => ELEMENTOR_VERSION,
-				'site_lang' => get_bloginfo( 'language' ),
-				'variationType' => (int) $variation_type,
-			]
+			$endpoint,
+			$body
 		);
 	}
 

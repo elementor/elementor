@@ -8,6 +8,8 @@ import GenerateSubmit from '../../form-media/components/generate-submit';
 import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
+import Attachments from './attachments';
+import { attachmentsShape } from '../../../types/attachments';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -63,12 +65,27 @@ const GenerateButton = ( props ) => (
 	</GenerateSubmit>
 );
 
-const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit }, ref ) => {
+const PromptForm = forwardRef( ( {
+	isActive,
+	attachmentsTypes,
+	attachments,
+	isLoading,
+	showActions = false,
+	onAttach,
+	onDetach,
+	onSubmit,
+	onBack,
+	onEdit,
+}, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || '' === prompt;
+	const attachmentsType = attachments[ 0 ]?.type || '';
+	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
+	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
+
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -84,54 +101,68 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 		<Box
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
-			sx={ { p: 2 } }
-			display="flex"
-			alignItems="center"
-			gap={ 1 }
 		>
-			<Stack direction="row" flexGrow={ 1 } spacing={ 1 }>
-				{
-					showActions && (
-						isActive ? (
-							<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
-						) : (
-							<EditButton disabled={ isLoading } onClick={ handleEdit } />
+			<Stack
+				direction="row"
+				sx={ { p: 2 } }
+				alignItems="center"
+				gap={ 1 }
+			>
+				<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+					{
+						showActions && (
+							isActive ? (
+								<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
+							) : (
+								<EditButton disabled={ isLoading } onClick={ handleEdit } />
+							)
 						)
-					)
-				}
+					}
 
-				<PromptAutocomplete
-					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
-					onSubmit={ ( e ) => onSubmit( e, prompt ) }
-					options={ PROMPT_SUGGESTIONS }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
-					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
-					renderInput={ ( params ) => (
-						<PromptAutocomplete.TextInput
-							{ ...params }
-							ref={ ref }
-							onChange={ ( e ) => setPrompt( e.target.value ) }
-							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
-						/>
-					) }
+					<Attachments
+						attachments={ attachments }
+						onAttach={ onAttach }
+						onDetach={ onDetach }
+						disabled={ isLoading }
+					/>
+
+					<PromptAutocomplete
+						value={ prompt }
+						disabled={ isLoading || ! isActive || isEnhancing }
+						onSubmit={ ( e ) => onSubmit( e, prompt ) }
+						options={ promptSuggestions }
+						getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+						onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
+						renderInput={ ( params ) => (
+							<PromptAutocomplete.TextInput
+								{ ...params }
+								ref={ ref }
+								onChange={ ( e ) => setPrompt( e.target.value ) }
+								placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+							/>
+						) }
+					/>
+				</Stack>
+
+				<EnhanceButton
+					size="small"
+					disabled={ isInteractionsDisabled }
+					isLoading={ isEnhancing }
+					onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 				/>
+
+				<GenerateButton disabled={ isInteractionsDisabled } />
 			</Stack>
-
-			<EnhanceButton
-				size="small"
-				disabled={ isInteractionsDisabled }
-				isLoading={ isEnhancing }
-				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
-			/>
-
-			<GenerateButton disabled={ isInteractionsDisabled } />
 		</Box>
 	);
 } );
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
+	attachmentsTypes: PropTypes.object,
+	attachments: attachmentsShape,
+	onAttach: PropTypes.func,
+	onDetach: PropTypes.func,
 	isLoading: PropTypes.bool,
 	showActions: PropTypes.bool,
 	onSubmit: PropTypes.func.isRequired,
