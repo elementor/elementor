@@ -234,14 +234,19 @@ class Widgets_Manager {
 	 *
 	 * @param \Elementor\Widget_Base $widget_instance Elementor Widget.
 	 *
-	 * @return true True if the widget was registered.
+	 * @return bool True if the widget was registered.
 	 * @since 3.5.0
 	 * @access public
-	 *
 	 */
 	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
+		}
+
+		$should_register = apply_filters( 'elementor/widgets_manager/is_widget_registered', true, $widget_instance );
+
+		if ( ! $should_register ) {
+			return false;
 		}
 
 		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;

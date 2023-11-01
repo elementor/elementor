@@ -123,6 +123,7 @@ const entry = {
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
+	'widget-manager-admin': path.resolve( __dirname, '../modules/widget-manager/assets/js/admin.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
@@ -146,6 +147,8 @@ const externals = {
 	'@elementor/router': 'elementorAppPackages.router',
 	'@elementor/ui': 'elementorV2.ui',
 	'@elementor/icons': 'elementorV2.icons',
+	'@wordpress/dom-ready': 'wp.domReady',
+	'@wordpress/components': 'wp.components',
 };
 
 const plugins = [
