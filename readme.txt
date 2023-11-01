@@ -240,6 +240,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.17.2 - 2023-11-01 =
+
+* Modified controls sanitization to enforce better security policies in Heading, Icon, Image Box, and Testimonial widgets
+
 = 3.17.1 - 2023-10-25 =
 
 * Error message appears when loading the Theme Builder
