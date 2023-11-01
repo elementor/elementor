@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-# <a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=contribution">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a>
+<a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=contribution">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a>
 
 **Welcome to the Elementor Contribution Guidelines**
 

@@ -5,13 +5,13 @@ body:
     - type: markdown
       attributes:
           value: |
-              ### 👋 Hello, welcome to the Elementor Bug Reports!
+              **👋 Hello, welcome to the Elementor Bug Reports!**
               # ⚠️ BEFORE POSTING READ THIS CAREFULLY
               ## 🐞 Please only use this form to report validated Elementor Bugs.
               ### 🛟 Need Help, Guidance, Assistance, or Support? <br>[Click here to get support](https://elemn.to/support-ticket).
               ### 🔧 Before submitting your issue, troubleshoot and validate it. <br>[Click here to start troubleshooting](https://elemn.to/help-troubleshooting).
 
-              #### ℹ️ For more information please read our [Contribution Guidelines](https://elemn.to/gh-contributing).
+              **ℹ️ For more information please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
               <br>
 
               ### 😉 Follow these best practices to help save time
@@ -25,7 +25,7 @@ body:
               - 🧩 We do not provide solutions for 3rd-party add-ons, extensions, and other plugins or themes that Elementor does not offer official integration.
               <br>
 
-              # THE ISSUE
+              ## THE ISSUE
               ### 📋 Prerequisites
               - 🔍 **Search Before Posting** <br>Please **[search for similar issues](https://elemn.to/gh-issues)** (both open and closed) to prevent creating duplicates. <br>Use **[GitHub Labels](https://elemn.to/gh-labels)** to refine your serach.
               - 🆕 **Stay Up-to-date** <br>Ensure you are using the **[most recent and stable versions](https://elemn.to/changelog)** of Elementor (and Elementor Pro), as well as all installed plugins, themes, and WordPress.
@@ -107,7 +107,7 @@ body:
               <br>
 
               ### 💾 Elementor System Info
-              #### ⚠️ <ins>This field is REQUIRED</ins>
+              **⚠️ <ins>This field is REQUIRED</ins>**
               - Please copy and paste the **<ins>full Elementor System Info</ins>** report from your WordPress **`Dashboard`** > **`Elementor`** > **`System Info`** page (available at the bottom of the page). <br>**We won't accept issues without it. [Learn how to copy it here](https://elemn.to/help-system-info).**
     - type: textarea
       id: system_info

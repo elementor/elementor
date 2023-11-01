@@ -1,6 +1,6 @@
 # Code of Conduct
 
-# <a href="https://elemn.to/gh-to-elementor">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a>
+<a href="https://elemn.to/gh-to-elementor">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a>
 
 **The Elementor GitHub organization page and all respective repositories are collaborative spaces for web creators, developers, enthusiasts, and users alike to contribute, share ideas, and help shape the future of Elementor in a positive and welcoming way.**
 

@@ -3,14 +3,14 @@ body:
     - type: markdown
       attributes:
           value: |
-              ### 👋 Hello, welcome to Elementor Feature Requests!
+              **👋 Hello, welcome to Elementor Feature Requests!**
               # ⚠️ BEFORE POSTING READ THIS CAREFULLY
               ## 🚀 Please only use this form to request an Elementor feature or enhancement.
-              #### 🚩 Check our [Roadmap](https://elemn.to/gh-to-roadmap) to learn what's in the pipeline.
+              **🚩 Check our [Roadmap](https://elemn.to/gh-to-roadmap) to learn what's in the pipeline.**
               ### 🛟 Need Help, Guidance, Assistance, or Support? <br>[Click here to get support](https://elemn.to/support-ticket).
               ### 🐞 Need to Report an Elementor Bug? <br>[Click here to report a bug](https://elemn.to/gh-new-bug-report).
 
-              #### ℹ️ For more information, please read our [Contribution Guidelines](https://elemn.to/gh-contributing).
+              **ℹ️ For more information, please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
               <br>
 
               ### 😉 Follow these best practices to help save time
@@ -26,7 +26,7 @@ body:
               ---
               <br>
 
-              # THE REQUEST
+              ## THE REQUEST
               ### 📋 Prerequisites
               - 🔍 **Search Before Posting** <br>Before creating a new Feature Request, please [search for similar requests](https://elemn.to/gh-feature-requests) to prevent creating duplicates. 
               - ✔️ **Confirm Before Posting** <br>Please check the [Elementor Features page](https://elemn.to/features) before posting to avoid requesting an existing feature.

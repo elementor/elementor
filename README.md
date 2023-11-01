@@ -1,4 +1,4 @@
-# <p><a href="https://elemn.to/gh-to-elementor"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
+# <a href="https://elemn.to/gh-to-elementor"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a>
 
 Welcome to the Elementor GitHub repository!
 
@@ -42,7 +42,7 @@ Community contributions are always welcomed and help us remain the Number 1 Word
 
 There are many ways to contribute to Elementor:
 
-#### Contribution Guidelines
+### Contribution Guidelines
 
 Please read our [Contribution Guidelines](https://elemn.to/gh-contributing) to learn the best practices for contributing to Elementor.
 
