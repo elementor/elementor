@@ -1,12 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { Box, useTheme } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 const THUMBNAIL_SIZE = 64;
 
 export const Thumbnail = ( props ) => {
 	const previewRef = useRef( null );
-	const theme = useTheme();
 
 	useEffect( () => {
 		if ( previewRef.current ) {
@@ -21,12 +20,16 @@ export const Thumbnail = ( props ) => {
 		<Box sx={ {
 			width: THUMBNAIL_SIZE,
 			height: THUMBNAIL_SIZE,
+			minWidth: THUMBNAIL_SIZE,
+			minHeight: THUMBNAIL_SIZE,
+			maxWidth: THUMBNAIL_SIZE,
+			maxHeight: THUMBNAIL_SIZE,
 			border: '1px solid',
-			borderColor: theme.palette.grey[ '300' ],
+			borderColor: 'grey.300',
 			position: 'relative',
 			cursor: 'default',
 			overflow: 'hidden',
-			borderRadius: theme.shape.borderRadius,
+			borderRadius: 1,
 			opacity: props.disabled ? 0.5 : 1,
 			'& img': {
 				width: '100%',

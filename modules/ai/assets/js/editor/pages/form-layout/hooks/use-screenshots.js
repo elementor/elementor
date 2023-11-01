@@ -77,7 +77,7 @@ const useScreenshots = ( { onData } ) => {
 
 		setScreenshots( placeholders );
 
-		return createScreenshots( prompt, attachments );
+		createScreenshots( prompt, attachments );
 	};
 
 	const regenerate = ( prompt, attachments ) => {
@@ -85,7 +85,7 @@ const useScreenshots = ( { onData } ) => {
 
 		setScreenshots( ( prev ) => [ ...prev, ...placeholders ] );
 
-		return createScreenshots( prompt, attachments );
+		createScreenshots( prompt, attachments );
 	};
 
 	return {

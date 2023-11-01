@@ -41,11 +41,11 @@ export const createScreenshot = async ( template ) => {
 
 export const renderLayoutApp = ( options = {
 	at: null,
-	onRenderApp: null,
-	onInsert: null,
 	onClose: null,
-	onSelect: null,
 	onGenerate: null,
+	onInsert: null,
+	onRenderApp: null,
+	onSelect: null,
 	attachments: [],
 } ) => {
 	closePanel();
