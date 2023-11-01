@@ -1,0 +1,48 @@
+name: Build PR
+
+on:name: pull request comment
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  only_pull_requests:
+    if: contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/build')
+  run:
+    runs-on: ubuntu-22.04
+    if: startsWith( github.repository, 'elementor/' )
+    needs: [ 'only_pull_requests' ]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-npm-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build and Deploy
+        run: |
+          npm config set git-tag-version false
+          export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
+          export PACKAGE_VERSION=$(cat package.json \
+            | grep version \
+            | head -1 \
+            | awk -F: '{ print $2 }' \
+            | sed 's/[",]//g' \
+            | tr -d '[[:space:]]')
+          export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
+          grunt build
+          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
+          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
+          mv build elementor
+          zip -r $PLUGIN_ZIP_FILENAME elementor
+          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          path: elementor-*.zip
