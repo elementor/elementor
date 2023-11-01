@@ -10,9 +10,14 @@ export const Thumbnail = ( props ) => {
 	useEffect( () => {
 		if ( previewRef.current ) {
 			const previewRoot = previewRef.current.querySelector( '*' );
-			const attachmentWidth = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
+			const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
+			const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
 
-			previewRef.current.style.transform = 'scale(' + ( THUMBNAIL_SIZE / attachmentWidth ) + ')';
+			const scaleFactor = width > height ? width : height;
+			const scale = THUMBNAIL_SIZE / scaleFactor;
+
+			previewRef.current.style.transform = `scale(${ scale })`;
+			previewRef.current.style.transformOrigin = 'center';
 		}
 	}, [] );
 
@@ -43,8 +48,9 @@ export const Thumbnail = ( props ) => {
 					ref={ previewRef }
 					sx={ {
 						pointerEvents: 'none',
-						transform: 'scale(0.10)',
-						transformOrigin: 'top left',
+						transformOrigin: 'center',
+						width: THUMBNAIL_SIZE,
+						height: THUMBNAIL_SIZE,
 					} }
 					dangerouslySetInnerHTML={ {
 						__html: props.html,
