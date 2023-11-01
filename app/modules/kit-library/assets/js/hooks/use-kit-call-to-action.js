@@ -14,6 +14,8 @@ export default function useKitCallToAction( kitAccessTier ) {
 	const isPaidUser = settings.access_level > 0;
 	const shouldFallbackToLegacy = isPaidUser && userAccessTier === TIERS.free;
 
+	// Fallback to the last access_tier before the new tiers were introduced.
+	// TODO: Remove when Pro with the new tiers is stable.
 	if ( shouldFallbackToLegacy ) {
 		userAccessTier = TIERS[ 'essential-oct2023' ];
 	}
