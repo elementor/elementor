@@ -23,10 +23,12 @@ export const onConnect = ( data ) => {
 export const getUiConfig = () => {
 	const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 	const isRTL = elementorCommon.config.isRTL;
+	const locale = elementorCommon.config.locale;
 
 	return {
 		colorScheme,
 		isRTL,
+		locale,
 	};
 };
 
@@ -57,7 +59,7 @@ export const renderLayoutApp = ( options = {
 
 	options.onRenderApp?.( { previewContainer } );
 
-	const { colorScheme, isRTL } = getUiConfig();
+	const { colorScheme, isRTL, locale } = getUiConfig();
 
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
@@ -66,6 +68,7 @@ export const renderLayoutApp = ( options = {
 		<LayoutApp
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
+			locale={ locale }
 			attachmentsTypes={ {
 				json: {
 					promptSuggestions: [
@@ -79,6 +82,16 @@ export const renderLayoutApp = ( options = {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
+				},
+				url: {
+					promptSuggestions: [
+						{ text: 'Change the content to be about' },
+						{ text: 'I need the container to become more related to' },
+						{ text: 'Make the text more hard-sell oriented' },
+						{ text: 'Alter the look and feel to become more Christmas related' },
+						{ text: 'Replace all images to relate to' },
+					],
+
 				},
 			} }
 			attachments={ options.attachments || [] }

@@ -22,9 +22,6 @@ export const AttachmentJson = ( props ) => {
 		<Thumbnail
 			disabled={ props.disabled }
 			html={ attachment.previewHTML }
-			onClick={ () => {} }
-			allowRemove={ false }
-			onRemove={ () => {} }
 		/>
 	);
 };

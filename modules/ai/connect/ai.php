@@ -495,6 +495,14 @@ class Ai extends Library {
 
 		if ( ! empty( $attachments ) ) {
 			switch ( $attachments[0]['type'] ) {
+				case 'url':
+					$endpoint = 'generate/html-to-elementor';
+
+					$html = json_encode( $attachments[0]['content'] );
+
+					$body['html'] = $html;
+
+					break;
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
 

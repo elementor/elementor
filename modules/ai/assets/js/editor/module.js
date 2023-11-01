@@ -1,8 +1,7 @@
 import AiBehavior from './ai-behavior';
-import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
 import { registerContextMenu } from './utils/editor-integration';
-
+import { __ } from '@wordpress/i18n';
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
