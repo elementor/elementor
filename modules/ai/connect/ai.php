@@ -477,12 +477,13 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $context, $variation_type ) {
+	public function generate_layout( $prompt, $context, $variation_type, $prev_generated_ids = [] ) {
 		return $this->ai_request(
 			'POST',
 			'generate/layout',
 			[
 				'prompt' => $prompt,
+				'generatedBaseTemplatesIds' => $prev_generated_ids,
 				'context' => $context ?? [],
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
