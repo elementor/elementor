@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { Box, Button, Grid, Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { AIIcon, MessageIcon, ShrinkIcon, ExpandIcon } from '@elementor/icons';
 import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
