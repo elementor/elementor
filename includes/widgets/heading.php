@@ -344,7 +344,7 @@ class Widget_Heading extends Widget_Base {
 		var title = settings.title;
 
 		if ( '' !== settings.link.url ) {
-			title = '<a href="' + settings.link.url + '">' + title + '</a>';
+			title = '<a href="' + _.escape( settings.link.url ) + '">' + title + '</a>';
 		}
 
 		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );
