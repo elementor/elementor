@@ -51,7 +51,9 @@ const useScreenshots = ( { onData } ) => {
 		};
 
 		const promises = screenshotsData.map( ( { generate } ) => {
-			return generate( prompt, abortController.current.signal )
+			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId );
+
+			return generate( prompt, prevGeneratedIds, abortController.current.signal )
 				.then( onGenerate )
 				.catch( onError );
 		} );
