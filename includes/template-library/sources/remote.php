@@ -307,15 +307,6 @@ class Source_Remote extends Source_Base {
 	private function prepare_template( array $template_data ) {
 		$favorite_templates = $this->get_user_meta( 'favorites' );
 
-		// BC: Support legacy APIs that don't have access tiers.
-		if ( isset( $template_data['access_tier'] ) ) {
-			$access_tier = $template_data['access_tier'];
-		} else {
-			$access_tier = 0 === $template_data['access_level']
-				? ConnectModule::ACCESS_TIER_FREE
-				: ConnectModule::ACCESS_TIER_ESSENTIAL_OCT_2023;
-		}
-
 		return [
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
@@ -328,7 +319,7 @@ class Source_Remote extends Source_Base {
 			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
 			'accessLevel' => $template_data['access_level'],
-			'accessTier' => $access_tier,
+			'accessTier' => $template_data['access_tier'],
 			'popularityIndex' => (int) $template_data['popularity_index'],
 			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
