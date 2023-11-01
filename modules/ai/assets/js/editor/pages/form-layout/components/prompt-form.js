@@ -96,60 +96,57 @@ const PromptForm = forwardRef( ( {
 	};
 
 	return (
-		<Box
+		<Stack
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
+			direction="row"
+			sx={ { p: 2 } }
+			alignItems="center"
+			gap={ 1 }
 		>
-			<Stack
-				direction="row"
-				sx={ { p: 2 } }
-				alignItems="center"
-				gap={ 1 }
-			>
-				<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
-					{
-						showActions && (
-							isActive ? (
-								<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
-							) : (
-								<EditButton disabled={ isLoading } onClick={ handleEdit } />
-							)
+			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+				{
+					showActions && (
+						isActive ? (
+							<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
+						) : (
+							<EditButton disabled={ isLoading } onClick={ handleEdit } />
 						)
-					}
+					)
+				}
 
-					<Attachments
-						attachments={ attachments }
-						disabled={ isLoading }
-					/>
-
-					<PromptAutocomplete
-						value={ prompt }
-						disabled={ isLoading || ! isActive || isEnhancing }
-						onSubmit={ ( e ) => onSubmit( e, prompt ) }
-						options={ promptSuggestions }
-						getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
-						onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
-						renderInput={ ( params ) => (
-							<PromptAutocomplete.TextInput
-								{ ...params }
-								ref={ ref }
-								onChange={ ( e ) => setPrompt( e.target.value ) }
-								placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
-							/>
-						) }
-					/>
-				</Stack>
-
-				<EnhanceButton
-					size="small"
-					disabled={ isInteractionsDisabled }
-					isLoading={ isEnhancing }
-					onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
+				<Attachments
+					attachments={ attachments }
+					disabled={ isLoading }
 				/>
 
-				<GenerateButton disabled={ isInteractionsDisabled } />
+				<PromptAutocomplete
+					value={ prompt }
+					disabled={ isLoading || ! isActive || isEnhancing }
+					onSubmit={ ( e ) => onSubmit( e, prompt ) }
+					options={ promptSuggestions }
+					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
+					renderInput={ ( params ) => (
+						<PromptAutocomplete.TextInput
+							{ ...params }
+							ref={ ref }
+							onChange={ ( e ) => setPrompt( e.target.value ) }
+							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+						/>
+					) }
+				/>
 			</Stack>
-		</Box>
+
+			<EnhanceButton
+				size="small"
+				disabled={ isInteractionsDisabled }
+				isLoading={ isEnhancing }
+				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
+			/>
+
+			<GenerateButton disabled={ isInteractionsDisabled } />
+		</Stack>
 	);
 } );
 
