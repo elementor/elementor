@@ -1,8 +1,7 @@
-// TODO: Check the access tier strings.
 export const TIERS_PRIORITY = Object.freeze( [
 	'free',
 	'essential',
-	'legacy',
+	'essential-oct2023',
 	'advanced',
 	'expert',
 	'agency',
@@ -12,7 +11,7 @@ export const TIERS_PRIORITY = Object.freeze( [
  * @type {Readonly<{
  *     free: string;
  *     essential: string;
- *     legacy: string;
+ *     'essential-oct2023': string;
  *     advanced: string;
  *     expert: string;
  *     agency: string;

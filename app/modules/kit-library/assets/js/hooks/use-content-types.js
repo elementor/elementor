@@ -55,8 +55,8 @@ function fetchContentTypes( tier ) {
 	];
 
 	// BC: When there is no tier, fallback to legacy (Core/Pro dependency).
-	const currentTier = tier || TIERS.legacy;
-	const tierThatSupportsPopups = TIERS.legacy;
+	const currentTier = tier || TIERS[ 'essential-oct2023' ];
+	const tierThatSupportsPopups = TIERS[ 'essential-oct2023' ];
 
 	if ( isTierAtLeast( currentTier, tierThatSupportsPopups ) ) {
 		contentTypes.push( {
