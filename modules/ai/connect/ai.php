@@ -482,9 +482,9 @@ class Ai extends Library {
 		$body = [
 			'prompt' => $prompt,
 			'generatedBaseTemplatesIds' => $prev_generated_ids,
-			"config" => [
-				"generate" => [
-					"all" => true
+			'config' => [
+				'generate' => [
+					'all' => true,
 				],
 			],
 			'context' => $context ?? [],
@@ -499,7 +499,7 @@ class Ai extends Library {
 					$endpoint = 'generate/generate-json-variation';
 
 					$json = new \stdClass();
-					$json->type ='elementor';
+					$json->type = 'elementor';
 					$json->elements = [ $attachments[0]['content'] ];
 
 					$body['json'] = wp_json_encode( $json );
