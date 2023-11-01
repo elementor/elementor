@@ -9,11 +9,17 @@ const useScreenshot = ( type, onData ) => {
 
 	const layoutData = useLayoutPrompt( type, null );
 
-	const generate = ( prompt, prevGeneratedIds, signal ) => {
+	const generate = ( prompt, attachments, prevGeneratedIds, signal ) => {
 		setIsLoading( true );
 		setError( ERROR_INITIAL_VALUE );
 
-		return layoutData.send( prompt, prevGeneratedIds, signal )
+		const cleanAttachments = attachments.map( ( attachment ) => {
+			const cleanAttachment = { ...attachment };
+			delete cleanAttachment.previewHTML;
+			return cleanAttachment;
+		} );
+
+		return layoutData.send( prompt, cleanAttachments, prevGeneratedIds, signal )
 			.then( async ( data ) => {
 				const createdScreenshot = await onData( data.result );
 

@@ -30,17 +30,32 @@ export const getUiConfig = () => {
 	};
 };
 
+export const createScreenshot = async ( template ) => {
+	const screenshot = await takeScreenshot( template );
+
+	return {
+		screenshot,
+		template,
+	};
+};
+
 export const renderLayoutApp = ( options = {
 	at: null,
+	onRenderApp: null,
 	onInsert: null,
+	onClose: null,
+	onSelect: null,
+	onGenerate: null,
+	attachments: [],
 } ) => {
 	closePanel();
 
 	const previewContainer = createPreviewContainer( {
+		// Create the container at the "drag widget here" area position.
 		at: options.at,
 	} );
 
-	previewContainer.init();
+	options.onRenderApp?.( { previewContainer } );
 
 	const { colorScheme, isRTL } = getUiConfig();
 
@@ -51,8 +66,25 @@ export const renderLayoutApp = ( options = {
 		<LayoutApp
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
+			attachmentsTypes={ {
+				json: {
+					promptSuggestions: [
+						{ text: 'Change the content to be about' },
+						{ text: 'I need the container to become more related to' },
+						{ text: 'Make the text more hard-sell oriented' },
+						{ text: 'Alter the look and feel to become more Christmas related' },
+						{ text: 'Replace all images to relate to' },
+					],
+					previewGenerator: async ( json ) => {
+						const screenshot = await takeScreenshot( json );
+						return `<img src="${ screenshot }" />`;
+					},
+				},
+			} }
+			attachments={ options.attachments || [] }
 			onClose={ () => {
 				previewContainer.destroy();
+				options.onClose?.();
 
 				ReactDOM.unmountComponentAtNode( rootElement );
 				rootElement.remove();
@@ -60,7 +92,9 @@ export const renderLayoutApp = ( options = {
 				openPanel();
 			} }
 			onConnect={ onConnect }
-			onGenerate={ () => previewContainer.reset() }
+			onGenerate={ () => {
+				options.onGenerate?.( { previewContainer } );
+			} }
 			onData={ async ( template ) => {
 				const screenshot = await takeScreenshot( template );
 
@@ -69,7 +103,10 @@ export const renderLayoutApp = ( options = {
 					template,
 				};
 			} }
-			onSelect={ ( template ) => previewContainer.setContent( template ) }
+			onSelect={ ( template ) => {
+				options.onSelect?.();
+				previewContainer.setContent( template );
+			} }
 			onInsert={ options.onInsert }
 		/>,
 		rootElement,
@@ -80,11 +117,18 @@ export const importToEditor = ( {
 	at,
 	template,
 	historyTitle,
+	replace = false,
 } ) => {
 	const endHistoryLog = startHistoryLog( {
 		type: 'import',
 		title: historyTitle,
 	} );
+
+	if ( replace ) {
+		$e.run( 'document/elements/delete', {
+			container: elementor.getPreviewContainer().children.at( at ),
+		} );
+	}
 
 	$e.run( 'document/elements/create', {
 		container: elementor.getPreviewContainer(),
@@ -97,3 +141,50 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
+
+export const registerContextMenu = ( groups, currentElement ) => {
+	const saveGroup = groups.find( ( group ) => 'save' === group.name );
+
+	if ( ! saveGroup ) {
+		return groups;
+	}
+
+	// Add on top of save group actions
+	saveGroup.actions.unshift( {
+		name: 'ai',
+		icon: 'eicon-ai',
+		title: __( 'Generate AI Variations', 'elementor' ),
+		callback: async () => {
+			const container = currentElement.getContainer();
+			const json = container.model.toJSON( { remove: [ 'default' ] } );
+			const attachments = [ {
+				type: 'json',
+				previewHTML: '',
+				content: json,
+				label: container.model.get( 'title' ),
+			} ];
+
+			renderLayoutApp( {
+				at: container.view._index,
+				attachments,
+				onSelect: () => {
+					container.view.$el.hide();
+				},
+				onClose: () => {
+					container.view.$el.show();
+				},
+				onInsert: ( template ) => {
+					importToEditor( {
+						at: container.view._index,
+						template,
+						historyTitle: __( 'AI Variation', 'elementor' ),
+						replace: true,
+					} );
+				},
+			} );
+		},
+	} );
+
+	return groups;
+};
+

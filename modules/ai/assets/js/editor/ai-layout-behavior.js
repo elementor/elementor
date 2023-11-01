@@ -26,6 +26,12 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		renderLayoutApp( {
 			at: this.view.getOption( 'at' ),
 			onInsert: this.onInsert.bind( this ),
+			onRenderApp: ( args ) => {
+				args.previewContainer.init();
+			},
+			onGenerate: ( args ) => {
+				args.previewContainer.reset();
+			},
 		} );
 	}
 

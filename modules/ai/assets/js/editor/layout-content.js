@@ -10,8 +10,18 @@ import { Alert } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import useIntroduction from './hooks/use-introduction';
+import { attachmentsShape } from './types/attachments';
 
-const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGenerate } ) => {
+const LayoutContent = ( {
+	attachmentsTypes,
+	attachments,
+	onClose,
+	onConnect,
+	onData,
+	onInsert,
+	onSelect,
+	onGenerate,
+} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-coming-soon-info' );
 
@@ -61,6 +71,8 @@ const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGene
 
 	return (
 		<FormLayout
+			attachmentsTypes={ attachmentsTypes }
+			attachments={ attachments }
 			credits={ credits }
 			onClose={ onClose }
 			onInsert={ onInsert }
@@ -85,6 +97,8 @@ const LayoutContent = ( { onClose, onConnect, onData, onInsert, onSelect, onGene
 };
 
 LayoutContent.propTypes = {
+	attachmentsTypes: PropTypes.object,
+	attachments: attachmentsShape,
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
 	onData: PropTypes.func.isRequired,
