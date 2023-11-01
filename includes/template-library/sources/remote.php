@@ -2,7 +2,6 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
-use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
