@@ -81,11 +81,11 @@ const PromptForm = forwardRef( ( {
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
 
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
+
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
 	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
-
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
