@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Data;
 
-use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Utils\Collection;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
