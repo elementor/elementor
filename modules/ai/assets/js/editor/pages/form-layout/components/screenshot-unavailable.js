@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 import ScreenshotContainer from './screenshot-container';
 
 export default function ScreenshotUnavailable( props ) {

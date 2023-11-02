@@ -1,4 +1,5 @@
 import { Tooltip as UITooltip } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const Tooltip = ( { children, ...props } ) => {
 	return (

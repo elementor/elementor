@@ -21,7 +21,7 @@ class Module extends BaseModule {
 
 	const ACCESS_TIER_FREE = 'free';
 	const ACCESS_TIER_ESSENTIAL = 'essential';
-	const ACCESS_TIER_LEGACY = 'legacy';
+	const ACCESS_TIER_ESSENTIAL_OCT_2023 = 'essential-oct2023';
 	const ACCESS_TIER_ADVANCED = 'advanced';
 	const ACCESS_TIER_EXPERT = 'expert';
 	const ACCESS_TIER_AGENCY = 'agency';
@@ -209,7 +209,7 @@ class Module extends BaseModule {
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',
 			],
-			static::ACCESS_TIER_LEGACY => [
+			static::ACCESS_TIER_ESSENTIAL_OCT_2023 => [
 				'label' => 'Advanced', // Should be the same label as "Advanced".
 				'promotion_url' => 'https://elementor.com/pro/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro',
 				'color' => '#92003B',

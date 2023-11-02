@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 6.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 7.3
 Stable tag: 3.12.1
 License: GPLv3
@@ -239,6 +239,32 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.17.2 - 2023-11-01 =
+
+* Modified controls sanitization to enforce better security policies in Heading, Icon, Image Box, and Testimonial widgets
+
+= 3.17.1 - 2023-10-25 =
+
+* Error message appears when loading the Theme Builder
+
+= 3.17.0 - 2023-10-25 =
+
+* New: AI History - Quickly restore AI-generated content, enhancing your workflow by improving content recovery and acceleration
+* New: Revamped Rating widget - enhanced flexibility for customizable visual rating scales, elevating your designs to be more engaging and interactive ([#18793](https://github.com/elementor/elementor/issues/18793), [#10529](https://github.com/elementor/elementor/issues/10529), [#18169](https://github.com/elementor/elementor/issues/18169), [#20651](https://github.com/elementor/elementor/issues/20651), [#10127](https://github.com/elementor/elementor/issues/10127))
+* New: Introducing Gutenberg Asset Loading as a Beta feature - enhance performance by avoiding unnecessary block editor assets
+* New: Introducing Optimize Image Loading as a Beta feature - Apply default optimization strategies during content rendering for improved LCP
+* Tweak: Allowed using TinyMCE Full Screen Toolbar with Editor Top Bar ([#23463](https://github.com/elementor/elementor/issues/23463), [#22873](https://github.com/elementor/elementor/issues/22873))
+* Tweak: Make the Container element extendable (props [@HadyShaltout](https://github.com/HadyShaltout))
+* Tweak: Added a FAQ Schema support in Accordion widget
+* Tweak: Added VideoPress integration for self-hosted videos in Video widget
+* Tweak: Implemented accessibility improvements in Accordion widget
+* Tweak: Upgraded minimum required PHP version to 7.3
+* Fix: Responsive settings for Templates wouldn't save completely when Additional Custom Breakpoints feature is activated ([#19394](https://github.com/elementor/elementor/issues/19394), [#22829](https://github.com/elementor/elementor/issues/22829))
+* Fix: Error messages appear on Theme Builder when using PHP 8.X ([#22991](https://github.com/elementor/elementor/issues/22991))
+* Fix: Disabling options in URL Control does not hide the options icon in External URL field ([#11214](https://github.com/elementor/elementor/issues/11214))
+* Fix: UI Glitch in widget Style and Advanced tabs ([#23402](https://github.com/elementor/elementor/issues/23402))
+* Fix: PHP Memory Limit displayed in System Info wasn't accurate in various scenarios
 
 = 3.16.6 - 2023-10-17 =
 

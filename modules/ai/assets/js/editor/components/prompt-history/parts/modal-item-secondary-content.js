@@ -1,4 +1,5 @@
 import { Stack, styled, Typography } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const StyledDateSubtitle = styled( Typography )`
   color: ${ ( { theme } ) => theme.palette.secondary.light };

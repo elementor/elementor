@@ -14,8 +14,10 @@ export default function useKitCallToAction( kitAccessTier ) {
 	const isPaidUser = settings.access_level > 0;
 	const shouldFallbackToLegacy = isPaidUser && userAccessTier === TIERS.free;
 
+	// Fallback to the last access_tier before the new tiers were introduced.
+	// TODO: Remove when Pro with the new tiers is stable.
 	if ( shouldFallbackToLegacy ) {
-		userAccessTier = TIERS.legacy;
+		userAccessTier = TIERS[ 'essential-oct2023' ];
 	}
 
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 export const HISTORY_TYPES = Object.freeze( {
 	ALL: 'all',
 	TEXT: 'text',
