@@ -477,15 +477,19 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $attachments, $context, $variation_type, $prev_generated_ids = [] ) {
+	public function generate_layout( $prompt, $attachments, $context, $variation_type, $prev_generated_ids = [], $prompt_affects = [] ) {
 		$endpoint = 'generate/layout';
+
+		// If all prompt affects are the same (true/false) or empty, = set 'all' to true
+		if ( empty( $prompt_affects ) || ( count( array_unique( $prompt_affects ) ) === 1 ) ) {
+			$prompt_affects = [ 'all' => true ];
+		}
+
 		$body = [
 			'prompt' => $prompt,
 			'generatedBaseTemplatesIds' => $prev_generated_ids,
 			'config' => [
-				'generate' => [
-					'all' => true,
-				],
+				'generate' => $prompt_affects,
 			],
 			'context' => $context ?? [],
 			'api_version' => ELEMENTOR_VERSION,

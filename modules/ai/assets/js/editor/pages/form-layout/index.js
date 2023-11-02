@@ -111,7 +111,7 @@ const FormLayout = ( {
 		abortAndClose();
 	};
 
-	const handleGenerate = ( event, prompt ) => {
+	const handleGenerate = ( event, prompt, promptAffects ) => {
 		event.preventDefault();
 
 		if ( '' === prompt.trim() && 0 === attachments.length ) {
@@ -122,7 +122,7 @@ const FormLayout = ( {
 
 		lastRun.current = () => {
 			setSelectedScreenshotIndex( -1 );
-			generate( prompt, attachments );
+			generate( prompt, attachments, promptAffects );
 		};
 
 		lastRun.current();

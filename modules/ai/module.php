@@ -719,7 +719,8 @@ class Module extends BaseModule {
 			$data['attachments'],
 			$this->prepare_generate_layout_context(),
 			$data['variationType'],
-			$data['prevGeneratedIds']
+			$data['prevGeneratedIds'],
+			$data['promptAffects']
 		);
 
 		if ( is_wp_error( $result ) ) {

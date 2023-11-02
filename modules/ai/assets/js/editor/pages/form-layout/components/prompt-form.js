@@ -1,5 +1,5 @@
 import { useState, useRef, forwardRef } from 'react';
-import { Box, Stack, IconButton, Tooltip } from '@elementor/ui';
+import { Box, Stack, IconButton, Tooltip, Chip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import PromptAutocomplete from './prompt-autocomplete';
@@ -10,6 +10,8 @@ import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 import Attachments from './attachments';
 import { attachmentsShape } from '../../../types/attachments';
+import { PromptChips } from './prompt-chips';
+import { PromptChip } from './prompt-chip';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -85,6 +87,16 @@ const PromptForm = forwardRef( ( {
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
 	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
 
+	const [ promptAffects, setPromptAffects ] = useState( {
+		images: true,
+		content: true,
+		colors: true,
+	} );
+
+	const togglePromptAffect = ( affect ) => {
+		setPromptAffects( { ...promptAffects, [ affect ]: ! promptAffects[ affect ] } );
+	};
+
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
 		onBack();
@@ -98,7 +110,7 @@ const PromptForm = forwardRef( ( {
 	return (
 		<Stack
 			component="form"
-			onSubmit={ ( e ) => onSubmit( e, prompt ) }
+			onSubmit={ ( e ) => onSubmit( e, prompt, promptAffects ) }
 			direction="row"
 			sx={ { p: 2 } }
 			alignItems="center"
@@ -120,22 +132,45 @@ const PromptForm = forwardRef( ( {
 					disabled={ isLoading }
 				/>
 
-				<PromptAutocomplete
-					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
-					onSubmit={ ( e ) => onSubmit( e, prompt ) }
-					options={ promptSuggestions }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
-					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
-					renderInput={ ( params ) => (
-						<PromptAutocomplete.TextInput
-							{ ...params }
-							ref={ ref }
-							onChange={ ( e ) => setPrompt( e.target.value ) }
-							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
-						/>
-					) }
-				/>
+				<Box width="100%">
+					{
+						attachments.length && <PromptChips>
+							<PromptChip
+								label={ __( 'Images', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'images' ) }
+								isSelected={ promptAffects.images }
+							/>
+							<PromptChip
+								label={ __( 'Content', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'content' ) }
+								isSelected={ promptAffects.content }
+							/>
+							<PromptChip
+								label={ __( 'Colors', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'colors' ) }
+								isSelected={ promptAffects.colors }
+							/>
+						</PromptChips>
+					}
+
+					<PromptAutocomplete
+						value={ prompt }
+						disabled={ isLoading || ! isActive || isEnhancing }
+						onSubmit={ ( e ) => onSubmit( e, prompt ) }
+						options={ promptSuggestions }
+						getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
+						onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
+						renderInput={ ( params ) => (
+							<PromptAutocomplete.TextInput
+								{ ...params }
+								ref={ ref }
+								onChange={ ( e ) => setPrompt( e.target.value ) }
+								placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+							/>
+						) }
+					/>
+
+				</Box>
 			</Stack>
 
 			<EnhanceButton
