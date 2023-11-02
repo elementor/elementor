@@ -55,14 +55,7 @@ const FormLayout = ( {
 	DialogContentProps = {},
 	attachments: initialAttachments,
 } ) => {
-	const {
-		attachmentsTypes,
-		onData,
-		onInsert,
-		onSelect,
-		onClose,
-		onGenerate,
-	} = useConfig();
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
 
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 

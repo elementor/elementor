@@ -16,10 +16,7 @@ import { useConfig } from './pages/form-layout/context/config';
 const LayoutContent = ( props ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-coming-soon-info' );
-	const {
-		onClose,
-		onConnect,
-	} = useConfig();
+	const { onClose, onConnect } = useConfig();
 
 	if ( isLoading ) {
 		return (

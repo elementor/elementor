@@ -6,7 +6,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'views/add-section/behaviors', this.registerAiLayoutBehavior );
 
-		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerContextMenu );
+		elementor.hooks.addFilter( 'elements/container/contextMenuGroups', this.registerVariationsContextMenu );
 	}
 
 	registerAiLayoutBehavior( behaviors ) {
@@ -17,7 +17,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		return behaviors;
 	}
 
-	registerContextMenu = ( groups, currentElement ) => {
+	registerVariationsContextMenu = ( groups, currentElement ) => {
 		const saveGroup = groups.find( ( group ) => 'save' === group.name );
 
 		if ( ! saveGroup ) {

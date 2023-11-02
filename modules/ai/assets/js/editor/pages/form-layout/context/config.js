@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 
 const ConfigContext = React.createContext( {} );
 
-// Create context hook
 export const useConfig = () => React.useContext( ConfigContext );
 
-// Create context provider
 export const ConfigProvider = ( props ) => {
 	return (
 		<ConfigContext.Provider
