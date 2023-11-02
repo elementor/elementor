@@ -477,6 +477,7 @@ class Ai extends Library {
 		return $result;
 	}
 
+	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
 
 		$body = [
