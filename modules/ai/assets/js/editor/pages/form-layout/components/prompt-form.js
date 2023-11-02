@@ -9,7 +9,8 @@ import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 import Attachments from './attachments';
-import { attachmentsShape } from '../../../types/attachments';
+import { useConfig } from '../context/config';
+import { AttachmentPropType } from '../../../types/attachment';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -66,9 +67,8 @@ const GenerateButton = ( props ) => (
 );
 
 const PromptForm = forwardRef( ( {
-	isActive,
-	attachmentsTypes,
 	attachments,
+	isActive,
 	isLoading,
 	showActions = false,
 	onSubmit,
@@ -78,6 +78,7 @@ const PromptForm = forwardRef( ( {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
+	const { attachmentsTypes } = useConfig();
 
 	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
 
@@ -152,13 +153,12 @@ const PromptForm = forwardRef( ( {
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
-	attachmentsTypes: PropTypes.object,
-	attachments: attachmentsShape,
 	isLoading: PropTypes.bool,
 	showActions: PropTypes.bool,
 	onSubmit: PropTypes.func.isRequired,
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default PromptForm;

@@ -715,11 +715,8 @@ class Module extends BaseModule {
 		}
 
 		$result = $app->generate_layout(
-			$data['prompt'],
-			$data['attachments'],
-			$this->prepare_generate_layout_context(),
-			$data['variationType'],
-			$data['prevGeneratedIds']
+			$data,
+			$this->prepare_generate_layout_context()
 		);
 
 		if ( is_wp_error( $result ) ) {

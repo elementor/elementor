@@ -53,7 +53,20 @@ const useScreenshots = ( { onData } ) => {
 		const promises = screenshotsData.map( ( { generate } ) => {
 			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId );
 
-			return generate( prompt, attachments, prevGeneratedIds, abortController.current.signal )
+			const requestBody = {
+				prompt,
+				attachments: attachments.map( ( { type, content, label } ) => {
+					// Send only the data that is needed for the generation.
+					return {
+						type,
+						content,
+						label,
+					};
+				} ),
+				prevGeneratedIds,
+			};
+
+			return generate( requestBody, abortController.current.signal )
 				.then( onGenerate )
 				.catch( onError );
 		} );

@@ -30,15 +30,6 @@ export const getUiConfig = () => {
 	};
 };
 
-export const createScreenshot = async ( template ) => {
-	const screenshot = await takeScreenshot( template );
-
-	return {
-		screenshot,
-		template,
-	};
-};
-
 export const renderLayoutApp = ( options = {
 	at: null,
 	onClose: null,
@@ -55,8 +46,6 @@ export const renderLayoutApp = ( options = {
 		at: options.at,
 	} );
 
-	options.onRenderApp?.( { previewContainer } );
-
 	const { colorScheme, isRTL } = getUiConfig();
 
 	const rootElement = document.createElement( 'div' );
@@ -69,11 +58,11 @@ export const renderLayoutApp = ( options = {
 			attachmentsTypes={ {
 				json: {
 					promptSuggestions: [
-						{ text: 'Change the content to be about' },
-						{ text: 'I need the container to become more related to' },
-						{ text: 'Make the text more hard-sell oriented' },
-						{ text: 'Alter the look and feel to become more Christmas related' },
-						{ text: 'Replace all images to relate to' },
+						{ text: __( 'Change the content to be about' ) },
+						{ text: __( 'I need the container to become more related to' ) },
+						{ text: __( 'Make the text more hard-sell oriented' ) },
+						{ text: __( 'Alter the look and feel to become more Christmas related' ) },
+						{ text: __( 'Replace all images to relate to' ) },
 					],
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
@@ -111,6 +100,8 @@ export const renderLayoutApp = ( options = {
 		/>,
 		rootElement,
 	);
+
+	options.onRenderApp?.( { previewContainer } );
 };
 
 export const importToEditor = ( {
@@ -140,51 +131,5 @@ export const importToEditor = ( {
 	} );
 
 	endHistoryLog();
-};
-
-export const registerContextMenu = ( groups, currentElement ) => {
-	const saveGroup = groups.find( ( group ) => 'save' === group.name );
-
-	if ( ! saveGroup ) {
-		return groups;
-	}
-
-	// Add on top of save group actions
-	saveGroup.actions.unshift( {
-		name: 'ai',
-		icon: 'eicon-ai',
-		title: __( 'Generate AI Variations', 'elementor' ),
-		callback: async () => {
-			const container = currentElement.getContainer();
-			const json = container.model.toJSON( { remove: [ 'default' ] } );
-			const attachments = [ {
-				type: 'json',
-				previewHTML: '',
-				content: json,
-				label: container.model.get( 'title' ),
-			} ];
-
-			renderLayoutApp( {
-				at: container.view._index,
-				attachments,
-				onSelect: () => {
-					container.view.$el.hide();
-				},
-				onClose: () => {
-					container.view.$el.show();
-				},
-				onInsert: ( template ) => {
-					importToEditor( {
-						at: container.view._index,
-						template,
-						historyTitle: __( 'AI Variation', 'elementor' ),
-						replace: true,
-					} );
-				},
-			} );
-		},
-	} );
-
-	return groups;
 };
 
