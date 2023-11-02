@@ -12,7 +12,8 @@ import useScreenshots from './hooks/use-screenshots';
 import useSlider from './hooks/use-slider';
 import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
-import { attachmentsShape } from '../../types/attachments';
+import { useConfig } from './context/config';
+import { AttachmentPropType } from '../../types/attachment';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -50,15 +51,12 @@ UseLayoutButton.propTypes = {
 	sx: PropTypes.object,
 };
 const FormLayout = ( {
-	attachmentsTypes,
-	attachments: initialAttachments,
-	onClose, onInsert,
-	onData,
-	onSelect,
-	onGenerate,
 	DialogHeaderProps = {},
 	DialogContentProps = {},
+	attachments: initialAttachments,
 } ) => {
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
+
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
 	const screenshotOutlineOffset = '2px';
@@ -323,15 +321,9 @@ const FormLayout = ( {
 };
 
 FormLayout.propTypes = {
-	attachmentsTypes: PropTypes.object.isRequired,
-	attachments: attachmentsShape,
 	DialogHeaderProps: PropTypes.object,
 	DialogContentProps: PropTypes.object,
-	onClose: PropTypes.func.isRequired,
-	onInsert: PropTypes.func.isRequired,
-	onData: PropTypes.func.isRequired,
-	onSelect: PropTypes.func.isRequired,
-	onGenerate: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default FormLayout;

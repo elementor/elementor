@@ -9,11 +9,11 @@ export const Thumbnail = ( props ) => {
 
 	useEffect( () => {
 		if ( previewRef.current ) {
-			const previewRoot = previewRef.current.querySelector( '*' );
+			const previewRoot = previewRef.current.firstElementChild;
 			const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
 			const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
 
-			const scaleFactor = width > height ? width : height;
+			const scaleFactor = Math.max( height, width );
 			const scale = THUMBNAIL_SIZE / scaleFactor;
 
 			previewRef.current.style.transform = `scale(${ scale })`;
@@ -62,7 +62,6 @@ export const Thumbnail = ( props ) => {
 };
 
 Thumbnail.propTypes = {
-	disabled: PropTypes.bool,
-	onClick: PropTypes.func.isRequired,
 	html: PropTypes.string.isRequired,
+	disabled: PropTypes.bool,
 };

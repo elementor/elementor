@@ -10,20 +10,13 @@ import { Alert } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import useIntroduction from './hooks/use-introduction';
-import { attachmentsShape } from './types/attachments';
+import { AttachmentPropType } from './types/attachment';
+import { useConfig } from './pages/form-layout/context/config';
 
-const LayoutContent = ( {
-	attachmentsTypes,
-	attachments,
-	onClose,
-	onConnect,
-	onData,
-	onInsert,
-	onSelect,
-	onGenerate,
-} ) => {
+const LayoutContent = ( props ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
 	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-coming-soon-info' );
+	const { onClose, onConnect } = useConfig();
 
 	if ( isLoading ) {
 		return (
@@ -71,14 +64,7 @@ const LayoutContent = ( {
 
 	return (
 		<FormLayout
-			attachmentsTypes={ attachmentsTypes }
-			attachments={ attachments }
-			credits={ credits }
-			onClose={ onClose }
-			onInsert={ onInsert }
-			onData={ onData }
-			onSelect={ onSelect }
-			onGenerate={ onGenerate }
+			attachments={ props.attachments }
 			DialogHeaderProps={ {
 				children: showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } />,
 			} }
@@ -97,14 +83,7 @@ const LayoutContent = ( {
 };
 
 LayoutContent.propTypes = {
-	attachmentsTypes: PropTypes.object,
-	attachments: attachmentsShape,
-	onClose: PropTypes.func.isRequired,
-	onConnect: PropTypes.func.isRequired,
-	onData: PropTypes.func.isRequired,
-	onInsert: PropTypes.func.isRequired,
-	onSelect: PropTypes.func.isRequired,
-	onGenerate: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default LayoutContent;

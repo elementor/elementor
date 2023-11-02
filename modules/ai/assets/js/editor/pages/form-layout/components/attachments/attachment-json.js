@@ -1,6 +1,7 @@
 import { Thumbnail } from './thumbnail';
 import PropTypes from 'prop-types';
 import { Skeleton } from '@elementor/ui';
+import { AttachmentPropType } from '../../../../types/attachment';
 
 export const AttachmentJson = ( props ) => {
 	const attachment = props.attachments?.find( ( item ) => 'json' === item.type );
@@ -10,24 +11,26 @@ export const AttachmentJson = ( props ) => {
 	}
 
 	if ( ! attachment.previewHTML ) {
-		return <Skeleton
-			animation="wave"
-			variant="rounded"
-			width={ 60 }
-			height={ 60 }
-		/>;
+		return (
+			<Skeleton
+				animation="wave"
+				variant="rounded"
+				width={ 60 }
+				height={ 60 }
+			/>
+		);
 	}
 
 	return (
 		<Thumbnail
-			disabled={ props.disabled }
 			html={ attachment.previewHTML }
+			disabled={ props.disabled }
 		/>
 	);
 };
 
 AttachmentJson.propTypes = {
-	attachments: PropTypes.array,
+	attachments: PropTypes.arrayOf( AttachmentPropType ).isRequired,
 	disabled: PropTypes.bool,
 };
 

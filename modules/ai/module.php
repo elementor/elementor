@@ -115,6 +115,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Build with AI', 'elementor' ),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'hidden' => true,
 			'dependencies' => [
 				'container',
 			],
@@ -715,12 +716,8 @@ class Module extends BaseModule {
 		}
 
 		$result = $app->generate_layout(
-			$data['prompt'],
-			$data['attachments'],
-			$this->prepare_generate_layout_context(),
-			$data['variationType'],
-			$data['prevGeneratedIds'],
-			$data['promptAffects']
+			$data,
+			$this->prepare_generate_layout_context()
 		);
 
 		if ( is_wp_error( $result ) ) {

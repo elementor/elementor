@@ -477,40 +477,51 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $attachments, $context, $variation_type, $prev_generated_ids = [], $prompt_affects = [] ) {
+	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
 
+		$body = [
+			'prompt' => $data['prompt'],
+			'variationType' => (int) $data['variationType'],
+		];
+
 		// If all prompt affects are the same (true/false) or empty, = set 'all' to true
+		$prompt_affects = $data['promptAffects'] ?? [];
+
 		if ( empty( $prompt_affects ) || ( count( array_unique( $prompt_affects ) ) === 1 ) ) {
 			$prompt_affects = [ 'all' => true ];
 		}
 
-		$body = [
-			'prompt' => $prompt,
-			'generatedBaseTemplatesIds' => $prev_generated_ids,
-			'config' => [
-				'generate' => $prompt_affects,
-			],
-			'context' => $context ?? [],
-			'api_version' => ELEMENTOR_VERSION,
-			'site_lang' => get_bloginfo( 'language' ),
-			'variationType' => (int) $variation_type,
-		];
+		if ( ! empty( $data['prevGeneratedIds'] ) ) {
+			$body['generatedBaseTemplatesIds'] = $data['prevGeneratedIds'];
+		}
 
-		if ( ! empty( $attachments ) ) {
-			switch ( $attachments[0]['type'] ) {
+		if ( ! empty( $data['attachments'] ) ) {
+			$attachment = $data['attachments'][0];
+
+			switch ( $attachment['type'] ) {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
 
-					$json = new \stdClass();
-					$json->type = 'elementor';
-					$json->elements = [ $attachments[0]['content'] ];
-
-					$body['json'] = wp_json_encode( $json );
+					$body['json'] = wp_json_encode( [
+						'type' => 'elementor',
+						'elements' => [ $attachment['content'] ],
+					] );
 
 					break;
 			}
 		}
+
+		$metadata = [
+			'context' => $context,
+			'api_version' => ELEMENTOR_VERSION,
+			'site_lang' => get_bloginfo( 'language' ),
+			'config' => [
+				'generate' => $prompt_affects,
+			],
+		];
+
+		$body = array_merge( $body, $metadata );
 
 		return $this->ai_request(
 			'POST',

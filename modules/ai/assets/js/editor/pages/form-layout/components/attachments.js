@@ -1,33 +1,22 @@
-import { useState } from 'react';
 import AttachmentJson from './attachments/attachment-json';
 import PropTypes from 'prop-types';
+import { AttachmentPropType } from '../../../types/attachment';
 
 const ATTACHMENT_TYPE_JSON = 'json';
 
-const Attachments = ( { attachments, disabled } ) => {
-	const initialAttachmentType = attachments.length ? attachments[ 0 ].type : null;
-	const [ currentAttachmentType, setCurrentAttachmentType ] = useState( initialAttachmentType );
+const Attachments = ( props ) => {
+	const type = props.attachments[ 0 ]?.type;
 
-	// On external change, e.g. thumbnail generated
-	if ( initialAttachmentType && initialAttachmentType !== currentAttachmentType ) {
-		setCurrentAttachmentType( initialAttachmentType );
+	switch ( type ) {
+		case ATTACHMENT_TYPE_JSON:
+			return <AttachmentJson { ...props } />;
 	}
 
-	return (
-		<>
-			{
-				ATTACHMENT_TYPE_JSON === currentAttachmentType &&
-				<AttachmentJson
-					disabled={ disabled }
-					attachments={ attachments }
-				/>
-			}
-		</>
-	);
+	return null;
 };
 
 Attachments.propTypes = {
-	attachments: PropTypes.array,
+	attachments: PropTypes.arrayOf( AttachmentPropType ).isRequired,
 	disabled: PropTypes.bool,
 };
 

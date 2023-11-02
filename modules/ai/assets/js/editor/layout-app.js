@@ -1,7 +1,8 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import LayoutContent from './layout-content';
-import { attachmentsShape } from './types/attachments';
+import { AttachmentPropType } from './types/attachment';
+import { ConfigProvider } from './pages/form-layout/context/config';
 
 const LayoutApp = ( {
 	isRTL,
@@ -18,16 +19,19 @@ const LayoutApp = ( {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
-				<LayoutContent
+				<ConfigProvider
 					attachmentsTypes={ attachmentsTypes }
-					attachments={ attachments }
 					onClose={ onClose }
 					onConnect={ onConnect }
 					onData={ onData }
 					onInsert={ onInsert }
 					onSelect={ onSelect }
 					onGenerate={ onGenerate }
-				/>
+				>
+					<LayoutContent
+						attachments={ attachments }
+					/>
+				</ConfigProvider>
 			</ThemeProvider>
 		</DirectionProvider>
 	);
@@ -36,8 +40,15 @@ const LayoutApp = ( {
 LayoutApp.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
-	attachmentsTypes: PropTypes.object,
-	attachments: attachmentsShape,
+	attachmentsTypes: PropTypes.shape( {
+		type: PropTypes.shape( {
+			promptSuggestions: PropTypes.arrayOf( PropTypes.shape( {
+				text: PropTypes.string.isRequired,
+			} ) ),
+			previewGenerator: PropTypes.func,
+		} ),
+	} ),
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
 	onData: PropTypes.func.isRequired,
