@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Data;
 
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Utils\Collection;
 use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
@@ -250,13 +251,22 @@ class Repository {
 			->pluck( 'name' )
 			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
 
+		// BC: Support legacy APIs that don't have access tiers.
+		if ( isset( $kit->access_tier ) ) {
+			$access_tier = $kit->access_tier;
+		} else {
+			$access_tier = 0 === $kit->access_level
+				? ConnectModule::ACCESS_TIER_FREE
+				: ConnectModule::ACCESS_TIER_ESSENTIAL_OCT_2023;
+		}
+
 		return array_merge(
 			[
 				'id' => $kit->_id,
 				'title' => $kit->title,
 				'thumbnail_url' => $kit->thumbnail,
 				'access_level' => $kit->access_level,
-				'access_tier' => $kit->access_tier,
+				'access_tier' => $access_tier,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies->values(),
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
