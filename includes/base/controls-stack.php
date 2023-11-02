@@ -467,16 +467,16 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	private function should_optimize_controls() {
-		static $retval = null;
+		static $is_frontend = null;
 
-		if ( null === $retval ) {
-			$retval = (
+		if ( null === $is_frontend ) {
+			$is_frontend = (
 				! is_admin()
-				&& ! \Elementor\Plugin::$instance->preview->is_preview_mode()
+				&& ! Plugin::$instance->preview->is_preview_mode()
 			);
 		}
 
-		return $retval;
+		return $is_frontend;
 	}
 
 	/**
