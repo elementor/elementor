@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Box, IconButton } from '@elementor/ui';
-import PropTypes from 'prop-types';
 import { TrashIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const THUMBNAIL_SIZE = 64;
 
@@ -11,14 +12,23 @@ export const Thumbnail = ( props ) => {
 	useEffect( () => {
 		if ( previewRef.current ) {
 			const previewRoot = previewRef.current.firstElementChild;
+			const isImage = 'IMG' === previewRoot?.tagName;
 			const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
 			const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
 
-			const scaleFactor = Math.max( height, width );
+			const scaleFactor = Math.min( height, width );
 			const scale = THUMBNAIL_SIZE / scaleFactor;
 
 			previewRef.current.style.transform = `scale(${ scale })`;
-			previewRef.current.style.transformOrigin = 'center';
+
+			if ( isImage ) {
+				previewRef.current.style.transformOrigin = 'center';
+			} else {
+				const top = height > width ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( height / width ) ) ) / 2 ) : 0;
+				const left = width > height ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( width / height ) ) ) / 2 ) : 0;
+
+				previewRef.current.style.transformOrigin = `${ left }px ${ top }px`;
+			}
 		}
 	}, [] );
 
