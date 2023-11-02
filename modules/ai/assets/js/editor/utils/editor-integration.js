@@ -32,22 +32,21 @@ export const getUiConfig = () => {
 	};
 };
 
-export const createScreenshot = async ( template ) => {
-	const screenshot = await takeScreenshot( template );
-
-	return {
-		screenshot,
-		template,
-	};
-};
+const REFORMAT_PROMPTS = [
+	{ text: __( 'Change the content to be about' ) },
+	{ text: __( 'I need the container to become more related to' ) },
+	{ text: __( 'Make the text more hard-sell oriented' ) },
+	{ text: __( 'Alter the look and feel to become more Christmas related' ) },
+	{ text: __( 'Replace all images to relate to' ) },
+];
 
 export const renderLayoutApp = ( options = {
 	at: null,
-	onRenderApp: null,
-	onInsert: null,
 	onClose: null,
-	onSelect: null,
 	onGenerate: null,
+	onInsert: null,
+	onRenderApp: null,
+	onSelect: null,
 	attachments: [],
 } ) => {
 	closePanel();
@@ -57,9 +56,7 @@ export const renderLayoutApp = ( options = {
 		at: options.at,
 	} );
 
-	options.onRenderApp?.( { previewContainer } );
-
-	const { colorScheme, isRTL, locale } = getUiConfig();
+	const { colorScheme, isRTL } = getUiConfig();
 
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
@@ -68,30 +65,16 @@ export const renderLayoutApp = ( options = {
 		<LayoutApp
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
-			locale={ locale }
 			attachmentsTypes={ {
 				json: {
-					promptSuggestions: [
-						{ text: 'Change the content to be about' },
-						{ text: 'I need the container to become more related to' },
-						{ text: 'Make the text more hard-sell oriented' },
-						{ text: 'Alter the look and feel to become more Christmas related' },
-						{ text: 'Replace all images to relate to' },
-					],
+					promptSuggestions: REFORMAT_PROMPTS,
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
 				},
 				url: {
-					promptSuggestions: [
-						{ text: 'Change the content to be about' },
-						{ text: 'I need the container to become more related to' },
-						{ text: 'Make the text more hard-sell oriented' },
-						{ text: 'Alter the look and feel to become more Christmas related' },
-						{ text: 'Replace all images to relate to' },
-					],
-
+					promptSuggestions: REFORMAT_PROMPTS,
 				},
 			} }
 			attachments={ options.attachments || [] }
@@ -124,6 +107,8 @@ export const renderLayoutApp = ( options = {
 		/>,
 		rootElement,
 	);
+
+	options.onRenderApp?.( { previewContainer } );
 };
 
 export const importToEditor = ( {
@@ -153,51 +138,5 @@ export const importToEditor = ( {
 	} );
 
 	endHistoryLog();
-};
-
-export const registerContextMenu = ( groups, currentElement ) => {
-	const saveGroup = groups.find( ( group ) => 'save' === group.name );
-
-	if ( ! saveGroup ) {
-		return groups;
-	}
-
-	// Add on top of save group actions
-	saveGroup.actions.unshift( {
-		name: 'ai',
-		icon: 'eicon-ai',
-		title: __( 'Generate AI Variations', 'elementor' ),
-		callback: async () => {
-			const container = currentElement.getContainer();
-			const json = container.model.toJSON( { remove: [ 'default' ] } );
-			const attachments = [ {
-				type: 'json',
-				previewHTML: '',
-				content: json,
-				label: container.model.get( 'title' ),
-			} ];
-
-			renderLayoutApp( {
-				at: container.view._index,
-				attachments,
-				onSelect: () => {
-					container.view.$el.hide();
-				},
-				onClose: () => {
-					container.view.$el.show();
-				},
-				onInsert: ( template ) => {
-					importToEditor( {
-						at: container.view._index,
-						template,
-						historyTitle: __( 'AI Variation', 'elementor' ),
-						replace: true,
-					} );
-				},
-			} );
-		},
-	} );
-
-	return groups;
 };
 

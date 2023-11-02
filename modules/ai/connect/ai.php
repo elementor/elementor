@@ -477,44 +477,58 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $attachments, $context, $variation_type, $prev_generated_ids = [] ) {
 		$endpoint = 'generate/layout';
+
 		$body = [
-			'prompt' => $prompt,
-			'generatedBaseTemplatesIds' => $prev_generated_ids,
-			"config" => [
-				"generate" => [
-					"all" => true
-				],
-			],
-			'context' => $context ?? [],
-			'api_version' => ELEMENTOR_VERSION,
-			'site_lang' => get_bloginfo( 'language' ),
-			'variationType' => (int) $variation_type,
+			'prompt' => $data['prompt'],
+			'variationType' => (int) $data['variationType'],
 		];
 
-		if ( ! empty( $attachments ) ) {
-			switch ( $attachments[0]['type'] ) {
+		// If all prompt affects are the same (true/false) or empty, = set 'all' to true
+		$prompt_affects = $data['promptAffects'] ?? [];
+
+		if ( empty( $prompt_affects ) || ( count( array_unique( $prompt_affects ) ) === 1 ) ) {
+			$prompt_affects = [ 'all' => true ];
+		}
+
+		if ( ! empty( $data['prevGeneratedIds'] ) ) {
+			$body['generatedBaseTemplatesIds'] = $data['prevGeneratedIds'];
+		}
+
+		if ( ! empty( $data['attachments'] ) ) {
+			$attachment = $data['attachments'][0];
+
+			switch ( $attachment['type'] ) {
+				case 'json':
+					$endpoint = 'generate/generate-json-variation';
+
+					$body['json'] = wp_json_encode( [
+						'type' => 'elementor',
+						'elements' => [ $attachment['content'] ],
+					] );
+
+					break;
 				case 'url':
 					$endpoint = 'generate/html-to-elementor';
 
-					$html = json_encode( $attachments[0]['content'] );
+					$html = json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
 
 					break;
-				case 'json':
-					$endpoint = 'generate/generate-json-variation';
-
-					$json = new \stdClass();
-					$json->type ='elementor';
-					$json->elements = [ $attachments[0]['content'] ];
-
-					$body['json'] = wp_json_encode( $json );
-
-					break;
 			}
 		}
+
+		$metadata = [
+			'context' => $context,
+			'api_version' => ELEMENTOR_VERSION,
+			'site_lang' => get_bloginfo( 'language' ),
+			'config' => [
+				'generate' => $prompt_affects,
+			],
+		];
+
+		$body = array_merge( $body, $metadata );
 
 		return $this->ai_request(
 			'POST',

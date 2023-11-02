@@ -9,7 +9,10 @@ import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
 import Attachments from './attachments';
-import { attachmentsShape } from '../../../types/attachments';
+import { useConfig } from '../context/config';
+import { AttachmentPropType } from '../../../types/attachment';
+import { PromptChips } from './prompt-chips';
+import { PromptChip } from './prompt-chip';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -66,9 +69,8 @@ const GenerateButton = ( props ) => (
 );
 
 const PromptForm = forwardRef( ( {
-	isActive,
-	attachmentsTypes,
 	attachments,
+	isActive,
 	isLoading,
 	showActions = false,
 	onAttach,
@@ -80,12 +82,23 @@ const PromptForm = forwardRef( ( {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
+	const { attachmentsTypes } = useConfig();
+
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
 
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
 	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
+	const [ promptAffects, setPromptAffects ] = useState( {
+		images: true,
+		content: true,
+		colors: true,
+	} );
+
+	const togglePromptAffect = ( affect ) => {
+		setPromptAffects( { ...promptAffects, [ affect ]: ! promptAffects[ affect ] } );
+	};
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -98,33 +111,52 @@ const PromptForm = forwardRef( ( {
 	};
 
 	return (
-		<Box
+		<Stack
 			component="form"
-			onSubmit={ ( e ) => onSubmit( e, prompt ) }
+			onSubmit={ ( e ) => onSubmit( e, prompt, promptAffects ) }
+			direction="row"
+			sx={ { p: 2 } }
+			alignItems="center"
+			gap={ 1 }
 		>
-			<Stack
-				direction="row"
-				sx={ { p: 2 } }
-				alignItems="center"
-				gap={ 1 }
-			>
-				<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
-					{
-						showActions && (
-							isActive ? (
-								<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
-							) : (
-								<EditButton disabled={ isLoading } onClick={ handleEdit } />
-							)
+			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+				{
+					showActions && (
+						isActive ? (
+							<BackButton disabled={ isLoading || isEnhancing } onClick={ handleBack } />
+						) : (
+							<EditButton disabled={ isLoading } onClick={ handleEdit } />
 						)
-					}
+					)
+				}
 
-					<Attachments
-						attachments={ attachments }
-						onAttach={ onAttach }
-						onDetach={ onDetach }
-						disabled={ isLoading }
-					/>
+				<Attachments
+					attachments={ attachments }
+					onAttach={ onAttach }
+					onDetach={ onDetach }
+					disabled={ isLoading }
+				/>
+
+				<Box width="100%">
+					{
+						attachments.length && <PromptChips>
+							<PromptChip
+								label={ __( 'Images', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'images' ) }
+								isSelected={ promptAffects.images }
+							/>
+							<PromptChip
+								label={ __( 'Content', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'content' ) }
+								isSelected={ promptAffects.content }
+							/>
+							<PromptChip
+								label={ __( 'Colors', 'elementor' ) }
+								onClick={ () => togglePromptAffect( 'colors' ) }
+								isSelected={ promptAffects.colors }
+							/>
+						</PromptChips>
+					}
 
 					<PromptAutocomplete
 						value={ prompt }
@@ -142,25 +174,25 @@ const PromptForm = forwardRef( ( {
 							/>
 						) }
 					/>
-				</Stack>
 
-				<EnhanceButton
-					size="small"
-					disabled={ isInteractionsDisabled }
-					isLoading={ isEnhancing }
-					onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
-				/>
-
-				<GenerateButton disabled={ isInteractionsDisabled } />
+				</Box>
 			</Stack>
-		</Box>
+
+			<EnhanceButton
+				size="small"
+				disabled={ isInteractionsDisabled }
+				isLoading={ isEnhancing }
+				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
+			/>
+
+			<GenerateButton disabled={ isInteractionsDisabled } />
+		</Stack>
 	);
 } );
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
 	attachmentsTypes: PropTypes.object,
-	attachments: attachmentsShape,
 	onAttach: PropTypes.func,
 	onDetach: PropTypes.func,
 	isLoading: PropTypes.bool,
@@ -168,6 +200,7 @@ PromptForm.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default PromptForm;
