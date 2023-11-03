@@ -7,3 +7,4 @@ build/**
 packages/**/*
 tests/qunit/setup/tinymce.js
 /tmp/**
+assets/js/packages/**/*
