@@ -60,7 +60,7 @@
 		"@elementor/externalize-wordpress-assets-webpack-plugin": "0.3.0",
 		"@elementor/extract-i18n-wordpress-expressions-webpack-plugin": "0.3.0",
 		"@elementor/generate-wordpress-asset-file-webpack-plugin": "0.3.0",
-		"@playwright/test": "^1.33.0",
+		"@playwright/test": "^1.35.0",
 		"@testing-library/dom": "^9.3.3",
 		"@wordpress/babel-plugin-import-jsx-pragma": "~3.2.0",
 		"@wordpress/babel-preset-default": "^3.0.2",
