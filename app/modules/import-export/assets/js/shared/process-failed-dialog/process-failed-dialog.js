@@ -60,6 +60,10 @@ const messagesContent = {
 		title: __( 'Couldn’t install the Kit', 'elementor' ),
 		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
 	},
+	'no-domdocument': {
+		title: __( 'Couldn’t install the Kit', 'elementor' ),
+		text: __( 'You must have DOMDocument installed', 'elementor' ),
+	},
 };
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
