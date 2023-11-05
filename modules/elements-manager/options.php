@@ -1,5 +1,9 @@
 <?php
-namespace Elementor\Modules\WidgetManager;
+namespace Elementor\Modules\ElementsManager;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Options {
 
