@@ -1,7 +1,7 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import LayoutContent from './layout-content';
-import { AttachmentPropType } from './types/attachment';
+import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment';
 import { ConfigProvider } from './pages/form-layout/context/config';
 
 const LayoutApp = ( {
@@ -40,14 +40,7 @@ const LayoutApp = ( {
 LayoutApp.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
-	attachmentsTypes: PropTypes.shape( {
-		type: PropTypes.shape( {
-			promptSuggestions: PropTypes.arrayOf( PropTypes.shape( {
-				text: PropTypes.string.isRequired,
-			} ) ),
-			previewGenerator: PropTypes.func,
-		} ),
-	} ),
+	attachmentsTypes: AttachmentsTypesPropType,
 	attachments: PropTypes.arrayOf( AttachmentPropType ),
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,

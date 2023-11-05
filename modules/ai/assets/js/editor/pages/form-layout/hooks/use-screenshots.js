@@ -55,6 +55,7 @@ const useScreenshots = ( { onData } ) => {
 
 			const requestBody = {
 				prompt,
+				prevGeneratedIds,
 				attachments: attachments.map( ( { type, content, label } ) => {
 					// Send only the data that is needed for the generation.
 					return {
@@ -63,7 +64,6 @@ const useScreenshots = ( { onData } ) => {
 						label,
 					};
 				} ),
-				prevGeneratedIds,
 			};
 
 			return generate( requestBody, abortController.current.signal )

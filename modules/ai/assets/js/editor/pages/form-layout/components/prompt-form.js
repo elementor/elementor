@@ -80,7 +80,7 @@ const PromptForm = forwardRef( ( {
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && attachments.length < 1 );
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && ! attachments.length );
 
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];

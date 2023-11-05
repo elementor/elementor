@@ -17,7 +17,6 @@ export const Thumbnail = ( props ) => {
 			const scale = THUMBNAIL_SIZE / scaleFactor;
 
 			previewRef.current.style.transform = `scale(${ scale })`;
-			previewRef.current.style.transformOrigin = 'center';
 		}
 	}, [] );
 
@@ -43,20 +42,18 @@ export const Thumbnail = ( props ) => {
 			},
 		} }
 		>
-			<Box>
-				<Box
-					ref={ previewRef }
-					sx={ {
-						pointerEvents: 'none',
-						transformOrigin: 'center',
-						width: THUMBNAIL_SIZE,
-						height: THUMBNAIL_SIZE,
-					} }
-					dangerouslySetInnerHTML={ {
-						__html: props.html,
-					} }
-				/>
-			</Box>
+			<Box
+				ref={ previewRef }
+				sx={ {
+					pointerEvents: 'none',
+					transformOrigin: 'center',
+					width: THUMBNAIL_SIZE,
+					height: THUMBNAIL_SIZE,
+				} }
+				dangerouslySetInnerHTML={ {
+					__html: props.html,
+				} }
+			/>
 		</Box>
 	);
 };

@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
-import { Box, Divider, Button, Pagination, IconButton, Collapse, Tooltip, withDirection } from '@elementor/ui';
+import { Box, Button, Collapse, Divider, IconButton, Pagination, Tooltip, withDirection } from '@elementor/ui';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import UnsavedChangesAlert from './components/unsaved-changes-alert';
 import LayoutDialog from './components/layout-dialog';
@@ -173,7 +173,16 @@ const FormLayout = ( {
 				typeConfig.previewGenerator( item.content ).then( ( html ) => {
 					item.previewHTML = html;
 
-					setAttachments( () => [ item ] );
+					setAttachments( ( prev ) => {
+						// Replace the attachment with the updated one.
+						return prev.map( ( attachment ) => {
+							if ( attachment.content === item.content ) {
+								return item;
+							}
+
+							return attachment;
+						} );
+					} );
 				} );
 			}
 		} );
