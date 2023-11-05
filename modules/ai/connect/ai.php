@@ -97,7 +97,6 @@ class Ai extends Library {
 		$headers = [
 			'x-elementor-ai-version' => '2',
 			'Content-Type' => 'application/json',
-			'data_format' => 'body',
 		];
 
 		if ( $file ) {
