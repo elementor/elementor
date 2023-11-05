@@ -96,6 +96,7 @@ class Ai extends Library {
 	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '' ) {
 		$headers = [
 			'x-elementor-ai-version' => '2',
+			'Content-Type' => 'application/json',
 		];
 
 		if ( $file ) {
@@ -111,7 +112,8 @@ class Ai extends Library {
 			[
 				'timeout' => 100,
 				'headers' => $headers,
-				'body' => $body,
+				'body' => wp_json_encode( $body ),
+
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
@@ -477,18 +479,51 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function generate_layout( $prompt, $context, $variation_type, $prev_generated_ids = [] ) {
+	public function generate_layout( $data, $context ) {
+		$endpoint = 'generate/layout';
+
+		$body = [
+			'prompt' => $data['prompt'],
+			'variationType' => (int) $data['variationType'],
+		];
+
+		if ( ! empty( $data['prevGeneratedIds'] ) ) {
+			$body['generatedBaseTemplatesIds'] = $data['prevGeneratedIds'];
+		}
+
+		if ( ! empty( $data['attachments'] ) ) {
+			$attachment = $data['attachments'][0];
+
+			switch ( $attachment['type'] ) {
+				case 'json':
+					$endpoint = 'generate/generate-json-variation';
+
+					$body['json'] = [
+						'type' => 'elementor',
+						'elements' => [ $attachment['content'] ],
+					];
+
+					break;
+			}
+		}
+
+		$metadata = [
+			'context' => $context,
+			'api_version' => ELEMENTOR_VERSION,
+			'site_lang' => get_bloginfo( 'language' ),
+			'config' => [
+				'generate' => [
+					'all' => true,
+				],
+			],
+		];
+
+		$body = array_merge( $body, $metadata );
+
 		return $this->ai_request(
 			'POST',
-			'generate/layout',
-			[
-				'prompt' => $prompt,
-				'generatedBaseTemplatesIds' => $prev_generated_ids,
-				'context' => $context ?? [],
-				'api_version' => ELEMENTOR_VERSION,
-				'site_lang' => get_bloginfo( 'language' ),
-				'variationType' => (int) $variation_type,
-			]
+			$endpoint,
+			$body
 		);
 	}
 

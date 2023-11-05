@@ -9,11 +9,11 @@ const useScreenshot = ( type, onData ) => {
 
 	const layoutData = useLayoutPrompt( type, null );
 
-	const generate = ( prompt, prevGeneratedIds, signal ) => {
+	const generate = ( requestBody, signal ) => {
 		setIsLoading( true );
 		setError( ERROR_INITIAL_VALUE );
 
-		return layoutData.send( prompt, prevGeneratedIds, signal )
+		return layoutData.send( requestBody, signal )
 			.then( async ( data ) => {
 				const createdScreenshot = await onData( data.result );
 

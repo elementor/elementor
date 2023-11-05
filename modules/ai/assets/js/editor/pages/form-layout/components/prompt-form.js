@@ -8,6 +8,9 @@ import GenerateSubmit from '../../form-media/components/generate-submit';
 import ArrowLeftIcon from '../../../icons/arrow-left-icon';
 import EditIcon from '../../../icons/edit-icon';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
+import Attachments from './attachments';
+import { useConfig } from '../context/config';
+import { AttachmentPropType } from '../../../types/attachment';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
 	{ text: __( 'A services section with a list layout, icons, and corresponding service descriptions for', 'elementor' ) },
@@ -63,12 +66,25 @@ const GenerateButton = ( props ) => (
 	</GenerateSubmit>
 );
 
-const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onSubmit, onBack, onEdit }, ref ) => {
+const PromptForm = forwardRef( ( {
+	attachments,
+	isActive,
+	isLoading,
+	showActions = false,
+	onSubmit,
+	onBack,
+	onEdit,
+}, ref ) => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { isEnhancing, enhance } = usePromptEnhancer( prompt, 'layout' );
 	const previousPrompt = useRef( '' );
+	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || '' === prompt;
+	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && ! attachments.length );
+
+	const attachmentsType = attachments[ 0 ]?.type || '';
+	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
+	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -81,15 +97,15 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 	};
 
 	return (
-		<Box
+		<Stack
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
+			direction="row"
 			sx={ { p: 2 } }
-			display="flex"
 			alignItems="center"
 			gap={ 1 }
 		>
-			<Stack direction="row" flexGrow={ 1 } spacing={ 1 }>
+			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
 				{
 					showActions && (
 						isActive ? (
@@ -100,11 +116,16 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 					)
 				}
 
+				<Attachments
+					attachments={ attachments }
+					disabled={ isLoading }
+				/>
+
 				<PromptAutocomplete
 					value={ prompt }
 					disabled={ isLoading || ! isActive || isEnhancing }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
-					options={ PROMPT_SUGGESTIONS }
+					options={ promptSuggestions }
 					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
@@ -126,7 +147,7 @@ const PromptForm = forwardRef( ( { isActive, isLoading, showActions = false, onS
 			/>
 
 			<GenerateButton disabled={ isInteractionsDisabled } />
-		</Box>
+		</Stack>
 	);
 } );
 
@@ -137,6 +158,7 @@ PromptForm.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	onBack: PropTypes.func.isRequired,
 	onEdit: PropTypes.func.isRequired,
+	attachments: PropTypes.arrayOf( AttachmentPropType ),
 };
 
 export default PromptForm;
