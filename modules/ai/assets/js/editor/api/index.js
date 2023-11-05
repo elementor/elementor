@@ -55,6 +55,7 @@ export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_promp
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
 
 /**
+ * @typedef {Object} AttachmentPropType - See ./types/attachment.js
  * @typedef {Object} requestBody
  * @property {string}               prompt             - Prompt to generate the layout from.
  * @property {0|1|2}                [variationType]    - Type of the layout to generate (actually it's a position).
