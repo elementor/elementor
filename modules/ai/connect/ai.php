@@ -96,6 +96,8 @@ class Ai extends Library {
 	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '' ) {
 		$headers = [
 			'x-elementor-ai-version' => '2',
+			'Content-Type' => 'application/json',
+			'data_format' => 'body',
 		];
 
 		if ( $file ) {
@@ -111,7 +113,8 @@ class Ai extends Library {
 			[
 				'timeout' => 100,
 				'headers' => $headers,
-				'body' => $body,
+				'body' => wp_json_encode( $body ),
+
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
@@ -496,10 +499,10 @@ class Ai extends Library {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
 
-					$body['json'] = wp_json_encode( [
+					$body['json'] = [
 						'type' => 'elementor',
 						'elements' => [ $attachment['content'] ],
-					] );
+					];
 
 					break;
 			}
