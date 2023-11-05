@@ -30,6 +30,14 @@ export const getUiConfig = () => {
 	};
 };
 
+const REFORMAT_PROMPTS = [
+	{ text: __( 'Change the content to be about', 'elementor' ) },
+	{ text: __( 'I need the container to become more related to', 'elementor' ) },
+	{ text: __( 'Make the text more hard-sell oriented', 'elementor' ) },
+	{ text: __( 'Alter the look and feel to become more Christmas related', 'elementor' ) },
+	{ text: __( 'Replace all images to relate to', 'elementor' ) },
+];
+
 export const renderLayoutApp = ( options = {
 	at: null,
 	onClose: null,
@@ -57,17 +65,14 @@ export const renderLayoutApp = ( options = {
 			colorScheme={ colorScheme }
 			attachmentsTypes={ {
 				json: {
-					promptSuggestions: [
-						{ text: __( 'Change the content to be about', 'elementor' ) },
-						{ text: __( 'I need the container to become more related to', 'elementor' ) },
-						{ text: __( 'Make the text more hard-sell oriented', 'elementor' ) },
-						{ text: __( 'Alter the look and feel to become more Christmas related', 'elementor' ) },
-						{ text: __( 'Replace all images to relate to', 'elementor' ) },
-					],
+					promptSuggestions: REFORMAT_PROMPTS,
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
+				},
+				url: {
+					promptSuggestions: REFORMAT_PROMPTS,
 				},
 			} }
 			attachments={ options.attachments || [] }

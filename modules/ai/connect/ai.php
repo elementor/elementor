@@ -502,6 +502,13 @@ class Ai extends Library {
 						'type' => 'elementor',
 						'elements' => [ $attachment['content'] ],
 					];
+					break;
+				case 'url':
+					$endpoint = 'generate/html-to-elementor';
+
+					$html = json_encode( $attachment['content'] );
+
+					$body['html'] = $html;
 
 					break;
 			}
