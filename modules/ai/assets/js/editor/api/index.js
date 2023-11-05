@@ -54,7 +54,20 @@ export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_promp
 
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
 
-export const generateLayout = ( prompt, variationType, prevGeneratedIds, signal ) => request( 'ai_generate_layout', { prompt, variationType, prevGeneratedIds }, true, signal );
+/**
+ * @typedef {Object} AttachmentPropType - See ./types/attachment.js
+ * @typedef {Object} requestBody
+ * @property {string}               prompt             - Prompt to generate the layout from.
+ * @property {0|1|2}                [variationType]    - Type of the layout to generate (actually it's a position).
+ * @property {string[]}             [prevGeneratedIds] - Previously generated ids for exclusion on regeneration.
+ * @property {AttachmentPropType[]} [attachments]      - Attachments to use for the generation. currently only `json` type is supported - a container JSON to generate variations from.
+ */
+
+/**
+ * @param {requestBody} requestBody
+ * @param {AbortSignal} [signal]
+ */
+export const generateLayout = ( requestBody, signal ) => request( 'ai_generate_layout', requestBody, true, signal );
 
 export const getLayoutPromptEnhanced = ( prompt ) => request( 'ai_get_layout_prompt_enhancer', { prompt } );
 
