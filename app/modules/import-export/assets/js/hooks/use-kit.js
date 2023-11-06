@@ -57,10 +57,11 @@ export default function useKit() {
 			return await runRequest( ajaxConfig ).catch( ( error ) => {
 				const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
 
-				setKitState( ( prevState ) => ( { ...prevState, ...{
+				setKitState( ( prevState ) => ( {
+					...prevState,
 					status: KIT_STATUS_MAP.ERROR,
 					data: response || {},
-				} } ) );
+				} ) );
 			} );
 		},
 		runImportRunners = async ( session, runners ) => {
