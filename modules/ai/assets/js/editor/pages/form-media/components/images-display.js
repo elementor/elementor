@@ -1,4 +1,5 @@
 import { Box, Stack } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import useImageSize from '../hooks/use-image-size';
 import useImageNavigation from '../../../hooks/use-image-navigation';
 import ImageSlider from './image-slider';

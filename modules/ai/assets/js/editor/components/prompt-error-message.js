@@ -1,4 +1,6 @@
 import { Alert, Button, AlertTitle, Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'default', ...props } ) => {
 	const messages = {

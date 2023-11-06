@@ -26,6 +26,8 @@ class Container extends Element_Base {
 	 * @var \Elementor\Core\Kits\Documents\Kit
 	 */
 	private $active_kit;
+	private $logical_dimensions_inline_start;
+	private $logical_dimensions_inline_end;
 
 	/**
 	 * Container constructor.
@@ -350,7 +352,7 @@ class Container extends Element_Base {
 			'selector' => '{{WRAPPER}}',
 			'fields_options' => [
 				'gap' => [
-					'label' => esc_html_x( 'Gaps', 'Flex Container Control', 'elementor' ),
+					'label' => esc_html__( 'Gaps', 'elementor' ),
 					'device_args' => [
 						Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
 							// Use the default gap from the kit as a placeholder.

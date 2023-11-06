@@ -1,4 +1,5 @@
 import { Box, Stack } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const ImageForm = ( { children, ...props } ) => {
 	return (

@@ -12,6 +12,8 @@ import {
 	ListItemIcon,
 	Paper,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { UpgradeIcon, CheckedCircleIcon } from '@elementor/icons';
 
 const popoverId = 'e-ai-upgrade-popover';
@@ -60,9 +62,9 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
-	__( 'Generate impressive images that you can, edit, enhance and refine.', 'elementor' ),
-	__( 'Create professional text, about any topic, in any tone and language.', 'elementor' ),
-	__( 'Unleash infinite possibilities with the custom code generator.', 'elementor' ),
+	__( 'Generate your website\'s text or create custom code without having to write a single line yourself.', 'elementor' ),
+	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
+	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
 ];
 
 const Chip = styled( ChipBase )( () => ( {
@@ -121,7 +123,7 @@ const UpgradeChip = ( {
 					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
-						{ __( 'Unlimited access to Elementor AI', 'elementor' ) }
+						{ __( 'Maximum access to Elementor AI', 'elementor' ) }
 					</Typography>
 
 					<List sx={ { mb: 1 } }>
