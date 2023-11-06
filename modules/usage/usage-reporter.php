@@ -127,6 +127,8 @@ class Usage_Reporter extends Base {
 	}
 
 	private function get_insights( $insights ) {
+		$this->enqueue_styles();
+
 		$documents = [];
 		$widgets = [];
 		$max_per_document = 0;
@@ -151,7 +153,6 @@ class Usage_Reporter extends Base {
 
 		ob_start();
 		?>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css@1.1.0/dist/charts.min.css">
 
 		<style>
 		.charts-css caption {
@@ -238,5 +239,14 @@ class Usage_Reporter extends Base {
 
 		<?php
 		return ob_get_clean();
+	}
+
+	private function enqueue_styles() {
+		wp_enqueue_style(
+			'charts-css',
+			ELEMENTOR_ASSETS_URL . 'lib/charts.css/charts.min.css',
+			[],
+			'1.1.0'
+		);
 	}
 }
