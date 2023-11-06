@@ -32,15 +32,19 @@ export const getUiConfig = () => {
 
 export const renderLayoutApp = ( options = {
 	at: null,
+	onClose: null,
+	onGenerate: null,
 	onInsert: null,
+	onRenderApp: null,
+	onSelect: null,
+	attachments: [],
 } ) => {
 	closePanel();
 
 	const previewContainer = createPreviewContainer( {
+		// Create the container at the "drag widget here" area position.
 		at: options.at,
 	} );
-
-	previewContainer.init();
 
 	const { colorScheme, isRTL } = getUiConfig();
 
@@ -51,8 +55,25 @@ export const renderLayoutApp = ( options = {
 		<LayoutApp
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
+			attachmentsTypes={ {
+				json: {
+					promptSuggestions: [
+						{ text: __( 'Change the content to be about', 'elementor' ) },
+						{ text: __( 'I need the container to become more related to', 'elementor' ) },
+						{ text: __( 'Make the text more hard-sell oriented', 'elementor' ) },
+						{ text: __( 'Alter the look and feel to become more Christmas related', 'elementor' ) },
+						{ text: __( 'Replace all images to relate to', 'elementor' ) },
+					],
+					previewGenerator: async ( json ) => {
+						const screenshot = await takeScreenshot( json );
+						return `<img src="${ screenshot }" />`;
+					},
+				},
+			} }
+			attachments={ options.attachments || [] }
 			onClose={ () => {
 				previewContainer.destroy();
+				options.onClose?.();
 
 				ReactDOM.unmountComponentAtNode( rootElement );
 				rootElement.remove();
@@ -60,7 +81,9 @@ export const renderLayoutApp = ( options = {
 				openPanel();
 			} }
 			onConnect={ onConnect }
-			onGenerate={ () => previewContainer.reset() }
+			onGenerate={ () => {
+				options.onGenerate?.( { previewContainer } );
+			} }
 			onData={ async ( template ) => {
 				const screenshot = await takeScreenshot( template );
 
@@ -69,22 +92,34 @@ export const renderLayoutApp = ( options = {
 					template,
 				};
 			} }
-			onSelect={ ( template ) => previewContainer.setContent( template ) }
+			onSelect={ ( template ) => {
+				options.onSelect?.();
+				previewContainer.setContent( template );
+			} }
 			onInsert={ options.onInsert }
 		/>,
 		rootElement,
 	);
+
+	options.onRenderApp?.( { previewContainer } );
 };
 
 export const importToEditor = ( {
 	at,
 	template,
 	historyTitle,
+	replace = false,
 } ) => {
 	const endHistoryLog = startHistoryLog( {
 		type: 'import',
 		title: historyTitle,
 	} );
+
+	if ( replace ) {
+		$e.run( 'document/elements/delete', {
+			container: elementor.getPreviewContainer().children.at( at ),
+		} );
+	}
 
 	$e.run( 'document/elements/create', {
 		container: elementor.getPreviewContainer(),
@@ -97,3 +132,4 @@ export const importToEditor = ( {
 
 	endHistoryLog();
 };
+
