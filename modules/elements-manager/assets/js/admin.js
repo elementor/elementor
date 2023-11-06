@@ -1,5 +1,9 @@
 import {useEffect, render, useState, useMemo} from '@wordpress/element';
-import {Button, ToggleControl, Spinner, SearchControl, ButtonGroup, Panel, PanelBody, PanelRow, SelectControl, FlexItem, Flex, FlexBlock} from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalDivider as Divider,
+	__experimentalConfirmDialog as ConfirmDialog,
+	Button, ToggleControl, Spinner, SearchControl, ButtonGroup, Panel, PanelBody, PanelRow, SelectControl, FlexItem, Flex} from '@wordpress/components';
 import {__} from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 
@@ -74,18 +78,26 @@ const App = () => {
 	const [ searchKeyword, setSearchKeyword ] = useState( '' );
 	const [ widgets, setWidgets ] = useState( [] );
 	const [ plugins, setPlugins ] = useState( [] );
-	const [ usageWidgets, setUsageWidgets ] = useState( null );
+	const [ usageWidgets, setUsageWidgets ] = useState( {
+		isLoading: false,
+		data: null,
+	} );
 	const [ widgetsDisabled, setWidgetsDisabled ] = useState( [] );
 	const [ sortingColumn, setSortingColumn ] = useState( 'widget' );
 	const [ sortingDirection, setSortingDirection ] = useState( 'asc' );
 	const [ filterByPlugin, setFilterByPlugin ] = useState( '' );
+	const [ changeProgress, setChangeProgress ] = useState( {
+		isSaving: false,
+		isUnsavedChanges: false,
+	} );
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
 	const getUsageWidget = ( widgetName ) => {
-		if ( ! usageWidgets.hasOwnProperty( widgetName ) ) {
+		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
 			return 0;
 		}
 
-		return usageWidgets[ widgetName ];
+		return usageWidgets.data[ widgetName ];
 	}
 
 	const sortedAndFilteredWidgets = useMemo( () => {
@@ -125,7 +137,7 @@ const App = () => {
 		} );
 
 		return filteredWidgets;
-	}, [ widgets, searchKeyword, sortingColumn, sortingDirection, filterByPlugin	 ] );
+	}, [ widgets, searchKeyword, sortingColumn, sortingDirection, filterByPlugin, usageWidgets ] );
 
 	const getSortingIndicatorClasses = ( column ) => {
 		if ( sortingColumn !== column ) {
@@ -153,8 +165,56 @@ const App = () => {
 	};
 
 	const onSaveClicked = async () => {
+		setIsConfirmDialogOpen( false );
+		setChangeProgress( { ...changeProgress, isSaving: true } );
+
 		await saveDisabledWidgets( widgetsDisabled );
-		console.log( widgetsDisabled );
+
+		setChangeProgress( { ...changeProgress, isSaving: false, isUnsavedChanges: false } );
+	};
+
+	const deactivateAllUnusedWidgets = () => {
+		const widgetsToDeactivate = widgets.filter( ( widget ) => {
+			return ! usageWidgets.data.hasOwnProperty( widget.name ) || widgetsDisabled.includes( widget.name );
+		} );
+
+		setWidgetsDisabled( widgetsToDeactivate.map( ( widget ) => {
+			return widget.name;
+		} ) );
+	};
+
+	const enableAllWidgets = () => {
+		setWidgetsDisabled( [] );
+	};
+
+	const onScanUsageElementsClicked = async () => {
+		setUsageWidgets( { ...usageWidgets, isLoading: true } );
+		const data = await getUsageWidgets();
+		setUsageWidgets( { data, isLoading: false } );
+	};
+
+	const UsageTimesColumn = ( { widgetName } ) => {
+		if ( null !== usageWidgets.data ) {
+			return (
+				<>
+					{ getUsageWidget( widgetName ) } { __( 'times', 'elementor' ) }
+				</>
+			);
+		}
+
+		if ( usageWidgets.isLoading ) {
+			return (
+				<Spinner />
+			);
+		}
+
+		return (
+			<Button
+				onClick={ onScanUsageElementsClicked }
+			>
+				Scan to show
+			</Button>
+		);
 	};
 
 	useEffect( () => {
@@ -184,6 +244,14 @@ const App = () => {
 		onLoading();
 	}, [] );
 
+	useEffect( () => {
+		if ( isLoading ) {
+			return;
+		}
+
+		setChangeProgress( { ...changeProgress, isUnsavedChanges: true } );
+	}, [ widgetsDisabled ] );
+
 	if ( isLoading ) {
 		return (
 			<Flex
@@ -204,15 +272,27 @@ const App = () => {
 
 	return (
 		<>
+			<Text
+				adjustLineHeightForInnerControls="xSmall"
+				as="p"
+				style={ {
+					marginBottom: '20px',
+				} }
+			>
+				The Element Manager is provides users with a streamlined and efficient way to organize, control, and manage elements, offering a hassle-free experience in customizing their websites. <a href="#">Learn More</a>
+			</Text>
 			<Panel>
 				<PanelBody>
 					<Flex
-						style={{
+						style={ {
 							position: 'sticky',
-							top: '60px',
-							background: '#fff',
-							zIndex: 1,
-						}}
+							top: '32px',
+							background: 'rgb(255, 255, 255)',
+							zIndex: 10,
+							padding: '20px 16px',
+							boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
+							margin: '-16px -16px 24px',
+						} }
 					>
 						<FlexItem>
 							<Flex
@@ -232,38 +312,35 @@ const App = () => {
 									__nextHasNoMarginBottom={ true }
 									options={ plugins }
 								/>
+								<Divider
+									margin="2"
+									orientation={ 'vertical' }
+								/>
 								<ButtonGroup>
 									<Button
 										variant={ 'secondary' }
 										style={{ marginInlineEnd: '10px' }}
-										isBusy
-										onClick={ async () => {
-
-											const data = await getUsageWidgets();
-											setUsageWidgets( data );
-										} }
+										disabled={ usageWidgets.isLoading }
+										isBusy={ usageWidgets.isLoading }
+										onClick={ onScanUsageElementsClicked }
 									>
-										{ __( 'Scan Usage Widgets', 'elementor' ) }
+										{ __( 'Scan Usage Elements', 'elementor' ) }
 									</Button>
+									{ null !== usageWidgets.data && (
+										<Button
+											variant={ 'secondary' }
+											style={{ marginInlineEnd: '10px' }}
+											onClick={ deactivateAllUnusedWidgets }
+										>
+											{ __( 'Deactivate Unused Elements', 'elementor' ) }
+										</Button>
+									) }
 									<Button
 										variant={ 'secondary' }
 										style={{ marginInlineEnd: '10px' }}
-										onClick={ async () => {
-											const data = await getUsageWidgets();
-											setUsageWidgets( data );
-										} }
+										onClick={ enableAllWidgets }
 									>
 										{ __( 'Enable All', 'elementor' ) }
-									</Button>
-									<Button
-										variant={ 'secondary' }
-										style={{ marginInlineEnd: '10px' }}
-										onClick={ async () => {
-											const data = await getUsageWidgets();
-											setUsageWidgets( data );
-										} }
-									>
-										{ __( 'Deactivate Unused Elements', 'elementor' ) }
 									</Button>
 								</ButtonGroup>
 							</Flex>
@@ -271,7 +348,11 @@ const App = () => {
 						<FlexItem>
 							<Button
 								variant="primary"
-								onClick={ onSaveClicked }
+								disabled={ changeProgress.isSaving || ! changeProgress.isUnsavedChanges }
+								isBusy={ changeProgress.isSaving }
+								onClick={ () => {
+									setIsConfirmDialogOpen( true );
+								} }
 							>
 								{ __( 'Save Changes', 'elementor' ) }
 							</Button>
@@ -282,7 +363,7 @@ const App = () => {
 
 						{ ! sortedAndFilteredWidgets.length ? (
 							<>
-								{ __( 'No widgets found.', 'elementor' ) }
+								{ __( 'No elements found.', 'elementor' ) }
 							</>
 							) : (
 
@@ -293,26 +374,24 @@ const App = () => {
 										<a onClick={ () => {
 											onSortingClicked( 'widget' );
 										} }>
-											<span>{ __( 'Widget', 'elementor' ) }</span>
+											<span>{ __( 'Element', 'elementor' ) }</span>
 											<span className="sorting-indicators">
 												<span className="sorting-indicator asc" aria-hidden="true"></span>
 												<span className="sorting-indicator desc" aria-hidden="true"></span>
 											</span>
 										</a>
 									</th>
-									{ null !== usageWidgets && (
-										<th className={`manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
-											<a onClick={ () => {
-												onSortingClicked( 'usage' );
-											} }>
-												<span>{ __( 'Usage', 'elementor' ) }</span>
-												<span className="sorting-indicators">
-												<span className="sorting-indicator asc" aria-hidden="true"></span>
-												<span className="sorting-indicator desc" aria-hidden="true"></span>
-											</span>
-											</a>
-										</th>
-									) }
+									<th className={`manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
+										<a onClick={ () => {
+											onSortingClicked( 'usage' );
+										} }>
+											<span>{ __( 'Usage', 'elementor' ) }</span>
+											<span className="sorting-indicators">
+											<span className="sorting-indicator asc" aria-hidden="true"></span>
+											<span className="sorting-indicator desc" aria-hidden="true"></span>
+										</span>
+										</a>
+									</th>
 									<th>{ __( 'Plugin', 'elementor' ) }</th>
 									<th>{ __( 'Enabled', 'elementor' ) }</th>
 								</tr>
@@ -322,11 +401,11 @@ const App = () => {
 								return (
 									<tr key={ widget.name }>
 										<td>{ widget.title }</td>
-										{ null !== usageWidgets && (
-											<th>
-												{ getUsageWidget( widget.name ) } { __( 'times', 'elementor' ) }
-											</th>
-										) }
+										<th>
+											<UsageTimesColumn
+												widgetName={ widget.name }
+											/>
+										</th>
 										<td>{ widget.plugin }</td>
 										<td>
 											<ToggleControl
@@ -347,23 +426,24 @@ const App = () => {
 						</table>
 						) }
 				</PanelRow>
-
-				<PanelRow>
-					<Button
-						variant="primary"
-						onClick={ onSaveClicked }
-					>
-						{ __( 'Save Changes', 'elementor' ) }
-					</Button>
-				</PanelRow>
 				</PanelBody>
 			</Panel>
+
+			<ConfirmDialog
+				isOpen={ isConfirmDialogOpen }
+				onConfirm={ onSaveClicked }
+				onCancel={ () => {
+					setIsConfirmDialogOpen( false );
+				} }
+			>
+				Are you sure? <strong>This action cannot be undone!</strong>
+			</ConfirmDialog>
 		</>
 	);
 }
 
 domReady( () => {
-	const htmlOutput = document.getElementById( 'elementor-elements-manager-wrap' );
+	const htmlOutput = document.getElementById( 'elementor-element-manager-wrap' );
 
 	if ( htmlOutput ) {
 		render( <App />, htmlOutput );

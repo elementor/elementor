@@ -19,11 +19,11 @@ class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Elements Manager', 'elementor' );
+		return esc_html__( 'Element Manager', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Elements Manager', 'elementor' );
+		return esc_html__( 'Element Manager', 'elementor' );
 	}
 
 	public function get_capability() {
@@ -32,8 +32,8 @@ class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
 
 	public function render() {
 		echo '<div class="wrap">';
-		echo '<h2>' . esc_html__( 'Elements Manager', 'elementor' ) . '</h2>';
-		echo '<div id="elementor-elements-manager-wrap"></div>';
+		echo '<h2>' . esc_html__( 'Element Manager', 'elementor' ) . '</h2>';
+		echo '<div id="elementor-element-manager-wrap"></div>';
 		echo '</div>';
 	}
 }
