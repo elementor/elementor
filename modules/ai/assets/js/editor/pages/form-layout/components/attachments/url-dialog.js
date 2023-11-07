@@ -42,7 +42,7 @@ export const UrlDialog = ( props ) => {
 			if ( ! isIframeLoaded ) {
 				setIsTimeout( true );
 			}
-		}, 100 );
+		}, 10_000 );
 
 		return () => {
 			clearTimeout( timeout );
@@ -67,7 +67,7 @@ export const UrlDialog = ( props ) => {
 				} }
 			>
 				{
-					 <AlertDialog
+					isTimeout && <AlertDialog
 						message={ __( 'The app is not responding. Please try again later.', 'elementor' ) }
 						onClose={ props.onClose }
 					/>
@@ -94,4 +94,5 @@ export const UrlDialog = ( props ) => {
 
 UrlDialog.propTypes = {
 	onAttach: PropTypes.func.isRequired,
+	onClose: PropTypes.func.isRequired,
 };
