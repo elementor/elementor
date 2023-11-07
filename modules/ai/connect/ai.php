@@ -114,7 +114,8 @@ class Ai extends Library {
 			[
 				'timeout' => 100,
 				'headers' => $headers,
-				'body' => $body,
+				'body' => wp_json_encode( $body ),
+
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
