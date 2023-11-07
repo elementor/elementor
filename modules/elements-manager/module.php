@@ -56,5 +56,6 @@ class Module extends BaseModule {
 		] );
 
 		wp_enqueue_style( 'wp-components' );
+		wp_enqueue_style( 'wp-format-library' );
 	}
 }

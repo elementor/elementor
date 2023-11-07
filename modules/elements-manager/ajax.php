@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\ElementsManager;;
 
+use Elementor\Api;
 use Elementor\Modules\Usage\Module as Usage_Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -43,9 +45,14 @@ class Ajax {
 
 		$data = [
 			'disabled_widgets' => Options::get_disabled_widgets(),
+			'promotion_widgets' => [],
 			'widgets' => $widgets,
 			'plugins' => $plugins,
 		];
+
+		if ( ! Utils::has_pro() ) {
+			$data['promotion_widgets'] = Api::get_promotion_widgets();
+		}
 
 		wp_send_json_success( $data );
 	}

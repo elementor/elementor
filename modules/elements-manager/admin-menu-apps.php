@@ -32,7 +32,7 @@ class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
 
 	public function render() {
 		echo '<div class="wrap">';
-		echo '<h2>' . esc_html__( 'Element Manager', 'elementor' ) . '</h2>';
+		echo '<h3 class="wp-heading-inline">' . esc_html__( 'Element Manager', 'elementor' ) . '</h3>';
 		echo '<div id="elementor-element-manager-wrap"></div>';
 		echo '</div>';
 	}

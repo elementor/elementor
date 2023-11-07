@@ -6,6 +6,7 @@ import {
 import {
 	__experimentalText as Text,
 	__experimentalDivider as Divider,
+	__experimentalHeading as Heading,
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
 	ToggleControl,
@@ -17,7 +18,8 @@ import {
 	PanelRow,
 	SelectControl,
 	FlexItem,
-	Flex
+	Flex,
+	Snackbar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -31,6 +33,7 @@ export const App = () => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ searchKeyword, setSearchKeyword ] = useState( '' );
 	const [ widgets, setWidgets ] = useState( [] );
+	const [ promotionWidgets, setPromotionWidgets ] = useState( [] );
 	const [ plugins, setPlugins ] = useState( [] );
 	const [ usageWidgets, setUsageWidgets ] = useState( {
 		isLoading: false,
@@ -45,6 +48,7 @@ export const App = () => {
 		isUnsavedChanges: false,
 	} );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const [ isSnackbarOpen, setIsSnackbarOpen ] = useState( false );
 
 	const getUsageWidget = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -125,6 +129,8 @@ export const App = () => {
 		await saveDisabledWidgets( widgetsDisabled );
 
 		setChangeProgress( { ...changeProgress, isSaving: false, isUnsavedChanges: false } );
+
+		setIsSnackbarOpen( true );
 	};
 
 	const deactivateAllUnusedWidgets = () => {
@@ -143,8 +149,12 @@ export const App = () => {
 
 	const onScanUsageElementsClicked = async () => {
 		setUsageWidgets( { ...usageWidgets, isLoading: true } );
+
 		const data = await getUsageWidgets();
+
 		setUsageWidgets( { data, isLoading: false } );
+		setSortingColumn( 'usage' );
+		setSortingDirection( 'desc' );
 	};
 
 	const UsageTimesColumn = ( { widgetName } ) => {
@@ -165,8 +175,10 @@ export const App = () => {
 		return (
 			<Button
 				onClick={ onScanUsageElementsClicked }
+				size={ 'small' }
+				variant={ 'secondary' }
 			>
-				Scan to show
+				{ __( 'Show', 'elementor' ) }
 			</Button>
 		);
 	};
@@ -177,6 +189,7 @@ export const App = () => {
 
 			setWidgetsDisabled( appData.disabled_widgets );
 			setWidgets( appData.widgets );
+			setPromotionWidgets( appData.promotion_widgets );
 
 			const pluginsData = appData.plugins.map( ( plugin ) => {
 				return {
@@ -231,6 +244,7 @@ export const App = () => {
 				as="p"
 				style={ {
 					marginBottom: '20px',
+					maxWidth: '800px',
 				} }
 			>
 				The Element Manager is provides users with a streamlined and efficient way to organize, control, and manage elements, offering a hassle-free experience in customizing their websites. <a href="#">Learn More</a>
@@ -256,7 +270,11 @@ export const App = () => {
 									label={ __( 'Search widgets', 'elementor' ) }
 									value={ searchKeyword }
 									size={ 'compact' }
-									style={{ height: '40px' }}
+									style={{
+										height: '40px',
+										border: '1px solid rgba(30, 30, 30, 0.62)',
+										background: 'transparent',
+									}}
 									__nextHasNoMarginBottom={ true }
 									onChange={ setSearchKeyword }
 								/>
@@ -291,6 +309,7 @@ export const App = () => {
 									) }
 									<Button
 										variant={ 'secondary' }
+										disabled={ ! widgetsDisabled.length }
 										style={{ marginInlineEnd: '10px' }}
 										onClick={ enableAllWidgets }
 									>
@@ -354,11 +373,11 @@ export const App = () => {
 									return (
 										<tr key={ widget.name }>
 											<td>{ widget.title }</td>
-											<th>
+											<td>
 												<UsageTimesColumn
 													widgetName={ widget.name }
 												/>
-											</th>
+											</td>
 											<td>{ widget.plugin }</td>
 											<td>
 												<ToggleControl
@@ -379,6 +398,63 @@ export const App = () => {
 							</table>
 						) }
 					</PanelRow>
+
+					{ promotionWidgets.length > 0 && (
+						<>
+							<PanelRow>
+								<Flex
+									style={{
+										marginTop: '40px',
+										marginBottom: '20px',
+								}}>
+									<FlexItem>
+										<Heading
+											level={ 3 }
+										>
+											{ __( 'Pro Elements', 'elementor' ) }
+										</Heading>
+										<Text>
+											{ __( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ) }
+										</Text>
+									</FlexItem>
+									<FlexItem>
+										<Button
+											variant="primary"
+											href="https://elementor.com/pro/"
+											target="_blank"
+											style={{
+												background: 'var(--e-a-btn-bg-accent, #93003f)',
+											}}
+										>
+											{ __( 'Upgrade Now', 'elementor' ) }
+										</Button>
+									</FlexItem>
+								</Flex>
+							</PanelRow>
+							<PanelRow>
+							<table className={'wp-list-table widefat fixed striped table-view-list'}>
+								<tbody>
+								{ promotionWidgets.map( ( widget ) => {
+									return (
+										<tr key={ widget.name }>
+											<td>{ widget.title }</td>
+											<td>
+												{ __( 'Elementor Pro', 'elementor' ) }
+											</td>
+											<td>
+												<ToggleControl
+													checked={ false }
+													disabled={ true }
+												/>
+											</td>
+										</tr>
+									);
+								} ) }
+								</tbody>
+							</table>
+						</PanelRow>
+						</>
+					) }
 				</PanelBody>
 			</Panel>
 
@@ -391,6 +467,23 @@ export const App = () => {
 			>
 				Are you sure? <strong>This action cannot be undone!</strong>
 			</ConfirmDialog>
+
+			{ /* TODO: Use notices API */ }
+			<div style={{
+				position: 'fixed',
+				bottom: '40px',
+				left: '50%',
+				transform: 'translateX(-50%)',
+				display: isSnackbarOpen ? 'block' : 'none',
+			}}>
+				<Snackbar
+					isDismissible
+					status={ 'success' }
+					onRemove={ () => { setIsSnackbarOpen( false ) } }
+				>
+					All saved.
+				</Snackbar>
+			</div>
 		</>
 	);
 };
