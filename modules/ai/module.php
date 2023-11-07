@@ -707,8 +707,8 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
+		if ( empty( $data['prompt'] ) && empty( $data['attachments'] ) ) {
+			throw new \Exception( 'Missing prompt / attachments' );
 		}
 
 		if ( ! $app->is_connected() ) {
@@ -716,16 +716,22 @@ class Module extends BaseModule {
 		}
 
 		$result = $app->generate_layout(
-			$data['prompt'],
-			$this->prepare_generate_layout_context(),
-			$data['variationType']
+			$data,
+			$this->prepare_generate_layout_context()
 		);
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			$message = $result->get_error_message();
+
+			if ( is_array( $message ) ) {
+				$message = implode( ', ', $message );
+			}
+
+			throw new \Exception( $message );
 		}
 
 		$template = $result['text']['elements'][0] ?? null;
+		$base_template_id = $result['baseTemplateId'] ?? null;
 
 		if ( empty( $template ) || ! is_array( $template ) ) {
 			throw new \Exception( 'unknown_error' );
@@ -736,6 +742,7 @@ class Module extends BaseModule {
 			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
+			'base_template_id' => $base_template_id,
 		];
 	}
 
