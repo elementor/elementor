@@ -36,7 +36,7 @@ export default class {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
 		} else {
 			await this.page.reload();
-
+			await this.page.reload();
 			if ( await this.page.$( '#elementor-panel-header-kit-close' ) ) {
 				await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
 			}
