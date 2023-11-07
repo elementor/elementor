@@ -93,10 +93,9 @@ class Ai extends Library {
 		return $payload;
 	}
 
-	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '' ) {
+	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '', $format = 'default' ) {
 		$headers = [
 			'x-elementor-ai-version' => '2',
-			'Content-Type' => 'application/json',
 		];
 
 		if ( $file ) {
@@ -104,7 +103,8 @@ class Ai extends Library {
 			$body = $this->get_upload_request_body( $body, $file, $boundary, $file_name );
 			// add content type header
 			$headers['Content-Type'] = 'multipart/form-data; boundary=' . $boundary;
-		} else {
+		} elseif ( 'json' === $format ) {
+			$headers['Content-Type'] = 'application/json';
 			$body = wp_json_encode( $body );
 		}
 
@@ -483,6 +483,7 @@ class Ai extends Library {
 
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
+		$format = 'default';
 
 		$body = [
 			'prompt' => $data['prompt'],
@@ -499,6 +500,7 @@ class Ai extends Library {
 			switch ( $attachment['type'] ) {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
+					$format = 'json';
 
 					$body['json'] = [
 						'type' => 'elementor',
@@ -507,6 +509,7 @@ class Ai extends Library {
 					break;
 				case 'url':
 					$endpoint = 'generate/html-to-elementor';
+					$format = 'json';
 
 					$html = json_encode( $attachment['content'] );
 
@@ -532,7 +535,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			$endpoint,
-			$body
+			$body,
+			false,
+			'',
+			$format
 		);
 	}
 
