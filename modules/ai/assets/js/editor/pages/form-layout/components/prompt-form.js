@@ -139,7 +139,7 @@ const PromptForm = forwardRef( ( {
 
 				<Box width="100%">
 					{
-						attachments.length > 0 && <PromptChips>
+						false/* Disable for now */ && attachments.length > 0 && <PromptChips>
 							<PromptChip
 								label={ __( 'Images', 'elementor' ) }
 								onClick={ () => togglePromptAffect( 'images' ) }
