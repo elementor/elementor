@@ -197,7 +197,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	/**
 	 * Get the responsive parent view if exists.
 	 *
-	 * @return {ControlBaseDataView|null} responsive parent view if exists
+	 * @return {ControlBaseDataView|undefined} responsive parent view if exists
 	 */
 	getResponsiveParentView() {
 		const parent = this.model.get( 'parent' );

@@ -77,7 +77,7 @@ const PromptDialog = ( props ) => {
 
 PromptDialog.propTypes = {
 	onClose: PropTypes.func.isRequired,
-	children: PropTypes.node.isRequired,
+	children: PropTypes.node,
 	maxWidth: PropTypes.oneOf( [ 'xs', 'sm', 'md', 'lg', 'xl', false ] ),
 };
 
