@@ -10,6 +10,7 @@ export const AttachDialog = ( props ) => {
 		case ATTACHMENT_TYPE_URL:
 			return <UrlDialog
 				onAttach={ props.onAttach }
+				onClose={ props.onClose }
 			/>;
 	}
 
@@ -19,6 +20,7 @@ export const AttachDialog = ( props ) => {
 AttachDialog.propTypes = {
 	type: PropTypes.string,
 	onAttach: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 export default AttachDialog;

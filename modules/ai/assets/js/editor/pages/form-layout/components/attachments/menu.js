@@ -52,6 +52,10 @@ export const Menu = ( props ) => {
 			<AttachDialog
 				type={ selectedType }
 				onAttach={ props.onAttach }
+				onClose={ () => {
+					setIsOpen( false );
+					setSelectedType( null );
+				} }
 			/>
 		</>
 	);

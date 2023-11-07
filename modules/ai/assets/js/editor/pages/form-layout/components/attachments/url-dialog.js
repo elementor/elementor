@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
+import { AlertDialog } from '../../../../components/alert-dialog';
 
 export const UrlDialog = ( props ) => {
 	const { iframeSource, setCurrentUrl } = useAttachUrlService();
 	const [ isIframeLoaded, setIsIframeLoaded ] = useState( false );
+	const [ isTimeout, setIsTimeout ] = useState( false );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
@@ -38,9 +40,9 @@ export const UrlDialog = ( props ) => {
 	useEffect( () => {
 		const timeout = setTimeout( () => {
 			if ( ! isIframeLoaded ) {
-				window.alert( __( 'Cannot load the app. Please try again later.' ) );
+				setIsTimeout( true );
 			}
-		}, 10000 );
+		}, 100 );
 
 		return () => {
 			clearTimeout( timeout );
@@ -64,17 +66,27 @@ export const UrlDialog = ( props ) => {
 					padding: 0,
 				} }
 			>
-				<iframe
-					title={ __( 'URL as a reference', 'elementor' ) }
-					src={ iframeSource }
-					style={ {
-						border: 'none',
-						overflow: 'scroll',
-						width: '100%',
-						height: '100%',
-						backgroundColor: 'rgba(255,255,255,0.6)',
-					} }
-				/>
+				{
+					 <AlertDialog
+						message={ __( 'The app is not responding. Please try again later.', 'elementor' ) }
+						onClose={ props.onClose }
+					/>
+				}
+
+				{
+					! isTimeout && (
+						<iframe
+							title={ __( 'URL as a reference', 'elementor' ) }
+							src={ iframeSource }
+							style={ {
+								border: 'none',
+								overflow: 'scroll',
+								width: '100%',
+								height: '100%',
+								backgroundColor: 'rgba(255,255,255,0.6)',
+							} }
+						/>
+					) }
 			</DialogContent>
 		</Dialog>
 	);
