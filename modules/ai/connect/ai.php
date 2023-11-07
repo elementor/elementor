@@ -104,6 +104,8 @@ class Ai extends Library {
 			$body = $this->get_upload_request_body( $body, $file, $boundary, $file_name );
 			// add content type header
 			$headers['Content-Type'] = 'multipart/form-data; boundary=' . $boundary;
+		} else {
+			$body = wp_json_encode( $body );
 		}
 
 		return $this->http_request(
@@ -112,7 +114,7 @@ class Ai extends Library {
 			[
 				'timeout' => 100,
 				'headers' => $headers,
-				'body' => wp_json_encode( $body ),
+				'body' => $body,
 
 			],
 			[
