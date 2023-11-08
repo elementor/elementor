@@ -240,7 +240,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.17.3 - 2023-11-08 =
+= 3.17.3 - 2023-11-08 = 
 
 * Modified control sanitization to enforce better security policies in Dynamic tags
 
