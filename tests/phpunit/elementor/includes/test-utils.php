@@ -9,13 +9,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
-	public function tearDown() {
-		parent::tearDown();
-
-		$_REQUEST  = [];
-		$_FILES = [];
-	}
-
 	public function test_should_return_elementor_pro_link() {
 		$this->assertSame( self::BASE_LINK . '&utm_term=twentytwenty-one', Utils::get_pro_link( self::BASE_LINK ) );
 	}
