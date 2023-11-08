@@ -1,0 +1,35 @@
+.e-playing-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--e-playing-cards-gap);
+
+	&-item {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+		width: 200px;
+		height: 400px;
+		box-shadow: 1px 3px 5px 0 rgba(184,184,184,0.75);
+		font-size: 3rem;
+		font-weight: bold;
+		border-radius: 5px;
+		padding: var(--e-playing-card-padding);
+
+		&-bottom {
+			align-self: flex-end;
+		}
+
+		&-top {
+			align-self: flex-start;
+		}
+	}
+}
+
+.red{
+	color: red;
+}
+
+.black{
+	color: black;
+}
