@@ -242,7 +242,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 
 = 3.17.3 - 2023-11-08 =
 
-* Modified control sanitization to enforce better security policies in Dynamic tags 
+* Modified control sanitization to enforce better security policies in Dynamic tags
 
 = 3.17.2 - 2023-11-01 =
 
