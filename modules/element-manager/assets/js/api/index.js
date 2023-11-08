@@ -1,13 +1,13 @@
 export const saveDisabledWidgets = async ( widgetsDisabled ) => {
 	try {
-		const response = await fetch( eElementsManagerConfig.ajaxurl, {
+		const response = await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			body: new URLSearchParams( {
-				action: 'elementor_elements_manager_save_disabled_widgets',
-				nonce: eElementsManagerConfig.nonce,
+				action: 'elementor_element_manager_save_disabled_elements',
+				nonce: eElementManagerConfig.nonce,
 				widgets: JSON.stringify( widgetsDisabled ),
 			} ),
 		} );
@@ -22,14 +22,14 @@ export const saveDisabledWidgets = async ( widgetsDisabled ) => {
 
 export const getAdminAppData = async () => {
 	try {
-		const response = await fetch( eElementsManagerConfig.ajaxurl, {
+		const response = await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			body: new URLSearchParams( {
-				action: 'elementor_elements_manager_get_admin_app_data',
-				nonce: eElementsManagerConfig.nonce,
+				action: 'elementor_element_manager_get_admin_app_data',
+				nonce: eElementManagerConfig.nonce,
 			} ),
 		} );
 
@@ -44,14 +44,14 @@ export const getAdminAppData = async () => {
 
 export const getUsageWidgets = async () => {
 	try {
-		const response = await fetch( eElementsManagerConfig.ajaxurl, {
+		const response = await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			body: new URLSearchParams( {
-				action: 'elementor_elements_manager_get_usage_widgets',
-				nonce: eElementsManagerConfig.nonce,
+				action: 'elementor_element_manager_get_usage_widgets',
+				nonce: eElementManagerConfig.nonce,
 			} ),
 		} );
 

@@ -187,7 +187,7 @@ export const App = () => {
 		const onLoading = async () => {
 			const appData = await getAdminAppData();
 
-			setWidgetsDisabled( appData.disabled_widgets );
+			setWidgetsDisabled( appData.disabled_elements );
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
 
@@ -247,7 +247,11 @@ export const App = () => {
 					maxWidth: '800px',
 				} }
 			>
-				The Element Manager is provides users with a streamlined and efficient way to organize, control, and manage elements, offering a hassle-free experience in customizing their websites. <a href="#">Learn More</a>
+				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance', 'elementor' ) }
+				{ ' ' }
+				<a href="https://go.elementor.com/wp-dash-element-manager/" target={ '_blank' }>
+					{ __( 'Learn More', 'elementor' ) }
+				</a>
 			</Text>
 			<Panel>
 				<PanelBody>
@@ -272,7 +276,7 @@ export const App = () => {
 									size={ 'compact' }
 									style={{
 										height: '40px',
-										border: '1px solid rgba(30, 30, 30, 0.62)',
+										border: '1px solid rgba(30, 30, 30, 0.5)',
 										background: 'transparent',
 									}}
 									__nextHasNoMarginBottom={ true }
@@ -287,6 +291,10 @@ export const App = () => {
 								<Divider
 									margin="2"
 									orientation={ 'vertical' }
+									style={{
+										height: '30px',
+										borderColor: 'rgba(30, 30, 30, 0.5)',
+									}}
 								/>
 								<ButtonGroup>
 									<Button
@@ -296,17 +304,16 @@ export const App = () => {
 										isBusy={ usageWidgets.isLoading }
 										onClick={ onScanUsageElementsClicked }
 									>
-										{ __( 'Scan Usage Elements', 'elementor' ) }
+										{ __( 'Scan Element Usage', 'elementor' ) }
 									</Button>
-									{ null !== usageWidgets.data && (
-										<Button
-											variant={ 'secondary' }
-											style={{ marginInlineEnd: '10px' }}
-											onClick={ deactivateAllUnusedWidgets }
-										>
-											{ __( 'Deactivate Unused Elements', 'elementor' ) }
-										</Button>
-									) }
+									<Button
+										variant={ 'secondary' }
+										style={{ marginInlineEnd: '10px' }}
+										onClick={ deactivateAllUnusedWidgets }
+										disabled={ null === usageWidgets.data }
+									>
+										{ __( 'Deactivate Unused Elements', 'elementor' ) }
+									</Button>
 									<Button
 										variant={ 'secondary' }
 										disabled={ ! widgetsDisabled.length }
@@ -365,7 +372,7 @@ export const App = () => {
 										</a>
 									</th>
 									<th>{ __( 'Plugin', 'elementor' ) }</th>
-									<th>{ __( 'Enabled', 'elementor' ) }</th>
+									<th>{ __( 'Status', 'elementor' ) }</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -382,6 +389,7 @@ export const App = () => {
 											<td>
 												<ToggleControl
 													checked={ ! widgetsDisabled.includes( widget.name ) }
+													__nextHasNoMarginBottom={ true }
 													onChange={ () => {
 														if ( widgetsDisabled.includes( widget.name ) ) {
 															setWidgetsDisabled( widgetsDisabled.filter( ( item ) => item !== widget.name ) );
@@ -411,7 +419,7 @@ export const App = () => {
 										<Heading
 											level={ 3 }
 										>
-											{ __( 'Pro Elements', 'elementor' ) }
+											{ __( 'Elementor Pro Elements', 'elementor' ) }
 										</Heading>
 										<Text>
 											{ __( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ) }
@@ -420,7 +428,7 @@ export const App = () => {
 									<FlexItem>
 										<Button
 											variant="primary"
-											href="https://elementor.com/pro/"
+											href="https://go.elementor.com/go-pro-element-manager/"
 											target="_blank"
 											style={{
 												background: 'var(--e-a-btn-bg-accent, #93003f)',
@@ -433,16 +441,28 @@ export const App = () => {
 							</PanelRow>
 							<PanelRow>
 							<table className={'wp-list-table widefat fixed striped table-view-list'}>
+								<thead>
+								<tr>
+									<th className={`manage-column` }>
+										<span>{ __( 'Element', 'elementor' ) }</span>
+									</th>
+									<th>{ __( 'Usage', 'elementor' ) }</th>
+									<th>{ __( 'Plugin', 'elementor' ) }</th>
+									<th>{ __( 'Status', 'elementor' ) }</th>
+								</tr>
+								</thead>
 								<tbody>
 								{ promotionWidgets.map( ( widget ) => {
 									return (
 										<tr key={ widget.name }>
 											<td>{ widget.title }</td>
 											<td>
-												{ __( 'Elementor Pro', 'elementor' ) }
+
 											</td>
+											<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
 											<td>
 												<ToggleControl
+													__nextHasNoMarginBottom={ true }
 													checked={ false }
 													disabled={ true }
 												/>
@@ -461,11 +481,29 @@ export const App = () => {
 			<ConfirmDialog
 				isOpen={ isConfirmDialogOpen }
 				onConfirm={ onSaveClicked }
+				cancelButtonText={ __( 'Cancel', 'elementor' ) }
+				confirmButtonText={ __( 'Save', 'elementor' ) }
 				onCancel={ () => {
 					setIsConfirmDialogOpen( false );
 				} }
 			>
-				Are you sure? <strong>This action cannot be undone!</strong>
+				<Heading
+					level={ 4 }
+					style={{
+						marginBottom: '20px',
+					}}
+				>
+					{ __( 'Sure you want to save these changes?', 'elementor' ) }
+				</Heading>
+				<Text
+					as={ 'p' }
+					lineHeight={ 1.5 }
+					style={{
+						maxWidth: '400px',
+					}}
+				>
+					{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
+				</Text>
 			</ConfirmDialog>
 
 			{ /* TODO: Use notices API */ }
@@ -481,7 +519,7 @@ export const App = () => {
 					status={ 'success' }
 					onRemove={ () => { setIsSnackbarOpen( false ) } }
 				>
-					All saved.
+					{ __( 'We saved your changes.', 'elementor' ) }
 				</Snackbar>
 			</div>
 		</>

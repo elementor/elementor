@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\Modules\ElementsManager;;
+namespace Elementor\Modules\ElementManager;
 
-use Elementor\Api;
 use Elementor\Modules\Usage\Module as Usage_Module;
+use Elementor\Api;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Ajax {
 
 	public function register_endpoints() {
-		add_action( 'wp_ajax_elementor_elements_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
-		add_action( 'wp_ajax_elementor_elements_manager_save_disabled_widgets', [ $this, 'ajax_save_disabled_widgets' ] );
-		add_action( 'wp_ajax_elementor_elements_manager_get_usage_widgets', [ $this, 'ajax_get_usage_widgets' ] );
+		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
+		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', [ $this, 'ajax_save_disabled_elements' ] );
+		add_action( 'wp_ajax_elementor_element_manager_get_usage_widgets', [ $this, 'ajax_get_usage_widgets' ] );
 	}
 
 	public function ajax_get_admin_page_data() {
@@ -44,7 +44,7 @@ class Ajax {
 		}
 
 		$data = [
-			'disabled_widgets' => Options::get_disabled_widgets(),
+			'disabled_elements' => Options::get_disabled_elements(),
 			'promotion_widgets' => [],
 			'widgets' => $widgets,
 			'plugins' => $plugins,
@@ -62,7 +62,7 @@ class Ajax {
 			wp_send_json_error();
 		}
 
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'e-elements-manager-app' ) ) {
+		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'e-element-manager-app' ) ) {
 			wp_send_json_error();
 		}
 	}
@@ -84,20 +84,20 @@ class Ajax {
 		return $plugin_data['Name'] ?? __( 'Unknown', 'elementor' );
 	}
 
-	public function ajax_save_disabled_widgets() {
+	public function ajax_save_disabled_elements() {
 		$this->verify_nonce();
 
 		if ( empty( $_POST['widgets'] ) ) {
 			wp_send_json_error();
 		}
 
-		$disabled_widgets = json_decode( wp_unslash( $_POST['widgets'] ) );
+		$disabled_elements = json_decode( wp_unslash( $_POST['widgets'] ) );
 
-		if ( ! is_array( $disabled_widgets ) ) {
+		if ( ! is_array( $disabled_elements ) ) {
 			wp_send_json_error();
 		}
 
-		Options::update_disabled_widgets( $disabled_widgets );
+		Options::update_disabled_elements( $disabled_elements );
 
 		wp_send_json_success();
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\ElementsManager;
+namespace Elementor\Modules\ElementManager;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin_Menu_Apps implements Admin_Menu_Item_With_Page {
+class Admin_Menu_App implements Admin_Menu_Item_With_Page {
 
 	public function is_visible() {
 		return true;
