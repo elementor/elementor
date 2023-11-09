@@ -59,11 +59,11 @@ class Ajax {
 
 	private function verify_permission() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'You do not have permission to edit these settings.', 'elementor' ) );
+			wp_send_json_error( esc_html__( 'You do not have permission to edit these settings.', 'elementor' ) );
 		}
 
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'e-element-manager-app' ) ) {
-			wp_send_json_error( __( 'Invalid nonce.', 'elementor' ) );
+			wp_send_json_error( esc_html__( 'Invalid nonce.', 'elementor' ) );
 		}
 	}
 
@@ -81,7 +81,7 @@ class Ajax {
 		$plugins_data = get_plugins( '/' . $plugin_directory );
 		$plugin_data = array_shift( $plugins_data );
 
-		return $plugin_data['Name'] ?? __( 'Unknown', 'elementor' );
+		return $plugin_data['Name'] ?? esc_html__( 'Unknown', 'elementor' );
 	}
 
 	public function ajax_save_disabled_elements() {
@@ -90,13 +90,13 @@ class Ajax {
 		$elements = Utils::get_super_global_value( $_POST, 'widgets' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		if ( empty( $elements ) ) {
-			wp_send_json_error( __( 'No elements to save.', 'elementor' ) );
+			wp_send_json_error( esc_html__( 'No elements to save.', 'elementor' ) );
 		}
 
 		$disabled_elements = json_decode( $elements );
 
 		if ( ! is_array( $disabled_elements ) ) {
-			wp_send_json_error( __( 'Unexpected elements data.', 'elementor' ) );
+			wp_send_json_error( esc_html__( 'Unexpected elements data.', 'elementor' ) );
 		}
 
 		Options::update_disabled_elements( $disabled_elements );
