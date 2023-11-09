@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Skeleton } from '@elementor/ui';
 import { AttachmentPropType } from '../../../../types/attachment';
 
-export const AttachmentJson = ( props ) => {
+export const ThumbnailJson = ( props ) => {
 	const attachment = props.attachments?.find( ( item ) => 'json' === item.type );
 
 	if ( ! attachment ) {
@@ -29,9 +29,9 @@ export const AttachmentJson = ( props ) => {
 	);
 };
 
-AttachmentJson.propTypes = {
+ThumbnailJson.propTypes = {
 	attachments: PropTypes.arrayOf( AttachmentPropType ).isRequired,
 	disabled: PropTypes.bool,
 };
 
-export default AttachmentJson;
+export default ThumbnailJson;

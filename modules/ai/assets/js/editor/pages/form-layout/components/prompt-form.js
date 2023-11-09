@@ -71,6 +71,8 @@ const PromptForm = forwardRef( ( {
 	isActive,
 	isLoading,
 	showActions = false,
+	onAttach,
+	onDetach,
 	onSubmit,
 	onBack,
 	onEdit,
@@ -118,6 +120,8 @@ const PromptForm = forwardRef( ( {
 
 				<Attachments
 					attachments={ attachments }
+					onAttach={ onAttach }
+					onDetach={ onDetach }
 					disabled={ isLoading }
 				/>
 
@@ -153,6 +157,8 @@ const PromptForm = forwardRef( ( {
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
+	onAttach: PropTypes.func,
+	onDetach: PropTypes.func,
 	isLoading: PropTypes.bool,
 	showActions: PropTypes.bool,
 	onSubmit: PropTypes.func.isRequired,

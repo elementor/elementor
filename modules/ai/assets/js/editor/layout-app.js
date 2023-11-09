@@ -2,9 +2,10 @@ import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import LayoutContent from './layout-content';
 import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment';
-import { ConfigProvider } from './pages/form-layout/context/config';
+import { ConfigProvider, LAYOUT_APP_MODES } from './pages/form-layout/context/config';
 
 const LayoutApp = ( {
+	mode,
 	isRTL,
 	colorScheme,
 	attachmentsTypes,
@@ -20,6 +21,7 @@ const LayoutApp = ( {
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<ConfigProvider
+					mode={ mode }
 					attachmentsTypes={ attachmentsTypes }
 					onClose={ onClose }
 					onConnect={ onConnect }
@@ -38,6 +40,7 @@ const LayoutApp = ( {
 };
 
 LayoutApp.propTypes = {
+	mode: PropTypes.oneOf( LAYOUT_APP_MODES ).isRequired,
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
 	attachmentsTypes: AttachmentsTypesPropType,
