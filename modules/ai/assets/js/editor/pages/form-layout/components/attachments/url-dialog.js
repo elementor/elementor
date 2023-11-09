@@ -14,19 +14,21 @@ export const UrlDialog = ( props ) => {
 		const onMessage = ( event ) => {
 			const { type, html, url } = event.data;
 
-			if ( 'element-selector/loaded' === type ) {
-				turnOffTimeout();
-			}
-
-			if ( 'element-selector/attach' === type ) {
-				const host = new URL( url ).host;
-
-				props.onAttach( [ {
-					type: 'url',
-					previewHTML: html,
-					content: html,
-					label: host,
-				} ] );
+			switch ( type ) {
+				case 'element-selector/close':
+					props.onClose();
+					break;
+				case 'element-selector/loaded':
+					turnOffTimeout();
+					break;
+				case 'element-selector/attach':
+					props.onAttach( [ {
+						type: 'url',
+						previewHTML: html,
+						content: html,
+						label: url ? new URL( url ).host : '',
+					} ] );
+					break;
 			}
 		};
 
