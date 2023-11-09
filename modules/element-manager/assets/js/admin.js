@@ -10,4 +10,3 @@ domReady( () => {
 		render( <App />, htmlOutput );
 	}
 } );
-

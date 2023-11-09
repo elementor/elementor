@@ -243,7 +243,15 @@ class Widgets_Manager {
 			$this->init_widgets();
 		}
 
-		$should_register = apply_filters( 'elementor/widgets_manager/is_widget_registered', true, $widget_instance );
+		/**
+		 * Should widget be registered.
+		 *
+		 * @since 3.18.0
+		 *
+		 * @param bool $should_register Should widget be registered. Default is `true`.
+		 * @param \Elementor\Widget_Base $widget_instance Widget instance.
+		 */
+		$should_register = apply_filters( 'elementor/widgets/is_widget_enabled', true, $widget_instance );
 
 		if ( ! $should_register ) {
 			return false;

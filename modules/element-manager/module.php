@@ -34,7 +34,7 @@ class Module extends BaseModule {
 			}
 		}, 10, 2 );
 
-		add_filter( 'elementor/widgets_manager/is_widget_registered', function( $should_register, Widget_Base $widget_instance ) {
+		add_filter( 'elementor/widgets/is_widget_enabled', function( $should_register, Widget_Base $widget_instance ) {
 			return ! Options::is_element_disabled( $widget_instance->get_name() );
 		}, 10, 2 );
 
@@ -67,6 +67,7 @@ class Module extends BaseModule {
 				'wp-element',
 				'wp-components',
 				'wp-dom-ready',
+				'wp-i18n',
 			],
 			ELEMENTOR_VERSION
 		);

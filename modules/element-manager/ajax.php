@@ -15,12 +15,12 @@ class Ajax {
 	public function register_endpoints() {
 		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
 		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', [ $this, 'ajax_save_disabled_elements' ] );
-		add_action( 'wp_ajax_elementor_element_manager_get_usage_widgets', [ $this, 'ajax_get_usage_widgets' ] );
+		add_action( 'wp_ajax_elementor_element_manager_get_widgets_usage', [ $this, 'ajax_get_widgets_usage' ] );
 	}
 
 	public function ajax_get_admin_page_data() {
-		$this->verify_nonce();
-		$this->disable_unregister_widgets();
+		$this->verify_permission();
+		$this->force_enabled_all_elements();
 
 		$widgets = [];
 		$plugins = [];
@@ -57,24 +57,24 @@ class Ajax {
 		wp_send_json_success( $data );
 	}
 
-	private function verify_nonce() {
+	private function verify_permission() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error();
+			wp_send_json_error( __( 'You do not have permission to edit these settings.', 'elementor' ) );
 		}
 
 		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'e-element-manager-app' ) ) {
-			wp_send_json_error();
+			wp_send_json_error( __( 'Invalid nonce.', 'elementor' ) );
 		}
 	}
 
-	private function disable_unregister_widgets() {
-		add_filter( 'elementor/widgets_manager/is_widget_registered', '__return_true', 100 );
+	private function force_enabled_all_elements() {
+		remove_all_filters( 'elementor/widgets/is_widget_enabled' );
 	}
 
 	private function get_plugin_name_from_widget_instance( $widget ) {
-		$classReflection = new \ReflectionClass( $widget );
+		$class_reflection = new \ReflectionClass( $widget );
 
-		$plugin_basename = plugin_basename( $classReflection->getFileName() );
+		$plugin_basename = plugin_basename( $class_reflection->getFileName() );
 
 		$plugin_directory = strtok( $plugin_basename, '/' );
 
@@ -85,16 +85,16 @@ class Ajax {
 	}
 
 	public function ajax_save_disabled_elements() {
-		$this->verify_nonce();
+		$this->verify_permission();
 
 		if ( empty( $_POST['widgets'] ) ) {
-			wp_send_json_error();
+			wp_send_json_error( __( 'No elements to save.', 'elementor' ) );
 		}
 
 		$disabled_elements = json_decode( wp_unslash( $_POST['widgets'] ) );
 
 		if ( ! is_array( $disabled_elements ) ) {
-			wp_send_json_error();
+			wp_send_json_error( __( 'Unexpected elements data.', 'elementor' ) );
 		}
 
 		Options::update_disabled_elements( $disabled_elements );
@@ -102,24 +102,24 @@ class Ajax {
 		wp_send_json_success();
 	}
 
-	public function ajax_get_usage_widgets() {
-		$this->verify_nonce();
+	public function ajax_get_widgets_usage() {
+		$this->verify_permission();
 
 		/** @var Usage_Module $usage_module */
 		$usage_module = Usage_Module::instance();
 		$usage_module->recalc_usage();
 
-		$usage_widgets = [];
+		$widgets_usage = [];
 		foreach ( $usage_module->get_formatted_usage( 'raw' ) as $data ) {
 			foreach ( $data['elements'] as $element => $count ) {
-				if ( ! isset( $usage_widgets[ $element ] ) ) {
-					$usage_widgets[ $element ] = 0;
+				if ( ! isset( $widgets_usage[ $element ] ) ) {
+					$widgets_usage[ $element ] = 0;
 				}
 
-				$usage_widgets[ $element ] += $count;
+				$widgets_usage[ $element ] += $count;
 			}
 		}
 
-		wp_send_json_success( $usage_widgets );
+		wp_send_json_success( $widgets_usage );
 	}
 }

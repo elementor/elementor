@@ -50,7 +50,7 @@ export const App = () => {
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ isSnackbarOpen, setIsSnackbarOpen ] = useState( false );
 
-	const getUsageWidget = ( widgetName ) => {
+	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
 			return 0;
 		}
@@ -79,8 +79,8 @@ export const App = () => {
 			}
 
 			if ( 'usage' === sortingColumn ) {
-				aValue = getUsageWidget( a.name );
-				bValue = getUsageWidget( b.name );
+				aValue = getWidgetUsage( a.name );
+				bValue = getWidgetUsage( b.name );
 			}
 
 			if ( aValue === bValue ) {
@@ -161,7 +161,7 @@ export const App = () => {
 		if ( null !== usageWidgets.data ) {
 			return (
 				<>
-					{ getUsageWidget( widgetName ) } { __( 'times', 'elementor' ) }
+					{ getWidgetUsage( widgetName ) } { __( 'times', 'elementor' ) }
 				</>
 			);
 		}

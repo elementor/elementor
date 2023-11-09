@@ -13,10 +13,8 @@ export const saveDisabledWidgets = async ( widgetsDisabled ) => {
 		} );
 
 		const data = await response.json();
-
-		console.log(data);
 	} catch ( error ) {
-		console.log( error );
+		console.error( error );
 	}
 };
 
@@ -38,7 +36,7 @@ export const getAdminAppData = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.log( error );
+		console.error( error );
 	}
 };
 
@@ -50,7 +48,7 @@ export const getUsageWidgets = async () => {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			body: new URLSearchParams( {
-				action: 'elementor_element_manager_get_usage_widgets',
+				action: 'elementor_element_manager_get_widgets_usage',
 				nonce: eElementManagerConfig.nonce,
 			} ),
 		} );
@@ -60,6 +58,6 @@ export const getUsageWidgets = async () => {
 			return data.data;
 		}
 	} catch ( error ) {
-		console.log( error );
+		console.error( error );
 	}
 };
