@@ -1,7 +1,10 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable @wordpress/no-unsafe-wp-apis */
+
 import {
 	useEffect,
 	useState,
-	useMemo
+	useMemo,
 } from '@wordpress/element';
 import {
 	__experimentalText as Text,
@@ -56,7 +59,7 @@ export const App = () => {
 		}
 
 		return usageWidgets.data[ widgetName ];
-	}
+	};
 
 	const sortedAndFilteredWidgets = useMemo( () => {
 		let filteredWidgets = widgets.filter( ( widget ) => {
@@ -222,16 +225,16 @@ export const App = () => {
 	if ( isLoading ) {
 		return (
 			<Flex
-				justify={'center'}
-				style={{
-					margin: '100px'
-				}}
+				justify={ 'center' }
+				style={ {
+					margin: '100px',
+				} }
 			>
 				<Spinner
-					style={{
+					style={ {
 						height: 'calc(4px * 20)',
-						width: 'calc(4px * 20)'
-					}}
+						width: 'calc(4px * 20)',
+					} }
 				/>
 			</Flex>
 		);
@@ -249,7 +252,7 @@ export const App = () => {
 			>
 				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance', 'elementor' ) }
 				{ ' ' }
-				<a href="https://go.elementor.com/wp-dash-element-manager/" target={ '_blank' }>
+				<a href="https://go.elementor.com/wp-dash-element-manager/" rel={ 'noreferrer' } target={ '_blank' }>
 					{ __( 'Learn More', 'elementor' ) }
 				</a>
 			</Text>
@@ -268,17 +271,17 @@ export const App = () => {
 					>
 						<FlexItem>
 							<Flex
-								align={'center'}
+								align={ 'center' }
 							>
 								<SearchControl
 									label={ __( 'Search widgets', 'elementor' ) }
 									value={ searchKeyword }
 									size={ 'compact' }
-									style={{
+									style={ {
 										height: '40px',
 										border: '1px solid rgba(30, 30, 30, 0.5)',
 										background: 'transparent',
-									}}
+									} }
 									__nextHasNoMarginBottom={ true }
 									onChange={ setSearchKeyword }
 								/>
@@ -291,15 +294,15 @@ export const App = () => {
 								<Divider
 									margin="2"
 									orientation={ 'vertical' }
-									style={{
+									style={ {
 										height: '30px',
 										borderColor: 'rgba(30, 30, 30, 0.5)',
-									}}
+									} }
 								/>
 								<ButtonGroup>
 									<Button
 										variant={ 'secondary' }
-										style={{ marginInlineEnd: '10px' }}
+										style={ { marginInlineEnd: '10px' } }
 										disabled={ usageWidgets.isLoading }
 										isBusy={ usageWidgets.isLoading }
 										onClick={ onScanUsageElementsClicked }
@@ -308,7 +311,7 @@ export const App = () => {
 									</Button>
 									<Button
 										variant={ 'secondary' }
-										style={{ marginInlineEnd: '10px' }}
+										style={ { marginInlineEnd: '10px' } }
 										onClick={ deactivateAllUnusedWidgets }
 										disabled={ null === usageWidgets.data }
 									>
@@ -317,7 +320,7 @@ export const App = () => {
 									<Button
 										variant={ 'secondary' }
 										disabled={ ! widgetsDisabled.length }
-										style={{ marginInlineEnd: '10px' }}
+										style={ { marginInlineEnd: '10px' } }
 										onClick={ enableAllWidgets }
 									>
 										{ __( 'Enable All', 'elementor' ) }
@@ -346,62 +349,70 @@ export const App = () => {
 							</>
 						) : (
 
-							<table className={'wp-list-table widefat fixed striped table-view-list'}>
+							<table className={ 'wp-list-table widefat fixed striped table-view-list' }>
 								<thead>
-								<tr>
-									<th className={`manage-column sortable ${ getSortingIndicatorClasses( 'widget' ) }` }>
-										<a onClick={ () => {
-											onSortingClicked( 'widget' );
-										} }>
-											<span>{ __( 'Element', 'elementor' ) }</span>
-											<span className="sorting-indicators">
-												<span className="sorting-indicator asc" aria-hidden="true"></span>
-												<span className="sorting-indicator desc" aria-hidden="true"></span>
-											</span>
-										</a>
-									</th>
-									<th className={`manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
-										<a onClick={ () => {
-											onSortingClicked( 'usage' );
-										} }>
-											<span>{ __( 'Usage', 'elementor' ) }</span>
-											<span className="sorting-indicators">
-											<span className="sorting-indicator asc" aria-hidden="true"></span>
-											<span className="sorting-indicator desc" aria-hidden="true"></span>
-										</span>
-										</a>
-									</th>
-									<th>{ __( 'Plugin', 'elementor' ) }</th>
-									<th>{ __( 'Status', 'elementor' ) }</th>
-								</tr>
+									<tr>
+										<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'widget' ) }` }>
+											<Button
+												href={ '#' }
+												onClick={ ( event ) => {
+													event.preventDefault();
+													onSortingClicked( 'widget' );
+												} }
+											>
+												<span>{ __( 'Element', 'elementor' ) }</span>
+												<span className="sorting-indicators">
+													<span className="sorting-indicator asc" aria-hidden="true"></span>
+													<span className="sorting-indicator desc" aria-hidden="true"></span>
+												</span>
+											</Button>
+										</th>
+										<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
+											<Button
+												href={ '#' }
+												onClick={ ( event ) => {
+													event.preventDefault();
+													onSortingClicked( 'usage' );
+												} }
+											>
+												<span>{ __( 'Usage', 'elementor' ) }</span>
+												<span className="sorting-indicators">
+													<span className="sorting-indicator asc" aria-hidden="true"></span>
+													<span className="sorting-indicator desc" aria-hidden="true"></span>
+												</span>
+											</Button>
+										</th>
+										<th>{ __( 'Plugin', 'elementor' ) }</th>
+										<th>{ __( 'Status', 'elementor' ) }</th>
+									</tr>
 								</thead>
 								<tbody>
-								{ sortedAndFilteredWidgets.map( ( widget ) => {
-									return (
-										<tr key={ widget.name }>
-											<td>{ widget.title }</td>
-											<td>
-												<UsageTimesColumn
-													widgetName={ widget.name }
-												/>
-											</td>
-											<td>{ widget.plugin }</td>
-											<td>
-												<ToggleControl
-													checked={ ! widgetsDisabled.includes( widget.name ) }
-													__nextHasNoMarginBottom={ true }
-													onChange={ () => {
-														if ( widgetsDisabled.includes( widget.name ) ) {
-															setWidgetsDisabled( widgetsDisabled.filter( ( item ) => item !== widget.name ) );
-														} else {
-															setWidgetsDisabled( [ ...widgetsDisabled, widget.name ] );
-														}
-													} }
-												/>
-											</td>
-										</tr>
-									);
-								} ) }
+									{ sortedAndFilteredWidgets.map( ( widget ) => {
+										return (
+											<tr key={ widget.name }>
+												<td>{ widget.title }</td>
+												<td>
+													<UsageTimesColumn
+														widgetName={ widget.name }
+													/>
+												</td>
+												<td>{ widget.plugin }</td>
+												<td>
+													<ToggleControl
+														checked={ ! widgetsDisabled.includes( widget.name ) }
+														__nextHasNoMarginBottom={ true }
+														onChange={ () => {
+															if ( widgetsDisabled.includes( widget.name ) ) {
+																setWidgetsDisabled( widgetsDisabled.filter( ( item ) => item !== widget.name ) );
+															} else {
+																setWidgetsDisabled( [ ...widgetsDisabled, widget.name ] );
+															}
+														} }
+													/>
+												</td>
+											</tr>
+										);
+									} ) }
 								</tbody>
 							</table>
 						) }
@@ -411,10 +422,10 @@ export const App = () => {
 						<>
 							<PanelRow>
 								<Flex
-									style={{
+									style={ {
 										marginTop: '40px',
 										marginBottom: '20px',
-								}}>
+								} }>
 									<FlexItem>
 										<Heading
 											level={ 3 }
@@ -430,9 +441,10 @@ export const App = () => {
 											variant="primary"
 											href="https://go.elementor.com/go-pro-element-manager/"
 											target="_blank"
-											style={{
+											rel={ 'noreferrer' }
+											style={ {
 												background: 'var(--e-a-btn-bg-accent, #93003f)',
-											}}
+											} }
 										>
 											{ __( 'Upgrade Now', 'elementor' ) }
 										</Button>
@@ -440,39 +452,37 @@ export const App = () => {
 								</Flex>
 							</PanelRow>
 							<PanelRow>
-							<table className={'wp-list-table widefat fixed striped table-view-list'}>
-								<thead>
-								<tr>
-									<th className={`manage-column` }>
-										<span>{ __( 'Element', 'elementor' ) }</span>
-									</th>
-									<th>{ __( 'Usage', 'elementor' ) }</th>
-									<th>{ __( 'Plugin', 'elementor' ) }</th>
-									<th>{ __( 'Status', 'elementor' ) }</th>
-								</tr>
-								</thead>
-								<tbody>
-								{ promotionWidgets.map( ( widget ) => {
-									return (
-										<tr key={ widget.name }>
-											<td>{ widget.title }</td>
-											<td>
-
-											</td>
-											<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
-											<td>
-												<ToggleControl
-													__nextHasNoMarginBottom={ true }
-													checked={ false }
-													disabled={ true }
-												/>
-											</td>
+								<table className={ 'wp-list-table widefat fixed striped table-view-list' }>
+									<thead>
+										<tr>
+											<th className={ `manage-column` }>
+												<span>{ __( 'Element', 'elementor' ) }</span>
+											</th>
+											<th>{ __( 'Usage', 'elementor' ) }</th>
+											<th>{ __( 'Plugin', 'elementor' ) }</th>
+											<th>{ __( 'Status', 'elementor' ) }</th>
 										</tr>
-									);
-								} ) }
-								</tbody>
-							</table>
-						</PanelRow>
+									</thead>
+									<tbody>
+										{ promotionWidgets.map( ( widget ) => {
+											return (
+												<tr key={ widget.name }>
+													<td>{ widget.title }</td>
+													<td></td>
+													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
+													<td>
+														<ToggleControl
+															__nextHasNoMarginBottom={ true }
+															checked={ false }
+															disabled={ true }
+														/>
+													</td>
+												</tr>
+											);
+										} ) }
+									</tbody>
+								</table>
+							</PanelRow>
 						</>
 					) }
 				</PanelBody>
@@ -489,35 +499,35 @@ export const App = () => {
 			>
 				<Heading
 					level={ 4 }
-					style={{
+					style={ {
 						marginBottom: '20px',
-					}}
+					} }
 				>
 					{ __( 'Sure you want to save these changes?', 'elementor' ) }
 				</Heading>
 				<Text
 					as={ 'p' }
 					lineHeight={ 1.5 }
-					style={{
+					style={ {
 						maxWidth: '400px',
-					}}
+					} }
 				>
 					{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
 				</Text>
 			</ConfirmDialog>
 
 			{ /* TODO: Use notices API */ }
-			<div style={{
+			<div style={ {
 				position: 'fixed',
 				bottom: '40px',
 				left: '50%',
 				transform: 'translateX(-50%)',
 				display: isSnackbarOpen ? 'block' : 'none',
-			}}>
+			} }>
 				<Snackbar
 					isDismissible
 					status={ 'success' }
-					onRemove={ () => { setIsSnackbarOpen( false ) } }
+					onRemove={ () => setIsSnackbarOpen( false ) }
 				>
 					{ __( 'We saved your changes.', 'elementor' ) }
 				</Snackbar>
