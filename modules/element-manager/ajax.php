@@ -87,11 +87,13 @@ class Ajax {
 	public function ajax_save_disabled_elements() {
 		$this->verify_permission();
 
-		if ( empty( $_POST['widgets'] ) ) {
+		$elements = Utils::get_super_global_value( $_POST, 'widgets' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( empty( $elements ) ) {
 			wp_send_json_error( __( 'No elements to save.', 'elementor' ) );
 		}
 
-		$disabled_elements = json_decode( wp_unslash( $_POST['widgets'] ) );
+		$disabled_elements = json_decode( $elements );
 
 		if ( ! is_array( $disabled_elements ) ) {
 			wp_send_json_error( __( 'Unexpected elements data.', 'elementor' ) );
