@@ -81,7 +81,7 @@ class Control_Select2 extends Base_Data_Control {
 							var selected = ( -1 !== value.indexOf( option_value ) ) ? 'selected' : '';
 						}
 						#>
-					<option {{ selected }} value="{{ option_value }}">{{{ option_title }}}</option>
+					<option {{ selected }} value="{{ _.escape( option_value ) }}">{{{ _.escape( option_title ) }}}</option>
 					<# } ); #>
 				</select>
 			</div>
