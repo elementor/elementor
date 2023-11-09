@@ -41,7 +41,7 @@ const useUserInfo = () => {
 		isConnected: userInfo.is_connected,
 		isGetStarted: userInfo.is_get_started,
 		connectUrl: userInfo.connect_url,
-		builderUrl: userInfo.builder_url,
+		builderUrl: userInfo.usage.builder_url,
 		hasSubscription: userInfo.usage.hasAiSubscription,
 		credits: credits < 0 ? 0 : credits,
 		usagePercentage: Math.round( usagePercentage ),
