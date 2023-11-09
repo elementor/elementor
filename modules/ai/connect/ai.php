@@ -524,6 +524,9 @@ class Ai extends Library {
 
 		$body = array_merge( $body, $metadata );
 
+		// Temp hack for platforms that filters the http_request_args, and it breaks JSON requests.
+		remove_all_filters( 'http_request_args' );
+
 		return $this->ai_request(
 			'POST',
 			$endpoint,
