@@ -241,16 +241,6 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
-		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
-
-		$taxonomies = ( new Collection( ( (array) $kit )['taxonomies'] ) )
-			->filter( function ( $taxonomy ) {
-				return in_array( $taxonomy->type, self::TAXONOMIES_KEYS );
-			} )
-			->flatten()
-			->pluck( 'name' )
-			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
-
 		// BC: Support legacy APIs that don't have access tiers.
 		if ( isset( $kit->access_tier ) ) {
 			$access_tier = $kit->access_tier;
@@ -259,6 +249,16 @@ class Repository {
 				? ConnectModule::ACCESS_TIER_FREE
 				: ConnectModule::ACCESS_TIER_ESSENTIAL_OCT_2023;
 		}
+
+		$subscription_plan_tag = $this->subscription_plans->get( $access_tier );
+
+		$taxonomies = ( new Collection( ( (array) $kit )['taxonomies'] ) )
+			->filter( function ( $taxonomy ) {
+				return in_array( $taxonomy->type, self::TAXONOMIES_KEYS );
+			} )
+			->flatten()
+			->pluck( 'name' )
+			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
 
 		return array_merge(
 			[
