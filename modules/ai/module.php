@@ -29,8 +29,6 @@ class Module extends BaseModule {
 
 	const LAYOUT_EXPERIMENT = 'ai-layout';
 
-	const BUILDER_URL = 'https://my.elementor.com/api/v2/ai/http/redirect/ai-builder';
-
 	public function get_name() {
 		return 'ai';
 	}

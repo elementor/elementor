@@ -35,7 +35,7 @@ export const UrlDialog = ( props ) => {
 		return () => {
 			window.removeEventListener( 'message', onMessage );
 		};
-	}, [] );
+	}, [ turnOffTimeout ] );
 
 	return (
 		<Dialog

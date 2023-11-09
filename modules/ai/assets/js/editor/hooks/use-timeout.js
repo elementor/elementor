@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export const useTimeout = ( delay ) => {
 	const [ isTimeout, setIsTimeout ] = useState( false );
+	const timeoutIdRef = useRef( null );
 
-	const timeout = setTimeout( () => {
-		setIsTimeout( true );
-	}, delay );
-
-	const turnOffTimeout = () => clearTimeout( timeout );
+	const turnOffTimeout = () => {
+		clearTimeout( timeoutIdRef.current );
+		setIsTimeout( false );
+	};
 
 	useEffect( () => {
-		return turnOffTimeout;
-	}, [] );
+		timeoutIdRef.current = setTimeout( () => {
+			setIsTimeout( true );
+		}, delay );
 
-	return [
-		isTimeout,
-		turnOffTimeout,
-	];
+		return () => {
+			clearTimeout( timeoutIdRef.current );
+		};
+	}, [ delay ] );
+
+	return [ isTimeout, turnOffTimeout ];
 };
