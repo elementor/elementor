@@ -62,7 +62,8 @@ class Ajax {
 			wp_send_json_error( esc_html__( 'You do not have permission to edit these settings.', 'elementor' ) );
 		}
 
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'e-element-manager-app' ) ) {
+		$nonce = Utils::get_super_global_value( $_POST, 'nonce' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'e-element-manager-app' ) ) {
 			wp_send_json_error( esc_html__( 'Invalid nonce.', 'elementor' ) );
 		}
 	}
