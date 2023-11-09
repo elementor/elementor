@@ -44,7 +44,6 @@ install_wp() {
 	fi
 
 	mkdir -p $WP_CORE_DIR
-	
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 		mkdir -p /tmp/wordpress-nightly
 		download https://wordpress.org/nightly-builds/wordpress-latest.zip  /tmp/wordpress-nightly/wordpress-nightly.zip
@@ -58,6 +57,13 @@ install_wp() {
 		fi
 		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
 		tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+	fi
+
+	if [ -z "$(ls -A $WP_CORE_DIR/wp-content/themes/twentytwentyone)" ]; then
+		mkdir -p /tmp/twentytwentyone
+		download https://downloads.wordpress.org/theme/twentytwentyone.2.0.zip /tmp/twentytwentyone/twentytwentyone.zip
+		unzip -q /tmp/twentytwentyone/twentytwentyone.zip -d /tmp/twentytwentyone/
+		mv /tmp/twentytwentyone/twentytwentyone $WP_CORE_DIR/wp-content/themes
 	fi
 
 	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
