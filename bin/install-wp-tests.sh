@@ -58,7 +58,7 @@ install_wp() {
 		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
 		tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
 	fi
-
+		
 	if [ -z "$(ls -A $WP_CORE_DIR/wp-content/themes/twentytwentyone)" ]; then
 		mkdir -p /tmp/twentytwentyone
 		download https://downloads.wordpress.org/theme/twentytwentyone.2.0.zip /tmp/twentytwentyone/twentytwentyone.zip
