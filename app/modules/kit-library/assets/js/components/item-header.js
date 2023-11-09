@@ -50,7 +50,6 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
-				// Translators: %s is the subscription plan name.
 				text: settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan.label }`,
 				hideText: false,
 				variant: 'contained',
