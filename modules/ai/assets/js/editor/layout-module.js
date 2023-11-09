@@ -1,7 +1,7 @@
 import AiLayoutBehavior from './ai-layout-behavior';
 import { importToEditor, renderLayoutApp } from './utils/editor-integration';
 import { __ } from '@wordpress/i18n';
-import { MODE_VARIATION } from './layout-app';
+import { MODE_VARIATION } from './pages/form-layout/context/config';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {

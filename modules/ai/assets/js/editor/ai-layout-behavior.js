@@ -3,7 +3,7 @@ import {
 	importToEditor,
 	renderLayoutApp,
 } from './utils/editor-integration';
-import { MODE_LAYOUT } from './layout-app';
+import { MODE_LAYOUT } from './pages/form-layout/context/config';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	previewContainer = null;
