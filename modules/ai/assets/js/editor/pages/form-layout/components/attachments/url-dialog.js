@@ -1,21 +1,21 @@
 import { Dialog, DialogContent } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useAttachUrlService } from '../../hooks/use-attach-url-service';
 import { AlertDialog } from '../../../../components/alert-dialog';
+import { useTimeout } from '../../../../hooks/use-timeout';
 
 export const UrlDialog = ( props ) => {
-	const { iframeSource, setCurrentUrl } = useAttachUrlService();
-	const [ isIframeLoaded, setIsIframeLoaded ] = useState( false );
-	const [ isTimeout, setIsTimeout ] = useState( false );
+	const { iframeSource } = useAttachUrlService();
+	const [ isTimeout, turnOffTimeout ] = useTimeout( 10_000 );
 
 	useEffect( () => {
 		const onMessage = ( event ) => {
 			const { type, html, url } = event.data;
 
 			if ( 'element-selector/loaded' === type ) {
-				setIsIframeLoaded( true );
+				turnOffTimeout();
 			}
 
 			if ( 'element-selector/attach' === type ) {
@@ -36,18 +36,6 @@ export const UrlDialog = ( props ) => {
 			window.removeEventListener( 'message', onMessage );
 		};
 	}, [] );
-
-	useEffect( () => {
-		const timeout = setTimeout( () => {
-			if ( ! isIframeLoaded ) {
-				setIsTimeout( true );
-			}
-		}, 10_000 );
-
-		return () => {
-			clearTimeout( timeout );
-		};
-	}, [ isIframeLoaded ] );
 
 	return (
 		<Dialog

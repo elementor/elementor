@@ -30,7 +30,7 @@ export const getUiConfig = () => {
 	};
 };
 
-const REFORMAT_PROMPTS = [
+const VARIATIONS_PROMPTS = [
 	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
 	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
 	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
@@ -71,14 +71,14 @@ export const renderLayoutApp = ( options = {
 			colorScheme={ colorScheme }
 			attachmentsTypes={ {
 				json: {
-					promptSuggestions: REFORMAT_PROMPTS,
+					promptSuggestions: VARIATIONS_PROMPTS,
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
 				},
 				url: {
-					promptSuggestions: REFORMAT_PROMPTS,
+					promptSuggestions: VARIATIONS_PROMPTS,
 				},
 			} }
 			attachments={ options.attachments || [] }

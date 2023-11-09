@@ -34,7 +34,7 @@ export const MenuItem = ( props ) => {
 };
 
 MenuItem.propTypes = {
-	title: PropTypes.string,
-	icon: PropTypes.func,
-	onClick: PropTypes.func,
+	title: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired,
+	icon: PropTypes.elementType,
 };

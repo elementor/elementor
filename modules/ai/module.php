@@ -29,7 +29,7 @@ class Module extends BaseModule {
 
 	const LAYOUT_EXPERIMENT = 'ai-layout';
 
-	const URL_TO_CONTAINER_URL = 'https://ai-h2e-helper.s3.eu-west-1.amazonaws.com/index.html';
+	const BUILDER_URL = 'https://my.elementor.com/api/v2/ai/http/redirect/ai-builder';
 
 	public function get_name() {
 		return 'ai';
@@ -150,7 +150,7 @@ class Module extends BaseModule {
 			[
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
-				'url_to_container_url' => static::URL_TO_CONTAINER_URL
+				'builder_url' => apply_filters( 'elementor/ai/builder_url', self::BUILDER_URL ),
 			]
 		);
 

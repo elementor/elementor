@@ -3,6 +3,7 @@ import {
 	importToEditor,
 	renderLayoutApp,
 } from './utils/editor-integration';
+import { MODE_LAYOUT } from './layout-app';
 
 export default class AiLayoutBehavior extends Marionette.Behavior {
 	previewContainer = null;
@@ -24,7 +25,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		e.stopPropagation();
 
 		renderLayoutApp( {
-			mode: 'layout',
+			mode: MODE_LAYOUT,
 			at: this.view.getOption( 'at' ),
 			onInsert: this.onInsert.bind( this ),
 			onRenderApp: ( args ) => {

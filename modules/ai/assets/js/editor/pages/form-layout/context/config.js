@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+export const MODE_LAYOUT = 'layout';
+export const MODE_VARIATION = 'variation';
+export const LAYOUT_APP_MODES = [ MODE_LAYOUT, MODE_VARIATION ];
+
 const ConfigContext = React.createContext( {} );
 
 export const useConfig = () => React.useContext( ConfigContext );
@@ -25,7 +29,7 @@ export const ConfigProvider = ( props ) => {
 };
 
 ConfigProvider.propTypes = {
-	mode: PropTypes.oneOf( [ 'layout', 'variation' ] ).isRequired,
+	mode: PropTypes.oneOf( LAYOUT_APP_MODES ).isRequired,
 	children: PropTypes.node.isRequired,
 	attachmentsTypes: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,

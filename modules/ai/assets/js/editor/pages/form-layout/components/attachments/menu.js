@@ -62,7 +62,11 @@ export const Menu = ( props ) => {
 };
 
 Menu.propTypes = {
+	items: PropTypes.arrayOf( PropTypes.shape( {
+		title: PropTypes.string.isRequired,
+		type: PropTypes.string.isRequired,
+		icon: PropTypes.elementType,
+	} ) ).isRequired,
+	onAttach: PropTypes.func.isRequired,
 	disabled: PropTypes.bool,
-	onAttach: PropTypes.func,
-	items: PropTypes.arrayOf( PropTypes.shape( MenuItem.propTypes ) ),
 };

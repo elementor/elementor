@@ -34,8 +34,8 @@ const Attachments = ( props ) => {
 
 Attachments.propTypes = {
 	attachments: PropTypes.arrayOf( AttachmentPropType ).isRequired,
+	onAttach: PropTypes.func.isRequired,
 	disabled: PropTypes.bool,
-	onAttach: PropTypes.func,
 };
 
 export default Attachments;
