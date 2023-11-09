@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable @wordpress/no-unsafe-wp-apis */
 
 import {
 	useEffect,
@@ -7,10 +6,7 @@ import {
 	useMemo,
 } from '@wordpress/element';
 import {
-	__experimentalText as Text,
-	__experimentalDivider as Divider,
-	__experimentalHeading as Heading,
-	__experimentalConfirmDialog as ConfirmDialog,
+	Modal,
 	Button,
 	ToggleControl,
 	Spinner,
@@ -242,9 +238,7 @@ export const App = () => {
 
 	return (
 		<>
-			<Text
-				adjustLineHeightForInnerControls="xSmall"
-				as="p"
+			<p
 				style={ {
 					marginBottom: '20px',
 					maxWidth: '800px',
@@ -255,7 +249,7 @@ export const App = () => {
 				<a href="https://go.elementor.com/wp-dash-element-manager/" rel={ 'noreferrer' } target={ '_blank' }>
 					{ __( 'Learn More', 'elementor' ) }
 				</a>
-			</Text>
+			</p>
 			<Panel>
 				<PanelBody>
 					<Flex
@@ -291,11 +285,12 @@ export const App = () => {
 									__nextHasNoMarginBottom={ true }
 									options={ plugins }
 								/>
-								<Divider
-									margin="2"
-									orientation={ 'vertical' }
+								<hr
 									style={ {
 										height: '30px',
+										margin: '0 5px',
+										borderWidth: '0 1px 0 0',
+										borderStyle: 'solid',
 										borderColor: 'rgba(30, 30, 30, 0.5)',
 									} }
 								/>
@@ -425,16 +420,15 @@ export const App = () => {
 									style={ {
 										marginTop: '40px',
 										marginBottom: '20px',
-								} }>
+									} }
+								>
 									<FlexItem>
-										<Heading
-											level={ 3 }
-										>
+										<h3>
 											{ __( 'Elementor Pro Elements', 'elementor' ) }
-										</Heading>
-										<Text>
+										</h3>
+										<p>
 											{ __( 'Unleash the full power of Elementor\'s features and web creation tools.', 'elementor' ) }
-										</Text>
+										</p>
 									</FlexItem>
 									<FlexItem>
 										<Button
@@ -488,6 +482,50 @@ export const App = () => {
 				</PanelBody>
 			</Panel>
 
+			{ isConfirmDialogOpen && (
+				<Modal
+					title={ __( 'Sure you want to save these changes?', 'elementor' ) }
+					size={ 'small' }
+					isDismissible={ false }
+					onRequestClose={ () => {
+						setIsConfirmDialogOpen( false );
+					} }
+				>
+					<p
+						style={ {
+							maxWidth: '400px',
+							marginBlockEnd: '30px',
+							marginBlockStart: '0',
+						} }
+					>
+						{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
+					</p>
+					<ButtonGroup
+						style={ {
+							display: 'flex',
+							justifyContent: 'flex-end',
+							gap: '30px',
+						} }
+					>
+						<Button
+							variant={ 'link' }
+							onClick={ () => {
+								setIsConfirmDialogOpen( false );
+							} }
+						>
+							{ __( 'Cancel', 'elementor' ) }
+						</Button>
+						<Button
+							variant={ 'primary' }
+							onClick={ onSaveClicked }
+						>
+							{ __( 'Save', 'elementor' ) }
+						</Button>
+					</ButtonGroup>
+				</Modal>
+			) }
+
+			{ /*
 			<ConfirmDialog
 				isOpen={ isConfirmDialogOpen }
 				onConfirm={ onSaveClicked }
@@ -497,24 +535,23 @@ export const App = () => {
 					setIsConfirmDialogOpen( false );
 				} }
 			>
-				<Heading
-					level={ 4 }
+				<h4
 					style={ {
 						marginBottom: '20px',
 					} }
 				>
 					{ __( 'Sure you want to save these changes?', 'elementor' ) }
-				</Heading>
-				<Text
-					as={ 'p' }
-					lineHeight={ 1.5 }
+				</h4>
+				<p
 					style={ {
 						maxWidth: '400px',
+						lineHeight: '1.5',
 					} }
 				>
 					{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
-				</Text>
+				</p>
 			</ConfirmDialog>
+			*/ }
 
 			{ /* TODO: Use notices API */ }
 			<div style={ {
