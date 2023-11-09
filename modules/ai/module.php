@@ -149,7 +149,6 @@ class Module extends BaseModule {
 			[
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
-				'builder_url' => apply_filters( 'elementor/ai/builder_url', self::BUILDER_URL ),
 			]
 		);
 
