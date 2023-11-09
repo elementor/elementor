@@ -31,14 +31,19 @@ export const getUiConfig = () => {
 };
 
 const REFORMAT_PROMPTS = [
-	{ text: __( 'Change the content to be about', 'elementor' ) },
-	{ text: __( 'I need the container to become more related to', 'elementor' ) },
-	{ text: __( 'Make the text more hard-sell oriented', 'elementor' ) },
-	{ text: __( 'Alter the look and feel to become more Christmas related', 'elementor' ) },
-	{ text: __( 'Replace all images to relate to', 'elementor' ) },
+	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
+	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
+	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
+	{ text: __( 'Futuristic layout with neon accents around', 'elementor' ) },
+	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
+	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
+	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },
+	{ text: __( 'Tech-inspired style with modern fonts about', 'elementor' ) },
+	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
 ];
 
 export const renderLayoutApp = ( options = {
+	mode: '',
 	at: null,
 	onClose: null,
 	onGenerate: null,
@@ -61,6 +66,7 @@ export const renderLayoutApp = ( options = {
 
 	ReactDOM.render(
 		<LayoutApp
+			mode={ options.mode }
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
 			attachmentsTypes={ {

@@ -9,6 +9,7 @@ export const ConfigProvider = ( props ) => {
 	return (
 		<ConfigContext.Provider
 			value={ {
+				mode: props.mode,
 				attachmentsTypes: props.attachmentsTypes,
 				onClose: props.onClose,
 				onConnect: props.onConnect,
@@ -24,6 +25,7 @@ export const ConfigProvider = ( props ) => {
 };
 
 ConfigProvider.propTypes = {
+	mode: PropTypes.oneOf( [ 'layout', 'variation' ] ).isRequired,
 	children: PropTypes.node.isRequired,
 	attachmentsTypes: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,

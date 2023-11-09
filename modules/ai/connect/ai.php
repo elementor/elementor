@@ -542,12 +542,13 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_layout_prompt_enhanced( $prompt, $context = [] ) {
+	public function get_layout_prompt_enhanced( $prompt, $enhance_type, $context ) {
 		return $this->ai_request(
 			'POST',
 			'generate/enhance-prompt',
 			[
 				'prompt' => $prompt,
+				'enhance_type' => $enhance_type,
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),

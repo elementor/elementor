@@ -27,7 +27,7 @@ export const ThumbnailUrl = ( props ) => {
 					zIndex: 1,
 				},
 				'&:hover .remove-attachment': {
-					display: 'block',
+					display: 'flex',
 				},
 			} }
 		>
@@ -43,10 +43,13 @@ export const ThumbnailUrl = ( props ) => {
 				sx={ {
 					display: 'none',
 					position: 'absolute',
-					insetInlineEnd: 0,
+					insetInlineEnd: 4,
+					insetBlockStart: 4,
 					backgroundColor: 'secondary.main',
 					zIndex: 1,
 					borderRadius: 1,
+					p: '3px',
+
 					'&:hover': {
 						backgroundColor: 'secondary.dark',
 					},
@@ -54,6 +57,7 @@ export const ThumbnailUrl = ( props ) => {
 			>
 				<TrashIcon
 					sx={ {
+						fontSize: '1.125rem',
 						color: 'common.white',
 					} }
 				/>

@@ -40,6 +40,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				} ];
 
 				renderLayoutApp( {
+					mode: 'variation',
 					at: container.view._index,
 					attachments,
 					onSelect: () => {

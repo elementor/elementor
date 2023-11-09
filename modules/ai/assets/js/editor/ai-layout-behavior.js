@@ -24,6 +24,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 		e.stopPropagation();
 
 		renderLayoutApp( {
+			mode: 'layout',
 			at: this.view.getOption( 'at' ),
 			onInsert: this.onInsert.bind( this ),
 			onRenderApp: ( args ) => {
