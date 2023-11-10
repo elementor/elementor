@@ -27,7 +27,7 @@ jobs:
             **/*.php
             composer.+(json|lock)
             .github/**/*.yml
-
+            install-wp-tests.sh
   test:
     runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]

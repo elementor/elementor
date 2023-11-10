@@ -6,16 +6,12 @@ import UpgradeChip from './components/upgrade-chip';
 import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
 import LayoutDialog from './pages/form-layout/components/layout-dialog';
-import { Alert } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import useIntroduction from './hooks/use-introduction';
 import { AttachmentPropType } from './types/attachment';
 import { useConfig } from './pages/form-layout/context/config';
 
 const LayoutContent = ( props ) => {
-	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-	const { isViewed, markAsViewed } = useIntroduction( 'e-ai-builder-coming-soon-info' );
+	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, usagePercentage } = useUserInfo();
 	const { onClose, onConnect } = useConfig();
 
 	if ( isLoading ) {
@@ -67,16 +63,6 @@ const LayoutContent = ( props ) => {
 			attachments={ props.attachments }
 			DialogHeaderProps={ {
 				children: showUpgradeChip && <UpgradeChip hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } />,
-			} }
-			DialogContentProps={ {
-				children: ! isViewed && (
-					<Alert
-						severity="info"
-						onClose={ markAsViewed }
-					>
-						{ __( "Layouts generated with AI only include some Elementor widgets, but we're evolving! More capabilities coming soon...", 'elementor' ) }
-					</Alert>
-				),
 			} }
 		/>
 	);
