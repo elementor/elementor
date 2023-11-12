@@ -33,7 +33,7 @@ const alertConfigs = [
 
 const UpgradeButton = ( props ) => <Button color="inherit" { ...props }>{ __( 'Upgrade', 'elementor' ) }</Button>;
 
-const UsageLimitAlert = ( { onClose, usagePercentage = 0, hasSubscription, ...props } ) => {
+const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
 	for ( const config of alertConfigs ) {
 		if ( usagePercentage >= config.threshold ) {
 			const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
