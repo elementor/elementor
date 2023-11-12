@@ -51,4 +51,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ env.PLUGIN_ZIP_FILENAME }}
-          path: elementor-*.zip
+          path: elementor
