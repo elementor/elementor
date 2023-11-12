@@ -42,12 +42,12 @@ class Ai extends Library {
 		$cache_key = 'elementor_ai_usage';
 		$cache_time = 24 * HOUR_IN_SECONDS;
 		$usage = get_site_transient( $cache_key );
-		
+
 		if ( ! $usage ) {
 			$usage = $this->get_usage();
 			set_site_transient( $cache_key, $usage, $cache_time );
 		}
-		
+
 		return $usage;
 	}
 
