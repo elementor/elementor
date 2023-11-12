@@ -2,33 +2,24 @@
 import { Alert, Button, IconButton, Stack } from '@elementor/ui';
 import { XIcon } from '@elementor/icons';
 
-const CloseButton = ( props ) => <IconButton color="inherit" size="small" { ...props }><XIcon /></IconButton>;
-
-const UpgradeCTA = ( props ) => (
-	<Button
-		variant="outlined"
-		color="inherit"
-		size="small"
-		{ ...props }
-	>
-		{ __( 'Upgrade', 'elementor' ) }
-	</Button>
-);
-
-const UpgradeBanner = ( { onClose, hasSubscription, usagePercentage, ...props } ) => {
-	let url = 'https://go.elementor.com/ai-popup-purchase-dropdown/';
-
-	if ( hasSubscription ) {
-		url = usagePercentage < 100 ? 'https://go.elementor.com/ai-popup-upgrade-limit-reached-80-percent/' : 'https://go.elementor.com/ai-popup-upgrade-limit-reached/';
-	}
-
+const UpgradeBanner = ( { onClose, ...props } ) => {
 	return (
 		<Alert
 			icon={ false }
 			action={
 				<Stack direction="row" alignItems="center" gap={ 1 }>
-					<UpgradeCTA onClick={ () => window.open( url, '_blank' ) } />
-					<CloseButton onClick={ onClose } />
+					<Button
+						size="small"
+						color="inherit"
+						variant="outlined"
+						onClick={ () => window.open( 'https://go.elementor.com/ai-banner-free-upgrade/', '_blank' ) }
+					>
+						{ __( 'Upgrade', 'elementor' ) }
+					</Button>
+
+					<IconButton color="inherit" size="small" onClick={ onClose }>
+						<XIcon />
+					</IconButton>
 				</Stack>
 			}
 			{ ...props }
@@ -45,8 +36,6 @@ const UpgradeBanner = ( { onClose, hasSubscription, usagePercentage, ...props } 
 
 UpgradeBanner.propTypes = {
 	onClose: PropTypes.func,
-	hasSubscription: PropTypes.bool,
-	usagePercentage: PropTypes.number,
 	sx: PropTypes.object,
 };
 

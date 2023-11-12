@@ -4,16 +4,7 @@ import UsageLimitAlert from './usage-limit-alert';
 const UsageMessages = ( { showBanner, markBannerAsViewed, hasSubscription, usagePercentage, sx } ) => {
 	return (
 		<>
-			{
-				showBanner && (
-					<UpgradeBanner
-						sx={ sx }
-						onClose={ markBannerAsViewed }
-						hasSubscription={ hasSubscription }
-						usagePercentage={ usagePercentage }
-					/>
-				)
-			}
+			{ showBanner && <UpgradeBanner onClose={ markBannerAsViewed } sx={ sx } /> }
 			<UsageLimitAlert hasSubscription={ hasSubscription } usagePercentage={ usagePercentage } sx={ sx } />
 		</>
 	);

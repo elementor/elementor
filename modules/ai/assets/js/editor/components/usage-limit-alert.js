@@ -1,47 +1,56 @@
 
 import { Alert, AlertTitle, Button } from '@elementor/ui';
 
+const KEY_SUBSCRIPTION = 'subscription';
+const KEY_NO_SUBSCRIPTION = 'noSubscription';
+
+const alertConfigs = [
+	{
+		threshold: 95,
+		title: {
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 95% of your Elementor AI plan.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 95% of the free trial.', 'elementor' ),
+		},
+		url: {
+			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-95-limit-reach/',
+			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-95-limit-reach/',
+		},
+		color: 'error',
+	},
+	{
+		threshold: 80,
+		title: {
+			[ KEY_SUBSCRIPTION ]: __( 'You’ve used over 80% of your Elementor AI plan.', 'elementor' ),
+			[ KEY_NO_SUBSCRIPTION ]: __( 'You’ve used over 80% of the free trial.', 'elementor' ),
+		},
+		url: {
+			[ KEY_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-paid-80-limit-reach/',
+			[ KEY_NO_SUBSCRIPTION ]: 'https://go.elementor.com/ai-banner-free-80-limit-reach/',
+		},
+		color: 'warning',
+	},
+];
+
 const UpgradeButton = ( props ) => <Button color="inherit" { ...props }>{ __( 'Upgrade', 'elementor' ) }</Button>;
 
-const UsageAlert = ( { title, actionUrl, ...props } ) => {
-	return (
-		<Alert
-			severity="warning"
-			action={ <UpgradeButton onClick={ () => window.open( actionUrl, '_blank' ) } /> }
-			{ ...props }
-		>
-			<AlertTitle>{ title }</AlertTitle>
-			{ __( 'Get maximum access.', 'elementor' ) }
-		</Alert>
-	);
-};
-
-UsageAlert.propTypes = {
-	title: PropTypes.string.isRequired,
-	actionUrl: PropTypes.string.isRequired,
-};
-
 const UsageLimitAlert = ( { onClose, usagePercentage = 0, hasSubscription, ...props } ) => {
-	let actionUrl = 'https://go.elementor.com/ai-popup-purchase-dropdown/';
+	for ( const config of alertConfigs ) {
+		if ( usagePercentage >= config.threshold ) {
+			const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
+			const { title, url, color } = config;
 
-	if ( hasSubscription ) {
-		actionUrl = usagePercentage < 100 ? 'https://go.elementor.com/ai-popup-upgrade-limit-reached-80-percent/' : 'https://go.elementor.com/ai-popup-upgrade-limit-reached/';
-	}
-
-	if ( usagePercentage >= 95 ) {
-		const alertTitle = hasSubscription
-			? __( 'You’ve used over 95% of your Elementor AI plan.', 'elementor' )
-			: __( 'You’ve used over 95% of the free trial.', 'elementor' );
-
-		return <UsageAlert title={ alertTitle } actionUrl={ actionUrl } color="error" { ...props } />;
-	}
-
-	if ( usagePercentage >= 80 ) {
-		const alertTitle = hasSubscription
-			? __( 'You’ve used over 80% of your Elementor AI plan.', 'elementor' )
-			: __( 'You’ve used over 80% of the free trial.', 'elementor' );
-
-		return <UsageAlert title={ alertTitle } actionUrl={ actionUrl } { ...props } />;
+			return (
+				<Alert
+					severity="warning"
+					action={ <UpgradeButton onClick={ () => window.open( url[ subscriptionType ], '_blank' ) } /> }
+					color={ color }
+					{ ...props }
+				>
+					<AlertTitle>{ title[ subscriptionType ] }</AlertTitle>
+					{ __( 'Get maximum access.', 'elementor' ) }
+				</Alert>
+			);
+		}
 	}
 
 	return null;
