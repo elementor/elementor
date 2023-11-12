@@ -6,6 +6,9 @@ import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
+import useUpgradeMessage from '../../../hooks/use-upgrade-message';
+import { useGlobalSettings } from '../context/global-settings-context';
+import UsageMessages from '../../../components/usage-messages';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
@@ -92,7 +95,30 @@ ErrorMessage.propTypes = {
 	sx: PropTypes.object,
 };
 
-View.Panel = Panel;
+const ViewPanel = ( props ) => {
+	const { hasSubscription, usagePercentage } = useGlobalSettings();
+	const { showBanner, markBannerAsViewed } = useUpgradeMessage( { usagePercentage, hasSubscription } );
+
+	return (
+		<Panel>
+			<UsageMessages
+				showBanner={ showBanner }
+				markBannerAsViewed={ markBannerAsViewed }
+				hasSubscription={ hasSubscription }
+				usagePercentage={ usagePercentage }
+				sx={ { mb: 4 } }
+			/>
+
+			{ props.children }
+		</Panel>
+	);
+};
+
+ViewPanel.propTypes = {
+	children: PropTypes.node,
+};
+
+View.Panel = ViewPanel;
 View.Content = Content;
 View.BackButton = ViewBackButton;
 View.ErrorMessage = ErrorMessage;
