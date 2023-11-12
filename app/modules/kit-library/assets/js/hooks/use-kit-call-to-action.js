@@ -11,8 +11,8 @@ export default function useKitCallToAction( kitAccessTier ) {
 
 	// BC: When user has old Pro version which doesn't override the `free` access_tier.
 	let userAccessTier = settings.access_tier;
-	const isPaidUser = settings.access_level > 0;
-	const shouldFallbackToLegacy = isPaidUser && userAccessTier === TIERS.free;
+	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
+	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
 
 	// Fallback to the last access_tier before the new tiers were introduced.
 	// TODO: Remove when Pro with the new tiers is stable.
