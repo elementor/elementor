@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Elementor is the leading WordPress website builder that empowers you to successfully build professional, pixel-perfect websites. With an intuitive drag and drop interface, you get complete control to build any type of website,  without writing a single line of code.
 
-Revolutionize the way you build websites with [Elementor AI](#), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create original text, code, and images instantly.
+Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create original text, code, and images instantly.
 
 Unlock all of Elementor’s features and elevate your website’s potential with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
