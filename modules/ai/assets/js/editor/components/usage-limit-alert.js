@@ -38,11 +38,12 @@ const UsageLimitAlert = ( { onClose, usagePercentage = 0, hasSubscription, ...pr
 		if ( usagePercentage >= config.threshold ) {
 			const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
 			const { title, url, color } = config;
+			const handleUpgradeClick = () => window.open( url[ subscriptionType ], '_blank' );
 
 			return (
 				<Alert
 					severity="warning"
-					action={ <UpgradeButton onClick={ () => window.open( url[ subscriptionType ], '_blank' ) } /> }
+					action={ <UpgradeButton onClick={ handleUpgradeClick } /> }
 					color={ color }
 					{ ...props }
 				>
