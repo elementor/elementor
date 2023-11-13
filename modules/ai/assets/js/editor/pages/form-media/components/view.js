@@ -97,13 +97,10 @@ ErrorMessage.propTypes = {
 
 const ViewPanel = ( props ) => {
 	const { hasSubscription, usagePercentage } = useGlobalSettings();
-	const { showBanner, markBannerAsViewed } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 
 	return (
 		<Panel>
 			<UsageMessages
-				showBanner={ showBanner }
-				markBannerAsViewed={ markBannerAsViewed }
 				hasSubscription={ hasSubscription }
 				usagePercentage={ usagePercentage }
 				sx={ { mb: 4 } }

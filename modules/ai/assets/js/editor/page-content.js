@@ -28,7 +28,7 @@ const PageContent = (
 		additionalOptions,
 	} ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData, hasSubscription, credits, usagePercentage } = useUserInfo();
-	const { showBadge, showBanner, markBannerAsViewed } = useUpgradeMessage( { usagePercentage, hasSubscription } );
+	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const promptDialogStyleProps = {
 		sx: {
 			'& .MuiDialog-container': {
@@ -146,8 +146,6 @@ const PageContent = (
 								usagePercentage={ usagePercentage }
 							>
 								<UsageMessages
-									showBanner={ showBanner }
-									markBannerAsViewed={ markBannerAsViewed }
 									hasSubscription={ hasSubscription }
 									usagePercentage={ usagePercentage }
 									sx={ { mb: 2 } }
@@ -182,8 +180,6 @@ const PageContent = (
 							usagePercentage={ usagePercentage }
 						>
 							<UsageMessages
-								showBanner={ showBanner }
-								markBannerAsViewed={ markBannerAsViewed }
 								hasSubscription={ hasSubscription }
 								usagePercentage={ usagePercentage }
 								sx={ { mb: 2 } }

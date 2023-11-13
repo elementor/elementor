@@ -1,4 +1,3 @@
-
 import { Alert, Button, IconButton, Stack } from '@elementor/ui';
 import { XIcon } from '@elementor/icons';
 
@@ -23,7 +22,7 @@ BannerActions.propTypes = {
 	onClose: PropTypes.func,
 };
 
-const UpgradeBanner = ( { onClose, ...props } ) => {
+const UpgradeBanner = ( { onClose, sx = {}, ...props } ) => {
 	return (
 		<Alert
 			icon={ false }
@@ -32,7 +31,7 @@ const UpgradeBanner = ( { onClose, ...props } ) => {
 			sx={ {
 				backgroundColor: 'accent.main',
 				color: 'accent.contrastText',
-				...props.sx,
+				...sx,
 			} }
 		>
 			{ __( 'You’re using a limited license. Get maximum access to Elementor AI.', 'elementor' ) }

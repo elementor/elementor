@@ -1,4 +1,3 @@
-
 import { Alert, AlertTitle, Button } from '@elementor/ui';
 
 const KEY_SUBSCRIPTION = 'subscription';
@@ -34,27 +33,27 @@ const alertConfigs = [
 const UpgradeButton = ( props ) => <Button color="inherit" { ...props }>{ __( 'Upgrade', 'elementor' ) }</Button>;
 
 const UsageLimitAlert = ( { onClose, usagePercentage, hasSubscription, ...props } ) => {
-	for ( const config of alertConfigs ) {
-		if ( usagePercentage >= config.threshold ) {
-			const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
-			const { title, url, color } = config;
-			const handleUpgradeClick = () => window.open( url[ subscriptionType ], '_blank' );
+	const config = alertConfigs.find( ( { threshold } ) => usagePercentage >= threshold );
 
-			return (
-				<Alert
-					severity="warning"
-					action={ <UpgradeButton onClick={ handleUpgradeClick } /> }
-					color={ color }
-					{ ...props }
-				>
-					<AlertTitle>{ title[ subscriptionType ] }</AlertTitle>
-					{ __( 'Get maximum access.', 'elementor' ) }
-				</Alert>
-			);
-		}
+	if ( ! config ) {
+		return null;
 	}
 
-	return null;
+	const subscriptionType = hasSubscription ? KEY_SUBSCRIPTION : KEY_NO_SUBSCRIPTION;
+	const { title, url, color } = config;
+	const handleUpgradeClick = () => window.open( url[ subscriptionType ], '_blank' );
+
+	return (
+		<Alert
+			severity="warning"
+			action={ <UpgradeButton onClick={ handleUpgradeClick } /> }
+			color={ color }
+			{ ...props }
+		>
+			<AlertTitle>{ title[ subscriptionType ] }</AlertTitle>
+			{ __( 'Get maximum access.', 'elementor' ) }
+		</Alert>
+	);
 };
 
 UsageLimitAlert.propTypes = {
