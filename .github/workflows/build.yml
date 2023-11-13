@@ -42,14 +42,15 @@ jobs:
             | awk -F: '{ print $2 }' \
             | sed 's/[",]//g' \
             | tr -d '[[:space:]]')
-          export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}.zip"
+          export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
+          export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
           grunt build
           sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
           sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
-          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+          echo "PLUGIN_FOLDER_FILENAME=${PLUGIN_FOLDER_FILENAME}" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor
