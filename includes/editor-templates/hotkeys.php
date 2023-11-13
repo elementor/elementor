@@ -22,65 +22,65 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Undo', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Z</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Z</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Redo', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>Z</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>Z</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Copy', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>C</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>C</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Paste', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>V</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>V</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Paste Style', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>V</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>V</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Delete', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>Delete</span>
+						<kbd>Delete</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Duplicate', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>D</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>D</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Save', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>S</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>S</kbd>
 					</div>
 				</li>
 
@@ -97,24 +97,24 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Finder', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>E</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>E</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Show / Hide Panel', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>P</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>P</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Site Settings', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>K</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>K</kbd>
 					</div>
 				</li>
 
@@ -125,35 +125,35 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 							: esc_html__( 'Navigator', 'elementor' );
 					?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>I</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>I</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Page Settings', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>Y</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>Y</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'History', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>H</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>H</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'User Preferences', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>U</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>U</kbd>
 					</div>
 				</li>
 
@@ -170,18 +170,18 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>M</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>M</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
-						<span>Shift</span>
-						<span>L</span>
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>L</kbd>
 					</div>
 				</li>
 
@@ -189,8 +189,8 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Notes', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>Shift</span>
-						<span>C</span>
+						<kbd>Shift</kbd>
+						<kbd>C</kbd>
 					</div>
 				</li>
 				<?php endif ?>
@@ -198,15 +198,15 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Keyboard Shortcuts', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>Shift</span>
-						<span>?</span>
+						<kbd>Shift</kbd>
+						<kbd>?</kbd>
 					</div>
 				</li>
 
 				<li class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Quit', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>Esc</span>
+						<kbd>Esc</kbd>
 					</div>
 				</li>
 

@@ -62,8 +62,9 @@
 				gap: 23px;
 			}
 
-			span {
+			kbd {
 				position: relative;
+				font-family: unset;
 				background-color: var(--e-a-bg-active);
 				padding: 5px 12px;
 				border-radius: var(--e-a-border-radius);
