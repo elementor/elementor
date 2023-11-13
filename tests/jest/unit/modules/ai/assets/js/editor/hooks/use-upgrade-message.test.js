@@ -1,4 +1,4 @@
-import useUpgradeMessage, { USAGE_PERCENTAGE_THRESHOLD } from 'elementor/modules/ai/assets/js/editor/hooks/use-upgrade-message.js';
+import useUpgradeMessage, { USAGE_PERCENTAGE_THRESHOLD } from 'elementor/modules/ai/assets/js/editor/hooks/use-upgrade-message';
 import useIntroduction from 'elementor/modules/ai/assets/js/editor/hooks/use-introduction';
 
 jest.mock( 'elementor/modules/ai/assets/js/editor/hooks/use-introduction', () => ( {
