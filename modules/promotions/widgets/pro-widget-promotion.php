@@ -43,10 +43,32 @@ class Pro_Widget_Promotion extends Widget_Base {
 		return '';
 	}
 
+	public function on_import( $element ) {
+		$element['settings']['__should_import'] = true;
+
+		return $element;
+	}
+
 	protected function register_controls() {}
 
 	protected function render() {
-		echo 'Promotion Widget';
+		if ( $this->is_editor_render() ) {
+			$this->render_promotion();
+		} else {
+			$this->render_empty_content();
+		}
+	}
+
+	private function is_editor_render(): bool {
+		return \Elementor\Plugin::$instance->editor->is_edit_mode();
+	}
+
+	private function render_promotion() {
+		echo 'Pro Promotion';
+	}
+
+	private function render_empty_content() {
+		echo ' ';
 	}
 
 	protected function content_template() {}
