@@ -1,7 +1,7 @@
 $menu-title-font-size: type(text,xxs);
 $menu-title-line-height: type(line-height,sm);
-$menu-title-padding-y: spacing(8);
-$menu-title-padding-x: spacing(30);
+$menu-title-padding-block: spacing(8);
+$menu-title-padding-inline: spacing(30);
 $menu-item-height: spacing(44);
 
 // Default Color scheme
@@ -31,7 +31,7 @@ $menu-title-dark-color: tints(600);
 	}
 
 	&__title {
-		padding: $menu-title-padding-y $menu-title-padding-x;
+		padding: $menu-title-padding-block $menu-title-padding-inline;
 		font-size: $menu-title-font-size;
 		line-height: $menu-title-line-height;
 		text-transform: uppercase;

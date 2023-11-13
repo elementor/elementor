@@ -30,7 +30,7 @@ $description-color: var(--e-a-color-txt);
 			display: flex;
 			align-items: center;
 			padding: 16px 32px;
-			border-bottom: var(--e-a-border);
+			border-block-end: var(--e-a-border);
 
 			.eicon-elementor {
 				color: var(--e-a-color-logo);
@@ -76,7 +76,7 @@ $description-color: var(--e-a-color-txt);
 					font-size: 18px;
 					font-weight: 700;
 					color: $base-color;
-					padding-bottom: 15px;
+					padding-block-end: 15px;
 				}
 
 				.announcement-body-description {
@@ -87,17 +87,17 @@ $description-color: var(--e-a-color-txt);
 				}
 
 				p {
-					margin-bottom: 15px;
+					margin-block-end: 15px;
 				}
 
 				ul {
-					margin-left: 20px;
-					margin-bottom: 15px;
+					margin-inline-start: 20px;
+					margin-block-end: 15px;
 				}
 
 				li {
 					list-style: disc;
-					margin-bottom: 5px;
+					margin-block-end: 5px;
 				}
 			}
 		}
@@ -109,7 +109,6 @@ $description-color: var(--e-a-color-txt);
 
 			.button-item {
 				margin-inline-start: 12px;
-				text-transform: uppercase;
 				padding: 8px 16px;
 				outline: none;
 				border: none;

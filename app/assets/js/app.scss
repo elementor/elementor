@@ -25,17 +25,18 @@
 		background-color: var(--app-lightbox-background-color);
 		z-index: $app-lightbox-z-index;
 		bottom: 0;
-		left: 0;
+		@include start(0);
 	}
 
 	&__header {
 		flex-shrink: 0;
 		font-size: $app-header-font-size;
-		border-bottom: var(--e-a-border);
+		border-block-end: var(--e-a-border);
 		position: relative;
 		z-index: $app-header-z-index;
 		height: $app-header-height;
-		padding: $app-header-padding-y $spp-header-padding-x;
+		padding-block: $app-header-padding-block;
+		padding-inline: $app-header-padding-inline;
 	}
 
 	&__header-buttons {
@@ -46,7 +47,7 @@
 	}
 
 	&__header-btn {
-		padding-inline-start: $app-header-btn-padding-x;
+		padding-inline-start: $app-header-btn-padding-inline;
 		font-size: $app-header-btn-font-size;
 		line-height: $app-header-btn-line-height;
 
@@ -59,7 +60,7 @@
 		}
 
 		&:not(:first-child) {
-			padding-inline-end: $app-header-btn-padding-x;
+			padding-inline-end: $app-header-btn-padding-inline;
 		}
 	}
 
@@ -82,7 +83,7 @@
 		background-color: var(--app-logo-background-color);
 
 		&:not(:last-child) {
-			margin-inline-end: $app-logo-margin-end;
+			margin-inline-end: $app-logo-margin-inline-end;
 		}
 	}
 
@@ -92,7 +93,7 @@
 		font-size: $app-title-font-size;
 		font-weight: $app-title-font-weight;
 		text-transform: uppercase;
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 
 	&__main {
@@ -103,7 +104,7 @@
 
 	&__sidebar {
 		background-color: var(--app-sidebar-background-color);
-		padding-top: $app-sidebar-padding-top;
+		padding-block-start: $app-sidebar-padding-block-start;
 		width: $app-sidebar-width;
 		max-width: $app-sidebar-max-width;
 		border-inline-end: var(--e-a-border);

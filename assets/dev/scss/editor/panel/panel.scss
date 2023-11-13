@@ -66,9 +66,6 @@
     // Categories
     @import "categories";
 
-    // Schemes
-    //@import "schemes"; //TODO: deprecated v3.0.0
-
 	// Menu
 	@import "menu";
 
@@ -121,11 +118,11 @@
 	width: 90%;
 	margin: 0 auto;
 	font-style: unset;
-	margin-bottom: 15px;
+	margin-block-end: 15px;
 	a {
 		font-weight: bold;
 		font-style: italic;
-		border-bottom: 2px dotted var(--e-a-color-info);
+		border-block-end: 2px dotted var(--e-a-color-info);
 		display: inline-block;
 	}
 }

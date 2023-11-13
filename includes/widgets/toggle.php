@@ -83,7 +83,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @return bool
 	 */
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'nested-accordion' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	/**

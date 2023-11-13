@@ -40,6 +40,12 @@
 				svg {
 					width: 100%;
 					height: auto;
+
+					&:not(.exclude-rtl-scale) {
+						@if 'rtl' == $direction {
+							transform: scaleX(-1);
+						}
+					}
 				}
 
 				path {
@@ -96,7 +102,7 @@
 				cursor: pointer;
 
 				svg {
-					margin-bottom: 10px;
+					margin-block-end: 10px;
 					width: 85px;
 
 					&:hover {

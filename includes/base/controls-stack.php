@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -230,6 +229,20 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Get widget number.
+	 *
+	 * Get the first three numbers of the element converted ID.
+	 *
+	 * @since 3.16
+	 * @access public
+	 *
+	 * @return string The widget number.
+	 */
+	public function get_widget_number(): string {
+		return substr( $this->get_id_int(), 0, 3 );
+	}
+
+	/**
 	 * Get the type.
 	 *
 	 * Retrieve the type, e.g. 'stack', 'section', 'widget' etc.
@@ -333,7 +346,7 @@ abstract class Controls_Stack extends Base_Object {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $this->is_control_visible( $control, $settings ) ) {
+				if ( $this->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 
@@ -375,6 +388,19 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool True if control added, False otherwise.
 	 */
 	public function add_control( $id, array $args, $options = [] ) {
+		$should_optimize_controls = $this->should_optimize_controls();
+
+		$ui_controls = [
+			Controls_Manager::RAW_HTML,
+			Controls_Manager::DIVIDER,
+			Controls_Manager::HEADING,
+			Controls_Manager::BUTTON,
+		];
+
+		if ( $should_optimize_controls && ! empty( $args['type'] ) && in_array( $args['type'], $ui_controls ) ) {
+			return false;
+		}
+
 		$default_options = [
 			'overwrite' => false,
 			'position' => null,
@@ -418,7 +444,39 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
+		if ( $should_optimize_controls ) {
+			unset(
+				$args['label_block'],
+				$args['label'],
+				$args['tab'],
+				$args['options'],
+				$args['separator'],
+				$args['size_units'],
+				$args['range'],
+				$args['render_type'],
+				$args['toggle'],
+				$args['ai'],
+				$args['label_on'],
+				$args['label_off'],
+				$args['labels'],
+				$args['handles']
+			);
+		}
+
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
+	}
+
+	private function should_optimize_controls() {
+		static $is_frontend = null;
+
+		if ( null === $is_frontend ) {
+			$is_frontend = (
+				! is_admin()
+				&& ! Plugin::$instance->preview->is_preview_mode()
+			);
+		}
+
+		return $is_frontend;
 	}
 
 	/**
@@ -705,30 +763,6 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$group->add_controls( $this, $args, $options );
-	}
-
-	/**
-	 * Get scheme controls.
-	 *
-	 * Retrieve all the controls that use schemes.
-	 *
-	 * @since 1.4.0
-	 * @access public
-	 * @deprecated 3.0.0
-	 *
-	 * @return array Scheme controls.
-	 */
-	final public function get_scheme_controls() {
-
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
-		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
-
-		return array_filter(
-			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-			}
-		);
 	}
 
 	/**
@@ -1159,6 +1193,8 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_settings = [];
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( ! isset( $controls[ $setting_key ] ) ) {
 				$active_settings[ $setting_key ] = $setting;
@@ -1168,8 +1204,8 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = $controls[ $setting_key ];
 
-			if ( $this->is_control_visible( $control, $settings ) ) {
-				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			if ( $this->is_control_visible( $control, $settings, $controls ) ) {
+				$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
@@ -1238,9 +1274,11 @@ abstract class Controls_Stack extends Base_Object {
 			$controls = $this->get_controls();
 		}
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $controls as $control ) {
 			$control_name = $control['name'];
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
@@ -1377,7 +1415,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool Whether the control is visible.
 	 */
-	public function is_control_visible( $control, $values = null ) {
+	public function is_control_visible( $control, $values = null, $controls = null ) {
 		if ( null === $values ) {
 			$values = $this->get_settings();
 		}
@@ -1390,7 +1428,9 @@ abstract class Controls_Stack extends Base_Object {
 			return true;
 		}
 
-		$controls = $this->get_controls();
+		if ( ! $controls ) {
+			$controls = $this->get_controls();
+		}
 
 		foreach ( $control['condition'] as $condition_key => $condition_value ) {
 			preg_match( '/([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i', $condition_key, $condition_key_parts );
@@ -2162,8 +2202,10 @@ abstract class Controls_Stack extends Base_Object {
 	protected function get_init_settings() {
 		$settings = $this->get_data( 'settings' );
 
+		$controls_objs = Plugin::$instance->controls_manager->get_controls();
+
 		foreach ( $this->get_controls() as $control ) {
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			$control_obj = $controls_objs[ $control['type'] ] ?? null;
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;

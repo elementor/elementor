@@ -305,7 +305,6 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
@@ -542,15 +541,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'arrows_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 20,
-						'max' => 60,
+						'max' => 100,
 					],
 				],
 				'selectors' => [
@@ -606,15 +605,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'dots_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 5,
-						'max' => 10,
+						'max' => 20,
 					],
 				],
 				'selectors' => [
@@ -714,6 +713,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
@@ -890,7 +890,12 @@ class Widget_Image_Carousel extends Widget_Base {
 				'class' => 'swiper-slide',
 				'role' => 'group',
 				'aria-roledescription' => 'slide',
-				'aria-label' => $slide_count . ' ' . esc_html__( 'of', 'elementor' ) . ' ' . count( $settings['carousel'] ),
+				'aria-label' => sprintf(
+					/* translators: 1: Slide count, 2: Total slides count. */
+					esc_html__( '%1$s of %2$s', 'elementor' ),
+					$slide_count,
+					count( $settings['carousel'] )
+				),
 			] );
 
 			$slide_html = '<div ' . $this->get_render_attribute_string( $slide_setting_key ) . '>' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;

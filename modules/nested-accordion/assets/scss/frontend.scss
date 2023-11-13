@@ -11,16 +11,21 @@
 	--n-accordion-item-title-distance-from-content: 0px;
 	--n-accordion-padding: 10px;
 	--n-accordion-border-radius: 0px;
-	--n-accordion-icon-size: 20px;
+	--n-accordion-icon-size: 15px;
 	--n-accordion-title-normal-color: #{$editor-darker};
 	--n-accordion-title-hover-color: #{$editor-darker};
 	--n-accordion-title-active-color: #{$editor-darker};
 	--n-accordion-icon-normal-color: var(--n-accordion-title-normal-color);
 	--n-accordion-icon-hover-color: var(--n-accordion-title-hover-color);
 	--n-accordion-icon-active-color: var(--n-accordion-title-active-color);
-	--n-accordion-icon-gap: 0 15px;
+	--n-accordion-icon-gap: 0 10px;
+	width: 100%;
 
 	.e-n-accordion {
+
+		details > summary::-webkit-details-marker {
+			display: none;
+		}
 
 		&-item {
 			display: flex;
@@ -28,7 +33,11 @@
 			position: relative;
 
 			&:not(:last-child) {
-				margin-bottom: var(--n-accordion-item-title-space-between);
+				margin-block-end: var(--n-accordion-item-title-space-between);
+			}
+
+			:where( & > .e-con ) {
+				border: var(--n-accordion-border-width) var(--n-accordion-border-style) var(--n-accordion-border-color);
 			}
 
 			&-title {
@@ -45,12 +54,14 @@
 				gap: var(--n-accordion-icon-gap);
 				color: var(--n-accordion-title-normal-color);
 				align-items: center;
+				cursor: pointer;
 
 				&-header {
 					display: flex;
 
 					h1, h2, h3, h4, h5, h6, p {
-						margin-block: 0;
+						margin-block-start: 0;
+						margin-block-end: 0;
 					}
 				}
 
@@ -68,9 +79,9 @@
 					width: fit-content;
 
 					span {
-						height: var(--n-accordion-icon-size, var(--n-accordion-title-font-size));
-						width: var(--n-accordion-icon-size, var(--n-accordion-title-font-size));
-						font-size: var(--n-accordion-icon-size, var(--n-accordion-title-font-size));
+						height: var(--n-accordion-icon-size);
+						width: var(--n-accordion-icon-size);
+						font-size: var(--n-accordion-icon-size);
 
 						& > i {
 							color: var(--n-accordion-icon-normal-color);
@@ -90,7 +101,7 @@
 			&[open] {
 
 				.e-n-accordion-item-title {
-					margin-bottom: var(--n-accordion-item-title-distance-from-content);
+					margin-block-end: var(--n-accordion-item-title-distance-from-content);
 					color: var(--n-accordion-title-active-color);
 
 					&-icon {

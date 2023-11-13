@@ -55,7 +55,8 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
-	@include padding(16.5px, 16.5px, 15px, 0);
+	padding-block: 16.5px 15px;
+	padding-inline: 0 16.5px;
 	border-inline-end: var(--e-a-border);
 	cursor: pointer;
 	transition: color .5s;
@@ -198,7 +199,7 @@ label.elementor-template-library-order-label {
 #elementor-template-library-filter {
 
 	.select2 {
-		text-align: $start;
+		text-align: start;
 		width: calc(#{$control-unit} * 5) !important;
 	}
 
@@ -211,14 +212,14 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-transform: capitalize;
-		text-align: $start;
+		text-align: start;
 		padding-inline-start: 5px;
 	}
 }
 
 #elementor-template-library-my-favorites {
 	flex-grow: 1;
-	text-align: $start;
+	text-align: start;
 	padding-inline-start: 20px;
 }
 
@@ -415,7 +416,7 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-name {
-		text-align: $start;
+		text-align: start;
 		flex-grow: 1;
 		@include ellipsis;
 		padding-inline-end: 5px;
@@ -477,7 +478,7 @@ label.elementor-template-library-order-label {
 	display: flex;
 	align-items: center;
 	padding: 0 25px;
-	text-align: $start;
+	text-align: start;
 }
 
 #elementor-template-library-order-toolbar-local {
@@ -501,11 +502,17 @@ label.elementor-template-library-order-label {
 	}
 
 	&:first-child {
-		border-radius: 3px 3px 0 0;
+		border-start-start-radius: 3px;
+		border-start-end-radius: 3px;
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
 	}
 
 	&:last-child {
-		border-radius: 0 0 3px 3px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-start-radius: 3px;
+		border-end-end-radius: 3px;
 	}
 
 	.elementor-template-library-template-name {
@@ -589,7 +596,7 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-more-toggle {
 		flex-grow: 1;
-		text-align: $end;
+		text-align: end;
 
 		i {
 			font-size: 16px;
@@ -664,12 +671,18 @@ label.elementor-template-library-order-label {
 #elementor-template-library-save-template-name {
 	width: 500px;
 	padding-inline-start: 25px;
-	border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+	border-start-start-radius: 3px;
+	border-start-end-radius: 0;
+	border-end-start-radius: 3px;
+	border-end-end-radius: 0;
 }
 
 #elementor-template-library-save-template-submit {
 	width: 150px;
-	border-radius: getValueByDirection(0 3px 3px 0, 3px 0 0 3px);
+	border-start-start-radius: 0;
+	border-start-end-radius: 3px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 3px;
 }
 
 #elementor-template-library-import {

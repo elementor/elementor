@@ -540,6 +540,10 @@ class Module extends BaseModule {
 					break;
 			}
 		} catch ( \Error $e ) {
+			if ( isset( $this->import ) ) {
+				$this->import->finalize_import_session_option();
+			}
+
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
 					'trace' => $e->getTraceAsString(),
@@ -641,6 +645,12 @@ class Module extends BaseModule {
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
 
+		Plugin::$instance->logger->get_logger()->info(
+			sprintf( 'Selected import runners: %1$s',
+				implode( ', ', $import['runners'] )
+			)
+		);
+
 		wp_send_json_success( $import );
 	}
 
@@ -657,6 +667,15 @@ class Module extends BaseModule {
 
 		// get_settings_config() added manually because the frontend Ajax request doesn't trigger the get_init_settings().
 		$import['configData'] = $this->get_config_data();
+
+		if ( ! empty( $import['status'] ) ) {
+			Plugin::$instance->logger->get_logger()->info(
+				sprintf( 'Import runner completed: %1$s %2$s',
+					$import['runner'],
+					( 'success' === $import['status'] ? '✓' : '✗' )
+				)
+			);
+		}
 
 		wp_send_json_success( $import );
 	}
@@ -730,8 +749,8 @@ class Module extends BaseModule {
 			$post_type_object = get_post_type_object( $post_type );
 
 			$summary_titles['content'][ $post_type ] = [
-				'single' => $post_type_object->labels->singular_name,
-				'plural' => $post_type_object->label,
+				'single' => $post_type_object->labels->singular_name ?? '',
+				'plural' => $post_type_object->label ?? '',
 			];
 		}
 
@@ -743,14 +762,14 @@ class Module extends BaseModule {
 				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
 				$summary_titles['content'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => $custom_post_types_object->labels->singular_name ?? '',
+					'plural' => $custom_post_types_object->label ?? '',
 				];
 
 				// 2. customPostTypes object: in order to actually export the data
 				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
-					'single' => $custom_post_types_object->labels->singular_name,
-					'plural' => $custom_post_types_object->label,
+					'single' => $custom_post_types_object->labels->singular_name ?? '',
+					'plural' => $custom_post_types_object->label ?? '',
 				];
 			}
 		}

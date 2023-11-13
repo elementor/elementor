@@ -3,6 +3,8 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
+import { SetDirectionMode } from 'elementor-document/hooks';
+import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -26,7 +28,8 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con`;
+		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
 	},
 
 	childViewOptions() {
@@ -49,11 +52,18 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const currentDirection = this.container.settings.get( this.getDirectionSettingKey() );
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
+			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
+			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
+			currentDirection = this.container.settings.get( directionSettingKey );
 
 		return {
 			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
 		};
+	},
+
+	onDeviceModeChange() {
+		SetDirectionMode.set( this.getContainer() );
 	},
 
 	getDirectionSettingKey() {
@@ -86,6 +96,16 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+
+		this.onDeviceModeChange = this.onDeviceModeChange.bind( this );
+
+		elementor.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+	},
+
+	onDestroy() {
+		BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	/**
@@ -120,6 +140,12 @@ const ContainerView = BaseElementView.extend( {
 		}
 
 		return parent.view.getNestingLevel() + 1;
+	},
+
+	isNestedElementContentContainer() {
+		const widgetType = this.container.parent.model.get( 'widgetType' );
+
+		return widgetType && widgetType.trim() !== '' && isWidgetSupportNesting( widgetType );
 	},
 
 	getDroppableAxis() {
@@ -389,9 +415,19 @@ const ContainerView = BaseElementView.extend( {
 			this.nestingLevel = this.getNestingLevel();
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.model.set( 'isInner', this.isNestedElementContentContainer() || this.getNestingLevel() > 0 );
+			}
+
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
+			}
+
+			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
+			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
+			if ( ! this.model.get( 'isInner' ) ) {
+				this.$el[ 0 ].dataset.coreV316Plus = 'true';
 			}
 
 			this.droppableInitialize( this.container.settings );
@@ -426,6 +462,36 @@ const ContainerView = BaseElementView.extend( {
 			this.droppableDestroy();
 			this.droppableInitialize( settings );
 		}
+
+		if ( settings.changed.container_type ) {
+			this.updatePanelTitlesAndIcons();
+		}
+	},
+
+	updatePanelTitlesAndIcons() {
+		const title = this.getPanelTitle(),
+			icon = this.getPanelIcon();
+
+		this.model.set( 'icon', icon );
+		this.model.set( 'title', title );
+
+		this.model.get( 'settings' ).set( 'presetTitle', title );
+		this.model.get( 'settings' ).set( 'presetIcon', icon );
+
+		/* Translators: %s: Element name. */
+		jQuery( '#elementor-panel-header-title' ).html( sprintf( __( 'Edit %s', 'elementor' ), title ) );
+	},
+
+	getPanelTitle() {
+		return this.isFlexContainer()
+			? __( 'Container', 'elementor' )
+			: __( 'Grid', 'elementor' );
+	},
+
+	getPanelIcon() {
+		return this.isFlexContainer()
+			? 'eicon-container'
+			: 'eicon-container-grid';
 	},
 
 	onDragStart() {
@@ -498,10 +564,11 @@ const ContainerView = BaseElementView.extend( {
 
 	handleGridEmptyView() {
 		const currentContainer = this.getCorrectContainerElement();
+		const emptyViewItem = currentContainer.find( '> .elementor-empty-view' );
 
 		this.moveElementToLastChild(
 			currentContainer,
-			currentContainer.find( '> .elementor-empty-view' ),
+			emptyViewItem,
 		);
 	},
 

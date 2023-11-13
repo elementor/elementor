@@ -10,7 +10,10 @@
 	left: 50%;
 	transform: translateX( -50% ) translateY( -100% );
 	background-color: var(--e-p-border-section);
-	border-radius: 5px 5px 0 0;
+	border-start-start-radius: 5px;
+	border-start-end-radius: 5px;
+	border-end-start-radius: 0;
+	border-end-end-radius: 0;
 
 	i.eicon-handle {
 		font-size: 16px;
@@ -23,43 +26,53 @@
 		}
 
 		&:first-child {
-			border-radius: getValueByDirection(5px 0 0 0, 0 5px 0 0);
+			border-start-start-radius: 5px;
+			border-start-end-radius: 0;
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
 
 			&:before {
 				content: '';
 				position: absolute;
-				border: solid transparent;
 				top: 2px;
-				@include border-end-property(color, var(--e-p-border-section));
-				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 				@include end(calc(100% - 1px));
+				border-block-start: 22px solid transparent;
+				border-block-end: 0 none transparent;
+				border-inline-start: 0 none transparent;
+				border-inline-end: 12px solid var(--e-p-border-section);
+				transition: var(--e-a-transition-hover);
 			}
 
 			&:hover {
 
 				&:before {
-					@include border-end-property(color, var(--e-p-border-section-hover));
+					border-inline-end-color: var(--e-p-border-section-hover);
 				}
 			}
 		}
 
 		&:last-child {
-			border-radius: getValueByDirection(0 5px 0 0, 5px 0 0 0);
+			border-start-start-radius: 0;
+			border-start-end-radius: 5px;
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
 
 			&:after {
 				content: '';
 				position: absolute;
-				border: solid transparent;
 				top: 2px;
-				@include border-start-property(color, var(--e-p-border-section));
-				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 				@include start(calc(100% - 1px));
+				border-block-start: 22px solid transparent;
+				border-block-end: 0 none transparent;
+				border-inline-start: 12px solid var(--e-p-border-section);
+				border-inline-end: 0 none transparent;
+				transition: var(--e-a-transition-hover);
 			}
 
 			&:hover {
 
 				&:after {
-					@include border-start-property(color, var(--e-p-border-section-hover));
+					border-inline-start-color: var(--e-p-border-section-hover);
 				}
 			}
 		}
@@ -72,24 +85,41 @@
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);
-		border-radius: 0 0 5px 5px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-start-radius: 5px;
+		border-end-end-radius: 5px;
 
 		.elementor-editor-element-setting {
 			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
+				border-start-start-radius: 0;
+				border-start-end-radius: 0;
+				border-end-start-radius: 5px;
+				border-end-end-radius: 0;
 
 				&:before {
 					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
+					border-block-start: 0 none transparent;
+					border-block-end: 22px solid transparent;
+					border-inline-start: 0 none transparent;
+					border-inline-end: 12px solid var(--e-p-border-section);
+					transition: var(--e-a-transition-hover);
 				}
 			}
 
 			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+				border-start-start-radius: 0;
+				border-start-end-radius: 0;
+				border-end-start-radius: 0;
+				border-end-end-radius: 5px;
 
 				&:after {
 					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
+					border-block-start: 0 none transparent;
+					border-block-end: 22px solid transparent;
+					border-inline-start: 12px solid var(--e-p-border-section);
+					border-inline-end: 0 none transparent;
+					transition: var(--e-a-transition-hover);
 				}
 			}
 		}

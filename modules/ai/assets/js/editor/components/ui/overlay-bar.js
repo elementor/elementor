@@ -5,7 +5,7 @@ const OverlayBar = styled( Stack )( ( { theme, position } ) => {
 		width: '100%',
 		position: 'absolute',
 		left: 0,
-		padding: theme.spacing( 6 ),
+		padding: theme.spacing( 2.5 ),
 	};
 
 	if ( 'top' === position ) {

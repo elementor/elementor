@@ -1,4 +1,9 @@
-import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
+import Base from 'elementor-frontend/handlers/base';
+import {
+	changeScrollStatus,
+	setHorizontalScrollAlignment,
+	setHorizontalTitleScrollValues,
+} from 'elementor-frontend-utils/flex-horizontal-scroll';
 
 export default class NestedTabs extends Base {
 	constructor( ...args ) {
@@ -13,7 +18,7 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabTitleFilterSelector( tabIndex ) {
-		return `[data-tab="${ tabIndex }"]`;
+		return `[data-tab-index="${ tabIndex }"]`;
 	}
 
 	/**
@@ -22,8 +27,7 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabContentFilterSelector( tabIndex ) {
-		// Double by 2, since each `e-con` should have 'e-collapse'.
-		return `*:nth-child(${ tabIndex * 2 })`;
+		return `*:nth-child(${ tabIndex })`;
 	}
 
 	/**
@@ -32,33 +36,30 @@ export default class NestedTabs extends Base {
 	 * @return {string}
 	 */
 	getTabIndex( tabTitleElement ) {
-		return tabTitleElement.getAttribute( 'data-tab' );
+		return tabTitleElement.getAttribute( 'data-tab-index' );
 	}
 
 	getDefaultSettings() {
 		return {
 			selectors: {
-				tablist: '[role="tablist"]',
+				widgetContainer: '.e-n-tabs',
 				tabTitle: '.e-n-tab-title',
-				tabContent: '.e-con',
+				tabContent: '.e-n-tabs-content > .e-con',
 				headingContainer: '.e-n-tabs-heading',
 				activeTabContentContainers: '.e-con.e-active',
-				mobileTabTitle: '.e-collapse',
 			},
 			classes: {
 				active: 'e-active',
+			},
+			ariaAttributes: {
+				titleStateAttribute: 'aria-selected',
+				activeTitleSelector: '[aria-selected="true"]',
 			},
 			showTabFn: 'show',
 			hideTabFn: 'hide',
 			toggleSelf: false,
 			hidePrevious: true,
 			autoExpand: true,
-			keyDirection: {
-				ArrowLeft: elementorFrontendConfig.is_rtl ? 1 : -1,
-				ArrowUp: -1,
-				ArrowRight: elementorFrontendConfig.is_rtl ? -1 : 1,
-				ArrowDown: 1,
-			},
 		};
 	}
 
@@ -68,9 +69,12 @@ export default class NestedTabs extends Base {
 		return {
 			$tabTitles: this.findElement( selectors.tabTitle ),
 			$tabContents: this.findElement( selectors.tabContent ),
-			$mobileTabTitles: this.findElement( selectors.mobileTabTitle ),
 			$headingContainer: this.findElement( selectors.headingContainer ),
 		};
+	}
+
+	getKeyboardNavigationSettings() {
+		return this.getSettings();
 	}
 
 	activateDefaultTab() {
@@ -94,76 +98,41 @@ export default class NestedTabs extends Base {
 		this.setSettings( originalToggleMethods );
 	}
 
-	handleKeyboardNavigation( event ) {
-		const tab = event.currentTarget,
-			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
-			// eslint-disable-next-line @wordpress/no-unused-vars-before-return
-			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
-			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
-
-		switch ( event.key ) {
-			case 'ArrowLeft':
-			case 'ArrowRight':
-				if ( isVertical ) {
-					return;
-				}
-				break;
-			case 'ArrowUp':
-			case 'ArrowDown':
-				if ( ! isVertical ) {
-					return;
-				}
-				event.preventDefault();
-				break;
-			case 'Home':
-				event.preventDefault();
-				$tabs.first().trigger( 'focus' );
-				return;
-			case 'End':
-				event.preventDefault();
-				$tabs.last().trigger( 'focus' );
-				return;
-			default:
-				return;
-		}
-
-		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
-			direction = this.getSettings( 'keyDirection' )[ event.key ],
-			nextTab = $tabs[ tabIndex + direction ];
-
-		if ( nextTab ) {
-			nextTab.focus();
-		} else if ( -1 === tabIndex + direction ) {
-			$tabs.last().trigger( 'focus' );
-		} else {
-			$tabs.first().trigger( 'focus' );
-		}
-	}
-
-	deactivateActiveTab( tabIndex ) {
+	deactivateActiveTab( newTabIndex ) {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
-			activeTitleFilter = tabIndex ? this.getTabTitleFilterSelector( tabIndex ) : '.' + activeClass,
-			activeContentFilter = tabIndex ? this.getTabContentFilterSelector( tabIndex ) : '.' + activeClass,
+			activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+			activeContentFilter = '.' + activeClass,
 			$activeTitle = this.elements.$tabTitles.filter( activeTitleFilter ),
 			$activeContent = this.elements.$tabContents.filter( activeContentFilter );
 
-		$activeTitle.add( $activeContent ).removeClass( activeClass );
-		$activeTitle.attr( this.getTitleDeactivationAttributes() );
+		this.setTabDeactivationAttributes( $activeTitle, newTabIndex );
 
+		$activeContent.removeClass( activeClass );
 		$activeContent[ settings.hideTabFn ]( 0, () => this.onHideTabContent( $activeContent ) );
-		$activeContent.attr( 'hidden', 'hidden' );
+
+		return $activeContent;
 	}
 
-	getTitleDeactivationAttributes() {
+	getTitleActivationAttributes() {
+		const titleStateAttribute = this.getSettings( 'ariaAttributes' ).titleStateAttribute;
+
 		return {
-			tabindex: '-1',
-			'aria-selected': 'false',
-			'aria-expanded': 'false',
+			tabindex: '0',
+			[ titleStateAttribute ]: 'true',
 		};
 	}
 
-	onHideTabContent( $activeContent ) {}
+	setTabDeactivationAttributes( $activeTitle ) {
+		const titleStateAttribute = this.getSettings( 'ariaAttributes' ).titleStateAttribute;
+
+		$activeTitle.attr( {
+			tabindex: '-1',
+			[ titleStateAttribute ]: 'false',
+		} );
+	}
+
+	onHideTabContent() {}
 
 	activateTab( tabIndex ) {
 		const settings = this.getSettings(),
@@ -182,66 +151,44 @@ export default class NestedTabs extends Base {
 			$requestedContent = this.elements.$tabContents.filter( this.getTabContentFilterSelector( previousTabIndex ) );
 		}
 
-		$requestedTitle.add( $requestedContent ).addClass( activeClass );
-		$requestedTitle.attr( {
-			tabindex: '0',
-			'aria-selected': 'true',
-			'aria-expanded': 'true',
-		} );
+		$requestedTitle.attr( this.getTitleActivationAttributes() );
+		$requestedContent.addClass( activeClass );
 
 		$requestedContent[ settings.showTabFn ](
 			animationDuration,
 			() => this.onShowTabContent( $requestedContent ),
 		);
-		$requestedContent.removeAttr( 'hidden' );
 	}
 
 	onShowTabContent( $requestedContent ) {
 		elementorFrontend.elements.$window.trigger( 'elementor-pro/motion-fx/recalc' );
 		elementorFrontend.elements.$window.trigger( 'elementor/nested-tabs/activate', $requestedContent );
+		elementorFrontend.elements.$window.trigger( 'elementor/bg-video/recalc' );
 	}
 
 	isActiveTab( tabIndex ) {
-		return this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ).hasClass( this.getSettings( 'classes.active' ) );
+		return 'true' === this.elements.$tabTitles.filter( '[data-tab-index="' + tabIndex + '"]' ).attr( this.getSettings( 'ariaAttributes' ).titleStateAttribute );
 	}
 
 	onTabClick( event ) {
 		event.preventDefault();
-		this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
-	}
-
-	onTabKeyDown( event ) {
-		this.onKeydownAvoidUndesiredPageScrolling( event );
-	}
-
-	onTabKeyUp( event ) {
-		switch ( event.code ) {
-			case 'ArrowLeft':
-			case 'ArrowRight':
-				this.handleKeyboardNavigation( event );
-				break;
-			case 'Enter':
-			case 'Space':
-				event.preventDefault();
-				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ), true );
-				break;
-		}
+		this.changeActiveTab( event.currentTarget?.getAttribute( 'data-tab-index' ), true );
 	}
 
 	getTabEvents() {
 		return {
-			keydown: this.onTabKeyDown.bind( this ),
-			keyup: this.onTabKeyUp.bind( this ),
 			click: this.onTabClick.bind( this ),
 		};
 	}
 
 	getHeadingEvents() {
+		const navigationWrapper = this.elements.$headingContainer[ 0 ];
+
 		return {
-			mousedown: this.changeScrollStatus.bind( this ),
-			mouseup: this.changeScrollStatus.bind( this ),
-			mouseleave: this.changeScrollStatus.bind( this ),
-			mousemove: this.setHorizontalTabTitleScrollValues.bind( this ),
+			mousedown: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseup: changeScrollStatus.bind( this, navigationWrapper ),
+			mouseleave: changeScrollStatus.bind( this, navigationWrapper ),
+			mousemove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
 		};
 	}
 
@@ -249,23 +196,27 @@ export default class NestedTabs extends Base {
 		this.elements.$tabTitles.on( this.getTabEvents() );
 		this.elements.$headingContainer.on( this.getHeadingEvents() );
 
-		this.resizeListenerNestedTabs = this.setHorizontalScrollAlignment.bind( this );
+		const settingsObject = {
+			element: this.elements.$headingContainer[ 0 ],
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
+
+		this.resizeListenerNestedTabs = setHorizontalScrollAlignment.bind( this, settingsObject );
 		elementorFrontend.elements.$window.on( 'resize', this.resizeListenerNestedTabs );
+
+		elementorFrontend.elements.$window.on( 'resize', this.setTouchMode.bind( this ) );
 		elementorFrontend.elements.$window.on( 'elementor/nested-tabs/activate', this.reInitSwipers );
+		elementorFrontend.elements.$window.on( 'elementor/nested-elements/activate-by-keyboard', this.changeActiveTabByKeyboard.bind( this ) );
 	}
 
 	unbindEvents() {
 		this.elements.$tabTitles.off();
 		this.elements.$headingContainer.off();
+		this.elements.$tabContents.children().off();
 		elementorFrontend.elements.$window.off( 'resize' );
 		elementorFrontend.elements.$window.off( 'elementor/nested-tabs/activate' );
-	}
-
-	onKeydownAvoidUndesiredPageScrolling( event ) {
-		// We listen to keydowon event for these keys in order to prevent undesired page scrolling
-		if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
-			this.handleKeyboardNavigation( event );
-		}
 	}
 
 	/**
@@ -279,25 +230,38 @@ export default class NestedTabs extends Base {
 	 */
 	reInitSwipers( event, content ) {
 		const swiperElements = content.querySelectorAll( `.${ elementorFrontend.config.swiperClass }` );
+
 		for ( const element of swiperElements ) {
 			if ( ! element.swiper ) {
 				return;
 			}
+
 			element.swiper.initialized = false;
 			element.swiper.init();
 		}
 	}
 
 	onInit( ...args ) {
-		this.createMobileTabs( args );
-
 		super.onInit( ...args );
 
 		if ( this.getSettings( 'autoExpand' ) ) {
 			this.activateDefaultTab();
 		}
 
-		this.setHorizontalScrollAlignment();
+		const settingsObject = {
+			element: this.elements.$headingContainer[ 0 ],
+			direction: this.getTabsDirection(),
+			justifyCSSVariable: '--n-tabs-heading-justify-content',
+			horizontalScrollStatus: this.getHorizontalScrollSetting(),
+		};
+
+		setHorizontalScrollAlignment( settingsObject );
+
+		this.setTouchMode();
+
+		if ( 'nested-tabs.default' === this.getSettings( 'elementName' ) ) {
+			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+		}
 	}
 
 	onEditSettingsChange( propertyName, value ) {
@@ -305,14 +269,23 @@ export default class NestedTabs extends Base {
 			this.changeActiveTab( value, false );
 		}
 	}
+
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
-			this.setHorizontalScrollAlignment();
+			const settingsObject = {
+				element: this.elements.$headingContainer[ 0 ],
+				direction: this.getTabsDirection(),
+				justifyCSSVariable: '--n-tabs-heading-justify-content',
+				horizontalScrollStatus: this.getHorizontalScrollSetting(),
+			};
+
+			setHorizontalScrollAlignment( settingsObject );
 		}
 	}
 
 	checkSliderPropsToWatch( propertyName ) {
 		return 0 === propertyName.indexOf( 'horizontal_scroll' ) ||
+			'breakpoint_selector' === propertyName ||
 			0 === propertyName.indexOf( 'tabs_justify_horizontal' ) ||
 			0 === propertyName.indexOf( 'tabs_title_space_between' );
 	}
@@ -335,7 +308,7 @@ export default class NestedTabs extends Base {
 			settings = this.getSettings();
 
 		if ( ( settings.toggleSelf || ! isActiveTab ) && settings.hidePrevious ) {
-			this.deactivateActiveTab();
+			this.deactivateActiveTab( tabIndex );
 		}
 
 		if ( ! settings.hidePrevious && isActiveTab ) {
@@ -343,15 +316,21 @@ export default class NestedTabs extends Base {
 		}
 
 		if ( ! isActiveTab ) {
-			const isMobileVersion = 'none' === this.elements.$headingContainer.css( 'display' );
-
-			if ( isMobileVersion ) {
+			if ( this.isAccordionVersion() ) {
 				this.activateMobileTab( tabIndex );
 				return;
 			}
 
 			this.activateTab( tabIndex );
 		}
+	}
+
+	changeActiveTabByKeyboard( event, settings ) {
+		if ( settings.widgetId.toString() !== this.getID().toString() ) {
+			return;
+		}
+
+		this.changeActiveTab( settings.titleIndex, true );
 	}
 
 	activateMobileTab( tabIndex ) {
@@ -367,35 +346,10 @@ export default class NestedTabs extends Base {
 			return;
 		}
 
-		const $activeTabTitle = this.elements.$mobileTabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
+		const $activeTabTitle = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( tabIndex ) );
 
 		if ( ! elementor.helpers.isInViewport( $activeTabTitle[ 0 ] ) ) {
 			$activeTabTitle[ 0 ].scrollIntoView( { block: 'center' } );
-		}
-	}
-
-	createMobileTabs( args ) {
-		const settings = this.getSettings();
-		if ( elementorFrontend.isEditMode() ) {
-			const $widget = this.$element,
-				$removed = this.findElement( '.e-collapse' ).remove();
-
-			let index = 1;
-
-			this.findElement( '.e-con' ).each( function() {
-				const $current = jQuery( this ),
-					$desktopTabTitle = $widget.find( `${ settings.selectors.headingContainer } > *:nth-child(${ index })` ),
-					mobileTitleHTML = `<div class="${ settings.selectors.tabTitle.replace( '.', '' ) } e-collapse" data-tab="${ index }" role="tab">${ $desktopTabTitle.html() }</div>`;
-
-				$current.before( mobileTitleHTML );
-
-				++index;
-			} );
-
-			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
-			if ( $removed.length ) {
-				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
-			}
 		}
 	}
 
@@ -405,217 +359,36 @@ export default class NestedTabs extends Base {
 		return settings.classes.active;
 	}
 
-	getVisibleTabTitle( tabTitleFilter ) {
-		const $tabTitle = this.elements.$tabTitles.filter( tabTitleFilter ),
-			isTabTitleDesktopVisible = null !== $tabTitle[ 0 ]?.offsetParent;
-
-		return isTabTitleDesktopVisible ? $tabTitle[ 0 ] : $tabTitle[ 1 ];
-	}
-
-	getKeyPressed( event ) {
-		const keyTab = 9,
-			keyEscape = 27,
-			isTabPressed = keyTab === event?.which,
-			isShiftPressed = event?.shiftKey,
-			isShiftAndTabPressed = !! isTabPressed && isShiftPressed,
-			isOnlyTabPressed = !! isTabPressed && ! isShiftPressed,
-			isEscapePressed = keyEscape === event?.which;
-
-		if ( isShiftAndTabPressed ) {
-			return 'ShiftTab';
-		} else if ( isOnlyTabPressed ) {
-			return 'Tab';
-		} else if ( isEscapePressed ) {
-			return 'Escape';
-		}
-	}
-
-	changeFocusFromContentContainerItemBackToTabTitle( event ) {
-		if ( this.hasDropdownLayout() ) {
-			return;
-		}
-
-		const isShiftAndTabPressed = 'ShiftTab' === this.getKeyPressed( event ),
-			isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
-			isEscapePressed = 'Escape' === this.getKeyPressed( event ),
-			firstItemIsInFocus = this.itemInsideContentContainerHasFocus( 0 ),
-			lastItemIsInFocus = this.itemInsideContentContainerHasFocus( 'last' ),
-			activeTabTitleFilter = `.${ this.getActiveClass() }`,
-			activeTabTitleVisible = this.getVisibleTabTitle( activeTabTitleFilter ),
-			activeTabTitleIndex = parseInt( activeTabTitleVisible?.getAttribute( 'data-tab' ) ),
-			nextTabTitleFilter = this.getTabTitleFilterSelector( activeTabTitleIndex + 1 ),
-			nextTabTitleVisible = this.getVisibleTabTitle( nextTabTitleFilter ),
-			pressShiftTabOnFirstFocusableItem = isShiftAndTabPressed && firstItemIsInFocus && !! activeTabTitleVisible,
-			pressTabOnLastFocusableItem = isOnlyTabPressed && lastItemIsInFocus && !! nextTabTitleVisible;
-
-		if ( pressShiftTabOnFirstFocusableItem || isEscapePressed ) {
-			event.preventDefault();
-
-			activeTabTitleVisible?.focus();
-		} else if ( pressTabOnLastFocusableItem ) {
-			event.preventDefault();
-
-			this.setTabindexOfActiveContainerItems( '-1' );
-
-			nextTabTitleVisible?.focus();
-		}
-	}
-
-	changeFocusFromActiveTabTitleToContentContainer( event ) {
-		const isOnlyTabPressed = 'Tab' === this.getKeyPressed( event ),
-			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
-			$firstFocusableItem = $focusableItems[ 0 ],
-			currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle.getAttribute( 'data-tab' ) );
-
-		if ( isOnlyTabPressed && this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) && !! $firstFocusableItem ) {
-			event.preventDefault();
-			$firstFocusableItem.trigger( 'focus' );
-		}
-	}
-
-	itemInsideContentContainerHasFocus( position ) {
-		const currentItem = elementorFrontend.elements.window.document.activeElement,
-			$focusableItems = this.getFocusableItemsInsideActiveContentContainer(),
-			itemIndex = 'last' === position ? $focusableItems.length - 1 : position;
-
-		return $focusableItems[ itemIndex ] === currentItem;
-	}
-
-	getFocusableItemsInsideActiveContentContainer() {
-		const settings = this.getSettings();
-
-		return this.$element.find( settings.selectors.activeTabContentContainers ).find( ':focusable' );
-	}
-
-	setTabindexOfActiveContainerItems( tabIndex ) {
-		const $focusableItems = this.getFocusableItemsInsideActiveContentContainer();
-
-		$focusableItems.attr( 'tabindex', tabIndex );
-	}
-
-	setActiveCurrentContainerItemsToFocusable() {
-		const currentTabTitle = elementorFrontend.elements.window.document.activeElement,
-			currentTabTitleIndex = parseInt( currentTabTitle?.getAttribute( 'data-tab' ) );
-
-		if ( this.tabTitleHasActiveContentContainer( currentTabTitleIndex ) ) {
-			this.setTabindexOfActiveContainerItems( '0' );
-		}
-	}
-
-	tabTitleHasActiveContentContainer( index ) {
-		const $tabTitleElement = this.elements.$tabTitles.filter( this.getTabTitleFilterSelector( index ) ),
-			isTabTitleActive = $tabTitleElement[ 0 ]?.classList.contains( `${ this.getActiveClass() }` ),
-			$tabTitleContainerElement = this.elements.$tabContents.filter( this.getTabContentFilterSelector( index ) );
-
-		return !! $tabTitleContainerElement && isTabTitleActive ? true : false;
-	}
-
-	// This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
-	changeScrollStatus( event ) {
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		if ( 'mousedown' === event.type ) {
-			slider.classList.add( 'e-scroll' );
-			slider.dataset.pageX = event.pageX;
-		} else {
-			slider.classList.remove( 'e-scroll' );
-			slider.classList.remove( 'e-scroll-active' );
-			slider.dataset.pageX = '';
-		}
-	}
-
-	isHorizontalScroll() {
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		return slider.clientWidth < this.getChildrenWidth( slider.children ) && 'enable' === this.getHorizontalScrollSetting();
-	}
-
-	getChildrenWidth( children ) {
-		let totalWidth = 0;
-
-		const parentContainer = children[ 0 ].parentNode,
-			computedStyles = getComputedStyle( parentContainer ),
-			gap = parseFloat( computedStyles.gap ) || 0; // Get the gap value or default to 0 if it's not specified
-
-		for ( let i = 0; i < children.length; i++ ) {
-			totalWidth += children[ i ].offsetWidth + gap;
-		}
-
-		return totalWidth;
-	}
-
-	setHorizontalScrollAlignment( event = {} ) {
-		if ( ! this.elements ) {
-			return;
-		}
-
-		const slider = this.elements.$headingContainer[ 0 ];
-
-		if ( this.isHorizontalScroll() ) {
-			const tabsDirection = this.getTabsDirection();
-
-			this.initialScrollPosition( slider, tabsDirection );
-		} else {
-			slider.style.setProperty( '--n-tabs-heading-justify-content', '' );
-		}
-	}
-
 	getTabsDirection() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			tabsDirection = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
-
-		return tabsDirection;
-	}
-
-	initialScrollPosition( slider, tabsDirection ) {
-		const isRTL = elementorCommon.config.isRTL;
-		switch ( tabsDirection ) {
-			case 'end':
-				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = isRTL ? -1 * this.getChildrenWidth( slider.children ) : this.getChildrenWidth( slider.children );
-				break;
-			default:
-				slider.style.setProperty( '--n-tabs-heading-justify-content', 'start' );
-				slider.scrollLeft = 0;
-		}
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'tabs_justify_horizontal', '', currentDevice );
 	}
 
 	getHorizontalScrollSetting() {
-		const currentDevice = elementorFrontend.getCurrentDeviceMode(),
-			horizontalScrollSetting = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
-
-		return horizontalScrollSetting;
+		const currentDevice = elementorFrontend.getCurrentDeviceMode();
+		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'horizontal_scroll', '', currentDevice );
 	}
 
-	setHorizontalTabTitleScrollValues( event ) {
-		const slider = this.elements.$headingContainer[ 0 ],
-			isActiveScroll = slider.classList.contains( 'e-scroll' ),
-			isHorizontalScrollActive = 'enable' === this.getHorizontalScrollSetting(),
-			headingContentIsWiderThanWrapper = slider.scrollWidth > slider.clientWidth;
+	isAccordionVersion() {
+		return 'contents' === this.elements.$headingContainer.css( 'display' );
+	}
 
-		if ( ! isActiveScroll || ! isHorizontalScrollActive || ! headingContentIsWiderThanWrapper ) {
+	setTouchMode() {
+		const widgetSelector = this.getSettings( 'selectors' ).widgetContainer;
+
+		if ( elementorFrontend.isEditMode() || 'resize' === event?.type ) {
+			const responsiveDevices = [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra' ],
+				currentDevice = elementorFrontend.getCurrentDeviceMode();
+
+			if ( -1 !== responsiveDevices.indexOf( currentDevice ) ) {
+				this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'true' );
+				return;
+			}
+		} else if ( 'ontouchstart' in window ) {
+			this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'true' );
 			return;
 		}
 
-		event.preventDefault();
-
-		const previousPositionX = parseFloat( slider.dataset.pageX ),
-			mouseMoveX = event.pageX - previousPositionX,
-			maximumScrollValue = 5,
-			stepLimit = 20;
-
-		let toScrollDistanceX = 0;
-
-		if ( stepLimit < mouseMoveX ) {
-			toScrollDistanceX = maximumScrollValue;
-		} else if ( stepLimit * -1 > mouseMoveX ) {
-			toScrollDistanceX = -1 * maximumScrollValue;
-		} else {
-			toScrollDistanceX = mouseMoveX;
-		}
-
-		slider.scrollLeft = slider.scrollLeft - toScrollDistanceX;
-		slider.classList.add( 'e-scroll-active' );
+		this.$element.find( widgetSelector ).attr( 'data-touch-mode', 'false' );
 	}
 }

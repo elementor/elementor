@@ -1,4 +1,5 @@
 import App from './app';
+import { __ } from '@wordpress/i18n';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -8,6 +9,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		this.editButtonLabel = __( 'Edit with AI', 'elementor' );
 		this.isLabelBlock = false;
 		this.additionalOptions = {};
+		this.context = {};
 
 		this.config = window.ElementorAiConfig;
 	}
@@ -33,6 +35,8 @@ export default class AiBehavior extends Marionette.Behavior {
 
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
+
+		window.elementorAiCurrentContext = this.getOption( 'context' );
 
 		ReactDOM.render( <App
 			type={ this.getOption( 'type' ) }
@@ -84,7 +88,12 @@ export default class AiBehavior extends Marionette.Behavior {
 			} );
 		}
 
-		this.$el.find( '.elementor-control-title' ).after(
+		let $wrap = this.$el.find( '.elementor-control-responsive-switchers' );
+		if ( ! $wrap.length ) {
+			$wrap = this.$el.find( '.elementor-control-title' );
+		}
+
+		$wrap.after(
 			$button,
 		);
 	}

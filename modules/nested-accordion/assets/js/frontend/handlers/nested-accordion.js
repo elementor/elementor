@@ -1,6 +1,5 @@
-import Base from 'elementor/assets/dev/js/frontend/handlers/base';
-
-const ANIMATION_DURATION = 500;
+import Base from 'elementor-frontend/handlers/base';
+import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboard-handler';
 
 export default class NestedAccordion extends Base {
 	constructor( ...args ) {
@@ -17,6 +16,7 @@ export default class NestedAccordion extends Base {
 				accordionItems: '.e-n-accordion-item',
 				accordionItemTitles: '.e-n-accordion-item-title',
 				accordionContent: '.e-n-accordion-item > .e-con',
+				accordionWrapper: '.e-n-accordion-item',
 			},
 			default_state: 'expanded',
 		};
@@ -40,6 +40,17 @@ export default class NestedAccordion extends Base {
 		if ( elementorFrontend.isEditMode() ) {
 			this.interlaceContainers();
 		}
+
+		this.injectKeyboardHandler();
+	}
+
+	injectKeyboardHandler() {
+		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
+			new NestedAccordionTitleKeyboardHandler( {
+				$element: this.$element,
+				toggleTitle: this.clickListener.bind( this ),
+			} );
+		}
 	}
 
 	interlaceContainers() {
@@ -61,8 +72,9 @@ export default class NestedAccordion extends Base {
 	clickListener( event ) {
 		event.preventDefault();
 
-		const accordionItem = event.currentTarget.parentElement,
-			settings = this.getSettings(),
+		const settings = this.getSettings(),
+			accordionItem = event?.currentTarget?.closest( settings.selectors.accordionWrapper ),
+			itemSummary = accordionItem.querySelector( settings.selectors.accordionItemTitles ),
 			accordionContent = accordionItem.querySelector( settings.selectors.accordionContent ),
 			{ max_items_expended: maxItemsExpended } = this.getElementSettings(),
 			{ $accordionTitles, $accordionItems } = this.elements;
@@ -72,9 +84,9 @@ export default class NestedAccordion extends Base {
 		}
 
 		if ( ! accordionItem.open ) {
-			this.prepareOpenAnimation( accordionItem, event.currentTarget, accordionContent );
+			this.prepareOpenAnimation( accordionItem, itemSummary, accordionContent );
 		} else {
-			this.closeAccordionItem( accordionItem, event.currentTarget );
+			this.closeAccordionItem( accordionItem, itemSummary );
 		}
 	}
 
@@ -88,11 +100,13 @@ export default class NestedAccordion extends Base {
 
 		animation = accordionItem.animate(
 			{ height: [ startHeight, endHeight ] },
-			{ duration: ANIMATION_DURATION },
+			{ duration: this.getAnimationDuration() },
 		);
 
 		animation.onfinish = () => this.onAnimationFinish( accordionItem, isOpen );
 		this.animations.set( accordionItem, animation );
+
+		accordionItem.querySelector( 'summary' )?.setAttribute( 'aria-expanded', isOpen );
 	}
 
 	closeAccordionItem( accordionItem, accordionItemTitle ) {
@@ -126,5 +140,10 @@ export default class NestedAccordion extends Base {
 		$titles.each( ( index, title ) => {
 			this.closeAccordionItem( $items[ index ], title );
 		} );
+	}
+
+	getAnimationDuration() {
+		const { size, unit } = this.getElementSettings( 'n_accordion_animation_duration' );
+		return size * ( 'ms' === unit ? 1 : 1000 );
 	}
 }

@@ -277,6 +277,10 @@ class Api {
 	public static function ajax_reset_api_data() {
 		check_ajax_referer( 'elementor_reset_library', '_nonce' );
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		self::get_info_data( true );
 
 		wp_send_json_success();

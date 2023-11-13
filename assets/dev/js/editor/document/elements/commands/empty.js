@@ -7,13 +7,6 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 
 			if ( data ) {
 				elementor.getPreviewView().addChildModel( data );
-
-				$e.store.dispatch(
-					$e.store.get( 'document/elements' ).actions.populate( {
-						documentId: elementor.documents.getCurrentId(),
-						elements: structuredClone( data ),
-					} ),
-				);
 			}
 
 			$e.internal( 'document/save/set-is-modified', { status: true } );
@@ -37,13 +30,6 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 		if ( args.force && elementor.elements ) {
 			elementor.elements.reset();
 			elementor.getPreviewContainer().panel.closeEditor();
-
-			$e.store.dispatch(
-				this.component.store.actions.empty( {
-					documentId: elementor.documents.getCurrentId(),
-				} ),
-			);
-
 			return;
 		}
 
@@ -52,19 +38,6 @@ export class Empty extends $e.modules.editor.document.CommandHistoryBase {
 
 	isDataChanged() {
 		return this.args.force;
-	}
-
-	static reducer( state, { payload } ) {
-		const { documentId } = payload;
-
-		if ( state[ documentId ] ) {
-			state[ documentId ] = {
-				document: {
-					id: 'document',
-					elements: [],
-				},
-			};
-		}
 	}
 }
 

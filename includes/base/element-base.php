@@ -321,6 +321,21 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Get panel presets.
+	 *
+	 * Used for displaying the widget in the panel multiple times, but with different defaults values,
+	 * icon, title etc.
+	 *
+	 * @since 3.16.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_panel_presets() {
+		return [];
+	}
+
+	/**
 	 * Add new child element.
 	 *
 	 * Register new child element to allow hierarchy.
@@ -683,7 +698,13 @@ abstract class Element_Base extends Controls_Stack {
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
-				$class_settings[ $setting_key ] = $setting;
+				if ( isset( $controls[ $setting_key ]['classes_dictionary'][ $setting ] ) ) {
+					$value = $controls[ $setting_key ]['classes_dictionary'][ $setting ];
+				} else {
+					$value = $setting;
+				}
+
+				$class_settings[ $setting_key ] = $value;
 			}
 		}
 
