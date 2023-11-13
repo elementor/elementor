@@ -38,6 +38,19 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_cached_usage() {
+		$cache_key = 'elementor_ai_usage';
+		$cache_time = 24 * HOUR_IN_SECONDS;
+		$usage = get_site_transient( $cache_key );
+
+		if ( ! $usage ) {
+			$usage = $this->get_usage();
+			set_site_transient( $cache_key, $usage, $cache_time );
+		}
+
+		return $usage;
+	}
+
 	/**
 	 * get_file_payload
 	 * @param $filename
@@ -483,7 +496,6 @@ class Ai extends Library {
 
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
-		$format = 'default';
 
 		$body = [
 			'prompt' => $data['prompt'],
@@ -500,7 +512,6 @@ class Ai extends Library {
 			switch ( $attachment['type'] ) {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
-					$format = 'json';
 
 					$body['json'] = [
 						'type' => 'elementor',
@@ -509,9 +520,8 @@ class Ai extends Library {
 					break;
 				case 'url':
 					$endpoint = 'generate/html-to-elementor';
-					$format = 'json';
 
-					$html = json_encode( $attachment['content'] );
+					$html = wp_json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
 
@@ -541,7 +551,7 @@ class Ai extends Library {
 			$body,
 			false,
 			'',
-			$format
+			'json'
 		);
 	}
 
