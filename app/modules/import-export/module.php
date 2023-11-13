@@ -45,6 +45,8 @@ class Module extends BaseModule {
 
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
+	const THIRD_PARTY_PLUGIN_ERROR = 'third-party-plugin-error';
+
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
@@ -549,6 +551,10 @@ class Module extends BaseModule {
 					break;
 			}
 		} catch ( \Error $e ) {
+			if ( $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 );
+			}
+
 			if ( isset( $this->import ) ) {
 				$this->import->finalize_import_session_option();
 			}
@@ -875,5 +881,36 @@ class Module extends BaseModule {
 		$document = $this->get_elementor_document( $page_id );
 
 		return $document ? $document->get_edit_url() : '';
+	}
+
+	/**
+	 * @param string $class
+	 *
+	 * @return bool
+	 */
+	private function is_third_party_plugin_class( $class ) {
+		$allowed_classes = [
+			'Elementor',
+			'ElementorPro',
+			'WP',
+		];
+
+		return ! $this->str_starts_with_any( $class, $allowed_classes );
+	}
+
+	/**
+	 * @param $haystack
+	 * @param array $needles
+	 *
+	 * @return bool
+	 */
+	private function str_starts_with_any( $haystack, array $needles ) {
+		foreach ( $needles as $needle ) {
+			if ( str_starts_with( $haystack, $needle ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
