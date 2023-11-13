@@ -10,7 +10,7 @@ import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { isTierAtLeast, TIERS } from '../tiers';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 import './item-header.scss';
 

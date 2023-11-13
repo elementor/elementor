@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useSettingsContext } from '../context/settings-context';
-import { isTierAtLeast, TIERS } from '../tiers';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 export const TYPE_CONNECT = 'connect';
 export const TYPE_PROMOTION = 'promotion';
@@ -23,6 +23,11 @@ export default function useKitCallToAction( kitAccessTier ) {
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessTier ], [ settings, kitAccessTier ] );
 
+	// Free user should see a generic "Pro" badge.
+	const badgeLabel = userAccessTier === TIERS.free
+		? settings.subscription_plans?.essential.label
+		: subscriptionPlan?.label;
+
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).
 		const isAuthorizeToApplyKit = isTierAtLeast( userAccessTier, kitAccessTier );
@@ -41,5 +46,5 @@ export default function useKitCallToAction( kitAccessTier ) {
 		return TYPE_APPLY;
 	}, [ settings, kitAccessTier ] );
 
-	return [ type, { subscriptionPlan } ];
+	return [ type, { subscriptionPlan, badgeLabel } ];
 }

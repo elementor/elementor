@@ -9,7 +9,7 @@ import { useSettingsContext } from '../context/settings-context';
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessTier );
+	const [ type, { subscriptionPlan, badgeLabel } ] = useKitCallToAction( props.model.accessTier );
 	const { settings } = useSettingsContext();
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 	const ctaText = settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan?.label || '' }`;
@@ -56,7 +56,7 @@ const KitListItem = ( props ) => {
 								className="e-kit-library__kit-item-subscription-plan-badge"
 								style={ { '--e-a-color-brand': subscriptionPlan.color } }
 							>
-								{ subscriptionPlan.label }
+								{ badgeLabel }
 							</Badge>
 						)
 					}

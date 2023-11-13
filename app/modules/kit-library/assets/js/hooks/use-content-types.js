@@ -1,7 +1,7 @@
 import ContentType from '../models/content-type';
 import { useQuery } from 'react-query';
 import { useSettingsContext } from '../context/settings-context';
-import { isTierAtLeast, TIERS } from '../tiers';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 export const KEY = 'content-types';
 
