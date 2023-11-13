@@ -1,5 +1,7 @@
 import { resolve } from 'path';
 
+process.env.DEBUG_PORT = '9222';
+
 function getGrepInvert() {
 	if ( '@default' === process.env.TEST_SUITE ) {
 		return [
@@ -45,6 +47,9 @@ export default {
 	fullyParallel: false,
 	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
 	use: {
+		launchOptions: {
+			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+		},
 		headless: process.env.CI ? true : false,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
