@@ -32,7 +32,7 @@ export const freeUserInformationExceededQuota80Mock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 80,
-			quota: 80,
+			quota: 100,
 		},
 	},
 } );
@@ -46,7 +46,7 @@ export const freeUserInformationExceededQuota95Mock = getJsonMock( {
 		usage: {
 			hasAiSubscription: false,
 			usedQuota: 95,
-			quota: 95,
+			quota: 100,
 		},
 	},
 } );
@@ -60,7 +60,7 @@ export const paidUserInformationExceededQuota80Mock = getJsonMock( {
 		usage: {
 			hasAiSubscription: true,
 			usedQuota: 80,
-			quota: 80,
+			quota: 100,
 		},
 	},
 } );
@@ -74,7 +74,7 @@ export const paidUserInformationExceededQuota95Mock = getJsonMock( {
 		usage: {
 			hasAiSubscription: true,
 			usedQuota: 95,
-			quota: 95,
+			quota: 100,
 		},
 	},
 } );
