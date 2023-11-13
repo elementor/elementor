@@ -48,10 +48,6 @@ class Module extends Base_Module {
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
-			if ( Utils::has_pro() ) {
-				return;
-			}
-
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
 				$manager->register( new Widgets\Pro_Widget_Promotion( [], [
 					'widget_name' => $widget_data['name'],

@@ -27,22 +27,6 @@ class Pro_Widget_Promotion extends Widget_Base {
 		return $this->widget_data['widget_title'];
 	}
 
-	public function get_categories() {
-		return [ 'pro' ];
-	}
-
-	public function get_icon() {
-		return 'eicon-wordpress';
-	}
-
-	public function get_keywords() {
-		return [ 'pro', 'widget' ];
-	}
-
-	public function get_help_url() {
-		return '';
-	}
-
 	public function on_import( $element ) {
 		$element['settings']['__should_import'] = true;
 
@@ -64,7 +48,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 	}
 
 	private function render_promotion() {
-		echo 'Pro Promotion';
+		echo 'Pro Promotion <a href="#" class="e-promotion-delete e-btn">Delete</a> | <a href="https://elementor.com/pro/" target="_blank">Upgrade</a>';
 	}
 
 	private function render_empty_content() {
