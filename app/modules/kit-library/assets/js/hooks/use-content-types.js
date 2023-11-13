@@ -14,15 +14,15 @@ export const KEY = 'content-types';
 export default function useContentTypes() {
 	const { settings } = useSettingsContext();
 
-	return useQuery( [ KEY, settings ], () => fetchContentTypes( settings.access_tier ) );
+	return useQuery( [ KEY, settings ], () => fetchContentTypes( settings ) );
 }
 
 /**
- * @param {string} tier - Current user tier.
+ * @param {Object} settings - Current settings
  *
  * @return {Promise.constructor} content types
  */
-function fetchContentTypes( tier ) {
+function fetchContentTypes( settings ) {
 	const contentTypes = [
 		{
 			id: 'page',
@@ -54,11 +54,20 @@ function fetchContentTypes( tier ) {
 		},
 	];
 
-	// BC: When there is no tier, fallback to legacy (Core/Pro dependency).
-	const currentTier = tier || TIERS[ 'essential-oct2023' ];
+	// BC: When user has old Pro version which doesn't override the `free` access_tier.
+	let userAccessTier = settings.access_tier;
+	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
+	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
+
+	// Fallback to the last access_tier before the new tiers were introduced.
+	// TODO: Remove when Pro with the new tiers is stable.
+	if ( shouldFallbackToLegacy ) {
+		userAccessTier = TIERS[ 'essential-oct2023' ];
+	}
+
 	const tierThatSupportsPopups = TIERS[ 'essential-oct2023' ];
 
-	if ( isTierAtLeast( currentTier, tierThatSupportsPopups ) ) {
+	if ( isTierAtLeast( userAccessTier, tierThatSupportsPopups ) ) {
 		contentTypes.push( {
 			id: 'popup',
 			label: __( 'Popups', 'elementor' ),
