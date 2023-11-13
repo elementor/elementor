@@ -64,6 +64,10 @@ const messagesContent = {
 		title: __( 'Couldn’t install the Kit', 'elementor' ),
 		text: __( 'You must have DOMDocument installed', 'elementor' ),
 	},
+	'third-party-plugin-error': {
+		title: __( 'Couldn’t install the Kit', 'elementor' ),
+		text: __( 'Other plugins ', 'elementor' ),
+	},
 };
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
