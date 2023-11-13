@@ -621,12 +621,12 @@ class Admin extends App {
 		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
 			$additions_actions['ai-library'] = [
 				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
-				'link'  => 'https://go.elementor.com/overview-ai-prompts-library/',
+				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
 			];
 		} else {
 			$additions_actions['ai'] = [
 				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
-				'link'  => 'https://go.elementor.com/overview-widget-ai/',
+				'link' => 'https://go.elementor.com/overview-widget-ai/',
 			];
 		}
 
