@@ -13,7 +13,7 @@
 		display: flex;
 		justify-content: space-between;
 		gap: 70px;
-		padding: 10px 30px;
+		padding: 20px 30px;
 		width: 100%;
 		overflow: hidden;
 
@@ -28,20 +28,14 @@
 .elementor-hotkeys {
 
 	&__col {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		width: 100%;
 	}
 
 	&__header{
-		padding: 10px 0;
 		font-weight: 500;
-	}
-
-	&__list {
-		padding: 10px 0;
-
-		@media (max-width: $editor-screen-md-max) {
-			padding: 0;
-		}
 	}
 
 	&__item {
