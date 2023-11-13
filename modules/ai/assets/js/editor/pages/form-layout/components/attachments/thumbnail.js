@@ -13,10 +13,20 @@ export const Thumbnail = ( props ) => {
 			const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
 			const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
 
-			const scaleFactor = Math.max( height, width );
+			const scaleFactor = Math.min( height, width );
 			const scale = THUMBNAIL_SIZE / scaleFactor;
 
 			previewRef.current.style.transform = `scale(${ scale })`;
+
+			const isImage = 'IMG' === previewRoot?.tagName;
+
+			if ( ! isImage ) {
+				// Center the preview
+				const top = height > width ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( height / width ) ) ) / 2 ) : 0;
+				const left = width > height ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( width / height ) ) ) / 2 ) : 0;
+
+				previewRef.current.style.transformOrigin = `${ left }px ${ top }px`;
+			}
 		}
 	}, [] );
 
