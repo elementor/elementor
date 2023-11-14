@@ -36,7 +36,7 @@ export const ThumbnailUrl = ( props ) => {
 			<IconButton
 				className="remove-attachment"
 				size="small"
-				aria-label={ __( 'Remove' ) }
+				aria-label={ __( 'Remove', 'elementor' ) }
 				disabled={ props.disabled }
 				onClick={ ( event ) => {
 					event.stopPropagation();
