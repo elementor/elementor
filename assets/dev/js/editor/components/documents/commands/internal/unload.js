@@ -11,6 +11,8 @@ export class Unload extends $e.modules.CommandInternalBase {
 
 			if ( document.id !== elementor.config.document.id ) {
 				reject();
+
+				return;
 			}
 
 			elementor.elements = [];
