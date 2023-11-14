@@ -269,4 +269,26 @@ class Test_Module extends Elementor_Test_Base {
 
 		$instance->assertEquals( $session_id, $import_sessions[0]['session_id'] );
 	}
+
+	public function test_is_native_class__returns_true_on_native_class() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_native_class = $import_export_module->is_native_class( 'Elementor\Test' );
+
+		// Assert
+		$this->assertTrue( $is_native_class );
+	}
+
+	public function test_is_native_class__returns_false_on_third_party() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_native_class = $import_export_module->is_native_class( 'ThirdParty\Test' );
+
+		// Assert
+		$this->assertFalse( $is_native_class );
+	}
 }

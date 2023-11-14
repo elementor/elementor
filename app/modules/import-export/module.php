@@ -45,9 +45,7 @@ class Module extends BaseModule {
 
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
-	const THIRD_PARTY_PLUGIN_ERROR = 'third-party-plugin-error';
-
-	const THIRD_PARTY_PLUGIN_ERROR = 'third-party-plugin-error';
+	const THIRD_PARTY_ERROR = 'third-party-error';
 
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
@@ -563,8 +561,8 @@ class Module extends BaseModule {
 				],
 			] );
 
-			if ( isset( $this->import ) && $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] ) ) {
-				wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 );
+			if ( isset( $this->import ) && ! $this->is_native_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
 			}
 
 			wp_send_json_error( $e->getMessage(), 500 );
@@ -891,25 +889,16 @@ class Module extends BaseModule {
 	 *
 	 * @return bool
 	 */
-	private function is_third_party_plugin_class( $class ) {
+	public function is_native_class( $class ) {
 		$allowed_classes = [
-			'Elementor',
-			'ElementorPro',
-			'WP',
+			'Elementor\\',
+			'ElementorPro\\',
+			'WP_',
+			'wp_',
 		];
 
-		return ! $this->str_starts_with_any( $class, $allowed_classes );
-	}
-
-	/**
-	 * @param $haystack
-	 * @param array $needles
-	 *
-	 * @return bool
-	 */
-	private function str_starts_with_any( $haystack, array $needles ) {
-		foreach ( $needles as $needle ) {
-			if ( str_starts_with( $haystack, $needle ) ) {
+		foreach ( $allowed_classes as $allowed_class ) {
+			if ( str_starts_with( $class, $allowed_class ) ) {
 				return true;
 			}
 		}
