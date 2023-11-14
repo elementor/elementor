@@ -43,7 +43,7 @@ class Module extends BaseModule {
 
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
-	const NO_DOMDOCUMENT_KEY = 'no-domdocument';
+	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
@@ -494,7 +494,7 @@ class Module extends BaseModule {
 
 	private function ensure_DOMDocument_exists() {
 		if ( ! class_exists( 'DOMDocument' ) ) {
-			throw new \Error( self::NO_DOMDOCUMENT_KEY );
+			throw new \Error( self::DOMDOCUMENT_MISSING );
 		}
 	}
 
