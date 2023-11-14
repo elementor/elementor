@@ -44,6 +44,8 @@ const FormMedia = ( {
 	controlView,
 	additionalOptions,
 	maybeRenderUpgradeChip,
+	hasSubscription,
+	usagePercentage,
 } ) => {
 	const [ state, dispatch ] = useReducer( reducer, initialData );
 
@@ -66,6 +68,8 @@ const FormMedia = ( {
 
 	const globalSettings = {
 		initialImageType: additionalOptions?.defaultImageType || '',
+		hasSubscription,
+		usagePercentage,
 	};
 
 	const globalActions = {
@@ -126,6 +130,8 @@ FormMedia.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	maybeRenderUpgradeChip: PropTypes.func,
+	hasSubscription: PropTypes.bool,
+	usagePercentage: PropTypes.number,
 };
 
 export default FormMedia;
