@@ -48,16 +48,28 @@ class Pro_Widget_Promotion extends Widget_Base {
 	}
 
 	private function render_promotion() {
-		echo '<div class="e-widget-pro">
-				<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> Pro</span>
-				<p>
-				<img src="http://dev.elementor.local/wp-content/plugins/elementor/assets/images/go-pro.svg" loading="lazy">
-				This result includes the Elementor Pro {{widget name}} widget that\'s not available in your plan. Upgrade to use all the widgets in this result.</p>
-				<div class="e-widget-pro-actions">
-					<a href="#" class="e-btn e-btn-txt e-promotion-delete">Delete</a>
-					<a href="https://go.elementor.com/go-pro-element-pro/" target="_blank" class="e-btn go-pro elementor-clickable">Upgrade</a>
-				</div>
-			</div>';
+		?>
+		<div class="e-widget-pro">
+			<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
+			<p>
+				<img src="<?php echo $this->get_promotion_image_url(); ?>" loading="lazy" alt="Go Pro">
+				<?php
+					echo sprintf(
+						esc_html__( 'This result includes the Elementor Pro %s widget that\'s not available in your plan. Upgrade to use all the widgets in this result.', 'elementor' ),
+						$this->widget_data['widget_title']
+					);
+				?>
+			</p>
+			<div class="e-widget-pro-actions">
+				<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Delete', 'elementor' ); ?></a>
+				<a href="https://go.elementor.com/go-pro-element-pro/" target="_blank" class="e-btn go-pro elementor-clickable"><?php echo esc_html__( 'Upgrade', 'elementor' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function get_promotion_image_url(): string {
+		return ELEMENTOR_ASSETS_URL . 'images/go-pro.svg';
 	}
 
 	private function render_empty_content() {
