@@ -551,10 +551,6 @@ class Module extends BaseModule {
 					break;
 			}
 		} catch ( \Error $e ) {
-			if ( $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] ) ) {
-				wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 );
-			}
-
 			if ( isset( $this->import ) ) {
 				$this->import->finalize_import_session_option();
 			}
@@ -564,6 +560,11 @@ class Module extends BaseModule {
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
+
+			if ( isset( $this->import ) && $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 );
+			}
+
 			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
