@@ -8,7 +8,6 @@ const useUserInfo = () => {
 		is_connected: false,
 		is_get_started: false,
 		connect_url: '',
-		builder_url: '',
 		usage: {
 			hasAiSubscription: false,
 			quota: 0,
