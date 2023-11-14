@@ -22,3 +22,52 @@
 		}
 	}
 }
+
+// Widget Pro Promotion
+.e-widget-pro-promotion {
+
+	.elementor-widget-container {
+		border: 2px dashed var(--e-a-border-color-bold);
+		background-color: rgba(255, 255, 255, 0.5);
+		padding: 20px;
+	}
+
+	.e-widget-pro {
+		max-width: 600px;
+		margin: auto;
+	}
+
+	.e-badge {
+		border: 1px solid var(--e-a-color-accent);
+		color: var(--e-a-color-accent);
+		background: var(--e-a-color-white);
+		border-radius: 100px;
+		padding: 4px 12px;
+		font-size: 0.8em;
+	}
+
+	p {
+		margin-block-start: 1em;
+		margin-block-end: 1em;
+		text-align: center;
+
+		img {
+			display: block;
+			margin: 0 auto 20px;
+		}
+	}
+
+	.e-widget-pro-actions {
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+
+		a {
+			font-size: 14px;
+
+			&.go-pro {
+				color: var(--e-a-color-white);
+			}
+		}
+	}
+}

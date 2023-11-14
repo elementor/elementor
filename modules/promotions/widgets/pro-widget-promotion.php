@@ -48,7 +48,16 @@ class Pro_Widget_Promotion extends Widget_Base {
 	}
 
 	private function render_promotion() {
-		echo 'Pro Promotion <a href="#" class="e-promotion-delete e-btn">Delete</a> | <a href="https://elementor.com/pro/" target="_blank">Upgrade</a>';
+		echo '<div class="e-widget-pro">
+				<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> Pro</span>
+				<p>
+				<img src="http://dev.elementor.local/wp-content/plugins/elementor/assets/images/go-pro.svg" loading="lazy">
+				This result includes the Elementor Pro {{widget name}} widget that\'s not available in your plan. Upgrade to use all the widgets in this result.</p>
+				<div class="e-widget-pro-actions">
+					<a href="#" class="e-btn e-btn-txt e-promotion-delete">Delete</a>
+					<a href="https://go.elementor.com/go-pro-element-pro/" target="_blank" class="e-btn go-pro elementor-clickable">Upgrade</a>
+				</div>
+			</div>';
 	}
 
 	private function render_empty_content() {
