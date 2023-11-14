@@ -551,12 +551,12 @@ class Module extends BaseModule {
 					break;
 			}
 		} catch ( \Error $e ) {
-			if ( isset( $this->import ) ) {
-				$is_third_party_plugin_error = $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] );
+			if ( $this->is_third_party_plugin_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 );
+			}
 
-				$is_third_party_plugin_error ?
-					wp_send_json_error( self::THIRD_PARTY_PLUGIN_ERROR, 500 ) :
-					$this->import->finalize_import_session_option();
+			if ( isset( $this->import ) ) {
+				$this->import->finalize_import_session_option();
 			}
 
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
