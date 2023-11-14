@@ -13,7 +13,6 @@ import PromptAction from '../../components/prompt-action';
 import PromptErrorMessage from '../../components/prompt-error-message';
 import useTextPrompt from '../../hooks/use-text-prompt';
 import { textAutocomplete, textareaAutocomplete, vocalTones, translateLanguages } from '../../actions-data';
-import PromptCredits from '../../components/prompt-credits';
 import {
 	ACTION_TYPES,
 	useSubscribeOnPromptHistoryAction,
@@ -57,7 +56,7 @@ const FormText = (
 		setControlValue,
 		additionalOptions,
 		credits,
-		usagePercentage,
+		children,
 	},
 ) => {
 	const initialValue = getControlValue() === additionalOptions?.defaultValue ? '' : getControlValue();
@@ -127,6 +126,8 @@ const FormText = (
 		<>
 			{ error && <PromptErrorMessage error={ error } onRetry={ lastRun.current } sx={ { mb: 2.5 } } /> }
 
+			{ children }
+
 			{ ! data.result && (
 				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { mb: 2.5 } }>
@@ -148,8 +149,6 @@ const FormText = (
 					) }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" justifyContent="flex-end" flexGrow={ 1 }>
 							<GenerateButton>
 								{ __( 'Generate text', 'elementor' ) }
@@ -193,8 +192,6 @@ const FormText = (
 					</Stack>
 
 					<Stack direction="row" alignItems="center" sx={ { my: 1 } }>
-						<PromptCredits usagePercentage={ usagePercentage } />
-
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ reset }>
 								{ __( 'New prompt', 'elementor' ) }
@@ -219,6 +216,7 @@ FormText.propTypes = {
 	additionalOptions: PropTypes.object,
 	credits: PropTypes.number,
 	usagePercentage: PropTypes.number,
+	children: PropTypes.node,
 };
 
 export default FormText;

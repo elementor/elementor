@@ -113,9 +113,9 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => static::LAYOUT_EXPERIMENT,
 			'title' => esc_html__( 'Build with AI', 'elementor' ),
+			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'hidden' => true,
 			'dependencies' => [
 				'container',
 			],
@@ -148,6 +148,8 @@ class Module extends BaseModule {
 			[
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
+				// Use a cached version, don't call the API on every editor load.
+				'usage' => $this->get_ai_app()->get_cached_usage(),
 			]
 		);
 
@@ -707,8 +709,8 @@ class Module extends BaseModule {
 
 		$app = $this->get_ai_app();
 
-		if ( empty( $data['prompt'] ) ) {
-			throw new \Exception( 'Missing prompt' );
+		if ( empty( $data['prompt'] ) && empty( $data['attachments'] ) ) {
+			throw new \Exception( 'Missing prompt / attachments' );
 		}
 
 		if ( ! $app->is_connected() ) {
@@ -716,14 +718,18 @@ class Module extends BaseModule {
 		}
 
 		$result = $app->generate_layout(
-			$data['prompt'],
-			$this->prepare_generate_layout_context(),
-			$data['variationType'],
-			$data['prevGeneratedIds']
+			$data,
+			$this->prepare_generate_layout_context()
 		);
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			$message = $result->get_error_message();
+
+			if ( is_array( $message ) ) {
+				$message = implode( ', ', $message );
+			}
+
+			throw new \Exception( $message );
 		}
 
 		$template = $result['text']['elements'][0] ?? null;
@@ -755,7 +761,11 @@ class Module extends BaseModule {
 			throw new \Exception( 'not_connected' );
 		}
 
-		$result = $app->get_layout_prompt_enhanced( $data['prompt'] );
+		$result = $app->get_layout_prompt_enhanced(
+			$data['prompt'],
+			$data['enhance_type'],
+			$this->prepare_generate_layout_context()
+		);
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
