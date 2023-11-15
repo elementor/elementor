@@ -732,11 +732,36 @@ class Module extends BaseModule {
 			throw new \Exception( $message );
 		}
 
-		$template = $result['text']['elements'][0] ?? null;
+		$elements = $result['text']['elements'] ?? [];
 		$base_template_id = $result['baseTemplateId'] ?? null;
 
-		if ( empty( $template ) || ! is_array( $template ) ) {
+		if ( empty( $elements ) || ! is_array( $elements ) ) {
 			throw new \Exception( 'unknown_error' );
+		}
+
+		if ( 1 === count( $elements ) ) {
+			$template = $elements[0];
+		} else {
+			$template = [
+				'elType' => 'container',
+				'elements' => $elements,
+				'settings' => [
+					'content_width' => 'full',
+					'flex_gap' => [
+						'column' => '0',
+						'row' => '0',
+						'unit' => 'px',
+					],
+					'padding' => [
+						'unit' => 'px',
+						'top' => '0',
+						'right' => '0',
+						'bottom' => '0',
+						'left' => '0',
+						'isLinked' => true,
+					],
+				],
+			];
 		}
 
 		return [
