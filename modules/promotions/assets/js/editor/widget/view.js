@@ -1,7 +1,6 @@
 const WidgetView = elementor.modules.elements.views.Widget;
 
 export default class View extends WidgetView {
-
 	events() {
 		return {
 			'click .e-promotion-delete': 'onRemoveButtonClick',
@@ -24,7 +23,7 @@ export default class View extends WidgetView {
 					'save' !== group.name &&
 					'general' !== group.name
 				);
-			}
+			},
 		);
 	}
 }

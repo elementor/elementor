@@ -1,5 +1,4 @@
 export default class Module extends elementorModules.editor.utils.Module {
-
 	onElementorInit() {
 		if ( ! elementor.config?.promotionWidgets ) {
 			return;
