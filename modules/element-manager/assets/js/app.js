@@ -248,7 +248,7 @@ export const App = () => {
 					maxWidth: '800px',
 				} }
 			>
-				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance', 'elementor' ) }
+				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance.', 'elementor' ) }
 				{ ' ' }
 				<a href="https://go.elementor.com/wp-dash-element-manager/" rel={ 'noreferrer' } target={ '_blank' }>
 					{ __( 'Learn More', 'elementor' ) }
