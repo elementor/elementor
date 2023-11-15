@@ -1,11 +1,8 @@
 <?php
 namespace Elementor\Modules\ElementManager;
 
-use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Plugin;
-use Elementor\User;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
