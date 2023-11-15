@@ -19,6 +19,7 @@ import {
 	FlexItem,
 	Flex,
 	Snackbar,
+	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -26,6 +27,7 @@ import {
 	saveDisabledWidgets,
 	getAdminAppData,
 	getUsageWidgets,
+	markNoticeViewed,
 } from './api';
 
 export const App = () => {
@@ -48,6 +50,7 @@ export const App = () => {
 	} );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ isSnackbarOpen, setIsSnackbarOpen ] = useState( false );
+	const [ noticeData, setNoticeData ] = useState( null );
 
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -186,6 +189,7 @@ export const App = () => {
 		const onLoading = async () => {
 			const appData = await getAdminAppData();
 
+			setNoticeData( appData.notice_data );
 			setWidgetsDisabled( appData.disabled_elements );
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
@@ -250,6 +254,24 @@ export const App = () => {
 					{ __( 'Learn More', 'elementor' ) }
 				</a>
 			</p>
+
+			{ ! noticeData.is_viewed && (
+				<p
+					style={ {
+						margin: '20px -15px',
+					} }
+				>
+					<Notice
+						onRemove={ () => {
+							markNoticeViewed( noticeData.notice_id );
+							setNoticeData( { ...noticeData, is_viewed: true } );
+						} }
+						status="warning"
+					>
+						<strong>{ __( 'Before you continue:' , 'elementor' ) }</strong> { __( 'Deactivating widgets here will remove them from both the Elementor Editor and your website, which can cause changes to your overall layout, design and what visitors see.', 'elementor' ) }
+					</Notice>
+				</p>
+			) }
 			<Panel>
 				<PanelBody>
 					<Flex
@@ -498,7 +520,15 @@ export const App = () => {
 							marginBlockStart: '0',
 						} }
 					>
-						{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
+						{ __( 'Turning widgets off will hide them from the editor panel, and can potentially affect your layout or front-end.', 'elementor' ) }
+						<span
+							style={ {
+								display: 'block',
+								marginTop: '20px',
+							} }
+						>
+							{ __( 'If you’re adding widgets back in, enjoy them!', 'elementor' ) }
+						</span>
 					</p>
 					<ButtonGroup
 						style={ {
