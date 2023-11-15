@@ -165,12 +165,12 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_should_show_revert_section( $has_pro, $import_session, $should_show ) {
 		// Arrange
 		$mock_module = $this->getMockBuilder( Module::class )
-			->setMethods( [ 'has_pro' ] )
-			->getMock();
+		                    ->setMethods( [ 'has_pro' ] )
+		                    ->getMock();
 
 		$mock_module->expects( $this->once() )
-			->method( 'has_pro' )
-			->willReturn( $has_pro );
+		            ->method( 'has_pro' )
+		            ->willReturn( $has_pro );
 
 		// Act
 		$should_show_revert_section = $mock_module->should_show_revert_section( $import_session );
@@ -268,5 +268,27 @@ class Test_Module extends Elementor_Test_Base {
 		$instance->assert_array_have_keys( $import_session_keys, $import_sessions[0] );
 
 		$instance->assertEquals( $session_id, $import_sessions[0]['session_id'] );
+	}
+
+	public function test_is_native_class__returns_true_on_native_class() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_native_class = $import_export_module->is_native_class( 'Elementor\Test' );
+
+		// Assert
+		$this->assertTrue( $is_native_class );
+	}
+
+	public function test_is_native_class__returns_false_on_third_party() {
+		// Arrange
+		$import_export_module = new Module();
+
+		// Act
+		$is_native_class = $import_export_module->is_native_class( 'ThirdParty\Test' );
+
+		// Assert
+		$this->assertFalse( $is_native_class );
 	}
 }

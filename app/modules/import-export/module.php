@@ -43,6 +43,8 @@ class Module extends BaseModule {
 
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
+	const THIRD_PARTY_ERROR = 'third-party-error';
+
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
@@ -427,9 +429,9 @@ class Module extends BaseModule {
 	private function register_actions() {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
-				isset( $_POST['action'] ) &&
-				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
-				current_user_can( 'manage_options' )
+				 isset( $_POST['action'] ) &&
+				 wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
+				 current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
 			}
@@ -549,6 +551,11 @@ class Module extends BaseModule {
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
+
+			if ( isset( $this->import ) && ! $this->is_native_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
+			}
+
 			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
@@ -866,5 +873,27 @@ class Module extends BaseModule {
 		$document = $this->get_elementor_document( $page_id );
 
 		return $document ? $document->get_edit_url() : '';
+	}
+
+	/**
+	 * @param string $class
+	 *
+	 * @return bool
+	 */
+	public function is_native_class( $class ) {
+		$allowed_classes = [
+			'Elementor\\',
+			'ElementorPro\\',
+			'WP_',
+			'wp_',
+		];
+
+		foreach ( $allowed_classes as $allowed_class ) {
+			if ( str_starts_with( $class, $allowed_class ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
