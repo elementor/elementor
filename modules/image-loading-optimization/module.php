@@ -52,13 +52,9 @@ class Module extends BaseModule {
 				'<code>fetchpriority="high"</code>',
 				'<code>loading="lazy"</code>'
 			),
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.17.0',
-			],
 			'generator_tag' => true,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
 

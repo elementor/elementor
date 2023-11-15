@@ -14,8 +14,8 @@
 		.elementor-control-dynamic-switcher {
 			position: absolute;
 			top: 0;
+			@include end(0);
 			z-index: $first-layer;
-			#{$end}: 0;
 		}
 	}
 

@@ -51,7 +51,7 @@ const useScreenshots = ( { onData } ) => {
 		};
 
 		const promises = screenshotsData.map( ( { generate } ) => {
-			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId );
+			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId || '' );
 
 			const requestBody = {
 				prompt,
