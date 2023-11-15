@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import { setStatusFeedback } from '../api';
 
-const normalizeResponse = ( { text, response_id: responseId, usage, images } ) => {
+const normalizeResponse = ( { text, response_id: responseId, usage, images, ...optional } ) => {
 	const creditsData = usage ? ( usage.quota - usage.usedQuota ) : 0;
 	const credits = Math.max( creditsData, 0 );
 	const result = text || images;
 
-	return {
+	const normalized = {
 		result,
 		responseId,
 		credits,
 	};
+
+	if ( optional.base_template_id ) {
+		normalized.baseTemplateId = optional.base_template_id;
+	}
+
+	return normalized;
 };
 
 const usePrompt = ( fetchData, initialState ) => {
@@ -46,10 +52,23 @@ const usePrompt = ( fetchData, initialState ) => {
 		setIsLoading( false );
 	};
 
+	const setResult = ( result, responseId = null ) => {
+		const updatedResult = { ...data };
+
+		updatedResult.result = result;
+
+		if ( responseId ) {
+			updatedResult.responseId = responseId;
+		}
+
+		setData( updatedResult );
+	};
+
 	return {
 		isLoading,
 		error,
 		data,
+		setResult,
 		reset,
 		send,
 		sendUsageData,

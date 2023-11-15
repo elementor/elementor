@@ -374,6 +374,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.17.0',
+			],
 			'generator_tag' => true,
 		] );
 
@@ -445,18 +449,6 @@ class Manager extends Base_Object {
 			'dependencies' => [
 				'container',
 			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'rating',
-			'title' => esc_html__( 'Rating', 'elementor' ),
-			/* translators: %1$s Link open tag, %2$s: Link close tag. */
-			'description' => sprintf( esc_html__(
-				'Display author-assigned star ratings within your content in most customizable way and better performance. %1$sLearn more%2$s',
-				'elementor'
-			), '<a target="_blank" href="http://go.elementor.com/widget-rating">', '</a>'),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'hidden' => true,
 		] );
 	}
 
