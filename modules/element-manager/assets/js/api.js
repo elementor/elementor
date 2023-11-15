@@ -62,7 +62,7 @@ export const getUsageWidgets = async () => {
 	}
 };
 
-export const markNoticeViewed = async ( notice_id  ) => {
+export const markNoticeViewed = async ( noticeId ) => {
 	try {
 		const response = await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
@@ -71,7 +71,7 @@ export const markNoticeViewed = async ( notice_id  ) => {
 			},
 			body: new URLSearchParams( {
 				action: 'elementor_set_admin_notice_viewed',
-				notice_id: notice_id,
+				notice_id: noticeId,
 			} ),
 		} );
 

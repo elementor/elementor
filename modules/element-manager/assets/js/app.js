@@ -268,7 +268,7 @@ export const App = () => {
 						} }
 						status="warning"
 					>
-						<strong>{ __( 'Before you continue:' , 'elementor' ) }</strong> { __( 'Deactivating widgets here will remove them from both the Elementor Editor and your website, which can cause changes to your overall layout, design and what visitors see.', 'elementor' ) }
+						<strong>{ __( 'Before you continue:', 'elementor' ) }</strong> { __( 'Deactivating widgets here will remove them from both the Elementor Editor and your website, which can cause changes to your overall layout, design and what visitors see.', 'elementor' ) }
 					</Notice>
 				</p>
 			) }
