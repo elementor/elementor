@@ -41,6 +41,7 @@ class Ajax {
 				'name' => $widget->get_name(),
 				'plugin' => $plugin_name,
 				'title' => $widget->get_title(),
+				'icon' => $widget->get_icon(),
 			];
 		}
 
