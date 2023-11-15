@@ -165,12 +165,12 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_should_show_revert_section( $has_pro, $import_session, $should_show ) {
 		// Arrange
 		$mock_module = $this->getMockBuilder( Module::class )
-		                    ->setMethods( [ 'has_pro' ] )
-		                    ->getMock();
+	        ->setMethods( [ 'has_pro' ] )
+	        ->getMock();
 
 		$mock_module->expects( $this->once() )
-		            ->method( 'has_pro' )
-		            ->willReturn( $has_pro );
+	        ->method( 'has_pro' )
+	        ->willReturn( $has_pro );
 
 		// Act
 		$should_show_revert_section = $mock_module->should_show_revert_section( $import_session );
