@@ -25,7 +25,7 @@ class Module extends Module_Base {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		$is_tests = Utils::is_elementor_tests();
-		$is_v2_experiment_on = Plugin::$instance->experiments->is_feature_active( 'editor_v2' )
+		$is_v2_experiment_on = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
 		if ( ! $is_v2_experiment_on && ! $is_tests ) {
 			return;
 		}
