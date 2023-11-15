@@ -384,6 +384,7 @@ export const App = () => {
 												</span>
 											</Button>
 										</th>
+										<th>{ __( 'Status', 'elementor' ) }</th>
 										<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
 											<Button
 												href={ '#' }
@@ -400,20 +401,20 @@ export const App = () => {
 											</Button>
 										</th>
 										<th>{ __( 'Plugin', 'elementor' ) }</th>
-										<th>{ __( 'Status', 'elementor' ) }</th>
 									</tr>
 								</thead>
 								<tbody>
 									{ sortedAndFilteredWidgets.map( ( widget ) => {
 										return (
 											<tr key={ widget.name }>
-												<td>{ widget.title }</td>
 												<td>
-													<UsageTimesColumn
-														widgetName={ widget.name }
-													/>
+													<i
+														style={ {
+															marginInlineEnd: '5px',
+														} }
+														className={ `${ widget.icon }` }
+													></i> { widget.title }
 												</td>
-												<td>{ widget.plugin }</td>
 												<td>
 													<ToggleControl
 														checked={ ! widgetsDisabled.includes( widget.name ) }
@@ -427,6 +428,12 @@ export const App = () => {
 														} }
 													/>
 												</td>
+												<td>
+													<UsageTimesColumn
+														widgetName={ widget.name }
+													/>
+												</td>
+												<td>{ widget.plugin }</td>
 											</tr>
 										);
 									} ) }
@@ -474,18 +481,23 @@ export const App = () => {
 											<th className={ `manage-column` }>
 												<span>{ __( 'Element', 'elementor' ) }</span>
 											</th>
+											<th>{ __( 'Status', 'elementor' ) }</th>
 											<th>{ __( 'Usage', 'elementor' ) }</th>
 											<th>{ __( 'Plugin', 'elementor' ) }</th>
-											<th>{ __( 'Status', 'elementor' ) }</th>
 										</tr>
 									</thead>
 									<tbody>
 										{ promotionWidgets.map( ( widget ) => {
 											return (
 												<tr key={ widget.name }>
-													<td>{ widget.title }</td>
-													<td></td>
-													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
+													<td>
+														<i
+															style={ {
+																marginInlineEnd: '5px',
+															} }
+															className={ `${ widget.icon }` }
+														></i> { widget.title }
+													</td>
 													<td>
 														<ToggleControl
 															__nextHasNoMarginBottom={ true }
@@ -493,6 +505,8 @@ export const App = () => {
 															disabled={ true }
 														/>
 													</td>
+													<td></td>
+													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
 												</tr>
 											);
 										} ) }
