@@ -49,7 +49,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 
 	private function render_promotion() {
 		?>
-		<div class="e-widget-pro">
+		<div class="e-container">
 			<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
 			<p>
 				<img src="<?php echo esc_url( $this->get_promotion_image_url() ); ?>" loading="lazy" alt="Go Pro">
@@ -60,7 +60,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 					);
 				?>
 			</p>
-			<div class="e-widget-pro-actions">
+			<div class="e-actions">
 				<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Delete', 'elementor' ); ?></a>
 				<a href="https://go.elementor.com/go-pro-element-pro/" target="_blank" class="e-btn go-pro elementor-clickable"><?php echo esc_html__( 'Upgrade', 'elementor' ); ?></a>
 			</div>
