@@ -52,11 +52,11 @@ class Pro_Widget_Promotion extends Widget_Base {
 		<div class="e-widget-pro">
 			<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
 			<p>
-				<img src="<?php echo $this->get_promotion_image_url(); ?>" loading="lazy" alt="Go Pro">
+				<img src="<?php echo esc_url( $this->get_promotion_image_url() ); ?>" loading="lazy" alt="Go Pro">
 				<?php
 					echo sprintf(
 						esc_html__( 'This result includes the Elementor Pro %s widget that\'s not available in your plan. Upgrade to use all the widgets in this result.', 'elementor' ),
-						$this->widget_data['widget_title']
+						esc_html( $this->widget_data['widget_title'] )
 					);
 				?>
 			</p>
