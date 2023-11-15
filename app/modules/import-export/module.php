@@ -429,9 +429,9 @@ class Module extends BaseModule {
 	private function register_actions() {
 		add_action( 'admin_init', function() {
 			if ( wp_doing_ajax() &&
-				 isset( $_POST['action'] ) &&
-				 wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
-				 current_user_can( 'manage_options' )
+				isset( $_POST['action'] ) &&
+				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
+				current_user_can( 'manage_options' )
 			) {
 				$this->maybe_handle_ajax();
 			}
