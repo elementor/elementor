@@ -1,4 +1,4 @@
-name: Increment Patch Version 
+name: Increment Patch Version
 description: On a GA release already exists, the patch version should be incremented by 1.
 
 runs:
@@ -8,19 +8,20 @@ runs:
       run: |
           # Get package latest version
           current_package_version=$(node -p "require('./package.json').version")
+          echo "current_package_version=$current_package_version"
           major_minor=$(echo "$current_package_version" | cut -d'.' -f1-2)
 
           # This CLI command is used to retrieve the most recent version number from the Git remote repository tags that match a specific major and minor version.
           # The command is broken down as follows:
           # git ls-remote --tags: This command lists the references to tags in the remote Git repository.
           # grep "$major_minor": The grep command filters the output to match the specified $major_minor pattern, which represents the desired major and minor version numbers.
-          # awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}': The awk command is used to extract the version numbers that match the pattern "x.x.x". It splits each line using the / delimiter and checks if the last field ($NF) matches the pattern. If it does, the version number is printed. 
+          # awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}': The awk command is used to extract the version numbers that match the pattern "x.x.x". It splits each line using the / delimiter and checks if the last field ($NF) matches the pattern. If it does, the version number is printed.
           # e.g refs/tags/3.13.1 -> 3.13.1
           # sort -V: The sort command is used to sort the version numbers in numerical order (-V flag ensures the sorting is done correctly for version numbers).
           # tail -1: Finally, the tail command retrieves the last (most recent) version number from the sorted list.
-          
-          latest_ga_version=$(git ls-remote --tags | grep "$major_minor" | awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}' | sort -V | tail -1)
 
+          latest_ga_version=$(git ls-remote --tags | grep "refs/tags/$major_minor" | awk -F/ '{if ($NF ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $NF}' | sort -V | tail -1)
+          echo "latest_ga_version is=$latest_ga_version"
           # Exit with status code 0 if no latest version is found
           if [ -z "$latest_ga_version" ]; then
             exit 0
@@ -40,5 +41,7 @@ runs:
           PACKAGE_VERSION=${updated_version}-ga-rc
 
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION is=$PACKAGE_VERSION"
           echo "CLEAN_PACKAGE_VERSION=${updated_version}" >> $GITHUB_ENV
+          echo "CLEAN_PACKAGE_VERSION is=$CLEAN_PACKAGE_VERSION"
 

@@ -22,16 +22,16 @@ export async function testTabIsVisibleInAccordionView( page: Page, editor: Edito
 
 	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, '1' );
+	await clickTab( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, '2' );
+	await clickTab( page, 2 );
 	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, '1' );
+	await clickTab( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, '0' );
+	await clickTab( page, 0 );
 	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
 	await expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 }

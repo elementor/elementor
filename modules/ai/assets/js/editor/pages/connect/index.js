@@ -1,11 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { Stack, Button, Typography, Link } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { AIIcon } from '@elementor/icons';
 
 const Connect = ( { connectUrl, onSuccess } ) => {
 	const approveButtonRef = useRef();
 
 	useEffect( () => {
+		// On local dev (as a standalone app), the connect lib is not loaded.
+		if ( ! jQuery.fn.elementorConnect ) {
+			return;
+		}
+
 		jQuery( approveButtonRef.current ).elementorConnect( {
 			success: ( _, data ) => onSuccess( data ),
 			error: () => {
@@ -15,8 +22,8 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 	}, [] );
 
 	return (
-		<Stack alignItems="center" gap={ 5 }>
-			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 3 } } />
+		<Stack alignItems="center" gap={ 2 }>
+			<AIIcon sx={ { color: 'text.primary', fontSize: '60px', mb: 1 } } />
 
 			<Typography variant="h4" sx={ { color: 'text.primary' } }>{ __( 'Step into the future with Elementor AI', 'elementor' ) }</Typography>
 
@@ -35,7 +42,7 @@ const Connect = ( { connectUrl, onSuccess } ) => {
 				href={ connectUrl }
 				variant="contained"
 				sx={ {
-					mt: 3,
+					mt: 1,
 					'&:hover': {
 						color: 'primary.contrastText',
 					},

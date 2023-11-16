@@ -1,4 +1,6 @@
 import { Box, Button, IconButton, Tooltip as TooltipBase, withDirection } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { default as CopySvgIcon } from '../../../icons/copy-icon';
 import { default as EditSvgIcon } from '../../../icons/edit-icon';
 import DownloadIcon from '../../../icons/download-icon';
@@ -14,7 +16,7 @@ const Tooltip = ( props ) => {
 			PopperProps={ {
 				sx: {
 					'&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
-						mt: 3,
+						mt: 1,
 					},
 				},
 			} }
@@ -25,7 +27,7 @@ const Tooltip = ( props ) => {
 
 const ImageActions = ( { children, ...props } ) => {
 	return (
-		<Box display="flex" justifyContent="space-between" alignItems="center" width="100%" gap={ 3 } { ...props }>
+		<Box display="flex" justifyContent="space-between" alignItems="center" width="100%" gap={ 1 } { ...props }>
 			{ children }
 		</Box>
 	);
@@ -64,7 +66,7 @@ const EditImage = ( props ) => (
 const EditIcon = ( { sx = {}, ...props } ) => (
 	<Tooltip title={ __( 'Edit', 'elementor' ) }>
 		<IconButton
-			sx={ { mr: -4, ml: 2, color: 'common.white', '&:hover': { color: 'common.white' }, ...sx } }
+			sx={ { mr: -1.5, ml: 0.5, color: 'common.white', '&:hover': { color: 'common.white' }, ...sx } }
 			{ ...props }
 		>
 			<StyledEditSvgIcon />
@@ -96,7 +98,7 @@ ZoomIcon.propTypes = {
 const CopyIcon = ( { sx = {}, ...props } ) => (
 	<Tooltip title={ __( 'Copy prompt', 'elementor' ) }>
 		<IconButton
-			sx={ { mr: -4, ml: 2, color: 'common.white', '&:hover': { color: 'common.white' }, ...sx } }
+			sx={ { mr: -1.5, ml: 0.5, color: 'common.white', '&:hover': { color: 'common.white' }, ...sx } }
 			{ ...props }
 		>
 
