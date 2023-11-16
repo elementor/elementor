@@ -171,9 +171,9 @@ export default class ExperimentsMessages {
 	showDependenciesDialog( experimentId ) {
 		const experiment = this.getExperimentData( experimentId ),
 			experimentName = experiment.title,
-			dependanciesArray = this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ),
-			glue = 1 < dependanciesArray.length ? ' ' : '',
-			dialogMessage = this.joinDependenciesNames( dependanciesArray, glue );
+			dependenciesArray = this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ),
+			glue = 1 < dependenciesArray.length ? ' ' : '',
+			dialogMessage = this.joinDependenciesNames( dependenciesArray, glue );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
 		const message = __( 'In order to use %1$s, first you need to activate %2$s.', 'elementor' )
