@@ -1390,5 +1390,5 @@
 	"xmarks-lines",
 	"yen-sign",
 	"yin-yang"
-  ]
+	]
 }

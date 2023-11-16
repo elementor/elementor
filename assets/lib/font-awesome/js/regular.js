@@ -163,5 +163,5 @@
 	"window-maximize",
 	"window-minimize",
 	"window-restore"
-  ]
+	]
 }
