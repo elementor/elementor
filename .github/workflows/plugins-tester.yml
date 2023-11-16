@@ -70,7 +70,7 @@ jobs:
           path: ./build/*
           key: ${{ github.sha }}
 
-  test:
+  Plugin-tester:
     name: Test Plugins
     runs-on: ubuntu-latest
     needs: [build-plugin]
@@ -106,12 +106,6 @@ jobs:
         run: |
             echo "PLUGINS_TESTER__PLUGINS_TO_TEST=${{ github.event.inputs.plugins }}" >> $GITHUB_ENV
             echo "PLUGINS_TESTER__DIFF_THRESHOLD=${{ github.event.inputs.diffThreshold }}" >> $GITHUB_ENV
-      - name: Run wp-env
-        uses: ./.github/workflows/run-wp-env
-        with:
-          PLUGINS: './tests/plugins-tester/plugins/elementor-tests-utils'
-          PORT: '7777' # In order to enable local run side by side with another default server (port 8888)
-      - run: wp-env run cli "wp option update elementor_onboarded 1"
       - run: cd ./tests/plugins-tester && npm install
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
@@ -121,3 +115,16 @@ jobs:
           name: errors-reports
           path: ./tests/plugins-tester/errors-reports/
           retention-days: 7
+
+  test-result:
+      needs: Plugin-tester
+      if: ${{ always() }} # Will be run even if 'Plugin-tester' matrix will be skipped
+      runs-on: ubuntu-22.04
+      name: Plugin Tester - Test Results
+      steps:
+        - name: Test status
+          run: echo "Test status is - ${{ needs.Plugin-tester.result }}"
+        - name: Check Plugin-tester matrix status
+          if: ${{ needs.Plugin-tester.result != 'success' && needs.Plugin-tester.result != 'skipped' }}
+          run: exit 1
+        

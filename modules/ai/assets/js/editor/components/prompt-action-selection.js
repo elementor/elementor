@@ -1,30 +1,23 @@
 import { MenuItem, Select, FormControl, InputLabel } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const labelToDashCash = ( str ) => str.toLowerCase().replace( / /g, '-' );
 
 const PromptActionSelection = ( props ) => {
 	const actionId = labelToDashCash( props.label );
-	const { wrapperStyle = { width: 138 } } = props;
+	const { wrapperStyle = { maxWidth: 138 } } = props;
+
 	return (
-		<FormControl sx={ wrapperStyle }>
+		<FormControl size="small" color="secondary" fullWidth sx={ wrapperStyle }>
 			<InputLabel id={ actionId }>{ props.label }</InputLabel>
 
 			<Select
-				labelId={ actionId }
 				id={ actionId }
-				value={ props.value || '' }
-				color="secondary"
-				onChange={ props.onChange }
-				size="small"
+				labelId={ actionId }
 				label={ props.label }
+				value={ props.value || '' }
+				onChange={ props.onChange }
 				disabled={ props.disabled }
-				MenuProps={ {
-					PaperProps: {
-						sx: {
-							width: 138,
-						},
-					},
-				} }
 				sx={ {
 					// Fixing global CSS of the editor that targets input[disabled] globally.
 					'&.Mui-disabled .MuiSelect-nativeInput': {

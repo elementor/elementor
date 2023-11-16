@@ -1,4 +1,6 @@
 import { Alert, Button, AlertTitle, Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
 const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'default', ...props } ) => {
 	const messages = {
@@ -74,7 +76,7 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 		>
 			{ message.text }
 			{ message.description }
-			{ 'bottom' === actionPosition && <Box sx={ { mt: 3 } }>{ action }</Box> }
+			{ 'bottom' === actionPosition && <Box sx={ { mt: 1 } }>{ action }</Box> }
 		</Alert>
 	);
 };

@@ -1,7 +1,7 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
 const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
 const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
@@ -77,7 +77,9 @@ const prodConfig = {
 	},
 	plugins: [
 		...( common.plugins || [] ),
-		new ExtractI18nWordpressExpressionsWebpackPlugin(),
+		new ExtractI18nWordpressExpressionsWebpackPlugin( {
+			pattern: ( entryPath ) => path.resolve( entryPath, '../../src/**/*.{ts,tsx,js,jsx}' ),
+		} ),
 	],
 	output: {
 		...( common.output || {} ),

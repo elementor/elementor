@@ -57,7 +57,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Push Deployment Info to Jira
-        if: env.CHANNEL == 'ga' && steps.jira_keys.outputs.jira-keys != '' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false'
+        if: env.CHANNEL != 'ga' && steps.jira_keys.outputs.jira-keys != '' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false'
         uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
         with:
           client-id: '${{ secrets.JIRA_CLIENT_ID }}'
@@ -98,9 +98,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_NAME }}
-          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip 
+          files: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           body_path: ${{ env.CHANGELOG_FILE }}
           prerelease: ${{ github.event.inputs.pre_release }}
+          target_commitish: ${{ env.CLEAN_REF }}
       - name: Publish to WordPress.org SVN
         if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
         env:
@@ -116,7 +117,7 @@ jobs:
         if: env.CHANNEL == 'beta' # Only for beta releases
         uses: ./.github/workflows/release-dev-from-beta
         with:
-          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip 
+          BUILD_ZIP_FILE_PATH: /tmp/${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}

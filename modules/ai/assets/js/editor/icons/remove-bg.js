@@ -1,3 +1,4 @@
+import React from 'react';
 import { SvgIcon } from '@elementor/ui';
 
 const RemoveBackgroundIcon = React.forwardRef( ( props, ref ) => {

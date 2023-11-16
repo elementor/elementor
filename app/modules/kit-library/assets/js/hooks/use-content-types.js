@@ -1,5 +1,7 @@
 import ContentType from '../models/content-type';
 import { useQuery } from 'react-query';
+import { useSettingsContext } from '../context/settings-context';
+import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 
 export const KEY = 'content-types';
 
@@ -10,14 +12,18 @@ export const KEY = 'content-types';
  * @return {import('react-query').UseQueryResult<Promise.constructor, unknown>} result
  */
 export default function useContentTypes() {
-	return useQuery( [ KEY ], fetchContentTypes );
+	const { settings } = useSettingsContext();
+
+	return useQuery( [ KEY, settings ], () => fetchContentTypes( settings ) );
 }
 
 /**
+ * @param {Object} settings - Current settings
+ *
  * @return {Promise.constructor} content types
  */
-function fetchContentTypes() {
-	return Promise.resolve( [
+function fetchContentTypes( settings ) {
+	const contentTypes = [
 		{
 			id: 'page',
 			label: __( 'Pages', 'elementor' ),
@@ -46,13 +52,31 @@ function fetchContentTypes() {
 			],
 			order: 1,
 		},
-		{
+	];
+
+	// BC: When user has old Pro version which doesn't override the `free` access_tier.
+	let userAccessTier = settings.access_tier;
+	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
+	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
+
+	// Fallback to the last access_tier before the new tiers were introduced.
+	// TODO: Remove when Pro with the new tiers is stable.
+	if ( shouldFallbackToLegacy ) {
+		userAccessTier = TIERS[ 'essential-oct2023' ];
+	}
+
+	const tierThatSupportsPopups = TIERS[ 'essential-oct2023' ];
+
+	if ( isTierAtLeast( userAccessTier, tierThatSupportsPopups ) ) {
+		contentTypes.push( {
 			id: 'popup',
 			label: __( 'Popups', 'elementor' ),
 			doc_types: [ 'popup' ],
 			order: 2,
-		},
-	] ).then( ( data ) => {
+		} );
+	}
+
+	return Promise.resolve( contentTypes ).then( ( data ) => {
 		return data.map( ( contentType ) => ContentType.createFromResponse( contentType ) );
 	} );
 }

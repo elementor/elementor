@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import Gallery from '../../components/gallery';
 import ImageForm from '../../components/image-form';
@@ -17,6 +18,10 @@ import useSuggestedImages from './hooks/use-suggested-images';
 import useTextToImage from './hooks/use-text-to-image';
 import useImageActions from '../../hooks/use-image-actions';
 import { useGlobalSettings } from '../../context/global-settings-context';
+import {
+	ACTION_TYPES,
+	useSubscribeOnPromptHistoryAction,
+} from '../../../../components/prompt-history/context/prompt-history-action-context';
 
 const getPromptPlaceholder = ( images ) => {
 	if ( ! images?.length ) {
@@ -39,13 +44,13 @@ const Generate = () => {
 
 	const promptPlaceholder = getPromptPlaceholder( suggestedImages );
 
-	const { data: generatedImages, send, isLoading: isGenerating, error, reset } = useTextToImage();
+	const { data: generatedImages, setResult, send, isLoading: isGenerating, error, reset } = useTextToImage( {} );
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
 	const isLoading = isPreloading || isGenerating || isUploading;
 
-	// The aspect ratio in the content view shuld only be updated when the generated images are updated.
+	// The aspect ratio in the content view should only be updated when the generated images are updated.
 	const generateAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ generatedImages?.result ] );
 
 	const handleSubmit = ( event ) => {
@@ -62,6 +67,22 @@ const Generate = () => {
 		updateSettings( { [ IMAGE_TYPE ]: type, [ IMAGE_STYLE ]: style } );
 	};
 
+	useSubscribeOnPromptHistoryAction( [
+		{
+			type: ACTION_TYPES.RESTORE,
+			handler( action ) {
+				handleCopyPrompt( {
+					prompt: action.data?.prompt,
+					imageType: action.data?.imageType || '',
+				} );
+
+				updateSettings( { [ IMAGE_RATIO ]: action.data?.ratio } );
+
+				setResult( action.data?.images, action.id );
+			},
+		},
+	] );
+
 	return (
 		<View>
 			<View.Panel>
@@ -74,6 +95,7 @@ const Generate = () => {
 
 				<ImageForm onSubmit={ handleSubmit }>
 					<PromptField
+						data-testid="e-image-prompt"
 						value={ prompt }
 						disabled={ isLoading }
 						placeholder={ promptPlaceholder }
@@ -102,7 +124,7 @@ const Generate = () => {
 					{
 						generatedImages?.result
 							? (
-								<Stack gap={ 5 } sx={ { my: 6 } }>
+								<Stack gap={ 2 } sx={ { my: 2.5 } }>
 									<GenerateAgainSubmit disabled={ isLoading || '' === prompt } />
 
 									<NewPromptButton disabled={ isLoading } onClick={ () => {

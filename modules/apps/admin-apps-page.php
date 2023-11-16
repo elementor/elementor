@@ -22,7 +22,7 @@ class Admin_Apps_Page {
 				<?php self::render_plugins_list(); ?>
 			</div>
 			<div class="e-a-page-footer">
-				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
+				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on the their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
 			</div>
 		</div>
 		<?php
@@ -125,6 +125,72 @@ class Admin_Apps_Page {
 				'action_label' => 'Let\'s Go',
 				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
 				'image' => $images_url . 'hover.svg',
+			],
+			[
+				'name' => 'Gravity Forms',
+				'author' => 'Gravity Forms',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-gravityforms/',
+				'description' => 'Millions trust Gravity Forms for versatile forms—boost email lists, create quizzes, accept payments, and more!',
+				'badge' => '30% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-gravityforms/',
+				'image' => $images_url . 'gravity-forms.svg',
+			],
+			[
+				'name' => 'TranslatePress',
+				'author' => 'Reflection Media SRL',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-translatepress/',
+				'description' => 'TranslatePress is the easiest way to translate your WordPress site and go multilingual. It\'s a proven way to grow multilingual traffic and reach more people.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-translatepress/',
+				'image' => $images_url . 'translate-press.png',
+			],
+			[
+				'name' => 'Profile Builder',
+				'author' => 'Cozmoslabs',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-cozmoslabs-wordpress-profile-builder/',
+				'description' => 'Create beautiful user registration forms, user profiles and member directories with the #1 user management tool for modern websites.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-cozmoslabs-wordpress-profile-builder/',
+				'image' => $images_url . 'profile-builder.svg',
+			],
+			[
+				'name' => 'Paid Member Subscriptions',
+				'author' => 'Cozmoslabs',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-cozmoslabs-wordpress-paid-member-subscriptions/',
+				'description' => 'Launch your membership site, online course or paid community, increase conversions and generate subscription revenue with one flexible and seamless solution.',
+				'badge' => '15% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-cozmoslabs-wordpress-paid-member-subscriptions/',
+				'image' => $images_url . 'paid-member-subscriptions.svg',
+			],
+			[
+				'name' => 'BetterDocs',
+				'author' => 'WPDeveloper',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper-betterdocs/',
+				'description' => 'BetterDocs is the ultimate WordPress knowledge base tool to create powerful documentation, multiple or internal knowledge bases, FAQ sections, and more.',
+				'badge' => '20% Off',
+				'offering' => 'Use coupon code: Elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper-betterdocs/',
+				'image' => $images_url . 'better-docs.svg',
+			],
+			[
+				'name' => 'SchedulePress',
+				'author' => 'WPDeveloper',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper-wp-scheduled-posts/',
+				'description' => 'SchedulePress is the advanced WordPress content management solution for effortlessly scheduling site content & sharing on multiple social media platforms.',
+				'badge' => '20% Off',
+				'offering' => 'Use coupon code: Elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper-wp-scheduled-posts/',
+				'image' => $images_url . 'schedule-press.svg',
 			],
 		];
 
