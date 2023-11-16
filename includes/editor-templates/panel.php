@@ -189,11 +189,11 @@ $is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor
 	<?php if ( ! Utils::has_pro() ) : ?>
 	<# if ( elementData.upsale_data && elementData.upsale_data.description ) { #>
 	<div class="elementor-nerd-box">
-		<img class="elementor-nerd-box-icon" src="https://elementor.local/wp-content/plugins/elementor/assets/images/go-pro.svg" loading="lazy">
+		<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" loading="lazy">
 		<# if ( elementData.upsale_data.title ) { #>
 		<div class="elementor-nerd-box-title">{{ elementData.upsale_data.title }}</div>
 		<# } #>
-		<div class="elementor-nerd-box-message">{{ elementData.upsale_data.description }}</div>
+		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
 		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
 	</div>
 	<# } #>
