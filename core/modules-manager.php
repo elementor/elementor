@@ -113,6 +113,7 @@ class Modules_Manager {
 			'site-navigation',
 			'styleguide',
 			'apps',
+			'playing-cards',
 		];
 	}
 
