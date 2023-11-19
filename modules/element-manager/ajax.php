@@ -4,6 +4,7 @@ namespace Elementor\Modules\ElementManager;
 use Elementor\Modules\Usage\Module as Usage_Module;
 use Elementor\Api;
 use Elementor\Plugin;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,14 +41,21 @@ class Ajax {
 				'name' => $widget->get_name(),
 				'plugin' => $plugin_name,
 				'title' => $widget->get_title(),
+				'icon' => $widget->get_icon(),
 			];
 		}
+
+		$notice_id = 'e-element-manager-intro-1';
 
 		$data = [
 			'disabled_elements' => Options::get_disabled_elements(),
 			'promotion_widgets' => [],
 			'widgets' => $widgets,
 			'plugins' => $plugins,
+			'notice_data' => [
+				'notice_id' => $notice_id,
+				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
+			],
 		];
 
 		if ( ! Utils::has_pro() ) {
