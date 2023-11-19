@@ -27,7 +27,8 @@ class Ajax {
 		$plugins = [];
 
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
-			if ( ! $widget->show_in_panel() ) {
+			$widget_title = sanitize_user( $widget->get_title() );
+			if ( empty( $widget_title ) || ! $widget->show_in_panel() ) {
 				continue;
 			}
 
@@ -40,7 +41,8 @@ class Ajax {
 			$widgets[] = [
 				'name' => $widget->get_name(),
 				'plugin' => $plugin_name,
-				'title' => $widget->get_title(),
+				'title' => $widget_title,
+				'icon' => $widget->get_icon(),
 			];
 		}
 
@@ -80,6 +82,10 @@ class Ajax {
 	}
 
 	private function get_plugin_name_from_widget_instance( $widget ) {
+		if ( in_array( 'wordpress', $widget->get_categories() ) ) {
+			return esc_html__( 'WordPress Widgets', 'elementor' );
+		}
+
 		$class_reflection = new \ReflectionClass( $widget );
 
 		$plugin_basename = plugin_basename( $class_reflection->getFileName() );
