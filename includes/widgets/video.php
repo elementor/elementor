@@ -313,12 +313,12 @@ class Widget_Video extends Widget_Base {
 		$this->add_control(
 			'autoplay',
 			[
-				'label' => esc_html__('Autoplay', 'elementor'),
+				'label' => esc_html__( 'Autoplay', 'elementor' ),
 				'description' => sprintf(
-					esc_html__('Note: Autoplay is affected by %s', 'elementor'),
+					esc_html__( 'Note: Autoplay is affected by %s', 'elementor' ),
 					'<a href="https://developers.google.com/web/updates/2017/09/autoplay-policy-changes" target="_blank">' .
-					esc_html__('Google’s Autoplay policy', 'elementor') . '</a>' .
-					esc_html__(' on Chrome browsers.', 'elementor')
+					esc_html__( 'Google’s Autoplay policy', 'elementor' ) . '</a>' .
+					esc_html__( ' on Chrome browsers.', 'elementor' )
 				),
 				'type' => Controls_Manager::SWITCHER,
 				'frontend_available' => true,
