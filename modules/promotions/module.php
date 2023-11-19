@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Promotions;
 
+use Elementor\Api;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
@@ -10,6 +11,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Widgets_Manager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,6 +46,15 @@ class Module extends Base_Module {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_promotion_menu_item( $admin_menu );
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
+
+		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
+			foreach ( Api::get_promotion_widgets() as $widget_data ) {
+				$manager->register( new Widgets\Pro_Widget_Promotion( [], [
+					'widget_name' => $widget_data['name'],
+					'widget_title' => $widget_data['title'],
+				] ) );
+			}
+		} );
 	}
 
 	private function handle_external_redirects() {
