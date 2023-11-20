@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\PlayingCards\Widgets;
 
+use Elementor\Controls_Manager;
 use Elementor\Repeater;
 use Elementor\Widget_Base;
 
@@ -57,25 +58,25 @@ class Playing_Cards extends Widget_Base {
 		return [ 'playing', 'cards' ];
 	}
 
-	protected function register_controls() {
+	private function register_cards_section_controls() {
 		$this->start_controls_section(
-			'content_section',
-			[
-				'label' => esc_html__( 'Layout', 'elementor' ),
-				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
-			]
+				'cards_section',
+				[
+						'label' => esc_html__( 'Card', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_LAYOUT,
+				]
 		);
 
 		$repeater = new \Elementor\Repeater();
 
 		$repeater->add_control(
-			'card_title',
-			[
-				'label' => esc_html__( 'Title', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::TEXT,
-				'default' => esc_html__( 'My Card' , 'elementor' ),
-				'label_block' => true,
-			]
+				'card_title',
+				[
+						'label' => esc_html__( 'Title', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::TEXT,
+						'default' => esc_html__( 'My Card' , 'elementor' ),
+						'label_block' => true,
+				]
 		);
 
 		$repeater->add_control(
@@ -85,9 +86,9 @@ class Playing_Cards extends Widget_Base {
 						'type' => \Elementor\Controls_Manager::SELECT,
 						'default' => '1',
 						'options' => static::$VALUE_MAP,
-//						'selectors' => [
-//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
-//						],
+						//						'selectors' => [
+						//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
+						//						],
 				]
 		);
 
@@ -98,130 +99,558 @@ class Playing_Cards extends Widget_Base {
 						'type' => \Elementor\Controls_Manager::SELECT,
 						'default' => 'diamond',
 						'options' => static::$SUIT_CHAR_MAP
-//						'selectors' => [
-//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
-//						],
+						//						'selectors' => [
+						//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
+						//						],
 				]
 		);
 
 		$this->add_control(
-			'list',
-			[
-				'label' => esc_html__( 'Card List', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::REPEATER,
-				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
-						'card_title' => esc_html__( 'Card #1', 'elementor' ),
-						'card_suit' => 'diamond',
-						'card_value' => '1',
-					],
-					[
-						'card_title' => esc_html__( 'Card #2', 'textdomain' ),
-					],
-				],
-				'title_field' => '{{{ card_title }}}',
-			]
+				'list',
+				[
+						'label' => esc_html__( 'Item List', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::REPEATER,
+						'fields' => $repeater->get_controls(),
+						'default' => [
+								[
+										'card_title' => esc_html__( 'Card #1', 'elementor' ),
+										'card_suit' => 'diamond',
+										'card_value' => '1',
+								],
+								[
+										'card_title' => esc_html__( 'Card #2', 'elementor' ),
+								],
+						],
+						'title_field' => '{{{ card_title }}}',
+				]
 		);
 
 		$this->end_controls_section();
 	}
 
+	private function register_layout_section_controls() {
+		$this->start_controls_section(
+				'layout_section',
+				[
+						'label' => esc_html__( 'Layout', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_LAYOUT,
+				]
+		);
+
+		$this->add_responsive_control(
+				'content_width',
+				[
+						'label' => esc_html__( 'Width', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SLIDER,
+						'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+						'range' => [
+								'px' => [
+										'min' => 160,
+										'max' => 1000,
+										'step' => 1,
+								],
+								'%' => [
+										'min' => 0,
+										'max' => 100,
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-width: {{SIZE}}{{UNIT}};',
+						],
+				]
+		);
+		$this->add_control(
+				'layout-divider-1',
+				[
+						'type' => \Elementor\Controls_Manager::DIVIDER,
+				]
+		);
+		$this->add_responsive_control(
+				'content_direction',
+				[
+						'label' => esc_html__( 'Direction', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::CHOOSE,
+						'options' => [
+								'row' => [
+										'title' => esc_html__( 'Right', 'elementor' ),
+										'icon' => 'eicon-arrow-right',
+								],
+								'column' => [
+										'title' => esc_html__( 'Down', 'elementor' ),
+										'icon' => 'eicon-arrow-down',
+								],
+								'row-reverse' => [
+										'title' => esc_html__( 'Left', 'elementor' ),
+										'icon' => 'eicon-arrow-left',
+								],
+								'column-reverse' => [
+										'title' => esc_html__( 'Up', 'elementor' ),
+										'icon' => 'eicon-arrow-up',
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-direction: {{VALUE}};',
+						],
+				]
+		);
+		$this->add_responsive_control(
+				'justify_content',
+				[
+						'label' => esc_html__( 'Justify Content', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::CHOOSE,
+						'label_block' => true,
+						'options' => [
+								'start' => [
+										'title' => esc_html__( 'Start', 'elementor' ),
+										'icon' => 'eicon-justify-start-h',
+								],
+								'center' => [
+										'title' => esc_html__( 'Center', 'elementor' ),
+										'icon' => 'eicon-justify-center-h',
+								],
+								'end' => [
+										'title' => esc_html__( 'End', 'elementor' ),
+										'icon' => 'eicon-justify-end-h',
+								],
+								'space-between' => [
+										'title' => esc_html__( 'Space Between', 'elementor' ),
+										'icon' => 'eicon-justify-space-between-h',
+								],
+								'space-around' => [
+										'title' => esc_html__( 'Space Around', 'elementor' ),
+										'icon' => 'eicon-justify-space-around-h',
+								],
+								'space-evenly' => [
+										'title' => esc_html__( 'Space Evenly', 'elementor' ),
+										'icon' => 'eicon-justify-space-evenly-h',
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-justify-content: {{VALUE}};',
+						],
+				]
+		);
+		$this->add_responsive_control(
+				'align_items',
+				[
+						'label' => esc_html__( 'Align Items', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::CHOOSE,
+						'options' => [
+								'start' => [
+										'title' => esc_html__( 'Start', 'elementor' ),
+										'icon' => 'eicon-align-start-v',
+								],
+								'center' => [
+										'title' => esc_html__( 'Center', 'elementor' ),
+										'icon' => 'eicon-align-center-v',
+								],
+								'end' => [
+										'title' => esc_html__( 'End', 'elementor' ),
+										'icon' => 'eicon-align-end-v',
+								],
+								'stretch' => [
+										'title' => esc_html__( 'Stretch', 'elementor' ),
+										'icon' => 'eicon-align-stretch-v',
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-flex-align-items: {{VALUE}};',
+						],
+				]
+		);
+		$this->add_control(
+				'layout-divider-2',
+				[
+						'type' => \Elementor\Controls_Manager::DIVIDER,
+				]
+		);
+		$this->add_responsive_control(
+				'cards_gap',
+				[
+						'label' => esc_html__( 'Gaps', 'elementor' ),
+						'type' => Controls_Manager::GAPS,
+						'default' => [
+								'row' => '20',
+								'column' => '20',
+								'unit' => 'px',
+						],
+						'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-row-gap: {{ROW}}{{UNIT}}; --e-cards-col-gap: {{COLUMN}}{{UNIT}};',
+						],
+				]
+		);
+
+		$this->add_responsive_control(
+				'background_color',
+				[
+						'label' => esc_html__( 'Background ', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::COLOR,
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-background-color: {{VALUE}}',
+						],
+						'default' => '#ffffff',
+				]
+		);
+		$this->end_controls_section();
+
+	}
+
+	private function register_border_controls() {
+		$this->start_controls_section(
+				'card_border',
+				[
+						'label' => esc_html__( 'Border', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+				]
+		);
+		$this->add_group_control(
+				\Elementor\Group_Control_Border::get_type(),
+				[
+						'name' => 'border',
+						'selector' => '{{WRAPPER}} .e-playing-cards-item, {{WRAPPER}} .e-card-royal-image',
+				]
+		);
+
+		$this->add_responsive_control(
+				'border-radius',
+				[
+						'label' => esc_html__( 'Border Raduis', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::DIMENSIONS,
+						'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+						'range' => [
+								'min' => [
+										'px' => 0,
+										'%' => 0,
+										'em' => 0,
+										'rem' => 0,
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+						],
+				]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function register_value_controls() {
+		$this->start_controls_section(
+				'typography_section',
+				[
+						'label' => esc_html__( 'Typography', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+				]
+		);
+		$this->add_responsive_control(
+				'font_family',
+				[
+						'label' => esc_html__( 'Font Family', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::FONT,
+						'default' => "'Open Sans', sans-serif",
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-family: {{VALUE}}',
+						],
+				]
+		);
+		$this->add_responsive_control(
+				'value-font-size',
+				[
+						'label' => esc_html__( 'Font Size', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SLIDER,
+						'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+						'range' => [
+								'px' => [
+										'min' => 0,
+										'max' => 50,
+										'step' => 1,
+								],
+								'em' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'rem' => [
+										'min' => 0,
+										'max' => 100,
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-size: {{SIZE}}{{UNIT}};',
+						],
+				]
+		);
+		$this->add_responsive_control(
+				'font-weight',
+				[
+						'label' => esc_html__( 'Font Weight', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SELECT,
+						'default' => 'normal',
+						'options' => [
+								'100' => '100' . esc_html__( 'Thin', 'elementor' ),
+								'200' => '200' . esc_html__( 'Extra Light', 'elementor' ),
+								'300' => '300' . esc_html__( 'Light', 'elementor' ),
+								'400' => '400' . esc_html__( 'Normal', 'elementor' ),
+								'500' => '500' . esc_html__( 'Medium', 'elementor' ),
+								'600' => '600' . esc_html__( 'Semi Bold', 'elementor' ),
+								'700' => '700' . esc_html__( 'Bold', 'elementor' ),
+								'800' => '800' . esc_html__( 'Extra Bold', 'elementor' ),
+								'default' => esc_html__( 'Default', 'elementor' ),
+								'normal' => esc_html__( 'Normal', 'elementor' ),
+								'bold'  => esc_html__( 'Bold', 'elementor' ),
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-font-weight: {{VALUE}};',
+						],
+				]
+		);
+		$this->end_controls_section();
+	}
+
+	private function register_suit_controls() {
+		$this->start_controls_section(
+				'suit_section',
+				[
+						'label' => esc_html__( 'Suit', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+				]
+		);
+
+		$this->add_responsive_control(
+				'suit_size',
+				[
+						'label' => esc_html__( 'Suit Size', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SLIDER,
+						'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+						'range' => [
+								'px' => [
+										'min' => 0,
+										'max' => 50,
+										'step' => 1,
+								],
+								'em' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'rem' => [
+										'min' => 0,
+										'max' => 100,
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-suit-font-size: {{SIZE}}{{UNIT}};',
+						],
+				]
+		);
+		$this->add_control(
+				'suit_divider',
+				[
+						'type' => \Elementor\Controls_Manager::DIVIDER,
+				]
+		);
+		$this->add_responsive_control(
+				'diamond_color',
+				[
+						'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'diamond' ],
+						'type' => \Elementor\Controls_Manager::COLOR,
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-diamond-color: {{VALUE}}',
+						],
+						'default' => '#ff0000',
+				]
+		);$this->add_responsive_control(
+				'heart_color',
+				[
+						'label' => esc_html__( 'Heart ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'heart' ],
+						'type' => \Elementor\Controls_Manager::COLOR,
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-heart-color: {{VALUE}}',
+						],
+						'default' => '#ff0000',
+				]
+		);$this->add_responsive_control(
+				'club_color',
+				[
+						'label' => esc_html__( 'Club ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'club' ],
+						'type' => \Elementor\Controls_Manager::COLOR,
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-club-color: {{VALUE}}',
+						],
+						'default' => '#000000',
+				]
+		);$this->add_responsive_control(
+				'spade_color',
+				[
+						'label' => esc_html__( 'Spade ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'spade' ],
+						'type' => \Elementor\Controls_Manager::COLOR,
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-spade-color: {{VALUE}}',
+						],
+						'default' => '#000000',
+				]
+		);
+		$this->end_controls_section();
+		$this->start_controls_section(
+				'royal_suit_offset',
+				[
+						'label' => esc_html__( 'Royal Suit Offset', 'elementor' ),
+						'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+				]
+		);
+		$this->add_responsive_control(
+				'royal_offset_h',
+				[
+						'label' => esc_html__( 'Horizontal Offset', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SLIDER,
+						'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
+						'range' => [
+								'px' => [
+										'min' => 0,
+										'max' => 50,
+										'step' => 1,
+								],
+								'em' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'rem' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'%' => [
+										'min' => 0,
+										'max' => 100
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-royal-suit-offset-h: {{SIZE}}{{UNIT}};',
+						],
+				]
+		);
+		$this->add_responsive_control(
+				'royal_offset_v',
+				[
+						'label' => esc_html__( 'Vertical Offset', 'elementor' ),
+						'type' => \Elementor\Controls_Manager::SLIDER,
+						'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
+						'range' => [
+								'px' => [
+										'min' => 0,
+										'max' => 50,
+										'step' => 1,
+								],
+								'em' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'rem' => [
+										'min' => 0,
+										'max' => 100,
+								],
+								'%' => [
+										'min' => 0,
+										'max' => 100
+								],
+						],
+						'selectors' => [
+								'{{WRAPPER}} .e-playing-cards-container' => '--e-card-royal-suit-offset-v: {{SIZE}}{{UNIT}};',
+						],
+				]
+		);
+		$this->end_controls_section();
+
+	}
+
+	protected function register_controls() {
+		$this->register_cards_section_controls();
+		$this->register_layout_section_controls();
+		$this->register_border_controls();
+		$this->register_value_controls();
+		$this->register_suit_controls();
+	}
+
 	private static function render_card( $value, $suit ) {
 		$formatted_value = static::$VALUE_MAP[ $value ];
 		$formatted_suit = static::$SUIT_CHAR_MAP[ $suit ];
-		$color = static::$COLORS[ $suit ];
 		$value = (int) $value;
 		?>
-			<span style="color: <?= $color ?>; grid-row: 1; grid-column: 1;"><?= $formatted_value ?></span>
-			<span style="color: <?= $color ?>; grid-row: -2; grid-column: -2; rotate: 180deg;"><?= $formatted_value
-				?></span>
+			<span class="e-card value <?= $suit ?> row_1 col_1"><?= $formatted_value ?></span>
+			<span class="e-card value flip <?= $suit ?> row_-2 col_-2"><?= $formatted_value ?></span>
 		<?php
 		if ( $value > 10 ) {
 			?>
-				<div style="grid-row: 2/-2; grid-column: 2/-2; border: 2px solid black; background-image: url( <?=
-			ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $formatted_value . '.jpg' ?> ); width: 100%;
-			height: 100%; background-size: cover; background-position: center"></div>
+			<div class="e-card-royal-image" style="background-image: url( <?=
+				ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $formatted_value . '.jpg' ?> ); "></div>
 
-			<span style="align-self: end; justify-self: end; font-size: 4em; color: <?= $color ?>; grid-row: 2;
-					grid-column: 2; position: relative; left: 10%;"><?=
-				$formatted_suit
-				?></span>
-			<span style="align-self: start; justify-self: start; font-size: 4em; color: <?= $color ?>; grid-row: -3;
-					grid-column: -3; rotate: 180deg; position: relative; left: -10%;"><?=
-				$formatted_suit ?></span>
+			<span class="e-card suit royal end row_2 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit royal start row_-3 col_-3 flip <?= $suit ?>"><?=$formatted_suit ?></span>
 			<?php
 			return;
 		}
+
 		$center = [ '1', '3', '5', '9' ];
 		$center_block = [ '2', '3' ];
 		$inline_small = [ '6', '7', '8' ];
 		?>
 
-		<span style="color: <?= $color ?>; grid-row: 2; grid-column: 1; align-self: start;"><?= $formatted_suit ?></span>
-		<span style="color: <?= $color ?>; grid-row: -3; grid-column: -2; rotate: 180deg; align-self: end;"><?=
-			$formatted_suit ?></span>
+		<span class="e-card value row_2 col_1 self-start <?= $suit ?>"><?= $formatted_suit ?></span>
+		<span class="e-card value row_-3 col_-2 self-end flip <?= $suit ?>"><?= $formatted_suit ?></span>
 		<?php
 
 		if ( in_array( $value, $center ) ) {
 			?>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 5; grid-column: 4;"><?= $formatted_suit
-				?></span>
+			<span class="e-card suit self-start row_5 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
 			<?php
 		}
 		if ( in_array( $value, $center_block ) ) {
 			?>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 2; grid-column: 4;"><?= $formatted_suit
-				?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -3; grid-column: 4; rotate: 180deg;"><?=
-				$formatted_suit
-				?></span>
+			<span class="e-card suit row_2 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_-3 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
 			<?php
 		}
 		if ( $value > 3 ) {
 			?>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 2; grid-column: 2;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 2; grid-column: -3;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -3; grid-column: 2; rotate: 180deg;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -3; grid-column: -3; rotate: 180deg;"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_2 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_2 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_-3 col_2 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_-3 col_-3 flip <?= $suit ?>"><?= $formatted_suit ?></span>
 			<?php
 		}
 		if ( in_array( $value, $inline_small ) ) {
 			?>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 5; grid-column: 2;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 5; grid-column: -3;"><?= $formatted_suit
-				?></span>
+			<span class="e-card suit row_5 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_5 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
 			<?php
 		}
 		if ( $value > 8 ) {
 			?>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 4; grid-column: 2;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 4; grid-column: -3;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -5; grid-column: 2; rotate: 180deg;"><?= $formatted_suit ?></span>
-			<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -5; grid-column: -3; rotate: 180deg;"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_4 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_4 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_-5 col_2 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="e-card suit row_-5 col_-3 flip <?= $suit ?>"><?= $formatted_suit ?></span>
 			<?php
 		}
 		switch ( $value ) {
 			case 8:
 				?>
-				<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -3/-5; grid-column: 4; rotate:180deg;"><?= $formatted_suit ?></span>
+				<span class="e-card suit row_-5-double col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
 				<?php
 			case 7:
 				?>
-				<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 3/5; grid-column: 4;"><?= $formatted_suit ?></span>
-				break;
+				<span class="e-card suit row_3-double col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
 				<?php
+				break;
 			case 10:
 				?>
-				<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: 3; grid-column: 4;"><?= $formatted_suit ?></span>
-				<span style="color: <?= $color ?>; font-size: 1.75em; grid-row: -4; grid-column: 4; rotate:180deg;
-						"><?= $formatted_suit ?></span>
+				<span class="e-card suit row_3 col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+				<span class="e-card suit row_-4 col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
 				<?php
 		}
 	}
 
 	protected function render() {
 		$cards = $this->get_settings_for_display()[ 'list' ];
+//		$this->add_render_attribute()
 		?>
 		<div class="e-playing-cards-container">
 
@@ -230,18 +659,7 @@ class Playing_Cards extends Widget_Base {
 			$suit = $card[ 'card_suit' ];
 			$value = $card[ 'card_value' ];
 		?>
-			<article
-					class="e-playing-cards-item"
-					style="
-						display: grid;
-						grid-template-columns: repeat( 7, 1fr );
-						grid-template-rows: repeat( 9, 1fr );
-						justify-items: center;
-						align-items: center;
-						aspect-ratio: .6;
-						width: 300px;
-					"
-			>
+			<article class="e-playing-cards-item">
 			<?php static::render_card( $value, $suit ); ?>
 		</article>
 		<?php
