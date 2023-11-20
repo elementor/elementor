@@ -5,7 +5,6 @@ import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment
 import { ConfigProvider, LAYOUT_APP_MODES } from './pages/form-layout/context/config';
 
 const LayoutApp = ( {
-	currentContext,
 	mode,
 	isRTL,
 	colorScheme,
@@ -17,6 +16,7 @@ const LayoutApp = ( {
 	onInsert,
 	onSelect,
 	onGenerate,
+	currentContext,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
