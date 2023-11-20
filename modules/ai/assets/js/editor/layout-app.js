@@ -5,6 +5,7 @@ import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment
 import { ConfigProvider, LAYOUT_APP_MODES } from './pages/form-layout/context/config';
 
 const LayoutApp = ( {
+	currentContext,
 	mode,
 	isRTL,
 	colorScheme,
@@ -21,6 +22,7 @@ const LayoutApp = ( {
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<ConfigProvider
+					currentContext={ currentContext }
 					mode={ mode }
 					attachmentsTypes={ attachmentsTypes }
 					onClose={ onClose }
@@ -43,6 +45,7 @@ LayoutApp.propTypes = {
 	mode: PropTypes.oneOf( LAYOUT_APP_MODES ).isRequired,
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
+	currentContext: PropTypes.object,
 	attachmentsTypes: AttachmentsTypesPropType,
 	attachments: PropTypes.arrayOf( AttachmentPropType ),
 	onClose: PropTypes.func.isRequired,

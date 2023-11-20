@@ -65,11 +65,19 @@ export const renderLayoutApp = ( options = {
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
 
+	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
+
 	ReactDOM.render(
 		<LayoutApp
 			mode={ options.mode }
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
+			currentContext={ {
+				body: {
+					backgroundColor: bodyStyle.backgroundColor,
+					backgroundImage: bodyStyle.backgroundImage,
+				},
+			} }
 			attachmentsTypes={ {
 				json: {
 					promptSuggestions: VARIATIONS_PROMPTS,
