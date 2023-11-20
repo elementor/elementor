@@ -435,7 +435,7 @@ class Manager {
 				'id' => 'elementor_site_settings',
 				'title' => esc_html__( 'Site Settings', 'elementor' ),
 				'sub_title' => esc_html__( 'Site', 'elementor' ),
-				'href' => $document_edit_url . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'href' => $document_edit_url,
 				'class' => 'elementor-site-settings',
 				'parent_class' => 'elementor-second-section',
 			];
