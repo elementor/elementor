@@ -12,12 +12,22 @@ export class Close extends $e.modules.CommandBase {
 			return jQuery.Deferred().resolve();
 		}
 
+		if ( document.editor.isClosing ) {
+			return Promise.reject( 'Document is already closing.' );
+		}
+
+		if ( document.editor.isOpening ) {
+			await new Promise( ( res ) => elementor.once( 'document:loaded', res ) );
+		}
+
 		// TODO: Move to an hook.
 		if ( ! mode && ( document.editor.isChanged || document.isDraft() ) ) {
 			const deferred = jQuery.Deferred();
 			this.getConfirmDialog( deferred ).show();
 			return deferred.promise();
 		}
+
+		document.editor.isClosing = true;
 
 		switch ( mode ) {
 			case 'autosave':
@@ -31,7 +41,10 @@ export class Close extends $e.modules.CommandBase {
 				break;
 		}
 
-		await $e.internal( 'editor/documents/unload', { document } );
+		await $e.internal( 'editor/documents/unload', { document } )
+			.finally( () => {
+				document.editor.isClosing = false;
+			} );
 
 		if ( onClose ) {
 			await onClose( document );

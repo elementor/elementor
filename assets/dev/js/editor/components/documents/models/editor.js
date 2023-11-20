@@ -40,4 +40,16 @@ export default class Editor {
 	 * @type {number}
 	 */
 	lastSaveHistoryId = 0;
+
+	/**
+	 * Is document closing?.
+	 * @type {boolean}
+	 */
+	isClosing = false;
+
+	/**
+	 * Is document opening?.
+	 * @type {boolean}
+	 */
+	isOpening = true;
 }

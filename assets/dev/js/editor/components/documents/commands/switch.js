@@ -3,16 +3,8 @@ export class Switch extends $e.modules.CommandBase {
 		this.requireArgument( 'id', args );
 	}
 
-	async apply( args ) {
+	apply( args ) {
 		const { id, mode, onClose, shouldScroll = true, setAsInitial = false } = args;
-
-		if ( ! elementor.documents.getCurrent().$element && elementor.config.document.panel.has_elements ) {
-			await new Promise( ( resolve ) => {
-				elementor.on( 'document:loaded', () => {
-					return resolve();
-				} );
-			} );
-		}
 
 		if ( setAsInitial ) {
 			// Will be removed by the attach-preview after the iframe has loaded.
