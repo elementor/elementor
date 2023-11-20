@@ -22,7 +22,6 @@ const LayoutApp = ( {
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<ConfigProvider
-					currentContext={ currentContext }
 					mode={ mode }
 					attachmentsTypes={ attachmentsTypes }
 					onClose={ onClose }
@@ -31,6 +30,7 @@ const LayoutApp = ( {
 					onInsert={ onInsert }
 					onSelect={ onSelect }
 					onGenerate={ onGenerate }
+					currentContext={ currentContext }
 				>
 					<LayoutContent
 						attachments={ attachments }
@@ -45,7 +45,6 @@ LayoutApp.propTypes = {
 	mode: PropTypes.oneOf( LAYOUT_APP_MODES ).isRequired,
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
-	currentContext: PropTypes.object,
 	attachmentsTypes: AttachmentsTypesPropType,
 	attachments: PropTypes.arrayOf( AttachmentPropType ),
 	onClose: PropTypes.func.isRequired,
@@ -54,6 +53,7 @@ LayoutApp.propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
+	currentContext: PropTypes.object,
 };
 
 export default LayoutApp;

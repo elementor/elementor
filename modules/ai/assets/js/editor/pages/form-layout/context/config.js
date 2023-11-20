@@ -14,7 +14,6 @@ export const ConfigProvider = ( props ) => {
 		<ConfigContext.Provider
 			value={ {
 				mode: props.mode,
-				currentContext: props.currentContext,
 				attachmentsTypes: props.attachmentsTypes,
 				onClose: props.onClose,
 				onConnect: props.onConnect,
@@ -22,6 +21,7 @@ export const ConfigProvider = ( props ) => {
 				onInsert: props.onInsert,
 				onSelect: props.onSelect,
 				onGenerate: props.onGenerate,
+				currentContext: props.currentContext,
 			} }
 		>
 			{ props.children }
@@ -33,13 +33,13 @@ ConfigProvider.propTypes = {
 	mode: PropTypes.oneOf( LAYOUT_APP_MODES ).isRequired,
 	children: PropTypes.node.isRequired,
 	attachmentsTypes: PropTypes.object.isRequired,
-	currentContext: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 	onConnect: PropTypes.func.isRequired,
 	onData: PropTypes.func.isRequired,
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
+	currentContext: PropTypes.object,
 };
 
 export default ConfigContext;
