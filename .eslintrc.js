@@ -92,6 +92,7 @@ module.exports = {
 		} ],
 		'react/react-in-jsx-scope': 'off',
 		'react/prop-types': 'error',
+		'react/no-deprecated': 'warn', // Temporary until we remove the deprecated components
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'jsdoc/require-returns-description': 'off', // We prefer self-explanatory method names

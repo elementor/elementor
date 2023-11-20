@@ -31,3 +31,24 @@
 		margin-inline-start: auto;
 	}
 }
+
+.elementor-context-menu {
+	&-list__item {
+		&__ai-badge {
+			background-color: $e-indigo-600;
+			border-radius: 25px;
+			display: flex;
+			justify-content: center;
+			padding: 4px;
+
+			svg {
+				width: 12px;
+				height: 12px;
+
+				path {
+					fill: $white;
+				}
+			}
+		}
+	}
+}

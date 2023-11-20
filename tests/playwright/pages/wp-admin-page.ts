@@ -42,6 +42,27 @@ export default class WpAdminPage extends BasePage {
 		return new EditorPage( this.page, this.testInfo );
 	}
 
+	async convertFromGutenberg() {
+		await Promise.all( [
+			this.page.waitForResponse( async ( response ) => await this.blockUrlResponse( response ) ),
+			this.page.click( '#elementor-switch-mode' ),
+		] );
+
+		await this.page.waitForURL( '**/post.php?post=*&action=elementor' );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( this.page, this.testInfo );
+	}
+
+	async blockUrlResponse( response ) {
+		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
+		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
+		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
+	}
+
 	/**
 	 *  @deprecated - use openNewPage() & editor.editCurrentPage() instead to allow parallel tests in the near future.
 	 *
@@ -128,11 +149,11 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	getActiveTheme() {
-		return execSync( `npx wp-env run cli "wp theme list --status=active --field=name --format=csv"` ).toString().trim();
+		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
 	}
 
 	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli "wp theme activate ${ theme }"` );
+		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
 	}
 
 	async openSiteSettings() {
@@ -166,5 +187,17 @@ export default class WpAdminPage extends BasePage {
 
 	async editWithElementor() {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
+	}
+
+	async closeBlockEditorPopupIfVisible() {
+		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
+		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
+			await this.page.getByRole( 'button', { name: 'Close' } ).click();
+		}
+	}
+
+	async openNewWordpressPage() {
+		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
+		await this.closeBlockEditorPopupIfVisible();
 	}
 }

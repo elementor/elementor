@@ -50,6 +50,7 @@ class Test_Settings extends Elementor_Test_Base {
 		$expected_items = [
 			'elementor' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
+			'elementor-element-manager' => 'Element Manager',
 			'elementor-tools' => 'Tools',
 			'elementor-system-info' => 'System Info',
 			'elementor-getting-started' => 'Getting Started',
@@ -57,7 +58,7 @@ class Test_Settings extends Elementor_Test_Base {
 			'e-form-submissions' => 'Submissions',
 			'elementor_custom_fonts' => 'Custom Fonts',
 			'elementor_custom_icons' => 'Custom Icons',
-			'elementor_custom_custom_code' => 'Custom Code',
+			'elementor_custom_code' => 'Custom Code',
 			'elementor-apps' => 'Apps',
 			'go_elementor_pro' => 'Upgrade',
 		];

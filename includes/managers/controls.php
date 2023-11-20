@@ -293,7 +293,7 @@ class Controls_Manager {
 	/**
 	 * Has stacks cache been cleared.
 	 *
-	 * Holds the list of all the control stacks that have been cleared.
+	 * Boolean flag used to determine whether the controls manager stack cache has been cleared once during the current runtime.
 	 *
 	 * @since 3.13.0
 	 * @access private
@@ -301,7 +301,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	private $has_post_stacks_cache_been_cleared = [];
+	private $has_stacks_cache_been_cleared = false;
 
 	/**
 	 * Init tabs.
@@ -746,6 +746,7 @@ class Controls_Manager {
 		$this->stacks[ $stack_id ] = [
 			'tabs' => [],
 			'controls' => [],
+			'responsive_control_duplication_mode' => Plugin::$instance->breakpoints->get_responsive_control_duplication_mode(),
 		];
 	}
 
@@ -881,8 +882,8 @@ class Controls_Manager {
 	 * @access public
 	 * @return bool True if the CSS requires to clear the controls stack cache, False otherwise.
 	 */
-	public function has_stacks_cache_been_cleared( $handle_id = 'default' ) {
-		return isset( $this->has_post_stacks_cache_been_cleared[ $handle_id ] );
+	public function has_stacks_cache_been_cleared() {
+		return $this->has_stacks_cache_been_cleared;
 	}
 
 	/**
@@ -891,10 +892,9 @@ class Controls_Manager {
 	 * @since 3.13.0
 	 * @access public
 	 */
-	public function clear_stack_cache( $handle_id = 'default' ) {
+	public function clear_stack_cache() {
 		$this->stacks = [];
-
-		$this->has_post_stacks_cache_been_cleared[ $handle_id ] = true;
+		$this->has_stacks_cache_been_cleared = true;
 	}
 
 	/**
@@ -994,12 +994,17 @@ class Controls_Manager {
 	 *
 	 * @param Controls_Stack $controls_stack  Controls stack.
 	 *
-	 * @return null|array Stack data if it exist, `null` otherwise.
+	 * @return null|array Stack data if it exists, `null` otherwise.
 	 */
 	public function get_element_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
 
 		if ( ! isset( $this->stacks[ $stack_id ] ) ) {
+			return null;
+		}
+
+		if ( $this->should_clean_stack( $this->stacks[ $stack_id ] ) ) {
+			$this->delete_stack( $controls_stack );
 			return null;
 		}
 
@@ -1177,21 +1182,36 @@ class Controls_Manager {
 	}
 
 	/**
-	 * Clear stacks
+	 * Check if a stack should be cleaned by the current responsive control duplication mode.
 	 *
-	 * If a page contains templates, such as loop items, shortcodes, kits, or template widgets,
-	 * the templates responsive setting will not be updated unless the 'Regenerate CSS' option is used.
-	 * Reproduce only when additional breakpoints are active.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @access private
+	 * @param $stack
+	 * @return bool
 	 */
-	public function clear_stacks( $handle_id ) {
-		if ( $handle_id ) {
-			if ( ! $this->has_stacks_cache_been_cleared( $handle_id ) ) {
-				$this->clear_stack_cache( $handle_id );
-			}
+	private function should_clean_stack( $stack ): bool {
+		if ( ! isset( $stack['responsive_control_duplication_mode'] ) ) {
+			return false;
 		}
+
+		$stack_duplication_mode = $stack['responsive_control_duplication_mode'];
+
+		// This array provides a convenient way to map human-readable mode names to numeric values for comparison.
+		// If the current stack's mode is greater than or equal to the current mode, then we shouldn't clean the stack.
+		$modes = [
+			'off' => 1,
+			'dynamic' => 2,
+			'on' => 3,
+		];
+
+		if ( ! isset( $modes[ $stack_duplication_mode ] ) ) {
+			return false;
+		}
+
+		$current_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+		if ( $modes[ $stack_duplication_mode ] >= $modes[ $current_duplication_mode ] ) {
+			return false;
+		}
+
+		return true;
 	}
 }

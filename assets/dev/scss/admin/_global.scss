@@ -144,6 +144,16 @@ body {
 				display: none;
 			}
 		}
+
+		// Override Gutenberg styles to ensure the containers don't take the full height
+		// so we can append our button without breaking the layout.
+		:is( .is-desktop-preview, .is-tablet-preview, .is-mobile-preview ) {
+			:is( .editor-styles-wrapper, iframe[name="editor-canvas"] ) {
+				height: auto !important;
+				padding: 0 !important;
+				flex: 0 !important;
+			}
+		}
 	}
 
 	.block-editor {
@@ -255,7 +265,7 @@ body {
 		font-size: 32px;
 		font-weight: 300;
 		color: inherit;
-		margin: 40px 0 10px;
+		margin: 20px 0 10px;
 		line-height: 1.2;
 	}
 

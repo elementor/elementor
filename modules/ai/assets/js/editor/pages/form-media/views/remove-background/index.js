@@ -1,4 +1,5 @@
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import GenerateSubmit from '../../components/generate-submit';
 import ImageForm from '../../components/image-form';
@@ -10,6 +11,7 @@ import useRemoveBackground from './hooks/use-remove-background';
 import NewPromptButton from '../../components/new-prompt-button';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
+import useImageSize from '../../hooks/use-image-size';
 
 const RemoveBackground = () => {
 	const { editImage } = useEditImage();
@@ -21,6 +23,8 @@ const RemoveBackground = () => {
 	const { navigate } = useLocation();
 
 	const isLoading = isGenerating || isUploading;
+
+	const { width, height } = useImageSize( editImage.aspectRatio );
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
@@ -41,7 +45,10 @@ const RemoveBackground = () => {
 
 				<ImageForm onSubmit={ handleSubmit }>
 					{ data?.result ? (
-						<NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } />
+						<NewPromptButton
+							variant="contained"
+							disabled={ isLoading }
+							onClick={ () => navigate( LOCATIONS.GENERATE ) } />
 					) : (
 						<GenerateSubmit disabled={ isLoading } >
 							{ __( 'Remove Background', 'elementor' ) }
@@ -53,12 +60,9 @@ const RemoveBackground = () => {
 			<View.Content isGenerating={ isLoading }>
 				{
 					data?.result ? (
-						<Box sx={ {
-							backgroundImage: 'linear-gradient(45deg, #bbb 25%, transparent 25%), linear-gradient(-45deg, #bbb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bbb 75%), linear-gradient(-45deg, transparent 75%, #bbb 75%)',
-							backgroundSize: '20px 20px',
-							backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-						} }>
+						<Box>
 							<ImagesDisplay
+								transparentContainer={ true }
 								onUseImage={ use }
 								onEditImage={ edit }
 								images={ data.result }
@@ -66,13 +70,16 @@ const RemoveBackground = () => {
 							/>
 						</Box>
 					) : (
-						<SingleImagePreview>
-							<SingleImagePreview.Image
-								src={ editImage.url }
-								alt={ editImage.alt }
-								style={ { width: editImage.width, height: editImage.height } }
-							/>
-						</SingleImagePreview>
+						<Box>
+							<SingleImagePreview>
+								<SingleImagePreview.Image
+									src={ editImage.url }
+									alt={ editImage.alt }
+									style={ { width, height } }
+								>
+								</SingleImagePreview.Image>
+							</SingleImagePreview>
+						</Box>
 					)
 				}
 			</View.Content>

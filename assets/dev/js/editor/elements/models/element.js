@@ -149,8 +149,8 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		let title = this.getSetting( '_title' ),
-			custom = this.get( 'custom' );
+		let title = this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {
 			return this.get( 'title' ) || title;
@@ -168,7 +168,7 @@ ElementModel = BaseElementModel.extend( {
 			custom = this.get( 'custom' );
 
 		if ( custom?.isPreset ?? false ) {
-			return this.get( 'icon' ) || mainIcon;
+			return this.attributes.custom.preset_settings.presetIcon || mainIcon;
 		}
 
 		const savedPresetIcon = this.getSetting( 'presetIcon' );
