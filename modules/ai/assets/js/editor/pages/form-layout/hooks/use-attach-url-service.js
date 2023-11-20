@@ -1,13 +1,13 @@
 import { useTheme } from '@elementor/ui';
 import { useState } from 'react';
-import useUserInfo from '../../../hooks/use-user-info';
+import { useRemoteConfig } from '../context/remote-config';
 
 export const useAttachUrlService = ( ) => {
 	const [ currentUrl, setCurrentUrl ] = useState( '' );
 	const theme = useTheme();
-	const { isLoaded, builderUrl } = useUserInfo();
+	const { isLoaded, isError, builderUrl } = useRemoteConfig();
 
-	if ( ! isLoaded ) {
+	if ( ! isLoaded || isError ) {
 		return {
 			iframeSource: '',
 			currentUrl,
