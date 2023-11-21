@@ -128,7 +128,7 @@ const entry = {
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
-	'playing-cards-frontend': path.resolve( __dirname, '../playing-cards/assets/js/frontend.js' ),
+	// 'playing-cards-frontend': path.resolve( __dirname, '../playing-cards/assets/js/frontend.js' ),
 };
 
 const frontendEntries = {

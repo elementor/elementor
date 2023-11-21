@@ -83,5 +83,5 @@ export default class PlayingCards extends Base {
 		document.querySelectorAll( '.e-playing-cards-item' ).forEach( ( e ) => {
 			e.addEventListener( 'click', this.clickListener );
 		} );
-	},
+	}
 }

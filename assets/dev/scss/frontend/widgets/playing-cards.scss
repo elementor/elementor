@@ -17,7 +17,7 @@
   --e-card-suit-font-size: 1.5em;
   --e-card-royal-suit-offset-h: 10%;
   --e-card-royal-suit-offset-v: 0%;
-  --e-card-background-color: #ffffff;
+  --e-card-background-color: white;
 
   display: flex;
   flex-wrap: wrap;
@@ -295,24 +295,6 @@
 	.col_5-double {
 	  grid-column: 5/7;
 	}
-
-	//@for $i from -5 through 5 {
-	//  .row_#{$i} {
-	//	grid-row: $i;
-	//
-	//	&.double {
-	//	  grid-row: $i/calc($i + 2);
-	//	}
-	//  }
-	//
-	//  .col_#{$i} {
-	//	grid-column: $i;
-	//
-	//	&.double {
-	//	  grid-column: $i/calc($i + 2);
-	//	}
-	//  }
-	//}
   }
 }
 

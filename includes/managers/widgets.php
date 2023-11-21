@@ -92,6 +92,7 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
+			'playing-cards',
 		];
 
 		$this->_widget_types = [];
