@@ -619,6 +619,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-5-double col_4 flip"><?php echo esc_html( $suit ); ?></span>
 				<?php
+				// Intentional fallthrough
 			case 7:
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_3-double col_4"><?php echo esc_html( $suit ); ?></span>
@@ -631,7 +632,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				<?php
 				break;
 			default:
-				echo "";
+				echo '';
 				break;
 		}
 	}
