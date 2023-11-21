@@ -110,7 +110,7 @@ jobs:
       - name: Run tests
         run: cd ./tests/plugins-tester && npm run ${{ matrix.testSuite }}
       - uses: actions/upload-artifact@v3
-        if: failure()
+        if: always()
         with:
           name: errors-reports
           path: ./tests/plugins-tester/errors-reports/
