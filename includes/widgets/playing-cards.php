@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Playing_Cards extends Widget_Base {
 
-	private static $Suit_Char_Map = [
+	private static $suit_Char_Map = [
 		'diamond' => '&#9830;',
 		'heart' => '&#9829;',
 		'club' => '&#9827;',
 		'spade' => '&#9824;',
 	];
 
-	private static $Value_Map = [
+	private static $value_Map = [
 		'1' => 'A',
 		'2' => 2,
 		'3' => 3,
@@ -48,7 +48,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'playing', 'cards'];
+		return [ 'playing', 'cards' ];
 	}
 
 	private function register_cards_section_controls() {
@@ -67,7 +67,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::TEXT,
-				'default' => esc_html__( 'My Card' , 'elementor' ),
+				'default' => esc_html__( 'My Card', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -78,7 +78,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Value', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => '1',
-				'options' => static::$Value_Map,
+				'options' => static::$value_Map,
 			]
 		);
 		$repeater->add_control(
@@ -87,7 +87,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Suit', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => 'diamond',
-				'options' => static::$Suit_Char_Map,
+				'options' => static::$suit_Char_Map,
 			]
 		);
 		$this->add_control(
@@ -127,7 +127,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Card Width', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom'],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 160,
@@ -259,7 +259,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					'column' => '20',
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom'],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-row-gap: {{ROW}}{{UNIT}}; --e-cards-col-gap: {{COLUMN}}{{UNIT}};',
 				],
@@ -302,7 +302,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Raduis', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom'],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'min' => [
 						'px' => 0,
@@ -344,7 +344,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Font Size', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom'],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -406,7 +406,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Suit Size', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom'],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -436,7 +436,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_responsive_control(
 			'diamond_color',
 			[
-				'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$Suit_Char_Map[ 'diamond'],
+				'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$suit_Char_Map['diamond'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-diamond-color: {{VALUE}}',
@@ -446,7 +446,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'heart_color',
 			[
-				'label' => esc_html__( 'Heart ', 'elementor' ) . static::$Suit_Char_Map['heart'],
+				'label' => esc_html__( 'Heart ', 'elementor' ) . static::$suit_Char_Map['heart'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-heart-color: {{VALUE}}',
@@ -456,7 +456,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'club_color',
 			[
-				'label' => esc_html__( 'Club ', 'elementor' ) . static::$Suit_Char_Map['club'],
+				'label' => esc_html__( 'Club ', 'elementor' ) . static::$suit_Char_Map['club'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-club-color: {{VALUE}}',
@@ -466,7 +466,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'spade_color',
 			[
-				'label' => esc_html__( 'Spade ', 'elementor' ) . static::$Suit_Char_Map['spade'],
+				'label' => esc_html__( 'Spade ', 'elementor' ) . static::$suit_Char_Map['spade'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-spade-color: {{VALUE}}',
@@ -487,7 +487,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Horizontal Offset', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => ['px', 'em', 'rem', '%', 'custom'],
+				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -517,7 +517,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Vertical Offset', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => ['px', 'em', 'rem', '%', 'custom'],
+				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -556,8 +556,8 @@ class Widget_Playing_Cards extends Widget_Base {
 
 	private static function render_card( $value, $suit ) {
 		$value = (int) $value;
-		$text = static::$Value_Map[ $value ];
-		$suit = static::$Suit_Char_Map[ $suit ];
+		$text = static::$value_Map[ $value ];
+		$suit = static::$suit_Char_Map[ $suit ];
 		$class = 'e-card-content';
 		?>
 		<span class="<?php echo $class; ?> value row_1 col_1"><?php echo $text; ?></span>
@@ -574,9 +574,9 @@ class Widget_Playing_Cards extends Widget_Base {
 			return;
 		}
 
-		$center = ['1', '3', '5', '9'];
-		$center_block = ['2', '3'];
-		$inline_small = ['6', '7', '8'];
+		$center = [ '1', '3', '5', '9' ];
+		$center_block = [ '2', '3'];
+		$inline_small = [ '6', '7', '8' ];
 		?>
 
 		<span class="<?php echo $class; ?> value row_2 col_1 self-start"><?php echo $suit; ?></span>
@@ -656,7 +656,7 @@ class Widget_Playing_Cards extends Widget_Base {
 							$suit,
 						],
 						'data-id' => $_id,
-						'data-value' => static::$Value_Map[ $value ],
+						'data-value' => static::$value_Map[ $value ],
 						'data-suit' => $suit,
 					] );
 				?>
