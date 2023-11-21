@@ -62,7 +62,7 @@ class Playing_Cards extends Widget_Base {
 		$this->start_controls_section(
 				'cards_section',
 				[
-						'label' => esc_html__( 'Card', 'elementor' ),
+						'label' => esc_html__( 'Items', 'elementor' ),
 						'tab' => \Elementor\Controls_Manager::TAB_LAYOUT,
 				]
 		);
@@ -86,12 +86,8 @@ class Playing_Cards extends Widget_Base {
 						'type' => \Elementor\Controls_Manager::SELECT,
 						'default' => '1',
 						'options' => static::$VALUE_MAP,
-						//						'selectors' => [
-						//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
-						//						],
 				]
 		);
-
 		$repeater->add_control(
 				'card_suit',
 				[
@@ -99,16 +95,12 @@ class Playing_Cards extends Widget_Base {
 						'type' => \Elementor\Controls_Manager::SELECT,
 						'default' => 'diamond',
 						'options' => static::$SUIT_CHAR_MAP
-						//						'selectors' => [
-						//								'{{WRAPPER}} .your-class' => 'border-style: {{VALUE}};',
-						//						],
 				]
 		);
-
 		$this->add_control(
 				'list',
 				[
-						'label' => esc_html__( 'Item List', 'elementor' ),
+						'label' => esc_html__( 'Card List', 'elementor' ),
 						'type' => \Elementor\Controls_Manager::REPEATER,
 						'fields' => $repeater->get_controls(),
 						'default' => [
@@ -140,7 +132,7 @@ class Playing_Cards extends Widget_Base {
 		$this->add_responsive_control(
 				'content_width',
 				[
-						'label' => esc_html__( 'Width', 'elementor' ),
+						'label' => esc_html__( 'Card Width', 'elementor' ),
 						'type' => \Elementor\Controls_Manager::SLIDER,
 						'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 						'range' => [
@@ -168,7 +160,7 @@ class Playing_Cards extends Widget_Base {
 		$this->add_responsive_control(
 				'content_direction',
 				[
-						'label' => esc_html__( 'Direction', 'elementor' ),
+						'label' => esc_html__( 'Cards Direction', 'elementor' ),
 						'type' => \Elementor\Controls_Manager::CHOOSE,
 						'options' => [
 								'row' => [
@@ -200,29 +192,29 @@ class Playing_Cards extends Widget_Base {
 						'type' => \Elementor\Controls_Manager::CHOOSE,
 						'label_block' => true,
 						'options' => [
-								'start' => [
+								'flex-start' => [
 										'title' => esc_html__( 'Start', 'elementor' ),
-										'icon' => 'eicon-justify-start-h',
+										'icon' => 'eicon-flex eicon-justify-start-h',
 								],
 								'center' => [
 										'title' => esc_html__( 'Center', 'elementor' ),
-										'icon' => 'eicon-justify-center-h',
+										'icon' => 'eicon-flex eicon-justify-center-h',
 								],
-								'end' => [
+								'flex-end' => [
 										'title' => esc_html__( 'End', 'elementor' ),
-										'icon' => 'eicon-justify-end-h',
+										'icon' => 'eicon-flex eicon-justify-end-h',
 								],
 								'space-between' => [
 										'title' => esc_html__( 'Space Between', 'elementor' ),
-										'icon' => 'eicon-justify-space-between-h',
+										'icon' => 'eicon-flex eicon-justify-space-between-h',
 								],
 								'space-around' => [
 										'title' => esc_html__( 'Space Around', 'elementor' ),
-										'icon' => 'eicon-justify-space-around-h',
+										'icon' => 'eicon-flex eicon-justify-space-around-h',
 								],
 								'space-evenly' => [
 										'title' => esc_html__( 'Space Evenly', 'elementor' ),
-										'icon' => 'eicon-justify-space-evenly-h',
+										'icon' => 'eicon-flex eicon-justify-space-evenly-h',
 								],
 						],
 						'selectors' => [
@@ -238,19 +230,19 @@ class Playing_Cards extends Widget_Base {
 						'options' => [
 								'start' => [
 										'title' => esc_html__( 'Start', 'elementor' ),
-										'icon' => 'eicon-align-start-v',
+										'icon' => 'eicon-flex eicon-align-start-v',
 								],
 								'center' => [
 										'title' => esc_html__( 'Center', 'elementor' ),
-										'icon' => 'eicon-align-center-v',
+										'icon' => 'eicon-flex eicon-align-center-v',
 								],
 								'end' => [
 										'title' => esc_html__( 'End', 'elementor' ),
-										'icon' => 'eicon-align-end-v',
+										'icon' => 'eicon-flex eicon-align-end-v',
 								],
 								'stretch' => [
 										'title' => esc_html__( 'Stretch', 'elementor' ),
-										'icon' => 'eicon-align-stretch-v',
+										'icon' => 'eicon-flex eicon-align-stretch-v',
 								],
 						],
 						'selectors' => [
@@ -570,20 +562,21 @@ class Playing_Cards extends Widget_Base {
 	}
 
 	private static function render_card( $value, $suit ) {
-		$formatted_value = static::$VALUE_MAP[ $value ];
-		$formatted_suit = static::$SUIT_CHAR_MAP[ $suit ];
 		$value = (int) $value;
+		$text = static::$VALUE_MAP[ $value ];
+		$suit = static::$SUIT_CHAR_MAP[ $suit ];
+		$class = "e-card-content";
 		?>
-			<span class="e-card value <?= $suit ?> row_1 col_1"><?= $formatted_value ?></span>
-			<span class="e-card value flip <?= $suit ?> row_-2 col_-2"><?= $formatted_value ?></span>
+			<span class="<?= $class ?> value row_1 col_1"><?= $text ?></span>
+			<span class="<?= $class ?> value flip row_-2 col_-2"><?= $text ?></span>
 		<?php
 		if ( $value > 10 ) {
 			?>
-			<div class="e-card-royal-image" style="background-image: url( <?=
-				ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $formatted_value . '.jpg' ?> ); "></div>
+			<div class="<?= $class ?>-royal-image" style="background-image: url( <?=
+				ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $text . '.jpg' ?> ); "></div>
 
-			<span class="e-card suit royal end row_2 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit royal start row_-3 col_-3 flip <?= $suit ?>"><?=$formatted_suit ?></span>
+			<span class="<?= $class ?> suit royal end row_2 col_2"><?= $suit ?></span>
+			<span class="<?= $class ?> suit royal start row_-3 col_-3 flip"><?=$suit ?></span>
 			<?php
 			return;
 		}
@@ -593,73 +586,88 @@ class Playing_Cards extends Widget_Base {
 		$inline_small = [ '6', '7', '8' ];
 		?>
 
-		<span class="e-card value row_2 col_1 self-start <?= $suit ?>"><?= $formatted_suit ?></span>
-		<span class="e-card value row_-3 col_-2 self-end flip <?= $suit ?>"><?= $formatted_suit ?></span>
+		<span class="<?= $class ?> value row_2 col_1 self-start"><?= $suit ?></span>
+		<span class="<?= $class ?> value row_-3 col_-2 self-end flip"><?= $suit ?></span>
 		<?php
 
 		if ( in_array( $value, $center ) ) {
 			?>
-			<span class="e-card suit self-start row_5 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="<?= $class ?> suit self-start row_5 col_4"><?= $suit ?></span>
 			<?php
 		}
 		if ( in_array( $value, $center_block ) ) {
 			?>
-			<span class="e-card suit row_2 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_-3 col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="<?= $class ?> suit row_2 col_4"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_-3 col_4"><?= $suit ?></span>
 			<?php
 		}
 		if ( $value > 3 ) {
 			?>
-			<span class="e-card suit row_2 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_2 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_-3 col_2 flip <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_-3 col_-3 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="<?= $class ?> suit row_2 col_2"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_2 col_-3"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_-3 col_2 flip"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_-3 col_-3 flip"><?= $suit ?></span>
 			<?php
 		}
 		if ( in_array( $value, $inline_small ) ) {
 			?>
-			<span class="e-card suit row_5 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_5 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="<?= $class ?> suit row_5 col_2"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_5 col_-3"><?= $suit ?></span>
 			<?php
 		}
 		if ( $value > 8 ) {
 			?>
-			<span class="e-card suit row_4 col_2 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_4 col_-3 <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_-5 col_2 flip <?= $suit ?>"><?= $formatted_suit ?></span>
-			<span class="e-card suit row_-5 col_-3 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+			<span class="<?= $class ?> suit row_4 col_2"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_4 col_-3"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_-5 col_2 flip"><?= $suit ?></span>
+			<span class="<?= $class ?> suit row_-5 col_-3 flip"><?= $suit ?></span>
 			<?php
 		}
 		switch ( $value ) {
 			case 8:
 				?>
-				<span class="e-card suit row_-5-double col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+				<span class="<?= $class ?> suit row_-5-double col_4 flip"><?= $suit ?></span>
 				<?php
 			case 7:
 				?>
-				<span class="e-card suit row_3-double col_4 <?= $suit ?>"><?= $formatted_suit ?></span>
+				<span class="<?= $class ?> suit row_3-double col_4"><?= $suit ?></span>
 				<?php
 				break;
 			case 10:
 				?>
-				<span class="e-card suit row_3 col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
-				<span class="e-card suit row_-4 col_4 flip <?= $suit ?>"><?= $formatted_suit ?></span>
+				<span class="<?= $class ?> suit row_3 col_4 flip"><?= $suit ?></span>
+				<span class="<?= $class ?> suit row_-4 col_4 flip"><?= $suit ?></span>
 				<?php
+				break;
 		}
 	}
 
 	protected function render() {
-		$cards = $this->get_settings_for_display()[ 'list' ];
-//		$this->add_render_attribute()
+		$settings = $this->get_settings_for_display();
+		$cards = $settings[ 'list' ];
+//		echo "<pre>";
+//		print_r( $cards );
+//		echo "</pre>";
 		?>
 		<div class="e-playing-cards-container">
 
 		<?php
 		foreach ( $cards as $card ) {
+			$_id = $card[ '_id' ];
 			$suit = $card[ 'card_suit' ];
 			$value = $card[ 'card_value' ];
-		?>
-			<article class="e-playing-cards-item">
+			$this->add_render_attribute( $_id,
+				[
+					'class' => [
+						"e-playing-cards-item",
+						$suit,
+					],
+					'data-id' => $_id,
+					'data-value' => static::$VALUE_MAP[ $value ],
+					'data-suit' => $suit
+				] );
+			?>
+			<article <?= $this->get_render_attribute_string( $_id ); ?>>
 			<?php static::render_card( $value, $suit ); ?>
 		</article>
 		<?php
@@ -668,8 +676,5 @@ class Playing_Cards extends Widget_Base {
 
 		</div>
 		<?php
-	}
-
-	protected function content_template() {
 	}
 }
