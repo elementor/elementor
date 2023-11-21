@@ -556,19 +556,18 @@ class Widget_Playing_Cards extends Widget_Base {
 
 	private static function render_card( $value, $suit ) {
 		$value = (int) $value;
-		$text = esc_html__( static::$value_map[ $value ], 'elementor' );
+		$text = static::$value_map[ $value ];
 		$suit = static::$suit_char_map[ $suit ];
-		$suit = esc_html__( "$suit", 'elementor' );
-		$class = esc_html__( 'e-card-content', 'elementor' );
+		$class = __( 'e-card-content', 'elementor' );
 		?>
-		<span class="<?php echo esc_html__( $class, 'elementor' ); ?> value row_1 col_1"><?php echo esc_html__( $text, 'elementor' ); ?></span>
-		<span class="<?php echo esc_html__( $class, 'elementor' ); ?> value flip row_-2 col_-2"><?php echo esc_html__( $text, 'elementor' ); ?></span>
+		<span class="<?php echo esc_html( $class ); ?> value row_1 col_1"><?php echo esc_html( $text ); ?></span>
+		<span class="<?php echo esc_html( $class ); ?> value flip row_-2 col_-2"><?php echo esc_html( $text ); ?></span>
 		<?php
 		if ( $value > 10 ) {
 			?>
-			<div class="<?php echo esc_html__( $class, 'elementor' ); ?>-royal-image" style="background-image: url( <?php echo esc_url( ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $text . '.jpg' ); ?> );"></div>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit royal end row_2 col_2"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit royal start row_-3 col_-3 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<div class="<?php echo esc_html( $class ); ?>-royal-image" style="background-image: url( <?php echo esc_url( ELEMENTOR_ASSETS_URL .	"images/playing-cards/$text.jpg" ); ?> );"></div>
+			<span class="<?php echo esc_html( "$class" ); ?> suit royal end row_2 col_2"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit royal start row_-3 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 			<?php
 			return;
 		}
@@ -578,57 +577,57 @@ class Widget_Playing_Cards extends Widget_Base {
 		$inline_small = [ '6', '7', '8' ];
 		?>
 
-		<span class="<?php echo esc_html__( $class, 'elementor' ); ?> value row_2 col_1 self-start"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-		<span class="<?php echo esc_html__( $class, 'elementor' ); ?> value row_-3 col_-2 self-end flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+		<span class="<?php echo esc_html( "$class" ); ?> value row_2 col_1 self-start"><?php echo esc_html( $suit ); ?></span>
+		<span class="<?php echo esc_html( "$class" ); ?> value row_-3 col_-2 self-end flip"><?php echo esc_html( $suit ); ?></span>
 		<?php
 
 		if ( in_array( $value, $center ) ) {
 			?>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit self-start row_5 col_4"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit self-start row_5 col_4"><?php echo esc_html( $suit ); ?></span>
 			<?php
 		}
 		if ( in_array( $value, $center_block ) ) {
 			?>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_2 col_4"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-3 col_4"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_2 col_4"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_-3 col_4"><?php echo esc_html( $suit ); ?></span>
 			<?php
 		}
 		if ( $value > 3 ) {
 			?>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_2 col_2"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_2 col_-3"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-3 col_2 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-3 col_-3 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_2 col_2"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_2 col_-3"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_-3 col_2 flip"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_-3 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 			<?php
 		}
 		if ( in_array( $value, $inline_small ) ) {
 			?>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_5 col_2"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_5 col_-3"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_5 col_2"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_5 col_-3"><?php echo esc_html( $suit ); ?></span>
 			<?php
 		}
 		if ( $value > 8 ) {
 			?>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_4 col_2"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_4 col_-3"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-5 col_2 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-			<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-5 col_-3 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_4 col_2"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_4 col_-3"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_-5 col_2 flip"><?php echo esc_html( $suit ); ?></span>
+			<span class="<?php echo esc_html( "$class" ); ?> suit row_-5 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 			<?php
 		}
 		switch ( $value ) {
 			case 8:
 				?>
-				<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-5-double col_4 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+				<span class="<?php echo esc_html( "$class" ); ?> suit row_-5-double col_4 flip"><?php echo esc_html( $suit ); ?></span>
 			<?php
 			case 7:
 				?>
-				<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_3-double col_4"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+				<span class="<?php echo esc_html( "$class" ); ?> suit row_3-double col_4"><?php echo esc_html( $suit ); ?></span>
 				<?php
 				break;
 			case 10:
 				?>
-				<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_3 col_4 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
-				<span class="<?php echo esc_html__( $class, 'elementor' ); ?> suit row_-4 col_4 flip"><?php echo esc_html__( $suit, 'elementor' ); ?></span>
+				<span class="<?php echo esc_html( "$class" ); ?> suit row_3 col_4 flip"><?php echo esc_html( $suit ); ?></span>
+				<span class="<?php echo esc_html( "$class" ); ?> suit row_-4 col_4 flip"><?php echo esc_html( $suit ); ?></span>
 				<?php
 				break;
 		}
