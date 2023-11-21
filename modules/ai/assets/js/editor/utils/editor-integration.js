@@ -35,7 +35,7 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
 	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
 	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
-	{ text: __( 'Futuristic layout with neon accents around', 'elementor' ) },
+	{ text: __( 'Futuristic design with neon accents about', 'elementor' ) },
 	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
 	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
 	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },

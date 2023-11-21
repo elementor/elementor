@@ -28,7 +28,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const contextMenu = {
 			name: 'ai',
 			icon: 'eicon-ai',
-			title: __( 'Generate AI Variations', 'elementor' ),
+			title: __( 'Edit with AI', 'elementor' ),
 			callback: async () => {
 				const container = currentElement.getContainer();
 				const json = container.model.toJSON( { remove: [ 'default' ] } );
