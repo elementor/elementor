@@ -631,6 +631,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				<?php
 				break;
 			default:
+				// Intentional
 				break;
 		}
 	}
@@ -658,7 +659,7 @@ class Widget_Playing_Cards extends Widget_Base {
 						'data-id' => $_id,
 						'data-value' => static::$value_map[ $value ],
 						'data-suit' => $suit,
-				] );
+					] );
 				?>
 				<article <?php $this->print_render_attribute_string( $_id ); ?>>
 				<?php static::render_card( $value, $suit ); ?>
