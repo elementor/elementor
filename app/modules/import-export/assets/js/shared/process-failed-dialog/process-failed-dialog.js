@@ -61,8 +61,8 @@ const messagesContent = {
 		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
 	},
 	'third-party-error': {
-		title: __( 'Couldn’t install the Kit', 'elementor' ),
-		text: __( 'Other plugins ', 'elementor' ),
+		title: __( 'Unable to download the Kit', 'elementor' ),
+		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go. ', 'elementor' ),
 	},
 };
 
