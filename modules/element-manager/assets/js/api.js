@@ -61,3 +61,25 @@ export const getUsageWidgets = async () => {
 		console.error( error );
 	}
 };
+
+export const markNoticeViewed = async ( noticeId ) => {
+	try {
+		const response = await fetch( eElementManagerConfig.ajaxurl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams( {
+				action: 'elementor_set_admin_notice_viewed',
+				notice_id: noticeId,
+			} ),
+		} );
+
+		const data = await response.json();
+		if ( data.success ) {
+			return data.data;
+		}
+	} catch ( error ) {
+		console.error( error );
+	}
+};
