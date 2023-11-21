@@ -61,8 +61,8 @@ const messagesContent = {
 		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
 	},
 	'domdocument-missing': {
-		title: __( 'Couldn’t install the Kit', 'elementor' ),
-		text: __( 'You must have DOMDocument installed', 'elementor' ),
+		title: __( 'Unable to download the Kit' ),
+		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
 	},
 };
 
