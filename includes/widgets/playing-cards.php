@@ -557,7 +557,8 @@ class Widget_Playing_Cards extends Widget_Base {
 	private static function render_card( $value, $suit ) {
 		$value = (int) $value;
 		$text = esc_html__( static::$value_map[ $value ], 'elementor' );
-		$suit = esc_html__( static::$suit_char_map[ $suit ], 'elementor' );
+		$suit = static::$suit_char_map[ $suit ];
+		$suit = esc_html__( "$suit", 'elementor' );
 		$class = esc_html__( 'e-card-content', 'elementor' );
 		?>
 		<span class="<?php echo esc_html__( $class, 'elementor' ); ?> value row_1 col_1"><?php echo esc_html__( $text, 'elementor' ); ?></span>
