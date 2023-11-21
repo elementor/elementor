@@ -19,6 +19,7 @@ import {
 	FlexItem,
 	Flex,
 	Snackbar,
+	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -26,6 +27,7 @@ import {
 	saveDisabledWidgets,
 	getAdminAppData,
 	getUsageWidgets,
+	markNoticeViewed,
 } from './api';
 
 export const App = () => {
@@ -48,6 +50,7 @@ export const App = () => {
 	} );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ isSnackbarOpen, setIsSnackbarOpen ] = useState( false );
+	const [ noticeData, setNoticeData ] = useState( null );
 
 	const getWidgetUsage = ( widgetName ) => {
 		if ( ! usageWidgets.data || ! usageWidgets.data.hasOwnProperty( widgetName ) ) {
@@ -186,6 +189,7 @@ export const App = () => {
 		const onLoading = async () => {
 			const appData = await getAdminAppData();
 
+			setNoticeData( appData.notice_data );
 			setWidgetsDisabled( appData.disabled_elements );
 			setWidgets( appData.widgets );
 			setPromotionWidgets( appData.promotion_widgets );
@@ -244,12 +248,30 @@ export const App = () => {
 					maxWidth: '800px',
 				} }
 			>
-				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance', 'elementor' ) }
+				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance.', 'elementor' ) }
 				{ ' ' }
 				<a href="https://go.elementor.com/wp-dash-element-manager/" rel={ 'noreferrer' } target={ '_blank' }>
 					{ __( 'Learn More', 'elementor' ) }
 				</a>
 			</p>
+
+			{ ! noticeData.is_viewed && (
+				<p
+					style={ {
+						margin: '20px -15px',
+					} }
+				>
+					<Notice
+						onRemove={ () => {
+							markNoticeViewed( noticeData.notice_id );
+							setNoticeData( { ...noticeData, is_viewed: true } );
+						} }
+						status="warning"
+					>
+						<strong>{ __( 'Before you continue:', 'elementor' ) }</strong> { __( 'Deactivating widgets here will remove them from both the Elementor Editor and your website, which can cause changes to your overall layout, design and what visitors see.', 'elementor' ) }
+					</Notice>
+				</p>
+			) }
 			<Panel>
 				<PanelBody>
 					<Flex
@@ -362,6 +384,7 @@ export const App = () => {
 												</span>
 											</Button>
 										</th>
+										<th>{ __( 'Status', 'elementor' ) }</th>
 										<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
 											<Button
 												href={ '#' }
@@ -378,20 +401,20 @@ export const App = () => {
 											</Button>
 										</th>
 										<th>{ __( 'Plugin', 'elementor' ) }</th>
-										<th>{ __( 'Status', 'elementor' ) }</th>
 									</tr>
 								</thead>
 								<tbody>
 									{ sortedAndFilteredWidgets.map( ( widget ) => {
 										return (
 											<tr key={ widget.name }>
-												<td>{ widget.title }</td>
 												<td>
-													<UsageTimesColumn
-														widgetName={ widget.name }
-													/>
+													<i
+														style={ {
+															marginInlineEnd: '5px',
+														} }
+														className={ `${ widget.icon }` }
+													></i> { widget.title }
 												</td>
-												<td>{ widget.plugin }</td>
 												<td>
 													<ToggleControl
 														checked={ ! widgetsDisabled.includes( widget.name ) }
@@ -405,6 +428,12 @@ export const App = () => {
 														} }
 													/>
 												</td>
+												<td>
+													<UsageTimesColumn
+														widgetName={ widget.name }
+													/>
+												</td>
+												<td>{ widget.plugin }</td>
 											</tr>
 										);
 									} ) }
@@ -452,18 +481,23 @@ export const App = () => {
 											<th className={ `manage-column` }>
 												<span>{ __( 'Element', 'elementor' ) }</span>
 											</th>
+											<th>{ __( 'Status', 'elementor' ) }</th>
 											<th>{ __( 'Usage', 'elementor' ) }</th>
 											<th>{ __( 'Plugin', 'elementor' ) }</th>
-											<th>{ __( 'Status', 'elementor' ) }</th>
 										</tr>
 									</thead>
 									<tbody>
 										{ promotionWidgets.map( ( widget ) => {
 											return (
 												<tr key={ widget.name }>
-													<td>{ widget.title }</td>
-													<td></td>
-													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
+													<td>
+														<i
+															style={ {
+																marginInlineEnd: '5px',
+															} }
+															className={ `${ widget.icon }` }
+														></i> { widget.title }
+													</td>
 													<td>
 														<ToggleControl
 															__nextHasNoMarginBottom={ true }
@@ -471,6 +505,8 @@ export const App = () => {
 															disabled={ true }
 														/>
 													</td>
+													<td></td>
+													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
 												</tr>
 											);
 										} ) }
@@ -498,7 +534,15 @@ export const App = () => {
 							marginBlockStart: '0',
 						} }
 					>
-						{ __( 'Turning off widgets will hide them from the panel in the editor and from your website, potentially changing your layout or front-end appearance.', 'elementor' ) }
+						{ __( 'Turning widgets off will hide them from the editor panel, and can potentially affect your layout or front-end.', 'elementor' ) }
+						<span
+							style={ {
+								display: 'block',
+								marginTop: '20px',
+							} }
+						>
+							{ __( 'If you’re adding widgets back in, enjoy them!', 'elementor' ) }
+						</span>
 					</p>
 					<ButtonGroup
 						style={ {
