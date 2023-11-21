@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { getRemoteConfig } from '../../../api';
-import { AlertDialog } from '../../../components/alert-dialog';
 
 const RemoteConfigContext = React.createContext( {} );
 
@@ -11,9 +10,7 @@ export const RemoteConfigProvider = ( props ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ isError, setIsError ] = useState( false );
-	const [ remoteConfig, setRemoteConfig ] = useState( {
-		builderUrl: '',
-	} );
+	const [ remoteConfig, setRemoteConfig ] = useState( {} );
 
 	const fetchData = async () => {
 		setIsLoading( true );
@@ -24,7 +21,11 @@ export const RemoteConfigProvider = ( props ) => {
 				setIsLoading( false );
 			} );
 
-			setRemoteConfig( result );
+			if ( ! result.config ) {
+				throw new Error( 'Invalid remote config' );
+			}
+
+			setRemoteConfig( result.config );
 		} catch ( error ) {
 			setIsError( true );
 			setIsLoaded( true );
@@ -36,22 +37,13 @@ export const RemoteConfigProvider = ( props ) => {
 		fetchData();
 	}
 
-	if ( isError ) {
-		return (
-			<AlertDialog
-				message={ __( "Can't connect server", 'elementor' ) }
-				onClose={ props.onError }
-			/>
-		);
-	}
-
 	return (
 		<RemoteConfigContext.Provider
 			value={ {
 				isLoading,
 				isLoaded,
 				isError,
-				builderUrl: remoteConfig.builderUrl,
+				remoteConfig,
 			} }
 		>
 			{ props.children }
