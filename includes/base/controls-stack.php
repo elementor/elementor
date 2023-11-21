@@ -1139,13 +1139,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed The raw data.
 	 */
 	public function get_data( $item = null ) {
-		if ( ! $this->settings_sanitized && ( ! $item || 'settings' === $item ) ) {
-			$this->data['settings'] = $this->sanitize_settings( $this->data['settings'] );
-
-			$this->settings_sanitized = true;
+		if (!empty($this->data['settings'])){
+			if ( ! $this->settings_sanitized && ( ! $item || 'settings' === $item ) ) {
+				$this->data['settings'] = $this->sanitize_settings( $this->data['settings'] );
+	
+				$this->settings_sanitized = true;
+			}
+	
+			return self::get_items( $this->data, $item );
 		}
-
-		return self::get_items( $this->data, $item );
 	}
 
 	/**
