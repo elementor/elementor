@@ -529,9 +529,10 @@ class Ai extends Library {
 			}
 		}
 
+		$context['currentContext'] = $data['currentContext'];
+
 		$metadata = [
 			'context' => $context,
-			'currentContext' => $data['currentContext'],
 			'api_version' => ELEMENTOR_VERSION,
 			'site_lang' => get_bloginfo( 'language' ),
 			'config' => [
