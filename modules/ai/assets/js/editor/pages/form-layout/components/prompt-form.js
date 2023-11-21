@@ -103,11 +103,11 @@ const PromptForm = forwardRef( ( {
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
 			direction="row"
-			sx={ { p: 2 } }
-			alignItems="center"
+			sx={ { p: 3 } }
+			alignItems="start"
 			gap={ 1 }
 		>
-			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+			<Stack direction="row" alignItems="start" flexGrow={ 1 } spacing={ 2 }>
 				{
 					showActions && (
 						isActive ? (
@@ -122,7 +122,7 @@ const PromptForm = forwardRef( ( {
 					attachments={ attachments }
 					onAttach={ onAttach }
 					onDetach={ onDetach }
-					disabled={ isLoading }
+					disabled={ isLoading || isEnhancing || ! isActive }
 				/>
 
 				<PromptAutocomplete
@@ -130,7 +130,6 @@ const PromptForm = forwardRef( ( {
 					disabled={ isLoading || ! isActive || isEnhancing }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ promptSuggestions }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput

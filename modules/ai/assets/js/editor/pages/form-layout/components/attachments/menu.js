@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Popover, Stack, useTheme } from '@elementor/ui';
+import { IconButton, Popover, Stack, useTheme } from '@elementor/ui';
 import { MenuItem } from './menu-item';
 import XCircleIcon from '../../../../icons/x-circle-icon';
 import PlusCircleIcon from '../../../../icons/plus-circle-icon';
@@ -14,19 +14,20 @@ export const Menu = ( props ) => {
 
 	return (
 		<>
-			<Button
+			<IconButton
+				size="medium"
 				ref={ anchorRef }
 				disabled={ props.disabled }
 				onClick={ () => setIsOpen( true ) }
 				color="secondary"
 				variant="text"
 				sx={ {
-					width: 24,
-					minWidth: 24,
+					width: 20,
+					minWidth: 20,
 				} }
 			>
 				{ isOpen ? <XCircleIcon /> : <PlusCircleIcon /> }
-			</Button>
+			</IconButton>
 
 			<Popover
 				open={ isOpen }

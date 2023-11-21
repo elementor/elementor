@@ -1,6 +1,7 @@
 import { useState, forwardRef } from 'react';
-import { Autocomplete, TextField } from '@elementor/ui';
+import { Autocomplete, Box, Divider, Paper, TextField, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 
 const TextInput = forwardRef( ( props, ref ) => (
 	<TextField
@@ -24,11 +25,55 @@ TextInput.propTypes = {
 	InputProps: PropTypes.object,
 };
 
+const PaperComponent = function( props ) {
+	return <Paper { ...props }
+		sx={ {
+			borderRadius: 2,
+		} }
+	>
+		<Typography
+			component={ Box }
+			color={ ( theme ) => theme.palette.text.tertiary }
+			variant="caption"
+			paddingX={ 2 }
+			paddingY={ 1 }
+		>
+			{ __( 'Suggested Prompts', 'elementor' ) }
+		</Typography>
+		<Divider />
+		{ props.children }
+	</Paper>;
+};
+
+PaperComponent.propTypes = {
+	children: PropTypes.node,
+};
+
 const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 	const [ showSuggestions, setShowSuggestions ] = useState( false );
 
 	return (
 		<Autocomplete
+			PaperComponent={ PaperComponent }
+			ListboxProps={ { sx: { maxHeight: ( theme ) => theme.spacing( 5 /* Items */ * 4 ) } } }
+			renderOption={ ( optionProps, option ) => (
+				<Typography
+					component={ Box }
+					variant="body2"
+					{ ...optionProps }
+				>
+					<div
+						title={ option.text }
+						style={ {
+							textOverflow: 'ellipsis',
+							overflow: 'hidden',
+							whiteSpace: 'nowrap',
+						} }
+					>
+						{ option.text }
+					</div>
+				</Typography>
+			) }
 			freeSolo
 			fullWidth
 			disableClearable
