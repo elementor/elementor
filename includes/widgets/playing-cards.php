@@ -565,7 +565,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		<?php
 		if ( $value > 10 ) {
 			?>
-			<div class="<?php echo esc_html( $class ); ?>-royal-image" style="background-image: url( <?php echo esc_url( ELEMENTOR_ASSETS_URL .	"images/playing-cards/$text.jpg" ); ?> );"></div>
+			<div class="<?php echo esc_html( $class ); ?>-royal-image" style="background-image: url( <?php echo esc_url( ELEMENTOR_ASSETS_URL . "images/playing-cards/$text.jpg" ); ?> );"></div>
 			<span class="<?php echo esc_html( "$class" ); ?> suit royal end row_2 col_2"><?php echo esc_html( $suit ); ?></span>
 			<span class="<?php echo esc_html( "$class" ); ?> suit royal start row_-3 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 			<?php
@@ -618,7 +618,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			case 8:
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-5-double col_4 flip"><?php echo esc_html( $suit ); ?></span>
-			<?php
+				<?php
 			case 7:
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_3-double col_4"><?php echo esc_html( $suit ); ?></span>
@@ -629,6 +629,8 @@ class Widget_Playing_Cards extends Widget_Base {
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_3 col_4 flip"><?php echo esc_html( $suit ); ?></span>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-4 col_4 flip"><?php echo esc_html( $suit ); ?></span>
 				<?php
+				break;
+			default:
 				break;
 		}
 	}
@@ -656,7 +658,7 @@ class Widget_Playing_Cards extends Widget_Base {
 						'data-id' => $_id,
 						'data-value' => static::$value_map[ $value ],
 						'data-suit' => $suit,
-					] );
+				] );
 				?>
 				<article <?php $this->print_render_attribute_string( $_id ); ?>>
 				<?php static::render_card( $value, $suit ); ?>
