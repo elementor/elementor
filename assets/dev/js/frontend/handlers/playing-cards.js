@@ -1,8 +1,5 @@
 import Base from 'elementor-frontend/handlers/base';
 export default class PlayingCards extends Base {
-	constructor( ...args ) {
-		super( ...args );
-	}
 	getDefaultSettings() {
 		return {
 			selectors: {

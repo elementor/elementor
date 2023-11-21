@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Playing_Cards extends Widget_Base {
 
-	private static $SUIT_CHAR_MAP = [
+	private static $Suit_Char_Map = [
 		'diamond' => '&#9830;',
 		'heart' => '&#9829;',
 		'club' => '&#9827;',
 		'spade' => '&#9824;',
 	];
 
-	private static $VALUE_MAP = [
+	private static $Value_Map = [
 		'1' => 'A',
 		'2' => 2,
 		'3' => 3,
@@ -35,13 +35,6 @@ class Widget_Playing_Cards extends Widget_Base {
 		'13' => 'K',
 	];
 
-	private static $COLORS = [
-		'diamond' => 'red',
-		'heart' => 'red',
-		'club' => 'black',
-		'spade' => 'black',
-	];
-
 	public function get_name() {
 		return 'playing-cards';
 	}
@@ -55,7 +48,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'playing', 'cards' ];
+		return [ 'playing', 'cards'];
 	}
 
 	private function register_cards_section_controls() {
@@ -85,7 +78,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Value', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => '1',
-				'options' => static::$VALUE_MAP,
+				'options' => static::$Value_Map,
 			]
 		);
 		$repeater->add_control(
@@ -94,7 +87,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Suit', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => 'diamond',
-				'options' => static::$SUIT_CHAR_MAP
+				'options' => static::$Suit_Char_Map,
 			]
 		);
 		$this->add_control(
@@ -134,7 +127,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Card Width', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom'],
 				'range' => [
 					'px' => [
 						'min' => 160,
@@ -266,7 +259,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					'column' => '20',
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom'],
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-cards-row-gap: {{ROW}}{{UNIT}}; --e-cards-col-gap: {{COLUMN}}{{UNIT}};',
 				],
@@ -309,7 +302,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Border Raduis', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom'],
 				'range' => [
 					'min' => [
 						'px' => 0,
@@ -351,7 +344,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Font Size', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom'],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -413,7 +406,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Suit Size', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom'],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -443,7 +436,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		$this->add_responsive_control(
 			'diamond_color',
 			[
-				'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'diamond' ],
+				'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$Suit_Char_Map[ 'diamond'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-diamond-color: {{VALUE}}',
@@ -453,7 +446,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'heart_color',
 			[
-				'label' => esc_html__( 'Heart ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'heart' ],
+				'label' => esc_html__( 'Heart ', 'elementor' ) . static::$Suit_Char_Map['heart'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-heart-color: {{VALUE}}',
@@ -463,7 +456,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'club_color',
 			[
-				'label' => esc_html__( 'Club ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'club' ],
+				'label' => esc_html__( 'Club ', 'elementor' ) . static::$Suit_Char_Map['club'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-club-color: {{VALUE}}',
@@ -473,7 +466,7 @@ class Widget_Playing_Cards extends Widget_Base {
 		);$this->add_responsive_control(
 			'spade_color',
 			[
-				'label' => esc_html__( 'Spade ', 'elementor' ) . static::$SUIT_CHAR_MAP[ 'spade' ],
+				'label' => esc_html__( 'Spade ', 'elementor' ) . static::$Suit_Char_Map['spade'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-spade-color: {{VALUE}}',
@@ -494,7 +487,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Horizontal Offset', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
+				'size_units' => ['px', 'em', 'rem', '%', 'custom'],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -524,7 +517,7 @@ class Widget_Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Vertical Offset', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', '%', 'custom' ],
+				'size_units' => ['px', 'em', 'rem', '%', 'custom'],
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -563,80 +556,80 @@ class Widget_Playing_Cards extends Widget_Base {
 
 	private static function render_card( $value, $suit ) {
 		$value = (int) $value;
-		$text = static::$VALUE_MAP[ $value ];
-		$suit = static::$SUIT_CHAR_MAP[ $suit ];
-		$class = "e-card-content";
+		$text = static::$Value_Map[ $value ];
+		$suit = static::$Suit_Char_Map[ $suit ];
+		$class = 'e-card-content';
 		?>
-		<span class="<?= $class ?> value row_1 col_1"><?= $text ?></span>
-		<span class="<?= $class ?> value flip row_-2 col_-2"><?= $text ?></span>
+		<span class="<?php echo $class; ?> value row_1 col_1"><?php echo $text; ?></span>
+		<span class="<?php echo $class; ?> value flip row_-2 col_-2"><?php echo $text; ?></span>
 		<?php
 		if ( $value > 10 ) {
 			?>
-			<div class="<?= $class ?>-royal-image" style="background-image: url( <?=
+			<div class="<?php echo $class; ?>-royal-image" style="background-image: url( <?php echo
 			ELEMENTOR_ASSETS_URL .	'images/playing-cards/' . $text . '.jpg' ?> ); "></div>
 
-			<span class="<?= $class ?> suit royal end row_2 col_2"><?= $suit ?></span>
-			<span class="<?= $class ?> suit royal start row_-3 col_-3 flip"><?=$suit ?></span>
+			<span class="<?php echo $class; ?> suit royal end row_2 col_2"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit royal start row_-3 col_-3 flip"><?php echo$suit; ?></span>
 			<?php
 			return;
 		}
 
-		$center = [ '1', '3', '5', '9' ];
-		$center_block = [ '2', '3' ];
-		$inline_small = [ '6', '7', '8' ];
+		$center = ['1', '3', '5', '9'];
+		$center_block = ['2', '3'];
+		$inline_small = ['6', '7', '8'];
 		?>
 
-		<span class="<?= $class ?> value row_2 col_1 self-start"><?= $suit ?></span>
-		<span class="<?= $class ?> value row_-3 col_-2 self-end flip"><?= $suit ?></span>
+		<span class="<?php echo $class; ?> value row_2 col_1 self-start"><?php echo $suit; ?></span>
+		<span class="<?php echo $class; ?> value row_-3 col_-2 self-end flip"><?php echo $suit; ?></span>
 		<?php
 
 		if ( in_array( $value, $center ) ) {
 			?>
-			<span class="<?= $class ?> suit self-start row_5 col_4"><?= $suit ?></span>
+			<span class="<?php echo $class; ?> suit self-start row_5 col_4"><?php echo $suit; ?></span>
 			<?php
 		}
 		if ( in_array( $value, $center_block ) ) {
 			?>
-			<span class="<?= $class ?> suit row_2 col_4"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_-3 col_4"><?= $suit ?></span>
+			<span class="<?php echo $class; ?> suit row_2 col_4"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_-3 col_4"><?php echo $suit; ?></span>
 			<?php
 		}
 		if ( $value > 3 ) {
 			?>
-			<span class="<?= $class ?> suit row_2 col_2"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_2 col_-3"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_-3 col_2 flip"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_-3 col_-3 flip"><?= $suit ?></span>
+			<span class="<?php echo $class; ?> suit row_2 col_2"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_2 col_-3"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_-3 col_2 flip"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_-3 col_-3 flip"><?php echo $suit; ?></span>
 			<?php
 		}
 		if ( in_array( $value, $inline_small ) ) {
 			?>
-			<span class="<?= $class ?> suit row_5 col_2"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_5 col_-3"><?= $suit ?></span>
+			<span class="<?php echo $class; ?> suit row_5 col_2"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_5 col_-3"><?php echo $suit; ?></span>
 			<?php
 		}
 		if ( $value > 8 ) {
 			?>
-			<span class="<?= $class ?> suit row_4 col_2"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_4 col_-3"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_-5 col_2 flip"><?= $suit ?></span>
-			<span class="<?= $class ?> suit row_-5 col_-3 flip"><?= $suit ?></span>
+			<span class="<?php echo $class; ?> suit row_4 col_2"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_4 col_-3"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_-5 col_2 flip"><?php echo $suit; ?></span>
+			<span class="<?php echo $class; ?> suit row_-5 col_-3 flip"><?php echo $suit; ?></span>
 			<?php
 		}
 		switch ( $value ) {
 			case 8:
 				?>
-				<span class="<?= $class ?> suit row_-5-double col_4 flip"><?= $suit ?></span>
+				<span class="<?php echo $class; ?> suit row_-5-double col_4 flip"><?php echo $suit; ?></span>
 			<?php
 			case 7:
 				?>
-				<span class="<?= $class ?> suit row_3-double col_4"><?= $suit ?></span>
+				<span class="<?php echo $class; ?> suit row_3-double col_4"><?php echo $suit; ?></span>
 				<?php
 				break;
 			case 10:
 				?>
-				<span class="<?= $class ?> suit row_3 col_4 flip"><?= $suit ?></span>
-				<span class="<?= $class ?> suit row_-4 col_4 flip"><?= $suit ?></span>
+				<span class="<?php echo $class; ?> suit row_3 col_4 flip"><?php echo $suit; ?></span>
+				<span class="<?php echo $class; ?> suit row_-4 col_4 flip"><?php echo $suit; ?></span>
 				<?php
 				break;
 		}
@@ -644,7 +637,7 @@ class Widget_Playing_Cards extends Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$cards = $settings[ 'list' ];
+		$cards = $settings['list'];
 		//		echo "<pre>";
 		//		print_r( $cards );
 		//		echo "</pre>";
@@ -653,21 +646,21 @@ class Widget_Playing_Cards extends Widget_Base {
 
 			<?php
 			foreach ( $cards as $card ) {
-				$_id = $card[ '_id' ];
-				$suit = $card[ 'card_suit' ];
-				$value = $card[ 'card_value' ];
+				$_id = $card['_id'];
+				$suit = $card['card_suit'];
+				$value = $card['card_value'];
 				$this->add_render_attribute( $_id,
 					[
 						'class' => [
-							"e-playing-cards-item",
+							'e-playing-cards-item',
 							$suit,
 						],
 						'data-id' => $_id,
-						'data-value' => static::$VALUE_MAP[ $value ],
-						'data-suit' => $suit
+						'data-value' => static::$Value_Map[ $value ],
+						'data-suit' => $suit,
 					] );
 				?>
-				<article <?= $this->get_render_attribute_string( $_id ); ?>>
+				<article <?php $this->print_render_attribute_string( $_id ); ?>>
 					<?php static::render_card( $value, $suit ); ?>
 				</article>
 				<?php
