@@ -100,6 +100,4 @@ export class PluginsTester {
 	prepareTestSite() {
 		this.cmd( 'npm run test:setup' );
 	}
-
-	// Dummy commit
 }
