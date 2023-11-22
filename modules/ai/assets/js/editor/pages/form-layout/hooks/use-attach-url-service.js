@@ -15,7 +15,7 @@ export const useAttachUrlService = ( ) => {
 		};
 	}
 
-	const urlObject = new URL( remoteConfig.webBaseBuilderUrl );
+	const urlObject = new URL( remoteConfig.webBasedBuilderUrl );
 	urlObject.searchParams.append( 'colorScheme', theme.palette.mode );
 	urlObject.searchParams.append( 'isRTL', 'rtl' === theme.direction ? 'true' : 'false' );
 
