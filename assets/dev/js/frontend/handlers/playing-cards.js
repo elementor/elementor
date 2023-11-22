@@ -1,4 +1,5 @@
 import Base from 'elementor-frontend/handlers/base';
+
 export default class PlayingCards extends Base {
 	getDefaultSettings() {
 		return {
@@ -9,6 +10,7 @@ export default class PlayingCards extends Base {
 		};
 	}
 	getDefaultElements() {
+		return {};
 		const selectors = this.getSettings( 'selectors' );
 		return {
 			$playingCardContainer: this.$element.find( selectors.playingCardContainer ),
@@ -16,11 +18,12 @@ export default class PlayingCards extends Base {
 		};
 	}
 	bindEvents() {
-		this.elements.$playingCardItem.on( 'click', this.onCardClick.bind( this ) );
+		// This.elements.$playingCardItem.on( 'click', this.onCardClick.bind( this ) );
+
 	}
 
 	unbindEvents() {
-		this.elements.$playingCardItem.off( 'click', this.onCardClick.unbind( this ) );
+		// This.elements.$playingCardItem.off( 'click', this.onCardClick.unbind( this ) );
 	}
 
 	onCardClick( event ) {
@@ -31,9 +34,10 @@ export default class PlayingCards extends Base {
 	}
 
 	onInit( ...args ) {
+		console.log( 'hello world' );
 		super.onInit( ...args );
-		document.querySelectorAll( '.e-playing-cards-item' ).forEach( ( e ) => {
-			e.addEventListener( 'click', this.clickListener );
-		} );
+		// Document.querySelectorAll( '.e-playing-cards-item' ).forEach( ( e ) => {
+		// 	e.addEventListener( 'click', this.clickListener );
+		// } );
 	}
 }
