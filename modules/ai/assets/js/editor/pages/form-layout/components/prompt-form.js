@@ -82,7 +82,9 @@ const PromptForm = forwardRef( ( {
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && ! attachments.length );
+	const isInputDisabled = isLoading || isEnhancing || ! isActive;
+	const isInputEmpty = '' === prompt && ! attachments.length;
+	const isGenerateDisabled = isInputDisabled || isInputEmpty;
 
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
@@ -122,12 +124,12 @@ const PromptForm = forwardRef( ( {
 					attachments={ attachments }
 					onAttach={ onAttach }
 					onDetach={ onDetach }
-					disabled={ isLoading || isEnhancing || ! isActive }
+					disabled={ isInputDisabled }
 				/>
 
 				<PromptAutocomplete
 					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
+					disabled={ isInputDisabled }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ promptSuggestions }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
@@ -144,12 +146,12 @@ const PromptForm = forwardRef( ( {
 
 			<EnhanceButton
 				size="small"
-				disabled={ isInteractionsDisabled }
+				disabled={ isGenerateDisabled || '' === prompt }
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isInteractionsDisabled } />
+			<GenerateButton disabled={ isGenerateDisabled } />
 		</Stack>
 	);
 } );
