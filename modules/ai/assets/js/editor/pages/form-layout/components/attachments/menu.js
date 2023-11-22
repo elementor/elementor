@@ -15,18 +15,13 @@ export const Menu = ( props ) => {
 	return (
 		<>
 			<IconButton
-				size="medium"
+				size="small"
 				ref={ anchorRef }
 				disabled={ props.disabled }
 				onClick={ () => setIsOpen( true ) }
 				color="secondary"
-				variant="text"
-				sx={ {
-					width: 20,
-					minWidth: 20,
-				} }
 			>
-				{ isOpen ? <XCircleIcon /> : <PlusCircleIcon /> }
+				{ isOpen ? <XCircleIcon fontSize="small" /> : <PlusCircleIcon fontSize="small" /> }
 			</IconButton>
 
 			<Popover
