@@ -247,7 +247,7 @@ class Repository {
 		} else {
 			$access_tier = 0 === $kit->access_level
 				? ConnectModule::ACCESS_TIER_FREE
-				: ConnectModule::ACCESS_TIER_ESSENTIAL_OCT_2023;
+				: ConnectModule::ACCESS_TIER_ESSENTIAL;
 		}
 
 		$subscription_plan_tag = $this->subscription_plans->get( $access_tier );
