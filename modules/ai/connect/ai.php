@@ -51,6 +51,17 @@ class Ai extends Library {
 		return $usage;
 	}
 
+	public function get_remote_config() {
+		return $this->ai_request(
+			'GET',
+			'remote-config/config',
+			[
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
 	/**
 	 * get_file_payload
 	 * @param $filename
