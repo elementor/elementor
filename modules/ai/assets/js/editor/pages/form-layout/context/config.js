@@ -21,6 +21,7 @@ export const ConfigProvider = ( props ) => {
 				onInsert: props.onInsert,
 				onSelect: props.onSelect,
 				onGenerate: props.onGenerate,
+				currentContext: props.currentContext,
 			} }
 		>
 			{ props.children }
@@ -38,6 +39,7 @@ ConfigProvider.propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
+	currentContext: PropTypes.object,
 };
 
 export default ConfigContext;
