@@ -34,7 +34,7 @@ const LayoutApp = ( {
 						onInsert={ onInsert }
 						onSelect={ onSelect }
 						onGenerate={ onGenerate }
-                        currentContext={ currentContext }
+						currentContext={ currentContext }
 					>
 						<LayoutContent
 							attachments={ attachments }
