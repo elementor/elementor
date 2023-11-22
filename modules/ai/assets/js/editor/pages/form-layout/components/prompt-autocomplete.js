@@ -1,5 +1,5 @@
 import { useState, forwardRef } from 'react';
-import { Autocomplete, Box, Divider, Paper, TextField, Typography } from '@elementor/ui';
+import { Autocomplete, Box, Divider, Paper, TextField, Typography, useTheme } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 
@@ -51,27 +51,28 @@ PaperComponent.propTypes = {
 
 const PromptAutocomplete = ( { onSubmit, ...props } ) => {
 	const [ showSuggestions, setShowSuggestions ] = useState( false );
+	const theme = useTheme();
+	const itemHeight = parseInt( theme.spacing( 4 ) );
+	const maxItems = 5;
 
 	return (
 		<Autocomplete
 			PaperComponent={ PaperComponent }
-			ListboxProps={ { sx: { maxHeight: ( theme ) => theme.spacing( 5 /* Items */ * 4 ) } } }
+			ListboxProps={ { sx: { maxHeight: maxItems * itemHeight } } }
 			renderOption={ ( optionProps, option ) => (
 				<Typography
-					component={ Box }
-					variant="body2"
 					{ ...optionProps }
+					title={ option.text }
+					noWrap
+					variant="body2"
+					component={ Box }
+					sx={ {
+						'&.MuiAutocomplete-option': {
+							display: 'block',
+							minHeight: itemHeight,
+						} } }
 				>
-					<div
-						title={ option.text }
-						style={ {
-							textOverflow: 'ellipsis',
-							overflow: 'hidden',
-							whiteSpace: 'nowrap',
-						} }
-					>
-						{ option.text }
-					</div>
+					{ option.text }
 				</Typography>
 			) }
 			freeSolo
