@@ -529,6 +529,8 @@ class Ai extends Library {
 			}
 		}
 
+		$context['currentContext'] = $data['currentContext'];
+
 		$metadata = [
 			'context' => $context,
 			'api_version' => ELEMENTOR_VERSION,
