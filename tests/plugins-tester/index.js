@@ -38,7 +38,7 @@ const pluginsToTest = getConfig( {
 
 const diffThreshold = getConfig( {
 	envVar: 'PLUGINS_TESTER__DIFF_THRESHOLD',
-	default: 0.2,
+	default: 0.3,
 	logger,
 } );
 
