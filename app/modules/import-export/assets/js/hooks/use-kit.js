@@ -54,7 +54,7 @@ export default function useKit() {
 
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
-			return await runRequest( ajaxConfig ).catch( ( error ) => {
+			return runRequest( ajaxConfig ).catch( ( error ) => {
 				const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
 
 				setKitState( ( prevState ) => ( {
