@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport;
 use Elementor\App\Modules\ImportExport\Module;
 use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Modules\System_Info\Reporters\Server;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
@@ -275,7 +274,7 @@ class Test_Module extends Elementor_Test_Base {
 		$import_export_module = new Module();
 
 		// Act
-		$is_native_class = $import_export_module->is_native_class( 'Elementor\Test' );
+		$is_native_class = $import_export_module->is_native_class( Module::class );
 
 		// Assert
 		$this->assertTrue( $is_native_class );

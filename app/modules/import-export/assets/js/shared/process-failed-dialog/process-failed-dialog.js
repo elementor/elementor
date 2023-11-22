@@ -62,7 +62,7 @@ const messagesContent = {
 	},
 	'third-party-error': {
 		title: __( 'Unable to download the Kit', 'elementor' ),
-		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go. ', 'elementor' ),
+		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go.', 'elementor' ),
 	},
 };
 
