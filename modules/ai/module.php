@@ -45,6 +45,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/ajax/register_actions', function( $ajax ) {
 			$handlers = [
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
+				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
 				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
 				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
 				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
@@ -231,6 +232,10 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'usage' => $user_usage,
 		];
+	}
+
+	public function ajax_ai_get_remote_config() {
+		return $this->get_ai_app()->get_remote_config();
 	}
 
 	private function verify_permissions( $editor_post_id ) {
