@@ -1,13 +1,13 @@
 import { useTheme } from '@elementor/ui';
 import { useState } from 'react';
-import { useRemoteConfig } from '../context/remote-config';
+import { CONFIG_KEYS, useRemoteConfig } from '../context/remote-config';
 
 export const useAttachUrlService = ( ) => {
 	const [ currentUrl, setCurrentUrl ] = useState( '' );
 	const theme = useTheme();
 	const { isLoaded, isError, remoteConfig } = useRemoteConfig();
 
-	if ( ! isLoaded || isError || ! remoteConfig.webBaseBuilderUrl ) {
+	if ( ! isLoaded || isError || ! remoteConfig[ CONFIG_KEYS.WEB_BASED_BUILDER_URL ] ) {
 		return {
 			iframeSource: '',
 			currentUrl,
@@ -15,7 +15,7 @@ export const useAttachUrlService = ( ) => {
 		};
 	}
 
-	const urlObject = new URL( remoteConfig.webBasedBuilderUrl );
+	const urlObject = new URL( remoteConfig[ CONFIG_KEYS.WEB_BASED_BUILDER_URL ] );
 	urlObject.searchParams.append( 'colorScheme', theme.palette.mode );
 	urlObject.searchParams.append( 'isRTL', 'rtl' === theme.direction ? 'true' : 'false' );
 
