@@ -20,7 +20,6 @@ export default class PlayingCards extends Base {
 
 	bindEvents() {
 		this.elements.$playingCards.on( 'click', this.onCardClick.bind( this ) );
-
 	}
 
 	unbindEvents() {
@@ -29,7 +28,7 @@ export default class PlayingCards extends Base {
 
 	onCardClick( event ) {
 		event.preventDefault();
-		event.target.classList.toggle('flipped' );
+		event.target.classList.toggle( 'flipped' );
 	}
 
 	onInit( ...args ) {

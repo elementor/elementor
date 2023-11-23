@@ -645,7 +645,7 @@ class Widget_Playing_Cards extends Widget_Base {
 					echo '';
 					break;
 			}
-		echo '</div>';
+			echo '</div>';
 	}
 
 	protected function render() {
