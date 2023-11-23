@@ -6,6 +6,10 @@ const RemoteConfigContext = React.createContext( {} );
 
 export const useRemoteConfig = () => React.useContext( RemoteConfigContext );
 
+export const CONFIG_KEYS = {
+	WEB_BASED_BUILDER_URL: 'webBasedBuilderUrl',
+};
+
 export const RemoteConfigProvider = ( props ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isLoaded, setIsLoaded ] = useState( false );
