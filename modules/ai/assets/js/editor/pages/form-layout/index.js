@@ -254,8 +254,14 @@ const FormLayout = ( {
 						attachmentsTypes={ attachmentsTypes }
 						attachments={ attachments }
 						onAttach={ onAttach }
-						onDetach={ () => {
-							setAttachments( [] );
+						onDetach={ ( index ) => {
+							setAttachments( ( prev ) => {
+								const newAttachments = [ ...prev ];
+
+								newAttachments.splice( index, 1 );
+
+								return newAttachments;
+							} );
 							setIsPromptEditable( true );
 						} }
 						onSubmit={ handleGenerate }

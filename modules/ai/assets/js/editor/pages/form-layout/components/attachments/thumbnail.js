@@ -37,7 +37,7 @@ export const Thumbnail = ( props ) => {
 			previewRef.current.style.width = `${ THUMBNAIL_SIZE }px`;
 			previewRef.current.style.height = `${ THUMBNAIL_SIZE }px`;
 		}
-	}, [] );
+	}, [ previewRef.current ] );
 
 	return (
 		<Box sx={ {
