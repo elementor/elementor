@@ -173,7 +173,6 @@ export default class ExperimentsMessages {
 			experimentName = experiment.title,
 			dependenciesArray = this.getExperimentDependencies( experimentId ).map( ( d ) => d.title ),
 			glue = 1 < dependenciesArray.length ? ' ' : '',
-			
 			dialogMessage = this.joinDependenciesNames( dependenciesArray, glue );
 
 		// Translators: %1$s: Experiment title, %2$s: Comma-separated dependencies list
