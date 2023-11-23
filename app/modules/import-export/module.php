@@ -552,7 +552,7 @@ class Module extends BaseModule {
 				],
 			] );
 
-			if ( isset( $this->import ) && ! $this->is_native_class( $e->getTrace()[0]['class'] ) ) {
+			if ( isset( $this->import ) && $this->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
 			}
 
@@ -880,7 +880,7 @@ class Module extends BaseModule {
 	 *
 	 * @return bool
 	 */
-	public function is_native_class( $class ) {
+	public function is_third_party_class( $class ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -890,10 +890,10 @@ class Module extends BaseModule {
 
 		foreach ( $allowed_classes as $allowed_class ) {
 			if ( str_starts_with( $class, $allowed_class ) ) {
-				return true;
+				return false;
 			}
 		}
 
-		return false;
+		return true;
 	}
 }
