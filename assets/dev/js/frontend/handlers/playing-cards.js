@@ -5,39 +5,34 @@ export default class PlayingCards extends Base {
 		return {
 			selectors: {
 				playingCardContainer: '.e-playing-cards-container',
-				playingCardsItem: '.e-playing-cards-item',
+				playingCards: '.e-playing-cards-item',
 			},
 		};
 	}
+
 	getDefaultElements() {
-		return {};
-		const selectors = this.getSettings( 'selectors' );
+		const { playingCardContainer, playingCards } = this.getSettings( 'selectors' );
 		return {
-			$playingCardContainer: this.$element.find( selectors.playingCardContainer ),
-			$playingCardsItem: this.$element.find( selectors.playingCardsItem ),
+			$playingCardContainer: this.$element.find( playingCardContainer ),
+			$playingCards: this.$element.find( playingCards ),
 		};
 	}
+
 	bindEvents() {
-		// This.elements.$playingCardItem.on( 'click', this.onCardClick.bind( this ) );
+		this.elements.$playingCards.on( 'click', this.onCardClick.bind( this ) );
 
 	}
 
 	unbindEvents() {
-		// This.elements.$playingCardItem.off( 'click', this.onCardClick.unbind( this ) );
+		this.elements.$playingCards.off( 'click', this.onCardClick.unbind( this ) );
 	}
 
 	onCardClick( event ) {
 		event.preventDefault();
-		const card = event?.target?.getAttribute( 'data-id' );
-		// eslint-disable-next-line no-alert
-		alert( `this is card number ${ card }` );
+		event.target.classList.toggle('flipped' );
 	}
 
 	onInit( ...args ) {
-		console.log( 'hello world' );
 		super.onInit( ...args );
-		// Document.querySelectorAll( '.e-playing-cards-item' ).forEach( ( e ) => {
-		// 	e.addEventListener( 'click', this.clickListener );
-		// } );
 	}
 }
