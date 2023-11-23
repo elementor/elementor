@@ -26,23 +26,25 @@ TextInput.propTypes = {
 };
 
 const PaperComponent = function( props ) {
-	return <Paper { ...props }
-		sx={ {
-			borderRadius: 2,
-		} }
-	>
-		<Typography
-			component={ Box }
-			color={ ( theme ) => theme.palette.text.tertiary }
-			variant="caption"
-			paddingX={ 2 }
-			paddingY={ 1 }
+	return (
+		<Paper { ...props }
+			sx={ {
+				borderRadius: 2,
+			} }
 		>
-			{ __( 'Suggested Prompts', 'elementor' ) }
-		</Typography>
-		<Divider />
-		{ props.children }
-	</Paper>;
+			<Typography
+				component={ Box }
+				color={ ( theme ) => theme.palette.text.tertiary }
+				variant="caption"
+				paddingX={ 2 }
+				paddingY={ 1 }
+			>
+				{ __( 'Suggested Prompts', 'elementor' ) }
+			</Typography>
+			<Divider />
+			{ props.children }
+		</Paper>
+	);
 };
 
 PaperComponent.propTypes = {
