@@ -415,7 +415,7 @@ class Manager extends Base_Object {
 			],
 			'messages' => [
 				'on_deactivate' => esc_html__(
-					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
+					'Container-based content will be hidden from your site and may not be recoverable in all cases. Learn more',
 					'elementor'
 				),
 			],
