@@ -31,7 +31,7 @@ export default function GoodToGo() {
 					name="template"
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
 					imageAlt={ __( 'Click here to go to Elementor\'s Kit Library', 'elementor' ) }
-					text={ __( 'Browse from +100 templates or import your own', 'elementor' ) }
+					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
 						// The location is reloaded to make sure the Kit Library's state is re-created.
