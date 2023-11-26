@@ -109,7 +109,7 @@ jobs:
           npx playwright install firefox
       - name: Run Playwright tests with Firefox
         run: |
-          npm run test:playwright:${{ matrix.testSuite }} --browser firefox
+          npm run test:playwright:${{ matrix.testSuite }} --browser=firefox
       - uses: actions/upload-artifact@v3
         if: always()
         with:
