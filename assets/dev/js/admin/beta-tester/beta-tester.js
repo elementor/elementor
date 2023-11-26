@@ -7,7 +7,7 @@ class BetaTesterModule extends elementorModules.ViewModule {
 	}
 
 	showLayout( always = true ) {
-		if ( ! always && ( ! elementorAdmin.config.beta_tester.option_enabled || elementorAdmin.config.beta_tester.signup_dismissed || '#tab-fontawesome4_migration' === location.hash ) ) {
+		if ( ! always && ( ! elementorAdmin.config.beta_tester.option_enabled || elementorAdmin.config.beta_tester.signup_dismissed || '#tab-fontawesome_migration' === location.hash ) ) {
 			return;
 		}
 		this.layout = new BetaTesterLayout();

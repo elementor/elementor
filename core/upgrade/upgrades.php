@@ -529,6 +529,10 @@ class Upgrades {
 		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
 
+	public static function _v_3_8_0_fa5_migration_flag() { 	// TODO: Update the version number and call where needed
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
+	}
+
 	/**
 	 * migrate Icon control string value to Icons control array value
 	 *
@@ -537,12 +541,13 @@ class Upgrades {
 	 *
 	 * @return mixed
 	 */
-	public static function _migrate_icon_fa4_value( $element, $args ) {
+	public static function _migrate_fa_icon_values( $element, $args ) {
 		$widget_id = $args['widget_id'];
 
 		if ( empty( $element['widgetType'] ) || $widget_id !== $element['widgetType'] ) {
 			return $element;
 		}
+
 		foreach ( $args['control_ids'] as $old_name => $new_name ) {
 			// exit if new value exists
 			if ( isset( $element['settings'][ $new_name ] ) ) {
@@ -568,7 +573,7 @@ class Upgrades {
 	public static function _v_2_6_6_fa4_migration_button( $updater ) {
 		$changes = [
 			[
-				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_icon_fa4_value' ],
+				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_fa_icon_values' ],
 				'control_ids' => [
 					'icon' => 'selected_icon',
 				],
