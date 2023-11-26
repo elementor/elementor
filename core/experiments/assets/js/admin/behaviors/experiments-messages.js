@@ -203,7 +203,7 @@ export default class ExperimentsMessages {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			strings: {
 				confirm: __( 'Deactivate', 'elementor' ),
-				cancel: __( 'Dismiss', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			onConfirm: () => {
 				this.setExperimentState( experimentId, STATE_INACTIVE );

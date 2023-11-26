@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-const THUMBNAIL_SIZE = 64;
+export const THUMBNAIL_SIZE = 64;
 
 export const Thumbnail = ( props ) => {
 	const previewRef = useRef( null );
@@ -10,24 +10,37 @@ export const Thumbnail = ( props ) => {
 	useEffect( () => {
 		if ( previewRef.current ) {
 			const previewRoot = previewRef.current.firstElementChild;
-			const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
-			const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
 
-			const scaleFactor = Math.max( height, width );
-			const scale = THUMBNAIL_SIZE / scaleFactor;
+			const isImage = 'IMG' === previewRoot?.tagName;
 
-			previewRef.current.style.transform = `scale(${ scale })`;
+			if ( ! isImage ) {
+				const width = previewRoot?.offsetWidth || THUMBNAIL_SIZE;
+				const height = previewRoot?.offsetHeight || THUMBNAIL_SIZE;
+
+				// Keep the aspect ratio
+				previewRoot.style.width = `${ width }px`;
+				previewRoot.style.height = `${ height }px`;
+
+				const scaleFactor = Math.min( height, width );
+				const scale = THUMBNAIL_SIZE / scaleFactor;
+
+				previewRef.current.style.transform = `scale(${ scale })`;
+
+				// Center the preview
+				const top = height > width ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( height / width ) ) ) / 2 ) : 0;
+				const left = width > height ? ( ( THUMBNAIL_SIZE - ( THUMBNAIL_SIZE * ( width / height ) ) ) / 2 ) : 0;
+
+				previewRef.current.style.transformOrigin = `${ left }px ${ top }px`;
+			}
+
+			// Set the preview size only after the transform is applied
+			previewRef.current.style.width = `${ THUMBNAIL_SIZE }px`;
+			previewRef.current.style.height = `${ THUMBNAIL_SIZE }px`;
 		}
-	}, [] );
+	}, [ previewRef.current ] );
 
 	return (
 		<Box sx={ {
-			width: THUMBNAIL_SIZE,
-			height: THUMBNAIL_SIZE,
-			minWidth: THUMBNAIL_SIZE,
-			minHeight: THUMBNAIL_SIZE,
-			maxWidth: THUMBNAIL_SIZE,
-			maxHeight: THUMBNAIL_SIZE,
 			border: '1px solid',
 			borderColor: 'grey.300',
 			position: 'relative',
@@ -47,8 +60,6 @@ export const Thumbnail = ( props ) => {
 				sx={ {
 					pointerEvents: 'none',
 					transformOrigin: 'center',
-					width: THUMBNAIL_SIZE,
-					height: THUMBNAIL_SIZE,
 				} }
 				dangerouslySetInnerHTML={ {
 					__html: props.html,

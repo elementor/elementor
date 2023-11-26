@@ -71,6 +71,8 @@ const PromptForm = forwardRef( ( {
 	isActive,
 	isLoading,
 	showActions = false,
+	onAttach,
+	onDetach,
 	onSubmit,
 	onBack,
 	onEdit,
@@ -80,7 +82,9 @@ const PromptForm = forwardRef( ( {
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && ! attachments.length );
+	const isInputDisabled = isLoading || isEnhancing || ! isActive;
+	const isInputEmpty = '' === prompt && ! attachments.length;
+	const isGenerateDisabled = isInputDisabled || isInputEmpty;
 
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
@@ -101,11 +105,11 @@ const PromptForm = forwardRef( ( {
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
 			direction="row"
-			sx={ { p: 2 } }
-			alignItems="center"
+			sx={ { p: 3 } }
+			alignItems="start"
 			gap={ 1 }
 		>
-			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+			<Stack direction="row" alignItems="start" flexGrow={ 1 } spacing={ 2 }>
 				{
 					showActions && (
 						isActive ? (
@@ -118,15 +122,16 @@ const PromptForm = forwardRef( ( {
 
 				<Attachments
 					attachments={ attachments }
-					disabled={ isLoading }
+					onAttach={ onAttach }
+					onDetach={ onDetach }
+					disabled={ isInputDisabled }
 				/>
 
 				<PromptAutocomplete
 					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
+					disabled={ isInputDisabled }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ promptSuggestions }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
@@ -141,18 +146,20 @@ const PromptForm = forwardRef( ( {
 
 			<EnhanceButton
 				size="small"
-				disabled={ isInteractionsDisabled }
+				disabled={ isGenerateDisabled || '' === prompt }
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isInteractionsDisabled } />
+			<GenerateButton disabled={ isGenerateDisabled } />
 		</Stack>
 	);
 } );
 
 PromptForm.propTypes = {
 	isActive: PropTypes.bool,
+	onAttach: PropTypes.func,
+	onDetach: PropTypes.func,
 	isLoading: PropTypes.bool,
 	showActions: PropTypes.bool,
 	onSubmit: PropTypes.func.isRequired,

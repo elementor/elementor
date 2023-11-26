@@ -22,6 +22,8 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 
 export const getUserInformation = () => request( 'ai_get_user_information' );
 
+export const getRemoteConfig = () => request( 'ai_get_remote_config' );
+
 export const getCompletionText = ( prompt ) => request( 'ai_get_completion_text', { prompt } );
 
 export const getEditText = ( input, instruction ) => request( 'ai_get_edit_text', { input, instruction } );
@@ -69,7 +71,7 @@ export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image }
  */
 export const generateLayout = ( requestBody, signal ) => request( 'ai_generate_layout', requestBody, true, signal );
 
-export const getLayoutPromptEnhanced = ( prompt ) => request( 'ai_get_layout_prompt_enhancer', { prompt } );
+export const getLayoutPromptEnhanced = ( prompt, enhanceType ) => request( 'ai_get_layout_prompt_enhancer', { prompt, enhance_type: enhanceType } );
 
 export const getHistory = ( type, page, limit ) => request( 'ai_get_history', { type, page, limit } );
 

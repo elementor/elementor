@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
 import useScreenshot from './use-screenshot';
+import { useConfig } from '../context/config';
 
 const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
+	const { currentContext } = useConfig();
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -51,11 +53,12 @@ const useScreenshots = ( { onData } ) => {
 		};
 
 		const promises = screenshotsData.map( ( { generate } ) => {
-			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId );
+			const prevGeneratedIds = screenshots.map( ( screenshot ) => screenshot.baseTemplateId || '' );
 
 			const requestBody = {
 				prompt,
 				prevGeneratedIds,
+				currentContext,
 				attachments: attachments.map( ( { type, content, label } ) => {
 					// Send only the data that is needed for the generation.
 					return {
