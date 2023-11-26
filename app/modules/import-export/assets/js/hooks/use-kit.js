@@ -54,7 +54,15 @@ export default function useKit() {
 
 			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
 
-			return await runRequest( ajaxConfig );
+			return runRequest( ajaxConfig ).catch( ( error ) => {
+				const response = 408 === error.status ? 'timeout' : error.responseJSON?.data;
+
+				setKitState( ( prevState ) => ( {
+					...prevState,
+					status: KIT_STATUS_MAP.ERROR,
+					data: response || {},
+				} ) );
+			} );
 		},
 		runImportRunners = async ( session, runners ) => {
 			let stopIterations = false;
@@ -107,16 +115,11 @@ export default function useKit() {
 				selectedCustomPostTypes,
 			} );
 
-			if ( ! importSession.success ) {
-				const newState = {
-					status: KIT_STATUS_MAP.ERROR,
-					data: ajaxState.response || {},
-				};
-
-				setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
-			} else {
-				await runImportRunners( importSession.data.session, importSession.data.runners );
+			if ( ! importSession ) {
+				return;
 			}
+
+			await runImportRunners( importSession.data.session, importSession.data.runners );
 		},
 		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
 			setAjax( {
