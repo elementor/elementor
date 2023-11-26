@@ -417,7 +417,7 @@ class Manager extends Base_Object {
 				'on_deactivate' => sprintf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases. %1$sLearn more%2$s', 'elementor' ),
-					'<a href="https://go.elementor.com/wp-dash-deactivate-container/">',
+					'<a target="_blank" href="https://go.elementor.com/wp-dash-deactivate-container/">',
 					'</a>'
 				),
 			],
