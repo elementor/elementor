@@ -8,6 +8,7 @@ use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -335,7 +336,7 @@ class Editor {
 	public function enqueue_scripts() {
 		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
-		global $wp_styles, $wp_scripts;
+		global $wp_styles, $wp_scripts, $is_safari, $is_gecko;
 
 		// Reset global variable
 		$wp_styles = new \WP_Styles(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -343,8 +344,12 @@ class Editor {
 
 		$this->get_loader()->register_scripts();
 
-		$wp_scripts->registered['wp-polyfill']->src = '';
-
+		// Remove polyfill script on Safari and Firefox
+		// See: https://github.com/elementor/elementor/issues/24260
+		if ( $is_safari || $is_gecko ) {
+			$wp_scripts->remove( 'wp-polyfill' );
+			$wp_scripts->add( 'wp-polyfill', '' );
+		}
 		/**
 		 * Before editor enqueue scripts.
 		 *
