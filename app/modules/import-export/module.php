@@ -43,6 +43,8 @@ class Module extends BaseModule {
 
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
+	const THIRD_PARTY_ERROR = 'third-party-error';
+
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
@@ -558,6 +560,11 @@ class Module extends BaseModule {
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
+
+			if ( isset( $this->import ) && $this->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
+			}
+
 			wp_send_json_error( $e->getMessage(), 500 );
 		}
 	}
@@ -875,5 +882,27 @@ class Module extends BaseModule {
 		$document = $this->get_elementor_document( $page_id );
 
 		return $document ? $document->get_edit_url() : '';
+	}
+
+	/**
+	 * @param string $class
+	 *
+	 * @return bool
+	 */
+	public function is_third_party_class( $class ) {
+		$allowed_classes = [
+			'Elementor\\',
+			'ElementorPro\\',
+			'WP_',
+			'wp_',
+		];
+
+		foreach ( $allowed_classes as $allowed_class ) {
+			if ( str_starts_with( $class, $allowed_class ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
