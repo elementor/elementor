@@ -106,7 +106,7 @@ jobs:
           npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_dom_optimization,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints,e_image_loading_optimization
       - name: Install playwright/test
         run: |
-          npx playwright install firefox
+          npx playwright install
       - name: Run Playwright tests with Firefox
         run: |
           npm run test:playwright:${{ matrix.testSuite }} --browser=firefox
