@@ -45,6 +45,8 @@ class Module extends BaseModule {
 
 	const THIRD_PARTY_ERROR = 'third-party-error';
 
+	const DOMDOCUMENT_MISSING = 'domdocument-missing';
+
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
@@ -333,6 +335,7 @@ class Module extends BaseModule {
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
+		$this->ensure_DOMDocument_exists();
 
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
@@ -488,6 +491,12 @@ class Module extends BaseModule {
 		// 2. If the dir doesn't exist, the parent dir has to be writable (wp uploads dir), so we can create it.
 		if ( $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
 			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+		}
+	}
+
+	private function ensure_DOMDocument_exists() {
+		if ( ! class_exists( 'DOMDocument' ) ) {
+			throw new \Error( self::DOMDOCUMENT_MISSING );
 		}
 	}
 
