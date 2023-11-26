@@ -343,6 +343,8 @@ class Editor {
 
 		$this->get_loader()->register_scripts();
 
+		$wp_scripts->registered['wp-polyfill']->src = '';
+
 		/**
 		 * Before editor enqueue scripts.
 		 *
