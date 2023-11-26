@@ -414,10 +414,8 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.16.0',
 			],
 			'messages' => [
-				'on_deactivate' => esc_html__(
-					'Container-based content will be hidden from your site and may not be recoverable in all cases. Learn more',
-					'elementor'
-				),
+				'on_deactivate' => sprintf(
+					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases. %1$sLearn more%2$s', 'elementor' ), '<a href="https://go.elementor.com/wp-dash-deactivate-container/">', '</a>' ),
 			],
 		] );
 
