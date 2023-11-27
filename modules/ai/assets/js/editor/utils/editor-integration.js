@@ -43,6 +43,8 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
 ];
 
+const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
+
 export const renderLayoutApp = ( options = {
 	mode: '',
 	at: null,
@@ -81,12 +83,14 @@ export const renderLayoutApp = ( options = {
 			attachmentsTypes={ {
 				json: {
 					promptSuggestions: VARIATIONS_PROMPTS,
+					promptPlaceholder: PROMPT_PLACEHOLDER,
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
 				},
 				url: {
+					promptPlaceholder: PROMPT_PLACEHOLDER,
 					promptSuggestions: VARIATIONS_PROMPTS,
 				},
 			} }
