@@ -414,9 +414,11 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.16.0',
 			],
 			'messages' => [
-				'on_deactivate' => esc_html__(
-					'If you deactivate Flexbox Container, you will permanently delete all content created with containers and lose access to container-based features like Tabs and Menu widgets',
-					'elementor'
+				'on_deactivate' => sprintf(
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases. %1$sLearn more%2$s', 'elementor' ),
+					'<a target="_blank" href="https://go.elementor.com/wp-dash-deactivate-container/">',
+					'</a>'
 				),
 			],
 		] );

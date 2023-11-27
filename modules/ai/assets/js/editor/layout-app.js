@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import LayoutContent from './layout-content';
 import { AttachmentPropType, AttachmentsTypesPropType } from './types/attachment';
 import { ConfigProvider, LAYOUT_APP_MODES } from './pages/form-layout/context/config';
+import { RemoteConfigProvider } from './pages/form-layout/context/remote-config';
 
 const LayoutApp = ( {
 	mode,
@@ -16,24 +17,30 @@ const LayoutApp = ( {
 	onInsert,
 	onSelect,
 	onGenerate,
+	currentContext,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
-				<ConfigProvider
-					mode={ mode }
-					attachmentsTypes={ attachmentsTypes }
-					onClose={ onClose }
-					onConnect={ onConnect }
-					onData={ onData }
-					onInsert={ onInsert }
-					onSelect={ onSelect }
-					onGenerate={ onGenerate }
+				<RemoteConfigProvider
+					onError={ onClose }
 				>
-					<LayoutContent
-						attachments={ attachments }
-					/>
-				</ConfigProvider>
+					<ConfigProvider
+						mode={ mode }
+						attachmentsTypes={ attachmentsTypes }
+						onClose={ onClose }
+						onConnect={ onConnect }
+						onData={ onData }
+						onInsert={ onInsert }
+						onSelect={ onSelect }
+						onGenerate={ onGenerate }
+						currentContext={ currentContext }
+					>
+						<LayoutContent
+							attachments={ attachments }
+						/>
+					</ConfigProvider>
+				</RemoteConfigProvider>
 			</ThemeProvider>
 		</DirectionProvider>
 	);
@@ -51,6 +58,7 @@ LayoutApp.propTypes = {
 	onInsert: PropTypes.func.isRequired,
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
+	currentContext: PropTypes.object,
 };
 
 export default LayoutApp;
