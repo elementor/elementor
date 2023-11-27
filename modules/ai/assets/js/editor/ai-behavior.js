@@ -1,4 +1,5 @@
 import App from './app';
+import { __ } from '@wordpress/i18n';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {

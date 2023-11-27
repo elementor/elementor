@@ -1,4 +1,5 @@
 import { Box, Stack } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import useImageSize from '../hooks/use-image-size';
 import useImageNavigation from '../../../hooks/use-image-navigation';
 import ImageSlider from './image-slider';
@@ -79,11 +80,12 @@ const ImagesDisplay = ( {
 							alt={ `generated-${ index }` }
 							src={ image.image_url }
 							aspectRatio={ aspectRatio }
+							data-testid="e-gallery-image"
 						>
 							<ImageActions>
 								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
 
-								<Stack direction="row" spacing={ 1 } alignItems="center">
+								<Stack direction="row" spacing={ 0.25 } alignItems="center">
 									<ImageActions.ZoomIcon onClick={ () => setZoomIndex( index ) } size="medium" />
 									<ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" />
 								</Stack>

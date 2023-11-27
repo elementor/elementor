@@ -1,7 +1,7 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
 const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-experssions-webpack-plugin' );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
 const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
@@ -61,6 +61,11 @@ const devConfig = {
 	mode: 'development',
 	devtool: false, // TODO: Need to check what to do with source maps.
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
+	optimization: {
+		...( common.optimization || {} ),
+		// Intentionally minimizing the dev assets to reduce the bundle size.
+		minimize: true,
+	},
 	output: {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
@@ -77,7 +82,9 @@ const prodConfig = {
 	},
 	plugins: [
 		...( common.plugins || [] ),
-		new ExtractI18nWordpressExpressionsWebpackPlugin(),
+		new ExtractI18nWordpressExpressionsWebpackPlugin( {
+			pattern: ( entryPath ) => path.resolve( entryPath, '../../src/**/*.{ts,tsx,js,jsx}' ),
+		} ),
 	],
 	output: {
 		...( common.output || {} ),

@@ -1,25 +1,25 @@
-import { Drawer } from '@elementor/ui';
+import { Box, Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const Panel = ( { sx = {}, ...props } ) => {
 	return (
-		<Drawer
-			open={ true }
-			anchor="left"
-			variant="persistent"
-			PaperProps={ {
-				sx: {
-					position: 'relative',
+		<>
+			<Box
+				sx={ {
+					p: 4,
 					width: 360,
-					px: 8,
-					pt: 8,
-					bgcolor: 'background.default',
-				},
-			} }
-			sx={ { height: '100%', ...sx } }
-			{ ...props }
-		>
-			{ props.children }
-		</Drawer>
+					flexShrink: 0,
+					height: '100%',
+					overflowY: 'auto',
+					...sx,
+				} }
+				{ ...props }
+			>
+				{ props.children }
+			</Box>
+
+			<Divider orientation="vertical" />
+		</>
 	);
 };
 

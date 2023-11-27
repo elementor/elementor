@@ -56,7 +56,7 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
-					'size' => '1140',
+					'size' => 1140,
 				],
 				'tablet_default' => [
 					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
@@ -112,7 +112,7 @@ class Settings_Layout extends Tab_Base {
 					'column' => '20',
 					'unit' => 'px',
 				],
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'placeholder' => [
 					'row' => '20',
 					'column' => '20',
@@ -125,6 +125,15 @@ class Settings_Layout extends Tab_Base {
 				'conversion_map' => [
 					'old_key' => 'size',
 					'new_key' => 'column',
+				],
+				'upgrade_conversion_map' => [
+					'old_key' => 'size',
+					'new_keys' => [ 'column', 'row' ],
+				],
+				'validators' => [
+					'Number' => [
+						'min' => 0,
+					],
 				],
 			]
 		);

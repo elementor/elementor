@@ -1,4 +1,6 @@
 import { Box, Button, Typography, SvgIcon, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import ExpandIcon from '../../../../icons/expand-icon';
 import BrushIcon from '../../../../icons/brush-icon';
 import EvolveIcon from '../../../../icons/evolve-icon';
@@ -33,12 +35,13 @@ const TeaserDrawing = () => (
 );
 
 const ImageToolsContainer = styled( Box )( ( { theme } ) => ( {
-	height: `calc(100% - 140px)`,
+	height: `calc(100% - ${ theme.spacing( 13 ) })`,
 } ) );
 
 const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 	position: 'sticky',
-	top: `calc(100% - ${ theme.spacing( 10 ) })`,
+	top: '100%',
+	padding: theme.spacing( 4, 0, 1 ),
 } ) );
 
 const ImageToolsPanel = () => {
@@ -78,7 +81,7 @@ const ImageToolsPanel = () => {
 	];
 	return (
 		<ImageToolsContainer>
-			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 3 } justifyContent="center">
+			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 1 } justifyContent="center">
 				{ tools.map( ( { label, Icon, onClick } ) => (
 					<Button
 						onClick={ onClick }
@@ -87,7 +90,7 @@ const ImageToolsPanel = () => {
 						color="secondary"
 						disabled={ false }
 						sx={ {
-							py: 7,
+							py: 3,
 							fontSize: '12px',
 							height: 'auto',
 							borderRadius: '4px',
@@ -99,7 +102,7 @@ const ImageToolsPanel = () => {
 							alignItems="center"
 							flexDirection="column"
 						>
-							<Icon sx={ { mb: 2 } } />
+							<Icon sx={ { mb: 0.5 } } />
 							{ label }
 						</Box>
 					</Button>
@@ -109,7 +112,7 @@ const ImageToolsPanel = () => {
 			<ToolsTeaserContainer display="flex" flexDirection="column" alignItems="center">
 				<TeaserDrawing />
 
-				<Typography variant="body2" align="center" color="secondary" sx={ { mt: 5 } }>
+				<Typography variant="body2" align="center" color="secondary" sx={ { mt: 2 } }>
 					{ __( 'Stay tuned! More incredible AI tools are coming your way soon.', 'elementor' ) }
 				</Typography>
 			</ToolsTeaserContainer>
