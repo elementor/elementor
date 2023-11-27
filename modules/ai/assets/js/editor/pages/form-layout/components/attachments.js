@@ -17,7 +17,7 @@ const Attachments = ( props ) => {
 				disabled={ props.disabled }
 				onAttach={ props.onAttach }
 				items={ [ {
-					title: __( 'URL as a reference', 'elementor' ),
+					title: __( 'Reference a website', 'elementor' ),
 					icon: WebsiteIcon,
 					type: ATTACHMENT_TYPE_URL,
 				} ] }
