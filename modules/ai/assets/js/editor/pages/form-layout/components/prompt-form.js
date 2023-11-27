@@ -89,6 +89,7 @@ const PromptForm = forwardRef( ( {
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
 	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
+	const promptPlaceholder = attachmentsConfig?.promptPlaceholder || __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' );
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -138,7 +139,7 @@ const PromptForm = forwardRef( ( {
 							{ ...params }
 							ref={ ref }
 							onChange={ ( e ) => setPrompt( e.target.value ) }
-							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+							placeholder={ promptPlaceholder }
 						/>
 					) }
 				/>
