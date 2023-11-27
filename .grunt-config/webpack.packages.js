@@ -61,6 +61,11 @@ const devConfig = {
 	mode: 'development',
 	devtool: false, // TODO: Need to check what to do with source maps.
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
+	optimization: {
+		...( common.optimization || {} ),
+		// Intentionally minimizing the dev assets to reduce the bundle size.
+		minimize: true,
+	},
 	output: {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
