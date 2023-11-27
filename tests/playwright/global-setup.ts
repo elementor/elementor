@@ -1,10 +1,10 @@
-import { firefox, request, type FullConfig } from '@playwright/test';
+import { chromium, request, type FullConfig } from '@playwright/test';
 import { createApiContext, createDefaultMedia, deleteDefaultMedia } from './assets/api-requests';
 
 module.exports = async ( config: FullConfig ) => {
 	const { baseURL, headless } = config.projects[ 0 ].use;
 
-	const browser = await firefox.launch( { headless } );
+	const browser = await chromium.launch( { headless } );
 	const page = await browser.newPage();
 
 	await page.goto( `${ baseURL }/wp-admin` );
