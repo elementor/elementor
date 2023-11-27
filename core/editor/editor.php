@@ -8,7 +8,6 @@ use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
