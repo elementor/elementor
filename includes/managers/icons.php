@@ -580,11 +580,13 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => sprintf(
+		$success_msg = sprintf(
 			/* translators: %s: Version number. */
 			esc_html__( 'Hurray! The upgrade process to Font Awesome %s was completed successfully.', 'elementor' ),
 			self::get_current_fa_version()
-		) ] );
+		);
+
+		wp_send_json_success( [ 'message' => $success_msg ] );
 	}
 
 	/**
@@ -636,8 +638,6 @@ class Icons_Manager {
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-
-		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );

@@ -529,7 +529,8 @@ class Upgrades {
 		add_option( 'elementor_load_fa4_shim', 'yes' );
 	}
 
-	public static function _v_3_8_0_fa5_migration_flag() { 	// TODO: Update the version number and call where needed
+	// TODO: Update the version number and call where needed
+	public static function _v_3_8_0_fa5_migration_flag() {
 		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 	}
 
