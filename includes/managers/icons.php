@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -534,7 +533,8 @@ class Icons_Manager {
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
 							wp_create_nonce( self::NEEDS_UPDATE_OPTION ),
 							esc_url( $this->get_upgrade_redirect_url() ),
-							esc_html__( 'Upgrade To Font Awesome ' . self::get_current_fa_version(), 'elementor' )
+							/* translators: %s: Version number. */
+							sprintf( esc_html__( 'Upgrade To Font Awesome %s', 'elementor' ), self::get_current_fa_version() )
 						),
 					],
 				],
@@ -580,10 +580,11 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => esc_html__( sprintf(
-			'Hurray! The upgrade process to Font Awesome %s was completed successfully.',
-				self::get_current_fa_version()
-		), 'elementor' ) ] );
+		wp_send_json_success( [ 'message' => sprintf(
+			/* translators: %s: Version number. */
+			esc_html__( 'Hurray! The upgrade process to Font Awesome %s was completed successfully.', 'elementor' ),
+			self::get_current_fa_version()
+		) ] );
 	}
 
 	/**
@@ -635,6 +636,8 @@ class Icons_Manager {
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+
+		add_option( 'elementor_icon_manager_needs_update', 'yes' );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
