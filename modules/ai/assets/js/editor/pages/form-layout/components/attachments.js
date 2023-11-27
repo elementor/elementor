@@ -28,12 +28,12 @@ const Attachments = ( props ) => {
 	return (
 		<Stack direction="row" spacing={ 1 }>
 			{
-				props.attachments.map( ( attachment ) => {
+				props.attachments.map( ( attachment, index ) => {
 					switch ( attachment.type ) {
 						case ATTACHMENT_TYPE_JSON:
-							return <ThumbnailJson key={ attachment.id } { ...props } />;
+							return <ThumbnailJson key={ index } { ...props } />;
 						case ATTACHMENT_TYPE_URL:
-							return <ThumbnailUrl key={ attachment.id } { ...props } />;
+							return <ThumbnailUrl key={ index } { ...props } />;
 						default:
 							return null;
 					}
