@@ -288,10 +288,11 @@ const FormLayout = ( {
 											} }
 										>
 											{
-												screenshots.map( ( { screenshot, template, isError, isPending }, index ) => (
+												screenshots.map( ( { screenshot, type, template, isError, isPending }, index ) => (
 													<Screenshot
 														key={ index }
 														url={ screenshot }
+														type={ type }
 														disabled={ isPromptFormActive }
 														isPlaceholder={ isError }
 														isLoading={ isPending }
