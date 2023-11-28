@@ -93,7 +93,7 @@ const UpgradeChip = ( {
 	if ( hasSubscription ) {
 		actionUrl = usagePercentage >= 100 ? 'https://go.elementor.com/ai-popup-upgrade-limit-reached/' : 'https://go.elementor.com/ai-popup-upgrade-limit-reached-80-percent/';
 	}
-	const actionLabel = hasSubscription ? __( 'Maximize Your Access to Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
+	const actionLabel = hasSubscription ? __( 'Upgrade Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
 
 	return (
 		<Box
@@ -124,7 +124,7 @@ const UpgradeChip = ( {
 					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
-						{ __( 'Maximum access to Elementor AI', 'elementor' ) }
+						{ __( 'Maximize Your Access to Elementor AI', 'elementor' ) }
 					</Typography>
 
 					<List sx={ { mb: 1 } }>
