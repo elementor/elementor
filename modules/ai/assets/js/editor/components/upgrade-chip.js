@@ -62,6 +62,7 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
+	__( 'Let AI build your container layouts and content with ease and radically transform the way you create websites.', 'elementor' ),
 	__( 'Generate your website\'s text or create custom code without having to write a single line yourself.', 'elementor' ),
 	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
 	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
@@ -92,7 +93,7 @@ const UpgradeChip = ( {
 	if ( hasSubscription ) {
 		actionUrl = usagePercentage >= 100 ? 'https://go.elementor.com/ai-popup-upgrade-limit-reached/' : 'https://go.elementor.com/ai-popup-upgrade-limit-reached-80-percent/';
 	}
-	const actionLabel = hasSubscription ? __( 'Upgrade Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
+	const actionLabel = hasSubscription ? __( 'Maximize Your Access to Elementor AI', 'elementor' ) : __( 'Get Elementor AI', 'elementor' );
 
 	return (
 		<Box
