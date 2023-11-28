@@ -4,6 +4,7 @@ export default class View extends WidgetView {
 	events() {
 		return {
 			'click .e-promotion-delete': 'onRemoveButtonClick',
+			'click .e-promotion-go-pro': 'onGoProButtonClick',
 		};
 	}
 
@@ -25,5 +26,12 @@ export default class View extends WidgetView {
 				);
 			},
 		);
+	}
+
+	onGoProButtonClick( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		window.open( event.currentTarget.href, '_blank' );
 	}
 }
