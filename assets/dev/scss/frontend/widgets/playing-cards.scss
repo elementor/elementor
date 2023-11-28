@@ -1,205 +1,211 @@
 .e-playing-cards-container {
-  --e-card-width: 220px;
-  --e-cards-flex-direction: row;
-  --e-cards-flex-justify-content: start;
-  --e-cards-flex-align-items: start;
-  --e-cards-transition-time: 300ms;
-  --e-cards-row-gap: 10px;
-  --e-cards-col-gap: 10px;
-  --e-card-border-radius: 10px;
-  --e-card-border: .7px solid #ccc;
-  --e-card-font-family: initial;
-  --e-card-font-size: 25px;
-  --e-card-font-weight: 300;
-  --e-card-diamond-color: red;
-  --e-card-heart-color: red;
-  --e-card-spade-color: black;
-  --e-card-club-color: black;
-  --e-card-suit-font-size: 35px;
-  --e-card-royal-suit-offset-h: 10%;
-  --e-card-royal-suit-offset-v: 25%;
-  --e-card-background-color: white;
+	--e-card-width: 220px;
+	--e-cards-flex-direction: row;
+	--e-cards-flex-justify-content: start;
+	--e-cards-flex-align-items: start;
+	--e-cards-transition-time: 300ms;
+	--e-cards-row-gap: 10px;
+	--e-cards-col-gap: 10px;
+	--e-card-border-radius: 10px;
+	--e-card-border: .7px solid #ccc;
+	--e-card-font-family: initial;
+	--e-card-font-size: 25px;
+	--e-card-font-weight: 300;
+	--e-card-diamond-color: red;
+	--e-card-heart-color: red;
+	--e-card-spade-color: black;
+	--e-card-club-color: black;
+	--e-card-suit-font-size: 35px;
+	--e-card-royal-suit-offset-h: 10%;
+	--e-card-royal-suit-offset-v: 25%;
+	--e-card-background-color: white;
+	--e-card-padding: 2px 4px;
 
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: var(--e-cards-flex-direction);
-  justify-content: var(--e-cards-flex-justify-content);
-  align-items: var(--e-cards-flex-align-items);
-  row-gap: var(--e-cards-row-gap);
-  column-gap: var(--e-cards-col-gap);
-  transition: var(--e-cards-transition-time);
-
-  .e-playing-cards-item * {
-	pointer-events: none;
-	user-select: none;
-  }
-
-  .e-playing-cards-item {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: var(--e-cards-flex-direction);
+	justify-content: var(--e-cards-flex-justify-content);
+	align-items: var(--e-cards-flex-align-items);
+	row-gap: var(--e-cards-row-gap);
+	column-gap: var(--e-cards-col-gap);
 	transition: var(--e-cards-transition-time);
-	width: var(--e-card-width);
-	height: calc(var(--e-card-width) / 0.7);
-	border-radius: var(--e-card-border-radius);
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-	background-color: var(--e-card-background-color);
-	transform-style: preserve-3d;
-	cursor: pointer;
-	border: var(--e-card-border);
 
-	.e-card-backside {
-	  position: relative;
-	  position: absolute;
-	  width: 100%;
-	  height: 100%;
-	  border-radius: inherit;
-	  background-color: inherit;
-	  transform: rotateY(.5turn);
-	  padding: 10px;
-
-	  .image {
-		background-image: url(../images/playing-cards/backside.jpg);
-		background-size: cover;
-		width: 100%;
-		height: 100%;
-	  }
+	.e-playing-cards-item * {
+		pointer-events: none;
+		user-select: none;
 	}
 
-	&.flipped {
-	  transform: rotateY(.5turn);
-
-	  .e-card-backside {
-		transform: rotateY(1turn);
-	  }
-	}
-
-
-	&.heart {
-	  .suit {
-		color: var(--e-card-heart-color);
-	  }
-
-	  .value {
-		color: var(--e-card-heart-color);
-	  }
-	}
-
-	&.club {
-	  .suit {
-		color: var(--e-card-club-color);
-	  }
-
-	  .value {
-		color: var(--e-card-club-color);
-	  }
-	}
-
-	&.diamond {
-	  .suit {
-		color: var(--e-card-diamond-color);
-	  }
-
-	  .value {
-		color: var(--e-card-diamond-color);
-	  }
-	}
-
-	&.spade {
-	  .suit {
-		color: var(--e-card-spade-color);
-	  }
-
-	  .value {
-		color: var(--e-card-spade-color);
-	  }
-	}
-
-	.e-card-frontside {
-	  backface-visibility: hidden;
-	  position: relative;
-	  display: grid;
-	  grid-template-columns: 1.2fr repeat( 5, 1fr ) 1.2fr;
-	  grid-template-rows: 1.2fr repeat( 7, 1fr ) 1.2fr;
-	  justify-items: center;
-	  align-items: center;
-	  width: 100%;
-	  height: 100%;
-	  border-radius: inherit;
-	  background-color: inherit;
-	  padding: 2px 4px;
-
-	  .e-card-content {
-		font-family: var(--e-card-font-family) Sans-serif;
-		font-size: var(--e-card-font-size);
-		font-weight: var(--e-card-font-weight);
-	  }
-
-	  .flip {
-		rotate: .5turn;
-	  }
-
-	  .self-start {
-		align-self: start;
-	  }
-
-	  .self-end {
-		align-self: end;
-	  }
-
-	  .suit {
-		font-size: var(--e-card-suit-font-size);
-		line-height: 1;
-	  }
-
-	  .e-card-content.value {
-		font-size: var(--e-card-font-size);
-	  }
-
-	  .e-card-content-royal-image {
-		grid-row: 2/-2;
-		grid-column: 2/-2;
+	.e-playing-cards-item {
+		transition: var(--e-cards-transition-time);
+		width: var(--e-card-width);
+		height: calc(var(--e-card-width) / 0.7);
+		border-radius: var(--e-card-border-radius);
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+		background-color: var(--e-card-background-color);
+		transform-style: preserve-3d;
+		cursor: pointer;
 		border: var(--e-card-border);
-		width: 100%;
-		height: 100%;
-		background-size: cover;
-		background-position: center;
-	  }
 
-	  .suit {
-		position: relative;
+		.e-card-backside {
+			position: relative;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: inherit;
+			background-color: inherit;
+			transform: rotateY(.5turn);
+			padding: 10px;
+			overflow: hidden;
 
-		&.end {
-		  align-self: end;
-		  justify-self: end;
-		  left: var(--e-card-royal-suit-offset-h);
-		  top: var(--e-card-royal-suit-offset-v);
-		}
-
-		&.start {
-		  align-self: start;
-		  justify-self: start;
-		  right: var(--e-card-royal-suit-offset-h);
-		  bottom: var(--e-card-royal-suit-offset-v);
-		}
-	  }
-	  @mixin grid_loop() {
-
-		@for $i from -5 through 5 {
-
-		  .row_#{$i} {
-			grid-row-start: #{$i};
-			&-double{
-			  grid-row-end: calc(#{$i} + 2);
+			.image {
+				background-image: url(../images/playing-cards/backside.jpg);
+				background-size: cover;
+				width: 100%;
+				height: 100%;
 			}
-		  }
-		  .col_#{$i} {
-			grid-column-start: #{$i};
-			&-double{
-			  grid-column-end: calc(#{$i} + 2);
-			}
-		  }
 		}
-	  }
 
-	  @include grid_loop();
+		&.flipped {
+			transform: rotateY(.5turn);
+
+			.e-card-backside {
+				transform: rotateY(1turn);
+			}
+		}
+
+
+		&.heart {
+			.suit {
+				color: var(--e-card-heart-color);
+			}
+
+			.value {
+				color: var(--e-card-heart-color);
+			}
+		}
+
+		&.club {
+			.suit {
+				color: var(--e-card-club-color);
+			}
+
+			.value {
+				color: var(--e-card-club-color);
+			}
+		}
+
+		&.diamond {
+			.suit {
+				color: var(--e-card-diamond-color);
+			}
+
+			.value {
+				color: var(--e-card-diamond-color);
+			}
+		}
+
+		&.spade {
+			.suit {
+				color: var(--e-card-spade-color);
+			}
+
+			.value {
+				color: var(--e-card-spade-color);
+			}
+		}
+
+		.e-card-frontside {
+			backface-visibility: hidden;
+			position: relative;
+			display: grid;
+			grid-template-columns: 1.2fr repeat( 5, 1fr ) 1.2fr;
+			grid-template-rows: 1.2fr repeat( 7, 1fr ) 1.2fr;
+			justify-items: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			border-radius: inherit;
+			background-color: inherit;
+			padding: var(--e-card-padding);
+			overflow: hidden;
+
+			.e-card-content {
+				font-family: var(--e-card-font-family) Sans-serif;
+				font-size: var(--e-card-font-size);
+				font-weight: var(--e-card-font-weight);
+			}
+
+			.flip {
+				rotate: .5turn;
+			}
+
+			.self-start {
+				align-self: start;
+			}
+
+			.self-end {
+				align-self: end;
+			}
+
+			.suit {
+				font-size: var(--e-card-suit-font-size);
+				line-height: 1;
+			}
+
+			.e-card-content.value {
+				font-size: var(--e-card-font-size);
+			}
+
+			.e-card-content-royal-image {
+				grid-row: 2/-2;
+				grid-column: 2/-2;
+				border: var(--e-card-border);
+				width: 100%;
+				height: 100%;
+				background-size: cover;
+				background-position: center;
+			}
+
+			.suit {
+				position: relative;
+
+				&.end {
+					align-self: end;
+					justify-self: end;
+					left: var(--e-card-royal-suit-offset-h);
+					top: var(--e-card-royal-suit-offset-v);
+				}
+
+				&.start {
+					align-self: start;
+					justify-self: start;
+					right: var(--e-card-royal-suit-offset-h);
+					bottom: var(--e-card-royal-suit-offset-v);
+				}
+			}
+
+			@mixin grid_loop() {
+
+				@for $i from -5 through 5 {
+
+					.row_#{$i} {
+						grid-row-start: #{$i};
+
+						&-double {
+							grid-row-end: calc(#{$i} + 2);
+						}
+					}
+					.col_#{$i} {
+						grid-column-start: #{$i};
+
+						&-double {
+							grid-column-end: calc(#{$i} + 2);
+						}
+					}
+				}
+			}
+
+			@include grid_loop();
+		}
 	}
-  }
 }

@@ -267,21 +267,29 @@ class Widget_Playing_Cards extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'background_color',
+			'card-padding',
 			[
-				'label' => esc_html__( 'Background ', 'elementor' ),
-				'type' => \Elementor\Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-background-color: {{VALUE}}',
+				'label' => esc_html__( 'Padding', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'range' => [
+					'min' => [
+						'px' => 0,
+						'%' => 0,
+						'em' => 0,
+						'rem' => 0,
+					],
 				],
-				'default' => '#ffffff',
+				'selectors' => [
+					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 		$this->end_controls_section();
 
 	}
 
-	private function register_border_controls() {
+	private function register_card_style_controls() {
 		$this->start_controls_section(
 			'card_style',
 			[
@@ -289,6 +297,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
 			]
 		);
+
 		$this->add_group_control(
 			\Elementor\Group_Control_Border::get_type(),
 			[
@@ -296,6 +305,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'selector' => '{{WRAPPER}} .e-playing-cards-item, {{WRAPPER}} .e-card-royal-image',
 			]
 		);
+
 		$this->add_responsive_control(
 			'border-radius',
 			[
@@ -313,6 +323,18 @@ class Widget_Playing_Cards extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'background_color',
+			[
+				'label' => esc_html__( 'Background ', 'elementor' ),
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-background-color: {{VALUE}}',
+				],
+				'default' => '#ffffff',
 			]
 		);
 
@@ -555,7 +577,7 @@ class Widget_Playing_Cards extends Widget_Base {
 	protected function register_controls() {
 		$this->register_cards_section_controls();
 		$this->register_layout_section_controls();
-		$this->register_border_controls();
+		$this->register_card_style_controls();
 		$this->register_value_controls();
 		$this->register_suit_controls();
 	}
