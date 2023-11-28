@@ -17,7 +17,7 @@ const Attachments = ( props ) => {
 				disabled={ props.disabled }
 				onAttach={ props.onAttach }
 				items={ [ {
-					title: __( 'URL as a reference', 'elementor' ),
+					title: __( 'Reference a website', 'elementor' ),
 					icon: WebsiteIcon,
 					type: ATTACHMENT_TYPE_URL,
 				} ] }
@@ -28,12 +28,12 @@ const Attachments = ( props ) => {
 	return (
 		<Stack direction="row" spacing={ 1 }>
 			{
-				props.attachments.map( ( attachment ) => {
+				props.attachments.map( ( attachment, index ) => {
 					switch ( attachment.type ) {
 						case ATTACHMENT_TYPE_JSON:
-							return <ThumbnailJson key={ attachment.id } { ...props } />;
+							return <ThumbnailJson key={ index } { ...props } />;
 						case ATTACHMENT_TYPE_URL:
-							return <ThumbnailUrl key={ attachment.id } { ...props } />;
+							return <ThumbnailUrl key={ index } { ...props } />;
 						default:
 							return null;
 					}
