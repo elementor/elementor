@@ -148,7 +148,6 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'small' => esc_html__( 'Small', 'elementor' ),
@@ -156,6 +155,10 @@ class Widget_Heading extends Widget_Base {
 					'large' => esc_html__( 'Large', 'elementor' ),
 					'xl' => esc_html__( 'XL', 'elementor' ),
 					'xxl' => esc_html__( 'XXL', 'elementor' ),
+				],
+				'default' => 'default',
+				'condition' => [
+					'size!' => 'default', // a workaround to hide the control, unless it's in use (not default).
 				],
 			]
 		);
