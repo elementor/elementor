@@ -88,7 +88,7 @@ jobs:
           key: playwright-build-${{ github.sha }}
       - name: Update wp-env.json file
         env:
-          PHP_VERSION: 8.0.3
+          PHP_VERSION: '8.0'
           WP_CORE_VERSION: 'latest'
         run: node ./.github/scripts/build-wp-env.js
       - name: Install dependencies
