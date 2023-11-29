@@ -32,6 +32,10 @@ export const Menu = ( props ) => {
 					vertical: 'bottom',
 					horizontal: 'rtl' === direction ? 'right' : 'left',
 				} }
+				transformOrigin={ {
+					vertical: 'top',
+					horizontal: 'rtl' === direction ? 'right' : 'left',
+				} }
 			>
 				<Stack spacing={ 2 } sx={ {
 					width: 440,

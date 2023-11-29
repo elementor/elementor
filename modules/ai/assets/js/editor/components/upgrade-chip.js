@@ -62,6 +62,7 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 const upgradeBullets = [
+	__( 'Let AI build your container layouts and content with ease and radically transform the way you create websites.', 'elementor' ),
 	__( 'Generate your website\'s text or create custom code without having to write a single line yourself.', 'elementor' ),
 	__( 'Effortlessly create or enhance stunning images and bring your ideas to life.', 'elementor' ),
 	__( 'Access 30-days of AI History with the AI Starter plan and 90-days with the Power plan.', 'elementor' ),
@@ -123,7 +124,7 @@ const UpgradeChip = ( {
 					<StyledArrow ref={ arrowEl } />
 
 					<Typography variant="h5" color="text.primary">
-						{ __( 'Maximum access to Elementor AI', 'elementor' ) }
+						{ __( 'Maximize Your Access to Elementor AI', 'elementor' ) }
 					</Typography>
 
 					<List sx={ { mb: 1 } }>
