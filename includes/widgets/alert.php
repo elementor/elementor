@@ -169,11 +169,11 @@ class Widget_Alert extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-regular' => [
-						'times-circle',
+						'circle-xmark',
 					],
 					'fa-solid' => [
-						'times',
-						'times-circle',
+						'xmark',
+						'circle-xmark',
 					],
 				],
 				'condition' => [

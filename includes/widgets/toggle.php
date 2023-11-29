@@ -184,12 +184,12 @@ class Widget_Toggle extends Widget_Base {
 					'fa-solid' => [
 						'chevron-down',
 						'angle-down',
-						'angle-double-down',
+						'angles-down',
 						'caret-down',
-						'caret-square-down',
+						'carets-down',
 					],
 					'fa-regular' => [
-						'caret-square-down',
+						'square-caret-down',
 					],
 				],
 				'label_block' => false,
@@ -211,12 +211,12 @@ class Widget_Toggle extends Widget_Base {
 					'fa-solid' => [
 						'chevron-up',
 						'angle-up',
-						'angle-double-up',
+						'angles-up',
 						'caret-up',
-						'caret-square-up',
+						'square-caret-up',
 					],
 					'fa-regular' => [
-						'caret-square-up',
+						'square-caret-up',
 					],
 				],
 				'skin' => 'inline',

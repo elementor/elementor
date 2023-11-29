@@ -181,7 +181,7 @@ class Widget_Accordion extends Widget_Base {
 					'fa-solid' => [
 						'chevron-down',
 						'angle-down',
-						'angle-double-down',
+						'angles-down',
 						'caret-down',
 						'caret-square-down',
 					],
@@ -208,7 +208,7 @@ class Widget_Accordion extends Widget_Base {
 					'fa-solid' => [
 						'chevron-up',
 						'angle-up',
-						'angle-double-up',
+						'angles-up',
 						'caret-up',
 						'caret-square-up',
 					],

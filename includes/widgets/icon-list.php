@@ -169,14 +169,14 @@ class Widget_Icon_List extends Widget_Base {
 					[
 						'text' => esc_html__( 'List Item #2', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-times',
+							'value' => 'fas fa-xmark',
 							'library' => 'fa-solid',
 						],
 					],
 					[
 						'text' => esc_html__( 'List Item #3', 'elementor' ),
 						'selected_icon' => [
-							'value' => 'fas fa-dot-circle',
+							'value' => 'fas fa-circle-dot',
 							'library' => 'fa-solid',
 						],
 					],
@@ -706,8 +706,8 @@ class Widget_Icon_List extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$fallback_defaults = [
 			'fa fa-check',
-			'fa fa-times',
-			'fa fa-dot-circle-o',
+			'fa fa-xmark',
+			'fa fa-dot-circle',
 		];
 
 		$this->add_render_attribute( 'icon_list', 'class', 'elementor-icon-list-items' );

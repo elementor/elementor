@@ -685,11 +685,11 @@ class Widget_Video extends Widget_Base {
 				],
 				'recommended' => [
 					'fa-regular' => [
-						'play-circle',
+						'circle-play',
 					],
 					'fa-solid' => [
 						'play',
-						'play-circle',
+						'circle-play',
 					],
 				],
 				'condition' => [
