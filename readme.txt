@@ -14,7 +14,7 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 https://www.youtube.com/watch?v=lBu9TKg7dFM
 
-= THE #1 WEB CREATION PLATFORM, POWERING OVER 14M WEBSITES WORLDWIDE. =
+= THE #1 WEB CREATION PLATFORM, POWERING OVER 15M WEBSITES WORLDWIDE. =
 
 Elementor is the leading WordPress website builder that empowers you to successfully build professional, pixel-perfect websites. With an intuitive drag and drop interface, you get complete control to build any type of website,  without writing a single line of code.
 
@@ -54,7 +54,7 @@ Elementor includes a variety of 40+ free widgets for you to build professional a
 - **Icon List**. Use any icon to create a bullet list.
 - **Counter**. Show stats and numbers in an escalating manner.
 - **Progress Bar**. Include an escalating progress bar.
-- **Nested Tabs**. Leverage complete design freedom to display content in vertical or horizontal tabs.
+- **Nested Tabs**. Gain complete design freedom to display content in vertical or horizontal tabs.
 - **Nested Accordion**. Display any type of content in collapsible sections.
 - **Toggle**. Use the Toggle to hide or display content, like FAQ.
 - **Rating**. Display how many stars (or any other icon) other visitors gave your content.
