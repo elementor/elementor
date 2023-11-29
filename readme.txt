@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Elementor is the leading WordPress website builder that empowers you to successfully build professional, pixel-perfect websites. With an intuitive drag and drop interface, you get complete control to build any type of website,  without writing a single line of code.
 
-Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create original text, code, and images instantly.
+Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/elementor-ai/), a native AI integration built specifically for Elementor, that transforms the way you build websites by enabling you to create complete sections, original text, code, and images instantly.
 
 Unlock all of Elementor’s features and elevate your website’s potential with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
@@ -130,9 +130,13 @@ Elementor Pro’s features include:
 Unlock full creative freedom and build professional websites with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro-2/)!
 
 = SECURITY AND COMPLIANCE =
-Elementor is ISO 27001 certified and has a dedicated team of security professionals that implements industry best practices for maximum security and compliance 24/7.
+Elementor places a paramount focus on security, evident through our acquisition of various industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications not only underscore our commitment to implementing robust security measures, but also highlight our dedication to adhering to recognized industry standards.
 
-There is also a managed security [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
+To build secure and reliable software, we follow a Secure System Development Lifecycle based on industry best practices. Our development process integrates multiple services that monitor vulnerabilities and configuration mistakes, including those in third-party libraries. Each line of code we release undergoes meticulous manual and automated quality assurance to detect and address any potential issues.
+
+We actively encourage ethical security research through our [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/). We collaborate with leading bug bounty services to provide opportunities for researchers to report vulnerabilities in our services. Our bounty programs include a triage team available 24/7/365 to verify every submission.
+
+More information could be found in our [Trust Center](https://go.elementor.com/trust-center/).
 
 = ELEMENTOR RESOURCES AND SUPPORT =
 - To learn how to get started with Elementor, or view tutorials about new features, go to the [Elementor Academy](https://go.elementor.com/wp-repo-description-tab-academy-elementor-academy/) or the [Help Center](https://go.elementor.com/wp-repo-description-tab-help-center-help-center/).
@@ -158,7 +162,7 @@ There is also a managed security [Bug Bounty program](https://go.elementor.com/w
 * MySQL version 5.6 or greater
 * WordPress Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
-https://www.youtube.com/watch?v=Ypn6fltn_7s
+https://www.youtube.com/watch?v=9EZ159ryFNs
 
 = Installation =
 
@@ -231,12 +235,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Screenshots ==
 
-1. **Visual Drag and Drop Editor** Our instant drag and drop lets you easily place every element anywhere on the page and create pixel perfect designs.
-2. **Full Design System** Speed up your workflow and ensure consistency across your site with settings you define once, use globally, and change anytime - no coding required.
-3. **Motion Effects** Add transitions and animations to your website elements/designs to create a unique user experience.
-4. **Kit Library** Choose from a variety of designer-made website kits created to fit any industry. Add content, customize it, and make it your own.
-5. **Templates Library** Save your pages or sections as templates, so you can easily reuse them again or choose one of our beautiful pre-designed templates.
-6. **Responsive Design** Fully edit your websites and customize the behavior on desktop, tablet & mobile to maximize the experience by switching between devices and breaking points.
+1. **Visual Drag and Drop Editor** - Design your website layouts and place any element anywhere on the page for pixel-perfect designs.
+2. **Full Design System** - Enjoy a professional workflow and ensure consistency across your site. Define your settings, use them globally, and instantly adjust them any time.
+3. **Responsive Design** Fully edit your website and customize the behavior on desktop, tablet, & mobile to optimize the visitor experience on every device.
+4. **Kits and Templates** - Jumpstart your web creation process or get inspired with professionally-designed templates or full website kits available for your immediate customization.
+5. **Nested Elements** Leverage Elementor's Nested widgets to place any widget inside the content area of another widget - like Tabs, and Accordion for complete design flexibility.
+6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
 
