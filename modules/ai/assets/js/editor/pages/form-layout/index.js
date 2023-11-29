@@ -14,6 +14,7 @@ import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
 import { useConfig } from './context/config';
 import { AttachmentPropType } from '../../types/attachment';
+import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -229,6 +230,8 @@ const FormLayout = ( {
 							{ dialogContentChildren }
 						</Box>
 					) }
+
+					{ attachments.length > 0 && <PromptPowerNotice /> }
 
 					{ error && (
 						<Box sx={ { pt: 2, px: 2, pb: 0 } }>
