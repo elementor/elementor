@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Box, Button, Chip as ChipBase, IconButton, Paper, Popper, Stack, styled, Typography } from '@elementor/ui';
+import { Box, Button, Chip, IconButton, Paper, Popper, Stack, styled, Typography } from '@elementor/ui';
 import LockIcon from '../../../icons/lock-icon';
 import { useRef, useState } from 'react';
 
@@ -32,15 +32,6 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 		transform: 'translateX(-50%) translateY(-50%) rotate(45deg)',
 		boxShadow: '5px -5px 5px 0px rgba(0, 0, 0, 0.2)',
 		backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
-	},
-} ) );
-
-const Chip = styled( ChipBase )( () => ( {
-	'& .MuiChip-label': {
-		lineHeight: 1.5,
-	},
-	'& .MuiSvgIcon-root.MuiChip-icon': {
-		fontSize: '1.25rem',
 	},
 } ) );
 
