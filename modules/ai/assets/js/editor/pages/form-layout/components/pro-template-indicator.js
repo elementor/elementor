@@ -14,13 +14,12 @@ const StyledContent = styled( Paper )( ( { theme } ) => ( {
 
 const StyledArrow = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
-	width: theme.spacing( 3 ),
-	height: theme.spacing( 2.5 ),
+	width: theme.spacing( 5 ),
+	height: theme.spacing( 5 ),
 	overflow: 'hidden',
 	// Override Popper inline styles.
-	insetInlineEnd: `-19px !important`,
-	marginTop: theme.spacing( -2 ),
-	rotate: '270deg',
+	left: '100% !important',
+	transform: 'translateX(-50%) translateY(-50%) rotate(var(--rotate, 0deg)) !important',
 	'&::after': {
 		backgroundColor: theme.palette.background.paper,
 		content: '""',
@@ -28,10 +27,10 @@ const StyledArrow = styled( Box )( ( { theme } ) => ( {
 		position: 'absolute',
 		width: theme.spacing( 2.5 ),
 		height: theme.spacing( 2.5 ),
-		top: 0,
+		top: '50%',
 		left: '50%',
 		transform: 'translateX(-50%) translateY(-50%) rotate(45deg)',
-		boxShadow: '1px 1px 5px 0px rgba(0, 0, 0, 0.2)',
+		boxShadow: '5px -5px 5px 0px rgba(0, 0, 0, 0.2)',
 		backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
 	},
 } ) );
@@ -68,6 +67,7 @@ export const ProTemplateIndicator = () => {
 			<IconButton
 				ref={ anchorEl }
 				onMouseEnter={ showPopover }
+				onClick={ ( e ) => e.stopPropagation() /* Do nothing */ }
 				aria-owns={ isPopoverOpen ? popoverId : undefined }
 				aria-haspopup="true"
 				sx={ {
