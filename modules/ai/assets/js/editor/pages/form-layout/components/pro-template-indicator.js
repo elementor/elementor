@@ -129,9 +129,6 @@ export const ProTemplateIndicator = () => {
 							target="_blank"
 							sx={ {
 								alignSelf: 'flex-end',
-								'&:hover': {
-									color: 'accent.contrastText',
-								},
 							} }
 						>
 							{ actionLabel }

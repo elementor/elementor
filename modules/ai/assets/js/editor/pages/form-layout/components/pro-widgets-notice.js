@@ -23,11 +23,7 @@ export const ProWidgetsNotice = () => {
 				variant="filled"
 				color="accent"
 				onClose={ () => setIsViewed( true ) }
-				icon={ <LockIcon
-					sx={ {
-						color: 'accent.contrastText',
-					} }
-				/> }
+				icon={ <LockIcon /> }
 				sx={ {
 					'& .MuiAlert-message': {
 						width: '100%',

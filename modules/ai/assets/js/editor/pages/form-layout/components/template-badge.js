@@ -5,9 +5,8 @@ import { ProTemplateIndicator } from './pro-template-indicator';
 const TemplateBadge = ( props ) => {
 	const { hasPro } = useConfig();
 
-	switch ( props.type ) {
-		case 'Pro':
-			return hasPro ? null : <ProTemplateIndicator />;
+	if ( 'Pro' === props.type && ! hasPro ) {
+		return <ProTemplateIndicator />;
 	}
 
 	return null;
