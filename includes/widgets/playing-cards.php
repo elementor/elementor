@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Playing_Cards extends Widget_Base {
 
-	private static $suit_char_map = [
+	const SUIT_MAP_CHAR = [
 		'diamond' => '&#9830;',
 		'heart' => '&#9829;',
 		'club' => '&#9827;',
 		'spade' => '&#9824;',
 	];
 
-	private static $value_map = [
+	const  VALUE_MAP = [
 		'1' => 'A',
 		'2' => 2,
 		'3' => 3,
@@ -78,18 +78,20 @@ class Widget_Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Value', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => '1',
-				'options' => static::$value_map,
+				'options' => self::VALUE_MAP,
 			]
 		);
+
 		$repeater->add_control(
 			'card_suit',
 			[
 				'label' => esc_html__( 'Card Suit', 'elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => 'diamond',
-				'options' => static::$suit_char_map,
+				'options' => self::SUIT_MAP_CHAR,
 			]
 		);
+
 		$this->add_control(
 			'list',
 			[
@@ -144,12 +146,14 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_control(
 			'layout-divider-1',
 			[
 				'type' => \Elementor\Controls_Manager::DIVIDER,
 			]
 		);
+
 		$this->add_responsive_control(
 			'content_direction',
 			[
@@ -178,6 +182,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'justify_content',
 			[
@@ -215,6 +220,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'align_items',
 			[
@@ -243,12 +249,14 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_control(
 			'layout-divider-2',
 			[
 				'type' => \Elementor\Controls_Manager::DIVIDER,
 			]
 		);
+
 		$this->add_responsive_control(
 			'cards_gap',
 			[
@@ -285,8 +293,8 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
-		$this->end_controls_section();
 
+		$this->end_controls_section();
 	}
 
 	private function register_card_style_controls() {
@@ -356,6 +364,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
 			]
 		);
+
 		$this->add_responsive_control(
 			'font_family',
 			[
@@ -367,6 +376,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'value-font-size',
 			[
@@ -393,6 +403,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'font-weight',
 			[
@@ -417,6 +428,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->end_controls_section();
 	}
 
@@ -455,46 +467,54 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_control(
 			'suit_divider',
 			[
 				'type' => \Elementor\Controls_Manager::DIVIDER,
 			]
 		);
+
 		$this->add_responsive_control(
 			'diamond_color',
 			[
-				'label' => esc_html__( 'Diamond ', 'elementor' ) . static::$suit_char_map['diamond'],
+				'label' => esc_html__( 'Diamond ', 'elementor' ) . self::SUIT_MAP_CHAR['diamond'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-diamond-color: {{VALUE}}',
 				],
 				'default' => '#ff0000',
 			]
-		);$this->add_responsive_control(
+		);
+
+		$this->add_responsive_control(
 			'heart_color',
 			[
-				'label' => esc_html__( 'Heart ', 'elementor' ) . static::$suit_char_map['heart'],
+				'label' => esc_html__( 'Heart ', 'elementor' ) . self::SUIT_MAP_CHAR['heart'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-heart-color: {{VALUE}}',
 				],
 				'default' => '#ff0000',
 			]
-		);$this->add_responsive_control(
+		);
+
+		$this->add_responsive_control(
 			'club_color',
 			[
-				'label' => esc_html__( 'Club ', 'elementor' ) . static::$suit_char_map['club'],
+				'label' => esc_html__( 'Club ', 'elementor' ) . self::SUIT_MAP_CHAR['club'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-club-color: {{VALUE}}',
 				],
 				'default' => '#000000',
 			]
-		);$this->add_responsive_control(
+		);
+
+		$this->add_responsive_control(
 			'spade_color',
 			[
-				'label' => esc_html__( 'Spade ', 'elementor' ) . static::$suit_char_map['spade'],
+				'label' => esc_html__( 'Spade ', 'elementor' ) . self::SUIT_MAP_CHAR['spade'],
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .e-playing-cards-container' => '--e-card-spade-color: {{VALUE}}',
@@ -502,7 +522,9 @@ class Widget_Playing_Cards extends Widget_Base {
 				'default' => '#000000',
 			]
 		);
+
 		$this->end_controls_section();
+
 		$this->start_controls_section(
 			'royal_suit_offset',
 			[
@@ -510,6 +532,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
 			]
 		);
+
 		$this->add_responsive_control(
 			'royal_offset_h',
 			[
@@ -540,6 +563,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'royal_offset_v',
 			[
@@ -570,8 +594,8 @@ class Widget_Playing_Cards extends Widget_Base {
 				],
 			]
 		);
-		$this->end_controls_section();
 
+		$this->end_controls_section();
 	}
 
 	protected function register_controls() {
@@ -584,8 +608,8 @@ class Widget_Playing_Cards extends Widget_Base {
 
 	private static function render_card( $value, $suit ) {
 		$value = (int) $value;
-		$text = static::$value_map[ $value ];
-		$suit = static::$suit_char_map[ $suit ];
+		$text = self::VALUE_MAP[ $value ];
+		$suit = self::SUIT_MAP_CHAR[ $suit ];
 		$class = __( 'e-card-content', 'elementor' );
 		?>
 		<div class="<?php echo esc_html( 'e-card-backside' ); ?>">
@@ -618,12 +642,14 @@ class Widget_Playing_Cards extends Widget_Base {
 				<span class="<?php echo esc_html( "$class" ); ?> suit self-start row_5 col_4"><?php echo esc_html( $suit ); ?></span>
 				<?php
 			}
+
 			if ( in_array( $value, $center_block ) ) {
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_2 col_4"><?php echo esc_html( $suit ); ?></span>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-3 col_4"><?php echo esc_html( $suit ); ?></span>
 				<?php
 			}
+
 			if ( $value > 3 ) {
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_2 col_2"><?php echo esc_html( $suit ); ?></span>
@@ -632,12 +658,14 @@ class Widget_Playing_Cards extends Widget_Base {
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-3 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 				<?php
 			}
+
 			if ( in_array( $value, $inline_small ) ) {
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_5 col_2"><?php echo esc_html( $suit ); ?></span>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_5 col_-3"><?php echo esc_html( $suit ); ?></span>
 				<?php
 			}
+
 			if ( $value > 8 ) {
 				?>
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_4 col_2"><?php echo esc_html( $suit ); ?></span>
@@ -646,6 +674,7 @@ class Widget_Playing_Cards extends Widget_Base {
 				<span class="<?php echo esc_html( "$class" ); ?> suit row_-5 col_-3 flip"><?php echo esc_html( $suit ); ?></span>
 				<?php
 			}
+
 			switch ( $value ) {
 				case 8:
 					?>
@@ -667,15 +696,13 @@ class Widget_Playing_Cards extends Widget_Base {
 					echo '';
 					break;
 			}
+
 			echo '</div>';
 	}
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$cards = $settings['list'];
-		//		echo "<pre>";
-		//		print_r( $cards );
-		//		echo "</pre>";
 		?>
 		<div class="e-playing-cards-container">
 
@@ -692,7 +719,7 @@ class Widget_Playing_Cards extends Widget_Base {
 							$suit,
 						],
 						'data-id' => $_id,
-						'data-value' => static::$value_map[ $value ],
+						'data-value' => self::VALUE_MAP[ $value ],
 						'data-suit' => $suit,
 					]
 				);
