@@ -44,7 +44,7 @@
                         },
                         "play_icon_text_shadow_text_shadow_type": "yes",
                         "play_icon_text_shadow_text_shadow": {
-                            "horizontal": -13,
+                            "horizontal": -3,
                             "vertical": 0,
                             "blur": 10,
                             "color": "rgba(0,0,0,0.3)"

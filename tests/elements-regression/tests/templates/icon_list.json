@@ -15,7 +15,7 @@
                             {
                                 "text": "My list  #2",
                                 "selected_icon": {
-                                    "value": "fas fa-times",
+                                    "value": "fas fa-xmark",
                                     "library": "fa-solid"
                                 },
                                 "_id": "87bc45b"
@@ -82,7 +82,7 @@
                             {
                                 "text": "List Item #2",
                                 "selected_icon": {
-                                    "value": "fas fa-times",
+                                    "value": "fas fa-xmark",
                                     "library": "fa-solid"
                                 },
                                 "_id": "87bc45b"
@@ -90,7 +90,7 @@
                             {
                                 "text": "List Item #3",
                                 "selected_icon": {
-                                    "value": "fas fa-dot-circle",
+                                    "value": "fas fa-circle-dot",
                                     "library": "fa-solid"
                                 },
                                 "_id": "8733d04"
@@ -160,7 +160,7 @@
                             {
                                 "text": "List Item #1",
                                 "selected_icon": {
-                                    "value": "fas fa-check-circle",
+                                    "value": "fas fa-circle-check",
                                     "library": "fa-solid"
                                 },
                                 "_id": "2160cd3"
@@ -168,7 +168,7 @@
                             {
                                 "text": "List Item #2",
                                 "selected_icon": {
-                                    "value": "fas fa-times",
+                                    "value": "fas fa-xmark",
                                     "library": "fa-solid"
                                 },
                                 "_id": "87bc45b"
@@ -176,7 +176,7 @@
                             {
                                 "text": "List Item #3",
                                 "selected_icon": {
-                                    "value": "fas fa-dot-circle",
+                                    "value": "fas fa-circle-dot",
                                     "library": "fa-solid"
                                 },
                                 "_id": "8733d04"
@@ -251,7 +251,7 @@
                             {
                                 "text": "List Item #2",
                                 "selected_icon": {
-                                    "value": "fas fa-times",
+                                    "value": "fas fa-xmark",
                                     "library": "fa-solid"
                                 },
                                 "_id": "53876fc"
@@ -259,7 +259,7 @@
                             {
                                 "text": "List Item #3",
                                 "selected_icon": {
-                                    "value": "fas fa-dot-circle",
+                                    "value": "fas fa-circle-dot",
                                     "library": "fa-solid"
                                 },
                                 "_id": "11ea65a"

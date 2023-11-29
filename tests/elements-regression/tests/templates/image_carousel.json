@@ -119,11 +119,11 @@
                         "slides_to_scroll": "1",
                         "image_stretch": "yes",
                         "navigation_previous_icon": {
-                            "value": "fas fa-angle-double-left",
+                            "value": "fas fa-angles-left",
                             "library": "fa-solid"
                         },
                         "navigation_next_icon": {
-                            "value": "fas fa-arrow-circle-right",
+                            "value": "fas fa-circle-arrow-right",
                             "library": "fa-solid"
                         },
                         "autoplay": "no",
