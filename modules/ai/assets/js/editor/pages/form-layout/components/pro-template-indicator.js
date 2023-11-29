@@ -72,9 +72,8 @@ export const ProTemplateIndicator = () => {
 				aria-haspopup="true"
 				sx={ {
 					m: 1,
-					backgroundColor: 'grey.100',
 					'&:hover': {
-						backgroundColor: 'grey.200',
+						backgroundColor: 'action.selected',
 					},
 				} }
 			>
