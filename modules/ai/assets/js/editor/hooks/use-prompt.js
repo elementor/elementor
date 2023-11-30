@@ -16,6 +16,8 @@ const normalizeResponse = ( { text, response_id: responseId, usage, images, ...o
 		normalized.baseTemplateId = optional.base_template_id;
 	}
 
+	normalized.type = optional.template_type;
+
 	return normalized;
 };
 
