@@ -1,5 +1,5 @@
 {
-	"phpVersion": "7.4",
+	"phpVersion": "8.0",
 	"plugins": [],
 	"themes": [
 		"https://downloads.wordpress.org/theme/hello-elementor.zip"
