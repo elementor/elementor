@@ -465,15 +465,19 @@ class Widget_Alert extends Widget_Base {
 			return;
 		}
 
-		$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert' );
+		$this->add_render_attribute(
+			'wrapper',
+			[
+				'class' => 'elementor-alert',
+				'role' => 'alert'
+			]
+		);
 
 		if ( ! empty( $settings['alert_type'] ) ) {
 			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert-' . $settings['alert_type'] );
 		} else {
 			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert-info' );
 		}
-
-		$this->add_render_attribute( 'wrapper', 'role', 'alert' );
 
 		$this->add_render_attribute( 'alert_title', 'class', 'elementor-alert-title' );
 
@@ -522,15 +526,19 @@ class Widget_Alert extends Widget_Base {
 				alert_description: { class: 'elementor-alert-description' }
 			} );
 
-			view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert' );
+			view.addRenderAttribute(
+				'wrapper',
+				{
+					'class': 'elementor-alert',
+					'role': 'alert',
+				}
+			);
 
 			if ( settings.alert_type ) {
 				view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert-' + settings.alert_type );
 			} else {
 				view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert-info' );
 			}
-
-			view.addRenderAttribute( 'wrapper', 'role', 'alert' );
 
 			view.addInlineEditingAttributes( 'alert_title', 'none' );
 			view.addInlineEditingAttributes( 'alert_description' );
