@@ -235,7 +235,13 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_remote_config() {
-		return $this->get_ai_app()->get_remote_config();
+		$app = $this->get_ai_app();
+
+		if ( ! $app->is_connected() ) {
+			return [];
+		}
+
+		return $app->get_remote_config();
 	}
 
 	private function verify_permissions( $editor_post_id ) {
