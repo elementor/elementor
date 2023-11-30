@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 import { AttachmentPropType } from '../../../types/attachment';
 import { Stack } from '@elementor/ui';
 
-const ATTACHMENT_TYPE_JSON = 'json';
-const ATTACHMENT_TYPE_URL = 'url';
+export const ATTACHMENT_TYPE_JSON = 'json';
+export const ATTACHMENT_TYPE_URL = 'url';
 
 const Attachments = ( props ) => {
 	if ( ! props.attachments.length ) {
