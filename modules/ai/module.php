@@ -739,6 +739,7 @@ class Module extends BaseModule {
 
 		$elements = $result['text']['elements'] ?? [];
 		$base_template_id = $result['baseTemplateId'] ?? null;
+		$template_type = $result['templateType'] ?? null;
 
 		if ( empty( $elements ) || ! is_array( $elements ) ) {
 			throw new \Exception( 'unknown_error' );
@@ -775,6 +776,7 @@ class Module extends BaseModule {
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 			'base_template_id' => $base_template_id,
+			'template_type' => $template_type,
 		];
 	}
 
