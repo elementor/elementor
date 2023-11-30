@@ -82,11 +82,14 @@ const PromptForm = forwardRef( ( {
 	const previousPrompt = useRef( '' );
 	const { attachmentsTypes } = useConfig();
 
-	const isInteractionsDisabled = isEnhancing || isLoading || ! isActive || ( '' === prompt && ! attachments.length );
+	const isInputDisabled = isLoading || isEnhancing || ! isActive;
+	const isInputEmpty = '' === prompt && ! attachments.length;
+	const isGenerateDisabled = isInputDisabled || isInputEmpty;
 
 	const attachmentsType = attachments[ 0 ]?.type || '';
 	const attachmentsConfig = attachmentsTypes[ attachmentsType ];
 	const promptSuggestions = attachmentsConfig?.promptSuggestions || PROMPT_SUGGESTIONS;
+	const promptPlaceholder = attachmentsConfig?.promptPlaceholder || __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' );
 
 	const handleBack = () => {
 		setPrompt( previousPrompt.current );
@@ -103,11 +106,11 @@ const PromptForm = forwardRef( ( {
 			component="form"
 			onSubmit={ ( e ) => onSubmit( e, prompt ) }
 			direction="row"
-			sx={ { p: 2 } }
-			alignItems="center"
+			sx={ { p: 3 } }
+			alignItems="start"
 			gap={ 1 }
 		>
-			<Stack direction="row" alignItems="center" flexGrow={ 1 } spacing={ 1 }>
+			<Stack direction="row" alignItems="start" flexGrow={ 1 } spacing={ 2 }>
 				{
 					showActions && (
 						isActive ? (
@@ -122,22 +125,21 @@ const PromptForm = forwardRef( ( {
 					attachments={ attachments }
 					onAttach={ onAttach }
 					onDetach={ onDetach }
-					disabled={ isLoading }
+					disabled={ isInputDisabled }
 				/>
 
 				<PromptAutocomplete
 					value={ prompt }
-					disabled={ isLoading || ! isActive || isEnhancing }
+					disabled={ isInputDisabled }
 					onSubmit={ ( e ) => onSubmit( e, prompt ) }
 					options={ promptSuggestions }
-					getOptionLabel={ ( option ) => option.text ? option.text + '...' : prompt }
 					onChange={ ( _, selectedValue ) => setPrompt( selectedValue.text + ' ' ) }
 					renderInput={ ( params ) => (
 						<PromptAutocomplete.TextInput
 							{ ...params }
 							ref={ ref }
 							onChange={ ( e ) => setPrompt( e.target.value ) }
-							placeholder={ __( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' ) }
+							placeholder={ promptPlaceholder }
 						/>
 					) }
 				/>
@@ -145,12 +147,12 @@ const PromptForm = forwardRef( ( {
 
 			<EnhanceButton
 				size="small"
-				disabled={ isInteractionsDisabled }
+				disabled={ isGenerateDisabled || '' === prompt }
 				isLoading={ isEnhancing }
 				onClick={ () => enhance().then( ( { result } ) => setPrompt( result ) ) }
 			/>
 
-			<GenerateButton disabled={ isInteractionsDisabled } />
+			<GenerateButton disabled={ isGenerateDisabled } />
 		</Stack>
 	);
 } );

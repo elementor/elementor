@@ -313,7 +313,7 @@ class Source_Remote extends Source_Base {
 		} else {
 			$access_tier = 0 === $template_data['access_level']
 				? ConnectModule::ACCESS_TIER_FREE
-				: ConnectModule::ACCESS_TIER_ESSENTIAL_OCT_2023;
+				: ConnectModule::ACCESS_TIER_ESSENTIAL;
 		}
 
 		return [

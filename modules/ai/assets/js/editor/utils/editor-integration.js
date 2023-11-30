@@ -35,13 +35,15 @@ const VARIATIONS_PROMPTS = [
 	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
 	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
 	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
-	{ text: __( 'Futuristic layout with neon accents around', 'elementor' ) },
+	{ text: __( 'Futuristic design with neon accents about', 'elementor' ) },
 	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
 	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
 	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },
 	{ text: __( 'Tech-inspired style with modern fonts about', 'elementor' ) },
 	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
 ];
+
+const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
 
 export const renderLayoutApp = ( options = {
 	mode: '',
@@ -65,20 +67,30 @@ export const renderLayoutApp = ( options = {
 	const rootElement = document.createElement( 'div' );
 	document.body.append( rootElement );
 
+	const bodyStyle = window.elementorFrontend.elements.$window[ 0 ].getComputedStyle( window.elementorFrontend.elements.$body[ 0 ] );
+
 	ReactDOM.render(
 		<LayoutApp
 			mode={ options.mode }
 			isRTL={ isRTL }
 			colorScheme={ colorScheme }
+			currentContext={ {
+				body: {
+					backgroundColor: bodyStyle.backgroundColor,
+					backgroundImage: bodyStyle.backgroundImage,
+				},
+			} }
 			attachmentsTypes={ {
 				json: {
 					promptSuggestions: VARIATIONS_PROMPTS,
+					promptPlaceholder: PROMPT_PLACEHOLDER,
 					previewGenerator: async ( json ) => {
 						const screenshot = await takeScreenshot( json );
 						return `<img src="${ screenshot }" />`;
 					},
 				},
 				url: {
+					promptPlaceholder: PROMPT_PLACEHOLDER,
 					promptSuggestions: VARIATIONS_PROMPTS,
 				},
 			} }
@@ -109,6 +121,7 @@ export const renderLayoutApp = ( options = {
 				previewContainer.setContent( template );
 			} }
 			onInsert={ options.onInsert }
+			hasPro={ elementor.helpers.hasPro() }
 		/>,
 		rootElement,
 	);
