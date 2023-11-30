@@ -117,6 +117,31 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect( container ).toHaveCSS( 'grid-auto-flow', 'column' );
 		} );
 
+		await test.step( 'Assert justify align and content start on full width', async () => {
+			await page.selectOption( '.elementor-control-content_width >> select', 'full' );
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'start' );
+			await expect( container ).toHaveCSS( 'align-content', 'start' );
+		} );
+
+		await test.step( 'Assert justify align and content middle on full width', async () => {
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'center' );
+			await expect( container ).toHaveCSS( 'align-content', 'center' );
+		} );
+
+		await test.step( 'Assert justify align and content end on full width', async () => {
+			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
+			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
+			const container = await frame.locator( `.elementor-element-${ containerId }` );
+			await expect( container ).toHaveCSS( 'justify-content', 'end' );
+			await expect( container ).toHaveCSS( 'align-content', 'end' );
+		} );
+
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await page.selectOption( '.elementor-control-content_width >> select', 'boxed' );
 			const dragAreaIsVisible = await editor.getPreviewFrame()
