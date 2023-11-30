@@ -377,13 +377,6 @@
 				}
 			  },
 			  {
-				"_id": "064396e",
-				"social_icon": {
-				  "value": "fab fa-tripadvisor",
-				  "library": "fa-brands"
-				}
-			  },
-			  {
 				"_id": "46f9c40",
 				"social_icon": {
 				  "value": "fab fa-github",
