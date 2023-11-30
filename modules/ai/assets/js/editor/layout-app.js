@@ -18,6 +18,7 @@ const LayoutApp = ( {
 	onSelect,
 	onGenerate,
 	currentContext,
+	hasPro,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
@@ -35,6 +36,7 @@ const LayoutApp = ( {
 						onSelect={ onSelect }
 						onGenerate={ onGenerate }
 						currentContext={ currentContext }
+						hasPro={ hasPro }
 					>
 						<LayoutContent
 							attachments={ attachments }
@@ -59,6 +61,7 @@ LayoutApp.propTypes = {
 	onSelect: PropTypes.func.isRequired,
 	onGenerate: PropTypes.func.isRequired,
 	currentContext: PropTypes.object,
+	hasPro: PropTypes.bool,
 };
 
 export default LayoutApp;
