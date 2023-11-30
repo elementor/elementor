@@ -469,7 +469,7 @@ class Widget_Alert extends Widget_Base {
 			'wrapper',
 			[
 				'class' => 'elementor-alert',
-				'role' => 'alert'
+				'role' => 'alert',
 			]
 		);
 
