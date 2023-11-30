@@ -19,6 +19,7 @@ const useScreenshot = ( type, onData ) => {
 
 				createdScreenshot.sendUsageData = () => layoutData.sendUsageData( data );
 				createdScreenshot.baseTemplateId = data.baseTemplateId;
+				createdScreenshot.type = data.type;
 
 				return createdScreenshot;
 			} )
