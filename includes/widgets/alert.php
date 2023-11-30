@@ -465,8 +465,12 @@ class Widget_Alert extends Widget_Base {
 			return;
 		}
 
+		$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert' );
+
 		if ( ! empty( $settings['alert_type'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $settings['alert_type'] );
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert-' . $settings['alert_type'] );
+		} else {
+			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert-info' );
 		}
 
 		$this->add_render_attribute( 'wrapper', 'role', 'alert' );
@@ -518,13 +522,23 @@ class Widget_Alert extends Widget_Base {
 				alert_description: { class: 'elementor-alert-description' }
 			} );
 
+			view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert' );
+
+			if ( settings.alert_type ) {
+				view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert-' + settings.alert_type );
+			} else {
+				view.addRenderAttribute( 'wrapper', 'class', 'elementor-alert-info' );
+			}
+
+			view.addRenderAttribute( 'wrapper', 'role', 'alert' );
+
 			view.addInlineEditingAttributes( 'alert_title', 'none' );
 			view.addInlineEditingAttributes( 'alert_description' );
 
 			var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 				migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
 			#>
-			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
+			<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
 				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
 				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
 				<# if ( 'show' === settings.show_dismiss ) { #>
