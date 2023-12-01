@@ -14,6 +14,9 @@ import MinimizeDiagonalIcon from '../../icons/minimize-diagonal-icon';
 import ExpandDiagonalIcon from '../../icons/expand-diagonal-icon';
 import { useConfig } from './context/config';
 import { AttachmentPropType } from '../../types/attachment';
+import { PromptPowerNotice } from './components/attachments/prompt-power-notice';
+import { ProWidgetsNotice } from './components/pro-widgets-notice';
+import { ATTACHMENT_TYPE_URL } from './components/attachments';
 
 const DirectionalMinimizeDiagonalIcon = withDirection( MinimizeDiagonalIcon );
 const DirectionalExpandDiagonalIcon = withDirection( ExpandDiagonalIcon );
@@ -55,7 +58,7 @@ const FormLayout = ( {
 	DialogContentProps = {},
 	attachments: initialAttachments,
 } ) => {
-	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate } = useConfig();
+	const { attachmentsTypes, onData, onInsert, onSelect, onClose, onGenerate, hasPro } = useConfig();
 
 	const { screenshots, generate, regenerate, isLoading, error, abort } = useScreenshots( { onData } );
 
@@ -93,6 +96,8 @@ const FormLayout = ( {
 	const shouldFallbackToEditPrompt = !! ( error && 0 === screenshots.length );
 
 	const isPromptFormActive = isPromptEditable || shouldFallbackToEditPrompt;
+
+	const mayContainProWidgets = 0 === attachments.length || attachments.some( ( attachment ) => ATTACHMENT_TYPE_URL === attachment.type );
 
 	const abortAndClose = () => {
 		abort();
@@ -230,6 +235,10 @@ const FormLayout = ( {
 						</Box>
 					) }
 
+					{ mayContainProWidgets && ! hasPro && <ProWidgetsNotice /> }
+
+					{ attachments.length > 0 && <PromptPowerNotice /> }
+
 					{ error && (
 						<Box sx={ { pt: 2, px: 2, pb: 0 } }>
 							<PromptErrorMessage error={ error } onRetry={ lastRun.current } />
@@ -254,8 +263,14 @@ const FormLayout = ( {
 						attachmentsTypes={ attachmentsTypes }
 						attachments={ attachments }
 						onAttach={ onAttach }
-						onDetach={ () => {
-							setAttachments( [] );
+						onDetach={ ( index ) => {
+							setAttachments( ( prev ) => {
+								const newAttachments = [ ...prev ];
+
+								newAttachments.splice( index, 1 );
+
+								return newAttachments;
+							} );
 							setIsPromptEditable( true );
 						} }
 						onSubmit={ handleGenerate }
@@ -279,10 +294,11 @@ const FormLayout = ( {
 											} }
 										>
 											{
-												screenshots.map( ( { screenshot, template, isError, isPending }, index ) => (
+												screenshots.map( ( { screenshot, type, template, isError, isPending }, index ) => (
 													<Screenshot
 														key={ index }
 														url={ screenshot }
+														type={ type }
 														disabled={ isPromptFormActive }
 														isPlaceholder={ isError }
 														isLoading={ isPending }

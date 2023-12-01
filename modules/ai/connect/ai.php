@@ -51,6 +51,17 @@ class Ai extends Library {
 		return $usage;
 	}
 
+	public function get_remote_config() {
+		return $this->ai_request(
+			'GET',
+			'remote-config/config',
+			[
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			]
+		);
+	}
+
 	/**
 	 * get_file_payload
 	 * @param $filename
@@ -496,7 +507,6 @@ class Ai extends Library {
 
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
-		$format = 'default';
 
 		$body = [
 			'prompt' => $data['prompt'],
@@ -513,7 +523,6 @@ class Ai extends Library {
 			switch ( $attachment['type'] ) {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
-					$format = 'json';
 
 					$body['json'] = [
 						'type' => 'elementor',
@@ -522,15 +531,16 @@ class Ai extends Library {
 					break;
 				case 'url':
 					$endpoint = 'generate/html-to-elementor';
-					$format = 'json';
 
-					$html = json_encode( $attachment['content'] );
+					$html = wp_json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
 
 					break;
 			}
 		}
+
+		$context['currentContext'] = $data['currentContext'];
 
 		$metadata = [
 			'context' => $context,
@@ -554,7 +564,7 @@ class Ai extends Library {
 			$body,
 			false,
 			'',
-			$format
+			'json'
 		);
 	}
 

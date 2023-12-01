@@ -70,6 +70,7 @@ class Module extends BaseModule {
 				'utm_term' => '%%page%%', // Will be replaced in the frontend.
 			] ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
 			'app_url' => Plugin::$instance->app->get_base_url() . '#/' . $this->get_name(),
 		] );
 	}
