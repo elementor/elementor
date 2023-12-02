@@ -9,6 +9,8 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
+		"wp-env": "wp-env",
+		"test:linux": "node ./run-on-linux.js",
 		"setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
 		"start-local-server": "npm run setup-templates && wp-env start",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -30,6 +32,7 @@
 		"test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
 		"test:playwright:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
 		"test:playwright:elements-regression:linux:update-snapshots": "npm run test:playwright:elements-regression:linux -- -u",
+		"test:playwright:pluginTesterPro": "npx cross-env TEST_SUITE=@pluginTester playwright test -c tests/playwright/playwright.config.ts",
 		"dev:start": "npm ci && composer install",
 		"test:jest": "jest --config='./tests/jest/jest.config.js'",
 		"scripts": "grunt scripts",
@@ -45,6 +48,7 @@
 		"npm": ">=8.3.0"
 	},
 	"devDependencies": {
+		"@actions/core": "^1.10.1",
 		"@axe-core/playwright": "^4.8.1",
 		"@babel/core": "~7.18.6",
 		"@babel/eslint-parser": "^7.22.15",
