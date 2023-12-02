@@ -121,10 +121,13 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
+        if: ${{matrix.testSuite !='elements-regression'}}
         env: 
           TEST_SUITE: ${{matrix.testSuite}}
-        run: |
-          npm run test:playwright
+        run: npm run test:playwright
+      - name: Run element regression tests
+        if: ${{matrix.testSuite =='elements-regression'}}
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v3
         if: always()
         with:
