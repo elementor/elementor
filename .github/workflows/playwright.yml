@@ -121,8 +121,10 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
+        env: 
+          TEST_SUITE: ${{matrix.testSuite}}
         run: |
-          npm run test:playwright:${{ matrix.testSuite }}
+          npm run test:playwright
       - uses: actions/upload-artifact@v3
         if: always()
         with:
