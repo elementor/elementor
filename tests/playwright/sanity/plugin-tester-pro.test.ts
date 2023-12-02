@@ -16,7 +16,7 @@ const cmd = ( command: string ) => {
 	}
 };
 
-const newPlugins = [
+const pluginList = [
 	'addon-elements-for-elementor-page-builder',
 	'addons-for-elementor',
 	'anywhere-elementor',
@@ -51,10 +51,8 @@ const newPlugins = [
 	'code-block-for-elementor',
 ];
 
-const plugins = [ 'addons-for-elementor', 'addon-elements-for-elementor-page-builder' ];
-
 test.describe( 'Plugin tester tests @pluginTester', () => {
-	for ( const plugin of plugins ) {
+	for ( const plugin of pluginList ) {
 		test( `"${ plugin }" plugin`, async ( { page }, testInfo ) => {
 			const editorPage = new EditorPage( page, testInfo );
 			const wpAdmin = new wpAdminPage( page, testInfo );
