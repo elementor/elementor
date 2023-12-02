@@ -66,7 +66,19 @@ jobs:
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
       matrix:
-        testSuite: ['ai','onBoarding','video','elements-regression', 'default', 'nested-tabs', 'reverse-columns', 'container', 'nested-accordion', 'styleguide_image_link', 'rating']
+        testSuite: [
+          'ai',
+          'onBoarding',
+          'video',
+          'elements-regression', 
+          'default', 
+          'nested-tabs', 
+          'reverse-columns', 
+          'container', 
+          'nested-accordion', 
+          'styleguide_image_link', 
+          'rating'
+        ]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -108,8 +120,13 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        run: |
-          npm run test:playwright:${{ matrix.testSuite }}
+        if: ${{matrix.testSuite !='elements-regression'}}
+        env: 
+          TEST_SUITE: ${{matrix.testSuite}}
+        run: npm run test:playwright
+      - name: Run element regression tests
+        if: ${{matrix.testSuite =='elements-regression'}}
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v3
         if: always()
         with:
