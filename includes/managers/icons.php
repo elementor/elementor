@@ -212,7 +212,7 @@ class Icons_Manager {
 		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
 		if ( ! wp_script_is( 'font-awesome-pro' ) ) {
 			wp_enqueue_style(
-				'font-awesome-' . self::get_current_fa_version() . '-all',
+				'font-awesome-all',
 				self::get_fa_asset_url( 'all' ),
 				[],
 				ELEMENTOR_VERSION
@@ -368,19 +368,11 @@ class Icons_Manager {
 
 	/**
 	 * Get the current Font Awesome major version.
-	 * The default is v5 as that's the first version, which we started "migrating" to.
 	 *
 	 * @return int
 	 */
 	private static function get_current_fa_version() {
-		$original_version = 5;
-		$version_parts = explode( '.', self::ELEMENTOR_ICONS_VERSION );
-
-		if ( empty( $version_parts ) ) {
-			return $original_version;
-		}
-
-		return (int) $version_parts[0];
+		return (int) explode( '.', self::ELEMENTOR_ICONS_VERSION )[0];
 	}
 
 	/**
@@ -394,30 +386,66 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function fa_icon_value_migration( $value ) {
-		static $migration_dictionary = false;
+		static $migration_dictionary = [];
 
-		if ( '' === $value ) {
-			return [
-				'value' => '',
+		$mapping_files = self::get_mapping_files();
+		$found_in_mapping = false;
+
+		if ( is_string( $value ) ) {
+			if ( '' === $value ) {
+				return [
+					'value' => '',
+					'library' => '',
+				];
+			}
+
+			$value = [
+				'value' => $value,
 				'library' => '',
 			];
 		}
 
-		if ( false === $migration_dictionary ) {
-			$current_version = self::get_current_fa_version();
-			$mapping_by_version = sprintf( 'mapping-v%s-to-v%s', $current_version - 1, $current_version );
+		foreach ( $mapping_files as $mapping_file ) {
+			if ( ! isset( $migration_dictionary[ $mapping_file ] ) ) {
+				$migration_dictionary[ $mapping_file ] = json_decode( Utils::file_get_contents( $mapping_file ), true );
+			}
 
-			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . "/lib/font-awesome/migration/$mapping_by_version.js" ), true );
+			if ( isset( $migration_dictionary[ $mapping_file ][ $value['value'] ] ) ) {
+				$value = $migration_dictionary[ $mapping_file ][ $value ]['value'];
+				$found_in_mapping = true;
+			}
 		}
 
-		if ( isset( $migration_dictionary[ $value ] ) ) {
-			return $migration_dictionary[ $value ];
+		// Make sure there's no value in the old 'fa ' format, even if no replacement found.
+		if ( ! $found_in_mapping && '' === $value['library'] ) {
+			$value = [
+				'value'   => 'fas ' . str_replace( 'fa ', '', $value ),
+				'library' => 'fa-solid',
+			];
 		}
 
-		return [
-			'value' => 'fas ' . str_replace( 'fa ', '', $value ),
-			'library' => 'fa-solid',
-		];
+		return $value;
+	}
+
+	/**
+	 * Get the mapping files for the migration.
+	 *
+	 * @return array
+	 */
+	public static function get_mapping_files() {
+		$current_version = self::get_current_fa_version();
+		$mapping_files = [];
+
+		for ( $i = $current_version - 1; $i >= 1; $i-- ) {
+			$mapping_by_version = sprintf( 'mapping-v%s-to-v%s', $i, $i + 1 );
+			$mapping_file = ELEMENTOR_ASSETS_PATH . "/lib/font-awesome/migration/$mapping_by_version.js";
+
+			if ( file_exists( $mapping_file ) ) {
+				$mapping_files[] = $mapping_file;
+			}
+		}
+
+		return array_reverse( $mapping_files );
 	}
 
 	/**
