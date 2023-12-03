@@ -3,7 +3,7 @@ import LayoutApp from '../layout-app';
 import { takeScreenshot } from './screenshot';
 import { startHistoryLog } from './history';
 import { __ } from '@wordpress/i18n';
-import { generateIds } from './genereate-ids';
+import { generateIds, getUniqueId } from './genereate-ids';
 
 export const closePanel = () => {
 	$e.run( 'panel/close' );
@@ -44,6 +44,7 @@ const VARIATIONS_PROMPTS = [
 ];
 
 const PROMPT_PLACEHOLDER = __( "Press '/' for suggestions or describe the changes you want to apply (optional)...", 'elementor' );
+const SESSION_ID = `session-${ getUniqueId() }`;
 
 export const renderLayoutApp = ( options = {
 	mode: '',
@@ -122,6 +123,7 @@ export const renderLayoutApp = ( options = {
 			} }
 			onInsert={ options.onInsert }
 			hasPro={ elementor.helpers.hasPro() }
+			sessionId={ SESSION_ID }
 		/>,
 		rootElement,
 	);

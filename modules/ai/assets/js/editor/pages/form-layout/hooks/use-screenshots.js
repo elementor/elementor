@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react';
 import useScreenshot from './use-screenshot';
 import { useConfig } from '../context/config';
+import { getUniqueId } from '../../../utils/genereate-ids';
 
 const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
-	const { currentContext } = useConfig();
+	const { currentContext, sessionId } = useConfig();
+	const generateIdRef = useRef( '' );
+	const groupId = `group-${ getUniqueId() }`;
 
 	const screenshotsData = [
 		useScreenshot( 0, onData ),
@@ -59,6 +62,12 @@ const useScreenshots = ( { onData } ) => {
 				prompt,
 				prevGeneratedIds,
 				currentContext,
+				ids: {
+					sessionId,
+					generateId: generateIdRef.current,
+					groupId,
+					requestId: `request-${ getUniqueId() }`,
+				},
 				attachments: attachments.map( ( { type, content, label } ) => {
 					// Send only the data that is needed for the generation.
 					return {
@@ -91,6 +100,7 @@ const useScreenshots = ( { onData } ) => {
 	const generate = ( prompt, attachments ) => {
 		const placeholders = Array( screenshotsGroupCount ).fill( PENDING_VALUE );
 
+		generateIdRef.current = `generate-${ getUniqueId() }`;
 		setScreenshots( placeholders );
 
 		createScreenshots( prompt, attachments );

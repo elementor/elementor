@@ -19,6 +19,7 @@ const LayoutApp = ( {
 	onGenerate,
 	currentContext,
 	hasPro,
+	sessionId,
 } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
@@ -37,6 +38,7 @@ const LayoutApp = ( {
 						onGenerate={ onGenerate }
 						currentContext={ currentContext }
 						hasPro={ hasPro }
+						sessionId={ sessionId }
 					>
 						<LayoutContent
 							attachments={ attachments }
@@ -62,6 +64,7 @@ LayoutApp.propTypes = {
 	onGenerate: PropTypes.func.isRequired,
 	currentContext: PropTypes.object,
 	hasPro: PropTypes.bool,
+	sessionId: PropTypes.string,
 };
 
 export default LayoutApp;
