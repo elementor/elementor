@@ -134,7 +134,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	public function test_should_get_when_and_how_edited_the_post_last() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
-		$this->assertRegExp( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
+		$this-> assertMatchesRegularExpression( '/Last edited on \<time\>.*\<\/time\>\ by .*/', Plugin::$instance->documents->get( $post_id )->get_last_edited() );
 	}
 
 	public function test_should_get_post_auto_save() {

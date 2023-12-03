@@ -45,9 +45,9 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		// Assert
-		$this->assertRegExp( '/\<h3\>test title\<\/h3\>/', $result );
-		$this->assertRegExp( '/\<p\>test description\<\/p\>/', $result );
-		$this->assertRegExp( '/data-notice_id="test_id"/', $result );
+		$this->assertMatchesRegularExpression( '/\<h3\>test title\<\/h3\>/', $result );
+		$this-> assertMatchesRegularExpression( '/\<p\>test description\<\/p\>/', $result );
+		$this-> assertMatchesRegularExpression( '/data-notice_id="test_id"/', $result );
 	}
 
 	public function test_admin_notices__should_not_print_if_should_print_returns_false() {

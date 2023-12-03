@@ -67,7 +67,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_static/', ob_get_clean() );
+		$this-> assertMatchesRegularExpression( '/render_static/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_normally() {
@@ -79,7 +79,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render/', ob_get_clean() );
+		$this-> assertMatchesRegularExpression( '/render/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_skin_static() {
@@ -96,7 +96,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_skin_static/', ob_get_clean() );
+		$this-> assertMatchesRegularExpression( '/render_skin_static/', ob_get_clean() );
 	}
 
 	public function test_render_content__should_render_skin_normally() {
@@ -111,7 +111,7 @@ class Test_Widget_Base extends Elementor_Test_Base {
 
 		$widget->render_content();
 
-		$this->assertRegExp( '/render_skin/', ob_get_clean() );
+		$this-> assertMatchesRegularExpression( '/render_skin/', ob_get_clean() );
 	}
 
 	protected function arrange_static_render_mode() {

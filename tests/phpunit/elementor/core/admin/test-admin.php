@@ -116,7 +116,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$result = apply_filters( 'admin_body_class', '' );
 
 		// Assert
-		$this->assertRegExp( '/elementor-editor-inactive/', $result );
+		$this-> assertMatchesRegularExpression( '/elementor-editor-inactive/', $result );
 	}
 
 	public function test_body_statues_classes__when_edit_with_elementor() {
@@ -133,7 +133,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$result = apply_filters( 'admin_body_class', '' );
 
 		// Assert
-		$this->assertRegExp( '/elementor-editor-active/', $result );
+		$this-> assertMatchesRegularExpression( '/elementor-editor-active/', $result );
 	}
 
 	public function test_get_init_settings__returns_experiments_config() {
