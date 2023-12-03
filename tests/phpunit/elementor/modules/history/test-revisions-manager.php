@@ -189,7 +189,7 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
 		$args['id'] = $this->factory()->create_and_get_default_post()->ID;
 
-		$this->expectExceptionMessage( 'Not found.' );
+		$this->expectExceptionMessage('Access denied.');
 		Revisions_Manager::ajax_get_revision_data( $args );
 	}
 

@@ -31,7 +31,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 	public function test_get_new_post_url() {
 		$new_post_url =  Plugin::$instance->documents->get_create_new_post_url();
 
-		$this->assertContains( 'edit.php?action=elementor_new_post&post_type=', $new_post_url );
+		$this->assertStringContainsString( 'edit.php?action=elementor_new_post&post_type=', $new_post_url );
 		$this->assertContains( '_wpnonce=', $new_post_url );
 	}
 
