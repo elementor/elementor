@@ -18,7 +18,7 @@ class Test_Admin extends Elementor_Test_Base {
 	 */
 	private $pagenow;
 
-	public function setUp() {
+	public function setUp():void  {
 		global $pagenow;
 
 		parent::setUp();
@@ -26,7 +26,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->pagenow = $pagenow;
 	}
 
-	public function tearDown() {
+	public function  tearDown():void  {
 		global $pagenow;
 
 		parent::tearDown();

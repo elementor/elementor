@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Svg_Handler extends Elementor_Test_Base {
 
-	public function setUp() {
+	public function setUp():void  {
 		parent::setUp();
 
 		$_REQUEST['uploadTypeCaller'] = 'elementor-media-upload';

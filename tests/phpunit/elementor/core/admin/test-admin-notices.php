@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Admin_Notices extends Elementor_Test_Base {
 
-	public function setUp() {
+	public function setUp():void  {
 		parent::setUp();
 
 		remove_all_actions('admin_notices');

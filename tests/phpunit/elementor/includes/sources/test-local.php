@@ -17,7 +17,7 @@ class Test_Local extends Elementor_Test_Base {
 	 */
 	private $source;
 
-	public function setUp() {
+	public function setUp():void  {
 		parent::setUp();
 
 		$this->source = $this
