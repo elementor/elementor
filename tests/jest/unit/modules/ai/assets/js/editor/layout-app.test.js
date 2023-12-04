@@ -49,7 +49,6 @@ describe( 'LayoutApp', () => {
 		ajaxResponses.ai_generate_layout = [];
 	} );
 
-	// Test react component
 	test( 'Should generate unique ids', async () => {
 		const wrapper = await screen.getByTestId( 'root' );
 
@@ -61,7 +60,6 @@ describe( 'LayoutApp', () => {
 
 		expect( onGenerate ).toHaveBeenCalled();
 
-		// Have ids
 		expect( ajaxResponses.ai_generate_layout[ 0 ].request.data ).toMatchObject( {
 			attachments: [],
 			ids: {
@@ -76,7 +74,7 @@ describe( 'LayoutApp', () => {
 		} );
 	} );
 
-	it( 'should have unique session id on first generate', async () => {
+	it( 'Should have unique session id on first generate', async () => {
 		const wrapper = await screen.getByTestId( 'root' );
 
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
@@ -85,7 +83,6 @@ describe( 'LayoutApp', () => {
 
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
-		// Convert to it.each
 		const expected = [
 			{
 				id: 'sessionId',
@@ -114,7 +111,7 @@ describe( 'LayoutApp', () => {
 		}
 	} );
 
-	it( 'should have unique same sessionId, generateID, but different batchId on regenerate', async () => {
+	it( 'Should have unique same sessionId, generateID, but different batchId on regenerate', async () => {
 		const wrapper = await screen.getByTestId( 'root' );
 
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
@@ -160,7 +157,7 @@ describe( 'LayoutApp', () => {
 		const editButton = wrapper.querySelector( '[aria-label="Edit prompt"] button' );
 		fireEvent.click( editButton );
 
-		// 'should have unique same sessionId, but different generateID, batchId on a new prompt', async () => {
+		// Should have unique same sessionId, but different generateID, batchId on a new prompt.
 		fireEvent.change( wrapper.querySelector( 'textarea' ), {
 			target: { value: 'test2' },
 		} );
