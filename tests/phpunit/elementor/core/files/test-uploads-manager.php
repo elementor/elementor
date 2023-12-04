@@ -272,6 +272,40 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		rmdir( $temp_dir );
 	}
 
+	/**
+	 * Test that the temp file name was sanitized before it was created.
+	 *
+	 * Addresses the following issue:
+	 * https://elementor.atlassian.net/browse/ED-12938
+	 */
+	public function test_create_invalid_filename_temp_file() {
+		$file_names_to_test = [
+			'../../../test/file.php',
+			'..\..\..\ttest\ffile.php',
+			'test<file.php',
+			'test>file.php',
+			'test;file.php',
+			'test/file.php',
+			'test\\file.php',
+			'test%file.php',
+		];
+
+		$temp_folder = Plugin::$instance->uploads_manager->get_temp_dir();
+		$correct_path_pattern = '#' . preg_quote( $temp_folder, '#' ) . '/[a-z0-9]+/testfile.php#';
+		$template = json_encode( self::$mock_template );
+
+		foreach ( $file_names_to_test as $file_name ) {
+			$temp_file_path = Plugin::$instance->uploads_manager->create_temp_file( $template, $file_name );
+
+			$this->assertRegExp( $correct_path_pattern, $temp_file_path, "Failed for file name: { $file_name }" );
+
+			$temp_dir = dirname( $temp_file_path );
+
+			unlink( $temp_file_path );
+			rmdir( $temp_dir );
+		}
+	}
+
 	public function test_get_temp_dir() {
 		$wp_upload_dir = wp_upload_dir();
 
