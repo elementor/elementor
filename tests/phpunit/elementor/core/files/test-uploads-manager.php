@@ -291,7 +291,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		];
 
 		$temp_folder = Plugin::$instance->uploads_manager->get_temp_dir();
-		$correct_path_pattern = '#' . preg_quote( $temp_folder, '#' ) . '/[a-z0-9]+/testfile.php#';
+		$correct_path_pattern = '#' . preg_quote( $temp_folder, '#' ) . '[a-z0-9]+/testfile.php#';
 		$template = json_encode( self::$mock_template );
 
 		foreach ( $file_names_to_test as $file_name ) {
