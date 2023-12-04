@@ -84,7 +84,6 @@ describe( 'LayoutApp', () => {
 
 		fireEvent.click( screen.getByText( /^generate/i ) );
 
-		// Convert to it.each
 		const expected = [
 			{
 				id: 'sessionId',
