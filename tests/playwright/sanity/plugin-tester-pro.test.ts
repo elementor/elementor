@@ -7,7 +7,7 @@ import github from '@actions/core';
 const cmd = ( command: string ) => {
 	const logs = execSync( command, { encoding: 'utf-8' } );
 	// eslint-disable-next-line no-console
-	console.log( '\x1b[36m%s\x1b[0m', logs );
+	console.log( logs );
 	if ( process.env.CI ) {
 		if ( logs.includes( 'Warning' ) ) {
 			github.warning( logs );
