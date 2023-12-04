@@ -110,12 +110,3 @@ jobs:
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
           php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-      - name: Run PHP Syntax Lint 8.2
-        run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
