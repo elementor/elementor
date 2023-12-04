@@ -51,16 +51,16 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$preview_url = Plugin::$instance->documents->get( $post_id )->get_preview_url();
 		$this->assertStringContainsString( '/?p=', $preview_url );
-		$this->assertContains( '&elementor-preview=', $preview_url );
-		$this->assertContains( '&ver=', $preview_url );
+		$this->assertStringContainsString( '&elementor-preview=', $preview_url );
+		$this->assertStringContainsString( '&ver=', $preview_url );
 	}
 
 	public function test_should_get_wordpress_preview_url() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$wp_preview_url = Plugin::$instance->documents->get( $post_id )->get_wp_preview_url();
 		$this->assertStringContainsString( '/?p=', $wp_preview_url );
-		$this->assertContains( '&preview_nonce=', $wp_preview_url );
-		$this->assertContains( '&preview=', $wp_preview_url );
+		$this->assertStringContainsString( '&preview_nonce=', $wp_preview_url );
+		$this->assertStringContainsString( '&preview=', $wp_preview_url );
 	}
 
 	/**

@@ -42,7 +42,7 @@ class Test_Local extends Elementor_Test_Base {
 		$output = ob_get_clean();
 
 		// Assert
-		$this->assertContains( 'elementor-template-library-add-new', $output );
+		$this->assertStringContainsString( 'elementor-template-library-add-new', $output );
 
 		// Clean - globals.
 		$post_type = null;
