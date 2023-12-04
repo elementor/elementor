@@ -44,6 +44,7 @@ export default {
 	expect: {
 		timeout: 5_000,
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
+		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 1 : 0,
