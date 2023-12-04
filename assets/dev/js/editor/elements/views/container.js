@@ -641,7 +641,7 @@ const ContainerView = BaseElementView.extend( {
 		if ( $linkElement ) {
 			$linkElement.attr( 'href', href );
 		}
-	}
+	},
 } );
 
 module.exports = ContainerView;
