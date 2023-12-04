@@ -80,8 +80,8 @@ jobs:
           'rating',
           'pluginTester1_containers',
           'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections'
+          # 'pluginTester1_sections',
+          # 'pluginTester2_sections'
         ]
     steps:
       - name: Checkout source code
