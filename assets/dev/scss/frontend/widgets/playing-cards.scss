@@ -75,7 +75,7 @@
 			}
 
 
-			&.heart {
+			&-heart {
 				.suit {
 					color: var(--e-card-heart-color);
 				}
@@ -85,7 +85,7 @@
 				}
 			}
 
-			&.club {
+			&-club {
 				.suit {
 					color: var(--e-card-club-color);
 				}
@@ -95,7 +95,7 @@
 				}
 			}
 
-			&.diamond {
+			&-diamond {
 				.suit {
 					color: var(--e-card-diamond-color);
 				}
@@ -105,7 +105,7 @@
 				}
 			}
 
-			&.spade {
+			&-spade {
 				.suit {
 					color: var(--e-card-spade-color);
 				}
