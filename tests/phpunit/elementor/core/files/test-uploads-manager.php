@@ -281,7 +281,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	public function test_create_invalid_filename_temp_file() {
 		$file_names_to_test = [
 			'../../../test/file.php',
-			'..\..\..\ttest\ffile.php',
+			'..\..\..\test\file.php',
 			'test<file.php',
 			'test>file.php',
 			'test;file.php',
