@@ -7,6 +7,15 @@ const PENDING_VALUE = { isPending: true };
 
 const useScreenshots = ( { onData } ) => {
 	const [ screenshots, setScreenshots ] = useState( [] );
+
+	/**
+	 * The ids for each request are:
+	 * - sessionId: a unique id for each session. (open the editor)
+	 * - generateId: a unique id for each generate request. (prompt change)
+	 * - batchId: a unique id for each batch of generate requests. (generate, regenerate)
+	 * - requestId: a unique id for each generate request.
+	 */
+
 	const { currentContext, sessionId } = useConfig();
 	const generateIdRef = useRef( '' );
 	const batchId = `batch-${ getUniqueId() }`;
